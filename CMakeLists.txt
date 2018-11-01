@@ -1,6 +1,19 @@
 # minimum cmake version
 cmake_minimum_required(VERSION 3.0)
 
+# find the LCIO directory
+if (LCIO_DIR)
+    set(LCIO_INCLUDE_DIR "${LCIO_DIR}/include")
+    set(LCIO_LIBRARY "${LCIO_DIR}/lib/liblcio.so")
+    if (NOT EXISTS "${LCIO_DIR}")
+        message(FATAL_ERROR "Unable to find LCIO library")
+    endif()
+    message(STATUS "LCIO dir set to: ${LCIO_DIR}")
+    message(STATUS "LCIO include dir set to: ${LCIO_INCLUDE_DIR}")
+    message(STATUS "LCIO library set to: ${LCIO_LIBRARY}")
+endif()
+find_package(LCIO REQUIRED)
+
 # find Python installation
 find_package(PythonLibs REQUIRED)
 message(STATUS "Python lib found at: ${PYTHON_LIBRARIES}")
