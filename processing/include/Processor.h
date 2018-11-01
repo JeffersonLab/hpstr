@@ -12,10 +12,11 @@
 //----------------//
 #include <map>
 
-//---------//
-//   DAQ   //
-//---------//
-//#include "TrackerEvent.h"
+//----------//
+//   LCIO   //
+//----------//
+#include <EVENT/LCEvent.h>
+
 
 // Forward declarations
 class Process;
@@ -54,7 +55,7 @@ class Processor {
          * Process the event and put new data products into it.
          * @param event The Event to process.
          */
-        //virtual void process(TrackerEvent* event) = 0;
+        virtual void process(EVENT::LCEvent* event) = 0;
 
         /**
          * Callback for the Processor to take any necessary
