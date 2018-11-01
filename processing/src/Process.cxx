@@ -17,22 +17,25 @@ void Process::run() {
         if (input_files_.empty()) 
             throw std::runtime_error("Please specify files to process.");
 
-        //data_reader = new DataRead();
-        //TrackerEvent event;  
+        // Instantiate the LCIO file reader
+        IO::LCReader* lc_reader = IOIMPL::LCFactory::getInstance()->createLCReader(); 
+        
+        // Create an object used to store all of the event information of the
+        // current event.
+        EVENT::LCEvent* event{nullptr}; 
 
         int cfile = 0; 
         for (auto ifile : input_files_) { 
             
-            // Open the input file.  If the input file can't be opened, exit
-            // the application.
-            //if (!data_reader->open(ifile.c_str(), false)) 
-            //  throw std::runtime_error("Error! File " + ifile + " cannot be opened.");   
+            // Open the input file.  If the input file can't be opened, throw
+            // an exeception.
+            lc_reader->open(ifile); 
         
-            std::cout << "---- [ svt-qa ][ Process ]: Processing file " 
+            std::cout << "---- [ hpstr ][ Process ]: Processing file " 
                       << ifile << std::endl;
 
             // Open the output file where all histograms will be stored.
-            TFile* ofile = new TFile(output_files_[cfile].c_str(), "RECREATE"); 
+            //TFile* ofile = new TFile(output_files_[cfile].c_str(), "RECREATE"); 
 
             // first, notify everyone that we are starting
             for (auto module : sequence_) {
@@ -40,26 +43,30 @@ void Process::run() {
             }
 
 
-            //while (data_reader->next(&event)) {
-            //    for (auto module : sequence_) { 
-            //        module->process(&event); 
-            //    }
-            //}
+            while ((event = lc_reader->readNextEvent()) != 0) {
+                //std::cout << "--- [ hpstr ][ Process ]: Event: " << std::endl;
+                for (auto module : sequence_) { 
+                    module->process(event); 
+                }
+            }
             ++cfile; 
          
             for (auto module : sequence_) { 
                 module->finalize(); 
             }
 
-            if (ofile) {
+            /*if (ofile) {
                 ofile->Write();
                 delete ofile;
                 ofile = nullptr;
-            }
+            }*/
+
+            // Close the LCIO file that was being processed
+            lc_reader->close(); 
         }
 
     } catch (std::exception& e) {
-        std::cerr << "---- [ svt-qa ][ Process ]: Error! " << e.what() << std::endl;
+        std::cerr << "---- [ hpstr ][ Process ]: Error! " << e.what() << std::endl;
     }
 }
 
