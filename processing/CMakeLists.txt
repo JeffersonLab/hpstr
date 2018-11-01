@@ -4,5 +4,5 @@ module(
     NAME processing 
     EXECUTABLES src/hpstr.cxx
     DEPENDENCIES 
-    EXTERNAL_DEPENDENCIES ROOT Python
+    EXTERNAL_DEPENDENCIES ROOT Python LCIO
 )
