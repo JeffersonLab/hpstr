@@ -17,52 +17,47 @@ void Process::run() {
         if (input_files_.empty()) 
             throw std::runtime_error("Please specify files to process.");
 
-        // Instantiate the LCIO file reader
-        IO::LCReader* lc_reader = IOIMPL::LCFactory::getInstance()->createLCReader(); 
-        
-        // Create an object used to store all of the event information of the
-        // current event.
-        EVENT::LCEvent* event{nullptr}; 
+        // Create an object used to manage the input and output files.
+        Event event;  
 
         int cfile = 0; 
         for (auto ifile : input_files_) { 
             
-            // Open the input file.  If the input file can't be opened, throw
-            // an exeception.
-            lc_reader->open(ifile); 
-        
             std::cout << "---- [ hpstr ][ Process ]: Processing file " 
                       << ifile << std::endl;
 
-            // Open the output file where all histograms will be stored.
-            //TFile* ofile = new TFile(output_files_[cfile].c_str(), "RECREATE"); 
+            // Open the output file if an output file path has been specified.
+            EventFile* file{nullptr};  
+            if (!output_files_.empty()) { 
+                file = new EventFile(ifile, output_files_[cfile]);
+                file->setupEvent(&event);  
+            }
 
             // first, notify everyone that we are starting
             for (auto module : sequence_) {
                 module->initialize();
             }
 
-
-            while ((event = lc_reader->readNextEvent()) != 0) {
+            // Process all events.
+            while (file->nextEvent()) {
                 //std::cout << "--- [ hpstr ][ Process ]: Event: " << std::endl;
                 for (auto module : sequence_) { 
-                    module->process(event); 
+                    module->process(&event); 
                 }
             }
             ++cfile; 
-         
+        
+            // Finalize all modules. 
             for (auto module : sequence_) { 
                 module->finalize(); 
             }
 
-            /*if (ofile) {
-                ofile->Write();
-                delete ofile;
-                ofile = nullptr;
-            }*/
+            if (file) {
+                file->close(); 
+                delete file;
+                file = nullptr;
+            }
 
-            // Close the LCIO file that was being processed
-            lc_reader->close(); 
         }
 
     } catch (std::exception& e) {
