@@ -12,11 +12,10 @@
 //----------------//
 #include <map>
 
-//----------//
-//   LCIO   //
-//----------//
-#include <EVENT/LCEvent.h>
-
+//-----------//
+//   hpstr   //
+//-----------//
+#include "Event.h"
 
 // Forward declarations
 class Process;
@@ -55,7 +54,7 @@ class Processor {
          * Process the event and put new data products into it.
          * @param event The Event to process.
          */
-        virtual void process(EVENT::LCEvent* event) = 0;
+        virtual void process(Event* event) = 0;
 
         /**
          * Callback for the Processor to take any necessary
