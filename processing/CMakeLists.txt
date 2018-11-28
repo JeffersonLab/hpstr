@@ -3,6 +3,6 @@
 module( 
     NAME processing 
     EXECUTABLES src/hpstr.cxx
-    DEPENDENCIES 
+    DEPENDENCIES event 
     EXTERNAL_DEPENDENCIES ROOT Python LCIO
 )
