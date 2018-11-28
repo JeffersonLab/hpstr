@@ -15,21 +15,15 @@
 #include <stdexcept>
 
 //----------//
-//   LCIO   //
-//----------//
-#include <IO/LCReader.h>
-#include <IOIMPL/LCFactory.h>
-#include <EVENT/LCEvent.h>
-
-//----------//
 //   ROOT   //
 //----------//
 #include <TFile.h>
 
-//------------//
-//   svt-qa   //
-//------------//
+//-----------//
+//   hpstr   //
+//-----------//
 #include "Processor.h"
+#include "EventFile.h"
 
 class Process {
 
