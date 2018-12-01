@@ -39,11 +39,12 @@ void Process::run() {
             }
 
             // Process all events.
-            while (file->nextEvent()) {
-                //std::cout << "--- [ hpstr ][ Process ]: Event: " << std::endl;
+            while (file->nextEvent() && (event_limit_ < 0 || (n_events_processed < event_limit_))) {
+                std::cout << "--- [ hpstr ][ Process ]: Event: " << n_events_processed << std::endl;
                 for (auto module : sequence_) { 
                     module->process(&event); 
                 }
+                ++n_events_processed;
             }
             ++cfile; 
         
