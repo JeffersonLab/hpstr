@@ -27,6 +27,8 @@ bool EventFile::nextEvent() {
    
     // Read the next event.  If it doesn't exist, stop processing events.
     if ((lc_event_ = lc_reader_->readNextEvent())  == 0) return false;
+    
+    event_->setLCEvent(lc_event_); 
 
     ++entry_; 
     return true; 
