@@ -8,6 +8,11 @@
 #ifndef __EVENT_H__
 #define __EVENT_H__
 
+//----------------//
+//   C++ StdLib   //
+//----------------//
+#include <stdexcept>
+
 //----------//
 //   LCIO   //
 //----------//
@@ -38,7 +43,13 @@ class Event {
          */
         void addCollection(const std::string name, TClonesArray* collection);
 
-    
+        /** 
+         * @param name Name of the collection
+         *
+         * @return Get a collection from the event. 
+         */
+        TClonesArray* getCollection(const std::string name); 
+
         /**
          * Clear all of the collections in the event 
          */
@@ -55,6 +66,13 @@ class Event {
             return static_cast<EVENT::LCCollection*>(lc_event_->getCollection(name)); 
         }; 
 
+        /**
+         * Set the current entry. 
+         *
+         * @param The current entry. 
+         */
+        void setEntry(const int entry) { entry_ = entry; }; 
+
     private: 
 
         /** The ROOT tree containing the event. */
@@ -64,7 +82,13 @@ class Event {
         EVENT::LCEvent* lc_event_{nullptr};
 
         /** Container with all TClonesArray collections. */
-        std::map<std::string, TClonesArray*> collections_;  
+        std::map<std::string, TClonesArray*> collections_; 
+
+        /** Container will all branches. */
+        std::map<std::string, TBranch*> branches_; 
+
+        /** The current entry. */
+        int entry_{0};  
 
 }; // Event
 

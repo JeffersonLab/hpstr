@@ -29,6 +29,7 @@ bool EventFile::nextEvent() {
     if ((lc_event_ = lc_reader_->readNextEvent())  == 0) return false;
     
     event_->setLCEvent(lc_event_); 
+    event_->setEntry(entry_); 
 
     ++entry_; 
     return true; 

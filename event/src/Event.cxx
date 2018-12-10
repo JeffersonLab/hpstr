@@ -21,10 +21,26 @@ void Event::addCollection(const std::string name, TClonesArray* collection) {
     if (collections_.find(name) != collections_.end()) return; 
 
     // Add a branch with the given name to the event tree.
-    tree_->Branch(name.c_str(), collection, 1000000, 3); 
+    branches_[name] = tree_->Branch(name.c_str(), collection, 1000000, 3); 
 
-    // Kepp track of which events were added to the event
+    // Keep track of which events were added to the event
     collections_[name] = collection;  
+}
+
+TClonesArray* Event::getCollection(const std::string name) { 
+    
+    // Check if the collection already exist
+    auto itc = collections_.find(name);
+    auto itb = branches_.find(name); 
+
+    if (itc != collections_.end()) { 
+        if (itb != branches_.end()) { 
+            itb->second->GetEntry(entry_); 
+        }
+        return itc->second; 
+    } else { 
+        throw std::runtime_error("Collection not found."); 
+    }
 }
 
 void Event::Clear() { 
