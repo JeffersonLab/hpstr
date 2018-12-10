@@ -4,9 +4,14 @@ class Processor:
     def __init__(self, instance_name, class_name): 
         self.instance_name = instance_name
         self.class_name    = class_name
+        self.parameters    = {}
 
     def toString(self):
         print "\tProcessor( %s of instance %s )" % (self.instance_name, self.class_name)
+        if len(self.parameters) > 0: 
+            print "\t\tParameters: "
+            for key, value in self.parameters.items():
+                print "\t\t\t [ %s ]: %s" % (key, value)
 
 class Process: 
 

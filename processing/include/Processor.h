@@ -16,6 +16,7 @@
 //   hpstr   //
 //-----------//
 #include "Event.h"
+#include "ParameterSet.h"
 
 // Forward declarations
 class Process;
@@ -51,10 +52,11 @@ class Processor {
         virtual ~Processor() {;}
 
         /**
-         * Process the event and put new data products into it.
-         * @param event The Event to process.
+         * Callback for the EventProcessor to configure itself from the given set of parameters.
+         * @param parameters ParameterSet for configuration.
          */
-        virtual void process(Event* event) = 0;
+        virtual void configure(const ParameterSet& parameters) {
+        }
 
         /**
          * Callback for the Processor to take any necessary
@@ -62,6 +64,12 @@ class Processor {
          * creating histograms.
          */
         virtual void initialize() = 0;
+
+        /**
+         * Process the event and put new data products into it.
+         * @param event The Event to process.
+         */
+        virtual void process(Event* event) = 0;
 
         /**
          * Callback for the Processor to take any necessary
