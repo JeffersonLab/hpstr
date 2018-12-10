@@ -111,9 +111,7 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
         pi.classname_ = stringMember(processor, "class_name");
         pi.instancename_ = stringMember(processor, "instance_name");
         std::cout << pi.classname_ << std::endl;
-        std::cout << "Hereeeeeee:" << std::endl;
         
-        /*
         PyObject* params = PyObject_GetAttrString(processor, "parameters");
         if (params != 0 && PyDict_Check(params)) {
             PyObject *key(0), *value(0);
@@ -121,10 +119,7 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
 
             while (PyDict_Next(params, &pos, &key, &value)) {
                 std::string skey = PyString_AsString(key);
-                if (PyBool_Check(value)) {
-                    pi.params_.insert(skey, bool(PyInt_AsLong(value)));
-                    //printf("Bool Key: %s\n",skey.c_str());
-                } else if (PyInt_Check(value)) {
+                if (PyInt_Check(value)) {
                     pi.params_.insert(skey, int(PyInt_AsLong(value)));
                     //printf("Int Key: %s\n",skey.c_str());
                 } else if (PyFloat_Check(value)) {
@@ -158,7 +153,7 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
                     }
                 }
             }
-        }*/
+        }
 
         sequence_.push_back(pi);
     }
@@ -219,7 +214,7 @@ Process* ConfigurePython::makeProcess() {
         if (ep == 0) {
             throw std::runtime_error("[ ConfigurePython ]: Unable to create instance of " + proc.instancename_); 
         }
-        //ep->configure(proc.params_);
+        ep->configure(proc.params_);
         p->addToSequence(ep);    
     }
         

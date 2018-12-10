@@ -21,11 +21,12 @@
 #include <stdexcept>
 #include <vector>
 
-//------------//
-//   svt-qa   //
-//------------//
+//-----------//
+//   hpstr   //
+//-----------//
 #include "Process.h"
 #include "ProcessorFactory.h"
+#include "ParameterSet.h"
 
 class ConfigurePython {
 
@@ -72,7 +73,7 @@ class ConfigurePython {
         struct ProcessorInfo {
             std::string classname_;
             std::string instancename_;
-            //ParameterSet params_;
+            ParameterSet params_;
         };
 
         /** The sequence of EventProcessor objects to be executed in order. */
