@@ -27,6 +27,9 @@ namespace Collections {
     /** Name of the collection containing Track to TrackData LCRelations */
     constexpr const char* TRACK_DATA_REL{"TrackDataRelations"};
 
+    /** Name of the collection containing Final State Particles. */
+    constexpr const char* FINAL_STATE_PARTICLES{"FinalStateParticles"}; 
+
 }
 
 #endif // _COLLECTION_H_
