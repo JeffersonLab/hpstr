@@ -21,11 +21,6 @@
 #include <TRefArray.h>
 #include <TRef.h>
 
-//----------//
-//   hpstr  //
-//----------//
-#include "TrackerHit.h"
-
 class Track : public TObject {
 
     public:
@@ -44,7 +39,10 @@ class Track : public TObject {
          *
          * @param hit : A TrackerHit object
          */
-        void addHit(TrackerHit* hit); 
+        void addHit(TObject* hit); 
+
+        /** @return A reference to the hits associated with this track. */
+        TRefArray* getSvtHits() const { return tracker_hits_; };
 
         /**
          * Set the track parameters.
@@ -112,12 +110,15 @@ class Track : public TObject {
         void setTrackVolume(const int track_volume) { track_volume_ = track_volume; };
 
         /**
-         * Set the HpsParticle associated with this track.  This can be used to
+         * Set the Particle associated with this track.  This can be used to
          * retrieve additional track properties such as the momentum and charge.
          *
-         * @param fs_particle : Final state HpsParticle associated with this track
+         * @param particle : Final state particle associated with this track
          */
-        //void setParticle(HpsParticle* fs_particle) { this->fs_particle = (TObject*) fs_particle; };
+        void setParticle(TObject* particle) { particle_ = particle; };
+
+        /** @return The {@link Particle} associated with this track. */
+        TObject* getParticle() const { return static_cast<TObject*>(particle_.GetObject()); }; 
 
         /**
          * Set the extrapolated track position at the Ecal face. The 
@@ -189,20 +190,6 @@ class Track : public TObject {
         double getPhiKink(const int layer) const { return phi_kinks_[layer]; }
 
         /**
-         * Get an array of references to the hits associated with this track.
-         *
-         * @return A reference to the hits associated with this track.
-         */
-        TRefArray* getSvtHits() const { return tracker_hits_; };
-
-        /**
-         * Get the {@link HpsParticle} associated with this track.
-         *
-         * @return The {@link HpsParticle} associated with this track.
-         */
-        //HpsParticle* getParticle() const { return (HpsParticle*) this->fs_particle.GetObject(); }; 
-
-        /**
          * @returns True if the track is in the top SVT volume, false otherwise.
          */
         bool isTopTrack() const { return track_volume_ ? false : true; };
@@ -218,7 +205,7 @@ class Track : public TObject {
         TRefArray* tracker_hits_{new TRefArray{}}; 
 
         /** Reference to the reconstructed particle associated with this track. */
-        //TRef fs_particle;
+        TRef particle_;
 
         /** Array used to store the isolation variables for each of the sensor layers. */
         double isolation_[12];

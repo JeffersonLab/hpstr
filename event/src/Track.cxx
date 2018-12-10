@@ -53,7 +53,7 @@ std::vector<double> Track::getPositionAtEcal() { return { x_at_ecal_, y_at_ecal_
 //    return ((HpsParticle*) this->fs_particle.GetObject())->getMomentum();
 //}
 
-void Track::addHit(TrackerHit* hit) {
+void Track::addHit(TObject* hit) {
     ++n_hits_; 
-    tracker_hits_->Add(static_cast<TObject*>(hit)); 
+    tracker_hits_->Add(hit); 
 }
