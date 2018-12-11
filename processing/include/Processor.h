@@ -52,7 +52,7 @@ class Processor {
         virtual ~Processor() {;}
 
         /**
-         * Callback for the EventProcessor to configure itself from the given set of parameters.
+         * Callback for the Processor to configure itself from the given set of parameters.
          * @param parameters ParameterSet for configuration.
          */
         virtual void configure(const ParameterSet& parameters) {
@@ -77,13 +77,6 @@ class Processor {
          * calculating job-summary quantities.
          */
         virtual void finalize()  = 0; 
-
-        /**
-         * Callback for the Processor to configure itself from the given set of parameters.
-         * @param parameters ParameterSet for configuration.
-         */
-        //virtual void configure(const ParameterSet& parameters) {
-        //}
 
         /**
          * Internal function which is part of the ProcessorFactory machinery.
