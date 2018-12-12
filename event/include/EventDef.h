@@ -1,6 +1,6 @@
 
-#include "CalorimeterCluster.h"
-#include "CalorimeterHit.h"
+#include "CalCluster.h"
+#include "CalHit.h"
 #include "Event.h"
 #include "Particle.h"
 #include "Track.h"
