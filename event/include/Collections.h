@@ -30,6 +30,17 @@ namespace Collections {
     /** Name of the collection containing Final State Particles. */
     constexpr const char* FINAL_STATE_PARTICLES{"FinalStateParticles"}; 
 
+    /** Name of time corrected ECal hits collection. */
+    constexpr const char* ECAL_TIME_CORR_HITS{"TimeCorrEcalHits"}; 
+
+    /** Name of ECal hits collection. */
+    constexpr const char* ECAL_HITS{"EcalCalHits"}; 
+
+    /** Name of ECal clusters collection. */
+    constexpr const char* ECAL_CLUSTERS{"EcalClustersCorr"};
+
+    /** Name of collection containing "other electrons". */
+    constexpr const char* OTHER_ELECTRONS{"OtherElectrons"}; 
 }
 
 #endif // _COLLECTION_H_
