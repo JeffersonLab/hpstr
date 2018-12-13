@@ -31,9 +31,9 @@ void Particle::addTrack(TObject* track) {
     tracks_->Add(track);
 }
 
-/*void Particle::addCluster(CalorimeterCluster* cluster) {
+void Particle::addCluster(TObject* cluster) {
     clusters_->Add(static_cast<TObject*>(cluster));
-}*/
+}
 
 void Particle::addParticle(Particle* particle) {
     ++n_daughters_;
@@ -65,9 +65,3 @@ void Particle::setVertexPosition(const float* vtx_pos) {
 std::vector<double> Particle::getVertexPosition() const { 
     return { vtx_x_, vtx_y_, vtx_z_ }; 
 }
-
-TRefArray* Particle::getTracks() const { return tracks_; }
-
-//TRefArray* Particle::getClusters() const { return clusters_; }
-
-TRefArray* Particle::getParticles() const { return particles_; }
