@@ -15,7 +15,6 @@
 #include <TRef.h>
 #include <TRefArray.h>
 
-//class EcalCluster;
 
 class Particle : public TObject { 
 
@@ -42,22 +41,22 @@ class Particle : public TObject {
          * @return An array of references to the tracks associated with this
          *         particle
          */
-        TRefArray* getTracks() const; 
+        TRefArray* getTracks() const { return tracks_; } 
 
         /**
-         * Add a reference to an CalorimeterCluster object.  This will be used
+         * Add a reference to an CalCluster object.  This will be used
          * to associated a particle with the calorimeter cluster that composes it.
          *
-         * @param ecal_cluster Ecal cluster whose reference will be added
+         * @param cluster Cluster whose reference will be added
          */
-        //void addCluster(EcalCluster* ecal_cluster);
+        void addCluster(TObject* cluster);
        
 
         /**
          * @return An array of references to the calorimeter clusters associated
          *         with this particle
          */
-        //TRefArray* getClusters() const;
+        TRefArray* getClusters() const { return clusters_; };
 
         /**
          * Add a reference to an Particle object.  This will be used to
@@ -73,7 +72,7 @@ class Particle : public TObject {
          * @return An array of references to the daughter particles associated
          *         with this particle
          */
-        TRefArray* getParticles() const; 
+        TRefArray* getParticles() const { return particles_; }; 
 
         /**
          * Set the charge of the particle.
