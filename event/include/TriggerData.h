@@ -25,22 +25,22 @@ class TriggerData {
         TriggerData(EVENT::LCGenericObject* trigger_data);
 
         /** @return The trigger time. */
-        double getTime() const { return time_stamp; };
+        double getTime() const { return time_stamp_; };
 
         /** @return True if the event registered a single0 trigger. */
-        bool isSingle0Trigger() const { return single0; };
+        bool isSingle0Trigger() const { return single0_; };
 
         /** @return True if the event registered a single1 trigger. */
-        bool isSingle1Trigger() const { return single1; };
+        bool isSingle1Trigger() const { return single1_; };
 
         /** @return True if the event registered a pair0 trigger. */
-        bool isPair0Trigger() const { return pair0; };
+        bool isPair0Trigger() const { return pair0_; };
         
         /** @return True if the event registered a pair1 trigger. */
-        bool isPair1Trigger() const { return pair1; };
+        bool isPair1Trigger() const { return pair1_; };
 
         /** @return True if the event registered a pulser trigger. */
-        bool isPulserTrigger() const { return pulser; };
+        bool isPulserTrigger() const { return pulser_; };
 
     private:
 
