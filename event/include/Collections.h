@@ -10,10 +10,10 @@
 namespace Collections { 
 
     /** Name of the tracks collection. */
-    constexpr const char* HPS_TRACKS{"GBLTracks"};
+    constexpr const char* GBL_TRACKS{"GBLTracks"};
 
     /** Name of the tracker hits collection. */
-    constexpr const char* HPS_TRACKER_HITS{"RotatedHelicalTrackHits"};
+    constexpr const char* TRACKER_HITS{"RotatedHelicalTrackHits"};
 
     /** The name of the collection containing GBL kink data GenericObjects */
     constexpr const char* KINK_DATA{"GBLKinkData"};
@@ -40,7 +40,16 @@ namespace Collections {
     constexpr const char* ECAL_CLUSTERS{"EcalClustersCorr"};
 
     /** Name of collection containing "other electrons". */
-    constexpr const char* OTHER_ELECTRONS{"OtherElectrons"}; 
+    constexpr const char* OTHER_ELECTRONS{"OtherElectrons"};
+
+    /** Name of the collection of event headers. */
+    constexpr const char* EVENT_HEADERS{"EventHeader"}; 
+    
+    /** Name of trigger bank collection. */
+    constexpr const char* TRIGGER_BANK{"TriggerBank"}; 
+
+    /** Name of RF hits collection. */
+    constexpr const char* RF_HITS{"RFHits"};
 }
 
 #endif // _COLLECTION_H_
