@@ -69,7 +69,7 @@ void ParticleProcessor::process(Event* event) {
             // and add references to the Particle object.
             for (auto const &lc_track : lc_particle->getTracks()) { 
             
-                TClonesArray* tracks = event->getCollection("Tracks"); 
+                TClonesArray* tracks = event->getCollection(Collections::GBL_TRACKS); 
 
                 // Loop through all of the tracks in the HpsEvent and find the one
                 // that matches the track associated with the particle
