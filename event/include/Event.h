@@ -51,6 +51,15 @@ class Event {
         TClonesArray* getCollection(const std::string name); 
 
         /**
+         * Checks if a collection already exist. 
+         *
+         * @param name Collection name
+         * 
+         * @return True if the collection exist, false otherwise.
+         */
+        bool exists(const std::string name); 
+
+        /**
          * Clear all of the collections in the event 
          */
         void Clear(); 
