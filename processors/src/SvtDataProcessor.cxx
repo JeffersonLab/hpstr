@@ -19,7 +19,7 @@ void SvtDataProcessor::process(Event* event) {
 
     // Get the collection of 3D hits from the LCIO event. If no such collection 
     // exist, a DataNotAvailableException is thrown
-    EVENT::LCCollection* tracker_hits = event->getLCCollection(Collections::HPS_TRACKER_HITS); 
+    EVENT::LCCollection* tracker_hits = event->getLCCollection(Collections::TRACKER_HITS); 
 
     // Create a map from an LCIO TrackerHit to a SvtHit. This will be used when
     // assigning references to a track
@@ -58,10 +58,10 @@ void SvtDataProcessor::process(Event* event) {
     }
 
     // Add the hit collection to the event
-    event->addCollection("TrackerHits", hits_); 
+    event->addCollection(Collections::TRACKER_HITS, hits_); 
    
     // Get all track collections from the event
-    EVENT::LCCollection* tracks = event->getLCCollection(Collections::HPS_TRACKS);
+    EVENT::LCCollection* tracks = event->getLCCollection(Collections::GBL_TRACKS);
 
      
     // Loop over all the LCIO Tracks and add them to the HPS event.
@@ -187,7 +187,7 @@ void SvtDataProcessor::process(Event* event) {
         }
     }
 
-    event->addCollection("Tracks", tracks_); 
+    event->addCollection(Collections::GBL_TRACKS, tracks_); 
 
 }
 
