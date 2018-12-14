@@ -32,6 +32,7 @@
 //-----------//
 //   hpstr   //
 //-----------//
+#include "CalCluster.h"
 #include "Collections.h"
 #include "Particle.h"
 #include "Processor.h"
