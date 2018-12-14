@@ -43,6 +43,15 @@ TClonesArray* Event::getCollection(const std::string name) {
     }
 }
 
+bool Event::exists(const std::string name) {  
+    
+    // Search the list of collections to find if it exist. 
+    auto it = collections_.find(name); 
+
+    if (it == collections_.end()) return false; 
+    else return true; 
+}
+
 void Event::Clear() { 
     
     for (auto& collection : collections_) { 
