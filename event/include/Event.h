@@ -70,6 +70,9 @@ class Event {
         /** Set the LCIO event. */
         void setLCEvent(EVENT::LCEvent* lc_event) { lc_event_ = lc_event; }; 
 
+        /** @return LCIO event. */
+        EVENT::LCEvent* getLCEvent() { return lc_event_; };
+
         /** Get the LCIO event. */
         EVENT::LCCollection* getLCCollection(std::string name) { 
             return static_cast<EVENT::LCCollection*>(lc_event_->getCollection(name)); 
