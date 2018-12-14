@@ -33,7 +33,7 @@ void ParticleProcessor::initialize() {
 void ParticleProcessor::process(Event* event) {
 
     for (auto& collections : collections_) { 
-        
+       
         // Get the collection from the event
         EVENT::LCCollection* lc_particles = event->getLCCollection(collections.first);
 
@@ -93,24 +93,32 @@ void ParticleProcessor::process(Event* event) {
                 }
                
             }   
+            
+            for (auto const &lc_cluster : lc_particle->getClusters()) { 
+              
+                std::string coll_name = Collections::ECAL_TIME_CORR_HITS;
+                if (!event->exists(coll_name))  coll_name = Collections::ECAL_HITS;
 
-        /*for (auto const &cluster : lc_particle->getClusters()) { 
-                
-            // Loop through all of the clusters in the HpsEvent and find the one 
-            // that matches the cluster associated with the particle
-            for (int cluster_n = 0; cluster_n < hps_event->getNumberOfEcalClusters(); ++cluster_n) {
+                // Get the collection of ECal hits from the event.
+                TClonesArray* clusters = event->getCollection(coll_name); 
 
-                // Use the cluster energy to find the match
-                // TODO: Verify that the cluster enegy is unique enough to find a match
-                if (cluster->getEnergy() == hps_event->getEcalCluster(cluster_n)->getEnergy()) {
-                    particle->addCluster(hps_event->getEcalCluster(cluster_n)); 
-                    break;
-                }
-            }       
-        }*/
+                // Loop through all of the clusters in the event and find the one 
+                // that matches the cluster associated with the particle
+                for (int icluster = 0; icluster < clusters->GetEntriesFast(); ++icluster) {
+
+                    CalCluster* cluster = static_cast<CalCluster*>(clusters->At(icluster)); 
+                    // Use the cluster energy to find the match
+                    // TODO: Verify that the cluster enegy is unique enough to find a match
+                    if (lc_cluster->getEnergy() == cluster->getEnergy()) {
+                        particle->addCluster(cluster);
+                        break;
+                    }
+                }          
+            }
 
             // Only add vertex information if the particle is not a final state particle
-            if (collections.first.compare(Collections::FINAL_STATE_PARTICLES) == 0) {                    
+            if ((collections.first.compare(Collections::FINAL_STATE_PARTICLES) == 0) || 
+                    (collections.first.compare(Collections::OTHER_ELECTRONS) == 0)) {                    
                 // Set the PDG ID of the particle
                 particle->setPDG(lc_particle->getParticleIDUsed()->getPDG());    
                 continue;
@@ -123,40 +131,50 @@ void ParticleProcessor::process(Event* event) {
             // Set the vertex chi2
             particle->setVertexFitChi2(vtx->getChi2()); 
 
-        //
-        // If the particle has daughter particles, add the daughters to the Particle
-        //
+            //
+            // If the particle has daughter particles, add the daughters to the
+            // Particle.
+            //
 
-        // Loop through all of the daughter particles associated with the particle
-        /*for (auto const &daughter : lc_particle->getParticles()) { 
+            // Get the collection of final state particles from the event.  If 
+            // it doesn't exist, continue on to the next collection. 
+            if (!event->exists(Collections::FINAL_STATE_PARTICLES)) continue; 
+
+            // Get the collection of final state particles from the event.
+            TClonesArray* fs_particles 
+                = event->getCollection(Collections::FINAL_STATE_PARTICLES); 
+
+            // Loop through all of the daughter particles associated with the particle
+            for (auto const &daughter : lc_particle->getParticles()) { 
                 
-            // Loop through all of the final state particles in the HpsEvent and
-            // find the one that matches the daughters associated with the particles
-            for (int d_particle_n = 0; d_particle_n < hps_event->getNumberOfParticles(HpsParticle::FINAL_STATE_PARTICLE); ++d_particle_n) {
-                  
-                HpsParticle* daughter_particle 
-                    = hps_event->getParticle(HpsParticle::FINAL_STATE_PARTICLE, d_particle_n); 
+                // Loop through all of the final state particles in the event 
+                // and find the one that matches the daughters associated with 
+                // the particles.
+                for (int iparticle = 0; 
+                        iparticle < fs_particles->GetEntriesFast(); ++iparticle) {
+                
+                Particle* dparticle = static_cast<Particle*>(fs_particles->At(iparticle));   
 
-                // Try to find the match between a final state HpsParticle 
-                // and ReconstructedParticle daughter.  For now, use the
-                // momentum as the matching criterion. 
-                // TODO: Verify that the track momentum is always unique in an event.
-                if (daughter->getMomentum()[0] == daughter_particle->getMomentum()[0] 
-                        && daughter->getMomentum()[1] == daughter_particle->getMomentum()[1]
-                        && daughter->getMomentum()[2] == daughter_particle->getMomentum()[2]) {
+                    // Try to find the match between a final state particle
+                    // and ReconstructedParticle daughter.  For now, use the
+                    // momentum as the matching criterion. 
+                    // TODO: Verify that the track momentum is always unique in an event.
+                    if ((dparticle->getMomentum()[0] == lc_particle->getMomentum()[0])
+                            && (dparticle->getMomentum()[1] == lc_particle->getMomentum()[1])
+                            && (dparticle->getMomentum()[2] == lc_particle->getMomentum()[2])) {
             
-                    particle->addParticle(daughter_particle);
+                        particle->addParticle(dparticle);
                     
-                    if (daughter_particle->getTracks()->GetEntriesFast() != 0) 
-                        particle->addTrack((SvtTrack*) daughter_particle->getTracks()->At(0)); 
+                        if (dparticle->getTracks()->GetEntriesFast() != 0) 
+                            particle->addTrack(dparticle->getTracks()->At(0)); 
                     
-                    if (daughter_particle->getClusters()->GetEntriesFast() != 0) 
-                        particle->addCluster((EcalCluster*) daughter_particle->getClusters()->At(0)); 
+                        if (dparticle->getClusters()->GetEntriesFast() != 0) 
+                            particle->addCluster(dparticle->getClusters()->At(0)); 
 
-                    break; 
+                        break; 
+                    }
                 }
             }
-        }*/
         }   
     
         // Add the hit collection to the event
