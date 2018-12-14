@@ -40,7 +40,8 @@ void Process::run() {
 
             // Process all events.
             while (file->nextEvent() && (event_limit_ < 0 || (n_events_processed < event_limit_))) {
-                std::cout << "--- [ hpstr ][ Process ]: Event: " << n_events_processed << std::endl;
+                if (n_events_processed%1000 == 0)
+                    std::cout << "--- [ hpstr ][ Process ]: Event: " << n_events_processed << std::endl;
                 event.Clear(); 
                 for (auto module : sequence_) { 
                     module->process(&event); 
