@@ -14,42 +14,41 @@ EventProcessor::~EventProcessor() {
 }
 
 void EventProcessor::initialize() {
-    
-    header_ = new TClonesArray("EventHeader", 100000); 
 }
 
 void EventProcessor::process(Event* event) {
 
-    EventHeader* header 
-        = static_cast<EventHeader*>(header_->ConstructedAt(0)); 
+    /*EventHeader* header 
+        = static_cast<EventHeader*>(header_->ConstructedAt(0));*/
+    EventHeader& header = event->getEventHeaderMutable(); 
 
     EVENT::LCEvent* lc_event = event->getLCEvent(); 
 
     // Set the event number
-    header->setEventNumber(lc_event->getEventNumber());
+    header.setEventNumber(lc_event->getEventNumber());
 
     // Set the run number
-    header->setRunNumber(lc_event->getRunNumber());
+    header.setRunNumber(lc_event->getRunNumber());
 
     // Set the trigger timestamp 
-    header->setEventTime(lc_event->getTimeStamp()); 
+    header.setEventTime(lc_event->getTimeStamp()); 
 
     // Set the SVT bias state
-    header->setSvtBiasState(lc_event->getParameters().getIntVal("svt_bias_good")); 
+    header.setSvtBiasState(lc_event->getParameters().getIntVal("svt_bias_good")); 
     
     // Set the flag indicating whether the event was affected by SVT burst
     // mode noise 
-    header->setSvtBurstModeNoise(lc_event->getParameters().getIntVal("svt_burstmode_noise_good"));
+    header.setSvtBurstModeNoise(lc_event->getParameters().getIntVal("svt_burstmode_noise_good"));
 
     // Set the flag indicating whether the SVT latency was correct during an
     // event.
-    header->setSvtLatencyState(lc_event->getParameters().getIntVal("svt_latency_good")); 
+    header.setSvtLatencyState(lc_event->getParameters().getIntVal("svt_latency_good")); 
 
     // Set the SVT position state
-    header->setSvtPositionState(lc_event->getParameters().getIntVal("svt_position_good"));
+    header.setSvtPositionState(lc_event->getParameters().getIntVal("svt_position_good"));
 
     // Set the SVT event header state
-    header->setSvtEventHeaderState(lc_event->getParameters().getIntVal("svt_event_header_good"));
+    header.setSvtEventHeaderState(lc_event->getParameters().getIntVal("svt_event_header_good"));
 
     try { 
         EVENT::LCCollection* trigger_data 
@@ -63,11 +62,11 @@ void EventProcessor::process(Event* event) {
             if (trigger_datum->getIntVal(0) == 0xe10a) { 
           
                 TriggerData* tdata = new TriggerData(trigger_datum); 
-                header->setSingle0Trigger(static_cast<int>(tdata->isSingle0Trigger()));
-                header->setSingle1Trigger(static_cast<int>(tdata->isSingle1Trigger()));
-                header->setPair0Trigger(static_cast<int>(tdata->isPair0Trigger()));
-                header->setPair1Trigger(static_cast<int>(tdata->isPair1Trigger()));
-                header->setPulserTrigger(static_cast<int>(tdata->isPulserTrigger()));
+                header.setSingle0Trigger(static_cast<int>(tdata->isSingle0Trigger()));
+                header.setSingle1Trigger(static_cast<int>(tdata->isSingle1Trigger()));
+                header.setPair0Trigger(static_cast<int>(tdata->isPair0Trigger()));
+                header.setPair1Trigger(static_cast<int>(tdata->isPair1Trigger()));
+                header.setPulserTrigger(static_cast<int>(tdata->isPulserTrigger()));
 
                 delete tdata;
                 break;
@@ -105,15 +104,14 @@ void EventProcessor::process(Event* event) {
     
             // Write the RF times to the event
             for (int ichannel = 0; ichannel < rf_hit->getNDouble(); ++ichannel) { 
-                header->setRfTime(ichannel, rf_hit->getDoubleVal(ichannel));  
+                header.setRfTime(ichannel, rf_hit->getDoubleVal(ichannel));  
             }
         }
     } catch(EVENT::DataNotAvailableException e) {
         // It's fine if the event doesn't have an RF hits collection.
     }
 
-    event->addCollection(Collections::EVENT_HEADERS, header_); 
-
+    event->add(Collections::EVENT_HEADERS, &header);
 }
 
 void EventProcessor::finalize() { 
