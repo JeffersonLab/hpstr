@@ -25,6 +25,12 @@
 #include <TClonesArray.h>
 #include <TTree.h>
 
+//-----------//
+//   hpstr   //
+//-----------//
+#include "Collections.h"
+#include "EventHeader.h"
+
 class Event { 
 
     public: 
@@ -34,6 +40,11 @@ class Event {
 
         /** Destructor */
         ~Event(); 
+
+        /** 
+         *
+         */
+        void add(const std::string name, TObject* object); 
 
         /** 
          * Add a collection (TClonesArray) of objects to the event. 
@@ -57,12 +68,15 @@ class Event {
          * 
          * @return True if the collection exist, false otherwise.
          */
-        bool exists(const std::string name); 
+        bool exists(const std::string name);
 
         /**
          * Clear all of the collections in the event 
          */
-        void Clear(); 
+        void Clear();
+
+        /** @return Get a mutable copy of the EventHeader. */
+        EventHeader& getEventHeaderMutable() const { return *event_header_; }
 
         /** @return The ROOT tree containing the event. */
         TTree* getTree() { return tree_; }
@@ -87,6 +101,9 @@ class Event {
 
     private: 
 
+        /** The event headeer object (as pointer). */
+        EventHeader* event_header_{nullptr};
+
         /** The ROOT tree containing the event. */
         TTree* tree_{nullptr}; 
         
@@ -94,7 +111,7 @@ class Event {
         EVENT::LCEvent* lc_event_{nullptr};
 
         /** Container with all TClonesArray collections. */
-        std::map<std::string, TClonesArray*> collections_; 
+        std::map<std::string, TObject*> objects_; 
 
         /** Container will all branches. */
         std::map<std::string, TBranch*> branches_; 
