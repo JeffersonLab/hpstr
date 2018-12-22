@@ -143,19 +143,30 @@ class Track : public TObject {
         int getType() const { return type; }; 
 
 
+        /** 
+         * Set the track charge. 
+         *
+         * @param charge Track charge.
+         */
+        void setCharge(const int charge) { charge_ = charge; };
+
         /**
          * Get the charge of a the track.
          *
          * @return The charge associated of the track.
          */
-        int getCharge(); 
+        int getCharge() const { return charge_; };  
 
-        /**
-         * Get the track momentum.
+        /** 
+         * Set the momentum of the track.  The momentum is extracted from
+         * the corresponding ReconstructedParticle.
          *
-         * @return The track momentum.
+         * @param momentum The momentum of the track.
          */
-        std::vector<double> getMomentum(); 
+        void setMomentum(std::vector<double> momentum); 
+
+         /** @return The track momentum. */
+        std::vector<double> getMomentum() { return {px_, py_, pz_}; }; 
        
         /**
          * Set the lambda kink of the given layer.
@@ -198,6 +209,11 @@ class Track : public TObject {
          * @return True if the track is in the bottom SVT volume, false otherwise.
          */
         bool isBottomTrack() const { return track_volume_ ? true : false; };
+
+        /**
+         * @return Number of tracker hits associated with this track.
+         */
+        int getTrackerHitCount() const { return n_hits_; };
 
     private:
 
@@ -269,6 +285,14 @@ class Track : public TObject {
         
         /** Array used to store the phi kinks for each of the sensor layers. */
         double phi_kinks_[12];  
+
+        /** Track momentum. */
+        double px_{-9999}; 
+        double py_{-9999}; 
+        double pz_{-9999};
+
+        /** Track charge. */
+        int charge_{0}; 
 
         ClassDef(Track, 1);
 }; // Track
