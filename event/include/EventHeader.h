@@ -10,6 +10,8 @@
 //----------------//
 //   C++ StdLib   //
 //----------------//
+#include <cstdio>
+#include <iostream>
 #include <vector>
 
 //----------//
@@ -30,6 +32,13 @@ class EventHeader : public TObject {
         /** Reset the EventHeader object */ 
         void Clear(Option_t *option="");
 
+        /**
+         * Copy this object
+         *
+         * @param obj The target object.
+         */
+        void Copy(TObject& obj) const; 
+
         /** 
          * Set the event number. 
          *
@@ -46,10 +55,10 @@ class EventHeader : public TObject {
          *
          * @param event_time The Unix time stamp of the event.
          */
-        void setEventTime(const int event_time) { event_time_ = event_time; };
+        void setEventTime(const long event_time) { event_time_ = event_time; };
 
         /** @return The event time. */
-        int getEventTime() const { return event_time_; };
+        long getEventTime() const { return event_time_; };
 
         /** 
          * @param event_time The run number.
@@ -253,14 +262,16 @@ class EventHeader : public TObject {
          * @return The RF time. 
          */ 
         double getRfTime(const int channel) const { return rf_times_[channel]; }; 
-    
+   
+        void Print(); 
+
     private: 
 
         /** Event number */
         int event_number_{-9999}; 
 
         /**  Event time */
-        double event_time_{-9999}; 
+        long event_time_{-9999}; 
 
         /** Run number */
         int run_number_{-9999}; 
