@@ -31,13 +31,6 @@ class TrackerHit : public TObject {
         /** Reset the Hit object. */
         void Clear(Option_t *option="");
         
-        /** 
-         * Set the layer associated with this hit.
-         *
-         * @param layer The layer associated with this hit.
-         */
-        void setLayer(const int layer){ this->layer = layer; };
-
         /**
          * Set the hit position.
          *
@@ -46,7 +39,7 @@ class TrackerHit : public TObject {
         void setPosition(const double* position);
 
         /** @return The hit position. */
-        std::vector<double> getPosition() const;
+        std::vector<double> getPosition() const { return {x_, y_, z_}; };
 
         /**
          * Set the covariance matrix.
@@ -63,41 +56,36 @@ class TrackerHit : public TObject {
          *
          * @param time The hit time.
          */
-        void setTime(const double time) { this->time = time; };
-
-        /** @return The layer associated with this hit. */
-        double getLayer() const { return layer; };
+        void setTime(const double time) { time_ = time; };
 
 
         /** @return The hit time. */
-        double getTime() const { return time; };
+        double getTime() const { return time_; };
 
         ClassDef(TrackerHit, 1);	
     
     private:
 
         /** The x position of the hit. */
-        double x{-999}; 
+        double x_{-999}; 
         
         /** The x position of the hit. */
-        double y{-999}; 
+        double y_{-999}; 
         
         /** The x position of the hit. */
-        double z{-999};
+        double z_{-999};
 
         /** Components of the covariance matrix. */
-        double cxx{0};
-        double cxy{0};
-        double cxz{0};
-        double cyy{0};
-        double cyz{0};
-        double czz{0};
+        double cxx_{0};
+        double cxy_{0};
+        double cxz_{0};
+        double cyy_{0};
+        double cyz_{0};
+        double czz_{0};
 
         /** The hit time. */
-        double time{-999};
+        double time_{-999};
         
-        /** The hit layer. */
-        int layer{0};
 
 }; // TrackerHit
 

@@ -21,25 +21,20 @@ void TrackerHit::Clear(Option_t* /* options */) {
 }
 
 void TrackerHit::setPosition(const double* position) {
-    x = position[0]; 
-    y = position[1];
-    z = position[2]; 
+    x_ = position[0]; 
+    y_ = position[1];
+    z_ = position[2]; 
 }
-
-std::vector<double> TrackerHit::getPosition() const { 
-    return { x, y, z }; 
-}
-
 
 void TrackerHit::setCovarianceMatrix(const std::vector<float> covariance_matrix) {
-	cxx = covariance_matrix[0];
-	cxy = covariance_matrix[1];
-	cxz = covariance_matrix[2];
-	cyy = covariance_matrix[3];
-	cyz = covariance_matrix[4];
-	czz = covariance_matrix[5];
+	cxx_ = covariance_matrix[0];
+	cxy_ = covariance_matrix[1];
+	cxz_ = covariance_matrix[2];
+	cyy_ = covariance_matrix[3];
+	cyz_ = covariance_matrix[4];
+	czz_ = covariance_matrix[5];
 }
 
 std::vector<double> TrackerHit::getCovarianceMatrix() const { 
-    return { cxx, cxy, cxz, cyy, cyz, czz }; 
+    return { cxx_, cxy_, cxz_, cyy_, cyz_, czz_ }; 
 }
