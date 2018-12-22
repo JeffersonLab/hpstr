@@ -1,8 +1,12 @@
-#
-# Configuration used to generate DST's
-#
-
 import HpstrConf
+import sys
+
+# Use the input file to set the output file name
+lcio_file = sys.argv[1].strip()
+root_file = '%s.root' % lcio_file[:-6]
+
+print 'LCIO file: %s' % lcio_file
+print 'Root file: %s' % root_file
 
 p = HpstrConf.Process()
 
@@ -13,11 +17,10 @@ p.libraries.append("libprocessors.so")
 #          Processors         #
 ###############################
 
-header   = HpstrConf.Processor('header', 'EventProcessor')
+header = HpstrConf.Processor('header', 'EventProcessor')
+svt = HpstrConf.Processor('svt', 'SvtDataProcessor')
 
-svt      = HpstrConf.Processor('svt', 'SvtDataProcessor')
-
-ecal     = HpstrConf.Processor('ecal', 'ECalDataProcessor')
+ecal = HpstrConf.Processor('ecal', 'ECalDataProcessor')
 
 particle = HpstrConf.Processor("particle", "ParticleProcessor")
 particle.parameters["Collections"] = [ 'FinalStateParticles', 
@@ -34,9 +37,9 @@ particle.parameters["Collections"] = [ 'FinalStateParticles',
 # Sequence which the processors will run.
 p.sequence = [header, svt, ecal, particle]
 
-p.input_files=['input.lcio']
-p.output_files = ['dst.root']
+p.input_files=[lcio_file]
+p.output_files = [root_file]
 
-#p.max_events = 100
+#p.max_events = 1000
 
 p.printProcess()
