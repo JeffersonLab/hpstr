@@ -43,15 +43,11 @@ void Track::setPositionAtEcal(const double* position) {
 
 std::vector<double> Track::getPositionAtEcal() { return { x_at_ecal_, y_at_ecal_, z_at_ecal_ }; }
 
-//int Track::getCharge() { 
-//    if (fs_particle == NULL) return 9999;
-//    return ((HpsParticle*) this->fs_particle.GetObject())->getCharge();
-//}
-
-//std::vector<double> Track::getMomentum() {
-//    if (fs_particle == NULL) return {0, 0, 0}; 
-//    return ((HpsParticle*) this->fs_particle.GetObject())->getMomentum();
-//}
+void Track::setMomentum(std::vector<double> momentum) { 
+    px_ = momentum[0]; 
+    py_ = momentum[1]; 
+    pz_ = momentum[2]; 
+}
 
 void Track::addHit(TObject* hit) {
     ++n_hits_; 
