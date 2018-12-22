@@ -85,8 +85,11 @@ void ParticleProcessor::process(Event* event) {
                         
                         // If the particle is a final state particle, add a
                         // reference from the corresponding track to the particle
-                        if (collections.first.compare(Collections::FINAL_STATE_PARTICLES) == 0) {                    
-                            track->setParticle(particle); 
+                        if ((collections.first.compare(Collections::FINAL_STATE_PARTICLES) == 0)
+                                || (collections.first.compare(Collections::OTHER_ELECTRONS) == 0) ) {                    
+                            track->setParticle(particle);
+                            track->setMomentum(particle->getMomentum()); 
+                            track->setCharge(particle->getCharge());  
                         } 
                         break; 
                     }
