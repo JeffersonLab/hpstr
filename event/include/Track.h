@@ -137,10 +137,10 @@ class Track : public TObject {
          *
          * @param type The track type. 
          */
-        void setType(const int type) { this->type = type; }; 
+        void setType(const int type) { type_ = type; }; 
 
         /** @return The track type. */
-        int getType() const { return type; }; 
+        int getType() const { return type_; }; 
 
 
         /** 
@@ -233,7 +233,7 @@ class Track : public TObject {
         int track_volume_{-999}; 
 
         /** The track type. */
-        int type{-999}; 
+        int type_{-999}; 
 
         /** The distance of closest approach to the reference point. */
         double d0_{-999}; 
