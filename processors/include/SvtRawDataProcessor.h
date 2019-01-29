@@ -15,9 +15,7 @@
 //   LCIO   //
 //----------//
 #include <EVENT/LCCollection.h>
-#include <EVENT/Track.h>
-#include <EVENT/TrackerHit.h>
-#include <EVENT/TrackState.h>
+#include <EVENT/TrackerRawData.h>
 #include <IMPL/LCGenericObjectImpl.h>
 #include <UTIL/LCRelationNavigator.h>
 
@@ -31,8 +29,7 @@
 //-----------//
 #include "Collections.h"
 #include "Processor.h"
-#include "Track.h"
-#include "TrackerHit.h"
+#include "RawSvtHit.h"
 
 class SvtRawDataProcessor : public Processor { 
 
@@ -71,11 +68,7 @@ class SvtRawDataProcessor : public Processor {
     private: 
 
         /** Container to hold all TrackerHit objects. */
-        TClonesArray* hits_{nullptr}; 
-
-        /** Container to hold all Track objects. */
-        TClonesArray* tracks_{nullptr};
-
+        TClonesArray* rawhits_{nullptr}; 
 
 }; // SvtRawDataProcessor
 

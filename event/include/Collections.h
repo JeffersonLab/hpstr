@@ -12,6 +12,9 @@ namespace Collections {
     /** Name of the tracks collection. */
     constexpr const char* GBL_TRACKS{"GBLTracks"};
 
+    /** Name of the Raw tracker hits collection. */
+    constexpr const char* RAW_SVT_HITS{"SVTRawTrackerHits"};
+
     /** Name of the tracker hits collection. */
     constexpr const char* TRACKER_HITS{"RotatedHelicalTrackHits"};
 
