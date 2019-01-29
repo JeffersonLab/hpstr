@@ -10,7 +10,7 @@ ClassImp(TrackerHit)
 
 TrackerHit::TrackerHit()
     : TObject() { 
-}
+    }
 
 TrackerHit::~TrackerHit() { 
     Clear(); 
@@ -27,12 +27,12 @@ void TrackerHit::setPosition(const double* position) {
 }
 
 void TrackerHit::setCovarianceMatrix(const std::vector<float> covariance_matrix) {
-	cxx_ = covariance_matrix[0];
-	cxy_ = covariance_matrix[1];
-	cxz_ = covariance_matrix[2];
-	cyy_ = covariance_matrix[3];
-	cyz_ = covariance_matrix[4];
-	czz_ = covariance_matrix[5];
+    cxx_ = covariance_matrix[0];
+    cxy_ = covariance_matrix[1];
+    cxz_ = covariance_matrix[2];
+    cyy_ = covariance_matrix[3];
+    cyz_ = covariance_matrix[4];
+    czz_ = covariance_matrix[5];
 }
 
 std::vector<double> TrackerHit::getCovarianceMatrix() const { 
