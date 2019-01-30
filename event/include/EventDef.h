@@ -6,3 +6,4 @@
 #include "Particle.h"
 #include "Track.h"
 #include "TrackerHit.h"
+#include "RawSvtHit.h"

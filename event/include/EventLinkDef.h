@@ -12,5 +12,6 @@
 #pragma link C++ class Particle+; 
 #pragma link C++ class Track+;
 #pragma link C++ class TrackerHit+;
+#pragma link C++ class RawSvtHit+;
 
 #endif
