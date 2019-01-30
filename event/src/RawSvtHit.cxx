@@ -49,3 +49,27 @@ void RawSvtHit::setStrip(int strip) {
     strip_ = strip; 
 }
 
+int * RawSvtHit::getADCs() {
+    return adcs_;
+}
+
+int RawSvtHit::getLayer() {
+    return layer_; 
+}
+
+int RawSvtHit::getModule() {
+    return module_;
+}
+
+int RawSvtHit::getSensor() {
+    return sensor_;
+}
+
+int RawSvtHit::getSide() {
+    return side_;
+}
+
+int RawSvtHit::getStrip() {
+    return strip_;
+}
+

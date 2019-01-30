@@ -49,6 +49,24 @@ class RawSvtHit : public TObject {
         /** Set the strip */
         void setStrip(int strip);
 
+        /** Set the adc values */
+        int * getADCs();
+
+        /** Set the layer */
+        int getLayer();
+
+        /** Set the module */
+        int getModule();
+
+        /** Set the sensor */
+        int getSensor();
+
+        /** Set the side */
+        int getSide();
+
+        /** Set the strip */
+        int getStrip();
+
         ClassDef(RawSvtHit, 1);	
     
     private:
