@@ -29,3 +29,23 @@ void RawSvtHit::setADCs(int adcs[6]) {
     adcs_[5] = adcs[5]; 
 }
 
+void RawSvtHit::setLayer(int layer) {
+    layer_ = layer; 
+}
+
+void RawSvtHit::setModule(int module) {
+    module_ = module; 
+}
+
+void RawSvtHit::setSensor(int sensor) {
+    sensor_ = sensor; 
+}
+
+void RawSvtHit::setSide(int side) {
+    side_ = side; 
+}
+
+void RawSvtHit::setStrip(int strip) {
+    strip_ = strip; 
+}
+

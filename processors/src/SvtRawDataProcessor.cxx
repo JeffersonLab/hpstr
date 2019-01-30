@@ -22,15 +22,28 @@ void SvtRawDataProcessor::process(Event* event) {
     // exist, a DataNotAvailableException is thrown
     EVENT::LCCollection* raw_svt_hits = event->getLCCollection(Collections::RAW_SVT_HITS); 
 
+    // Get decoders to read cellids
+    UTIL::BitField64 decoder("system:6,barrel:3,layer:4,module:12,sensor:1,side:32:-2,strip:12");
+    //decoder[field] returns the value
+
     // Loop over all of the raw SVT hits in the LCIO event and add them to the 
     // HPS event
     for (int ihit = 0; ihit < raw_svt_hits->getNumberOfElements(); ++ihit) { 
         
         // Get a 3D hit from the list of hits
         EVENT::TrackerRawData* rawTracker_hit = static_cast<EVENT::TrackerRawData*>(raw_svt_hits->getElementAt(ihit));
+        //Decode the cellid
+        EVENT::long64 value = EVENT::long64( rawTracker_hit->getCellID0() & 0xffffffff ) | ( EVENT::long64( rawTracker_hit->getCellID1() ) << 32 ) ;
+        decoder.setValue(value);
     
         // Add a raw tracker hit to the event
         RawSvtHit* rawHit = static_cast<RawSvtHit*>(rawhits_->ConstructedAt(ihit));
+
+        rawHit->setLayer(decoder["layer"]);
+        rawHit->setModule(decoder["module"]);
+        rawHit->setSensor(decoder["sensor"]);
+        rawHit->setSide(decoder["side"]);
+        rawHit->setStrip(decoder["strip"]);
 
         // Rotate the position of the LCIO TrackerHit and set the position of 
         // the TrackerHit

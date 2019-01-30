@@ -34,12 +34,32 @@ class RawSvtHit : public TObject {
         /** Set the adc values */
         void setADCs(int adcs[6]);
 
+        /** Set the layer */
+        void setLayer(int layer);
+
+        /** Set the module */
+        void setModule(int module);
+
+        /** Set the sensor */
+        void setSensor(int sensor);
+
+        /** Set the side */
+        void setSide(int side);
+
+        /** Set the strip */
+        void setStrip(int strip);
+
         ClassDef(RawSvtHit, 1);	
     
     private:
 
         /** The raw adcs of the hit. */
         int adcs_[6]{-999,-999,-999,-999,-999,-999}; 
+        int layer_{-999}; 
+        int module_{-999}; 
+        int sensor_{-999}; 
+        int side_{-999}; 
+        int strip_{-999}; 
 
 }; // RawSvtHit
 
