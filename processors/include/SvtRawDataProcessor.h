@@ -17,7 +17,7 @@
 #include <EVENT/LCCollection.h>
 #include <EVENT/TrackerRawData.h>
 #include <IMPL/LCGenericObjectImpl.h>
-#include <UTIL/LCRelationNavigator.h>
+#include <UTIL/BitField64.h>
 
 //----------//
 //   ROOT   //
