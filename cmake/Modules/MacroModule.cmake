@@ -147,7 +147,7 @@ macro(MODULE)
   endforeach()
 
   # install python scripts
-  set(PYTHON_INSTALL_DIR lib/python/LDMX/${MODULE_NAME})
+  set(PYTHON_INSTALL_DIR lib/python)
   file(GLOB py_scripts "${CMAKE_CURRENT_SOURCE_DIR}/python/[!_]*.py")
   if (py_scripts)
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/python/__init__.py "# python package")
