@@ -36,9 +36,6 @@ include(MacroModule)
 # import macro for declaring external dependencies
 include(MacroExtDeps)
 
-# declare list of modules with correct dependency order
-#set(MODULES Event Framework DetDescr Tools EventProc SimCore SimPlugins Biasing SimApplication Configuration Detectors Ecal EventDisplay)
-
 set(MODULES event processing processors)
 
 # build each module in the list
@@ -46,10 +43,6 @@ foreach(module ${MODULES})
   message(STATUS "Adding module: ${module}")
   add_subdirectory(${module})
 endforeach()
-
-# install python init file for top-level LDMX module
-#file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/python/__init__.py "# python package")
-#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/python/__init__.py DESTINATION lib/python/LDMX)
 
 # configure and generate documentation using doxygen
 #option(INSTALL_DOC "Set to ON to generate documentation using doxygen" OFF)
@@ -81,15 +74,6 @@ endforeach()
     #    add_custom_target(doc COMMAND doxygen ${PROJECT_SOURCE_DIR}/docs/doxygen.conf)
 
     #endif()
-
-# option for dumping full CMake env
-option(DUMP_CMAKE_VARIABLES OFF)
-if(DUMP_CMAKE_VARIABLES)
-  get_cmake_property(_variableNames VARIABLES)
-  foreach(_variableName ${_variableNames})
-    message(STATUS "${_variableName}=${${_variableName}}")
-  endforeach()
-endif()
 
 # info message about install prefix
 message(STATUS "hpstr will be installed to: ${CMAKE_INSTALL_PREFIX}")
