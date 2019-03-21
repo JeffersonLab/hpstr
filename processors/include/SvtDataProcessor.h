@@ -34,6 +34,9 @@
 #include "Track.h"
 #include "TrackerHit.h"
 
+// Forward declarations
+class TTree; 
+
 class SvtDataProcessor : public Processor { 
 
     public: 
@@ -60,7 +63,7 @@ class SvtDataProcessor : public Processor {
          * Callback for the Processor to take any necessary
          * action when the processing of events starts.
          */
-        virtual void initialize();
+        virtual void initialize(TTree* tree);
 
         /**
          * Callback for the Processor to take any necessary
