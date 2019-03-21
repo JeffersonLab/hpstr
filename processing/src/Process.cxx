@@ -33,9 +33,10 @@ void Process::run() {
                 file->setupEvent(&event);  
             }
 
+            TTree* tree = event.getTree(); 
             // first, notify everyone that we are starting
             for (auto module : sequence_) {
-                module->initialize();
+                module->initialize(tree);
             }
 
             // Process all events.

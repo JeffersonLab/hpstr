@@ -36,6 +36,9 @@
 
 typedef long long long64;
 
+// Forward declarations
+class TTree;
+
 class ECalDataProcessor : public Processor { 
 
     public: 
@@ -62,7 +65,7 @@ class ECalDataProcessor : public Processor {
          * Callback for the Processor to take any necessary
          * action when the processing of events starts.
          */
-        virtual void initialize();
+        virtual void initialize(TTree* tree);
 
         /**
          * Callback for the Processor to take any necessary

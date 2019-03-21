@@ -13,7 +13,7 @@ EventProcessor::EventProcessor(const std::string& name, Process& process)
 EventProcessor::~EventProcessor() { 
 }
 
-void EventProcessor::initialize() {
+void EventProcessor::initialize(TTree* tree) {
 }
 
 void EventProcessor::process(Event* event) {

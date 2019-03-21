@@ -12,7 +12,7 @@ SvtRawDataProcessor::SvtRawDataProcessor(const std::string& name, Process& proce
 SvtRawDataProcessor::~SvtRawDataProcessor() { 
 }
 
-void SvtRawDataProcessor::initialize() {
+void SvtRawDataProcessor::initialize(TTree* tree) {
 
     rawhits_   = new TClonesArray("RawSvtHit", 100000);  
 }

@@ -32,6 +32,9 @@
 #include "Processor.h"
 #include "TriggerData.h"
 
+// Forward declarations
+class TTree; 
+
 class EventProcessor : public Processor { 
 
     public: 
@@ -58,7 +61,7 @@ class EventProcessor : public Processor {
          * Callback for the Processor to take any necessary
          * action when the processing of events starts.
          */
-        virtual void initialize();
+        virtual void initialize(TTree* tree);
 
         /**
          * Callback for the Processor to take any necessary
