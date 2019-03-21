@@ -21,6 +21,7 @@
 // Forward declarations
 class Process;
 class Processor;
+class TTree; 
 
 /** Typedef for ProcessorFactory use. */
 typedef Processor* ProcessorMaker(const std::string& name, Process& process);
@@ -63,7 +64,7 @@ class Processor {
          * action when the processing of events starts, such as
          * creating histograms.
          */
-        virtual void initialize() = 0;
+        virtual void initialize(TTree* tree) = 0;
 
         /**
          * Process the event and put new data products into it.
