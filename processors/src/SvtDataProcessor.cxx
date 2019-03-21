@@ -8,7 +8,7 @@ SvtDataProcessor::SvtDataProcessor(const std::string& name, Process& process)
 SvtDataProcessor::~SvtDataProcessor() { 
 }
 
-void SvtDataProcessor::initialize() {
+void SvtDataProcessor::initialize(TTree* tree) {
 
     tracks_ = new TClonesArray("Track", 100000); 
     hits_   = new TClonesArray("TrackerHit", 100000);  

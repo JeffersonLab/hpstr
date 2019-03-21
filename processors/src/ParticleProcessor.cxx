@@ -27,7 +27,7 @@ void ParticleProcessor::configure(const ParameterSet& parameters) {
 
 }
 
-void ParticleProcessor::initialize() {
+void ParticleProcessor::initialize(TTree* tree) {
 }
 
 void ParticleProcessor::process(Event* event) {

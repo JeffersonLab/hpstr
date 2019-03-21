@@ -31,6 +31,8 @@
 #include "Processor.h"
 #include "RawSvtHit.h"
 
+class TTree; 
+
 class SvtRawDataProcessor : public Processor { 
 
     public: 
@@ -57,7 +59,7 @@ class SvtRawDataProcessor : public Processor {
          * Callback for the Processor to take any necessary
          * action when the processing of events starts.
          */
-        virtual void initialize();
+        virtual void initialize(TTree* tree);
 
         /**
          * Callback for the Processor to take any necessary

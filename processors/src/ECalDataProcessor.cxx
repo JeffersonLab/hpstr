@@ -13,7 +13,7 @@ ECalDataProcessor::ECalDataProcessor(const std::string& name, Process& process)
 ECalDataProcessor::~ECalDataProcessor() { 
 }
 
-void ECalDataProcessor::initialize() {
+void ECalDataProcessor::initialize(TTree* tree) {
 
     cal_hits_ = new TClonesArray("CalHit", 100000); 
     clusters_ = new TClonesArray("CalCluster", 1000000);  
