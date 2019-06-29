@@ -39,14 +39,15 @@ void SvtRawDataProcessor::process(Event* event) {
         // Add a raw tracker hit to the event
         RawSvtHit* rawHit = static_cast<RawSvtHit*>(rawhits_->ConstructedAt(ihit));
 
+        rawHit->setSystem(decoder["system"]);
+        rawHit->setBarrel(decoder["barrel"]);
         rawHit->setLayer(decoder["layer"]);
         rawHit->setModule(decoder["module"]);
         rawHit->setSensor(decoder["sensor"]);
         rawHit->setSide(decoder["side"]);
         rawHit->setStrip(decoder["strip"]);
 
-        // Rotate the position of the LCIO TrackerHit and set the position of 
-        // the TrackerHit
+        // Extract ADC values for this hit
         int hit_adcs[6] = { 
             (int)rawTracker_hit->getADCValues().at(0), 
             (int)rawTracker_hit->getADCValues().at(1), 

@@ -29,6 +29,14 @@ void RawSvtHit::setADCs(int adcs[6]) {
     adcs_[5] = adcs[5]; 
 }
 
+void RawSvtHit::setSystem(int system) {
+    system_ = system; 
+}
+
+void RawSvtHit::setBarrel(int barrel) {
+    barrel_ = barrel; 
+}
+
 void RawSvtHit::setLayer(int layer) {
     layer_ = layer; 
 }
@@ -51,6 +59,14 @@ void RawSvtHit::setStrip(int strip) {
 
 int * RawSvtHit::getADCs() {
     return adcs_;
+}
+
+int RawSvtHit::getSystem() {
+    return system_; 
+}
+
+int RawSvtHit::getBarrel() {
+    return barrel_; 
 }
 
 int RawSvtHit::getLayer() {
