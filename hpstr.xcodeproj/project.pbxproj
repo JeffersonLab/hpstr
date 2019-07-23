@@ -89,7 +89,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		406DB8C821C6D3AF007C8A8A /* libprocessors.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libprocessors.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		406DB8C821C6D3AF007C8A8A /* libprocessors.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libprocessors.dylib; path = .dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4077E06E21C7398A00F46720 /* ConfigurePython.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ConfigurePython.cxx; path = processing/src/ConfigurePython.cxx; sourceTree = "<group>"; };
 		4077E06F21C7398A00F46720 /* ConfigurePython.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConfigurePython.h; path = processing/include/ConfigurePython.h; sourceTree = "<group>"; };
 		4077E07021C7398A00F46720 /* hpstr.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hpstr.cxx; path = processing/src/hpstr.cxx; sourceTree = "<group>"; };
@@ -106,6 +106,8 @@
 		40A076CD21C41A4000A29625 /* Processor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Processor.h; path = include/Processor.h; sourceTree = "<group>"; };
 		40A076CE21C41A4000A29625 /* ProcessorFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ProcessorFactory.h; path = include/ProcessorFactory.h; sourceTree = "<group>"; };
 		40A076D021C41A4B00A29625 /* HpstrConf.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = HpstrConf.py; path = python/HpstrConf.py; sourceTree = "<group>"; };
+		40AA4B7C223DE7B500777A43 /* rawSvtHits_cfg.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = rawSvtHits_cfg.py; path = processors/config/rawSvtHits_cfg.py; sourceTree = "<group>"; };
+		40AA4B7D223DE7B500777A43 /* dst.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = dst.py; path = processors/config/dst.py; sourceTree = "<group>"; };
 		40BC14F721C6D422002B95DF /* EventProcessor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EventProcessor.cxx; path = src/EventProcessor.cxx; sourceTree = "<group>"; };
 		40BC14F821C6D422002B95DF /* ParticleProcessor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleProcessor.cxx; path = src/ParticleProcessor.cxx; sourceTree = "<group>"; };
 		40BC14F921C6D422002B95DF /* ECalDataProcessor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ECalDataProcessor.cxx; path = src/ECalDataProcessor.cxx; sourceTree = "<group>"; };
@@ -115,10 +117,10 @@
 		40BC150121C6D431002B95DF /* ECalDataProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ECalDataProcessor.h; path = include/ECalDataProcessor.h; sourceTree = "<group>"; };
 		40BC150221C6D431002B95DF /* EventProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventProcessor.h; path = include/EventProcessor.h; sourceTree = "<group>"; };
 		40BC150721C6D67D002B95DF /* hpstr_processors.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = hpstr_processors.xcconfig; sourceTree = "<group>"; };
-		40BC150D21C6F0F7002B95DF /* libprocessing.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libprocessing.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		40BC150D21C6F0F7002B95DF /* libprocessing.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libprocessing.dylib; path = .dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		40BC151F21C6F21B002B95DF /* hpstr_processing.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = hpstr_processing.xcconfig; sourceTree = "<group>"; };
 		40BC152121C6F2CC002B95DF /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = System/Library/Frameworks/Python.framework; sourceTree = SDKROOT; };
-		40D3000421C3486700381AF5 /* libevent.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libevent.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		40D3000421C3486700381AF5 /* libevent.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libevent.dylib; path = .dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		40D3001221C3490500381AF5 /* CalHit.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CalHit.cxx; path = src/CalHit.cxx; sourceTree = "<group>"; };
 		40D3001321C3490500381AF5 /* TrackerHit.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TrackerHit.cxx; path = src/TrackerHit.cxx; sourceTree = "<group>"; };
 		40D3001421C3490500381AF5 /* Event.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Event.cxx; path = src/Event.cxx; sourceTree = "<group>"; };
@@ -213,6 +215,15 @@
 			path = processing;
 			sourceTree = "<group>";
 		};
+		40AA4B7B223DE79800777A43 /* python */ = {
+			isa = PBXGroup;
+			children = (
+				40AA4B7D223DE7B500777A43 /* dst.py */,
+				40AA4B7C223DE7B500777A43 /* rawSvtHits_cfg.py */,
+			);
+			name = python;
+			sourceTree = "<group>";
+		};
 		40BC151821C6F169002B95DF /* hpstr */ = {
 			isa = PBXGroup;
 			children = (
@@ -263,6 +274,7 @@
 		40D3FFF321C3475800381AF5 = {
 			isa = PBXGroup;
 			children = (
+				40AA4B7B223DE79800777A43 /* python */,
 				40D3FFFA21C3476900381AF5 /* Config */,
 				40BC151821C6F169002B95DF /* hpstr */,
 				40D3000621C3486700381AF5 /* event */,

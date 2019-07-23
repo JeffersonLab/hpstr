@@ -32,7 +32,7 @@
 # @author Jeremy McCormick, SLAC
 ###############################################################################
 macro(MODULE)
-
+  
   # define options for this function
   set(options)
   set(oneValueArgs NAME)
@@ -80,18 +80,45 @@ macro(MODULE)
   file(GLOB sources ${MODULE_SOURCE_DIR}/*.cxx)
   file(GLOB headers ${MODULE_INCLUDE_DIR}/include/*/*.h)
 
+  #
+  # On Mac, the libRGL.so is not correctly added into the ROOT_LIBRARIES
+  # So, if on APPLE, and if ROOT is needed, and if libRGL.so not already in the ROOT_LIBRARIES, then add it.
+  #
+  if(APPLE)
+    string(FIND "${MODULE_EXTERNAL_DEPENDENCIES}" "ROOT" _index)
+    if(_index GREATER -1)
+      list (FIND ROOT_LIBRARIES "${ROOT_LIBRARY_DIR}/libRGL.so" _index)
+      if( _index EQUAL -1)
+	list(APPEND ROOT_LIBRARIES "${ROOT_LIBRARY_DIR}/libRGL.so")
+      endif()
+    endif()
+  endif()
+
+
   # setup external dependencies
   ext_deps(DEPENDENCIES ${MODULE_EXTERNAL_DEPENDENCIES}) 
   if (EXT_DEP_INCLUDE_DIRS)
     include_directories(${EXT_DEP_INCLUDE_DIRS})
   endif()
-
+  
   # make list of all library dependencies
   set(MODULE_LIBRARIES ${MODULE_DEPENDENCIES} ${EXT_DEP_LIBRARIES} ${MODULE_EXTRA_LINK_LIBRARIES})
   if(MODULE_DEBUG)
     message("MODULE_LIBRARIES='${MODULE_LIBRARIES}'")
   endif()
 
+  # make list of libraries required by executables and test programs which includes this module's lib
+  if (sources)
+    set(MODULE_BIN_LIBRARIES ${MODULE_LIBRARIES} ${MODULE_NAME})
+  else()
+    set(MODULE_BIN_LIBRARIES ${MODULE_LIBRARIES})
+  endif()
+    
+  if(MODULE_DEBUG)
+    message("MODULE_BIN_LIBRARIES='${MODULE_BIN_LIBRARIES}'")
+  endif()
+
+  
   # if there are C++ source files then build a shared library
   if (sources)
 
@@ -99,22 +126,14 @@ macro(MODULE)
     add_library(${MODULE_NAME} SHARED ${sources} ${MODULE_EXTRA_SOURCES})
    
     # add link libs
-    target_link_libraries(${MODULE_NAME} ${MODULE_EXTRA_LINK_LIBRARIES})
-  
+    if(APPLE) # A MacOS library behaves like an executable, it needs all objects resolved.
+      target_link_libraries(${MODULE_NAME} ${MODULE_LIBRARIES} ${MODULE_EXTRA_LINK_LIBRARIES})
+    else()
+      target_link_libraries(${MODULE_NAME} ${MODULE_EXTRA_LINK_LIBRARIES})
+    endif()
     # install the library
     install(TARGETS ${MODULE_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
-  endif()
-  
-  # make list of libraries required by executables and test programs which includes this module's lib
-  if (sources)
-    set(MODULE_BIN_LIBRARIES ${MODULE_NAME} ${MODULE_LIBRARIES})
-  else()
-    set(MODULE_BIN_LIBRARIES ${MODULE_LIBRARIES})
-  endif()
-    
-  if(MODULE_DEBUG)
-    message("MODULE_BIN_LIBRARIES='${MODULE_BIN_LIBRARIES}'")
   endif()
  
   # find test programs
@@ -147,7 +166,7 @@ macro(MODULE)
   endforeach()
 
   # install python scripts
-  set(PYTHON_INSTALL_DIR lib/python)
+  set(PYTHON_INSTALL_DIR lib/python/LDMX/${MODULE_NAME})
   file(GLOB py_scripts "${CMAKE_CURRENT_SOURCE_DIR}/python/[!_]*.py")
   if (py_scripts)
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/python/__init__.py "# python package")
