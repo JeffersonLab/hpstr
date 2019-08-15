@@ -18,9 +18,24 @@ void SvtRawDataProcessor::initialize(TTree* tree) {
 }
 
 void SvtRawDataProcessor::process(Event* event) {
+    UTIL::LCRelationNavigator* rawTracker_hit_fits_nav;
+    EVENT::LCCollection* raw_svt_hit_fits;
     // Get the collection of 3D hits from the LCIO event. If no such collection 
     // exist, a DataNotAvailableException is thrown
     EVENT::LCCollection* raw_svt_hits = event->getLCCollection(Collections::RAW_SVT_HITS); 
+
+    //Check to see if fits are in the file
+    auto evColls = event->getLCEvent()->getCollectionNames();
+    auto it = std::find (evColls->begin(), evColls->end(), Collections::RAW_SVT_HIT_FITS);
+    bool hasFits = true;
+    if(it == evColls->end()) hasFits = false;
+    if(hasFits) 
+    {
+        raw_svt_hit_fits = event->getLCCollection(Collections::RAW_SVT_HIT_FITS); 
+        // Heap an LCRelation navigator which will allow faster access 
+        rawTracker_hit_fits_nav = new UTIL::LCRelationNavigator(raw_svt_hit_fits);
+
+    }
 
     // Get decoders to read cellids
     UTIL::BitField64 decoder("system:6,barrel:3,layer:4,module:12,sensor:1,side:32:-2,strip:12");
@@ -29,13 +44,15 @@ void SvtRawDataProcessor::process(Event* event) {
     // Loop over all of the raw SVT hits in the LCIO event and add them to the 
     // HPS event
     for (int ihit = 0; ihit < raw_svt_hits->getNumberOfElements(); ++ihit) { 
-        
+
         // Get a 3D hit from the list of hits
-        EVENT::TrackerRawData* rawTracker_hit = static_cast<EVENT::TrackerRawData*>(raw_svt_hits->getElementAt(ihit));
+        EVENT::TrackerRawData* rawTracker_hit 
+            = static_cast<EVENT::TrackerRawData*>(raw_svt_hits->getElementAt(ihit));
         //Decode the cellid
-        EVENT::long64 value = EVENT::long64( rawTracker_hit->getCellID0() & 0xffffffff ) | ( EVENT::long64( rawTracker_hit->getCellID1() ) << 32 ) ;
+        EVENT::long64 value = EVENT::long64( rawTracker_hit->getCellID0() & 0xffffffff ) | 
+            ( EVENT::long64( rawTracker_hit->getCellID1() ) << 32 ) ;
         decoder.setValue(value);
-    
+
         // Add a raw tracker hit to the event
         RawSvtHit* rawHit = static_cast<RawSvtHit*>(rawhits_->ConstructedAt(ihit));
 
@@ -57,11 +74,36 @@ void SvtRawDataProcessor::process(Event* event) {
             (int)rawTracker_hit->getADCValues().at(5)
         };
         rawHit->setADCs(hit_adcs);
-        
+
+
+        if (hasFits)
+        {
+            // Get the list of fit params associated with the raw tracker hit
+            EVENT::LCObjectVec rawTracker_hit_fits_list
+                = rawTracker_hit_fits_nav->getRelatedToObjects(rawTracker_hit);
+
+            // Get the list SVTFittedRawTrackerHit GenericObject associated with the SVTRawTrackerHit
+            IMPL::LCGenericObjectImpl* hit_fit_param
+                = static_cast<IMPL::LCGenericObjectImpl*>(rawTracker_hit_fits_list.at(0));
+
+            double fit_params[5] = { 
+                (double)hit_fit_param->getDoubleVal(0), 
+                (double)hit_fit_param->getDoubleVal(1), 
+                (double)hit_fit_param->getDoubleVal(2), 
+                (double)hit_fit_param->getDoubleVal(3), 
+                (double)hit_fit_param->getDoubleVal(4)
+            };
+
+            rawHit->setFit(fit_params);
+        }
+
     }
 
     // Add the raw hit collection to the event
     event->addCollection(Collections::RAW_SVT_HITS, rawhits_); 
+
+    //Clean up
+    if (hasFits) delete rawTracker_hit_fits_nav;
 
 }
 

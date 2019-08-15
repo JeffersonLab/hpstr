@@ -15,6 +15,12 @@ namespace Collections {
     /** Name of the Raw tracker hits collection. */
     constexpr const char* RAW_SVT_HITS{"SVTRawTrackerHits"};
 
+    /** Name of the Raw tracker fit relations collection. */
+    constexpr const char* RAW_SVT_HIT_FITS{"SVTFittedRawTrackerHits"};
+
+    /** Name of the Raw tracker fit relations collection. */
+    constexpr const char* RAW_SVT_HIT_FITSP{"SVTShapeFitParameters"};
+
     /** Name of the tracker hits collection. */
     constexpr const char* TRACKER_HITS{"RotatedHelicalTrackHits"};
 

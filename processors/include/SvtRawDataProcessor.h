@@ -9,6 +9,7 @@
 //   C++  StdLib   //
 //-----------------//
 #include <iostream>
+#include <algorithm>
 #include <string>
 
 //----------//
@@ -18,6 +19,8 @@
 #include <EVENT/TrackerRawData.h>
 #include <IMPL/LCGenericObjectImpl.h>
 #include <UTIL/BitField64.h>
+#include <IMPL/LCGenericObjectImpl.h>
+#include <UTIL/LCRelationNavigator.h>
 
 //----------//
 //   ROOT   //

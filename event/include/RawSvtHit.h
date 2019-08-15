@@ -31,6 +31,9 @@ class RawSvtHit : public TObject {
         /** Reset the Hit object. */
         void Clear();
 
+        /** Set the fit parameters */
+        void setFit(double fit[5]);
+
         /** Set the adc values */
         void setADCs(int adcs[6]);
 
@@ -54,6 +57,9 @@ class RawSvtHit : public TObject {
 
         /** Set the strip */
         void setStrip(int strip);
+
+        /** Get the fit paramters */
+        double * getFit();
 
         /** Get the adc values */
         int * getADCs();
@@ -83,6 +89,7 @@ class RawSvtHit : public TObject {
     
     private:
 
+
         /** The raw adcs of the hit. */
         int adcs_[6]{-999,-999,-999,-999,-999,-999}; 
         int system_{-999}; 
@@ -92,6 +99,8 @@ class RawSvtHit : public TObject {
         int sensor_{-999}; 
         int side_{-999}; 
         int strip_{-999}; 
+        /** The fit parameters of the hit. */
+        double fit_[5]{-999.9,-999.9,-999.9,-999.9,-999.9}; 
 
 }; // RawSvtHit
 
