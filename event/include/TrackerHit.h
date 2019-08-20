@@ -58,9 +58,19 @@ class TrackerHit : public TObject {
          */
         void setTime(const double time) { time_ = time; };
 
-
         /** @return The hit time. */
         double getTime() const { return time_; };
+
+        /**
+         * Set the hit charge deposit.
+         *
+         * @param charge The hit charge.
+         */
+        void setCharge(const double charge) { charge_ = charge; };
+
+
+        /** @return The hit time. */
+        double getCharge() const { return charge_; };
 
         ClassDef(TrackerHit, 1);	
     
@@ -85,6 +95,9 @@ class TrackerHit : public TObject {
 
         /** The hit time. */
         double time_{-999};
+        
+        /** The hit charge deposit. */
+        double charge_{-999};
         
 
 }; // TrackerHit
