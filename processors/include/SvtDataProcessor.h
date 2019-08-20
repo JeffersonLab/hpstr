@@ -19,6 +19,7 @@
 #include <EVENT/TrackerHit.h>
 #include <EVENT/TrackState.h>
 #include <IMPL/LCGenericObjectImpl.h>
+#include <IMPL/TrackerHitImpl.h>
 #include <UTIL/LCRelationNavigator.h>
 
 //----------//

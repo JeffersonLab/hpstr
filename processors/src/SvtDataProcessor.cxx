@@ -31,7 +31,7 @@ void SvtDataProcessor::process(Event* event) {
     for (int ihit = 0; ihit < tracker_hits->getNumberOfElements(); ++ihit) { 
         
         // Get a 3D hit from the list of hits
-        EVENT::TrackerHit* lc_tracker_hit = static_cast<EVENT::TrackerHit*>(tracker_hits->getElementAt(ihit));
+        IMPL::TrackerHitImpl* lc_tracker_hit = static_cast<IMPL::TrackerHitImpl*>(tracker_hits->getElementAt(ihit));
     
         // Add a tracker hit to the event
         TrackerHit* tracker_hit = static_cast<TrackerHit*>(hits_->ConstructedAt(ihit));
@@ -50,6 +50,9 @@ void SvtDataProcessor::process(Event* event) {
                 
         // Set the time of the SvtHit
         tracker_hit->setTime(lc_tracker_hit->getTime());
+
+        // Set the charge of the SvtHit
+        tracker_hit->setCharge(lc_tracker_hit->getEDep());
 
         // Map the TrackerHit object to the corresponding SvtHit object. This
         // will be used later when setting references for hits on tracks.
