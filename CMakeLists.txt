@@ -15,11 +15,21 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 # find the LCIO directory
 if (LCIO_DIR)
     set(LCIO_INCLUDE_DIR "${LCIO_DIR}/include")
+
+    #TEMPORARY: if MacOs LCIO standard compilation creates dynamic libs. Correct for that. 
+    if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(LCIO_LIBRARY "${LCIO_DIR}/lib/liblcio.dylib")
+    else()
     set(LCIO_LIBRARY "${LCIO_DIR}/lib/liblcio.so")
+    endif()	       
+
+
     if (NOT EXISTS "${LCIO_DIR}")
         message(FATAL_ERROR "Unable to find LCIO library")
     endif()
     message(STATUS "LCIO dir set to: ${LCIO_DIR}")
+
+    #The following are not necessary - should clean up
     message(STATUS "LCIO include dir set to: ${LCIO_INCLUDE_DIR}")
     message(STATUS "LCIO library set to: ${LCIO_LIBRARY}")
 endif()

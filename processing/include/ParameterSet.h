@@ -13,6 +13,7 @@
 #include <map>
 #include <stdexcept>
 #include <vector>
+#include <string>
 
 class ParameterSet { 
 
