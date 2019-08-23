@@ -223,8 +223,8 @@ class Track : public TObject {
         /** Reference to the reconstructed particle associated with this track. */
         TRef particle_;
 
-        /** Array used to store the isolation variables for each of the sensor layers. */
-        double isolation_[12];
+        /** Array used to store the isolation variables for each of the sensor layers. Updated to 2019 geometry. */
+        double isolation_[14];
 
         /** The number of 3D hits associated with this track. */
         int n_hits_{0}; 
