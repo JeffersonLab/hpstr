@@ -5,6 +5,7 @@
  */
 
 #include "Process.h"
+#include "EventFile.h"
 
 Process::Process() {}
 
@@ -26,6 +27,9 @@ void Process::run() {
             std::cout << "---- [ hpstr ][ Process ]: Processing file " 
                       << ifile << std::endl;
 
+
+	    //TODO:: Change the order here.
+	    
             // Open the output file if an output file path has been specified.
             EventFile* file{nullptr};  
             if (!output_files_.empty()) { 
@@ -38,6 +42,9 @@ void Process::run() {
             for (auto module : sequence_) {
                 module->initialize(tree);
             }
+
+	    //In the case of additional output files from the processors this restores the correct ProcessID storage
+	    file->resetOutputFileDir();
 
             // Process all events.
             while (file->nextEvent() && (event_limit_ < 0 || (n_events_processed < event_limit_))) {

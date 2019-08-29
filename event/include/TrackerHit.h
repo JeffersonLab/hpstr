@@ -38,8 +38,13 @@ class TrackerHit : public TObject {
          */
         void setPosition(const double* position);
 
+  //TODO: stupid to return a vector. 
         /** @return The hit position. */
         std::vector<double> getPosition() const { return {x_, y_, z_}; };
+
+  double getGlobalX() const {return x_;}
+  double getGlobalY() const {return y_;}
+  double getGlobalZ() const {return z_;}
 
         /**
          * Set the covariance matrix.
