@@ -30,7 +30,7 @@ class EventFile {
     public: 
 
         /** Constructor */
-        EventFile(const std::string ifilename, const std::string ofilename);
+        EventFile(const std::string ifilename, const std::string& ofilename);
 
         /** Destructor */
         ~EventFile();
@@ -54,11 +54,19 @@ class EventFile {
          */
         void close();
 
+  /** 
+   * Get output file directory
+   */
+  void resetOutputFileDir();
+
     private: 
 
         /** The ROOT file to which event data will be written to. */
         TFile* ofile_{nullptr}; 
 
+        /** Additional output files, i.e. for histogramming */
+        //std::vector<TFile* > outputs_f;
+     
         /** Object used to build the HPS event model. */
         Event* event_{nullptr};
 

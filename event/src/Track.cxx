@@ -31,6 +31,11 @@ void Track::setTrackParameters(double d0, double phi0, double omega,
     omega_      = omega;
     tan_lambda_ = tan_lambda;
     z0_         = z0;
+    if (omega_ < 0)
+      charge_   = -1;
+    else
+      charge_   =  1;
+		  
 }
 
 std::vector<double> Track::getTrackParameters() { return { d0_, phi0_, omega_, tan_lambda_, z0_ }; }

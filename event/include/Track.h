@@ -44,6 +44,9 @@ class Track : public TObject {
         /** @return A reference to the hits associated with this track. */
         TRefArray* getSvtHits() const { return tracker_hits_; };
 
+        /** @return Number of 3D hits associated with this track */
+        int getNSvtHits() const { return n_hits_;}
+
         /**
          * Set the track parameters.
          *

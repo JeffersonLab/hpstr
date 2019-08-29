@@ -6,7 +6,7 @@
 
 #include "EventFile.h"
 
-EventFile::EventFile(const std::string ifilename, const std::string ofilename) { 
+EventFile::EventFile(const std::string ifilename, const std::string& ofilename) { 
 
     // Open the input LCIO file. If the input file can't be opened, throw an 
     // exception. 
@@ -40,12 +40,17 @@ void EventFile::setupEvent(Event* event) {
     entry_ = 0;  
 }
 
+void EventFile::resetOutputFileDir() {
+  ofile_->cd();
+}
+
 void EventFile::close() { 
     
     // Close the LCIO file that was being processed
     lc_reader_->close();
 
     // Write the ROOT tree to disk
+    ofile_->cd();
     event_->getTree()->Write();  
     
     // Close the ROOT file
