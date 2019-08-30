@@ -29,6 +29,12 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
+    bool processRoot = false;
+    if (strstr(argv[1],"-r")) {
+      processRoot=true;
+      std::cout<<"Processing root file"<<std::endl;
+    }
+
     int ptrpy = 1;
     for (ptrpy = 1; ptrpy < argc; ptrpy++) {
         std::cout << argv[ptrpy] << std::endl;
@@ -63,8 +69,12 @@ int main(int argc, char **argv) {
         }
 
         std::cout << "---- [ hpstr ]: Starting event processing --------" << std::endl;
-        
-        p->run();
+
+	//TODO Make this better
+	if (processRoot)
+	  p->runOnRoot();
+	else
+	  p->run();
         
         std::cout << "---- [ hpstr ]: Event processing complete  --------" << std::endl;
 

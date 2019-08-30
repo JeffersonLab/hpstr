@@ -6,8 +6,57 @@
 
 #include "Process.h"
 #include "EventFile.h"
+#include "HpsEventFile.h"
 
 Process::Process() {}
+
+//TODO Fix this better
+
+void Process::runOnRoot() {
+  try {
+    int n_events_processed = 0;
+    HpsEvent event;
+    int cfile =0 ;
+    for (auto ifile : input_files_) {
+      std::cout<<"Processing file"<<ifile<<std::endl;
+      HpsEventFile* file(nullptr);
+      if (!output_files_.empty()) {
+	file = new HpsEventFile(ifile, output_files_[cfile]);
+	file->setupEvent(&event);
+      }
+      for (auto module : sequence_) {
+	module->initialize(event.getTree());
+      }
+      while (file->nextEvent() && (event_limit_ < 0 || (n_events_processed < event_limit_))) {
+	if (n_events_processed%100 == 0)
+	  std::cout<<"Event:"<<n_events_processed<<std::endl;
+
+	//In this way if the processing fails (like an event doesn't pass the selection, the other modules aren't run on that event)
+	for (auto module : sequence_) {
+	  module->process(&event);
+	  //if (!module->process(&event))
+	  //break;
+	}
+	//event.Clear();
+	++n_events_processed;
+      }
+      //Pass to next file
+      ++cfile;
+      // Finalize all modules
+      for (auto module : sequence_) {
+	std::cout<<"Finalize your processors here"<<std::endl;
+      }
+      // TODO Check all these destructors
+      if (file) {
+	file->close();
+      delete file;
+      file = nullptr;
+      }
+    }
+  } catch (std::exception& e) {
+    std::cerr<<"Error:"<<e.what()<<std::endl;
+  }
+}
 
 void Process::run() {
 
@@ -17,7 +66,7 @@ void Process::run() {
         
         if (input_files_.empty()) 
             throw std::runtime_error("Please specify files to process.");
-
+	
         // Create an object used to manage the input and output files.
         Event event;  
 

@@ -30,8 +30,9 @@ void ParticleProcessor::configure(const ParameterSet& parameters) {
 void ParticleProcessor::initialize(TTree* tree) {
 }
 
-void ParticleProcessor::process(Event* event) {
+void ParticleProcessor::process(IEvent* ievent) {
 
+    Event* event = static_cast<Event*> (ievent);
     for (auto& collections : collections_) { 
        
         // Get the collection from the event

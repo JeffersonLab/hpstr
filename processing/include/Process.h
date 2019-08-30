@@ -66,6 +66,10 @@ class Process {
         /** Run the process. */
         void run();
 
+        /** Run the process on root files. */
+        //TODO Write this better
+        void runOnRoot();
+
         /** Request that the processing finish with this event. */ 
         void requestFinish() { event_limit_=0; }
 

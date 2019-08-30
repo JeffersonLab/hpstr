@@ -35,8 +35,8 @@ bool EventFile::nextEvent() {
     return true; 
 }
 
-void EventFile::setupEvent(Event* event) { 
-    event_ = event;
+void EventFile::setupEvent(IEvent* ievent) {
+    event_ = static_cast<Event*> (ievent);
     entry_ = 0;  
 }
 

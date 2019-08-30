@@ -59,7 +59,7 @@ class ECalDataProcessor : public Processor {
          * Process the event and put new data products into it.
          * @param event The Event to process.
          */
-        virtual void process(Event* event);
+        virtual void process(IEvent* event);
 
         /**
          * Callback for the Processor to take any necessary

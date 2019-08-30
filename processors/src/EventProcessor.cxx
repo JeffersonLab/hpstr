@@ -6,6 +6,7 @@
 
 #include "EventProcessor.h"
 
+
 EventProcessor::EventProcessor(const std::string& name, Process& process)
     : Processor(name, process) { 
 }
@@ -16,8 +17,9 @@ EventProcessor::~EventProcessor() {
 void EventProcessor::initialize(TTree* tree) {
 }
 
-void EventProcessor::process(Event* event) {
-
+void EventProcessor::process(IEvent* ievent) {
+  
+    Event* event = static_cast<Event*> (ievent);
     /*EventHeader* header 
         = static_cast<EventHeader*>(header_->ConstructedAt(0));*/
     EventHeader& header = event->getEventHeaderMutable(); 
