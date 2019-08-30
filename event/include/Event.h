@@ -29,9 +29,10 @@
 //   hpstr   //
 //-----------//
 #include "Collections.h"
+#include "IEvent.h"
 #include "EventHeader.h"
 
-class Event { 
+class Event : public IEvent {
 
     public: 
 
@@ -44,7 +45,7 @@ class Event {
         /** 
          *
          */
-        void add(const std::string name, TObject* object); 
+        virtual void add(const std::string name, TObject* object);
 
         /** 
          * Add a collection (TClonesArray) of objects to the event. 

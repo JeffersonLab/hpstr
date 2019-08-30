@@ -33,6 +33,7 @@
 #include "Collections.h"
 #include "Processor.h"
 #include "RawSvtHit.h"
+#include "Event.h"
 
 class TTree; 
 
@@ -56,7 +57,7 @@ class SvtRawDataProcessor : public Processor {
          * Process the event and put new data products into it.
          * @param event The Event to process.
          */
-        virtual void process(Event* event);
+        virtual void process(IEvent* ievent);
 
         /**
          * Callback for the Processor to take any necessary

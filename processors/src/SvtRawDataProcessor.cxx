@@ -17,7 +17,9 @@ void SvtRawDataProcessor::initialize(TTree* tree) {
     rawhits_   = new TClonesArray("RawSvtHit", 100000);  
 }
 
-void SvtRawDataProcessor::process(Event* event) {
+void SvtRawDataProcessor::process(IEvent* ievent) {
+  
+    Event* event = static_cast<Event*>(ievent);
     UTIL::LCRelationNavigator* rawTracker_hit_fits_nav;
     EVENT::LCCollection* raw_svt_hit_fits;
     // Get the collection of 3D hits from the LCIO event. If no such collection 
