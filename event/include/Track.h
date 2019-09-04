@@ -284,10 +284,10 @@ class Track : public TObject {
         double z_at_ecal_{-999};
         
         /** Array used to store the lambda kinks for each of the sensor layers. */
-        double lambda_kinks_[12];  
+        double lambda_kinks_[14];  
         
         /** Array used to store the phi kinks for each of the sensor layers. */
-        double phi_kinks_[12];  
+        double phi_kinks_[14];  
 
         /** Track momentum. */
         double px_{-9999}; 
