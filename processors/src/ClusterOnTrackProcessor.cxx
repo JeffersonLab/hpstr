@@ -6,28 +6,35 @@ ClusterOnTrackProcessor::ClusterOnTrackProcessor(const std::string& name, Proces
 ClusterOnTrackProcessor::~ClusterOnTrackProcessor(){}
 
 void ClusterOnTrackProcessor::initialize(TTree* tree) {
-  clusterHistos = new ClusterHistos("default_");
-  tree_=tree;
+  clusterHistos = new ClusterHistos("hitOnTrack_2D");
+  clusterHistos->Define1DHistos();
+  clusterHistos->Define2DHistos();
+  tree_= tree;
   //TODO Change this.
   tree_->SetBranchAddress("GBLTracks",&tracks_,&btracks_);
+  //TODO Change this.
+  outF_ = new TFile("outputFile.root","recreate");
   
 }
 
-void ClusterOnTrackProcessor::process(IEvent* ievent) {
+bool ClusterOnTrackProcessor::process(IEvent* ievent) {
 
-
-  for (int itrack = 0; itrack<tracks_->GetEntries();itrack++) {
-    Track *track = (Track*)tracks_->ConstructedAt(itrack);
-    
-    std::cout<<"Tracks number of hits for track "<<itrack<<" "<<track->getNSvtHits()<<std::endl;
+  
+  for (int itrack = 0; itrack<tracks_->size();itrack++) {
+    Track *track = tracks_->at(itrack);
+    //Loop on hits
+    for (int ihit = 0; ihit<track->getSvtHits()->GetEntries(); ++ihit) {
+      TrackerHit* hit3d = (TrackerHit*) track->getSvtHits()->At(ihit);
+      clusterHistos->FillHistograms(hit3d,1.);
+    }
   }
-  
+  return true;
 }
-
 
 void ClusterOnTrackProcessor::finalize() {
-  
-}
 
+  clusterHistos->saveHistos(outF_,"");
+
+}
 
 DECLARE_PROCESSOR(ClusterOnTrackProcessor);

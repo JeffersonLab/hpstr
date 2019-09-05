@@ -17,7 +17,7 @@ EventProcessor::~EventProcessor() {
 void EventProcessor::initialize(TTree* tree) {
 }
 
-void EventProcessor::process(IEvent* ievent) {
+bool EventProcessor::process(IEvent* ievent) {
   
     Event* event = static_cast<Event*> (ievent);
     /*EventHeader* header 
@@ -25,6 +25,11 @@ void EventProcessor::process(IEvent* ievent) {
     EventHeader& header = event->getEventHeaderMutable(); 
 
     EVENT::LCEvent* lc_event = event->getLCEvent(); 
+
+    if (_debug) {
+      std::cout<<"Event Number: "<<lc_event->getEventNumber()<<std::endl;
+      std::cout<<"Run Number: "<<lc_event->getRunNumber()<<std::endl;
+    }
 
     // Set the event number
     header.setEventNumber(lc_event->getEventNumber());
@@ -114,6 +119,9 @@ void EventProcessor::process(IEvent* ievent) {
     }
 
     event->add(Collections::EVENT_HEADERS, &header);
+
+    return true;
+
 }
 
 void EventProcessor::finalize() { 

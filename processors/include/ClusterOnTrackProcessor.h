@@ -4,12 +4,14 @@
 //HPSTR
 #include "HpsEvent.h"
 #include "Track.h"
+#include "TrackerHit.h"
 
 
 //ROOT
 #include "ClusterHistos.h"
 #include "Processor.h"
 #include "TClonesArray.h"
+#include "TFile.h"
 
 class TTree;
 
@@ -22,7 +24,7 @@ class ClusterOnTrackProcessor : public Processor {
 
   ~ClusterOnTrackProcessor();
 
-  virtual void process(IEvent* ievent);
+  virtual bool process(IEvent* ievent);
 
   virtual void initialize(TTree* tree);
 
@@ -33,10 +35,11 @@ class ClusterOnTrackProcessor : public Processor {
   ClusterHistos* clusterHistos;
   //TODO Change this to be held from HPSEvent
   TTree* tree_;
-  TClonesArray* tracks_{nullptr};
+  std::vector<Track*> *tracks_{};
   TBranch*      btracks_{nullptr};
-  TClonesArray* hits_{nullptr};
-  TBranch*      bhits_{nullptr};  
+  std::vector<TrackerHit*> hits_{};
+  TBranch*      bhits_{nullptr};
+  TFile*        outF_{nullptr};
   
 };
 

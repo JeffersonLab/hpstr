@@ -17,6 +17,7 @@
 //----------//
 #include <TObject.h>
 #include <TClonesArray.h>
+#include <TRefArray.h>
 
 class TrackerHit : public TObject { 
 
@@ -30,21 +31,29 @@ class TrackerHit : public TObject {
 
         /** Reset the Hit object. */
         void Clear(Option_t *option="");
+
+        /** Get the references to the raw hits associated with this tracker hit */
+        TRefArray* getRawHits() const {return raw_hits_;};
         
         /**
          * Set the hit position.
          *
          * @param position The hit position.
          */
-        void setPosition(const double* position);
+        void setPosition(const double* position, bool rotate = false);
 
-  //TODO: stupid to return a vector. 
+        //TODO: avoid returning a vector, rather pass by ref.
         /** @return The hit position. */
         std::vector<double> getPosition() const { return {x_, y_, z_}; };
 
-  double getGlobalX() const {return x_;}
-  double getGlobalY() const {return y_;}
-  double getGlobalZ() const {return z_;}
+        /** @return the global X coordinate of the hit */
+        double getGlobalX() const {return x_;}
+
+        /** @return the global X coordinate of the hit */
+        double getGlobalY() const {return y_;}
+
+        /** @return the global X coordinate of the hit */
+        double getGlobalZ() const {return z_;}
 
         /**
          * Set the covariance matrix.
@@ -73,13 +82,22 @@ class TrackerHit : public TObject {
          */
         void setCharge(const double charge) { charge_ = charge; };
 
-
         /** @return The hit time. */
         double getCharge() const { return charge_; };
+
+
+        /** Add raw hit to the raw hit reference array */
+        void addRawHit(TObject* rawhit) {
+	  ++n_rawhits_;
+	  raw_hits_->Add(rawhit);
+	}
 
         ClassDef(TrackerHit, 1);	
     
     private:
+
+        /** Number of raw hits forming the Tracker hit */
+        int n_rawhits_{0};
 
         /** The x position of the hit. */
         double x_{-999}; 
@@ -103,6 +121,9 @@ class TrackerHit : public TObject {
         
         /** The hit charge deposit. */
         double charge_{-999};
+
+        /** The raw hits */
+        TRefArray* raw_hits_{new TRefArray{}};
         
 
 }; // TrackerHit

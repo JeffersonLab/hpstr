@@ -56,7 +56,7 @@ class EventProcessor : public Processor {
          * Process the event and put new data products into it.
          * @param event The Event to process.
          */
-        virtual void process(IEvent* ievent);
+        virtual bool process(IEvent* ievent);
 
         /**
          * Callback for the Processor to take any necessary
@@ -73,6 +73,7 @@ class EventProcessor : public Processor {
     private: 
 
        TClonesArray* header_{nullptr};
+       bool _debug{false};
 
 
 }; // EventProcessor

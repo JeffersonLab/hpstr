@@ -69,8 +69,9 @@ class Processor {
         /**
          * Process the event and put new data products into it.
          * @param event The Event to process.
+         * @return status of the processing, false will move to next event and skip other processes.
          */
-        virtual void process(IEvent* ievent) = 0;
+        virtual bool process(IEvent* ievent) = 0;
 
         /**
          * Callback for the Processor to take any necessary

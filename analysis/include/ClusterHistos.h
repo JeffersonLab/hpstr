@@ -5,6 +5,7 @@
 #include "HistoManager.h"
 
 #include "TrackerHit.h"
+#include "RawSvtHit.h"
 
 #include <string>
 
@@ -29,7 +30,16 @@ class ClusterHistos : public HistoManager{
 
  private:
   
-     
+  std::vector<std::string> layers{"ly0","ly1","ly2","ly3","ly4","ly5","ly6"};
+  std::vector<std::string> volumes{"top","bottom"};
+  std::vector<std::string> sides{"axial","stereo"};
+  std::vector<std::string> variables{"charge","cluSize"};
+
+  std::map<std::string, int>    cluSizeMap;
+  std::map<std::string, double> chargeMap;
+  std::map<std::string, double> cluPositionMap;
+  
+  
 };
 
 

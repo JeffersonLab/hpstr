@@ -20,10 +20,20 @@ void TrackerHit::Clear(Option_t* /* options */) {
     TObject::Clear(); 
 }
 
-void TrackerHit::setPosition(const double* position) {
+void TrackerHit::setPosition(const double* position, bool rotate) {
+
+  //Rotate the the input position automatically to match with the SVT tracker system
+  if (rotate)
+    {
+      x_ = position[1];
+      y_ = position[2];
+      z_ = position[1] * sin(30.5e-3) + position[0]*cos(30.5e-3);
+    }
+  else {
     x_ = position[0]; 
     y_ = position[1];
-    z_ = position[2]; 
+    z_ = position[2];
+  }
 }
 
 void TrackerHit::setCovarianceMatrix(const std::vector<float> covariance_matrix) {

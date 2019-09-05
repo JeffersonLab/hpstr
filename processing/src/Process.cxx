@@ -28,7 +28,7 @@ void Process::runOnRoot() {
 	module->initialize(event.getTree());
       }
       while (file->nextEvent() && (event_limit_ < 0 || (n_events_processed < event_limit_))) {
-	if (n_events_processed%100 == 0)
+	if (n_events_processed%1000 == 0)
 	  std::cout<<"Event:"<<n_events_processed<<std::endl;
 
 	//In this way if the processing fails (like an event doesn't pass the selection, the other modules aren't run on that event)
@@ -44,7 +44,8 @@ void Process::runOnRoot() {
       ++cfile;
       // Finalize all modules
       for (auto module : sequence_) {
-	std::cout<<"Finalize your processors here"<<std::endl;
+	//TODO:Change the finalize method
+	module->finalize();
       }
       // TODO Check all these destructors
       if (file) {

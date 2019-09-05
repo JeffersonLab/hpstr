@@ -20,7 +20,7 @@ void ECalDataProcessor::initialize(TTree* tree) {
     clusters_ = new TClonesArray("CalCluster", 1000000);  
 }
 
-void ECalDataProcessor::process(IEvent* ievent) {
+bool ECalDataProcessor::process(IEvent* ievent) {
 
     // Attempt to retrieve the collection "TimeCorrEcalHits" from the event. If
     // the collection doesn't exist, handle the DataNotAvailableCollection and
@@ -139,6 +139,7 @@ void ECalDataProcessor::process(IEvent* ievent) {
 
     event->addCollection(Collections::ECAL_CLUSTERS, clusters_); 
 
+    return true;
 }
 
 void ECalDataProcessor::finalize() { 
