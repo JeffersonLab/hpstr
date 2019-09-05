@@ -16,7 +16,7 @@ class HPSEventProcessor : public Processor {
   HPSEventProcessor(const std::string& name, Process& process);
   ~HPSEventProcessor();
 
-  virtual void process(IEvent* ievent);
+  virtual bool process(IEvent* ievent);
   virtual void initialize(TTree* tree);
   virtual void finalize();
 

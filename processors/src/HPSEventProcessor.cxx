@@ -11,10 +11,11 @@ HPSEventProcessor::~HPSEventProcessor(){
 void HPSEventProcessor::initialize(TTree*) {
 }
 
-void HPSEventProcessor::process(IEvent* ievent) {
+bool HPSEventProcessor::process(IEvent* ievent) {
   HpsEvent* event = static_cast<HpsEvent*>(ievent);
 
   std::cout<<"This is the HPSEventProcessor"<<std::endl;
+  return true;
   
 }
   

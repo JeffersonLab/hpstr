@@ -30,7 +30,7 @@ void ParticleProcessor::configure(const ParameterSet& parameters) {
 void ParticleProcessor::initialize(TTree* tree) {
 }
 
-void ParticleProcessor::process(IEvent* ievent) {
+bool ParticleProcessor::process(IEvent* ievent) {
 
     Event* event = static_cast<Event*> (ievent);
     for (auto& collections : collections_) { 
@@ -182,8 +182,9 @@ void ParticleProcessor::process(IEvent* ievent) {
         }   
     
         // Add the hit collection to the event
-        event->addCollection(collections.first, collections.second); 
+        event->addCollection(collections.first, collections.second);
     }
+    return true;
 }
 
 void ParticleProcessor::finalize() { 

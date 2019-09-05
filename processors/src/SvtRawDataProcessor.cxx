@@ -17,14 +17,15 @@ void SvtRawDataProcessor::initialize(TTree* tree) {
     rawhits_   = new TClonesArray("RawSvtHit", 100000);  
 }
 
-void SvtRawDataProcessor::process(IEvent* ievent) {
+bool SvtRawDataProcessor::process(IEvent* ievent) {
   
     Event* event = static_cast<Event*>(ievent);
     UTIL::LCRelationNavigator* rawTracker_hit_fits_nav;
     EVENT::LCCollection* raw_svt_hit_fits;
     // Get the collection of 3D hits from the LCIO event. If no such collection 
     // exist, a DataNotAvailableException is thrown
-    EVENT::LCCollection* raw_svt_hits = event->getLCCollection(Collections::RAW_SVT_HITS); 
+    EVENT::LCCollection* raw_svt_hits = event->getLCCollection(Collections::RAW_SVT_HITS);
+
 
     //Check to see if fits are in the file
     auto evColls = event->getLCEvent()->getCollectionNames();
@@ -45,9 +46,9 @@ void SvtRawDataProcessor::process(IEvent* ievent) {
 
     // Loop over all of the raw SVT hits in the LCIO event and add them to the 
     // HPS event
-    for (int ihit = 0; ihit < raw_svt_hits->getNumberOfElements(); ++ihit) { 
+    for (int ihit = 0; ihit < raw_svt_hits->getNumberOfElements(); ++ihit) {
 
-        // Get a 3D hit from the list of hits
+      // Get a 3D hit from the list of hits
         EVENT::TrackerRawData* rawTracker_hit 
             = static_cast<EVENT::TrackerRawData*>(raw_svt_hits->getElementAt(ihit));
         //Decode the cellid
@@ -102,11 +103,12 @@ void SvtRawDataProcessor::process(IEvent* ievent) {
     }
 
     // Add the raw hit collection to the event
-    event->addCollection(Collections::RAW_SVT_HITS, rawhits_); 
+    event->addCollection(Collections::RAW_SVT_HITS, rawhits_);
 
     //Clean up
     if (hasFits) delete rawTracker_hit_fits_nav;
 
+    return true;
 }
 
 void SvtRawDataProcessor::finalize() { 

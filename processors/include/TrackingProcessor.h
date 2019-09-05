@@ -2,25 +2,27 @@
  *
  */
 
-#ifndef __SVT_RAW_DATA_PROCESSOR_H__
-#define __SVT_RAW_DATA_PROCESSOR_H__
+#ifndef __TRACKING_PROCESSOR_H__
+#define __TRACKING_PROCESSOR_H__
 
 //-----------------//
 //   C++  StdLib   //
 //-----------------//
 #include <iostream>
-#include <algorithm>
 #include <string>
 
 //----------//
 //   LCIO   //
 //----------//
 #include <EVENT/LCCollection.h>
+#include <EVENT/Track.h>
+#include <EVENT/TrackerHit.h>
+#include <EVENT/TrackState.h>
 #include <EVENT/TrackerRawData.h>
 #include <IMPL/LCGenericObjectImpl.h>
-#include <UTIL/BitField64.h>
-#include <IMPL/LCGenericObjectImpl.h>
+#include <IMPL/TrackerHitImpl.h>
 #include <UTIL/LCRelationNavigator.h>
+#include <UTIL/BitField64.h>
 
 //----------//
 //   ROOT   //
@@ -32,12 +34,15 @@
 //-----------//
 #include "Collections.h"
 #include "Processor.h"
-#include "RawSvtHit.h"
+#include "Track.h"
+#include "TrackerHit.h"
 #include "Event.h"
+#include "RawSvtHit.h"
 
+// Forward declarations
 class TTree; 
 
-class SvtRawDataProcessor : public Processor { 
+class TrackingProcessor : public Processor { 
 
     public: 
 
@@ -48,10 +53,10 @@ class SvtRawDataProcessor : public Processor {
          * @param process The Process class associated with Processor, provided
          *                by the processing framework.
          */
-        SvtRawDataProcessor(const std::string& name, Process& process); 
+        TrackingProcessor(const std::string& name, Process& process); 
 
         /** Destructor */
-        ~SvtRawDataProcessor(); 
+        ~TrackingProcessor(); 
 
         /**
          * Process the event and put new data products into it.
@@ -74,8 +79,19 @@ class SvtRawDataProcessor : public Processor {
     private: 
 
         /** Container to hold all TrackerHit objects. */
-        TClonesArray* rawhits_{nullptr}; 
+	std::vector<TrackerHit*> hits_{}; 
 
-}; // SvtRawDataProcessor
+        /** Container to hold all Track objects. */
+	std::vector<Track*> tracks_{};
 
-#endif // __SVT_RAW_DATA_PROCESSOR_H__
+        /** Container to hold all raw hits objecs. */
+        std::vector<RawSvtHit*> rawhits_{};
+        bool _debug{false};
+
+
+        
+
+
+}; // Tracking Processor
+
+#endif // __TRACKING_PROCESSOR_H__
