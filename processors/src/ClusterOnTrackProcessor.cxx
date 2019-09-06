@@ -34,6 +34,7 @@ bool ClusterOnTrackProcessor::process(IEvent* ievent) {
 void ClusterOnTrackProcessor::finalize() {
 
   clusterHistos->saveHistos(outF_,"");
+  outF_->Close();
 
 }
 
