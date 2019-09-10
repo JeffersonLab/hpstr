@@ -1,4 +1,5 @@
 #include "RefittedTracksProcessor.h"
+#include <iomanip>
 
 RefittedTracksProcessor::RefittedTracksProcessor(const std::string& name, Process& process)
   : Processor(name, process) { 
@@ -136,15 +137,19 @@ bool RefittedTracksProcessor::process(IEvent* ievent) {
 
     //Build the navigator
     UTIL::LCRelationNavigator* refitted_tracks_nav = new UTIL::LCRelationNavigator(refitted_tracks_rel);
-
-    //Get the list of data
-    EVENT::LCObjectVec refitted_tracks_list = refitted_tracks_nav -> getRelatedFromObjects(lc_track);
-
-    //print the size!
-    //std::cout<<"For track: "<<itrack<<" refitted_tracks_list size:"<<refitted_tracks_list.size()<<std::endl;
-					
     
 
+    //Get the list of data
+    EVENT::LCObjectVec refitted_tracks_list = refitted_tracks_nav -> getRelatedToObjects(lc_track);
+
+    std::cout<< std::fixed << std::setw( 11 ) << std::setprecision( 6 )<<std::endl;
+    std::cout<<"                             D0"<<"   Phi   "<<"   Omega   "<<"   TanLambda   "<<"   Z0   "<<std::endl;
+    std::cout<<"Track params:           "<<lc_track->getD0()<<" " <<lc_track->getPhi()<<" "<<lc_track->getOmega()<<" "<<lc_track->getTanLambda()<<" "<<lc_track->getZ0()<<std::endl;
+    for (int irtrk = 0; irtrk < refitted_tracks_list.size(); irtrk++) {
+      EVENT::Track* rfit_track = static_cast<EVENT::Track*>(refitted_tracks_list.at(irtrk));
+      std::cout<<"Refitted tracks params: "<<rfit_track->getD0()<<" " << rfit_track->getPhi()<<" "<<rfit_track->getOmega()<<" "<<rfit_track->getTanLambda()<<" "<<rfit_track->getZ0()<<std::endl;
+    }
+    
   }//Loop on tracks
   
   
