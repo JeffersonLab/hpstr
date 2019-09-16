@@ -13,7 +13,7 @@ void ClusterOnTrackProcessor::initialize(TTree* tree) {
   //TODO Change this.
   tree_->SetBranchAddress("GBLTracks",&tracks_,&btracks_);
   //TODO Change this.
-  outF_ = new TFile("outputFile.root","recreate");
+  //outF_ = new TFile("outputFile.root","recreate");
   
 }
 
@@ -34,7 +34,7 @@ bool ClusterOnTrackProcessor::process(IEvent* ievent) {
 void ClusterOnTrackProcessor::finalize() {
 
   clusterHistos->saveHistos(outF_,"");
-  outF_->Close();
+  //outF_->Close();
 
 }
 

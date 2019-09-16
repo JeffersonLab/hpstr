@@ -22,7 +22,8 @@ void HpsEventFile::setupEvent(IEvent* ievent) {
 }
 
 void HpsEventFile::close() {
-  
+  rootfile_->cd();
+  rootfile_->Close();
   ofile_->cd();
   ofile_->Close();
   
