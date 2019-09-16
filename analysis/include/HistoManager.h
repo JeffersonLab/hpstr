@@ -70,9 +70,11 @@ class HistoManager {
   
   virtual void GetHistosFromFile(TFile* inFile, const std::string& name,const std::string& folder = "");
 
-  virtual void saveHistos(TFile* outF,std::string folder);
+  virtual void saveHistos(TFile* outF = nullptr,std::string folder = "");
   
   virtual void sumw2();
+  
+  void debugMode(bool debug) {debug_ = debug;}
   
  protected:
   
@@ -89,7 +91,7 @@ class HistoManager {
   std::map<std::string, TH3F*> histos3d;
   typedef std::map<std::string, TH3F*>::iterator it3d;
   
-  
+  bool debug_{false};
   
 };
 

@@ -29,15 +29,23 @@ void ClusterHistos::Define1DHistos() {
 
 void ClusterHistos::Define2DHistos() {
   std::string h_name = "";
-  histos2d[m_name+"_charge_vs_gx"] = plot2D(m_name+"_charge_vs_gx",
+  histos2d[m_name+"_charge_L0_top_vs_gx"] = plot2D(m_name+"_charge_L0_top_vs_gx",
 					      "Global X [mm] ",100,0,100,
 					      "edep",100,0,10000);
   int nbins = 1000;
-  float pitch = 0.055;
+  float pitch = 0.050;
   
-  histos2d[m_name+"_charge_vs_gy"] = plot2D(m_name+"_charge_vs_gy",
-					    "Gloabl Y [mm]",nbins,0.750,(nbins+1)*0.055,
-					    "edep",100,0,10000);
+  histos2d[m_name+"_charge_L0_top_vs_gy"] = plot2D(m_name+"_charge_L0_top_vs_gy",
+						   "Global Y [mm]",nbins,0.700,(nbins+1)*pitch,
+						   "edep",100,0,10000);
+
+
+  histos2d[m_name+"_charge_L0_bottom_vs_gx"] = plot2D(m_name+"_charge_L0_bottom_vs_gx",
+						      "Global X [mm] ",100,0,100,
+						      "edep",100,0,10000);
+  histos2d[m_name+"_charge_L0_top_vs_gy"] = plot2D(m_name+"_charge_L0_bottom_vs_gy",
+						   "Global Y [mm]",nbins,0.700,(nbins+1)*pitch,
+						   "edep",100,0,10000);
   
   for (unsigned int iv = 0 ; iv < volumes.size(); ++iv) {
     for (unsigned int ily = 0; ily < layers.size(); ++ily) {
@@ -136,6 +144,14 @@ void ClusterHistos::FillHistograms(TrackerHit* hit,float weight) {
   //1D
   //histos1d[m_name+"_charge"]->Fill(hit->getCharge(),weight);
   //2D
-  //histos2d[m_name+"_charge_vs_gx"]->Fill(hit->getGlobalX(),hit->getCharge(),weight);
-  //histos2d[m_name+"_charge_vs_gy"]->Fill(hit->getGlobalY(),hit->getCharge(),weight);
+  if (hit->getGlobalZ() < 50 && hit->getGlobalZ() > 40) {
+    histos2d[m_name+"_charge_L0_top_vs_gx"]->Fill(hit->getGlobalX(),hit->getCharge(),weight);
+    histos2d[m_name+"_charge_L0_top_vs_gy"]->Fill(hit->getGlobalY(),hit->getCharge(),weight);
+  }
+
+  if (hit->getGlobalZ() < 60 && hit->getGlobalZ() > 55) {
+    histos2d[m_name+"_charge_L0_bottom_vs_gx"]->Fill(hit->getGlobalX(),hit->getCharge(),weight);
+    histos2d[m_name+"_charge_L0_bottom_vs_gy"]->Fill(hit->getGlobalY(),hit->getCharge(),weight);
+  }
+  
 }
