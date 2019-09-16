@@ -167,7 +167,8 @@ void HistoManager::sumw2() {
 
 void HistoManager::saveHistos(TFile* outF,std::string folder) {
 
-  outF->cd();
+  if (outF)
+    outF->cd();
   TDirectoryFile* dir = 0;
   
   if (!folder.empty()) {
