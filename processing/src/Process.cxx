@@ -41,6 +41,9 @@ void Process::runOnRoot() {
       //Pass to next file
       ++cfile;
       // Finalize all modules
+
+      //Select the output file for storing the results of the processors.
+      file->resetOutputFileDir();
       for (auto module : sequence_) {
 	//TODO:Change the finalize method
 	module->finalize();
