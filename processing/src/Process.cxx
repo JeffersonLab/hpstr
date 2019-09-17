@@ -34,8 +34,6 @@ void Process::runOnRoot() {
 	//In this way if the processing fails (like an event doesn't pass the selection, the other modules aren't run on that event)
 	for (auto module : sequence_) {
 	  module->process(&event);
-	  //if (!module->process(&event))
-	  //break;
 	}
 	//event.Clear();
 	++n_events_processed;
@@ -43,6 +41,9 @@ void Process::runOnRoot() {
       //Pass to next file
       ++cfile;
       // Finalize all modules
+
+      //Select the output file for storing the results of the processors.
+      file->resetOutputFileDir();
       for (auto module : sequence_) {
 	//TODO:Change the finalize method
 	module->finalize();
@@ -101,8 +102,10 @@ void Process::run() {
                 if (n_events_processed%1000 == 0)
                     std::cout << "---- [ hpstr ][ Process ]: Event: " << n_events_processed << std::endl;
                 event.Clear(); 
-                for (auto module : sequence_) { 
-                    module->process(&event); 
+                for (auto module : sequence_) {
+		  //TODO: actually pass the flag to the filling of the tree
+		  if (!module->process(&event))
+		    break;
                 }
                 ++n_events_processed;
             }

@@ -36,6 +36,9 @@
 #include "Processor.h"
 #include "Track.h"
 #include "Event.h"
+#include "TrackHistos.h"
+#include "TrackerHit.h"
+#include "RawSvtHit.h"
 
 // Forward declarations
 class TTree; 
@@ -82,9 +85,18 @@ class RefittedTracksProcessor : public Processor {
         /** Container to hold all Track objects. */
 	std::vector<Track*> refit_tracks_{};
         
-        bool _debug{false};
+        /** Container to hold the hits on track */
+	std::vector<TrackerHit*> hits_{};
 
+	/** Container to hold the raw hits */
+	std::vector<RawSvtHit*> raw_hits_{};
 
+	bool _debug{false};
+
+	TrackHistos* _OriginalTrkHistos;
+	TrackHistos* _RefitTrkHistos;
+	TrackHistos* _RefitTrkHistos_chi2cut;
+	TrackHistos* _RefitTrkHistos_z0cut;
         
 
 
