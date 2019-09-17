@@ -16,12 +16,35 @@ void TrackingProcessor::initialize(TTree* tree) {
 }
 
 bool TrackingProcessor::process(IEvent* ievent) {
+  
+  
+  //Clean up
+  if (tracks_.size() > 0 ) {
+    for (std::vector<Track *>::iterator it = tracks_.begin(); it != tracks_.end(); ++it) {
+      delete *it;
+    }
+    tracks_.clear();
+  }
+  
+  if (hits_.size() > 0) {
+    for (std::vector<TrackerHit *>::iterator it = hits_.begin(); it != hits_.end(); ++it) {
+      delete *it;
+    }
+    hits_.clear();
+  }
 
-
+  if (rawhits_.size() > 0) {
+    for (std::vector<RawSvtHit *>::iterator it = rawhits_.begin(); it != rawhits_.end(); ++it) {
+      delete *it;
+    }
+    rawhits_.clear();
+  }
+  
+  
   tracks_.clear();
   hits_.clear();
   rawhits_.clear();
-  
+    
   Event* event = static_cast<Event*> (ievent);
   // Get the collection of 3D hits from the LCIO event. If no such collection 
   // exist, a DataNotAvailableException is thrown
@@ -40,8 +63,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
     {
       raw_svt_hit_fits = event->getLCCollection(Collections::RAW_SVT_HIT_FITS); 
       // Heap an LCRelation navigator which will allow faster access 
-      rawTracker_hit_fits_nav = new UTIL::LCRelationNavigator(raw_svt_hit_fits);
-      
+      rawTracker_hit_fits_nav = new UTIL::LCRelationNavigator(raw_svt_hit_fits);     
     }
   
   // Get all track collections from the event
@@ -230,25 +252,26 @@ bool TrackingProcessor::process(IEvent* ievent) {
 	rawHit->setADCs(hit_adcs);
 
 	if (hasFits)
-        {
-            // Get the list of fit params associated with the raw tracker hit
-            EVENT::LCObjectVec rawTracker_hit_fits_list
-                = rawTracker_hit_fits_nav->getRelatedToObjects(rawTracker_hit);
-
+	  {
+	    // Get the list of fit params associated with the raw tracker hit
+	    EVENT::LCObjectVec rawTracker_hit_fits_list
+	      = rawTracker_hit_fits_nav->getRelatedToObjects(rawTracker_hit);
+	    
             // Get the list SVTFittedRawTrackerHit GenericObject associated with the SVTRawTrackerHit
             IMPL::LCGenericObjectImpl* hit_fit_param
-                = static_cast<IMPL::LCGenericObjectImpl*>(rawTracker_hit_fits_list.at(0));
-
+	      = static_cast<IMPL::LCGenericObjectImpl*>(rawTracker_hit_fits_list.at(0));
+	    
             double fit_params[5] = { 
-                (double)hit_fit_param->getDoubleVal(0), 
-                (double)hit_fit_param->getDoubleVal(1), 
+	      (double)hit_fit_param->getDoubleVal(0), 
+	      (double)hit_fit_param->getDoubleVal(1), 
                 (double)hit_fit_param->getDoubleVal(2), 
-                (double)hit_fit_param->getDoubleVal(3), 
-                (double)hit_fit_param->getDoubleVal(4)
+	      (double)hit_fit_param->getDoubleVal(3), 
+	      (double)hit_fit_param->getDoubleVal(4)
             };
-
+	    
             rawHit->setFit(fit_params);
-        }
+	    
+	  }
 	
 	tracker_hit->addRawHit(rawHit);
 	rawhits_.push_back(rawHit);
@@ -265,12 +288,14 @@ bool TrackingProcessor::process(IEvent* ievent) {
     tracks_.push_back(track);
   }// tracks
   
-
+  //delete
+  if (rawTracker_hit_fits_nav) {
+    delete rawTracker_hit_fits_nav; rawTracker_hit_fits_nav = nullptr;}
+  
   //event->addCollection("TracksInfo",   &tracks_);
   //event->addCollection("TrackerHitsInfo", &hits_); 
   //event->addCollection("TrackerHitsRawInfo",     &rawhits_);
   
-
   return true;
 }
 
