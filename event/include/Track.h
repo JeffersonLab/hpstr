@@ -21,6 +21,11 @@
 #include <TRefArray.h>
 #include <TRef.h>
 
+//TODO static?
+namespace TRACKINFO {
+  enum STRATEGY  {MATCH = 0, S345, S456, S123C4, S123C5, GBL};
+}
+
 class Track : public TObject {
 
     public:
@@ -40,14 +45,13 @@ class Track : public TObject {
          * @param hit : A TrackerHit object
          */
         void addHit(TObject* hit); 
-
-        /** @return A reference to the hits associated with this track. */
+	
+        /** 
+	 * @return A reference to the hits associated with this track. 
+	 */
         TRefArray* getSvtHits() const { return tracker_hits_; };
 
-        /** @return Number of 3D hits associated with this track */
-        int getNSvtHits() const { return n_hits_;}
-
-        /**
+	/**
          * Set the track parameters.
          *
          * @param d0 Distance of closest approach to the reference point.
@@ -67,6 +71,17 @@ class Track : public TObject {
         /** @return The track parameters. */ 
         std::vector<double> getTrackParameters(); 
 
+
+	double getD0       () const {return d0_;};
+	double getPhi      () const {return phi0_;};
+	double getOmega    () const {return omega_;};
+	double getTanLambda() const {return tan_lambda_;};
+	double getZ0       () const {return z0_;};
+	
+
+	void setNdf(const float ndf) {ndf_ = ndf;};
+	double getNdf() const {return ndf_;};
+
         /**
          * Set the chi^2 of the fit to the track.
          *
@@ -77,6 +92,15 @@ class Track : public TObject {
         /** @return the chi^2 of the fit to the track. */
         double getChi2() const { return chi2_; };
 
+	/** @return the chi^2 / ndf of the fit to the track. */
+        double getChi2Ndf() const { 
+	  //avoid check for 0
+	  if (ndf_ > 1e-6) 
+	    return chi2_;
+	  else  
+	    return -999;
+	};
+	
         /**
          * Set the isolation variable of the given layer.
          *
@@ -145,7 +169,23 @@ class Track : public TObject {
         /** @return The track type. */
         int getType() const { return type_; }; 
 
-
+	/** @return The track decoded type: GSSSSM. */
+	
+	//bit1
+	bool is345Seed     () const  { return   ((type_  >> 1) & 0x1);}
+	
+	bool is456Seed     () const  { return   ((type_  >> 2) & 0x1);}
+	
+	bool is123SeedC4   () const  { return   ((type_  >> 3) & 0x1);}
+	
+	bool is123SeedC5   () const  { return   ((type_  >> 4) & 0x1);}
+	
+	bool isMatchedTrack() const  { return    (type_ & 0x1);}
+	
+	bool isGBLTrack    () const  { return   ((type_ >> 5)  & 0x1);}
+	
+	bool isStrategy(TRACKINFO::STRATEGY strategy) {return (type_ >> strategy) & 0x1;};
+	
         /** 
          * Set the track charge. 
          *
@@ -218,6 +258,22 @@ class Track : public TObject {
          */
         int getTrackerHitCount() const { return n_hits_; };
 
+	/** Set number of shared 3D hits */
+	void setNShared(const int nShared) { nShared_ = nShared;};
+
+	int getNShared() const {return nShared_;};
+
+	void setSharedLy0(const bool isShared) {SharedLy0_ = isShared;};
+	void setSharedLy1(const bool isShared) {SharedLy1_ = isShared;};
+
+	bool getSharedLy0() const {return SharedLy0_;};
+	bool getSharedLy1() const {return SharedLy1_;};
+	
+
+	//TODO doc
+
+	void Print (Option_t *option="") const;
+	
     private:
 
         /** Reference to the 3D hits associated with this track. */
@@ -268,6 +324,9 @@ class Track : public TObject {
         /** The chi^2 of the track fit. */ 
         double chi2_{-999};
 
+	/** The ndfs of the track fit. */
+	double ndf_{0.};
+
         /** 
          * The time of the track.  This is currently the average time of all
          * hits composing the track.
@@ -295,8 +354,18 @@ class Track : public TObject {
         double pz_{-9999};
 
         /** Track charge. */
-        int charge_{0}; 
+        int charge_{0};
 
+	/** N Shared hits. */
+	int nShared_{0};
+
+	/** Has Ly0 Shared hits. */
+	bool SharedLy0_{false};
+
+	/** Has Ly1 Shared hits. */
+	bool SharedLy1_{false};
+
+	
         ClassDef(Track, 1);
 }; // Track
 

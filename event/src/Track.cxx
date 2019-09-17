@@ -58,3 +58,9 @@ void Track::addHit(TObject* hit) {
     ++n_hits_; 
     tracker_hits_->Add(hit); 
 }
+
+void Track::Print (Option_t *option) const {
+  printf("d0     Phi     Omega     TanLambda     Z0     time     chi2\n");
+  printf("% 6.4f  % 6.4f  % 6.4f  % 6.4f  % 6.4f  % 6.4f  % 6.4f\n",d0_,phi0_,omega_,tan_lambda_,z0_,track_time_,chi2_);
+  printf("type: %d\n", type_);
+}
