@@ -3,9 +3,14 @@
 
 #include "TFile.h"
 #include "HistoManager.h"
+#include "TGraphErrors.h"
+#include "TKey.h"
+#include "TList.h"
 
 #include "TrackerHit.h"
 #include "RawSvtHit.h"
+
+#include "ModuleMapper.h"
 
 #include <string>
 
@@ -27,18 +32,36 @@ class ClusterHistos : public HistoManager{
   void FillHistograms(TrackerHit* hit,float weight = 1.);
   //void BuildAxesMap();
   
+  void setBaselineFitsDir(const std::string& baselineFits) {baselineFits_ = baselineFits;};
+  bool LoadBaselineHistos(const std::string& baselineRun);
+  
+  //void setBaselineFits(const std::string& baselineFits){baselineFits_ = baselineFits;};
+  //std::string getBaselineFits const () {return baselineFits_;};
+  
 
  private:
   
-  std::vector<std::string> layers{"ly0","ly1","ly2","ly3","ly4","ly5","ly6"};
-  std::vector<std::string> volumes{"top","bottom"};
-  std::vector<std::string> sides{"axial","stereo"};
+  std::vector<std::string> layers{"L0","L1","L2","L3","L4","L5","L6"};
+  std::vector<std::string> volumes{"T","B"};
+  std::vector<std::string> types{"axial","stereo"};
+  std::vector<std::string> side{"ele","pos"};
   std::vector<std::string> variables{"charge","cluSize"};
+  
+  std::vector<std::string> half_module_names{};
+
 
   std::map<std::string, int>    cluSizeMap;
   std::map<std::string, double> chargeMap;
+  std::map<std::string, double> chargeCorrectedMap;
   std::map<std::string, double> cluPositionMap;
   
+  std::string baselineFits_{"/nfs/slac/g/hps3/svtTests/jlabSystem/baselines/fits/"};
+  std::string baselineRun_{""};
+
+  std::map<std::string, TGraphErrors*> baselineGraphs;
+
+  //TODO clean this
+  ModuleMapper *mmapper_;
   
 };
 
