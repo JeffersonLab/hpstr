@@ -4,6 +4,34 @@
 #include "TClass.h"
 
 
+HistoManager::~HistoManager() {
+  
+  std::cout<<"Cleaning up HistoManager"<<std::endl;
+  
+  for (it1d it = histos1d.begin(); it!=histos1d.end(); ++it) {
+    if (it->second) {
+      delete (it->second);
+      (it->second) = nullptr;
+    }
+  }
+  histos1d.clear();
+  
+  for (it2d it = histos2d.begin(); it!=histos2d.end(); ++it) {
+    if (it->second) {
+      delete (it->second);
+      (it->second) = nullptr;
+    }
+  }
+  histos2d.clear();
+  
+  for (it3d it = histos3d.begin(); it!=histos3d.end(); ++it) {
+    if (it->second) {
+      delete (it->second);
+      (it->second) = nullptr;
+    }
+  }
+  histos3d.clear();
+}
 
 
 void HistoManager::GetHistosFromFile(TFile* inFile, const std::string& name, const std::string& folder) {

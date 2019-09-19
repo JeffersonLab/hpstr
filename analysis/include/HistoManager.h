@@ -16,8 +16,8 @@ class HistoManager {
   HistoManager() {m_name = "default";}
   HistoManager(const std::string& inputName) {m_name=inputName;};
 
-  //Todo add proper delete!!
-  virtual ~HistoManager(){};
+  
+  virtual ~HistoManager();
 
   TH3F* get3dHisto(const std::string& str) {
     return histos3d[str];
