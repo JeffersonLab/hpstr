@@ -2,13 +2,43 @@
 #include <math.h>
 #include "TCanvas.h"
 
+ClusterHistos::ClusterHistos(const std::string& inputName):HistoManager(inputName) {
+  m_name = inputName;
+  mmapper_ = new ModuleMapper(2019);
+}
+
+ClusterHistos::~ClusterHistos() {
+  
+  std::cout<<"Cleaning ClusterHistos"<<std::endl;
+  
+  //TODO understand why this crashes
+  /*
+  if (mmapper_) {
+    delete mmapper_; 
+    mmapper_=nullptr;
+  }
+  */
+  
+  cluSizeMap.clear();
+  chargeMap.clear();
+  chargeCorrectedMap.clear();
+  cluPositionMap.clear();
+  for (std::map<std::string, TGraphErrors*>::iterator it = baselineGraphs.begin(); 
+       it!=baselineGraphs.end(); ++it) {
+    if (it->second) {
+      delete (it->second);
+      it->second = nullptr;
+    }
+  }
+  baselineGraphs.clear();
+}
+
+
 void ClusterHistos::Define1DHistos() {
 
   //TODO improve this naming scheme
   std::string h_name = "";
-  
-  mmapper_ = new ModuleMapper(2019);
-
+ 
   //Cluster position
   histos1d[m_name+"_gz"] = plot1D(m_name+"_gz","Global Z [mm]",20000,-1000,2000);
   
