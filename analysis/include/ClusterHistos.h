@@ -55,7 +55,7 @@ class ClusterHistos : public HistoManager{
   std::map<std::string, double> chargeCorrectedMap;
   std::map<std::string, double> cluPositionMap;
   
-  std::string baselineFits_{"/nfs/slac/g/hps3/svtTests/jlabSystem/baselines/fits/"};
+  std::string baselineFits_{"/nfs/hps3/svtTests/jlabSystem/baselines/fits/"};
   std::string baselineRun_{""};
 
   std::map<std::string, TGraphErrors*> baselineGraphs;
