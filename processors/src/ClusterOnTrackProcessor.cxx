@@ -7,6 +7,10 @@ ClusterOnTrackProcessor::~ClusterOnTrackProcessor(){}
 
 void ClusterOnTrackProcessor::initialize(TTree* tree) {
   clusterHistos = new ClusterHistos("hitOnTrack_2D");
+  
+  if (!clusterHistos->LoadBaselineHistos("010458"))
+    std::cout<<"WARNING: baselines not loaded in Cluster on Track histos."<<std::endl;
+  
   clusterHistos->Define1DHistos();
   clusterHistos->Define2DHistos();
   tree_= tree;
@@ -35,7 +39,8 @@ void ClusterOnTrackProcessor::finalize() {
 
   clusterHistos->saveHistos(outF_,"");
   //outF_->Close();
-
+  delete clusterHistos;
+  clusterHistos = nullptr;
 }
 
 DECLARE_PROCESSOR(ClusterOnTrackProcessor);
