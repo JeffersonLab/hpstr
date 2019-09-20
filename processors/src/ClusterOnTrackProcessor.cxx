@@ -5,11 +5,22 @@ ClusterOnTrackProcessor::ClusterOnTrackProcessor(const std::string& name, Proces
 //TODO CHECK THIS DESTRUCTOR
 ClusterOnTrackProcessor::~ClusterOnTrackProcessor(){}
 
+
+void ClusterOnTrackProcessor::configure(const ParameterSet& parameters) {
+  
+  baselineFits_ = parameters.getString("BaselineFits");
+  baselineRun_  = parameters.getString("BaselineRun");
+  std::cout<<"Configured: "<<baselineFits_<<" "<<baselineRun_<<std::endl;
+  
+}
+
 void ClusterOnTrackProcessor::initialize(TTree* tree) {
   clusterHistos = new ClusterHistos("hitOnTrack_2D");
   
-  if (!clusterHistos->LoadBaselineHistos("010458"))
-    std::cout<<"WARNING: baselines not loaded in Cluster on Track histos."<<std::endl;
+  if (!baselineFits_.empty() && !baselineRun_.empty()) {
+    clusterHistos->setBaselineFitsDir(baselineFits_);
+    if (!clusterHistos->LoadBaselineHistos(baselineRun_))
+      std::cout<<"WARNING: baselines not loaded in Cluster on Track histos."<<std::endl;}
   
   clusterHistos->Define1DHistos();
   clusterHistos->Define2DHistos();

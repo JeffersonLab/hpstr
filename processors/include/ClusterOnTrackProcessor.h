@@ -29,10 +29,22 @@ class ClusterOnTrackProcessor : public Processor {
   virtual void initialize(TTree* tree);
 
   virtual void finalize();
+  
+  virtual void configure(const ParameterSet& parameters);
+  
+  void setBaselineFits(const std::string& baselineFits,const std::string& baselineRun){
+    baselineFits_ = baselineFits;
+    baselineRun_  = baselineRun;
+  };
+  
 
  private:
-
+  
   ClusterHistos* clusterHistos;
+  
+  std::string baselineFits_{""};
+  std::string baselineRun_{""};
+
   //TODO Change this to be held from HPSEvent
   TTree* tree_;
   std::vector<Track*> *tracks_{};
