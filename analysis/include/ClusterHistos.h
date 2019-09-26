@@ -18,9 +18,8 @@
 class ClusterHistos : public HistoManager{
   
  public:
- ClusterHistos(const std::string& inputName):HistoManager(inputName)
-  {m_name = inputName;
-  }
+  ClusterHistos(const std::string& inputName);
+  ~ClusterHistos();
 
   virtual void Define3DHistos(){};
   virtual void Define2DHistos();
@@ -41,10 +40,6 @@ class ClusterHistos : public HistoManager{
 
  private:
   
-  std::vector<std::string> layers{"L0","L1","L2","L3","L4","L5","L6"};
-  std::vector<std::string> volumes{"T","B"};
-  std::vector<std::string> types{"axial","stereo"};
-  std::vector<std::string> side{"ele","pos"};
   std::vector<std::string> variables{"charge","cluSize"};
   
   std::vector<std::string> half_module_names{};
@@ -61,8 +56,7 @@ class ClusterHistos : public HistoManager{
   std::map<std::string, TGraphErrors*> baselineGraphs;
 
   //TODO clean this
-  ModuleMapper *mmapper_;
-  
+  ModuleMapper *mmapper_{nullptr};
 };
 
 
