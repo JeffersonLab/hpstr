@@ -58,31 +58,44 @@ void ClusterHistos::Define1DHistos() {
 
 void ClusterHistos::Define2DHistos() {
   std::string h_name = "";
-  histos2d[m_name+"_charge_L0_top_vs_gx"] = plot2D(m_name+"_charge_L0_top_vs_gx",
-						   "Global X [mm] ",200,-100,100,
-						   "edep",500,0,10000);
   int nbins = 1000;
-  float pitch = 0.050;
+  float pitch = 0.055;
   float startY = 0.700;
   
   histos2d[m_name+"_charge_L0T_vs_gy"] = plot2D(m_name+"_charge_L0T_vs_gy",
 						"Global Y [mm]",nbins,startY,(nbins+1)*pitch,
-						"edep",100,0,10000);
+						"edep",100,0,1e-5);
   
   
   histos2d[m_name+"_charge_L0T_vs_gx"] = plot2D(m_name+"_charge_L0T_vs_gx",
-						"Global X [mm] ",200,-100,100,
-						"edep",100,0,10000);
+						"Global X [mm] ",80,-20,20,
+						"edep",100,0,1e-5);
   
   
   histos2d[m_name+"_charge_L0B_vs_gy"] = plot2D(m_name+"_charge_L0B_vs_gy",
 						"Global Y [mm]",nbins,startY,(nbins+1)*pitch,
-						"edep",100,0,10000);
+						"edep",100,0,1e-5);
   
   
   histos2d[m_name+"_charge_L0B_vs_gx"] = plot2D(m_name+"_charge_L0B_vs_gx",
-						"Global X [mm] ",200,-100,100,
-						"edep",100,0,10000);
+						"Global X [mm] ",80,-20,20,
+						"edep",100,0,1e-5);
+
+
+  // location of the hits
+
+  histos2d[m_name+"_gy_L0T_vs_gx"] = plot2D(m_name+"_gy_L0T_vs_gx",
+					    "Global X [mm] ",80,-20,20,
+					    "Global Y [mm]",100,0,5);
+  
+  
+  
+  histos2d[m_name+"_gy_L0B_vs_gx"] = plot2D(m_name+"_gy_L0B_vs_gx",
+					    "Global X [mm] ",80,-20,20,
+					    "Global Y [mm]",100,0,5);
+					    
+  
+  
   
 
   //bin size must be multiple of 20 adc counts
@@ -160,7 +173,7 @@ bool ClusterHistos::LoadBaselineHistos(const std::string& baselineRun) {
   //I assume that there are only TGraphErrors
   //TObject* obj;
   
-  while ( key = (TKey*)next()) {
+  while ( (key = (TKey*)next())) {
     //obj = key->ReadObj();
     //if (strcmp(obj->IsA()->GetName(),"TGraphErrors") != 0 )
     //continue;
@@ -226,7 +239,8 @@ void ClusterHistos::FillHistograms(TrackerHit* hit,float weight) {
     double strip    = -999;
     
     //2D cluster corrected charge
-    baselineGraphs[mmapper_->getHwFromString(key)]->GetPoint(rawhit->getStrip(),strip,baseline);
+    if (baselineGraphs[mmapper_->getHwFromString(key)])
+      baselineGraphs[mmapper_->getHwFromString(key)]->GetPoint(rawhit->getStrip(),strip,baseline);
     
     float sample0 = baseline - rawhit->getADCs()[0];
     float sample1 = baseline - rawhit->getADCs()[1]; 
@@ -298,11 +312,14 @@ void ClusterHistos::FillHistograms(TrackerHit* hit,float weight) {
   //histos1d[m_name+"_charge"]->Fill(hit->getCharge(),weight);
   //2D
   if (hit->getGlobalZ() < 50 && hit->getGlobalZ() > 40) {
+    histos2d[m_name+"_gy_L0T_vs_gx"]->Fill(hit->getGlobalX(),fabs(hit->getGlobalY()),weight);
     histos2d[m_name+"_charge_L0T_vs_gx"]->Fill(hit->getGlobalX(),hit->getCharge(),weight);
     histos2d[m_name+"_charge_L0T_vs_gy"]->Fill(fabs(hit->getGlobalY()),hit->getCharge(),weight);
+    
   }
   
   if (hit->getGlobalZ() < 60 && hit->getGlobalZ() > 55) {
+    histos2d[m_name+"_gy_L0B_vs_gx"]->Fill(hit->getGlobalX(),fabs(hit->getGlobalY()),weight);
     histos2d[m_name+"_charge_L0B_vs_gx"]->Fill(hit->getGlobalX(),hit->getCharge(),weight);
     histos2d[m_name+"_charge_L0B_vs_gy"]->Fill(fabs(hit->getGlobalY()),hit->getCharge(),weight);
   }
