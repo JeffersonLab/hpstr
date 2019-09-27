@@ -174,6 +174,9 @@ RawSvtHit* utils::buildRawHit(EVENT::TrackerRawData* rawTracker_hit,
     };
     
     rawHit->setFit(fit_params);
+    if (rawTracker_hit_fits_nav)
+      delete rawTracker_hit_fits_nav;
+    rawTracker_hit_fits_nav = nullptr;
   }//raw svt hits
   
   return rawHit;
@@ -216,7 +219,7 @@ TrackerHit* utils::buildTrackerHit(IMPL::TrackerHitImpl* lc_tracker_hit) {
 
 bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit, 
 			      IMPL::TrackerHitImpl* lc_tracker_hit,
-			      EVENT::LCCollection* raw_svt_fits) {
+			      EVENT::LCCollection* raw_svt_fits, std::vector<RawSvtHit*>* rawHits) {
 
   if (!tracker_hit || !lc_tracker_hit)
     return false;
@@ -228,12 +231,12 @@ bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit,
   int layer = -1;
   
   //Get the Raw content of the tracker hits
-  EVENT::LCObjectVec rawHits             = lc_tracker_hit->getRawHits();  
+  EVENT::LCObjectVec lc_rawHits             = lc_tracker_hit->getRawHits();  
   
-  for (unsigned int irh = 0 ; irh < rawHits.size(); ++irh) {
+  for (unsigned int irh = 0 ; irh < lc_rawHits.size(); ++irh) {
     
     //TODO useless to build all of it?
-    RawSvtHit* rawHit = buildRawHit(static_cast<EVENT::TrackerRawData*>(rawHits.at(irh)),raw_svt_fits); 
+    RawSvtHit* rawHit = buildRawHit(static_cast<EVENT::TrackerRawData*>(lc_rawHits.at(irh)),raw_svt_fits); 
     rawcharge += rawHit->getAmp();
     int currentHitVolume = rawHit->getModule() % 2 ? 1 : 0;
     int currentHitLayer  = (rawHit->getLayer() - 1 ) / 2;
@@ -253,6 +256,8 @@ bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit,
     
     //TODO:: store only if asked
     tracker_hit->addRawHit(rawHit);
+    if (rawHits)
+      rawHits->push_back(rawHit);
     
   }
   
