@@ -11,6 +11,8 @@
 #include <UTIL/LCRelationNavigator.h>
 #include <UTIL/BitField64.h>
 
+#include <vector>
+
 //-----------//
 //   hpstr   //
 //-----------//
@@ -33,7 +35,8 @@ namespace utils {
   TrackerHit* buildTrackerHit(IMPL::TrackerHitImpl* lc_trackerHit);
   bool addRawInfoTo3dHit(TrackerHit* tracker_hit,
 			 IMPL::TrackerHitImpl* lc_tracker_hit,
-			 EVENT::LCCollection* raw_svt_fits);
+			 EVENT::LCCollection* raw_svt_fits,
+			 std::vector<RawSvtHit*>* rawHits = nullptr);
   
   
   bool isUsedByTrack(IMPL::TrackerHitImpl* lc_tracker_hit,
