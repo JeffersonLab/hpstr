@@ -73,6 +73,10 @@ class Process {
         /** Request that the processing finish with this event. */ 
         void requestFinish() { event_limit_=0; }
 
+        //TODO add a check on consistent extensions of the input files
+        /** Check if the input_files_ are rootFiles  */
+       bool processRootFiles();
+
     private:
 
         /** Reader used to parse either binary or EVIO files. */

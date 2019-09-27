@@ -12,6 +12,13 @@ Process::Process() {}
 
 //TODO Fix this better
 
+bool Process::processRootFiles() {
+  if ((input_files_[0]).find(".root") != std::string::npos)
+    return true;
+  
+  return false;
+}
+
 void Process::runOnRoot() {
   try {
     int n_events_processed = 0;
