@@ -5,5 +5,6 @@
 #include "EventHeader.h"
 #include "Particle.h"
 #include "Track.h"
+#include "Vertex.h"
 #include "TrackerHit.h"
 #include "RawSvtHit.h"
