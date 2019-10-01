@@ -59,6 +59,34 @@ namespace Collections {
 
     /** Name of RF hits collection. */
     constexpr const char* RF_HITS{"RFHits"};
+
+    /** There are three typical type of V0Candidates: BeamspotConstrained, TargetConstrained and Unconstrained */
+  
+    /** Base name of the V0Candidates collection. */
+    constexpr const char* V0CANDIDATES{"V0Candidates"};
+
+    /** Name of the BSC V0Candidates collection. */
+    constexpr const char* BSC_V0CANDIDATES{"BeamspotConstrainedV0Candidates"};
+
+    /** Name of the TC V0Candidates collection. */
+    constexpr const char* TC_V0CANDIDATES{"TargetConstrainedV0Candidates"};
+
+    /** Name of the UC V0Candidates collection. */
+    constexpr const char* UC_V0CANDIDATES{"UnConstrainedV0Candidates"};
+
+    /** Name of the V0Vertices collection. */
+    constexpr const char* V0VERTICES{"V0Vertices"};
+
+    /** Name of the BSC V0Vertices collection. */
+    constexpr const char* BSC_V0VERTICES{"BeamspotConstrainedV0Vertices"};
+
+    /** Name of the TC V0Candidates collection. */
+    constexpr const char* TC_V0Vertices{"TargetConstrainedV0Vertices"};
+
+    /** Name of the UC V0Candidates collection. */
+    constexpr const char* UC_V0VERTICES{"UnConstrainedV0Vertices"};
+   
 }
 
 #endif // _COLLECTION_H_
+
