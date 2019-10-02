@@ -57,6 +57,7 @@ void TriggerData::parseTriggerData(EVENT::LCGenericObject* trigger_data)
                         break;
                     default:
                         //std::cout << "At " << i << " invalid HPS type: " << type << " subtype: " << subtype << std::endl;
+                        break;
                 }
 
                 break;
@@ -65,6 +66,7 @@ void TriggerData::parseTriggerData(EVENT::LCGenericObject* trigger_data)
                 break;
             default:
                 //std::cout << i << "I was not expecting a VTP data type of " << type << std::endl;
+                break;
         }
         single0_ = 0;
         single1_ = 0;
