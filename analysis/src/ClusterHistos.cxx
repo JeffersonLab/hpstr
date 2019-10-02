@@ -85,14 +85,14 @@ void ClusterHistos::Define2DHistos() {
   // location of the hits
 
   histos2d[m_name+"_gy_L0T_vs_gx"] = plot2D(m_name+"_gy_L0T_vs_gx",
-					    "Global X [mm] ",80,-20,20,
-					    "Global Y [mm]",100,0,5);
+					    "Global X [mm] ",400,-20,20,
+					    "Global Y [mm]",200,0,5);
   
   
   
   histos2d[m_name+"_gy_L0B_vs_gx"] = plot2D(m_name+"_gy_L0B_vs_gx",
-					    "Global X [mm] ",80,-20,20,
-					    "Global Y [mm]",100,0,5);
+					    "Global X [mm] ",400,-20,20,
+					    "Global Y [mm]",200,0,5);
 					    
   
   
