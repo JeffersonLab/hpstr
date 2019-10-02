@@ -81,7 +81,7 @@ def MakeHistoListFromSameFile(infile,path,histoNames):
     return histolist    
 
 
-def InsertText(runNumber="",texts=[],line=0.87,xoffset=0.18,Atlas=True):
+def InsertText(runNumber="",texts=[],line=0.87,xoffset=0.18,Hps=True):
 
     
     newline = 0.06
@@ -91,7 +91,7 @@ def InsertText(runNumber="",texts=[],line=0.87,xoffset=0.18,Atlas=True):
     text.SetTextFont(42)
     text.SetTextSize(0.05)
     text.SetTextColor(kBlack)
-    if (Atlas):
+    if (Hps):
         text.DrawLatex(xoffset,line,'#bf{#it{HPS} Internal}')
     if runNumber:
         line=line-newline
@@ -110,89 +110,89 @@ def InsertText(runNumber="",texts=[],line=0.87,xoffset=0.18,Atlas=True):
 def SetStyle():
     gROOT.SetBatch(1)
 
-    atlasStyle= TStyle("ATLAS","Atlas style")
+    hpsStyle= TStyle("HPS","HPS style")
     
     # use plain black on white colors
     icol=0
-    atlasStyle.SetFrameBorderMode(icol)
-    atlasStyle.SetCanvasBorderMode(icol)
-    atlasStyle.SetPadBorderMode(icol)
-    atlasStyle.SetPadColor(icol)
-    atlasStyle.SetCanvasColor(icol)
-    atlasStyle.SetStatColor(icol)
-#atlasStyle.SetFillColor(icol)
+    hpsStyle.SetFrameBorderMode(icol)
+    hpsStyle.SetCanvasBorderMode(icol)
+    hpsStyle.SetPadBorderMode(icol)
+    hpsStyle.SetPadColor(icol)
+    hpsStyle.SetCanvasColor(icol)
+    hpsStyle.SetStatColor(icol)
+#hpsStyle.SetFillColor(icol)
     
 # set the paper & margin sizes
-    atlasStyle.SetPaperSize(20,26) 
-    atlasStyle.SetPadTopMargin(0.05)
-    atlasStyle.SetPadRightMargin(0.05)
-    atlasStyle.SetPadBottomMargin(0.18)
-    atlasStyle.SetPadLeftMargin(0.14)
+    hpsStyle.SetPaperSize(20,26) 
+    hpsStyle.SetPadTopMargin(0.05)
+    hpsStyle.SetPadRightMargin(0.05)
+    hpsStyle.SetPadBottomMargin(0.18)
+    hpsStyle.SetPadLeftMargin(0.14)
     
     # use large fonts
 #font=72
     font=42
     tsize=0.07
     tzsize = 0.055
-    atlasStyle.SetTextFont(font)
+    hpsStyle.SetTextFont(font)
 
     
-    atlasStyle.SetTextSize(tsize)
-    atlasStyle.SetLabelFont(font,"x")
-    atlasStyle.SetTitleFont(font,"x")
-    atlasStyle.SetLabelFont(font,"y")
-    atlasStyle.SetTitleFont(font,"y")
-    atlasStyle.SetLabelFont(font,"z")
-    atlasStyle.SetTitleFont(font,"z")
+    hpsStyle.SetTextSize(tsize)
+    hpsStyle.SetLabelFont(font,"x")
+    hpsStyle.SetTitleFont(font,"x")
+    hpsStyle.SetLabelFont(font,"y")
+    hpsStyle.SetTitleFont(font,"y")
+    hpsStyle.SetLabelFont(font,"z")
+    hpsStyle.SetTitleFont(font,"z")
     
-    atlasStyle.SetLabelSize(tsize,"x")
-    atlasStyle.SetTitleSize(tsize,"x")
-    atlasStyle.SetLabelSize(tsize,"y")
-    atlasStyle.SetTitleSize(tsize,"y")
-    atlasStyle.SetLabelSize(tzsize,"z")
-    atlasStyle.SetTitleSize(tzsize,"z")
+    hpsStyle.SetLabelSize(tsize,"x")
+    hpsStyle.SetTitleSize(tsize,"x")
+    hpsStyle.SetLabelSize(tsize,"y")
+    hpsStyle.SetTitleSize(tsize,"y")
+    hpsStyle.SetLabelSize(tzsize,"z")
+    hpsStyle.SetTitleSize(tzsize,"z")
 
-    atlasStyle.SetTitleOffset(0.8,"y")
-    atlasStyle.SetTitleOffset(1.3,"x")
+    hpsStyle.SetTitleOffset(0.8,"y")
+    hpsStyle.SetTitleOffset(1.3,"x")
     
     
 #use bold lines and markers
-    #atlasStyle.SetMarkerStyle(20)
-    atlasStyle.SetMarkerSize(1.0)
-    atlasStyle.SetHistLineWidth(3)
-    atlasStyle.SetLineStyleString(2,"[12 12]") # postscript dashes
+    #hpsStyle.SetMarkerStyle(20)
+    hpsStyle.SetMarkerSize(1.0)
+    hpsStyle.SetHistLineWidth(3)
+    hpsStyle.SetLineStyleString(2,"[12 12]") # postscript dashes
     
 #get rid of X error bars and y error bar caps
-#atlasStyle.SetErrorX(0.001)
+#hpsStyle.SetErrorX(0.001)
     
 #do not display any of the standard histogram decorations
-    atlasStyle.SetOptTitle(0)
-#atlasStyle.SetOptStat(1111)
-    atlasStyle.SetOptStat(0)
-#atlasStyle.SetOptFit(1111)
-    atlasStyle.SetOptFit(0)
+    hpsStyle.SetOptTitle(0)
+#hpsStyle.SetOptStat(1111)
+    hpsStyle.SetOptStat(0)
+#hpsStyle.SetOptFit(1111)
+    hpsStyle.SetOptFit(0)
     
 # put tick marks on top and RHS of plots
-    atlasStyle.SetPadTickX(1) 
-    atlasStyle.SetPadTickY(1)
+    hpsStyle.SetPadTickX(1) 
+    hpsStyle.SetPadTickY(1)
     
     gROOT.SetStyle("Plain")
 
 #gStyle.SetPadTickX(1)
 #gStyle.SetPadTickY(1)
-    gROOT.SetStyle("ATLAS")
+    gROOT.SetStyle("HPS")
     gROOT.ForceStyle() 
     gStyle.SetOptTitle(0)
     gStyle.SetOptStat(0) 
     gStyle.SetOptFit(0) 
 
 
-# overwrite atlas styles
-    atlasStyle.SetPadLeftMargin(0.14)
-    atlasStyle.SetPadRightMargin(0.06)    
-    atlasStyle.SetPadBottomMargin(0.11)     
-    atlasStyle.SetPadTopMargin(0.05) 
-    atlasStyle.SetFrameFillColor(0)
+# overwrite hps styles
+    hpsStyle.SetPadLeftMargin(0.14)
+    hpsStyle.SetPadRightMargin(0.06)    
+    hpsStyle.SetPadBottomMargin(0.11)     
+    hpsStyle.SetPadTopMargin(0.05) 
+    hpsStyle.SetFrameFillColor(0)
 
     NRGBs = 5;
     NCont = 255;

@@ -61,24 +61,17 @@ bool EventProcessor::process(IEvent* ievent) {
         EVENT::LCCollection* trigger_data 
             = static_cast<EVENT::LCCollection*>(event->getLCCollection(Collections::TRIGGER_BANK));
 
-        for (int itrigger = 0; itrigger < trigger_data->getNumberOfElements(); ++itrigger) { 
-       
-            EVENT::LCGenericObject* trigger_datum 
-                = static_cast<EVENT::LCGenericObject*>(trigger_data->getElementAt(itrigger));
+        EVENT::LCGenericObject* trigger_datum 
+            = static_cast<EVENT::LCGenericObject*>(trigger_data->getElementAt(0));
 
-            if (trigger_datum->getIntVal(0) == 0xe10a) { 
-          
-                TriggerData* tdata = new TriggerData(trigger_datum); 
-                header.setSingle0Trigger(static_cast<int>(tdata->isSingle0Trigger()));
-                header.setSingle1Trigger(static_cast<int>(tdata->isSingle1Trigger()));
-                header.setPair0Trigger(static_cast<int>(tdata->isPair0Trigger()));
-                header.setPair1Trigger(static_cast<int>(tdata->isPair1Trigger()));
-                header.setPulserTrigger(static_cast<int>(tdata->isPulserTrigger()));
+        TriggerData* tdata = new TriggerData(trigger_datum); 
+        header.setSingle0Trigger(static_cast<int>(tdata->isSingle0Trigger()));
+        header.setSingle1Trigger(static_cast<int>(tdata->isSingle1Trigger()));
+        header.setPair0Trigger(static_cast<int>(tdata->isPair0Trigger()));
+        header.setPair1Trigger(static_cast<int>(tdata->isPair1Trigger()));
+        header.setPulserTrigger(static_cast<int>(tdata->isPulserTrigger()));
 
-                delete tdata;
-                break;
-            }
-        }
+        delete tdata;
     } catch(EVENT::DataNotAvailableException e) {
         // It's fine if the event doesn't have a trigger bank.
     }
@@ -97,18 +90,18 @@ bool EventProcessor::process(IEvent* ievent) {
 
         // Loop over all the RF hits in the event and write them to the DST
         for (int ihit = 0; ihit < rf_hits->getNumberOfElements(); ++ihit) { 
-        
+
             // Get the RF hit from the event
             EVENT::LCGenericObject* rf_hit
                 = static_cast<EVENT::LCGenericObject*>(rf_hits->getElementAt(ihit));
-    
+
             // An RFHit GenericObject should only have two RF times
             if (rf_hit->getNDouble() != 2) { 
                 throw std::runtime_error("[ EventProcessor ]: The collection "
-                    + static_cast<std::string>(Collections::RF_HITS)
-                    + " has the wrong structure."); 
+                        + static_cast<std::string>(Collections::RF_HITS)
+                        + " has the wrong structure."); 
             }
-    
+
             // Write the RF times to the event
             for (int ichannel = 0; ichannel < rf_hit->getNDouble(); ++ichannel) { 
                 header.setRfTime(ichannel, rf_hit->getDoubleVal(ichannel));  
