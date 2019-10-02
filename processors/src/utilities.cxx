@@ -13,6 +13,32 @@ void utils::buildTrackCollection(std::vector<Track*>& tracks,
 
 */
 
+
+bool utils::hasCollection(EVENT::LCEvent* lc_event,const std::string& collection) {
+  
+  if (!lc_event || collection.empty())
+    return false;
+  
+  auto evColls = lc_event->getCollectionNames();
+  auto it = std::find(evColls->begin(),evColls->end(), collection);
+  if (it!=evColls->end()) 
+    return true;
+  return false;
+}
+
+
+Vertex* utils::buildVertex(EVENT::Vertex* lc_vertex) { 
+  
+  if (!lc_vertex) 
+    return nullptr;
+  
+  Vertex* vertex = new Vertex();
+  vertex->setChi2       (lc_vertex->getChi2());
+  vertex->setProbability(lc_vertex->getProbability());
+  
+  return vertex;
+}
+
 Track* utils::buildTrack(EVENT::Track* lc_track,
 			 EVENT::LCCollection* gbl_kink_data,
 			 EVENT::LCCollection* track_data) {

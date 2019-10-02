@@ -55,10 +55,20 @@ class Vertex : public TObject {
 
   void   setZ        (const double z) {z_ = z;};
   double getZ        () const {return z_;};
-
+  
+  /** Set the position of the vertex. If rotate is set to true, then position is defined in svt coordinates */
+  void     setPos    (const float* pos, bool rotate = false);
+  
+  /** Set the position from a TVector */
   void     setPos    (const TVector3& pos);
   TVector3 getPos    () const {return pos_;};
 
+  /** Vertex parameters depend on LCIO files. 
+   *  The available parameters are invMass, p1X, p2Y, p2X, p1Z, p2Z, p1Y, invMassError
+   */
+  
+  void setVtxParameters(float* parameters);
+   
   void        setType (const std::string& type) {type_ = type;};
   std::string getType() const {return type_;};
 
@@ -66,11 +76,16 @@ class Vertex : public TObject {
 
   int nTracks() const; 
 
-  //Returns the covariance matrix as a simple vector of values
+  /** Returns the covariance matrix as a simple vector of values */
   const std::vector<float>& covariance () const {return covariance_;};
   
-  //Sets the covariance matrix as a simple vector of values
+  /** Sets the covariance matrix as a simple vector of values
+   *  Covariance matrix of the position (stored as lower triangle matrix, i.e.
+   *  cov(xx),cov(y,x),cov(y,y) ).
+   */
+  
   void setCovariance( const std::vector<float>* vec);
+  
 
   void   setNdf     (const double ndf) {ndf_ = ndf;};
   double getNdf     () const {return ndf_;};
@@ -94,7 +109,10 @@ class Vertex : public TObject {
   double   getP2Y      () const {return p2y_;};
   double   getP2Z      () const {return p2z_;};
   TVector3 getP2       () const {return p2_;};
-  
+
+  float getInvMass     () const {return invM_;};
+  float getInvMassErr  () const {return invMerr_;};
+    
  private:
 
   double chi2_{-999};
@@ -113,6 +131,9 @@ class Vertex : public TObject {
 
   double p1z_{-999};
   double p2z_{-999};
+
+  float invM_{-999};
+  float invMerr_{-999};
   
   
   std::vector<float> covariance_{};
