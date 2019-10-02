@@ -59,6 +59,5 @@ void Vertex::setPos(const float* pos, bool rotate) {
     x_ = pos[1];
     y_ = pos[2];
     z_ = pos[0];
-  }
-  
+  }  
 }
