@@ -58,13 +58,19 @@ bool EventProcessor::process(IEvent* ievent) {
     header.setSvtEventHeaderState(lc_event->getParameters().getIntVal("svt_event_header_good"));
 
     try { 
-        EVENT::LCCollection* trigger_data 
-            = static_cast<EVENT::LCCollection*>(event->getLCCollection(Collections::TRIGGER_BANK));
+        EVENT::LCCollection* vtp_data 
+            = static_cast<EVENT::LCCollection*>(event->getLCCollection(Collections::VTP_BANK));
 
-        EVENT::LCGenericObject* trigger_datum 
-            = static_cast<EVENT::LCGenericObject*>(trigger_data->getElementAt(0));
+        EVENT::LCGenericObject* vtp_datum 
+            = static_cast<EVENT::LCGenericObject*>(vtp_data->getElementAt(0));
 
-        TriggerData* tdata = new TriggerData(trigger_datum); 
+        EVENT::LCCollection* ts_data 
+            = static_cast<EVENT::LCCollection*>(event->getLCCollection(Collections::TS_BANK));
+
+        EVENT::LCGenericObject* ts_datum 
+            = static_cast<EVENT::LCGenericObject*>(ts_data->getElementAt(0));
+
+        TriggerData* tdata = new TriggerData(vtp_datum, ts_datum); 
         header.setSingle0Trigger(static_cast<int>(tdata->isSingle0Trigger()));
         header.setSingle1Trigger(static_cast<int>(tdata->isSingle1Trigger()));
         header.setPair0Trigger(static_cast<int>(tdata->isPair0Trigger()));
