@@ -22,7 +22,7 @@ class TriggerData {
          * @param trigger_data : The LCGenericObeject that is being used to 
          *                       store the data from the TI
          */
-        TriggerData(EVENT::LCGenericObject* trigger_data);
+        TriggerData(EVENT::LCGenericObject* vtp_data, EVENT::LCGenericObject* ts_data);
 
         /** @return The trigger time. */
         double getTime() const { return time_stamp_; };
@@ -45,7 +45,7 @@ class TriggerData {
     private:
 
         /** Private method used to decode all trigger information. */
-        void parseTriggerData(EVENT::LCGenericObject* trigger_data);  
+        void parseTriggerData(EVENT::LCGenericObject* vtp_data, EVENT::LCGenericObject* ts_data);  
 
         /** Trigger time stamp. */
         long time_stamp_{-9999}; 
