@@ -3,6 +3,7 @@
 
 #include <EVENT/LCCollection.h>
 #include <EVENT/Track.h>
+#include <EVENT/Vertex.h>
 #include <EVENT/TrackerHit.h>
 #include <EVENT/TrackState.h>
 #include <EVENT/TrackerRawData.h>
@@ -19,11 +20,17 @@
 #include "Collections.h"
 #include "Processor.h"
 #include "Track.h"
+#include "Vertex.h"
 #include "RawSvtHit.h"
 #include "Event.h"
 #include "TrackerHit.h"
 
 namespace utils {
+
+
+  bool hasCollection(EVENT::LCEvent* lc_event,const std::string& collection);
+  
+  Vertex* buildVertex(EVENT::Vertex* lc_vertex);
   
   Track* buildTrack(EVENT::Track* lc_track, 
 		    EVENT::LCCollection* gbl_kink_data, 
