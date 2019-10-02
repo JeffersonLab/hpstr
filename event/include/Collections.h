@@ -55,7 +55,7 @@ namespace Collections {
     constexpr const char* EVENT_HEADERS{"EventHeader"}; 
     
     /** Name of trigger bank collection. */
-    constexpr const char* TRIGGER_BANK{"TriggerBank"}; 
+    constexpr const char* TRIGGER_BANK{"VTPBank"}; 
 
     /** Name of RF hits collection. */
     constexpr const char* RF_HITS{"RFHits"};

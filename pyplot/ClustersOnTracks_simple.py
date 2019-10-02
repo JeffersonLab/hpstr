@@ -10,7 +10,8 @@ SetStyle()
 #              "hists_10492_bin5.root"]
 
 
-path = "/Users/"+os.environ["USER"]+"/Dropbox/HPS/macros/hists/"
+#path = "/Users/"+os.environ["USER"]+"/Dropbox/HPS/macros/hists/"
+path = "/data/run/hists/"
 inFileList = [
     "projections_10710.root",
     "projections_10711.root",
