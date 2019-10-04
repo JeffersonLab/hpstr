@@ -70,14 +70,13 @@ bool EventProcessor::process(IEvent* ievent) {
         EVENT::LCGenericObject* ts_datum 
             = static_cast<EVENT::LCGenericObject*>(ts_data->getElementAt(0));
 
-        TriggerData* tdata = new TriggerData(vtp_datum, ts_datum); 
-        header.setSingle0Trigger(static_cast<int>(tdata->isSingle0Trigger()));
-        header.setSingle1Trigger(static_cast<int>(tdata->isSingle1Trigger()));
-        header.setPair0Trigger(static_cast<int>(tdata->isPair0Trigger()));
-        header.setPair1Trigger(static_cast<int>(tdata->isPair1Trigger()));
-        header.setPulserTrigger(static_cast<int>(tdata->isPulserTrigger()));
+        header.setTriggerData(new TriggerData(vtp_datum, ts_datum)); 
+        //header.setSingle0Trigger(static_cast<int>(tdata->isSingle0Trigger()));
+        //header.setSingle1Trigger(static_cast<int>(tdata->isSingle1Trigger()));
+        //header.setPair0Trigger(static_cast<int>(tdata->isPair0Trigger()));
+        //header.setPair1Trigger(static_cast<int>(tdata->isPair1Trigger()));
+        //header.setPulserTrigger(static_cast<int>(tdata->isPulserTrigger()));
 
-        delete tdata;
     } catch(EVENT::DataNotAvailableException e) {
         // It's fine if the event doesn't have a trigger bank.
     }
