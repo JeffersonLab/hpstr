@@ -19,6 +19,11 @@
 //----------//
 #include <TObject.h>
 
+//----------//
+//  event   //
+//----------//
+#include "TriggerData.h"
+
 class EventHeader : public TObject { 
 
     public: 
@@ -263,6 +268,21 @@ class EventHeader : public TObject {
          */ 
         double getRfTime(const int channel) const { return rf_times_[channel]; }; 
    
+        /**
+         * Set the Trigger Data.
+         *
+         * @param trigData The parsed trigger data
+         *  
+         */ 
+        void setTriggerData(TriggerData* trigData) { tdata = trigData; }; 
+
+        /**
+         * Get the RF time.
+         *
+         * @return The parsed trigger data
+         */ 
+        TriggerData* getTriggerData() { return tdata; }; 
+   
         void Print(); 
 
     private: 
@@ -338,6 +358,9 @@ class EventHeader : public TObject {
 
         /** The RF time */
         double rf_times_[2]; 
+
+        /** The parsed trigger data */
+        TriggerData* tdata{nullptr}; 
 
         ClassDef(EventHeader, 1);
 

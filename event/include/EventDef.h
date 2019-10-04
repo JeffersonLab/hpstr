@@ -3,6 +3,8 @@
 #include "CalHit.h"
 #include "Event.h"
 #include "EventHeader.h"
+#include "TriggerData.h"
+#include "VTPData.h"
 #include "Particle.h"
 #include "Track.h"
 #include "Vertex.h"
