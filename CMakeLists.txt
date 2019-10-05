@@ -35,6 +35,9 @@ if (LCIO_DIR)
 endif()
 find_package(LCIO REQUIRED)
 
+# Find BOOST. -- Was added by Omar on TupleBuilder.h
+find_package(Boost)
+
 # find Python installation
 find_package(PythonLibs 2.7 REQUIRED)
 message(STATUS "Python lib found at: ${PYTHON_LIBRARIES}")
