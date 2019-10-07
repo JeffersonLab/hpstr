@@ -5,6 +5,7 @@
 #include "EventHeader.h"
 #include "TriggerData.h"
 #include "VTPData.h"
+#include "TSData.h"
 #include "Particle.h"
 #include "Track.h"
 #include "Vertex.h"

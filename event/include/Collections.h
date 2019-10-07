@@ -2,6 +2,7 @@
  * @file Collection.h
  * @brief List of collection names.
  * @author Omar Moreno, SLAC National Accelerator Laboratory
+ * @author Cameron Bravo, SLAC National Accelerator Laboratory
  */
 
 #ifndef _COLLECTIONS_H_
