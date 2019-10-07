@@ -15,6 +15,8 @@ EventProcessor::~EventProcessor() {
 }
 
 void EventProcessor::initialize(TTree* tree) {
+    vtpData = new VTPData();
+    tree->Branch(Collections::VTP_BANK, &vtpData);
 }
 
 bool EventProcessor::process(IEvent* ievent) {
@@ -71,6 +73,7 @@ bool EventProcessor::process(IEvent* ievent) {
             = static_cast<EVENT::LCGenericObject*>(ts_data->getElementAt(0));
 
         header.setTriggerData(new TriggerData(vtp_datum, ts_datum)); 
+        parseVTPData(vtp_datum);
         //header.setSingle0Trigger(static_cast<int>(tdata->isSingle0Trigger()));
         //header.setSingle1Trigger(static_cast<int>(tdata->isSingle1Trigger()));
         //header.setPair0Trigger(static_cast<int>(tdata->isPair0Trigger()));
@@ -116,11 +119,164 @@ bool EventProcessor::process(IEvent* ievent) {
         // It's fine if the event doesn't have an RF hits collection.
     }
 
+    vtpData->print();
     event->add(Collections::EVENT_HEADERS, &header);
+    event->add(Collections::VTP_BANK, vtpData);
 
     return true;
 
 }
+
+void EventProcessor::parseVTPData(EVENT::LCGenericObject* vtp_data_lcio)
+{ 
+    // First Clear out all the old data.
+    std::cout << "New VTP Block of size " << vtp_data_lcio->getNInt() << std::endl;
+    vtpData->Clear();
+    for(int i=0; i<vtp_data_lcio->getNInt()/2; ++i)
+    {
+        int data = vtp_data_lcio->getIntVal(i);
+        int secondWord = vtp_data_lcio->getIntVal(i+1);
+        if(!(data & 1<<31)) continue;
+        int type = (data>>27)&0x0F;
+        int subtype;
+        switch (type)
+        {
+            case 0:  // Block Header
+                vtpData->blockHeader.blocklevel = (data      )&0x00FF;
+                vtpData->blockHeader.blocknum   = (data >>  8)&0x03FF;
+                vtpData->blockHeader.nothing    = (data >> 18)&0x00FF;
+                vtpData->blockHeader.slotid     = (data >> 22)&0x001F;
+                vtpData->blockHeader.type       = (data >> 27)&0x000F;
+                vtpData->blockHeader.istype     = (data >> 31)&0x0001;
+                std::cout << i << " BlockHeader " << vtpData->blockHeader.type << std::endl;
+                break;
+            case 1: //  Block Tail
+                vtpData->blockTail.nwords       = (data      )&0x03FFFFF;
+                vtpData->blockTail.slotid       = (data >> 22)&0x000001F;
+                vtpData->blockTail.type         = (data >> 27)&0x000000F;
+                vtpData->blockTail.istype       = (data >> 31)&0x0000001;
+                std::cout << i << " BlockTail " << vtpData->blockTail.type << std::endl;
+                break;
+            case 2:  // Event Header
+                vtpData->eventHeader.eventnum   = (data      )&0x07FFFFFF;
+                vtpData->eventHeader.type       = (data >> 27)&0x0000000F;
+                vtpData->eventHeader.istype     = (data >> 31)&0x00000001;
+                std::cout << i << " EventHeader " << vtpData->eventHeader.eventnum << std::endl;
+                break;
+            case 3:  // Trigger time
+                vtpData->trigTime = (data & 0x00FFFFFF) + ((secondWord & 0x00FFFFFF )<<24);
+                std::cout << i << "&" << i+1 << " trigTime = " << vtpData->trigTime << std::endl;
+                i++;
+                break;
+            case 12:  // Expansion type
+                subtype = (data>>23)&0x0F;
+                switch(subtype){
+                    case 2: // HPS Cluster
+                        VTPData::hpsCluster  clus;
+                        clus.X        = (data      )&0x0003F;
+                        clus.Y        = (data >>  6)&0x0000F;
+                        clus.E        = (data >> 10)&0x01FFF;
+                        clus.subtype  = (data >> 23)&0x0000F;
+                        clus.type     = (data >> 27)&0x0000F;
+                        clus.istype   = (data >> 31)&0x00001;
+                        clus.T        = (secondWord      )&0x003FF;
+                        clus.N        = (secondWord >> 10)&0x0000F;
+                        clus.nothing  = (secondWord >> 14)&0x3FFFF;
+                        vtpData->clusters.push_back(clus);
+                        std::cout << i << "&" << i+1 << " HPS Cluster " << clus.E << std::endl;
+                        i++;
+                        break;
+                    case 3: // HPS Single Trigger
+                        VTPData::hpsSingleTrig strig;
+                        strig.T        = (data      )&0x003FF;
+                        strig.emin     = (data >> 10)&0x00001;
+                        strig.emax     = (data >> 11)&0x00001;
+                        strig.nmin     = (data >> 12)&0x00001;
+                        strig.xmin     = (data >> 13)&0x00001;
+                        strig.pose     = (data >> 14)&0x00001;
+                        strig.hodo1c   = (data >> 15)&0x00001;
+                        strig.hodo2c   = (data >> 16)&0x00001;
+                        strig.hodogeo  = (data >> 17)&0x00001;
+                        strig.hodoecal = (data >> 18)&0x00001;
+                        strig.topnbot  = (data >> 19)&0x00001;
+                        strig.inst     = (data >> 20)&0x00007;
+                        strig.subtype  = (data >> 23)&0x0000F;
+                        strig.type     = (data >> 27)&0x0000F;
+                        strig.istype   = (data >> 31)&0x00001;
+                        std::cout << i << " HPS Single Trigger " << strig.subtype << std::endl;
+                        vtpData->singletrigs.push_back(strig);
+                        break;
+                    case 4: // HPS Pair Trigger
+                        VTPData::hpsPairTrig ptrig;
+                        ptrig.T          = (data      )&0x003FF;
+                        ptrig.clusesum   = (data >> 10)&0x00001;
+                        ptrig.clusedif   = (data >> 11)&0x00001;
+                        ptrig.eslope     = (data >> 12)&0x00001;
+                        ptrig.coplane    = (data >> 13)&0x00001;
+                        ptrig.dummy      = (data >> 14)&0x0001F;
+                        ptrig.topnbot    = (data >> 19)&0x00001;
+                        ptrig.inst       = (data >> 20)&0x00007;
+                        ptrig.subtype    = (data >> 23)&0x0000F;
+                        ptrig.type       = (data >> 27)&0x0000F;
+                        ptrig.istype     = (data >> 31)&0x00001;
+                        std::cout << i << " HPS Pair Trigger " << ptrig.subtype << std::endl;
+                        vtpData->pairtrigs.push_back(ptrig);
+                        break;
+                    case 5: // HPS Calibration Trigger
+                        VTPData::hpsCalibTrig ctrig;
+                        ctrig.T          = (data      )&0x003FF;
+                        ctrig.reserved   = (data >> 10)&0x001FF;
+                        ctrig.cosmicTrig = (data >> 19)&0x00001;
+                        ctrig.LEDTrig    = (data >> 20)&0x00001;
+                        ctrig.hodoTrig   = (data >> 21)&0x00001;
+                        ctrig.pulserTrig = (data >> 22)&0x00001;
+                        ctrig.subtype    = (data >> 23)&0x0000F;
+                        ctrig.type       = (data >> 27)&0x0000F;
+                        ctrig.istype     = (data >> 31)&0x00001;
+                        std::cout << i << " HPS Cal Trigger " << ctrig.subtype << std::endl;
+                        vtpData->calibtrigs.push_back(ctrig);
+                        break;
+                    case 6: // HPS Cluster Multiplicity Trigger
+                        VTPData::hpsClusterMult clmul;
+                        clmul.T          = (data      )&0x003FF;
+                        clmul.multtop    = (data >> 10)&0x0000F;
+                        clmul.multbot    = (data >> 14)&0x0000F;
+                        clmul.multtot    = (data >> 18)&0x0000F;
+                        clmul.bitinst    = (data >> 22)&0x00001;
+                        clmul.subtype    = (data >> 23)&0x0000F;
+                        clmul.type       = (data >> 27)&0x0000F;
+                        clmul.istype     = (data >> 31)&0x00001;
+                        std::cout << i << " HPS Clus Mult Trigger " << clmul.subtype << std::endl;
+                        vtpData->clustermult.push_back(clmul);
+                        break;
+                    case 7: // HPS FEE Trigger
+                        VTPData::hpsFEETrig fee;
+                        fee.T          = (data      )&0x003FF;
+                        fee.region     = (data >> 10)&0x0007F;
+                        fee.reserved   = (data >> 17)&0x0003F;
+                        fee.subtype    = (data >> 23)&0x0000F;
+                        fee.type       = (data >> 27)&0x0000F;
+                        fee.istype     = (data >> 31)&0x00001;
+                        std::cout << i << " HPS FEE Trigger " << fee.subtype << std::endl;
+                        vtpData->feetrigger.push_back(fee);
+                        break;
+                    default:
+                        std::cout << "At " << i << " invalid HPS type: " << type << " subtype: " << subtype << std::endl;
+                        break;
+                }
+
+                break;
+            case 14:
+                std::cout << i << "VTP data type not valid: " << type << std::endl;
+                break;
+            default:
+                std::cout << i << "I was not expecting a VTP data type of " << type << std::endl;
+                break;
+        }
+    }
+    std::cout << "---------------------------------------" << std::endl;
+    std::cout << std::endl;
+} //VTPData::parseVTPData(LCGenericObject* vtp_data_lcio)
 
 void EventProcessor::finalize() { 
 }
