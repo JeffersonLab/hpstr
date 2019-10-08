@@ -21,6 +21,8 @@
 #pragma link C++ class VTPData::hpsClusterMult+;
 #pragma link C++ class VTPData::hpsFEETrig+;
 #pragma link C++ class TSData+;
+#pragma link C++ class TSData::tsHeader+;
+#pragma link C++ class TSData::tsBits+;
 #pragma link C++ class Particle+; 
 #pragma link C++ class Track+;
 #pragma link C++ class Vertex+;
@@ -44,4 +46,5 @@
 #pragma link C++ class vector<VTPData::hpsCalibTrig>    +;
 #pragma link C++ class vector<VTPData::hpsClusterMult>  +;
 #pragma link C++ class vector<VTPData::hpsFEETrig>      +;
+#pragma link C++ class vector<TSData::tsBits>           +;
 #endif
