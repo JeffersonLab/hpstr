@@ -31,6 +31,7 @@
 #include "EventHeader.h"
 #include "Processor.h"
 #include "VTPData.h"
+#include "TSData.h"
 #include "TriggerData.h"
 #include "Event.h"
 
@@ -75,8 +76,10 @@ class EventProcessor : public Processor {
 
        TClonesArray* header_{nullptr};
        VTPData* vtpData{nullptr};
+       TSData* tsData{nullptr};
        bool _debug{false};
        void parseVTPData(EVENT::LCGenericObject* vtp_data_lcio);
+       void parseTSData(EVENT::LCGenericObject* ts_data_lcio);
 
 
 }; // EventProcessor
