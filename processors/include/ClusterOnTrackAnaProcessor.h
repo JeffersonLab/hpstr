@@ -1,5 +1,5 @@
-#ifndef __CLUSTERONTRACK_PROCESSOR_H__
-#define __CLUSTERONTRACK_PROCESSOR_H__
+#ifndef __CLUSTERONTRACK_ANAPROCESSOR_H__
+#define __CLUSTERONTRACK_ANAPROCESSOR_H__
 
 //HPSTR
 #include "HpsEvent.h"
@@ -16,13 +16,13 @@
 class TTree;
 
 
-class ClusterOnTrackProcessor : public Processor {
+class ClusterOnTrackAnaProcessor : public Processor {
 
  public:
 
-  ClusterOnTrackProcessor(const std::string& name, Process& process);
+  ClusterOnTrackAnaProcessor(const std::string& name, Process& process);
 
-  ~ClusterOnTrackProcessor();
+  ~ClusterOnTrackAnaProcessor();
 
   virtual bool process(IEvent* ievent);
 
@@ -40,7 +40,7 @@ class ClusterOnTrackProcessor : public Processor {
 
  private:
   
-  ClusterHistos* clusterHistos;
+  ClusterHistos* clusterHistos{nullptr};
   
   std::string baselineFits_{""};
   std::string baselineRun_{""};

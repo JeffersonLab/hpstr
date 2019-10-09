@@ -12,7 +12,7 @@ TrackingProcessor::~TrackingProcessor() {
 void TrackingProcessor::initialize(TTree* tree) {
     tree->Branch(Collections::GBL_TRACKS, &tracks_);
     tree->Branch(Collections::TRACKER_HITS, &hits_);
-    tree->Branch(Collections::RAW_SVT_HITS, &rawhits_);
+    tree->Branch(Collections::RAW_SVT_HITS_ON_TRACK, &rawhits_);
 
 }
 
