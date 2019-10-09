@@ -74,7 +74,6 @@ bool EventProcessor::process(IEvent* ievent) {
         EVENT::LCGenericObject* ts_datum 
             = static_cast<EVENT::LCGenericObject*>(ts_data->getElementAt(0));
 
-        header.setTriggerData(new TriggerData(vtp_datum, ts_datum)); 
         parseVTPData(vtp_datum);
         parseTSData(ts_datum);
         //header.setSingle0Trigger(static_cast<int>(tdata->isSingle0Trigger()));
