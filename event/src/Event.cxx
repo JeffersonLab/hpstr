@@ -45,7 +45,7 @@ void Event::addCollection(const std::string name, TClonesArray* collection) {
     // Add a branch with the given name to the event tree.
     branches_[name] = tree_->Branch(name.c_str(), collection, 1000000, 3); 
 
-    // Keep track of which events were added to the event
+    // Keep track of which collections were added to the event
     objects_[name] = collection;  
 }
 

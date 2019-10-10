@@ -1,12 +1,12 @@
-#include "ClusterOnTrackProcessor.h"
+#include "ClusterOnTrackAnaProcessor.h"
 #include "TBranch.h"
 
-ClusterOnTrackProcessor::ClusterOnTrackProcessor(const std::string& name, Process& process) : Processor(name,process){}
+ClusterOnTrackAnaProcessor::ClusterOnTrackAnaProcessor(const std::string& name, Process& process) : Processor(name,process){}
 //TODO CHECK THIS DESTRUCTOR
-ClusterOnTrackProcessor::~ClusterOnTrackProcessor(){}
+ClusterOnTrackAnaProcessor::~ClusterOnTrackAnaProcessor(){}
 
 
-void ClusterOnTrackProcessor::configure(const ParameterSet& parameters) {
+void ClusterOnTrackAnaProcessor::configure(const ParameterSet& parameters) {
   
   baselineFits_ = parameters.getString("BaselineFits");
   baselineRun_  = parameters.getString("BaselineRun");
@@ -14,7 +14,7 @@ void ClusterOnTrackProcessor::configure(const ParameterSet& parameters) {
   
 }
 
-void ClusterOnTrackProcessor::initialize(TTree* tree) {
+void ClusterOnTrackAnaProcessor::initialize(TTree* tree) {
   clusterHistos = new ClusterHistos("hitOnTrack_2D");
   
   if (!baselineFits_.empty() && !baselineRun_.empty()) {
@@ -32,7 +32,7 @@ void ClusterOnTrackProcessor::initialize(TTree* tree) {
   
 }
 
-bool ClusterOnTrackProcessor::process(IEvent* ievent) {
+bool ClusterOnTrackAnaProcessor::process(IEvent* ievent) {
 
   
   for (int itrack = 0; itrack<tracks_->size();itrack++) {
@@ -51,7 +51,7 @@ bool ClusterOnTrackProcessor::process(IEvent* ievent) {
   return true;
 }
 
-void ClusterOnTrackProcessor::finalize() {
+void ClusterOnTrackAnaProcessor::finalize() {
 
   clusterHistos->saveHistos(outF_,"");
   //outF_->Close();
@@ -59,4 +59,4 @@ void ClusterOnTrackProcessor::finalize() {
   clusterHistos = nullptr;
 }
 
-DECLARE_PROCESSOR(ClusterOnTrackProcessor);
+DECLARE_PROCESSOR(ClusterOnTrackAnaProcessor);
