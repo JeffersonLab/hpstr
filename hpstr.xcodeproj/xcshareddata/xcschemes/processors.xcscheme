@@ -29,7 +29,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "406DB8C721C6D3AF007C8A8A"
-               BuildableName = ".dylib"
+               BuildableName = "libprocessors.dylib"
                BlueprintName = "processors"
                ReferencedContainer = "container:hpstr.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "406DB8C721C6D3AF007C8A8A"
-            BuildableName = ".dylib"
+            BuildableName = "libprocessors.dylib"
             BlueprintName = "processors"
             ReferencedContainer = "container:hpstr.xcodeproj">
          </BuildableReference>
@@ -67,7 +67,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "406DB8C721C6D3AF007C8A8A"
-            BuildableName = ".dylib"
+            BuildableName = "libprocessors.dylib"
             BlueprintName = "processors"
             ReferencedContainer = "container:hpstr.xcodeproj">
          </BuildableReference>
@@ -83,7 +83,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "406DB8C721C6D3AF007C8A8A"
-            BuildableName = ".dylib"
+            BuildableName = "libprocessors.dylib"
             BlueprintName = "processors"
             ReferencedContainer = "container:hpstr.xcodeproj">
          </BuildableReference>
