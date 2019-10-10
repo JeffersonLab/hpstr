@@ -85,7 +85,10 @@ class Event : public IEvent {
 
         /** @return Get a mutable copy of the EventHeader. */
         EventHeader& getEventHeaderMutable() const { return *event_header_; }
-
+	
+	//TODO document
+	void setTree(TTree* tree) {tree_ = tree;};
+      
         /** @return The ROOT tree containing the event. */
         TTree* getTree() { return tree_; }
 
