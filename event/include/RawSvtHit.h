@@ -85,23 +85,23 @@ class RawSvtHit : public TObject {
         /** Get the strip */
         int getStrip();
 
-	/** Get the t0 fit parameter */
-	double getT0() {return fit_[0];}
+        /** Get the t0 fit parameter */
+        double getT0() {return fit_[0];}
 
-	/** Get the t0 err fit parameter */
-	double getT0err() {return fit_[1];}
+        /** Get the t0 err fit parameter */
+        double getT0err() {return fit_[1];}
 
-	/** Get the amplitude fit parameter */
-	double getAmp() {return fit_[2];}
+        /** Get the amplitude fit parameter */
+        double getAmp() {return fit_[2];}
 
-	/** Get the amplitude error fit parameter */
-	double getAmpErr() {return fit_[3];}
+        /** Get the amplitude error fit parameter */
+        double getAmpErr() {return fit_[3];}
 
-	/** Get the chiSq probability */
-	double getChiSq() {return fit_[4];}
+        /** Get the chiSq probability */
+        double getChiSq() {return fit_[4];}
 
         ClassDef(RawSvtHit, 1);	
-    
+
     private:
 
 

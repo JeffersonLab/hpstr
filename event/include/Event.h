@@ -43,7 +43,7 @@ class Event : public IEvent {
         ~Event(); 
 
         /** 
-         *
+         * Add a TObject to the event.
          */
         virtual void add(const std::string name, TObject* object);
 
