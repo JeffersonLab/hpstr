@@ -1,0 +1,88 @@
+//
+//  hpstr_event.xcconfig
+//  event
+//
+//  Created by Maurik Holtrop on 12/14/18.
+//
+//#include "../master.xcconfig"
+///////////////////////////////////////////////////////////////////////
+//  master.xcconfig
+//  Common settings for the entire workspace.
+//
+//  Created by Maurik Holtrop on 12/14/2018
+//
+HPS_ANALYSIS_DIR=/data/HPS/HPS_Analysis
+
+HPSTR =${HPS_ANALYSIS_DIR}/hpstr
+HPSDST=${HPS_ANALYSIS_DIR}/hps-dst
+BASEANA=${HPS_ANALYSIS_DIR}/BaseAna
+
+INSTALL_PATH=${HPS_ANALYSIS_DIR}/${CONFIGURATION}
+INSTALL_DIR=${HPS_ANALYSIS_DIR}/${CONFIGURATION}
+
+PREBINDING = NO;
+GCC_WARN_ABOUT_RETURN_TYPE = YES
+GCC_WARN_UNUSED_VARIABLE = YES
+GCC_GENERATE_DEBUGGING_SYMBOLS = YES
+GCC_GENERATE_DEBUGGING_SYMBOLS[config=Release]=NO
+GCC_OPTIMIZATION_LEVEL=0
+GCC_OPTIMIZATION_LEVEL[config=Release] = 3
+GCC_UNROLL_LOOPS[config=Release] = YES
+
+DEBUG_INFORMATION_FORMAT=dwarf
+
+GCC_INLINES_ARE_PRIVATE_EXTERN=NO
+GCC_SYMBOLS_PRIVATE_EXTERN = NO
+
+DEPLOYMENT_LOCATION = YES
+// The following, if YES for Debug, will not allow debugging breakpoints, because code will be stripped.
+// DEPLOYMENT_POSTPROCESSING[config=Release] = YES
+
+CLANG_CXX_LIBRARY = libc++
+CLANG_CXX_LANGUAGE_STANDARD = c++14
+
+// ======= ROOT 6 ==============
+ROOTSYS=/Users/maurik/root/root.git.py2
+ROOTLIBS=-L${ROOTSYS}/lib -lCore -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -lMultiProc -lProof -lpthread -stdlib=libc++ -lm -ldl
+
+// ==== LCIO ========
+LCIO=/data/HPS/lcio
+LCIOHEADERS=${LCIO}/include
+LCIOLIBDIR=${LCIO}/build/${CONFIGURATION}
+//LCIOLIBDIR=${LCIO}/lib
+LCIOLIBS=-L${LCIOLIBDIR} -llcio
+
+// === Always include ROOT
+
+HEADER_SEARCH_PATHS=${ROOTSYS}/include
+LIBRARY_SEARCH_PATHS=${ROOTSYS}/lib
+OTHER_LDFLAGS= ${ROOTLIBS}
+// -L${HPSDST}/Release -lHpsEvent
+OTHER_CPLUSPLUSFLAGS = -fPIC -DDEBUG="1"
+OTHER_CPLUSPLUSFLAGS[config=Release] = -fPIC
+
+// Some Xcode recommended settings:
+ONLY_ACTIVE_ARCH = YES
+ENABLE_TESTABILITY[config=Debug] = YES
+GCC_NO_COMMON_BLOCKS = YES
+
+ALWAYS_SEARCH_USER_PATHS = NO
+
+///////////////////////////////////////////////////////////////////////
+
+
+
+
+PRODUCT_NAME= ${TARGET_NAME} // event
+
+EXECUTABLE_PREFIX=lib
+EXECUTABLE_EXTENSION = dylib
+
+DYLIB_COMPATIBILITY_VERSION=0
+DYLIB_CURRENT_VERSION=0
+
+// == Activate LCIO
+HEADER_SEARCH_PATHS=$(inherited) ${LCIO}/include
+LIBRARY_SEARCH_PATHS=$(inherited) ${LCIOLIBDIR}
+OTHER_LDFLAGS=$(inherited) ${LCIOLIBS}
+

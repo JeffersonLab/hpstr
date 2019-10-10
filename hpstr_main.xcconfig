@@ -1,0 +1,17 @@
+//
+//  AprimeAna.xcconfig
+//  AprimeAna
+//
+//  Created by Maurik Holtrop on 6/4/10.
+//  Copyright 2010 University of New Hampshire. All rights reserved.
+//
+#include "../master.xcconfig"
+PRODUCT_NAME=hpstr
+EXECUTABLE_PREFIX=
+
+// == Activate LCIO and Python
+HEADER_SEARCH_PATHS=$(inherited) ${LCIO}/include ///usr/local/Cellar/python/3.6.5/Frameworks/Python.framework/Versions/3.6/include/python3.6m
+LIBRARY_SEARCH_PATHS=$(inherited) ${LCIOLIBDIR}
+OTHER_LDFLAGS=$(inherited) ${LCIOLIBS} -lpython2.7 -ldl -framework CoreFoundation
+OTHER_CPLUSPLUSFLAGS = $(inherited) -iwithsysroot /System/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7
+//HEADER_SEARCH_PATHS=$(inherited) ${HPSTR}/event/include
