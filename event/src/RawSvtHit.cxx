@@ -20,6 +20,14 @@ void RawSvtHit::Clear() {
     TObject::Clear(); 
 }
 
+void RawSvtHit::setFit(double fit[5]) {
+    fit_[0] = fit[0]; 
+    fit_[1] = fit[1]; 
+    fit_[2] = fit[2]; 
+    fit_[3] = fit[3]; 
+    fit_[4] = fit[4]; 
+}
+
 void RawSvtHit::setADCs(int adcs[6]) {
     adcs_[0] = adcs[0]; 
     adcs_[1] = adcs[1]; 
@@ -27,6 +35,14 @@ void RawSvtHit::setADCs(int adcs[6]) {
     adcs_[3] = adcs[3]; 
     adcs_[4] = adcs[4]; 
     adcs_[5] = adcs[5]; 
+}
+
+void RawSvtHit::setSystem(int system) {
+    system_ = system; 
+}
+
+void RawSvtHit::setBarrel(int barrel) {
+    barrel_ = barrel; 
 }
 
 void RawSvtHit::setLayer(int layer) {
@@ -49,8 +65,20 @@ void RawSvtHit::setStrip(int strip) {
     strip_ = strip; 
 }
 
+double * RawSvtHit::getFit() {
+    return fit_;
+}
+
 int * RawSvtHit::getADCs() {
     return adcs_;
+}
+
+int RawSvtHit::getSystem() {
+    return system_; 
+}
+
+int RawSvtHit::getBarrel() {
+    return barrel_; 
 }
 
 int RawSvtHit::getLayer() {

@@ -19,6 +19,7 @@
 #include <EVENT/TrackerHit.h>
 #include <EVENT/TrackState.h>
 #include <IMPL/LCGenericObjectImpl.h>
+#include <IMPL/TrackerHitImpl.h>
 #include <UTIL/LCRelationNavigator.h>
 
 //----------//
@@ -33,6 +34,10 @@
 #include "Processor.h"
 #include "Track.h"
 #include "TrackerHit.h"
+#include "Event.h"
+
+// Forward declarations
+class TTree; 
 
 class SvtDataProcessor : public Processor { 
 
@@ -54,13 +59,13 @@ class SvtDataProcessor : public Processor {
          * Process the event and put new data products into it.
          * @param event The Event to process.
          */
-        virtual void process(Event* event);
+        virtual bool process(IEvent* ievent);
 
         /**
          * Callback for the Processor to take any necessary
          * action when the processing of events starts.
          */
-        virtual void initialize();
+        virtual void initialize(TTree* tree);
 
         /**
          * Callback for the Processor to take any necessary

@@ -31,6 +31,10 @@
 #include "EventHeader.h"
 #include "Processor.h"
 #include "TriggerData.h"
+#include "Event.h"
+
+// Forward declarations
+class TTree; 
 
 class EventProcessor : public Processor { 
 
@@ -52,13 +56,13 @@ class EventProcessor : public Processor {
          * Process the event and put new data products into it.
          * @param event The Event to process.
          */
-        virtual void process(Event* event);
+        virtual bool process(IEvent* ievent);
 
         /**
          * Callback for the Processor to take any necessary
          * action when the processing of events starts.
          */
-        virtual void initialize();
+        virtual void initialize(TTree* tree);
 
         /**
          * Callback for the Processor to take any necessary
@@ -69,6 +73,7 @@ class EventProcessor : public Processor {
     private: 
 
        TClonesArray* header_{nullptr};
+       bool _debug{false};
 
 
 }; // EventProcessor

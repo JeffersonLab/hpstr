@@ -9,6 +9,7 @@
 //   C++  StdLib   //
 //-----------------//
 #include <iostream>
+#include <algorithm>
 #include <string>
 
 //----------//
@@ -18,6 +19,8 @@
 #include <EVENT/TrackerRawData.h>
 #include <IMPL/LCGenericObjectImpl.h>
 #include <UTIL/BitField64.h>
+#include <IMPL/LCGenericObjectImpl.h>
+#include <UTIL/LCRelationNavigator.h>
 
 //----------//
 //   ROOT   //
@@ -30,6 +33,9 @@
 #include "Collections.h"
 #include "Processor.h"
 #include "RawSvtHit.h"
+#include "Event.h"
+
+class TTree; 
 
 class SvtRawDataProcessor : public Processor { 
 
@@ -51,13 +57,13 @@ class SvtRawDataProcessor : public Processor {
          * Process the event and put new data products into it.
          * @param event The Event to process.
          */
-        virtual void process(Event* event);
+        virtual bool process(IEvent* ievent);
 
         /**
          * Callback for the Processor to take any necessary
          * action when the processing of events starts.
          */
-        virtual void initialize();
+        virtual void initialize(TTree* tree);
 
         /**
          * Callback for the Processor to take any necessary

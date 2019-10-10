@@ -1,18 +1,42 @@
 # minimum cmake version
 cmake_minimum_required(VERSION 3.0)
 
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_C_STANDARD 14)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
+
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
 # find the LCIO directory
+find_package(LCIO REQUIRED)
 if (LCIO_DIR)
     set(LCIO_INCLUDE_DIR "${LCIO_DIR}/include")
-    set(LCIO_LIBRARY "${LCIO_DIR}/lib/liblcio.so")
+
+    #TEMPORARY: if MacOs LCIO standard compilation creates dynamic libs. Correct for that. 
+    if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+      set(LCIO_LIBRARY "${LCIO_DIR}/lib/liblcio.dylib")
+    else()
+      set(LCIO_LIBRARY "${LCIO_DIR}/lib/liblcio.so")
+    endif()	       
+
     if (NOT EXISTS "${LCIO_DIR}")
         message(FATAL_ERROR "Unable to find LCIO library")
     endif()
     message(STATUS "LCIO dir set to: ${LCIO_DIR}")
+
+    #The following are not necessary - should clean up
     message(STATUS "LCIO include dir set to: ${LCIO_INCLUDE_DIR}")
     message(STATUS "LCIO library set to: ${LCIO_LIBRARY}")
 endif()
-find_package(LCIO REQUIRED)
+
+
+# Find BOOST. -- Was added in TupleBuilder.h
+find_package(Boost)
 
 # find Python installation
 find_package(PythonLibs REQUIRED)
@@ -36,7 +60,7 @@ include(MacroModule)
 # import macro for declaring external dependencies
 include(MacroExtDeps)
 
-set(MODULES event processing processors)
+set(MODULES event analysis processing processors)
 
 
 # build each module in the list

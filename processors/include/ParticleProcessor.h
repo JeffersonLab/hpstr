@@ -37,6 +37,10 @@
 #include "Particle.h"
 #include "Processor.h"
 #include "Track.h"
+#include "Event.h"
+
+// Forward declarations
+class TTree; 
 
 class ParticleProcessor : public Processor { 
 
@@ -64,13 +68,13 @@ class ParticleProcessor : public Processor {
          * Callback for the Processor to take any necessary
          * action when the processing of events starts.
          */
-        virtual void initialize();
+        virtual void initialize(TTree* tree);
 
         /**
          * Process the event and put new data products into it.
          * @param event The Event to process.
          */
-        virtual void process(Event* event);
+        virtual bool process(IEvent* ievent);
 
         /**
          * Callback for the Processor to take any necessary

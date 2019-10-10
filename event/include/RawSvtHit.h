@@ -31,8 +31,17 @@ class RawSvtHit : public TObject {
         /** Reset the Hit object. */
         void Clear();
 
+        /** Set the fit parameters */
+        void setFit(double fit[5]);
+
         /** Set the adc values */
         void setADCs(int adcs[6]);
+
+        /** Set the system */
+        void setSystem(int system);
+
+        /** Set the barrel */
+        void setBarrel(int barrel);
 
         /** Set the layer */
         void setLayer(int layer);
@@ -49,35 +58,64 @@ class RawSvtHit : public TObject {
         /** Set the strip */
         void setStrip(int strip);
 
-        /** Set the adc values */
+        /** Get the fit paramters */
+        double * getFit();
+
+        /** Get the adc values */
         int * getADCs();
 
-        /** Set the layer */
+        /** Get the system */
+        int getSystem();
+
+        /** Get the barrel */
+        int getBarrel();
+
+        /** Get the layer */
         int getLayer();
 
-        /** Set the module */
+        /** Get the module */
         int getModule();
 
-        /** Set the sensor */
+        /** Get the sensor */
         int getSensor();
 
-        /** Set the side */
+        /** Get the side */
         int getSide();
 
-        /** Set the strip */
+        /** Get the strip */
         int getStrip();
+
+	/** Get the t0 fit parameter */
+	double getT0() {return fit_[0];}
+
+	/** Get the t0 err fit parameter */
+	double getT0err() {return fit_[1];}
+
+	/** Get the amplitude fit parameter */
+	double getAmp() {return fit_[2];}
+
+	/** Get the amplitude error fit parameter */
+	double getAmpErr() {return fit_[3];}
+
+	/** Get the chiSq probability */
+	double getChiSq() {return fit_[4];}
 
         ClassDef(RawSvtHit, 1);	
     
     private:
 
+
         /** The raw adcs of the hit. */
         int adcs_[6]{-999,-999,-999,-999,-999,-999}; 
+        int system_{-999}; 
+        int barrel_{-999}; 
         int layer_{-999}; 
         int module_{-999}; 
         int sensor_{-999}; 
         int side_{-999}; 
         int strip_{-999}; 
+        /** The fit parameters of the hit. */
+        double fit_[5]{-999.9,-999.9,-999.9,-999.9,-999.9}; 
 
 }; // RawSvtHit
 

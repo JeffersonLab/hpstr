@@ -24,41 +24,51 @@
 //   hpstr   //
 //-----------//
 #include "Event.h"
+#include "IEventFile.h"
 
-class EventFile { 
+class EventFile : public IEventFile {
 
     public: 
 
         /** Constructor */
-        EventFile(const std::string ifilename, const std::string ofilename);
+        EventFile(const std::string ifilename, const std::string& ofilename);
 
+        //TODO CHECK THIS
         /** Destructor */
-        ~EventFile();
+        virtual ~EventFile();
 
         /**
          * Load the next event in the file. 
          *
          * @return true if an event was loaded successfully, false otherwise 
          */
-        bool nextEvent(); 
+        virtual bool nextEvent();
 
         /**
          * Setup the event object that will be used by this file.
          *
          * @param event The Event container.
          */
-        void setupEvent(Event* event); 
+        void setupEvent(IEvent* ievent);
 
         /** 
          * Close the file, writing the tree to disk if creating an output file.
          */
         void close();
 
+  /** 
+   * Get output file directory
+   */
+  void resetOutputFileDir();
+
     private: 
 
         /** The ROOT file to which event data will be written to. */
         TFile* ofile_{nullptr}; 
 
+        /** Additional output files, i.e. for histogramming */
+        //std::vector<TFile* > outputs_f;
+     
         /** Object used to build the HPS event model. */
         Event* event_{nullptr};
 

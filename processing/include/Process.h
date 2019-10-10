@@ -23,7 +23,7 @@
 //   hpstr   //
 //-----------//
 #include "Processor.h"
-#include "EventFile.h"
+
 
 class Process {
 
@@ -66,8 +66,16 @@ class Process {
         /** Run the process. */
         void run();
 
+        /** Run the process on root files. */
+        //TODO Write this better
+        void runOnRoot();
+
         /** Request that the processing finish with this event. */ 
         void requestFinish() { event_limit_=0; }
+
+        //TODO add a check on consistent extensions of the input files
+        /** Check if the input_files_ are rootFiles  */
+       bool processRootFiles();
 
     private:
 

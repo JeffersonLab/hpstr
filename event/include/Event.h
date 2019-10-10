@@ -29,9 +29,10 @@
 //   hpstr   //
 //-----------//
 #include "Collections.h"
+#include "IEvent.h"
 #include "EventHeader.h"
 
-class Event { 
+class Event : public IEvent {
 
     public: 
 
@@ -44,7 +45,7 @@ class Event {
         /** 
          *
          */
-        void add(const std::string name, TObject* object); 
+        virtual void add(const std::string name, TObject* object);
 
         /** 
          * Add a collection (TClonesArray) of objects to the event. 
@@ -53,6 +54,13 @@ class Event {
          * @param collection The TClonesArray containing the object. 
          */
         void addCollection(const std::string name, TClonesArray* collection);
+
+        /**  TODO fix docu
+         * Add a collection (std::vector) of objects to the event. */
+
+        template<typename T>
+        void addCollection(const std::string& name, std::vector<T*>* collection ){
+        branches_[name] = tree_->Branch(name.c_str(),&collection);};
 
         /** 
          * @param name Name of the collection
@@ -111,7 +119,7 @@ class Event {
         EVENT::LCEvent* lc_event_{nullptr};
 
         /** Container with all TClonesArray collections. */
-        std::map<std::string, TObject*> objects_; 
+        std::map<std::string, TObject*> objects_;
 
         /** Container will all branches. */
         std::map<std::string, TBranch*> branches_; 

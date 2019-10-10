@@ -8,14 +8,16 @@ SvtDataProcessor::SvtDataProcessor(const std::string& name, Process& process)
 SvtDataProcessor::~SvtDataProcessor() { 
 }
 
-void SvtDataProcessor::initialize() {
+void SvtDataProcessor::initialize(TTree* tree) {
 
     tracks_ = new TClonesArray("Track", 100000); 
     hits_   = new TClonesArray("TrackerHit", 100000);  
 }
 
-void SvtDataProcessor::process(Event* event) {
+bool SvtDataProcessor::process(IEvent* ievent) {
 
+
+    Event* event = static_cast<Event*> (ievent);
 
     // Get the collection of 3D hits from the LCIO event. If no such collection 
     // exist, a DataNotAvailableException is thrown
@@ -31,7 +33,7 @@ void SvtDataProcessor::process(Event* event) {
     for (int ihit = 0; ihit < tracker_hits->getNumberOfElements(); ++ihit) { 
         
         // Get a 3D hit from the list of hits
-        EVENT::TrackerHit* lc_tracker_hit = static_cast<EVENT::TrackerHit*>(tracker_hits->getElementAt(ihit));
+        IMPL::TrackerHitImpl* lc_tracker_hit = static_cast<IMPL::TrackerHitImpl*>(tracker_hits->getElementAt(ihit));
     
         // Add a tracker hit to the event
         TrackerHit* tracker_hit = static_cast<TrackerHit*>(hits_->ConstructedAt(ihit));
@@ -50,6 +52,9 @@ void SvtDataProcessor::process(Event* event) {
                 
         // Set the time of the SvtHit
         tracker_hit->setTime(lc_tracker_hit->getTime());
+
+        // Set the charge of the SvtHit
+        tracker_hit->setCharge(lc_tracker_hit->getEDep());
 
         // Map the TrackerHit object to the corresponding SvtHit object. This
         // will be used later when setting references for hits on tracks.
@@ -153,7 +158,7 @@ void SvtDataProcessor::process(Event* event) {
                 
             // Check that the TrackData data structure is correct.  If it's
             // not, throw a runtime exception.   
-            if (track_datum->getNDouble() != 12 || track_datum->getNFloat() != 1 
+            if (track_datum->getNDouble() != 14 || track_datum->getNFloat() != 1 
                     || track_datum->getNInt() != 1) {
                 throw std::runtime_error("[ SvtDataProcessor ]: The collection " 
                         + std::string(Collections::TRACK_DATA)
@@ -189,6 +194,7 @@ void SvtDataProcessor::process(Event* event) {
 
     event->addCollection(Collections::GBL_TRACKS, tracks_); 
 
+    return true;
 }
 
 void SvtDataProcessor::finalize() { 

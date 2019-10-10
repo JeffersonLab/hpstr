@@ -4,7 +4,8 @@
  * @author Omar Moreno, SLAC National Accelerator Laboratory
  */
 
-#include "ECalDataProcessor.h" 
+#include "ECalDataProcessor.h"
+#include "Event.h"
 
 ECalDataProcessor::ECalDataProcessor(const std::string& name, Process& process)
     : Processor(name, process) { 
@@ -13,18 +14,21 @@ ECalDataProcessor::ECalDataProcessor(const std::string& name, Process& process)
 ECalDataProcessor::~ECalDataProcessor() { 
 }
 
-void ECalDataProcessor::initialize() {
+void ECalDataProcessor::initialize(TTree* tree) {
 
     cal_hits_ = new TClonesArray("CalHit", 100000); 
     clusters_ = new TClonesArray("CalCluster", 1000000);  
 }
 
-void ECalDataProcessor::process(Event* event) {
+bool ECalDataProcessor::process(IEvent* ievent) {
 
     // Attempt to retrieve the collection "TimeCorrEcalHits" from the event. If
     // the collection doesn't exist, handle the DataNotAvailableCollection and
     // attempt to retrieve the collection "EcalCalHits". If that collection 
     // doesn't exist, the DST maker will fail.
+
+    //dynamic cast
+    Event* event = static_cast<Event*> (ievent);
     EVENT::LCCollection* hits{nullptr};
     std::string hits_coll_name = Collections::ECAL_TIME_CORR_HITS; 
     try { 
@@ -135,6 +139,7 @@ void ECalDataProcessor::process(Event* event) {
 
     event->addCollection(Collections::ECAL_CLUSTERS, clusters_); 
 
+    return true;
 }
 
 void ECalDataProcessor::finalize() { 

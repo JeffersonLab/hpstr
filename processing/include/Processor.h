@@ -15,12 +15,13 @@
 //-----------//
 //   hpstr   //
 //-----------//
-#include "Event.h"
 #include "ParameterSet.h"
 
 // Forward declarations
 class Process;
 class Processor;
+class TTree;
+class IEvent;
 
 /** Typedef for ProcessorFactory use. */
 typedef Processor* ProcessorMaker(const std::string& name, Process& process);
@@ -63,13 +64,14 @@ class Processor {
          * action when the processing of events starts, such as
          * creating histograms.
          */
-        virtual void initialize() = 0;
+        virtual void initialize(TTree* tree) = 0;
 
         /**
          * Process the event and put new data products into it.
          * @param event The Event to process.
+         * @return status of the processing, false will move to next event and skip other processes.
          */
-        virtual void process(Event* event) = 0;
+        virtual bool process(IEvent* ievent) = 0;
 
         /**
          * Callback for the Processor to take any necessary

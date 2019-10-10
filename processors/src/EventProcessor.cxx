@@ -6,6 +6,7 @@
 
 #include "EventProcessor.h"
 
+
 EventProcessor::EventProcessor(const std::string& name, Process& process)
     : Processor(name, process) { 
 }
@@ -13,16 +14,22 @@ EventProcessor::EventProcessor(const std::string& name, Process& process)
 EventProcessor::~EventProcessor() { 
 }
 
-void EventProcessor::initialize() {
+void EventProcessor::initialize(TTree* tree) {
 }
 
-void EventProcessor::process(Event* event) {
-
+bool EventProcessor::process(IEvent* ievent) {
+  
+    Event* event = static_cast<Event*> (ievent);
     /*EventHeader* header 
         = static_cast<EventHeader*>(header_->ConstructedAt(0));*/
     EventHeader& header = event->getEventHeaderMutable(); 
 
     EVENT::LCEvent* lc_event = event->getLCEvent(); 
+
+    if (_debug) {
+      std::cout<<"Event Number: "<<lc_event->getEventNumber()<<std::endl;
+      std::cout<<"Run Number: "<<lc_event->getRunNumber()<<std::endl;
+    }
 
     // Set the event number
     header.setEventNumber(lc_event->getEventNumber());
@@ -112,6 +119,9 @@ void EventProcessor::process(Event* event) {
     }
 
     event->add(Collections::EVENT_HEADERS, &header);
+
+    return true;
+
 }
 
 void EventProcessor::finalize() { 
