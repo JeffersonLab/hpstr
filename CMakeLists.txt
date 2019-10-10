@@ -38,6 +38,7 @@ include(MacroExtDeps)
 
 set(MODULES event processing processors)
 
+
 # build each module in the list
 foreach(module ${MODULES})
   message(STATUS "Adding module: ${module}")
