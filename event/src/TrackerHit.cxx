@@ -33,9 +33,9 @@ void TrackerHit::setPosition(const double* position, bool rotate) {
       x_ = position[1] * cos(svtAngle) - position[0]*sin(svtAngle);
     }
   else {
-    x_ = position[0]; 
-    y_ = position[1];
-    z_ = position[2];
+    x_ = position[1]; 
+    y_ = position[2];
+    z_ = position[0];
   }
 }
 
