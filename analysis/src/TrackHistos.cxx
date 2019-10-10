@@ -6,6 +6,9 @@ void TrackHistos::Define1DHistos() {
   //TODO improve naming
   std::string h_name = "";
 
+  histos1d[m_name+"_n_tracks"] = plot1D(m_name+"_n_tracks",
+					"n_tracks",10,0,10);
+
   for (unsigned int itp = 0; itp<tPs.size(); ++itp){ 
     
     histos1d[m_name+"_"+tPs[itp] ] = plot1D(m_name+tPs[itp],
@@ -46,12 +49,20 @@ void TrackHistos::Define1DHistos() {
   //location of hit in first layer
   //Total charge of hit in first layer
   //size of hit in first layer
-
-
-
+  
+  //TODO: Move it somewhere else?
+  //Vertices 
+  
+  histos1d[m_name+"_n_vertices"] = plot1D(m_name+"_n_vertices",
+					  "N Vertices",10,0,10);
+  
+  for ( auto vp : vPs) {
+    histos1d[m_name+"_"+vp] = plot1D(m_name+vp,
+				     vp,axes[vp][0],axes[vp][1],axes[vp][2]);
+  }
 }
 
-
+//TODO make it load from a configuration file!
 void TrackHistos::BuildAxes() {
 
   axes["d0"].push_back(200);
@@ -81,6 +92,43 @@ void TrackHistos::BuildAxes() {
   axes["chi2"].push_back(200);
   axes["chi2"].push_back(0);
   axes["chi2"].push_back(30); 
+
+  axes["vtx_chi2"].push_back(200);
+  axes["vtx_chi2"].push_back(0);
+  axes["vtx_chi2"].push_back(30); 
+
+  axes["vtx_X"].push_back(200);
+  axes["vtx_X"].push_back(-50);
+  axes["vtx_X"].push_back(50);
+
+  axes["vtx_Y"].push_back(200);
+  axes["vtx_Y"].push_back(-50);
+  axes["vtx_Y"].push_back(50);
+
+  axes["vtx_Z"].push_back(200);
+  axes["vtx_Z"].push_back(-50);
+  axes["vtx_Z"].push_back(50);
+
+  axes["vtx_sigma_X"].push_back(100);
+  axes["vtx_sigma_X"].push_back(0);
+  axes["vtx_sigma_X"].push_back(10);
+
+  axes["vtx_sigma_Y"].push_back(100);
+  axes["vtx_sigma_Y"].push_back(0);
+  axes["vtx_sigma_Y"].push_back(10);
+
+  axes["vtx_sigma_Z"].push_back(100);
+  axes["vtx_sigma_Z"].push_back(0);
+  axes["vtx_sigma_Z"].push_back(10);
+  
+  axes["vtx_InvM"].push_back(100);
+  axes["vtx_InvM"].push_back(0);
+  axes["vtx_InvM"].push_back(0.2);
+
+  axes["vtx_InvMErr"].push_back(100);
+  axes["vtx_InvMErr"].push_back(0);
+  axes["vtx_InvMErr"].push_back(0.2);
+  
 }
 
 
@@ -92,7 +140,7 @@ void TrackHistos::Define2DHistos() {
   
   //TODO improve binning
   if (doTrkCompPlots) {
-
+    
     for (unsigned int itp = 0; itp<tPs.size(); ++itp){
       
       if (debug_)
@@ -101,56 +149,91 @@ void TrackHistos::Define2DHistos() {
       histos2d[m_name+"_"+tPs[itp]+"_vs_"+tPs[itp] ] = plot2D(m_name+tPs[itp]+"_vs_"+tPs[itp],
 							      tPs[itp],axes[tPs[itp]][0],axes[tPs[itp]][1],axes[tPs[itp]][2],
 							      tPs[itp],axes[tPs[itp]][0],axes[tPs[itp]][1],axes[tPs[itp]][2]);
-    
+      
     }//loop on vars
   }//do track comparison
     
+  histos2d[m_name+"_vtxY_vs_vtxX"] = plot2D(m_name+"_vtxY_vs_vtxX",
+					    "vtxX",axes["vtx_X"][0],axes["vtx_X"][1],axes["vtx_X"][2],
+					    "vtxY",axes["vtx_Y"][0],axes["vtx_Y"][1],axes["vtx_Y"][2]);
+  
+  
 }//define 2dhistos
 
-void TrackHistos::Fill1DHistograms(Track *track, float weight ) {
-  
-  //TODO improve
-  histos1d[m_name+"_d0"       ]->Fill(track->getD0()          ,weight);
-  histos1d[m_name+"_Phi"      ]->Fill(track->getPhi()         ,weight);
-  histos1d[m_name+"_Omega"    ]->Fill(track->getOmega()       ,weight);
-  histos1d[m_name+"_TanLambda"]->Fill(track->getTanLambda()   ,weight);
-  histos1d[m_name+"_Z0"       ]->Fill(track->getZ0()          ,weight);
-  histos1d[m_name+"_time"     ]->Fill(track->getTrackTime()   ,weight);
-  histos1d[m_name+"_chi2"     ]->Fill(track->getChi2Ndf()     ,weight);
-  histos1d[m_name+"_nShared"  ]->Fill(track->getNShared()     ,weight);
+//TODO Improve passing a vector to fill histos
+void TrackHistos::Fill1DHisto(const std::string& histoName,float value, float weight) {
+  if (histos1d[m_name+"_"+histoName])
+    histos1d[m_name+"_"+histoName]->Fill(value,weight);
+  else
+    std::cout<<"ERROR::Fill1DHisto Histogram not found! "<<m_name+"_"+histoName<<std::endl;
+}
 
-  //All Tracks
-  histos1d[m_name+"_sharingHits"]->Fill(0.,weight);
-  if (track->getNShared() == 0)
-    histos1d[m_name+"_sharingHits"]->Fill(1.,weight);
-  else {
-    //track has shared hits
-    if (track->getSharedLy0())
-      histos1d[m_name+"_sharingHits"]->Fill(2.,weight);
-    if (track->getSharedLy1())
-      histos1d[m_name+"_sharingHits"]->Fill(3.,weight);
-    if (track->getSharedLy0() && track->getSharedLy1())
-      histos1d[m_name+"_sharingHits"]->Fill(4.,weight);
-    if (!track->getSharedLy0() && !track->getSharedLy1())
-      histos1d[m_name+"_sharingHits"]->Fill(5.,weight);
+void TrackHistos::Fill1DHistograms(Track *track, Vertex* vtx, float weight ) {
+    
+  //TODO improve
+  
+  if (track) {
+    
+    histos1d[m_name+"_d0"       ]->Fill(track->getD0()          ,weight);
+    histos1d[m_name+"_Phi"      ]->Fill(track->getPhi()         ,weight);
+    histos1d[m_name+"_Omega"    ]->Fill(track->getOmega()       ,weight);
+    histos1d[m_name+"_TanLambda"]->Fill(track->getTanLambda()   ,weight);
+    histos1d[m_name+"_Z0"       ]->Fill(track->getZ0()          ,weight);
+    histos1d[m_name+"_time"     ]->Fill(track->getTrackTime()   ,weight);
+    histos1d[m_name+"_chi2"     ]->Fill(track->getChi2Ndf()     ,weight);
+    histos1d[m_name+"_nShared"  ]->Fill(track->getNShared()     ,weight);
+    
+    //All Tracks
+    histos1d[m_name+"_sharingHits"]->Fill(0.,weight);
+    if (track->getNShared() == 0)
+      histos1d[m_name+"_sharingHits"]->Fill(1.,weight);
+    else {
+      //track has shared hits
+      if (track->getSharedLy0())
+	histos1d[m_name+"_sharingHits"]->Fill(2.,weight);
+      if (track->getSharedLy1())
+	histos1d[m_name+"_sharingHits"]->Fill(3.,weight);
+      if (track->getSharedLy0() && track->getSharedLy1())
+	histos1d[m_name+"_sharingHits"]->Fill(4.,weight);
+      if (!track->getSharedLy0() && !track->getSharedLy1())
+	histos1d[m_name+"_sharingHits"]->Fill(5.,weight);
+    }
+    
+    
+    //TODO improve this
+    if (track -> is345Seed())
+      histos1d[m_name+"_strategy"]->Fill(0);
+    if (track-> is456Seed())
+      histos1d[m_name+"_strategy"]->Fill(1);
+    if (track-> is123SeedC4())
+      histos1d[m_name+"_strategy"]->Fill(2);
+    if (track->is123SeedC5())
+      histos1d[m_name+"_strategy"]->Fill(3);
+    if (track->isMatchedTrack())
+      histos1d[m_name+"_strategy"]->Fill(4);
+    if (track->isGBLTrack())
+      histos1d[m_name+"_strategy"]->Fill(5);
+    
+    histos1d[m_name+"_type"     ]->Fill(track->getType()     ,weight);
+    
   }
   
-  
+  //Vertices
   //TODO improve this
-  if (track -> is345Seed())
-    histos1d[m_name+"_strategy"]->Fill(0);
-  if (track-> is456Seed())
-    histos1d[m_name+"_strategy"]->Fill(1);
-  if (track-> is123SeedC4())
-    histos1d[m_name+"_strategy"]->Fill(2);
-  if (track->is123SeedC5())
-    histos1d[m_name+"_strategy"]->Fill(3);
-  if (track->isMatchedTrack())
-    histos1d[m_name+"_strategy"]->Fill(4);
-  if (track->isGBLTrack())
-    histos1d[m_name+"_strategy"]->Fill(5);
+  if (vtx) {
+    
+    histos1d[m_name+"_vtx_chi2"]->Fill(vtx->getChi2(),weight);
+    histos1d[m_name+"_vtx_X"]->Fill(vtx->getX(),weight);
+    histos1d[m_name+"_vtx_Y"]->Fill(vtx->getY(),weight);
+    histos1d[m_name+"_vtx_Z"]->Fill(vtx->getZ(),weight);
+    // 0 xx 1 xy 2 xz 3 yy 4 yz 5 zz
+    histos1d[m_name+"_vtx_sigma_X"]->Fill(sqrt(vtx->getCovariance()[0]),weight);
+    histos1d[m_name+"_vtx_sigma_Y"]->Fill(sqrt(vtx->getCovariance()[3]),weight);
+    histos1d[m_name+"_vtx_sigma_Z"]->Fill(sqrt(vtx->getCovariance()[5]),weight);
+    histos1d[m_name+"_vtx_InvM"]->Fill(vtx->getInvMass(),weight);
+    histos1d[m_name+"_vtx_InvMErr"]->Fill(vtx->getInvMassErr(),weight);
+  }
   
-  histos1d[m_name+"_type"     ]->Fill(track->getType()     ,weight);
 }
 
 
