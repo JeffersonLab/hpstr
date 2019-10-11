@@ -11,6 +11,19 @@
 		40911CA6234D1DAB006AD16F /* RawSvtHit.h in Headers */ = {isa = PBXBuildFile; fileRef = 40911CA4234D1DAB006AD16F /* RawSvtHit.h */; };
 		40911CA9234D1DCC006AD16F /* SvtRawDataProcessor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40911CA7234D1DCC006AD16F /* SvtRawDataProcessor.cxx */; };
 		40911CAA234D1DCC006AD16F /* SvtRawDataProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 40911CA8234D1DCC006AD16F /* SvtRawDataProcessor.h */; };
+		40911CAE234F65A8006AD16F /* HpsEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 40911CAB234F65A8006AD16F /* HpsEvent.h */; };
+		40911CAF234F65A8006AD16F /* IEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 40911CAC234F65A8006AD16F /* IEvent.h */; };
+		40911CB0234F65A8006AD16F /* HpsEvent.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40911CAD234F65A8006AD16F /* HpsEvent.cxx */; };
+		40AE3D3B234F6D9B00178209 /* HPSEventProcessor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40AE3D31234F6D9A00178209 /* HPSEventProcessor.cxx */; };
+		40AE3D3C234F6D9B00178209 /* ClusterOnTrackProcessor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40AE3D32234F6D9A00178209 /* ClusterOnTrackProcessor.cxx */; };
+		40AE3D3D234F6D9B00178209 /* TrackingProcessor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40AE3D33234F6D9A00178209 /* TrackingProcessor.cxx */; };
+		40AE3D3E234F6D9B00178209 /* ClusterOnTrackProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 40AE3D34234F6D9A00178209 /* ClusterOnTrackProcessor.h */; };
+		40AE3D3F234F6D9B00178209 /* RefittedTracksProcessor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40AE3D35234F6D9B00178209 /* RefittedTracksProcessor.cxx */; };
+		40AE3D40234F6D9B00178209 /* TrackingProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 40AE3D36234F6D9B00178209 /* TrackingProcessor.h */; };
+		40AE3D41234F6D9B00178209 /* HPSEventProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 40AE3D37234F6D9B00178209 /* HPSEventProcessor.h */; };
+		40AE3D42234F6D9B00178209 /* RefittedTracksProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 40AE3D38234F6D9B00178209 /* RefittedTracksProcessor.h */; };
+		40AE3D43234F6D9B00178209 /* utilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 40AE3D39234F6D9B00178209 /* utilities.h */; };
+		40AE3D44234F6D9B00178209 /* utilities.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40AE3D3A234F6D9B00178209 /* utilities.cxx */; };
 		40BC14FB21C6D422002B95DF /* EventProcessor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40BC14F721C6D422002B95DF /* EventProcessor.cxx */; };
 		40BC14FC21C6D422002B95DF /* ParticleProcessor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40BC14F821C6D422002B95DF /* ParticleProcessor.cxx */; };
 		40BC14FD21C6D422002B95DF /* ECalDataProcessor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40BC14F921C6D422002B95DF /* ECalDataProcessor.cxx */; };
@@ -98,6 +111,9 @@
 		40911CA4234D1DAB006AD16F /* RawSvtHit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RawSvtHit.h; path = include/RawSvtHit.h; sourceTree = "<group>"; };
 		40911CA7234D1DCC006AD16F /* SvtRawDataProcessor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SvtRawDataProcessor.cxx; path = src/SvtRawDataProcessor.cxx; sourceTree = "<group>"; };
 		40911CA8234D1DCC006AD16F /* SvtRawDataProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SvtRawDataProcessor.h; path = include/SvtRawDataProcessor.h; sourceTree = "<group>"; };
+		40911CAB234F65A8006AD16F /* HpsEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HpsEvent.h; path = include/HpsEvent.h; sourceTree = "<group>"; };
+		40911CAC234F65A8006AD16F /* IEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IEvent.h; path = include/IEvent.h; sourceTree = "<group>"; };
+		40911CAD234F65A8006AD16F /* HpsEvent.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HpsEvent.cxx; path = src/HpsEvent.cxx; sourceTree = "<group>"; };
 		40A076B421C4196A00A29625 /* hpstr */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hpstr; sourceTree = BUILT_PRODUCTS_DIR; };
 		40A076BC21C41A3000A29625 /* Processor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Processor.cxx; path = src/Processor.cxx; sourceTree = "<group>"; };
 		40A076BD21C41A3000A29625 /* ParameterSet.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParameterSet.cxx; path = src/ParameterSet.cxx; sourceTree = "<group>"; };
@@ -112,6 +128,16 @@
 		40A076D021C41A4B00A29625 /* HpstrConf.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = HpstrConf.py; path = python/HpstrConf.py; sourceTree = "<group>"; };
 		40AA4B7C223DE7B500777A43 /* rawSvtHits_cfg.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = rawSvtHits_cfg.py; path = processors/config/rawSvtHits_cfg.py; sourceTree = "<group>"; };
 		40AA4B7D223DE7B500777A43 /* dst.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = dst.py; path = processors/config/dst.py; sourceTree = "<group>"; };
+		40AE3D31234F6D9A00178209 /* HPSEventProcessor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HPSEventProcessor.cxx; path = src/HPSEventProcessor.cxx; sourceTree = "<group>"; };
+		40AE3D32234F6D9A00178209 /* ClusterOnTrackProcessor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClusterOnTrackProcessor.cxx; path = src/ClusterOnTrackProcessor.cxx; sourceTree = "<group>"; };
+		40AE3D33234F6D9A00178209 /* TrackingProcessor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TrackingProcessor.cxx; path = src/TrackingProcessor.cxx; sourceTree = "<group>"; };
+		40AE3D34234F6D9A00178209 /* ClusterOnTrackProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClusterOnTrackProcessor.h; path = include/ClusterOnTrackProcessor.h; sourceTree = "<group>"; };
+		40AE3D35234F6D9B00178209 /* RefittedTracksProcessor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RefittedTracksProcessor.cxx; path = src/RefittedTracksProcessor.cxx; sourceTree = "<group>"; };
+		40AE3D36234F6D9B00178209 /* TrackingProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TrackingProcessor.h; path = include/TrackingProcessor.h; sourceTree = "<group>"; };
+		40AE3D37234F6D9B00178209 /* HPSEventProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HPSEventProcessor.h; path = include/HPSEventProcessor.h; sourceTree = "<group>"; };
+		40AE3D38234F6D9B00178209 /* RefittedTracksProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RefittedTracksProcessor.h; path = include/RefittedTracksProcessor.h; sourceTree = "<group>"; };
+		40AE3D39234F6D9B00178209 /* utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utilities.h; path = include/utilities.h; sourceTree = "<group>"; };
+		40AE3D3A234F6D9B00178209 /* utilities.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = utilities.cxx; path = src/utilities.cxx; sourceTree = "<group>"; };
 		40BC14F721C6D422002B95DF /* EventProcessor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EventProcessor.cxx; path = src/EventProcessor.cxx; sourceTree = "<group>"; };
 		40BC14F821C6D422002B95DF /* ParticleProcessor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleProcessor.cxx; path = src/ParticleProcessor.cxx; sourceTree = "<group>"; };
 		40BC14F921C6D422002B95DF /* ECalDataProcessor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ECalDataProcessor.cxx; path = src/ECalDataProcessor.cxx; sourceTree = "<group>"; };
@@ -184,6 +210,16 @@
 		406DB8C921C6D3AF007C8A8A /* processors */ = {
 			isa = PBXGroup;
 			children = (
+				40AE3D32234F6D9A00178209 /* ClusterOnTrackProcessor.cxx */,
+				40AE3D34234F6D9A00178209 /* ClusterOnTrackProcessor.h */,
+				40AE3D31234F6D9A00178209 /* HPSEventProcessor.cxx */,
+				40AE3D37234F6D9B00178209 /* HPSEventProcessor.h */,
+				40AE3D35234F6D9B00178209 /* RefittedTracksProcessor.cxx */,
+				40AE3D38234F6D9B00178209 /* RefittedTracksProcessor.h */,
+				40AE3D33234F6D9A00178209 /* TrackingProcessor.cxx */,
+				40AE3D36234F6D9B00178209 /* TrackingProcessor.h */,
+				40AE3D3A234F6D9B00178209 /* utilities.cxx */,
+				40AE3D39234F6D9B00178209 /* utilities.h */,
 				40911CA7234D1DCC006AD16F /* SvtRawDataProcessor.cxx */,
 				40911CA8234D1DCC006AD16F /* SvtRawDataProcessor.h */,
 				40BC14F921C6D422002B95DF /* ECalDataProcessor.cxx */,
@@ -225,6 +261,13 @@
 			name = python;
 			sourceTree = "<group>";
 		};
+		40AE3D45234F808D00178209 /* analysis */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = analysis;
+			sourceTree = "<group>";
+		};
 		40BC151821C6F169002B95DF /* hpstr */ = {
 			isa = PBXGroup;
 			children = (
@@ -246,6 +289,9 @@
 		40D3000621C3486700381AF5 /* event */ = {
 			isa = PBXGroup;
 			children = (
+				40911CAD234F65A8006AD16F /* HpsEvent.cxx */,
+				40911CAB234F65A8006AD16F /* HpsEvent.h */,
+				40911CAC234F65A8006AD16F /* IEvent.h */,
 				40911CA3234D1DAB006AD16F /* RawSvtHit.cxx */,
 				40911CA4234D1DAB006AD16F /* RawSvtHit.h */,
 				40D3001721C3490500381AF5 /* CalCluster.cxx */,
@@ -277,6 +323,7 @@
 				40AA4B7B223DE79800777A43 /* python */,
 				40D3FFFA21C3476900381AF5 /* Config */,
 				40BC151821C6F169002B95DF /* hpstr */,
+				40AE3D45234F808D00178209 /* analysis */,
 				40D3000621C3486700381AF5 /* event */,
 				40A076BB21C419F700A29625 /* processing */,
 				406DB8C921C6D3AF007C8A8A /* processors */,
@@ -312,7 +359,12 @@
 				40911CAA234D1DCC006AD16F /* SvtRawDataProcessor.h in Headers */,
 				40BC150621C6D431002B95DF /* EventProcessor.h in Headers */,
 				40BC150521C6D431002B95DF /* ECalDataProcessor.h in Headers */,
+				40AE3D43234F6D9B00178209 /* utilities.h in Headers */,
+				40AE3D3E234F6D9B00178209 /* ClusterOnTrackProcessor.h in Headers */,
+				40AE3D42234F6D9B00178209 /* RefittedTracksProcessor.h in Headers */,
+				40AE3D40234F6D9B00178209 /* TrackingProcessor.h in Headers */,
 				40BC150321C6D431002B95DF /* SvtDataProcessor.h in Headers */,
+				40AE3D41234F6D9B00178209 /* HPSEventProcessor.h in Headers */,
 				40BC150421C6D431002B95DF /* ParticleProcessor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -334,12 +386,14 @@
 				40D3002F21C3491500381AF5 /* CalCluster.h in Headers */,
 				40D3002E21C3491500381AF5 /* Track.h in Headers */,
 				40D3002B21C3491500381AF5 /* TrackerHit.h in Headers */,
+				40911CAE234F65A8006AD16F /* HpsEvent.h in Headers */,
 				40D3002921C3491500381AF5 /* Collections.h in Headers */,
 				40DA52D321C428A20035D296 /* EventHeader.h in Headers */,
 				40D3002821C3491500381AF5 /* Event.h in Headers */,
 				40D3002C21C3491500381AF5 /* EventDef.h in Headers */,
 				40D3002D21C3491500381AF5 /* EventLinkDef.h in Headers */,
 				40DA52D221C428A20035D296 /* TriggerData.h in Headers */,
+				40911CAF234F65A8006AD16F /* IEvent.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -543,10 +597,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				40BC14FE21C6D422002B95DF /* SvtDataProcessor.cxx in Sources */,
+				40AE3D3D234F6D9B00178209 /* TrackingProcessor.cxx in Sources */,
+				40AE3D44234F6D9B00178209 /* utilities.cxx in Sources */,
+				40AE3D3F234F6D9B00178209 /* RefittedTracksProcessor.cxx in Sources */,
 				40BC14FD21C6D422002B95DF /* ECalDataProcessor.cxx in Sources */,
 				40BC14FC21C6D422002B95DF /* ParticleProcessor.cxx in Sources */,
 				40911CA9234D1DCC006AD16F /* SvtRawDataProcessor.cxx in Sources */,
+				40AE3D3C234F6D9B00178209 /* ClusterOnTrackProcessor.cxx in Sources */,
 				40BC14FB21C6D422002B95DF /* EventProcessor.cxx in Sources */,
+				40AE3D3B234F6D9B00178209 /* HPSEventProcessor.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -583,6 +642,7 @@
 				40D3001C21C3490500381AF5 /* Particle.cxx in Sources */,
 				40DA52CE21C428970035D296 /* TriggerData.cxx in Sources */,
 				40D3001D21C3490500381AF5 /* CalCluster.cxx in Sources */,
+				40911CB0234F65A8006AD16F /* HpsEvent.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
