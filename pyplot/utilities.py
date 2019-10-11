@@ -387,7 +387,7 @@ def DivideHistos(h1,h2):
 
 
 
-def Make1Dplots(name,outdir,histos,colors,markers,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,noErrors=False,RebinFactor=0,runNumber="",additionalText=[],LogX=False,WriteMean=False,multiLeg=False):
+def Make1Dplots(name,outdir,histos,colors,markers,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,noErrors=False,RebinFactor=0,runNumber="",additionalText=[],LogY=False,WriteMean=False,multiLeg=False):
         
 
     if not os.path.exists(outdir):
@@ -395,8 +395,8 @@ def Make1Dplots(name,outdir,histos,colors,markers,legends,oFext,xtitle="",ytitle
 
                 
     can = TCanvas()
-    if LogX:
-        can.SetLogx(1)
+    if LogY:
+        can.SetLogy(1)
 
     means   = []
     meansErr = []
@@ -411,20 +411,19 @@ def Make1Dplots(name,outdir,histos,colors,markers,legends,oFext,xtitle="",ytitle
         histos[ih].SetMarkerStyle(markers[ih])
         histos[ih].SetLineColor(colors[ih])
         histos[ih].GetYaxis().SetRangeUser(ymin,ymax)
+        histos[ih].GetXaxis().CenterTitle()
+        histos[ih].GetYaxis().CenterTitle()
         if ("pT" in name or "pt" in name):
             histos[ih].GetXaxis().SetRangeUser(1.,20.)
         #histos[ih].SetMarkerSize(0.5)
         if RebinFactor>0:
             histos[ih].Rebin(RebinFactor)
-        
 
         if ih==0:
             if noErrors:
                 histos[ih].GetXaxis().SetTextSize(0.045)
                 histos[ih].GetYaxis().SetTextSize(0.045)
                 histos[ih].Draw("hist p")
-                
-                
             else:
                 histos[ih].Draw()
             if xtitle:
@@ -436,10 +435,8 @@ def Make1Dplots(name,outdir,histos,colors,markers,legends,oFext,xtitle="",ytitle
                 histos[ih].Draw("same hist p")
             else:
                 histos[ih].Draw("same")
-
-                
                         
-    InsertText(runNumber,additionalText,0.52)
+    InsertText(runNumber,additionalText,0.85,xoffset=0.7)
 
     if len(legends)>0:
         #print "building legend"
