@@ -104,19 +104,23 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "dst.py"
+            argument = "/data/HPS/HPS_Analysis/hpstr/processors/config/dst.py"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/data/HPS/data/physrun2019/slcio/hps_010084/hps_010084_00003.slcio"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "DYLD_LIBRARY_PATH"
-            value = "/Users/maurik/root/root.p2/lib:/data/HPS/HPS_Analysis/hpstr/lib"
+            value = "/Users/maurik/root/root.git.py2/lib:/data/HPS/HPS_Analysis/Debug"
             isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable
             key = "PYTHONPATH"
-            value = "/data/HPS/HPS_Analysis/hpstr/lib/python/LDMX/processing"
+            value = "/data/HPS/HPS_Analysis/hpstr/processing/python"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>

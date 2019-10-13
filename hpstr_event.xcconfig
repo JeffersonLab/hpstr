@@ -20,6 +20,8 @@ BASEANA=${HPS_ANALYSIS_DIR}/BaseAna
 INSTALL_PATH=${HPS_ANALYSIS_DIR}/${CONFIGURATION}
 INSTALL_DIR=${HPS_ANALYSIS_DIR}/${CONFIGURATION}
 
+MACOSX_DEPLOYMENT_TARGET = 10.14
+
 PREBINDING = NO;
 GCC_WARN_ABOUT_RETURN_TYPE = YES
 GCC_WARN_UNUSED_VARIABLE = YES
@@ -54,8 +56,8 @@ LCIOLIBS=-L${LCIOLIBDIR} -llcio
 
 // === Always include ROOT
 
-HEADER_SEARCH_PATHS=${ROOTSYS}/include
-LIBRARY_SEARCH_PATHS=${ROOTSYS}/lib
+HEADER_SEARCH_PATHS=$(inherited) ${ROOTSYS}/include
+LIBRARY_SEARCH_PATHS=$(inherited) ${ROOTSYS}/lib
 OTHER_LDFLAGS= ${ROOTLIBS}
 // -L${HPSDST}/Release -lHpsEvent
 OTHER_CPLUSPLUSFLAGS = -fPIC -DDEBUG="1"
@@ -71,8 +73,6 @@ ALWAYS_SEARCH_USER_PATHS = NO
 ///////////////////////////////////////////////////////////////////////
 
 
-
-
 PRODUCT_NAME= ${TARGET_NAME} // event
 
 EXECUTABLE_PREFIX=lib
@@ -80,6 +80,13 @@ EXECUTABLE_EXTENSION = dylib
 
 DYLIB_COMPATIBILITY_VERSION=0
 DYLIB_CURRENT_VERSION=0
+
+// == Cross directory include
+HEADER_SEARCH_PATHS=$(inherited) $(SOURCE_ROOT)/analysis/include  $(SOURCE_ROOT)/event/include $(SOURCE_ROOT)/processing/include
+
+// == Add Boost (for just one call! humpf )
+
+HEADER_SEARCH_PATHS=$(inherited) /usr/local/include
 
 // == Activate LCIO
 HEADER_SEARCH_PATHS=$(inherited) ${LCIO}/include

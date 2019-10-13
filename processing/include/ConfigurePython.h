@@ -11,7 +11,7 @@
 //------------//
 //   Python   //
 //------------//
-#include "Python.h"
+#include "python2.7/Python.h"
 
 //----------------//
 //   C++ StdLib   //
