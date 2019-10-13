@@ -39,7 +39,7 @@ endif()
 find_package(Boost)
 
 # find Python installation
-find_package(PythonLibs REQUIRED)
+find_package(PythonLibs 2.7 REQUIRED)
 message(STATUS "Python lib found at: ${PYTHON_LIBRARIES}")
 message(STATUS "Python include dir found at: ${PYTHON_INCLUDE_DIRS}")
 get_filename_component(PYTHON_LIBRARY_DIR ${PYTHON_LIBRARIES} DIRECTORY)
@@ -61,7 +61,6 @@ include(MacroModule)
 include(MacroExtDeps)
 
 set(MODULES event analysis processing processors)
-
 
 # build each module in the list
 foreach(module ${MODULES})
