@@ -2,6 +2,7 @@
  * @file Collection.h
  * @brief List of collection names.
  * @author Omar Moreno, SLAC National Accelerator Laboratory
+ * @author Cameron Bravo, SLAC National Accelerator Laboratory
  */
 
 #ifndef _COLLECTIONS_H_
@@ -14,6 +15,9 @@ namespace Collections {
 
     /** Name of the Raw tracker hits collection. */
     constexpr const char* RAW_SVT_HITS{"SVTRawTrackerHits"};
+
+    /** Name of the Raw tracker hits collection. */
+    constexpr const char* RAW_SVT_HITS_ON_TRACK{"SVTRawHitsOnTrack"};
 
     /** Name of the Raw tracker fit relations collection. */
     constexpr const char* RAW_SVT_HIT_FITS{"SVTFittedRawTrackerHits"};
@@ -55,7 +59,13 @@ namespace Collections {
     constexpr const char* EVENT_HEADERS{"EventHeader"}; 
     
     /** Name of trigger bank collection. */
-    constexpr const char* TRIGGER_BANK{"VTPBank"}; 
+    constexpr const char* TRIGGER_BANK{"TriggerBank"}; 
+
+    /** Name of vtp (JLab VME Trigger Processor) bank collection. */
+    constexpr const char* VTP_BANK{"VTPBank"}; 
+
+    /** Name of trigger supervisor bank collection. */
+    constexpr const char* TS_BANK{"TSBank"}; 
 
     /** Name of RF hits collection. */
     constexpr const char* RF_HITS{"RFHits"};
