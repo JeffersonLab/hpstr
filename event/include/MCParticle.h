@@ -94,7 +94,7 @@ class MCParticle : public TObject {
          * @param vtx_pos An array containing the three vertex position
          *                components of the particle
          */
-        void setVertexPosition(const float* vtx_pos);
+        void setVertexPosition(const double* vtx_pos);
  
         /** @return The particle charge. */
         int getCharge() const { return charge_; };

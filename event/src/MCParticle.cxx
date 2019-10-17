@@ -36,7 +36,7 @@ void MCParticle::setMomentum(const double* momentum) {
 
 std::vector<double> MCParticle::getMomentum() const { return { px_, py_, pz_ }; }
 
-void MCParticle::setVertexPosition(const float* vtx_pos) {
+void MCParticle::setVertexPosition(const double* vtx_pos) {
     vtx_x_ = static_cast<double>(vtx_pos[0]);
     vtx_y_ = static_cast<double>(vtx_pos[1]);
     vtx_z_ = static_cast<double>(vtx_pos[2]);
