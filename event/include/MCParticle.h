@@ -95,6 +95,14 @@ class MCParticle : public TObject {
          *                components of the particle
          */
         void setVertexPosition(const double* vtx_pos);
+
+        /**
+         * Set the end point of the particle.
+         *
+         * @param ep_pos An array containing the three endpoint
+         *                components of the particle
+         */
+        void setEndPoint(const double* ep_pos);
  
         /** @return The particle charge. */
         int getCharge() const { return charge_; };
