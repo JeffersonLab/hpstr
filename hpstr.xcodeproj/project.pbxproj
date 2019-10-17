@@ -15,9 +15,7 @@
 		40911CAF234F65A8006AD16F /* IEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 40911CAC234F65A8006AD16F /* IEvent.h */; };
 		40911CB0234F65A8006AD16F /* HpsEvent.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40911CAD234F65A8006AD16F /* HpsEvent.cxx */; };
 		40AE3D3B234F6D9B00178209 /* HPSEventProcessor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40AE3D31234F6D9A00178209 /* HPSEventProcessor.cxx */; };
-		40AE3D3C234F6D9B00178209 /* ClusterOnTrackProcessor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40AE3D32234F6D9A00178209 /* ClusterOnTrackProcessor.cxx */; };
 		40AE3D3D234F6D9B00178209 /* TrackingProcessor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40AE3D33234F6D9A00178209 /* TrackingProcessor.cxx */; };
-		40AE3D3E234F6D9B00178209 /* ClusterOnTrackProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 40AE3D34234F6D9A00178209 /* ClusterOnTrackProcessor.h */; };
 		40AE3D3F234F6D9B00178209 /* RefittedTracksProcessor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40AE3D35234F6D9B00178209 /* RefittedTracksProcessor.cxx */; };
 		40AE3D40234F6D9B00178209 /* TrackingProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 40AE3D36234F6D9B00178209 /* TrackingProcessor.h */; };
 		40AE3D41234F6D9B00178209 /* HPSEventProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 40AE3D37234F6D9B00178209 /* HPSEventProcessor.h */; };
@@ -66,10 +64,7 @@
 		40E4976D235388DC00C18547 /* ConfigurePython.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40E49767235388DB00C18547 /* ConfigurePython.cxx */; };
 		40E4976E235388DC00C18547 /* IEventFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 40E49768235388DB00C18547 /* IEventFile.h */; };
 		40E4976F235388DC00C18547 /* HpsEventFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 40E49769235388DB00C18547 /* HpsEventFile.h */; };
-		40E49770235388DC00C18547 /* TupleBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 40E4976A235388DB00C18547 /* TupleBuilder.h */; };
-		40E49771235388DC00C18547 /* TupleBuilder.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40E4976B235388DC00C18547 /* TupleBuilder.cxx */; };
 		40E49772235388DC00C18547 /* ConfigurePython.h in Headers */ = {isa = PBXBuildFile; fileRef = 40E4976C235388DC00C18547 /* ConfigurePython.h */; };
-		40E4977423538A1400C18547 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 40BC152121C6F2CC002B95DF /* Python.framework */; };
 		40E4977523538D4E00C18547 /* libprocessing.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 40BC150D21C6F0F7002B95DF /* libprocessing.dylib */; };
 		40E4979523538E0B00C18547 /* ClusterHistos.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40E4977923538D8600C18547 /* ClusterHistos.cxx */; };
 		40E4979623538E1300C18547 /* ClusterHistos.h in Headers */ = {isa = PBXBuildFile; fileRef = 40E4977A23538D8600C18547 /* ClusterHistos.h */; };
@@ -83,6 +78,12 @@
 		40E4979E23538EF400C18547 /* libprocessing.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 40BC150D21C6F0F7002B95DF /* libprocessing.dylib */; };
 		40E4979F23538EFA00C18547 /* libanalysis.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 40E4978A23538DDD00C18547 /* libanalysis.dylib */; };
 		40E497A023538F3B00C18547 /* libanalysis.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 40E4978A23538DDD00C18547 /* libanalysis.dylib */; };
+		40E5D0102358B5180050FB57 /* VTPData.h in Headers */ = {isa = PBXBuildFile; fileRef = 40E5D00A2358B5170050FB57 /* VTPData.h */; };
+		40E5D0112358B5180050FB57 /* VTPData.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40E5D00B2358B5170050FB57 /* VTPData.cxx */; };
+		40E5D0122358B5180050FB57 /* TSData.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40E5D00C2358B5180050FB57 /* TSData.cxx */; };
+		40E5D0132358B5180050FB57 /* Vertex.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 40E5D00D2358B5180050FB57 /* Vertex.cxx */; };
+		40E5D0142358B5180050FB57 /* TSData.h in Headers */ = {isa = PBXBuildFile; fileRef = 40E5D00E2358B5180050FB57 /* TSData.h */; };
+		40E5D0152358B5180050FB57 /* Vertex.h in Headers */ = {isa = PBXBuildFile; fileRef = 40E5D00F2358B5180050FB57 /* Vertex.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -172,9 +173,7 @@
 		40AA4B7C223DE7B500777A43 /* rawSvtHits_cfg.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = rawSvtHits_cfg.py; path = processors/config/rawSvtHits_cfg.py; sourceTree = "<group>"; };
 		40AA4B7D223DE7B500777A43 /* dst.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = dst.py; path = processors/config/dst.py; sourceTree = "<group>"; };
 		40AE3D31234F6D9A00178209 /* HPSEventProcessor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HPSEventProcessor.cxx; path = src/HPSEventProcessor.cxx; sourceTree = "<group>"; };
-		40AE3D32234F6D9A00178209 /* ClusterOnTrackProcessor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClusterOnTrackProcessor.cxx; path = src/ClusterOnTrackProcessor.cxx; sourceTree = "<group>"; };
 		40AE3D33234F6D9A00178209 /* TrackingProcessor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TrackingProcessor.cxx; path = src/TrackingProcessor.cxx; sourceTree = "<group>"; };
-		40AE3D34234F6D9A00178209 /* ClusterOnTrackProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClusterOnTrackProcessor.h; path = include/ClusterOnTrackProcessor.h; sourceTree = "<group>"; };
 		40AE3D35234F6D9B00178209 /* RefittedTracksProcessor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RefittedTracksProcessor.cxx; path = src/RefittedTracksProcessor.cxx; sourceTree = "<group>"; };
 		40AE3D36234F6D9B00178209 /* TrackingProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TrackingProcessor.h; path = include/TrackingProcessor.h; sourceTree = "<group>"; };
 		40AE3D37234F6D9B00178209 /* HPSEventProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HPSEventProcessor.h; path = include/HPSEventProcessor.h; sourceTree = "<group>"; };
@@ -217,8 +216,6 @@
 		40E49767235388DB00C18547 /* ConfigurePython.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ConfigurePython.cxx; path = src/ConfigurePython.cxx; sourceTree = "<group>"; };
 		40E49768235388DB00C18547 /* IEventFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IEventFile.h; path = include/IEventFile.h; sourceTree = "<group>"; };
 		40E49769235388DB00C18547 /* HpsEventFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HpsEventFile.h; path = include/HpsEventFile.h; sourceTree = "<group>"; };
-		40E4976A235388DB00C18547 /* TupleBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TupleBuilder.h; path = include/TupleBuilder.h; sourceTree = "<group>"; };
-		40E4976B235388DC00C18547 /* TupleBuilder.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TupleBuilder.cxx; path = src/TupleBuilder.cxx; sourceTree = "<group>"; };
 		40E4976C235388DC00C18547 /* ConfigurePython.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConfigurePython.h; path = include/ConfigurePython.h; sourceTree = "<group>"; };
 		40E4977623538D8600C18547 /* ModuleMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModuleMapper.h; path = analysis/include/ModuleMapper.h; sourceTree = "<group>"; };
 		40E4977723538D8600C18547 /* HistoManager.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HistoManager.cxx; path = analysis/src/HistoManager.cxx; sourceTree = "<group>"; };
@@ -229,6 +226,13 @@
 		40E4977C23538D8600C18547 /* TrackHistos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TrackHistos.h; path = analysis/include/TrackHistos.h; sourceTree = "<group>"; };
 		40E4977D23538D8600C18547 /* ModuleMapper.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModuleMapper.cxx; path = analysis/src/ModuleMapper.cxx; sourceTree = "<group>"; };
 		40E4978A23538DDD00C18547 /* libanalysis.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libanalysis.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		40E5D00A2358B5170050FB57 /* VTPData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VTPData.h; path = include/VTPData.h; sourceTree = "<group>"; };
+		40E5D00B2358B5170050FB57 /* VTPData.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VTPData.cxx; path = src/VTPData.cxx; sourceTree = "<group>"; };
+		40E5D00C2358B5180050FB57 /* TSData.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TSData.cxx; path = src/TSData.cxx; sourceTree = "<group>"; };
+		40E5D00D2358B5180050FB57 /* Vertex.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Vertex.cxx; path = src/Vertex.cxx; sourceTree = "<group>"; };
+		40E5D00E2358B5180050FB57 /* TSData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSData.h; path = include/TSData.h; sourceTree = "<group>"; };
+		40E5D00F2358B5180050FB57 /* Vertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Vertex.h; path = include/Vertex.h; sourceTree = "<group>"; };
+		40E5D0162358B6880050FB57 /* hpstr_processing.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = hpstr_processing.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -256,7 +260,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				40E4977423538A1400C18547 /* Python.framework in Frameworks */,
 				40D02EA821C6F92500ABDC88 /* libevent.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -282,8 +285,6 @@
 		406DB8C921C6D3AF007C8A8A /* processors */ = {
 			isa = PBXGroup;
 			children = (
-				40AE3D32234F6D9A00178209 /* ClusterOnTrackProcessor.cxx */,
-				40AE3D34234F6D9A00178209 /* ClusterOnTrackProcessor.h */,
 				40AE3D31234F6D9A00178209 /* HPSEventProcessor.cxx */,
 				40AE3D37234F6D9B00178209 /* HPSEventProcessor.h */,
 				40AE3D35234F6D9B00178209 /* RefittedTracksProcessor.cxx */,
@@ -313,8 +314,6 @@
 				40E4976C235388DC00C18547 /* ConfigurePython.h */,
 				40E49769235388DB00C18547 /* HpsEventFile.h */,
 				40E49768235388DB00C18547 /* IEventFile.h */,
-				40E4976B235388DC00C18547 /* TupleBuilder.cxx */,
-				40E4976A235388DB00C18547 /* TupleBuilder.h */,
 				40E497642353888500C18547 /* hpstr.cxx */,
 				40E497622353885300C18547 /* HpsEventFile.cxx */,
 				40A076BE21C41A3000A29625 /* EventFile.cxx */,
@@ -378,6 +377,12 @@
 		40D3000621C3486700381AF5 /* event */ = {
 			isa = PBXGroup;
 			children = (
+				40E5D00C2358B5180050FB57 /* TSData.cxx */,
+				40E5D00E2358B5180050FB57 /* TSData.h */,
+				40E5D00D2358B5180050FB57 /* Vertex.cxx */,
+				40E5D00F2358B5180050FB57 /* Vertex.h */,
+				40E5D00B2358B5170050FB57 /* VTPData.cxx */,
+				40E5D00A2358B5170050FB57 /* VTPData.h */,
 				40911CAD234F65A8006AD16F /* HpsEvent.cxx */,
 				40911CAB234F65A8006AD16F /* HpsEvent.h */,
 				40911CAC234F65A8006AD16F /* IEvent.h */,
@@ -424,6 +429,7 @@
 		40D3FFFA21C3476900381AF5 /* Config */ = {
 			isa = PBXGroup;
 			children = (
+				40E5D0162358B6880050FB57 /* hpstr_processing.xcconfig */,
 				408D7D1A21C401FF006556DB /* hpstr_event.xcconfig */,
 				40D3FFFE21C347B300381AF5 /* hpstr_main.xcconfig */,
 			);
@@ -449,7 +455,6 @@
 				40BC150621C6D431002B95DF /* EventProcessor.h in Headers */,
 				40BC150521C6D431002B95DF /* ECalDataProcessor.h in Headers */,
 				40AE3D43234F6D9B00178209 /* utilities.h in Headers */,
-				40AE3D3E234F6D9B00178209 /* ClusterOnTrackProcessor.h in Headers */,
 				40AE3D42234F6D9B00178209 /* RefittedTracksProcessor.h in Headers */,
 				40AE3D40234F6D9B00178209 /* TrackingProcessor.h in Headers */,
 				40BC150321C6D431002B95DF /* SvtDataProcessor.h in Headers */,
@@ -463,7 +468,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				40E497612353873300C18547 /* EventFile.h in Headers */,
-				40E49770235388DC00C18547 /* TupleBuilder.h in Headers */,
 				40E4976F235388DC00C18547 /* HpsEventFile.h in Headers */,
 				40E4976E235388DC00C18547 /* IEventFile.h in Headers */,
 				40E49772235388DC00C18547 /* ConfigurePython.h in Headers */,
@@ -476,10 +480,12 @@
 			files = (
 				40D3002A21C3491500381AF5 /* Particle.h in Headers */,
 				40911CA6234D1DAB006AD16F /* RawSvtHit.h in Headers */,
+				40E5D0102358B5180050FB57 /* VTPData.h in Headers */,
 				40D3002721C3491500381AF5 /* CalHit.h in Headers */,
 				40D3002F21C3491500381AF5 /* CalCluster.h in Headers */,
 				40D3002E21C3491500381AF5 /* Track.h in Headers */,
 				40D3002B21C3491500381AF5 /* TrackerHit.h in Headers */,
+				40E5D0152358B5180050FB57 /* Vertex.h in Headers */,
 				40911CAE234F65A8006AD16F /* HpsEvent.h in Headers */,
 				40D3002921C3491500381AF5 /* Collections.h in Headers */,
 				40DA52D321C428A20035D296 /* EventHeader.h in Headers */,
@@ -488,6 +494,7 @@
 				40D3002D21C3491500381AF5 /* EventLinkDef.h in Headers */,
 				40DA52D221C428A20035D296 /* TriggerData.h in Headers */,
 				40911CAF234F65A8006AD16F /* IEvent.h in Headers */,
+				40E5D0142358B5180050FB57 /* TSData.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -750,7 +757,6 @@
 				40BC14FD21C6D422002B95DF /* ECalDataProcessor.cxx in Sources */,
 				40BC14FC21C6D422002B95DF /* ParticleProcessor.cxx in Sources */,
 				40911CA9234D1DCC006AD16F /* SvtRawDataProcessor.cxx in Sources */,
-				40AE3D3C234F6D9B00178209 /* ClusterOnTrackProcessor.cxx in Sources */,
 				40BC14FB21C6D422002B95DF /* EventProcessor.cxx in Sources */,
 				40AE3D3B234F6D9B00178209 /* HPSEventProcessor.cxx in Sources */,
 			);
@@ -770,7 +776,6 @@
 			files = (
 				40E497632353885300C18547 /* HpsEventFile.cxx in Sources */,
 				40BC151A21C6F18C002B95DF /* EventFile.cxx in Sources */,
-				40E49771235388DC00C18547 /* TupleBuilder.cxx in Sources */,
 				40BC151E21C6F1AA002B95DF /* ProcessorFactory.cxx in Sources */,
 				40E4976D235388DC00C18547 /* ConfigurePython.cxx in Sources */,
 				40BC151B21C6F196002B95DF /* ParameterSet.cxx in Sources */,
@@ -783,6 +788,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				40E5D0112358B5180050FB57 /* VTPData.cxx in Sources */,
 				40E49760235383CC00C18547 /* Event.h in Sources */,
 				40D3001A21C3490500381AF5 /* Event.cxx in Sources */,
 				40D3001921C3490500381AF5 /* TrackerHit.cxx in Sources */,
@@ -791,7 +797,9 @@
 				40DA52CF21C428970035D296 /* EventHeader.cxx in Sources */,
 				40D3001B21C3490500381AF5 /* Track.cxx in Sources */,
 				40D3001C21C3490500381AF5 /* Particle.cxx in Sources */,
+				40E5D0122358B5180050FB57 /* TSData.cxx in Sources */,
 				40DA52CE21C428970035D296 /* TriggerData.cxx in Sources */,
+				40E5D0132358B5180050FB57 /* Vertex.cxx in Sources */,
 				40D3001D21C3490500381AF5 /* CalCluster.cxx in Sources */,
 				40911CB0234F65A8006AD16F /* HpsEvent.cxx in Sources */,
 			);
@@ -866,14 +874,14 @@
 		};
 		40BC151621C6F0F7002B95DF /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 408D7D1A21C401FF006556DB /* hpstr_event.xcconfig */;
+			baseConfigurationReference = 40E5D0162358B6880050FB57 /* hpstr_processing.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		40BC151721C6F0F7002B95DF /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 408D7D1A21C401FF006556DB /* hpstr_event.xcconfig */;
+			baseConfigurationReference = 40E5D0162358B6880050FB57 /* hpstr_processing.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;

@@ -11,7 +11,7 @@ print 'Root file: %s' % root_file
 p = HpstrConf.Process()
 
 # Library containing processors
-p.libraries.append("libprocessors.dylib")
+p.libraries.append("libprocessors.so")
 
 ###############################
 #          Processors         #
