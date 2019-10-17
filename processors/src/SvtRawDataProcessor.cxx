@@ -14,7 +14,7 @@ SvtRawDataProcessor::~SvtRawDataProcessor() {
 
 void SvtRawDataProcessor::initialize(TTree* tree) {
 
-    rawhits_   = new TClonesArray("RawSvtHit", 100000);  
+    rawhits_   = new TClonesArray(Collections::RAW_SVT_HITS, 100000);  
     tree->Branch(Collections::RAW_SVT_HITS,&rawhits_);
 }
 
