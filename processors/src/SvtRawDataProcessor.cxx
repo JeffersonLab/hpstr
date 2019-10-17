@@ -15,6 +15,7 @@ SvtRawDataProcessor::~SvtRawDataProcessor() {
 void SvtRawDataProcessor::initialize(TTree* tree) {
 
     rawhits_   = new TClonesArray("RawSvtHit", 100000);  
+    tree->Branch(Collections::RAW_SVT_HITS,&rawhits_);
 }
 
 bool SvtRawDataProcessor::process(IEvent* ievent) {
@@ -46,6 +47,7 @@ bool SvtRawDataProcessor::process(IEvent* ievent) {
 
     // Loop over all of the raw SVT hits in the LCIO event and add them to the 
     // HPS event
+    rawhits_->Clear();
     for (int ihit = 0; ihit < raw_svt_hits->getNumberOfElements(); ++ihit) {
 
       // Get a 3D hit from the list of hits
@@ -101,9 +103,6 @@ bool SvtRawDataProcessor::process(IEvent* ievent) {
         }
 
     }
-
-    // Add the raw hit collection to the event
-    event->addCollection(Collections::RAW_SVT_HITS, rawhits_);
 
     //Clean up
     if (hasFits) delete rawTracker_hit_fits_nav;
