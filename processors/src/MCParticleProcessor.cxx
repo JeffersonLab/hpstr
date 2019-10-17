@@ -106,6 +106,9 @@ bool MCParticleProcessor::process(IEvent* ievent) {
         // Set the vertex position of the particle
         particle->setVertexPosition(lc_particle->getVertex()); 
 
+        // Set the vertex position of the particle
+        particle->setEndPoint(lc_particle->getEndpoint()); 
+
         // If the particle has daughter particles, add the daughters to the
         // MCParticle.
         //
