@@ -7,6 +7,7 @@
 #include "VTPData.h"
 #include "TSData.h"
 #include "Particle.h"
+#include "MCParticle.h"
 #include "Track.h"
 #include "Vertex.h"
 #include "TrackerHit.h"

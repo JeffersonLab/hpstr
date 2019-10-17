@@ -12,6 +12,9 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
+# add dir with extra CMake modules 
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules/)
+
 # find the LCIO directory
 if (LCIO_DIR)
     set(LCIO_INCLUDE_DIR "${LCIO_DIR}/include")
