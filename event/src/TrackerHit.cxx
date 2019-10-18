@@ -21,22 +21,22 @@ void TrackerHit::Clear(Option_t* /* options */) {
 }
 
 void TrackerHit::setPosition(const double* position, bool rotate) {
-  
-  //svt angle: it's already with minus sign.
-  float svtAngle = 30.5e-3;
-  //Rotate the the input position automatically to match with the SVT tracker system
-  if (rotate)
+
+    //svt angle: it's already with minus sign.
+    float svtAngle = 30.5e-3;
+    //Rotate the the input position automatically to match with the SVT tracker system
+    if (rotate)
     {
-      //x_ = position[1];
-      y_ = position[2];
-      z_ = position[1] * sin(svtAngle) + position[0]*cos(svtAngle);
-      x_ = position[1] * cos(svtAngle) - position[0]*sin(svtAngle);
+        //x_ = position[1];
+        y_ = position[2];
+        z_ = position[1] * sin(svtAngle) + position[0]*cos(svtAngle);
+        x_ = position[1] * cos(svtAngle) - position[0]*sin(svtAngle);
     }
-  else {
-    x_ = position[0]; 
-    y_ = position[1];
-    z_ = position[2];
-  }
+    else {
+        x_ = position[0]; 
+        y_ = position[1];
+        z_ = position[2];
+    }
 }
 
 void TrackerHit::setCovarianceMatrix(const std::vector<float> covariance_matrix) {
