@@ -9,6 +9,8 @@
 
 #include <dlfcn.h>
 
+ClassImp(ProcessorFactory)
+
 void ProcessorFactory::registerProcessor(const std::string& classname, ProcessorMaker* maker) {
     auto ptr = module_info_.find(classname);
     if (ptr != module_info_.end()) {

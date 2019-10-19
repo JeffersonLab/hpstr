@@ -16,6 +16,10 @@
 #include <stdexcept>
 #include <string>
 
+//----------//
+//   ROOT   //
+//----------//
+#include "TObject.h"
 
 //
 #include "Processor.h"
@@ -63,20 +67,20 @@ class ProcessorFactory {
          * @param libname The library to load.
          */
         void loadLibrary(const std::string& libname);
+          
+       /**
+        * @struct ProcessorInfo
+        * @brief Processor info container to hold classname, class type and maker.
+        */
+        struct ProcessorInfo {
+           std::string classname;
+           ProcessorMaker* maker;
+        };
 
     private:
 
         /** Constructor */
         ProcessorFactory() {};
-
-        /**
-         * @struct ProcessorInfo
-         * @brief Processor info container to hold classname, class type and maker.
-         */
-        struct ProcessorInfo {
-            std::string classname;
-            ProcessorMaker* maker;
-        };
 
         /** A map of names to processor containers. */
         std::map<std::string, ProcessorInfo> module_info_;
@@ -85,6 +89,9 @@ class ProcessorFactory {
         /** A set of names of loaded libraries. */
         std::set<std::string> libs_loaded_;
 
+
+      ClassDef(ProcessorFactory,1);
+  
 };
 
 #endif  // ProcessorFactory
