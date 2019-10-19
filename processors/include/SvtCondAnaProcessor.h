@@ -8,7 +8,7 @@
 #include "Collections.h"
 
 //ROOT
-#include "ClusterHistos.h"
+#include "SvtCondHistos.h"
 #include "Processor.h"
 #include "TClonesArray.h"
 #include "TFile.h"
@@ -16,13 +16,13 @@
 class TTree;
 
 
-class ClusterOnTrackAnaProcessor : public Processor {
+class SvtCondAnaProcessor : public Processor {
 
  public:
 
-  ClusterOnTrackAnaProcessor(const std::string& name, Process& process);
+  SvtCondAnaProcessor(const std::string& name, Process& process);
 
-  ~ClusterOnTrackAnaProcessor();
+  ~SvtCondAnaProcessor();
 
   virtual bool process(IEvent* ievent);
 
@@ -40,17 +40,18 @@ class ClusterOnTrackAnaProcessor : public Processor {
 
  private:
   
-  ClusterHistos* clusterHistos{nullptr};
+  SvtCondHistos* svtCondHistos{nullptr};
   
   std::string baselineFits_{""};
   std::string baselineRun_{""};
 
   //TODO Change this to be held from HPSEvent
+  TClonesArray* rawSvtHits_{nullptr};
+ //
   TTree* tree_;
   std::vector<Track*> *tracks_{};
-  TBranch*      btracks_{nullptr};
   std::vector<TrackerHit*> hits_{};
-  TBranch*      bhits_{nullptr};
+  TBranch*      brawSvtHits_{nullptr};
   TFile*        outF_{nullptr};
   
 };

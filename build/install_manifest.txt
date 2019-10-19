@@ -1,0 +1,8 @@
+/u/re/alspellm/work/src/hpstr/install/lib/libevent.so
+/u/re/alspellm/work/src/hpstr/install/lib/libevent_rdict.pcm
+/u/re/alspellm/work/src/hpstr/install/lib/libanalysis.so
+/u/re/alspellm/work/src/hpstr/install/lib/libprocessing.so
+/u/re/alspellm/work/src/hpstr/install/bin/hpstr
+/u/re/alspellm/work/src/hpstr/install/lib/python/__init__.py
+/u/re/alspellm/work/src/hpstr/install/lib/python/HpstrConf.py
+/u/re/alspellm/work/src/hpstr/install/lib/libprocessors.so

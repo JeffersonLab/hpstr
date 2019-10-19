@@ -1,0 +1,6 @@
+module "event" {
+  requires cplusplus
+  module "/u/re/alspellm/work/src/hpstr/event/include/EventDef.h" { header "/u/re/alspellm/work/src/hpstr/event/include/EventDef.h" export * }
+  export *
+}
+
