@@ -8,6 +8,8 @@
 #include "EventFile.h"
 #include "HpsEventFile.h"
 
+ClassImp(Process)
+
 Process::Process() {}
 
 //TODO Fix this better

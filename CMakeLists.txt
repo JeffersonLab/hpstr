@@ -39,7 +39,8 @@ endif()
 find_package(LCIO REQUIRED)
 
 # find Python installation
-find_package(PythonLibs 2.7 REQUIRED)
+# find_package(PythonLibs 2.7 REQUIRED)
+find_package(PythonLibs REQUIRED)
 message(STATUS "Python lib found at: ${PYTHON_LIBRARIES}")
 message(STATUS "Python include dir found at: ${PYTHON_INCLUDE_DIRS}")
 get_filename_component(PYTHON_LIBRARY_DIR ${PYTHON_LIBRARIES} DIRECTORY)
@@ -60,7 +61,7 @@ include(MacroModule)
 # import macro for declaring external dependencies
 include(MacroExtDeps)
 
-set(MODULES event analysis processing processors)
+set(MODULES event analysis processing processors execs)
 
 # build each module in the list
 foreach(module ${MODULES})

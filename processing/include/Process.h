@@ -17,7 +17,8 @@
 //----------//
 //   ROOT   //
 //----------//
-#include <TFile.h>
+#include "TObject.h"
+#include "TFile.h"
 
 //-----------//
 //   hpstr   //
@@ -77,6 +78,7 @@ class Process {
         /** Check if the input_files_ are rootFiles  */
        bool processRootFiles();
 
+
     private:
 
         /** Reader used to parse either binary or EVIO files. */
@@ -94,6 +96,7 @@ class Process {
         /** List of output file names.  If empty, no output file will be created. */
         std::vector<std::string> output_files_;
 
+        ClassDef(Process,1)
 };
 
 #endif
