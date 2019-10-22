@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
     }
 
     bool processRoot = false;
-    
+
     int ptrpy = 1;
     for (ptrpy = 1; ptrpy < argc; ptrpy++) {
         std::cout << argv[ptrpy] << std::endl;
@@ -45,15 +45,15 @@ int main(int argc, char **argv) {
     }
 
     try {
-        
+
         std::cout << "---- [ hpstr ]: Loading configuration --------" << std::endl;
-        
+
         ConfigurePython cfg(argv[ptrpy], argv + ptrpy + 1, argc - ptrpy);
 
         std::cout << "---- [ hpstr ]: Configuration load complete  --------" << std::endl;
 
         Process* p = cfg.makeProcess();
-        
+
         std::cout << "---- [ hpstr ]: Process initialized.  --------" << std::endl;
 
         // If Ctrl-c is used, immediately exit the application.
@@ -66,22 +66,22 @@ int main(int argc, char **argv) {
 
         std::cout << "---- [ hpstr ]: Starting event processing --------" << std::endl;
 
-	//TODO Make this better
-	if (p->processRootFiles()) {
-	  std::cout<<"---- [ hpstr ]: Running on ROOT Files --------" << std::endl;
-	  p->runOnRoot();
-	}
-	else {
-	  std::cout<<"---- [ hpstr ]: Running on LCIO Files --------" << std::endl;
-	  p->run();
-	}
-        
+        //TODO Make this better
+        if (p->processRootFiles()) {
+            std::cout<<"---- [ hpstr ]: Running on ROOT Files --------" << std::endl;
+            p->runOnRoot();
+        }
+        else {
+            std::cout<<"---- [ hpstr ]: Running on LCIO Files --------" << std::endl;
+            p->run();
+        }
+
         std::cout << "---- [ hpstr ]: Event processing complete  --------" << std::endl;
 
     } catch (exception& e) { 
         //std::cerr << "Error! [" << e.name() << "] : " << e.message() << std::endl;
         //std::cerr << "  at " << e.module() << ":" << e.line() << " in " << e.function() << std::endl;
-    
+
     } 
 
     return EXIT_SUCCESS;
@@ -90,5 +90,5 @@ int main(int argc, char **argv) {
 
 void displayUsage() {
     printf("Usage: hpstr [application arguments] {configuration_script.py}"
-           " [arguments to configuration script]\n");
+            " [arguments to configuration script]\n");
 }
