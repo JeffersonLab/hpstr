@@ -1,6 +1,0 @@
-module "event" {
-  requires cplusplus
-  module "/home/alic/src/hpstr/event/include/EventDef.h" { header "/home/alic/src/hpstr/event/include/EventDef.h" export * }
-  export *
-}
-

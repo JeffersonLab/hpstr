@@ -1,8 +1,0 @@
-/home/alic/src/hpstr/install/lib/libevent.so
-/home/alic/src/hpstr/install/lib/libevent_rdict.pcm
-/home/alic/src/hpstr/install/lib/libanalysis.so
-/home/alic/src/hpstr/install/lib/libprocessing.so
-/home/alic/src/hpstr/install/bin/hpstr
-/home/alic/src/hpstr/install/lib/python/__init__.py
-/home/alic/src/hpstr/install/lib/python/HpstrConf.py
-/home/alic/src/hpstr/install/lib/libprocessors.so
