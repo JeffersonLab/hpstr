@@ -10,7 +10,7 @@
 ClassImp(Vertex)
 
 Vertex::Vertex()
-: TObject() {
+    : TObject() {
 }
 
 Vertex::~Vertex() {
@@ -32,10 +32,10 @@ void Vertex::Clear(Option_t *option) {
 
 bool Vertex::vxTracksAvailable() const {
 
-  if (tracks_)
-    return true;
+    if (tracks_)
+        return true;
 
-  return false;
+    return false;
 }
 
 int Vertex::nTracks() const {

@@ -43,11 +43,20 @@ namespace Collections {
     /** Name of the collection containing Final State Particles. */
     constexpr const char* FINAL_STATE_PARTICLES{"FinalStateParticles"}; 
 
+    /** Name of the collection containing MC Particles. */
+    constexpr const char* MC_PARTICLES{"MCParticle"}; 
+
+    /** Name of the collection containing MC Tracker Hits. */
+    constexpr const char* MC_TRACKER_HITS{"TrackerHits"}; 
+
     /** Name of time corrected ECal hits collection. */
     constexpr const char* ECAL_TIME_CORR_HITS{"TimeCorrEcalHits"}; 
 
     /** Name of ECal hits collection. */
     constexpr const char* ECAL_HITS{"EcalCalHits"}; 
+
+    /** Name of simulated ECal hits collection. */
+    constexpr const char* MC_ECAL_HITS{"EcalHits"}; 
 
     /** Name of ECal clusters collection. */
     constexpr const char* ECAL_CLUSTERS{"EcalClustersCorr"};
