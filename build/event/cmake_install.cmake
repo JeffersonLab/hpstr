@@ -1,8 +1,8 @@
-# Install script for directory: /u/re/alspellm/work/src/hpstr/event
+# Install script for directory: /home/alic/src/hpstr/event
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/u/re/alspellm/work/src/hpstr/install")
+  set(CMAKE_INSTALL_PREFIX "/home/alic/src/hpstr/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -29,7 +29,7 @@ endif()
 
 # Install shared libraries without execute permission?
 if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
-  set(CMAKE_INSTALL_SO_NO_EXE "0")
+  set(CMAKE_INSTALL_SO_NO_EXE "1")
 endif()
 
 # Is this installation the result of a crosscompile?
@@ -38,45 +38,42 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  if(EXISTS "$ENV{DESTDIR}/u/re/alspellm/work/src/hpstr/install/lib/libevent.so" AND
-     NOT IS_SYMLINK "$ENV{DESTDIR}/u/re/alspellm/work/src/hpstr/install/lib/libevent.so")
+  if(EXISTS "$ENV{DESTDIR}/home/alic/src/hpstr/install/lib/libevent.so" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}/home/alic/src/hpstr/install/lib/libevent.so")
     file(RPATH_CHECK
-         FILE "$ENV{DESTDIR}/u/re/alspellm/work/src/hpstr/install/lib/libevent.so"
+         FILE "$ENV{DESTDIR}/home/alic/src/hpstr/install/lib/libevent.so"
          RPATH "")
   endif()
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/u/re/alspellm/work/src/hpstr/install/lib/libevent.so")
+   "/home/alic/src/hpstr/install/lib/libevent.so")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/u/re/alspellm/work/src/hpstr/install/lib" TYPE SHARED_LIBRARY FILES "/u/re/alspellm/work/src/hpstr/build/event/libevent.so")
-  if(EXISTS "$ENV{DESTDIR}/u/re/alspellm/work/src/hpstr/install/lib/libevent.so" AND
-     NOT IS_SYMLINK "$ENV{DESTDIR}/u/re/alspellm/work/src/hpstr/install/lib/libevent.so")
+file(INSTALL DESTINATION "/home/alic/src/hpstr/install/lib" TYPE SHARED_LIBRARY FILES "/home/alic/src/hpstr/build/event/libevent.so")
+  if(EXISTS "$ENV{DESTDIR}/home/alic/src/hpstr/install/lib/libevent.so" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}/home/alic/src/hpstr/install/lib/libevent.so")
     file(RPATH_CHANGE
-         FILE "$ENV{DESTDIR}/u/re/alspellm/work/src/hpstr/install/lib/libevent.so"
-         OLD_RPATH "/nfs/slac/g/hps3/users/bravo/src/root/buildV61204/lib:/nfs/slac/g/hps3/users/alspellm/src/LCIO/install/lib:"
+         FILE "$ENV{DESTDIR}/home/alic/src/hpstr/install/lib/libevent.so"
+         OLD_RPATH "/home/alic/src/root-6.18.04/buildV61804/lib:/home/alic/work/hps/hpsgit/LCIO/install/lib:"
          NEW_RPATH "")
     if(CMAKE_INSTALL_DO_STRIP)
-      execute_process(COMMAND "/opt/rh/devtoolset-8/root/usr/bin/strip" "$ENV{DESTDIR}/u/re/alspellm/work/src/hpstr/install/lib/libevent.so")
+      execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}/home/alic/src/hpstr/install/lib/libevent.so")
     endif()
   endif()
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-endif()
-
-if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/u/re/alspellm/work/src/hpstr/install/lib/libevent_rdict.pcm")
+   "/home/alic/src/hpstr/install/lib/libevent_rdict.pcm")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/u/re/alspellm/work/src/hpstr/install/lib" TYPE FILE FILES "/u/re/alspellm/work/src/hpstr/build/event/libevent_rdict.pcm")
+file(INSTALL DESTINATION "/home/alic/src/hpstr/install/lib" TYPE FILE FILES "/home/alic/src/hpstr/build/event/libevent_rdict.pcm")
 endif()
 

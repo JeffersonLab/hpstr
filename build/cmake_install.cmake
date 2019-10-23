@@ -1,8 +1,8 @@
-# Install script for directory: /u/re/alspellm/work/src/hpstr
+# Install script for directory: /home/alic/src/hpstr
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/u/re/alspellm/work/src/hpstr/install")
+  set(CMAKE_INSTALL_PREFIX "/home/alic/src/hpstr/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -29,7 +29,7 @@ endif()
 
 # Install shared libraries without execute permission?
 if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
-  set(CMAKE_INSTALL_SO_NO_EXE "0")
+  set(CMAKE_INSTALL_SO_NO_EXE "1")
 endif()
 
 # Is this installation the result of a crosscompile?
@@ -39,10 +39,10 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/u/re/alspellm/work/src/hpstr/build/event/cmake_install.cmake")
-  include("/u/re/alspellm/work/src/hpstr/build/analysis/cmake_install.cmake")
-  include("/u/re/alspellm/work/src/hpstr/build/processing/cmake_install.cmake")
-  include("/u/re/alspellm/work/src/hpstr/build/processors/cmake_install.cmake")
+  include("/home/alic/src/hpstr/build/event/cmake_install.cmake")
+  include("/home/alic/src/hpstr/build/analysis/cmake_install.cmake")
+  include("/home/alic/src/hpstr/build/processing/cmake_install.cmake")
+  include("/home/alic/src/hpstr/build/processors/cmake_install.cmake")
 
 endif()
 
@@ -54,5 +54,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/u/re/alspellm/work/src/hpstr/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/alic/src/hpstr/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

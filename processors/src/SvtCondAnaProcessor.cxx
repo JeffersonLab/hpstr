@@ -23,12 +23,12 @@ void SvtCondAnaProcessor::initialize(TTree* tree) {
       //std::cout<<"WARNING: baselines not loaded in Cluster on Track histos."<<std::endl;}
   
   svtCondHistos->Define1DHistos();
-  svtCondHistos->Define2DHistos();
+//  svtCondHistos->Define2DHistos();
   tree_= tree;
   //TODO Change this to Svt Raw blah blah
   tree_->SetBranchAddress(Collections::RAW_SVT_HITS,&rawSvtHits_,&brawSvtHits_);
   //TODO Change this.
-  //outF_ = new TFile("outputFile.root","recreate");
+  outF_ = new TFile("shazam.root","recreate");
   
 }
 

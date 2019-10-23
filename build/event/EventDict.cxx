@@ -1,6 +1,7 @@
 // Do NOT change. Changes will be lost next time file is generated
 
 #define R__DICTIONARY_FILENAME EventDict
+#define R__NO_DEPRECATION
 
 /*******************************************************************/
 #include <stddef.h>
@@ -33,11 +34,11 @@
 
 #include "TDataMember.h"
 
-// Since CINT ignores the std namespace, we need to do so in this file.
+// The generated code does not explicitly qualifies STL entities
 namespace std {} using namespace std;
 
 // Header files passed as explicit arguments
-#include "/u/re/alspellm/work/src/hpstr/event/include/EventDef.h"
+#include "/home/alic/src/hpstr/event/include/EventDef.h"
 
 // Header files passed via #pragma extra_include
 
@@ -1882,7 +1883,7 @@ namespace ROOT {
       vector<float> *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<float>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<float>", -2, "vector", 339,
+         instance("vector<float>", -2, "vector", 216,
                   typeid(vector<float>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &vectorlEfloatgR_Dictionary, isa_proxy, 0,
                   sizeof(vector<float>) );
@@ -1945,7 +1946,7 @@ namespace ROOT {
       vector<Vertex> *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<Vertex>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<Vertex>", -2, "vector", 339,
+         instance("vector<Vertex>", -2, "vector", 216,
                   typeid(vector<Vertex>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &vectorlEVertexgR_Dictionary, isa_proxy, 4,
                   sizeof(vector<Vertex>) );
@@ -2008,7 +2009,7 @@ namespace ROOT {
       vector<Vertex*> *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<Vertex*>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<Vertex*>", -2, "vector", 339,
+         instance("vector<Vertex*>", -2, "vector", 216,
                   typeid(vector<Vertex*>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &vectorlEVertexmUgR_Dictionary, isa_proxy, 4,
                   sizeof(vector<Vertex*>) );
@@ -2071,7 +2072,7 @@ namespace ROOT {
       vector<VTPData::hpsSingleTrig> *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<VTPData::hpsSingleTrig>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<VTPData::hpsSingleTrig>", -2, "vector", 339,
+         instance("vector<VTPData::hpsSingleTrig>", -2, "vector", 216,
                   typeid(vector<VTPData::hpsSingleTrig>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &vectorlEVTPDatacLcLhpsSingleTriggR_Dictionary, isa_proxy, 4,
                   sizeof(vector<VTPData::hpsSingleTrig>) );
@@ -2134,7 +2135,7 @@ namespace ROOT {
       vector<VTPData::hpsPairTrig> *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<VTPData::hpsPairTrig>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<VTPData::hpsPairTrig>", -2, "vector", 339,
+         instance("vector<VTPData::hpsPairTrig>", -2, "vector", 216,
                   typeid(vector<VTPData::hpsPairTrig>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &vectorlEVTPDatacLcLhpsPairTriggR_Dictionary, isa_proxy, 4,
                   sizeof(vector<VTPData::hpsPairTrig>) );
@@ -2197,7 +2198,7 @@ namespace ROOT {
       vector<VTPData::hpsFEETrig> *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<VTPData::hpsFEETrig>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<VTPData::hpsFEETrig>", -2, "vector", 339,
+         instance("vector<VTPData::hpsFEETrig>", -2, "vector", 216,
                   typeid(vector<VTPData::hpsFEETrig>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &vectorlEVTPDatacLcLhpsFEETriggR_Dictionary, isa_proxy, 4,
                   sizeof(vector<VTPData::hpsFEETrig>) );
@@ -2260,7 +2261,7 @@ namespace ROOT {
       vector<VTPData::hpsClusterMult> *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<VTPData::hpsClusterMult>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<VTPData::hpsClusterMult>", -2, "vector", 339,
+         instance("vector<VTPData::hpsClusterMult>", -2, "vector", 216,
                   typeid(vector<VTPData::hpsClusterMult>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &vectorlEVTPDatacLcLhpsClusterMultgR_Dictionary, isa_proxy, 4,
                   sizeof(vector<VTPData::hpsClusterMult>) );
@@ -2323,7 +2324,7 @@ namespace ROOT {
       vector<VTPData::hpsCluster> *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<VTPData::hpsCluster>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<VTPData::hpsCluster>", -2, "vector", 339,
+         instance("vector<VTPData::hpsCluster>", -2, "vector", 216,
                   typeid(vector<VTPData::hpsCluster>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &vectorlEVTPDatacLcLhpsClustergR_Dictionary, isa_proxy, 4,
                   sizeof(vector<VTPData::hpsCluster>) );
@@ -2386,7 +2387,7 @@ namespace ROOT {
       vector<VTPData::hpsCalibTrig> *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<VTPData::hpsCalibTrig>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<VTPData::hpsCalibTrig>", -2, "vector", 339,
+         instance("vector<VTPData::hpsCalibTrig>", -2, "vector", 216,
                   typeid(vector<VTPData::hpsCalibTrig>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &vectorlEVTPDatacLcLhpsCalibTriggR_Dictionary, isa_proxy, 4,
                   sizeof(vector<VTPData::hpsCalibTrig>) );
@@ -2449,7 +2450,7 @@ namespace ROOT {
       vector<TrackerHit> *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<TrackerHit>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<TrackerHit>", -2, "vector", 339,
+         instance("vector<TrackerHit>", -2, "vector", 216,
                   typeid(vector<TrackerHit>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &vectorlETrackerHitgR_Dictionary, isa_proxy, 4,
                   sizeof(vector<TrackerHit>) );
@@ -2512,7 +2513,7 @@ namespace ROOT {
       vector<TrackerHit*> *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<TrackerHit*>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<TrackerHit*>", -2, "vector", 339,
+         instance("vector<TrackerHit*>", -2, "vector", 216,
                   typeid(vector<TrackerHit*>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &vectorlETrackerHitmUgR_Dictionary, isa_proxy, 4,
                   sizeof(vector<TrackerHit*>) );
@@ -2575,7 +2576,7 @@ namespace ROOT {
       vector<Track> *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<Track>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<Track>", -2, "vector", 339,
+         instance("vector<Track>", -2, "vector", 216,
                   typeid(vector<Track>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &vectorlETrackgR_Dictionary, isa_proxy, 4,
                   sizeof(vector<Track>) );
@@ -2638,7 +2639,7 @@ namespace ROOT {
       vector<Track*> *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<Track*>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<Track*>", -2, "vector", 339,
+         instance("vector<Track*>", -2, "vector", 216,
                   typeid(vector<Track*>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &vectorlETrackmUgR_Dictionary, isa_proxy, 4,
                   sizeof(vector<Track*>) );
@@ -2701,7 +2702,7 @@ namespace ROOT {
       vector<TSData::tsBits> *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<TSData::tsBits>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<TSData::tsBits>", -2, "vector", 339,
+         instance("vector<TSData::tsBits>", -2, "vector", 216,
                   typeid(vector<TSData::tsBits>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &vectorlETSDatacLcLtsBitsgR_Dictionary, isa_proxy, 4,
                   sizeof(vector<TSData::tsBits>) );
@@ -2764,7 +2765,7 @@ namespace ROOT {
       vector<TObject> *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<TObject>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<TObject>", -2, "vector", 339,
+         instance("vector<TObject>", -2, "vector", 216,
                   typeid(vector<TObject>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &vectorlETObjectgR_Dictionary, isa_proxy, 4,
                   sizeof(vector<TObject>) );
@@ -2827,7 +2828,7 @@ namespace ROOT {
       vector<TObject*> *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<TObject*>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<TObject*>", -2, "vector", 339,
+         instance("vector<TObject*>", -2, "vector", 216,
                   typeid(vector<TObject*>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &vectorlETObjectmUgR_Dictionary, isa_proxy, 4,
                   sizeof(vector<TObject*>) );
@@ -2890,7 +2891,7 @@ namespace ROOT {
       vector<RawSvtHit> *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<RawSvtHit>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<RawSvtHit>", -2, "vector", 339,
+         instance("vector<RawSvtHit>", -2, "vector", 216,
                   typeid(vector<RawSvtHit>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &vectorlERawSvtHitgR_Dictionary, isa_proxy, 4,
                   sizeof(vector<RawSvtHit>) );
@@ -2953,7 +2954,7 @@ namespace ROOT {
       vector<RawSvtHit*> *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<RawSvtHit*>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<RawSvtHit*>", -2, "vector", 339,
+         instance("vector<RawSvtHit*>", -2, "vector", 216,
                   typeid(vector<RawSvtHit*>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &vectorlERawSvtHitmUgR_Dictionary, isa_proxy, 4,
                   sizeof(vector<RawSvtHit*>) );
@@ -3004,16 +3005,16 @@ namespace ROOT {
 namespace {
   void TriggerDictionaryInitialization_libevent_Impl() {
     static const char* headers[] = {
-"/u/re/alspellm/work/src/hpstr/event/include/EventDef.h",
+"/home/alic/src/hpstr/event/include/EventDef.h",
 0
     };
     static const char* includePaths[] = {
-"/u/re/alspellm/work/src/hpstr/event/include",
-"/nfs/slac/g/hps3/users/bravo/src/root/buildV61204/include",
-"/nfs/slac/g/hps3/users/bravo/src/root/buildV61204/externals/usr/local/include",
-"/nfs/slac/g/hps3/users/alspellm/src/LCIO/install/include",
-"/nfs/slac/g/hps3/users/bravo/src/root/buildV61204/include",
-"/nfs/slac/g/hps3/users/alspellm/src/hpstr/build/event/",
+"/home/alic/src/hpstr/event/include",
+"/home/alic/src/root-6.18.04/buildV61804/include",
+"/home/alic/work/hps/hpsgit/LCIO/install/include",
+"/home/alic/src/hpstr/event",
+"/home/alic/src/root-6.18.04/buildV61804/include",
+"/home/alic/src/hpstr/build/event/",
 0
     };
     static const char* fwdDeclCode = R"DICTFWDDCLS(
@@ -3022,30 +3023,28 @@ namespace {
 #pragma clang diagnostic ignored "-Wignored-attributes"
 #pragma clang diagnostic ignored "-Wreturn-type-c-linkage"
 extern int __Cling_Autoloading_Map;
-class __attribute__((annotate("$clingAutoload$Vertex.h")))  __attribute__((annotate("$clingAutoload$/u/re/alspellm/work/src/hpstr/event/include/EventDef.h")))  Vertex;
+class __attribute__((annotate("$clingAutoload$Vertex.h")))  __attribute__((annotate("$clingAutoload$/home/alic/src/hpstr/event/include/EventDef.h")))  Vertex;
 namespace std{template <typename _Tp> class __attribute__((annotate("$clingAutoload$bits/allocator.h")))  __attribute__((annotate("$clingAutoload$string")))  allocator;
 }
-class __attribute__((annotate("$clingAutoload$Track.h")))  __attribute__((annotate("$clingAutoload$/u/re/alspellm/work/src/hpstr/event/include/EventDef.h")))  Track;
-class __attribute__((annotate("$clingAutoload$TrackerHit.h")))  __attribute__((annotate("$clingAutoload$/u/re/alspellm/work/src/hpstr/event/include/EventDef.h")))  TrackerHit;
-class __attribute__((annotate("$clingAutoload$RawSvtHit.h")))  __attribute__((annotate("$clingAutoload$/u/re/alspellm/work/src/hpstr/event/include/EventDef.h")))  RawSvtHit;
+class __attribute__((annotate("$clingAutoload$Track.h")))  __attribute__((annotate("$clingAutoload$/home/alic/src/hpstr/event/include/EventDef.h")))  Track;
+class __attribute__((annotate("$clingAutoload$TrackerHit.h")))  __attribute__((annotate("$clingAutoload$/home/alic/src/hpstr/event/include/EventDef.h")))  TrackerHit;
+class __attribute__((annotate("$clingAutoload$RawSvtHit.h")))  __attribute__((annotate("$clingAutoload$/home/alic/src/hpstr/event/include/EventDef.h")))  RawSvtHit;
 class __attribute__((annotate("$clingAutoload$TObject.h")))  TObject;
-class __attribute__((annotate("$clingAutoload$CalCluster.h")))  __attribute__((annotate("$clingAutoload$/u/re/alspellm/work/src/hpstr/event/include/EventDef.h")))  CalCluster;
-class __attribute__((annotate("$clingAutoload$CalHit.h")))  __attribute__((annotate("$clingAutoload$/u/re/alspellm/work/src/hpstr/event/include/EventDef.h")))  CalHit;
-class __attribute__((annotate("$clingAutoload$EventHeader.h")))  __attribute__((annotate("$clingAutoload$/u/re/alspellm/work/src/hpstr/event/include/EventDef.h")))  EventHeader;
-class __attribute__((annotate("$clingAutoload$VTPData.h")))  __attribute__((annotate("$clingAutoload$/u/re/alspellm/work/src/hpstr/event/include/EventDef.h")))  VTPData;
-class __attribute__((annotate("$clingAutoload$TriggerData.h")))  __attribute__((annotate("$clingAutoload$/u/re/alspellm/work/src/hpstr/event/include/EventDef.h")))  TriggerData;
-class __attribute__((annotate("$clingAutoload$TSData.h")))  __attribute__((annotate("$clingAutoload$/u/re/alspellm/work/src/hpstr/event/include/EventDef.h")))  TSData;
-class __attribute__((annotate("$clingAutoload$Particle.h")))  __attribute__((annotate("$clingAutoload$/u/re/alspellm/work/src/hpstr/event/include/EventDef.h")))  Particle;
+class __attribute__((annotate("$clingAutoload$CalCluster.h")))  __attribute__((annotate("$clingAutoload$/home/alic/src/hpstr/event/include/EventDef.h")))  CalCluster;
+class __attribute__((annotate("$clingAutoload$CalHit.h")))  __attribute__((annotate("$clingAutoload$/home/alic/src/hpstr/event/include/EventDef.h")))  CalHit;
+class __attribute__((annotate("$clingAutoload$EventHeader.h")))  __attribute__((annotate("$clingAutoload$/home/alic/src/hpstr/event/include/EventDef.h")))  EventHeader;
+class __attribute__((annotate("$clingAutoload$VTPData.h")))  __attribute__((annotate("$clingAutoload$/home/alic/src/hpstr/event/include/EventDef.h")))  VTPData;
+class __attribute__((annotate("$clingAutoload$TriggerData.h")))  __attribute__((annotate("$clingAutoload$/home/alic/src/hpstr/event/include/EventDef.h")))  TriggerData;
+class __attribute__((annotate("$clingAutoload$TSData.h")))  __attribute__((annotate("$clingAutoload$/home/alic/src/hpstr/event/include/EventDef.h")))  TSData;
+class __attribute__((annotate("$clingAutoload$Particle.h")))  __attribute__((annotate("$clingAutoload$/home/alic/src/hpstr/event/include/EventDef.h")))  Particle;
 )DICTFWDDCLS";
     static const char* payloadCode = R"DICTPAYLOAD(
 #line 1 "libevent dictionary payload"
 
-#ifndef G__VECTOR_HAS_CLASS_ITERATOR
-  #define G__VECTOR_HAS_CLASS_ITERATOR 1
-#endif
 
 #define _BACKWARD_BACKWARD_WARNING_H
-#include "/u/re/alspellm/work/src/hpstr/event/include/EventDef.h"
+// Inline headers
+#include "/home/alic/src/hpstr/event/include/EventDef.h"
 
 #undef  _BACKWARD_BACKWARD_WARNING_H
 )DICTPAYLOAD";
@@ -3078,7 +3077,7 @@ nullptr};
     if (!isInitialized) {
       TROOT::RegisterModule("libevent",
         headers, includePaths, payloadCode, fwdDeclCode,
-        TriggerDictionaryInitialization_libevent_Impl, {}, classesHeaders);
+        TriggerDictionaryInitialization_libevent_Impl, {}, classesHeaders, /*has no C++ module*/false);
       isInitialized = true;
     }
   }

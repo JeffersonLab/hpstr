@@ -1,6 +1,0 @@
-#!/bin/bash 
-#export PYTHONPATH=/data/src/hpstr/processing/python:$PYTHONPATH
-export PYTHONPATH=/nfs/slac/g/hps3/users/alspellm/src/hpstr/install/lib/python:$PYTHONPATH
-
-export PATH=/nfs/slac/g/hps3/users/alspellm/src/hpstr/install/bin:$PATH
-export LD_LIBRARY_PATH=/nfs/slac/g/hps3/users/alspellm/src/hpstr/install/lib:$LD_LIBRARY_PATH

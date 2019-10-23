@@ -11,14 +11,6 @@ SvtCondHistos::~SvtCondHistos() {
 
     std::cout<<"Cleaning SvtCondHistos"<<std::endl;
 
-    //TODO understand why this crashes
-    /*
-       if (mmapper_) {
-       delete mmapper_; 
-       mmapper_=nullptr;
-       }
-       */
-
     for (std::map<std::string, TGraphErrors*>::iterator it = baselineGraphs.begin(); 
             it!=baselineGraphs.end(); ++it) {
         if (it->second) {
@@ -30,7 +22,7 @@ SvtCondHistos::~SvtCondHistos() {
 }
 
 
-/*void SvtCondHistos::Define1DHistos() {
+void SvtCondHistos::Define1DHistos() {
 
     //TODO improve this naming scheme
     std::string h_name = "";
@@ -48,8 +40,8 @@ SvtCondHistos::~SvtCondHistos() {
     }//half module plots
 }
 
-void SvtCondHistos::Define2DHistos() {
-    std::string h_name = "";
+/*void SvtCondHistos::Define2DHistos() {
+    f a container has volumeV′in its rest frameS′,  what is the volume measured by anobserver in frameSmoving at speedvrelative toS′?std::string h_name = "";
     int nbins = 1000;
     float pitch = 0.055;
     float startY = 0.700;
@@ -197,12 +189,21 @@ bool SvtCondHistos::LoadBaselineHistos(const std::string& baselineRun) {
 */
 
 
-void SvtCondHistos::Define1DHistos() {
-	svtCondHisto = new TH1F();
-}
-
 void SvtCondHistos::FillHistograms(RawSvtHit* rawSvtHit,float weight) {
+	std::string swTag = "";
+// for (unsigned int irh = 0; irh < rawSvtHit->GetEntries(); ++irh) {
 
-svtCondHisto->Fill(rawSvtHit->getADCs()[0], weight);
+	 swTag = "ly"+std::to_string(rawSvtHit->getLayer())+"_m"+std::to_string(rawSvtHit->getModule());
+	 std::string key = mmapper_->getStringFromSw(swTag);
 
+	 float sample0 = rawSvtHit->getADCs()[0];
+
+	 histos1d[m_name+"_"+key+"_sample0_vs_Amp"]->Fill(sample0,weight);
+	//RawSvtHit* rawhit = static_cast<RawSvtHit*>(rawhits_->At(irh));
+	
+	
+
+
+
+// }
  }      
