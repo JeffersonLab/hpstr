@@ -18,41 +18,41 @@ class TTree;
 
 class ClusterOnTrackAnaProcessor : public Processor {
 
- public:
+    public:
 
-  ClusterOnTrackAnaProcessor(const std::string& name, Process& process);
+        ClusterOnTrackAnaProcessor(const std::string& name, Process& process);
 
-  ~ClusterOnTrackAnaProcessor();
+        ~ClusterOnTrackAnaProcessor();
 
-  virtual bool process(IEvent* ievent);
+        virtual bool process(IEvent* ievent);
 
-  virtual void initialize(TTree* tree);
+        virtual void initialize(TTree* tree);
 
-  virtual void finalize();
-  
-  virtual void configure(const ParameterSet& parameters);
-  
-  void setBaselineFits(const std::string& baselineFits,const std::string& baselineRun){
-    baselineFits_ = baselineFits;
-    baselineRun_  = baselineRun;
-  };
-  
+        virtual void finalize();
 
- private:
-  
-  ClusterHistos* clusterHistos{nullptr};
-  
-  std::string baselineFits_{""};
-  std::string baselineRun_{""};
+        virtual void configure(const ParameterSet& parameters);
 
-  //TODO Change this to be held from HPSEvent
-  TTree* tree_;
-  std::vector<Track*> *tracks_{};
-  TBranch*      btracks_{nullptr};
-  std::vector<TrackerHit*> hits_{};
-  TBranch*      bhits_{nullptr};
-  TFile*        outF_{nullptr};
-  
+        void setBaselineFits(const std::string& baselineFits,const std::string& baselineRun){
+            baselineFits_ = baselineFits;
+            baselineRun_  = baselineRun;
+        };
+
+
+    private:
+
+        ClusterHistos* clusterHistos{nullptr};
+
+        std::string baselineFits_{""};
+        std::string baselineRun_{""};
+
+        //TODO Change this to be held from HPSEvent
+        TTree* tree_;
+        std::vector<Track*> *tracks_{};
+        TBranch*      btracks_{nullptr};
+        std::vector<TrackerHit*> hits_{};
+        TBranch*      bhits_{nullptr};
+        TFile*        outF_{nullptr};
+
 };
 
 
