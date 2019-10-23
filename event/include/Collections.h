@@ -55,6 +55,9 @@ namespace Collections {
     /** Name of ECal hits collection. */
     constexpr const char* ECAL_HITS{"EcalCalHits"}; 
 
+    /** Name of simulated ECal hits collection. */
+    constexpr const char* MC_ECAL_HITS{"EcalHits"}; 
+
     /** Name of ECal clusters collection. */
     constexpr const char* ECAL_CLUSTERS{"EcalClustersCorr"};
 
