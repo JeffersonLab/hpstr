@@ -94,8 +94,9 @@ void Process::run() {
                 file = new EventFile(ifile, output_files_[cfile]);
                 file->setupEvent(&event);  
             }
-
-            TTree* tree = event.getTree(); 
+	    
+            TTree* tree = new TTree("HPS_Event","HPS event tree");
+	    event.setTree(tree); 
             // first, notify everyone that we are starting
             for (auto module : sequence_) {
                 module->initialize(tree);

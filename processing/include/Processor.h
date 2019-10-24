@@ -91,11 +91,12 @@ class Processor {
 
         /** Handle to the Process. */
         Process& process_;
-
+		
     private:
 
         /** The name of the Processor. */
         std::string name_;
+	
 
 };
 
