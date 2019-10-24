@@ -10,8 +10,6 @@ RefittedTracksProcessor::RefittedTracksProcessor(const std::string& name, Proces
   _RefitTrkHistos          = new TrackHistos("refit");
   _RefitTrkHistos_z0cut    = new TrackHistos("refit_z0");
   _RefitTrkHistos_chi2cut  = new TrackHistos("refit_chi2");
-  
-  
 }
 
 RefittedTracksProcessor::~RefittedTracksProcessor() { 
@@ -19,7 +17,9 @@ RefittedTracksProcessor::~RefittedTracksProcessor() {
 
 void RefittedTracksProcessor::initialize(TTree* tree) {
   
-  //tree->Branch("GBLRefittedTracks", &refit_tracks_);
+  tree->Branch("GBLRefittedTracks", &tracks_);
+  tree->Branch("V0Vertices", &vertices_);
+  tree->Branch("V0Vertices_refit", &vertices_refit_);
   
   
   //Original hists
@@ -48,6 +48,8 @@ bool RefittedTracksProcessor::process(IEvent* ievent) {
 
   tracks_.clear();
   refit_tracks_.clear();
+  vertices_.clear();
+  vertices_refit_.clear();
     
   Event* event = static_cast<Event*> (ievent);
   //Get all the tracks
@@ -59,18 +61,56 @@ bool RefittedTracksProcessor::process(IEvent* ievent) {
   //Get all the rawHits fits
   EVENT::LCCollection* raw_svt_hit_fits = event->getLCCollection(Collections::RAW_SVT_HIT_FITS);
 
-  //Initialize map of shared hits
+  //Grab the vertices and the vtx candidates
+  EVENT::LCCollection* u_vtx_candidates = nullptr;
+  EVENT::LCCollection* u_vtxs = nullptr;
+  if (utils::hasCollection(event->getLCEvent(),Collections::UC_V0CANDIDATES)) { 
+    //Get the vertex candidates
+    u_vtx_candidates  = event->getLCCollection(Collections::UC_V0CANDIDATES);
+    //Get the vertices 
+    u_vtxs = event->getLCCollection(Collections::UC_V0VERTICES);
+  
+    
+    for (int ivtx = 0 ; ivtx < u_vtxs->getNumberOfElements(); ++ivtx) {
+      Vertex* vtx = utils::buildVertex(static_cast<EVENT::Vertex*>(u_vtxs->getElementAt(ivtx)));
+      vertices_.push_back(vtx);
+      _OriginalTrkHistos->Fill1DHistograms(nullptr,vtx);
+    }
+    _OriginalTrkHistos->Fill1DHisto("n_vertices",u_vtxs->getNumberOfElements());
+  }
+
+  //Grab the vertices and the vtx candidates
+  EVENT::LCCollection* u_vtx_candidates_r = nullptr;
+  EVENT::LCCollection* u_vtxs_r = nullptr;
+  if (utils::hasCollection(event->getLCEvent(),"UnconstrainedV0Candidates_refit")) { 
+    //Get the vertex candidates
+    u_vtx_candidates_r  = event->getLCCollection("UnconstrainedV0Candidates_refit");
+    //Get the vertices 
+    u_vtxs_r = event->getLCCollection("UnconstrainedV0Vertices_refit");
+    
+    for (int ivtx = 0 ; ivtx < u_vtxs_r->getNumberOfElements(); ++ivtx) {
+      Vertex* vtx_r = utils::buildVertex(static_cast<EVENT::Vertex*>(u_vtxs_r->getElementAt(ivtx)));
+      vertices_refit_.push_back(vtx_r);
+      _RefitTrkHistos->Fill1DHistograms(nullptr,vtx_r);
+    }
+    _RefitTrkHistos->Fill1DHisto("n_vertices",u_vtxs_r->getNumberOfElements());
+  }
+    
+    
+    //Initialize map of shared hits
   std::map <int, std::vector<int> > SharedHits;
   //TODO: can we do better? (innermost)
   std::map <int, bool> SharedHitsLy0;
   std::map <int, bool> SharedHitsLy1;
-
+  
   for (int itrack = 0; itrack < tracks->getNumberOfElements();++itrack) {
     SharedHits[itrack]   = {};
     SharedHitsLy0[itrack] = false;
     SharedHitsLy1[itrack] = false;
   }
   
+
+  _OriginalTrkHistos->Fill1DHisto("n_tracks",tracks->getNumberOfElements());
   // Loop over all the LCIO Tracks and add them to the HPS event.
   for (int itrack = 0; itrack < tracks->getNumberOfElements(); ++itrack) {
     
@@ -175,6 +215,8 @@ bool RefittedTracksProcessor::process(IEvent* ievent) {
     }
 
     _OriginalTrkHistos->Fill1DHistograms(track);
+    
+    _RefitTrkHistos->Fill1DHisto("n_tracks",refitted_tracks_list.size());
     
     for (int irtrk = 0; irtrk < refitted_tracks_list.size(); irtrk++) {
       
