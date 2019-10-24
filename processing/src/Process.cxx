@@ -33,6 +33,7 @@ void Process::runOnRoot() {
             }
             for (auto module : sequence_) {
                 module->initialize(event.getTree());
+                module->setFile(file->getOutputFile());
             }
             while (file->nextEvent() && (event_limit_ < 0 || (n_events_processed < event_limit_))) {
                 if (n_events_processed%1000 == 0)

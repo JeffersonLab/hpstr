@@ -48,7 +48,6 @@ class MCAnaProcessor : public Processor {
         TClonesArray* mcParts_{nullptr};
         TClonesArray* mcTrkrHits_{nullptr};
         TClonesArray* mcEcalHits_{nullptr};
-        TFile*        outF_{nullptr};
 
 };
 

@@ -51,7 +51,6 @@ class ClusterOnTrackAnaProcessor : public Processor {
         TBranch*      btracks_{nullptr};
         std::vector<TrackerHit*> hits_{};
         TBranch*      bhits_{nullptr};
-        TFile*        outF_{nullptr};
 
 };
 
