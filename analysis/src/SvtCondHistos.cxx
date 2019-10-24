@@ -34,7 +34,9 @@ void SvtCondHistos::Define1DHistos() {
         histos1d[h_name] = plot1D(h_name,"charge",100,0,10000);
 	std::cout << "Hybrid: " << h_name << std::endl;
         h_name = m_name+"_"+half_module_names[ihm]+"_cluSize";
+	std::cout << "h_name: " << h_name << std::endl;
         histos1d[h_name] = plot1D(h_name,"cluSize",10,0,10);
+
     }//half module plots
 }
 
@@ -191,12 +193,13 @@ void SvtCondHistos::FillHistograms(RawSvtHit* rawSvtHit,float weight) {
 	std::string swTag = "";
 // for (unsigned int irh = 0; irh < rawSvtHit->GetEntries(); ++irh) {
 
-	 swTag = "ly"+std::to_string(rawSvtHit->getLayer())+"_m"+std::to_string(rawSvtHit->getModule());
-	 std::string key = mmapper_->getStringFromSw(swTag);
+	// swTag = "ly"+std::to_string(rawSvtHit->getLayer())+"_m"+std::to_string(rawSvtHit->getModule());
+	 //std::string key = mmapper_->getStringFromSw(swTag);
 
 	 float sample0 = rawSvtHit->getADCs()[0];
+	 histos1d[hitOnTrack_2D_L0B_axial_cluSize]->Fill(sample0,weight);
 
-	 histos1d[m_name+"_"+key+"_sample0_vs_Amp"]->Fill(sample0,weight);
+	// histos1d[m_name+"_"+key+"_sample0_vs_Amp"]->Fill(sample0,weight);
 	//RawSvtHit* rawhit = static_cast<RawSvtHit*>(rawhits_->At(irh));
 	
 	
