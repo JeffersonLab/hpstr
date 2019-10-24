@@ -17,6 +17,7 @@
 //----------//
 #include <EVENT/LCCollection.h>
 #include <EVENT/SimTrackerHit.h>
+#include <EVENT/MCParticle.h>
 #include <UTIL/BitField64.h>
 
 //----------//

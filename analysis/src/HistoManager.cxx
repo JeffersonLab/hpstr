@@ -3,6 +3,13 @@
 #include "TKey.h"
 #include "TClass.h"
 
+HistoManager::HistoManager() {
+    HistoManager("default");
+}
+
+HistoManager::HistoManager(const std::string& inputName) {
+    m_name = inputName;
+}
 
 HistoManager::~HistoManager() {
 
