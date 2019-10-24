@@ -110,7 +110,7 @@ class MCTrackerHit : public TObject {
         /** Module */
         int module_{-999};
 
-        /** Raw charge: sum of the raw hit fit amplitudes */
+        /** Energy deposit of hit */
         float edep_{-999};
 
         /** pdg id of particle that made the hit */
