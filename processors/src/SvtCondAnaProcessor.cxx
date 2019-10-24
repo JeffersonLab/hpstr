@@ -1,20 +1,18 @@
 #include "SvtCondAnaProcessor.h"
 #include "TBranch.h"
 
-SvtCondAnaProcessor::SvtCondAnaProcessor(const std::string& name, Process& process) : Processor(name,process){}
+SvtCondAnaProcessor::SvtCondAnaProcessor(const std::string& name, Process& process) : Processor(name,process){std::cout << "SvtCondAnaProcessor Constructor" << std::endl;
+	std::cout << "name:" << name << std::endl;
+}
 //TODO CHECK THIS DESTRUCTOR
-SvtCondAnaProcessor::~SvtCondAnaProcessor(){}
+SvtCondAnaProcessor::~SvtCondAnaProcessor(){ std::cout << "SvtCondAnaProcessor Destructor" << std::endl;}
 
 
 void SvtCondAnaProcessor::configure(const ParameterSet& parameters) {
-  
-  baselineFits_ = parameters.getString("BaselineFits");
-  baselineRun_  = parameters.getString("BaselineRun");
-  std::cout<<"Configured: "<<baselineFits_<<" "<<baselineRun_<<std::endl;
-  
 }
 
 void SvtCondAnaProcessor::initialize(TTree* tree) {
+  std::cout << "SvtCondAnaProcessor has been initialized" << std::endl;
   svtCondHistos = new SvtCondHistos("hitOnTrack_2D");
   
 //  if (!baselineFits_.empty() && !baselineRun_.empty()) {
@@ -47,7 +45,7 @@ bool SvtCondAnaProcessor::process(IEvent* ievent) {
 void SvtCondAnaProcessor::finalize() {
 
   svtCondHistos->saveHistos(outF_,"");
-  //outF_->Close();
+  outF_->Close();
   delete svtCondHistos;
   svtCondHistos = nullptr;
 }

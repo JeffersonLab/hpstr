@@ -32,10 +32,10 @@ class SvtCondAnaProcessor : public Processor {
   
   virtual void configure(const ParameterSet& parameters);
   
-  void setBaselineFits(const std::string& baselineFits,const std::string& baselineRun){
+ /* void setBaselineFits(const std::string& baselineFits,const std::string& baselineRun){
     baselineFits_ = baselineFits;
     baselineRun_  = baselineRun;
-  };
+  };*/
   
 
  private:

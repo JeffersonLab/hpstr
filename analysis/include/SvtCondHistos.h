@@ -22,7 +22,7 @@ class SvtCondHistos : public HistoManager{
   ~SvtCondHistos();
 
   virtual void Define3DHistos(){};
-  virtual void Define2DHistos();
+//  virtual void Define2DHistos();
   virtual void Define1DHistos();
 
   //virtual void GetHistosFromFile(TFile* inFile, const std::string& name,const std::string& folder="");
