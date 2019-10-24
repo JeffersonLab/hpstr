@@ -9,7 +9,6 @@ HistoManager::HistoManager() {
 
 HistoManager::HistoManager(const std::string& inputName) {
     m_name = inputName;
-    event_h = new TH1D("event_h","Number of Events Processed;;Events", 21, -10.5, 10.5);
 }
 
 HistoManager::~HistoManager() {
@@ -211,8 +210,6 @@ void HistoManager::saveHistos(TFile* outF,std::string folder) {
         dir = new TDirectoryFile(folder.c_str(),folder.c_str());
         dir->cd();
     }
-
-    event_h->Write();
 
     for (it3d it = histos3d.begin(); it!=histos3d.end(); ++it) {
         if (!it->second){
