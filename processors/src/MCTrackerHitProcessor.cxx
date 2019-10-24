@@ -54,6 +54,9 @@ bool MCTrackerHitProcessor::process(IEvent* ievent) {
         // Set the energy deposit of the hit
         mc_tracker_hit->setEdep(lcio_mcTracker_hit->getEDep());
 
+        // Set the pdg of particle generating the hit
+        mc_tracker_hit->setPDG(lcio_mcTracker_hit->getMCParticle()->getPDG());
+
         // Set the time of the hit
         mc_tracker_hit->setTime(lcio_mcTracker_hit->getTime());
 
