@@ -26,15 +26,13 @@ void SvtCondHistos::Define1DHistos() {
 
     //TODO improve this naming scheme
     std::string h_name = "";
-
-    //Cluster position
     histos1d[m_name+"_gz"] = plot1D(m_name+"_gz","Global Z [mm]",20000,-1000,2000);
-
+    std::cout << "Module name " << m_name << std::endl;
     mmapper_->getStrings(half_module_names);
-
     for (unsigned int ihm = 0; ihm<half_module_names.size(); ihm++) {
         h_name = m_name+"_"+half_module_names[ihm]+"_charge";
         histos1d[h_name] = plot1D(h_name,"charge",100,0,10000);
+	std::cout << "Hybrid: " << h_name << std::endl;
         h_name = m_name+"_"+half_module_names[ihm]+"_cluSize";
         histos1d[h_name] = plot1D(h_name,"cluSize",10,0,10);
     }//half module plots
