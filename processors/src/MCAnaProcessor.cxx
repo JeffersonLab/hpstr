@@ -46,9 +46,7 @@ bool MCAnaProcessor::process(IEvent* ievent) {
 
 void MCAnaProcessor::finalize() {
 
-    outF_ = new TFile("testMCAnaHistos.root","RECREATE");
     histos->saveHistos(outF_,"");
-    outF_->Close();
     delete histos;
     histos = nullptr;
 }
