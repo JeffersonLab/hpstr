@@ -54,7 +54,6 @@ bool ClusterOnTrackAnaProcessor::process(IEvent* ievent) {
 void ClusterOnTrackAnaProcessor::finalize() {
 
     clusterHistos->saveHistos(outF_,"");
-    //outF_->Close();
     delete clusterHistos;
     clusterHistos = nullptr;
 }
