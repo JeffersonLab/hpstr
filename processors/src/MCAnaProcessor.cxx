@@ -20,7 +20,7 @@ void MCAnaProcessor::initialize(TTree* tree) {
     // init histos
     histos = new MCAnaHistos("hitOnTrack_2D");
     histos->Define1DHistos();
-    histos->Define2DHistos();
+    //histos->Define2DHistos();
 
     // init TClonesArrays
     mcParts_    = new TClonesArray("MCParticle"  , 1000000);
@@ -36,7 +36,6 @@ void MCAnaProcessor::initialize(TTree* tree) {
 
 bool MCAnaProcessor::process(IEvent* ievent) {
 
-    histos->FillEvent();
     histos->FillMCParticles(mcParts_);
     histos->FillMCTrackerHits(mcTrkrHits_);
     histos->FillMCEcalHits(mcEcalHits_);

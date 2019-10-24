@@ -67,8 +67,6 @@ class HistoManager {
         virtual void Define2DHistos(){};
         virtual void Define1DHistos(){};
 
-        virtual void FillEvent(){event_h->Fill(0.0);};
-
         virtual void GetHistosFromFile(TFile* inFile, const std::string& name,const std::string& folder = "");
 
         virtual void saveHistos(TFile* outF = nullptr,std::string folder = "");
@@ -91,8 +89,6 @@ class HistoManager {
 
         std::map<std::string, TH3F*> histos3d;
         typedef std::map<std::string, TH3F*>::iterator it3d;
-
-        TH1D * event_h;
 
         bool debug_{false};
 
