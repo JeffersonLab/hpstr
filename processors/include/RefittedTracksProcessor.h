@@ -35,6 +35,7 @@
 #include "Collections.h"
 #include "Processor.h"
 #include "Track.h"
+#include "Vertex.h"
 #include "Event.h"
 #include "TrackHistos.h"
 #include "TrackerHit.h"
@@ -90,6 +91,11 @@ class RefittedTracksProcessor : public Processor {
 
 	/** Container to hold the raw hits */
 	std::vector<RawSvtHit*> raw_hits_{};
+	
+	/** Container to hold vertex objects */
+	std::vector<Vertex*> vertices_{};
+	std::vector<Vertex*> vertices_refit_{};
+	
 
 	bool _debug{false};
 

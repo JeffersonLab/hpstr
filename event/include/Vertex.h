@@ -65,9 +65,11 @@ class Vertex : public TObject {
 
   /** Vertex parameters depend on LCIO files. 
    *  The available parameters are invMass, p1X, p2Y, p2X, p1Z, p2Z, p1Y, invMassError
+   *  For unconstrained:
+   * V0PzErr, invMass, V0Pz, vXErr, V0Py, V0Px, V0PErr, V0TargProjY, vZErr, V0TargProjXErr, vYErr, V0TargProjYErr, invMassError, p1X, p2Y, p2X, V0P, p1Z, p1Y, p2Z, V0TargProjX, layerCode, V0PxErr, V0PyErr,
    */
   
-  void setVtxParameters(float* parameters);
+  void setVtxParameters(const std::vector<float>& parameters);
    
   void        setType (const std::string& type) {type_ = type;};
   std::string getType() const {return type_;};
@@ -77,16 +79,15 @@ class Vertex : public TObject {
   int nTracks() const; 
 
   /** Returns the covariance matrix as a simple vector of values */
-  const std::vector<float>& covariance () const {return covariance_;};
+  const std::vector<float>& getCovariance () const {return covariance_;};
   
   /** Sets the covariance matrix as a simple vector of values
    *  Covariance matrix of the position (stored as lower triangle matrix, i.e.
    *  cov(xx),cov(y,x),cov(y,y) ).
    */
   
-  void setCovariance( const std::vector<float>* vec);
+  void setCovariance( const std::vector<float>& vec);
   
-
   void   setNdf     (const double ndf) {ndf_ = ndf;};
   double getNdf     () const {return ndf_;};
 
@@ -140,8 +141,9 @@ class Vertex : public TObject {
   float probability_{-999};
   int id_;
   std::string type_{""};
-  TRefArray* tracks_;
-
+  TRefArray* tracks_{nullptr};
+  std::vector<float> parameters_;
+  
   ClassDef(Vertex,1);
 
 }; // Vertex
