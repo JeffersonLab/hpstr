@@ -31,11 +31,24 @@ Vertex* utils::buildVertex(EVENT::Vertex* lc_vertex) {
   
   if (!lc_vertex) 
     return nullptr;
+
+  //TODO move the static cast outside?
   
   Vertex* vertex = new Vertex();
-  vertex->setChi2       (lc_vertex->getChi2());
-  vertex->setProbability(lc_vertex->getProbability());
+  vertex->setChi2         (lc_vertex->getChi2());
+  vertex->setProbability  (lc_vertex->getProbability());
+  vertex->setID           (lc_vertex->id());
+  vertex->setType         (lc_vertex->getAlgorithmType());
+  vertex->setVtxParameters((std::vector<float>)lc_vertex->getParameters());
   
+  //TODO Rotate the covariance matrix!
+  vertex->setCovariance   ((std::vector<float>)lc_vertex->getCovMatrix());
+  //std::cout<<lc_vertex->getVertexParameterNames[0]<<std::endl;
+  vertex->setType         (lc_vertex->getAlgorithmType());
+  
+  vertex->setPos          (lc_vertex->getPosition(),false);
+
+
   return vertex;
 }
 
