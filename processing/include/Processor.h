@@ -21,6 +21,7 @@
 class Process;
 class Processor;
 class TTree;
+class TFile;
 class IEvent;
 
 /** Typedef for ProcessorFactory use. */
@@ -67,6 +68,12 @@ class Processor {
         virtual void initialize(TTree* tree) = 0;
 
         /**
+         * Set output TFile for AnaProcessors
+         * @param pointer to output TFile
+         */
+        virtual void setFile(TFile* outFile) {outF_ = outFile;};
+
+        /**
          * Process the event and put new data products into it.
          * @param event The Event to process.
          * @return status of the processing, false will move to next event and skip other processes.
@@ -92,10 +99,14 @@ class Processor {
         /** Handle to the Process. */
         Process& process_;
 
+        /** output file pointer */
+        TFile* outF_{nullptr};
+
     private:
 
         /** The name of the Processor. */
         std::string name_;
+
 
 };
 

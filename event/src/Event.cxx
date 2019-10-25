@@ -10,7 +10,7 @@
 Event::Event() {
     
     // Create the tree
-    tree_ = new TTree("HPS_Event", "HPS event tree");
+    //tree_ = new TTree("HPS_Event", "HPS event tree");
     
     // Instantiate the event header
     event_header_ = new EventHeader();  

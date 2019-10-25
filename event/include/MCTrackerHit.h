@@ -82,6 +82,12 @@ class MCTrackerHit : public TObject {
         //** @return the tracker hit layer from the raw hit content */
         int getLayer() const {return layer_;};
 
+        //** set the pdg id of particle that made the hit */
+        void setPDG(const int pdg) {pdg_ = pdg;};
+
+        //** @return the pdg id of particle that made the hit */
+        int getPDG() const {return pdg_;};
+
         ClassDef(MCTrackerHit, 1);	
 
     private:
@@ -104,8 +110,11 @@ class MCTrackerHit : public TObject {
         /** Module */
         int module_{-999};
 
-        /** Raw charge: sum of the raw hit fit amplitudes */
+        /** Energy deposit of hit */
         float edep_{-999};
+
+        /** pdg id of particle that made the hit */
+        int pdg_{-999};
 
 }; // MCTrackerHit
 

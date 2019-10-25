@@ -12,4 +12,5 @@
 #include "Vertex.h"
 #include "TrackerHit.h"
 #include "MCTrackerHit.h"
+#include "MCEcalHit.h"
 #include "RawSvtHit.h"
