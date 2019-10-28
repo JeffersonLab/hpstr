@@ -31,26 +31,18 @@ class SvtCondAnaProcessor : public Processor {
   virtual void finalize();
   
   virtual void configure(const ParameterSet& parameters);
-  
- /* void setBaselineFits(const std::string& baselineFits,const std::string& baselineRun){
-    baselineFits_ = baselineFits;
-    baselineRun_  = baselineRun;
-  };*/
-  
+ 
 
  private:
   
+  int Event_number=0;
   SvtCondHistos* svtCondHistos{nullptr};
   
   std::string baselineFits_{""};
   std::string baselineRun_{""};
 
-  //TODO Change this to be held from HPSEvent
   TClonesArray* rawSvtHits_{nullptr};
- //
   TTree* tree_;
-  std::vector<Track*> *tracks_{};
-  std::vector<TrackerHit*> hits_{};
   TBranch*      brawSvtHits_{nullptr};
   TFile*        outF_{nullptr};
   

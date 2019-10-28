@@ -1,53 +1,47 @@
 #include "SvtCondAnaProcessor.h"
 #include "TBranch.h"
 
-SvtCondAnaProcessor::SvtCondAnaProcessor(const std::string& name, Process& process) : Processor(name,process){std::cout << "SvtCondAnaProcessor Constructor" << std::endl;
-	std::cout << "name:" << name << std::endl;
+SvtCondAnaProcessor::SvtCondAnaProcessor(const std::string& name, Process& process) : Processor(name,process){
 }
-//TODO CHECK THIS DESTRUCTOR
-SvtCondAnaProcessor::~SvtCondAnaProcessor(){ std::cout << "SvtCondAnaProcessor Destructor" << std::endl;}
+
+SvtCondAnaProcessor::~SvtCondAnaProcessor(){ 
+}
 
 
 void SvtCondAnaProcessor::configure(const ParameterSet& parameters) {
+    std::cout << "Configure" << std::endl;
 }
 
 void SvtCondAnaProcessor::initialize(TTree* tree) {
-  std::cout << "SvtCondAnaProcessor has been initialized" << std::endl;
-  svtCondHistos = new SvtCondHistos("hitOnTrack_2D");
-  
-//  if (!baselineFits_.empty() && !baselineRun_.empty()) {
-  //  svtCondHistos->setBaselineFitsDir(baselineFits_);
-    //if (!svtCondHistos->LoadBaselineHistos(baselineRun_))
-      //std::cout<<"WARNING: baselines not loaded in Cluster on Track histos."<<std::endl;}
-  
-  svtCondHistos->Define1DHistos();
-//  svtCondHistos->Define2DHistos();
-  tree_= tree;
-  //TODO Change this to Svt Raw blah blah
-  tree_->SetBranchAddress(Collections::RAW_SVT_HITS,&rawSvtHits_,&brawSvtHits_);
-  //TODO Change this.
-  outF_ = new TFile("shazam.root","recreate");
-  
+    std::cout << "Initializing" << std::endl;
+    svtCondHistos = new SvtCondHistos("raw_hits");
+    svtCondHistos->Define2DHistos();
+    std::cout << "Define2DHistos" << std::endl;
+
+    tree_= tree;
+    std::cout << "tree defined" << std::endl;
+    tree_->SetBranchAddress(Collections::RAW_SVT_HITS,&rawSvtHits_,&brawSvtHits_);
+    std::cout << "Branch Address Set" << std::endl;
+
 }
 
 bool SvtCondAnaProcessor::process(IEvent* ievent) {
 
- 	int nlines = rawSvtHits_->GetEntriesFast();
-	for (int i=0; i<nlines; i++) {
-         RawSvtHit* rawSvtHit = (RawSvtHit*)rawSvtHits_->At(i);
-	 svtCondHistos->FillHistograms(rawSvtHit, 1.); 
-	 
-}
-  
-   return true;
+    int nlines = rawSvtHits_->GetEntries();
+    if(Event_number%1000 == 0) std::cout << "Event: " << Event_number << " Number of Entries is: " << nlines << std::endl;
+    for (int i=0; i<nlines; i++) {
+        RawSvtHit* rawSvtHit = (RawSvtHit*)rawSvtHits_->At(i);
+        svtCondHistos->FillHistograms(rawSvtHit, 1.); 
+    }
+    Event_number++;  
+    return true;
 }
 
 void SvtCondAnaProcessor::finalize() {
 
-  svtCondHistos->saveHistos(outF_,"");
-  outF_->Close();
-  delete svtCondHistos;
-  svtCondHistos = nullptr;
+    svtCondHistos->saveHistos(outF_,"");
+    delete svtCondHistos;
+    svtCondHistos = nullptr;
 }
 
 DECLARE_PROCESSOR(SvtCondAnaProcessor);
