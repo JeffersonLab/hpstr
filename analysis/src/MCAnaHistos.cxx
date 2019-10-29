@@ -10,8 +10,12 @@ void MCAnaHistos::Define1DHistos() {
             450, 0, 4.5);
     histos1d["MCpartsEnergyLow_h"] = new TH1F("MCpartsEnergyLow_h", ";Energy of Sim Particle [MeV];Sim Particles / 1 MeV",
             200, 0, 200);
+    histos1d["numMuons_h"] = new TH1F("numMuons_h", ";Number of Sim Muons;Events",
+            10, -0.5, 9.5);
     histos1d["minMuonE_h"] = new TH1F("minMuonE_h", "Minimum MC Muon Energy;Energy [GeV];Sim Particles / 10 MeV",
             450, 0, 4.5);
+    histos1d["minMuonEhigh_h"] = new TH1F("minMuonEhigh_h","Minimum MC Muon Energy;Energy [GeV];Sim Particles/100 keV",
+            3000, 2.2, 2.5);
 
     // init MCTrackerHit Histos
     histos1d["numMCTrkrHit_h"] = new TH1F("numMCTrkrHit_h", ";Number of Sim Tracker Hits;Events",
@@ -26,25 +30,33 @@ void MCAnaHistos::Define1DHistos() {
             60, -0.5, 59.5);
     histos1d["mcEcalHitEnergy_h"] = new TH1F("mcEcalHitEnergy_h", ";Ecal Hit Energy [MeV];Sim Particles / 2 MeV",
             200, 0, 400);
+    sumw2();
 }
 
 void MCAnaHistos::FillMCParticles(TClonesArray* mcParts, float weight ) {
     int nParts = mcParts->GetEntriesFast();
     histos1d["numMCparts_h"]->Fill((float)nParts, weight);
+    int nMuons = 0;
     double minMuonE = -99.9;
     for (int i=0; i < nParts; i++) 
     {
         MCParticle *part = (MCParticle*)mcParts->At(i);
         int pdg = part->getPDG();
         double energy = part->getEnergy();
-        if ((fabs(pdg) == 13) && (energy < minMuonE || minMuonE < 0.0))
+        if (fabs(pdg) == 13)
         {
-            minMuonE = energy;
+            nMuons++;
+            if(energy < minMuonE || minMuonE < 0.0)
+            {
+                minMuonE = energy;
+            }
         }
         histos1d["MCpartsEnergy_h"]->Fill(energy, weight);
         histos1d["MCpartsEnergyLow_h"]->Fill(energy*1000.0, weight);// Scaled to MeV
     }
+    histos1d["numMuons_h"]->Fill(nMuons, weight);
     histos1d["minMuonE_h"]->Fill(minMuonE, weight);
+    histos1d["minMuonEhigh_h"]->Fill(minMuonE, weight);
 }
 
 void MCAnaHistos::FillMCTrackerHits(TClonesArray* mcTrkrHits, float weight ) {
