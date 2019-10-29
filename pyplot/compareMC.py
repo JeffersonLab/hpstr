@@ -8,15 +8,14 @@ utils.SetStyle()
 path = "/home/bravo/hps3/users/bravo/sim/det16/singleMuon/"
 inFileList = [
     "slic/slicSingleMu4deg_anaMC.root",
-    "hps-sim/muonHpsSim_anaMC.root",
-    "ldmx-sim/muonLdmxSim_anaMC.root"]
+    "hps-sim/muonHpsSim_anaMC.root"]
 
 
 
 colors = [r.kBlack, r.kRed, r.kBlue, r.kGreen+2, r.kOrange-2]
 
 inputFiles = []
-legends     = ["slic","hps-sim","ldmx-sim"]
+legends     = ["slic","hps-sim"]
 outdir     = "./"
 
 if not os.path.exists(outdir):
