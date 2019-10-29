@@ -79,17 +79,17 @@ class TrackingProcessor : public Processor {
     private: 
 
         /** Container to hold all TrackerHit objects. */
-	std::vector<TrackerHit*> hits_{}; 
+        std::vector<TrackerHit*> hits_{}; 
 
         /** Container to hold all Track objects. */
-	std::vector<Track*> tracks_{};
+        std::vector<Track*> tracks_{};
 
         /** Container to hold all raw hits objecs. */
         std::vector<RawSvtHit*> rawhits_{};
         bool _debug{false};
 
 
-        
+
 
 
 }; // Tracking Processor
