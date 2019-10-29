@@ -46,11 +46,17 @@ namespace Collections {
     /** Name of the collection containing MC Particles. */
     constexpr const char* MC_PARTICLES{"MCParticle"}; 
 
+    /** Name of the collection containing MC Tracker Hits. */
+    constexpr const char* MC_TRACKER_HITS{"TrackerHits"}; 
+
     /** Name of time corrected ECal hits collection. */
     constexpr const char* ECAL_TIME_CORR_HITS{"TimeCorrEcalHits"}; 
 
     /** Name of ECal hits collection. */
     constexpr const char* ECAL_HITS{"EcalCalHits"}; 
+
+    /** Name of simulated ECal hits collection. */
+    constexpr const char* MC_ECAL_HITS{"EcalHits"}; 
 
     /** Name of ECal clusters collection. */
     constexpr const char* ECAL_CLUSTERS{"EcalClustersCorr"};
@@ -85,7 +91,7 @@ namespace Collections {
     constexpr const char* TC_V0CANDIDATES{"TargetConstrainedV0Candidates"};
 
     /** Name of the UC V0Candidates collection. */
-    constexpr const char* UC_V0CANDIDATES{"UnConstrainedV0Candidates"};
+    constexpr const char* UC_V0CANDIDATES{"UnconstrainedV0Candidates"};
 
     /** Name of the V0Vertices collection. */
     constexpr const char* V0VERTICES{"V0Vertices"};
@@ -94,10 +100,10 @@ namespace Collections {
     constexpr const char* BSC_V0VERTICES{"BeamspotConstrainedV0Vertices"};
 
     /** Name of the TC V0Candidates collection. */
-    constexpr const char* TC_V0Vertices{"TargetConstrainedV0Vertices"};
+    constexpr const char* TC_V0VERTICES{"TargetConstrainedV0Vertices"};
 
     /** Name of the UC V0Candidates collection. */
-    constexpr const char* UC_V0VERTICES{"UnConstrainedV0Vertices"};
+    constexpr const char* UC_V0VERTICES{"UnconstrainedV0Vertices"};
    
 }
 
