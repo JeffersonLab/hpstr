@@ -1,26 +1,9 @@
 /**
- * @file CalHit.cxx
- * @brief Class that encapsulate calorimeter hit information
- * @author Omar Moreno, SLAC National Accelerator Laboratory
+ * @file HodoHit.cxx
+ * @brief Class that encapsulate hodoscope hit information
+ * @author Maurik Holtrop, University of New Hampshire
  */
 
-#include "CalHit.h"
+#include "HodoHit.h"
 
-ClassImp(CalHit)
-
-CalHit::CalHit() 
-    : TObject() {
-}
-
-CalHit::~CalHit() {
-    Clear(); 
-}
-
-void CalHit::Clear(Option_t* /* options */) {
-    TObject::Clear(); 
-}
-
-void CalHit::setCrystalIndices(int index_x, int index_y) {
-    index_x_ = index_x;
-    index_y_ = index_y;
-}
+ClassImp(HodoHit)

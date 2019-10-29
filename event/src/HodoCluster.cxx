@@ -1,36 +1,25 @@
 /**
- * @file CalCluster.cxx
- * @brief Class used to encapsulate calorimeter cluster information.
- * @author Omar Moreno, SLAC National Accelerator Laboratory
+ * @file HodoCluster.cxx
+ * @brief Class used to encapsulate hodoscope cluster information.
+ * @author Maurik Holtrop, University of New Hampshire
  */
 
-#include "CalCluster.h"
+#include "HodoCluster.h"
 
-ClassImp(CalCluster)
+ClassImp(HodoCluster)
 
-CalCluster::CalCluster()
-    : TObject() { 
-}
-
-CalCluster::~CalCluster() {
+HodoCluster::~HodoCluster() {
     Clear();
     delete hits_;   
 }
 
-void CalCluster::Clear(Option_t* /*option*/) {
+void HodoCluster::Clear(Option_t* /*option*/) {
     TObject::Clear();
     hits_->Delete();
-    seed_hit_ = nullptr; 
     n_hits_ = 0;
 }
 
-void CalCluster::setPosition(const float* position) {
-    x_ = position[0];
-    y_ = position[1];
-    z_ = position[2];
-}
-
-void CalCluster::addHit(TObject* hit) { 
+void HodoCluster::addHit(TObject* hit) {
     ++n_hits_;
     hits_->Add(hit);
 }

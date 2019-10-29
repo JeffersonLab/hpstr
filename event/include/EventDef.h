@@ -3,6 +3,8 @@
 #include "CalHit.h"
 #include "Event.h"
 #include "EventHeader.h"
+#include "HodoCluster.h"
+#include "HodoHit.h"
 #include "TriggerData.h"
 #include "VTPData.h"
 #include "TSData.h"

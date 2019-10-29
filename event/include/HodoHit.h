@@ -1,29 +1,28 @@
 /**
- * @file CalHit.h
- * @brief Class that encapsulate calorimeter hit information
- * @author Omar Moreno, SLAC National Accelerator Laboratory
+ * @file HodoHit.h
+ * @brief Class that encapsulates hodoscope hit information
+ * @author Maurik Holtrop, University of New Hampshire
+ * *
+ * * TODO: Entire thing can be replaced by a simple struct.
  */
 
-#ifndef _CALORIMETER_HIT_H_
-#define _CALORIMETER_HIT_H_
+#ifndef _HODO_HIT_H_
+#define _HODO_HIT_H_
 
 //----------//
 //   ROOT   //
 //----------//
 #include <TObject.h>
 
-class CalHit : public TObject { 
+class HodoHit : public TObject {
     
     public:    
 
         /** Constructor */
-        CalHit(); 
+        HodoHit(){};
 
         /** Destructor */
-        ~CalHit();
-
-        /** Reset the hit object */ 
-        void Clear(Option_t* option=""); 
+        ~HodoHit(){ Clear(); };
 
         /**
          * Set the energy of the hit in GeV.
@@ -34,6 +33,25 @@ class CalHit : public TObject {
       
         /** @return The energy of the hit in GeV. */
         double getEnergy() const { return energy_; };
+        /**
+         * Set the hole number of the hit.
+         *
+         * @param hole The hole number of the hit.
+         */
+        void setHole(const int hole) { hole_ = hole; };
+
+        /** @return The layer number of the hit. */
+        double getHole() const { return hole_; };
+
+        /**
+         * Set the layer of the hit.
+         *
+         * @param layer The layer of the hit.
+         */
+        void setLayer(const int layer) { layer_ = layer; };
+
+        /** @return The layer number of the hit. */
+        double getLayer() const { return layer_; };
 
         /**
          * Set the time of the hit in ns. 
@@ -51,10 +69,13 @@ class CalHit : public TObject {
          * @param index_x The index along x
          * @param index_y The index along y
          */
-        void setCrystalIndices(int index_x_, int index_y_);       
+        void setIndices(int index_x, int index_y){
+            index_x_ = index_x;
+            index_y_ = index_y;
+        };
 
         /** @return The crystal indices. */ 
-        std::vector<int> getCrystalIndices() const { return { index_x_, index_y_ }; }
+        std::vector<int> getIndices() const { return { index_x_, index_y_ }; }
 
     private: 
         
@@ -63,6 +84,10 @@ class CalHit : public TObject {
 
         /** The crystal index along y. */
         int index_y_{-9999};
+  
+        int layer_{-9999};
+    
+        int hole_{-9999};
 
         /** The energy of the hit in GeV. */ 
         double energy_{-9999};
@@ -70,7 +95,7 @@ class CalHit : public TObject {
         /** The time of the hit in ns. */
         double time_{0};
         
-        ClassDef(CalHit, 1);
+        ClassDef(HodoHit, 1);
 };
 
 #endif
