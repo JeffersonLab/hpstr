@@ -96,7 +96,6 @@ class Process {
         /** List of output file names.  If empty, no output file will be created. */
         std::vector<std::string> output_files_;
 
-        ClassDef(Process,1)
 };
 
 #endif

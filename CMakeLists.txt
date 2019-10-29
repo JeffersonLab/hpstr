@@ -39,8 +39,12 @@ endif()
 find_package(LCIO REQUIRED)
 
 # find Python installation
-# find_package(PythonLibs 2.7 REQUIRED)
-find_package(PythonLibs REQUIRED)
+if (PYTHON3)
+  find_package(PythonLibs 3 REQUIRED)
+else()
+  find_package(PythonLibs 2.7 REQUIRED)
+endif()
+
 message(STATUS "Python lib found at: ${PYTHON_LIBRARIES}")
 message(STATUS "Python include dir found at: ${PYTHON_INCLUDE_DIRS}")
 get_filename_component(PYTHON_LIBRARY_DIR ${PYTHON_LIBRARIES} DIRECTORY)

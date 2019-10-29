@@ -28,6 +28,8 @@
 #pragma link C++ class Track+;
 #pragma link C++ class Vertex+;
 #pragma link C++ class TrackerHit+;
+#pragma link C++ class MCTrackerHit+;
+#pragma link C++ class MCEcalHit+;
 #pragma link C++ class RawSvtHit+;
 
 // This is to create the dictionary for stl containers
@@ -37,6 +39,10 @@
 #pragma link C++ class vector<RawSvtHit*>  +;
 #pragma link C++ class vector<TrackerHit>  +;
 #pragma link C++ class vector<TrackerHit*> +;
+#pragma link C++ class vector<MCTrackerHit>  +;
+#pragma link C++ class vector<MCTrackerHit*> +;
+#pragma link C++ class vector<MCEcalHit>  +;
+#pragma link C++ class vector<MCEcalHit*> +;
 #pragma link C++ class vector<Track>       +;
 #pragma link C++ class vector<Track*>      +;
 #pragma link C++ class vector<Vertex*>     +;

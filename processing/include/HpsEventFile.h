@@ -17,6 +17,7 @@ class HpsEventFile : public IEventFile {
   virtual bool nextEvent();
   void setupEvent(IEvent* ievent);
   void resetOutputFileDir() { ofile_->cd();}
+  TFile* getOutputFile() { return ofile_;}
   void close();
 
 
