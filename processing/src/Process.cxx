@@ -8,7 +8,6 @@
 #include "Process.h"
 #include "EventFile.h"
 #include "HpsEventFile.h"
-
 #include "TH1.h"
 
 Process::Process() {}
