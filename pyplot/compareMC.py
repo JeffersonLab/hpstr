@@ -8,14 +8,15 @@ utils.SetStyle()
 path = "/home/bravo/hps3/users/bravo/sim/det16/singleMuon/"
 inFileList = [
     "slic/slicSingleMu4deg_anaMC.root",
-    "hps-sim/muonHpsSim_anaMC.root"]
+    "hps-sim/muonHpsSim_anaMC.root",
+    "ldmx-sim/muonLdmxSim_anaMC.root"]
 
 
 
 colors = [r.kBlack, r.kRed, r.kBlue, r.kGreen+2, r.kOrange-2]
 
 inputFiles = []
-legends     = ["slic","hps-sim"]
+legends     = ["slic","hps-sim","ldmx-sim"]
 outdir     = "./"
 
 if not os.path.exists(outdir):
@@ -38,7 +39,7 @@ for key in inputFiles[0].GetListOfKeys():
         histos[i_f].SetMarkerColor(colors[i_f])
         histos[i_f].SetLineColor(colors[i_f])
         pass
-    canvs.append(utils.MakePlot(key.GetName(),outdir,histos,legends,".png",LogY=True))
+    canvs.append(utils.MakePlot(key.GetName(),outdir,histos,legends,".png",LogY=True,RatioType="Sequential"))
     pass
 
 outF = r.TFile("slicSingleMu_compMC.root","RECREATE")
