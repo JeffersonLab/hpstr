@@ -58,14 +58,20 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
     if (nargs > 0) {
 #if PY_MAJOR_VERSION >= 3
       wchar_t** targs = new wchar_t*[nargs + 1];
-#if PY_MINOR_VERION >=5
+
+#if PY_MINOR_VERSION >=5 // Python 3.4 is missing the Py_DecodeLocale() method.
       targs[0] = Py_DecodeLocale(python_script.c_str(),NULL);
       for (int i = 0; i < nargs; i++)
           targs[i + 1] = Py_DecodeLocale(args[i],NULL);
-#else
-      targs[0] = PyUnicode_AsUnicode(PyUnicode_DecodeLocale(python_script.c_str(),NULL));
-      for (int i = 0; i < nargs; i++)
-	  targs[i + 1] = PyUnicode_AsUnicode(PyUnicode_DecodeLocale(args[i],NULL));
+#else // Code for Python 3.4, where Py_DecodeLocale is missing.
+      PyObject *tmpstr = PyUnicode_DecodeLocale(python_script.c_str(),NULL);
+      targs[0] = PyUnicode_AsUnicode(tmpstr);
+      Py_DECREF(tmpstr);
+        for (int i = 0; i < nargs; i++){
+          tmpstr = PyUnicode_DecodeLocale(args[i],NULL);
+          targs[i + 1] = PyUnicode_AsUnicode(tmpstr);
+          Py_DECREF(tmpstr);
+        }
 
 #endif      
       PySys_SetArgv(nargs+1, targs);
