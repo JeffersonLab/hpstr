@@ -15,13 +15,16 @@ ECalDataProcessor::~ECalDataProcessor() {
 }
 
 void ECalDataProcessor::initialize(TTree* tree) {
-
-    cal_hits_ = new TClonesArray("CalHit", 100000); 
-    clusters_ = new TClonesArray("CalCluster", 1000000);  
+    tree->Branch(Collections::ECAL_HITS, &cal_hits_);
+    tree->Branch(Collections::ECAL_CLUSTERS, &clusters_);
 }
 
 bool ECalDataProcessor::process(IEvent* ievent) {
 
+    for(int i = 0; i < cal_hits_.size(); i++) delete cal_hits_.at(i);
+    for(int i = 0; i < clusters_.size(); i++) delete clusters_.at(i);
+    cal_hits_.clear();
+    clusters_.clear();
     // Attempt to retrieve the collection "TimeCorrEcalHits" from the event. If
     // the collection doesn't exist, handle the DataNotAvailableCollection and
     // attempt to retrieve the collection "EcalCalHits". If that collection 
@@ -58,7 +61,7 @@ bool ECalDataProcessor::process(IEvent* ievent) {
         // 0.1 ns resolution is sufficient to distinguish any 2 hits on the same crystal.
         int id1 = static_cast<int>(10.0*lc_hit->getTime()); 
 
-        CalHit* cal_hit = static_cast<CalHit*>(cal_hits_->ConstructedAt(ihit)); 
+        CalHit* cal_hit = new CalHit();
 
         // Store the hit in the map for easy access later.
         hit_map[ std::make_pair(id0,id1) ] = cal_hit;
@@ -74,10 +77,9 @@ bool ECalDataProcessor::process(IEvent* ievent) {
         int index_y = this->getIdentifierFieldValue("iy", lc_hit);
 
         cal_hit->setCrystalIndices(index_x, index_y);
+        cal_hits_.push_back(cal_hit);
 
     }
-    
-    event->addCollection(hits_coll_name, cal_hits_); 
     
     // Get the collection of Ecal clusters from the event
     EVENT::LCCollection* clusters 
@@ -90,7 +92,7 @@ bool ECalDataProcessor::process(IEvent* ievent) {
         IMPL::ClusterImpl* lc_cluster = static_cast<IMPL::ClusterImpl*>(clusters->getElementAt(icluster));
 
         // Add a cluster to the event
-        CalCluster* cluster = static_cast<CalCluster*>(clusters_->ConstructedAt(icluster)); 
+        CalCluster* cluster = new CalCluster();
 
         // Set the cluster position
         cluster->setPosition(lc_cluster->getPosition());
@@ -135,9 +137,8 @@ bool ECalDataProcessor::process(IEvent* ievent) {
 
         // Set the cluster seed. 
         cluster->setSeed(seed_hit); 
+        clusters_.push_back(cluster);
     }
-
-    event->addCollection(Collections::ECAL_CLUSTERS, clusters_); 
 
     return true;
 }

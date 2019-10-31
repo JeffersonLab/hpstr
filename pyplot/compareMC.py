@@ -38,7 +38,7 @@ for key in inputFiles[0].GetListOfKeys():
         histos[i_f].SetMarkerColor(colors[i_f])
         histos[i_f].SetLineColor(colors[i_f])
         pass
-    canvs.append(utils.MakePlot(key.GetName(),outdir,histos,legends,".png",LogY=True))
+    canvs.append(utils.MakePlot(key.GetName(),outdir,histos,legends,".png",LogY=True,RatioType="Sequential"))
     pass
 
 outF = r.TFile("slicSingleMu_compMC.root","RECREATE")
