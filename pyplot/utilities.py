@@ -325,7 +325,7 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
             
             ForRatio.SetMaximum(100.)
             ForRatio.Divide(reference)
-            ForRatio.DrawCopy("hist PX0 same")
+            ForRatio.DrawCopy("pe same")
 
 
     elif (RatioType=="Alternate"):
