@@ -2,15 +2,15 @@
 #include <algorithm>
 #include <memory>
 /*
-   void utils::buildTrackCollection(std::vector<Track*>& tracks, 
-   Event* event,
-   const char* LCTrackCollection)
-   {
+  void utils::buildTrackCollection(std::vector<Track*>& tracks, 
+  Event* event,
+  const char* LCTrackCollection)
+  {
 
-   EVENT::LCCollection* lc_tracks event->getLCCollection(LCTrackCollection);
+  EVENT::LCCollection* lc_tracks event->getLCCollection(LCTrackCollection);
 
 
-   }
+  }
 
 */
 
@@ -54,8 +54,8 @@ Vertex* utils::buildVertex(EVENT::Vertex* lc_vertex) {
 }
 
 Track* utils::buildTrack(EVENT::Track* lc_track,
-        EVENT::LCCollection* gbl_kink_data,
-        EVENT::LCCollection* track_data) {
+                         EVENT::LCCollection* gbl_kink_data,
+                         EVENT::LCCollection* track_data) {
 
     if (!lc_track)
         return nullptr;
@@ -63,10 +63,10 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
     Track* track = new Track();
     // Set the track parameters
     track->setTrackParameters(lc_track->getD0(), 
-            lc_track->getPhi(), 
-            lc_track->getOmega(), 
-            lc_track->getTanLambda(), 
-            lc_track->getZ0());
+                              lc_track->getPhi(), 
+                              lc_track->getOmega(), 
+                              lc_track->getTanLambda(), 
+                              lc_track->getZ0());
 
     // Set the track type
     track->setType(lc_track->getType()); 
@@ -252,8 +252,8 @@ TrackerHit* utils::buildTrackerHit(IMPL::TrackerHitImpl* lc_tracker_hit) {
 }
 
 bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit, 
-        IMPL::TrackerHitImpl* lc_tracker_hit,
-        EVENT::LCCollection* raw_svt_fits, std::vector<RawSvtHit*>* rawHits) {
+                              IMPL::TrackerHitImpl* lc_tracker_hit,
+                              EVENT::LCCollection* raw_svt_fits, std::vector<RawSvtHit*>* rawHits) {
 
     if (!tracker_hit || !lc_tracker_hit)
         return false;
@@ -305,7 +305,7 @@ bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit,
 //TODO-improve shared finding algorithm 
 
 bool utils::isUsedByTrack(IMPL::TrackerHitImpl* lc_tracker_hit,
-        EVENT::Track* lc_track) {
+                          EVENT::Track* lc_track) {
 
     EVENT::TrackerHitVec trk_lc_tracker_hits = lc_track->getTrackerHits();
 
@@ -318,7 +318,7 @@ bool utils::isUsedByTrack(IMPL::TrackerHitImpl* lc_tracker_hit,
 }
 
 bool utils::isUsedByTrack(TrackerHit* tracker_hit,
-        EVENT::Track* lc_track) {
+                          EVENT::Track* lc_track) {
 
     EVENT::TrackerHitVec trk_lc_tracker_hits = lc_track->getTrackerHits();
 
