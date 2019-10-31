@@ -82,16 +82,16 @@ class ECalDataProcessor : public Processor {
          * @param hit The CalorimeterHit whose ID will be used to unpack the 
          *            the field value. 
          */
-	    UTIL::BitFieldValue getIdentifierFieldValue(std::string field, EVENT::CalorimeterHit* hit);
+        UTIL::BitFieldValue getIdentifierFieldValue(std::string field, EVENT::CalorimeterHit* hit);
 
         /** TClonesArray collection containing all ECal hits. */ 
-        TClonesArray* cal_hits_{nullptr}; 
+        std::vector<CalHit*> cal_hits_; 
 
         /** TClonesArray collection containing all ECal clusters. */
-        TClonesArray* clusters_{nullptr}; 
+        std::vector<CalCluster*> clusters_; 
 
         /** Encoding string describing cell ID. */
-	    const std::string encoder_string_{"system:6,layer:2,ix:-8,iy:-6"};
+        const std::string encoder_string_{"system:6,layer:2,ix:-8,iy:-6"};
 
 }; // ECalDataProcessor
 

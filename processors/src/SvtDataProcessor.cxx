@@ -9,13 +9,17 @@ SvtDataProcessor::~SvtDataProcessor() {
 }
 
 void SvtDataProcessor::initialize(TTree* tree) {
-
-    tracks_ = new TClonesArray("Track", 100000); 
-    hits_   = new TClonesArray("TrackerHit", 100000);  
+    // Add branches to tree
+    tree->Branch(Collections::GBL_TRACKS, &tracks_);
+    tree->Branch(Collections::TRACKER_HITS, &hits_);
 }
 
 bool SvtDataProcessor::process(IEvent* ievent) {
 
+    for(int i = 0; i < tracks_.size(); i++) delete tracks_.at(i);
+    for(int i = 0; i < hits_.size(); i++) delete hits_.at(i);
+    tracks_.clear();
+    hits_.clear();
 
     Event* event = static_cast<Event*> (ievent);
 
@@ -36,7 +40,7 @@ bool SvtDataProcessor::process(IEvent* ievent) {
         IMPL::TrackerHitImpl* lc_tracker_hit = static_cast<IMPL::TrackerHitImpl*>(tracker_hits->getElementAt(ihit));
     
         // Add a tracker hit to the event
-        TrackerHit* tracker_hit = static_cast<TrackerHit*>(hits_->ConstructedAt(ihit));
+        TrackerHit* tracker_hit = new TrackerHit();
 
         // Rotate the position of the LCIO TrackerHit and set the position of 
         // the TrackerHit
@@ -59,11 +63,12 @@ bool SvtDataProcessor::process(IEvent* ievent) {
         // Map the TrackerHit object to the corresponding SvtHit object. This
         // will be used later when setting references for hits on tracks.
         hit_map[lc_tracker_hit] = tracker_hit; 
+        hits_.push_back(tracker_hit);
         
     }
 
     // Add the hit collection to the event
-    event->addCollection(Collections::TRACKER_HITS, hits_); 
+    //event->addCollection(Collections::TRACKER_HITS, hits_); 
    
     // Get all track collections from the event
     EVENT::LCCollection* tracks = event->getLCCollection(Collections::GBL_TRACKS);
@@ -76,7 +81,7 @@ bool SvtDataProcessor::process(IEvent* ievent) {
         EVENT::Track* lc_track = static_cast<EVENT::Track*>(tracks->getElementAt(itrack));
 
         // Add a track to the event
-        Track* track = static_cast<Track*>(tracks_->ConstructedAt(itrack));
+        Track* track = new Track();
          
         // Set the track parameters
         track->setTrackParameters(lc_track->getD0(), 
@@ -158,7 +163,7 @@ bool SvtDataProcessor::process(IEvent* ievent) {
                 
             // Check that the TrackData data structure is correct.  If it's
             // not, throw a runtime exception.   
-            if (track_datum->getNDouble() != 14 || track_datum->getNFloat() != 1 
+            if (track_datum->getNDouble() < 12 || track_datum->getNFloat() != 1 
                     || track_datum->getNInt() != 1) {
                 throw std::runtime_error("[ SvtDataProcessor ]: The collection " 
                         + std::string(Collections::TRACK_DATA)
@@ -190,9 +195,10 @@ bool SvtDataProcessor::process(IEvent* ievent) {
             // Add a reference to the hit
             track->addHit(hit_map[hit]);  
         }
+        tracks_.push_back(track);
     }
 
-    event->addCollection(Collections::GBL_TRACKS, tracks_); 
+    //event->addCollection(Collections::GBL_TRACKS, tracks_); 
 
     return true;
 }
