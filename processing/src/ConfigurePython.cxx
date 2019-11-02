@@ -64,17 +64,18 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
       for (int i = 0; i < nargs; i++)
           targs[i + 1] = Py_DecodeLocale(args[i],NULL);
 #else // Code for Python 3.4, where Py_DecodeLocale is missing.
-      PyObject *tmpstr = PyUnicode_DecodeLocale(python_script.c_str(),NULL);
-      targs[0] = PyUnicode_AsUnicode(tmpstr);
+      PyObject *tmpstr = PyUnicode_FromString(python_script.c_str());
+      targs[0] = PyUnicode_AsWideCharString(tmpstr,NULL);
       Py_DECREF(tmpstr);
         for (int i = 0; i < nargs; i++){
-          tmpstr = PyUnicode_DecodeLocale(args[i],NULL);
-          targs[i + 1] = PyUnicode_AsUnicode(tmpstr);
+          tmpstr = PyUnicode_FromString(args[i]);
+          targs[i + 1] = PyUnicode_AsWideCharString(tmpstr,NULL);
           Py_DECREF(tmpstr);
         }
 
 #endif      
-      PySys_SetArgv(nargs+1, targs);
+      PySys_SetArgvEx(nargs+1, targs,1);
+      for(int i=0;i<nargs+1; i++) PyMem_RawFree(targs[i]);
       delete[] targs;
 #else
       char** targs = new char*[nargs + 1];
