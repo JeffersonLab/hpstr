@@ -43,6 +43,10 @@
 #pragma link C++ class vector<MCTrackerHit*> +;
 #pragma link C++ class vector<MCEcalHit>  +;
 #pragma link C++ class vector<MCEcalHit*> +;
+#pragma link C++ class vector<CalHit>  +;
+#pragma link C++ class vector<CalHit*> +;
+#pragma link C++ class vector<CalCluster>  +;
+#pragma link C++ class vector<CalCluster*> +;
 #pragma link C++ class vector<Track>       +;
 #pragma link C++ class vector<Track*>      +;
 #pragma link C++ class vector<Vertex*>     +;
