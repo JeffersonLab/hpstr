@@ -6,13 +6,13 @@ lcio_file = sys.argv[1].strip()
 root_file = '%s.root' % lcio_file[:-6]
 root_file = 'testRun.root'
 
-print 'LCIO file: %s' % lcio_file
-print 'Root file: %s' % root_file
+print('LCIO file: %s' % lcio_file)
+print('Root file: %s' % root_file)
 
 p = HpstrConf.Process()
 
 # Library containing processors
-p.libraries.append("libprocessors.so")
+p.add_library("libprocessors")
 
 ###############################
 #          Processors         #
