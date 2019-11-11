@@ -5,7 +5,7 @@
 #include "HpsEvent.h"
 #include "Track.h"
 #include "TrackerHit.h"
-
+#include "Collections.h"
 
 //ROOT
 #include "ClusterHistos.h"
