@@ -1,6 +1,7 @@
 #include "SvtCondHistos.h"
 #include <math.h>
 #include "TCanvas.h"
+#include "TString.h"
 
 SvtCondHistos::SvtCondHistos(const std::string& inputName):HistoManager(inputName) {
     m_name = inputName;
@@ -19,7 +20,6 @@ SvtCondHistos::~SvtCondHistos() {
     baselineGraphs.clear();
 }
 
-
 void SvtCondHistos::Define1DHistos() {
 }
 
@@ -29,26 +29,21 @@ void SvtCondHistos::Define2DHistos() {
     std::cout << "half_module_names length: " << half_module_names.size() << std::endl;
     for (unsigned int ihm = 0; ihm<half_module_names.size(); ihm++) {
         for (unsigned int ihn = 0; ihn<6; ihn++) {
-            auto n = std::to_string(ihn);
-            h_name = m_name+"_"+half_module_names[ihm]+"_timesample_"+n;
+            h_name = Form("%s_%s_timesample_%i_hh", m_name.c_str(), half_module_names[ihm].c_str(), ihn);
             histos2d[h_name] = plot2D(h_name, "Channel", 640, 0, 640, "ADC Value", 5000, 0, 20000);
+        }
+    }
 }
-}
-}
-
 
 void SvtCondHistos::FillHistograms(RawSvtHit* rawSvtHit,float weight) {
-    std::string swTag="";
-    std::string build_key = "";
-    auto mod = std::to_string(rawSvtHit->getModule());
-    auto lay = std::to_string(rawSvtHit->getLayer());
-    swTag= mmapper_->getStringFromSw("ly"+lay+"_m"+mod);
+    std::string histo_key;
+    int mod = rawSvtHit->getModule();
+    int lay = rawSvtHit->getLayer();
+    std::string swTag = mmapper_->getStringFromSw(Form("ly%i_m%i", lay, mod));
 
     for (int i=0; i<6; i++){
-        build_key= m_name+"_"+swTag+"_timesample_"+std::to_string(i);
-        histos2d[build_key]->Fill((float)rawSvtHit->getStrip(),(float)rawSvtHit->getADCs()[i], weight); 
+        histo_key = Form("%s_%s_timesample_%i_hh", m_name.c_str(), swTag.c_str(), i);
+        histos2d[histo_key]->Fill((float)rawSvtHit->getStrip(),(float)rawSvtHit->getADCs()[i], weight); 
     }
-
-
 
 }      

@@ -5,8 +5,9 @@ from copy import deepcopy
 import utilities as utils
 
 #RMS cutoff at 150 or less
-def RatioDeadAlive(cmax, RMScut, scADCrms=[]):
+def RatioDeadAlive(RMScut, scADCyps):
     #ratio of dead/alive channels for each half_module
+    hName = scADCyps.GetNames
     numDead=0
     numChannels=0
     ratio=float(0.0)
@@ -41,7 +42,7 @@ def RMSrms(scADCrms, cmax):
         
 
 #Build Half Module Names
-def BuildHybridNames():
+def BuildHybridKeys(sampleNumber):
     module="raw_hits_"
     ster="_stereo_"
     ax="_axial_"
@@ -53,55 +54,49 @@ def BuildHybridNames():
     hybrid_names=[]
     for i in range(len(half_module_names)):
         if i < 8:
-            key=module+half_module_names[i]+ax+ts+str(0)
+            key=module+half_module_names[i]+ax+ts+str(sampleNumber)
             hybrid_names.append(key)
-            key=module+half_module_names[i]+ster+ts+str(0)
+            key=module+half_module_names[i]+ster+ts+str(sampleNumber)
             hybrid_names.append(key)
         elif i >= 8:
-            key=module+half_module_names[i]+ax+ele+ts+str(0)
+            key=module+half_module_names[i]+ax+ele+ts+str(sampleNumber)
             hybrid_names.append(key)
-            key=module+half_module_names[i]+ax+pos+ts+str(0)
+            key=module+half_module_names[i]+ax+pos+ts+str(sampleNumber)
             hybrid_names.append(key)
             
-            key=module+half_module_names[i]+ster+ele+ts+str(0)
+            key=module+half_module_names[i]+ster+ele+ts+str(sampleNumber)
             hybrid_names.append(key)
 
-            key=module+half_module_names[i]+ster+pos+ts+str(0)
+            key=module+half_module_names[i]+ster+pos+ts+str(sampleNumber)
             hybrid_names.append(key)
     return hybrid_names
 
-#Get a DeepCopy of Time Sample 0 
-def DeepCopy(inFile, key):
-   deepc=[]
-   hybridSample0=[]
-   for i in range(len(key)):
-       deepc=deepcopy(getattr(inFile, key[i]))
-       hybridSample0.append(deepc)
-   return hybridSample0
+#Get a DeepCopy of hybrid_keys from TFile
+def DeepCopy(inFile, hybrid_keys, plotTail):
+   plots=[]
+   for i in range(len(hybrid_keys)):
+       plot = deepcopy(getattr(inFile, hybrid_keys[i]+plotTail))
+       plots.append(plot)
+   return plots
 
 #Get the RMS Value of an array of 2D Histograms
-def GetRMS(hybridSample0):
-    
+def GetYPs(hybridHistos):
     #Get Y Projection and RMs Values
-    scADCyp=[]
-    scADCrms=[]
-    numHy=len(hybridSample0)
-    for i in range(numHy):
-        scADCyp.append([])
-        scADCrms.append([])
-        for cc in range(640):
-            scADCyp[i].append(hybridSample0[i].ProjectionY('scData0_ch%i_h'%(cc),cc+1,cc+1,"e"))
-            scADCrms[i].append(scADCyp[i][cc].GetRMS())
-        print "Processing%i"%(i)
-    return scADCrms
+    scADCyps={}
+    for i, histo in enumerate(hybridHistos):
+        layers, modules = swModuleMapper()
+        layer = layers[i]
+        if layer > 4.5: cmax = 640
+        else: cmax = 510
+        hName = histo.GetName()
+        scADCyps[hName] = []
+        for cc in range(cmax):
+            scADCyps[hname].append(histo.ProjectionY('%s_ch%i_h'%(hName, cc),cc+1,cc+1,"e"))
+    return scADCyps
 
-def Plot(out_file_name, Name, Title, Xlabel, Ylabel, rangeX, data_in=[], update="RECREATE", end=False):
+def DrawGraph(outFile, Name, titles, xdata_in, ydata_in):
 
-    outFilename=out_file_name
-    outFile=r.TFile(outFilename,update)
     outFile.cd()
-    
-
     x=[]
     j=0.00
     for i in range(len(data_in)):
@@ -114,15 +109,11 @@ def Plot(out_file_name, Name, Title, Xlabel, Ylabel, rangeX, data_in=[], update=
     gr=r.TGraph(n,np.array(x),np.array(data_in))
     utils.SetStyle()
     gr.SetName(Name)
-    gr.SetTitle(Title+";"+Xlabel+";"+Ylabel)
+    gr.SetTitle(titles)
     SetStyle(gr)
     
     gr.Draw()
     gr.Write()
-    #c.Write()
-    #c.SaveAs("look.png")
-    if end==True:
-        outFile.Close()
 
 def SetStyle(histo,label_size=0.05, title_size=0.05, title_offset=1,line_width=1, line_color=1):
 

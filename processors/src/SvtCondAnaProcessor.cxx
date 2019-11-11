@@ -27,9 +27,9 @@ void SvtCondAnaProcessor::initialize(TTree* tree) {
 
 bool SvtCondAnaProcessor::process(IEvent* ievent) {
 
-    int nlines = rawSvtHits_->GetEntries();
-    if(Event_number%1000 == 0) std::cout << "Event: " << Event_number << " Number of Entries is: " << nlines << std::endl;
-    for (int i=0; i<nlines; i++) {
+    int nhits = rawSvtHits_->GetEntries();
+    if(Event_number%1000 == 0) std::cout << "Event: " << Event_number << " Number of Raw Svt Hits: " << nhits << std::endl;
+    for (int i=0; i<nhits; i++) {
         RawSvtHit* rawSvtHit = (RawSvtHit*)rawSvtHits_->At(i);
         svtCondHistos->FillHistograms(rawSvtHit, 1.); 
     }

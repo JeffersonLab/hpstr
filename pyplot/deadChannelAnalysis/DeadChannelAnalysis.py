@@ -20,12 +20,13 @@ inFile = r.TFile(in_path_to_File+options.inputDir+run+in_file_ext)
 
 out_path_to_File=""
 out_file_ext="_testing.root"
-outFileName=out_path_to_File+options.inputDir+run+out_file_ext
+outFilename=out_path_to_File+options.inputDir+run+out_file_ext
+outFile = r.TFile(outFilename,"RECREATE")
 
 
-hybrid_names=svtc.BuildHybridNames()
-hybridSample0=svtc.DeepCopy(inFile, hybrid_names)
-scADCrms=svtc.GetRMS(hybridSample0)
+hybrid_names=svtc.BuildHybridKeys()
+sample0Histos=svtc.DeepCopy(inFile, hybrid_names, "_hh")
+scADCyps=svtc.GetYPs(sample0Histos)
 
 #PNG_file_path="Images/"
 
@@ -34,12 +35,8 @@ ratioAlive=[]
 deadChannels=[]
 avgRMS=[]
 rmsofRMS=[]
-for i in range(len(scADCrms)):
-     if i<8:
-        cmax=510
-     else:
-        cmax=640
-     rtemp, dctemp = svtc.RatioDeadAlive(cmax, 150, scADCrms[i])
+for hName in scADCyps:
+     rtemp, dctemp = svtc.RatioDeadAlive(150, scADCyps[hName])
      ratioAlive.append(rtemp)
      deadChannels.append(dctemp)
      avgRMS.append(svtc.AvgRMS(scADCrms[i],cmax))
@@ -62,7 +59,8 @@ for i in range(len(scADCrms)):
         end=False
     if i==len(scADCrms):
         end = True
-    svtc.Histo1D(outFileName, hybrid_names[i]+"_h", hybrid_names[i]+"_"+run+"_h", "RMS [ADC Units]", "Number of Strips", 250, 0.5, 1000.5, scADCrms[i], update, end)
-    svtc.Plot(outFileName, hybrid_names[i]+"_g", hybrid_names[i]+"_"+run+"_g", "Strip Number", "RMS [ADC Units]", 640, scADCrms[i], update, end)
-    svtc.Histo1D(outFileName, "Dead_Channels_"+hybrid_names[i], "Dead Channels for "+hybrid_names[i]+run,"Channel", "Dead", 640, 0, 640, deadChannels[i],update, end)
+    svtc.Histo1D(outFile, hybrid_names[i]+"_h", hybrid_names[i]+"_"+run+"_h", "RMS [ADC Units]", "Number of Strips", 250, 0.5, 1000.5, scADCrms[i], update, end)
+    svtc.DrawGraph(outFile, hybrid_names[i]+"_g", hybrid_names[i]+"_"+run+"_g;"+"Strip Number;RMS [ADC Units]", 640, scADCrms[i])
+    svtc.Histo1D(outFile, "Dead_Channels_"+hybrid_names[i], "Dead Channels for "+hybrid_names[i]+run,"Channel", "Dead", 640, 0, 640, deadChannels[i],update, end)
 
+outFile.Close()
