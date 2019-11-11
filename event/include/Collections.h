@@ -28,6 +28,9 @@ namespace Collections {
     /** Name of the tracker hits collection. */
     constexpr const char* TRACKER_HITS{"RotatedHelicalTrackHits"};
 
+    /** Name of the tracker hits on track collection. */
+    constexpr const char* TRACKER_HITS_ON_TRACK{"RotatedHelicalOnTrackHits"};
+
     /** The name of the collection containing GBL kink data GenericObjects */
     constexpr const char* KINK_DATA{"GBLKinkData"};
 
