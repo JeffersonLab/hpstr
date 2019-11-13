@@ -55,7 +55,7 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
     // Set the command line arguments passed to the python script to be 
     // executed. Note that the first parameter in the list or arguments 
     // should refer to the script to be executed.
-    if (nargs > 0) {
+    
 #if PY_MAJOR_VERSION >= 3
       wchar_t** targs = new wchar_t*[nargs + 1];
 
@@ -86,7 +86,6 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
       PySys_SetArgvEx(nargs+1, targs, 1);
       delete[] targs;
 #endif
-    }
 
     PyObject* script = nullptr; 
     PyObject* process = nullptr; 
