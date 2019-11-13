@@ -17,7 +17,8 @@
 //----------//
 //   ROOT   //
 //----------//
-#include <TFile.h>
+#include "TObject.h"
+#include "TFile.h"
 
 //-----------//
 //   hpstr   //
@@ -76,6 +77,7 @@ class Process {
         //TODO add a check on consistent extensions of the input files
         /** Check if the input_files_ are rootFiles  */
        bool processRootFiles();
+
 
     private:
 
