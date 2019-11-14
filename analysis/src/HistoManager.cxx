@@ -13,8 +13,7 @@ HistoManager::HistoManager(const std::string& inputName) {
     m_name = inputName;
 }
 
-HistoManager::~HistoManager() {
-    
+void HistoManager::Clear() {
     
     for (it1d it = histos1d.begin(); it!=histos1d.end(); ++it) {
         if (it->second) {
@@ -24,23 +23,28 @@ HistoManager::~HistoManager() {
     }
     
     histos1d.clear();
-
+    
     for (it2d it = histos2d.begin(); it!=histos2d.end(); ++it) {
         if (it->second) {
             delete (it->second);
             (it->second) = nullptr;
         }
     }
+    
     histos2d.clear();
-
+    
     for (it3d it = histos3d.begin(); it!=histos3d.end(); ++it) {
         if (it->second) {
             delete (it->second);
             (it->second) = nullptr;
         }
     }
+    
     histos3d.clear();
+
 }
+
+HistoManager::~HistoManager() {}
 
 void HistoManager::DefineHistos(){
     
@@ -298,6 +302,8 @@ void HistoManager::saveHistos(TFile* outF,std::string folder) {
     }
 
     if (dir) {delete dir; dir=0;}
+    
+    Clear();
 
 }
 
