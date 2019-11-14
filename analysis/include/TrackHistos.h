@@ -25,7 +25,7 @@ class TrackHistos : public HistoManager {
 
   void Fill1DHistograms(Track* track = nullptr, Vertex* vtx = nullptr, float weight = 1.);
   
-  void Fill1DHisto(const std::string& histoName, float value, float weight=1.);
+  
 
   //track_x goes for x axis, and y for y axis
   void FillTrackComparisonHistograms(Track* track_x, Track* track_y, float weight = 1.);
