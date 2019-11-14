@@ -33,7 +33,7 @@ bool MCTrackerHitProcessor::process(IEvent* ievent) {
     trackerhits_->Clear();
     for (int ihit = 0; ihit < lcio_trackerhits->getNumberOfElements(); ++ihit) {
 
-      // Get a 3D hit from the list of hits
+        // Get a 3D hit from the list of hits
         EVENT::SimTrackerHit* lcio_mcTracker_hit 
             = static_cast<EVENT::SimTrackerHit*>(lcio_trackerhits->getElementAt(ihit));
         //Decode the cellid
@@ -49,10 +49,18 @@ bool MCTrackerHitProcessor::process(IEvent* ievent) {
         mc_tracker_hit->setModule(decoder["module"]);
 
         // Set the position of the hit
-        mc_tracker_hit->setPosition(lcio_mcTracker_hit->getPosition());
+        double hitPos[3];
+        hitPos[0] = lcio_mcTracker_hit->getPosition()[0];
+        hitPos[1] = lcio_mcTracker_hit->getPosition()[1];
+        hitPos[2] = lcio_mcTracker_hit->getPosition()[2];
+        mc_tracker_hit->setPosition(hitPos);
 
         // Set the energy deposit of the hit
         mc_tracker_hit->setEdep(lcio_mcTracker_hit->getEDep());
+
+        // Set the pdg of particle generating the hit
+        if(lcio_mcTracker_hit->getMCParticle()) 
+            mc_tracker_hit->setPDG(lcio_mcTracker_hit->getMCParticle()->getPDG());
 
         // Set the time of the hit
         mc_tracker_hit->setTime(lcio_mcTracker_hit->getTime());

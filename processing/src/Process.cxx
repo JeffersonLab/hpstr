@@ -2,11 +2,13 @@
  * @file Process.cxx
  * @brief Class which represents the process under execution.
  * @author Omar Moreno, SLAC National Accelerator Laboratory
+ * @author Cameron Bravo, SLAC National Accelerator Laboratory
  */
 
 #include "Process.h"
 #include "EventFile.h"
 #include "HpsEventFile.h"
+#include "TH1.h"
 
 Process::Process() {}
 
@@ -23,6 +25,7 @@ void Process::runOnRoot() {
     try {
         int n_events_processed = 0;
         HpsEvent event;
+        TH1D * event_h = new TH1D("event_h","Number of Events Processed;;Events", 21, -10.5, 10.5);
         int cfile =0 ;
         for (auto ifile : input_files_) {
             std::cout<<"Processing file"<<ifile<<std::endl;
@@ -33,6 +36,7 @@ void Process::runOnRoot() {
             }
             for (auto module : sequence_) {
                 module->initialize(event.getTree());
+                module->setFile(file->getOutputFile());
             }
             while (file->nextEvent() && (event_limit_ < 0 || (n_events_processed < event_limit_))) {
                 if (n_events_processed%1000 == 0)
@@ -43,6 +47,7 @@ void Process::runOnRoot() {
                     module->process(&event);
                 }
                 //event.Clear();
+                event_h->Fill(0.0);
                 ++n_events_processed;
             }
             //Pass to next file
@@ -51,6 +56,7 @@ void Process::runOnRoot() {
 
             //Select the output file for storing the results of the processors.
             file->resetOutputFileDir();
+            event_h->Write();
             for (auto module : sequence_) {
                 //TODO:Change the finalize method
                 module->finalize();
@@ -60,6 +66,8 @@ void Process::runOnRoot() {
                 file->close();
                 delete file;
                 file = nullptr;
+                delete event_h;
+                event_h = nullptr;
             }
         }
     } catch (std::exception& e) {
@@ -72,6 +80,7 @@ void Process::run() {
     try {
 
         int n_events_processed = 0;
+        TH1D * event_h = new TH1D("event_h","Number of Events Processed;;Events", 21, -10.5, 10.5);
 
         if (input_files_.empty()) 
             throw std::runtime_error("Please specify files to process.");
@@ -95,7 +104,8 @@ void Process::run() {
                 file->setupEvent(&event);  
             }
 
-            TTree* tree = event.getTree(); 
+            TTree* tree = new TTree("HPS_Event","HPS event tree");
+            event.setTree(tree); 
             // first, notify everyone that we are starting
             for (auto module : sequence_) {
                 module->initialize(tree);
@@ -115,9 +125,13 @@ void Process::run() {
                         break;
                 }
                 ++n_events_processed;
+                event_h->Fill(0.0);
             }
             ++cfile; 
 
+            //Prepare to write to file
+            file->resetOutputFileDir();
+            event_h->Write();
             // Finalize all modules. 
             for (auto module : sequence_) { 
                 module->finalize(); 
@@ -127,6 +141,8 @@ void Process::run() {
                 file->close(); 
                 delete file;
                 file = nullptr;
+                delete event_h;
+                event_h = nullptr;
             }
 
         }

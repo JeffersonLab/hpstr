@@ -13,8 +13,8 @@
 class HistoManager {
 
     public:
-        HistoManager() {m_name = "default";}
-        HistoManager(const std::string& inputName) {m_name=inputName;};
+        HistoManager();
+        HistoManager(const std::string& inputName);
 
 
         virtual ~HistoManager();
@@ -66,7 +66,6 @@ class HistoManager {
         virtual void Define3DHistos(){};
         virtual void Define2DHistos(){};
         virtual void Define1DHistos(){};
-
 
         virtual void GetHistosFromFile(TFile* inFile, const std::string& name,const std::string& folder = "");
 

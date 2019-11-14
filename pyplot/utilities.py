@@ -1,5 +1,6 @@
 from ROOT import *
 from array import array
+from copy import deepcopy
 import os,sys
 
 colors  = [kBlack,kBlue+2,kRed+2,kGreen-1,kYellow+2,kRed+2,kAzure-2,kGreen-8,kOrange+3,kYellow+2,kRed+2,kBlue+2,kGreen-8,kOrange+3,kYellow+2,kRed+2,kBlue+2,kGreen-8,kOrange+3,kYellow+2,kRed+2,kBlue+2,kGreen-8,kOrange+3,kYellow+2,kRed+2,kBlue+2,kGreen-8,kOrange+3]
@@ -214,7 +215,7 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
     Xmin=0
     Xmax=1
         
-    can = TCanvas()
+    can = TCanvas(name, name, 1200, 800)
     can.SetMargin(0,0,0,0)
     top = TPad("top","top",0,0.42,1,1)
     if LogX:
@@ -222,10 +223,8 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
         bot.SetLogx(1)
     if LogY:
         top.SetLogy(1)
-
     
     bot = TPad("bot","bot",0,0,1,0.38)
-
 
     #----------Histogram------------#
     
@@ -239,9 +238,6 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
     plotsProperties=[]
     
     for ih in xrange(len(histos)):
-        
-        
-        
 
         if (Normalise):
             histos[ih].Scale(1./histos[ih].Integral())
@@ -251,6 +247,8 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
         histos[ih].SetMarkerColor(colors[ih])
         histos[ih].SetMarkerStyle(markers[ih])
         histos[ih].SetLineColor(colors[ih])
+        histos[ih].GetXaxis().CenterTitle()
+        histos[ih].GetYaxis().CenterTitle()
         
         plotsProperties.append(("#mu=%.4f"%round(histos[ih].GetMean(),4))+(" #sigma=%.4f"%round(histos[ih].GetRMS(),4)))
         
@@ -259,32 +257,28 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
             histos[ih].Rebin(RebinFactor)
 
         if ih==0:
-            histos[ih].GetYaxis().SetRangeUser(ymin,ymax)
+            #histos[ih].GetYaxis().SetRangeUser(ymin,ymax)
             if noErrors:
                 #histos[ih].GetXaxis().SetTextSize(0.045)
                 #histos[ih].GetYaxis().SetTextSize(0.045)
-                
-                
-                histos[ih].Draw("hist p")
-                
+                histos[ih].Draw("pe")
                 
             else:
-                histos[ih].Draw()
+                histos[ih].Draw("pe")
             if xtitle:
                 histos[ih].GetXaxis().SetTitle(xtitle)
             if ytitle:
                 histos[ih].GetYaxis().SetTitle(ytitle)
         else:
             if noErrors:
-                histos[ih].Draw("same hist p")
+                histos[ih].Draw("same hist")
             else:
-                histos[ih].Draw("same")
+                histos[ih].Draw("same hist")
 
 
-    InsertText(runNumber,additionalText,0.85)
+    InsertText(runNumber,additionalText,0.8,xoffset=0.75)
     if (WriteMean):
-        InsertText("",plotsProperties,0.85,0.6,False)
-        
+        InsertText("",plotsProperties,0.8,0.6,False)
 
     if len(legends)>0:
         #print "building legend"
@@ -293,35 +287,31 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
         linesep = 0.07
         lowerY=upperY - len(legends)* linesep
         #minX = 0.51
-        minX  = 0.18
-        maxX = minX+0.26
+        minX  = 0.75
+        maxX = minX+0.15
         leg=TLegend(minX,upperY,maxX,lowerY)
         leg.SetBorderSize(0)
         leg.SetFillColor(0)
         leg.SetTextSize(0.04)
-        
-        
-
         for i_leg in xrange(len(legends)):
             #print "Adding Entry",i_leg, legends[i_leg] 
             leg.AddEntry(histos[i_leg],legends[i_leg],"lpf") 
-        
+            pass
         leg.Draw()
-
-
+        pass
         
     #-------------Ratio---------------------#
-        
         
     bot.cd()
     reference = histos[0].Clone("reference")
     reference.GetYaxis().SetTitle("Ratio")
     reference.GetYaxis().SetTitleSize(0.06)
+    reference.GetXaxis().SetTitleSize(0.1)
+    reference.GetXaxis().SetLabelSize(0.12)
     reference.GetYaxis().SetRangeUser(RatioMin,RatioMax)
     reference.GetYaxis().SetNdivisions(508)
     reference.GetYaxis().SetDecimals(True)
     reference.Draw("axis")
-        
 
     if (RatioType=="Sequential"):
         
@@ -335,7 +325,7 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
             
             ForRatio.SetMaximum(100.)
             ForRatio.Divide(reference)
-            ForRatio.DrawCopy("hist PX0 same")
+            ForRatio.DrawCopy("pe same")
 
 
     elif (RatioType=="Alternate"):
@@ -354,7 +344,7 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
             
             numerator.SetMaximum(100.)
             numerator.Divide(histos[ih-1])
-            numerator.DrawCopy("hist p same")
+            numerator.DrawCopy("pe same")
 
 
     elif (RatioType=="Alternate2"):
@@ -373,9 +363,9 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
     line = TLine()
     line.SetLineStyle(kDashed)
     line.DrawLine(reference.GetXaxis().GetXmin(),1,reference.GetXaxis().GetXmax(),1)
-        
     
     can.SaveAs(outdir+"/"+name+oFext)
+    return deepcopy(can)
     
 
 def DivideHistos(h1,h2):
@@ -394,7 +384,7 @@ def Make1Dplots(name,outdir,histos,colors,markers,legends,oFext,xtitle="",ytitle
         os.mkdir(outdir)
 
                 
-    can = TCanvas()
+    can = TCanvas(name,name,1500,1000)
     if LogY:
         can.SetLogy(1)
 
@@ -436,7 +426,7 @@ def Make1Dplots(name,outdir,histos,colors,markers,legends,oFext,xtitle="",ytitle
             else:
                 histos[ih].Draw("same")
                         
-    InsertText(runNumber,additionalText,0.85,xoffset=0.7)
+    InsertText(runNumber,additionalText,0.8,xoffset=0.7)
 
     if len(legends)>0:
         #print "building legend"

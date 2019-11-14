@@ -1,9 +1,11 @@
 /**
- *
+ * @file MCEcalHitProcessor.h
+ * @brief Processor used to add simulated ecal hits to the event
+ * @author Cameron Bravo, SLAC National Accelerator Laboratory
  */
 
-#ifndef __MCTRACKERHIT_PROCESSOR_H__
-#define __MCTRACKERHIT_PROCESSOR_H__
+#ifndef __MCECALHIT_PROCESSOR_H__
+#define __MCECALHIT_PROCESSOR_H__
 
 //-----------------//
 //   C++  StdLib   //
@@ -16,8 +18,7 @@
 //   LCIO   //
 //----------//
 #include <EVENT/LCCollection.h>
-#include <EVENT/SimTrackerHit.h>
-#include <EVENT/MCParticle.h>
+#include <EVENT/SimCalorimeterHit.h>
 #include <UTIL/BitField64.h>
 
 //----------//
@@ -31,10 +32,10 @@
 //-----------//
 #include "Collections.h"
 #include "Processor.h"
-#include "MCTrackerHit.h"
+#include "MCEcalHit.h"
 #include "Event.h"
 
-class MCTrackerHitProcessor : public Processor { 
+class MCEcalHitProcessor : public Processor { 
 
     public: 
 
@@ -45,10 +46,10 @@ class MCTrackerHitProcessor : public Processor {
          * @param process The Process class associated with Processor, provided
          *                by the processing framework.
          */
-        MCTrackerHitProcessor(const std::string& name, Process& process); 
+        MCEcalHitProcessor(const std::string& name, Process& process); 
 
         /** Destructor */
-        ~MCTrackerHitProcessor(); 
+        ~MCEcalHitProcessor(); 
 
         /**
          * Process the event and put new data products into it.
@@ -70,9 +71,9 @@ class MCTrackerHitProcessor : public Processor {
 
     private: 
 
-        /** Container to hold all TrackerHit objects. */
-        TClonesArray* trackerhits_{nullptr}; 
+        /** Container to hold all MCEcalHit objects. */
+        TClonesArray* ecalhits_{nullptr}; 
 
-}; // MCTrackerHitProcessor
+}; // MCEcalHitProcessor
 
-#endif // __MCTRACKERHIT_PROCESSOR_H__
+#endif // __MCECALHIT_PROCESSOR_H__
