@@ -151,7 +151,7 @@
     "vtx_InvMErr_Z_h" : {
         "bins" : 100,
         "minX" : 0,
-        "maxX" : 0.2,
+        "maxX" : 0.05,
         "xtitle" : "vtx #sigma_{z} [mm]",
         "ytitle" : "Vertices"
     }   

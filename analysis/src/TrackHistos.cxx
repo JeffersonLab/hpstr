@@ -1,42 +1,6 @@
 #include "TrackHistos.h"
 #include <iostream>
 
-void TrackHistos::Define1DHistos() {
-
-    //TODO improve naming
-    std::string h_name = "";
-    
-    for (auto hist : _h_configs.items()) {
-        h_name = m_name+"_"+hist.key();
-        histos1d[h_name] = plot1D(h_name,hist.value().at("xtitle"),
-                                  hist.value().at("bins"),
-                                  hist.value().at("minX"),
-                                  hist.value().at("maxX"));
-        
-        std::string ytitle = hist.value().at("ytitle");
-        histos1d[h_name]->GetYaxis()->SetTitle(ytitle.c_str());
-        
-        if (hist.value().contains("labels")) {
-            std::vector<std::string> labels = hist.value().at("labels").get<std::vector<std::string> >();
-        
-            if (labels.size() < hist.value().at("bins")) {
-                std::cout<<"Cannot apply labels to histogram:"<<h_name<<std::endl;
-            }
-            else {
-                for (int i = 1; i<=hist.value().at("bins");++i)
-                    histos1d[h_name]->GetXaxis()->SetBinLabel(i,labels[i-1].c_str());
-            }
-        }
-       
-    }   
-    
-    //Hit content
-    //shared hits
-    //location of hit in first layer
-    //Total charge of hit in first layer
-    //size of hit in first layer
-  
-}
 void TrackHistos::BuildAxes(){}
 
 void TrackHistos::Define2DHistos() {
@@ -71,8 +35,6 @@ void TrackHistos::Define2DHistos() {
 
 void TrackHistos::Fill1DHistograms(Track *track, Vertex* vtx, float weight ) {
     
-    //TODO improve
-  
     if (track) {
       
         Fill1DHisto("d0_h"       ,track->getD0()          ,weight);
@@ -85,42 +47,40 @@ void TrackHistos::Fill1DHistograms(Track *track, Vertex* vtx, float weight ) {
         Fill1DHisto("nShared_h"  ,track->getNShared()     ,weight);
         
         //All Tracks
-        histos1d[m_name+"_sharingHits_h"]->Fill(0.,weight);
+        Fill1DHisto("sharingHits_h",0,weight);
         if (track->getNShared() == 0)
-            histos1d[m_name+"_sharingHits_h"]->Fill(1.,weight);
+            Fill1DHisto("sharingHits_h",0,weight);
         else {
             //track has shared hits
             if (track->getSharedLy0())
-                histos1d[m_name+"_sharingHits_h"]->Fill(2.,weight);
+                Fill1DHisto("sharingHits_h",2.,weight);
             if (track->getSharedLy1())
-                histos1d[m_name+"_sharingHits_h"]->Fill(3.,weight);
+                Fill1DHisto("sharingHits_h",3.,weight);
             if (track->getSharedLy0() && track->getSharedLy1())
-                histos1d[m_name+"_sharingHits_h"]->Fill(4.,weight);
+                Fill1DHisto("sharingHits_h",4.,weight);
             if (!track->getSharedLy0() && !track->getSharedLy1())
-                histos1d[m_name+"_sharingHits_h"]->Fill(5.,weight);
+                Fill1DHisto("sharingHits_h",5.,weight);
         }
-    
-    
-        //TODO improve this
+                
         if (track -> is345Seed())
-            histos1d[m_name+"_strategy_h"]->Fill(0);
+            Fill1DHisto("strategy_h",0,weight);
         if (track-> is456Seed())
-            histos1d[m_name+"_strategy_h"]->Fill(1);
+            Fill1DHisto("strategy_h",1,weight);
         if (track-> is123SeedC4())
-            histos1d[m_name+"_strategy_h"]->Fill(2);
+            Fill1DHisto("strategy_h",2,weight);
         if (track->is123SeedC5())
-            histos1d[m_name+"_strategy_h"]->Fill(3);
+            Fill1DHisto("strategy_h",3,weight);
         if (track->isMatchedTrack())
-            histos1d[m_name+"_strategy_h"]->Fill(4);
+            Fill1DHisto("strategy_h",4,weight);
         if (track->isGBLTrack())
-            histos1d[m_name+"_strategy_h"]->Fill(5);
-    
-        histos1d[m_name+"_type_h"     ]->Fill(track->getType()     ,weight);
-    
+            Fill1DHisto("strategy_h",5,weight);
+        
+        
+        Fill1DHisto("type_h",track->getType(),weight);
     }
   
     //Vertices
-    //TODO improve this
+    
     if (vtx) {
         
         Fill1DHisto("vtx_chi2_h"   ,vtx->getChi2(),weight);
