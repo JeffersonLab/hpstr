@@ -84,6 +84,8 @@ class HistoManager {
         
         virtual void sumw2();
 
+        virtual void Clear();
+
         void debugMode(bool debug) {debug_ = debug;}
 
     protected:
