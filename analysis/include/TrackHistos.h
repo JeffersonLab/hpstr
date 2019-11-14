@@ -19,8 +19,7 @@ class TrackHistos : public HistoManager {
   
   virtual void Define3DHistos(){};
   virtual void Define2DHistos();
-  virtual void Define1DHistos();
-
+  
   void BuildAxes();
 
   void Fill1DHistograms(Track* track = nullptr, Vertex* vtx = nullptr, float weight = 1.);
@@ -32,8 +31,6 @@ class TrackHistos : public HistoManager {
   void doTrackComparisonPlots(bool doplots) {doTrkCompPlots = doplots;};
   
  private:
-  std::vector<std::string> tPs{"d0","Phi","Omega","TanLambda","Z0","time","chi2"};
-  std::map<std::string, std::vector<float> > axes; 
   
   // Vertices
   std::vector<std::string> vPs{"vtx_chi2", "vtx_X", "vtx_Y", "vtx_Z", "vtx_sigma_X","vtx_sigma_Y","vtx_sigma_Z","vtx_InvM","vtx_InvMErr"};

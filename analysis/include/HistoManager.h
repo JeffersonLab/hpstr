@@ -66,10 +66,13 @@ class HistoManager {
                 std::string ytitle, int nbinsY, double* axisY,
                 std::string ztitle, int nbinsZ, double* axisZ);
 
-
+        //Additional histograms that might be defined by hand
         virtual void Define3DHistos(){};
         virtual void Define2DHistos(){};
         virtual void Define1DHistos(){};
+        
+        //Definition of histograms from json config
+        virtual void DefineHistos();
 
         void Fill1DHisto(const std::string& histoName, float value, float weight=1.);
 
