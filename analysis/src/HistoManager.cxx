@@ -2,6 +2,8 @@
 #include <iostream>
 #include "TKey.h"
 #include "TClass.h"
+#include <fstream>
+#include <iomanip>
 
 HistoManager::HistoManager() {
     HistoManager("default");
@@ -198,7 +200,24 @@ void HistoManager::sumw2() {
 
 }
 
+void HistoManager::Fill1DHisto(const std::string& histoName,float value, float weight) {
+    if (histos1d[m_name+"_"+histoName])
+        histos1d[m_name+"_"+histoName]->Fill(value,weight);
+    else
+        std::cout<<"ERROR::Fill1DHisto Histogram not found! "<<m_name+"_"+histoName<<std::endl;
+}
 
+
+void HistoManager::loadHistoConfig(const std::string histoConfigFile) {
+    
+    std::ifstream i_file(histoConfigFile);
+    i_file>>_h_configs;
+    if (debug_) {
+        for (auto& el : _h_configs.items()) 
+            std::cout << el.key() << " : " << el.value() << "\n";
+    }
+    
+}
 
 void HistoManager::saveHistos(TFile* outF,std::string folder) {
 
