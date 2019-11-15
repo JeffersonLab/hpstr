@@ -21,8 +21,9 @@ class TrackHistos : public HistoManager {
   virtual void Define2DHistos();
   
   void BuildAxes();
-
+  
   void Fill1DHistograms(Track* track = nullptr, Vertex* vtx = nullptr, float weight = 1.);
+  void Fill2DHistograms(Track* track = nullptr, Vertex* vtx = nullptr, float weight = 1.);
   
   
 

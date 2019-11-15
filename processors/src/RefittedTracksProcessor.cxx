@@ -31,27 +31,27 @@ void RefittedTracksProcessor::initialize(TTree* tree) {
   //Original hists
   _OriginalTrkHistos->loadHistoConfig(histoCfg_);
   _OriginalTrkHistos->doTrackComparisonPlots(false);
-  _OriginalTrkHistos->Define1DHistos();
+  _OriginalTrkHistos->DefineHistos();
   
   
   //Refit hists
   _RefitTrkHistos->loadHistoConfig(histoCfg_);
   _RefitTrkHistos->doTrackComparisonPlots(true);
-  _RefitTrkHistos->Define1DHistos();
+  _RefitTrkHistos->DefineHistos();
   _RefitTrkHistos->Define2DHistos();
   
 
   //Refit hists with z0 closer to 0
   _RefitTrkHistos_z0cut->loadHistoConfig(histoCfg_);
   _RefitTrkHistos_z0cut->doTrackComparisonPlots(true);
-  _RefitTrkHistos_z0cut->Define1DHistos();
+  _RefitTrkHistos_z0cut->DefineHistos();
   _RefitTrkHistos_z0cut->Define2DHistos();
   
 
   //Refit hists with z0 closer to 0
   _RefitTrkHistos_chi2cut->loadHistoConfig(histoCfg_);
   _RefitTrkHistos_chi2cut->doTrackComparisonPlots(true);
-  _RefitTrkHistos_chi2cut->Define1DHistos();
+  _RefitTrkHistos_chi2cut->DefineHistos();
   _RefitTrkHistos_chi2cut->Define2DHistos();
   
   
