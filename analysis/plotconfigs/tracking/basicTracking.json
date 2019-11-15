@@ -154,5 +154,15 @@
         "maxX" : 0.05,
         "xtitle" : "vtx #sigma_{z} [mm]",
         "ytitle" : "Vertices"
-    }   
+    },
+    "tanlambda_vs_phi0_hh" : {
+        "binsX"  : 100,
+        "minX"   : -0.4,
+        "maxX"   : 0.4,
+        "binsY"  : 100,
+        "minY"   : -0.2,
+        "maxY"   : 0.2,
+        "xtitle" : "trk #phi_{0}",
+        "ytitle" : "trk tan(#lambda)"
+    }
 }

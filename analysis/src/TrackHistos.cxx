@@ -100,6 +100,12 @@ void TrackHistos::Fill1DHistograms(Track *track, Vertex* vtx, float weight ) {
 }
 
 
+void TrackHistos::Fill2DHistograms(Track* track, Vertex* vtx, float weight) { 
+    
+    if (track) {
+        Fill2DHisto("tanlambda_vs_phi0_hh",track->getPhi(),track->getTanLambda(), weight);
+    }
+}
 
 void TrackHistos::FillTrackComparisonHistograms(Track* track_x, Track* track_y, float weight) {
 
