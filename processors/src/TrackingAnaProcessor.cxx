@@ -24,8 +24,9 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
 
     //Init histos
     trkHistos_ = new TrackHistos(trkCollName_);
+    trkHistos_->loadHistoConfig(histCfgFilename_);
     trkHistos_->doTrackComparisonPlots(false);
-    trkHistos_->Define1DHistos();
+    trkHistos_->DefineHistos();
     
     // Init tree
     tree->SetBranchAddress(trkCollName_.c_str(), &tracks_, &btracks_);
@@ -49,9 +50,10 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
         }
 
         trkHistos_->Fill1DHistograms(track);
+        trkHistos_->Fill2DHistograms(track);
     }//Loop on tracks
 
-    trkHistos_->Fill1DHisto("n_tracks",tracks_->size());
+    trkHistos_->Fill1DHisto("n_tracks_h",tracks_->size());
 
     return true;
 }

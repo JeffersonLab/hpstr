@@ -22,7 +22,7 @@ anaTrks = HpstrConf.Processor('anaTrks', 'TrackingAnaProcessor')
 #   Processor Configuration   #
 ###############################
 anaTrks.parameters["debug"] = 0 
-anaTrks.parameters["histCfg"] = 'hists.json'
+anaTrks.parameters["histCfg"] = '/data/src/hpstr/analysis/plotconfigs/tracking/basicTracking.json'
 anaTrks.parameters["trkCollName"] = 'GBLTracks'
 
 # Sequence which the processors will run.
