@@ -66,8 +66,8 @@
     },
     "Z0_h" : {
         "bins" : 200,
-        "minX" : -20,
-        "maxX" : 20,
+        "minX" : -5,
+        "maxX" : 5,
         "xtitle" : "z_0 [mm]",
         "ytitle" : "Tracks"
     },
