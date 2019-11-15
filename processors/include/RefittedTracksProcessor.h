@@ -78,6 +78,8 @@ class RefittedTracksProcessor : public Processor {
          */
         virtual void finalize();
 
+        virtual void configure(const ParameterSet& parameters);
+
     private: 
 
         /** Container to hold all Track objects. */
@@ -103,7 +105,7 @@ class RefittedTracksProcessor : public Processor {
 	TrackHistos* _RefitTrkHistos;
 	TrackHistos* _RefitTrkHistos_chi2cut;
 	TrackHistos* _RefitTrkHistos_z0cut;
-        
+    std::string histoCfg_;
 
 
 }; // Refitted Tracks Processor
