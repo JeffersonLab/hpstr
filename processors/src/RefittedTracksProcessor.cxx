@@ -15,6 +15,12 @@ RefittedTracksProcessor::RefittedTracksProcessor(const std::string& name, Proces
 RefittedTracksProcessor::~RefittedTracksProcessor() { 
 }
 
+
+void RefittedTracksProcessor::configure(const ParameterSet& parameters) {
+    histoCfg_ = parameters.getString("histoCfg");
+    
+}
+
 void RefittedTracksProcessor::initialize(TTree* tree) {
   
   tree->Branch("GBLRefittedTracks", &tracks_);
@@ -23,23 +29,31 @@ void RefittedTracksProcessor::initialize(TTree* tree) {
   
   
   //Original hists
+  _OriginalTrkHistos->loadHistoConfig(histoCfg_);
   _OriginalTrkHistos->doTrackComparisonPlots(false);
   _OriginalTrkHistos->Define1DHistos();
   
+  
   //Refit hists
+  _RefitTrkHistos->loadHistoConfig(histoCfg_);
   _RefitTrkHistos->doTrackComparisonPlots(true);
   _RefitTrkHistos->Define1DHistos();
   _RefitTrkHistos->Define2DHistos();
+  
 
   //Refit hists with z0 closer to 0
+  _RefitTrkHistos_z0cut->loadHistoConfig(histoCfg_);
   _RefitTrkHistos_z0cut->doTrackComparisonPlots(true);
   _RefitTrkHistos_z0cut->Define1DHistos();
   _RefitTrkHistos_z0cut->Define2DHistos();
+  
 
   //Refit hists with z0 closer to 0
+  _RefitTrkHistos_chi2cut->loadHistoConfig(histoCfg_);
   _RefitTrkHistos_chi2cut->doTrackComparisonPlots(true);
   _RefitTrkHistos_chi2cut->Define1DHistos();
   _RefitTrkHistos_chi2cut->Define2DHistos();
+  
   
  
 }
@@ -76,7 +90,7 @@ bool RefittedTracksProcessor::process(IEvent* ievent) {
       vertices_.push_back(vtx);
       _OriginalTrkHistos->Fill1DHistograms(nullptr,vtx);
     }
-    _OriginalTrkHistos->Fill1DHisto("n_vertices",u_vtxs->getNumberOfElements());
+    _OriginalTrkHistos->Fill1DHisto("n_vertices_h",u_vtxs->getNumberOfElements());
   }
 
   //Grab the vertices and the vtx candidates
@@ -93,7 +107,7 @@ bool RefittedTracksProcessor::process(IEvent* ievent) {
       vertices_refit_.push_back(vtx_r);
       _RefitTrkHistos->Fill1DHistograms(nullptr,vtx_r);
     }
-    _RefitTrkHistos->Fill1DHisto("n_vertices",u_vtxs_r->getNumberOfElements());
+    _RefitTrkHistos->Fill1DHisto("n_vertices_h",u_vtxs_r->getNumberOfElements());
   }
     
     
@@ -110,7 +124,7 @@ bool RefittedTracksProcessor::process(IEvent* ievent) {
   }
   
 
-  _OriginalTrkHistos->Fill1DHisto("n_tracks",tracks->getNumberOfElements());
+  _OriginalTrkHistos->Fill1DHisto("n_tracks_h",tracks->getNumberOfElements());
   // Loop over all the LCIO Tracks and add them to the HPS event.
   for (int itrack = 0; itrack < tracks->getNumberOfElements(); ++itrack) {
     
@@ -216,7 +230,7 @@ bool RefittedTracksProcessor::process(IEvent* ievent) {
 
     _OriginalTrkHistos->Fill1DHistograms(track);
     
-    _RefitTrkHistos->Fill1DHisto("n_tracks",refitted_tracks_list.size());
+    _RefitTrkHistos->Fill1DHisto("n_tracks_h",refitted_tracks_list.size());
     
     for (int irtrk = 0; irtrk < refitted_tracks_list.size(); irtrk++) {
       
