@@ -1,4 +1,5 @@
 import HpstrConf
+import os
 import sys
 
 # Use the input file to set the output file name
@@ -22,7 +23,7 @@ anaTrks = HpstrConf.Processor('anaTrks', 'TrackingAnaProcessor')
 #   Processor Configuration   #
 ###############################
 anaTrks.parameters["debug"] = 0 
-anaTrks.parameters["histCfg"] = '/data/src/hpstr/analysis/plotconfigs/tracking/basicTracking.json'
+anaTrks.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/tracking/basicTracking.json'
 anaTrks.parameters["trkCollName"] = 'GBLTracks'
 
 # Sequence which the processors will run.
