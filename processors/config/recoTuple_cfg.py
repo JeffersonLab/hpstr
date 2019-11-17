@@ -18,13 +18,14 @@ p.libraries.append("libprocessors.so")
 ###############################
 
 header = HpstrConf.Processor('header', 'EventProcessor')
-track = HpstrConf.Processor('svt', 'TrackingProcessor')
-#track = HpstrConf.Processor('svt', 'SvtDataProcessor')
+track = HpstrConf.Processor('track', 'TrackingProcessor')
+svthits = HpstrConf.Processor('svthits', 'Tracker3DHitProcessor')
+rawsvt = HpstrConf.Processor('rawsvt', 'SvtRawDataProcessor')
 ecal = HpstrConf.Processor('ecal', 'ECalDataProcessor')
 mcpart = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
 
 # Sequence which the processors will run.
-p.sequence = [header, track, ecal, mcpart]
+p.sequence = [header, track, rawsvt, svthits, ecal, mcpart]
 
 p.input_files=[lcio_file]
 p.output_files = [root_file]
