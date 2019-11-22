@@ -42,10 +42,6 @@ bool TrackingProcessor::process(IEvent* ievent) {
     }
 
 
-    tracks_.clear();
-    hits_.clear();
-    rawhits_.clear();
-
     Event* event = static_cast<Event*> (ievent);
     // Get the collection of 3D hits from the LCIO event. If no such collection 
     // exist, a DataNotAvailableException is thrown
