@@ -99,6 +99,8 @@ class TrackingProcessor : public Processor {
         std::vector<RawSvtHit*> rawhits_{};
         std::string hitFitsCollLcio_{"SVTFittedRawTrackerHits"};
         std::string rawhitCollRoot_{"SVTRawHitsOnTrack"};
+
+        //Debug Level
         int debug_{false};
 
 

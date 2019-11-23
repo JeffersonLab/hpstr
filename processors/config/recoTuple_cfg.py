@@ -39,6 +39,11 @@ track.parameters["trkhitCollRoot"] = 'RotatedHelicalOnTrackHits'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 track.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack'
 
+#MCParticles
+mcpart.parameters["debug"] = 0 
+mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
+mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
+
 # Sequence which the processors will run.
 p.sequence = [header, track, rawsvt, svthits, ecal, mcpart]
 
