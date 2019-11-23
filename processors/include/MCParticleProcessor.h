@@ -83,7 +83,14 @@ class MCParticleProcessor : public Processor {
     private:
 
         /** Map to hold all particle collections. */
-        TClonesArray* mc_particles_; 
+        std::vector<MCParticle*> mc_particles_{}; 
+        std::string mcPartCollLcio_{"MCParticle"};
+        std::string mcPartCollRoot_{"MCParticle"};
+
+
+        //Debug
+        int debug_{0};
+
 
 }; // MCParticleProcessor
 
