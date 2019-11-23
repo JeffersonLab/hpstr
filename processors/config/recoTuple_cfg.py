@@ -29,7 +29,7 @@ mcpart = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
 ###############################
 #Event
 
-#Tracks
+#Tracking
 track.parameters["debug"] = 0 
 track.parameters["trkCollLcio"] = 'GBLTracks'
 track.parameters["trkCollRoot"] = 'GBLTracks'
@@ -39,7 +39,14 @@ track.parameters["trkhitCollRoot"] = 'RotatedHelicalOnTrackHits'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 track.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack'
 
-#MCParticles
+#ECalData
+ecal.parameters["debug"] = 0 
+ecal.parameters["hitCollLcio"] = 'EcalCalHits'
+ecal.parameters["hitCollRoot"] = 'RecoEcalHits'
+ecal.parameters["clusCollLcio"] = "EcalClustersCorr"
+ecal.parameters["clusCollRoot"] = "RecoEcalClusters"
+
+#MCParticle
 mcpart.parameters["debug"] = 0 
 mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'

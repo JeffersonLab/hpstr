@@ -57,7 +57,7 @@ class MCParticleProcessor : public Processor {
         ~MCParticleProcessor();
 
         /**
-         * Callback for the EventProcessor to configure itself from the given set of parameters.
+         * Callback for the Processor to configure itself from the given set of parameters.
          * @param parameters ParameterSet for configuration.
          */
         virtual void configure(const ParameterSet& parameters);
