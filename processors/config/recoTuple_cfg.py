@@ -35,6 +35,11 @@ rawsvt.parameters["hitCollLcio"]    = 'SVTRawTrackerHits'
 rawsvt.parameters["hitfitCollLcio"] = 'SVTFittedRawTrackerHits'
 rawsvt.parameters["hitCollRoot"]    = 'SVTRawTrackerHits'
 
+#Tracker3DHits
+svthits.parameters["debug"] = 0
+svthits.parameters["hitCollLcio"]    = 'RotatedHelicalTrackHits'
+svthits.parameters["hitCollRoot"]    = 'RotatedHelicalTrackHits'
+
 #Tracking
 track.parameters["debug"] = 0 
 track.parameters["trkCollLcio"] = 'GBLTracks'
