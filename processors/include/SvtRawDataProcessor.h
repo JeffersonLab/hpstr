@@ -54,16 +54,22 @@ class SvtRawDataProcessor : public Processor {
         ~SvtRawDataProcessor(); 
 
         /**
-         * Process the event and put new data products into it.
-         * @param event The Event to process.
+         * Callback for the Processor to configure itself from the given set of parameters.
+         * @param parameters ParameterSet for configuration.
          */
-        virtual bool process(IEvent* ievent);
+        virtual void configure(const ParameterSet& parameters);
 
         /**
          * Callback for the Processor to take any necessary
          * action when the processing of events starts.
          */
         virtual void initialize(TTree* tree);
+
+        /**
+         * Process the event and put new data products into it.
+         * @param event The Event to process.
+         */
+        virtual bool process(IEvent* ievent);
 
         /**
          * Callback for the Processor to take any necessary
@@ -73,8 +79,14 @@ class SvtRawDataProcessor : public Processor {
 
     private: 
 
-        /** Container to hold all TrackerHit objects. */
-        TClonesArray* rawhits_{nullptr}; 
+        /** Container to hold all TrackerHit objects, and collection names. */
+        std::vector<RawSvtHit*> rawhits_; 
+        std::string hitCollLcio_{"SVTRawTrackerHits"};
+        std::string hitfitCollLcio_{"SVTFittedRawTrackerHits"};
+        std::string hitCollRoot_{"SVTRawTrackerHits"};
+
+        //Debug Level
+        int debug_{0};
 
 }; // SvtRawDataProcessor
 

@@ -29,6 +29,12 @@ mcpart = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
 ###############################
 #Event
 
+#SvtRawData
+rawsvt.parameters["debug"] = 0
+rawsvt.parameters["hitCollLcio"]    = 'SVTRawTrackerHits'
+rawsvt.parameters["hitfitCollLcio"] = 'SVTFittedRawTrackerHits'
+rawsvt.parameters["hitCollRoot"]    = 'SVTRawTrackerHits'
+
 #Tracking
 track.parameters["debug"] = 0 
 track.parameters["trkCollLcio"] = 'GBLTracks'
