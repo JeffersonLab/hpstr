@@ -21,6 +21,17 @@ p.add_library("libprocessors")
 header = HpstrConf.Processor('header', 'EventProcessor')
 rawsvt = HpstrConf.Processor('svt', 'SvtRawDataProcessor')
 
+###############################
+#   Processor Configuration   #
+###############################
+#Event
+
+#SvtRawData
+rawsvt.parameters["debug"] = 0
+rawsvt.parameters["hitCollLcio"]    = 'SVTRawTrackerHits'
+rawsvt.parameters["hitfitCollLcio"] = 'SVTFittedRawTrackerHits'
+rawsvt.parameters["hitCollRoot"]    = 'SVTRawTrackerHits'
+
 # Sequence which the processors will run.
 p.sequence = [header, rawsvt]
 
