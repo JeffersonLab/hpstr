@@ -9,10 +9,31 @@ TrackingProcessor::TrackingProcessor(const std::string& name, Process& process)
 TrackingProcessor::~TrackingProcessor() { 
 }
 
+void TrackingProcessor::configure(const ParameterSet& parameters) {
+
+    std::cout << "Configuring TrackingProcessor" << std::endl;
+    try
+    {
+        debug_          = parameters.getInteger("debug");
+        trkCollLcio_    = parameters.getString("trkCollLcio");
+        trkCollRoot_    = parameters.getString("trkCollRoot");
+        kinkRelCollLcio_    = parameters.getString("kinkRelCollLcio");
+        trkRelCollLcio_    = parameters.getString("trkRelCollLcio");
+        trkhitCollRoot_    = parameters.getString("trkhitCollRoot");
+        hitFitsCollLcio_    = parameters.getString("hitFitsCollLcio");
+        rawhitCollRoot_    = parameters.getString("rawhitCollRoot");
+    }
+    catch (std::runtime_error& error)
+    {
+        std::cout << error.what() << std::endl;
+    }
+
+}
+
 void TrackingProcessor::initialize(TTree* tree) {
-    tree->Branch(Collections::GBL_TRACKS, &tracks_);
-    tree->Branch(Collections::TRACKER_HITS_ON_TRACK, &hits_);
-    tree->Branch(Collections::RAW_SVT_HITS_ON_TRACK, &rawhits_);
+    tree->Branch(trkCollRoot_.c_str(), &tracks_);
+    tree->Branch(trkhitCollRoot_.c_str(), &hits_);
+    tree->Branch(rawhitCollRoot_.c_str(), &rawhits_);
 
 }
 
@@ -53,18 +74,18 @@ bool TrackingProcessor::process(IEvent* ievent) {
     EVENT::LCCollection* raw_svt_hit_fits              = nullptr;
     //Check to see if fits are in the file
     auto evColls = event->getLCEvent()->getCollectionNames();
-    auto it = std::find (evColls->begin(), evColls->end(), Collections::RAW_SVT_HIT_FITS);
+    auto it = std::find (evColls->begin(), evColls->end(), hitFitsCollLcio_.c_str());
     bool hasFits = true;
     if(it == evColls->end()) hasFits = false;
     if(hasFits) 
     {
-        raw_svt_hit_fits = event->getLCCollection(Collections::RAW_SVT_HIT_FITS); 
+        raw_svt_hit_fits = event->getLCCollection(hitFitsCollLcio_.c_str()); 
         // Heap an LCRelation navigator which will allow faster access 
         rawTracker_hit_fits_nav = new UTIL::LCRelationNavigator(raw_svt_hit_fits);     
     }
 
     // Get all track collections from the event
-    EVENT::LCCollection* tracks = event->getLCCollection(Collections::GBL_TRACKS);
+    EVENT::LCCollection* tracks = event->getLCCollection(trkCollLcio_.c_str());
 
 
     // Loop over all the LCIO Tracks and add them to the HPS event.
@@ -76,12 +97,12 @@ bool TrackingProcessor::process(IEvent* ievent) {
         // Get the collection of LCRelations between GBL kink data variables 
         // (GBLKinkData) and the corresponding track.
         EVENT::LCCollection* gbl_kink_data = 
-            static_cast<EVENT::LCCollection*>(event->getLCCollection(Collections::KINK_DATA_REL));
+            static_cast<EVENT::LCCollection*>(event->getLCCollection(kinkRelCollLcio_.c_str()));
 
         // Get the collection of LCRelations between track data variables 
         // (TrackData) and the corresponding track.
         EVENT::LCCollection* track_data = static_cast<EVENT::LCCollection*>(
-                event->getLCCollection(Collections::TRACK_DATA_REL));
+                event->getLCCollection(trkRelCollLcio_.c_str()));
 
 
         // Add a track to the event
@@ -110,7 +131,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
 
             rawSvthitsOn3d.clear();
 
-            if (_debug)
+            if (debug_)
                 std::cout<<tracker_hit->getRawHits()->GetEntries()<<std::endl;
             // Add a reference to the hit
             track->addHit(tracker_hit);

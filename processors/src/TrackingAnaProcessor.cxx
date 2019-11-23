@@ -11,11 +11,17 @@ TrackingAnaProcessor::~TrackingAnaProcessor() {
 
 void TrackingAnaProcessor::configure(const ParameterSet& parameters) {
 
-    std::cout << "configure" << std::endl;
-    debug_          = parameters.getInteger("debug");
-    trkCollName_    = parameters.getString("trkCollName");
-    histCfgFilename_ = parameters.getString("histCfg");
-    std::cout << "configure done" << std::endl;
+    std::cout << "Configuring TrackingAnaProcessor" << std::endl;
+    try
+    {
+        debug_          = parameters.getInteger("debug");
+        trkCollName_    = parameters.getString("trkCollName");
+        histCfgFilename_ = parameters.getString("histCfg");
+    }
+    catch (std::runtime_error& error)
+    {
+        std::cout << error.what() << std::endl;
+    }
 
 }
 
@@ -27,7 +33,7 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
     trkHistos_->loadHistoConfig(histCfgFilename_);
     trkHistos_->doTrackComparisonPlots(false);
     trkHistos_->DefineHistos();
-    
+
     // Init tree
     tree->SetBranchAddress(trkCollName_.c_str(), &tracks_, &btracks_);
 
