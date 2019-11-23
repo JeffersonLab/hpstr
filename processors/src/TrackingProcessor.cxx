@@ -84,8 +84,17 @@ bool TrackingProcessor::process(IEvent* ievent) {
         rawTracker_hit_fits_nav = new UTIL::LCRelationNavigator(raw_svt_hit_fits);     
     }
 
-    // Get all track collections from the event
-    EVENT::LCCollection* tracks = event->getLCCollection(trkCollLcio_.c_str());
+        EVENT::LCCollection* tracks{nullptr};
+    try
+    {
+        // Get all track collections from the event
+        tracks = event->getLCCollection(trkCollLcio_.c_str());
+    }
+    catch (EVENT::DataNotAvailableException e)
+    {
+        std::cout << e.what() << std::endl;
+    }
+
 
 
     // Loop over all the LCIO Tracks and add them to the HPS event.
@@ -94,15 +103,20 @@ bool TrackingProcessor::process(IEvent* ievent) {
         // Get a LCIO Track from the LCIO event
         EVENT::Track* lc_track = static_cast<EVENT::Track*>(tracks->getElementAt(itrack));
 
-        // Get the collection of LCRelations between GBL kink data variables 
-        // (GBLKinkData) and the corresponding track.
-        EVENT::LCCollection* gbl_kink_data = 
-            static_cast<EVENT::LCCollection*>(event->getLCCollection(kinkRelCollLcio_.c_str()));
+        // Get the collection of LCRelations between GBL kink data and track data variables 
+        // and the corresponding track.
+        EVENT::LCCollection* gbl_kink_data{nullptr};
+        EVENT::LCCollection* track_data{nullptr};
+        try
+        {
+            gbl_kink_data = static_cast<EVENT::LCCollection*>(event->getLCCollection(kinkRelCollLcio_.c_str()));
+            track_data = static_cast<EVENT::LCCollection*>(event->getLCCollection(trkRelCollLcio_.c_str()));
+        }
+        catch (EVENT::DataNotAvailableException e)
+        {
+            std::cout << e.what() << std::endl;
+        }
 
-        // Get the collection of LCRelations between track data variables 
-        // (TrackData) and the corresponding track.
-        EVENT::LCCollection* track_data = static_cast<EVENT::LCCollection*>(
-                event->getLCCollection(trkRelCollLcio_.c_str()));
 
 
         // Add a track to the event

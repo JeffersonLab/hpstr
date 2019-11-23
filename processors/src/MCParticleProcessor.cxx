@@ -42,7 +42,16 @@ bool MCParticleProcessor::process(IEvent* ievent) {
     Event* event = static_cast<Event*> (ievent);
 
     // Get the collection from the event
-    EVENT::LCCollection* lc_particles = event->getLCCollection(mcPartCollLcio_.c_str());
+    EVENT::LCCollection* lc_particles{nullptr};
+    try
+    {
+        lc_particles = event->getLCCollection(mcPartCollLcio_.c_str());
+    }
+    catch (EVENT::DataNotAvailableException e)
+    {
+        std::cout << e.what() << std::endl;
+    }
+
 
     //Clean up
     if (mc_particles_.size() > 0 ) 
