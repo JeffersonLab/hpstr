@@ -3,7 +3,8 @@ import sys
 
 # Use the input file to set the output file name
 lcio_file = sys.argv[1].strip()
-root_file = '%s.root' % lcio_file[:-6]
+root_file = '%s_tracks.root' % lcio_file[:-6]
+#root_file = 'testRun.root'
 
 print 'LCIO file: %s' % lcio_file
 print 'Root file: %s' % root_file
@@ -18,19 +19,12 @@ p.libraries.append("libprocessors.so")
 ###############################
 
 header = HpstrConf.Processor('header', 'EventProcessor')
-track = HpstrConf.Processor('track', 'TrackingProcessor')
-svthits = HpstrConf.Processor('svthits', 'Tracker3DHitProcessor')
-rawsvt = HpstrConf.Processor('rawsvt', 'SvtRawDataProcessor')
-ecal = HpstrConf.Processor('ecal', 'ECalDataProcessor')
-mcpart = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
+tracks = HpstrConf.Processor('tracks', 'TrackingProcessor')
 
 ###############################
 #   Processor Configuration   #
 ###############################
-#Event
-
-#Tracks
-track.parameters["debug"] = 0 
+track.parameters["debug"] = 0
 track.parameters["trkCollLcio"] = 'GBLTracks'
 track.parameters["trkCollRoot"] = 'GBLTracks'
 track.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
@@ -39,8 +33,9 @@ track.parameters["trkhitCollRoot"] = 'RotatedHelicalOnTrackHits'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 track.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack'
 
+
 # Sequence which the processors will run.
-p.sequence = [header, track, rawsvt, svthits, ecal, mcpart]
+p.sequence = [header, tracks]
 
 p.input_files=[lcio_file]
 p.output_files = [root_file]
