@@ -33,14 +33,14 @@ void MCAnaHistos::Define1DHistos() {
     sumw2();
 }
 
-void MCAnaHistos::FillMCParticles(TClonesArray* mcParts, float weight ) {
-    int nParts = mcParts->GetEntriesFast();
+void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, float weight ) {
+    int nParts = mcParts->size();
     histos1d["numMCparts_h"]->Fill((float)nParts, weight);
     int nMuons = 0;
     double minMuonE = -99.9;
     for (int i=0; i < nParts; i++) 
     {
-        MCParticle *part = (MCParticle*)mcParts->At(i);
+        MCParticle *part = mcParts->at(i);
         int pdg = part->getPDG();
         double energy = part->getEnergy();
         if (fabs(pdg) == 13)
@@ -59,24 +59,24 @@ void MCAnaHistos::FillMCParticles(TClonesArray* mcParts, float weight ) {
     histos1d["minMuonEhigh_h"]->Fill(minMuonE, weight);
 }
 
-void MCAnaHistos::FillMCTrackerHits(TClonesArray* mcTrkrHits, float weight ) {
-    int nHits = mcTrkrHits->GetEntriesFast();
+void MCAnaHistos::FillMCTrackerHits(std::vector<MCTrackerHit*> *mcTrkrHits, float weight ) {
+    int nHits = mcTrkrHits->size();
     histos1d["numMCTrkrHit_h"]->Fill(nHits, weight);
     for (int i=0; i < nHits; i++) 
     {
-        MCTrackerHit *hit = (MCTrackerHit*)mcTrkrHits->At(i);
+        MCTrackerHit *hit = mcTrkrHits->at(i);
         int pdg = hit->getPDG();
         histos1d["mcTrkrHitEdep_h"]->Fill(hit->getEdep()*1000.0, weight); // Scaled to MeV
         histos1d["mcTrkrHitPdgId_h"]->Fill((float)hit->getPDG(), weight);
     }
 }
 
-void MCAnaHistos::FillMCEcalHits(TClonesArray* mcEcalHits, float weight ) {
-    int nHits = mcEcalHits->GetEntriesFast();
+void MCAnaHistos::FillMCEcalHits(std::vector<MCEcalHit*> *mcEcalHits, float weight ) {
+    int nHits = mcEcalHits->size();
     histos1d["numMCEcalHit_h"]->Fill(nHits, weight);
     for (int i=0; i < nHits; i++) 
     {
-        MCEcalHit *hit = (MCEcalHit*)mcEcalHits->At(i);
+        MCEcalHit *hit = mcEcalHits->at(i);
         histos1d["mcEcalHitEnergy_h"]->Fill(hit->getEnergy()*1000.0, weight); // Scaled to MeV
     }
 }

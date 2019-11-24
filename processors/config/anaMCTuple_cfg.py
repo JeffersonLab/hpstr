@@ -18,6 +18,17 @@ p.libraries.append("libprocessors.so")
 ###############################
 
 mcana = HpstrConf.Processor('mcana', 'MCAnaProcessor')
+
+###############################
+#   Processor Configuration   #
+###############################
+#RecoHitAna
+mcana.parameters["debug"] = 0
+mcana.parameters["anaName"] = "mcAna"
+mcana.parameters["partColl"] = "MCParticle"
+mcana.parameters["trkrHitColl"] = "TrackerHits"
+mcana.parameters["ecalHitColl"] = "EcalHits"
+
 # Sequence which the processors will run.
 p.sequence = [mcana]
 
