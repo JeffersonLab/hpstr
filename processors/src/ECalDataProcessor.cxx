@@ -39,8 +39,8 @@ void ECalDataProcessor::initialize(TTree* tree) {
 bool ECalDataProcessor::process(IEvent* ievent) {
 
     for(int i = 0; i < cal_hits_.size(); i++) delete cal_hits_.at(i);
-    for(int i = 0; i < clusters_.size(); i++) delete clusters_.at(i);
     cal_hits_.clear();
+    for(int i = 0; i < clusters_.size(); i++) delete clusters_.at(i);
     clusters_.clear();
     // Attempt to retrieve the collection "TimeCorrEcalHits" from the event. If
     // the collection doesn't exist, handle the DataNotAvailableCollection and
