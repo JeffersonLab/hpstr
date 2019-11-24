@@ -1,5 +1,6 @@
 import HpstrConf
 import sys
+import os
 
 # Use the input file to set the output file name
 infile = sys.argv[1].strip()
@@ -29,7 +30,7 @@ recoana.parameters["trkColl"] = "GBLTracks"
 recoana.parameters["trkrHitColl"] = "RotatedHelicalTrackHits"
 recoana.parameters["ecalHitColl"] = "RecoEcalHits"
 recoana.parameters["ecalClusColl"] = "RecoEcalClusters"
-
+recoana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/basicRecoHit.json'
 
 # Sequence which the processors will run.
 p.sequence = [recoana]
