@@ -71,7 +71,7 @@ bool MCParticleProcessor::process(IEvent* ievent) {
         IMPL::MCParticleImpl* lc_particle
             = static_cast<IMPL::MCParticleImpl*>(lc_particles->getElementAt(iparticle)); 
 
-        // Make an MCParticle to build and add to TClonesArray
+        // Make an MCParticle to build and add to vector
         MCParticle* particle = new MCParticle();
 
         // Set the charge of the HpsMCParticle    
