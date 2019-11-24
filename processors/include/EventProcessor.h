@@ -2,6 +2,7 @@
  * @file EventProcessor.h
  * @brief Processor used to write event info.
  * @author Omar Moreno, SLAC National Accelerator Laboratory
+ * @author Cameron Bravo, SLAC National Accelerator Laboratory
  */
 
 #ifndef _EVENT_HEADER_PROCESSOR_H__
@@ -55,16 +56,22 @@ class EventProcessor : public Processor {
         ~EventProcessor(); 
 
         /**
-         * Process the event and put new data products into it.
-         * @param event The Event to process.
+         * Callback for the Processor to configure itself from the given set of parameters.
+         * @param parameters ParameterSet for configuration.
          */
-        virtual bool process(IEvent* ievent);
+        virtual void configure(const ParameterSet& parameters);
 
         /**
          * Callback for the Processor to take any necessary
          * action when the processing of events starts.
          */
         virtual void initialize(TTree* tree);
+
+        /**
+         * Process the event and put new data products into it.
+         * @param event The Event to process.
+         */
+        virtual bool process(IEvent* ievent);
 
         /**
          * Callback for the Processor to take any necessary
@@ -74,13 +81,28 @@ class EventProcessor : public Processor {
 
     private: 
 
-       TClonesArray* header_{nullptr};
-       VTPData* vtpData{nullptr};
-       TSData* tsData{nullptr};
-       bool _debug{false};
-       void parseVTPData(EVENT::LCGenericObject* vtp_data_lcio);
-       void parseTSData(EVENT::LCGenericObject* ts_data_lcio);
+        //Containers for event header
+        EventHeader* header_{nullptr};
+        std::string  headCollRoot_{"EventHeader"};
+        std::string  rfCollLcio_{"RFHits"};
+        std::string  trigCollLcio_{"TriggerBank"};
 
+        //Containers for vtp data
+        VTPData* vtpData{nullptr};
+        std::string vtpCollLcio_{"VTPBank"};
+        std::string vtpCollRoot_{"VTPBank"};
+
+        //Containers for ts data
+        TSData* tsData{nullptr};
+        std::string tsCollLcio_{"TSBank"};
+        std::string tsCollRoot_{"TSBank"};
+
+        //Parsing methods
+        void parseVTPData(EVENT::LCGenericObject* vtp_data_lcio);
+        void parseTSData(EVENT::LCGenericObject* ts_data_lcio);
+
+        //Debug Level
+        int debug_{0};
 
 }; // EventProcessor
 
