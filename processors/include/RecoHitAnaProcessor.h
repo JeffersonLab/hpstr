@@ -51,6 +51,15 @@ class RecoHitAnaProcessor : public Processor {
         std::vector<CalHit*>     * ecalHits_{};
         std::vector<CalCluster*> * ecalClusters_{};
 
+        std::string anaName_{"recoHitAna"};
+        std::string trkColl_{"GBLTracks"};
+        std::string trkrHitColl_{"RotatedHelicalTrackHits"};
+        std::string ecalHitColl_{"EcalCalHits"};
+        std::string ecalClusColl_{"EcalClustersCorr"};
+
+        //Debug Level
+        int debug_{0};
+
 };
 
 

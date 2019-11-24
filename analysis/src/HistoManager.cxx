@@ -14,32 +14,32 @@ HistoManager::HistoManager(const std::string& inputName) {
 }
 
 void HistoManager::Clear() {
-    
+
     for (it1d it = histos1d.begin(); it!=histos1d.end(); ++it) {
         if (it->second) {
             delete (it->second);
             (it->second) = nullptr;
         }
     }
-    
+
     histos1d.clear();
-    
+
     for (it2d it = histos2d.begin(); it!=histos2d.end(); ++it) {
         if (it->second) {
             delete (it->second);
             (it->second) = nullptr;
         }
     }
-    
+
     histos2d.clear();
-    
+
     for (it3d it = histos3d.begin(); it!=histos3d.end(); ++it) {
         if (it->second) {
             delete (it->second);
             (it->second) = nullptr;
         }
     }
-    
+
     histos3d.clear();
 
 }
@@ -47,31 +47,31 @@ void HistoManager::Clear() {
 HistoManager::~HistoManager() {}
 
 void HistoManager::DefineHistos(){
-    
+
     std::string h_name = "";
     for (auto hist : _h_configs.items()) {
-        
+
         h_name = m_name+"_"+hist.key();
-        
+
         //Get the extension of the name to decide the histogram to create
         //i.e. _h = TH1D, _hh = TH2D, _ge = TGraphErrors, _p = TProfile ...
-        
+
         std::size_t found = (hist.key()).find_last_of("_");
         std::string extension = hist.key().substr(found+1);
-        
+
         if (extension == "h") {
             histos1d[h_name] = plot1D(h_name,hist.value().at("xtitle"),
-                                      hist.value().at("bins"),
-                                      hist.value().at("minX"),
-                                      hist.value().at("maxX"));
-            
+                    hist.value().at("bins"),
+                    hist.value().at("minX"),
+                    hist.value().at("maxX"));
+
             std::string ytitle = hist.value().at("ytitle");
-            
+
             histos1d[h_name]->GetYaxis()->SetTitle(ytitle.c_str());
-            
+
             if (hist.value().contains("labels")) {
                 std::vector<std::string> labels = hist.value().at("labels").get<std::vector<std::string> >();
-                
+
                 if (labels.size() < hist.value().at("bins")) {
                     std::cout<<"Cannot apply labels to histogram:"<<h_name<<std::endl;
                 }
@@ -81,11 +81,11 @@ void HistoManager::DefineHistos(){
                 }//bins
             }//labels
         }//1D histo
-        
+
         else if (extension == "hh") {
             histos2d[h_name] = plot2D(h_name,
-                                      hist.value().at("xtitle"),hist.value().at("binsX"),hist.value().at("minX"),hist.value().at("maxX"),
-                                      hist.value().at("ytitle"),hist.value().at("binsY"),hist.value().at("minY"),hist.value().at("maxY"));
+                    hist.value().at("xtitle"),hist.value().at("binsX"),hist.value().at("minX"),hist.value().at("maxX"),
+                    hist.value().at("ytitle"),hist.value().at("binsY"),hist.value().at("minY"),hist.value().at("maxY"));
         }
     }//loop on config
 }
@@ -264,24 +264,23 @@ void HistoManager::Fill1DHisto(const std::string& histoName,float value, float w
 
 
 void HistoManager::loadHistoConfig(const std::string histoConfigFile) {
-    
+
     std::ifstream i_file(histoConfigFile);
     i_file>>_h_configs;
     if (debug_) {
         for (auto& el : _h_configs.items()) 
             std::cout << el.key() << " : " << el.value() << "\n";
     }
-    
+
 }
 
 void HistoManager::saveHistos(TFile* outF,std::string folder) {
 
-    if (outF)
-        outF->cd();
-    TDirectoryFile* dir = 0;
+    if (outF) outF->cd();
+    TDirectory* dir{nullptr};
 
     if (!folder.empty()) {
-        dir = new TDirectoryFile(folder.c_str(),folder.c_str());
+        dir = outF->mkdir(folder.c_str());
         dir->cd();
     }
 
@@ -309,8 +308,9 @@ void HistoManager::saveHistos(TFile* outF,std::string folder) {
         it->second->Write();
     }
 
-    if (dir) {delete dir; dir=0;}
-    
+    //dir->Write();
+    //if (dir) {delete dir; dir=0;}
+
     Clear();
 
 }
