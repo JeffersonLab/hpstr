@@ -24,6 +24,17 @@ tracks = HpstrConf.Processor('tracks', 'TrackingProcessor')
 ###############################
 #   Processor Configuration   #
 ###############################
+#Event
+header.parameters["debug"] = 0
+header.parameters["headCollRoot"] = "EventHeader"
+header.parameters["trigCollLcio"] = "TriggerBank"
+header.parameters["rfCollLcio"]   = "RFHits"
+header.parameters["vtpCollLcio"]  = "VTPBank"
+header.parameters["vtpCollRoot"]  = "VTPBank"
+header.parameters["tsCollLcio"]   = "TSBank"
+header.parameters["tsCollRoot"]   = "TSBank"
+
+#Tracking
 track.parameters["debug"] = 0
 track.parameters["trkCollLcio"] = 'GBLTracks'
 track.parameters["trkCollRoot"] = 'GBLTracks'
