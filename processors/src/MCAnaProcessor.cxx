@@ -15,11 +15,12 @@ void MCAnaProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring MCAnaProcessor" << std::endl;
     try
     {
-        debug_        = parameters.getInteger("debug");
-        anaName_      = parameters.getString("anaName");
-        partColl_     = parameters.getString("partColl");
-        trkrHitColl_  = parameters.getString("trkrHitColl");
-        ecalHitColl_  = parameters.getString("ecalHitColl");
+        debug_           = parameters.getInteger("debug");
+        anaName_         = parameters.getString("anaName");
+        partColl_        = parameters.getString("partColl");
+        trkrHitColl_     = parameters.getString("trkrHitColl");
+        ecalHitColl_     = parameters.getString("ecalHitColl");
+        histCfgFilename_ = parameters.getString("histCfg");
     }
     catch (std::runtime_error& error)
     {
@@ -30,8 +31,9 @@ void MCAnaProcessor::configure(const ParameterSet& parameters) {
 void MCAnaProcessor::initialize(TTree* tree) {
     tree_= tree;
     // init histos
-    histos = new MCAnaHistos(anaName_.c_str());
-    histos->Define1DHistos();
+    histos = new MCAnaHistos(anaName_);
+    histos->loadHistoConfig(histCfgFilename_);
+    histos->DefineHistos();
     //histos->Define2DHistos();
 
     // init TTree
@@ -52,7 +54,7 @@ bool MCAnaProcessor::process(IEvent* ievent) {
 
 void MCAnaProcessor::finalize() {
 
-    histos->saveHistos(outF_,anaName_.c_str());
+    histos->saveHistos(outF_, anaName_);
     delete histos;
     histos = nullptr;
 }

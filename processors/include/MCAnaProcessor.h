@@ -38,7 +38,9 @@ class MCAnaProcessor : public Processor {
 
     private:
 
+        //Containers to hold histogrammer info
         MCAnaHistos* histos{nullptr};
+        std::string  histCfgFilename_;
 
         //TODO Change this to be held from HPSEvent
         TTree* tree_;

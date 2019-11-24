@@ -1,5 +1,6 @@
 import HpstrConf
 import sys
+import os
 
 # Use the input file to set the output file name
 infile = sys.argv[1].strip()
@@ -28,6 +29,7 @@ mcana.parameters["anaName"] = "mcAna"
 mcana.parameters["partColl"] = "MCParticle"
 mcana.parameters["trkrHitColl"] = "TrackerHits"
 mcana.parameters["ecalHitColl"] = "EcalHits"
+mcana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
 
 # Sequence which the processors will run.
 p.sequence = [mcana]

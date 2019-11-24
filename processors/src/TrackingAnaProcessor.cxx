@@ -27,7 +27,6 @@ void TrackingAnaProcessor::configure(const ParameterSet& parameters) {
 
 void TrackingAnaProcessor::initialize(TTree* tree) {
 
-
     //Init histos
     trkHistos_ = new TrackHistos(trkCollName_);
     trkHistos_->loadHistoConfig(histCfgFilename_);

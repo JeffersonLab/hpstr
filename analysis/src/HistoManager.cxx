@@ -251,7 +251,7 @@ void HistoManager::Fill2DHisto(const std::string& histoName,float valuex, float 
     if (histos2d[m_name+"_"+histoName])
         histos2d[m_name+"_"+histoName]->Fill(valuex,valuey,weight);
     else
-        std::cout<<"ERROR::Fill1DHisto Histogram not found! "<<m_name+"_"+histoName<<std::endl;
+        std::cout<<"ERROR::Fill2DHisto Histogram not found! "<<m_name+"_"+histoName<<std::endl;
 }
 
 
@@ -266,7 +266,7 @@ void HistoManager::Fill1DHisto(const std::string& histoName,float value, float w
 void HistoManager::loadHistoConfig(const std::string histoConfigFile) {
 
     std::ifstream i_file(histoConfigFile);
-    i_file>>_h_configs;
+    i_file >> _h_configs;
     if (debug_) {
         for (auto& el : _h_configs.items()) 
             std::cout << el.key() << " : " << el.value() << "\n";
