@@ -15,12 +15,13 @@ void RecoHitAnaProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring RecoHitAnaProcessor" << std::endl;
     try
     {
-        debug_         = parameters.getInteger("debug");
-        anaName_       = parameters.getString("anaName");
-        trkColl_       = parameters.getString("trkColl");
-        trkrHitColl_   = parameters.getString("trkrHitColl");
-        ecalHitColl_   = parameters.getString("ecalHitColl");
-        ecalClusColl_  = parameters.getString("ecalClusColl");
+        debug_           = parameters.getInteger("debug");
+        anaName_         = parameters.getString("anaName");
+        trkColl_         = parameters.getString("trkColl");
+        trkrHitColl_     = parameters.getString("trkrHitColl");
+        ecalHitColl_     = parameters.getString("ecalHitColl");
+        ecalClusColl_    = parameters.getString("ecalClusColl");
+        histCfgFilename_ = parameters.getString("histCfg");
     }
     catch (std::runtime_error& error)
     {
@@ -33,8 +34,8 @@ void RecoHitAnaProcessor::initialize(TTree* tree) {
     tree_= tree;
     // init histos
     histos = new RecoHitAnaHistos(anaName_.c_str());
-    histos->Define1DHistos();
-    //histos->Define2DHistos();
+    histos->loadHistoConfig(histCfgFilename_);
+    histos->DefineHistos();
 
     // init TTree
     tree_->SetBranchAddress(trkrHitColl_.c_str()  , &trkrHits_    , &btrkrHits_    );
