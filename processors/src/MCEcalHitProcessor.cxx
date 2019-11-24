@@ -36,7 +36,16 @@ bool MCEcalHitProcessor::process(IEvent* ievent) {
 
     Event* event = static_cast<Event*>(ievent);
     // Get the collection of simulated ecal hits from the LCIO event.
-    EVENT::LCCollection* lcio_ecalhits = event->getLCCollection(hitCollRoot_.c_str());
+    EVENT::LCCollection* lcio_ecalhits{nullptr};
+    try
+    {
+        lcio_ecalhits = event->getLCCollection(hitCollLcio_.c_str());
+    }
+    catch (EVENT::DataNotAvailableException e) 
+    {
+        std::cout << e.what() << std::endl;
+    }
+
 
     // Get decoders to read cellids
     UTIL::BitField64 decoder("system:0:6,layer:6:2,ix:8:-8,iy:16:-6");
