@@ -42,17 +42,23 @@ class ClusterOnTrackAnaProcessor : public Processor {
 
         ClusterHistos* clusterHistos{nullptr};
 
-        std::string baselineFits_{""};
-        std::string baselineRun_{""};
-
         //TODO Change this to be held from HPSEvent
         TTree* tree_;
+
+        //Containers for adding to the TTree
         std::vector<Track*> *tracks_{};
         TBranch*      btracks_{nullptr};
         std::vector<TrackerHit*> hits_{};
         TBranch*      bhits_{nullptr};
 
-};
+        std::string anaName_{"hitsOnTrack_2D"};
+        std::string trkColl_{"GBLTracks"};
+        std::string baselineFits_{""};
+        std::string baselineRun_{""};
 
+        //Debug Level
+        int debug_{0};
+
+};
 
 #endif

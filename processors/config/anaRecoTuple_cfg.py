@@ -4,7 +4,7 @@ import os
 
 # Use the input file to set the output file name
 infile = sys.argv[1].strip()
-outfile = '%s_anaMC.root' % infile[:-5]
+outfile = '%s_anaReco.root' % infile[:-5]
 
 print 'Input file: %s' % infile
 print 'Output file: %s' % outfile
@@ -18,21 +18,22 @@ p.libraries.append("libprocessors.so")
 #          Processors         #
 ###############################
 
-mcana = HpstrConf.Processor('mcana', 'MCAnaProcessor')
+recoana = HpstrConf.Processor('recoana', 'RecoHitAnaProcessor')
 
 ###############################
 #   Processor Configuration   #
 ###############################
 #RecoHitAna
-mcana.parameters["debug"] = 0
-mcana.parameters["anaName"] = "mcAna"
-mcana.parameters["partColl"] = "MCParticle"
-mcana.parameters["trkrHitColl"] = "TrackerHits"
-mcana.parameters["ecalHitColl"] = "EcalHits"
-mcana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
+recoana.parameters["debug"] = 0
+recoana.parameters["anaName"] = "recoHitAna"
+recoana.parameters["trkColl"] = "GBLTracks"
+recoana.parameters["trkrHitColl"] = "RotatedHelicalTrackHits"
+recoana.parameters["ecalHitColl"] = "RecoEcalHits"
+recoana.parameters["ecalClusColl"] = "RecoEcalClusters"
+recoana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/basicRecoHit.json'
 
 # Sequence which the processors will run.
-p.sequence = [mcana]
+p.sequence = [recoana]
 
 p.input_files=[infile]
 p.output_files = [outfile]
