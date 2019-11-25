@@ -82,6 +82,7 @@ bool EventProcessor::process(IEvent* ievent) {
     // Set the SVT event header state
     header_->setSvtEventHeaderState(lc_event->getParameters().getIntVal("svt_event_header_good"));
 
+    // First try to read "new/2019" trigger format, if not available assume it is "old/2016"
     try { 
         EVENT::LCCollection* vtp_data 
             = static_cast<EVENT::LCCollection*>(event->getLCCollection(vtpCollLcio_.c_str()));
