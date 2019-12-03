@@ -22,6 +22,7 @@ track = HpstrConf.Processor('track', 'TrackingProcessor')
 svthits = HpstrConf.Processor('svthits', 'Tracker3DHitProcessor')
 rawsvt = HpstrConf.Processor('rawsvt', 'SvtRawDataProcessor')
 ecal = HpstrConf.Processor('ecal', 'ECalDataProcessor')
+vtx = HpstrConf.Processor('vtx', 'VertexProcessor')
 mcpart = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
 
 ###############################
@@ -65,13 +66,20 @@ ecal.parameters["hitCollRoot"] = 'RecoEcalHits'
 ecal.parameters["clusCollLcio"] = "EcalClustersCorr"
 ecal.parameters["clusCollRoot"] = "RecoEcalClusters"
 
+#Vertex
+vtx.parameters["debug"] = 0
+vtx.parameters["vtxCollLcio"]    = 'UnconstrainedV0Vertices'
+vtx.parameters["vtxCollRoot"]    = 'UnconstrainedV0Vertices'
+
+
 #MCParticle
 mcpart.parameters["debug"] = 0 
 mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
 # Sequence which the processors will run.
-p.sequence = [header, track, rawsvt, svthits, ecal, mcpart]
+#p.sequence = [header, track, rawsvt, svthits, ecal, vtx, mcpart]
+p.sequence = [header, track, rawsvt, svthits, ecal, vtx]
 
 p.input_files=[lcio_file]
 p.output_files = [root_file]
