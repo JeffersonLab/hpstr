@@ -39,7 +39,6 @@ void TrackingProcessor::initialize(TTree* tree) {
 
 bool TrackingProcessor::process(IEvent* ievent) {
 
-
     //Clean up
     if (tracks_.size() > 0 ) {
         for (std::vector<Track *>::iterator it = tracks_.begin(); it != tracks_.end(); ++it) {
@@ -61,7 +60,6 @@ bool TrackingProcessor::process(IEvent* ievent) {
         }
         rawhits_.clear();
     }
-
 
     Event* event = static_cast<Event*> (ievent);
     // Get the collection of 3D hits from the LCIO event. If no such collection 
@@ -95,8 +93,6 @@ bool TrackingProcessor::process(IEvent* ievent) {
         std::cout << e.what() << std::endl;
     }
 
-
-
     // Loop over all the LCIO Tracks and add them to the HPS event.
     for (int itrack = 0; itrack < tracks->getNumberOfElements(); ++itrack) {
 
@@ -117,8 +113,6 @@ bool TrackingProcessor::process(IEvent* ievent) {
             std::cout << e.what() << std::endl;
         }
 
-
-
         // Add a track to the event
         Track* track = utils::buildTrack(lc_track,gbl_kink_data,track_data);
 
@@ -129,7 +123,6 @@ bool TrackingProcessor::process(IEvent* ievent) {
         //  Iterate through the collection of 3D hits (TrackerHit objects)
         //  associated with a track, find the corresponding hits in the HPS
         //  event and add references to the track
-
 
         for (auto lc_tracker_hit : lc_tracker_hits) {
 
