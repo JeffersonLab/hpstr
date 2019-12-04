@@ -37,12 +37,7 @@ class Vertex : public TObject {
          * @param: A Track object
          */
 
-        void addTrack(TObject* track);
-
-        /**
-         * @return A reference to the tracks associated with this vertex
-         */
-        TRefArray* getTracks() const {return tracks_;} 
+        void addParticle(TObject* part);
 
         //TODO unify
         /** Set the chi2 */
@@ -94,9 +89,7 @@ class Vertex : public TObject {
         /** Set the probability */
         void setProbability(const float probability) {probability_ = probability;}
 
-        bool vxTracksAvailable() const;
-
-        int nTracks() const; 
+        TRefArray* getParticles(); 
 
         /** Returns the covariance matrix as a simple vector of values */
         const std::vector<float>& getCovariance() const {return covariance_;}
@@ -136,15 +129,15 @@ class Vertex : public TObject {
 
         //TODO - Change these to use the track references after filling the
         //track refs
-        double   getP1X      () const {return p1x_;}
-        double   getP1Y      () const {return p1y_;}
-        double   getP1Z      () const {return p1z_;}
         TVector3 getP1       () const {return p1_;}
+        double   getP1X      () const {return p1_.X();}
+        double   getP1Y      () const {return p1_.Y();}
+        double   getP1Z      () const {return p1_.Z();}
 
-        double   getP2X      () const {return p2x_;}
-        double   getP2Y      () const {return p2y_;}
-        double   getP2Z      () const {return p2z_;}
         TVector3 getP2       () const {return p2_;}
+        double   getP2X      () const {return p2_.X();}
+        double   getP2Y      () const {return p2_.Y();}
+        double   getP2Z      () const {return p2_.Z();}
 
         ClassDef(Vertex,1);
 
@@ -152,30 +145,18 @@ class Vertex : public TObject {
 
         double chi2_{-999};
         int ndf_{-999};  
-        TVector3 pos_,p1_,p2_;
-
-        int ntracks_;
-
-        double p1x_{-999};
-        double p2x_{-999};
-
-        double p1y_{-999};
-        double p2y_{-999};
-
-        double p1z_{-999};
-        double p2z_{-999};
+        TVector3 pos_,p1_,p2_,p1e_,p2e_;
 
         float invM_{-999};
         float invMerr_{-999};
-
 
         std::vector<float> covariance_{};
         float probability_{-999};
         int id_;
         std::string type_{""};
-        TRefArray* tracks_{nullptr};
+        TRefArray* parts_{new TRefArray()};
+        int n_parts_{0};
         std::vector<float> parameters_;
-
 
 }; // Vertex
 

@@ -53,6 +53,79 @@ Vertex* utils::buildVertex(EVENT::Vertex* lc_vertex) {
     return vertex;
 }
 
+Particle* utils::buildParticle(EVENT::ReconstructedParticle* lc_particle) 
+{ 
+
+    if (!lc_particle) 
+        return nullptr;
+
+    Particle* part = new Particle();
+    // Set the charge of the HpsParticle    
+    part->setCharge(lc_particle->getCharge());
+
+    // Set the HpsParticle type
+    part->setType(lc_particle->getType());
+
+    // Set the energy of the HpsParticle
+    part->setEnergy(lc_particle->getEnergy());
+
+    // Set the momentum of the HpsParticle
+    part->setMomentum(lc_particle->getMomentum());
+
+    // Set the mass of the HpsParticle
+    part->setMass(lc_particle->getMass());
+
+    // Set the goodness of PID for the HpsParticle
+    part->setGoodnessOfPID(lc_particle->getGoodnessOfPID());
+
+    // Set the PDG ID for the HpsParticle
+    part->setPDG(lc_particle->getParticleIDUsed()->getPDG());
+
+    // Set the Track for the HpsParticle
+    part->setTrack(utils::buildTrack(lc_particle->getTracks()[0], nullptr, nullptr));
+
+    // Set the Track for the HpsParticle
+    part->setCluster(utils::buildCalCluster(lc_particle->getClusters()[0]));
+
+    return part;
+}
+
+CalCluster* utils::buildCalCluster(EVENT::Cluster* lc_cluster) 
+{ 
+
+    if (!lc_cluster) 
+        return nullptr;
+
+    CalCluster* cluster = new CalCluster();
+    // Set the cluster position
+    cluster->setPosition(lc_cluster->getPosition());
+
+    // Set the cluster energy
+    cluster->setEnergy(lc_cluster->getEnergy());
+
+    // Get the ecal hits used to create the cluster
+    EVENT::CalorimeterHitVec lc_hits = lc_cluster->getCalorimeterHits();
+
+    // Loop over all of the Ecal hits and add them to the Ecal cluster.  The
+    // seed hit is set to be the hit with the highest energy.  The cluster time
+    // is set to be the hit time of the seed hit.
+    double senergy = 0;
+    double stime = 0;
+    for(int ihit = 0; ihit < (int) lc_hits.size(); ++ihit) {
+        // Get an Ecal hit
+        EVENT::CalorimeterHit* lc_hit  = lc_hits[ihit];
+        if (senergy < lc_hit->getEnergy()) {
+            senergy = lc_hit->getEnergy();
+            stime = lc_hit->getTime();
+        }
+    }
+
+    // Set the time of the cluster
+    cluster->setTime(stime);
+
+    return cluster;
+}
+
 Track* utils::buildTrack(EVENT::Track* lc_track,
         EVENT::LCCollection* gbl_kink_data,
         EVENT::LCCollection* track_data) {

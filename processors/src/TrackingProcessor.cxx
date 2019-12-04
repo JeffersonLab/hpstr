@@ -82,7 +82,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
         rawTracker_hit_fits_nav = new UTIL::LCRelationNavigator(raw_svt_hit_fits);     
     }
 
-        EVENT::LCCollection* tracks{nullptr};
+    EVENT::LCCollection* tracks{nullptr};
     try
     {
         // Get all track collections from the event
@@ -115,7 +115,6 @@ bool TrackingProcessor::process(IEvent* ievent) {
 
         // Add a track to the event
         Track* track = utils::buildTrack(lc_track,gbl_kink_data,track_data);
-
 
         // Get the collection of 3D hits associated with a LCIO Track
         EVENT::TrackerHitVec lc_tracker_hits = lc_track->getTrackerHits();
