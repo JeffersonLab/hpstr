@@ -16,6 +16,7 @@
 //   LCIO   //
 //----------//
 #include <EVENT/LCCollection.h>
+#include <EVENT/ReconstructedParticle.h>
 #include <IMPL/LCGenericObjectImpl.h>
 #include <UTIL/LCRelationNavigator.h>
 
@@ -24,6 +25,7 @@
 //-----------//
 #include "Processor.h"
 #include "Vertex.h"
+#include "Particle.h"
 #include "Event.h"
 
 // Forward declarations
@@ -71,10 +73,12 @@ class VertexProcessor : public Processor {
 
     private: 
 
-        /** Container to hold all TrackerHit objects. */
-        std::vector<Vertex*> vtxs_{}; 
+        /** Containers to hold all TrackerHit objects. */
+        std::vector<Vertex*>   vtxs_{}; 
+        std::vector<Particle*> parts_{}; 
         std::string vtxCollLcio_{"UnconstrainedV0Vertices"};
         std::string vtxCollRoot_{"UnconstrainedV0Vertices"};
+        std::string partCollRoot_{"ParticlesOnVertices"};
 
         //Debug Level
         int debug_{0};

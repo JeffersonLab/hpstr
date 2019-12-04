@@ -16,7 +16,6 @@ p.libraries.append("libprocessors.so")
 ###############################
 #          Processors         #
 ###############################
-
 header = HpstrConf.Processor('header', 'EventProcessor')
 track = HpstrConf.Processor('track', 'TrackingProcessor')
 svthits = HpstrConf.Processor('svthits', 'Tracker3DHitProcessor')
@@ -70,6 +69,7 @@ ecal.parameters["clusCollRoot"] = "RecoEcalClusters"
 vtx.parameters["debug"] = 0
 vtx.parameters["vtxCollLcio"]    = 'UnconstrainedV0Vertices'
 vtx.parameters["vtxCollRoot"]    = 'UnconstrainedV0Vertices'
+vtx.parameters["partCollRoot"]   = 'ParticlesOnVertices'
 
 
 #MCParticle
