@@ -85,7 +85,8 @@ Particle* utils::buildParticle(EVENT::ReconstructedParticle* lc_particle)
     part->setTrack(utils::buildTrack(lc_particle->getTracks()[0], nullptr, nullptr));
 
     // Set the Track for the HpsParticle
-    part->setCluster(utils::buildCalCluster(lc_particle->getClusters()[0]));
+    if (lc_particle->getClusters().size() > 0)
+        part->setCluster(utils::buildCalCluster(lc_particle->getClusters()[0]));
 
     return part;
 }
