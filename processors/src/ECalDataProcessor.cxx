@@ -38,6 +38,7 @@ void ECalDataProcessor::initialize(TTree* tree) {
 
 bool ECalDataProcessor::process(IEvent* ievent) {
 
+    if(debug_ > 0) std::cout << "[ECalDataProcessor] Running Process" << std::endl;
     for(int i = 0; i < cal_hits_.size(); i++) delete cal_hits_.at(i);
     cal_hits_.clear();
     for(int i = 0; i < clusters_.size(); i++) delete clusters_.at(i);
@@ -162,6 +163,7 @@ bool ECalDataProcessor::process(IEvent* ievent) {
         clusters_.push_back(cluster);
     }
 
+    if(debug_ > 0) std::cout << "[ECalDataProcessor] End of process" << std::endl;
     return true;
 }
 
