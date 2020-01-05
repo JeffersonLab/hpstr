@@ -27,9 +27,12 @@ bhtoys = HpstrConf.Processor('bhtoys', 'BhToysHistoProcessor')
 ###############################
 #MCParticles
 bhtoys.parameters["debug"] = 1 
-bhtoys.parameters["massSpectrum"] = 'massDataHisto_h'
-bhtoys.parameters["pol_order"] = 3
-bhtoys.parameters["mass_hypo"] = 95.0
+bhtoys.parameters["massSpectrum"] = 'mass_tweak__p_tot_min_cut'
+bhtoys.parameters["mass_hypo"] = 95.0/1000.0
+bhtoys.parameters["poly_order"] = 3
+bhtoys.parameters["win_factor"] = 12
+bhtoys.parameters["seed"] = 0
+bhtoys.parameters["nToys"] = 100
 
 # Sequence which the processors will run.
 p.sequence = [bhtoys]
