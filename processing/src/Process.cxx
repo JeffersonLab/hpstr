@@ -16,58 +16,23 @@ Process::Process() {}
 
 void Process::runOnHisto() {
     try {
-        std::cout << "TODO: Write Histo Analysis Process" << std::endl;
-        /*int n_events_processed = 0;
-        HpsEvent event;
-        TH1D * event_h = new TH1D("event_h","Number of Events Processed;;Events", 21, -10.5, 10.5);
-        int cfile =0 ;
+        int cfile = 0;
         for (auto ifile : input_files_) {
-            std::cout<<"Processing file"<<ifile<<std::endl;
-            HpsEventFile* file(nullptr);
-            if (!output_files_.empty()) {
-                file = new HpsEventFile(ifile, output_files_[cfile]);
-                file->setupEvent(&event);
-            }
-            for (auto module : sequence_) {
-                module->initialize(event.getTree());
-                module->setFile(file->getOutputFile());
-            }
-            while (file->nextEvent() && (event_limit_ < 0 || (n_events_processed < event_limit_))) {
-                if (n_events_processed%1000 == 0)
-                    std::cout<<"Event:"<<n_events_processed<<std::endl;
+            std::cout << "Processing file " << ifile << std::endl;
 
-                //In this way if the processing fails (like an event doesn't pass the selection, the other modules aren't run on that event)
-                for (auto module : sequence_) {
-                    module->process(&event);
-                }
-                //event.Clear();
-                event_h->Fill(0.0);
-                ++n_events_processed;
+            for (auto module : sequence_) {
+                module->initialize(ifile, output_files_[cfile]);
+                module->process();
+                module->finalize();
             }
             //Pass to next file
             ++cfile;
-            // Finalize all modules
 
-            //Select the output file for storing the results of the processors.
-            file->resetOutputFileDir();
-            event_h->Write();
-            for (auto module : sequence_) {
-                //TODO:Change the finalize method
-                module->finalize();
-            }
-            // TODO Check all these destructors
-            if (file) {
-                file->close();
-                delete file;
-                file = nullptr;
-                delete event_h;
-                event_h = nullptr;
-            }
-        }*/
+        } //ifile
     } catch (std::exception& e) {
         std::cerr<<"Error:"<<e.what()<<std::endl;
     }
-}
+} //Process::runOnHisto
 
 void Process::runOnRoot() {
     try {
