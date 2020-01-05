@@ -1,4 +1,5 @@
 #!/bin/bash 
+
 export HPSTR_BASE=/data/src/hpstr
 export PYTHONPATH=$HPSTR_BASE/pyplot:$HPSTR_BASE/install/lib/python:$PYTHONPATH
 

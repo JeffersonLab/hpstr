@@ -2,15 +2,15 @@
 #include <algorithm>
 #include <memory>
 /*
-  void utils::buildTrackCollection(std::vector<Track*>& tracks, 
-  Event* event,
-  const char* LCTrackCollection)
-  {
+   void utils::buildTrackCollection(std::vector<Track*>& tracks, 
+   Event* event,
+   const char* LCTrackCollection)
+   {
 
-  EVENT::LCCollection* lc_tracks event->getLCCollection(LCTrackCollection);
+   EVENT::LCCollection* lc_tracks event->getLCCollection(LCTrackCollection);
 
 
-  }
+   }
 
 */
 
@@ -53,9 +53,83 @@ Vertex* utils::buildVertex(EVENT::Vertex* lc_vertex) {
     return vertex;
 }
 
+Particle* utils::buildParticle(EVENT::ReconstructedParticle* lc_particle) 
+{ 
+
+    if (!lc_particle) 
+        return nullptr;
+
+    Particle* part = new Particle();
+    // Set the charge of the HpsParticle    
+    part->setCharge(lc_particle->getCharge());
+
+    // Set the HpsParticle type
+    part->setType(lc_particle->getType());
+
+    // Set the energy of the HpsParticle
+    part->setEnergy(lc_particle->getEnergy());
+
+    // Set the momentum of the HpsParticle
+    part->setMomentum(lc_particle->getMomentum());
+
+    // Set the mass of the HpsParticle
+    part->setMass(lc_particle->getMass());
+
+    // Set the goodness of PID for the HpsParticle
+    part->setGoodnessOfPID(lc_particle->getGoodnessOfPID());
+
+    // Set the PDG ID for the HpsParticle
+    part->setPDG(lc_particle->getParticleIDUsed()->getPDG());
+
+    // Set the Track for the HpsParticle
+    part->setTrack(utils::buildTrack(lc_particle->getTracks()[0], nullptr, nullptr));
+
+    // Set the Track for the HpsParticle
+    if (lc_particle->getClusters().size() > 0)
+        part->setCluster(utils::buildCalCluster(lc_particle->getClusters()[0]));
+
+    return part;
+}
+
+CalCluster* utils::buildCalCluster(EVENT::Cluster* lc_cluster) 
+{ 
+
+    if (!lc_cluster) 
+        return nullptr;
+
+    CalCluster* cluster = new CalCluster();
+    // Set the cluster position
+    cluster->setPosition(lc_cluster->getPosition());
+
+    // Set the cluster energy
+    cluster->setEnergy(lc_cluster->getEnergy());
+
+    // Get the ecal hits used to create the cluster
+    EVENT::CalorimeterHitVec lc_hits = lc_cluster->getCalorimeterHits();
+
+    // Loop over all of the Ecal hits and add them to the Ecal cluster.  The
+    // seed hit is set to be the hit with the highest energy.  The cluster time
+    // is set to be the hit time of the seed hit.
+    double senergy = 0;
+    double stime = 0;
+    for(int ihit = 0; ihit < (int) lc_hits.size(); ++ihit) {
+        // Get an Ecal hit
+        EVENT::CalorimeterHit* lc_hit  = lc_hits[ihit];
+        if (senergy < lc_hit->getEnergy()) {
+            senergy = lc_hit->getEnergy();
+            stime = lc_hit->getTime();
+        }
+    }
+
+    // Set the time of the cluster
+    cluster->setTime(stime);
+
+    return cluster;
+}
+
 Track* utils::buildTrack(EVENT::Track* lc_track,
-                         EVENT::LCCollection* gbl_kink_data,
-                         EVENT::LCCollection* track_data) {
+        EVENT::LCCollection* gbl_kink_data,
+        EVENT::LCCollection* track_data) {
 
     if (!lc_track)
         return nullptr;
@@ -63,10 +137,10 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
     Track* track = new Track();
     // Set the track parameters
     track->setTrackParameters(lc_track->getD0(), 
-                              lc_track->getPhi(), 
-                              lc_track->getOmega(), 
-                              lc_track->getTanLambda(), 
-                              lc_track->getZ0());
+            lc_track->getPhi(), 
+            lc_track->getOmega(), 
+            lc_track->getTanLambda(), 
+            lc_track->getZ0());
 
     // Set the track type
     track->setType(lc_track->getType()); 
@@ -95,56 +169,56 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
         // Instantiate an LCRelation navigator which will allow faster access 
         // to GBLKinkData object
         std::shared_ptr<UTIL::LCRelationNavigator> gbl_kink_data_nav = std::make_shared<UTIL::LCRelationNavigator>(gbl_kink_data);
-        
+
         // Get the list of GBLKinkData associated with the LCIO Track
         EVENT::LCObjectVec gbl_kink_data_list 
             = gbl_kink_data_nav->getRelatedFromObjects(lc_track);
-        
+
         // The container of GBLKinkData objects should only contain a 
         // single object. If not, throw an exception
         if (gbl_kink_data_list.size() != 1) { 
             throw std::runtime_error("[ TrackingProcessor ]: The collection " 
-                                     + std::string(Collections::TRACK_DATA_REL)
-                                     + " has the wrong data structure."); 
+                    + std::string(Collections::TRACK_DATA_REL)
+                    + " has the wrong data structure."); 
         }
-        
+
         // Get the list GBLKinkData GenericObject associated with the LCIO Track
         IMPL::LCGenericObjectImpl* gbl_kink_datum 
             = static_cast<IMPL::LCGenericObjectImpl*>(gbl_kink_data_list.at(0));
-        
+
         // Set the lambda and phi kink values
         for (int ikink = 0; ikink < gbl_kink_datum->getNDouble(); ++ikink) { 
             track->setLambdaKink(ikink, gbl_kink_datum->getFloatVal(ikink));
             track->setPhiKink(ikink, gbl_kink_datum->getDoubleVal(ikink));
         }
-        
+
     } // add gbl kink data
-    
+
     if (track_data) { 
-        
+
         // Instantiate an LCRelation navigator which will allow faster access
         // to TrackData objects  
         std::shared_ptr<UTIL::LCRelationNavigator> track_data_nav = std::make_shared<UTIL::LCRelationNavigator>(track_data);
-        
+
         // Get the list of TrackData associated with the LCIO Track
         EVENT::LCObjectVec track_data_list = track_data_nav->getRelatedFromObjects(lc_track);
-        
+
         // The container of TrackData objects should only contain a single
         //  object.  If not, throw an exception.
         if (track_data_list.size() == 1) { 
-            
+
             // Get the TrackData GenericObject associated with the LCIO Track
             IMPL::LCGenericObjectImpl* track_datum = static_cast<IMPL::LCGenericObjectImpl*>(track_data_list.at(0));
-            
+
             // Check that the TrackData data structure is correct.  If it's
             // not, throw a runtime exception.   
             if (track_datum->getNDouble() > 14 || track_datum->getNFloat() != 1 
-                || track_datum->getNInt() != 1) {
+                    || track_datum->getNInt() != 1) {
                 throw std::runtime_error("[ TrackingProcessor ]: The collection " 
-                                         + std::string(Collections::TRACK_DATA)
-                                         + " has the wrong structure.");
+                        + std::string(Collections::TRACK_DATA)
+                        + " has the wrong structure.");
             }
-            
+
             // Set the SvtTrack isolation values
             for (int iso_index = 0; iso_index < track_datum->getNDouble(); ++iso_index) { 
                 track->setIsolation(iso_index, track_datum->getDoubleVal(iso_index));
@@ -152,24 +226,24 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 
             // Set the SvtTrack time
             track->setTrackTime(track_datum->getFloatVal(0));
-            
+
             // Set the volume (top/bottom) in which the SvtTrack resides
             track->setTrackVolume(track_datum->getIntVal(0));
         }
-        
+
     } //add track data  
 
     return track;
 }
 
 RawSvtHit* utils::buildRawHit(EVENT::TrackerRawData* rawTracker_hit,
-                              EVENT::LCCollection* raw_svt_hit_fits) {
+        EVENT::LCCollection* raw_svt_hit_fits) {
 
     EVENT::long64 value =
         EVENT::long64(rawTracker_hit->getCellID0() & 0xffffffff) |
         ( EVENT::long64(rawTracker_hit->getCellID1() ) << 32       );
     decoder.setValue(value);
-    
+
     RawSvtHit* rawHit = new RawSvtHit();
     rawHit->setSystem(decoder["system"]);
     rawHit->setBarrel(decoder["barrel"]);
@@ -191,7 +265,7 @@ RawSvtHit* utils::buildRawHit(EVENT::TrackerRawData* rawTracker_hit,
     rawHit->setADCs(hit_adcs);
     if (raw_svt_hit_fits) {
         std::shared_ptr<UTIL::LCRelationNavigator> rawTracker_hit_fits_nav = std::make_shared<UTIL::LCRelationNavigator>(raw_svt_hit_fits);
-        
+
 
         // Get the list of fit params associated with the raw tracker hit
         EVENT::LCObjectVec rawTracker_hit_fits_list
@@ -210,7 +284,7 @@ RawSvtHit* utils::buildRawHit(EVENT::TrackerRawData* rawTracker_hit,
         };
 
         rawHit->setFit(fit_params);
-        
+
     }//raw svt hits
 
     return rawHit;
@@ -252,8 +326,8 @@ TrackerHit* utils::buildTrackerHit(IMPL::TrackerHitImpl* lc_tracker_hit) {
 }
 
 bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit, 
-                              IMPL::TrackerHitImpl* lc_tracker_hit,
-                              EVENT::LCCollection* raw_svt_fits, std::vector<RawSvtHit*>* rawHits) {
+        IMPL::TrackerHitImpl* lc_tracker_hit,
+        EVENT::LCCollection* raw_svt_fits, std::vector<RawSvtHit*>* rawHits) {
 
     if (!tracker_hit || !lc_tracker_hit)
         return false;
@@ -305,7 +379,7 @@ bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit,
 //TODO-improve shared finding algorithm 
 
 bool utils::isUsedByTrack(IMPL::TrackerHitImpl* lc_tracker_hit,
-                          EVENT::Track* lc_track) {
+        EVENT::Track* lc_track) {
 
     EVENT::TrackerHitVec trk_lc_tracker_hits = lc_track->getTrackerHits();
 
@@ -318,7 +392,7 @@ bool utils::isUsedByTrack(IMPL::TrackerHitImpl* lc_tracker_hit,
 }
 
 bool utils::isUsedByTrack(TrackerHit* tracker_hit,
-                          EVENT::Track* lc_track) {
+        EVENT::Track* lc_track) {
 
     EVENT::TrackerHitVec trk_lc_tracker_hits = lc_track->getTrackerHits();
 

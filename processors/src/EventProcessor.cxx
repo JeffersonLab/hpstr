@@ -2,6 +2,7 @@
  * @file EventProcessor.cxx
  * @brief Processor used to write event info.
  * @author Omar Moreno, SLAC National Accelerator Laboratory
+ * @author Cameron Bravo, SLAC National Accelerator Laboratory
  */
 
 #include "EventProcessor.h"
@@ -9,92 +10,131 @@
 
 EventProcessor::EventProcessor(const std::string& name, Process& process)
     : Processor(name, process) { 
-}
+    }
 
 EventProcessor::~EventProcessor() { 
 }
 
+void EventProcessor::configure(const ParameterSet& parameters) {
+
+    std::cout << "Configuring EventProcessor" << std::endl;
+    try
+    {
+        debug_         = parameters.getInteger("debug");
+        headCollRoot_  = parameters.getString("headCollRoot");
+        trigCollLcio_    = parameters.getString("trigCollLcio");
+        rfCollLcio_    = parameters.getString("rfCollLcio");
+        vtpCollLcio_   = parameters.getString("vtpCollLcio");
+        vtpCollRoot_   = parameters.getString("vtpCollRoot");
+        tsCollLcio_  = parameters.getString("tsCollLcio");
+        tsCollRoot_  = parameters.getString("tsCollRoot");
+    }
+    catch (std::runtime_error& error)
+    {
+        std::cout << error.what() << std::endl;
+    }
+}
+
 void EventProcessor::initialize(TTree* tree) {
+    header_ = new EventHeader();
     vtpData = new VTPData();
     tsData = new TSData();
-    tree->Branch(Collections::VTP_BANK, &vtpData);
-    tree->Branch(Collections::TS_BANK, &tsData);
+    tree->Branch(headCollRoot_.c_str(), &header_);
+    tree->Branch(vtpCollRoot_.c_str(), &vtpData);
+    tree->Branch(tsCollRoot_.c_str(),  &tsData);
 }
 
 bool EventProcessor::process(IEvent* ievent) {
-  
+
     Event* event = static_cast<Event*> (ievent);
-    /*EventHeader* header 
-        = static_cast<EventHeader*>(header_->ConstructedAt(0));*/
-    EventHeader& header = event->getEventHeaderMutable(); 
+    *header_ = event->getEventHeaderMutable(); 
 
     EVENT::LCEvent* lc_event = event->getLCEvent(); 
 
-    if (_debug) {
-      std::cout<<"Event Number: "<<lc_event->getEventNumber()<<std::endl;
-      std::cout<<"Run Number: "<<lc_event->getRunNumber()<<std::endl;
+    if (debug_) {
+        std::cout<<"Event Number: "<<lc_event->getEventNumber()<<std::endl;
+        std::cout<<"Run Number: "<<lc_event->getRunNumber()<<std::endl;
     }
 
     // Set the event number
-    header.setEventNumber(lc_event->getEventNumber());
+    header_->setEventNumber(lc_event->getEventNumber());
 
     // Set the run number
-    header.setRunNumber(lc_event->getRunNumber());
+    header_->setRunNumber(lc_event->getRunNumber());
 
     // Set the trigger timestamp 
-    header.setEventTime(lc_event->getTimeStamp()); 
+    header_->setEventTime(lc_event->getTimeStamp()); 
 
     // Set the SVT bias state
-    header.setSvtBiasState(lc_event->getParameters().getIntVal("svt_bias_good")); 
-    
+    header_->setSvtBiasState(lc_event->getParameters().getIntVal("svt_bias_good")); 
+
     // Set the flag indicating whether the event was affected by SVT burst
     // mode noise 
-    header.setSvtBurstModeNoise(lc_event->getParameters().getIntVal("svt_burstmode_noise_good"));
+    header_->setSvtBurstModeNoise(lc_event->getParameters().getIntVal("svt_burstmode_noise_good"));
 
     // Set the flag indicating whether the SVT latency was correct during an
     // event.
-    header.setSvtLatencyState(lc_event->getParameters().getIntVal("svt_latency_good")); 
+    header_->setSvtLatencyState(lc_event->getParameters().getIntVal("svt_latency_good")); 
 
     // Set the SVT position state
-    header.setSvtPositionState(lc_event->getParameters().getIntVal("svt_position_good"));
+    header_->setSvtPositionState(lc_event->getParameters().getIntVal("svt_position_good"));
 
     // Set the SVT event header state
-    header.setSvtEventHeaderState(lc_event->getParameters().getIntVal("svt_event_header_good"));
+    header_->setSvtEventHeaderState(lc_event->getParameters().getIntVal("svt_event_header_good"));
 
+    // First try to read "new/2019" trigger format, if not available assume it is "old/2016"
     try { 
         EVENT::LCCollection* vtp_data 
-            = static_cast<EVENT::LCCollection*>(event->getLCCollection(Collections::VTP_BANK));
+            = static_cast<EVENT::LCCollection*>(event->getLCCollection(vtpCollLcio_.c_str()));
 
         EVENT::LCGenericObject* vtp_datum 
             = static_cast<EVENT::LCGenericObject*>(vtp_data->getElementAt(0));
 
         EVENT::LCCollection* ts_data 
-            = static_cast<EVENT::LCCollection*>(event->getLCCollection(Collections::TS_BANK));
+            = static_cast<EVENT::LCCollection*>(event->getLCCollection(tsCollLcio_.c_str()));
 
         EVENT::LCGenericObject* ts_datum 
             = static_cast<EVENT::LCGenericObject*>(ts_data->getElementAt(0));
 
         parseVTPData(vtp_datum);
         parseTSData(ts_datum);
-        //header.setSingle0Trigger(static_cast<int>(tdata->isSingle0Trigger()));
-        //header.setSingle1Trigger(static_cast<int>(tdata->isSingle1Trigger()));
-        //header.setPair0Trigger(static_cast<int>(tdata->isPair0Trigger()));
-        //header.setPair1Trigger(static_cast<int>(tdata->isPair1Trigger()));
-        //header.setPulserTrigger(static_cast<int>(tdata->isPulserTrigger()));
 
-    } catch(EVENT::DataNotAvailableException e) {
-        // It's fine if the event doesn't have a trigger bank.
+    } 
+    catch(EVENT::DataNotAvailableException e) 
+    {
+        // Get old version of trigger data
+        EVENT::LCCollection* trigger_data 
+            = static_cast<EVENT::LCCollection*>(event->getLCCollection(trigCollLcio_.c_str()));
+
+        for (int itrigger = 0; itrigger < trigger_data->getNumberOfElements(); ++itrigger) { 
+
+            EVENT::LCGenericObject* trigger_datum 
+                = static_cast<EVENT::LCGenericObject*>(trigger_data->getElementAt(itrigger));
+
+            if (trigger_datum->getIntVal(0) == 0xe10a) { 
+
+                TriggerData* tdata = new TriggerData(trigger_datum); 
+                header_->setSingle0Trigger(static_cast<int>(tdata->isSingle0Trigger()));
+                header_->setSingle1Trigger(static_cast<int>(tdata->isSingle1Trigger()));
+                header_->setPair0Trigger(static_cast<int>(tdata->isPair0Trigger()));
+                header_->setPair1Trigger(static_cast<int>(tdata->isPair1Trigger()));
+                header_->setPulserTrigger(static_cast<int>(tdata->isPulserTrigger()));
+
+                delete tdata;
+                break;
+            }
+        }
     }
 
     try { 
         // Get the LCIO GenericObject collection containing the RF times
         EVENT::LCCollection* rf_hits 
-            = static_cast<EVENT::LCCollection*>(event->getLCCollection(Collections::RF_HITS));
+            = static_cast<EVENT::LCCollection*>(event->getLCCollection(rfCollLcio_.c_str()));
 
         // The collection should only have a single RFHit object per event
         if (rf_hits->getNumberOfElements() > 1) { 
             throw std::runtime_error("[ EventProcessor ]: The collection " 
-                    + static_cast<std::string>(Collections::RF_HITS)
+                    + static_cast<std::string>(rfCollLcio_.c_str())
                     + " doesn't have the expected number of elements."); 
         }
 
@@ -108,13 +148,13 @@ bool EventProcessor::process(IEvent* ievent) {
             // An RFHit GenericObject should only have two RF times
             if (rf_hit->getNDouble() != 2) { 
                 throw std::runtime_error("[ EventProcessor ]: The collection "
-                        + static_cast<std::string>(Collections::RF_HITS)
+                        + static_cast<std::string>(rfCollLcio_.c_str())
                         + " has the wrong structure."); 
             }
 
             // Write the RF times to the event
             for (int ichannel = 0; ichannel < rf_hit->getNDouble(); ++ichannel) { 
-                header.setRfTime(ichannel, rf_hit->getDoubleVal(ichannel));  
+                header_->setRfTime(ichannel, rf_hit->getDoubleVal(ichannel));  
             }
         }
     } catch(EVENT::DataNotAvailableException e) {
@@ -122,7 +162,7 @@ bool EventProcessor::process(IEvent* ievent) {
     }
 
     //vtpData->print();
-    event->add(Collections::EVENT_HEADERS, &header);
+    //event->add(Collections::EVENT_HEADERS, &header);
 
     return true;
 

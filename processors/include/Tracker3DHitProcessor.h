@@ -1,45 +1,39 @@
 /**
- * @file EventProcessor.h
- * @brief Processor used to write event info.
- * @author Omar Moreno, SLAC National Accelerator Laboratory
- * @author Cameron Bravo, SLAC National Accelerator Laboratory
+ *
  */
 
-#ifndef _EVENT_HEADER_PROCESSOR_H__
-#define _EVENT_HEADER_PROCESSOR_H__
+#ifndef __TRACKER3DHIT_PROCESSOR_H__
+#define __TRACKER3DHIT_PROCESSOR_H__
 
 //-----------------//
 //   C++  StdLib   //
 //-----------------//
-#include <string>
 #include <iostream>
+#include <string>
+#include <vector>
 
 //----------//
 //   LCIO   //
 //----------//
-#include <EVENT/LCGenericObject.h>
 #include <EVENT/LCCollection.h>
-
-//----------//
-//   ROOT   //
-//----------//
-#include "TClonesArray.h"
+#include <EVENT/TrackerHit.h>
+#include <IMPL/LCGenericObjectImpl.h>
+#include <IMPL/TrackerHitImpl.h>
+#include <UTIL/LCRelationNavigator.h>
 
 //-----------//
 //   hpstr   //
 //-----------//
 #include "Collections.h"
-#include "EventHeader.h"
 #include "Processor.h"
-#include "VTPData.h"
-#include "TSData.h"
-#include "TriggerData.h"
+#include "Track.h"
+#include "TrackerHit.h"
 #include "Event.h"
 
 // Forward declarations
 class TTree; 
 
-class EventProcessor : public Processor { 
+class Tracker3DHitProcessor : public Processor { 
 
     public: 
 
@@ -50,10 +44,10 @@ class EventProcessor : public Processor {
          * @param process The Process class associated with Processor, provided
          *                by the processing framework.
          */
-        EventProcessor(const std::string& name, Process& process); 
+        Tracker3DHitProcessor(const std::string& name, Process& process); 
 
         /** Destructor */
-        ~EventProcessor(); 
+        ~Tracker3DHitProcessor(); 
 
         /**
          * Callback for the Processor to configure itself from the given set of parameters.
@@ -81,29 +75,14 @@ class EventProcessor : public Processor {
 
     private: 
 
-        //Containers for event header
-        EventHeader* header_{nullptr};
-        std::string  headCollRoot_{"EventHeader"};
-        std::string  rfCollLcio_{"RFHits"};
-        std::string  trigCollLcio_{"TriggerBank"};
-
-        //Containers for vtp data
-        VTPData* vtpData{nullptr};
-        std::string vtpCollLcio_{"VTPBank"};
-        std::string vtpCollRoot_{"VTPBank"};
-
-        //Containers for ts data
-        TSData* tsData{nullptr};
-        std::string tsCollLcio_{"TSBank"};
-        std::string tsCollRoot_{"TSBank"};
-
-        //Parsing methods
-        void parseVTPData(EVENT::LCGenericObject* vtp_data_lcio);
-        void parseTSData(EVENT::LCGenericObject* ts_data_lcio);
+        /** Container to hold all TrackerHit objects. */
+        std::vector<TrackerHit*> hits_; 
+        std::string hitCollLcio_{"RotatedHelicalTrackHits"};
+        std::string hitCollRoot_{"RotatedHelicalTrackHits"};
 
         //Debug Level
         int debug_{0};
 
-}; // EventProcessor
+}; // Tracker3DHitProcessor
 
-#endif // _EVENT_HEADER_PROCESSOR_H__
+#endif // __TRACKER3DHIT_PROCESSOR_H__

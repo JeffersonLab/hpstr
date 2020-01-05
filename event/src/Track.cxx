@@ -10,7 +10,7 @@ ClassImp(Track)
 
 Track::Track()
     : TObject() { 
-}
+    }
 
 Track::~Track() {
     Clear();
@@ -25,17 +25,17 @@ void Track::Clear(Option_t* /* option */) {
 }
 
 void Track::setTrackParameters(double d0, double phi0, double omega,
-                                  double tan_lambda, double z0) {
+        double tan_lambda, double z0) {
     d0_         = d0;
     phi0_       = phi0;
     omega_      = omega;
     tan_lambda_ = tan_lambda;
     z0_         = z0;
     if (omega_ < 0)
-      charge_   = -1;
+        charge_   = -1;
     else
-      charge_   =  1;
-		  
+        charge_   =  1;
+
 }
 
 std::vector<double> Track::getTrackParameters() { return { d0_, phi0_, omega_, tan_lambda_, z0_ }; }
@@ -60,7 +60,7 @@ void Track::addHit(TObject* hit) {
 }
 
 void Track::Print (Option_t *option) const {
-  printf("d0     Phi     Omega     TanLambda     Z0     time     chi2\n");
-  printf("% 6.4f  % 6.4f  % 6.4f  % 6.4f  % 6.4f  % 6.4f  % 6.4f\n",d0_,phi0_,omega_,tan_lambda_,z0_,track_time_,chi2_);
-  printf("type: %d\n", type_);
+    printf("d0     Phi     Omega     TanLambda     Z0     time     chi2\n");
+    printf("% 6.4f  % 6.4f  % 6.4f  % 6.4f  % 6.4f  % 6.4f  % 6.4f\n",d0_,phi0_,omega_,tan_lambda_,z0_,track_time_,chi2_);
+    printf("type: %d\n", type_);
 }

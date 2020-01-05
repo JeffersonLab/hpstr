@@ -56,16 +56,22 @@ class ECalDataProcessor : public Processor {
         ~ECalDataProcessor(); 
 
         /**
-         * Process the event and put new data products into it.
-         * @param event The Event to process.
+         * Callback for the Processor to configure itself from the given set of parameters.
+         * @param parameters ParameterSet for configuration.
          */
-        virtual bool process(IEvent* event);
+        virtual void configure(const ParameterSet& parameters);
 
         /**
          * Callback for the Processor to take any necessary
          * action when the processing of events starts.
          */
         virtual void initialize(TTree* tree);
+
+        /**
+         * Process the event and put new data products into it.
+         * @param event The Event to process.
+         */
+        virtual bool process(IEvent* event);
 
         /**
          * Callback for the Processor to take any necessary
@@ -86,12 +92,19 @@ class ECalDataProcessor : public Processor {
 
         /** TClonesArray collection containing all ECal hits. */ 
         std::vector<CalHit*> cal_hits_; 
+        std::string hitCollLcio_{"TimeCorrEcalHits"};
+        std::string hitCollRoot_{"RecoEcalHits"};
 
         /** TClonesArray collection containing all ECal clusters. */
         std::vector<CalCluster*> clusters_; 
+        std::string clusCollLcio_{"EcalClustersCorr"};
+        std::string clusCollRoot_{"RecoEcalClusters"};
 
         /** Encoding string describing cell ID. */
         const std::string encoder_string_{"system:6,layer:2,ix:-8,iy:-6"};
+
+        //Debug Level
+        int debug_{0};
 
 }; // ECalDataProcessor
 

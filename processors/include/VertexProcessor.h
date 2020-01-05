@@ -1,51 +1,40 @@
 /**
- * @file ParticleProcessor.h
- * @brief Processor used to translate LCIO ReconstructedParticles to DST 
- *        Particle objects.
- * @author Omar Moreno, SLAC National Accelerator Laboratory
+ *
  */
 
-#ifndef _PARTICLE_PROCESSOR_H_
-#define _PARTICLE_PROCESSOR_H_
+#ifndef __VERTEX_PROCESSOR_H__
+#define __VERTEX_PROCESSOR_H__
 
-//----------------//
-//   C++ StdLib   //
-//----------------//
+//-----------------//
+//   C++  StdLib   //
+//-----------------//
 #include <iostream>
-#include <map>
-#include <vector>
 #include <string>
+#include <vector>
 
 //----------//
 //   LCIO   //
 //----------//
 #include <EVENT/LCCollection.h>
 #include <EVENT/ReconstructedParticle.h>
-#include <EVENT/Vertex.h>
-//#include <Exceptions.h>
-
-//----------//
-//   ROOT   //
-//----------//
-#include "TClonesArray.h"
+#include <IMPL/LCGenericObjectImpl.h>
+#include <UTIL/LCRelationNavigator.h>
 
 //-----------//
 //   hpstr   //
 //-----------//
-#include "CalCluster.h"
-#include "Collections.h"
-#include "Particle.h"
 #include "Processor.h"
-#include "Track.h"
+#include "Vertex.h"
+#include "Particle.h"
 #include "Event.h"
 
 // Forward declarations
 class TTree; 
 
-class ParticleProcessor : public Processor { 
+class VertexProcessor : public Processor { 
 
     public: 
-        
+
         /**
          * Class constructor. 
          *
@@ -53,17 +42,17 @@ class ParticleProcessor : public Processor {
          * @param process The Process class associated with Processor, provided
          *                by the processing framework.
          */
-        ParticleProcessor(const std::string& name, Process& process); 
+        VertexProcessor(const std::string& name, Process& process); 
 
         /** Destructor */
-        ~ParticleProcessor();
+        ~VertexProcessor(); 
 
         /**
-         * Callback for the EventProcessor to configure itself from the given set of parameters.
+         * Callback for the Processor to configure itself from the given set of parameters.
          * @param parameters ParameterSet for configuration.
          */
         virtual void configure(const ParameterSet& parameters);
-         
+
         /**
          * Callback for the Processor to take any necessary
          * action when the processing of events starts.
@@ -82,11 +71,18 @@ class ParticleProcessor : public Processor {
          */
         virtual void finalize();
 
-    private:
+    private: 
 
-        /** Map to hold all particle collections. */
-        std::map<std::string, TClonesArray*> collections_; 
+        /** Containers to hold all TrackerHit objects. */
+        std::vector<Vertex*>   vtxs_{}; 
+        std::vector<Particle*> parts_{}; 
+        std::string vtxCollLcio_{"UnconstrainedV0Vertices"};
+        std::string vtxCollRoot_{"UnconstrainedV0Vertices"};
+        std::string partCollRoot_{"ParticlesOnVertices"};
 
-}; // ParticleProcessor
+        //Debug Level
+        int debug_{0};
 
-#endif // _PARTICLE_PROCESSOR_H_
+}; // VertexProcessor
+
+#endif // __VERTEX_PROCESSOR_H__

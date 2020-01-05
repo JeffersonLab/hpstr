@@ -58,6 +58,13 @@ class MCParticle : public TObject {
          * @param pdg The PDG ID of this particle
          */
         void setPDG(const int pdg) { pdg_ = pdg; }; 
+
+        /**
+         * Set the generator status of the particle.
+         *
+         * @param gen_ MCParticle generator status
+         */
+        void setGenStatus(const int gen) { gen_ = gen; };
        
         /**
          * Set the energy of the particle in GeV.
@@ -110,6 +117,9 @@ class MCParticle : public TObject {
         /** @return The particle ID. */
         int getPDG() const { return pdg_; }; 
         
+        /** @return The particle generator status. */
+        int getGenStatus() const { return gen_; }; 
+        
         /** @return The particle energy in GeV. */
         double getEnergy() const { return energy_; }; 
         
@@ -146,6 +156,9 @@ class MCParticle : public TObject {
 
         /** The PDG ID of this particle */
         int pdg_{-9999}; 
+
+        /** The generator status of the particle */ 
+        int gen_{-9999}; 
 
         /** The x component of the momentum of this particle in GeV */
         double px_{-9999}; 

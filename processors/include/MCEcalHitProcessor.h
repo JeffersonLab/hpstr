@@ -52,16 +52,22 @@ class MCEcalHitProcessor : public Processor {
         ~MCEcalHitProcessor(); 
 
         /**
-         * Process the event and put new data products into it.
-         * @param event The Event to process.
+         * Callback for the Processor to configure itself from the given set of parameters.
+         * @param parameters ParameterSet for configuration.
          */
-        virtual bool process(IEvent* ievent);
+        virtual void configure(const ParameterSet& parameters);
 
         /**
          * Callback for the Processor to take any necessary
          * action when the processing of events starts.
          */
         virtual void initialize(TTree* tree);
+
+        /**
+         * Process the event and put new data products into it.
+         * @param event The Event to process.
+         */
+        virtual bool process(IEvent* ievent);
 
         /**
          * Callback for the Processor to take any necessary
@@ -72,7 +78,12 @@ class MCEcalHitProcessor : public Processor {
     private: 
 
         /** Container to hold all MCEcalHit objects. */
-        TClonesArray* ecalhits_{nullptr}; 
+        std::vector<MCEcalHit*> ecalhits_; 
+        std::string   hitCollLcio_{"EcalHits"};
+        std::string   hitCollRoot_{"EcalHits"};
+
+        //Debug Level
+        int debug_{0};
 
 }; // MCEcalHitProcessor
 
