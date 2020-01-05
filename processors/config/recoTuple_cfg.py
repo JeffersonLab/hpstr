@@ -10,6 +10,9 @@ print 'Root file: %s' % root_file
 
 p = HpstrConf.Process()
 
+#p.max_events = 1000
+p.run_mode = 0
+
 # Library containing processors
 p.libraries.append("libprocessors.so")
 
@@ -83,7 +86,5 @@ p.sequence = [header, track, rawsvt, svthits, ecal, vtx]
 
 p.input_files=[lcio_file]
 p.output_files = [root_file]
-
-#p.max_events = 1000
 
 p.printProcess()
