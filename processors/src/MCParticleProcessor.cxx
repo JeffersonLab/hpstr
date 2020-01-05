@@ -92,6 +92,9 @@ bool MCParticleProcessor::process(IEvent* ievent) {
         // Set the PDG of the particle
         particle->setPDG(lc_particle->getPDG());    
 
+        // Set the generator status of the particle
+        particle->setGenStatus(lc_particle->getGeneratorStatus());    
+
         // Loop through all of the tracks associated with the particle
         // and add references to the MCParticle object.
         /*for (auto const &lc_track : lc_particle->getTracks()) { 
