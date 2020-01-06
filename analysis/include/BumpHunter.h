@@ -151,7 +151,7 @@ class BumpHunter {
         double corr_mass_{0};
 
         /** The lower bound of the histogram. */
-        double lower_bound{0.016};
+        double lower_bound_{0.016};
 
         /** The upper bound of the histogram. */
         double upper_bound_{0.115};

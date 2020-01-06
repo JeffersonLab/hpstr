@@ -34,7 +34,7 @@ void BumpHunter::initialize(TH1* histogram, double &mass_hypothesis) {
 
     // If the mass hypothesis is below the lower bound, throw an exception.  A 
     // search cannot be performed using an invalid value for the mass hypothesis.
-    if (mass_hypothesis < lower_bound) {
+    if (mass_hypothesis < lower_bound_) {
         throw std::runtime_error("Mass hypothesis less than the lower bound!"); 
     }
 
@@ -55,10 +55,10 @@ void BumpHunter::initialize(TH1* histogram, double &mass_hypothesis) {
     window_start_ = mass_hypothesis - window_size_/2;
     int window_start_bin = histogram->GetXaxis()->FindBin(window_start_);  
     window_start_ = histogram->GetXaxis()->GetBinLowEdge(window_start_bin);
-    if (window_start_ < lower_bound) { 
+    if (window_start_ < lower_bound_) { 
         std::cout << "[ BumpHunter ]: Starting edge of window (" << window_start_ 
                   << " MeV) is below lower bound." << std::endl;
-        window_start_bin = histogram->GetXaxis()->FindBin(lower_bound);
+        window_start_bin = histogram->GetXaxis()->FindBin(lower_bound_);
         window_start_ = histogram->GetXaxis()->GetBinLowEdge(window_start_bin);
     }
     std::cout << "[ BumpHunter ]: Setting starting edge of fit window to " 
@@ -348,7 +348,7 @@ std::vector<TH1*> BumpHunter::generateToys(TH1* histogram, double n_toys, int se
     for (int itoy = 0; itoy < n_toys; ++itoy) { 
         std::string name = "invariant_mas_" + std::to_string(itoy); 
         if(itoy%100 == 0) std::cout << "Generating Toy " << itoy << std::endl;
-        TH1F* hist = new TH1F(name.c_str(), name.c_str(), histogram->GetNbinsX(), 0., 0.15);
+        TH1F* hist = new TH1F(name.c_str(), name.c_str(), histogram->GetNbinsX(), window_start_, window_end_);
         for (int i =0; i < integral_; ++i) { 
             hist->Fill(bkg->GetRandom(window_start_, window_end_)); 
         }
@@ -377,9 +377,9 @@ void BumpHunter::getChi2Prob(double cond_nll, double mle_nll, double &q0, double
 }
 
 void BumpHunter::setBounds(double lower_bound, double upper_bound) {
-    lower_bound = lower_bound; 
+    lower_bound_ = lower_bound; 
     upper_bound_ = upper_bound;
-    printf("Fit bounds set to [ %f , %f ]\n", lower_bound, upper_bound_);   
+    printf("Fit bounds set to [ %f , %f ]\n", lower_bound_, upper_bound_);   
 }
 
 double BumpHunter::correctMass(double mass) { 
