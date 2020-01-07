@@ -4,7 +4,7 @@
 
 ClusterHistos::ClusterHistos(const std::string& inputName):HistoManager(inputName) {
     m_name = inputName;
-    mmapper_ = new ModuleMapper(2019);
+    mmapper_ = new ModuleMapper(2016);
 }
 
 ClusterHistos::~ClusterHistos() {

@@ -7,22 +7,44 @@
 
 MCTrackerHitProcessor::MCTrackerHitProcessor(const std::string& name, Process& process)
     : Processor(name, process) { 
-}
+    }
 
 MCTrackerHitProcessor::~MCTrackerHitProcessor() { 
 }
 
+void MCTrackerHitProcessor::configure(const ParameterSet& parameters) {
+
+    std::cout << "Configuring MCTrackerHitProcessor" << std::endl;
+    try
+    {
+        debug_         = parameters.getInteger("debug");
+        hitCollLcio_   = parameters.getString("hitCollLcio");
+        hitCollRoot_   = parameters.getString("hitCollRoot");
+    }
+    catch (std::runtime_error& error)
+    {
+        std::cout << error.what() << std::endl;
+    }
+}
+
 void MCTrackerHitProcessor::initialize(TTree* tree) {
 
-    trackerhits_   = new TClonesArray("MCTrackerHit", 100000);  
-    tree->Branch(Collections::MC_TRACKER_HITS,&trackerhits_);
+    tree->Branch(hitCollRoot_.c_str(), &trackerhits_);
 }
 
 bool MCTrackerHitProcessor::process(IEvent* ievent) {
-  
+
     Event* event = static_cast<Event*>(ievent);
     // Get the collection of simulated tracker hits from the LCIO event.
-    EVENT::LCCollection* lcio_trackerhits = event->getLCCollection(Collections::MC_TRACKER_HITS);
+    EVENT::LCCollection* lcio_trackerhits{nullptr};
+    try
+    {
+        lcio_trackerhits = event->getLCCollection(hitCollLcio_.c_str());
+    }
+    catch (EVENT::DataNotAvailableException e) 
+    {
+        std::cout << e.what() << std::endl;
+    }
 
     // Get decoders to read cellids
     UTIL::BitField64 decoder("system:0:6,barrel:6:3,layer:9:4,module:13:12,sensor:25:1,side:32:-2,strip:34:12");
@@ -30,7 +52,8 @@ bool MCTrackerHitProcessor::process(IEvent* ievent) {
 
     // Loop over all of the raw SVT hits in the LCIO event and add them to the 
     // HPS event
-    trackerhits_->Clear();
+    for(int i = 0; i < trackerhits_.size(); i++) delete trackerhits_.at(i);
+    trackerhits_.clear();
     for (int ihit = 0; ihit < lcio_trackerhits->getNumberOfElements(); ++ihit) {
 
         // Get a 3D hit from the list of hits
@@ -42,7 +65,7 @@ bool MCTrackerHitProcessor::process(IEvent* ievent) {
         decoder.setValue(value);
 
         // Add a raw tracker hit to the event
-        MCTrackerHit* mc_tracker_hit = static_cast<MCTrackerHit*>(trackerhits_->ConstructedAt(ihit));
+        MCTrackerHit* mc_tracker_hit = new MCTrackerHit();
 
         // Set sensitive detector identification
         mc_tracker_hit->setLayer(decoder["layer"]);
@@ -64,6 +87,9 @@ bool MCTrackerHitProcessor::process(IEvent* ievent) {
 
         // Set the time of the hit
         mc_tracker_hit->setTime(lcio_mcTracker_hit->getTime());
+
+        //Push hit onto vector
+        trackerhits_.push_back(mc_tracker_hit);
 
     }
 

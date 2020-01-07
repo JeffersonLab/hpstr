@@ -50,16 +50,22 @@ class Tracker3DHitProcessor : public Processor {
         ~Tracker3DHitProcessor(); 
 
         /**
-         * Process the event and put new data products into it.
-         * @param event The Event to process.
+         * Callback for the Processor to configure itself from the given set of parameters.
+         * @param parameters ParameterSet for configuration.
          */
-        virtual bool process(IEvent* ievent);
+        virtual void configure(const ParameterSet& parameters);
 
         /**
          * Callback for the Processor to take any necessary
          * action when the processing of events starts.
          */
         virtual void initialize(TTree* tree);
+
+        /**
+         * Process the event and put new data products into it.
+         * @param event The Event to process.
+         */
+        virtual bool process(IEvent* ievent);
 
         /**
          * Callback for the Processor to take any necessary
@@ -71,7 +77,11 @@ class Tracker3DHitProcessor : public Processor {
 
         /** Container to hold all TrackerHit objects. */
         std::vector<TrackerHit*> hits_; 
+        std::string hitCollLcio_{"RotatedHelicalTrackHits"};
+        std::string hitCollRoot_{"RotatedHelicalTrackHits"};
 
+        //Debug Level
+        int debug_{0};
 
 }; // Tracker3DHitProcessor
 

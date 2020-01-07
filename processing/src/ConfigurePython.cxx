@@ -55,14 +55,27 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
     // Set the command line arguments passed to the python script to be 
     // executed. Note that the first parameter in the list or arguments 
     // should refer to the script to be executed.
-    if (nargs > 0) {
+    
 #if PY_MAJOR_VERSION >= 3
       wchar_t** targs = new wchar_t*[nargs + 1];
+
+#if PY_MINOR_VERSION >=5 // Python 3.4 is missing the Py_DecodeLocale() method.
       targs[0] = Py_DecodeLocale(python_script.c_str(),NULL);
       for (int i = 0; i < nargs; i++)
           targs[i + 1] = Py_DecodeLocale(args[i],NULL);
-      
-      PySys_SetArgv(nargs+1, targs);
+#else // Code for Python 3.4, where Py_DecodeLocale is missing.
+      PyObject *tmpstr = PyUnicode_FromString(python_script.c_str());
+      targs[0] = PyUnicode_AsWideCharString(tmpstr,NULL);
+      Py_DECREF(tmpstr);
+        for (int i = 0; i < nargs; i++){
+          tmpstr = PyUnicode_FromString(args[i]);
+          targs[i + 1] = PyUnicode_AsWideCharString(tmpstr,NULL);
+          Py_DECREF(tmpstr);
+        }
+
+#endif      
+      PySys_SetArgvEx(nargs+1, targs,1);
+      for(int i=0;i<nargs+1; i++) PyMem_RawFree(targs[i]);
       delete[] targs;
 #else
       char** targs = new char*[nargs + 1];
@@ -73,7 +86,6 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
       PySys_SetArgvEx(nargs+1, targs, 1);
       delete[] targs;
 #endif
-    }
 
     PyObject* script = nullptr; 
     PyObject* process = nullptr; 

@@ -12,21 +12,36 @@ RecoHitAnaProcessor::~RecoHitAnaProcessor(){}
 
 
 void RecoHitAnaProcessor::configure(const ParameterSet& parameters) {
+    std::cout << "Configuring RecoHitAnaProcessor" << std::endl;
+    try
+    {
+        debug_           = parameters.getInteger("debug");
+        anaName_         = parameters.getString("anaName");
+        trkColl_         = parameters.getString("trkColl");
+        trkrHitColl_     = parameters.getString("trkrHitColl");
+        ecalHitColl_     = parameters.getString("ecalHitColl");
+        ecalClusColl_    = parameters.getString("ecalClusColl");
+        histCfgFilename_ = parameters.getString("histCfg");
+    }
+    catch (std::runtime_error& error)
+    {
+        std::cout << error.what() << std::endl;
+    }
 
 }
 
 void RecoHitAnaProcessor::initialize(TTree* tree) {
     tree_= tree;
     // init histos
-    histos = new RecoHitAnaHistos("recoHitAna");
-    histos->Define1DHistos();
-    //histos->Define2DHistos();
+    histos = new RecoHitAnaHistos(anaName_.c_str());
+    histos->loadHistoConfig(histCfgFilename_);
+    histos->DefineHistos();
 
     // init TTree
-    tree_->SetBranchAddress(Collections::TRACKER_HITS , &trkrHits_    , &btrkrHits_    );
-    tree_->SetBranchAddress(Collections::GBL_TRACKS   , &tracks_      , &btracks_      );
-    tree_->SetBranchAddress(Collections::ECAL_HITS    , &ecalHits_    , &becalHits_    );
-    tree_->SetBranchAddress(Collections::ECAL_CLUSTERS, &ecalClusters_, &becalClusters_);
+    tree_->SetBranchAddress(trkrHitColl_.c_str()  , &trkrHits_    , &btrkrHits_    );
+    tree_->SetBranchAddress(trkColl_.c_str()      , &tracks_      , &btracks_      );
+    tree_->SetBranchAddress(ecalHitColl_.c_str()  , &ecalHits_    , &becalHits_    );
+    tree_->SetBranchAddress(ecalClusColl_.c_str() , &ecalClusters_, &becalClusters_);
 
 }
 
@@ -42,7 +57,7 @@ bool RecoHitAnaProcessor::process(IEvent* ievent) {
 
 void RecoHitAnaProcessor::finalize() {
 
-    histos->saveHistos(outF_,"");
+    histos->saveHistos(outF_, anaName_.c_str());
     delete histos;
     histos = nullptr;
 }

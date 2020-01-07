@@ -1,6 +1,8 @@
 #!/bin/bash 
-#export PYTHONPATH=/data/src/hpstr/processing/python:$PYTHONPATH
-export PYTHONPATH=/u/re/alspellm/work/src/hpstr/pyplot:/u/re/alspellm/work/src/hpstr/install/lib/python:$PYTHONPATH
 
-export PATH=/u/re/alspellm/work/src/hpstr/install/bin:$PATH
-export LD_LIBRARY_PATH=/u/re/alspellm/work/src/hpstr/install/lib/:$LD_LIBRARY_PATH
+export HPSTR_BASE=/u/re/alspellm/work/src/hpstr
+export PYTHONPATH=$HPSTR_BASE/pyplot:$HPSTR_BASE/install/lib/python:$PYTHONPATH
+
+export PATH=$HPSTR_BASE/install/bin:$PATH
+export LD_LIBRARY_PATH=$HPSTR_BASE/install/lib:$LD_LIBRARY_PATH
+
