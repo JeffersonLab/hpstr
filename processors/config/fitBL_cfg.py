@@ -10,6 +10,8 @@ parser.add_option("-d", "--outDir", type="string", dest="outDir",
         help="Specify the output directory.", metavar="outDir", default=".")
 parser.add_option("-r", "--run", type="string", dest="runNum",
         help="Specify the Run File.", metavar="runNum", default="")
+parser.add_option("-f", "--folder", type="string", dest="folder",
+        help="Specify the folder that input File is located.", metavar="folder", default=".")
 (options, args) = parser.parse_args()
 
 # Use the input file to set the output file name
@@ -33,7 +35,9 @@ fitBL = HpstrConf.Processor('fitBL', 'SvtBlFitHistoProcessor')
 ###############################
 #   Processor Configuration   #
 ###############################
-#MCParticles
+
+fitBL.parameters["folder"] = options.folder
+
 # Sequence which the processors will run.
 p.sequence = [fitBL]
 

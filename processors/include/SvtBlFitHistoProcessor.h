@@ -9,6 +9,8 @@
 
 //HPSTR
 #include "IEvent.h"
+#include "anaUtils.h"
+#include "HistogramHelpers.h"
 
 
 class SvtBlFitHistoProcessor : public Processor {
@@ -30,7 +32,31 @@ class SvtBlFitHistoProcessor : public Processor {
 
     private:
 
-        TFile* inf_{nullptr};
+        TFile* inFile{nullptr};
+        TFile* outFile{nullptr};
+        
+        //Maps for sensor histograms and channels
+        std::vector<std::string> histos2dk;
+        std::map<std::string, TH2F*> histos2d;
+        std::map<std::string, TH1D*> singleChannel_h;
+
+        //1D histogram names for each fit parameter for each sensor
+        std::string graphname_m;
+        std::string graphname_w;
+        std::string graphname_n;
+        std::string graphname_l;
+        std::string graphname_u;
+
+        //histograms that hold fit parameters for each channel
+        TH1D* histoMean{nullptr};
+        TH1D* histoWidth{nullptr};
+        TH1D* histoNorm{nullptr};
+        TH1D* histoFitRangeLower{nullptr};
+        TH1D* histoFitRangeUpper{nullptr};
+
+
+        //Folder where input histograms file is located
+        std::string folder{nullptr};
 
 
 };
