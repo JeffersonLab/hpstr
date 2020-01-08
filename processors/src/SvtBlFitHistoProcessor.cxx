@@ -1,5 +1,4 @@
 #include "SvtBlFitHistoProcessor.h"
-#include "anaUtils.h"
 
 SvtBlFitHistoProcessor::SvtBlFitHistoProcessor(const std::string& name, Process& process)
     : Processor(name, process) {
@@ -10,7 +9,7 @@ SvtBlFitHistoProcessor::~SvtBlFitHistoProcessor() {
 
 void SvtBlFitHistoProcessor::configure(const ParameterSet& parameters) {
 
-    std::cout << "Configuring SvtBlFitHistoProcessor" << std::endl;
+    std::cout << "[SvtBlFitHistoProcessor] Configuring" << std::endl;
     try
     {
         folder = parameters.getString("folder");
@@ -20,8 +19,6 @@ void SvtBlFitHistoProcessor::configure(const ParameterSet& parameters) {
         std::cout << error.what() << std::endl;
     }
 
-
-
 }
 
 void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outFilename) {
@@ -29,7 +26,7 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     std::cout << "initializing SvtBlFitHistoProcessor" << std::endl;
     //InFile containing 2D histograms from the SvtCondAnaProcessor
     inFile = new TFile(inFilename.c_str());
-    outFile = new TFile(outFilename.c_str(),"RECREATE");
+    outF_ = new TFile(outFilename.c_str(),"RECREATE");
 
     utils::Get2DHistosFromFile(histos2d, histos2dk,inFile, folder, "0");
 
@@ -47,7 +44,6 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
         //Create 1D histograms to store fit values for each channel on each sensor. These fit values determined in process method, using profileYwithIterativeGaussFit function 
 
         histoMean  = new TH1D(graphname_m.c_str(),graphname_m.c_str(), histos2d[histos2dk[ih2d]]->GetNbinsX(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmin(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmax());
-        outFile->cd();
 
         histoWidth = new TH1D(graphname_w.c_str(),graphname_w.c_str(), histos2d[histos2dk[ih2d]]->GetNbinsX(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmin(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmax());
         histoNorm = new TH1D(graphname_n.c_str(),graphname_n.c_str(), histos2d[histos2dk[ih2d]]->GetNbinsX(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmin(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmax());
@@ -70,7 +66,7 @@ bool SvtBlFitHistoProcessor::process() {
     for (unsigned int ih2d = 0; ih2d<histos2dk.size();++ih2d) {     
 
         HistogramHelpers::profileYwithIterativeGaussFit(histos2d[histos2dk[ih2d]],histoMean,histoWidth,histoNorm,histoFitRangeLower,histoFitRangeUpper,binning,0);
-        outFile->cd();
+        outF_->cd();
         histos2d[histos2dk[ih2d]]->Write();
         histoMean ->Write(graphname_m.c_str());
         histoWidth->Write(graphname_w.c_str());
@@ -78,13 +74,15 @@ bool SvtBlFitHistoProcessor::process() {
         histoFitRangeLower->Write(graphname_l.c_str());
         histoFitRangeUpper->Write(graphname_u.c_str());
     }
+    return true;
 
 }
 
 void SvtBlFitHistoProcessor::finalize() {
 
     std::cout << "finalizing SvtBlFitHistoProcessor" << std::endl;
+    outF_->Close();
 
 }
 
-DECLARE_PROCESSOR(SvtBlFitHistoProcessor)
+DECLARE_PROCESSOR(SvtBlFitHistoProcessor);

@@ -15,7 +15,7 @@ p.run_mode = 0
 #p.max_events = 1000
 
 # Library containing processors
-p.add_library("libprocessors")
+p.libraries.append("libprocessors.so")
 
 ###############################
 #          Processors         #

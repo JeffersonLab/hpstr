@@ -1,7 +1,7 @@
 #include "anaUtils.h"
 #include <utility>
 
-Double_t langaufun(Double_t *x, Double_t *par) {
+Double_t utils::langaufun(Double_t *x, Double_t *par) {
 
   //Fit parameters:
   //par[0]=Width (scale) parameter of Landau density
@@ -55,7 +55,7 @@ Double_t langaufun(Double_t *x, Double_t *par) {
 }
 
 
-TF1 *langaufit(TH1F *his, Double_t *fitrange, Double_t *startvalues, Double_t *parlimitslo, Double_t *parlimitshi, Double_t *fitparams, Double_t *fiterrors, Double_t *ChiSqr, Int_t *NDF)
+TF1* utils::langaufit(TH1F *his, Double_t *fitrange, Double_t *startvalues, Double_t *parlimitslo, Double_t *parlimitshi, Double_t *fitparams, Double_t *fiterrors, Double_t *ChiSqr, Int_t *NDF)
 {
   // Once again, here are the Landau * Gaussian parameters:
   //   par[0]=Width (scale) parameter of Landau density
@@ -103,7 +103,7 @@ TF1 *langaufit(TH1F *his, Double_t *fitrange, Double_t *startvalues, Double_t *p
 
 }
 
-void GetMean(TH1* hist, std::pair<float,float> &info, int method,TFile* outfile,float* fitRange) {
+void utils::GetMean(TH1* hist, std::pair<float,float> &info, int method,TFile* outfile,float* fitRange) {
 
   std::string histname = hist->GetName();
   if(method==0) {
@@ -196,7 +196,7 @@ void GetMean(TH1* hist, std::pair<float,float> &info, int method,TFile* outfile,
 
 
 
-void GetMean(TH1F* hist, std::pair<float,float> &info, std::pair<float,float> &info_width, int method,TFile* outfile,std::string runNumber,std::string name){
+void utils::GetMean(TH1F* hist, std::pair<float,float> &info, std::pair<float,float> &info_width, int method,TFile* outfile,std::string runNumber,std::string name){
 
   //name here is the runNumber in string format
   int runN = (int)::atof(runNumber.c_str());
@@ -284,7 +284,7 @@ void GetMean(TH1F* hist, std::pair<float,float> &info, std::pair<float,float> &i
   }
 }
 
-string getSubString(const string& s, const string& start_delim,const string& stop_delim) {
+string utils::getSubString(const string& s, const string& start_delim,const string& stop_delim) {
   unsigned first_delim_pos = s.find(start_delim);
   unsigned end_pos_of_first_delim = first_delim_pos + start_delim.length();
   unsigned last_delim_pos  = s.find_first_of(stop_delim,end_pos_of_first_delim);
@@ -294,7 +294,7 @@ string getSubString(const string& s, const string& start_delim,const string& sto
 
 }
 
-TH1F* getHisto(const string &histoname,const  string &filename) {
+TH1F* utils::getHisto(const string &histoname,const  string &filename) {
 
 
   TFile f(filename.c_str());
@@ -306,15 +306,7 @@ TH1F* getHisto(const string &histoname,const  string &filename) {
 }
 
 
-
-
-
-
-
-
-
-
-std::pair<TGraphErrors*,TGraphErrors*> FillPlot(TH2* histo2d, const std::string y_title,int method,TFile* outfile, int binning, float* fitRange) {
+std::pair<TGraphErrors*,TGraphErrors*> utils::FillPlot(TH2* histo2d, const std::string y_title,int method,TFile* outfile, int binning, float* fitRange) {
 
   int point = 0;
   std::pair <TGraphErrors*,TGraphErrors*> graphs;
@@ -386,7 +378,7 @@ std::pair<TGraphErrors*,TGraphErrors*> FillPlot(TH2* histo2d, const std::string 
 
 
 
-std::pair<TGraphErrors*,TGraphErrors*> FillPlot(const string & plotname, const string & layer, const vector<string> &sample, int colour, const string&  y_title, bool runNo,int method, TFile* outFile) {
+std::pair<TGraphErrors*,TGraphErrors*> utils::FillPlot(const string & plotname, const string & layer, const vector<string> &sample, int colour, const string&  y_title, bool runNo,int method, TFile* outFile) {
 
   int point = 0;
   TGraphErrors * graph = new TGraphErrors();
@@ -485,7 +477,7 @@ std::pair<TGraphErrors*,TGraphErrors*> FillPlot(const string & plotname, const s
   }
 
 
-void Get2DHistosFromFile(std::map<std::string, TH2F*>& histos2d,std::vector<std::string>& histos2dk,TFile* inFile, std::string folder, std::string timesample) {
+void utils::Get2DHistosFromFile(std::map<std::string, TH2F*>& histos2d,std::vector<std::string>& histos2dk,TFile* inFile, std::string folder, std::string timesample) {
     TIter next(inFile->GetListOfKeys());
     TKey *key;
     typedef std::map<std::string, TH2F*>::iterator it2d;
@@ -505,7 +497,7 @@ void Get2DHistosFromFile(std::map<std::string, TH2F*>& histos2d,std::vector<std:
     
 }
 
-void getFitParams(TFile* ParametersFile,std::map<std::string, double>& means, std::string sensor) {
+void utils::getFitParams(TFile* ParametersFile,std::map<std::string, double>& means, std::string sensor) {
      ParametersFile->cd();
     // TH1D* mean_h = (TH1D*)inFile->Get("mean_raw_hits_L0B_axial_timesample_0_hh");
      TH1D* mean_h = (TH1D*)ParametersFile->Get(Form("mean_%s", sensor.c_str()));
@@ -513,7 +505,7 @@ void getFitParams(TFile* ParametersFile,std::map<std::string, double>& means, st
          means[std::to_string(cc)]=mean_h->GetBinContent(cc);
 }
 
-void fitCheck(std::map<std::string, TH2F*> histos2d, std::string histo_key, std::map<std::string, TH1D*>& singleChannel_h, std::map<std::string, double> means) {
+void utils::fitCheck(std::map<std::string, TH2F*> histos2d, std::string histo_key, std::map<std::string, TH1D*>& singleChannel_h, std::map<std::string, double> means) {
       int FitRangeLower=0;
       int FitRangeUpper=20000;
       for (int cc=2;cc<3;cc++){
