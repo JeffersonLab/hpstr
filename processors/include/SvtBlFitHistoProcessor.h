@@ -35,6 +35,7 @@ class SvtBlFitHistoProcessor : public Processor {
         TFile* inFile{nullptr};
         TFile* outFile{nullptr};
         
+        int binning = 1;
         //Maps for sensor histograms and channels
         std::vector<std::string> histos2dk;
         std::map<std::string, TH2F*> histos2d;
