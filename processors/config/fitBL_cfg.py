@@ -16,7 +16,8 @@ parser.add_option("-f", "--folder", type="string", dest="folder",
 
 # Use the input file to set the output file name
 histo_file = options.inFilename
-fit_file = '%s/fitBL_Run_%s'%(options.outDir, options.runNum)
+fit_file = '%s/fitBL_Run_%s.root'%(options.outDir, options.runNum)
+fit_file = 'fitBL_Run_%s.root'%(options.runNum)
 
 p = HpstrConf.Process()
 
