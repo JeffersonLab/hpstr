@@ -43,14 +43,15 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
 
         //Create 1D histograms to store fit values for each channel on each sensor. These fit values determined in process method, using profileYwithIterativeGaussFit function 
 
-        histoMean  = new TH1D(graphname_m.c_str(),graphname_m.c_str(), histos2d[histos2dk[ih2d]]->GetNbinsX(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmin(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmax());
+        histoMean[histoname]  = new TH1D(graphname_m.c_str(),graphname_m.c_str(), histos2d[histos2dk[ih2d]]->GetNbinsX(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmin(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmax());
 
-        histoWidth = new TH1D(graphname_w.c_str(),graphname_w.c_str(), histos2d[histos2dk[ih2d]]->GetNbinsX(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmin(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmax());
-        histoNorm = new TH1D(graphname_n.c_str(),graphname_n.c_str(), histos2d[histos2dk[ih2d]]->GetNbinsX(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmin(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmax());
+        histoWidth[histoname] = new TH1D(graphname_w.c_str(),graphname_w.c_str(), histos2d[histos2dk[ih2d]]->GetNbinsX(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmin(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmax());
 
-        histoFitRangeLower = new TH1D(graphname_l.c_str(),graphname_l.c_str(), histos2d[histos2dk[ih2d]]->GetNbinsX(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmin(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmax());
+        histoNorm[histoname] = new TH1D(graphname_n.c_str(),graphname_n.c_str(), histos2d[histos2dk[ih2d]]->GetNbinsX(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmin(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmax());
 
-        histoFitRangeUpper = new TH1D(graphname_u.c_str(),graphname_u.c_str(), histos2d[histos2dk[ih2d]]->GetNbinsX(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmin(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmax());
+        histoFitRangeLower[histoname] = new TH1D(graphname_l.c_str(),graphname_l.c_str(), histos2d[histos2dk[ih2d]]->GetNbinsX(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmin(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmax());
+
+        histoFitRangeUpper[histoname] = new TH1D(graphname_u.c_str(),graphname_u.c_str(), histos2d[histos2dk[ih2d]]->GetNbinsX(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmin(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmax());
 
 
 
@@ -64,15 +65,24 @@ bool SvtBlFitHistoProcessor::process() {
 
     // use PF's tweaked fit code to perform Gauss Fit on ADC counts for every channel of a sensor
     for (unsigned int ih2d = 0; ih2d<histos2dk.size();++ih2d) {     
+    //for (unsigned int ih2d=0; ih2d<2; ++ih2d) {
+        std::string histoname = histos2d[histos2dk[ih2d]]->GetName();
+        histoname=histoname.substr(0,histoname.size()-1);
+        graphname_m = "mean_"  + histoname;
+        graphname_w = "width_" + histoname;
+        graphname_n = "norm_" + histoname;
+        graphname_l = "FitRangeLower_" + histoname;
+        graphname_u = "FitRangeUpper_" + histoname;
 
-        HistogramHelpers::profileYwithIterativeGaussFit(histos2d[histos2dk[ih2d]],histoMean,histoWidth,histoNorm,histoFitRangeLower,histoFitRangeUpper,binning,0);
+
+        HistogramHelpers::profileYwithIterativeGaussFit(histos2d[histos2dk[ih2d]],histoMean[histoname],histoWidth[histoname],histoNorm[histoname],histoFitRangeLower[histoname],histoFitRangeUpper[histoname],binning,0);
         outF_->cd();
         histos2d[histos2dk[ih2d]]->Write();
-        histoMean ->Write(graphname_m.c_str());
-        histoWidth->Write(graphname_w.c_str());
-        histoNorm->Write(graphname_n.c_str());
-        histoFitRangeLower->Write(graphname_l.c_str());
-        histoFitRangeUpper->Write(graphname_u.c_str());
+        histoMean[histoname] ->Write(graphname_m.c_str());
+        histoWidth[histoname]->Write(graphname_w.c_str());
+        histoNorm[histoname]->Write(graphname_n.c_str());
+        histoFitRangeLower[histoname]->Write(graphname_l.c_str());
+        histoFitRangeUpper[histoname]->Write(graphname_u.c_str());
     }
     return true;
 

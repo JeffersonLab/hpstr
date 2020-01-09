@@ -1,6 +1,6 @@
 import HpstrConf
 import sys
-
+import os
 from optparse import OptionParser
 
 parser = OptionParser()
@@ -16,8 +16,8 @@ parser.add_option("-f", "--folder", type="string", dest="folder",
 
 # Use the input file to set the output file name
 histo_file = options.inFilename
-fit_file = '%s/fitBL_Run_%s.root'%(options.outDir, options.runNum)
-fit_file = 'fitBL_Run_%s.root'%(options.runNum)
+run_number = os.path.basename(histo_file)
+fit_file = '%s/%s_SvtBaselineFit.root'%(options.outDir, run_number)
 
 p = HpstrConf.Process()
 

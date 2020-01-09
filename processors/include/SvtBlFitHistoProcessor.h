@@ -51,11 +51,18 @@ class SvtBlFitHistoProcessor : public Processor {
         std::string graphname_u{""};
 
         //histograms that hold fit parameters for each channel
-        TH1D* histoMean{nullptr};
+        std::map<std::string, TH1D*> histoMean{}; 
+        std::map<std::string, TH1D*> histoWidth{};
+        std::map<std::string, TH1D*> histoNorm{};
+        std::map<std::string, TH1D*> histoFitRangeLower{};
+        std::map<std::string, TH1D*> histoFitRangeUpper{};
+
+        /*TH1D* histoMean{nullptr};
         TH1D* histoWidth{nullptr};
         TH1D* histoNorm{nullptr};
         TH1D* histoFitRangeLower{nullptr};
         TH1D* histoFitRangeUpper{nullptr};
+        */
 
         //Folder where input histograms file is located
         std::string folder{"."};
