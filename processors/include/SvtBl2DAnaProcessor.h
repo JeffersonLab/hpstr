@@ -6,7 +6,7 @@
 #include "RawSvtHit.h"
 
 //ROOT
-#include "SvtCondHistos.h"
+#include "Svt2DBlHistos.h"
 #include "Processor.h"
 #include "TClonesArray.h"
 #include "TFile.h"
@@ -34,7 +34,7 @@ class SvtBl2DAnaProcessor : public Processor {
     private:
 
         int Event_number=0;
-        SvtCondHistos* svtCondHistos{nullptr};
+        Svt2DBlHistos* svtCondHistos{nullptr};
 
         int rmBl_{0};
         std::string blFitFile_{""};

@@ -10,6 +10,7 @@
 #include <map>
 #include <vector>
 #include "json.hpp"
+#include "ModuleMapper.h"
 
 //for convenience 
 using json = nlohmann::json;
@@ -92,6 +93,8 @@ class HistoManager {
     protected:
 
         std::string m_name;
+        std::vector<std::string> strings;
+        ModuleMapper* mmapper;
 
         std::map<std::string, std::vector<double> > Axes;
 

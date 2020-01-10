@@ -4,6 +4,7 @@
 #include "TClass.h"
 #include <fstream>
 #include <iomanip>
+#include <vector>
 
 HistoManager::HistoManager() {
     HistoManager("default");
@@ -55,12 +56,13 @@ void HistoManager::DefineHistos(){
 
         //Get the extension of the name to decide the histogram to create
         //i.e. _h = TH1D, _hh = TH2D, _ge = TGraphErrors, _p = TProfile ...
-
-        std::size_t found = (hist.key()).find_last_of("_");
-        std::string extension = hist.key().substr(found+1);
-
-        if (extension == "h") {
-            histos1d[h_name] = plot1D(h_name,hist.value().at("xtitle"),
+        if (hist.key() == "SvtHybrids") {
+           mmapper = new ModuleMapper();
+           mmapper->getStrings(strings);
+           
+           for(std::vector<std::string>::iterator it = strings.begin(); it != strings.end(); ++it) {
+                if (hist.value().at("type") == "h") {
+                    histos1d[*it] = plot1D(h_name+ *it,hist.value().at("xtitle"),
                     hist.value().at("bins"),
                     hist.value().at("minX"),
                     hist.value().at("maxX"));
@@ -68,26 +70,53 @@ void HistoManager::DefineHistos(){
             std::string ytitle = hist.value().at("ytitle");
 
             histos1d[h_name]->GetYaxis()->SetTitle(ytitle.c_str());
-
-            if (hist.value().contains("labels")) {
-                std::vector<std::string> labels = hist.value().at("labels").get<std::vector<std::string> >();
-
-                if (labels.size() < hist.value().at("bins")) {
-                    std::cout<<"Cannot apply labels to histogram:"<<h_name<<std::endl;
                 }
-                else {
-                    for (int i = 1; i<=hist.value().at("bins");++i)
-                        histos1d[h_name]->GetXaxis()->SetBinLabel(i,labels[i-1].c_str());
-                }//bins
-            }//labels
-        }//1D histo
+                if (hist.value().at("type") == "hh") {
+                    histos2d[h_name] = plot2D(h_name,
+                    hist.value().at("xtitle"),hist.value().at("binsX"),hist.value().at("minX"),
+                    hist.value().at("maxX"),
+                    hist.value().at("ytitle"),hist.value().at("binsY"),hist.value().at("minY"),
+                    hist.value().at("maxY"));
+                }   
+            }   
+        }  
 
-        else if (extension == "hh") {
-            histos2d[h_name] = plot2D(h_name,
-                    hist.value().at("xtitle"),hist.value().at("binsX"),hist.value().at("minX"),hist.value().at("maxX"),
-                    hist.value().at("ytitle"),hist.value().at("binsY"),hist.value().at("minY"),hist.value().at("maxY"));
-        }
-    }//loop on config
+        else {
+            std::size_t found = (hist.key()).find_last_of("_");
+            std::string extension = hist.key().substr(found+1);
+
+            if (extension == "h") {
+                histos1d[h_name] = plot1D(h_name,hist.value().at("xtitle"),
+                        hist.value().at("bins"),
+                        hist.value().at("minX"),
+                        hist.value().at("maxX"));
+
+                std::string ytitle = hist.value().at("ytitle");
+
+                histos1d[h_name]->GetYaxis()->SetTitle(ytitle.c_str());
+
+                if (hist.value().contains("labels")) {
+                    std::vector<std::string> labels = hist.value().at("labels").get<std::vector<std::string> >();
+
+                    if (labels.size() < hist.value().at("bins")) {
+                        std::cout<<"Cannot apply labels to histogram:"<<h_name<<std::endl;
+                    }
+                    else {
+                        for (int i = 1; i<=hist.value().at("bins");++i)
+                            histos1d[h_name]->GetXaxis()->SetBinLabel(i,labels[i-1].c_str());
+                    }//bins
+                }//labels
+            }//1D histo
+
+            else if (extension == "hh") {
+                histos2d[h_name] = plot2D(h_name,
+                        hist.value().at("xtitle"),hist.value().at("binsX"),hist.value().at("minX"),hist.value().at("maxX"),
+                        hist.value().at("ytitle"),hist.value().at("binsY"),hist.value().at("minY"),hist.value().at("maxY"));
+            }
+        
+            
+        }//loop on config
+    }
 }
 
 void HistoManager::GetHistosFromFile(TFile* inFile, const std::string& name, const std::string& folder) {
