@@ -1,0 +1,17 @@
+{   
+    "SvtHybrids" : {
+            "prefix" : "hitQ"
+            "type" : "hh",
+            "xtitle" : ,
+            "binsX" : ,
+            "minX" : ,
+            "maxX" : ,
+            "ytitle" : ,
+            "binsY" : ,
+            "minY" : ,
+            "maxY" : ,
+
+        }
+
+
+}
