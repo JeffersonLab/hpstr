@@ -7,11 +7,13 @@
 #include <vector>
 
 HistoManager::HistoManager() {
-    HistoManager("default");
+    std::cout << "[HistoManager] Init ModuleMapper" << std::endl;
+    mmapper_ = new ModuleMapper();
 }
 
 HistoManager::HistoManager(const std::string& inputName) {
     m_name = inputName;
+    HistoManager();
 }
 
 void HistoManager::Clear() {
@@ -45,43 +47,50 @@ void HistoManager::Clear() {
 
 }
 
-HistoManager::~HistoManager() {}
+HistoManager::~HistoManager() { delete mmapper_;}
 
 void HistoManager::DefineHistos(){
 
     std::string h_name = "";
+    std::vector<std::string> hybNames;
+    mmapper_->getStrings(hybNames);
     for (auto hist : _h_configs.items()) {
 
-        h_name = m_name+"_"+hist.key();
 
         //Get the extension of the name to decide the histogram to create
         //i.e. _h = TH1D, _hh = TH2D, _ge = TGraphErrors, _p = TProfile ...
         if (hist.key() == "SvtHybrids") {
-           mmapper = new ModuleMapper();
-           mmapper->getStrings(strings);
-           
-           for(std::vector<std::string>::iterator it = strings.begin(); it != strings.end(); ++it) {
-                if (hist.value().at("type") == "h") {
-                    histos1d[*it] = plot1D(h_name+ *it,hist.value().at("xtitle"),
-                    hist.value().at("bins"),
-                    hist.value().at("minX"),
-                    hist.value().at("maxX"));
 
-            std::string ytitle = hist.value().at("ytitle");
+            for(std::vector<std::string>::iterator it = hybNames.begin(); it != hybNames.end(); ++it) {
+                if (hist.value().at("type") == "h") 
+                {
+                    h_name = std::string(hist.value().at("prefix"))+m_name+"_"+*it+"_h";
+                    histos1d[h_name] = plot1D(h_name,
+                            hist.value().at("xtitle"),
+                            hist.value().at("bins"),
+                            hist.value().at("minX"),
+                            hist.value().at("maxX"));
 
-            histos1d[h_name]->GetYaxis()->SetTitle(ytitle.c_str());
+                    std::string ytitle = hist.value().at("ytitle");
+                    histos1d[h_name]->GetYaxis()->SetTitle(ytitle.c_str());
                 }
                 if (hist.value().at("type") == "hh") {
+                    h_name = std::string(hist.value().at("prefix"))+m_name+"_"+*it+"_hh";
                     histos2d[h_name] = plot2D(h_name,
-                    hist.value().at("xtitle"),hist.value().at("binsX"),hist.value().at("minX"),
-                    hist.value().at("maxX"),
-                    hist.value().at("ytitle"),hist.value().at("binsY"),hist.value().at("minY"),
-                    hist.value().at("maxY"));
-                }   
-            }   
-        }  
-
-        else {
+                            hist.value().at("xtitle"),
+                            hist.value().at("binsX"),
+                            hist.value().at("minX"),
+                            hist.value().at("maxX"),
+                            hist.value().at("ytitle"),
+                            hist.value().at("binsY"),
+                            hist.value().at("minY"),
+                            hist.value().at("maxY"));
+                }  
+            }
+        }
+        else 
+        {
+            h_name = m_name+"_"+hist.key();
             std::size_t found = (hist.key()).find_last_of("_");
             std::string extension = hist.key().substr(found+1);
 
@@ -113,8 +122,8 @@ void HistoManager::DefineHistos(){
                         hist.value().at("xtitle"),hist.value().at("binsX"),hist.value().at("minX"),hist.value().at("maxX"),
                         hist.value().at("ytitle"),hist.value().at("binsY"),hist.value().at("minY"),hist.value().at("maxY"));
             }
-        
-            
+
+
         }//loop on config
     }
 }

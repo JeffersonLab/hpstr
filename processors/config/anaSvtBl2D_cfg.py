@@ -1,5 +1,6 @@
 import HpstrConf
 import sys
+import os
 
 # Use the input file to set the output file name
 infile = sys.argv[1].strip()
@@ -33,6 +34,7 @@ svtblana.parameters["removeBaseline"] = 0
 svtblana.parameters["baselineFits"] = "filename"
 svtblana.parameters["runNumber"] = 135
 svtblana.parameters["rawSvtHitsColl"] = "SVTRawTrackerHits"
+svtblana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/Svt2DBl.json'
 
 #p.max_events = 1000
 

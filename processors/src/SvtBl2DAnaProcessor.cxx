@@ -28,7 +28,9 @@ void SvtBl2DAnaProcessor::configure(const ParameterSet& parameters) {
 void SvtBl2DAnaProcessor::initialize(TTree* tree) {
     std::cout << "[SvtBl2DAnaProcessor] Initializing" << std::endl;
     svtCondHistos = new Svt2DBlHistos("raw_hits");
+    std::cout << "[SvtBl2DAnaProcessor] Load JSON" << std::endl;
     svtCondHistos->loadHistoConfig(histCfgFilename_);
+    if (debug_ > 0) std::cout << "[SvtBl2DAnaProcessor] Define 2DHistos" << std::endl;
     svtCondHistos->DefineHistos();
     if (debug_ > 0) std::cout << "[SvtBl2DAnaProcessor] Defined 2DHistos" << std::endl;
 

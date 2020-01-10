@@ -16,33 +16,32 @@
 
 
 class Svt2DBlHistos : public HistoManager{
-  
- public:
-  Svt2DBlHistos(const std::string& inputName) : HistoManager(inputName) {m_name = inputName;} ;
-  ~Svt2DBlHistos();
 
-  virtual void Define3DHistos(){};
-  virtual void Define2DHistos();
-  virtual void Define1DHistos();
+    public:
+        Svt2DBlHistos(const std::string& inputName);
+        ~Svt2DBlHistos();
+
+        virtual void Define3DHistos(){};
+        virtual void Define2DHistos(){};
+        virtual void Define1DHistos(){};
 
 
-  void FillHistograms(RawSvtHit* hit,float weight = 1.);
-  
-  void setBaselineFitsDir(const std::string& baselineFits) {baselineFits_ = baselineFits;};
-  bool LoadBaselineHistos(const std::string& baselineRun);
-  
+        void FillHistograms(RawSvtHit* hit,float weight = 1.);
 
- private:
-	
-  TH1F* svtCondHisto{nullptr};  
-  
-  std::vector<std::string> half_module_names{};
-  std::string baselineFits_{"/nfs/hps3/svtTests/jlabSystem/baselines/fits/"};
-  std::string baselineRun_{""};
+        void setBaselineFitsDir(const std::string& baselineFits) {baselineFits_ = baselineFits;};
+        bool LoadBaselineHistos(const std::string& baselineRun);
 
-  std::map<std::string, TGraphErrors*> baselineGraphs;
 
-  ModuleMapper *mmapper_{nullptr};
+    private:
+
+        TH1F* svtCondHisto{nullptr};  
+
+        std::string baselineFits_{"/nfs/hps3/svtTests/jlabSystem/baselines/fits/"};
+        std::string baselineRun_{""};
+
+        std::map<std::string, TGraphErrors*> baselineGraphs;
+
+        ModuleMapper *mmapper_{nullptr};
 };
 
 

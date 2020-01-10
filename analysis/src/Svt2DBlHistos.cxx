@@ -2,6 +2,12 @@
 #include <math.h>
 #include "TCanvas.h"
 
+Svt2DBlHistos::Svt2DBlHistos(const std::string& inputName) {
+    std::cout << "[Svt2DBlHistos] Constructor" << std::endl;
+    m_name = inputName;
+    HistoManager();
+}
+
 Svt2DBlHistos::~Svt2DBlHistos() {
 
     for (std::map<std::string, TGraphErrors*>::iterator it = baselineGraphs.begin(); 
@@ -13,24 +19,6 @@ Svt2DBlHistos::~Svt2DBlHistos() {
     }
     baselineGraphs.clear();
 }
-
-
-void Svt2DBlHistos::Define1DHistos() {
-}
-
-void Svt2DBlHistos::Define2DHistos() {
-    std::string h_name = "";
-    mmapper_->getStrings(half_module_names);
-    std::cout << "half_module_names length: " << half_module_names.size() << std::endl;
-    for (unsigned int ihm = 0; ihm<half_module_names.size(); ihm++) {
-        for (unsigned int ihn = 0; ihn<6; ihn++) {
-            auto n = std::to_string(ihn);
-            h_name = m_name+"_"+half_module_names[ihm]+"_timesample_"+n;
-            histos2d[h_name] = plot2D(h_name, "Channel", 640, 0, 640, "ADC Value", 5000, 0, 20000);
-}
-}
-}
-
 
 void Svt2DBlHistos::FillHistograms(RawSvtHit* rawSvtHit,float weight) {
     std::string swTag="";
