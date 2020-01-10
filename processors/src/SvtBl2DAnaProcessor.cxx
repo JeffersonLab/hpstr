@@ -17,6 +17,7 @@ void SvtBl2DAnaProcessor::configure(const ParameterSet& parameters) {
         blFitFile_       = parameters.getString("baselineFits");
         runNum_          = parameters.getInteger("runNumber");
         rawSvtHitsColl_  = parameters.getString("rawSvtHitsColl");
+        histCfgFilename_  = parameters.getString("histCfg");
     }
     catch (std::runtime_error& error)
     {
@@ -27,7 +28,8 @@ void SvtBl2DAnaProcessor::configure(const ParameterSet& parameters) {
 void SvtBl2DAnaProcessor::initialize(TTree* tree) {
     std::cout << "[SvtBl2DAnaProcessor] Initializing" << std::endl;
     svtCondHistos = new Svt2DBlHistos("raw_hits");
-    svtCondHistos->Define2DHistos();
+    svtCondHistos->loadHistoConfig(histCfgFilename_);
+    svtCondHistos->DefineHistos();
     if (debug_ > 0) std::cout << "[SvtBl2DAnaProcessor] Defined 2DHistos" << std::endl;
 
     tree_ = tree;

@@ -34,6 +34,7 @@ class SvtBl2DAnaProcessor : public Processor {
     private:
 
         int Event_number=0;
+        std::string histCfgFilename_;
         Svt2DBlHistos* svtCondHistos{nullptr};
 
         int rmBl_{0};
