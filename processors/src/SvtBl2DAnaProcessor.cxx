@@ -41,17 +41,20 @@ void SvtBl2DAnaProcessor::initialize(TTree* tree) {
 }
 
 bool SvtBl2DAnaProcessor::process(IEvent* ievent) {
-
-    int nhits = rawSvtHits_->size();
+    
+    svtCondHistos->FillHistograms(rawSvtHits_,1.);
+   /* int nhits = rawSvtHits_->size();
+    if (debug_ > 0) std::cout << nhits << std::endl;
     if(Event_number%1000 == 0) std::cout << "Event: " << Event_number 
         << " Number of RawSvtHits: " << nhits << std::endl;
     for (int i = 0; i < nhits; i++) 
     {
         RawSvtHit* rawSvtHit = rawSvtHits_->at(i);
+        if(debug_ > 0) std::cout << "rawSvtHit" << rawSvtHit << std::endl;
         svtCondHistos->FillHistograms(rawSvtHit, 1.); 
     }
     Event_number++;  
-    return true;
+    return true; */
 }
 
 void SvtBl2DAnaProcessor::finalize() {

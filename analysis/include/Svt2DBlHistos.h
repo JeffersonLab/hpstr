@@ -26,13 +26,15 @@ class Svt2DBlHistos : public HistoManager{
         virtual void Define1DHistos(){};
 
 
-        void FillHistograms(RawSvtHit* hit,float weight = 1.);
+        void FillHistograms(std::vector<RawSvtHit*> *rawSvtHits_,float weight = 1.);
 
         void setBaselineFitsDir(const std::string& baselineFits) {baselineFits_ = baselineFits;};
         bool LoadBaselineHistos(const std::string& baselineRun);
 
 
     private:
+
+        int Event_number=0;
 
         TH1F* svtCondHisto{nullptr};  
 

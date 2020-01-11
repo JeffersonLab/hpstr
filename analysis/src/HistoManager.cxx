@@ -85,6 +85,7 @@ void HistoManager::DefineHistos(){
                             hist.value().at("binsY"),
                             hist.value().at("minY"),
                             hist.value().at("maxY"));
+                    std::cout << histos2d[h_name]->GetName() << std::endl;
                 }  
             }
         }
