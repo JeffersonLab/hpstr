@@ -1,6 +1,6 @@
 {   
     "SvtHybrids" : {
-            "prefix" : "baseline_",
+            "prefix" : "baseline",
             "type" : "hh",
             "xtitle" : "Strip Number",
             "binsX" : 640,

@@ -7,13 +7,11 @@
 #include <vector>
 
 HistoManager::HistoManager() {
-    std::cout << "[HistoManager] Init ModuleMapper" << std::endl;
-    mmapper_ = new ModuleMapper();
+    m_name = "default";
 }
 
 HistoManager::HistoManager(const std::string& inputName) {
     m_name = inputName;
-    HistoManager();
 }
 
 void HistoManager::Clear() {
@@ -64,7 +62,7 @@ void HistoManager::DefineHistos(){
             for(std::vector<std::string>::iterator it = hybNames.begin(); it != hybNames.end(); ++it) {
                 if (hist.value().at("type") == "h") 
                 {
-                    h_name = std::string(hist.value().at("prefix"))+m_name+"_"+*it+"_h";
+                    h_name = m_name+"_"+std::string(hist.value().at("prefix"))+"_"+*it+"_h";
                     histos1d[h_name] = plot1D(h_name,
                             hist.value().at("xtitle"),
                             hist.value().at("bins"),
@@ -75,7 +73,7 @@ void HistoManager::DefineHistos(){
                     histos1d[h_name]->GetYaxis()->SetTitle(ytitle.c_str());
                 }
                 if (hist.value().at("type") == "hh") {
-                    h_name = std::string(hist.value().at("prefix"))+m_name+"_"+*it+"_hh";
+                    h_name = m_name+"_"+std::string(hist.value().at("prefix"))+"_"+*it+"_hh";
                     histos2d[h_name] = plot2D(h_name,
                             hist.value().at("xtitle"),
                             hist.value().at("binsX"),

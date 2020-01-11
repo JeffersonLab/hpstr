@@ -3,9 +3,8 @@
 #include "TCanvas.h"
 
 Svt2DBlHistos::Svt2DBlHistos(const std::string& inputName) {
-    std::cout << "[Svt2DBlHistos] Constructor" << std::endl;
     m_name = inputName;
-    HistoManager();
+    mmapper_ = new ModuleMapper();
 }
 
 Svt2DBlHistos::~Svt2DBlHistos() {
@@ -31,8 +30,11 @@ void Svt2DBlHistos::FillHistograms(std::vector<RawSvtHit*> *rawSvtHits_,float we
         RawSvtHit* rawSvtHit = rawSvtHits_->at(i);
         auto mod = std::to_string(rawSvtHit->getModule());
         auto lay = std::to_string(rawSvtHit->getLayer());
+        std::cout << "layer: " << lay << std::endl;
+        std::cout << "module: " << mod << std::endl;
         std::string swTag= mmapper_->getStringFromSw("ly"+lay+"_m"+mod);
-        std::string histokey = "SvtHybrids"+m_name+"_"+swTag+"_hh";
+        std::cout << swTag << std::endl;
+        std::string histokey = "baseline_"+swTag+"_hh";
         std::cout << histokey << std::endl;
         Fill2DHisto(histokey, 
         (float)rawSvtHit->getStrip(),

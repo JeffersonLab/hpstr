@@ -93,7 +93,7 @@ class HistoManager {
     protected:
 
         std::string m_name;
-        ModuleMapper* mmapper_;
+        ModuleMapper* mmapper_{nullptr};
 
         std::map<std::string, std::vector<double> > Axes;
 

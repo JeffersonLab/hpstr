@@ -43,7 +43,6 @@ class Svt2DBlHistos : public HistoManager{
 
         std::map<std::string, TGraphErrors*> baselineGraphs;
 
-        ModuleMapper *mmapper_{nullptr};
 };
 
 
