@@ -57,7 +57,7 @@ void HistoManager::DefineHistos(){
 
         //Get the extension of the name to decide the histogram to create
         //i.e. _h = TH1D, _hh = TH2D, _ge = TGraphErrors, _p = TProfile ...
-        if (hist.key() == "SvtHybrids") {
+        if (std::string(hist.key()).find("SvtHybrids") != std::string::npos) {
 
             for(std::vector<std::string>::iterator it = hybNames.begin(); it != hybNames.end(); ++it) {
                 if (hist.value().at("type") == "h") 

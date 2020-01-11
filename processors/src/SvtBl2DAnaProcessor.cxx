@@ -55,6 +55,7 @@ bool SvtBl2DAnaProcessor::process(IEvent* ievent) {
     }
     Event_number++;  
     return true; */
+    return true;
 }
 
 void SvtBl2DAnaProcessor::finalize() {
