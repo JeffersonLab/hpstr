@@ -11,6 +11,9 @@ print('Root file: %s' % root_file)
 
 p = HpstrConf.Process()
 
+p.run_mode = 0
+#p.max_events = 1000
+
 # Library containing processors
 p.add_library("libprocessors")
 
@@ -45,7 +48,5 @@ p.sequence = [header, rawsvt]
 
 p.input_files=[lcio_file]
 p.output_files = [root_file]
-
-#p.max_events = 1000
 
 p.printProcess()
