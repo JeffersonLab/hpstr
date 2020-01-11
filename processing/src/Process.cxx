@@ -14,12 +14,25 @@ Process::Process() {}
 
 //TODO Fix this better
 
-bool Process::processRootFiles() {
-    if ((input_files_[0]).find(".root") != std::string::npos)
-        return true;
+void Process::runOnHisto() {
+    try {
+        int cfile = 0;
+        for (auto ifile : input_files_) {
+            std::cout << "Processing file " << ifile << std::endl;
 
-    return false;
-}
+            for (auto module : sequence_) {
+                module->initialize(ifile, output_files_[cfile]);
+                module->process();
+                module->finalize();
+            }
+            //Pass to next file
+            ++cfile;
+
+        } //ifile
+    } catch (std::exception& e) {
+        std::cerr<<"Error:"<<e.what()<<std::endl;
+    }
+} //Process::runOnHisto
 
 void Process::runOnRoot() {
     try {
