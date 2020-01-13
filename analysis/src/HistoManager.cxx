@@ -71,6 +71,7 @@ void HistoManager::DefineHistos(){
 
                     std::string ytitle = hist.value().at("ytitle");
                     histos1d[h_name]->GetYaxis()->SetTitle(ytitle.c_str());
+                    std::cout << histos1d[h_name]->GetName() << std::endl;
                 }
                 if (hist.value().at("type") == "hh") {
                     h_name = m_name+"_"+std::string(hist.value().at("prefix"))+"_"+*it+"_hh";
