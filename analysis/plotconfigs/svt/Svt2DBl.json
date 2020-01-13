@@ -1,4 +1,22 @@
 {   
+    "svtHitN_h" : {
+            "xtitle" : "# of Strips",
+            "bins" : 4000,
+            "minX" : 0,
+            "maxX" : 4000,
+            "ytitle" : "Events"
+
+        },
+    "SvtHybridsHitMulti" : {
+            "prefix" : "hitN",
+            "type" : "h",
+            "xtitle" : "# of Strips",
+            "bins" : 200,
+            "minX" : 0,
+            "maxX" : 200,
+            "ytitle" : "Events"
+
+        },
     "SvtHybrids0" : {
             "prefix" : "baseline0",
             "type" : "hh",
@@ -76,27 +94,5 @@
             "minY" : 0,
             "maxY" : 20000
 
-        },
-    "SvtHybridsHitCount" : {
-            "prefix" : "Count",
-            "type" : "h",
-            "xtitle" : "# of Hits in Module (strips)",
-            "bins" : 200,
-            "minX" : 0,
-            "maxX" : 200,
-            "ytitle" : "Events"
-
-        },
-
-    "DetectorTotalHits_h" : {
-            "xtitle" : "# of Hits in Full Detector (strips)",
-            "bins" : 4000,
-            "minX" : 0,
-            "maxX" : 4000,
-            "ytitle" : "Events"
-
         }
-
-
-
 }

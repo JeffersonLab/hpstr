@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-export HPSTR_BASE=/u/re/alspellm/work/src/hpstr
+export HPSTR_BASE=/data/src/hpstr
 export PYTHONPATH=$HPSTR_BASE/pyplot:$HPSTR_BASE/install/lib/python:$PYTHONPATH
 
 export PATH=$HPSTR_BASE/install/bin:$PATH

@@ -28,36 +28,33 @@ void Svt2DBlHistos::FillHistograms(std::vector<RawSvtHit*> *rawSvtHits_,float we
         << " Number of RawSvtHits: " << nhits << std::endl;
 
     //Following Block counts the total number of hits each hybrid records per event
-    int matrix[4][15]= {0};
+    int svtHybMulti[4][15] = {0};
     for (int i = 0; i < nhits; i++)
     {
         RawSvtHit* rawSvtHit = rawSvtHits_->at(i);
         int mod = rawSvtHit->getModule();
         int lay = rawSvtHit->getLayer();
         //std::cout << "module: " << mod << std::endl;
-        matrix[mod][lay]++;
+        svtHybMulti[mod][lay]++;
 
     }
     for (int i =0; i < 4; i++)
     {
         for (int j = 1; j < 15; j++)
         {
-            if (j<9 && i>1)
-            {
-            }
-            else
+            if (!(j<9 && i>1))
             {   
-                std::string swTag= mmapper_->getStringFromSw("ly"+std::to_string(j)+"_m"+std::to_string(i));
-                Fill1DHisto("Count_"+swTag+"_h", matrix[i][j],weight);
+                std::string swTag = mmapper_->getStringFromSw("ly"+std::to_string(j)+"_m"+std::to_string(i));
+                Fill1DHisto("hitN_"+swTag+"_h", svtHybMulti[i][j],weight);
             }
         }
     }
 
-    Fill1DHisto("DetectorTotalHits_h", nhits,weight);
+    Fill1DHisto("svtHitN_h", nhits,weight);
     //End of counting block
 
     //Populates histograms for each hybrid
-    /*for (int i = 0; i < nhits; i++)
+    for (int i = 0; i < nhits; i++)
     {
         //std::cout << "hit: " << i << std::endl;
         RawSvtHit* rawSvtHit = rawSvtHits_->at(i);
@@ -77,7 +74,7 @@ void Svt2DBlHistos::FillHistograms(std::vector<RawSvtHit*> *rawSvtHits_,float we
                     (float)rawSvtHit->getADCs()[ss], 
                     weight);
         }
-    }*/
+    }
     Event_number++;
 
     
