@@ -61,8 +61,6 @@ void BumpHunter::initialize(TH1* histogram, double &mass_hypothesis) {
         window_start_bin = histogram->GetXaxis()->FindBin(lower_bound_);
         window_start_ = histogram->GetXaxis()->GetBinLowEdge(window_start_bin);
     }
-    std::cout << "[ BumpHunter ]: Setting starting edge of fit window to " 
-              << window_start_ << " MeV." << std::endl;
     
     // Find the end position of the window.  This is set to the lower edge of 
     // the bin closest to the calculated value. If the window edge falls above
@@ -71,27 +69,31 @@ void BumpHunter::initialize(TH1* histogram, double &mass_hypothesis) {
     // events. If the upper bound is shifted, reset the lower window bound.
     window_end_ = window_start_ + window_size_;
     int window_end_bin = histogram->GetXaxis()->FindBin(window_end_);
-    window_end_ = histogram->GetXaxis()->GetBinLowEdge(window_end_bin);
+    window_end_ = histogram->GetXaxis()->GetBinUpEdge(window_end_bin);
     if (window_end_ > upper_bound_) { 
         std::cout << "[ BumpHunter ]: Upper edge of window (" << window_end_ 
-                  << " MeV) is above upper bound." << std::endl;
+                  << " GeV) is above upper bound." << std::endl;
         window_end_bin = histogram->GetXaxis()->FindBin(upper_bound_);
         
         int last_bin_above = histogram->FindLastBinAbove(); 
         if (window_end_bin > last_bin_above) window_end_bin = last_bin_above; 
         
-        window_end_ = histogram->GetXaxis()->GetBinLowEdge(window_end_bin);
+        window_end_ = histogram->GetXaxis()->GetBinUpEdge(window_end_bin);
         window_start_bin = histogram->GetXaxis()->FindBin(window_end_ - window_size_);  
         window_start_ = histogram->GetXaxis()->GetBinLowEdge(window_start_bin);
     }
+    bins_ = window_end_bin - window_start_bin + 1;
+    std::cout << "[ BumpHunter ]: Setting starting edge of fit window to " 
+              << window_start_ << " GeV. Bin " << window_start_bin << std::endl;
     std::cout << "[ BumpHunter ]: Setting upper edge of fit window to " 
-              << window_end_ << " MeV." << std::endl;
+              << window_end_ << " GeV. Bin " << window_end_bin << std::endl;
+    std::cout << "[ BumpHunter ]: Total Number of Bins: " << bins_ << std::endl; 
 
     // Estimate the background normalization within the window by integrating
     // the histogram within the window range.  This should be close to the 
     // background yield in the case where there is no signal present.
     integral_ = histogram->Integral(window_start_bin, window_end_bin);
-    this->printDebug("Window integral: " + std::to_string(integral_)); 
+    std::cout << "[ BumpHunter ]: Integral within window: " << integral_ << std::endl; 
 }
 
 HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, bool skip_bkg_fit, bool skip_ul) { 
@@ -348,8 +350,8 @@ std::vector<TH1*> BumpHunter::generateToys(TH1* histogram, double n_toys, int se
     for (int itoy = 0; itoy < n_toys; ++itoy) { 
         std::string name = "invariant_mas_" + std::to_string(itoy); 
         if(itoy%100 == 0) std::cout << "Generating Toy " << itoy << std::endl;
-        TH1F* hist = new TH1F(name.c_str(), name.c_str(), histogram->GetNbinsX(), window_start_, window_end_);
-        for (int i =0; i < integral_; ++i) { 
+        TH1F* hist = new TH1F(name.c_str(), name.c_str(), bins_, window_start_, window_end_);
+        for (int i = 0; i < int(integral_); ++i) { 
             hist->Fill(bkg->GetRandom(window_start_, window_end_)); 
         }
         hists.push_back(hist); 
