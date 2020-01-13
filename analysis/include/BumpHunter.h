@@ -199,6 +199,42 @@ class BumpHunter {
 // TODO: Move the classes externally 
 //
 
+class ExpPol1BkgFunction { 
+    
+    public: 
+
+        /** Constructor */
+        ExpPol1BkgFunction(double mass_hypothesis, double window_size); 
+
+        double operator() (double* x, double* par); 
+
+    private: 
+
+        /** Mass hypothesis */
+        double mass_hypothesis_{0}; 
+
+        /** Size of the search window. */
+        double window_size_{0};
+
+         
+};
+
+class ExpPol1FullFunction { 
+    
+    public: 
+
+        /** Constructor */
+        ExpPol1FullFunction(double mass_hypothesis, double window_size); 
+
+        double operator() (double* x, double* par); 
+
+    private: 
+
+        double mass_hypothesis_{0}; 
+
+        double window_size_{0}; 
+};
+
 class ExpPol3BkgFunction { 
     
     public: 
@@ -219,6 +255,21 @@ class ExpPol3BkgFunction {
          
 };
 
+class ExpPol3FullFunction { 
+    
+    public: 
+
+        /** Constructor */
+        ExpPol3FullFunction(double mass_hypothesis, double window_size); 
+
+        double operator() (double* x, double* par); 
+
+    private: 
+
+        double mass_hypothesis_{0}; 
+
+        double window_size_{0}; 
+};
 
 class ExpPol5BkgFunction { 
     
@@ -257,21 +308,24 @@ class ExpPol5FullFunction {
         double window_size_{0}; 
 };
 
-
-class ExpPol3FullFunction { 
+class ExpPol7BkgFunction { 
     
     public: 
 
         /** Constructor */
-        ExpPol3FullFunction(double mass_hypothesis, double window_size); 
+        ExpPol7BkgFunction(double mass_hypothesis, double window_size); 
 
         double operator() (double* x, double* par); 
 
     private: 
 
+        /** Mass hypothesis */
         double mass_hypothesis_{0}; 
 
-        double window_size_{0}; 
+        /** Size of the search window. */
+        double window_size_{0};
+
+         
 };
 
 #endif // __BUMP_HUNTER_H__
