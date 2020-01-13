@@ -9,6 +9,11 @@
 #include <string>
 #include <map>
 #include <vector>
+#include "json.hpp"
+#include "ModuleMapper.h"
+
+//for convenience 
+using json = nlohmann::json;
 
 class HistoManager {
 
@@ -62,22 +67,33 @@ class HistoManager {
                 std::string ytitle, int nbinsY, double* axisY,
                 std::string ztitle, int nbinsZ, double* axisZ);
 
-
+        //Additional histograms that might be defined by hand
         virtual void Define3DHistos(){};
         virtual void Define2DHistos(){};
         virtual void Define1DHistos(){};
+        
+        //Definition of histograms from json config
+        virtual void DefineHistos();
+
+        void Fill1DHisto(const std::string& histoName, float value, float weight=1.);
+        void Fill2DHisto(const std::string& histoName, float valuex, float valuey, float weight=1.);
 
         virtual void GetHistosFromFile(TFile* inFile, const std::string& name,const std::string& folder = "");
 
         virtual void saveHistos(TFile* outF = nullptr,std::string folder = "");
-
+        
+        virtual void loadHistoConfig(const std::string histoConfigFile);
+        
         virtual void sumw2();
+
+        virtual void Clear();
 
         void debugMode(bool debug) {debug_ = debug;}
 
     protected:
 
         std::string m_name;
+        ModuleMapper* mmapper_{nullptr};
 
         std::map<std::string, std::vector<double> > Axes;
 
@@ -91,7 +107,7 @@ class HistoManager {
         typedef std::map<std::string, TH3F*>::iterator it3d;
 
         bool debug_{false};
-
+        json _h_configs;
 };
 
 

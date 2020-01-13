@@ -1,3 +1,4 @@
+from ctypes.util import find_library 
 
 class Processor: 
     
@@ -24,6 +25,12 @@ class Process:
         self.sequence = []
         self.libraries = []
         Process.lastProcess=self
+
+    def add_library(self,lib):
+        '''Add a libraries to the list of libraries to load, searching the appropriate paths to find it,
+        and adding the correct file extension'''
+        add_lib = find_library(lib)
+        self.libraries.append(add_lib)
 
     def printProcess(self):
         

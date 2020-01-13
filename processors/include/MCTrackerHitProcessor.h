@@ -51,16 +51,22 @@ class MCTrackerHitProcessor : public Processor {
         ~MCTrackerHitProcessor(); 
 
         /**
-         * Process the event and put new data products into it.
-         * @param event The Event to process.
+         * Callback for the Processor to configure itself from the given set of parameters.
+         * @param parameters ParameterSet for configuration.
          */
-        virtual bool process(IEvent* ievent);
+        virtual void configure(const ParameterSet& parameters);
 
         /**
          * Callback for the Processor to take any necessary
          * action when the processing of events starts.
          */
         virtual void initialize(TTree* tree);
+
+        /**
+         * Process the event and put new data products into it.
+         * @param event The Event to process.
+         */
+        virtual bool process(IEvent* ievent);
 
         /**
          * Callback for the Processor to take any necessary
@@ -70,8 +76,13 @@ class MCTrackerHitProcessor : public Processor {
 
     private: 
 
-        /** Container to hold all TrackerHit objects. */
-        TClonesArray* trackerhits_{nullptr}; 
+        /** Containers to hold all TrackerHit objects, and collection names. */
+        std::vector<MCTrackerHit*> trackerhits_; 
+        std::string   hitCollLcio_{"TrackerHits"};
+        std::string   hitCollRoot_{"TrackerHits"};
+
+        //Debug Level
+        int debug_{0};
 
 }; // MCTrackerHitProcessor
 

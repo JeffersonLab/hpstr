@@ -14,16 +14,34 @@ ECalDataProcessor::ECalDataProcessor(const std::string& name, Process& process)
 ECalDataProcessor::~ECalDataProcessor() { 
 }
 
+void ECalDataProcessor::configure(const ParameterSet& parameters) {
+
+    std::cout << "Configuring ECalDataProcessor" << std::endl;
+    try
+    {
+        debug_         = parameters.getInteger("debug");
+        hitCollLcio_   = parameters.getString("hitCollLcio");
+        hitCollRoot_   = parameters.getString("hitCollRoot");
+        clusCollLcio_  = parameters.getString("clusCollLcio");
+        clusCollRoot_  = parameters.getString("clusCollRoot");
+    }
+    catch (std::runtime_error& error)
+    {
+        std::cout << error.what() << std::endl;
+    }
+}
+
 void ECalDataProcessor::initialize(TTree* tree) {
-    tree->Branch(Collections::ECAL_HITS, &cal_hits_);
-    tree->Branch(Collections::ECAL_CLUSTERS, &clusters_);
+    tree->Branch(hitCollRoot_.c_str(), &cal_hits_);
+    tree->Branch(clusCollRoot_.c_str(), &clusters_);
 }
 
 bool ECalDataProcessor::process(IEvent* ievent) {
 
+    if(debug_ > 0) std::cout << "[ECalDataProcessor] Running Process" << std::endl;
     for(int i = 0; i < cal_hits_.size(); i++) delete cal_hits_.at(i);
-    for(int i = 0; i < clusters_.size(); i++) delete clusters_.at(i);
     cal_hits_.clear();
+    for(int i = 0; i < clusters_.size(); i++) delete clusters_.at(i);
     clusters_.clear();
     // Attempt to retrieve the collection "TimeCorrEcalHits" from the event. If
     // the collection doesn't exist, handle the DataNotAvailableCollection and
@@ -33,12 +51,10 @@ bool ECalDataProcessor::process(IEvent* ievent) {
     //dynamic cast
     Event* event = static_cast<Event*> (ievent);
     EVENT::LCCollection* hits{nullptr};
-    std::string hits_coll_name = Collections::ECAL_TIME_CORR_HITS; 
     try { 
-        hits =  static_cast<EVENT::LCCollection*>(event->getLCCollection(hits_coll_name)); 
+        hits =  static_cast<EVENT::LCCollection*>(event->getLCCollection(hitCollLcio_.c_str())); 
     } catch (EVENT::DataNotAvailableException e) { 
-        hits_coll_name = Collections::ECAL_HITS; 
-        hits =  static_cast<EVENT::LCCollection*>(event->getLCCollection(hits_coll_name)); 
+        std::cout << e.what() << std::endl;
     }
 
     // A calorimeter hit
@@ -80,14 +96,21 @@ bool ECalDataProcessor::process(IEvent* ievent) {
         cal_hits_.push_back(cal_hit);
 
     }
-    
+
     // Get the collection of Ecal clusters from the event
-    EVENT::LCCollection* clusters 
-        = static_cast<EVENT::LCCollection*>(event->getLCCollection(Collections::ECAL_CLUSTERS));
-    
+    EVENT::LCCollection* clusters{nullptr}; 
+    try 
+    { 
+        clusters = static_cast<EVENT::LCCollection*>(event->getLCCollection(clusCollLcio_.c_str()));
+    } 
+    catch (EVENT::DataNotAvailableException e) 
+    { 
+        std::cout << e.what() << std::endl;
+    }
+
     // Loop over all clusters and fill the event
     for(int icluster = 0; icluster < clusters->getNumberOfElements(); ++icluster) {
-        
+
         // Get an Ecal cluster from the LCIO collection
         IMPL::ClusterImpl* lc_cluster = static_cast<IMPL::ClusterImpl*>(clusters->getElementAt(icluster));
 
@@ -99,7 +122,7 @@ bool ECalDataProcessor::process(IEvent* ievent) {
 
         // Set the cluster energy
         cluster->setEnergy(lc_cluster->getEnergy());
-        
+
         // Get the ecal hits used to create the cluster
         EVENT::CalorimeterHitVec lc_hits = lc_cluster->getCalorimeterHits();
 
@@ -110,10 +133,10 @@ bool ECalDataProcessor::process(IEvent* ievent) {
         double stime = 0; 
         CalHit* seed_hit{nullptr}; 
         for(int ihit = 0; ihit < (int) lc_hits.size(); ++ihit) {
-            
+
             // Get an Ecal hit
             lc_hit  = static_cast<IMPL::CalorimeterHitImpl*>(lc_hits[ihit]); 
-        
+
             int id0=lc_hit->getCellID0();
             int id1=(int)(10.0*lc_hit->getTime());
 
@@ -123,7 +146,7 @@ bool ECalDataProcessor::process(IEvent* ievent) {
                 // Get the hit and add it to the cluster
                 CalHit* cal_hit = hit_map[std::make_pair(id0,id1)];
                 cluster->addHit(cal_hit);
-            
+
                 if (senergy < lc_hit->getEnergy()) { 
                     senergy = lc_hit->getEnergy(); 
                     seed_hit = cal_hit; 
@@ -140,6 +163,7 @@ bool ECalDataProcessor::process(IEvent* ievent) {
         clusters_.push_back(cluster);
     }
 
+    if(debug_ > 0) std::cout << "[ECalDataProcessor] End of process" << std::endl;
     return true;
 }
 

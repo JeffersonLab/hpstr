@@ -12,25 +12,34 @@ MCAnaProcessor::~MCAnaProcessor(){}
 
 
 void MCAnaProcessor::configure(const ParameterSet& parameters) {
-
+    std::cout << "Configuring MCAnaProcessor" << std::endl;
+    try
+    {
+        debug_           = parameters.getInteger("debug");
+        anaName_         = parameters.getString("anaName");
+        partColl_        = parameters.getString("partColl");
+        trkrHitColl_     = parameters.getString("trkrHitColl");
+        ecalHitColl_     = parameters.getString("ecalHitColl");
+        histCfgFilename_ = parameters.getString("histCfg");
+    }
+    catch (std::runtime_error& error)
+    {
+        std::cout << error.what() << std::endl;
+    }
 }
 
 void MCAnaProcessor::initialize(TTree* tree) {
     tree_= tree;
     // init histos
-    histos = new MCAnaHistos("hitOnTrack_2D");
-    histos->Define1DHistos();
+    histos = new MCAnaHistos(anaName_);
+    histos->loadHistoConfig(histCfgFilename_);
+    histos->DefineHistos();
     //histos->Define2DHistos();
 
-    // init TClonesArrays
-    mcParts_    = new TClonesArray("MCParticle"  , 1000000);
-    mcTrkrHits_ = new TClonesArray("MCTrackerHit", 1000000);
-    mcEcalHits_ = new TClonesArray("MCEcalHit"   , 1000000);
-
     // init TTree
-    tree_->SetBranchAddress(Collections::MC_PARTICLES, &mcParts_, &bmcParts_);
-    tree_->SetBranchAddress(Collections::MC_TRACKER_HITS, &mcTrkrHits_, &bmcTrkrHits_);
-    tree_->SetBranchAddress(Collections::MC_ECAL_HITS, &mcEcalHits_, &bmcEcalHits_);
+    tree_->SetBranchAddress(partColl_.c_str(), &mcParts_, &bmcParts_);
+    tree_->SetBranchAddress(trkrHitColl_.c_str(), &mcTrkrHits_, &bmcTrkrHits_);
+    tree_->SetBranchAddress(ecalHitColl_.c_str(), &mcEcalHits_, &bmcEcalHits_);
 
 }
 
@@ -45,7 +54,7 @@ bool MCAnaProcessor::process(IEvent* ievent) {
 
 void MCAnaProcessor::finalize() {
 
-    histos->saveHistos(outF_,"");
+    histos->saveHistos(outF_, anaName_);
     delete histos;
     histos = nullptr;
 }

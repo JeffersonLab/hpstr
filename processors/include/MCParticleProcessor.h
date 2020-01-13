@@ -57,7 +57,7 @@ class MCParticleProcessor : public Processor {
         ~MCParticleProcessor();
 
         /**
-         * Callback for the EventProcessor to configure itself from the given set of parameters.
+         * Callback for the Processor to configure itself from the given set of parameters.
          * @param parameters ParameterSet for configuration.
          */
         virtual void configure(const ParameterSet& parameters);
@@ -83,7 +83,14 @@ class MCParticleProcessor : public Processor {
     private:
 
         /** Map to hold all particle collections. */
-        TClonesArray* mc_particles_; 
+        std::vector<MCParticle*> mc_particles_{}; 
+        std::string mcPartCollLcio_{"MCParticle"};
+        std::string mcPartCollRoot_{"MCParticle"};
+
+
+        //Debug
+        int debug_{0};
+
 
 }; // MCParticleProcessor
 

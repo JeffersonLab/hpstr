@@ -65,6 +65,12 @@ class TrackingProcessor : public Processor {
         virtual bool process(IEvent* ievent);
 
         /**
+         * Configure the Processor
+         * @param parameters The configuration parameters
+         */
+        virtual void configure(const ParameterSet& parameters);
+
+        /**
          * Callback for the Processor to take any necessary
          * action when the processing of events starts.
          */
@@ -78,15 +84,24 @@ class TrackingProcessor : public Processor {
 
     private: 
 
-        /** Container to hold all TrackerHit objects. */
+        /** Container to hold all TrackerHit objects, and collection names. */
         std::vector<TrackerHit*> hits_{}; 
+        std::string trkhitCollRoot_{"RotatedHelicalOnTrackHits"};
 
-        /** Container to hold all Track objects. */
+        /** Container to hold all Track objects, and collection names. */
         std::vector<Track*> tracks_{};
+        std::string trkCollLcio_{"GBLTracks"};
+        std::string kinkRelCollLcio_{"GBLKinkDataRelations"};
+        std::string trkRelCollLcio_{"TrackDataRelations"};
+        std::string trkCollRoot_{"GBLTracks"};
 
-        /** Container to hold all raw hits objecs. */
+        /** Container to hold all raw hits objecs, and collection names. */
         std::vector<RawSvtHit*> rawhits_{};
-        bool _debug{false};
+        std::string hitFitsCollLcio_{"SVTFittedRawTrackerHits"};
+        std::string rawhitCollRoot_{"SVTRawHitsOnTrack"};
+
+        //Debug Level
+        int debug_{false};
 
 
 
