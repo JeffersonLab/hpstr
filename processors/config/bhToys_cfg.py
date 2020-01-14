@@ -1,26 +1,20 @@
 import HpstrConf
 import sys
+import baseConfig
 
-from optparse import OptionParser
-
-parser = OptionParser()
-parser.add_option("-i", "--inFile", type="string", dest="inFilename",
-        help="Input filename.", metavar="inFilename", default="cutflows.root")
-parser.add_option("-d", "--outDir", type="string", dest="outDir",
-        help="Specify the output directory.", metavar="outDir", default=".")
-parser.add_option("-m", "--mass", type="int", dest="mass_hypo",
+baseConfig.parser.add_option("-m", "--mass", type="int", dest="mass_hypo",
         help="Mass hypothesis in MeV.", metavar="mass_hypo", default=145)
-parser.add_option("-p", "--poly", type="int", dest="poly_order",
+baseConfig.parser.add_option("-p", "--poly", type="int", dest="poly_order",
         help="Polynomial order of background model.", metavar="poly_order", default=3)
-parser.add_option("-w", "--win", type="int", dest="win_factor",
+baseConfig.parser.add_option("-w", "--win", type="int", dest="win_factor",
         help="Window factor for determining fit window size.", metavar="win_factor", default=11)
-parser.add_option("-t", "--toys", type="int", dest="nToys",
+baseConfig.parser.add_option("-t", "--toys", type="int", dest="nToys",
         help="Number of toy spectra to throw.", metavar="nToys", default=100)
-parser.add_option("-s", "--spec", type="string", dest="mass_spec",
+baseConfig.parser.add_option("-s", "--spec", type="string", dest="mass_spec",
         help="Name of mass spectrum histogram.", metavar="mass_spec", 
         default="mass_tweak__p_tot_min_cut")
 
-(options, args) = parser.parse_args()
+(options, args) = baseConfig.parser.parse_args()
 
 # Use the input file to set the output file name
 histo_file = options.inFilename
