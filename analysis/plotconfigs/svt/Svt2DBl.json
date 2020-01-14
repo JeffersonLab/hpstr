@@ -1,9 +1,9 @@
 {   
     "svtHitN_h" : {
             "xtitle" : "# of Strips",
-            "bins" : 4000,
+            "bins" : 10000,
             "minX" : 0,
-            "maxX" : 4000,
+            "maxX" : 10000,
             "ytitle" : "Events"
 
         },
@@ -11,9 +11,9 @@
             "prefix" : "hitN",
             "type" : "h",
             "xtitle" : "# of Strips",
-            "bins" : 200,
+            "bins" : 4000,
             "minX" : 0,
-            "maxX" : 200,
+            "maxX" : 4000,
             "ytitle" : "Events"
 
         },
