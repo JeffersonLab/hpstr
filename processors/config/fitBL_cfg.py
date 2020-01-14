@@ -16,7 +16,7 @@ parser.add_option("-f", "--folder", type="string", dest="folder",
 
 # Use the input file to set the output file name
 histo_file = options.inFilename
-run_number = os.path.basename(histo_file)
+run_number = histo_file[:-5]
 fit_file = '%s/%s_SvtBaselineFit.root'%(options.outDir, run_number)
 
 p = HpstrConf.Process()

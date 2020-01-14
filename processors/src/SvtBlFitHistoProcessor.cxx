@@ -28,7 +28,7 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     inFile = new TFile(inFilename.c_str());
     outF_ = new TFile(outFilename.c_str(),"RECREATE");
 
-    utils::Get2DHistosFromFile(histos2d, histos2dk,inFile, folder, "0");
+    utils::Get2DHistosFromFile(histos2d, histos2dk,inFile, folder, "L");
 
     for (unsigned int ih2d = 0; ih2d<histos2dk.size();++ih2d) {
         //for (unsigned int ih2d = 0; ih2d<1;++ih2d) 

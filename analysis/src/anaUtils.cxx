@@ -486,7 +486,7 @@ void utils::Get2DHistosFromFile(std::map<std::string, TH2F*>& histos2d,std::vect
         std::string classType = key->GetClassName();
         std::string s(key->GetName());
         if (classType.find("TH2")!=std::string::npos)
-            if (s.find(Form("timesample_%s", timesample.c_str())) != std::string::npos) {
+            if (s.find(Form("baseline0_%s", timesample.c_str())) != std::string::npos) {
                // if (i<1){ //!!!This is just to limit the number of histos processed, for dev purposes!!!
                     histos2dk.push_back(s);
                     histos2d[key->GetName()] = (TH2F*) key->ReadObj();
