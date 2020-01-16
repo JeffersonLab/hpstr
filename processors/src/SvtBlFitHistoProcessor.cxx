@@ -1,5 +1,5 @@
 #include "SvtBlFitHistoProcessor.h"
-
+#include <string>
 SvtBlFitHistoProcessor::SvtBlFitHistoProcessor(const std::string& name, Process& process)
     : Processor(name, process) {
     }
@@ -12,7 +12,8 @@ void SvtBlFitHistoProcessor::configure(const ParameterSet& parameters) {
     std::cout << "[SvtBlFitHistoProcessor] Configuring" << std::endl;
     try
     {
-        folder = parameters.getString("folder");
+        outDir_ = parameters.getString("outDir");
+        histCfgFilename_ = parameters.getString("histCfg");
     }
     catch (std::runtime_error& error)
     {
@@ -25,45 +26,73 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
 
     std::cout << "initializing SvtBlFitHistoProcessor" << std::endl;
     //InFile containing 2D histograms from the SvtCondAnaProcessor
-    inFile = new TFile(inFilename.c_str());
+    inF_ = new TFile(inFilename.c_str());
     outF_ = new TFile(outFilename.c_str(),"RECREATE");
-
-    utils::Get2DHistosFromFile(histos2d, histos2dk,inFile, folder, "L");
-
-    for (unsigned int ih2d = 0; ih2d<histos2dk.size();++ih2d) {
-        //for (unsigned int ih2d = 0; ih2d<1;++ih2d) 
-        std::string histoname = histos2d[histos2dk[ih2d]]->GetName();
-        histoname=histoname.substr(0,histoname.size()-1);
-        std::cout << histoname << std::endl;
-        graphname_m = "mean_"  + histoname;
-        graphname_w = "width_" + histoname;
-        graphname_n = "norm_" + histoname;
-        graphname_l = "FitRangeLower_" + histoname;
-        graphname_u = "FitRangeUpper_" + histoname;
-
-        //Create 1D histograms to store fit values for each channel on each sensor. These fit values determined in process method, using profileYwithIterativeGaussFit function 
-
-        histoMean[histoname]  = new TH1D(graphname_m.c_str(),graphname_m.c_str(), histos2d[histos2dk[ih2d]]->GetNbinsX(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmin(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmax());
-
-        histoWidth[histoname] = new TH1D(graphname_w.c_str(),graphname_w.c_str(), histos2d[histos2dk[ih2d]]->GetNbinsX(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmin(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmax());
-
-        histoNorm[histoname] = new TH1D(graphname_n.c_str(),graphname_n.c_str(), histos2d[histos2dk[ih2d]]->GetNbinsX(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmin(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmax());
-
-        histoFitRangeLower[histoname] = new TH1D(graphname_l.c_str(),graphname_l.c_str(), histos2d[histos2dk[ih2d]]->GetNbinsX(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmin(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmax());
-
-        histoFitRangeUpper[histoname] = new TH1D(graphname_u.c_str(),graphname_u.c_str(), histos2d[histos2dk[ih2d]]->GetNbinsX(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmin(),histos2d[histos2dk[ih2d]]->GetXaxis()->GetXmax());
-
-
-
-    }
+    
+    outputHistos_ = new BlFitHistos("raw_hits");
+    inputHistos_ = new HistoManager("");
+    std::cout << "[BlFitHistos] Loading 2D Histos" << std::endl;
+    inputHistos_->GetHistosFromFile(inF_, "");
+    std::cout << "[BlFitHistos] Loading json file" << std::endl;
+    outputHistos_->loadHistoConfig(histCfgFilename_); 
+    std::cout << "[BlFitHistos] Creating Histograms for Fit Parameters" << std::endl;
+    outputHistos_->DefineHistos();
+    
 }
 
 
 bool SvtBlFitHistoProcessor::process() { 
 
-    std::cout << "[SvtBlFitHistoProcessor] process running" << std::endl;
+    //Given a list of names for the input 2d histograms, and a list of names for the 
+    //output 1d fit parameter histograms, the 2d and 1d hisgorams are connected
+    //based upon having matching substrings, starting from the last instance of "L" 
+    //which SHOULD represent the start of the hybrid name. If the Hybrid names match
+    //between the 2d and 1d histograms, they can be used in profileYwithIterativeGaussFit
 
-    // use PF's tweaked fit code to perform Gauss Fit on ADC counts for every channel of a sensor
+    std::cout << "[SvtBlFitHistoProcessor] process running" << std::endl;
+    for (vector<string>::iterator jj = inputHistos_->histos2dNamesfromTFile.begin();
+            jj != inputHistos_->histos2dNamesfromTFile.end(); ++jj)
+    {
+        std::string inputname = *jj;
+        std::string FitRangeLowerkey;
+        std::string FitRangeUpperkey;
+        std::string meankey;
+        std::string widthkey;
+        std::string normkey;
+
+        for (vector<string>::iterator it = outputHistos_->histos1dNamesfromJson.begin();
+                it != outputHistos_->histos1dNamesfromJson.end(); ++it) 
+        {
+            std::string fitparname = *it;
+            size_t L = fitparname.find_last_of("L");
+            std::string tag = fitparname.substr(L);
+            if (inputname.find(tag) != std::string::npos) {
+                //Substrings below must match the names in the JSON file
+                if (fitparname.find("FitRangeLower") != std::string::npos) 
+                    FitRangeLowerkey = fitparname;
+                if (fitparname.find("FitRangeUpper") != std::string::npos) 
+                    FitRangeUpperkey = fitparname;
+                 if (fitparname.find("mean") != std::string::npos) 
+                    meankey = fitparname;
+                 if (fitparname.find("width") != std::string::npos) 
+                    widthkey = fitparname;
+                if (fitparname.find("norm") != std::string::npos) 
+                    normkey = fitparname;
+
+            }
+        }
+        std::cout << inputHistos_->get2dHisto(inputname)->GetName() << std::endl; 
+        HistogramHelpers::profileYwithIterativeGaussFit(inputHistos_->get2dHisto(inputname),
+                outputHistos_->get1dHisto(meankey),
+                outputHistos_->get1dHisto(widthkey),
+                outputHistos_->get1dHisto(normkey),
+                outputHistos_->get1dHisto(FitRangeLowerkey),
+                outputHistos_->get1dHisto(FitRangeUpperkey),
+                binning_, 0);
+                
+    }
+
+    /*// use PF's tweaked fit code to perform Gauss Fit on ADC counts for every channel of a sensor
     for (unsigned int ih2d = 0; ih2d<histos2dk.size();++ih2d) {     
     //for (unsigned int ih2d=0; ih2d<2; ++ih2d) {
         std::string histoname = histos2d[histos2dk[ih2d]]->GetName();
@@ -84,6 +113,7 @@ bool SvtBlFitHistoProcessor::process() {
         histoFitRangeLower[histoname]->Write(graphname_l.c_str());
         histoFitRangeUpper[histoname]->Write(graphname_u.c_str());
     }
+    */
     return true;
 
 }
@@ -91,7 +121,12 @@ bool SvtBlFitHistoProcessor::process() {
 void SvtBlFitHistoProcessor::finalize() {
 
     std::cout << "finalizing SvtBlFitHistoProcessor" << std::endl;
+    outputHistos_->saveHistos(outF_,"");
     outF_->Close();
+    delete outputHistos_;
+    outputHistos_ = nullptr;
+    delete inputHistos_;
+    inputHistos_ = nullptr;
 
 }
 

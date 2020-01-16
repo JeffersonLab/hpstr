@@ -11,6 +11,8 @@
 #include "IEvent.h"
 #include "anaUtils.h"
 #include "HistogramHelpers.h"
+#include "BlFitHistos.h"
+#include "HistoManager.h"
 
 
 class SvtBlFitHistoProcessor : public Processor {
@@ -35,37 +37,22 @@ class SvtBlFitHistoProcessor : public Processor {
 
     private:
 
-        TFile* inFile{nullptr};
-        
-        int binning = 1;
+        TFile* inF_{nullptr};
+        //parameter defining json file
+        std::string histCfgFilename_;
+
+        //Histogram handlers
+        BlFitHistos* outputHistos_{nullptr};
+        HistoManager* inputHistos_{nullptr};
+
+        //binning for profileYIterativeGauss
+        int binning_{1};
+
         //Maps for sensor histograms and channels
-        std::vector<std::string> histos2dk{};
-        std::map<std::string, TH2F*> histos2d{};
-        std::map<std::string, TH1D*> singleChannel_h{};
-
-        //1D histogram names for each fit parameter for each sensor
-        std::string graphname_m{""};
-        std::string graphname_w{""};
-        std::string graphname_n{""};
-        std::string graphname_l{""};
-        std::string graphname_u{""};
-
-        //histograms that hold fit parameters for each channel
-        std::map<std::string, TH1D*> histoMean{}; 
-        std::map<std::string, TH1D*> histoWidth{};
-        std::map<std::string, TH1D*> histoNorm{};
-        std::map<std::string, TH1D*> histoFitRangeLower{};
-        std::map<std::string, TH1D*> histoFitRangeUpper{};
-
-        /*TH1D* histoMean{nullptr};
-        TH1D* histoWidth{nullptr};
-        TH1D* histoNorm{nullptr};
-        TH1D* histoFitRangeLower{nullptr};
-        TH1D* histoFitRangeUpper{nullptr};
-        */
+        std::vector<std::string> histos2dk_{};
 
         //Folder where input histograms file is located
-        std::string folder{"."};
+        std::string outDir_{"."};
 
 
 };

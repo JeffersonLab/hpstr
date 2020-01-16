@@ -8,16 +8,11 @@ parser.add_option("-i", "--inFile", type="string", dest="inFilename",
         help="Input filename.", metavar="inFilename", default="")
 parser.add_option("-d", "--outDir", type="string", dest="outDir",
         help="Specify the output directory.", metavar="outDir", default=".")
-parser.add_option("-r", "--run", type="string", dest="runNum",
-        help="Specify the Run File.", metavar="runNum", default="")
-parser.add_option("-f", "--folder", type="string", dest="folder",
-        help="Specify the folder that input File is located.", metavar="folder", default=".")
 (options, args) = parser.parse_args()
 
 # Use the input file to set the output file name
 histo_file = options.inFilename
-run_number = histo_file[:-5]
-fit_file = '%s/%s_SvtBaselineFit.root'%(options.outDir, run_number)
+fit_file = '%s/%s_SvtBaselineFit.root'%(options.outDir, histo_file[:-5])
 
 p = HpstrConf.Process()
 
@@ -36,8 +31,8 @@ fitBL = HpstrConf.Processor('fitBL', 'SvtBlFitHistoProcessor')
 ###############################
 #   Processor Configuration   #
 ###############################
-
-fitBL.parameters["folder"] = options.folder
+fitBL.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/SvtBlFits.json'
+fitBL.parameters["outDir"] = options.outDir
 
 # Sequence which the processors will run.
 p.sequence = [fitBL]

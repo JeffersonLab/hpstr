@@ -24,15 +24,15 @@ class HistoManager {
 
         virtual ~HistoManager();
 
-        TH3F* get3dHisto(const std::string& str) {
+        TH3D* get3dHisto(const std::string& str) {
             return histos3d[str];
         }
 
-        TH2F* get2dHisto(const std::string& str) {
+        TH2D* get2dHisto(const std::string& str) {
             return histos2d[str];
         }
 
-        TH1F* get1dHisto(const std::string& str) {
+        TH1D* get1dHisto(const std::string& str) {
             return histos1d[str];
         }
 
@@ -89,6 +89,11 @@ class HistoManager {
         virtual void Clear();
 
         void debugMode(bool debug) {debug_ = debug;}
+
+        std::vector<std::string> histos1dNamesfromTFile;
+        std::vector<std::string> histos2dNamesfromTFile;
+        std::vector<std::string> histos1dNamesfromJson;
+        std::vector<std::string> histos2dNamesfromJson;
 
     protected:
 
