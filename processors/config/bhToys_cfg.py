@@ -2,6 +2,8 @@ import HpstrConf
 import sys
 import baseConfig
 
+parser = baseConfig.parser
+
 baseConfig.parser.add_option("-m", "--mass", type="int", dest="mass_hypo",
         help="Mass hypothesis in MeV.", metavar="mass_hypo", default=145)
 baseConfig.parser.add_option("-p", "--poly", type="int", dest="poly_order",
