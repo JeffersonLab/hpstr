@@ -79,6 +79,8 @@ class VertexProcessor : public Processor {
         std::string vtxCollLcio_{"UnconstrainedV0Vertices"};
         std::string vtxCollRoot_{"UnconstrainedV0Vertices"};
         std::string partCollRoot_{"ParticlesOnVertices"};
+        std::string kinkRelCollLcio_{"GBLKinkDataRelations"};
+        std::string trkRelCollLcio_{"TrackDataRelations"};
 
         //Debug Level
         int debug_{0};

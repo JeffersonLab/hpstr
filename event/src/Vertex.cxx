@@ -71,6 +71,9 @@ void Vertex::setVtxParameters(const std::vector<float>& parameters) {
         //Invariant Mass
         invM_    = parameters_[0];
         invMerr_ = parameters_[7];
+        
+        //Vtx momentum
+        p_ = p1_ + p2_ ; 
     }
     else if (parameters_.size() == 24 ) //0 V0PzErr, 1 invMass, 2 V0Pz, 3 vXErr, 4 V0Py, 5 V0Px, 6 V0PErr, 7 V0TargProjY, 8 vZErr, 9 V0TargProjXErr, 10 vYErr, 11 V0TargProjYErr, 12 invMassError, 13 p1X, 14 p2Y, 15 p2X, 16 V0P, 17 p1Z, 18 p1Y, 19 p2Z, 20 V0TargProjX, 21 layerCode, 22 V0PxErr, 23 V0PyErr
     {
@@ -83,6 +86,8 @@ void Vertex::setVtxParameters(const std::vector<float>& parameters) {
         p2_.SetX(parameters_[15]);
         p2_.SetY(parameters_[14]);
         p2_.SetZ(parameters_[19]);
+
+        p_ = p1_ + p2_;
 
         invM_    = parameters_[1];
         invMerr_ = parameters_[12];
