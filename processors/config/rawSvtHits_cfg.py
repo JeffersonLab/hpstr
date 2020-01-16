@@ -4,7 +4,7 @@ import sys
 # Use the input file to set the output file name
 lcio_file = sys.argv[1].strip()
 root_file = '%s.root' % lcio_file[:-6]
-root_file = 'testRun.root'
+#root_file = 'testRun.root'
 
 print('LCIO file: %s' % lcio_file)
 print('Root file: %s' % root_file)
@@ -15,7 +15,7 @@ p.run_mode = 0
 #p.max_events = 1000
 
 # Library containing processors
-p.add_library("libprocessors")
+p.libraries.append("libprocessors.so")
 
 ###############################
 #          Processors         #
