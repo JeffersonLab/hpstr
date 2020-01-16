@@ -89,7 +89,7 @@ class Vertex : public TObject {
         /** Set the probability */
         void setProbability(const float probability) {probability_ = probability;}
 
-        TRefArray* getParticles(); 
+        TRefArray* getParticles(){return parts_;}; 
 
         /** Returns the covariance matrix as a simple vector of values */
         const std::vector<float>& getCovariance() const {return covariance_;}
@@ -139,13 +139,15 @@ class Vertex : public TObject {
         double   getP2Y      () const {return p2_.Y();}
         double   getP2Z      () const {return p2_.Z();}
 
+        TVector3 getP        () const {return p_;}
+
         ClassDef(Vertex,1);
 
     private:
 
         double chi2_{-999};
         int ndf_{-999};  
-        TVector3 pos_,p1_,p2_,p1e_,p2e_;
+        TVector3 pos_,p1_,p2_,p_;
 
         float invM_{-999};
         float invMerr_{-999};

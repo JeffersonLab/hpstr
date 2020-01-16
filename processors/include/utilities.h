@@ -39,8 +39,10 @@ namespace utils {
     bool hasCollection(EVENT::LCEvent* lc_event,const std::string& collection);
 
     Vertex* buildVertex(EVENT::Vertex* lc_vertex);
-
-    Particle* buildParticle(EVENT::ReconstructedParticle* lc_particle);
+    
+    Particle* buildParticle(EVENT::ReconstructedParticle* lc_particle, 
+                            EVENT::LCCollection* gbl_kink_data,
+                            EVENT::LCCollection* track_data);
 
     Track* buildTrack(EVENT::Track* lc_track, 
             EVENT::LCCollection* gbl_kink_data, 
