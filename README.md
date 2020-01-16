@@ -1,4 +1,4 @@
-updated: 13 Jan 2020
+updated: 15 Jan 2020
 
 # Heavy Photon Search Toolkit for Reconstruction
 
@@ -25,6 +25,7 @@ cd build
 cmake3 -DCMAKE_INSTALL_PREFIX=../install/ -DLCIO_DIR=$LCIO_DIR  ../src/hpstr/
 make -j4 install
 ```
+To compile with debug information, just add -DCMAKE_BUILD_TYPE=Debug to the cmake3 command
 
 ## Usage
 
