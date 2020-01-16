@@ -4,19 +4,19 @@ import baseConfig
 
 parser = baseConfig.parser
 
-baseConfig.parser.add_option("-m", "--mass", type="int", dest="mass_hypo",
+parser.add_option("-m", "--mass", type="int", dest="mass_hypo",
         help="Mass hypothesis in MeV.", metavar="mass_hypo", default=145)
-baseConfig.parser.add_option("-p", "--poly", type="int", dest="poly_order",
+parser.add_option("-p", "--poly", type="int", dest="poly_order",
         help="Polynomial order of background model.", metavar="poly_order", default=3)
-baseConfig.parser.add_option("-w", "--win", type="int", dest="win_factor",
+parser.add_option("-w", "--win", type="int", dest="win_factor",
         help="Window factor for determining fit window size.", metavar="win_factor", default=11)
-baseConfig.parser.add_option("-t", "--toys", type="int", dest="nToys",
+parser.add_option("-t", "--toys", type="int", dest="nToys",
         help="Number of toy spectra to throw.", metavar="nToys", default=100)
-baseConfig.parser.add_option("-s", "--spec", type="string", dest="mass_spec",
+parser.add_option("-s", "--spec", type="string", dest="mass_spec",
         help="Name of mass spectrum histogram.", metavar="mass_spec", 
         default="mass_tweak__p_tot_min_cut")
 
-(options, args) = baseConfig.parser.parse_args()
+(options, args) = parser.parse_args()
 
 # Use the input file to set the output file name
 histo_file = options.inFilename
