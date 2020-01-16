@@ -59,7 +59,7 @@ class Particle : public TObject {
          * @return An array of references to the calorimeter clusters associated
          *         with this particle
          */
-        CalCluster getClusters() const { return cluster_; };
+        CalCluster getCluster() const { return cluster_; };
 
         /**
          * Add a reference to an Particle object.  This will be used to

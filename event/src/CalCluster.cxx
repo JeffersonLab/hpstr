@@ -12,14 +12,17 @@ CalCluster::CalCluster()
     : TObject() { 
 }
 
+
+//TODO Fix the relation between particles->CalClusters (same as tracks)
 CalCluster::~CalCluster() {
     Clear();
-    delete hits_;   
+    //delete hits_;   
 }
+
 
 void CalCluster::Clear(Option_t* /*option*/) {
     TObject::Clear();
-    hits_->Delete();
+    //hits_->Delete();
     seed_hit_ = nullptr; 
     n_hits_ = 0;
 }
