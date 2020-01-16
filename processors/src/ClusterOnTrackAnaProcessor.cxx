@@ -39,7 +39,7 @@ void ClusterOnTrackAnaProcessor::initialize(TTree* tree) {
 }
 
 bool ClusterOnTrackAnaProcessor::process(IEvent* ievent) {
-
+    
 
     for (int itrack = 0; itrack<tracks_->size();itrack++) {
         Track *track = tracks_->at(itrack);
