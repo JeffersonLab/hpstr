@@ -3,7 +3,9 @@ import sys
 import os
 import baseConfig
 
-(options,args) = baseConfig.parser.parse_args()
+parser = baseConfig.parser
+
+(options,args) = parser.parse_args()
 
 
 # Use the input file to set the output file name
