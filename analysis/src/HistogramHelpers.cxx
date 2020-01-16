@@ -220,7 +220,7 @@ void HistogramHelpers::profileZwithIterativeGaussFit(TH3* hist, TH2* mu_graph, T
 
 
 //-----------------------------------------------------------------------------
-void HistogramHelpers::profileYwithIterativeGaussFit(TH2* hist, TH1F* mu_graph, TH1F* sigma_graph, TH1F* norm_graph, TH1F* FitRangeLower_graph, TH1F* FitRangeUpper_graph, int num_bins,int m_PrintLevel)
+void HistogramHelpers::profileYwithIterativeGaussFit(TH2* hist, TH1D* mu_graph, TH1D* sigma_graph, TH1D* norm_graph, TH1D* FitRangeLower_graph, TH1D* FitRangeUpper_graph, int num_bins,int m_PrintLevel)
 {
 
     if (!hist) {

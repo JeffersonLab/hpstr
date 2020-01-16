@@ -24,15 +24,15 @@ class HistoManager {
 
         virtual ~HistoManager();
 
-        TH3D* get3dHisto(const std::string& str) {
+        TH3F* get3dHisto(const std::string& str) {
             return histos3d[str];
         }
 
-        TH2D* get2dHisto(const std::string& str) {
+        TH2F* get2dHisto(const std::string& str) {
             return histos2d[str];
         }
 
-        TH1D* get1dHisto(const std::string& str) {
+        TH1F* get1dHisto(const std::string& str) {
             return histos1d[str];
         }
 
