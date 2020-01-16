@@ -21,6 +21,8 @@ class HpsFitResult {
       
         TFitResultPtr getBkgFitResult() { return bkg_result_; }; 
         
+        TFitResultPtr getBkgToysFitResult() { return bkg_toy_result_; }; 
+        
         TFitResultPtr getCompFitResult() { return comp_result_; }; 
 
         void addLikelihood(double likelihood) { _likelihoods.push_back(likelihood); }
@@ -78,6 +80,12 @@ class HpsFitResult {
          */
         void setBkgFitResult(TFitResultPtr bkg_result) { bkg_result_ = bkg_result; };
 
+        /** 
+         * Set the result from the background only fit for generating toys.
+         *
+         * @param result Result from the background only fit with toy model.
+         */
+        void setBkgToysFitResult(TFitResultPtr bkg_toy_result) { bkg_toy_result_ = bkg_toy_result; };
 
         /** 
          * Set the result from the signal+background only fit.
@@ -127,6 +135,9 @@ class HpsFitResult {
 
         /** Result from fit using a background model only. */
         TFitResultPtr bkg_result_{nullptr}; 
+
+        /** Result from fit using a background model for generating toys. */
+        TFitResultPtr bkg_toy_result_{nullptr}; 
 
         /** Result from fit using a signal+background model. */
         TFitResultPtr comp_result_{nullptr}; 
