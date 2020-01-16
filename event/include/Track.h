@@ -96,7 +96,7 @@ class Track : public TObject {
         double getChi2Ndf() const { 
             //avoid check for 0
             if (ndf_ > 1e-6) 
-                return chi2_;
+                return chi2_ / ndf_;
             else  
                 return -999;
         };
