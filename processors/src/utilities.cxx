@@ -53,9 +53,12 @@ Vertex* utils::buildVertex(EVENT::Vertex* lc_vertex) {
     return vertex;
 }
 
-Particle* utils::buildParticle(EVENT::ReconstructedParticle* lc_particle) 
+Particle* utils::buildParticle(EVENT::ReconstructedParticle* lc_particle,
+                               EVENT::LCCollection* gbl_kink_data,
+                               EVENT::LCCollection* track_data)
+    
 { 
-
+    
     if (!lc_particle) 
         return nullptr;
 
@@ -82,7 +85,7 @@ Particle* utils::buildParticle(EVENT::ReconstructedParticle* lc_particle)
     part->setPDG(lc_particle->getParticleIDUsed()->getPDG());
 
     // Set the Track for the HpsParticle
-    part->setTrack(utils::buildTrack(lc_particle->getTracks()[0], nullptr, nullptr));
+    part->setTrack(utils::buildTrack(lc_particle->getTracks()[0], gbl_kink_data, track_data));
 
     // Set the Track for the HpsParticle
     if (lc_particle->getClusters().size() > 0)

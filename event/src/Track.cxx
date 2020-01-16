@@ -12,14 +12,18 @@ Track::Track()
     : TObject() { 
     }
 
+//TODO Fix particle->track->tracker hits relation. If Track is object of Particle then tracker_hits in on the stack and delete make it crash?
 Track::~Track() {
     Clear();
-    delete tracker_hits_;
+    //delete tracker_hits_;
 }
 
+
+//TODO:: Why is tracker_hist->Delete() crashes.
 void Track::Clear(Option_t* /* option */) {
-    TObject::Clear(); 
-    tracker_hits_->Delete();
+    TObject::Clear();
+    //if (tracker_hits_) 
+    //   tracker_hits_->Delete();
     memset(isolation_, 0, sizeof(isolation_)); 
     n_hits_ = 0; 
 }
