@@ -61,8 +61,6 @@ void BumpHunter::initialize(TH1* histogram, double &mass_hypothesis) {
         window_start_bin = histogram->GetXaxis()->FindBin(lower_bound_);
         window_start_ = histogram->GetXaxis()->GetBinLowEdge(window_start_bin);
     }
-    std::cout << "[ BumpHunter ]: Setting starting edge of fit window to " 
-              << window_start_ << " MeV." << std::endl;
     
     // Find the end position of the window.  This is set to the lower edge of 
     // the bin closest to the calculated value. If the window edge falls above
@@ -71,27 +69,31 @@ void BumpHunter::initialize(TH1* histogram, double &mass_hypothesis) {
     // events. If the upper bound is shifted, reset the lower window bound.
     window_end_ = window_start_ + window_size_;
     int window_end_bin = histogram->GetXaxis()->FindBin(window_end_);
-    window_end_ = histogram->GetXaxis()->GetBinLowEdge(window_end_bin);
+    window_end_ = histogram->GetXaxis()->GetBinUpEdge(window_end_bin);
     if (window_end_ > upper_bound_) { 
         std::cout << "[ BumpHunter ]: Upper edge of window (" << window_end_ 
-                  << " MeV) is above upper bound." << std::endl;
+                  << " GeV) is above upper bound." << std::endl;
         window_end_bin = histogram->GetXaxis()->FindBin(upper_bound_);
         
         int last_bin_above = histogram->FindLastBinAbove(); 
         if (window_end_bin > last_bin_above) window_end_bin = last_bin_above; 
         
-        window_end_ = histogram->GetXaxis()->GetBinLowEdge(window_end_bin);
+        window_end_ = histogram->GetXaxis()->GetBinUpEdge(window_end_bin);
         window_start_bin = histogram->GetXaxis()->FindBin(window_end_ - window_size_);  
         window_start_ = histogram->GetXaxis()->GetBinLowEdge(window_start_bin);
     }
+    bins_ = window_end_bin - window_start_bin + 1;
+    std::cout << "[ BumpHunter ]: Setting starting edge of fit window to " 
+              << window_start_ << " GeV. Bin " << window_start_bin << std::endl;
     std::cout << "[ BumpHunter ]: Setting upper edge of fit window to " 
-              << window_end_ << " MeV." << std::endl;
+              << window_end_ << " GeV. Bin " << window_end_bin << std::endl;
+    std::cout << "[ BumpHunter ]: Total Number of Bins: " << bins_ << std::endl; 
 
     // Estimate the background normalization within the window by integrating
     // the histogram within the window range.  This should be close to the 
     // background yield in the case where there is no signal present.
     integral_ = histogram->Integral(window_start_bin, window_end_bin);
-    this->printDebug("Window integral: " + std::to_string(integral_)); 
+    std::cout << "[ BumpHunter ]: Integral within window: " << integral_ << std::endl; 
 }
 
 HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, bool skip_bkg_fit, bool skip_ul) { 
@@ -110,13 +112,34 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         // are used to get an intial estimate of the background parameters.  
         std::cout << "*************************************************" << std::endl;
         std::cout << "*************************************************" << std::endl;
-        std::cout << "[ BumpHunter ]: Performing a background only fit." << std::endl;
+        std::cout << "[ BumpHunter ]:  Performing background only fits." << std::endl;
         std::cout << "*************************************************" << std::endl;
         std::cout << "*************************************************" << std::endl;
    
         //
         TF1* bkg{nullptr}; 
-        if (poly_order_ == 3) { 
+        TF1* bkg_toys{nullptr}; 
+        if (poly_order_ == 1) 
+        { 
+            
+            //
+            ExpPol1BkgFunction bkg_func(mass_hypothesis, window_end_ - window_start_); 
+            bkg = new TF1("bkg", bkg_func, -1, 1, 2);
+
+            //
+            bkg->SetParameters(4,0);
+            bkg->SetParNames("pol0","pol1");
+
+            //Set bkg function fit for toys to come from next polynomial order
+            ExpPol3BkgFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_); 
+            bkg_toys = new TF1("bkg_toys", bkg_toy_func, -1, 1, 4);
+
+            //
+            bkg_toys->SetParameters(4,0,0,0);
+            bkg_toys->SetParNames("pol0","pol1","pol2","pol3");
+        } 
+        else if (poly_order_ == 3) 
+        { 
             
             //
             ExpPol3BkgFunction bkg_func(mass_hypothesis, window_end_ - window_start_); 
@@ -125,7 +148,17 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
             //
             bkg->SetParameters(4,0,0,0);
             bkg->SetParNames("pol0","pol1","pol2","pol3");
-        } else { 
+
+            //
+            ExpPol5BkgFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_); 
+            bkg_toys = new TF1("bkg_toys", bkg_toy_func, -1, 1, 6);
+
+            //
+            bkg_toys->SetParameters(4,0,0,0,0,0);
+            bkg_toys->SetParNames("pol0","pol1","pol2","pol3","pol4","pol5");
+        } 
+        else 
+        { 
             //
             ExpPol5BkgFunction bkg_func(mass_hypothesis, window_end_ - window_start_); 
             bkg = new TF1("bkg", bkg_func, -1, 1, 6);
@@ -133,11 +166,21 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
             //
             bkg->SetParameters(4,0,0,0,0,0);
             bkg->SetParNames("pol0","pol1","pol2","pol3","pol4","pol5");
+
+            //
+            ExpPol7BkgFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_); 
+            bkg_toys = new TF1("bkg_toys", bkg_toy_func, -1, 1, 8);
+
+            //
+            bkg_toys->SetParameters(4,0,0,0,0,0,0,0);
+            bkg_toys->SetParNames("pol0","pol1","pol2","pol3","pol4","pol5","pol6","pol7");
         }
 
         TFitResultPtr result = histogram->Fit("bkg", "LES+", "", window_start_, window_end_); 
         fit_result->setBkgFitResult(result); 
         //result->Print();
+        TFitResultPtr result_toys = histogram->Fit("bkg_toys", "LES+", "", window_start_, window_end_); 
+        fit_result->setBkgToysFitResult(result_toys); 
 
     }
          
@@ -148,8 +191,18 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
     std::cout << "***************************************************" << std::endl;
     
     TF1* full{nullptr};  
-    if (poly_order_ == 3) { 
-        
+    if (poly_order_ == 1) 
+    { 
+        ExpPol1FullFunction full_func(mass_hypothesis, window_end_ - window_start_); 
+        full = new TF1("full", full_func, -1, 1, 5);
+    
+        full->SetParameters(4,0,0,0,0);
+        full->SetParNames("pol0","pol1","signal norm","mean","sigma");
+        full->FixParameter(3,0.0); 
+        full->FixParameter(4, mass_resolution_); 
+    } 
+    else if (poly_order_ == 3) 
+    { 
         ExpPol3FullFunction full_func(mass_hypothesis, window_end_ - window_start_); 
         full = new TF1("full", full_func, -1, 1, 7);
     
@@ -157,9 +210,9 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         full->SetParNames("pol0","pol1","pol2","pol3","signal norm","mean","sigma");
         full->FixParameter(5,0.0); 
         full->FixParameter(6, mass_resolution_); 
-  
-    } else { 
-  
+    } 
+    else 
+    { 
         ExpPol5FullFunction full_func(mass_hypothesis, window_end_ - window_start_); 
         full = new TF1("full", full_func, -1, 1, 9);
     
@@ -167,7 +220,6 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         full->SetParNames("pol0","pol1","pol2","pol3","pol4","pol5","signal norm","mean","sigma");
         full->FixParameter(7,0.0); 
         full->FixParameter(8, mass_resolution_); 
-
     }    
        
     TFitResultPtr full_result = histogram->Fit("full", "LES+", "", window_start_, window_end_);
@@ -176,6 +228,7 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
 
     this->calculatePValue(fit_result);
     std::cout << "[ BumpHunter ]: Bkg Fit Status: " << fit_result->getBkgFitResult()->IsValid() <<  std::endl;
+    std::cout << "[ BumpHunter ]: Bkg Toys Fit Status: " << fit_result->getBkgToysFitResult()->IsValid() <<  std::endl;
     std::cout << "[ BumpHunter ]: Full Fit Status: " << fit_result->getCompFitResult()->IsValid() <<  std::endl;
     if((!skip_ul) && full_result->IsValid() ) this->getUpperLimit(histogram, fit_result);
     
@@ -342,15 +395,15 @@ std::vector<TH1*> BumpHunter::generateToys(TH1* histogram, double n_toys, int se
 
     gRandom->SetSeed(seed); 
 
-    TF1* bkg = histogram->GetFunction("bkg"); 
+    TF1* bkg_toys = histogram->GetFunction("bkg_toys"); 
 
     std::vector<TH1*> hists;
     for (int itoy = 0; itoy < n_toys; ++itoy) { 
-        std::string name = "invariant_mas_" + std::to_string(itoy); 
+        std::string name = "invariant_mass_" + std::to_string(itoy); 
         if(itoy%100 == 0) std::cout << "Generating Toy " << itoy << std::endl;
-        TH1F* hist = new TH1F(name.c_str(), name.c_str(), histogram->GetNbinsX(), window_start_, window_end_);
-        for (int i =0; i < integral_; ++i) { 
-            hist->Fill(bkg->GetRandom(window_start_, window_end_)); 
+        TH1F* hist = new TH1F(name.c_str(), name.c_str(), bins_, window_start_, window_end_);
+        for (int i = 0; i < int(integral_); ++i) { 
+            hist->Fill(bkg_toys->GetRandom(window_start_, window_end_)); 
         }
         hists.push_back(hist); 
     }
@@ -400,6 +453,46 @@ double BumpHunter::correctMass(double mass) {
 // TODO: Move the classes externally
 //
 
+ExpPol1BkgFunction::ExpPol1BkgFunction(double mass_hypothesis, double window_size)
+    : mass_hypothesis_(mass_hypothesis), 
+      window_size_(window_size) { 
+}
+
+double ExpPol1BkgFunction::operator() (double* x, double* par) { 
+    
+    double xp = (x[0] - mass_hypothesis_)/(window_size_*2.0); 
+  
+    // Chebyshevs between given limits
+    double t0 = par[0];
+    double t1 = par[1]*xp;
+  
+    double pol = t0+t1;
+
+    return TMath::Power(10,pol);
+}
+
+ExpPol1FullFunction::ExpPol1FullFunction(double mass_hypothesis, double window_size)
+    : mass_hypothesis_(mass_hypothesis), 
+      window_size_(window_size) { 
+}
+
+
+double ExpPol1FullFunction::operator() (double* x, double* par) { 
+    
+    double xp = (x[0] - mass_hypothesis_)/(window_size_*2.0); 
+  
+    // Chebyshevs between given limits
+    double t0 = par[0];
+    double t1 = par[1]*xp;
+  
+    double pol = t0+t1;
+
+    double gauss = (1.0)/(sqrt(2.0*TMath::Pi()*pow(par[4],2))) *
+        TMath::Exp( - pow((xp-par[3]),2)/(2.0*pow(par[4],2)) );
+  
+    return TMath::Power(10,pol)+0.0001*par[2]*gauss;
+}
+
 ExpPol3BkgFunction::ExpPol3BkgFunction(double mass_hypothesis, double window_size)
     : mass_hypothesis_(mass_hypothesis), 
       window_size_(window_size) { 
@@ -416,28 +509,6 @@ double ExpPol3BkgFunction::operator() (double* x, double* par) {
     double t3 = par[3]*(4*xp*xp*xp - 3*xp);
   
     double pol = t0+t1+t2+t3;
-
-    return TMath::Power(10,pol);
-}
-
-ExpPol5BkgFunction::ExpPol5BkgFunction(double mass_hypothesis, double window_size)
-    : mass_hypothesis_(mass_hypothesis), 
-      window_size_(window_size) { 
-}
-
-double ExpPol5BkgFunction::operator() (double* x, double* par) { 
-    
-    double xp = (x[0] - mass_hypothesis_)/(window_size_*2.0); 
-  
-    // Chebyshevs between given limits
-    double t0 = par[0];
-    double t1 = par[1]*xp;
-    double t2 = par[2]*(2*xp*xp - 1);
-    double t3 = par[3]*(4*xp*xp*xp - 3*xp);
-    double t4 = par[4]*(8*xp*xp*xp*xp - 8*xp*xp + 1);
-    double t5 = par[5]*(16*xp*xp*xp*xp*xp - 20*xp*xp*xp + 5*xp);
-  
-    double pol = t0+t1+t2+t3+t4+t5;
 
     return TMath::Power(10,pol);
 }
@@ -466,11 +537,32 @@ double ExpPol3FullFunction::operator() (double* x, double* par) {
     return TMath::Power(10,pol)+0.0001*par[4]*gauss;
 }
 
-ExpPol5FullFunction::ExpPol5FullFunction(double mass_hypothesis, double window_size)
+ExpPol5BkgFunction::ExpPol5BkgFunction(double mass_hypothesis, double window_size)
     : mass_hypothesis_(mass_hypothesis), 
       window_size_(window_size) { 
 }
 
+double ExpPol5BkgFunction::operator() (double* x, double* par) { 
+    
+    double xp = (x[0] - mass_hypothesis_)/(window_size_*2.0); 
+  
+    // Chebyshevs between given limits
+    double t0 = par[0];
+    double t1 = par[1]*xp;
+    double t2 = par[2]*(2*xp*xp - 1);
+    double t3 = par[3]*(4*xp*xp*xp - 3*xp);
+    double t4 = par[4]*(8*xp*xp*xp*xp - 8*xp*xp + 1);
+    double t5 = par[5]*(16*xp*xp*xp*xp*xp - 20*xp*xp*xp + 5*xp);
+  
+    double pol = t0+t1+t2+t3+t4+t5;
+
+    return TMath::Power(10,pol);
+}
+
+ExpPol5FullFunction::ExpPol5FullFunction(double mass_hypothesis, double window_size)
+    : mass_hypothesis_(mass_hypothesis), 
+      window_size_(window_size) { 
+}
 
 double ExpPol5FullFunction::operator() (double* x, double* par) { 
     
@@ -491,3 +583,28 @@ double ExpPol5FullFunction::operator() (double* x, double* par) {
   
     return TMath::Power(10,pol)+0.0001*par[6]*gauss;
 }
+
+ExpPol7BkgFunction::ExpPol7BkgFunction(double mass_hypothesis, double window_size)
+    : mass_hypothesis_(mass_hypothesis), 
+      window_size_(window_size) { 
+}
+
+double ExpPol7BkgFunction::operator() (double* x, double* par) { 
+    
+    double xp = (x[0] - mass_hypothesis_)/(window_size_*2.0); 
+  
+    // Chebyshevs between given limits
+    double t0 = par[0];
+    double t1 = par[1]*xp;
+    double t2 = par[2]*(2*xp*xp - 1);
+    double t3 = par[3]*(4*xp*xp*xp - 3*xp);
+    double t4 = par[4]*(8*xp*xp*xp*xp - 8*xp*xp + 1);
+    double t5 = par[5]*(16*xp*xp*xp*xp*xp - 20*xp*xp*xp + 5*xp);
+    double t6 = par[6]*(32*xp*xp*xp*xp*xp*xp - 48*xp*xp*xp*xp + 18*xp*xp - 1);
+    double t7 = par[7]*(64*xp*xp*xp*xp*xp*xp*xp - 112*xp*xp*xp*xp*xp + 56*xp*xp*xp - 7*xp);
+  
+    double pol = t0+t1+t2+t3+t4+t5+t6+t7;
+
+    return TMath::Power(10,pol);
+}
+
