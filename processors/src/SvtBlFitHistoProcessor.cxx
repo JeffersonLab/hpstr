@@ -30,7 +30,7 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     outF_ = new TFile(outFilename.c_str(),"RECREATE");
     
     outputHistos_ = new BlFitHistos("raw_hits");
-    inputHistos_ = new HistoManager("");
+    inputHistos_ = new HistoManager("baseline0");
     std::cout << "[BlFitHistos] Loading 2D Histos" << std::endl;
     inputHistos_->GetHistosFromFile(inF_, "");
     std::cout << "[BlFitHistos] Loading json file" << std::endl;

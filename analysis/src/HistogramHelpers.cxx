@@ -220,7 +220,7 @@ void HistogramHelpers::profileZwithIterativeGaussFit(TH3* hist, TH2* mu_graph, T
 
 
 //-----------------------------------------------------------------------------
-void HistogramHelpers::profileYwithIterativeGaussFit(TH2* hist, TH1D* mu_graph, TH1D* sigma_graph, TH1D* norm_graph, TH1D* FitRangeLower_graph, TH1D* FitRangeUpper_graph, int num_bins,int m_PrintLevel)
+void HistogramHelpers::profileYwithIterativeGaussFit(TH2* hist, TH1F* mu_graph, TH1F* sigma_graph, TH1F* norm_graph, TH1F* FitRangeLower_graph, TH1F* FitRangeUpper_graph, int num_bins,int m_PrintLevel)
 {
 
     if (!hist) {
@@ -265,7 +265,6 @@ void HistogramHelpers::profileYwithIterativeGaussFit(TH2* hist, TH1D* mu_graph, 
         if (num_bins == 1) index--;
 
         current_proj = hist->ProjectionY(Form("%s_projection_%i",hist->GetName(),index),i,i+num_bins-1);
-        std::cout << current_proj << std:: endl;
         double mu, mu_err, sigma, sigma_err, norm, FitRangeUpper,FitRangeLower;
 
         if(current_proj->GetEntries() < minEntries) {
@@ -289,11 +288,11 @@ void HistogramHelpers::profileYwithIterativeGaussFit(TH2* hist, TH1D* mu_graph, 
         double value_x = (hist->GetXaxis()->GetBinLowEdge(i) + hist->GetXaxis()->GetBinUpEdge(i+num_bins-1))/2;
 
         //Important!! Use Fill to increment the graph with each iteration, or SetBinContent to replace contents...
-        if (sigma_graph) sigma_graph->Fill(value_x, sigma);
-        if (mu_graph) mu_graph->Fill(value_x, mu);
-        if(norm_graph) norm_graph->Fill(value_x,norm);
-        if(FitRangeLower) FitRangeLower_graph->Fill(value_x,FitRangeLower);
-        if(FitRangeUpper) FitRangeUpper_graph->Fill(value_x,FitRangeUpper);
+        if (sigma_graph) sigma_graph->Fill((float)value_x,(float) sigma);
+        if (mu_graph) mu_graph->Fill((float)value_x,(float) mu);
+        if(norm_graph) norm_graph->Fill((float)value_x,(float)norm);
+        if(FitRangeLower) FitRangeLower_graph->Fill((float)value_x,(float)FitRangeLower);
+        if(FitRangeUpper) FitRangeUpper_graph->Fill((float)value_x,(float)FitRangeUpper);
 
         errs_mu[index + 1] = mu_err;
         errs_sigma[index + 1] = sigma_err;
