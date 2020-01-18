@@ -47,11 +47,10 @@ private:
     std::string vtxColl_{"Vertices"};
     std::string trkColl_{"GBLTracks"};
     TTree* tree_{nullptr};
-
+    
     std::shared_ptr<TrackHistos> _vtx_histos;
     std::string histoCfg_{""};
-    
-    
+    double timeOffset_{-999};
     
     //Debug level
     int debug_{0};
