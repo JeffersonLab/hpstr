@@ -25,6 +25,7 @@ void VertexAnaProcessor::configure(const ParameterSet& parameters) {
         trkColl_ = parameters.getString("trkColl");
         selectionCfg_   = parameters.getString("vtxSelectionjson");
         histoCfg_ = parameters.getString("histoCfg");
+        timeOffset_ = parameters.getDouble("CalTimeOffset");
     }
     catch (std::runtime_error& error) 
     {
@@ -99,9 +100,9 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
     if (!vtxSelector->passCutLt("posTrkCluMatch_lt",pos->getGoodnessOfPID(),weight))
         return false;
     
-
-    double corr_eleClusterTime = ele->getCluster().getTime() - 56;
-    double corr_posClusterTime = pos->getCluster().getTime() - 56;
+    
+    double corr_eleClusterTime = ele->getCluster().getTime() - timeOffset_;
+    double corr_posClusterTime = pos->getCluster().getTime() - timeOffset_;
     
     if (!vtxSelector->passCutLt("eleTrkCluTimeDiff_lt",fabs(ele_trk.getTrackTime() - corr_eleClusterTime),weight))
         return false;

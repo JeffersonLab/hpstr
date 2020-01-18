@@ -38,6 +38,22 @@ recoana.parameters["vtxColl"] = "UnconstrainedV0Vertices"
 recoana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/vertexSelection.json'
 recoana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/basicTracking.json"
 
+
+CalTimeOffset=-999
+
+if (options.isData==1):
+    CalTimeOffset=56
+    print "Running on data file: Setting CalTimeOffset %d"  % CalTimeOffset
+    
+elif (options.isData==0):
+    CalTimeOffset=43
+    print "Running on MC file: Setting CalTimeOffset %d"  % CalTimeOffset
+else:
+    print "Specify which type of ntuple you are running on: -t 1 [for Data] / -t 0 [for MC]"
+
+
+recoana.parameters["CalTimeOffset"]=CalTimeOffset
+
 # Sequence which the processors will run.
 p.sequence = [recoana]
 
