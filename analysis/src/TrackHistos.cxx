@@ -93,6 +93,10 @@ void TrackHistos::Fill1DHistograms(Track *track, Vertex* vtx, float weight ) {
         Fill1DHisto("vtx_sigma_Z_h",sqrt(vtx->getCovariance()[5]),weight);
         Fill1DHisto("vtx_InvM_h"   ,vtx->getInvMass(),weight);
         Fill1DHisto("vtx_InvMErr_Z_h",vtx->getInvMassErr(),weight);
+        Fill1DHisto("vtx_px_h",vtx->getP().X());
+        Fill1DHisto("vtx_py_h",vtx->getP().Y());
+        Fill1DHisto("vtx_pz_h",vtx->getP().Z());
+        Fill1DHisto("vtx_p_h" ,vtx->getP().Mag());
         
     }
   
@@ -104,6 +108,9 @@ void TrackHistos::Fill2DHistograms(Track* track, Vertex* vtx, float weight) {
     
     if (track) {
         Fill2DHisto("tanlambda_vs_phi0_hh",track->getPhi(),track->getTanLambda(), weight);
+    }
+    if (vtx) {
+        Fill2DHisto("vtx_InvM_vtx_z_hh",vtx->getInvMass(),vtx->getZ(),weight);
     }
 }
 

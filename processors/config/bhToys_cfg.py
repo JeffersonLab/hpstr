@@ -1,13 +1,9 @@
 import HpstrConf
 import sys
+import baseConfig
 
-from optparse import OptionParser
+parser = baseConfig.parser
 
-parser = OptionParser()
-parser.add_option("-i", "--inFile", type="string", dest="inFilename",
-        help="Input filename.", metavar="inFilename", default="cutflows.root")
-parser.add_option("-d", "--outDir", type="string", dest="outDir",
-        help="Specify the output directory.", metavar="outDir", default=".")
 parser.add_option("-m", "--mass", type="int", dest="mass_hypo",
         help="Mass hypothesis in MeV.", metavar="mass_hypo", default=145)
 parser.add_option("-p", "--poly", type="int", dest="poly_order",
