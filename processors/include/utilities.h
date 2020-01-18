@@ -48,6 +48,9 @@ namespace utils {
             EVENT::LCCollection* gbl_kink_data, 
             EVENT::LCCollection* track_data);
 
+
+    bool IsSameTrack(Track* trk1, Track* trk2);
+
     RawSvtHit* buildRawHit(EVENT::TrackerRawData* rawTracker_hit,
             EVENT::LCCollection* raw_svt_hit_fits);
 
