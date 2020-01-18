@@ -93,6 +93,20 @@ bool TrackingProcessor::process(IEvent* ievent) {
         std::cout << e.what() << std::endl;
     }
 
+
+    //Initialize map of shared hits
+    std::map <int, std::vector<int> > SharedHits;
+    //TODO: can we do better? (innermost)
+    std::map <int, bool> SharedHitsLy0;
+    std::map <int, bool> SharedHitsLy1;
+    
+    for (int itrack = 0; itrack < tracks->getNumberOfElements();++itrack) {
+        SharedHits[itrack]   = {};
+        SharedHitsLy0[itrack] = false;
+        SharedHitsLy1[itrack] = false;
+    }
+
+    
     // Loop over all the LCIO Tracks and add them to the HPS event.
     for (int itrack = 0; itrack < tracks->getNumberOfElements(); ++itrack) {
 
@@ -142,10 +156,37 @@ bool TrackingProcessor::process(IEvent* ievent) {
             // Add a reference to the hit
             track->addHit(tracker_hit);
             hits_.push_back(tracker_hit);
+            
+            //Get shared Hits information
+            for (int jtrack = itrack+1; jtrack < tracks->getNumberOfElements(); ++jtrack) {
+                
+                EVENT::Track* j_lc_track = static_cast<EVENT::Track*>(tracks->getElementAt(jtrack));
+                if (utils::isUsedByTrack(tracker_hit,j_lc_track)) {
+                    //The hit is not already in the shared list
+                    if (std::find(SharedHits[itrack].begin(), SharedHits[itrack].end(),tracker_hit->getID()) == SharedHits[itrack].end()) {
+                        SharedHits[itrack].push_back(tracker_hit->getID());
+                        if (tracker_hit->getLayer() == 0 )
+                            SharedHitsLy0[itrack] = true;
+                        if (tracker_hit->getLayer() == 1 ) 
+                            SharedHitsLy1[itrack] = true;
+                    }
+                    if (std::find(SharedHits[jtrack].begin(), SharedHits[jtrack].end(),tracker_hit->getID()) == SharedHits[jtrack].end()) {
+                        SharedHits[jtrack].push_back(tracker_hit->getID());
+                        if (tracker_hit->getLayer() == 0 ) 
+                            SharedHitsLy0[jtrack] = true;
+                        if (tracker_hit->getLayer() == 1 ) 
+                            SharedHitsLy1[jtrack] = true;
+                    }
+                } // found shared hit
+            } // loop on j>i tracks
         }//tracker hits
+        
+        track->setNShared(SharedHits[itrack].size());
+        track->setSharedLy0(SharedHitsLy0[itrack]);
+        track->setSharedLy1(SharedHitsLy1[itrack]);
         tracks_.push_back(track);
     }// tracks
-
+    
     //delete
     if (rawTracker_hit_fits_nav) {
         delete rawTracker_hit_fits_nav; rawTracker_hit_fits_nav = nullptr;}
