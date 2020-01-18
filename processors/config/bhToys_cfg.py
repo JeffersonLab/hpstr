@@ -17,8 +17,11 @@ parser.add_option("-w", "--win", type="int", dest="win_factor",
 parser.add_option("-t", "--toys", type="int", dest="nToys",
         help="Number of toy spectra to throw.", metavar="nToys", default=100)
 parser.add_option("-s", "--spec", type="string", dest="mass_spec",
-        help="Name of mass spectrum histogram.", metavar="mass_spec", 
+        help="Name of mass spectrum histogram.", metavar="mass_spec",
         default="mass_tweak__p_tot_min_cut")
+parser.add_option("-a", "--sig", type="int", dest="toy_sig_samples",
+        help="Number of signal events to add to toy models.", metavar="toy_sig_samples",
+        default=0)
 
 (options, args) = parser.parse_args()
 
@@ -50,13 +53,14 @@ bhtoys = HpstrConf.Processor('bhtoys', 'BhToysHistoProcessor')
 #   Processor Configuration   #
 ###############################
 #MCParticles
-bhtoys.parameters["debug"] = 1 
+bhtoys.parameters["debug"] = 1
 bhtoys.parameters["massSpectrum"] = options.mass_spec
 bhtoys.parameters["mass_hypo"] = mass_hypo
 bhtoys.parameters["poly_order"] = poly_order
 bhtoys.parameters["win_factor"] = win_factor
 bhtoys.parameters["seed"] = 0
 bhtoys.parameters["nToys"] = options.nToys
+bhtoys.parameters["toy_sig_samples"] = toy_sig_samples;
 
 # Sequence which the processors will run.
 p.sequence = [bhtoys]
