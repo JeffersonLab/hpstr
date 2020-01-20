@@ -26,7 +26,7 @@ histo_file = options.inFilename
 mass_hypo = options.mass_hypo/1000.0
 poly_order = options.poly_order
 win_factor = options.win_factor
-toy_file = '%s/bhToys_m%iw%ip%i.root'%(options.outDir, options.mass_hypo, win_factor, poly_order)
+toy_file = '%s/bhToys_m%iw%ip%is%i.root'%(options.outDir, options.mass_hypo, win_factor, poly_order, options.toy_sig_samples)
 
 print('Histo file: %s' % histo_file)
 print('Toy file: %s' % toy_file)
