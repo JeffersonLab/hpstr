@@ -407,7 +407,6 @@ std::vector<TH1*> BumpHunter::generateToys(TH1* histogram, double n_toys, int se
         std::string name = "invariant_mass_" + std::to_string(itoy);
         if(itoy%100 == 0) {
             std::cout << "Generating Toy " << itoy << std::endl;
-            std::cout << "    toy_sig_samples = " << toy_sig_samples << std::endl;
         }
         TH1F* hist = new TH1F(name.c_str(), name.c_str(), bins_, window_start_, window_end_);
         for (int i = 0; i < int(integral_); ++i) { 
@@ -416,7 +415,6 @@ std::vector<TH1*> BumpHunter::generateToys(TH1* histogram, double n_toys, int se
         for(int i = 0; i < toy_sig_samples; i++) {
             double sig_sample = sig_toys->GetRandom(window_start_, window_end_);
             hist->Fill(sig_sample);
-            if(itoy % 100 == 0 && i % 1000 == 0) { std::cout << "        sig sample: " << sig_sample <<  std::endl; }
         }
         hists.push_back(hist); 
     }
