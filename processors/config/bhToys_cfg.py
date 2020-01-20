@@ -56,7 +56,7 @@ bhtoys.parameters["poly_order"] = poly_order
 bhtoys.parameters["win_factor"] = win_factor
 bhtoys.parameters["seed"] = 0
 bhtoys.parameters["nToys"] = options.nToys
-bhtoys.parameters["toy_sig_samples"] = toy_sig_samples;
+bhtoys.parameters["toy_sig_samples"] = options.toy_sig_samples;
 
 # Sequence which the processors will run.
 p.sequence = [bhtoys]

@@ -393,8 +393,8 @@ void BumpHunter::getUpperLimit(TH1* histogram, HpsFitResult* result) {
 
 std::vector<TH1*> BumpHunter::generateToys(TH1* histogram, double n_toys, int seed, int toy_sig_samples) { 
 
-    gRandom->SetSeed(seed); 
-
+    gRandom->SetSeed(seed);
+    
     TF1* bkg_toys = histogram->GetFunction("bkg_toys");
     TF1* sig_toys = new TF1("sig_toys", "gaus(0)", window_start_, window_end_);
     // AMPLITUDE = 1 / sqrt(SIGMA * 2 * pi)
@@ -404,14 +404,19 @@ std::vector<TH1*> BumpHunter::generateToys(TH1* histogram, double n_toys, int se
 
     std::vector<TH1*> hists;
     for (int itoy = 0; itoy < n_toys; ++itoy) { 
-        std::string name = "invariant_mass_" + std::to_string(itoy); 
-        if(itoy%100 == 0) std::cout << "Generating Toy " << itoy << std::endl;
+        std::string name = "invariant_mass_" + std::to_string(itoy);
+        if(itoy%100 == 0) {
+            std::cout << "Generating Toy " << itoy << std::endl;
+            std::cout << "    toy_sig_samples = " << toy_sig_samples << std::endl;
+        }
         TH1F* hist = new TH1F(name.c_str(), name.c_str(), bins_, window_start_, window_end_);
         for (int i = 0; i < int(integral_); ++i) { 
             hist->Fill(bkg_toys->GetRandom(window_start_, window_end_)); 
         }
         for(int i = 0; i < toy_sig_samples; i++) {
-            hist->Fill(sig_toys->GetRandom(window_start_, window_end_));
+            double sig_sample = sig_toys->GetRandom(window_start_, window_end_);
+            hist->Fill(sig_sample);
+            if(itoy % 100 == 0 && i % 1000 == 0) { std::cout << "        sig sample: " << sig_sample <<  std::endl; }
         }
         hists.push_back(hist); 
     }
