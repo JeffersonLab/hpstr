@@ -47,6 +47,8 @@ private:
     std::string vtxColl_{"Vertices"};
     std::string trkColl_{"GBLTracks"};
     TTree* tree_{nullptr};
+
+    TH1F* nvtxs_;
     
     std::shared_ptr<TrackHistos> _vtx_histos;
     std::string histoCfg_{""};
