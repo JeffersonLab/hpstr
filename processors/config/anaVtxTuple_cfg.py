@@ -42,11 +42,11 @@ recoana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs
 CalTimeOffset=-999
 
 if (options.isData==1):
-    CalTimeOffset=56
+    CalTimeOffset=56.
     print "Running on data file: Setting CalTimeOffset %d"  % CalTimeOffset
     
 elif (options.isData==0):
-    CalTimeOffset=43
+    CalTimeOffset=43.
     print "Running on MC file: Setting CalTimeOffset %d"  % CalTimeOffset
 else:
     print "Specify which type of ntuple you are running on: -t 1 [for Data] / -t 0 [for MC]"
