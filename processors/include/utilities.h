@@ -70,7 +70,8 @@ namespace utils {
     bool isUsedByTrack(TrackerHit* tracker_hit,
             EVENT::Track* lc_track);
 
-
+    bool getParticlesFromVertex(Vertex* vtx, Particle* ele, Particle* pos);
+    
     //TODO: extern?
     static UTIL::BitField64 decoder("system:6,barrel:3,layer:4,module:12,sensor:1,side:32:-2,strip:12");
 
