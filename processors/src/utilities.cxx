@@ -423,3 +423,30 @@ bool utils::isUsedByTrack(TrackerHit* tracker_hit,
     }
     return false;
 }
+
+
+bool utils::getParticlesFromVertex(Vertex* vtx, Particle* ele, Particle* pos) {
+    
+    for (int ipart = 0; ipart < vtx->getParticles()->GetEntries(); ++ipart) {
+        int pdg_id = ((Particle*)vtx->getParticles()->At(ipart))->getPDG();
+        if (pdg_id == 11) {
+            ele = (Particle*)vtx->getParticles()->At(ipart);
+        }
+        else if (pdg_id == -11) {
+            pos = (Particle*)vtx->getParticles()->At(ipart);
+        }
+        
+        else {
+            std::cout<<"Utilities::Wrong particle ID "<< pdg_id <<"associated to vertex. Skip."<<std::endl;
+            return false;
+        }
+    }
+        
+    if (!ele || !pos) {
+        std::cout<<"Utilities::Vertex formed without ele/pos. Skip."<<std::endl;
+        return false;
+    }
+    
+    return true;
+}
+
