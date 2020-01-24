@@ -200,6 +200,21 @@ class Track : public TObject {
          */
         int getCharge() const { return charge_; };  
 
+
+        /** 
+         * Set the track id.
+         *
+         */
+        
+        void setID(const int id){id_ = id;};
+        
+        /** 
+         * Get the track id.
+         *
+         */
+        
+        int getID() const {return id_;};
+
         /** 
          * Set the momentum of the track.  The momentum is extracted from
          * the corresponding ReconstructedParticle.
@@ -352,6 +367,9 @@ class Track : public TObject {
         double px_{-9999}; 
         double py_{-9999}; 
         double pz_{-9999};
+        
+        /** Track id. */
+        int id_{0};
 
         /** Track charge. */
         int charge_{0};
