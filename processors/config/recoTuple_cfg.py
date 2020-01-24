@@ -19,7 +19,7 @@ p = HpstrConf.Process()
 p.run_mode = 0
 
 # Library containing processors
-p.libraries.append("libprocessors.so")
+p.add_library("libprocessors")
 
 ###############################
 #          Processors         #
