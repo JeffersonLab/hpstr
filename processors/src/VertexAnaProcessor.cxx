@@ -28,7 +28,7 @@ void VertexAnaProcessor::configure(const ParameterSet& parameters) {
         histoCfg_ = parameters.getString("histoCfg");
         timeOffset_ = parameters.getDouble("CalTimeOffset");
         beamE_  = parameters.getDouble("beamE");
-        
+        isData  = parameters.getInteger("isData");
 
         //region definitions
         regionSelections_ = parameters.getVString("regionDefinitions");
@@ -183,8 +183,11 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         _reg_vtx_selectors[region]->getCutFlowHisto()->Fill(0.,weight);
         
         //Trigger requirement
-        if (!_reg_vtx_selectors[region]->passCutEq("Pair1_eq",(int)evth_->isPair1Trigger(),weight))
+
+        if (isData) {
+            if (!_reg_vtx_selectors[region]->passCutEq("Pair1_eq",(int)evth_->isPair1Trigger(),weight))
             continue;
+        }
         
         //N selected vertices
         if (!_reg_vtx_selectors[region]->passCutEq("nVtxs_eq",selected_vtxs.size(),weight))
