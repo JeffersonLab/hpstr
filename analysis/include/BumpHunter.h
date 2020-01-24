@@ -171,6 +171,9 @@ class BumpHunter {
         /** The total number of bins */
         int bins_{0};
 
+        /** The bin width */
+        double bin_width_{0.0};
+
         /** Polynomial order used to model the background. */
         int poly_order_{0};
 
@@ -204,7 +207,7 @@ class ExpPol1BkgFunction {
     public: 
 
         /** Constructor */
-        ExpPol1BkgFunction(double mass_hypothesis, double window_size); 
+        ExpPol1BkgFunction(double mass_hypothesis, double window_size, double bin_width); 
 
         double operator() (double* x, double* par); 
 
@@ -215,6 +218,9 @@ class ExpPol1BkgFunction {
 
         /** Size of the search window. */
         double window_size_{0};
+
+        /** Bin width of histogram */
+        double bin_width_{0};
 
          
 };
@@ -224,7 +230,7 @@ class ExpPol1FullFunction {
     public: 
 
         /** Constructor */
-        ExpPol1FullFunction(double mass_hypothesis, double window_size); 
+        ExpPol1FullFunction(double mass_hypothesis, double window_size, double bin_width); 
 
         double operator() (double* x, double* par); 
 
@@ -233,6 +239,9 @@ class ExpPol1FullFunction {
         double mass_hypothesis_{0}; 
 
         double window_size_{0}; 
+
+        /** Bin width of histogram */
+        double bin_width_{0};
 };
 
 class ExpPol3BkgFunction { 
@@ -240,7 +249,7 @@ class ExpPol3BkgFunction {
     public: 
 
         /** Constructor */
-        ExpPol3BkgFunction(double mass_hypothesis, double window_size); 
+        ExpPol3BkgFunction(double mass_hypothesis, double window_size, double bin_width); 
 
         double operator() (double* x, double* par); 
 
@@ -251,6 +260,9 @@ class ExpPol3BkgFunction {
 
         /** Size of the search window. */
         double window_size_{0};
+
+        /** Bin width of histogram */
+        double bin_width_{0};
 
          
 };
@@ -260,7 +272,7 @@ class ExpPol3FullFunction {
     public: 
 
         /** Constructor */
-        ExpPol3FullFunction(double mass_hypothesis, double window_size); 
+        ExpPol3FullFunction(double mass_hypothesis, double window_size, double bin_width); 
 
         double operator() (double* x, double* par); 
 
@@ -269,6 +281,9 @@ class ExpPol3FullFunction {
         double mass_hypothesis_{0}; 
 
         double window_size_{0}; 
+
+        /** Bin width of histogram */
+        double bin_width_{0};
 };
 
 class ExpPol5BkgFunction { 
@@ -276,7 +291,7 @@ class ExpPol5BkgFunction {
     public: 
 
         /** Constructor */
-        ExpPol5BkgFunction(double mass_hypothesis, double window_size); 
+        ExpPol5BkgFunction(double mass_hypothesis, double window_size, double bin_width); 
 
         double operator() (double* x, double* par); 
 
@@ -287,6 +302,9 @@ class ExpPol5BkgFunction {
 
         /** Size of the search window. */
         double window_size_{0};
+
+        /** Bin width of histogram */
+        double bin_width_{0};
 
          
 };
@@ -297,7 +315,7 @@ class ExpPol5FullFunction {
     public: 
 
         /** Constructor */
-        ExpPol5FullFunction(double mass_hypothesis, double window_size); 
+        ExpPol5FullFunction(double mass_hypothesis, double window_size, double bin_width); 
 
         double operator() (double* x, double* par); 
 
@@ -306,6 +324,9 @@ class ExpPol5FullFunction {
         double mass_hypothesis_{0}; 
 
         double window_size_{0}; 
+
+        /** Bin width of histogram */
+        double bin_width_{0};
 };
 
 class ExpPol7BkgFunction { 
@@ -313,7 +334,7 @@ class ExpPol7BkgFunction {
     public: 
 
         /** Constructor */
-        ExpPol7BkgFunction(double mass_hypothesis, double window_size); 
+        ExpPol7BkgFunction(double mass_hypothesis, double window_size, double bin_width); 
 
         double operator() (double* x, double* par); 
 
@@ -324,6 +345,9 @@ class ExpPol7BkgFunction {
 
         /** Size of the search window. */
         double window_size_{0};
+
+        /** Bin width of histogram */
+        double bin_width_{0};
 
          
 };

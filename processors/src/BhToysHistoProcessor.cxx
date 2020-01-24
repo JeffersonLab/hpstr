@@ -25,9 +25,7 @@ void BhToysHistoProcessor::configure(const ParameterSet& parameters) {
         poly_order_     = parameters.getInteger("poly_order");
         seed_           = parameters.getInteger("seed");
         nToys_          = parameters.getInteger("nToys");
-        // MODIFIED
         toy_sig_samples_ = parameters.getInteger("toy_sig_samples");
-        // MODIFIED
     }
     catch (std::runtime_error& error)
     {
@@ -80,9 +78,7 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
     flat_tuple_->addVector("ul_sig_yields");
 
     flat_tuple_->addVariable("seed");
-    // MODIFIED
     flat_tuple_->addVariable("toy_sig_samples");
-    // MODIFIED
     flat_tuple_->addVector("toy_bkg_chi2_prob");
     flat_tuple_->addVector("toy_bkg_edm");
     flat_tuple_->addVector("toy_bkg_minuit_status");
@@ -149,9 +145,7 @@ bool BhToysHistoProcessor::process() {
 
     std::vector<HpsFitResult*> toy_results;
     flat_tuple_->setVariableValue("seed", seed_);
-    // MODIFIED
     flat_tuple_->setVariableValue("toy_sig_samples", toy_sig_samples_);
-    // MODIFIED
     
     if (nToys_ > 0) {
 
