@@ -38,6 +38,7 @@ recoana.parameters["vtxColl"] = "UnconstrainedV0Vertices"
 recoana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/vertexSelection.json'
 recoana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
 recoana.parameters["beamE"] = 2.3
+recoana.parameters["isData"] = options.isData
 CalTimeOffset=-999
 
 if (options.isData==1):

@@ -66,7 +66,7 @@ private:
     double timeOffset_{-999};
     //In GeV. Default is 2016 value;
     double beamE_{2.3};
-    
+    int isData{0};
 
 
 
