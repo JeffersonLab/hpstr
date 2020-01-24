@@ -5,6 +5,7 @@
 //HPSTR
 #include "HpsEvent.h"
 #include "Collections.h"
+#include "EventHeader.h"
 #include "Vertex.h"
 #include "Track.h"
 #include "Particle.h"
@@ -36,24 +37,40 @@ public:
 private:
     
     std::shared_ptr<BaseSelector> vtxSelector;
+    std::vector<std::string> regionSelections_;
+    
     std::string selectionCfg_;
     TBranch* bvtxs_{nullptr};
     TBranch* btrks_{nullptr};
+    TBranch* bevth_{nullptr};
     
     std::vector<Vertex*> * vtxs_{};
     std::vector<Track*>  * trks_{};
+    EventHeader* evth_{nullptr};
     
     std::string anaName_{"vtxAna"};
     std::string vtxColl_{"Vertices"};
     std::string trkColl_{"GBLTracks"};
     TTree* tree_{nullptr};
 
-    TH1F* nvtxs_;
-    
     std::shared_ptr<TrackHistos> _vtx_histos;
+    
+    //Duplicate.. We can make a single class.. ?
+    std::map<std::string, std::shared_ptr<BaseSelector> > _reg_vtx_selectors;
+    std::map<std::string, std::shared_ptr<TrackHistos> > _reg_vtx_histos;
+    std::vector<std::string> _regions;
+
+    typedef std::map<std::string,std::shared_ptr<TrackHistos> >::iterator reg_it;
+
     std::string histoCfg_{""};
     double timeOffset_{-999};
+    //In GeV. Default is 2016 value;
+    double beamE_{2.3};
     
+
+
+
+
     //Debug level
     int debug_{0};
 };

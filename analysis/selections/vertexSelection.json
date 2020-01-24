@@ -48,12 +48,5 @@
         "cut" : 2.15,
         "id"  : 9,
         "info" : "p e^{-}<2.15GeV"
-    },
-    "numVtx_eq" : {
-        "cut" : 1,
-        "id"  : 10,
-        "info" : "N_{vtx}=1"
     }
-
-    
 }
