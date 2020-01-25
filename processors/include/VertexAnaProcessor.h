@@ -8,10 +8,13 @@
 #include "EventHeader.h"
 #include "Vertex.h"
 #include "Track.h"
+#include "TrackerHit.h"
 #include "Particle.h"
 #include "Processor.h"
 #include "BaseSelector.h"
 #include "TrackHistos.h"
+#include "AnaHelpers.h"
+
 
 //ROOT
 #include "TFile.h"
@@ -67,7 +70,7 @@ private:
     //In GeV. Default is 2016 value;
     double beamE_{2.3};
     int isData{0};
-
+    std::shared_ptr<AnaHelpers> _ah;
 
 
 
