@@ -1,6 +1,6 @@
 #ifndef FITFUNCTION_H
 #define FITFUNCTION_H
-#include <iostream>
+#include <TMath.h>
 #include <FunctionMath.h>
 
 class FitFunction {
@@ -10,7 +10,7 @@ class FitFunction {
             GAUSSIAN     = 1,
             CRYSTAL_BALL = 2
         };
-		
+        
         enum ModelOrder {
             FIRST   = 0,
             THIRD   = 1,
@@ -20,51 +20,41 @@ class FitFunction {
 		
 		/** Constructor */
 		FitFunction(double m_mass_hypothesis, double m_window_size, double m_bin_size, ModelOrder m_model_order,
-				SignalFitModel m_sig_model = FitFunction::SignalFitModel::NONE) {
+				SignalFitModel m_sig_model = FitFunction::SignalFitModel::NONE,
+                bool m_exp_background = true) {
 			window_size = m_window_size;
 			bin_size = m_bin_size;
 			mass_hypothesis = m_mass_hypothesis;
 			sig_model = m_sig_model;
 			model_order = m_model_order;
+            exp_background = m_exp_background;
 			
 			// The signal parameter is always one greater than the
 			// polynomial order.
 			if(model_order == FitFunction::ModelOrder::FIRST) {
+                order = 1;
 				sigParm = 2;
 			} else if(model_order == FitFunction::ModelOrder::THIRD) {
+                order = 3;
 				sigParm = 4;
 			} else if(model_order == FitFunction::ModelOrder::FIFTH) {
+                order = 5;
 				sigParm = 6;
 			} else if(model_order == FitFunction::ModelOrder::SEVENTH) {
+                order = 7;
 				sigParm = 8;
 			}
-
-            std::cout << "Window Size: " << window_size << std::endl;
-            std::cout << "Bin Size: " << bin_size << std::endl;
-            std::cout << "Mass: " << mass_hypothesis << std::endl;
-            if(sig_model == SignalFitModel::GAUSSIAN) {
-                std::cout << "Signal Model: Gaussian" << std::endl;  
-            } else if(sig_model == SignalFitModel::CRYSTAL_BALL) {
-                std::cout << "Signal Model: Crystal Ball" << std::endl;  
-            } else {
-                std::cout << "Signal Model: None" << std::endl;
-            }
-            if(model_order == FitFunction::ModelOrder::FIRST) {
-                std::cout << "Model Order: 1" << std::endl;
-            } else if(model_order == FitFunction::ModelOrder::THIRD) {
-                std::cout << "Model Order: 3" << std::endl;
-            } else if(model_order == FitFunction::ModelOrder::FIFTH) {
-                std::cout << "Model Order: 5" << std::endl;
-            } else if(model_order == FitFunction::ModelOrder::SEVENTH) {
-                std::cout << "Model Order: 7" << std::endl;
-            }
 		}
 		
 		/** Calculates the value of the function at the specified x
 		 * and with the specified parameters.
 		 */
 		double operator() (double *x, double *par) {
-			return calculateBackground(x, par) + calculateSignal(x, par);
+            if(exp_background) {
+                return TMath::Power(10, calculateBackground(x, par)) + calculateSignal(x, par);
+            } else {
+    			return calculateBackground(x, par) + calculateSignal(x, par);
+            }
 		}
 		
 	protected:
@@ -76,6 +66,9 @@ class FitFunction {
 		
 		/** Size of each bin in the histogram. */
 		double bin_size = 0;
+        
+        /** The model order as an integer. */
+        int order = 0;
 		
 		/** Signal fit function to be used. */
 		SignalFitModel sig_model;
@@ -83,6 +76,9 @@ class FitFunction {
 		/** Order of the model to be used. */
 		ModelOrder model_order;
 		
+        /** Type of background fit to use. **/
+        bool exp_background = true;
+        
 		/**
 		 * Calculates the value of the background function at the
 		 * specified x and with the specified parameters.

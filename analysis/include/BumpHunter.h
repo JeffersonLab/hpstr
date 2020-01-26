@@ -36,7 +36,7 @@
 
 //---//
 #include <HpsFitResult.h>
-#include <ExpChebyshevFitFunction.h>
+#include <ChebyshevFitFunction.h>
 
 class BumpHunter {
 

@@ -124,37 +124,37 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         std::cout << "Defining fit functions." << std::endl;
         if (poly_order_ == 1) {
             // Define the fit function.
-            ExpChebyshevFitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIRST);
+            ChebyshevFitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIRST);
             bkg = new TF1("bkg", bkg_func, -1, 1, 2);
             bkg->SetParameters(4,0);
             bkg->SetParNames("pol0","pol1");
             
             // Set the background fit function for the toys to the next higher polynomial order.
-            ExpChebyshevFitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD); 
+            ChebyshevFitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD); 
             bkg_toys = new TF1("bkg_toys", bkg_toy_func, -1, 1, 4);
             bkg_toys->SetParameters(4,0,0,0);
             bkg_toys->SetParNames("pol0","pol1","pol2","pol3");
         } else if (poly_order_ == 3) {
             // Define the fit function.
-            ExpChebyshevFitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD);
+            ChebyshevFitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD);
             bkg = new TF1("bkg", bkg_func, -1, 1, 4);
             bkg->SetParameters(4,0,0,0);
             bkg->SetParNames("pol0","pol1","pol2","pol3");
 
             // Set the background fit function for the toys to the next higher polynomial order.
-            ExpChebyshevFitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH);
+            ChebyshevFitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH);
             bkg_toys = new TF1("bkg_toys", bkg_toy_func, -1, 1, 6);
             bkg_toys->SetParameters(4,0,0,0,0,0);
             bkg_toys->SetParNames("pol0","pol1","pol2","pol3","pol4","pol5");
         } else {
             // Define the fit function.
-            ExpChebyshevFitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH);
+            ChebyshevFitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH);
             bkg = new TF1("bkg", bkg_func, -1, 1, 6);
             bkg->SetParameters(4,0,0,0,0,0);
             bkg->SetParNames("pol0","pol1","pol2","pol3","pol4","pol5");
 
             // Set the background fit function for the toys to the next higher polynomial order.
-            ExpChebyshevFitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::SEVENTH);
+            ChebyshevFitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::SEVENTH);
             bkg_toys = new TF1("bkg_toys", bkg_toy_func, -1, 1, 8);
             bkg_toys->SetParameters(4,0,0,0,0,0,0,0);
             bkg_toys->SetParNames("pol0","pol1","pol2","pol3","pol4","pol5","pol6","pol7");
@@ -176,21 +176,21 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
     
     TF1* full{nullptr};  
     if (poly_order_ == 1) {
-        ExpChebyshevFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIRST, FitFunction::SignalFitModel::GAUSSIAN);
+        ChebyshevFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIRST, FitFunction::SignalFitModel::GAUSSIAN);
         full = new TF1("full", full_func, -1, 1, 5);
         full->SetParameters(4,0,0,0,0);
         full->SetParNames("pol0","pol1","signal norm","mean","sigma");
         full->FixParameter(3, mass_hypothesis); 
         full->FixParameter(4, mass_resolution_); 
     } else if (poly_order_ == 3) {
-        ExpChebyshevFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD, FitFunction::SignalFitModel::GAUSSIAN);
+        ChebyshevFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD, FitFunction::SignalFitModel::GAUSSIAN);
         full = new TF1("full", full_func, -1, 1, 7);
         full->SetParameters(4,0,0,0,0,0,0);
         full->SetParNames("pol0","pol1","pol2","pol3","signal norm","mean","sigma");
         full->SetParameter(5, mass_hypothesis); 
         full->SetParameter(6, mass_resolution_); 
     } else {
-        ExpChebyshevFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH, FitFunction::SignalFitModel::GAUSSIAN);
+        ChebyshevFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH, FitFunction::SignalFitModel::GAUSSIAN);
         full = new TF1("full", full_func, -1, 1, 9);
         full->SetParameters(4,0,0,0,0,0,0,0,0);
         full->SetParNames("pol0","pol1","pol2","pol3","pol4","pol5","signal norm","mean","sigma");
@@ -273,14 +273,14 @@ void BumpHunter::getUpperLimit(TH1* histogram, HpsFitResult* result) {
     
     TF1* comp{nullptr};
     if(poly_order_ == 3) {
-        ExpChebyshevFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD, FitFunction::SignalFitModel::GAUSSIAN);
+        ChebyshevFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD, FitFunction::SignalFitModel::GAUSSIAN);
         comp = new TF1("comp_ul", comp_func, -1, 1, 7);
         comp->SetParameters(4,0,0,0,0,0,0);
         comp->SetParNames("pol0","pol1","pol2","pol3","signal norm","mean","sigma");
         comp->FixParameter(5,0.0); 
         comp->FixParameter(6, mass_resolution_); 
     } else {
-        ExpChebyshevFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH, FitFunction::SignalFitModel::GAUSSIAN);
+        ChebyshevFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH, FitFunction::SignalFitModel::GAUSSIAN);
         comp = new TF1("comp_ul", comp_func, -1, 1, 9);
         comp->SetParameters(4,0,0,0,0,0,0,0,0);
         comp->SetParNames("pol0","pol1","pol2","pol3","pol4","pol5","signal norm","mean","sigma");
