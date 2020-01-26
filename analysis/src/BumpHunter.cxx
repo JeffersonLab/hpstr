@@ -121,59 +121,41 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         //
         TF1* bkg{nullptr}; 
         TF1* bkg_toys{nullptr}; 
-        if (poly_order_ == 1) 
-        { 
-            
-            //
-            ExpPol1BkgFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_); 
+        std::cout << "Defining fit functions." << std::endl;
+        if (poly_order_ == 1) {
+            // Define the fit function.
+            ExpChebyshevFitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIRST);
             bkg = new TF1("bkg", bkg_func, -1, 1, 2);
-
-            //
             bkg->SetParameters(4,0);
             bkg->SetParNames("pol0","pol1");
-
-            //Set bkg function fit for toys to come from next polynomial order
-            ExpPol3BkgFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_); 
+            
+            // Set the background fit function for the toys to the next higher polynomial order.
+            ExpChebyshevFitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD); 
             bkg_toys = new TF1("bkg_toys", bkg_toy_func, -1, 1, 4);
-
-            //
             bkg_toys->SetParameters(4,0,0,0);
             bkg_toys->SetParNames("pol0","pol1","pol2","pol3");
-        } 
-        else if (poly_order_ == 3) 
-        { 
-            
-            //
-            ExpPol3BkgFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_); 
+        } else if (poly_order_ == 3) {
+            // Define the fit function.
+            ExpChebyshevFitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD);
             bkg = new TF1("bkg", bkg_func, -1, 1, 4);
-
-            //
             bkg->SetParameters(4,0,0,0);
             bkg->SetParNames("pol0","pol1","pol2","pol3");
 
-            //
-            ExpPol5BkgFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_); 
+            // Set the background fit function for the toys to the next higher polynomial order.
+            ExpChebyshevFitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH);
             bkg_toys = new TF1("bkg_toys", bkg_toy_func, -1, 1, 6);
-
-            //
             bkg_toys->SetParameters(4,0,0,0,0,0);
             bkg_toys->SetParNames("pol0","pol1","pol2","pol3","pol4","pol5");
-        } 
-        else 
-        { 
-            //
-            ExpPol5BkgFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_); 
+        } else {
+            // Define the fit function.
+            ExpChebyshevFitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH);
             bkg = new TF1("bkg", bkg_func, -1, 1, 6);
-
-            //
             bkg->SetParameters(4,0,0,0,0,0);
             bkg->SetParNames("pol0","pol1","pol2","pol3","pol4","pol5");
 
-            //
-            ExpPol7BkgFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_); 
+            // Set the background fit function for the toys to the next higher polynomial order.
+            ExpChebyshevFitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::SEVENTH);
             bkg_toys = new TF1("bkg_toys", bkg_toy_func, -1, 1, 8);
-
-            //
             bkg_toys->SetParameters(4,0,0,0,0,0,0,0);
             bkg_toys->SetParNames("pol0","pol1","pol2","pol3","pol4","pol5","pol6","pol7");
         }
@@ -193,31 +175,23 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
     std::cout << "***************************************************" << std::endl;
     
     TF1* full{nullptr};  
-    if (poly_order_ == 1) 
-    { 
-        ExpPol1FullFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_); 
+    if (poly_order_ == 1) {
+        ExpChebyshevFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIRST, FitFunction::SignalFitModel::GAUSSIAN);
         full = new TF1("full", full_func, -1, 1, 5);
-    
         full->SetParameters(4,0,0,0,0);
         full->SetParNames("pol0","pol1","signal norm","mean","sigma");
         full->FixParameter(3, mass_hypothesis); 
         full->FixParameter(4, mass_resolution_); 
-    } 
-    else if (poly_order_ == 3) 
-    { 
-        ExpPol3FullFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_); 
+    } else if (poly_order_ == 3) {
+        ExpChebyshevFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD, FitFunction::SignalFitModel::GAUSSIAN);
         full = new TF1("full", full_func, -1, 1, 7);
-    
         full->SetParameters(4,0,0,0,0,0,0);
         full->SetParNames("pol0","pol1","pol2","pol3","signal norm","mean","sigma");
         full->SetParameter(5, mass_hypothesis); 
         full->SetParameter(6, mass_resolution_); 
-    } 
-    else 
-    { 
-        ExpPol5FullFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_); 
+    } else {
+        ExpChebyshevFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH, FitFunction::SignalFitModel::GAUSSIAN);
         full = new TF1("full", full_func, -1, 1, 9);
-    
         full->SetParameters(4,0,0,0,0,0,0,0,0);
         full->SetParNames("pol0","pol1","pol2","pol3","pol4","pol5","signal norm","mean","sigma");
         full->FixParameter(7, mass_hypothesis); 
@@ -298,26 +272,20 @@ void BumpHunter::printDebug(std::string message) {
 void BumpHunter::getUpperLimit(TH1* histogram, HpsFitResult* result) {
     
     TF1* comp{nullptr};
-    if (poly_order_ == 3) { 
-  
-        ExpPol3FullFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_); 
+    if(poly_order_ == 3) {
+        ExpChebyshevFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD, FitFunction::SignalFitModel::GAUSSIAN);
         comp = new TF1("comp_ul", comp_func, -1, 1, 7);
-    
         comp->SetParameters(4,0,0,0,0,0,0);
         comp->SetParNames("pol0","pol1","pol2","pol3","signal norm","mean","sigma");
         comp->FixParameter(5,0.0); 
         comp->FixParameter(6, mass_resolution_); 
-        
-    } else { 
-       
-        ExpPol5FullFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_); 
+    } else {
+        ExpChebyshevFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH, FitFunction::SignalFitModel::GAUSSIAN);
         comp = new TF1("comp_ul", comp_func, -1, 1, 9);
-    
         comp->SetParameters(4,0,0,0,0,0,0,0,0);
         comp->SetParNames("pol0","pol1","pol2","pol3","pol4","pol5","signal norm","mean","sigma");
         comp->FixParameter(7,0.0); 
         comp->FixParameter(8, mass_resolution_);
-   
     }    
 
     std::cout << "Mass resolution: " << mass_resolution_ << std::endl; 
@@ -457,174 +425,3 @@ double BumpHunter::correctMass(double mass) {
     this->printDebug("Corrected Mass: " + std::to_string(cmass)); 
     return cmass;
 }
-
-/**
- * BkgFunction
- */
-
-//
-// TODO: Move the classes externally
-//
-
-ExpPol1BkgFunction::ExpPol1BkgFunction(double mass_hypothesis, double window_size, double bin_width)
-    : mass_hypothesis_(mass_hypothesis), 
-      window_size_(window_size),
-      bin_width_(bin_width) { 
-}
-
-double ExpPol1BkgFunction::operator() (double* x, double* par) { 
-    
-    double xp = (x[0] - mass_hypothesis_)/(window_size_*2.0); 
-  
-    // Chebyshevs between given limits
-    double t0 = par[0];
-    double t1 = par[1]*xp;
-  
-    double pol = t0+t1;
-
-    return TMath::Power(10,pol);
-}
-
-ExpPol1FullFunction::ExpPol1FullFunction(double mass_hypothesis, double window_size, double bin_width)
-    : mass_hypothesis_(mass_hypothesis), 
-      window_size_(window_size),
-      bin_width_(bin_width) { 
-}
-
-
-double ExpPol1FullFunction::operator() (double* x, double* par) { 
-    
-    double xp = (x[0] - mass_hypothesis_)/(window_size_*2.0); 
-  
-    // Chebyshevs between given limits
-    double t0 = par[0];
-    double t1 = par[1]*xp;
-  
-    double pol = t0+t1;
-
-    double gauss = (1.0)/(sqrt(2.0*TMath::Pi()*pow(par[4],2))) *
-        TMath::Exp( - pow((x[0]-par[3]),2)/(2.0*pow(par[4],2)) );
-  
-    return TMath::Power(10,pol)+bin_width_*par[2]*gauss;
-}
-
-ExpPol3BkgFunction::ExpPol3BkgFunction(double mass_hypothesis, double window_size, double bin_width)
-    : mass_hypothesis_(mass_hypothesis), 
-      window_size_(window_size),
-      bin_width_(bin_width) { 
-}
-
-double ExpPol3BkgFunction::operator() (double* x, double* par) { 
-    
-    double xp = (x[0] - mass_hypothesis_)/(window_size_*2.0); 
-  
-    // Chebyshevs between given limits
-    double t0 = par[0];
-    double t1 = par[1]*xp;
-    double t2 = par[2]*(2*xp*xp - 1);
-    double t3 = par[3]*(4*xp*xp*xp - 3*xp);
-  
-    double pol = t0+t1+t2+t3;
-
-    return TMath::Power(10,pol);
-}
-
-ExpPol3FullFunction::ExpPol3FullFunction(double mass_hypothesis, double window_size, double bin_width)
-    : mass_hypothesis_(mass_hypothesis), 
-      window_size_(window_size),
-      bin_width_(bin_width) { 
-}
-
-
-double ExpPol3FullFunction::operator() (double* x, double* par) { 
-    
-    double xp = (x[0] - mass_hypothesis_)/(window_size_*2.0); 
-  
-    // Chebyshevs between given limits
-    double t0 = par[0];
-    double t1 = par[1]*xp;
-    double t2 = par[2]*(2*xp*xp - 1);
-    double t3 = par[3]*(4*xp*xp*xp - 3*xp);
-  
-    double pol = t0+t1+t2+t3;
-
-    double gauss = (1.0)/(sqrt(2.0*TMath::Pi()*pow(par[6],2))) *
-        TMath::Exp( - pow((x[0]-par[5]),2)/(2.0*pow(par[6],2)) );
-  
-    return TMath::Power(10,pol)+bin_width_*par[4]*gauss;
-}
-
-ExpPol5BkgFunction::ExpPol5BkgFunction(double mass_hypothesis, double window_size, double bin_width)
-    : mass_hypothesis_(mass_hypothesis), 
-      window_size_(window_size),
-      bin_width_(bin_width) { 
-}
-
-double ExpPol5BkgFunction::operator() (double* x, double* par) { 
-    
-    double xp = (x[0] - mass_hypothesis_)/(window_size_*2.0); 
-  
-    // Chebyshevs between given limits
-    double t0 = par[0];
-    double t1 = par[1]*xp;
-    double t2 = par[2]*(2*xp*xp - 1);
-    double t3 = par[3]*(4*xp*xp*xp - 3*xp);
-    double t4 = par[4]*(8*xp*xp*xp*xp - 8*xp*xp + 1);
-    double t5 = par[5]*(16*xp*xp*xp*xp*xp - 20*xp*xp*xp + 5*xp);
-  
-    double pol = t0+t1+t2+t3+t4+t5;
-
-    return TMath::Power(10,pol);
-}
-
-ExpPol5FullFunction::ExpPol5FullFunction(double mass_hypothesis, double window_size, double bin_width)
-    : mass_hypothesis_(mass_hypothesis), 
-      window_size_(window_size),
-      bin_width_(bin_width) { 
-}
-
-double ExpPol5FullFunction::operator() (double* x, double* par) { 
-    
-    double xp = (x[0] - mass_hypothesis_)/(window_size_*2.0); 
-  
-    // Chebyshevs between given limits
-    double t0 = par[0];
-    double t1 = par[1]*xp;
-    double t2 = par[2]*(2*xp*xp - 1);
-    double t3 = par[3]*(4*xp*xp*xp - 3*xp);
-    double t4 = par[4]*(8*xp*xp*xp*xp - 8*xp*xp + 1);
-    double t5 = par[5]*(16*xp*xp*xp*xp*xp - 20*xp*xp*xp + 5*xp);
-  
-    double pol = t0+t1+t2+t3+t4+t5;
-
-    double gauss = (1.0)/(sqrt(2.0*TMath::Pi()*pow(par[8],2))) *
-        TMath::Exp( - pow((x[0]-par[7]),2)/(2.0*pow(par[8],2)) );
-  
-    return TMath::Power(10,pol)+bin_width_*par[6]*gauss;
-}
-
-ExpPol7BkgFunction::ExpPol7BkgFunction(double mass_hypothesis, double window_size, double bin_width)
-    : mass_hypothesis_(mass_hypothesis), 
-      window_size_(window_size),
-      bin_width_(bin_width) { 
-}
-
-double ExpPol7BkgFunction::operator() (double* x, double* par) { 
-    
-    double xp = (x[0] - mass_hypothesis_)/(window_size_*2.0); 
-  
-    // Chebyshevs between given limits
-    double t0 = par[0];
-    double t1 = par[1]*xp;
-    double t2 = par[2]*(2*xp*xp - 1);
-    double t3 = par[3]*(4*xp*xp*xp - 3*xp);
-    double t4 = par[4]*(8*xp*xp*xp*xp - 8*xp*xp + 1);
-    double t5 = par[5]*(16*xp*xp*xp*xp*xp - 20*xp*xp*xp + 5*xp);
-    double t6 = par[6]*(32*xp*xp*xp*xp*xp*xp - 48*xp*xp*xp*xp + 18*xp*xp - 1);
-    double t7 = par[7]*(64*xp*xp*xp*xp*xp*xp*xp - 112*xp*xp*xp*xp*xp + 56*xp*xp*xp - 7*xp);
-  
-    double pol = t0+t1+t2+t3+t4+t5+t6+t7;
-
-    return TMath::Power(10,pol);
-}
-
