@@ -187,8 +187,8 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         full = new TF1("full", full_func, -1, 1, 7);
         full->SetParameters(4,0,0,0,0,0,0);
         full->SetParNames("pol0","pol1","pol2","pol3","signal norm","mean","sigma");
-        full->SetParameter(5, mass_hypothesis); 
-        full->SetParameter(6, mass_resolution_); 
+        full->FixParameter(5, mass_hypothesis); 
+        full->FixParameter(6, mass_resolution_); 
     } else {
         ChebyshevFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH, FitFunction::SignalFitModel::GAUSSIAN);
         full = new TF1("full", full_func, -1, 1, 9);
