@@ -130,7 +130,7 @@ void HistoManager::DefineHistos(){
     }
 }
 
-void HistoManager::GetHistosFromFile(TFile* inFile, const std::string& name, const std::string& folder) {
+void HistoManager::GetHistosFromFile(TFile* inFile, const std::vector<std::string>& name, const std::string& folder) {
 
     //Todo: use folder to choose a folder. 
     TIter next(inFile->GetListOfKeys());
@@ -138,19 +138,21 @@ void HistoManager::GetHistosFromFile(TFile* inFile, const std::string& name, con
     while ((key = (TKey*)next())) {
         std::string classType = key->GetClassName();
         std::string s(key->GetName());
-        if (s.find(name) == std::string::npos) continue;
-        if (classType.find("TH1")!=std::string::npos) {
-            histos1d[key->GetName()] = (TH1F*) key->ReadObj();
-            histos1dNamesfromTFile.push_back(key->GetName());
-        }
-        if (classType.find("TH2")!=std::string::npos) {
-            histos2d[key->GetName()] = (TH2F*) key->ReadObj();
-            histos2dNamesfromTFile.push_back(key->GetName());
-        }
-        if (classType.find("TH3")!=std::string::npos)
-            histos3d[key->GetName()] = (TH3F*) key->ReadObj();
+	for(std::vector<std::string>::const_iterator i = name.begin(); i != name.end(); i++) {
+		if (s.find(*i) == std::string::npos) continue;
+		if (classType.find("TH1")!=std::string::npos) {
+		    histos1d[key->GetName()] = (TH1F*) key->ReadObj();
+		    histos1dNamesfromTFile.push_back(key->GetName());
+		}
+		if (classType.find("TH2")!=std::string::npos) {
+		    histos2d[key->GetName()] = (TH2F*) key->ReadObj();
+		    histos2dNamesfromTFile.push_back(key->GetName());
+		    std::cout << histos2d[key->GetName()]->GetName() << std::endl;
+		}
+		if (classType.find("TH3")!=std::string::npos)
+		    histos3d[key->GetName()] = (TH3F*) key->ReadObj();
+	    }
     }
-    
 }
 
 
