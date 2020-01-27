@@ -3,11 +3,16 @@ import sys
 import os
 from optparse import OptionParser
 
+def timeSample_callback(options, opt, value, parser):
+    setattr(parser.values, options.dest, value.split(','))
+
 parser = OptionParser()
 parser.add_option("-i", "--inFile", type="string", dest="inFilename",
         help="Input filename.", metavar="inFilename", default="")
 parser.add_option("-d", "--outDir", type="string", dest="outDir",
         help="Specify the output directory.", metavar="outDir", default=".")
+parser.add_option('-t', '--timeSamples', type='string', dest="timeSamples", action='callback',
+        callback=timeSample_callback)
 (options, args) = parser.parse_args()
 
 # Use the input file to set the output file name
@@ -33,7 +38,7 @@ fitBL = HpstrConf.Processor('fitBL', 'SvtBlFitHistoProcessor')
 ###############################
 fitBL.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/SvtBlFits.json'
 fitBL.parameters["outDir"] = options.outDir
-
+fitBL.parameters["timeSamples"] = options.timeSamples
 # Sequence which the processors will run.
 p.sequence = [fitBL]
 

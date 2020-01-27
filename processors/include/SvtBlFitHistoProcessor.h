@@ -38,6 +38,7 @@ class SvtBlFitHistoProcessor : public Processor {
     private:
 
         TFile* inF_{nullptr};
+	std::vector<std::string> timeSamples_{};
         //parameter defining json file
         std::string histCfgFilename_;
 

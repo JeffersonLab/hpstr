@@ -234,7 +234,7 @@ void HistogramHelpers::profileYwithIterativeGaussFit(TH2* hist, TH1F* mu_graph, 
     }
 
     const int minEntries = 50;
-    const int fDebug = 0;
+    const int fDebug = 1;
 
     int num_bins_x = hist->GetXaxis()->GetNbins();
 
@@ -261,6 +261,7 @@ void HistogramHelpers::profileYwithIterativeGaussFit(TH2* hist, TH1F* mu_graph, 
 
     for (int i = 1; i < (num_bins_x + (num_bins == 1)); i+=num_bins) {
 
+	//std::cout << "Channel #" << i-1 << std::endl;
         int index = i/num_bins;
         if (num_bins == 1) index--;
 
@@ -296,7 +297,7 @@ void HistogramHelpers::profileYwithIterativeGaussFit(TH2* hist, TH1F* mu_graph, 
 
         errs_mu[index + 1] = mu_err;
         errs_sigma[index + 1] = sigma_err;
-
+	
         delete current_proj;
     }
 
@@ -411,6 +412,7 @@ int HistogramHelpers::IterativeGaussFit(TH1* hist, double &mu, double &mu_err, d
     //HistogramConditioning(hist);
 
     TF1* fit_func = new TF1("fit_func","gaus");
+    if (fDebug) std::cout << "TF1 fit_func created" << std::endl;
 
     int bad_fit = hist->Fit(fit_func,"QN");
 
@@ -437,7 +439,10 @@ int HistogramHelpers::IterativeGaussFit(TH1* hist, double &mu, double &mu_err, d
     double full_int = 1.0*hist->GetEntries();
     double integral = 0.0;
     while ( !(last_mu + high_seed - low_seed < FitRangeUpper && last_mu > FitRangeLower ) || iteration < 10 || mu_err > 100.0 || integral/full_int < 0.3 ) {
-
+    	/*std::cout << "last_mu= " << last_mu << "; high-low_seed= " << high_seed-low_seed <<
+		"; FitRangeUpper= " << FitRangeUpper << "; FitRangeLower= " << FitRangeLower
+		<< "; mu_err= " << mu_err << "; integral/full_int= " << integral/full_int <<  std::endl;*/
+	
         iteration++;
 
         FitRangeUpper += 2.0*hist->GetBinWidth(hist->FindFirstBinAbove(1));
@@ -472,8 +477,10 @@ int HistogramHelpers::IterativeGaussFit(TH1* hist, double &mu, double &mu_err, d
         mu_err = fit_func->GetParError(1);
         sigma_err = fit_func->GetParError(2);
 
+    	if (fDebug) std::cout << "Integral Method" << std::endl;
         integral = hist->Integral(hist->GetXaxis()->FindBin(FitRangeLower), hist->GetXaxis()->FindBin(FitRangeUpper));
-
+	
+    	if (fDebug) std::cout << "Integral Method Complete" << std::endl;
 
         if (m_PrintLevel >= 3) cout << " ** IterativeGaussFit ** fit iter # " << iteration
             << "  last_mu: " << last_mu << " +- " <<  mu_err

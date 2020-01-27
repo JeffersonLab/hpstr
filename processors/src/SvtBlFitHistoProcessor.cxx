@@ -14,6 +14,7 @@ void SvtBlFitHistoProcessor::configure(const ParameterSet& parameters) {
     {
         outDir_ = parameters.getString("outDir");
         histCfgFilename_ = parameters.getString("histCfg");
+	timeSamples_ = parameters.getVString("timeSamples");
     }
     catch (std::runtime_error& error)
     {
@@ -32,7 +33,7 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     outputHistos_ = new BlFitHistos("raw_hits");
     inputHistos_ = new HistoManager("baseline0");
     std::cout << "[BlFitHistos] Loading 2D Histos" << std::endl;
-    inputHistos_->GetHistosFromFile(inF_, "");
+    inputHistos_->GetHistosFromFile(inF_, timeSamples_);
     std::cout << "[BlFitHistos] Loading json file" << std::endl;
     outputHistos_->loadHistoConfig(histCfgFilename_); 
     std::cout << "[BlFitHistos] Creating Histograms for Fit Parameters" << std::endl;
