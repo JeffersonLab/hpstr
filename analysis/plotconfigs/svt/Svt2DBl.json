@@ -1,4 +1,13 @@
 {   
+
+    "svtHitOccupancy_h" : {
+            "xtitle" : "# hits per channel",
+            "bins" : 100000,
+            "minX" : 0,
+            "maxX" : 100000,
+            "ytitle" : "Events"
+
+        },
     "svtHitN_h" : {
             "xtitle" : "# of Strips",
             "bins" : 10000,
