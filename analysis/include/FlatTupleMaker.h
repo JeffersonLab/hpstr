@@ -2,6 +2,8 @@
  * @file FlatTupleMaker.h
  * @author Omar Moreno
  * @date January 18, 2016
+ * @author PF
+ * @date Jan, 2020
  * @brief 
  *
  */
@@ -31,6 +33,8 @@ class FlatTupleMaker {
          *  
          */
         FlatTupleMaker(std::string file_name, std::string tree_name);
+        
+        FlatTupleMaker(std::string tree_name);
 
         /** Destructor */
         ~FlatTupleMaker();
@@ -59,6 +63,14 @@ class FlatTupleMaker {
          */
         void close(); 
 
+
+        /** 
+         *
+         */ 
+        void writeTree() {
+            tree->Write();
+        }
+        
         /**
          *
          */
@@ -67,10 +79,10 @@ class FlatTupleMaker {
     private: 
     
         /** ROOT file to write ntuple to. */
-        TFile* file;
+        TFile* file{nullptr};
 
         /** ROOT Tree. */
-        TTree* tree; 
+        TTree* tree{nullptr}; 
 
         /** Map containing ntuple variables */
         std::map <std::string, double> variables; 
