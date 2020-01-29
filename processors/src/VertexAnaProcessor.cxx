@@ -5,7 +5,6 @@
  */
 
 #include "VertexAnaProcessor.h"
-#include "AnaHelpers.h"
 #include <iostream>
 
 VertexAnaProcessor::VertexAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
@@ -32,7 +31,7 @@ void VertexAnaProcessor::configure(const ParameterSet& parameters) {
 
         //region definitions
         regionSelections_ = parameters.getVString("regionDefinitions");
-
+        
 
     }
     catch (std::runtime_error& error) 
@@ -43,6 +42,7 @@ void VertexAnaProcessor::configure(const ParameterSet& parameters) {
 
 void VertexAnaProcessor::initialize(TTree* tree) {
     tree_ = tree;
+    _ah =  std::make_shared<AnaHelpers>();
     vtxSelector  = std::make_shared<BaseSelector>("vtxSelection",selectionCfg_);
     vtxSelector->setDebug(debug_);
     vtxSelector->LoadSelection();
@@ -78,7 +78,6 @@ void VertexAnaProcessor::initialize(TTree* tree) {
 bool VertexAnaProcessor::process(IEvent* ievent) { 
     
     HpsEvent* hps_evt = (HpsEvent*) ievent;
-    
     double weight = 1.;
 
     //Store processed number of events
@@ -90,76 +89,103 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         
         Vertex* vtx = vtxs_->at(i_vtx);
         Particle* ele = nullptr;
+        Track* ele_trk = nullptr;
         Particle* pos = nullptr;
-        
-        if (!vtxSelector->passCutLt("chi2unc_lt",vtx->getChi2(),weight))
-            continue;
+        Track* pos_trk = nullptr;
 
-        for (int ipart = 0; ipart < vtx->getParticles()->GetEntries(); ++ipart) {
-            int pdg_id = ((Particle*)vtx->getParticles()->At(ipart))->getPDG();
-            if (pdg_id == 11) {
-                ele = (Particle*)vtx->getParticles()->At(ipart);
-            }
-            else if (pdg_id == -11) {
-                pos = (Particle*)vtx->getParticles()->At(ipart);
-            }
+        //Trigger requirement - *really hate* having to do it here for each vertex.
             
-            else {
-                std::cout<<"VertexAnaProcessor::Wrong particle ID "<< pdg_id <<"associated to vertex. Skip."<<std::endl;
-                continue;
-            }
+        if (isData) {
+            if (!vtxSelector->passCutEq("Pair1_eq",(int)evth_->isPair1Trigger(),weight))
+                break;
         }
-        
-        
-        if (!ele || !pos) {
-            std::cout<<"VertexAnaProcessor::Vertex formed without ele/pos. Skip."<<std::endl;
+                
+        bool foundParts = _ah->GetParticlesFromVtx(vtx,ele,pos);
+        if (!foundParts) {
+            std::cout<<"VertexAnaProcessor::WARNING::Found vtx without ele/pos. Skip.";
             continue;
         }
         
+        bool foundTracks = _ah->MatchToGBLTracks((ele->getTrack()).getID(),(pos->getTrack()).getID(),
+                                                 ele_trk, pos_trk, *trks_);
         
-        //Get the ele and pos tracks
-        Track ele_trk = ele->getTrack();
-        Track pos_trk = pos->getTrack();
+        if (!foundTracks) {
+            std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
+            continue;  
+        }
+
+        bool foundL1ele = false;
+        bool foundL2ele = false;
+        _ah->InnermostLayerCheck(ele_trk, foundL1ele, foundL2ele);   
         
+        bool foundL1pos = false;
+        bool foundL2pos = false;
+        _ah->InnermostLayerCheck(pos_trk, foundL1pos, foundL2pos);  
         
-        if (!vtxSelector->passCutLt("eleposTanLambaProd_lt",ele_trk.getTanLambda() * pos_trk.getTanLambda(),weight)) 
+        //L1 requirement
+        if (!vtxSelector->passCutEq("L1Requirement_eq",(int)(foundL1ele&&foundL1pos),weight))
             continue;
         
+        //L2 requirement
+        if (!vtxSelector->passCutEq("L2Requirement_eq",(int)(foundL2ele&&foundL2pos),weight))
+            continue;
+        
+        //Tracks in opposite volumes - useless
+        //if (!vtxSelector->passCutLt("eleposTanLambaProd_lt",ele_trk->getTanLambda() * pos_trk->getTanLambda(),weight)) 
+        //  continue;
+        
+        //Ele Track-cluster match
         if (!vtxSelector->passCutLt("eleTrkCluMatch_lt",ele->getGoodnessOfPID(),weight))
             continue;
+
+        //Pos Track-cluster match
         if (!vtxSelector->passCutLt("posTrkCluMatch_lt",pos->getGoodnessOfPID(),weight))
             continue;
-        
-        
+
         double corr_eleClusterTime = ele->getCluster().getTime() - timeOffset_;
         double corr_posClusterTime = pos->getCluster().getTime() - timeOffset_;
-        
-        if (!vtxSelector->passCutLt("eleTrkCluTimeDiff_lt",fabs(ele_trk.getTrackTime() - corr_eleClusterTime),weight))
-            continue;
-        
-        if (!vtxSelector->passCutLt("posTrkCluTimeDiff_lt",fabs(pos_trk.getTrackTime() - corr_posClusterTime),weight))
-            continue;
-        
+                
+        //Ele Pos Cluster Tme Difference
         if (!vtxSelector->passCutLt("eleposCluTimeDiff_lt",fabs(corr_eleClusterTime - corr_posClusterTime),weight))
             continue;
         
-        if (!vtxSelector->passCutLt("eleTrkChi2_lt",ele_trk.getChi2Ndf(),weight))
+        //Ele Track-Cluster Time Difference
+        if (!vtxSelector->passCutLt("eleTrkCluTimeDiff_lt",fabs(ele_trk->getTrackTime() - corr_eleClusterTime),weight))
             continue;
         
-        if (!vtxSelector->passCutLt("posTrkChi2_lt",pos_trk.getChi2Ndf(),weight))
+        //Pos Track-Cluster Time Difference
+        if (!vtxSelector->passCutLt("posTrkCluTimeDiff_lt",fabs(pos_trk->getTrackTime() - corr_posClusterTime),weight))
             continue;
-
+        
         TVector3 ele_mom;
         ele_mom.SetX(ele->getMomentum()[0]);
         ele_mom.SetY(ele->getMomentum()[1]);
         ele_mom.SetZ(ele->getMomentum()[2]);
         
+        
+        //Beam Electron cut
         if (!vtxSelector->passCutLt("eleMom_lt",ele_mom.Mag(),weight))
             continue;
+
+        //Ele Track Quality
+        if (!vtxSelector->passCutLt("eleTrkChi2_lt",ele_trk->getChi2Ndf(),weight))
+            continue;
         
-        //Fill for vertex
+        //Pos Track Quality
+        if (!vtxSelector->passCutLt("posTrkChi2_lt",pos_trk->getChi2Ndf(),weight))
+            continue;
+
+        //Vertex Quality
+        if (!vtxSelector->passCutLt("chi2unc_lt",vtx->getChi2(),weight))
+            continue;
+
+        
+        
+                
+        //Fill Histograms for Vtx Preselection
         _vtx_histos->Fill1DHistograms(nullptr,vtx,weight);
         _vtx_histos->Fill2DHistograms(nullptr,vtx,weight);
+        
         
         selected_vtxs.push_back(vtx);       
         vtxSelector->clearSelector();
@@ -179,125 +205,87 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
     //TODO add yields.
     for (auto region : _regions ) {
         
-        //No cuts.
-        _reg_vtx_selectors[region]->getCutFlowHisto()->Fill(0.,weight);
-        
-        //Trigger requirement
-
-        if (isData) {
-            if (!_reg_vtx_selectors[region]->passCutEq("Pair1_eq",(int)evth_->isPair1Trigger(),weight))
-            continue;
-        }
-        
-        //N selected vertices
-        if (!_reg_vtx_selectors[region]->passCutEq("nVtxs_eq",selected_vtxs.size(),weight))
-            continue;
-
-        //TODO:: Remove duplication!
-        Vertex* vtx = selected_vtxs.at(0);
-        Particle* ele = nullptr;
-        Particle* pos = nullptr;
-        
-        for (int ipart = 0; ipart < vtx->getParticles()->GetEntries(); ++ipart) {
-            int pdg_id = ((Particle*)vtx->getParticles()->At(ipart))->getPDG();
-            if (pdg_id == 11) {
-                ele = (Particle*)vtx->getParticles()->At(ipart);
-            }
-            else if (pdg_id == -11) {
-                pos = (Particle*)vtx->getParticles()->At(ipart);
-            }
+        for ( auto vtx : selected_vtxs) {
             
-            else {
-                std::cout<<"VertexAnaProcessor::Wrong particle ID "<< pdg_id <<"associated to vertex. Skip."<<std::endl;
+            //No cuts.
+            _reg_vtx_selectors[region]->getCutFlowHisto()->Fill(0.,weight);
+            
+            
+            //N selected vertices
+            if (!_reg_vtx_selectors[region]->passCutEq("nVtxs_eq",selected_vtxs.size(),weight))
                 continue;
-            }
-        }
-        
-        
-        if (!ele || !pos) {
-            std::cout<<"VertexAnaProcessor::Vertex formed without ele/pos. Skip."<<std::endl;
-            continue;
-        }
-
-        
-        
-        //Chi2
-        if (!_reg_vtx_selectors[region]->passCutLt("chi2unc_lt",vtx->getChi2(),weight))
-            continue;
-        
-        double ele_E = ele->getEnergy();
-        double pos_E = pos->getEnergy();
-        
-        
-        //ESum 
-        if (!_reg_vtx_selectors[region]->passCutLt("eSum_lt",(ele_E+pos_E)/beamE_,weight))
-            continue;
-
-        //ESum 
-        if (!_reg_vtx_selectors[region]->passCutGt("eSum_gt",(ele_E+pos_E)/beamE_,weight))
-            continue;
-        
-        //_reg_vtx_histos[region]->Fill1DHistograms(nullptr,vtx,weight);
-
-
-
-        //Compute analysis variables here.
-
-        //Total number of tracks in the event:
-        
-        int Ntracks = trks_->size();
-        
-        Track ele_trk = ele->getTrack();
-        Track pos_trk = pos->getTrack();
-
-        //Get the shared info - TODO change and improve
-        
-        bool foundele = false;
-        bool foundpos = false;
-        for (auto trk : *trks_) {
             
-            if (ele_trk.getID() == trk->getID())  {
-                ele_trk.setNShared(trk->getNShared());
-                ele_trk.setSharedLy0(trk->getSharedLy0());
-                ele_trk.setSharedLy1(trk->getSharedLy1());
-                foundele=true;
-            }   
             
-            if (pos_trk.getID() == trk->getID()) {
-                pos_trk.setNShared(trk->getNShared());
-                pos_trk.setSharedLy0(trk->getSharedLy0());
-                pos_trk.setSharedLy1(trk->getSharedLy1());
-                foundpos=true;
+            Particle* ele = nullptr;
+            Particle* pos = nullptr;
+            
+            _ah->GetParticlesFromVtx(vtx,ele,pos);
+            
+            //Chi2
+            if (!_reg_vtx_selectors[region]->passCutLt("chi2unc_lt",vtx->getChi2(),weight))
+                continue;
+            
+            double ele_E = ele->getEnergy();
+            double pos_E = pos->getEnergy();
+            
+            
+            //ESum 
+            if (!_reg_vtx_selectors[region]->passCutLt("eSum_lt",(ele_E+pos_E)/beamE_,weight))
+                continue;
+            
+            //ESum 
+            if (!_reg_vtx_selectors[region]->passCutGt("eSum_gt",(ele_E+pos_E)/beamE_,weight))
+                continue;
+            
+            //_reg_vtx_histos[region]->Fill1DHistograms(nullptr,vtx,weight);
+            
+            
+
+            //Compute analysis variables here.
+            
+            //Total number of tracks in the event:
+            
+            int Ntracks = trks_->size();
+            
+            Track ele_trk = ele->getTrack();
+            Track pos_trk = pos->getTrack();
+            
+            //Get the shared info - TODO change and improve
+            
+            Track* ele_trk_gbl = nullptr;
+            Track* pos_trk_gbl = nullptr;
+            
+            bool foundTracks = _ah->MatchToGBLTracks(ele_trk.getID(),pos_trk.getID(),
+                                                     ele_trk_gbl, pos_trk_gbl, *trks_);
+            
+            if (!foundTracks) {
+                std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
+                continue;  
             }
-
-        }
-        if (!foundele || !foundpos) {
-            std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
-            continue;
-        }
-        
-        //No shared hits requirement
-        if (!_reg_vtx_selectors[region]->passCutEq("ele_sharedL0_eq",(int)ele_trk.getSharedLy0(),weight))
-            continue;
-        if (!_reg_vtx_selectors[region]->passCutEq("pos_sharedL0_eq",(int)pos_trk.getSharedLy0(),weight))
-            continue;
-        if (!_reg_vtx_selectors[region]->passCutEq("ele_sharedL1_eq",(int)ele_trk.getSharedLy1(),weight))
-            continue;
-        if (!_reg_vtx_selectors[region]->passCutEq("pos_sharedL1_eq",(int)pos_trk.getSharedLy1(),weight))
-            continue;
-        
-        
-        _reg_vtx_histos[region]->Fill1DHisto("n_tracks_h",Ntracks,weight);
-        _reg_vtx_histos[region]->Fill1DHisto("n_vertices_h",selected_vtxs.size(),weight);
-        _reg_vtx_histos[region]->Fill1DVertex(vtx,
-                                              ele,
-                                              pos,
-                                              &ele_trk,
-                                              &pos_trk,
-                                              weight);
-        _reg_vtx_histos[region]->Fill2DHistograms(nullptr,vtx,weight);
-
-    }
+            
+            
+            //No shared hits requirement
+            if (!_reg_vtx_selectors[region]->passCutEq("ele_sharedL0_eq",(int)ele_trk_gbl->getSharedLy0(),weight))
+                continue;
+            if (!_reg_vtx_selectors[region]->passCutEq("pos_sharedL0_eq",(int)pos_trk_gbl->getSharedLy0(),weight))
+                continue;
+            if (!_reg_vtx_selectors[region]->passCutEq("ele_sharedL1_eq",(int)ele_trk_gbl->getSharedLy1(),weight))
+                continue;
+            if (!_reg_vtx_selectors[region]->passCutEq("pos_sharedL1_eq",(int)pos_trk_gbl->getSharedLy1(),weight))
+                continue;
+            
+            
+            _reg_vtx_histos[region]->Fill1DHisto("n_tracks_h",Ntracks,weight);
+            _reg_vtx_histos[region]->Fill1DHisto("n_vertices_h",selected_vtxs.size(),weight);
+            _reg_vtx_histos[region]->Fill1DVertex(vtx,
+                                                  ele,
+                                                  pos,
+                                                  ele_trk_gbl,
+                                                  pos_trk_gbl,
+                                                  weight);
+            _reg_vtx_histos[region]->Fill2DHistograms(nullptr,vtx,weight);
+        }// selected vertices
+    }//regions
     
     return true;
 }

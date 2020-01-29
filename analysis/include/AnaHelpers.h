@@ -13,6 +13,14 @@
 #include "TMatrixDSym.h"
 #include "TMatrixTSym.h"
 
+//HPSTR
+#include "Track.h"
+#include "TrackerHit.h"
+#include "Particle.h"
+#include "Vertex.h"
+
+
+
 class AnaHelpers {
 
 public :
@@ -44,6 +52,15 @@ public :
         return cov.SimilarityT(*rotSvt_sym);
     }
 
+    /** 
+     * Checks if a track has a 3d hit on innermost layer and second innermost layer
+     */
+        
+    void InnermostLayerCheck(Track* trk, bool& foundL1, bool& foundL2);
+    
+    bool GetParticlesFromVtx(Vertex* vtx, Particle*& ele, Particle*& pos);
+    
+    bool MatchToGBLTracks(int ele_id, int pos_id, Track* & ele_trk, Track* & pos_trk, std::vector<Track*>& trks);
     
     static std::string getFileName(std::string filePath, bool withExtension);    
     

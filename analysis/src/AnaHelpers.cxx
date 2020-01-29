@@ -23,7 +23,64 @@ std::string AnaHelpers::getFileName(std::string filePath, bool withExtension)
     return "";
 }
 
+void AnaHelpers::InnermostLayerCheck(Track* trk, bool& foundL1, bool& foundL2) {
+    for (int ihit=0; ihit<trk->getSvtHits()->GetEntries();++ihit) {
+        TrackerHit* hit3d = (TrackerHit*) trk->getSvtHits()->At(ihit);
+        if (hit3d->getLayer() == 0 ) {
+            foundL1 = true;
+        }
+        if (hit3d->getLayer() == 1) {
+            foundL2 = true;
+        }
+    }
+}
 
+bool AnaHelpers::MatchToGBLTracks(int ele_id, int pos_id, Track* & ele_trk, Track* & pos_trk, std::vector<Track*>& trks) {
+    
+    bool foundele = false;
+    bool foundpos = false;
+    
+    for (auto trk : trks) {
+        if (ele_id == trk->getID())  {
+            ele_trk = trk;
+            foundele = true;
+        }
+        if (pos_id == trk->getID()) {
+            pos_trk = trk;
+            foundpos = true;
+        }
+    }
+    return foundele * foundpos;
+}
+
+
+//TODO clean bit up 
+bool AnaHelpers::GetParticlesFromVtx(Vertex* vtx, Particle*& ele, Particle*& pos) {
+    
+    bool foundele = false;
+    bool foundpos = false;
+    
+    for (int ipart = 0; ipart < vtx->getParticles()->GetEntries(); ++ipart) {
+        
+        int pdg_id = ((Particle*)vtx->getParticles()->At(ipart))->getPDG();
+        
+        if (pdg_id == 11) {
+            ele =  ((Particle*)vtx->getParticles()->At(ipart));
+            foundele=true;
+        }
+        else if (pdg_id == -11) {
+            pos = (Particle*)vtx->getParticles()->At(ipart);
+            foundpos=true;
+        }
+    }
+
+    if (!ele || !pos) {
+        std::cout<<"Vertex formed without ele/pos. Skip."<<std::endl;
+        return false;
+    }
+    
+    return foundele && foundpos;
+}
 
 AnaHelpers::AnaHelpers() {
     rotSvt.RotateY(SVT_ANGLE);
