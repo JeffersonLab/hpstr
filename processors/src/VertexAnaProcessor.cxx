@@ -50,8 +50,8 @@ void VertexAnaProcessor::initialize(TTree* tree) {
     _vtx_histos = std::make_shared<TrackHistos>("vtxSelection");
     _vtx_histos->loadHistoConfig(histoCfg_);
     _vtx_histos->DefineHistos();
-    
 
+    
     //For each region initialize plots
     
     for (unsigned int i_reg = 0; i_reg < regionSelections_.size(); i_reg++) {
@@ -64,6 +64,10 @@ void VertexAnaProcessor::initialize(TTree* tree) {
         _reg_vtx_histos[regname] = std::make_shared<TrackHistos>(regname);
         _reg_vtx_histos[regname]->loadHistoConfig(histoCfg_);
         _reg_vtx_histos[regname]->DefineHistos();
+
+        _reg_tuples[regname] = std::make_shared<FlatTupleMaker>(regname+"_tree");
+        _reg_tuples[regname]->addVariable("unc_vtx_mass");
+        _reg_tuples[regname]->addVariable("unc_vtx_z");
         
         _regions.push_back(regname);
     }
@@ -178,20 +182,23 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         //Vertex Quality
         if (!vtxSelector->passCutLt("chi2unc_lt",vtx->getChi2(),weight))
             continue;
-
         
         
-                
-        //Fill Histograms for Vtx Preselection
-        _vtx_histos->Fill1DHistograms(nullptr,vtx,weight);
+        _vtx_histos->Fill1DVertex(vtx,
+                                  ele,
+                                  pos,
+                                  ele_trk,
+                                  pos_trk,
+                                  weight);
+        
         _vtx_histos->Fill2DHistograms(nullptr,vtx,weight);
-        
-        
+                
         selected_vtxs.push_back(vtx);       
         vtxSelector->clearSelector();
     }
     
     _vtx_histos->Fill1DHisto("n_vertices_h",selected_vtxs.size()); 
+    _vtx_histos->Fill1DHisto("n_tracks_h",trks_->size()); 
     
     
     //not working atm
@@ -202,18 +209,13 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
     //TODO Bring the preselection out of this stupid loop
 
     
-    //TODO add yields.
-    for (auto region : _regions ) {
+    //TODO add yields. => Quite terrible way to loop. 
+    for ( auto vtx : selected_vtxs) {
         
-        for ( auto vtx : selected_vtxs) {
+        for (auto region : _regions ) {
             
             //No cuts.
             _reg_vtx_selectors[region]->getCutFlowHisto()->Fill(0.,weight);
-            
-            
-            //N selected vertices
-            if (!_reg_vtx_selectors[region]->passCutEq("nVtxs_eq",selected_vtxs.size(),weight))
-                continue;
             
             
             Particle* ele = nullptr;
@@ -229,23 +231,15 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             double pos_E = pos->getEnergy();
             
             
-            //ESum 
+            //ESum low cut 
             if (!_reg_vtx_selectors[region]->passCutLt("eSum_lt",(ele_E+pos_E)/beamE_,weight))
                 continue;
-            
-            //ESum 
+             
+            //ESum hight cut
             if (!_reg_vtx_selectors[region]->passCutGt("eSum_gt",(ele_E+pos_E)/beamE_,weight))
                 continue;
             
-            //_reg_vtx_histos[region]->Fill1DHistograms(nullptr,vtx,weight);
-            
-            
-
             //Compute analysis variables here.
-            
-            //Total number of tracks in the event:
-            
-            int Ntracks = trks_->size();
             
             Track ele_trk = ele->getTrack();
             Track pos_trk = pos->getTrack();
@@ -262,7 +256,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
                 continue;  
             }
-            
+           
             
             //No shared hits requirement
             if (!_reg_vtx_selectors[region]->passCutEq("ele_sharedL0_eq",(int)ele_trk_gbl->getSharedLy0(),weight))
@@ -275,17 +269,41 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 continue;
             
             
-            _reg_vtx_histos[region]->Fill1DHisto("n_tracks_h",Ntracks,weight);
-            _reg_vtx_histos[region]->Fill1DHisto("n_vertices_h",selected_vtxs.size(),weight);
+            //N selected vertices - this is quite a silly cut to make at the end. But okay. that's how we decided atm.
+            if (!_reg_vtx_selectors[region]->passCutEq("nVtxs_eq",selected_vtxs.size(),weight))
+                continue;
+            
+            _reg_vtx_histos[region]->Fill2DHistograms(nullptr,vtx,weight);
             _reg_vtx_histos[region]->Fill1DVertex(vtx,
                                                   ele,
                                                   pos,
                                                   ele_trk_gbl,
                                                   pos_trk_gbl,
                                                   weight);
-            _reg_vtx_histos[region]->Fill2DHistograms(nullptr,vtx,weight);
-        }// selected vertices
-    }//regions
+
+            
+            _reg_vtx_histos[region]->Fill1DHisto("n_tracks_h",trks_->size(),weight);
+            _reg_vtx_histos[region]->Fill1DHisto("n_vertices_h",selected_vtxs.size(),weight);
+            
+            
+            //Just for the selected vertex
+            _reg_tuples[region]->setVariableValue("unc_vtx_mass", vtx->getInvMass());
+            
+            //TODO put this in the Vertex!
+            TVector3 vtxPosSvt;
+            vtxPosSvt.SetX(vtx->getX());
+            vtxPosSvt.SetY(vtx->getY());
+            vtxPosSvt.SetZ(vtx->getZ());
+            vtxPosSvt.RotateY(-0.0305);
+            
+            _reg_tuples[region]->setVariableValue("unc_vtx_z"   , vtxPosSvt.Z());
+            
+            
+            _reg_tuples[region]->fill();
+        }// regions
+    } // preselected vertices
+    
+    
     
     return true;
 }
@@ -303,6 +321,8 @@ void VertexAnaProcessor::finalize() {
         (it->second)->saveHistos(outF_,it->first);
         outF_->cd((it->first).c_str());
         _reg_vtx_selectors[it->first]->getCutFlowHisto()->Write();
+        //Save tuples
+        _reg_tuples[it->first]->writeTree();
     }
     
     outF_->Close();

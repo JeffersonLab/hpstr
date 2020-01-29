@@ -206,11 +206,25 @@ void TrackHistos::Fill1DHistograms(Track *track, Vertex* vtx, float weight ) {
 
 void TrackHistos::Fill2DHistograms(Track* track, Vertex* vtx, float weight) { 
     
+    
+
+
     if (track) {
         Fill2DHisto("tanlambda_vs_phi0_hh",track->getPhi(),track->getTanLambda(), weight);
     }
     if (vtx) {
+        
+
+        //TODO Improve this.
+        TVector3 vtxPosSvt;
+        vtxPosSvt.SetX(vtx->getX());
+        vtxPosSvt.SetY(vtx->getY());
+        vtxPosSvt.SetZ(vtx->getZ());
+        
+        vtxPosSvt.RotateY(-0.0305);
+        
         Fill2DHisto("vtx_InvM_vtx_z_hh",vtx->getInvMass(),vtx->getZ(),weight);
+        Fill2DHisto("vtx_InvM_vtx_svt_z_hh",vtx->getInvMass(),vtxPosSvt.Z(),weight);
     }
 }
 

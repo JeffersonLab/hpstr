@@ -36,6 +36,7 @@ recoana.parameters["anaName"] = "vtxana"
 recoana.parameters["trkColl"] = "GBLTracks"
 recoana.parameters["vtxColl"] = "UnconstrainedV0Vertices"
 recoana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/vertexSelection.json'
+#recoana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/vtxSelection_noLyReq.json'
 recoana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
 recoana.parameters["beamE"] = 2.3
 recoana.parameters["isData"] = options.isData
@@ -57,14 +58,11 @@ recoana.parameters["CalTimeOffset"]=CalTimeOffset
 #Region definitions
 
 RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/"
-recoana.parameters["regionDefinitions"] = [
-    RegionPath+'Preselection.json',
-    RegionPath+'ESumCR.json',
-    RegionPath+'Tight.json',
-    RegionPath+'TightNoSharedL0.json',
-    RegionPath+'TightNoShared.json',
-    
-]
+recoana.parameters["regionDefinitions"] = [RegionPath+'Tight.json']
+#    
+#    RegionPath+'ESumCR.json',
+#    RegionPath+'TightNoSharedL0.json',
+#    RegionPath+'TightNoShared.json',
 
 
 
