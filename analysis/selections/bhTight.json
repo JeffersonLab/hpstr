@@ -1,13 +1,13 @@
 {
-    "Pair1_eq" : {
-        "cut"  : 1,
+    "eSum_gt"  : {
+        "cut"  : 0.8,
         "id"   : 0,
-        "info" : "Trigger Pair1"
+        "info" : "E_{e^{-}} +  E_{e^{+}}>0.8Ebeam"
     },
-    
     "nVtxs_eq" : {
         "cut"  : 1,
         "id"   : 1,
         "info" : "N_{vtx}=1"
     }
+
 }

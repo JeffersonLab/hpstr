@@ -30,7 +30,7 @@ class BhToysHistoProcessor : public Processor {
 
         virtual void initialize(TTree* tree) {};
 
-        virtual bool process(IEvent* event) {};
+        virtual bool process(IEvent* event) { return true;};
 
         virtual void finalize();
 

@@ -133,8 +133,8 @@ def SetStyle():
     # use large fonts
 #font=72
     font=42
-    tsize=0.07
-    tzsize = 0.055
+    tsize=0.045
+    tzsize = 0.045
     hpsStyle.SetTextFont(font)
 
     
@@ -153,8 +153,8 @@ def SetStyle():
     hpsStyle.SetLabelSize(tzsize,"z")
     hpsStyle.SetTitleSize(tzsize,"z")
 
-    hpsStyle.SetTitleOffset(0.8,"y")
-    hpsStyle.SetTitleOffset(1.3,"x")
+    hpsStyle.SetTitleOffset(1.2,"y")
+    hpsStyle.SetTitleOffset(1.15,"x")
     
     
 #use bold lines and markers
