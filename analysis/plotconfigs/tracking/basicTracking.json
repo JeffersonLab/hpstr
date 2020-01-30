@@ -86,9 +86,9 @@
         "ytitle" : "Tracks"
     },
     "n_vertices_h" : {
-        "bins"   : 4,
+        "bins"   : 6,
         "minX"   : -0.5,
-        "maxX"   : 3.5,
+        "maxX"   : 5.5,
         "xtitle" : "N_{vertices}",
         "ytitle" : "Events"
     },

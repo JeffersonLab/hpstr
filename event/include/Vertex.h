@@ -74,12 +74,6 @@ class Vertex : public TObject {
         /** Set the ID */
         void setID (const int id) {id_=id;}
 
-        /** Set the invariant mass */
-        float setInvMass() const {return invM_;}
-
-        /** Set the invariant mass error */
-        float setInvMassErr() const {return invMerr_;}
-
         /** Sets the covariance matrix as a simple vector of values
          *  Covariance matrix of the position (stored as lower triangle matrix, i.e.
          *  cov(xx),cov(y,x),cov(y,y) ).
@@ -140,7 +134,19 @@ class Vertex : public TObject {
         double   getP2Z      () const {return p2_.Z();}
 
         TVector3 getP        () const {return p_;}
-
+        
+        /** Get the Target Constrained Sigma X */
+        double getTgtConstrSigmaX() const {return parameters_[9];}
+        
+        /** Get the Target Constrained X */
+        double getTgtConstrX() const {return parameters_[7];}
+        
+        /** Get the Target Constrained Sigma Y */
+        double getTgtConstrSigmaY() const {return parameters_[11];}
+        
+        /** Get the Target Constrained Y */
+        double getTgtConstrY() const {return parameters_[20];}
+        
         ClassDef(Vertex,1);
 
     private:

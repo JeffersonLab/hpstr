@@ -1,4 +1,4 @@
-from ctypes.util import find_library 
+import platform
 
 class Processor: 
     
@@ -29,7 +29,15 @@ class Process:
     def add_library(self,lib):
         '''Add a libraries to the list of libraries to load, searching the appropriate paths to find it,
         and adding the correct file extension'''
-        add_lib = find_library(lib)
+        systemName = platform.system()
+        if (systemName == "Linux"):
+            libParts = lib.split(".")
+            add_lib = libParts[0]+".so"
+            pass
+        if (systemName == "Darwin"):
+            libParts = lib.split(".")
+            add_lib = libParts[0]+".dylib"
+            pass
         self.libraries.append(add_lib)
 
     def printProcess(self):

@@ -6,18 +6,21 @@ BaseSelector::BaseSelector() {
     BaseSelector("default");
     m_cfgFile = "";
     debug_ = false;
+    passSelection = true;
 }
 
 BaseSelector::BaseSelector(const std::string& inputName) { 
     m_name = inputName;
     m_cfgFile = "";
     debug_ = false;
+    passSelection = true;
 }
 
 BaseSelector::BaseSelector(const std::string& inputName, const std::string& cfgFile) { 
     m_name = inputName;
     m_cfgFile = cfgFile;
     debug_ = false;
+    passSelection=true;
 }
 
 void BaseSelector::setCfgFile(const std::string& cfgFile) {
@@ -72,13 +75,18 @@ void BaseSelector::makeCutFlowHisto() {
     }
 }
 
+
+//TODO Clean up logic
 bool BaseSelector::passCutEq(const std::string& cutname, double val, double w) {
     
     if (hasCut(cutname)) {
-        if (val != cuts[cutname].first)
+        if (val != cuts[cutname].first) { 
+            passSelection = passSelection && false;
             return false;
+        }
         else {
             h_cf_->Fill((double)(cuts[cutname].second + 1), w);
+            passSelection = passSelection && true;
         }
     }
     return true;
@@ -88,10 +96,13 @@ bool BaseSelector::passCutEq(const std::string& cutname, double val, double w) {
 bool BaseSelector::passCutLt(const std::string& cutname, double val, double w) {
     
     if (hasCut(cutname)) {
-        if (val > cuts[cutname].first)
+        if (val > cuts[cutname].first) {
+            passSelection = passSelection && false;
             return false;
+        }
         else {
             h_cf_->Fill((double)(cuts[cutname].second + 1), w);
+            passSelection = passSelection && true;
         }
     }
     return true;
@@ -100,10 +111,13 @@ bool BaseSelector::passCutLt(const std::string& cutname, double val, double w) {
 bool BaseSelector::passCutGt(const std::string& cutname, double val, double w) {
     
     if (hasCut(cutname)) {
-        if (val < cuts[cutname].first)
+        if (val < cuts[cutname].first) {
+            passSelection = passSelection && false;
             return false;
+        }
         else {
             h_cf_->Fill((double)(cuts[cutname].second + 1), w);
+            passSelection = passSelection && true;
         }
     }
     return true;

@@ -41,7 +41,7 @@ void Vertex::setPos(const float* pos, bool rotate) {
     if (rotate) {
         pos_.SetY(pos[2]);
         pos_.SetZ(pos[1]*sin(svtAngle) + pos[0]*cos(svtAngle));
-        pos_.SetX(pos[0]*cos(svtAngle) - pos[0]*sin(svtAngle));
+        pos_.SetX(pos[1]*cos(svtAngle) - pos[0]*sin(svtAngle));
     }
     else {
         // The vertex object should already by in HPS coordinates!  (if not in the SVT already)

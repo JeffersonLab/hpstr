@@ -1,0 +1,32 @@
+{
+    "Pair1_eq" : {
+        "cut"  : 1,
+        "id"   : 0,
+        "info" : "Trigger Pair1"
+    },  
+    "nVtxs_eq" : {
+        "cut"  : 1,
+        "id"   : 1,
+        "info" : "N_{vtx}=1"
+    },
+    "chi2unc_lt" : {
+        "cut"  : 4,
+        "id"   : 2,
+        "info" : "#chi^{2}_{unc}<4"
+    },
+    "eSum_gt"  : {
+        "cut"  : 0.5,
+        "id"   : 3,
+        "info" : "E_{e^{-}} +  E_{e^{+}}>0.8Ebeam"
+    },
+    "ele_sharedL0_eq" : {
+        "cut"  : 0,
+        "id"   : 4,
+        "info" : "N^{e^{-}}_{Shared} L0=0"
+    },
+    "pos_sharedL0_eq" : {
+        "cut"  : 0,
+        "id"   : 5,
+        "info" : "N^{e^{+}}_{Shared} L0=0"
+    }
+}

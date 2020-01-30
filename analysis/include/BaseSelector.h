@@ -14,7 +14,6 @@
 using json = nlohmann::json;
 
 class BaseSelector { 
-
     public: 
         BaseSelector();
         BaseSelector(const std::string& inputName);
@@ -51,7 +50,6 @@ class BaseSelector {
         std::shared_ptr<TH1F> h_cf_;
 
         typedef std::map<std::string,std::pair<double,int> >::iterator cut_it;
-
 };
 
 #endif
