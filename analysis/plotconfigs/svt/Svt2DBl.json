@@ -1,4 +1,13 @@
 {   
+    "Events_per_Channel_h" : {
+            "xtitle" : "Number of Hits per Channel",
+            "bins" : 10000,
+            "minX" : 0,
+            "maxX" : 10000,
+            "ytitle" : "Events"
+
+        },
+
     "svtHitN_h" : {
             "xtitle" : "# of Strips",
             "bins" : 10000,

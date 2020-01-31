@@ -27,7 +27,7 @@ class Svt2DBlHistos : public HistoManager{
 
 
         void FillHistograms(std::vector<RawSvtHit*> *rawSvtHits_,float weight = 1.);
-
+        void get2DHistoOccupancy(std::vector<std::string> histos2dNames);
         void setBaselineFitsDir(const std::string& baselineFits) {baselineFits_ = baselineFits;};
         bool LoadBaselineHistos(const std::string& baselineRun);
 
