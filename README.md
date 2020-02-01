@@ -1,4 +1,4 @@
-updated: 15 Jan 2020
+updated: 23 Jan 2020
 
 # Heavy Photon Search Toolkit for Reconstruction
 
@@ -49,12 +49,21 @@ where ```<config.py>``` is a config file (which are stored in ```hpstr/processor
 
 Hpstr can both run on LCIO files to produce ROOT ntuples, producing the hpstr event with all the objects needed for analysis, and on ROOT ntuples to produce histograms. This can be setup by using the appropriate configuration file. 
 
-### Running Examples -- ntuples production
+### Ntuples production
 
 The configuration to produce ntuples from LCIO files is ```recoTuple_cfg.py```. Typical usage is:
 ```bash
 hpstr recoTuple_cfg.py -i <inLcioFile> -o <outROOTFile>
 ```
+
+### Making Plots
+
+A working example on how to make some plots out of hpstr ntuple is 
+
+```bash
+hpstr anaVtxTuple_cfg.py -i /nfs/slac/g/hps3/users/bravo/data/physrun2016/7800/hps_007800.123_v0_4.2_4.4-SNAPSHOT_rereco.root -o hps_007800.123.root -t 1 
+```
+This example will run the standard vertex selection on a data file (to specify that this file is data one has to use the ```-t``` flag and passing 0 will tell hpstr that we are processing MonteCarlo. Plots will be produced according to the selections specified. 
 
 ## Contributing to Hpstr
 

@@ -3,7 +3,7 @@ import sys
 p = HpstrConf.Process()
 
 # Library containing processors
-p.libraries.append("libprocessors.dylib")
+p.add_library("libprocessors")
 
 #Processors
 

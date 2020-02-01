@@ -25,20 +25,20 @@ p.add_library("libprocessors")
 #          Processors         #
 ###############################
 
-vtxana = HpstrConf.Processor('vtxana', 'VertexAnaProcessor')
+bhana = HpstrConf.Processor('bhana', 'VertexAnaProcessor')
 
 ###############################
 #   Processor Configuration   #
 ###############################
 #Vertex Analysis
-vtxana.parameters["debug"] = 1
-vtxana.parameters["anaName"] = "vtxana"
-vtxana.parameters["trkColl"] = "GBLTracks"
-vtxana.parameters["vtxColl"] = "UnconstrainedV0Vertices"
-vtxana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/vertexSelection.json'
-vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
-vtxana.parameters["beamE"] = 2.3
-vtxana.parameters["isData"] = options.isData
+bhana.parameters["debug"] = 1
+bhana.parameters["anaName"] = "bhana"
+bhana.parameters["trkColl"] = "GBLTracks"
+bhana.parameters["vtxColl"] = "TargetConstrainedV0Vertices"
+bhana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/bhSelection.json'
+bhana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
+bhana.parameters["beamE"] = 2.3
+bhana.parameters["isData"] = options.isData
 CalTimeOffset=-999
 
 if (options.isData==1):
@@ -52,15 +52,15 @@ else:
     print "Specify which type of ntuple you are running on: -t 1 [for Data] / -t 0 [for MC]"
 
 
-vtxana.parameters["CalTimeOffset"]=CalTimeOffset
+bhana.parameters["CalTimeOffset"]=CalTimeOffset
 
 #Region definitions
 
 RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/"
-vtxana.parameters["regionDefinitions"] = [RegionPath+'Tight.json']
+bhana.parameters["regionDefinitions"] = [RegionPath+'bhTight.json']
 
 # Sequence which the processors will run.
-p.sequence = [vtxana]
+p.sequence = [bhana]
 
 p.input_files=[infile]
 p.output_files = [outfile]
