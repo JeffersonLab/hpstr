@@ -118,21 +118,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             continue;  
         }
 
-        bool foundL1ele = false;
-        bool foundL2ele = false;
-        _ah->InnermostLayerCheck(ele_trk, foundL1ele, foundL2ele);   
         
-        bool foundL1pos = false;
-        bool foundL2pos = false;
-        _ah->InnermostLayerCheck(pos_trk, foundL1pos, foundL2pos);  
-        
-        //L1 requirement
-        if (!vtxSelector->passCutEq("L1Requirement_eq",(int)(foundL1ele&&foundL1pos),weight))
-            continue;
-        
-        //L2 requirement
-        if (!vtxSelector->passCutEq("L2Requirement_eq",(int)(foundL2ele&&foundL2pos),weight))
-            continue;
         
         //Tracks in opposite volumes - useless
         //if (!vtxSelector->passCutLt("eleposTanLambaProd_lt",ele_trk->getTanLambda() * pos_trk->getTanLambda(),weight)) 
@@ -165,6 +151,11 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         ele_mom.SetX(ele->getMomentum()[0]);
         ele_mom.SetY(ele->getMomentum()[1]);
         ele_mom.SetZ(ele->getMomentum()[2]);
+
+        TVector3 pos_mom;
+        pos_mom.SetX(pos->getMomentum()[0]);
+        pos_mom.SetY(pos->getMomentum()[1]);
+        pos_mom.SetZ(pos->getMomentum()[2]);
         
         
         //Beam Electron cut
@@ -183,6 +174,19 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         if (!vtxSelector->passCutLt("chi2unc_lt",vtx->getChi2(),weight))
             continue;
         
+
+        //Ele min momentum cut
+        if (!vtxSelector->passCutGt("eleMom_gt",ele_mom.Mag(),weight))
+            continue;
+
+        //Pos min momentum cut
+        if (!vtxSelector->passCutGt("posMom_gt",ele_mom.Mag(),weight))
+            continue;
+
+        //Max vtx momentum
+        
+        if (!vtxSelector->passCutLt("maxVtxMom_lt",(ele_mom+pos_mom).Mag(),weight))
+            continue;
         
         _vtx_histos->Fill1DVertex(vtx,
                                   ele,
@@ -229,16 +233,8 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             
             double ele_E = ele->getEnergy();
             double pos_E = pos->getEnergy();
-            
-            
-            //ESum low cut 
-            if (!_reg_vtx_selectors[region]->passCutLt("eSum_lt",(ele_E+pos_E)/beamE_,weight))
-                continue;
-             
-            //ESum hight cut
-            if (!_reg_vtx_selectors[region]->passCutGt("eSum_gt",(ele_E+pos_E)/beamE_,weight))
-                continue;
-            
+
+
             //Compute analysis variables here.
             
             Track ele_trk = ele->getTrack();
@@ -257,6 +253,31 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 continue;  
             }
            
+            bool foundL1ele = false;
+            bool foundL2ele = false;
+            _ah->InnermostLayerCheck(ele_trk_gbl, foundL1ele, foundL2ele);   
+            
+            bool foundL1pos = false;
+            bool foundL2pos = false;
+            _ah->InnermostLayerCheck(pos_trk_gbl, foundL1pos, foundL2pos);  
+            
+            //L1 requirement
+            if (!vtxSelector->passCutEq("L1Requirement_eq",(int)(foundL1ele&&foundL1pos),weight))
+                continue;
+            
+            //L2 requirement
+            if (!vtxSelector->passCutEq("L2Requirement_eq",(int)(foundL2ele&&foundL2pos),weight))
+                continue;
+            
+            
+            //ESum low cut 
+            if (!_reg_vtx_selectors[region]->passCutLt("eSum_lt",(ele_E+pos_E)/beamE_,weight))
+                continue;
+             
+            //ESum hight cut
+            if (!_reg_vtx_selectors[region]->passCutGt("eSum_gt",(ele_E+pos_E)/beamE_,weight))
+                continue;
+            
             
             //No shared hits requirement
             if (!_reg_vtx_selectors[region]->passCutEq("ele_sharedL0_eq",(int)ele_trk_gbl->getSharedLy0(),weight))
