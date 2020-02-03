@@ -65,10 +65,13 @@ hpstr anaVtxTuple_cfg.py -i /nfs/slac/g/hps3/users/bravo/data/physrun2016/7800/h
 ```
 This example will run the standard vertex selection on a data file (to specify that this file is data one has to use the ```-t``` flag and passing 0 will tell hpstr that we are processing MonteCarlo. Plots will be produced according to the selections specified. 
 
+## Available Scripts 
+
+The sripts folder in the hpstr repo provides a serie of utilities which some or them are described here. 
 
 ### Processing multiple files
 
-The script ```scripts/run_jobPool.py``` provides a way to process multiple files with hpstr in parallel in parallel threads. 
+The script ```run_jobPool.py``` provides a way to process multiple files with hpstr in parallel in parallel threads. 
 Here is an example on how to run it
 
 ```bash
