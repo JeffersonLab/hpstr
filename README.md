@@ -71,7 +71,7 @@ This example will run the standard vertex selection on a data file (to specify t
 The script ```scripts/run_jobPool.py``` provides a way to process multiple files with hpstr in parallel in parallel threads. 
 Here is an example on how to run it
 
-```
+```bash
 python run_jobPool.py -t hpstr -c <configFile.py>  -i <inDir> -z <isData> -o <outDir> -r
 ```
 
