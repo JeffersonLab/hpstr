@@ -319,7 +319,7 @@
         "ytitle" : "trk tan(#lambda)"
     },
     "vtx_InvM_vtx_z_hh" : {
-        "binsX"  : 100,
+        "binsX"  : 160,
         "minX"   : 0.0,
         "maxX"   : 0.2,
         "binsY"  : 400,
@@ -329,7 +329,7 @@
         "ytitle" : "z_{vtx} [mm]"
     },
     "vtx_InvM_vtx_svt_z_hh" : {
-        "binsX"  : 100,
+        "binsX"  : 160,
         "minX"   : 0.0,
         "maxX"   : 0.4,
         "binsY"  : 400,
