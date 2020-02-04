@@ -11,13 +11,16 @@ def getEff(thisCut,previousCut):
     effs=[]
     #The first is the cut name
     for ival in range(1,len(thisCut)):
-        if (previousCut[ival] > -0.5 and thisCut[ival] > -0.5):
-            if (abs(previousCut[ival]) > 1e-8):
-                print(thisCut[ival],previousCut[ival])
-                eff=thisCut[ival] / previousCut[ival]
-            else:
-                eff=-1.
-            effs.append(eff)
+        if (abs(previousCut[ival]) > 1e-8):
+            print(thisCut[ival],previousCut[ival])
+            eff=thisCut[ival] / previousCut[ival]
+        else:
+            eff=-1.0
+        effs.append(thisCut[ival])
+        if (eff==-1.0):
+            effs.append("--")
+        else:
+            effs.append(round(eff,3))
     
     return effs
 
@@ -61,35 +64,43 @@ table = []
 
 for icut in range(1,nCuts+1):
     cutEntry=[]
+    cutEntry.append(cuts[icut-1])
     for cf_h in hList:
         v_yield=cf_h.GetBinContent(icut)
         cutEntry.append(cf_h.GetBinContent(icut))
         #place holder for eff
-        cutEntry.append(-1)
+        #cutEntry.append(-1)
     if (debug):
         print(cutEntry)
     table.append(cutEntry)
 
-    
+table_wEffs = []    
 #Get Efficiencies - TODO FIX
 for ientry in range(len(table)):
     print("table entry",table[ientry])
-    if (ientry<2):
-        table[ientry][1]=-1
-        table[ientry][3]=-1
+    yields=table[ientry][1:]
+    print(yields)
+    effs=[table[ientry][0]]
+    if (ientry<1):
+        for yi in yields:
+            effs.append(yi)
+            effs.append("--")
+        table_wEffs.append(effs)
     else:
-        effs = getEff(table[ientry-1],table[ientry-2])
-        print effs
-        table[ientry][1]=effs[0]
-        table[ientry][3]=effs[1]
-        print(effs)
+        if (debug):
+            print("Eff: "+table[ientry][0] +"/"+table[ientry-1][0])
+        effs += getEff(table[ientry],table[ientry-1])
+        table_wEffs.append(effs)
+        
+    
 
 
 
-#Print out
+#effs out
 headers = ["cut", "sample1","eff","sample2","eff"]
 outfile=open("test.txt","w")
 outfile.write(tabulate(table, headers, tablefmt="latex"))
 outfile.close()
 
 print tabulate(table, headers, tablefmt="latex")
+print tabulate(table_wEffs, headers, tablefmt="latex")
