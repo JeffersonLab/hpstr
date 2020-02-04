@@ -20,6 +20,7 @@ Svt2DBlHistos::~Svt2DBlHistos() {
 }
 
 void Svt2DBlHistos::get2DHistoOccupancy(std::vector<std::string> histos2dNames) {
+    /*
     //This block extracts the number of entries per channel, per event, and fills a 1D histogram
     //that will give the total number of hits/channel on the x axis, & number of events on the Y axis
     std::cout << "Running Occupancy method" << std::endl;
@@ -39,6 +40,7 @@ void Svt2DBlHistos::get2DHistoOccupancy(std::vector<std::string> histos2dNames) 
     //double ymax=co_h->GetBinContent(co_h->GetMaximumBin());
     co_h->GetXaxis()->SetRangeUser(0,xmax);
     //co_h->GetYaxis()->SetRange(0,ymax);
+    */
 }
 
 void Svt2DBlHistos::FillHistograms(std::vector<RawSvtHit*> *rawSvtHits_,float weight) {

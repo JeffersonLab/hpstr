@@ -14,7 +14,8 @@ void SvtBlFitHistoProcessor::configure(const ParameterSet& parameters) {
     {
         outDir_ = parameters.getString("outDir");
         histCfgFilename_ = parameters.getString("histCfg");
-	timeSamples_ = parameters.getVString("timeSamples");
+        hybrid_ = parameters.getVString("hybrid");
+        IterativeGaussFitCut_ = parameters.getInteger("nhitsFitCut");
     }
     catch (std::runtime_error& error)
     {
@@ -31,9 +32,9 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     outF_ = new TFile(outFilename.c_str(),"RECREATE");
     
     outputHistos_ = new BlFitHistos("raw_hits");
-    inputHistos_ = new HistoManager("baseline0");
+    inputHistos_ = new HistoManager("");
     std::cout << "[BlFitHistos] Loading 2D Histos" << std::endl;
-    inputHistos_->GetHistosFromFile(inF_, timeSamples_);
+    inputHistos_->GetHistosFromFile(inF_, hybrid_);
     std::cout << "[BlFitHistos] Loading json file" << std::endl;
     outputHistos_->loadHistoConfig(histCfgFilename_); 
     std::cout << "[BlFitHistos] Creating Histograms for Fit Parameters" << std::endl;
@@ -89,6 +90,7 @@ bool SvtBlFitHistoProcessor::process() {
                 outputHistos_->get1dHisto(normkey),
                 outputHistos_->get1dHisto(FitRangeLowerkey),
                 outputHistos_->get1dHisto(FitRangeUpperkey),
+                IterativeGaussFitCut_,
                 binning_, 0);
                 
     }

@@ -220,7 +220,7 @@ void HistogramHelpers::profileZwithIterativeGaussFit(TH3* hist, TH2* mu_graph, T
 
 
 //-----------------------------------------------------------------------------
-void HistogramHelpers::profileYwithIterativeGaussFit(TH2* hist, TH1F* mu_graph, TH1F* sigma_graph, TH1F* norm_graph, TH1F* FitRangeLower_graph, TH1F* FitRangeUpper_graph, int num_bins,int m_PrintLevel)
+void HistogramHelpers::profileYwithIterativeGaussFit(TH2* hist, TH1F* mu_graph, TH1F* sigma_graph, TH1F* norm_graph, TH1F* FitRangeLower_graph, TH1F* FitRangeUpper_graph, int IGFminEntries,int num_bins,int m_PrintLevel)
 {
 
     if (!hist) {
@@ -233,7 +233,7 @@ void HistogramHelpers::profileYwithIterativeGaussFit(TH2* hist, TH1F* mu_graph, 
         return;
     }
 
-    const int minEntries = 50;
+    const int minEntries = IGFminEntries;
     const int fDebug = 1;
 
     int num_bins_x = hist->GetXaxis()->GetNbins();
@@ -261,7 +261,7 @@ void HistogramHelpers::profileYwithIterativeGaussFit(TH2* hist, TH1F* mu_graph, 
 
     for (int i = 1; i < (num_bins_x + (num_bins == 1)); i+=num_bins) {
 
-	//std::cout << "Channel #" << i-1 << std::endl;
+        std::cout << "Channel #" << i-1 << std::endl;
         int index = i/num_bins;
         if (num_bins == 1) index--;
 
@@ -274,6 +274,9 @@ void HistogramHelpers::profileYwithIterativeGaussFit(TH2* hist, TH1F* mu_graph, 
             sigma = 0;
             sigma_err = 0;
             num_skipped++;
+            bad_channels.push_back(i); //if #entries < minEntries, add channel to list of bad_channel 
+            bad_channel_nhits.push_back(current_proj->GetEntries());
+
             if ( fDebug ) std::cout<<"WARNING: Not enough entries in bin "<<index<<std::endl;
         } else {
 
@@ -378,7 +381,7 @@ TF1* HistogramHelpers::IterativeGeneralFit(TH1* hist, double(*fcn)(double *, dou
 }
 
 
-int HistogramHelpers::IterativeGaussFit(TH1* hist, double &mu, double &mu_err, double &sigma, double &sigma_err,double &norm, double &FitRangeLower, double &FitRangeUpper,  int m_PrintLevel)
+int HistogramHelpers::IterativeGaussFit(TH1* hist, double &mu, double &mu_err, double &sigma, double &sigma_err,double &norm, double &FitRangeLower, double &FitRangeUpper, int m_PrintLevel) 
 {
 
     //constants for fitting algorithm
@@ -397,8 +400,7 @@ int HistogramHelpers::IterativeGaussFit(TH1* hist, double &mu, double &mu_err, d
     double sigma_percent_diff;
 
     //m_PrintLevel = 3;
-
-    int minEntries = 25;
+    int minEntries = 0;
 
     if (!hist) {
         if (fDebug) std::cout<< "Error in  Anp::IterativeGaussFit(): Histogram to be fit is missing" <<std::endl;
@@ -486,13 +488,18 @@ int HistogramHelpers::IterativeGaussFit(TH1* hist, double &mu, double &mu_err, d
             << "  last_mu: " << last_mu << " +- " <<  mu_err
             << "   fit range: " << FitRangeLower << " --> " << FitRangeUpper 
             <<  "  integral fraction: " << integral/full_int << endl;
+
+        if ( integral/full_int > 0.90 ) {
+            std::cout << "Fit will not converge" << std::endl;
+            return 0;
+        }
     }
 
     if (iteration == iteration_limit) {
         if (fDebug ) std::cout<<"WARNING: Fit did not converge to < "<<percent_limit*100<<"% in "<< hist->GetTitle() <<" in "<<iteration_limit<<" iterations. Percent Diffs: "<<mu_percent_diff*100<<"% (Mu),"<<" "<<sigma_percent_diff*100<<"% (Sigma)"<<std::endl;
         //possibly return a value other than 0 to indicate not converged?
     }
-
+    std::cout << "Current_mu" << mu << std::endl;
     mu = current_mu;
     mu_err = fit_func->GetParError(1);
     sigma = current_sigma;

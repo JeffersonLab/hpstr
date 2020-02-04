@@ -9,9 +9,11 @@ def timeSample_callback(options, opt, value, parser):
 parser = OptionParser()
 parser.add_option("-i", "--inFile", type="string", dest="inFilename",
         help="Input filename.", metavar="inFilename", default="")
+parser.add_option("-c", "--nhitsFitCut", type="int", dest="nhitsFitCut",
+        help="set the min number of hits required for Gauss Fit of channels", metavar="nhitsFitCut", default="0")
 parser.add_option("-d", "--outDir", type="string", dest="outDir",
         help="Specify the output directory.", metavar="outDir", default=".")
-parser.add_option('-t', '--timeSamples', type='string', dest="timeSamples", action='callback',
+parser.add_option('-s', '--hybrid', type='string', dest="hybrid", help="Enter baseline<#><hybrid_name>", action='callback',
         callback=timeSample_callback)
 (options, args) = parser.parse_args()
 
@@ -38,7 +40,9 @@ fitBL = HpstrConf.Processor('fitBL', 'SvtBlFitHistoProcessor')
 ###############################
 fitBL.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/SvtBlFits.json'
 fitBL.parameters["outDir"] = options.outDir
-fitBL.parameters["timeSamples"] = options.timeSamples
+fitBL.parameters["hybrid"] = options.hybrid
+fitBL.parameters["nhitsFitCut"] = options.nhitsFitCut
+
 # Sequence which the processors will run.
 p.sequence = [fitBL]
 

@@ -50,11 +50,11 @@ bool SvtBl2DAnaProcessor::process(IEvent* ievent) {
 void SvtBl2DAnaProcessor::finalize() {
     std::cout << "[SvtBl2DAnaProcessor] Finalizing" << std::endl;
 
-    for(std::vector<std::string>::iterator it = svtCondHistos->histos2dNamesfromJson.begin(); it != svtCondHistos->histos2dNamesfromJson.end(); ++it) {
+   /* for(std::vector<std::string>::iterator it = svtCondHistos->histos2dNamesfromJson.begin(); it != svtCondHistos->histos2dNamesfromJson.end(); ++it) {
         std::cout << *it << std::endl;
     }
     svtCondHistos->get2DHistoOccupancy(svtCondHistos->histos2dNamesfromJson);
-    std::cout << "svtCondHistos get2dHistoOccupancy" << std::endl;
+    std::cout << "svtCondHistos get2dHistoOccupancy" << std::endl;*/
     svtCondHistos->saveHistos(outF_,"");
     delete svtCondHistos;
     svtCondHistos = nullptr;
