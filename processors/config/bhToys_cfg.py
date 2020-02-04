@@ -1,13 +1,9 @@
 import HpstrConf
 import sys
+import baseConfig
 
-from optparse import OptionParser
+parser = baseConfig.parser
 
-parser = OptionParser()
-parser.add_option("-i", "--inFile", type="string", dest="inFilename",
-        help="Input filename.", metavar="inFilename", default="cutflows.root")
-parser.add_option("-d", "--outDir", type="string", dest="outDir",
-        help="Specify the output directory.", metavar="outDir", default=".")
 parser.add_option("-m", "--mass", type="int", dest="mass_hypo",
         help="Mass hypothesis in MeV.", metavar="mass_hypo", default=145)
 parser.add_option("-p", "--poly", type="int", dest="poly_order",
@@ -17,8 +13,11 @@ parser.add_option("-w", "--win", type="int", dest="win_factor",
 parser.add_option("-t", "--toys", type="int", dest="nToys",
         help="Number of toy spectra to throw.", metavar="nToys", default=100)
 parser.add_option("-s", "--spec", type="string", dest="mass_spec",
-        help="Name of mass spectrum histogram.", metavar="mass_spec", 
+        help="Name of mass spectrum histogram.", metavar="mass_spec",
         default="mass_tweak__p_tot_min_cut")
+parser.add_option("-a", "--sig", type="int", dest="toy_sig_samples",
+        help="Number of signal events to add to toy models.", metavar="toy_sig_samples",
+        default=0)
 
 (options, args) = parser.parse_args()
 
@@ -27,7 +26,7 @@ histo_file = options.inFilename
 mass_hypo = options.mass_hypo/1000.0
 poly_order = options.poly_order
 win_factor = options.win_factor
-toy_file = '%s/bhToys_m%iw%ip%i.root'%(options.outDir, options.mass_hypo, win_factor, poly_order)
+toy_file = '%s/bhToys_m%iw%ip%is%i.root'%(options.outDir, options.mass_hypo, win_factor, poly_order, options.toy_sig_samples)
 
 print('Histo file: %s' % histo_file)
 print('Toy file: %s' % toy_file)
@@ -50,13 +49,14 @@ bhtoys = HpstrConf.Processor('bhtoys', 'BhToysHistoProcessor')
 #   Processor Configuration   #
 ###############################
 #MCParticles
-bhtoys.parameters["debug"] = 1 
+bhtoys.parameters["debug"] = 1
 bhtoys.parameters["massSpectrum"] = options.mass_spec
 bhtoys.parameters["mass_hypo"] = mass_hypo
 bhtoys.parameters["poly_order"] = poly_order
 bhtoys.parameters["win_factor"] = win_factor
 bhtoys.parameters["seed"] = 0
 bhtoys.parameters["nToys"] = options.nToys
+bhtoys.parameters["toy_sig_samples"] = options.toy_sig_samples;
 
 # Sequence which the processors will run.
 p.sequence = [bhtoys]
