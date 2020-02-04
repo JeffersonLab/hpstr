@@ -11,6 +11,10 @@ class FunctionMath {
 
         /** Defines a crystal ball function for signal-fitting. */
         static double CrystalBall(double x, double amplitude, double mean, double stddev, double alpha, double n);
+	/** Defines a Landau function for signal-fitting. */
+	static double Landau(double x, double mu, double sigma, double amplitude);
+
+	static double HeavisideFunction(double x, double c);
 
     private:
         /**
