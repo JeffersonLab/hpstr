@@ -181,13 +181,9 @@
         "bins" : 100,
         "minX" : 0,
         "maxX" : 2.5,
-        "xtitle" : "p_{e^{-}} [GeV]",
+        "xtitle" : "p_{e^{+}} [GeV]",
         "ytitle" : "Tracks"
     },
-    
-    
-
-
     
     "n_vertices_h" : {
         "bins"   : 6,

@@ -6,6 +6,7 @@ import os,sys
 colors  = [kBlack,kBlue+2,kRed+2,kGreen-1,kYellow+2,kRed+2,kAzure-2,kGreen-8,kOrange+3,kYellow+2,kRed+2,kBlue+2,kGreen-8,kOrange+3,kYellow+2,kRed+2,kBlue+2,kGreen-8,kOrange+3,kYellow+2,kRed+2,kBlue+2,kGreen-8,kOrange+3,kYellow+2,kRed+2,kBlue+2,kGreen-8,kOrange+3]
 markers = [kFullCircle,kFullTriangleUp,kFullSquare,kOpenSquare,kOpenTriangleUp,kOpenCircle,kFullCircle,kOpenSquare,kFullSquare,kOpenTriangleUp,kOpenCircle,kFullCircle,kOpenSquare,kFullSquare,kOpenTriangleUp,kOpenCircle,kFullCircle,kOpenSquare,kFullSquare,kOpenTriangleUp,kOpenCircle,kFullCircle,kOpenSquare,kFullSquare,kOpenTriangleUp,kOpenCircle,kFullCircle,kOpenSquare,kFullSquare,kOpenTriangleUp]
 
+fillColors = [kRed-6+3,kAzure-4,kYellow+2]
 
 #General configuration
 
@@ -15,20 +16,19 @@ topScale    = 1./(1. - bottomFraction)
 TProfile.Approximate(True)
 
 
-def OptParsing():
-    
-    from optparse import OptionParser
-    parser=OptionParser()
-    parser.add_option("--inputFile",dest="inputFile",help="inputFile",default="")
-    parser.add_option("--outdir",dest="outdir",help="outdir",default="")
-    parser.add_option("--indir",dest="indir",help="indir",default="")
-    parser.add_option("--runNumber",dest="runNumber",help="runNumber",default="")
-    parser.add_option("--Selections",dest="Selections",default="LooseTracks,LooseL2VTracks,LooseT2VTracks")
-    parser.add_option("--Legends",dest="Legends",default="Loose,Loose + L2V,Loose + T2V")
-    parser.add_option("--Legends2",dest="Legends2",default="Tracks,Tracks + Truth,Tracks_L2V,Tracks_L2V + Truth,Tracks_T2V,Tracks_T2V + Truth")
-    parser.add_option("--dataFile",dest="dataFile",default="")
-    (config,sys.argv[1:]) = parser.parse_args(sys.argv[1:])
-    return config
+from optparse import OptionParser
+parser=OptionParser()
+parser.add_option("-f","--inputFiles",dest="inputFiles",help="Space separated list of files",metavar="inputFiles",default="")
+parser.add_option("-o","--outdir",dest="outdir",help="outdir",metavar="outdir",default="")
+parser.add_option("-i","--indir",dest="indir",help="indir",metavar="indir",default="")
+parser.add_option("-r","--runNumber",dest="runNumber",help="runNumber",metavar="runNumber",default="")
+parser.add_option("-s","--selection",dest="selection",metavar="selection",default="")
+parser.add_option("-l","--Legends",dest="Legends",metavar="Legends",default="")
+parser.add_option("-d","--debug",dest="debug",action="store_true",help="Debug flag",metavar="debug",default=False)
+
+
+#(config,sys.argv[1:]) = parser.parse_args(sys.argv[1:])
+
 
 
 #Get a plot from a directory+file name
@@ -44,7 +44,7 @@ def getPlot(loc,fin,plot):
 
 #Get a plot from a file
 def getPlot(fullpath,plot):
-    print "Getting", plot
+    print "Getting", plot,"from",fullpath
     f = TFile.Open(fullpath)
     histo = f.Get(plot)
     print histo
