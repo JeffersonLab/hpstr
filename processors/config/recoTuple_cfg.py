@@ -56,6 +56,8 @@ rawsvt.parameters["hitCollRoot"]    = 'SVTRawTrackerHits'
 svthits.parameters["debug"] = 0
 svthits.parameters["hitCollLcio"]    = 'RotatedHelicalTrackHits'
 svthits.parameters["hitCollRoot"]    = 'RotatedHelicalTrackHits'
+svthits.parameters["mcPartRelLcio"]  = 'RotatedHelicalTrackMCRelations'
+
 
 #Tracking
 track.parameters["debug"] = 0 
