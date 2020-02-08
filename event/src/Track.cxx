@@ -52,10 +52,27 @@ void Track::setPositionAtEcal(const double* position) {
 
 std::vector<double> Track::getPositionAtEcal() { return { x_at_ecal_, y_at_ecal_, z_at_ecal_ }; }
 
+
+void Track::setMomentum(double bfield) {
+    
+    double mom_param = 2.99792458e-04;
+    double pt = fabs(1. / omega_) * bfield * mom_param;
+    py_ = pt*tan_lambda_;
+    px_ = pt*sin(phi0_);
+    pz_ = pt*cos(phi0_);
+}
+
+
 void Track::setMomentum(std::vector<double> momentum) { 
     px_ = momentum[0]; 
     py_ = momentum[1]; 
     pz_ = momentum[2]; 
+}
+
+void Track::setMomentum(double px, double py, double pz) {
+    px_ = px;
+    py_ = py;
+    pz_ = pz;
 }
 
 void Track::addHit(TObject* hit) {

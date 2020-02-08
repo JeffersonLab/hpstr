@@ -65,7 +65,7 @@ void TrackHistos::Fill1DVertex(Vertex* vtx,
     //Fill ele and pos information
     Fill1DHisto("ele_p_h",p_ele.P(),weight);
     Fill1DHisto("pos_p_h",p_pos.P(),weight);
-    
+
     //Compute some extra variables 
     
     //TODO::Rotate them
@@ -96,9 +96,6 @@ void TrackHistos::Fill1DVertex(Vertex* vtx,
     else {
         thetay_diff_val = thetay_pos_val - thetay_miss_val;
     }
-    
-
-    
 
     //Fill event information
 
@@ -111,6 +108,27 @@ void TrackHistos::Fill1DVertex(Vertex* vtx,
     Fill1DHisto("thetay_pos_h",thetay_pos_val,weight);
     Fill1DHisto("thetay_miss_h",thetay_miss_val,weight);
     Fill1DHisto("thetay_diff_h",thetay_diff_val,weight);
+}
+
+
+void TrackHistos::Fill2DTrack(Track* track, float weight, const std::string& trkname) {
+    
+    
+    if (track) {
+        
+        double d0 = track->getD0();
+        double z0 = track->getZ0();
+        Fill2DHisto(trkname+"tanlambda_vs_phi0_hh",track->getPhi(),track->getTanLambda(), weight);
+        Fill2DHisto(trkname+"d0_vs_p_hh",track->getP(),d0,weight);
+        Fill2DHisto(trkname+"d0_vs_phi0_hh",track->getPhi(),d0,weight);
+        Fill2DHisto(trkname+"d0_vs_tanlambda_hh",track->getTanLambda(),d0,weight);
+        
+        Fill2DHisto(trkname+"z0_vs_p_hh",track->getP(),z0,weight);
+        Fill2DHisto(trkname+"z0_vs_phi0_hh",track->getPhi(),z0,weight);
+        Fill2DHisto(trkname+"z0_vs_tanlambda_hh",track->getTanLambda(),z0,weight);
+        
+    }
+    
 }
 
 void TrackHistos::Fill1DTrack(Track* track, float weight, const std::string& trkname) {
@@ -199,22 +217,13 @@ void TrackHistos::Fill1DHistograms(Track *track, Vertex* vtx, float weight ) {
     if (vtx) {
         Fill1DVertex(vtx);
     }
-  
-
 }
 
 
-void TrackHistos::Fill2DHistograms(Track* track, Vertex* vtx, float weight) { 
-    
-    
+void TrackHistos::Fill2DHistograms(Vertex* vtx, float weight) {    
 
-
-    if (track) {
-        Fill2DHisto("tanlambda_vs_phi0_hh",track->getPhi(),track->getTanLambda(), weight);
-    }
     if (vtx) {
-        
-
+                
         //TODO Improve this.
         TVector3 vtxPosSvt;
         vtxPosSvt.SetX(vtx->getX());

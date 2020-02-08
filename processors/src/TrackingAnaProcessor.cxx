@@ -55,7 +55,7 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
         }
 
         trkHistos_->Fill1DHistograms(track);
-        trkHistos_->Fill2DHistograms(track);
+        trkHistos_->Fill2DTrack(track);
     }//Loop on tracks
 
     trkHistos_->Fill1DHisto("n_tracks_h",tracks_->size());
