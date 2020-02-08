@@ -38,6 +38,7 @@ def prepare1DStack(stackList, norms=[]):
         #stackList[i_].SetFillColor(utils.colors[i_])
         stackList[i_].SetFillColor(utils.fillColors[i_])
         stackList[i_].SetLineColor(utils.fillColors[i_])
+        stackList[i_].SetMarkerColor(utils.fillColors[i_])
         stackList[i_].SetLineWidth(1)
         
         stack_h_.Add(stackList[i_])

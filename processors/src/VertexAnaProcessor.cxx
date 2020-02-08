@@ -117,8 +117,11 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
             continue;  
         }
-
         
+        //Add the momenta to the tracks
+        ele_trk->setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
+        pos_trk->setMomentum(pos->getMomentum()[0],pos->getMomentum()[1],pos->getMomentum()[2]);
+                
         
         //Tracks in opposite volumes - useless
         //if (!vtxSelector->passCutLt("eleposTanLambaProd_lt",ele_trk->getTanLambda() * pos_trk->getTanLambda(),weight)) 
@@ -195,8 +198,10 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                                   pos_trk,
                                   weight);
         
-        _vtx_histos->Fill2DHistograms(nullptr,vtx,weight);
-                
+        _vtx_histos->Fill2DHistograms(vtx,weight);
+        _vtx_histos->Fill2DTrack(ele_trk,weight,"ele_");
+        _vtx_histos->Fill2DTrack(pos_trk,weight,"pos_");
+        
         selected_vtxs.push_back(vtx);       
         vtxSelector->clearSelector();
     }
@@ -247,12 +252,16 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             
             bool foundTracks = _ah->MatchToGBLTracks(ele_trk.getID(),pos_trk.getID(),
                                                      ele_trk_gbl, pos_trk_gbl, *trks_);
-            
+
             if (!foundTracks) {
                 std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
                 continue;  
             }
-           
+
+            //Add the momenta to the tracks
+            ele_trk_gbl->setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
+            pos_trk_gbl->setMomentum(pos->getMomentum()[0],pos->getMomentum()[1],pos->getMomentum()[2]);
+                       
             bool foundL1ele = false;
             bool foundL2ele = false;
             _ah->InnermostLayerCheck(ele_trk_gbl, foundL1ele, foundL2ele);   
@@ -294,13 +303,17 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             if (!_reg_vtx_selectors[region]->passCutEq("nVtxs_eq",selected_vtxs.size(),weight))
                 continue;
             
-            _reg_vtx_histos[region]->Fill2DHistograms(nullptr,vtx,weight);
+            _reg_vtx_histos[region]->Fill2DHistograms(vtx,weight);
             _reg_vtx_histos[region]->Fill1DVertex(vtx,
                                                   ele,
                                                   pos,
                                                   ele_trk_gbl,
                                                   pos_trk_gbl,
                                                   weight);
+
+            _reg_vtx_histos[region]->Fill2DTrack(ele_trk_gbl,weight,"ele_");
+            _reg_vtx_histos[region]->Fill2DTrack(pos_trk_gbl,weight,"pos_");
+            
 
             
             _reg_vtx_histos[region]->Fill1DHisto("n_tracks_h",trks_->size(),weight);
