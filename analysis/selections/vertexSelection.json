@@ -17,7 +17,7 @@
     "eleposCluTimeDiff_lt" : {
         "cut"  : 1.45,
         "id"   : 3,
-        "info" : "#Delta_{t}(clu_{e^{-}},clu_{e^{+}})<2ns"
+        "info" : "#Delta_{t}(clu_{e^{-}},clu_{e^{+}})<1.45ns"
     },
     "eleTrkCluTimeDiff_lt" : {
         "cut"   : 4,
