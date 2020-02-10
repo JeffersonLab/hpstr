@@ -98,9 +98,6 @@ AnaHelpers::AnaHelpers() {
     (*rotSvt_sym)(1,0) = -sin(SVT_ANGLE);
     (*rotSvt_sym)(1,1) = 0.;
     (*rotSvt_sym)(1,2) = cos(SVT_ANGLE);
-    
-    
-        
 }
 
 TVector3 AnaHelpers::rotateToSvtFrame(TVector3 v) {
