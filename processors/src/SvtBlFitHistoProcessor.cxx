@@ -108,8 +108,8 @@ bool SvtBlFitHistoProcessor::process() {
             } 
 
             for(int i=0; i < chi2_NDF.size(); ++i) {
-                if( i > nPointsDer_ and i < (chi2_NDF.size() - nPointsDer_)){
-                chi2_2D.push_back((chi2_NDF.at(i+nPointsDer_)-chi2_NDF.at(i))/binwidth - (chi2_NDF.at(i)-chi2_NDF.at(iter-nPointsDer_))/binwidth);
+                if( i > nPointsDer_ && i < (chi2_NDF.size() - nPointsDer_)){
+                chi2_2D.push_back((chi2_NDF.at(i+nPointsDer_)-chi2_NDF.at(i))/(nPointsDer_*binwidth) - (chi2_NDF.at(i)-chi2_NDF.at(iter-nPointsDer_))/(nPointsDer_*binwidth));
                 }
             }
 
@@ -121,16 +121,16 @@ bool SvtBlFitHistoProcessor::process() {
             double max_Element = *std::max_element(chi2_2D.begin(), chi2_2D.end());
             int maxElementIndex = std::max_element(chi2_2D.begin(), chi2_2D.end()) - chi2_2D.begin();
             //std::cout << "maxElementIndex" << maxElementIndex << std::endl;
+            
+            //Re-run fit with xmax = location where 2nd derivative of chi2/NDF is maximum
+            xmax = fit_range_end.at(maxElementIndex);
+            TF1* cc_fit = new TF1("cc_fit", "gaus", xmin, xmax);
+            projy_h->Fit(cc_fit, "QRES");
+
+
 
             //Graphs and Histograms
-            for( int i=0; i < chi2_2D.size(); ++i) {
-                //std::cout << "Second Derivative" << chi2_2D.at(i) << std::endl;
-                //std::cout << "Chi2" << chi2.at(i) << std::endl;
-                //std::cout << "NDF" << NDF.at(i) << std::endl;
             
-                //std::cout << "Chi2_NDF" << chi2_NDF.at(i) << std::endl;
-            
-            }
             //fit_histo_h->SetBinContent(cc,max_Element);
             fit_histo_h->Fill(fit_range_end.at(maxElementIndex+nPointsDer_));
             int n=fit_range_end.size();
@@ -144,7 +144,15 @@ bool SvtBlFitHistoProcessor::process() {
             mean_gr->SetName(Form("Mean_gr_%s_Channel%i",histo_hh->GetName(),cc));
             mean_gr->SetTitle(Form("Mean_vs_FitRanageEnd_%s_Channel%i",histo_hh->GetName(),cc));
 
-            TGraph* chi2_2D_gr = new TGraph(n,fit_range_end.data(),chi2_2D.data());
+            std::vector<double>::const_iterator first = fit_range_end.begin()+nPointsDer_;
+            std::vector<double>::const_iterator last=fit_range_end.begin()+nPointsDer_+chi2_2D.size();
+            std::vector<double> chi2_2D_range(first,last);
+
+            //std::cout << "length of chi2_2D " << chi2_2D.size() << std::endl;
+            //std::cout << "length of chi2_2D_range" << chi2_2D_range.size() << std::endl;
+            //std::cout << "length of chi2_NDF" << chi2_NDF.size() << std::endl;
+
+            TGraph* chi2_2D_gr = new TGraph(chi2_2D.size(),chi2_2D_range.data(),chi2_2D.data());
             chi2_2D_gr->SetName(Form("chi2_2D_gr_%s_Channel%i",histo_hh->GetName(),cc));
             chi2_2D_gr->SetTitle(Form("chi2_2D_vs_FitRanageEnd_%s_Channel%i",histo_hh->GetName(),cc));
             
