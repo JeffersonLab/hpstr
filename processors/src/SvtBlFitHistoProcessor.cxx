@@ -1,6 +1,7 @@
 #include "SvtBlFitHistoProcessor.h"
 #include <string>
 #include <algorithm>
+#include <cstdlib>
 SvtBlFitHistoProcessor::SvtBlFitHistoProcessor(const std::string& name, Process& process)
     : Processor(name, process) {
     }
@@ -55,23 +56,26 @@ bool SvtBlFitHistoProcessor::process() {
     //between the 2d and 1d histograms, they can be used in profileYwithIterativeGaussFit
 
     std::cout << "[SvtBlFitHistoProcessor] process running" << std::endl;
+    //Loop over all 2D histogram names from the input TFile
     for (vector<string>::iterator jj = inputHistos_->histos2dNamesfromTFile.begin();
             jj != inputHistos_->histos2dNamesfromTFile.end(); ++jj)
     {
         
         TH2F* histo_hh = inputHistos_->get2dHisto(*jj);
         std::string sensorname = histo_hh->GetName();
-        int  nbins = histo_hh->GetXaxis()->GetNbins();
-        TH1D* fit_histo_h = new  TH1D(Form("Max_2nd_Derivative_%s",histo_hh->GetName()),"Max 2nd Derivative of chi2 per channel",10000,0,10000);
-        //TH1D* Max2D_total_h = new  TH1D(Form("Max_2nd_Derivative_%s",histo_hh->GetName()),"Max 2nd Derivative of chi2 per channel",50,0,50);
-
         histo_hh->RebinY(rebin_);
+        int  nbins = histo_hh->GetXaxis()->GetNbins();
+
+        TH1D* fit_histo_h = new  TH1D(Form("Max_Chi2_2nd_Derivative_for_Sensor%s",histo_hh->GetName()),"Max_Chi2_2nd_Derivative_per_Channel",10000,0,10000);
+
+        //Loop over all channels to find location of maximum chi2 2nd derivative
         for(int cc=0; cc < 640; ++cc) {
 
             std::cout << "Channel #" << cc << std::endl;
             TH1D* projy_h = histo_hh->ProjectionY(Form("%s_projection_%i",histo_hh->GetName(),cc),
                     cc+1,cc+1,"e");
             projy_h->SetTitle(Form("ProjectionY_%s_Channel%i",histo_hh->GetName(),cc));
+
             int iter=0;
             int firstbin=projy_h->FindFirstBinAbove(10,1);
             double xmin=projy_h->GetBinLowEdge(firstbin);
@@ -81,35 +85,47 @@ bool SvtBlFitHistoProcessor::process() {
                    fit_range_end,chi2_NDF,chi2_2D;
             std::vector<int> NDF;
 
+            //Iterative Fitting Procedure. Used to lcoate  maximum chi2 2nd derivative along x-axis
+            //This appears to correlate directly to the location where the baseline gaussian signal
+            //ends, and the pileup threshold begins. This x-axis location is then used as the 
+            //end of the iterative fit range window, fiting JUST the gaussian.
+
             while(iter < projy_h->GetNbinsX()-firstbin && xmax < 10000){
-            
                 TF1* cc_fit = new TF1("cc_fit", "gaus", xmin, xmax);
                 projy_h->Fit(cc_fit, "QRES");
 
                 if(cc_fit->GetNDF() == 0){
                     xmax = xmax + 2*binwidth;
-                    //iter = iter + 1;
                     continue;
                 }
-                                    
+
+                //Collect fit parameters                                 
                 amp.push_back(cc_fit->GetParameter(0));
                 mean.push_back(cc_fit->GetParameter(1));
                 sigma.push_back(cc_fit->GetParameter(2));
                 chi2.push_back(cc_fit->GetChisquare());
-                //std::cout << "get chi2:" << cc_fit->GetChisquare() << std::endl;
                 fit_range_end.push_back(xmax);
                 NDF.push_back(cc_fit->GetNDF());
-                //std::cout << "get NDF:" << cc_fit->GetNDF() << std::endl;
                 chi2_NDF.push_back(chi2.at(iter)/NDF.at(iter));
-
+                //Increase fit range window and iterate the fit
                 xmax = xmax + 2*binwidth;
                 iter = iter + 1;
                 delete cc_fit;
             } 
 
+            //Calculate the 2nd derivative of chi2 by taking slope on either side of one point
+            //and taking the difference between the two.
             for(int i=0; i < chi2_NDF.size(); ++i) {
                 if( i > nPointsDer_ && i < (chi2_NDF.size() - nPointsDer_)){
-                chi2_2D.push_back((chi2_NDF.at(i+nPointsDer_)-chi2_NDF.at(i))/(nPointsDer_*binwidth) - (chi2_NDF.at(i)-chi2_NDF.at(iter-nPointsDer_))/(nPointsDer_*binwidth));
+                    //std::cout << "chi2+n: " << chi2_NDF.at(i+nPointsDer_) << std::endl;
+                    //std::cout << "chi2: " << chi2_NDF.at(i) << std::endl;
+                    //std::cout << "chi2-n: " << chi2_NDF.at(i-nPointsDer_) << std::endl;
+                    double slope2 = (chi2_NDF.at(i+nPointsDer_)-chi2_NDF.at(i))/nPointsDer_*binwidth;
+                    double slope1 = (chi2_NDF.at(i)-chi2_NDF.at(i-nPointsDer_))/nPointsDer_*binwidth;
+                    double slopeDiff = slope2 - slope1;
+                    //std::cout << "xposition: " << fit_range_end.at(i) << "; slopeDiff: " << slopeDiff << std::endl;
+                    chi2_2D.push_back(slopeDiff);
+                    //chi2_2D.push_back((chi2_NDF.at(i+nPointsDer_)-chi2_NDF.at(i))/(nPointsDer_*binwidth) - ((chi2_NDF.at(i)-chi2_NDF.at(iter-nPointsDer_))/(nPointsDer_*binwidth)));
                 }
             }
 
@@ -117,13 +133,14 @@ bool SvtBlFitHistoProcessor::process() {
              for( int i=0; i < chi2_2D.size(); ++i) {
                 if(chi2_2D[i] != chi2_2D[i]) { chi2_2D[i]=0.0;}
             }
-
+            
+            //Find the maximum value of chi2 2nd derivative, and its index
             double max_Element = *std::max_element(chi2_2D.begin(), chi2_2D.end());
             int maxElementIndex = std::max_element(chi2_2D.begin(), chi2_2D.end()) - chi2_2D.begin();
-            //std::cout << "maxElementIndex" << maxElementIndex << std::endl;
-            
+            //for(int i=0; i < chi2_2D.size();++i) {std::cout << "2nd derivatives" << chi2_2D.at(i) << std::endl;}
             //Re-run fit with xmax = location where 2nd derivative of chi2/NDF is maximum
-            xmax = fit_range_end.at(maxElementIndex);
+            int back_off=0*nPointsDer_;
+            xmax = fit_range_end.at(maxElementIndex-back_off);
             TF1* cc_fit = new TF1("cc_fit", "gaus", xmin, xmax);
             projy_h->Fit(cc_fit, "QRES");
 
@@ -131,11 +148,9 @@ bool SvtBlFitHistoProcessor::process() {
 
             //Graphs and Histograms
             
-            //fit_histo_h->SetBinContent(cc,max_Element);
             fit_histo_h->Fill(fit_range_end.at(maxElementIndex+nPointsDer_));
+
             int n=fit_range_end.size();
-            //std::cout << "size of fit range end: "<< n << std::endl;
-            //std::cout << "size of chi2_NDF: " << chi2_NDF.size() << std::endl;
             TGraph* chi2_NDF_gr = new TGraph(n,fit_range_end.data(),chi2_NDF.data());
             chi2_NDF_gr->SetName(Form("Chi2_NDF_gr_%s_Channel%i",histo_hh->GetName(),cc));
             chi2_NDF_gr->SetTitle(Form("Chi2_vs_FitRanageEnd_%s_Channel%i",histo_hh->GetName(),cc));
@@ -147,24 +162,21 @@ bool SvtBlFitHistoProcessor::process() {
             std::vector<double>::const_iterator first = fit_range_end.begin()+nPointsDer_;
             std::vector<double>::const_iterator last=fit_range_end.begin()+nPointsDer_+chi2_2D.size();
             std::vector<double> chi2_2D_range(first,last);
-
-            //std::cout << "length of chi2_2D " << chi2_2D.size() << std::endl;
-            //std::cout << "length of chi2_2D_range" << chi2_2D_range.size() << std::endl;
-            //std::cout << "length of chi2_NDF" << chi2_NDF.size() << std::endl;
-
             TGraph* chi2_2D_gr = new TGraph(chi2_2D.size(),chi2_2D_range.data(),chi2_2D.data());
-            chi2_2D_gr->SetName(Form("chi2_2D_gr_%s_Channel%i",histo_hh->GetName(),cc));
-            chi2_2D_gr->SetTitle(Form("chi2_2D_vs_FitRanageEnd_%s_Channel%i",histo_hh->GetName(),cc));
+            chi2_2D_gr->SetName(Form("chi2_2ndDerivative_gr_%s_Channel%i",histo_hh->GetName(),cc));
+            chi2_2D_gr->SetTitle(Form("chi2_2ndDerivative_vs_FitRanageEnd_%s_Channel%i",
+                histo_hh->GetName(),cc));
             
+            projy_h->Write();
             chi2_NDF_gr->Write();
             mean_gr->Write();
-            projy_h->Write();
             chi2_2D_gr->Write();
 
             delete chi2_NDF_gr;
             delete mean_gr;
             delete projy_h;
             delete chi2_2D_gr;
+            delete cc_fit;
 
             }
 
