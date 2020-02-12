@@ -34,6 +34,7 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     //InFile containing 2D histograms from the SvtCondAnaProcessor
     inF_ = new TFile(inFilename.c_str());
     outF_ = new TFile(outFilename.c_str(),"RECREATE");
+    //outF_chi2 = new TFile(Form("chi2_%s",outFilename.c_str()));
 
     outputHistos_ = new BlFitHistos("raw_hits");
     inputHistos_ = new HistoManager("");
@@ -60,16 +61,48 @@ bool SvtBlFitHistoProcessor::process() {
     for (vector<string>::iterator jj = inputHistos_->histos2dNamesfromTFile.begin();
             jj != inputHistos_->histos2dNamesfromTFile.end(); ++jj)
     {
+
+         //Create histograms for fit parameters to fill
+        std::string inputname = *jj;
+        std::string FitRangeLowerkey;
+        std::string FitRangeUpperkey;
+        std::string meankey;
+        std::string widthkey;
+        std::string normkey;
+        std::cout << "Sensor: " << inputname << std::endl;
+
+        for (vector<string>::iterator it = outputHistos_->histos1dNamesfromJson.begin();
+                    it != outputHistos_->histos1dNamesfromJson.end(); ++it)
+        {
+            std::string fitparname = *it;
+            size_t L = fitparname.find_last_of("L");
+            std::string tag = fitparname.substr(L);
+            if (inputname.find(tag) != std::string::npos) {
+                //Substrings below must match the names in the JSON file
+                if (fitparname.find("FitRangeLower") != std::string::npos)
+                    FitRangeLowerkey = fitparname;
+                if (fitparname.find("FitRangeUpper") != std::string::npos)
+                    FitRangeUpperkey = fitparname;
+                if (fitparname.find("mean") != std::string::npos)
+                    meankey = fitparname;
+                if (fitparname.find("width") != std::string::npos)
+                    widthkey = fitparname;
+                if (fitparname.find("norm") != std::string::npos)
+                    normkey = fitparname;
+
+            }
+        }
+
         
         TH2F* histo_hh = inputHistos_->get2dHisto(*jj);
         std::string sensorname = histo_hh->GetName();
         histo_hh->RebinY(rebin_);
         int  nbins = histo_hh->GetXaxis()->GetNbins();
-
+        
         TH1D* fit_histo_h = new  TH1D(Form("Max_Chi2_2nd_Derivative_for_Sensor%s",histo_hh->GetName()),"Max_Chi2_2nd_Derivative_per_Channel",10000,0,10000);
 
         //Loop over all channels to find location of maximum chi2 2nd derivative
-        for(int cc=0; cc < 640; ++cc) {
+        for(int cc=0; cc < 100; ++cc) {
 
             std::cout << "Channel #" << cc << std::endl;
             TH1D* projy_h = histo_hh->ProjectionY(Form("%s_projection_%i",histo_hh->GetName(),cc),
@@ -144,6 +177,12 @@ bool SvtBlFitHistoProcessor::process() {
             TF1* cc_fit = new TF1("cc_fit", "gaus", xmin, xmax);
             projy_h->Fit(cc_fit, "QRES");
 
+            outputHistos_->get1dHisto(meankey)->Fill((float)cc_fit->GetParameter(1));
+            outputHistos_->get1dHisto(widthkey)->Fill((float)cc_fit->GetParameter(2));
+            outputHistos_->get1dHisto(normkey)->Fill((float)cc_fit->GetParameter(0));
+            outputHistos_->get1dHisto(FitRangeLowerkey)->Fill((float)xmin);
+            outputHistos_->get1dHisto(FitRangeUpperkey)->Fill((float)xmax);
+
 
 
             //Graphs and Histograms
@@ -167,6 +206,7 @@ bool SvtBlFitHistoProcessor::process() {
             chi2_2D_gr->SetTitle(Form("chi2_2ndDerivative_vs_FitRanageEnd_%s_Channel%i",
                 histo_hh->GetName(),cc));
             
+            //outF_chi2->cd();
             projy_h->Write();
             chi2_NDF_gr->Write();
             mean_gr->Write();
@@ -177,34 +217,15 @@ bool SvtBlFitHistoProcessor::process() {
             delete projy_h;
             delete chi2_2D_gr;
             delete cc_fit;
-
             }
 
         fit_histo_h->Write();
 
-        }
         
-    /*
-            TF1* baseline{nullptr};
-            double ga=100000., gm=5200., gs=200., hc=5500., lm=6274., ls=144.5, la=2000000., lshift=0.;
-            BlFitFunction baseline_func(3.0);
-            baseline = new TF1("baseline", baseline_func, 1000., 20000., 7);
-            baseline->SetParameters(ga,gm,gs,hc,lm,ls,la);
-            baseline->SetParNames("gAmp","gMean","gStd","hCut","lMean","lSigma","lAmp", "lshift");
-            //baseline->FixParameter(0, ga);
-            //baseline->FixParameter(1, gm);
-            //baseline->FixParameter(2, gs);
-            //baseline->FixParameter(3, hc);
-            baseline->FixParameter(4, lm);
-            baseline->FixParameter(5, ls);
-            //baseline->FixParameter(6, la);
-            projy_h->Fit("baseline");
-            baseline->Write();
-            projy_h->Write();
-
         
-        outFile.Close();
-*/
+        
+        
+    } 
 
     return true;
 

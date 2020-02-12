@@ -38,6 +38,7 @@ class SvtBlFitHistoProcessor : public Processor {
     private:
 
         TFile* inF_{nullptr};
+        TFile* outF_chi2{nullptr};
         std::vector<std::string> hybrid_{};
         int IterativeGaussFitCut_;
         //parameter defining json file
