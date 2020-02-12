@@ -62,7 +62,7 @@ bool SvtBlFitHistoProcessor::process() {
         TH2F* histo_hh = inputHistos_->get2dHisto(*jj);
         std::string sensorname = histo_hh->GetName();
         int  nbins = histo_hh->GetXaxis()->GetNbins();
-        TH1D* fit_histo_h = new  TH1D(Form("Max_2nd_Derivative_%s",histo_hh->GetName()),"Max 2nd Derivative of chi2 per channel",50,0,50);
+        TH1D* fit_histo_h = new  TH1D(Form("Max_2nd_Derivative_%s",histo_hh->GetName()),"Max 2nd Derivative of chi2 per channel",10000,0,10000);
         //TH1D* Max2D_total_h = new  TH1D(Form("Max_2nd_Derivative_%s",histo_hh->GetName()),"Max 2nd Derivative of chi2 per channel",50,0,50);
 
         histo_hh->RebinY(rebin_);
@@ -132,10 +132,10 @@ bool SvtBlFitHistoProcessor::process() {
             
             }
             //fit_histo_h->SetBinContent(cc,max_Element);
-            fit_histo_h->Fill(max_Element);
+            fit_histo_h->Fill(fit_range_end.at(maxElementIndex+nPointsDer_));
             int n=fit_range_end.size();
-            std::cout << "size of fit range end: "<< n << std::endl;
-            std::cout << "size of chi2_NDF: " << chi2_NDF.size() << std::endl;
+            //std::cout << "size of fit range end: "<< n << std::endl;
+            //std::cout << "size of chi2_NDF: " << chi2_NDF.size() << std::endl;
             TGraph* chi2_NDF_gr = new TGraph(n,fit_range_end.data(),chi2_NDF.data());
             chi2_NDF_gr->SetName(Form("Chi2_NDF_gr_%s_Channel%i",histo_hh->GetName(),cc));
             chi2_NDF_gr->SetTitle(Form("Chi2_vs_FitRanageEnd_%s_Channel%i",histo_hh->GetName(),cc));
@@ -143,15 +143,20 @@ bool SvtBlFitHistoProcessor::process() {
             TGraph* mean_gr = new TGraph(n,fit_range_end.data(),mean.data());
             mean_gr->SetName(Form("Mean_gr_%s_Channel%i",histo_hh->GetName(),cc));
             mean_gr->SetTitle(Form("Mean_vs_FitRanageEnd_%s_Channel%i",histo_hh->GetName(),cc));
+
+            TGraph* chi2_2D_gr = new TGraph(n,fit_range_end.data(),chi2_2D.data());
+            chi2_2D_gr->SetName(Form("chi2_2D_gr_%s_Channel%i",histo_hh->GetName(),cc));
+            chi2_2D_gr->SetTitle(Form("chi2_2D_vs_FitRanageEnd_%s_Channel%i",histo_hh->GetName(),cc));
             
-            std::cout << "Writing graphs and histograms" << std::endl;
             chi2_NDF_gr->Write();
             mean_gr->Write();
             projy_h->Write();
+            chi2_2D_gr->Write();
 
             delete chi2_NDF_gr;
             delete mean_gr;
             delete projy_h;
+            delete chi2_2D_gr;
 
             }
 
