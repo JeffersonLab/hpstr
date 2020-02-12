@@ -75,10 +75,10 @@ The script ```run_jobPool.py``` provides a way to process multiple files with hp
 Here is an example on how to run it
 
 ```bash
-python run_jobPool.py -t hpstr -c <configFile.py>  -i <inDir> -z <isData> -o <outDir> -r
+python run_jobPool.py -t hpstr -c <configFile.py>  -i <inDir> -z <isData> -o <outDir> -r <root|slcio>
 ```
 
-where ```-c``` is used to specify the configurationFile for hpstr, ```-i``` and ```-o``` are for specifying the input and output directory respectively, ```-z``` is to choose between data (=1) and MC simulation (=0) input type, and finally ```-r``` is a switch to tell hpstr to run on root files instead of slcio. The script runs one hpstr process for each file on the input folder matching the required extension and places the results in the output directory. Before running the user needs to create a folder ```<outDir>/logs``` otherwise the script fails [will be fixed soon]. 
+where ```-c``` is used to specify the configurationFile for hpstr, ```-i``` and ```-o``` are for specifying the input and output directory respectively, ```-z``` is to choose between data (=1) and MC simulation (=0) input type, and finally ```-r``` is needed to tell hpstr to run on root or slcio files. The script runs one hpstr process for each file on the input folder matching the required extension and places the results in the output directory. Before running the user needs to create a folder ```<outDir>/logs``` otherwise the script fails [will be fixed soon]. 
 
 ## Contributing to Hpstr
 
