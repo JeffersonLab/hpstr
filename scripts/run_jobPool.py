@@ -38,7 +38,7 @@ def runCommand(cmd,log=None):
 def launchTests(args):
   return launchTestsArgs(*args)
 
-def launchTestsArgs(tool, inDir, outDir, isData, cfgFile, fileN, jobN):
+def launchTestsArgs(options, infilename, fileN, jobN):
   import datetime,os,sys
   import subprocess
   from subprocess import CalledProcessError
@@ -48,17 +48,20 @@ def launchTestsArgs(tool, inDir, outDir, isData, cfgFile, fileN, jobN):
   #Build Commands
   setupCmds = []
   preCmd = None
-  print inDir
-  filenameBase = "apsignalv2-beamv6_2500kBunches_displaced_10mm_%i"%fileN
-  infilename = inDir+filenameBase+".root"
+  print options.inDir
+  #filenameBase = "apsignalv2-beamv6_2500kBunches_displaced_10mm_%i"%fileN
+  filenameBase = (infilename.split("/")[-1]).split(".")[0]
+  
   #outDir = "/nfs/slac/g/hps3/users/pbutti/hpstr_histos/ap/80MeV/"
-  outfilename = outDir+filenameBase+"_anaVtx.root"
-  logfilename = outDir+"logs/"+filenameBase+".log"
+  
+  logfilename = options.outDir+"logs/"+filenameBase+".log"
+  cfgname = ((options.configFile).split("/")[-1]).split(".")[0]
+  outfilename = options.outDir+filenameBase+"_"+cfgname+".root"
   print("%i. Generating %s"%(jobN, outfilename))
-  cmd = [ tool, cfgFile, 
+  cmd = [ options.tool, options.configFile, 
           "-i", infilename,
           "-o", outfilename,
-          "-t", str(isData)
+          "-t", str(options.isData)
           ]
   print cmd
 
@@ -95,8 +98,8 @@ if __name__ == '__main__':
                   help="List of files to run on.", metavar="fileList", default="fileList.txt")
   parser.add_option("-m", "--fileMod", type="string", dest="fileMod",
                   help="Modifier for output file names.", metavar="fileMod", default="_hpstr")
-  parser.add_option("-r", "--rootFile", action="store_true", dest="rootFile",
-                  help="Running on root files and not LCIO files", metavar="rootFile")
+  parser.add_option("-r", "--fileExt", dest="fileExt",
+                    help="Running on root files and not LCIO files", metavar="fileExt",default="root")
   parser.add_option("-d", "--debug", action="store_true", dest="debug",
                   help="print extra debugging information", metavar="debug")
   parser.add_option("-p", "--pool", type="int", dest="poolSize",
@@ -114,11 +117,7 @@ if __name__ == '__main__':
   cfgList = []
   fnList = range(1,10001)
 
-  fileExt = "slcio"
-  if (options.rootFile):
-    fileExt = "root"
-
-  listfiles=glob.glob(options.inDir+"/*"+fileExt)
+  listfiles=glob.glob(options.inDir+"/*"+options.fileExt)
 
   print options.inDir
 
@@ -145,11 +144,8 @@ if __name__ == '__main__':
     signal.signal(signal.SIGINT, original_sigint_handler)
     try:
       res = pool.map_async(launchTests,
-                           itertools.izip([options.tool for x in range(len(fnList))],
-                                          [options.inDir for x in range(len(fnList))],
-                                          [options.outDir for x in range(len(fnList))],
-                                          [options.isData for x in range(len(fnList))],
-                                          [options.configFile for x in range(len(fnList))],
+                           itertools.izip([options for x in range(len(fnList))],
+                                          [listfiles[x] for x in range(len(fnList))],
                                           fnList,
                                           fnList
                                          )
