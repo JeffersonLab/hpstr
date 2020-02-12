@@ -106,7 +106,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 
         bool foundParts = _ah->GetParticlesFromVtx(vtx,ele,pos);
         if (!foundParts) {
-            std::cout<<"VertexAnaProcessor::WARNING::Found vtx without ele/pos. Skip.";
+            //std::cout<<"VertexAnaProcessor::WARNING::Found vtx without ele/pos. Skip.";
             continue;
         }
         
@@ -114,7 +114,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                                                  ele_trk, pos_trk, *trks_);
         
         if (!foundTracks) {
-            std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
+            //std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
             continue;  
         }
         
@@ -254,7 +254,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                                                      ele_trk_gbl, pos_trk_gbl, *trks_);
 
             if (!foundTracks) {
-                std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
+                //std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
                 continue;  
             }
 
@@ -331,8 +331,6 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             vtxPosSvt.RotateY(-0.0305);
             
             _reg_tuples[region]->setVariableValue("unc_vtx_z"   , vtxPosSvt.Z());
-            
-            
             _reg_tuples[region]->fill();
         }// regions
     } // preselected vertices
