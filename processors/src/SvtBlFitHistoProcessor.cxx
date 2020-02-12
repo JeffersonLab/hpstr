@@ -102,7 +102,7 @@ bool SvtBlFitHistoProcessor::process() {
         TH1D* fit_histo_h = new  TH1D(Form("Max_Chi2_2nd_Derivative_for_Sensor%s",histo_hh->GetName()),"Max_Chi2_2nd_Derivative_per_Channel",10000,0,10000);
 
         //Loop over all channels to find location of maximum chi2 2nd derivative
-        for(int cc=0; cc < 100; ++cc) {
+        for(int cc=0; cc < 640; ++cc) {
 
             std::cout << "Channel #" << cc << std::endl;
             TH1D* projy_h = histo_hh->ProjectionY(Form("%s_projection_%i",histo_hh->GetName(),cc),
@@ -207,10 +207,27 @@ bool SvtBlFitHistoProcessor::process() {
                 histo_hh->GetName(),cc));
             
             //outF_chi2->cd();
-            projy_h->Write();
-            chi2_NDF_gr->Write();
-            mean_gr->Write();
-            chi2_2D_gr->Write();
+            TCanvas canvas(projy_h->GetName(),"c",1800,800);
+            projy_h->Draw();
+            canvas.Write();
+            canvas.SaveAs(Form("run/fit_images/%s_fit.png",projy_h->GetName()));
+
+            chi2_NDF_gr->Draw();
+            canvas.Write();
+            canvas.SaveAs(Form("run/fit_images/%s_chi2.png",projy_h->GetName()));
+
+            mean_gr->Draw();
+            canvas.Write();
+            canvas.SaveAs(Form("run/fit_images/%s_mean.png",projy_h->GetName()));
+
+            chi2_2D_gr->Draw();
+            canvas.Write();
+            canvas.SaveAs(Form("run/fit_images/%s_chi2_2nd_derivative.png",projy_h->GetName()));
+
+            //projy_h->Write();
+            //chi2_NDF_gr->Write();
+            //mean_gr->Write();
+            //chi2_2D_gr->Write();
 
             delete chi2_NDF_gr;
             delete mean_gr;
