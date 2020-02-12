@@ -69,7 +69,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, BlFitHistos* outputHi
     TH1D* fit_histo_h = new  TH1D(Form("Max_Chi2_2nd_Derivative_for_Sensor%s",histo_hh->GetName()),"Max_Chi2_2nd_Derivative_per_Channel",10000,0,10000);
 
     //Loop over all channels to find location of maximum chi2 2nd derivative
-    for(int cc=0; cc < 640; ++cc) {
+    for(int cc=0; cc < 5; ++cc) {
 
         std::cout << "Channel #" << cc << std::endl;
         TH1D* projy_h = histo_hh->ProjectionY(Form("%s_projection_%i",histo_hh->GetName(),cc),
@@ -144,11 +144,11 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, BlFitHistos* outputHi
     TF1* cc_fit = new TF1("cc_fit", "gaus", xmin, xmax);
     projy_h->Fit(cc_fit, "QRES");
 
-    outputHistos_->get1dHisto(meankey)->Fill((float)cc_fit->GetParameter(1));
-    outputHistos_->get1dHisto(widthkey)->Fill((float)cc_fit->GetParameter(2));
-    outputHistos_->get1dHisto(normkey)->Fill((float)cc_fit->GetParameter(0));
-    outputHistos_->get1dHisto(FitRangeLowerkey)->Fill((float)xmin);
-    outputHistos_->get1dHisto(FitRangeUpperkey)->Fill((float)xmax);
+    outputHistos_->get1dHisto(meankey)->SetBinContent(cc,(float)cc_fit->GetParameter(1));
+    outputHistos_->get1dHisto(widthkey)->SetBinContent(cc,(float)cc_fit->GetParameter(2));
+    outputHistos_->get1dHisto(normkey)->SetBinContent(cc,(float)cc_fit->GetParameter(0));
+    outputHistos_->get1dHisto(FitRangeLowerkey)->SetBinContent(cc,(float)xmin);
+    outputHistos_->get1dHisto(FitRangeUpperkey)->SetBinContent(cc,(float)xmax);
 
 //Graphs and Histograms
 
@@ -178,15 +178,15 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, BlFitHistos* outputHi
     canvas.SaveAs(Form("run/fit_images/%s_fit.png",projy_h->GetName()));
 
     chi2_NDF_gr->Draw();
-    canvas.Write();
+    //canvas.Write();
     canvas.SaveAs(Form("run/fit_images/%s_chi2.png",projy_h->GetName()));
 
     mean_gr->Draw();
-    canvas.Write();
+    //canvas.Write();
     canvas.SaveAs(Form("run/fit_images/%s_mean.png",projy_h->GetName()));
 
     chi2_2D_gr->Draw();
-    canvas.Write();
+    //canvas.Write();
     canvas.SaveAs(Form("run/fit_images/%s_chi2_2nd_derivative.png",projy_h->GetName()));
 
     //projy_h->Write();
