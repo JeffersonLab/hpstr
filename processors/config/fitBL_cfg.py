@@ -13,6 +13,10 @@ parser.add_option("-c", "--nhitsFitCut", type="int", dest="nhitsFitCut",
         help="set the min number of hits required for Gauss Fit of channels", metavar="nhitsFitCut", default="0")
 parser.add_option("-d", "--outDir", type="string", dest="outDir",
         help="Specify the output directory.", metavar="outDir", default=".")
+parser.add_option("-n", "--nPoints", type="int", dest="nPoints",
+        help="Select number of points for second derivative.", metavar="nPoints", default="1")
+parser.add_option("-b", "--rebin", type="int", dest="rebin",
+        help="rebin factor.", metavar="rebin", default="1")
 parser.add_option('-s', '--hybrid', type='string', dest="hybrid", help="Enter baseline<#><hybrid_name>", action='callback',
         callback=timeSample_callback)
 (options, args) = parser.parse_args()
@@ -42,6 +46,8 @@ fitBL.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/sv
 fitBL.parameters["outDir"] = options.outDir
 fitBL.parameters["hybrid"] = options.hybrid
 fitBL.parameters["nhitsFitCut"] = options.nhitsFitCut
+fitBL.parameters["rebin"] = options.rebin
+fitBL.parameters["nPoints"] = options.nPoints
 
 # Sequence which the processors will run.
 p.sequence = [fitBL]

@@ -1,5 +1,6 @@
 #include "SvtBlFitHistoProcessor.h"
 #include <string>
+#include <algorithm>
 SvtBlFitHistoProcessor::SvtBlFitHistoProcessor(const std::string& name, Process& process)
     : Processor(name, process) {
     }
@@ -16,6 +17,8 @@ void SvtBlFitHistoProcessor::configure(const ParameterSet& parameters) {
         histCfgFilename_ = parameters.getString("histCfg");
         hybrid_ = parameters.getVString("hybrid");
         IterativeGaussFitCut_ = parameters.getInteger("nhitsFitCut");
+        rebin_ = parameters.getInteger("rebin");
+        nPointsDer_ = parameters.getInteger("nPoints");
     }
     catch (std::runtime_error& error)
     {
@@ -55,102 +58,133 @@ bool SvtBlFitHistoProcessor::process() {
     for (vector<string>::iterator jj = inputHistos_->histos2dNamesfromTFile.begin();
             jj != inputHistos_->histos2dNamesfromTFile.end(); ++jj)
     {
-        std::string inputname = *jj;
-        std::string FitRangeLowerkey;
-        std::string FitRangeUpperkey;
-        std::string meankey;
-        std::string widthkey;
-        std::string normkey;
+        
+        TH2F* histo_hh = inputHistos_->get2dHisto(*jj);
+        std::string sensorname = histo_hh->GetName();
+        int  nbins = histo_hh->GetXaxis()->GetNbins();
+        TH1D* fit_histo_h = new  TH1D(Form("Max_2nd_Derivative_%s",histo_hh->GetName()),"Max 2nd Derivative of chi2 per channel",50,0,50);
+        //TH1D* Max2D_total_h = new  TH1D(Form("Max_2nd_Derivative_%s",histo_hh->GetName()),"Max 2nd Derivative of chi2 per channel",50,0,50);
 
-        for (vector<string>::iterator it = outputHistos_->histos1dNamesfromJson.begin();
-                it != outputHistos_->histos1dNamesfromJson.end(); ++it) 
-        {
-            std::string fitparname = *it;
-            size_t L = fitparname.find_last_of("L");
-            std::string tag = fitparname.substr(L);
-            if (inputname.find(tag) != std::string::npos) {
-                //Substrings below must match the names in the JSON file
-                if (fitparname.find("FitRangeLower") != std::string::npos) 
-                    FitRangeLowerkey = fitparname;
-                if (fitparname.find("FitRangeUpper") != std::string::npos) 
-                    FitRangeUpperkey = fitparname;
-                if (fitparname.find("mean") != std::string::npos) 
-                    meankey = fitparname;
-                if (fitparname.find("width") != std::string::npos) 
-                    widthkey = fitparname;
-                if (fitparname.find("norm") != std::string::npos) 
-                    normkey = fitparname;
+        histo_hh->RebinY(rebin_);
+        for(int cc=0; cc < 640; ++cc) {
 
-            }
-        }
-<<<<<<< HEAD
-        std::cout << inputHistos_->get2dHisto(inputname)->GetName() << std::endl; 
-        HistogramHelpers::profileYwithIterativeGaussFit(inputHistos_->get2dHisto(inputname),
-                outputHistos_->get1dHisto(meankey),
-                outputHistos_->get1dHisto(widthkey),
-                outputHistos_->get1dHisto(normkey),
-                outputHistos_->get1dHisto(FitRangeLowerkey),
-                outputHistos_->get1dHisto(FitRangeUpperkey),
-                IterativeGaussFitCut_,
-                binning_, 0);
-                
-=======
-    
-
-        TH2F* histo_hh = inputHistos_->get2dHisto(inputname);
-        for(int cc=0; cc < histo_hh->GetXaxis()->GetNbins(); ++cc) {
+            std::cout << "Channel #" << cc << std::endl;
             TH1D* projy_h = histo_hh->ProjectionY(Form("%s_projection_%i",histo_hh->GetName(),cc),
                     cc+1,cc+1,"e");
-        
-    
-            TF1* baseline{nullptr};
-            double ga=1., gm=0., gs=1., hc=10., lm=1., ls=1., la=1.;
-            BlFitFunction baseline_func(3.0);
-            baseline = new TF1("baseline", baseline_func, 1, 1, 7);
-            baseline->SetParameters(ga,gm,gs,hc,lm,ls,la);
-            baseline->SetParNames("gAmp","gMean","gStd","hCut","lMean","lSigma","lAmp");
-            projy_h->Fit("baseline");
+            projy_h->SetTitle(Form("ProjectionY_%s_Channel%i",histo_hh->GetName(),cc));
+            int iter=0;
+            int firstbin=projy_h->FindFirstBinAbove(10,1);
+            double xmin=projy_h->GetBinLowEdge(firstbin);
+            double binwidth=1*projy_h->GetBinWidth(firstbin);
+            double xmax=xmin+20*binwidth;
+            std::vector<double> amp,mean,sigma,chi2,const_err,sigma_err,
+                   fit_range_end,chi2_NDF,chi2_2D;
+            std::vector<int> NDF;
+
+            while(iter < projy_h->GetNbinsX()-firstbin && xmax < 10000){
+            
+                TF1* cc_fit = new TF1("cc_fit", "gaus", xmin, xmax);
+                projy_h->Fit(cc_fit, "QRES");
+
+                if(cc_fit->GetNDF() == 0){
+                    xmax = xmax + 2*binwidth;
+                    //iter = iter + 1;
+                    continue;
+                }
+                                    
+                amp.push_back(cc_fit->GetParameter(0));
+                mean.push_back(cc_fit->GetParameter(1));
+                sigma.push_back(cc_fit->GetParameter(2));
+                chi2.push_back(cc_fit->GetChisquare());
+                //std::cout << "get chi2:" << cc_fit->GetChisquare() << std::endl;
+                fit_range_end.push_back(xmax);
+                NDF.push_back(cc_fit->GetNDF());
+                //std::cout << "get NDF:" << cc_fit->GetNDF() << std::endl;
+                chi2_NDF.push_back(chi2.at(iter)/NDF.at(iter));
+
+                xmax = xmax + 2*binwidth;
+                iter = iter + 1;
+                delete cc_fit;
+            } 
+
+            for(int i=0; i < chi2_NDF.size(); ++i) {
+                if( i > nPointsDer_ and i < (chi2_NDF.size() - nPointsDer_)){
+                chi2_2D.push_back((chi2_NDF.at(i+nPointsDer_)-chi2_NDF.at(i))/binwidth - (chi2_NDF.at(i)-chi2_NDF.at(iter-nPointsDer_))/binwidth);
+                }
+            }
+
+             //Remove any 'nan' entries from chi2_2D
+             for( int i=0; i < chi2_2D.size(); ++i) {
+                if(chi2_2D[i] != chi2_2D[i]) { chi2_2D[i]=0.0;}
+            }
+
+            double max_Element = *std::max_element(chi2_2D.begin(), chi2_2D.end());
+            int maxElementIndex = std::max_element(chi2_2D.begin(), chi2_2D.end()) - chi2_2D.begin();
+            //std::cout << "maxElementIndex" << maxElementIndex << std::endl;
+
+            //Graphs and Histograms
+            for( int i=0; i < chi2_2D.size(); ++i) {
+                //std::cout << "Second Derivative" << chi2_2D.at(i) << std::endl;
+                //std::cout << "Chi2" << chi2.at(i) << std::endl;
+                //std::cout << "NDF" << NDF.at(i) << std::endl;
+            
+                //std::cout << "Chi2_NDF" << chi2_NDF.at(i) << std::endl;
+            
+            }
+            //fit_histo_h->SetBinContent(cc,max_Element);
+            fit_histo_h->Fill(max_Element);
+            int n=fit_range_end.size();
+            std::cout << "size of fit range end: "<< n << std::endl;
+            std::cout << "size of chi2_NDF: " << chi2_NDF.size() << std::endl;
+            TGraph* chi2_NDF_gr = new TGraph(n,fit_range_end.data(),chi2_NDF.data());
+            chi2_NDF_gr->SetName(Form("Chi2_NDF_gr_%s_Channel%i",histo_hh->GetName(),cc));
+            chi2_NDF_gr->SetTitle(Form("Chi2_vs_FitRanageEnd_%s_Channel%i",histo_hh->GetName(),cc));
+
+            TGraph* mean_gr = new TGraph(n,fit_range_end.data(),mean.data());
+            mean_gr->SetName(Form("Mean_gr_%s_Channel%i",histo_hh->GetName(),cc));
+            mean_gr->SetTitle(Form("Mean_vs_FitRanageEnd_%s_Channel%i",histo_hh->GetName(),cc));
+            
+            std::cout << "Writing graphs and histograms" << std::endl;
+            chi2_NDF_gr->Write();
+            mean_gr->Write();
+            projy_h->Write();
+
+            delete chi2_NDF_gr;
+            delete mean_gr;
+            delete projy_h;
+
+            }
+
+        fit_histo_h->Write();
 
         }
+        
+    /*
+            TF1* baseline{nullptr};
+            double ga=100000., gm=5200., gs=200., hc=5500., lm=6274., ls=144.5, la=2000000., lshift=0.;
+            BlFitFunction baseline_func(3.0);
+            baseline = new TF1("baseline", baseline_func, 1000., 20000., 7);
+            baseline->SetParameters(ga,gm,gs,hc,lm,ls,la);
+            baseline->SetParNames("gAmp","gMean","gStd","hCut","lMean","lSigma","lAmp", "lshift");
+            //baseline->FixParameter(0, ga);
+            //baseline->FixParameter(1, gm);
+            //baseline->FixParameter(2, gs);
+            //baseline->FixParameter(3, hc);
+            baseline->FixParameter(4, lm);
+            baseline->FixParameter(5, ls);
+            //baseline->FixParameter(6, la);
+            projy_h->Fit("baseline");
+            baseline->Write();
+            projy_h->Write();
 
+        
+        outFile.Close();
+*/
 
-
-        /* std::cout << inputHistos_->get2dHisto(inputname)->GetName() << std::endl; 
-           HistogramHelpers::profileYwithIterativeGaussFit(inputHistos_->get2dHisto(inputname),
-           outputHistos_->get1dHisto(meankey),
-           outputHistos_->get1dHisto(widthkey),
-           outputHistos_->get1dHisto(normkey),
-           outputHistos_->get1dHisto(FitRangeLowerkey),
-           outputHistos_->get1dHisto(FitRangeUpperkey),
-           binning_, 0);
-           */
->>>>>>> 095347c5554f981ef2f222665ce689a3def2240e
-    }
-
-    /*// use PF's tweaked fit code to perform Gauss Fit on ADC counts for every channel of a sensor
-      for (unsigned int ih2d = 0; ih2d<histos2dk.size();++ih2d) {     
-    //for (unsigned int ih2d=0; ih2d<2; ++ih2d) {
-    std::string histoname = histos2d[histos2dk[ih2d]]->GetName();
-    histoname=histoname.substr(0,histoname.size()-1);
-    graphname_m = "mean_"  + histoname;
-    graphname_w = "width_" + histoname;
-    graphname_n = "norm_" + histoname;
-    graphname_l = "FitRangeLower_" + histoname;
-    graphname_u = "FitRangeUpper_" + histoname;
-
-
-    HistogramHelpers::profileYwithIterativeGaussFit(histos2d[histos2dk[ih2d]],histoMean[histoname],histoWidth[histoname],histoNorm[histoname],histoFitRangeLower[histoname],histoFitRangeUpper[histoname],binning,0);
-    outF_->cd();
-    histos2d[histos2dk[ih2d]]->Write();
-    histoMean[histoname] ->Write(graphname_m.c_str());
-    histoWidth[histoname]->Write(graphname_w.c_str());
-    histoNorm[histoname]->Write(graphname_n.c_str());
-    histoFitRangeLower[histoname]->Write(graphname_l.c_str());
-    histoFitRangeUpper[histoname]->Write(graphname_u.c_str());
-    }
-    */
     return true;
 
+
+    
 }
 
 void SvtBlFitHistoProcessor::finalize() {

@@ -43,11 +43,11 @@ double FunctionMath::calcB(double n, double absAlpha) {
     return (n / absAlpha) - absAlpha;
 }
 
-double FunctionMath::Landau(double x, double mu, double sigma, double amplitude) {
-	return amplitude * TMath::Landau(x,mu, sigma, "kFALSE");
+double FunctionMath::Landau(double x, double mu, double sigma, double amplitude, double shift) {
+	return amplitude * TMath::Landau(x-shift, mu, sigma, "kFALSE");
 }
 
 double FunctionMath::HeavisideFunction(double x, double c) {
 	if (x >= c) { return 1.;}
-	if (x < c) {return 0.;}
+    else if (x < c) {return 0.;}
 }

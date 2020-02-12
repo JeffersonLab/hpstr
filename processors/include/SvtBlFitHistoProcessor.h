@@ -48,7 +48,9 @@ class SvtBlFitHistoProcessor : public Processor {
         HistoManager* inputHistos_{nullptr};
 
         //binning for profileYIterativeGauss
-        int binning_{1};
+        //int binning_{1};
+        int rebin_{};
+        int nPointsDer_{};
 
         //Maps for sensor histograms and channels
         std::vector<std::string> histos2dk_{};
