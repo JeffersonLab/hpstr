@@ -37,7 +37,7 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
     mass_spec_h = (TH1*) inF_->Get(massSpectrum_.c_str());
 
     // Init bump hunter manager
-    bump_hunter_ = new BumpHunter(bkg_model_, poly_order_, win_factor_);
+    bump_hunter_ = new BumpHunter(bkg_model_, poly_order_, win_factor_, asymptotic_limit_);
     bump_hunter_->setBounds(mass_spec_h->GetXaxis()->GetBinUpEdge(mass_spec_h->FindFirstBinAbove()),
             mass_spec_h->GetXaxis()->GetBinLowEdge(mass_spec_h->FindLastBinAbove()));
     if(debug_ > 0) bump_hunter_->enableDebug();
