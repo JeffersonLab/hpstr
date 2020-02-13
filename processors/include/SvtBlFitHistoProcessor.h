@@ -43,6 +43,7 @@ class SvtBlFitHistoProcessor : public Processor {
         int IterativeGaussFitCut_;
         //parameter defining json file
         std::string histCfgFilename_;
+        int xmin_{};
 
         //Histogram handlers
         BlFitHistos* outputHistos_{nullptr};

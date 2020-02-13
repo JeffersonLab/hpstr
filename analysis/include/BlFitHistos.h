@@ -20,7 +20,7 @@ class BlFitHistos : public HistoManager{
         BlFitHistos(const std::string& inputName);
         ~BlFitHistos();
     
-        void Chi2GausFit( HistoManager* inputHistos_, BlFitHistos* outputHistos_, int nPointsDer_,int rebin_);
+        void Chi2GausFit( HistoManager* inputHistos_, BlFitHistos* outputHistos_, int nPointsDer_,int rebin_i, int xmin_);
         void FillHistograms();
         void Mean2DHistoOverlay(HistoManager* inputHistos_, BlFitHistos* outputHistos_);
         

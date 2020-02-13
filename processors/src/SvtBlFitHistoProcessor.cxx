@@ -20,6 +20,7 @@ void SvtBlFitHistoProcessor::configure(const ParameterSet& parameters) {
         IterativeGaussFitCut_ = parameters.getInteger("nhitsFitCut");
         rebin_ = parameters.getInteger("rebin");
         nPointsDer_ = parameters.getInteger("nPoints");
+        xmin_ = parameters.getInteger("xmin");
     }
     catch (std::runtime_error& error)
     {
@@ -51,7 +52,7 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
 bool SvtBlFitHistoProcessor::process() { 
     //BlFitHistos* blarg = new BlFitHistos("");
     //blarg->Chi2GausFit(inputHistos_,outputHistos_);
-    outputHistos_->Chi2GausFit(inputHistos_,outputHistos_,nPointsDer_,rebin_);
+    outputHistos_->Chi2GausFit(inputHistos_,outputHistos_,nPointsDer_,rebin_,xmin_);
     outputHistos_->Mean2DHistoOverlay(inputHistos_,outputHistos_);
         return true;
     

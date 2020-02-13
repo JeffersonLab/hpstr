@@ -64,6 +64,7 @@ void BlFitHistos::Mean2DHistoOverlay(HistoManager* inputHistos_, BlFitHistos* ou
     canvas.Write();
     histo_hh->Write();
     outputHistos_->get1dHisto(meankey)->Write();
+    canvas.Close();
 
  
 
@@ -77,7 +78,7 @@ void BlFitHistos::FillHistograms() {
 }
 
 
-void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, BlFitHistos* outputHistos_, int nPointsDer_,int rebin_) {
+void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, BlFitHistos* outputHistos_, int nPointsDer_,int rebin_,int xmin_) {
 //Loop over all 2D histogram names from the input TFile
     for (std::vector<std::string>::iterator jj = inputHistos_->histos2dNamesfromTFile.begin();
         jj != inputHistos_->histos2dNamesfromTFile.end(); ++jj)
@@ -132,7 +133,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, BlFitHistos* outputHi
         if(projy_h->GetEntries() < 1000){continue;}
 
         int iter=0;
-        int firstbin=projy_h->FindFirstBinAbove(10,1);
+        int firstbin=projy_h->FindFirstBinAbove(xmin_,1);
         double xmin=projy_h->GetBinLowEdge(firstbin);
         double binwidth=1*projy_h->GetBinWidth(firstbin);
         double xmax=xmin+20*binwidth;
@@ -180,7 +181,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, BlFitHistos* outputHi
             double slope1 = (chi2_NDF.at(i)-chi2_NDF.at(i-nPointsDer_))/nPointsDer_*binwidth;
             double slopeDiff = slope2 - slope1;
             //std::cout << "xposition: " << fit_range_end.at(i) << "; slopeDiff: " << slopeDiff << std::endl;
-            chi2_2D.push_back(slopeDiff);
+            chi2_2D.push_back(std::abs(slopeDiff));
             //chi2_2D.push_back((chi2_NDF.at(i+nPointsDer_)-chi2_NDF.at(i))/(nPointsDer_*binwidth) - ((chi2_NDF.at(i)-chi2_NDF.at(iter-nPointsDer_))/(nPointsDer_*binwidth)));
         }
     }
@@ -244,10 +245,10 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, BlFitHistos* outputHi
     //canvas.Write();
     canvas.SaveAs(Form("run/fit_images/%s_chi2_2nd_derivative.png",projy_h->GetName()));
 
-    //projy_h->Write();
-    //chi2_NDF_gr->Write();
+    projy_h->Write();
+    chi2_NDF_gr->Write();
     //mean_gr->Write();
-    //chi2_2D_gr->Write();
+    chi2_2D_gr->Write();
 
     delete chi2_NDF_gr;
     delete mean_gr;
