@@ -7,7 +7,13 @@
 
 //ROOT
 #include "TFile.h"
-#include "TH1.h"
+#include "TH1F.h"
+#include "TH2F.h"
+#include "TAxis.h"
+
+//CPLUSPLUS
+#include <map>
+#include <memory>
 
 
 class VtxHistoProcessor : public Processor {
@@ -36,6 +42,23 @@ TFile* inF_{nullptr};
         
 //Debug Level
 int debug_{0};
+
+//Rebin factor
+int rebin_{1};
+
+//Selection folder
+
+std::string selection_{""};
+
+//Map storing the 2D histograms
+
+std::map<std::string,TH2F*> _histos2d;
+typedef std::map<std::string,TH2F*>::iterator it2d_;
+
+//Map storing the 1D biases and resolutions
+
+std::map<std::string,TH1F* > _histos1d;
+typedef std::map<std::string,TH1F*>::iterator it1d_;
 
 };
 
