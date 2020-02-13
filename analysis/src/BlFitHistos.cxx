@@ -18,6 +18,60 @@ BlFitHistos::~BlFitHistos() {
         baselineGraphs.clear();
 }
 
+void BlFitHistos::Mean2DHistoOverlay(HistoManager* inputHistos_, BlFitHistos* outputHistos_) {
+//Loop over all 2D histogram names from the input TFile
+    for (std::vector<std::string>::iterator jj = inputHistos_->histos2dNamesfromTFile.begin();
+        jj != inputHistos_->histos2dNamesfromTFile.end(); ++jj)
+    {
+
+    std::string inputname = *jj;
+    std::string FitRangeLowerkey;
+    std::string FitRangeUpperkey;
+    std::string meankey;
+    std::string widthkey;
+    std::string normkey;
+    std::cout << "Sensor: " << inputname << std::endl;
+
+    for (std::vector<std::string>::iterator it = outputHistos_->histos1dNamesfromJson.begin();
+                it != outputHistos_->histos1dNamesfromJson.end(); ++it)
+    {
+        std::string fitparname = *it;
+        size_t L = fitparname.find_last_of("L");
+        std::string tag = fitparname.substr(L);
+        if (inputname.find(tag) != std::string::npos) {
+            //Substrings below must match the names in the JSON file
+            if (fitparname.find("FitRangeLower") != std::string::npos)
+                FitRangeLowerkey = fitparname;
+            if (fitparname.find("FitRangeUpper") != std::string::npos)
+                FitRangeUpperkey = fitparname;
+            if (fitparname.find("mean") != std::string::npos)
+                meankey = fitparname;
+            if (fitparname.find("width") != std::string::npos)
+                widthkey = fitparname;
+            if (fitparname.find("norm") != std::string::npos)
+                normkey = fitparname;
+
+        }
+    }
+
+    TH2F* histo_hh = inputHistos_->get2dHisto(*jj);
+    TCanvas canvas(Form("Mean_Fit_Overlay_%s",histo_hh->GetName()),"c",1800,800);
+    //TCanvas canvas(projy_h->GetName(),"c",1800,800);
+
+    histo_hh->Draw("colz");
+    outputHistos_->get1dHisto(meankey)->SetLineColor(2);
+    outputHistos_->get1dHisto(meankey)->Draw("SAME");
+    canvas.Write();
+    histo_hh->Write();
+    outputHistos_->get1dHisto(meankey)->Write();
+
+ 
+
+
+
+    }
+}
+
 void BlFitHistos::FillHistograms() {
 
 }
@@ -69,12 +123,13 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, BlFitHistos* outputHi
     TH1D* fit_histo_h = new  TH1D(Form("Max_Chi2_2nd_Derivative_for_Sensor%s",histo_hh->GetName()),"Max_Chi2_2nd_Derivative_per_Channel",10000,0,10000);
 
     //Loop over all channels to find location of maximum chi2 2nd derivative
-    for(int cc=0; cc < 5; ++cc) {
-
+    for(int cc=0; cc < 640; ++cc) {
+        
         std::cout << "Channel #" << cc << std::endl;
         TH1D* projy_h = histo_hh->ProjectionY(Form("%s_projection_%i",histo_hh->GetName(),cc),
                 cc+1,cc+1,"e");
         projy_h->SetTitle(Form("ProjectionY_%s_Channel%i",histo_hh->GetName(),cc));
+        if(projy_h->GetEntries() < 1000){continue;}
 
         int iter=0;
         int firstbin=projy_h->FindFirstBinAbove(10,1);
@@ -174,7 +229,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, BlFitHistos* outputHi
     //outF_chi2->cd();
     TCanvas canvas(projy_h->GetName(),"c",1800,800);
     projy_h->Draw();
-    canvas.Write();
+    //canvas.Write();
     canvas.SaveAs(Form("run/fit_images/%s_fit.png",projy_h->GetName()));
 
     chi2_NDF_gr->Draw();

@@ -22,6 +22,7 @@ class BlFitHistos : public HistoManager{
     
         void Chi2GausFit( HistoManager* inputHistos_, BlFitHistos* outputHistos_, int nPointsDer_,int rebin_);
         void FillHistograms();
+        void Mean2DHistoOverlay(HistoManager* inputHistos_, BlFitHistos* outputHistos_);
         
     private:
         

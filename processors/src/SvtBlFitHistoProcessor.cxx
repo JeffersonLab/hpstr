@@ -52,8 +52,9 @@ bool SvtBlFitHistoProcessor::process() {
     //BlFitHistos* blarg = new BlFitHistos("");
     //blarg->Chi2GausFit(inputHistos_,outputHistos_);
     outputHistos_->Chi2GausFit(inputHistos_,outputHistos_,nPointsDer_,rebin_);
+    outputHistos_->Mean2DHistoOverlay(inputHistos_,outputHistos_);
         return true;
-
+    
 
     
 }
