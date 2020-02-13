@@ -10,7 +10,7 @@ parser.add_option("-p", "--poly", type="int", dest="poly_order",
         help="Polynomial order of background model.", metavar="poly_order", default=3)
 parser.add_option("-w", "--win", type="int", dest="win_factor",
         help="Window factor for determining fit window size.", metavar="win_factor", default=11)
-parser.add_option("-t", "--toys", type="int", dest="nToys",
+parser.add_option("-n", "--toys", type="int", dest="nToys",
         help="Number of toy spectra to throw.", metavar="nToys", default=100)
 parser.add_option("-s", "--spec", type="string", dest="mass_spec",
         help="Name of mass spectrum histogram.", metavar="mass_spec",
