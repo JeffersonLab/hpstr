@@ -232,8 +232,18 @@ void TrackHistos::Fill2DHistograms(Vertex* vtx, float weight) {
         
         vtxPosSvt.RotateY(-0.0305);
         
+
+        double vtxP = vtx->getP().Mag();
+        
         Fill2DHisto("vtx_InvM_vtx_z_hh",vtx->getInvMass(),vtx->getZ(),weight);
         Fill2DHisto("vtx_InvM_vtx_svt_z_hh",vtx->getInvMass(),vtxPosSvt.Z(),weight);
+        Fill2DHisto("vtx_p_svt_z_hh",vtxP,vtxPosSvt.Z(),weight);
+        Fill2DHisto("vtx_p_svt_x_hh",vtxP,vtxPosSvt.X(),weight);
+        Fill2DHisto("vtx_p_svt_y_hh",vtxP,vtxPosSvt.Y(),weight);
+        
+        Fill2DHisto("vtx_p_sigmaZ_hh",vtxP,vtx->getCovariance()[5],weight);
+        Fill2DHisto("vtx_p_sigmaX_hh",vtxP,vtx->getCovariance()[3],weight);
+        Fill2DHisto("vtx_p_sigmaY_hh",vtxP,vtx->getCovariance()[0],weight);
     }
 }
 

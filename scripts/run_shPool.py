@@ -38,7 +38,7 @@ def runCommand(cmd,log=None):
 def launchTests(args):
   return launchTestsArgs(*args)
 
-def launchTestsArgs(options, infilename, fileN, jobN):
+def launchTestsArgs(cmdString, logDir, jobN):
   import datetime,os,sys
   import subprocess
   from subprocess import CalledProcessError
@@ -48,22 +48,8 @@ def launchTestsArgs(options, infilename, fileN, jobN):
   #Build Commands
   setupCmds = []
   preCmd = None
-  print options.inDir
-  #filenameBase = "apsignalv2-beamv6_2500kBunches_displaced_10mm_%i"%fileN
-  filenameBase = (infilename.split("/")[-1]).split(".")[0]
-  
-  #outDir = "/nfs/slac/g/hps3/users/pbutti/hpstr_histos/ap/80MeV/"
-  
-  logfilename = options.outDir+"logs/"+filenameBase+".log"
-  cfgname = ((options.configFile).split("/")[-1]).split(".")[0]
-  outfilename = options.outDir+filenameBase+"_"+cfgname+".root"
-  print("%i. Generating %s"%(jobN, outfilename))
-  cmd = [ options.tool, options.configFile, 
-          "-i", infilename,
-          "-o", outfilename,
-          "-t", str(options.isData)
-          ]
-  print cmd
+  logfilename = logDir+"/job%i.log"%jobN
+  cmd = cmdString.split()
 
   #Execute Commands
   try:
@@ -75,7 +61,7 @@ def launchTestsArgs(options, infilename, fileN, jobN):
       runCommand(preCmd,log)
       pass
     runCommand(cmd,log)
-    print("%i. Finished %s"%(jobN, outfilename))
+    print("%i. Finished %s"%(jobN, cmdString))
   except CalledProcessError as e:
     print "Caught exception",e
     pass
@@ -90,22 +76,18 @@ if __name__ == '__main__':
   from optparse import OptionParser
 
   parser = OptionParser()
-  parser.add_option("-t", "--tool", type="string", dest="tool",
-                  help="Tool to use", metavar="tool", default="hpstr")
-  parser.add_option("-c", "--config", type="string", dest="configFile",
-                  help="Configuration file to use", metavar="configFile", default="dst.py")
   parser.add_option("-f", "--fileList", type="string", dest="fileList",
-                  help="List of files to run on.", metavar="fileList", default="fileList.txt")
+                  help="List of files to run on.", metavar="fileList", default="jobList.txt")
   parser.add_option("-m", "--fileMod", type="string", dest="fileMod",
                   help="Modifier for output file names.", metavar="fileMod", default="_hpstr")
-  parser.add_option("-r", "--fileExt", dest="fileExt",
-                    help="Running on root files and not LCIO files", metavar="fileExt",default="root")
+  parser.add_option("-r", "--rootFile", action="store_true", dest="rootFile",
+                  help="Running on root files and not LCIO files", metavar="rootFile")
   parser.add_option("-d", "--debug", action="store_true", dest="debug",
                   help="print extra debugging information", metavar="debug")
   parser.add_option("-p", "--pool", type="int", dest="poolSize",
                   help="Set the number of cores to use (pool size)", metavar="poolSize", default=10)
-  parser.add_option("-o", "--outDir", type="string", dest="outDir",
-                  help="Specify the directory to save the output", metavar="outDir", default="/data/run/output/")
+  parser.add_option("-l", "--logDir", type="string", dest="logDir",
+                  help="Specify the directory to save the log files", metavar="logDir", default="./")
   parser.add_option("-i", "--inDir", type="string",dest="inDir",
                     help="Specify the input directory with the files", metavar="inDir",default="")
   parser.add_option("-z", "--isData", type="int",dest="isData",
@@ -114,29 +96,22 @@ if __name__ == '__main__':
   
   (options, args) = parser.parse_args()
 
-  cfgList = []
-  fnList = range(1,10001)
-
-  listfiles=glob.glob(options.inDir+"/*"+options.fileExt)
-
-  print options.inDir
-
-  fnList = range(1,len(listfiles)+1)
+  jobListFile = open(options.fileList) 
+  shList = []
+  for line in jobListFile:
+      shList.append(line.rstrip())
+      pass
 
   if options.debug:
-    print "Testing %i jobs in parallel mode (using Pool(%i))"%(len(fnList),options.poolSize)
+    print "Testing %i jobs in parallel mode (using Pool(%i))"%(len(shList),options.poolSize)
     print list(
-              itertools.izip([options.tool for x in range(len(fnList))],
-                             [listfiles[x] for x in range(len(fnList))],
-                             [options.outDir     for x in range(len(fnList))],
-                             [options.isData for x in range(len(fnList))],
-                             [options.configFile for x in range(len(fnList))],
-                             fnList,
-                             fnList
+              itertools.izip(shList,
+                             [options.outDir     for x in range(len(shList))],
+                             range(len(shList))
                             )
               )
   else:
-    print "Running %i jobs in parallel mode (using Pool(%i))"%(len(fnList),options.poolSize)
+    print "Running %i jobs in parallel mode (using Pool(%i))"%(len(shList),options.poolSize)
     freeze_support()
     # from: https://stackoverflow.com/questions/11312525/catch-ctrlc-sigint-and-exit-multiprocesses-gracefully-in-python
     original_sigint_handler = signal.signal(signal.SIGINT, signal.SIG_IGN)
@@ -144,10 +119,9 @@ if __name__ == '__main__':
     signal.signal(signal.SIGINT, original_sigint_handler)
     try:
       res = pool.map_async(launchTests,
-                           itertools.izip([options for x in range(len(fnList))],
-                                          [listfiles[x] for x in range(len(fnList))],
-                                          fnList,
-                                          fnList
+                           itertools.izip(shList,
+                                          [options.logDir     for x in range(len(shList))],
+                                          range(len(shList))
                                          )
                            )
       # timeout must be properly set, otherwise tasks will crash
