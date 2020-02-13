@@ -199,11 +199,11 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, BlFitHistos* outputHi
     TF1* cc_fit = new TF1("cc_fit", "gaus", xmin, xmax);
     projy_h->Fit(cc_fit, "QRES");
 
-    outputHistos_->get1dHisto(meankey)->SetBinContent(cc,(float)cc_fit->GetParameter(1));
-    outputHistos_->get1dHisto(widthkey)->SetBinContent(cc,(float)cc_fit->GetParameter(2));
-    outputHistos_->get1dHisto(normkey)->SetBinContent(cc,(float)cc_fit->GetParameter(0));
-    outputHistos_->get1dHisto(FitRangeLowerkey)->SetBinContent(cc,(float)xmin);
-    outputHistos_->get1dHisto(FitRangeUpperkey)->SetBinContent(cc,(float)xmax);
+    outputHistos_->get1dHisto(meankey)->SetBinContent(cc+1,(float)cc_fit->GetParameter(1));
+    outputHistos_->get1dHisto(widthkey)->SetBinContent(cc+1,(float)cc_fit->GetParameter(2));
+    outputHistos_->get1dHisto(normkey)->SetBinContent(cc+1,(float)cc_fit->GetParameter(0));
+    outputHistos_->get1dHisto(FitRangeLowerkey)->SetBinContent(cc+1,(float)xmin);
+    outputHistos_->get1dHisto(FitRangeUpperkey)->SetBinContent(cc+1,(float)xmax);
 
 //Graphs and Histograms
 
