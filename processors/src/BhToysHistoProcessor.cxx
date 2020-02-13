@@ -10,14 +10,11 @@ BhToysHistoProcessor::BhToysHistoProcessor(const std::string& name, Process& pro
     : Processor(name, process) { 
     }
 
-BhToysHistoProcessor::~BhToysHistoProcessor() { 
-}
+BhToysHistoProcessor::~BhToysHistoProcessor() { }
 
 void BhToysHistoProcessor::configure(const ParameterSet& parameters) {
-
     std::cout << "Configuring BhToysHistoProcessor" << std::endl;
-    try
-    {
+    try {
         debug_          = parameters.getInteger("debug");
         massSpectrum_   = parameters.getString("massSpectrum");
         mass_hypo_      = parameters.getDouble("mass_hypo");
@@ -26,13 +23,10 @@ void BhToysHistoProcessor::configure(const ParameterSet& parameters) {
         seed_           = parameters.getInteger("seed");
         nToys_          = parameters.getInteger("nToys");
         toy_sig_samples_ = parameters.getInteger("toy_sig_samples");
-    }
-    catch (std::runtime_error& error)
-    {
+        //asymptotic_limit_ = parameters.getBoolean("asymptoticLimit");
+    } catch(std::runtime_error& error) {
         std::cout << error.what() << std::endl;
     }
-
-
 }
 
 void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFilename) {
@@ -94,14 +88,13 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
 }
 
 bool BhToysHistoProcessor::process() {
-
     std::cout << "Running on mass spectrum: " << massSpectrum_ << std::endl;
     std::cout << "Running with polynomial order: " << poly_order_ << std::endl;
     std::cout << "Running with window factor: " << win_factor_ << std::endl;
     std::cout << "Running on mass hypo: " << mass_hypo_ << std::endl;
 
     // Search for a resonance at the given mass hypothesis
-    HpsFitResult* result = bump_hunter_->performSearch(mass_spec_h, mass_hypo_, false, true);
+    HpsFitResult* result = bump_hunter_->performSearch(mass_spec_h, mass_hypo_, false, false);
     mass_spec_h->Write();
 
     // Get the result of the background fit
@@ -135,11 +128,11 @@ bool BhToysHistoProcessor::process() {
     flat_tuple_->setVariableValue("upper_limit",            result->getUpperLimit());
     flat_tuple_->setVariableValue("upper_limit_p_value",    result->getUpperLimitPValue());
 
-    for (auto& likelihood : result->getLikelihoods()) {
+    for(auto& likelihood : result->getLikelihoods()) {
         flat_tuple_->addToVector("nlls", likelihood);
     }
 
-    for (auto& yield : result->getSignalYields()) {
+    for(auto& yield : result->getSignalYields()) {
         flat_tuple_->addToVector("sig_yields", yield);
     }
 
@@ -147,21 +140,19 @@ bool BhToysHistoProcessor::process() {
     flat_tuple_->setVariableValue("seed", seed_);
     flat_tuple_->setVariableValue("toy_sig_samples", toy_sig_samples_);
     
-    if (nToys_ > 0) {
-
-        std::cout << "Generating " << nToys_ << " Toys" <<std::endl;
+    if(nToys_ > 0) {
+        std::cout << "Generating " << nToys_ << " Toys" << std::endl;
         std::vector<TH1*> toys_hist = bump_hunter_->generateToys(mass_spec_h, nToys_, seed_, toy_sig_samples_);
 
         int toyFitN = 0;
-        for (TH1* hist : toys_hist) {
+        for(TH1* hist : toys_hist) {
             std::cout << "Fitting Toy " << toyFitN << std::endl;
             toy_results.push_back(bump_hunter_->performSearch(hist, mass_hypo_, false, true));
             toyFitN++;
         }
     }
 
-    for (auto& toy_result : toy_results) {
-
+    for(auto& toy_result : toy_results) {
         // Get the result of the background fit
         TFitResultPtr toy_bkg_result = toy_result->getBkgFitResult();
 

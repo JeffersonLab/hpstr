@@ -72,11 +72,13 @@ class BhToysHistoProcessor : public Processor {
 
         // Number of samples for signal to employ in toy model generation. Defaults to zero.
         int toy_sig_samples_{0};
+        
+        // Whether to use the asymptotic upper limit or the power constrained. Defaults to asymptotic.
+        bool asymptotic_limit_{true};
 
         //Debug Level
         int debug_{0};
 
 };
-
 
 #endif
