@@ -34,6 +34,8 @@ class BaseSelector {
         bool passCutLt(const std::string& cutname,double val,double weight);
         bool passCutGt(const std::string& cutname,double val,double weight);
 
+        void clearSelector() { passSelection = true; }
+
 
     private:
         json _h_selections;
@@ -48,6 +50,8 @@ class BaseSelector {
         bool debug_{false};
         int ncuts_{0};
         std::shared_ptr<TH1F> h_cf_;
+
+        bool passSelection{false};
 
         typedef std::map<std::string,std::pair<double,int> >::iterator cut_it;
 };
