@@ -278,61 +278,15 @@ void BumpHunter::getUpperLimitAsymptotic(TH1* histogram, HpsFitResult* result) {
     // Calculate the upper limit according to Equation (69) of "Asymptotic formulae
     // for likelihood-based tests of new physics" by Cowan et alii. 1.64 is derived
     // from Equation (1) for a 95% confidence level (alpha = 0.05).
-    double upper_limit = 0.0;
-    if(signal_yield < 2.3) {
-        upper_limit = 2.3 + 1.64 * signal_yield_error;
-    } else {
-        upper_limit = signal_yield + 1.64 * signal_yield_error;
-    }
+    double upper_limit = signal_yield + 1.64 * signal_yield_error;
+    if(upper_limit < 2.3) { upper_limit = 2.3; }
     
-    // Calculate the p-value. First get the minimum NLL value. It is calculated
-    // using the singal yield if it is greater than zero, and the background (mu = 0)
-    // otherwise.
-    double mle_nll = 0.0;
-    if(signal_yield < 2.3) {
-        mle_nll = result->getBkgFitResult()->MinFcnValue();
-    } else {
-        mle_nll = result->getCompFitResult()->MinFcnValue();
-    }
-    
-    // The fit is performed again with the signal yield fixed to the upper limit
-    // signal yield.
-    TF1* comp{nullptr};
-    if(poly_order_ == 1) {
-        ChebyshevFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIRST, FitFunction::SignalFitModel::GAUSSIAN);
-        comp = new TF1("comp_ul", comp_func, -1, 1, 5);
-        comp->SetParameters(4, 0, 0, 0, 0);
-        comp->SetParNames("pol0", "pol1", "signal norm", "mean", "sigma");
-        comp->FixParameter(3, upper_limit);
-        comp->FixParameter(4, mass_resolution_);
-    } else if(poly_order_ == 3) {
-        ChebyshevFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD, FitFunction::SignalFitModel::GAUSSIAN);
-        comp = new TF1("comp_ul", comp_func, -1, 1, 7);
-        comp->SetParameters(4, 0, 0, 0, 0, 0, 0);
-        comp->SetParNames("pol0", "pol1", "pol2", "pol3", "signal norm", "mean", "sigma");
-        comp->FixParameter(5, upper_limit);
-        comp->FixParameter(6, mass_resolution_);
-    } else {
-        ChebyshevFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH, FitFunction::SignalFitModel::GAUSSIAN);
-        comp = new TF1("comp_ul", comp_func, -1, 1, 9);
-        comp->SetParameters(4, 0, 0, 0, 0, 0, 0, 0, 0);
-        comp->SetParNames("pol0", "pol1", "pol2", "pol3", "pol4", "pol5", "signal norm", "mean", "sigma");
-        comp->FixParameter(7, upper_limit);
-        comp->FixParameter(8, mass_resolution_);
-    }
-    TFitResultPtr full_result = histogram->Fit("comp_ul", "LES+", "", window_start_, window_end_);
-    double cond_nll = full_result->MinFcnValue();
-    
-    // The p-value is derived from the original result plus the upper limit
-    // result.
-    double p_value = 1;
-    double q0 = 0; 
-    this->getChi2Prob(cond_nll, mle_nll, q0, p_value); 
+    // The p-value is 0.05 by definition.
+    double p_value = 0.05;
     
     // Debug print the upper limit.
     std::cout << "Upper Limit        :: " << upper_limit << std::endl;
     std::cout << "p-Value            :: " << p_value << std::endl;
-    std::cout << "q0                 :: " << q0 << std::endl;
     
     // Set the upper limit and upper limit p-value.
     result->setUpperLimit(upper_limit);
