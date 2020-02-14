@@ -14,6 +14,7 @@
 #include "BlFitHistos.h"
 #include "HistoManager.h"
 #include "BlFitFunction.h"
+#include "FlatTupleMaker.h"
 
 class SvtBlFitHistoProcessor : public Processor {
 
@@ -59,6 +60,7 @@ class SvtBlFitHistoProcessor : public Processor {
 
         //Folder where input histograms file is located
         std::string outDir_{"."};
+        FlatTupleMaker* flat_tuple_{nullptr};
 
 
 };

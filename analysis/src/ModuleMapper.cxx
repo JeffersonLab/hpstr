@@ -1,6 +1,6 @@
 #include "ModuleMapper.h"
 #include <iostream>
-
+#include "TString.h"
 ModuleMapper::ModuleMapper() {
 
     if (year_ == 2019) {
@@ -521,3 +521,29 @@ ModuleMapper::ModuleMapper(const int year) {
 
 ModuleMapper::~ModuleMapper() {
 }
+
+std::vector<std::string> ModuleMapper::getHybridStrings() {
+    std::vector<std::string> hybrids;
+    for(int i=0; i < 7; ++i){
+        if( i < 4) {
+            hybrids.push_back(Form("L%iT_axial",i));
+            hybrids.push_back(Form("L%iT_stereo",i));
+            hybrids.push_back(Form("L%iB_stereo",i));
+            hybrids.push_back(Form("L%iB_axial",i));
+        }
+        else {
+            hybrids.push_back(Form("L%iT_axial_ele",i));
+            hybrids.push_back(Form("L%iT_stereo_ele",i));
+            hybrids.push_back(Form("L%iT_axial_pos",i));
+            hybrids.push_back(Form("L%iT_stereo_pos",i));
+            hybrids.push_back(Form("L%iB_axial_ele",i));
+            hybrids.push_back(Form("L%iB_stereo_ele",i));
+            hybrids.push_back(Form("L%iB_axial_pos",i));
+            hybrids.push_back(Form("L%iB_stereo_pos",i));
+        }
+    }
+
+    return hybrids;
+}
+
+
