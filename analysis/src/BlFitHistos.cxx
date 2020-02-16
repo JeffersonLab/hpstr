@@ -37,7 +37,9 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
         //Get input 2D histogram and rebin based on configuration setting
         TH2F* histo_hh = inputHistos_->get2dHisto(*jj);
         histo_hh->RebinY(rebin_);
-        std::string sensorname = histo_hh->GetName();
+        std::string SvtAna2DHisto_key = histo_hh->GetName();
+        histo_hh->Write();
+        SvtAna2DHisto_key.erase(SvtAna2DHisto_key.end()-1,SvtAna2DHisto_key.end());
 
     int  nbins = histo_hh->GetXaxis()->GetNbins();
 
@@ -47,17 +49,16 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
     for(int cc=0; cc < 640; ++cc) {
 
         //Set Channel and Hybrid information in the flat tuple
-        flat_tuple_->setVariableValue("SvtAna2DHisto_key", sensorname);
+        flat_tuple_->setVariableValue("SvtAna2DHisto_key", SvtAna2DHisto_key);
         flat_tuple_->setVariableValue("channel", cc);
 
 
 
 
         std::cout << "Channel #" << cc << std::endl;
-
-        TH1D* projy_h = histo_hh->ProjectionY(Form("%s_projection_%i",histo_hh->GetName(),cc),
+        TH1D* projy_h = histo_hh->ProjectionY(Form("%s_projection_%i",SvtAna2DHisto_key.c_str(),cc),
                 cc+1,cc+1,"e");
-        projy_h->SetTitle(Form("ProjectionY_%s_Channel%i",histo_hh->GetName(),cc));
+        projy_h->SetTitle(Form("ProjectionY_%s_channel_%i",SvtAna2DHisto_key.c_str(),cc));
 
         //Minimum Entry Requirement NOT ROBUST!!!
         if(projy_h->GetEntries() < minStats_){continue;}
@@ -155,7 +156,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
     delete cc_fit;
     }
 
-
+    delete histo_hh;
     }
 
     flat_tuple_->close();
