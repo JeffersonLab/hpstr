@@ -31,6 +31,15 @@ void FlatTupleMaker::addVariable(std::string variable_name) {
     tree->Branch(variable_name.c_str(), &variables[variable_name], (variable_name + "/D").c_str()); 
 }
 
+void FlatTupleMaker::addString(std::string variable_name) { 
+    
+    // Set the default value of the variable to something unrealistic 
+    string_variables[variable_name] ="EMPTY";
+    
+    // Add a leaf to the ROOT tree and set its address to the address of the 
+    // newly created variable. 
+    tree->Branch(variable_name.c_str(), &string_variables[variable_name]); 
+}
 void FlatTupleMaker::addVector(std::string variable_name) { 
     vectors[variable_name] = {}; 
     tree->Branch(variable_name.c_str(), &vectors[variable_name]); 

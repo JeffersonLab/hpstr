@@ -27,13 +27,10 @@ void BlFitHistos::FillHistograms() {
 }
 
 
-void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int rebin_,int xmin_, FlatTupleMaker* flat_tuple_) {
+void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int rebin_,int xmin_, int minStats_, FlatTupleMaker* flat_tuple_) {
 
-   //  ModuleMapper* mmapper = new ModuleMapper(2019);
-     //std::vector<std::string> hybrid_strings = mmapper->getHybridStrings();
-     //mmapper->getStrings(hybrid_strings);
 
-    //Loop over all 2D histogram names from the input TFile
+       //Loop over all 2D histogram names from the input TFile
     for (std::vector<std::string>::iterator jj = inputHistos_->histos2dNamesfromTFile.begin();
         jj != inputHistos_->histos2dNamesfromTFile.end(); ++jj)
     {
@@ -41,44 +38,13 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
         TH2F* histo_hh = inputHistos_->get2dHisto(*jj);
         histo_hh->RebinY(rebin_);
         std::string sensorname = histo_hh->GetName();
-        //Get the Hybrid Strings from ModuleMapper to find Feb and Hybrid #
-        /*std::string current_hybrid_string="";
-        for (int i=0; i < hybrid_strings.size(); ++i){
-            size_t found = sensorname.find(hybrid_strings.at(i));
-        if (found != std::string::npos) {current_hybrid_string = hybrid_strings.at(i);}
-        }
-        std::cout << current_hybrid_string << std::endl;
-        std::string hw = mmapper->getHwFromString(current_hybrid_string);
-        std::cout << hw << std::endl;
-        std::string f_del = "F";
-        std::string h_Del = "H";
-        std::string Feb = hw.substr(hw.find(f_del)+1,hw.find(f_del)+2);
-        std::cout << Feb << std::endl;
-        */
-        
-
-        
 
     int  nbins = histo_hh->GetXaxis()->GetNbins();
 
     //TH1D* fit_histo_h = new  TH1D(Form("Max_Chi2_2nd_Derivative_for_Sensor%s",histo_hh->GetName()),"Max_Chi2_2nd_Derivative_per_Channel",10000,0,10000);
 
     //Loop over all channels to find location of maximum chi2 2nd derivative
-    for(int cc=0; cc < 50; ++cc) {
-
-        //Setup flat tuple branches
-        flat_tuple_->addVariable("SvtAna2DHisto_key");
-        flat_tuple_->addVariable("channel");
-        flat_tuple_->addVariable("baseline_gausFit_mean");
-        flat_tuple_->addVariable("baseline_gausFit_norm");
-        flat_tuple_->addVariable("baseline_gausFit_sigma");
-        flat_tuple_->addVariable("baseline_gausFit_range_lower");
-        flat_tuple_->addVariable("baseline_gausFit_range_upper");
-        flat_tuple_->addVector("iterativeFit_chi2/NDF");
-        flat_tuple_->addVector("iterativeFit_range_end");
-        flat_tuple_->addVector("iterativeFit_mean");
-        flat_tuple_->addVector("iterativeFit_chi2_2ndDerivative");
-        flat_tuple_->addVector("iterativeFit_chi2_2Der_range");
+    for(int cc=0; cc < 640; ++cc) {
 
         //Set Channel and Hybrid information in the flat tuple
         flat_tuple_->setVariableValue("SvtAna2DHisto_key", sensorname);
@@ -94,7 +60,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
         projy_h->SetTitle(Form("ProjectionY_%s_Channel%i",histo_hh->GetName(),cc));
 
         //Minimum Entry Requirement NOT ROBUST!!!
-        if(projy_h->GetEntries() < 1000){continue;}
+        if(projy_h->GetEntries() < minStats_){continue;}
 
         int iter=0;
         int firstbin=projy_h->FindFirstBinAbove(xmin_,1);
@@ -156,8 +122,8 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
         if(chi2_2D[i] != chi2_2D[i]) { 
             chi2_2D[i]=0.0;
             //add chi2_2Der to flat tuple vector
-            flat_tuple_->addToVector("iterativeFit_chi2_2ndDerivative",chi2_2D.at(i));
         }
+        flat_tuple_->addToVector("iterativeFit_chi2_2ndDerivative",chi2_2D.at(i));
     }
 
 
@@ -189,7 +155,9 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
     delete cc_fit;
     }
 
-    flat_tuple_->close();
 
     }
+
+    flat_tuple_->close();
 }
+

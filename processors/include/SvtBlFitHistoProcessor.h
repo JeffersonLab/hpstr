@@ -54,6 +54,7 @@ class SvtBlFitHistoProcessor : public Processor {
         //int binning_{1};
         int rebin_{};
         int nPointsDer_{};
+        int minStats_{};
 
         //Maps for sensor histograms and channels
         std::vector<std::string> histos2dk_{};

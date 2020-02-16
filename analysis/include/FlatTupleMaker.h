@@ -39,6 +39,7 @@ class FlatTupleMaker {
          *
          */
         void addVariable(std::string variable_name);
+        void addString(std::string variable_name);
 
         void addVector(std::string vector_name); 
 

@@ -22,6 +22,7 @@ void SvtBlFitHistoProcessor::configure(const ParameterSet& parameters) {
         rebin_ = parameters.getInteger("rebin");
         nPointsDer_ = parameters.getInteger("nPoints");
         xmin_ = parameters.getInteger("xmin");
+        minStats_ = parameters.getInteger("minStats");
     }
     catch (std::runtime_error& error)
     {
@@ -36,23 +37,30 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     //InFile containing 2D histograms from the SvtCondAnaProcessor
     inF_ = new TFile(inFilename.c_str());
     outF_ = new TFile(outFilename.c_str(),"RECREATE");
-    //outF_chi2 = new TFile(Form("chi2_%s",outFilename.c_str()));
     flat_tuple_ = new FlatTupleMaker(outFilename.c_str(), "gaus_fit");
 
-    //outputHistos_ = new BlFitHistos("raw_hits");
     inputHistos_ = new HistoManager("");
     std::cout << "[BlFitHistos] Loading 2D Histos" << std::endl;
     inputHistos_->GetHistosFromFile(inF_, hybrid_);
-    //std::cout << "[BlFitHistos] Loading json file" << std::endl;
-    //outputHistos_->loadHistoConfig(histCfgFilename_); 
-    //std::cout << "[BlFitHistos] Creating Histograms for Fit Parameters" << std::endl;
-    //outputHistos_->DefineHistos();
 
+   //Setup flat tuple branches
+    flat_tuple_->addString("SvtAna2DHisto_key");
+    flat_tuple_->addVariable("channel");
+    flat_tuple_->addVariable("baseline_gausFit_mean");
+    flat_tuple_->addVariable("baseline_gausFit_norm");
+    flat_tuple_->addVariable("baseline_gausFit_sigma");
+    flat_tuple_->addVariable("baseline_gausFit_range_lower");
+    flat_tuple_->addVariable("baseline_gausFit_range_upper");
+    flat_tuple_->addVector("iterativeFit_chi2/NDF");
+    flat_tuple_->addVector("iterativeFit_range_end");
+    flat_tuple_->addVector("iterativeFit_mean");
+    flat_tuple_->addVector("iterativeFit_chi2_2ndDerivative");
+    flat_tuple_->addVector("iterativeFit_chi2_2Der_range");
 }
 
 
 bool SvtBlFitHistoProcessor::process() { 
-    outputHistos_->Chi2GausFit(inputHistos_,nPointsDer_,rebin_,xmin_, flat_tuple_);
+    outputHistos_->Chi2GausFit(inputHistos_,nPointsDer_,rebin_,xmin_,minStats_, flat_tuple_);
     //outputHistos_->Mean2DHistoOverlay(inputHistos_,outputHistos_);
 
     return true;

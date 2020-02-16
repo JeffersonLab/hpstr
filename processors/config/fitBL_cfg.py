@@ -15,6 +15,8 @@ parser.add_option("-d", "--outDir", type="string", dest="outDir",
         help="Specify the output directory.", metavar="outDir", default=".")
 parser.add_option("-t", "--xmin", type="int", dest="xmin",
         help="Set threshold for xmin of iterative fit range", metavar="xmin", default="50")
+parser.add_option("-m", "--minStats", type="int", dest="minStats",
+        help="Minimum Statistics required per bin to perform fit", metavar="minStats", default="1000")
 parser.add_option("-n", "--nPoints", type="int", dest="nPoints",
         help="Select number of points for second derivative.", metavar="nPoints", default="1")
 parser.add_option("-b", "--rebin", type="int", dest="rebin",
@@ -51,6 +53,7 @@ fitBL.parameters["nhitsFitCut"] = options.nhitsFitCut
 fitBL.parameters["rebin"] = options.rebin
 fitBL.parameters["nPoints"] = options.nPoints
 fitBL.parameters["xmin"] = options.xmin
+fitBL.parameters["minStats"] = options.minStats
 
 # Sequence which the processors will run.
 p.sequence = [fitBL]

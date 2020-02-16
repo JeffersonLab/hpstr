@@ -21,7 +21,7 @@ class BlFitHistos : public HistoManager{
         BlFitHistos(const std::string& inputName);
         ~BlFitHistos();
     
-        void Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int rebin_i, int xmin_, FlatTupleMaker* flat_tuple_);
+        void Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int rebin_i, int xmin_,int minStats_, FlatTupleMaker* flat_tuple_);
         void FillHistograms();
         void Mean2DHistoOverlay(HistoManager* inputHistos_, BlFitHistos* outputHistos_);
         
