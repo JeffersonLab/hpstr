@@ -42,7 +42,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
         histo_hh->RebinY(rebin_);
         std::string SvtAna2DHisto_key = histo_hh->GetName();
         histo_hh->Write();
-        SvtAna2DHisto_key.erase(SvtAna2DHisto_key.end()-1,SvtAna2DHisto_key.end());
+        SvtAna2DHisto_key.erase(SvtAna2DHisto_key.end()-3,SvtAna2DHisto_key.end());
 
     int  nbins = histo_hh->GetXaxis()->GetNbins();
 
@@ -58,11 +58,11 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
 
         if(cc%20 == 0){
-            std::cout <<"Hybrid: "<< SvtAna2DHisto_key << "Channel #" << cc << std::endl;
+            std::cout <<"Hybrid: "<< SvtAna2DHisto_key << " channel #" << cc << std::endl;
         }
-        TH1D* projy_h = histo_hh->ProjectionY(Form("%s_projection_%i",SvtAna2DHisto_key.c_str(),cc),
+        TH1D* projy_h = histo_hh->ProjectionY(Form("%s_projectionY_channel_%i",SvtAna2DHisto_key.c_str(),cc),
                 cc+1,cc+1,"e");
-        projy_h->SetTitle(Form("ProjectionY_%s_channel_%i",SvtAna2DHisto_key.c_str(),cc));
+        projy_h->SetTitle(Form("%s_projectionY_channel_%i",SvtAna2DHisto_key.c_str(),cc));
 
         //Minimum Entry Requirement NOT ROBUST!!!
         if(projy_h->GetEntries() < minStats_){continue;}
@@ -154,7 +154,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
         flat_tuple_->addToVector("iterativeFit_chi2_2Der_range",chi2_2D_range.at(i));
     }
 
-    projy_h->Write();
+    //projy_h->Write();
     flat_tuple_->fill();
     delete projy_h;
     delete cc_fit;
@@ -163,6 +163,5 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
     delete histo_hh;
     }
 
-    flat_tuple_->close();
 }
 
