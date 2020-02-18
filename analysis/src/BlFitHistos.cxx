@@ -98,7 +98,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
         chi2.push_back(cc_fit->GetChisquare());
         NDF.push_back(cc_fit->GetNDF());
         chi2_NDF.push_back(chi2.at(iter)/NDF.at(iter));
-        flat_tuple_->addToVector("iterativeFit_chi2/NDF", chi2_NDF.at(iter));
+        flat_tuple_->addToVector("iterativeFit_chi2_NDF", chi2_NDF.at(iter));
 
         fit_range_end.push_back(xmax);
         flat_tuple_->addToVector("iterativeFit_range_end", xmax);

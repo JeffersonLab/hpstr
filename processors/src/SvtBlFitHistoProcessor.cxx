@@ -54,7 +54,7 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     flat_tuple_->addVariable("baseline_gausFit_sigma");
     flat_tuple_->addVariable("baseline_gausFit_range_lower");
     flat_tuple_->addVariable("baseline_gausFit_range_upper");
-    flat_tuple_->addVector("iterativeFit_chi2/NDF");
+    flat_tuple_->addVector("iterativeFit_chi2_NDF");
     flat_tuple_->addVector("iterativeFit_range_end");
     flat_tuple_->addVector("iterativeFit_mean");
     flat_tuple_->addVector("iterativeFit_chi2_2ndDerivative");
