@@ -30,6 +30,9 @@ void BlFitHistos::FillHistograms() {
 void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int rebin_,int xmin_, int minStats_, FlatTupleMaker* flat_tuple_) {
 
 
+    flat_tuple_->setVariableValue("minimum_bin_threshold",(double)xmin_);
+    flat_tuple_->setVariableValue("minimum_entry_requirement_per_channel", (double)minStats_);
+    flat_tuple_->setVariableValue("rebin_factor", (double)rebin_);
        //Loop over all 2D histogram names from the input TFile
     for (std::vector<std::string>::iterator jj = inputHistos_->histos2dNamesfromTFile.begin();
         jj != inputHistos_->histos2dNamesfromTFile.end(); ++jj)
@@ -54,8 +57,9 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
 
 
-
-        std::cout << "Channel #" << cc << std::endl;
+        if(cc%20 == 0){
+            std::cout <<"Hybrid: "<< SvtAna2DHisto_key << "Channel #" << cc << std::endl;
+        }
         TH1D* projy_h = histo_hh->ProjectionY(Form("%s_projection_%i",SvtAna2DHisto_key.c_str(),cc),
                 cc+1,cc+1,"e");
         projy_h->SetTitle(Form("ProjectionY_%s_channel_%i",SvtAna2DHisto_key.c_str(),cc));

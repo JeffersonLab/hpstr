@@ -21,8 +21,7 @@ parser.add_option("-n", "--nPoints", type="int", dest="nPoints",
         help="Select number of points for second derivative.", metavar="nPoints", default="1")
 parser.add_option("-b", "--rebin", type="int", dest="rebin",
         help="rebin factor.", metavar="rebin", default="1")
-parser.add_option('-s', '--hybrid', type='string', dest="hybrid", help="Enter baseline<#><hybrid_name>", action='callback',
-        callback=timeSample_callback)
+parser.add_option('-s', '--hybrid', type='string', dest="hybrid",default="", help="Enter baseline<#><hybrid_name>", action='callback', callback=timeSample_callback)
 (options, args) = parser.parse_args()
 
 # Use the input file to set the output file name

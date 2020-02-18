@@ -45,6 +45,9 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
 
    //Setup flat tuple branches
     flat_tuple_->addString("SvtAna2DHisto_key");
+    flat_tuple_->addVariable("minimum_bin_threshold");
+    flat_tuple_->addVariable("minimum_entry_requirement_per_channel");
+    flat_tuple_->addVariable("rebin_factor");
     flat_tuple_->addVariable("channel");
     flat_tuple_->addVariable("baseline_gausFit_mean");
     flat_tuple_->addVariable("baseline_gausFit_norm");
