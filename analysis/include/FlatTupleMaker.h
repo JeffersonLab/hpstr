@@ -39,6 +39,7 @@ class FlatTupleMaker {
          *
          */
         void addVariable(std::string variable_name);
+        void addString(std::string variable_name);
 
         void addVector(std::string vector_name); 
 
@@ -47,6 +48,7 @@ class FlatTupleMaker {
          */
         void setVariableValue(std::string variable_name, double value) { variables[variable_name] = value; }; 
 
+        void setVariableValue(std::string variable_name, std::string value) { string_variables[variable_name] = value; }; 
         void addToVector(std::string variable_name, double value); 
 
         /**
@@ -74,6 +76,7 @@ class FlatTupleMaker {
 
         /** Map containing ntuple variables */
         std::map <std::string, double> variables; 
+        std::map <std::string, std::string> string_variables; 
 
         std::map <std::string, std::vector<double>> vectors; 
         

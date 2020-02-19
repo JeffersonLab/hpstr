@@ -68,10 +68,11 @@ void HistoManager::DefineHistos(){
                             hist.value().at("bins"),
                             hist.value().at("minX"),
                             hist.value().at("maxX"));
-
+                            
                     std::string ytitle = hist.value().at("ytitle");
                     histos1d[h_name]->GetYaxis()->SetTitle(ytitle.c_str());
-                    std::cout << histos1d[h_name]->GetName() << std::endl;
+                   // std::cout << histos1d[h_name]->GetName() << std::endl;
+                    histos1dNamesfromJson.push_back(h_name);
                 }
                 if (hist.value().at("type") == "hh") {
                     h_name = m_name+"_"+std::string(hist.value().at("prefix"))+"_"+*it+"_hh";
@@ -84,7 +85,8 @@ void HistoManager::DefineHistos(){
                             hist.value().at("binsY"),
                             hist.value().at("minY"),
                             hist.value().at("maxY"));
-                    std::cout << histos2d[h_name]->GetName() << std::endl;
+                   // std::cout << histos2d[h_name]->GetName() << std::endl;
+                    histos2dNamesfromJson.push_back(h_name);
                 }  
             }
         }
@@ -128,20 +130,28 @@ void HistoManager::DefineHistos(){
     }
 }
 
-void HistoManager::GetHistosFromFile(TFile* inFile, const std::string& name, const std::string& folder) {
+void HistoManager::GetHistosFromFile(TFile* inFile, const std::vector<std::string>& name, const std::string& folder) {
 
-    //Todo: use name as regular expression.
     //Todo: use folder to choose a folder. 
     TIter next(inFile->GetListOfKeys());
     TKey *key;
     while ((key = (TKey*)next())) {
         std::string classType = key->GetClassName();
-        if (classType.find("TH1")!=std::string::npos)
+        std::string s(key->GetName());
+    for(std::vector<std::string>::const_iterator i = name.begin(); i != name.end(); i++) {
+        if (s.find(*i) == std::string::npos) continue;
+        if (classType.find("TH1")!=std::string::npos) {
             histos1d[key->GetName()] = (TH1F*) key->ReadObj();
-        if (classType.find("TH2")!=std::string::npos)
+            histos1dNamesfromTFile.push_back(key->GetName());
+        }
+        if (classType.find("TH2")!=std::string::npos) {
             histos2d[key->GetName()] = (TH2F*) key->ReadObj();
+            histos2dNamesfromTFile.push_back(key->GetName());
+            std::cout << histos2d[key->GetName()]->GetName() << std::endl;
+        }
         if (classType.find("TH3")!=std::string::npos)
             histos3d[key->GetName()] = (TH3F*) key->ReadObj();
+    }
     }
 }
 
@@ -311,6 +321,9 @@ void HistoManager::loadHistoConfig(const std::string histoConfigFile) {
     }
 
 }
+
+
+
 
 void HistoManager::saveHistos(TFile* outF,std::string folder) {
 

@@ -1,0 +1,57 @@
+{
+    "numVtx_eq"     :   {
+        "cut"   : 1,
+        "id"    : 0,
+        "info"  : "N_{vtx}=1"
+    },
+    "chi2unc_lt" : {
+        "cut"   : 15,
+        "id"    : 1,
+        "info"  : "#chi^{2}_{unc}<10"
+    },
+    "eleposTanLambaProd_lt" : {
+        "cut"   : 0.0,
+        "id"    : 2,
+        "info"  : "e^{-}/e^{+} oppVol"
+    },
+    "eleTrkCluMatch_lt" : {
+        "cut"   : 10,
+        "id"    : 3,
+        "info"  : "e^{-} #Delta_{d}(trk,clu)<10#sigma"
+    },
+    "posTrkCluMatch_lt" : {
+        "cut"   : 10,
+        "id"    : 4,
+        "info"  : "e^{+} #Delta_{d}(trk,clu)<10#sigma"
+    },
+    "eleTrkCluTimeDiff_lt" : {
+        "cut"   : 4,
+        "id"    : 5,
+        "info"  : "e^{-} #Delta_{t}(trk,clu)<4ns"
+    },
+    "posTrkCluTimeDiff_lt" : {
+        "cut"   : 4,
+        "id"    : 6,
+        "info"  : "e^{+} #Delta_{t}(trk,clu)<4ns"
+    },
+    "eleposCluTimeDiff_lt" : {
+        "cut"  : 2,
+        "id"   : 7,
+        "info" : "#Delta_{t}(clu_{e^{-}},clu_{e^{+}})<2ns"
+    },
+    "eleTrkChi2_lt" : {
+        "cut"  : 6,
+        "id"   : 8,
+        "info" : "e^{-} Track #chi^{2}<6"
+    },
+    "posTrkChi2_lt" : {
+        "cut"  : 6,
+        "id"   : 9,
+        "info" : "e^{-} Track #chi^{2}<6"
+    },
+    "eleMom_lt" : {
+        "cut" : 2.15,
+        "id"  : 10,
+        "info" : "p e^{-}<2.15GeV"
+    }
+}

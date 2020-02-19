@@ -78,7 +78,7 @@ class HistoManager {
         void Fill1DHisto(const std::string& histoName, float value, float weight=1.);
         void Fill2DHisto(const std::string& histoName, float valuex, float valuey, float weight=1.);
 
-        virtual void GetHistosFromFile(TFile* inFile, const std::string& name,const std::string& folder = "");
+        virtual void GetHistosFromFile(TFile* inFile, const std::vector<std::string>& name,const std::string& folder = "");
 
         virtual void saveHistos(TFile* outF = nullptr,std::string folder = "");
         
@@ -89,6 +89,11 @@ class HistoManager {
         virtual void Clear();
 
         void debugMode(bool debug) {debug_ = debug;}
+
+        std::vector<std::string> histos1dNamesfromTFile;
+        std::vector<std::string> histos2dNamesfromTFile;
+        std::vector<std::string> histos1dNamesfromJson;
+        std::vector<std::string> histos2dNamesfromJson;
 
     protected:
 

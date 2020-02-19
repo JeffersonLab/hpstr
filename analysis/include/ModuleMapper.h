@@ -22,7 +22,7 @@ class ModuleMapper {
   std::string getStringFromHw(const std::string& key)  {return hw_to_string[key];};
   std::string getStringFromSw(const std::string& key)  {return sw_to_string[key];};
   
-
+  std::vector<std::string> getHybridStrings();
   //get list of string modules
 
   void getStrings (std::vector<std::string>& strings) {
