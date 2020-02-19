@@ -49,6 +49,7 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     flat_tuple_->addVariable("minimum_entry_requirement_per_channel");
     flat_tuple_->addVariable("rebin_factor");
     flat_tuple_->addVariable("channel");
+    flat_tuple_->addVariable("minStats_dead_channel");
     flat_tuple_->addVariable("baseline_gausFit_mean");
     flat_tuple_->addVariable("baseline_gausFit_norm");
     flat_tuple_->addVariable("baseline_gausFit_sigma");

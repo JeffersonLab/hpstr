@@ -65,7 +65,26 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
         projy_h->SetTitle(Form("%s_projectionY_channel_%i",SvtAna2DHisto_key.c_str(),cc));
 
         //Minimum Entry Requirement NOT ROBUST!!!
-        if(projy_h->GetEntries() < minStats_){continue;}
+        if(projy_h->GetEntries() < minStats_){
+            
+            flat_tuple_->setVariableValue("baseline_gausFit_mean", -9999.9);
+            flat_tuple_->setVariableValue("baseline_gausFit_sigma", -9999.9);
+            flat_tuple_->setVariableValue("baseline_gausFit_norm", -9999.9);
+            flat_tuple_->setVariableValue("baseline_gausFit_range_lower", -9999.9);
+            flat_tuple_->setVariableValue("baseline_gausFit_range_upper", -9999.9);
+                
+            flat_tuple_->addToVector("iterativeFit_mean", -9999.9);
+            flat_tuple_->addToVector("iterativeFit_chi2_2ndDerivative",-9999.9);
+            flat_tuple_->addToVector("iterativeFit_chi2_2Der_range",-9999.9);
+            flat_tuple_->addToVector("iterativeFit_chi2_NDF",-9999.9);
+            flat_tuple_->addToVector("iterativeFit_range_end", -9999.9);
+            //If channel did not have enough entries to perform a fit, set minStats_dead_channel status to 1
+            flat_tuple_->setVariableValue("minStats_dead_channel",1.0);
+            continue;
+        }
+
+        //If minimum entry requirement is passed, set 'dead_channel' variable to 0
+        flat_tuple_->setVariableValue("minStats_dead_channel",0.0);
 
         int iter=0;
         int firstbin=projy_h->FindFirstBinAbove(xmin_,1);
