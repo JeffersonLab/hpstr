@@ -144,8 +144,8 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
     flat_tuple_->setVariableValue("baseline_gausFit_mean", cc_fit->GetParameter(1));
     flat_tuple_->setVariableValue("baseline_gausFit_sigma", cc_fit->GetParameter(2));
     flat_tuple_->setVariableValue("baseline_gausFit_norm", cc_fit->GetParameter(0));
-    flat_tuple_->setVariableValue("baseline_gausFit_fit_range_lower", (double)xmin);
-    flat_tuple_->setVariableValue("baseline_gausFit_fit_range_upper", (double)xmax);
+    flat_tuple_->setVariableValue("baseline_gausFit_range_lower", (double)xmin);
+    flat_tuple_->setVariableValue("baseline_gausFit_range_upper", (double)xmax);
 
     std::vector<double>::const_iterator first = fit_range_end.begin()+nPointsDer_;
     std::vector<double>::const_iterator last=fit_range_end.begin()+nPointsDer_+chi2_2D.size();
