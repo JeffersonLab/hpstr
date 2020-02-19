@@ -1,4 +1,4 @@
-updated: 23 Jan 2020
+updated: 3 Feb 2020
 
 # Heavy Photon Search Toolkit for Reconstruction
 
@@ -64,6 +64,21 @@ A working example on how to make some plots out of hpstr ntuple is
 hpstr anaVtxTuple_cfg.py -i /nfs/slac/g/hps3/users/bravo/data/physrun2016/7800/hps_007800.123_v0_4.2_4.4-SNAPSHOT_rereco.root -o hps_007800.123.root -t 1 
 ```
 This example will run the standard vertex selection on a data file (to specify that this file is data one has to use the ```-t``` flag and passing 0 will tell hpstr that we are processing MonteCarlo. Plots will be produced according to the selections specified. 
+
+## Available Scripts 
+
+The sripts folder in the hpstr repo provides a serie of utilities which some or them are described here. 
+
+### Processing multiple files
+
+The script ```run_jobPool.py``` provides a way to process multiple files with hpstr in parallel in parallel threads. 
+Here is an example on how to run it
+
+```bash
+python run_jobPool.py -t hpstr -c <configFile.py>  -i <inDir> -z <isData> -o <outDir> -r <root|slcio>
+```
+
+where ```-c``` is used to specify the configurationFile for hpstr, ```-i``` and ```-o``` are for specifying the input and output directory respectively, ```-z``` is to choose between data (=1) and MC simulation (=0) input type, and finally ```-r``` is needed to tell hpstr to run on root or slcio files. The script runs one hpstr process for each file on the input folder matching the required extension and places the results in the output directory. Before running the user needs to create a folder ```<outDir>/logs``` otherwise the script fails [will be fixed soon]. 
 
 ## Contributing to Hpstr
 

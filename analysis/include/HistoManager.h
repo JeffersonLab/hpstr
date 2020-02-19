@@ -87,6 +87,8 @@ class HistoManager {
         virtual void sumw2();
 
         virtual void Clear();
+        
+        virtual std::string getName(){return m_name;}
 
         void debugMode(bool debug) {debug_ = debug;}
 

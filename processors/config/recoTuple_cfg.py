@@ -19,7 +19,7 @@ p = HpstrConf.Process()
 p.run_mode = 0
 
 # Library containing processors
-p.libraries.append("libprocessors.so")
+p.add_library("libprocessors")
 
 ###############################
 #          Processors         #
@@ -56,6 +56,8 @@ rawsvt.parameters["hitCollRoot"]    = 'SVTRawTrackerHits'
 svthits.parameters["debug"] = 0
 svthits.parameters["hitCollLcio"]    = 'RotatedHelicalTrackHits'
 svthits.parameters["hitCollRoot"]    = 'RotatedHelicalTrackHits'
+svthits.parameters["mcPartRelLcio"]  = 'RotatedHelicalTrackMCRelations'
+
 
 #Tracking
 track.parameters["debug"] = 0 

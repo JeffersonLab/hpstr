@@ -72,6 +72,13 @@ class TrackerHit : public TObject {
          */
         void setTime(const double time) { time_ = time; };
 
+        /**
+         * Add LCIO of MC Particle related to hit.
+         *
+         * @param id The LCIO ID of the related MC Particle.
+         */
+        void addMCPartID(const int id) { mcPartIDs_.push_back(id); };
+
         /** @return The hit time. */
         double getTime() const { return time_; };
 
@@ -115,6 +122,9 @@ class TrackerHit : public TObject {
         void setID(const int id) {id_=id;};
 
         int getID() const {return id_;};
+
+        /** LCIO IDs of related MC Particles */
+        std::vector<int> getMCPartIDs() const {return mcPartIDs_;};
 
         ClassDef(TrackerHit, 1);	
 
@@ -166,6 +176,9 @@ class TrackerHit : public TObject {
 
         /** Tracks that share this hit */
         TRefArray* tracks_{new TRefArray{}};
+
+        /** LCIO ids of MC Particles associated to the hit */
+        std::vector<int> mcPartIDs_;
 
 
 }; // TrackerHit

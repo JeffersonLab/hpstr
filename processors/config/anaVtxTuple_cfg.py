@@ -19,27 +19,48 @@ p.run_mode = 1
 #p.max_events = 1000
 
 # Library containing processors
-p.libraries.append("libprocessors.so")
+p.add_library("libprocessors")
 
 ###############################
 #          Processors         #
 ###############################
 
-recoana = HpstrConf.Processor('vtxana', 'VertexAnaProcessor')
+vtxana = HpstrConf.Processor('vtxana', 'VertexAnaProcessor')
 
 ###############################
 #   Processor Configuration   #
 ###############################
-#RecoHitAna
-recoana.parameters["debug"] = 1
-recoana.parameters["anaName"] = "vtxana"
-recoana.parameters["trkColl"] = "GBLTracks"
-recoana.parameters["vtxColl"] = "UnconstrainedV0Vertices"
-recoana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/vertexSelection.json'
-recoana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/basicTracking.json"
+#Vertex Analysis
+vtxana.parameters["debug"] = 1
+vtxana.parameters["anaName"] = "vtxana"
+vtxana.parameters["trkColl"] = "GBLTracks"
+vtxana.parameters["vtxColl"] = "UnconstrainedV0Vertices"
+vtxana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/vertexSelection.json'
+vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
+vtxana.parameters["beamE"] = 2.3
+vtxana.parameters["isData"] = options.isData
+CalTimeOffset=-999
+
+if (options.isData==1):
+    CalTimeOffset=56.
+    print "Running on data file: Setting CalTimeOffset %d"  % CalTimeOffset
+    
+elif (options.isData==0):
+    CalTimeOffset=43.
+    print "Running on MC file: Setting CalTimeOffset %d"  % CalTimeOffset
+else:
+    print "Specify which type of ntuple you are running on: -t 1 [for Data] / -t 0 [for MC]"
+
+
+vtxana.parameters["CalTimeOffset"]=CalTimeOffset
+
+#Region definitions
+
+RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/"
+vtxana.parameters["regionDefinitions"] = [RegionPath+'Tight.json']
 
 # Sequence which the processors will run.
-p.sequence = [recoana]
+p.sequence = [vtxana]
 
 p.input_files=[infile]
 p.output_files = [outfile]
