@@ -40,6 +40,7 @@ header.parameters["tsCollRoot"]   = "TSBank"
 rawsvt.parameters["debug"] = 0
 rawsvt.parameters["hitCollLcio"]    = 'SVTRawTrackerHits'
 rawsvt.parameters["hitfitCollLcio"] = 'SVTFittedRawTrackerHits'
+rawsvt.parameters["trueHitRelLcio"] = 'SVTTrueHitRelations'
 rawsvt.parameters["hitCollRoot"]    = 'SVTRawTrackerHits'
 
 # Sequence which the processors will run.

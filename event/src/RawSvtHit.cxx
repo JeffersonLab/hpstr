@@ -28,6 +28,12 @@ void RawSvtHit::setFit(double fit[5]) {
     fit_[4] = fit[4]; 
 }
 
+void RawSvtHit::setSimPos(double hitPos[3]) {
+    simPos_[0] = hitPos[0]; 
+    simPos_[1] = hitPos[1]; 
+    simPos_[2] = hitPos[2]; 
+}
+
 void RawSvtHit::setADCs(int adcs[6]) {
     adcs_[0] = adcs[0]; 
     adcs_[1] = adcs[1]; 
@@ -65,8 +71,16 @@ void RawSvtHit::setStrip(int strip) {
     strip_ = strip; 
 }
 
+void RawSvtHit::setSimEdep(double hitEdep) {
+    simEdep_ = hitEdep; 
+}
+
 double * RawSvtHit::getFit() {
     return fit_;
+}
+
+double * RawSvtHit::getSimPos() {
+    return simPos_;
 }
 
 int * RawSvtHit::getADCs() {

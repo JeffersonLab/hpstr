@@ -17,6 +17,7 @@
 //----------//
 #include <EVENT/LCCollection.h>
 #include <EVENT/TrackerRawData.h>
+#include <EVENT/SimTrackerHit.h>
 #include <IMPL/LCGenericObjectImpl.h>
 #include <UTIL/BitField64.h>
 #include <IMPL/LCGenericObjectImpl.h>
@@ -83,6 +84,7 @@ class SvtRawDataProcessor : public Processor {
         std::vector<RawSvtHit*> rawhits_; 
         std::string hitCollLcio_{"SVTRawTrackerHits"};
         std::string hitfitCollLcio_{"SVTFittedRawTrackerHits"};
+        std::string trueHitRelLcio_{"SVTTrueHitRelations"};
         std::string hitCollRoot_{"SVTRawTrackerHits"};
 
         //Debug Level

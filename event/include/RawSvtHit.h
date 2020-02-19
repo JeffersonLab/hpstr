@@ -34,6 +34,9 @@ class RawSvtHit : public TObject {
         /** Set the fit parameters */
         void setFit(double fit[5]);
 
+        /** Set the fit parameters */
+        void setSimPos(double hitPos[3]);
+
         /** Set the adc values */
         void setADCs(int adcs[6]);
 
@@ -58,8 +61,14 @@ class RawSvtHit : public TObject {
         /** Set the strip */
         void setStrip(int strip);
 
+        /** Set the sim hit energy deposition */
+        void setSimEdep(double hitEdep);
+
         /** Get the fit paramters */
         double * getFit();
+
+        /** Get the sim hit position */
+        double * getSimPos();
 
         /** Get the adc values */
         int * getADCs();
@@ -100,6 +109,9 @@ class RawSvtHit : public TObject {
         /** Get the chiSq probability */
         double getChiSq() {return fit_[4];}
 
+        /** Get the sim hit energy deposition */
+        double getSimEdep() {return simEdep_;}
+
         ClassDef(RawSvtHit, 1);	
 
     private:
@@ -116,6 +128,9 @@ class RawSvtHit : public TObject {
         int strip_{-999}; 
         /** The fit parameters of the hit. */
         double fit_[5]{-999.9,-999.9,-999.9,-999.9,-999.9}; 
+        /** The position and energy deposit of the associated sim hit. */
+        double simPos_[3]{-999.9, -999.9, -999.9}; 
+        double simEdep_{-999.9}; 
 
 }; // RawSvtHit
 
