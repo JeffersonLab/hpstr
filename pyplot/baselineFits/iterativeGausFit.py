@@ -21,18 +21,17 @@ parser.add_option("-s", "--hybrid", type="string", dest="hybrid",
         help="L<#><T/B>_<axial/stereo>_<ele/pos>", default="")
 
 (options, args) = parser.parse_args()
-baseline= "baseline0"
-hybrid =options.hybrid
+######################################################################################################
 
-def gethistos2DKeys(inFile, hybrid):
+def getHistoKeys(inFile,cType="", attr1="", attr2=""):
     inFile.cd()
-    histos2D=[]
+    histo_keys=[]
     for key in inFile.GetListOfKeys():
         kname = key.GetName()
         classType = key.GetClassName()
-        if classType.find("TH2") != -1 and kname.find(hybrid) != -1:
-            histos2D.append(kname)
-    return histos2D
+        if classType.find(cType) != -1 and kname.find(attr1) != -1 and kname.find(attr2) != -1:
+            histo_keys.append(kname)
+    return histo_keys
               
 def readhistoFromFile(inFile, histo_key):
     histo = deepcopy(getattr(inFile, histo_key))
@@ -42,103 +41,109 @@ def getChannelFitsPlots(inFile,channels):
     inFile.cd()
 
 
-def getGausFitParameters(inFile):
+def getGausFitParameters(inFile, key):
     inFile.cd()
+    histo_key=[]
     channel=[]
     mean=[]
     sigma=[]
-    histo_key=[]
-    myTree = inFile.gaus_fit
-    for fitData in myTree:
-        SvtAna2DHisto_key = str(fitData.SvtAna2DHisto_key)
-        channel.append(fitData.channel)
-        mean.append(fitData.baseline_gausFit_mean)
-        #baseline = fitData.baseline_gausFit_norm
-        sigma.append(fitData.baseline_gausFit_sigma)
-        histo_key.append(SvtAna2DHisto_key[:-2])
-    return channel,mean, sigma, histo_key
+    norm = []
+    range_lower=[]
+    range_upper=[]
 
-def getChannelFitGraphs(inFile):
-    inFile.cd()
-    channel=[]
-    histo_key=[]
     iterativeFit_chi2_NDF=[]
     iterativeFit_range_end=[]
     iterativeFit_mean=[]
     iterativeFit_chi2_2ndDerivative=[]
     iterativeFit_chi2_2Der_range=[]
+
     myTree = inFile.gaus_fit
     for fitData in myTree:
         SvtAna2DHisto_key = str(fitData.SvtAna2DHisto_key)
-        channel.append(fitData.channel)
-        iterativeFit_mean.append(fitData.iterativeFit_mean)
-        iterativeFit_chi2_2ndDerivative.append(fitData.iterativeFit_chi2_2ndDerivative)
-        iterativeFit_chi2_2Der_range.append(fitData.iterativeFit_chi2_2Der_range)
-        iterativeFit_chi2_NDF.append(fitData.iterativeFit_chi2_NDF)
-        iterativeFit_range_end.append(fitData.iterativeFit_range_end)
-        histo_key.append(SvtAna2DHisto_key[:-2])
-    return channel,histo_key,iterativeFit_mean, iterativeFit_chi2_2ndDerivative, iterativeFit_2Der_range, iterativeFit_chi2_NDF, iterativeFit_range_end
-        
-def getChannelsFitKeys(inFile, channels, hybrid):
-    inFile.cd()
-    channel_fit_keys=[]
-    for key in inFile.GetListOfKeys():
-        kname = key.GetName()
-        classType = key.GetClassName()
-        for e in channels:
-            #if kname.find("_"+str(e)) != -1 and kname.find(hybrid) != -1:
-            if kname.rsplit('_',1)[1] == str(e) and kname.find(hybrid) != -1:
-                channel_fit_keys.append(kname)
-    return channel_fit_keys
-                
+        if key == SvtAna2DHisto_key+"_hh":
+            histo_key.append(SvtAna2DHisto_key)
+            channel.append(fitData.channel)
+            mean.append(fitData.baseline_gausFit_mean)
+            sigma.append(fitData.baseline_gausFit_sigma)
+            norm.append(fitData.baseline_gausFit_norm)
+            range_lower.append(fitData.baseline_gausFit_range_lower)
+            range_upper.append(fitData.baseline_gausFit_range_upper)
+
+            iterativeFit_mean.append(fitData.iterativeFit_mean)
+            iterativeFit_chi2_2ndDerivative.append(fitData.iterativeFit_chi2_2ndDerivative)
+            iterativeFit_chi2_2Der_range.append(fitData.iterativeFit_chi2_2Der_range)
+            iterativeFit_chi2_NDF.append(fitData.iterativeFit_chi2_NDF)
+            iterativeFit_range_end.append(fitData.iterativeFit_range_end)
+    return channel,mean, sigma, histo_key,norm, range_lower, range_upper, iterativeFit_mean, iterativeFit_chi2_2ndDerivative, iterativeFit_chi2_2Der_range, iterativeFit_chi2_NDF, iterativeFit_range_end
+  
+
+               
+def buildTGraph(name,title, n_points, x, y,color):
+    g = r.TGraph(n_points,np.array(x, dtype = float), np.array(y, dtype = float))
+    g.SetName("%s"%(name))
+    g.SetTitle("%s"%(title))
+    g.SetLineColor(color)
+    return g
+
+def getVarWithKey(var,var_length, key, tuple_key, datatype):
+    x=[]
+    for i in range(var_length):
+        if key == tuple_key[i]:
+            x.append(var[i])
+    x=np.array(x,dtype = datatype)
+    if len(x) == 0:
+        print "No tuple_key was found matching input key"
+        return 0
+    return x
+
+def newCanvas(name):
+        canvas = r.TCanvas("%s"%(name), "c", 1800,800)
+        return canvas
+
+def savePNG(canvas,directory,name):
+        canvas.Draw()
+        canvas.SaveAs("%s/%s.png"%(directory,name))
+        canvas.Close()
+
 
 
 ######################################################################################################
 SvtBl2D_file = options.inFilename
-#out_File = '%s_iterativeFit_.root'%(SvtBl2D_file[:-5], channel)
-#print out_File
-
 inFile = r.TFile(SvtBl2D_file, "READ")
-#outFile = r.TFile(out_File, "RECREATE")
-histokeys_hh = gethistos2DKeys(inFile, options.hybrid)
+hybrid =options.hybrid
 
 r.gROOT.SetBatch(r.kTRUE)
-
+#Read in channels to be examined
 channels_in = options.channels
 if options.channels is not None:
     channels_in = [int(i) for i in options.channels]
     print channels_in
 
 
-for k in histokeys_hh:
-    histo_hh = readhistoFromFile(inFile, k)
-    print k
-    channel, mean, sigma, histo_key = getGausFitParameters(inFile)
-    n = len(channel)
-    m =0
-    x=[]
-    y=[]
-    for i in range(n):
-        if k == histo_key[i]+"_hh":
-            m = m + 1
-            x.append(channel[i])
-            y.append(mean[i])
-    if len(x) == 0 or len(y) == 0:
-        print "No matching fit results were found for %s"%(k)
-        break
+#Get SvtBl2D histogram keys from input file
+histokeys_hh = getHistoKeys(inFile,"TH2", options.hybrid,"")
+print histokeys_hh
 
-    fit_gr = r.TGraph(m,np.array(x, dtype = float), np.array(y, dtype = float))
-    fit_gr.SetName("baseline_gaus_fit_mean_%s"%(k))
-    fit_gr.SetTitle("baseline_gaus_fit_mean_%s;Channel;ADC"%(k))
 
-    canvas = r.TCanvas("%s"%(k), "c", 1800,800)
+for key in histokeys_hh:
+    histo_hh = readhistoFromFile(inFile, key)
+    print key
+
+    #Get flat_tuple variables from inFile
+    channel, mean, sigma, histo_key,norm, range_lower, range_upper, iterativeFit_mean, iterativeFit_chi2_2ndDerivative, iterativeFit_2Der_range, iterativeFit_chi2_NDF, iterativeFit_range_end = getGausFitParameters(inFile,key)
+
+    #Plot gaus Fit mean of all channels over 2D Histogram
+    fit_gr_x = np.array(channel, dtype = float)
+    fit_gr_y = np.array(mean, dtype=float)
+    fit_gr = buildTGraph("baseline_gaus_fit_mean_%s"%(key),"baseline_gaus_fit_mean_%s;Channel;ADC"%(key),len(fit_gr_x),fit_gr_x,fit_gr_y,2)
+
+    #Save PNG of 2D Histogram with Channel Mean ADC overlayed    
+    canvas = r.TCanvas("%s"%(key), "c", 1800,800)
     canvas.cd()
     histo_hh.Draw("colz")
-    fit_gr.SetLineColor(2)
     fit_gr.Draw("same")
-    canvas.Draw()
-    canvas.SaveAs("/home/alic/src/hpstr/pyplot/baselineFits/fit_images/hybrid_fits/baseline_gausFit_%s.png"%(k))
-    canvas.Close()
+    directory = "/home/alic/src/hpstr/pyplot/baselineFits/fit_images/"
+    savePNG(canvas,directory+"hybrid_fits/","baseline_gausFit_%s"%(key))
 
 
     ###Show Channel Fits
@@ -148,36 +153,47 @@ for k in histokeys_hh:
         print "Must specify hyrid to show channel fits"
         print ""
     elif options.show_fits == "show" and hybrid != "":
-        channel_fit_keys = getChannelsFitKeys(inFile,channels_in, hybrid)
-        for e in channel_fit_keys:
-            c_fit_h = readhistoFromFile(inFile,e)
-            print e
-            ch_canvas = r.TCanvas("%s_%s"%(k,e),"c", 1800,800)
-            ch_canvas.cd()
-            c_fit_h.Draw()
-            ch_canvas.Draw()
-            ch_canvas.SaveAs("/home/alic/src/hpstr/pyplot/baselineFits/fit_images/channel_fits/%s.png"%(e))
-            ch_canvas.Close()
+        for cc in channels_in:
+            canvas = r.TCanvas("%s"%(key), "c", 1800,800)
+            canvas.cd()
 
+            yproj_h = histo_hh.ProjectionY('%s_ch%i_h'%(key,cc),cc+1,cc+1,"e")
+
+            #func = r.TF1("cc_fit", "[norm] * ROOT::Math::normal_pdf(x, [sigma], [mean])",range_lower[cc],range_upper[cc]); 
+            func = r.TF1("m1","gaus",range_lower[cc],range_upper[cc])
+            func.SetParameter(0,norm[cc])
+            func.SetParameter(2,sigma[cc])
+            func.SetParameter(1,mean[cc])
+
+            yproj_h.Draw()
+            func.Draw("same")
+            savePNG(canvas,directory+"channel_fits/","baseline_gausFit_%s_ch_%i"%(key,cc))
 
 
 
     ###Show Channel Graphs
-    gmean=[]
-    gchi2NDF=[]
-    gfit_xmax=[]
-    gchi22D=[]
-    gchi22D_xmax=[]
-
     if options.show_graphs == "show" and hybrid == "":
         print "ERROR! PLEASE SPECIFY HYBRID TO SHOW CHANNEL GRAPHS"
     elif options.show_graphs == "show" and hybrid != "":
-        channel,histo_key,iterativeFit_mean, iterativeFit_chi2_2ndDerivative, iterativeFit_2Der_range, iterativeFit_chi2_NDF, iterativeFit_range_end = getChannelFitGraphs(inFile)
-        for e in channels_in:
-            for i in range(len(channel)):
-                if k == histo_key(i)+"_hh" and i==e:
-                    break
-        
+        for cc in channels_in:
+            canvas = r.TCanvas("%s"%(key), "c", 1800,800)
+            canvas.cd()
+            fit_gr = buildTGraph("iterative_fit_mean_%s_ch_%i"%(key,cc),"iterative_fit_mean_vs_position_%s_ch_%i;FitRangeEnd;mean"%(key,cc),len(iterativeFit_range_end[cc]),np.array(iterativeFit_range_end[cc], dtype = float) ,np.array(iterativeFit_mean[cc], dtype = float),1)
+            fit_gr.Draw()
+            savePNG(canvas,directory+"channel_fits/","iterative_fit_mean_%s_ch_%i"%(key,cc))
 
-        
+            canvas = r.TCanvas("%s"%(key), "c", 1800,800)
+            canvas.cd()
+            fit_gr = buildTGraph("iterative_fit_chi2_%s_ch_%i"%(key,cc),"iterative_fit_chi2_vs_position_%s_ch_%i;FitRangeEnd;mean"%(key,cc),len(iterativeFit_range_end[cc]),np.array(iterativeFit_range_end[cc], dtype = float) ,np.array(iterativeFit_chi2_NDF[cc], dtype = float),1)
+            fit_gr.Draw()
+            savePNG(canvas,directory+"channel_fits/","iterative_fit_chi2_%s_ch_%i"%(key,cc))
+
+            canvas = r.TCanvas("%s"%(key), "c", 1800,800)
+            canvas.cd()
+            fit_gr = buildTGraph("iterative_fit_chi2_%s_ch_%i"%(key,cc),"iterative_fit_chi2_vs_position_%s_ch_%i;FitRangeEnd;mean"%(key,cc),len(iterativeFit_2Der_range[cc]),np.array(iterativeFit_2Der_range[cc], dtype = float) ,np.array(iterativeFit_chi2_2ndDerivative[cc], dtype = float),1)
+            fit_gr.Draw()
+            savePNG(canvas,directory+"channel_fits/","iterative_fit_chi2_2nd_Der%s_ch_%i"%(key,cc))
+
+
+
 
