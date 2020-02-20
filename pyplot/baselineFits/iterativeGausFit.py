@@ -108,6 +108,7 @@ def savePNG(canvas,directory,name):
 
 
 ######################################################################################################
+directory = "/home/alic/src/hpstr/pyplot/baselineFits/fit_images/"
 SvtBl2D_file = options.inFilename
 inFile = r.TFile(SvtBl2D_file, "READ")
 hybrid =options.hybrid
@@ -116,9 +117,17 @@ r.gROOT.SetBatch(r.kTRUE)
 #Read in channels to be examined
 channels_in = options.channels
 if options.channels is not None:
-    channels_in = [int(i) for i in options.channels]
-    print channels_in
-
+    if options.channels == "all":
+        channels_in = range(0,640)
+    else:
+        channels_in = [int(i) for i in options.channels]
+        for i in range(len(channels_in)):
+            if i > 0:
+                temp = range(channels_in[i-1],channels_in[i])
+                print temp
+        channels_in=[]
+        for cc in temp:
+            channels_in.append(cc)
 
 #Get SvtBl2D histogram keys from input file
 histokeys_hh = getHistoKeys(inFile,"TH2", options.hybrid,"")
@@ -126,12 +135,16 @@ print histokeys_hh
 
 
 for key in histokeys_hh:
+
     histo_hh = readhistoFromFile(inFile, key)
     print key
-
+    if histo_hh.GetEntries() == 0:
+        continue
     #Get flat_tuple variables from inFile
     channel, mean, sigma, histo_key,norm, range_lower, range_upper, iterativeFit_mean, iterativeFit_chi2_2ndDerivative, iterativeFit_2Der_range, iterativeFit_chi2_NDF, iterativeFit_range_end = getGausFitParameters(inFile,key)
 
+    outFile = r.TFile(directory+"%s_fit_analysis.root"%(key[:-3]), "RECREATE")
+    outFile.cd()
     #Plot gaus Fit mean of all channels over 2D Histogram
     fit_gr_x = np.array(channel, dtype = float)
     fit_gr_y = np.array(mean, dtype=float)
@@ -142,7 +155,7 @@ for key in histokeys_hh:
     canvas.cd()
     histo_hh.Draw("colz")
     fit_gr.Draw("same")
-    directory = "/home/alic/src/hpstr/pyplot/baselineFits/fit_images/"
+    canvas.Write()
     savePNG(canvas,directory+"hybrid_fits/","baseline_gausFit_%s"%(key))
 
 
@@ -154,10 +167,10 @@ for key in histokeys_hh:
         print ""
     elif options.show_fits == "show" and hybrid != "":
         for cc in channels_in:
-            canvas = r.TCanvas("%s"%(key), "c", 1800,800)
+            canvas = r.TCanvas("%s_ch_%i_h"%(key[:-3],cc), "c", 1800,800)
             canvas.cd()
 
-            yproj_h = histo_hh.ProjectionY('%s_ch%i_h'%(key,cc),cc+1,cc+1,"e")
+            yproj_h = histo_hh.ProjectionY('%s_ch%i_h'%(key[:-3],cc),cc+1,cc+1,"e")
 
             #func = r.TF1("cc_fit", "[norm] * ROOT::Math::normal_pdf(x, [sigma], [mean])",range_lower[cc],range_upper[cc]); 
             func = r.TF1("m1","gaus",range_lower[cc],range_upper[cc])
@@ -165,9 +178,11 @@ for key in histokeys_hh:
             func.SetParameter(2,sigma[cc])
             func.SetParameter(1,mean[cc])
 
+            yproj_h.SetTitle("%s_ch_%i_h"%(key[:-3],cc))
             yproj_h.Draw()
             func.Draw("same")
-            savePNG(canvas,directory+"channel_fits/","baseline_gausFit_%s_ch_%i"%(key,cc))
+            canvas.Write()
+            savePNG(canvas,directory+"channel_fits/","baseline_gausFit_%s_ch_%i"%(key[:-3],cc))
 
 
 
@@ -176,24 +191,27 @@ for key in histokeys_hh:
         print "ERROR! PLEASE SPECIFY HYBRID TO SHOW CHANNEL GRAPHS"
     elif options.show_graphs == "show" and hybrid != "":
         for cc in channels_in:
-            canvas = r.TCanvas("%s"%(key), "c", 1800,800)
+            canvas = r.TCanvas("mean_%s_ch_%i"%(key,cc), "c", 1800,800)
             canvas.cd()
-            fit_gr = buildTGraph("iterative_fit_mean_%s_ch_%i"%(key,cc),"iterative_fit_mean_vs_position_%s_ch_%i;FitRangeEnd;mean"%(key,cc),len(iterativeFit_range_end[cc]),np.array(iterativeFit_range_end[cc], dtype = float) ,np.array(iterativeFit_mean[cc], dtype = float),1)
-            fit_gr.Draw()
-            savePNG(canvas,directory+"channel_fits/","iterative_fit_mean_%s_ch_%i"%(key,cc))
+            mean_gr = buildTGraph("iterative_fit_mean_%s_ch_%i"%(key,cc),"iterative_fit_mean_vs_position_%s_ch_%i;FitRangeEnd;mean"%(key,cc),len(iterativeFit_range_end[cc]),np.array(iterativeFit_range_end[cc], dtype = float) ,np.array(iterativeFit_mean[cc], dtype = float),1)
+            mean_gr.Draw()
+            canvas.Write()
+            #savePNG(canvas,directory+"channel_fits/","iterative_fit_mean_%s_ch_%i"%(key,cc))
 
-            canvas = r.TCanvas("%s"%(key), "c", 1800,800)
+            canvas = r.TCanvas("chi2_%s_ch_%i"%(key,cc), "c", 1800,800)
             canvas.cd()
-            fit_gr = buildTGraph("iterative_fit_chi2_%s_ch_%i"%(key,cc),"iterative_fit_chi2_vs_position_%s_ch_%i;FitRangeEnd;mean"%(key,cc),len(iterativeFit_range_end[cc]),np.array(iterativeFit_range_end[cc], dtype = float) ,np.array(iterativeFit_chi2_NDF[cc], dtype = float),1)
-            fit_gr.Draw()
-            savePNG(canvas,directory+"channel_fits/","iterative_fit_chi2_%s_ch_%i"%(key,cc))
+            chi2_gr = buildTGraph("iterative_fit_chi2_%s_ch_%i"%(key,cc),"iterative_fit_chi2_vs_position_%s_ch_%i;FitRangeEnd;chi2"%(key,cc),len(iterativeFit_range_end[cc]),np.array(iterativeFit_range_end[cc], dtype = float) ,np.array(iterativeFit_chi2_NDF[cc], dtype = float),1)
+            chi2_gr.Draw()
+            canvas.Write()
+            #savePNG(canvas,directory+"channel_fits/","iterative_fit_chi2_%s_ch_%i"%(key,cc))
 
-            canvas = r.TCanvas("%s"%(key), "c", 1800,800)
+            canvas = r.TCanvas("chi2_2Der_%s_ch_%i"%(key,cc), "c", 1800,800)
             canvas.cd()
-            fit_gr = buildTGraph("iterative_fit_chi2_%s_ch_%i"%(key,cc),"iterative_fit_chi2_vs_position_%s_ch_%i;FitRangeEnd;mean"%(key,cc),len(iterativeFit_2Der_range[cc]),np.array(iterativeFit_2Der_range[cc], dtype = float) ,np.array(iterativeFit_chi2_2ndDerivative[cc], dtype = float),1)
-            fit_gr.Draw()
-            savePNG(canvas,directory+"channel_fits/","iterative_fit_chi2_2nd_Der%s_ch_%i"%(key,cc))
-
+            chi2_2Der_gr = buildTGraph("iterative_fit_chi2_2Der_%s_ch_%i"%(key,cc),"iterative_fit_chi2_2Der_vs_position_%s_ch_%i;FitRangeEnd;chi2_2ndDeriv"%(key,cc),len(iterativeFit_2Der_range[cc]),np.array(iterativeFit_2Der_range[cc], dtype = float) ,np.array(iterativeFit_chi2_2ndDerivative[cc], dtype = float),1)
+            chi2_2Der_gr.Draw()
+            canvas.Write()
+            #savePNG(canvas,directory+"channel_fits/","iterative_fit_chi2_2nd_Der%s_ch_%i"%(key,cc))
+    outFile.Close()
 
 
 
