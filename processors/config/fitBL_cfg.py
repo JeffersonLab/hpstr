@@ -21,14 +21,12 @@ parser.add_option("-n", "--nPoints", type="int", dest="nPoints",
         help="Select number of points for second derivative.", metavar="nPoints", default="1")
 parser.add_option("-b", "--rebin", type="int", dest="rebin",
         help="rebin factor.", metavar="rebin", default="1")
-parser.add_option("-s", "--hybrid", type="string", dest="hybrid",
-        help="select hybrid name to run over", metavar="hybrid", default="baseline0")
-#parser.add_option('-s', '--hybrid', type='string', dest="hybrid",default="", help="Enter baseline<#><hybrid_name>", action='callback', callback=timeSample_callback)
+parser.add_option('-s', '--hybrid', type='string', dest="hybrid",default="", help="Enter baseline<#><hybrid_name>", action='callback', callback=timeSample_callback)
 (options, args) = parser.parse_args()
 
 # Use the input file to set the output file name
 histo_file = options.inFilename
-hybrid = options.hybrid
+hybrid = options.hybrid[0]
 xmin = options.xmin
 minStats = options.minStats
 rebin = options.rebin
