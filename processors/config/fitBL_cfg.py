@@ -26,7 +26,11 @@ parser.add_option('-s', '--hybrid', type='string', dest="hybrid",default="", hel
 
 # Use the input file to set the output file name
 histo_file = options.inFilename
-fit_file = '%s/%s_SvtBaselineFit_%s_t_%i_m_%i.root'%(options.outDir, histo_file[:-5],options.hybrid,xmin,minStats)
+hybrid = options.hybrid
+xmin = options.xmin
+minStats = options.minStats
+rebin = options.rebin
+fit_file = '%s/%s_SvtBaselineFit_%s_t_%i_m_%i_r_%i.root'%(options.outDir, histo_file[:-5],hybrid,xmin,minStats,rebin)
 
 p = HpstrConf.Process()
 
