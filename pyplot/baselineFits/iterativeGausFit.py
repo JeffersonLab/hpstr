@@ -51,11 +51,11 @@ def getGausFitParameters(inFile, key):
     range_lower=[]
     range_upper=[]
 
-    iterativeFit_chi2_NDF=[]
-    iterativeFit_range_end=[]
-    iterativeFit_mean=[]
-    iterativeFit_chi2_2ndDerivative=[]
-    iterativeFit_chi2_2Der_range=[]
+    iterChi2NDF=[]
+    iterFitRangeEnd=[]
+    iterMean=[]
+    iterChi2NDF_2der=[]
+    iterChi2NDF_2derRange=[]
 
     myTree = inFile.gaus_fit
     for fitData in myTree:
@@ -63,21 +63,19 @@ def getGausFitParameters(inFile, key):
         if key == SvtAna2DHisto_key+"_hh":
             histo_key.append(SvtAna2DHisto_key)
             channel.append(fitData.channel)
-            mean.append(fitData.baseline_gausFit_mean)
-            sigma.append(fitData.baseline_gausFit_sigma)
-            norm.append(fitData.baseline_gausFit_norm)
-            range_lower.append(fitData.baseline_gausFit_range_lower)
-            range_upper.append(fitData.baseline_gausFit_range_upper)
+            mean.append(fitData.BlFitMean)
+            sigma.append(fitData.BlFitSigma)
+            norm.append(fitData.BlFitNorm)
+            range_lower.append(fitData.BlFitRangeLower)
+            range_upper.append(fitData.BlFitRangeUpper)
 
-            iterativeFit_mean.append(fitData.iterativeFit_mean)
-            iterativeFit_chi2_2ndDerivative.append(fitData.iterativeFit_chi2_2ndDerivative)
-            iterativeFit_chi2_2Der_range.append(fitData.iterativeFit_chi2_2Der_range)
-    #        print fitData.iterativeFit_chi2_2Der_range
-            iterativeFit_chi2_NDF.append(fitData.iterativeFit_chi2_NDF)
-            iterativeFit_range_end.append(fitData.iterativeFit_range_end)
-    print iterativeFit_chi2_NDF[0]
-    print iterativeFit_chi2_NDF[1]
-    return channel,mean, sigma, histo_key,norm, range_lower, range_upper, iterativeFit_mean, iterativeFit_chi2_2ndDerivative, iterativeFit_chi2_2Der_range, iterativeFit_chi2_NDF, iterativeFit_range_end
+            iterMean.append(fitData.iterMean)
+            iterChi2NDF_2der.append(fitData.iterChi2NDF_2der)
+            iterChi2NDF_2derRange.append(fitData.iterChi2NDF_2derRange)
+            iterChi2NDF.append(fitData.iterChi2NDF)
+            iterFitRangeEnd.append(fitData.iterFitRangeEnd)
+
+    return channel,mean, sigma, histo_key,norm, range_lower, range_upper, iterMean, iterChi2NDF_2der, iterChi2NDF_2derRange, iterChi2NDF, iterFitRangeEnd
   
 
                
@@ -140,13 +138,12 @@ print histokeys_hh
 for key in histokeys_hh:
 
     histo_hh = readhistoFromFile(inFile, key)
-    histo_hh.GetXaxis
     channels_in= range(0,int(histo_hh.GetNbinsX()))
     print key
     if histo_hh.GetEntries() == 0:
         continue
     #Get flat_tuple variables from inFile
-    channel, mean, sigma, histo_key,norm, range_lower, range_upper, iterativeFit_mean, iterativeFit_chi2_2ndDerivative, iterativeFit_2Der_range, iterativeFit_chi2_NDF, iterativeFit_range_end = getGausFitParameters(inFile,key)
+    channel, mean, sigma, histo_key,norm, range_lower, range_upper, iterMean, iterChi2NDF_2der, iterativeFit_2Der_range, iterChi2NDF, iterFitRangeEnd = getGausFitParameters(inFile,key)
 
     #Output ROOT FILE
     outFile = r.TFile(directory+"%s_fit_analysis.root"%(key[:-3]), "RECREATE")
@@ -198,6 +195,8 @@ for key in histokeys_hh:
     #If Channel SIGMA > Value determined by sigma distribution
     noisey_ch = [i for i, j in zip(channel,sigma) if j >= 85]
     print noisey_ch
+
+
     ######################################################################################################
     ###Show Channel Fits
 
@@ -218,35 +217,38 @@ for key in histokeys_hh:
         yproj_h.Draw()
         func.Draw("same")
         canvas.Write()
+        canvas.Close()
         #savePNG(canvas,directory+"channel_fits/","baseline_gausFit_%s_ch_%i"%(key[:-3],cc))
 
 
-
+#########################################################################################################
     ###Show Channel Graphs
-        if options.show_graphs == "show":
-            if yproj_h.GetEntries() == 0:
-                continue
-            canvas = r.TCanvas("mean_%s_ch_%i"%(key,cc), "c", 1800,800)
-            canvas.cd()
-            mean_gr = buildTGraph("iterative_fit_mean_%s_ch_%i"%(key,cc),"iterative_fit_mean_vs_position_%s_ch_%i;FitRangeEnd;mean"%(key,cc),len(iterativeFit_range_end[cc]),np.array(iterativeFit_range_end[cc], dtype = float) ,np.array(iterativeFit_mean[cc], dtype = float),1)
-            mean_gr.Draw()
-            canvas.Write()
-            #savePNG(canvas,directory+"channel_fits/","iterative_fit_mean_%s_ch_%i"%(key,cc))
+    bw=histo_hh.GetXaxis().GetBinWidth(1)
+    if options.show_graphs == "show":
+        myTree = inFile.gaus_fit
+        for fitData in myTree:
+            SvtAna2DHisto_key = str(fitData.SvtAna2DHisto_key)
+            if key == SvtAna2DHisto_key+"_hh":
+                cc=(fitData.channel)
+                iterMean=(fitData.iterMean)
+                #iterChi2NDF_2der=(fitData.iterChi2NDF_2der)
+                iterChi2NDF_2derRange=(fitData.iterChi2NDF_2derRange)
+                iterChi2NDF=(fitData.iterChi2NDF)
+                der=[]
+                for i in range(len(iterChi2NDF)):
+                    if (i>3 and i < len(iterChi2NDF) - 3):
+                        slope2 = (iterChi2NDF[i+3] - iterChi2NDF[i])/(3*bw)
+                        slope1 = (iterChi2NDF[i] - iterChi2NDF[i-3])/(3*bw)
+                        slopeDiff = slope2 - slope1
+                        der.append(slopeDiff)
+                    
+                iterFitRangeEnd=(fitData.iterFitRangeEnd)
+                mean_gr = buildTGraph("iterative_fit_mean_%s_ch_%i"%(key,cc),"iterative_fit_mean_vs_position_%s_ch_%i;FitRangeEnd;mean"%(key,cc),len(fitData.iterFitRangeEnd),np.array(fitData.iterFitRangeEnd, dtype = float) ,np.array(fitData.iterMean, dtype = float),1)
 
-            canvas = r.TCanvas("chi2_%s_ch_%i"%(key,cc), "c", 1800,800)
-            canvas.cd()
-            chi2_gr = buildTGraph("iterative_fit_chi2_%s_ch_%i"%(key,cc),"iterative_fit_chi2_vs_position_%s_ch_%i;FitRangeEnd;chi2"%(key,cc),len(iterativeFit_range_end[cc]),np.array(iterativeFit_range_end[cc], dtype = float) ,np.array(iterativeFit_chi2_NDF[cc], dtype = float),1)
-            chi2_gr.Draw()
-            canvas.Write()
-            #savePNG(canvas,directory+"channel_fits/","iterative_fit_chi2_%s_ch_%i"%(key,cc))
+                chi2_gr = buildTGraph("iterative_fit_chi2_%s_ch_%i"%(key,cc),"iterative_fit_chi2/NDF_vs_position_%s_ch_%i;FitRangeEnd;chi2"%(key,cc),len(fitData.iterFitRangeEnd),np.array(fitData.iterFitRangeEnd, dtype = float) ,np.array(fitData.iterChi2NDF, dtype = float),1)
 
-            canvas = r.TCanvas("chi2_2Der_%s_ch_%i"%(key,cc), "c", 1800,800)
-            canvas.cd()
-            chi2_2Der_gr = buildTGraph("iterative_fit_chi2_2Der_%s_ch_%i"%(key,cc),"iterative_fit_chi2_2Der_vs_position_%s_ch_%i;FitRangeEnd;chi2_2ndDeriv"%(key,cc),len(iterativeFit_2Der_range[cc]),np.array(iterativeFit_2Der_range[cc], dtype = float) ,np.array(iterativeFit_chi2_2ndDerivative[cc], dtype = float),1)
-            chi2_2Der_gr.Draw()
-            canvas.Write()
-            #savePNG(canvas,directory+"channel_fits/","iterative_fit_chi2_2nd_Der%s_ch_%i"%(key,cc))
-    outFile.Close()
-
-
+                chi2_2Der_gr = buildTGraph("iterative_fit_chi2_2Der_%s_ch_%i"%(key,cc),"iterative_fit_chi2_2Der_vs_position_%s_ch_%i;FitRangeEnd;chi2_2ndDeriv"%(key,cc),len(fitData.iterChi2NDF_2derRange),np.array(fitData.iterChi2NDF_2derRange, dtype = float) ,np.array(der, dtype = float),1)
+                mean_gr.Write()
+                chi2_gr.Write()
+                chi2_2Der_gr.Write()
 
