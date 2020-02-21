@@ -13,6 +13,7 @@
 
 //CPLUSPLUS
 #include <map>
+#include <vector>
 #include <memory>
 
 
@@ -49,6 +50,10 @@ int rebin_{1};
 //Selection folder
 
 std::string selection_{""};
+
+//2D histos to project
+
+std::vector<std::string> projections_;
 
 //Map storing the 2D histograms
 
