@@ -2,6 +2,7 @@
 
 #include "HistogramHelpers.h"
 
+#include "TMath.h" 
 
 double HistogramHelpers::GaussExpTails_f(double* x, double *par) {
   //core Gaussian with exponential tails starting K
