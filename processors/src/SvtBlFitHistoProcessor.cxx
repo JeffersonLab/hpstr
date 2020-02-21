@@ -45,21 +45,22 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
 
    //Setup flat tuple branches
     flat_tuple_->addString("SvtAna2DHisto_key");
-    flat_tuple_->addVariable("minimum_bin_threshold");
-    flat_tuple_->addVariable("minimum_entry_requirement_per_channel");
-    flat_tuple_->addVariable("rebin_factor");
+    flat_tuple_->addString("n_entries");
+    flat_tuple_->addVariable("minbinThresh");
+    flat_tuple_->addVariable("minEntries");
+    flat_tuple_->addVariable("rebin");
     flat_tuple_->addVariable("channel");
-    flat_tuple_->addVariable("minStats_dead_channel");
-    flat_tuple_->addVariable("baseline_gausFit_mean");
-    flat_tuple_->addVariable("baseline_gausFit_norm");
-    flat_tuple_->addVariable("baseline_gausFit_sigma");
-    flat_tuple_->addVariable("baseline_gausFit_range_lower");
-    flat_tuple_->addVariable("baseline_gausFit_range_upper");
-    flat_tuple_->addVector("iterativeFit_chi2_NDF");
-    flat_tuple_->addVector("iterativeFit_range_end");
-    flat_tuple_->addVector("iterativeFit_mean");
-    flat_tuple_->addVector("iterativeFit_chi2_2ndDerivative");
-    flat_tuple_->addVector("iterativeFit_chi2_2Der_range");
+    flat_tuple_->addVariable("minStats");
+    flat_tuple_->addVariable("BlFitMean");
+    flat_tuple_->addVariable("BlFitNorm");
+    flat_tuple_->addVariable("BlFitSigma");
+    flat_tuple_->addVariable("BlFitRangeLower");
+    flat_tuple_->addVariable("BlFitRangeUpper");
+    flat_tuple_->addVector("iterChi2NDF");
+    flat_tuple_->addVector("iterFitRangeEnd");
+    flat_tuple_->addVector("iterMean");
+    flat_tuple_->addVector("iterChi2NDF_2der");
+    flat_tuple_->addVector("iterChi2NDF_2derRange");
 }
 
 
