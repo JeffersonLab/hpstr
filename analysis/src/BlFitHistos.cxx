@@ -30,10 +30,7 @@ void BlFitHistos::FillHistograms() {
 void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int rebin_,int xmin_, int minStats_, FlatTupleMaker* flat_tuple_) {
 
 
-    flat_tuple_->setVariableValue("minimum_bin_threshold",(double)xmin_);
-    flat_tuple_->setVariableValue("minimum_entry_requirement_per_channel", (double)minStats_);
-    flat_tuple_->setVariableValue("rebin_factor", (double)rebin_);
-       //Loop over all 2D histogram names from the input TFile
+      //Loop over all 2D histogram names from the input TFile
     for (std::vector<std::string>::iterator jj = inputHistos_->histos2dNamesfromTFile.begin();
         jj != inputHistos_->histos2dNamesfromTFile.end(); ++jj)
     {
@@ -54,7 +51,10 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
         //Set Channel and Hybrid information in the flat tuple
         flat_tuple_->setVariableValue("SvtAna2DHisto_key", SvtAna2DHisto_key);
         flat_tuple_->setVariableValue("channel", cc);
-
+        flat_tuple_->setVariableValue("minimum_bin_threshold",(double)xmin_);
+        flat_tuple_->setVariableValue("minimum_entry_requirement_per_channel", (double)minStats_);
+        flat_tuple_->setVariableValue("rebin_factor", (double)rebin_);
+     
 
 
         if(cc%20 == 0){
@@ -171,8 +171,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
     std::vector<double> chi2_2D_range(first,last);
     for(int i=0; i < chi2_2D_range.size(); ++i) {
         flat_tuple_->addToVector("iterativeFit_chi2_2Der_range",chi2_2D_range.at(i));
-    }
-
+    } 
     //projy_h->Write();
     flat_tuple_->fill();
     delete projy_h;

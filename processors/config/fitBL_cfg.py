@@ -7,30 +7,38 @@ def timeSample_callback(options, opt, value, parser):
     setattr(parser.values, options.dest, value.split(','))
 
 parser = OptionParser()
+
 parser.add_option("-i", "--inFile", type="string", dest="inFilename",
         help="Input filename.", metavar="inFilename", default="")
+
 parser.add_option("-c", "--nhitsFitCut", type="int", dest="nhitsFitCut",
         help="set the min number of hits required for Gauss Fit of channels", metavar="nhitsFitCut", default="0")
+
 parser.add_option("-d", "--outDir", type="string", dest="outDir",
         help="Specify the output directory.", metavar="outDir", default=".")
+
 parser.add_option("-t", "--xmin", type="int", dest="xmin",
         help="Set threshold for xmin of iterative fit range", metavar="xmin", default="50")
+
 parser.add_option("-m", "--minStats", type="int", dest="minStats",
         help="Minimum Statistics required per bin to perform fit", metavar="minStats", default="1000")
+
 parser.add_option("-n", "--nPoints", type="int", dest="nPoints",
-        help="Select number of points for second derivative.", metavar="nPoints", default="1")
+        help="Select number of points for second derivative.", metavar="nPoints", default="3")
+
 parser.add_option("-b", "--rebin", type="int", dest="rebin",
         help="rebin factor.", metavar="rebin", default="1")
+
 parser.add_option('-s', '--hybrid', type='string', dest="hybrid",default="", help="Enter baseline<#><hybrid_name>", action='callback', callback=timeSample_callback)
 (options, args) = parser.parse_args()
 
 # Use the input file to set the output file name
 histo_file = options.inFilename
 hybrid = options.hybrid[0]
-xmin = options.xmin
-minStats = options.minStats
-rebin = options.rebin
-fit_file = '%s/%s_SvtBaselineFit_%s_t_%i_m_%i_r_%i.root'%(options.outDir, histo_file[:-5],hybrid,xmin,minStats,rebin)
+if hybrid != "":
+    fit_file = '%s/%s_%s_BaselineFit.root'%(options.outDir, histo_file[:-5],hybrid)
+else:
+    fit_file = '%s/%s_all_sensors_BaselineFit.root'%(options.outDir, histo_file[:-5])
 
 p = HpstrConf.Process()
 
