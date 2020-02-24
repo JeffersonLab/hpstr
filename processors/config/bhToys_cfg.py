@@ -18,7 +18,9 @@ parser.add_option("-s", "--spec", type="string", dest="mass_spec",
 parser.add_option("-a", "--sig", type="int", dest="toy_sig_samples",
         help="Number of signal events to add to toy models.", metavar="toy_sig_samples",
         default=0)
-
+parser.add_option("-b", "--bkg", type="int", dest="toy_bkg_mult",
+        help="Number of toy background events in units of the integral of the input distribution.",
+        metavar="toy_bkg_mult", default=1)
 (options, args) = parser.parse_args()
 
 # Use the input file to set the output file name
@@ -57,6 +59,7 @@ bhtoys.parameters["win_factor"] = win_factor
 bhtoys.parameters["seed"] = 0
 bhtoys.parameters["nToys"] = options.nToys
 bhtoys.parameters["toy_sig_samples"] = options.toy_sig_samples;
+bhtoys.parameters["toy_bkg_mult"] = options.toy_bkg_mult;
 
 # Sequence which the processors will run.
 p.sequence = [bhtoys]

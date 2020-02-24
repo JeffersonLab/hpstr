@@ -15,14 +15,15 @@ BhToysHistoProcessor::~BhToysHistoProcessor() { }
 void BhToysHistoProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring BhToysHistoProcessor" << std::endl;
     try {
-        debug_          = parameters.getInteger("debug");
-        massSpectrum_   = parameters.getString("massSpectrum");
-        mass_hypo_      = parameters.getDouble("mass_hypo");
-        win_factor_     = parameters.getInteger("win_factor");
-        poly_order_     = parameters.getInteger("poly_order");
-        seed_           = parameters.getInteger("seed");
-        nToys_          = parameters.getInteger("nToys");
+        debug_           = parameters.getInteger("debug");
+        massSpectrum_    = parameters.getString("massSpectrum");
+        mass_hypo_       = parameters.getDouble("mass_hypo");
+        win_factor_      = parameters.getInteger("win_factor");
+        poly_order_      = parameters.getInteger("poly_order");
+        seed_            = parameters.getInteger("seed");
+        nToys_           = parameters.getInteger("nToys");
         toy_sig_samples_ = parameters.getInteger("toy_sig_samples");
+        bkg_mult_        = parameters.getInteger("toy_bkg_mult");
         //asymptotic_limit_ = parameters.getBoolean("asymptoticLimit");
     } catch(std::runtime_error& error) {
         std::cout << error.what() << std::endl;
@@ -73,6 +74,8 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
 
     flat_tuple_->addVariable("seed");
     flat_tuple_->addVariable("toy_sig_samples");
+    flat_tuple_->addVariable("toy_bkg_mult");
+    flat_tuple_->addVector("toy_model_index");
     flat_tuple_->addVector("toy_bkg_chi2_prob");
     flat_tuple_->addVector("toy_bkg_edm");
     flat_tuple_->addVector("toy_bkg_minuit_status");
@@ -138,20 +141,24 @@ bool BhToysHistoProcessor::process() {
 
     std::vector<HpsFitResult*> toy_results;
     flat_tuple_->setVariableValue("seed", seed_);
+    flat_tuple_->setVariableValue("toy_bkg_mult", bkg_mult_);
     flat_tuple_->setVariableValue("toy_sig_samples", toy_sig_samples_);
     
     if(nToys_ > 0) {
         std::cout << "Generating " << nToys_ << " Toys" << std::endl;
-        std::vector<TH1*> toys_hist = bump_hunter_->generateToys(mass_spec_h, nToys_, seed_, toy_sig_samples_);
+        std::cout << "    Signal Injection      :: " << toy_sig_samples_ << std::endl;
+        std::cout << "    Background Multiplier :: " << bkg_mult_ << std::endl;
+        std::vector<TH1*> toys_hist = bump_hunter_->generateToys(mass_spec_h, nToys_, seed_, toy_sig_samples_, bkg_mult_); 
 
         int toyFitN = 0;
         for(TH1* hist : toys_hist) {
             std::cout << "Fitting Toy " << toyFitN << std::endl;
-            toy_results.push_back(bump_hunter_->performSearch(hist, mass_hypo_, false, true));
+            toy_results.push_back(bump_hunter_->performSearch(hist, mass_hypo_, false, false));
             toyFitN++;
         }
     }
 
+    int toyModelIndex = 0;
     for(auto& toy_result : toy_results) {
         // Get the result of the background fit
         TFitResultPtr toy_bkg_result = toy_result->getBkgFitResult();
@@ -172,6 +179,9 @@ bool BhToysHistoProcessor::process() {
         flat_tuple_->addToVector("toy_sig_yield",     toy_result->getSignalYield());
         flat_tuple_->addToVector("toy_sig_yield_err", toy_result->getSignalYieldErr());
         flat_tuple_->addToVector("toy_upper_limit",   toy_result->getUpperLimit());
+
+        flat_tuple_->addToVector("toy_model_index",   toyModelIndex);
+        toyModelIndex++;
     }
 
     // Fill and write the flat tuple

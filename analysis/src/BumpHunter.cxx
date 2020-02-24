@@ -197,7 +197,7 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
     std::cout << "[ BumpHunter ]: Bkg Fit Status: " << fit_result->getBkgFitResult()->IsValid() <<  std::endl;
     std::cout << "[ BumpHunter ]: Bkg Toys Fit Status: " << fit_result->getBkgToysFitResult()->IsValid() <<  std::endl;
     std::cout << "[ BumpHunter ]: Full Fit Status: " << fit_result->getCompFitResult()->IsValid() <<  std::endl;
-    if((!skip_ul) && full_result->IsValid()) this->getUpperLimit(histogram, fit_result);
+    if((!skip_ul) && full_result->IsValid()) { this->getUpperLimit(histogram, fit_result); }
     
     // Persist the mass hypothesis used for this fit
     fit_result->setMass(mass_hypothesis_);
@@ -387,7 +387,7 @@ void BumpHunter::getUpperLimitPower(TH1* histogram, HpsFitResult* result) {
     }
 }
 
-std::vector<TH1*> BumpHunter::generateToys(TH1* histogram, double n_toys, int seed, int toy_sig_samples) {
+std::vector<TH1*> BumpHunter::generateToys(TH1* histogram, double n_toys, int seed, int toy_sig_samples, int bkg_mult) {
     gRandom->SetSeed(seed);
     
     TF1* bkg_toys = histogram->GetFunction("bkg_toys");
@@ -395,13 +395,14 @@ std::vector<TH1*> BumpHunter::generateToys(TH1* histogram, double n_toys, int se
     sig_toys->SetParameters(1.0, mass_hypothesis_, mass_resolution_);
     
     std::vector<TH1*> hists;
+    int bkg_events = bkg_mult * int(integral_);
     for(int itoy = 0; itoy < n_toys; ++itoy) {
         std::string name = "invariant_mass_" + std::to_string(itoy);
         if(itoy%100 == 0) {
             std::cout << "Generating Toy " << itoy << std::endl;
         }
         TH1F* hist = new TH1F(name.c_str(), name.c_str(), bins_, window_start_, window_end_);
-        for(int i = 0; i < int(integral_); ++i) {
+        for(int i = 0; i < bkg_events; ++i) {
             hist->Fill(bkg_toys->GetRandom(window_start_, window_end_));
         }
         for(int i = 0; i < toy_sig_samples; i++) {
