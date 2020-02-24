@@ -19,6 +19,7 @@
 #include <EVENT/TrackerHit.h>
 #include <IMPL/LCGenericObjectImpl.h>
 #include <IMPL/TrackerHitImpl.h>
+#include <IMPL/MCParticleImpl.h>
 #include <UTIL/LCRelationNavigator.h>
 
 //-----------//
@@ -79,6 +80,8 @@ class Tracker3DHitProcessor : public Processor {
         std::vector<TrackerHit*> hits_; 
         std::string hitCollLcio_{"RotatedHelicalTrackHits"};
         std::string hitCollRoot_{"RotatedHelicalTrackHits"};
+
+        std::string mcPartRelLcio_{"RotatedHelicalTrackMCRelations"};
 
         //Debug Level
         int debug_{0};

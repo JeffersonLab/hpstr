@@ -197,22 +197,26 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 
         // The container of GBLKinkData objects should only contain a 
         // single object. If not, throw an exception
-        if (gbl_kink_data_list.size() != 1) { 
-            throw std::runtime_error("[ TrackingProcessor ]: The collection " 
-                                     + std::string(Collections::TRACK_DATA_REL)
-                                     + " has the wrong data structure."); 
-        }
+        if (gbl_kink_data_list.size() == 1) {
 
-        // Get the list GBLKinkData GenericObject associated with the LCIO Track
-        IMPL::LCGenericObjectImpl* gbl_kink_datum 
-            = static_cast<IMPL::LCGenericObjectImpl*>(gbl_kink_data_list.at(0));
-
-        // Set the lambda and phi kink values
-        for (int ikink = 0; ikink < gbl_kink_datum->getNDouble(); ++ikink) { 
-            track->setLambdaKink(ikink, gbl_kink_datum->getFloatVal(ikink));
-            track->setPhiKink(ikink, gbl_kink_datum->getDoubleVal(ikink));
-        }
-
+	  /*
+	  std::cout<<"[ Utilities ]: The collection " 
+	    + std::string(Collections::KINK_DATA)
+	    + " has the wrong data structure for this track"<<std::endl; 
+	  */
+	  
+	  // Get the list GBLKinkData GenericObject associated with the LCIO Track
+	  IMPL::LCGenericObjectImpl* gbl_kink_datum 
+	    = static_cast<IMPL::LCGenericObjectImpl*>(gbl_kink_data_list.at(0));
+	  
+	  // Set the lambda and phi kink values
+	  for (int ikink = 0; ikink < gbl_kink_datum->getNDouble(); ++ikink) { 
+	    track->setLambdaKink(ikink, gbl_kink_datum->getFloatVal(ikink));
+	    track->setPhiKink(ikink, gbl_kink_datum->getDoubleVal(ikink));
+	  }
+	  
+	}//gbl_kink_data has right structure
+	
     } // add gbl kink data
 
     if (track_data) { 

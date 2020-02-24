@@ -91,7 +91,7 @@ bool VertexProcessor::process(IEvent* ievent) {
         for(auto lc_part : lc_parts)
         {
            if (debug_ > 0) std::cout << "VertexProcessor: Build particle" << std::endl;
-           Particle * part = utils::buildParticle(lc_part,gbl_kink_data,track_data);
+           Particle * part = utils::buildParticle(lc_part, gbl_kink_data, track_data);
            if (debug_ > 0) std::cout << "VertexProcessor: Add particle" << std::endl;
             parts_.push_back(part);
             vtx->addParticle(part);
