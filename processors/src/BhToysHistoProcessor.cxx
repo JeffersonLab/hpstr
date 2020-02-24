@@ -64,6 +64,8 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
     flat_tuple_->addVariable("nll");
     flat_tuple_->addVariable("p_value");
     flat_tuple_->addVariable("q0");
+    flat_tuple_->addVariable("bkg_rate_mass_hypo");
+    flat_tuple_->addVariable("bkg_rate_mass_hypo_err");
     flat_tuple_->addVariable("sig_yield");
     flat_tuple_->addVariable("sig_yield_err");
     flat_tuple_->addVariable("upper_limit");
@@ -84,6 +86,8 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
     flat_tuple_->addVector("toy_nll");
     flat_tuple_->addVector("toy_p_value");
     flat_tuple_->addVector("toy_q0");
+    flat_tuple_->addVector("toy_bkg_rate_mass_hypo");
+    flat_tuple_->addVector("toy_bkg_rate_mass_hypo_err");
     flat_tuple_->addVector("toy_sig_yield");
     flat_tuple_->addVector("toy_sig_yield_err");
     flat_tuple_->addVector("toy_upper_limit");
@@ -126,6 +130,8 @@ bool BhToysHistoProcessor::process() {
     flat_tuple_->setVariableValue("nll",                    sig_result->MinFcnValue());
     flat_tuple_->setVariableValue("p_value",                result->getPValue());
     flat_tuple_->setVariableValue("q0",                     result->getQ0());
+    flat_tuple_->setVariableValue("bkg_rate_mass_hypo",     result->getFullBkgRate());
+    flat_tuple_->setVariableValue("bkg_rate_mass_hypo_err", result->getFullBkgRateError());
     flat_tuple_->setVariableValue("sig_yield",              result->getSignalYield());
     flat_tuple_->setVariableValue("sig_yield_err",          result->getSignalYieldErr());
     flat_tuple_->setVariableValue("upper_limit",            result->getUpperLimit());
@@ -172,14 +178,15 @@ bool BhToysHistoProcessor::process() {
         TFitResultPtr toy_sig_result = toy_result->getCompFitResult();
 
         // Retrieve all of the result of interest. 
-        flat_tuple_->addToVector("toy_minuit_status", toy_sig_result->Status());
-        flat_tuple_->addToVector("toy_nll",           toy_sig_result->MinFcnValue());
-        flat_tuple_->addToVector("toy_p_value",       toy_result->getPValue());
-        flat_tuple_->addToVector("toy_q0",            toy_result->getQ0());
-        flat_tuple_->addToVector("toy_sig_yield",     toy_result->getSignalYield());
-        flat_tuple_->addToVector("toy_sig_yield_err", toy_result->getSignalYieldErr());
-        flat_tuple_->addToVector("toy_upper_limit",   toy_result->getUpperLimit());
-
+        flat_tuple_->addToVector("toy_minuit_status",          toy_sig_result->Status());
+        flat_tuple_->addToVector("toy_nll",                    toy_sig_result->MinFcnValue());
+        flat_tuple_->addToVector("toy_p_value",                toy_result->getPValue());
+        flat_tuple_->addToVector("toy_q0",                     toy_result->getQ0());
+        flat_tuple_->addToVector("toy_bkg_rate_mass_hypo",     toy_result->getFullBkgRate());
+        flat_tuple_->addToVector("toy_bkg_rate_mass_hypo_err", toy_result->getFullBkgRateError());
+        flat_tuple_->addToVector("toy_sig_yield",              toy_result->getSignalYield());
+        flat_tuple_->addToVector("toy_sig_yield_err",          toy_result->getSignalYieldErr());
+        flat_tuple_->addToVector("toy_upper_limit",            toy_result->getUpperLimit());
         flat_tuple_->addToVector("toy_model_index",   toyModelIndex);
         toyModelIndex++;
     }
