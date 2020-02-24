@@ -47,10 +47,12 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     flat_tuple_->addString("SvtAna2DHisto_key");
     flat_tuple_->addString("n_entries");
     flat_tuple_->addVariable("minbinThresh");
-    flat_tuple_->addVariable("minEntries");
+    flat_tuple_->addVariable("minStats");
     flat_tuple_->addVariable("rebin");
     flat_tuple_->addVariable("channel");
-    flat_tuple_->addVariable("minStats");
+    flat_tuple_->addVariable("statsTooLow");
+    flat_tuple_->addVariable("meanError_ch");
+    flat_tuple_->addVariable("noisey_ch");
     flat_tuple_->addVariable("BlFitMean");
     flat_tuple_->addVariable("BlFitNorm");
     flat_tuple_->addVariable("BlFitSigma");
@@ -60,7 +62,9 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     flat_tuple_->addVector("iterFitRangeEnd");
     flat_tuple_->addVector("iterMean");
     flat_tuple_->addVector("iterChi2NDF_2der");
-    flat_tuple_->addVector("iterChi2NDF_2derRange");
+    flat_tuple_->addVector("iterChi2NDF_1der");
+    flat_tuple_->addVector("ratio2derChi2");
+    flat_tuple_->addVector("iterChi2NDF_derRange");
 }
 
 

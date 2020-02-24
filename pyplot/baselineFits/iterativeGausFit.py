@@ -186,7 +186,6 @@ for key in histokeys_hh:
     ###Show Channel Fits
 
     for cc in channels_in:
-
         canvas = r.TCanvas("%s_ch_%i_h"%(sensor,cc), "c", 1800,800)
         canvas.cd()
         yproj_h = histo_hh.ProjectionY('%s_ch%i_h'%(sensor,cc),cc+1,cc+1,"e")
@@ -214,18 +213,24 @@ for key in histokeys_hh:
             SvtAna2DHisto_key = str(fitData.SvtAna2DHisto_key)
             if key == SvtAna2DHisto_key+"_hh":
                 cc=(fitData.channel)
-                iterMean=(fitData.iterMean)
-                iterChi2NDF_2der=(fitData.iterChi2NDF_2der)
-                iterChi2NDF_2derRange=(fitData.iterChi2NDF_2derRange)
-                iterChi2NDF=(fitData.iterChi2NDF)
-                iterFitRangeEnd=(fitData.iterFitRangeEnd)
 
                 mean_gr = buildTGraph("iterMean_%s_ch_%i"%(sensor,cc),"iterMean_vs_Position_%s_ch_%i;FitRangeEnd;mean"%(sensor,cc),len(fitData.iterFitRangeEnd),np.array(fitData.iterFitRangeEnd, dtype = float) ,np.array(fitData.iterMean, dtype = float),1)
 
                 chi2_gr = buildTGraph("iterChi2_%s_ch_%i"%(sensor,cc),"iterChi2/NDF_vs_Position_%s_ch_%i;FitRangeEnd;chi2"%(sensor,cc),len(fitData.iterFitRangeEnd),np.array(fitData.iterFitRangeEnd, dtype = float) ,np.array(fitData.iterChi2NDF, dtype = float),1)
 
-                chi2_2Der_gr = buildTGraph("iterFit_chi2/NDF_2Der_%s_ch_%i"%(sensor,cc),"iterChi2_2Der_%s_ch_%i;FitRangeEnd;chi2_2ndDeriv"%(sensor,cc),len(fitData.iterChi2NDF_2derRange),np.array(fitData.iterChi2NDF_2derRange, dtype = float) ,np.array(fitData.iterChi2NDF_2der, dtype = float),1)
+                chi2_2Der_gr = buildTGraph("iterFit_chi2/NDF_2Der_%s_ch_%i"%(sensor,cc),"iterChi2_2Der_%s_ch_%i;FitRangeEnd;chi2_2ndDeriv"%(sensor,cc),len(fitData.iterChi2NDF_derRange),np.array(fitData.iterChi2NDF_derRange, dtype = float) ,np.array(fitData.iterChi2NDF_2der, dtype = float),1)
+
+                chi2_1Der_gr = buildTGraph("iterFit_chi2/NDF_1Der_%s_ch_%i"%(sensor,cc),"iterChi2_1Der_%s_ch_%i;FitRangeEnd;chi2_1ndDeriv"%(sensor,cc),len(fitData.iterChi2NDF_derRange),np.array(fitData.iterChi2NDF_derRange, dtype = float) ,np.array(fitData.iterChi2NDF_1der, dtype = float),1)
+
+                temp=fitData.iterChi2NDF
+                ratio = [i / j for i,j in zip(fitData.iterChi2NDF_2der,temp[3:])]
+
+                ratio_gr = buildTGraph("ratio_%s_ch_%i"%(sensor,cc),"ratio_2Der/Chi2_%s_ch_%i;FitRangeEnd;chi2NDF_2der/chi2NDF"%(sensor,cc),len(fitData.iterChi2NDF_derRange),np.array(fitData.iterChi2NDF_derRange, dtype = float) ,np.array(ratio, dtype = float),1)
+
                 mean_gr.Write()
                 chi2_gr.Write()
+                chi2_1Der_gr.Write()
                 chi2_2Der_gr.Write()
+                ratio_gr.Write()
+                
 
