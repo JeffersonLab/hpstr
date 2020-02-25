@@ -14,6 +14,11 @@
 #include "TF1.h"
 #include <string>
 #include "FlatTupleMaker.h"
+#include <math.h>
+#include "TCanvas.h"
+#include <vector>
+#include "ModuleMapper.h"
+#include "TFitResult.h"
 
 class BlFitHistos : public HistoManager{
     

@@ -1,8 +1,5 @@
 #include "BlFitHistos.h"
-#include <math.h>
-#include "TCanvas.h"
-#include <vector>
-#include "ModuleMapper.h"
+
 BlFitHistos::BlFitHistos(const std::string& inputName) {
     m_name = inputName;
     mmapper_ = new ModuleMapper();
@@ -45,7 +42,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
 
     //Loop over all channels to find location of maximum chi2 2nd derivative
-    for(int cc=0; cc < 640; ++cc) {
+    for(int cc=43; cc < 50; ++cc) {
 
         //Set Channel and Hybrid information in the flat tuple
         flat_tuple_->setVariableValue("SvtAna2DHisto_key", SvtAna2DHisto_key);
@@ -186,15 +183,15 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
     int chi2_2D_minIndex = std::min_element(chi2_2D.begin(), chi2_2D.end()) - chi2_2D.begin();
     
     int back_off=0;
-    int minimum_thresh = 2;
+    double minimum_thresh = 1.4;
     std::vector<double>::const_iterator first = fit_range_end.begin()+nPointsDer_;
     std::vector<double>::const_iterator last=fit_range_end.begin()+nPointsDer_+chi2_2D.size();
     std::vector<double> chi2_2D_range(first,last);
 
-    //std::cout << "first max " << chi2_2D_max << std::endl;
-    //std::cout << "min " << chi2_2D_min << std::endl;
+    std::cout << "first max " << chi2_2D_max << "at pos " << chi2_2D_range.at(chi2_2D_maxIndex) << std::endl;
+    std::cout << "min " << chi2_2D_min << std::endl;
 
-    if(std::abs(chi2_2D_min) > chi2_2D_max + minimum_thresh and std::abs(chi2_2D_maxIndex - chi2_2D_minIndex) < 10) {
+    if(std::abs(chi2_2D_min) > chi2_2D_max * minimum_thresh and std::abs(chi2_2D_maxIndex - chi2_2D_minIndex) < 10) {
         //std::cout << "chi2_2D size " << chi2_2D.size() << std::endl;
         //std::cout << "chi2_2D_range size " << chi2_2D_range.size() << std::endl;
         //std::cout << "maxIndex " << chi2_2D_maxIndex << std::endl;
@@ -211,37 +208,51 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
         chi2_2D_max = *std::max_element(chi2_2D.begin(), chi2_2D.end());
         chi2_2D_maxIndex = std::max_element(chi2_2D.begin(), chi2_2D.end()) - chi2_2D.begin();
         
+        std::cout << "Filtered max " << chi2_2D_max << "at pos " << chi2_2D_range.at(chi2_2D_maxIndex) << std::endl;
     }   
 
 
 
 
+    std::cout << "chi2_2D_range Size" << chi2_2D_range.size() << std::endl;
+    std::cout << "chi2_2D_maxIndex" << chi2_2D_maxIndex << std::endl;
+    std::cout << "chi2_2D xmax" << chi2_2D_range.at(chi2_2D_maxIndex-back_off) << std::endl;
     double chi2_2D_xmax = chi2_2D_range.at(chi2_2D_maxIndex-back_off);
-    
-        /*
+    xmax = chi2_2D_xmax;
+    std::cout << "xmax " << xmax << std::endl;
+    std::cout << "new max " << chi2_2D_max << std::endl;
+    //TF1 cc_fit = new TF1("cc_fit", "gaus", xmin, xmax);
+    TFitResultPtr fit = projy_h->Fit("gaus", "QRESL","",xmin,xmax);
+    std::cout << "crash?" << std::endl;
+    const double* chi2params = fit->GetParams();
+    double sigma1= chi2params[2];
+    std::cout << "crash1?" << std::endl;
     //Find Maximum Chi2/NDF 2nd derivative divided by Chi2/NDF
     double ratio2derChi2_max = *std::max_element(ratio2derChi2.begin(), ratio2derChi2.end());
+    std::cout << "crash2?" << std::endl;
     int ratio2derChi2_maxIndex = std::max_element(ratio2derChi2.begin(), ratio2derChi2.end()) - ratio2derChi2.begin();
-    double ratio_xmax = fit_range_end.at(ratio2derChi2_maxIndex-back_off);
+    double ratio_xmax = chi2_2D_range.at(ratio2derChi2_maxIndex-back_off);
+    std::cout << "ratio max " << ratio2derChi2_max << "at pos " << ratio_xmax << std::endl;
 
-    cc_fit = new TF1("cc_fit", "gaus", xmin, ratio_xmax);
-    projy_h->Fit(cc_fit, "QRESL");
-    double sigma2 = cc_fit->GetParameter(2);
-    delete cc_fit;
+    fit = projy_h->Fit("gaus","QRESL","",xmin,ratio_xmax);
+    const double* ratioParams = fit->GetParams();
+    double sigma2= ratioParams[2];
+    std::cout << "crash c ?" << std::endl;
+    std::cout << "crash e?" << std::endl;
 
+    std::cout << "sigma 1: " << sigma1 << "; sigma 2: " << sigma2 << std::endl;
     if (sigma1 < sigma2){xmax = chi2_2D_xmax;}
     else {xmax = ratio_xmax;}
-    */
-    xmax = chi2_2D_xmax;
+    
     //std::cout << "xmax " << xmax << std::endl;
     //std::cout << "new max " << chi2_2D_max << std::endl;
-    TF1* cc_fit = new TF1("cc_fit", "gaus", xmin, xmax);
-    projy_h->Fit(cc_fit, "QRESL");
+    fit = projy_h->Fit("gaus", "QRESL","",xmin,xmax);
+    const double* fitparams = fit->GetParams();
 
     //Set Fit Parameters in the flat tuple
-    flat_tuple_->setVariableValue("BlFitMean", cc_fit->GetParameter(1));
-    flat_tuple_->setVariableValue("BlFitSigma", cc_fit->GetParameter(2));
-    flat_tuple_->setVariableValue("BlFitNorm", cc_fit->GetParameter(0));
+    flat_tuple_->setVariableValue("BlFitMean", fitparams[1]);
+    flat_tuple_->setVariableValue("BlFitSigma", fitparams[2]);
+    flat_tuple_->setVariableValue("BlFitNorm", fitparams[0]);
     flat_tuple_->setVariableValue("BlFitRangeLower", (double)xmin);
     flat_tuple_->setVariableValue("BlFitRangeUpper", (double)xmax);
 
@@ -251,7 +262,6 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
     //projy_h->Write();
     flat_tuple_->fill();
     delete projy_h;
-    delete cc_fit;
     }
 
     delete histo_hh;

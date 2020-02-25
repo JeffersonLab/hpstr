@@ -149,8 +149,8 @@ for key in histokeys_hh:
     histo_hh.Draw("colz")
     mean_gr.Draw("same")
     canvas.Write()
+    savePNG(canvas,directory+"hybrid_fits/","%s_gausFit"%(key))
     canvas.Close()
-    #savePNG(canvas,directory+"hybrid_fits/","baseline_gausFit_%s"%(key))
 
     #1D Histogram of channel fit sigma
     sigma_h = r.TH1F("Fit_Sigma_%s"%(sensor),"Sigma_Distribution_%s;sigma;events"%(sensor),len(sigma),0.,max((sigma)))
@@ -177,15 +177,11 @@ for key in histokeys_hh:
     #savePNG(canvas,directory+"hybrid_fits/","baseline_gausFit_%s"%(key))
 
 
-    #If Channel SIGMA > Value determined by sigma distribution
-    noisey_ch = [i for i, j in zip(channel,sigma) if j >= 85]
-    print noisey_ch
-
 
     ######################################################################################################
     ###Show Channel Fits
 
-    for cc in channels_in:
+    for cc in range(len(channel)):
         canvas = r.TCanvas("%s_ch_%i_h"%(sensor,cc), "c", 1800,800)
         canvas.cd()
         yproj_h = histo_hh.ProjectionY('%s_ch%i_h'%(sensor,cc),cc+1,cc+1,"e")
