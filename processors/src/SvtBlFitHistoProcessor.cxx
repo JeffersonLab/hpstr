@@ -51,8 +51,8 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     flat_tuple_->addVariable("rebin");
     flat_tuple_->addVariable("channel");
     flat_tuple_->addVariable("statsTooLow");
-    flat_tuple_->addVariable("meanError_ch");
-    flat_tuple_->addVariable("noisey_ch");
+    flat_tuple_->addVariable("rms");
+    flat_tuple_->addVariable("noisy");
     flat_tuple_->addVariable("BlFitMean");
     flat_tuple_->addVariable("BlFitNorm");
     flat_tuple_->addVariable("BlFitSigma");
