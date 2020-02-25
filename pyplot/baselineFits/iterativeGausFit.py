@@ -51,32 +51,19 @@ def getGausFitParameters(inFile, key):
     range_lower=[]
     range_upper=[]
 
-    iterativeFit_chi2_NDF=[]
-    iterativeFit_range_end=[]
-    iterativeFit_mean=[]
-    iterativeFit_chi2_2ndDerivative=[]
-    iterativeFit_chi2_2Der_range=[]
-
     myTree = inFile.gaus_fit
     for fitData in myTree:
         SvtAna2DHisto_key = str(fitData.SvtAna2DHisto_key)
         if key == SvtAna2DHisto_key+"_hh":
             histo_key.append(SvtAna2DHisto_key)
             channel.append(fitData.channel)
-            mean.append(fitData.baseline_gausFit_mean)
-            sigma.append(fitData.baseline_gausFit_sigma)
-            norm.append(fitData.baseline_gausFit_norm)
-            range_lower.append(fitData.baseline_gausFit_range_lower)
-            range_upper.append(fitData.baseline_gausFit_range_upper)
+            mean.append(fitData.BlFitMean)
+            sigma.append(fitData.BlFitSigma)
+            norm.append(fitData.BlFitNorm)
+            range_lower.append(fitData.BlFitRangeLower)
+            range_upper.append(fitData.BlFitRangeUpper)
 
-            iterativeFit_mean.append(fitData.iterativeFit_mean)
-            iterativeFit_chi2_2ndDerivative.append(fitData.iterativeFit_chi2_2ndDerivative)
-            iterativeFit_chi2_2Der_range.append(fitData.iterativeFit_chi2_2Der_range)
-            iterativeFit_chi2_NDF.append(fitData.iterativeFit_chi2_NDF)
-            iterativeFit_range_end.append(fitData.iterativeFit_range_end)
-    return channel,mean, sigma, histo_key,norm, range_lower, range_upper, iterativeFit_mean, iterativeFit_chi2_2ndDerivative, iterativeFit_chi2_2Der_range, iterativeFit_chi2_NDF, iterativeFit_range_end
-  
-
+    return channel,mean, sigma, histo_key,norm, range_lower, range_upper
                
 def buildTGraph(name,title, n_points, x, y,color):
     g = r.TGraph(n_points,np.array(x, dtype = float), np.array(y, dtype = float))
@@ -108,17 +95,26 @@ def savePNG(canvas,directory,name):
 
 
 ######################################################################################################
+directory = "/home/alic/src/hpstr/pyplot/baselineFits/fit_images/"
 SvtBl2D_file = options.inFilename
 inFile = r.TFile(SvtBl2D_file, "READ")
 hybrid =options.hybrid
 
 r.gROOT.SetBatch(r.kTRUE)
 #Read in channels to be examined
-channels_in = options.channels
-if options.channels is not None:
-    channels_in = [int(i) for i in options.channels]
-    print channels_in
-
+#channels_in = options.channels
+#if options.channels is not None:
+#    if options.channels == "all":
+#        channels_in = range(0,640)
+#    else:
+#        channels_in = [int(i) for i in options.channels]
+#        for i in range(len(channels_in)):
+#            if i > 0:
+#                temp = range(channels_in[i-1],channels_in[i])
+#                print temp
+#        channels_in=[]
+#        for cc in temp:
+#            channels_in.append(cc)
 
 #Get SvtBl2D histogram keys from input file
 histokeys_hh = getHistoKeys(inFile,"TH2", options.hybrid,"")
@@ -126,74 +122,111 @@ print histokeys_hh
 
 
 for key in histokeys_hh:
+
     histo_hh = readhistoFromFile(inFile, key)
     print key
+    sensor= key.replace('raw_hits_','').replace('_hh','')
+    channels_in= range(0,int(histo_hh.GetNbinsX()))
 
-    #Get flat_tuple variables from inFile
-    channel, mean, sigma, histo_key,norm, range_lower, range_upper, iterativeFit_mean, iterativeFit_chi2_2ndDerivative, iterativeFit_2Der_range, iterativeFit_chi2_NDF, iterativeFit_range_end = getGausFitParameters(inFile,key)
+    ##If 2D histogram is empty, skip histogram
+    if histo_hh.GetEntries() == 0:
+        continue
+
+    #Get baseline fit parameters from TTree
+    channel, mean, sigma, histo_key,norm, range_lower, range_upper = getGausFitParameters(inFile,key)
+
+    #Output ROOT FILE
+    outFile = r.TFile(directory+"%s_fit_analysis.root"%(key[:-3]), "RECREATE")
+    outFile.cd()
 
     #Plot gaus Fit mean of all channels over 2D Histogram
-    fit_gr_x = np.array(channel, dtype = float)
-    fit_gr_y = np.array(mean, dtype=float)
-    fit_gr = buildTGraph("baseline_gaus_fit_mean_%s"%(key),"baseline_gaus_fit_mean_%s;Channel;ADC"%(key),len(fit_gr_x),fit_gr_x,fit_gr_y,2)
-
-    #Save PNG of 2D Histogram with Channel Mean ADC overlayed    
-    canvas = r.TCanvas("%s"%(key), "c", 1800,800)
+    canvas = r.TCanvas("%s_mean"%(sensor), "c", 1800,800)
     canvas.cd()
+    mean_gr_x = np.array(channel, dtype = float)
+    mean_gr_y = np.array(mean, dtype=float)
+    mean_gr = buildTGraph("BlFitMean_%s"%(sensor),"BlFitMean_%s;Channel;ADC"%(sensor),len(mean_gr_x),mean_gr_x,mean_gr_y,2)
+
     histo_hh.Draw("colz")
-    fit_gr.Draw("same")
-    directory = "/home/alic/src/hpstr/pyplot/baselineFits/fit_images/"
-    savePNG(canvas,directory+"hybrid_fits/","baseline_gausFit_%s"%(key))
+    mean_gr.Draw("same")
+    canvas.Write()
+    savePNG(canvas,directory+"hybrid_fits/","%s_gausFit"%(key))
+    canvas.Close()
+
+    #1D Histogram of channel fit sigma
+    sigma_h = r.TH1F("Fit_Sigma_%s"%(sensor),"Sigma_Distribution_%s;sigma;events"%(sensor),len(sigma),0.,max((sigma)))
+    for i in range(len(sigma)):
+        sigma_h.Fill(sigma[i],1.)
+    sigma_h.Write()
+
+    
+    #Plot gaus Fit mean+sigma of all channels over 2D Histogram
+    canvas = r.TCanvas("%s_sigma"%(sensor), "c", 1800,800)
+    canvas.cd()
+
+    sigma_gr_y = np.array(sigma, dtype= float)
+    sigma_gr_x = np.array(channel, dtype=float)
+    sigma_gr = buildTGraph("BlFit_sigma_%s"%(sensor),"BlFit_sigma_%s;Channel;Sigma"%(sensor),len(sigma_gr_x),sigma_gr_x,sigma_gr_y,3)
+    sigma_gr.Draw()
+    sigma_gr.Write()
+
+    histo_hh.Draw("colz")
+    sigma_gr.Draw("same")
+    mean_gr.Draw("same")
+    canvas.Write()
+    canvas.Close()
+    #savePNG(canvas,directory+"hybrid_fits/","baseline_gausFit_%s"%(key))
 
 
+
+    ######################################################################################################
     ###Show Channel Fits
-    if options.show_fits == "show" and hybrid == "":
-        print ""
-        print "ERROR!"
-        print "Must specify hyrid to show channel fits"
-        print ""
-    elif options.show_fits == "show" and hybrid != "":
-        for cc in channels_in:
-            canvas = r.TCanvas("%s"%(key), "c", 1800,800)
-            canvas.cd()
 
-            yproj_h = histo_hh.ProjectionY('%s_ch%i_h'%(key,cc),cc+1,cc+1,"e")
+    for cc in range(len(channel)):
+        canvas = r.TCanvas("%s_ch_%i_h"%(sensor,cc), "c", 1800,800)
+        canvas.cd()
+        yproj_h = histo_hh.ProjectionY('%s_ch%i_h'%(sensor,cc),cc+1,cc+1,"e")
+        if yproj_h.GetEntries() == 0:
+            continue
+        func = r.TF1("m1","gaus",range_lower[cc],range_upper[cc])
+        func.SetParameter(0,norm[cc])
+        func.SetParameter(2,sigma[cc])
+        func.SetParameter(1,mean[cc])
 
-            #func = r.TF1("cc_fit", "[norm] * ROOT::Math::normal_pdf(x, [sigma], [mean])",range_lower[cc],range_upper[cc]); 
-            func = r.TF1("m1","gaus",range_lower[cc],range_upper[cc])
-            func.SetParameter(0,norm[cc])
-            func.SetParameter(2,sigma[cc])
-            func.SetParameter(1,mean[cc])
-
-            yproj_h.Draw()
-            func.Draw("same")
-            savePNG(canvas,directory+"channel_fits/","baseline_gausFit_%s_ch_%i"%(key,cc))
+        yproj_h.SetTitle("%s_ch_%i_h"%(sensor,cc))
+        yproj_h.Draw()
+        func.Draw("same")
+        canvas.Write()
+        canvas.Close()
+        #savePNG(canvas,directory+"channel_fits/","baseline_gausFit_%s_ch_%i"%(key[:-3],cc))
 
 
-
+#########################################################################################################
     ###Show Channel Graphs
-    if options.show_graphs == "show" and hybrid == "":
-        print "ERROR! PLEASE SPECIFY HYBRID TO SHOW CHANNEL GRAPHS"
-    elif options.show_graphs == "show" and hybrid != "":
-        for cc in channels_in:
-            canvas = r.TCanvas("%s"%(key), "c", 1800,800)
-            canvas.cd()
-            fit_gr = buildTGraph("iterative_fit_mean_%s_ch_%i"%(key,cc),"iterative_fit_mean_vs_position_%s_ch_%i;FitRangeEnd;mean"%(key,cc),len(iterativeFit_range_end[cc]),np.array(iterativeFit_range_end[cc], dtype = float) ,np.array(iterativeFit_mean[cc], dtype = float),1)
-            fit_gr.Draw()
-            savePNG(canvas,directory+"channel_fits/","iterative_fit_mean_%s_ch_%i"%(key,cc))
+    bw=histo_hh.GetXaxis().GetBinWidth(1)
+    if options.show_graphs == "show":
+        myTree = inFile.gaus_fit
+        for fitData in myTree:
+            SvtAna2DHisto_key = str(fitData.SvtAna2DHisto_key)
+            if key == SvtAna2DHisto_key+"_hh":
+                cc=(fitData.channel)
 
-            canvas = r.TCanvas("%s"%(key), "c", 1800,800)
-            canvas.cd()
-            fit_gr = buildTGraph("iterative_fit_chi2_%s_ch_%i"%(key,cc),"iterative_fit_chi2_vs_position_%s_ch_%i;FitRangeEnd;mean"%(key,cc),len(iterativeFit_range_end[cc]),np.array(iterativeFit_range_end[cc], dtype = float) ,np.array(iterativeFit_chi2_NDF[cc], dtype = float),1)
-            fit_gr.Draw()
-            savePNG(canvas,directory+"channel_fits/","iterative_fit_chi2_%s_ch_%i"%(key,cc))
+                mean_gr = buildTGraph("iterMean_%s_ch_%i"%(sensor,cc),"iterMean_vs_Position_%s_ch_%i;FitRangeEnd;mean"%(sensor,cc),len(fitData.iterFitRangeEnd),np.array(fitData.iterFitRangeEnd, dtype = float) ,np.array(fitData.iterMean, dtype = float),1)
 
-            canvas = r.TCanvas("%s"%(key), "c", 1800,800)
-            canvas.cd()
-            fit_gr = buildTGraph("iterative_fit_chi2_%s_ch_%i"%(key,cc),"iterative_fit_chi2_vs_position_%s_ch_%i;FitRangeEnd;mean"%(key,cc),len(iterativeFit_2Der_range[cc]),np.array(iterativeFit_2Der_range[cc], dtype = float) ,np.array(iterativeFit_chi2_2ndDerivative[cc], dtype = float),1)
-            fit_gr.Draw()
-            savePNG(canvas,directory+"channel_fits/","iterative_fit_chi2_2nd_Der%s_ch_%i"%(key,cc))
+                chi2_gr = buildTGraph("iterChi2_%s_ch_%i"%(sensor,cc),"iterChi2/NDF_vs_Position_%s_ch_%i;FitRangeEnd;chi2"%(sensor,cc),len(fitData.iterFitRangeEnd),np.array(fitData.iterFitRangeEnd, dtype = float) ,np.array(fitData.iterChi2NDF, dtype = float),1)
 
+                chi2_2Der_gr = buildTGraph("iterFit_chi2/NDF_2Der_%s_ch_%i"%(sensor,cc),"iterChi2_2Der_%s_ch_%i;FitRangeEnd;chi2_2ndDeriv"%(sensor,cc),len(fitData.iterChi2NDF_derRange),np.array(fitData.iterChi2NDF_derRange, dtype = float) ,np.array(fitData.iterChi2NDF_2der, dtype = float),1)
 
+                chi2_1Der_gr = buildTGraph("iterFit_chi2/NDF_1Der_%s_ch_%i"%(sensor,cc),"iterChi2_1Der_%s_ch_%i;FitRangeEnd;chi2_1ndDeriv"%(sensor,cc),len(fitData.iterChi2NDF_derRange),np.array(fitData.iterChi2NDF_derRange, dtype = float) ,np.array(fitData.iterChi2NDF_1der, dtype = float),1)
 
+                temp=fitData.iterChi2NDF
+                ratio = [i / j for i,j in zip(fitData.iterChi2NDF_2der,temp[3:])]
+
+                ratio_gr = buildTGraph("ratio_%s_ch_%i"%(sensor,cc),"ratio_2Der/Chi2_%s_ch_%i;FitRangeEnd;chi2NDF_2der/chi2NDF"%(sensor,cc),len(fitData.iterChi2NDF_derRange),np.array(fitData.iterChi2NDF_derRange, dtype = float) ,np.array(ratio, dtype = float),1)
+
+                mean_gr.Write()
+                chi2_gr.Write()
+                chi2_1Der_gr.Write()
+                chi2_2Der_gr.Write()
+                ratio_gr.Write()
+                
 
