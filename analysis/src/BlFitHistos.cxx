@@ -84,7 +84,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                 std::cout << "Bin threshold too low" << cc << std::endl;
                 continue;
             }
-            std::cout << "entries: " <<  projy_h->GetEntries() << std::endl;
+            //std::cout << "entries: " <<  projy_h->GetEntries() << std::endl;
             if(projy_h->GetEntries() < minStats_)
             {
 
@@ -112,7 +112,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
             int iter = 0;
             
-            std::cout << "max bin count" << projy_h->GetMaximumBin() << std::endl;
+            //std::cout << "max bin count" << projy_h->GetMaximumBin() << std::endl;
             double xmin = projy_h->GetBinLowEdge(firstbin);
             double binwidth = projy_h->GetBinWidth(firstbin);
             double xmax = xmin + 20.0*binwidth;
