@@ -34,6 +34,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
         //Get input 2D histogram and rebin based on configuration setting
         TH2F* histo_hh = inputHistos_->get2dHisto(*jj);
         histo_hh->RebinY(rebin_);
+        histo_hh->Write();
         std::string SvtAna2DHisto_key = histo_hh->GetName();
         SvtAna2DHisto_key.erase(SvtAna2DHisto_key.end()-3,SvtAna2DHisto_key.end());
 
@@ -41,7 +42,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
 
         //Loop over all channels to find location of maximum chi2 2nd derivative
-        for(int cc=43; cc < 50; ++cc) 
+        for(int cc=0; cc < 640; ++cc) 
         {
 
             //Set Channel and Hybrid information in the flat tuple
@@ -53,10 +54,10 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
 
 
-            if(cc%20 == 0)
-            {
+            //if(cc%20 == 0)
+           // {
                 std::cout <<"Hybrid: "<< SvtAna2DHisto_key << " channel #" << cc << std::endl;
-            }
+            //}
             TH1D* projy_h = histo_hh->ProjectionY(Form("%s_proY_ch%i",SvtAna2DHisto_key.c_str(),cc),cc+1,cc+1,"e");
 
             projy_h->SetTitle(Form("%s_proY_ch%i",SvtAna2DHisto_key.c_str(),cc));
