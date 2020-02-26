@@ -76,6 +76,15 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             flat_tuple_->setVariableValue("n_entries", projy_h->GetEntries());
 
             //Minimum Entry Requirement NOT ROBUST!!!
+            int firstbin = projy_h->FindFirstBinAbove(xmin_,1);
+            if (firstbin == -1) 
+            {
+                
+                flat_tuple_->setVariableValue("statsTooLow",1.0);
+                std::cout << "Bin threshold too low" << cc << std::endl;
+                continue;
+            }
+            std::cout << "entries: " <<  projy_h->GetEntries() << std::endl;
             if(projy_h->GetEntries() < minStats_)
             {
 
@@ -102,7 +111,8 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             flat_tuple_->setVariableValue("statsTooLow",0.0);
 
             int iter = 0;
-            int firstbin = projy_h->FindFirstBinAbove(xmin_,1);
+            
+            std::cout << "max bin count" << projy_h->GetMaximumBin() << std::endl;
             double xmin = projy_h->GetBinLowEdge(firstbin);
             double binwidth = projy_h->GetBinWidth(firstbin);
             double xmax = xmin + 20.0*binwidth;
