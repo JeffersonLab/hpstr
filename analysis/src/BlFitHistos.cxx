@@ -54,10 +54,10 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
 
 
-            //if(cc%20 == 0)
-           // {
+            if(cc%20 == 0)
+            {
                 std::cout <<"Hybrid: "<< SvtAna2DHisto_key << " channel #" << cc << std::endl;
-            //}
+            }
             TH1D* projy_h = histo_hh->ProjectionY(Form("%s_proY_ch%i",SvtAna2DHisto_key.c_str(),cc),cc+1,cc+1,"e");
 
             projy_h->SetTitle(Form("%s_proY_ch%i",SvtAna2DHisto_key.c_str(),cc));
