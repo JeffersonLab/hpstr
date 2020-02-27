@@ -269,6 +269,7 @@ void BumpHunter::getUpperLimitAsymptotic(TH1* histogram, HpsFitResult* result) {
     
     // Get the signal yield and signal yield error.
     double signal_yield = result->getCompFitResult()->Parameter(poly_order_ + 1);
+    if(signal_yield < 0) { signal_yield = 0; }
     double signal_yield_error = result->getCompFitResult()->ParError(poly_order_ + 1);
     
     // Debug print the signal yield and its error.
@@ -279,7 +280,6 @@ void BumpHunter::getUpperLimitAsymptotic(TH1* histogram, HpsFitResult* result) {
     // for likelihood-based tests of new physics" by Cowan et alii. 1.64 is derived
     // from Equation (1) for a 95% confidence level (alpha = 0.05).
     double upper_limit = signal_yield + 1.64 * signal_yield_error;
-    if(upper_limit < 2.3) { upper_limit = 2.3; }
     
     // The p-value is 0.05 by definition.
     double p_value = 0.05;
