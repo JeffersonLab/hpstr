@@ -1,7 +1,6 @@
 //Authors: F.Sforza, PF, Alignment Team
 
 #include "HistogramHelpers.h"
-
 #include "TMath.h" 
 
 double HistogramHelpers::GaussExpTails_f(double* x, double *par) {

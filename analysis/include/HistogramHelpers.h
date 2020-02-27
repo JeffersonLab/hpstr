@@ -8,6 +8,8 @@
 #include "TH1.h"
 #include "TFitResultPtr.h"
 #include "TCanvas.h"
+#include "TFile.h"
+#include "TStyle.h"
 
 using namespace std;
 
@@ -21,6 +23,10 @@ namespace HistogramHelpers {
   void profileYwithIterativeGaussFit(TH2* hist, TH1* mu_graph, TH1* sigma_graph, int num_bins = 1, int m_PrintLevel = 0);
   void profileZwithIterativeGaussFit(TH3* hist, TH2* mu_graph, TH2* sigma_graph, int num_bins, TH2* mu_err_graph, TH2* sigma_err_graph);
   void   HistogramConditioning (TH1* hist, int m_PrintLevel =0);
+  void OpenProjectionFile();
+  void CloseProjectionFile();  
+  TFile* outFile_for_projections; 
+  
 } 
   
 #endif
