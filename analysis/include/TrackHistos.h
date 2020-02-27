@@ -4,6 +4,7 @@
 #include "HistoManager.h"
 #include "Track.h"
 #include "Vertex.h"
+#include "Particle.h"
 #include <string>
 #include <vector>
 
@@ -17,14 +18,22 @@ class TrackHistos : public HistoManager {
         m_name = inputName;
         BuildAxes();
     }
-
+            
         virtual void Define3DHistos(){};
         virtual void Define2DHistos();
-
+        
         void BuildAxes();
 
+        void Fill1DTrack(Track* track, float weight = 1., const std::string& trkname = "");
+        void Fill2DTrack(Track* track, float weight = 1., const std::string& trkname = "");
+        
+        void Fill1DVertex(Vertex* vtx, float weight = 1.);
+        
+        //TODO Change this
+        void Fill1DVertex(Vertex* vtx, Particle* ele, Particle* pos, Track* ele_trk, Track* pos_trk, float weight = 1.);
+
         void Fill1DHistograms(Track* track = nullptr, Vertex* vtx = nullptr, float weight = 1.);
-        void Fill2DHistograms(Track* track = nullptr, Vertex* vtx = nullptr, float weight = 1.);
+        void Fill2DHistograms(Vertex* vtx = nullptr, float weight = 1.);
 
         //track_x goes for x axis, and y for y axis
         void FillTrackComparisonHistograms(Track* track_x, Track* track_y, float weight = 1.);

@@ -1,0 +1,17 @@
+{
+    "RADBeam" : {
+        "xsec"    : 81.61e3,
+        "xsecerr" : 0.834,
+        "nGen"    : 99670000
+    },
+    "tritrigBeam" : {
+        "xsec"    : 1.416e6,
+        "xsecerr" : 0.00431e6,
+        "nGen"    : 492650000
+    },
+    "wabBeam"     : {
+        "xsec"    : 0.1985e9,
+        "xsecerr" : 0.01973e9,
+        "nGen"    : 996600000
+    }
+}

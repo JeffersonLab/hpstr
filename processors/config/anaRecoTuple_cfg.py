@@ -1,18 +1,27 @@
 import HpstrConf
 import sys
 import os
+import baseConfig
+
+parser = baseConfig.parser
+
+(options,args) = parser.parse_args()
+
 
 # Use the input file to set the output file name
-infile = sys.argv[1].strip()
-outfile = '%s_anaReco.root' % infile[:-5]
+infile = options.inFilename
+outfile = options.outFilename
 
 print 'Input file: %s' % infile
 print 'Output file: %s' % outfile
 
 p = HpstrConf.Process()
 
+p.run_mode = 1
+#p.max_events = 1000
+
 # Library containing processors
-p.libraries.append("libprocessors.so")
+p.add_library("libprocessors")
 
 ###############################
 #          Processors         #
@@ -37,7 +46,5 @@ p.sequence = [recoana]
 
 p.input_files=[infile]
 p.output_files = [outfile]
-
-#p.max_events = 1000
 
 p.printProcess()

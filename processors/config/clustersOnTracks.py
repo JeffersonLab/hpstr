@@ -10,8 +10,11 @@ print 'Output file: %s' % outfilename
 
 p = HpstrConf.Process()
 
+p.run_mode   = 1
+#p.max_events   = 1000
+
 # Library containing processors
-p.libraries.append("libprocessors.so")
+p.add_library("libprocessors")
 
 #Processors
 clusters = HpstrConf.Processor('clusters','ClusterOnTrackAnaProcessor')
@@ -29,6 +32,5 @@ p.input_files    = [infilename]
 
 p.output_files  = [outfilename]
 
-#p.max_events   = 1000
 p.printProcess()
 

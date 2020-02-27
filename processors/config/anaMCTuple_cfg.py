@@ -11,8 +11,11 @@ print 'Output file: %s' % outfile
 
 p = HpstrConf.Process()
 
+p.run_mode = 1
+#p.max_events = 1000
+
 # Library containing processors
-p.libraries.append("libprocessors.so")
+p.add_library("libprocessors")
 
 ###############################
 #          Processors         #
@@ -36,7 +39,5 @@ p.sequence = [mcana]
 
 p.input_files=[infile]
 p.output_files = [outfile]
-
-#p.max_events = 1000
 
 p.printProcess()

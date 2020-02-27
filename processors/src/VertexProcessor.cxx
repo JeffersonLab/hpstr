@@ -18,10 +18,13 @@ void VertexProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring VertexProcessor" << std::endl;
     try
     {
-        debug_          = parameters.getInteger("debug");
-        vtxCollLcio_    = parameters.getString("vtxCollLcio");
-        vtxCollRoot_    = parameters.getString("vtxCollRoot");
-        partCollRoot_   = parameters.getString("partCollRoot");
+        debug_             = parameters.getInteger("debug");
+        vtxCollLcio_       = parameters.getString("vtxCollLcio");
+        vtxCollRoot_       = parameters.getString("vtxCollRoot");
+        partCollRoot_      = parameters.getString("partCollRoot");
+        kinkRelCollLcio_   = parameters.getString("kinkRelCollLcio");
+        trkRelCollLcio_    = parameters.getString("trkRelCollLcio");
+        
     }
     catch (std::runtime_error& error)
     {
@@ -45,7 +48,7 @@ bool VertexProcessor::process(IEvent* ievent) {
 
     Event* event = static_cast<Event*> (ievent);
 
-    // Get the collection of 3D hits from the LCIO event. If no such collection 
+    // Get the collection of vertices from the LCIO event. If no such collection 
     // exist, a DataNotAvailableException is thrown
     if (debug_ > 0) std::cout << "VertexProcessor: Get LCIO Collection " << vtxCollLcio_ << std::endl;
     EVENT::LCCollection* lc_vtxs = nullptr;
@@ -58,6 +61,20 @@ bool VertexProcessor::process(IEvent* ievent) {
         std::cout << e.what() << std::endl;
         return false;
     }
+
+    // Get the collection of LCRelations between GBL tracks and kink data and track data variables.
+    EVENT::LCCollection* gbl_kink_data{nullptr};
+    EVENT::LCCollection* track_data{nullptr};
+    try
+    {
+        gbl_kink_data = static_cast<EVENT::LCCollection*>(event->getLCCollection(kinkRelCollLcio_.c_str()));
+        track_data = static_cast<EVENT::LCCollection*>(event->getLCCollection(trkRelCollLcio_.c_str()));
+    }
+    catch (EVENT::DataNotAvailableException e)
+    {
+        std::cout << e.what() << std::endl;
+    }
+    
 
     if (debug_ > 0) std::cout << "VertexProcessor: Converting Verteces" << std::endl;
     for (int ivtx = 0 ; ivtx < lc_vtxs->getNumberOfElements(); ++ivtx) 
@@ -74,7 +91,7 @@ bool VertexProcessor::process(IEvent* ievent) {
         for(auto lc_part : lc_parts)
         {
            if (debug_ > 0) std::cout << "VertexProcessor: Build particle" << std::endl;
-            Particle * part = utils::buildParticle(lc_part);
+           Particle * part = utils::buildParticle(lc_part, gbl_kink_data, track_data);
            if (debug_ > 0) std::cout << "VertexProcessor: Add particle" << std::endl;
             parts_.push_back(part);
             vtx->addParticle(part);
