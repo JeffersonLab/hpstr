@@ -17,6 +17,8 @@ parser.add_option("-f", type="string", dest="show_fits", help="If == show, print
 
 parser.add_option("-i", type="string", dest="inFilename", help="Input SvtBlFitHistoProcessor output root file",default="")
 
+parser.add_option("-L", type="string", dest="layer", help="layer subdirectory",default="")
+
 parser.add_option("-s", "--hybrid", type="string", dest="hybrid",
         help="L<#><T/B>_<axial/stereo>_<ele/pos>", default="")
 
@@ -95,7 +97,7 @@ def savePNG(canvas,directory,name):
 
 
 ######################################################################################################
-directory = "/home/alic/src/hpstr/pyplot/baselineFits/fit_images/"
+directory = "/home/alic/src/hpstr/pyplot/baselineFits/fit_data/"
 SvtBl2D_file = options.inFilename
 inFile = r.TFile(SvtBl2D_file, "READ")
 hybrid =options.hybrid
@@ -134,9 +136,8 @@ for key in histokeys_hh:
 
     #Get baseline fit parameters from TTree
     channel, mean, sigma, histo_key,norm, range_lower, range_upper = getGausFitParameters(inFile,key)
-
     #Output ROOT FILE
-    outFile = r.TFile(directory+"%s_fit_analysis.root"%(key[:-3]), "RECREATE")
+    outFile = r.TFile(directory+options.layer+"/%s_fit_analysis.root"%(key[:-3]), "RECREATE")
     outFile.cd()
 
     #Plot gaus Fit mean of all channels over 2D Histogram
@@ -180,11 +181,10 @@ for key in histokeys_hh:
 
     ######################################################################################################
     ###Show Channel Fits
-
-    for cc in range(len(channel)):
-        canvas = r.TCanvas("%s_ch_%i_h"%(sensor,cc), "c", 1800,800)
+    for cc in range(len(channel)): 
+        canvas = r.TCanvas("%s_ch_%i_h"%(sensor,channel[cc]), "c", 1800,800)
         canvas.cd()
-        yproj_h = histo_hh.ProjectionY('%s_ch%i_h'%(sensor,cc),cc+1,cc+1,"e")
+        yproj_h = histo_hh.ProjectionY('%s_ch%i_h'%(sensor,channel[cc]),int(channel[cc]+1),int(channel[cc]+1),"e")
         if yproj_h.GetEntries() == 0:
             continue
         func = r.TF1("m1","gaus",range_lower[cc],range_upper[cc])
@@ -192,13 +192,12 @@ for key in histokeys_hh:
         func.SetParameter(2,sigma[cc])
         func.SetParameter(1,mean[cc])
 
-        yproj_h.SetTitle("%s_ch_%i_h"%(sensor,cc))
+        yproj_h.SetTitle("%s_ch_%i_h"%(sensor,channel[cc]))
         yproj_h.Draw()
         func.Draw("same")
         canvas.Write()
         canvas.Close()
         #savePNG(canvas,directory+"channel_fits/","baseline_gausFit_%s_ch_%i"%(key[:-3],cc))
-
 
 #########################################################################################################
     ###Show Channel Graphs
@@ -213,7 +212,6 @@ for key in histokeys_hh:
                 mean_gr = buildTGraph("iterMean_%s_ch_%i"%(sensor,cc),"iterMean_vs_Position_%s_ch_%i;FitRangeEnd;mean"%(sensor,cc),len(fitData.iterFitRangeEnd),np.array(fitData.iterFitRangeEnd, dtype = float) ,np.array(fitData.iterMean, dtype = float),1)
 
                 chi2_gr = buildTGraph("iterChi2_%s_ch_%i"%(sensor,cc),"iterChi2/NDF_vs_Position_%s_ch_%i;FitRangeEnd;chi2"%(sensor,cc),len(fitData.iterFitRangeEnd),np.array(fitData.iterFitRangeEnd, dtype = float) ,np.array(fitData.iterChi2NDF, dtype = float),1)
-
                 chi2_2Der_gr = buildTGraph("iterFit_chi2/NDF_2Der_%s_ch_%i"%(sensor,cc),"iterChi2_2Der_%s_ch_%i;FitRangeEnd;chi2_2ndDeriv"%(sensor,cc),len(fitData.iterChi2NDF_derRange),np.array(fitData.iterChi2NDF_derRange, dtype = float) ,np.array(fitData.iterChi2NDF_2der, dtype = float),1)
 
                 chi2_1Der_gr = buildTGraph("iterFit_chi2/NDF_1Der_%s_ch_%i"%(sensor,cc),"iterChi2_1Der_%s_ch_%i;FitRangeEnd;chi2_1ndDeriv"%(sensor,cc),len(fitData.iterChi2NDF_derRange),np.array(fitData.iterChi2NDF_derRange, dtype = float) ,np.array(fitData.iterChi2NDF_1der, dtype = float),1)
@@ -222,6 +220,7 @@ for key in histokeys_hh:
                 ratio = [i / j for i,j in zip(fitData.iterChi2NDF_2der,temp[3:])]
 
                 ratio_gr = buildTGraph("ratio_%s_ch_%i"%(sensor,cc),"ratio_2Der/Chi2_%s_ch_%i;FitRangeEnd;chi2NDF_2der/chi2NDF"%(sensor,cc),len(fitData.iterChi2NDF_derRange),np.array(fitData.iterChi2NDF_derRange, dtype = float) ,np.array(ratio, dtype = float),1)
+
 
                 mean_gr.Write()
                 chi2_gr.Write()

@@ -77,7 +77,6 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
             //Minimum Entry Requirement NOT ROBUST!!!
             int firstbin = projy_h->FindFirstBinAbove(xmin_,1);
-            std::cout << "first bin" << firstbin << std::endl;
             if (firstbin == -1) 
             {
                 
@@ -85,7 +84,6 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                 std::cout << "Bin threshold too low" << cc << std::endl;
                 continue;
             }
-            std::cout << "entries: " <<  projy_h->GetEntries() << std::endl;
             if(projy_h->GetEntries() < minStats_)
             {
 
@@ -165,7 +163,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                 double derForward = (chi2_NDF.at(i+nPointsDer_)-chi2_NDF.at(i))/(nPointsDer_*binwidth);
                 double derBack = (chi2_NDF.at(i)-chi2_NDF.at(i-nPointsDer_))/(nPointsDer_*binwidth);
                 double der = (derForward+derBack)/2.0;
-                double der2 = (derForward - derBack)/(nPointsDer_*binwidth);
+                double der2 = (derForward - derBack); //(nPointsDer_*binwidth);
                 if(der2 == der2) 
                 {
                     chi2_2D.push_back(der2);
@@ -203,12 +201,14 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             int chi2_2D_minIndex = std::min_element(chi2_2D.begin(), chi2_2D.end()) - chi2_2D.begin();
 
             int back_off = 0;
-            double minimum_thresh = 1.4;
+            double minimum_thresh = 1.;
             std::vector<double>::const_iterator first = fit_range_end.begin()+nPointsDer_;
             std::vector<double>::const_iterator last  = fit_range_end.begin()+nPointsDer_+chi2_2D.size();
             std::vector<double> chi2_2D_range(first,last);
 
             double chi2_2D_xmax = chi2_2D_range.at(chi2_2D_maxIndex-back_off);
+            std::cout << "xmax is " << chi2_2D_max << std::endl;
+            std::cout << "xmin is " << chi2_2D_min << std::endl;
             
             if(std::abs(chi2_2D_min) > chi2_2D_max * minimum_thresh && std::abs(chi2_2D_maxIndex - chi2_2D_minIndex) < 10) 
             {
@@ -258,8 +258,18 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             fit = projy_h->Fit("gaus","QRES","",xmin,ratio_xmax);
             const double* ratioParams = fit->GetParams();
             double sigma2= ratioParams[2];
+            std::cout << "2der sigma = " << sigma1 << std::endl;
+            std::cout << "ratio sigma = " << sigma2 << std::endl;
 
-            if (sigma1 < sigma2){xmax = chi2_2D_xmax;}
+            if (sigma1 < sigma2)
+            {
+                xmax = chi2_2D_xmax;
+
+                /*for(int i=0; i < chi2_2D.range.size(); ++i) 
+                {
+                    flat_tuple_->addToVector("iterChi2NDF_derRange",chi2_2D_range.at(i));
+                }*/
+            }
             else {xmax = ratio_xmax;}
 
             fit = projy_h->Fit("gaus", "QRESL", "", xmin, xmax);
