@@ -17,7 +17,7 @@ parser.add_option("-f", type="string", dest="show_fits", help="If == show, print
 
 parser.add_option("-i", type="string", dest="inFilename", help="Input SvtBlFitHistoProcessor output root file",default="")
 
-parser.add_option("-L", type="string", dest="layer", help="layer subdirectory",default="")
+parser.add_option("-t", type="string", dest="tag", help="file extension tag",default="")
 
 parser.add_option("-s", "--hybrid", type="string", dest="hybrid",
         help="L<#><T/B>_<axial/stereo>_<ele/pos>", default="")
@@ -137,7 +137,7 @@ for key in histokeys_hh:
     #Get baseline fit parameters from TTree
     channel, mean, sigma, histo_key,norm, range_lower, range_upper = getGausFitParameters(inFile,key)
     #Output ROOT FILE
-    outFile = r.TFile(directory+options.layer+"/%s_fit_analysis.root"%(key[:-3]), "RECREATE")
+    outFile = r.TFile(directory+"/%s_fit_analysis%s.root"%(key[:-3],options.tag), "RECREATE")
     outFile.cd()
 
     #Plot gaus Fit mean of all channels over 2D Histogram

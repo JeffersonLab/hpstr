@@ -42,7 +42,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
 
         //Loop over all channels to find location of maximum chi2 2nd derivative
-        for(int cc=0; cc < 640; ++cc) 
+        for(int cc=0; cc < 640 ; ++cc) 
         {
 
             //Set Channel and Hybrid information in the flat tuple
@@ -194,22 +194,40 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             }
 
             //Find Maximum Chi2/NDF second derivative
-            double chi2_2D_max = *std::max_element(chi2_2D.begin(), chi2_2D.end());
-            int chi2_2D_maxIndex = std::max_element(chi2_2D.begin(), chi2_2D.end()) - chi2_2D.begin();
-
-            double chi2_2D_min = *std::min_element(chi2_2D.begin(), chi2_2D.end());
-            int chi2_2D_minIndex = std::min_element(chi2_2D.begin(), chi2_2D.end()) - chi2_2D.begin();
-
-            int back_off = 0;
+            int back_off = 40;
             double minimum_thresh = 1.;
             std::vector<double>::const_iterator first = fit_range_end.begin()+nPointsDer_;
             std::vector<double>::const_iterator last  = fit_range_end.begin()+nPointsDer_+chi2_2D.size();
             std::vector<double> chi2_2D_range(first,last);
 
-            double chi2_2D_xmax = chi2_2D_range.at(chi2_2D_maxIndex-back_off);
+            double chi2max = *std::max_element(chi2_NDF.begin(), chi2_NDF.end());
+            int chi2maxIndex = std::max_element(chi2_NDF.begin(), chi2_NDF.end()) - chi2_NDF.begin();
+            std::cout << "Chi2 max: " << chi2max << std::endl;
+            std::cout << "Chi2 xmax: " << fit_range_end.at(chi2maxIndex) << std::endl;
+            std::cout << "Chi2 xmax - back_off: " << fit_range_end.at(chi2maxIndex-back_off) << std::endl;
+            std::vector<double>::const_iterator begin = fit_range_end.begin()+nPointsDer_;
+            std::vector<double>::const_iterator end  = fit_range_end.begin()+nPointsDer_+chi2maxIndex;
+            std::vector<double> range(begin,end);
+
+            double chi2_2D_max = *std::max_element(chi2_2D.begin(), chi2_2D.end());
+            std::cout << "Pre-cut chi2_2D_max is " << chi2_2D_max << std::endl;
+            int chi2_2D_maxIndex = std::max_element(chi2_2D.begin(), chi2_2D.end()) - chi2_2D.begin();
+            std::cout << "Pre-cut Chi2_2D xmax: " << chi2_2D_range.at(chi2_2D_maxIndex) << std::endl;
+            //chi2_2D max using chi2 cut
+            chi2_2D_maxIndex = std::max_element(chi2_2D.begin(), chi2_2D.begin()+chi2maxIndex - back_off - nPointsDer_) - chi2_2D.begin();
+            std::cout << "Chi2_2D max: " << chi2_2D_max << std::endl;
+            std::cout << "Post-cut Chi2_2D xmax: " << chi2_2D_range.at(chi2_2D_maxIndex) << std::endl;
+
+            double chi2_2D_min = *std::min_element(chi2_2D.begin(), chi2_2D.end());
+            int chi2_2D_minIndex = std::min_element(chi2_2D.begin(), chi2_2D.end()) - chi2_2D.begin();
+
+
+
+            double chi2_2D_xmax = chi2_2D_range.at(chi2_2D_maxIndex);
             std::cout << "xmax is " << chi2_2D_max << std::endl;
             std::cout << "xmin is " << chi2_2D_min << std::endl;
-            
+
+            /*
             if(std::abs(chi2_2D_min) > chi2_2D_max * minimum_thresh && std::abs(chi2_2D_maxIndex - chi2_2D_minIndex) < 10) 
             {
                 std::cout << "Removing anomolous der2Chi2 spike" << std::endl;
@@ -238,18 +256,39 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                 chi2_2D_max = *std::max_element(der2chi2.begin(), der2chi2.end());
                 chi2_2D_maxIndex = std::max_element(der2chi2.begin(),der2chi2.end())-der2chi2.begin();
                 chi2_2D_xmax = der2chi2R.at(chi2_2D_maxIndex-back_off);
-                std::cout << "Final xmax: " << der2chi2R.at(chi2_2D_maxIndex) << std::endl;
+                std::cout << "Filtered xmax: " << der2chi2R.at(chi2_2D_maxIndex) << std::endl;
 
-            }   
-
+            } 
+            */
 
 
             xmax = chi2_2D_xmax;
+            //double altmax = *std::max_element(chi2_2D.begin(), chi2_2D.end());
+            //int altmaxIndex = std::max_element(chi2_2D.begin(),chi2_2D.end())-chi2_2D.begin();
+            //double altxmax = chi2_2D_range.at(altmaxIndex-back_off);
+
+            //std::cout << "Non Filtered xmax " <<  altxmax << std::endl;
+
             //TF1 cc_fit = new TF1("cc_fit", "gaus", xmin, xmax);
             TFitResultPtr fit = projy_h->Fit("gaus", "QRESL","",xmin,xmax);
 
             const double* chi2params = fit->GetParams();
             double sigma1= chi2params[2];
+            std::cout << "2der sigma = " << sigma1 << std::endl;
+/*
+            fit = projy_h->Fit("gaus","QRES","",xmin,altxmax);
+            const double* altParams = fit->GetParams();
+            double sigma2= altParams[2];
+            std::cout << "2der sigma = " << sigma1 << std::endl;
+            std::cout << "ratio sigma = " << sigma2 << std::endl;
+
+            if (sigma1 < sigma2)
+            {
+                xmax = chi2_2D_xmax;
+            }
+
+            else {xmax = altmax;}
+            
             //Find Maximum Chi2/NDF 2nd derivative divided by Chi2/NDF
             double ratio2derChi2_max = *std::max_element(ratio2derChi2.begin(), ratio2derChi2.end());
             int ratio2derChi2_maxIndex = std::max_element(ratio2derChi2.begin(), ratio2derChi2.end()) - ratio2derChi2.begin();
@@ -265,13 +304,13 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             {
                 xmax = chi2_2D_xmax;
 
-                /*for(int i=0; i < chi2_2D.range.size(); ++i) 
+                //for(int i=0; i < chi2_2D.range.size(); ++i) 
                 {
-                    flat_tuple_->addToVector("iterChi2NDF_derRange",chi2_2D_range.at(i));
-                }*/
+                  //  flat_tuple_->addToVector("iterChi2NDF_derRange",chi2_2D_range.at(i));
+                }//
             }
             else {xmax = ratio_xmax;}
-
+*/
             fit = projy_h->Fit("gaus", "QRESL", "", xmin, xmax);
             const double* fitparams = fit->GetParams();
 
