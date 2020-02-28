@@ -201,8 +201,8 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
             double chi2max = *std::max_element(chi2_NDF.begin(), chi2_NDF.end());
             int chi2maxIndex = std::max_element(chi2_NDF.begin(), chi2_NDF.end()) - chi2_NDF.begin();
-            std::cout << " Original Chi2 xmax: " << fit_range_end.at(chi2maxIndex) << std::endl;
-            std::cout << "Chi2 max index " << chi2maxIndex << std::endl;
+            //std::cout << " Original Chi2 xmax: " << fit_range_end.at(chi2maxIndex) << std::endl;
+            //std::cout << "Chi2 max index " << chi2maxIndex << std::endl;
             //subrange of chi2_2D values using chi2max as a maximum cut
             std::vector<double>::const_iterator begin = chi2_2D.begin();
             std::vector<double>::const_iterator end  = chi2_2D.begin()+(chi2maxIndex-nPointsDer_);
@@ -211,11 +211,11 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             double chi2_2D_max = *std::max_element(chi2_2D.begin(), chi2_2D.end());
             int chi2_2D_maxIndex = std::max_element(chi2_2D.begin(), chi2_2D.end()) - chi2_2D.begin();
             double chi2_2D_xmax = chi2_2D_range.at(chi2_2D_maxIndex);
-            std::cout << "Pre-cut Chi2_2D xmax: " << chi2_2D_xmax << std::endl;
+            //std::cout << "Pre-cut Chi2_2D xmax: " << chi2_2D_xmax << std::endl;
 
             double cut_maxIndex = std::max_element(cutrange.begin(), cutrange.end()) - cutrange.begin();
             double cut_xmax = chi2_2D_range.at(cut_maxIndex);
-            std::cout << "Post-cut Chi2_2D xmax: " << cut_xmax << std::endl;
+            //std::cout << "Post-cut Chi2_2D xmax: " << cut_xmax << std::endl;
 
 
             double cut1xmax = cut_xmax;
@@ -241,7 +241,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
                     cut_maxIndex = std::max_element(cutrange.begin(), cutrange.end()) - cutrange.begin();
                     cut_xmax = chi2_2D_range.at(cut_maxIndex);
-                    std::cout << "Post-cut Chi2_2D xmax: " << cut_xmax << std::endl;
+                    //std::cout << "Post-cut Chi2_2D xmax: " << cut_xmax << std::endl;
                     cut2xmax = cut_xmax;
                     back_off ++;
                 }
