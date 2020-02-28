@@ -198,89 +198,89 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             std::vector<double>::const_iterator first = fit_range_end.begin()+nPointsDer_;
             std::vector<double>::const_iterator last  = fit_range_end.begin()+nPointsDer_+chi2_2D.size();
             std::vector<double> chi2_2D_range(first,last);
+            std::cout << "Chi2_2D_range size: " << chi2_2D_range.size() << std::endl;
+            std::cout << "Chi2_2D size: " << chi2_2D.size() << std::endl;
+            
+            first = chi2_NDF.begin()+nPointsDer_;
+            last = chi2_NDF.begin() + nPointsDer_ + chi2_2D.size();
+            std::vector<double> chi2SubRange(first,last);
 
-            double chi2max = *std::max_element(chi2_NDF.begin(), chi2_NDF.end() - nPointsDer_);
-            int chi2maxIndex = std::max_element(chi2_NDF.begin(), chi2_NDF.end()) - chi2_NDF.begin();
-            //std::cout << " Original Chi2 xmax: " << fit_range_end.at(chi2maxIndex) << std::endl;
-            //std::cout << "Chi2 max index " << chi2maxIndex << std::endl;
+
+            double chi2max = *std::max_element(chi2SubRange.begin(), chi2SubRange.end());
+            int chi2maxIndex = std::max_element(chi2SubRange.begin(), chi2SubRange.end()) - chi2SubRange.begin();
+            std::cout << " Original Chi2 xmax: " << fit_range_end.at(chi2maxIndex) << std::endl;
+            std::cout << "Chi2 max index " << chi2maxIndex << std::endl;
 
             double chi2_2D_max = *std::max_element(chi2_2D.begin(), chi2_2D.end());
             int chi2_2D_maxIndex = std::max_element(chi2_2D.begin(), chi2_2D.end()) - chi2_2D.begin();
             double chi2_2D_xmax = chi2_2D_range.at(chi2_2D_maxIndex);
-            //std::cout << "Pre-cut Chi2_2D xmax: " << chi2_2D_xmax << std::endl;
+            std::cout << "Pre-cut Chi2_2D xmax: " << chi2_2D_xmax << std::endl;
 
-            if (chi2maxIndex > nPointsDer_) 
+            
+            //subrange of chi2_2D values using chi2max as a maximum cut
+            std::vector<double>::const_iterator begin = chi2_2D.begin();
+            std::vector<double>::const_iterator end  = chi2_2D.begin()+(chi2maxIndex);
+            std::vector<double> cutrange(begin,end);
+            double cut_maxIndex = std::max_element(cutrange.begin(), cutrange.end()) - cutrange.begin();
+            double cut_xmax = chi2_2D_range.at(cut_maxIndex);
+            std::cout << "Post-cut Chi2_2D xmax: " << cut_xmax << std::endl;
+
+
+            double cut1xmax = cut_xmax;
+
+            //Fit regardless if cut was applied or not
+            TFitResultPtr fit = projy_h->Fit("gaus", "QRES", "", xmin, cut1xmax);
+            double sigma1 = fit->GetParams()[2];
+
+            
+            double cut2xmax;
+            double sigma2;
+            bool cut2;
+            if(cut_xmax >= chi2_2D_xmax) 
+            {
+                cut2 = true;
+                while (cut_xmax >= chi2_2D_xmax && chi2maxIndex > 0)
                 {
-                //subrange of chi2_2D values using chi2max as a maximum cut
-                std::vector<double>::const_iterator begin = chi2_2D.begin();
-                std::vector<double>::const_iterator end  = chi2_2D.begin()+(chi2maxIndex-nPointsDer_);
-                std::vector<double> cutrange(begin,end);
-                double cut_maxIndex = std::max_element(cutrange.begin(), cutrange.end()) - cutrange.begin();
-                double cut_xmax = chi2_2D_range.at(cut_maxIndex);
-                //std::cout << "Post-cut Chi2_2D xmax: " << cut_xmax << std::endl;
+                    std::cout << "chi2maxIndex" << chi2maxIndex << std::endl;
+                    std::cout << "chi2_2D size: " << chi2_2D.size() << std::endl;
+                    begin = chi2_2D.begin();
+                    end  = chi2_2D.begin()+(chi2maxIndex);
+                    std::vector<double> cutrange(begin,end);
 
-
-                double cut1xmax = cut_xmax;
-
-                //Fit regardless if cut was applied or not
-                TFitResultPtr fit = projy_h->Fit("gaus", "QRES", "", xmin, cut1xmax);
-                double sigma1 = fit->GetParams()[2];
-
-                
-                int back_off = 0;
-                double cut2xmax;
-                double sigma2;
-                bool cut2;
-                if(cut_xmax >= chi2_2D_xmax && chi2maxIndex > nPointsDer_) 
-                {
-                    cut2 = true;
-                    while ( back_off < chi2maxIndex && cut_xmax >= chi2_2D_xmax && chi2maxIndex > nPointsDer_)
-                    {
-                        chi2maxIndex = chi2maxIndex - 1;
-                       // std::cout << "chi2maxIndex" << chi2maxIndex << std::endl;
-                        //std::cout << "chi2_2D size: " << chi2_2D.size() << std::endl;
-                        //std::cout << "range subtr" << chi2maxIndex - nPointsDer_ << std::endl;
-                        begin = chi2_2D.begin();
-                        end  = chi2_2D.begin()+(chi2maxIndex-nPointsDer_);
-                        std::vector<double> cutrange(begin,end);
-
-                        cut_maxIndex = std::max_element(cutrange.begin(), cutrange.end()) - cutrange.begin();
-                        cut_xmax = chi2_2D_range.at(cut_maxIndex);
-                        //std::cout << "Post-cut Chi2_2D xmax: " << cut_xmax << std::endl;
-                        cut2xmax = cut_xmax;
-                        back_off ++;
-                    }
-                    //std::cout << "exit while loop" << std::endl;
-                    //Fit at next lowest xmax position of chi2 second derivative
-                    fit = projy_h->Fit("gaus", "QRES", "", xmin, cut2xmax);
-                    sigma2 = fit->GetParams()[2];
-
+                    cut_maxIndex = std::max_element(cutrange.begin(), cutrange.end()) - cutrange.begin();
+                    std::cout << "cut_maxIndex: " << cut_maxIndex << std::endl;
+                    cut_xmax = chi2_2D_range.at(cut_maxIndex);
+                    std::cout << "Post-cut Chi2_2D xmax: " << cut_xmax << std::endl;
+                    cut2xmax = cut_xmax;
+                    chi2maxIndex = chi2maxIndex - 1;
                 }
-                
-                if (cut2 == true) 
-                {
-                    if (sigma1 < sigma2)
-                    {
-                        xmax = cut1xmax;
-                    }
-                    else 
-                    {
-                        xmax = cut2xmax;
-                    }
-                }
-                else 
+                std::cout << "exit while loop" << std::endl;
+                //Fit at next lowest xmax position of chi2 second derivative
+                fit = projy_h->Fit("gaus", "QRES", "", xmin, cut2xmax);
+                sigma2 = fit->GetParams()[2];
+
+            }
+            
+            if (cut2 == true) 
+            {
+                if (sigma1 < sigma2)
                 {
                     xmax = cut1xmax;
                 }
-
+                else 
+                {
+                    xmax = cut2xmax;
+                }
             }
-
             else 
             {
-                xmax = chi2_2D_xmax;
+                xmax = cut1xmax;
             }
 
-            TFitResultPtr fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
+            
+            
+
+            fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
             const double* fitparams = fit->GetParams();
 
             //Set Fit Parameters in the flat tuple
