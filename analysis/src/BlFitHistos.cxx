@@ -217,7 +217,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                 std::vector<double> cutrange(begin,end);
                 double cut_maxIndex = std::max_element(cutrange.begin(), cutrange.end()) - cutrange.begin();
                 double cut_xmax = chi2_2D_range.at(cut_maxIndex);
-                //std::cout << "Post-cut Chi2_2D xmax: " << cut_xmax << std::endl;
+                std::cout << "Post-cut Chi2_2D xmax: " << cut_xmax << std::endl;
 
 
                 double cut1xmax = cut_xmax;
@@ -237,20 +237,20 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                     while ( back_off < chi2maxIndex && cut_xmax >= chi2_2D_xmax && chi2maxIndex > nPointsDer_)
                     {
                         chi2maxIndex = chi2maxIndex - 1;
-                        //std::cout << "chi2maxIndex" << chi2maxIndex << std::endl;
-                        //std::cout << "chi2_2D size: " << chi2_2D.size() << std::endl;
-                        //std::cout << "range subtr" << chi2maxIndex - nPointsDer_ << std::endl;
+                        std::cout << "chi2maxIndex" << chi2maxIndex << std::endl;
+                        std::cout << "chi2_2D size: " << chi2_2D.size() << std::endl;
+                        std::cout << "range subtr" << chi2maxIndex - nPointsDer_ << std::endl;
                         begin = chi2_2D.begin();
                         end  = chi2_2D.begin()+(chi2maxIndex-nPointsDer_);
                         std::vector<double> cutrange(begin,end);
 
                         cut_maxIndex = std::max_element(cutrange.begin(), cutrange.end()) - cutrange.begin();
                         cut_xmax = chi2_2D_range.at(cut_maxIndex);
-                        //std::cout << "Post-cut Chi2_2D xmax: " << cut_xmax << std::endl;
+                        std::cout << "Post-cut Chi2_2D xmax: " << cut_xmax << std::endl;
                         cut2xmax = cut_xmax;
                         back_off ++;
                     }
-                    //std::cout << "exit while loop" << std::endl;
+                    std::cout << "exit while loop" << std::endl;
                     //Fit at next lowest xmax position of chi2 second derivative
                     fit = projy_h->Fit("gaus", "QRES", "", xmin, cut2xmax);
                     sigma2 = fit->GetParams()[2];
