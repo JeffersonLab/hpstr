@@ -12,6 +12,7 @@
 //----------------//
 #include <cstdio>
 #include <vector>
+#include <cmath>
 
 //----------//
 //   ROOT   //
@@ -20,6 +21,7 @@
 #include <TClonesArray.h>
 #include <TRefArray.h>
 #include <TRef.h>
+
 
 //TODO static?
 namespace TRACKINFO {
@@ -96,7 +98,7 @@ class Track : public TObject {
         double getChi2Ndf() const { 
             //avoid check for 0
             if (ndf_ > 1e-6) 
-                return chi2_;
+                return chi2_ / ndf_;
             else  
                 return -999;
         };
@@ -200,6 +202,31 @@ class Track : public TObject {
          */
         int getCharge() const { return charge_; };  
 
+
+        /** 
+         * Set the track id.
+         *
+         */
+        
+        void setID(const int id){id_ = id;};
+        
+        /** 
+         * Get the track id.
+         *
+         */
+        
+        int getID() const {return id_;};
+
+
+        /**
+         * Set the momentum of the track from track parameters and b-field
+         *
+         * @param bfield
+         */
+        
+        void setMomentum(double bfield = 0.52);
+        
+
         /** 
          * Set the momentum of the track.  The momentum is extracted from
          * the corresponding ReconstructedParticle.
@@ -208,9 +235,17 @@ class Track : public TObject {
          */
         void setMomentum(std::vector<double> momentum); 
 
+        void setMomentum(double px, double py, double pz);
+
         /** @return The track momentum. */
         std::vector<double> getMomentum() { return {px_, py_, pz_}; }; 
-
+        
+        /**
+         * @return momentum magnitude
+         */
+        
+        double getP(){return sqrt(px_*px_ + py_*py_ + pz_*pz_);};
+        
         /**
          * Set the lambda kink of the given layer.
          *
@@ -218,7 +253,7 @@ class Track : public TObject {
          * @param lambda_kink The lambda kink value.
          */
         void setLambdaKink(const int layer, const double lambda_kink) { lambda_kinks_[layer] = lambda_kink; }
-
+        
         /**
          * Get the lambda kink value of the given layer.
          *
@@ -226,7 +261,7 @@ class Track : public TObject {
          * @return The lambda kink value of the given layer.
          */
         double getLambdaKink(const int layer) const { return lambda_kinks_[layer]; }
-
+        
         /**
          * Set the phi kink of the given layer.
          *
@@ -352,6 +387,9 @@ class Track : public TObject {
         double px_{-9999}; 
         double py_{-9999}; 
         double pz_{-9999};
+                
+        /** Track id. */
+        int id_{0};
 
         /** Track charge. */
         int charge_{0};
@@ -361,7 +399,7 @@ class Track : public TObject {
 
         /** Has Ly0 Shared hits. */
         bool SharedLy0_{false};
-
+        
         /** Has Ly1 Shared hits. */
         bool SharedLy1_{false};
 

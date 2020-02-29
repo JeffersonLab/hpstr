@@ -37,7 +37,9 @@ class RecoHitAnaProcessor : public Processor {
 
     private:
 
+        //Containers to hold histogrammer info
         RecoHitAnaHistos* histos{nullptr};
+        std::string  histCfgFilename_;
 
         //TODO Change this to be held from HPSEvent
         TTree* tree_;
@@ -50,6 +52,15 @@ class RecoHitAnaProcessor : public Processor {
         std::vector<Track*>      * tracks_{};
         std::vector<CalHit*>     * ecalHits_{};
         std::vector<CalCluster*> * ecalClusters_{};
+
+        std::string anaName_{"recoHitAna"};
+        std::string trkColl_{"GBLTracks"};
+        std::string trkrHitColl_{"RotatedHelicalTrackHits"};
+        std::string ecalHitColl_{"EcalCalHits"};
+        std::string ecalClusColl_{"EcalClustersCorr"};
+
+        //Debug Level
+        int debug_{0};
 
 };
 

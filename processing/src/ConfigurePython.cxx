@@ -55,7 +55,7 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
     // Set the command line arguments passed to the python script to be 
     // executed. Note that the first parameter in the list or arguments 
     // should refer to the script to be executed.
-    if (nargs > 0) {
+    
 #if PY_MAJOR_VERSION >= 3
       wchar_t** targs = new wchar_t*[nargs + 1];
 
@@ -86,7 +86,6 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
       PySys_SetArgvEx(nargs+1, targs, 1);
       delete[] targs;
 #endif
-    }
 
     PyObject* script = nullptr; 
     PyObject* process = nullptr; 
@@ -129,6 +128,7 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
     }
 
     event_limit_ = intMember(p_process, "max_events");
+    run_mode_    = intMember(p_process, "run_mode");
 
     PyObject* p_sequence = PyObject_GetAttrString(p_process, "sequence");
     if (!PyList_Check(p_sequence)) {
@@ -320,6 +320,7 @@ Process* ConfigurePython::makeProcess() {
     }
 
     p->setEventLimit(event_limit_);
+    p->setRunMode(run_mode_);
 
     return p; 
 }

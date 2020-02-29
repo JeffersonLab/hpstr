@@ -7,6 +7,11 @@
 
 #include "Event.h"
 
+/*~~~~~~~~~~*/
+/*   LCIO   */
+/*~~~~~~~~~~*/
+#include <EVENT/LCCollection.h>
+
 Event::Event() {
     
     // Create the tree
@@ -79,4 +84,18 @@ void Event::Clear() {
     for (auto& collection : objects_) { 
         collection.second->Clear("C"); 
     }
+}
+
+bool Event::hasLCCollection(const std::string name) {
+    
+    // Attempt to get the collection of the given name from the event. If it 
+    // doesn't exist, an exemption will be thrown. In this case, the exception 
+    // will be handled and the method will return false.  Otherwise, the 
+    // method returns true.  
+    try { 
+        getLCCollection(name); 
+    } catch (EVENT::DataNotAvailableException e) {
+        return false; 
+    }
+    return true; 
 }

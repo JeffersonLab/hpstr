@@ -38,16 +38,28 @@ class MCAnaProcessor : public Processor {
 
     private:
 
+        //Containers to hold histogrammer info
         MCAnaHistos* histos{nullptr};
+        std::string  histCfgFilename_;
 
         //TODO Change this to be held from HPSEvent
         TTree* tree_;
         TBranch* bmcParts_{nullptr};
         TBranch* bmcTrkrHits_{nullptr};
         TBranch* bmcEcalHits_{nullptr};
-        TClonesArray* mcParts_{nullptr};
-        TClonesArray* mcTrkrHits_{nullptr};
-        TClonesArray* mcEcalHits_{nullptr};
+
+        std::vector<MCParticle*>   * mcParts_{nullptr};
+        std::vector<MCTrackerHit*> * mcTrkrHits_{nullptr};
+        std::vector<MCEcalHit*>    * mcEcalHits_{nullptr};
+
+        std::string anaName_{"recoHitAna"};
+        std::string partColl_{"MCParticle"};
+        std::string trkrHitColl_{"TrackerHits"};
+        std::string ecalHitColl_{"EcalHits"};
+
+
+        //Debug Level
+        int debug_{0};
 
 };
 
