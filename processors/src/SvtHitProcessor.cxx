@@ -10,12 +10,13 @@
 #include "Event.h"
 #include "FlatTupleMaker.h"
 
-#include <EVENT/LCCollection.h>
-#include <EVENT/MCParticle.h>
-#include <EVENT/SimTrackerHit.h>
+#include "EVENT/LCCollection.h"
+#include "EVENT/MCParticle.h"
+#include "EVENT/SimTrackerHit.h"
+#include "EVENT/TrackerHit.h"
 #include "EVENT/TrackerRawData.h"
-#include <UTIL/BitField64.h>
-#include <UTIL/LCRelationNavigator.h>
+#include "UTIL/BitField64.h"
+#include "UTIL/LCRelationNavigator.h"
 
 SvtHitProcessor::SvtHitProcessor(const std::string& name, Process& process) 
     : Processor(name, process) { 
@@ -29,16 +30,25 @@ void SvtHitProcessor::initialize(TTree* tree) {
     ntuple_ = std::make_shared<FlatTupleMaker>("SvtHits");
    
     ntuple_->addVariable("raw_hit_count"); 
-    ntuple_->addVector("raw_hit_layer"); 
-    ntuple_->addVector("raw_hit_strip"); 
+    ntuple_->addVector(  "raw_hit_layer"); 
+    ntuple_->addVector(  "raw_hit_strip"); 
+    
+    ntuple_->addVariable("strip_hit_count"); 
+    ntuple_->addVector("strip_cluster_size"); 
+    ntuple_->addVector(  "strip_hit_x"); 
+    ntuple_->addVector(  "strip_hit_y"); 
+    ntuple_->addVector(  "strip_hit_z"); 
 
     ntuple_->addVariable("sim_hit_count"); 
-    ntuple_->addVector("sim_hit_layer"); 
-    ntuple_->addVector("sim_hit_module");
-    ntuple_->addVector("sim_hit_raw_strip"); 
-    ntuple_->addVector("sim_hit_x");  
-    ntuple_->addVector("sim_hit_y");  
-    ntuple_->addVector("sim_hit_z");  
+    ntuple_->addVector(  "sim_hit_layer"); 
+    ntuple_->addVector(  "sim_hit_module");
+    ntuple_->addVector(  "sim_hit_raw_strip"); 
+    ntuple_->addVector(  "sim_hit_strip_res_x");
+    ntuple_->addVector(  "sim_hit_strip_res_y");
+    ntuple_->addVector(  "sim_hit_strip_res_z");
+    ntuple_->addVector(  "sim_hit_x");  
+    ntuple_->addVector(  "sim_hit_y");  
+    ntuple_->addVector(  "sim_hit_z");  
 
 }
 
@@ -72,6 +82,31 @@ bool SvtHitProcessor::process(IEvent* ievent) {
         ntuple_->addToVector("raw_hit_strip", raw_decoder["strip"]); 
     }
 
+    std::map < EVENT::TrackerRawData*, EVENT::TrackerHit* > hit_map; 
+    if (event->hasLCCollection("StripClusterer_SiTrackerHitStrip1D")) { 
+        
+        auto strip_hits{event->getLCCollection("StripClusterer_SiTrackerHitStrip1D")}; 
+
+        auto strip_hit_count{strip_hits->getNumberOfElements()};
+        ntuple_->setVariableValue("strip_hit_count", strip_hit_count); 
+
+        for (int ihit{0}; ihit < strip_hit_count; ++ihit) { 
+            
+            auto hit{static_cast<EVENT::TrackerHit*>(strip_hits->getElementAt(ihit))}; 
+
+            auto position{hit->getPosition()}; 
+            ntuple_->addToVector("strip_hit_x", position[0]); 
+            ntuple_->addToVector("strip_hit_y", position[1]); 
+            ntuple_->addToVector("strip_hit_z", position[2]); 
+        
+            auto strip_raw_hits{hit->getRawHits()}; 
+            ntuple_->addToVector("strip_cluster_size", strip_raw_hits.size()); 
+
+            for (const auto& strip_raw_hit : strip_raw_hits) 
+                hit_map[static_cast<EVENT::TrackerRawData*>(strip_raw_hit)] = hit; 
+        }
+    }
+
     // Check for the existence of simulated tracker hits.  If they don't 
     // exists, stop processing the event. 
     if (!event->hasLCCollection("TrackerHits")) return false;
@@ -92,7 +127,7 @@ bool SvtHitProcessor::process(IEvent* ievent) {
     // Instantiate an LCRelations navigator which allows faster access to the 
     // raw tracker hits associated with a given sim tracker hit.
     auto raw_sim_nav{new UTIL::LCRelationNavigator(raw_sim_relation)};
-    
+
     auto sim_hit_count = sim_hits->getNumberOfElements(); 
     ntuple_->setVariableValue("sim_hit_count", sim_hit_count);
 
@@ -136,7 +171,29 @@ bool SvtHitProcessor::process(IEvent* ievent) {
         }
 
         raw_decoder.setValue(max_value); 
-        ntuple_->addToVector("sim_hit_raw_strip", raw_decoder["strip"]); 
+        ntuple_->addToVector("sim_hit_raw_strip", raw_decoder["strip"]);
+
+        double delta_x{-9999}, delta_y{-9999}, delta_z{-9999}; 
+        auto strip_hit_sim{hit_map[raw_hit_max]};
+       
+        if (decoder["layer"] == 1) { 
+            std::cout << "Sim x: " << sim_hit->getPosition()[0] 
+                      << " Strip x: " << strip_hit_sim->getPosition()[0] 
+                      << " Sim y: " << sim_hit->getPosition()[1] 
+                      << " Strip y: " << strip_hit_sim->getPosition()[1] 
+                      << " Sim z: " << sim_hit->getPosition()[2] 
+                      << " Strip z: " << strip_hit_sim->getPosition()[2] 
+                      << " Strip: " << raw_decoder["strip"] << std::endl;
+        } 
+        if (strip_hit_sim != nullptr) { 
+            delta_x = strip_hit_sim->getPosition()[0] - sim_hit->getPosition()[0];
+            delta_y = strip_hit_sim->getPosition()[1] - sim_hit->getPosition()[1];
+            delta_z = strip_hit_sim->getPosition()[2] - sim_hit->getPosition()[2];
+        }
+
+        ntuple_->addToVector("sim_hit_strip_res_x", delta_x); 
+        ntuple_->addToVector("sim_hit_strip_res_y", delta_y); 
+        ntuple_->addToVector("sim_hit_strip_res_z", delta_z); 
     }
     ntuple_->fill();
 
