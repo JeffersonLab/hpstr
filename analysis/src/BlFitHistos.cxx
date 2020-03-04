@@ -42,7 +42,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
 
         //Loop over all channels to find location of maximum chi2 2nd derivative
-        for(int cc=0; cc < 640 ; ++cc) 
+        for(int cc=0; cc < 30 ; ++cc) 
         {
             
             //Set Channel and Hybrid information in the flat tuple
@@ -63,13 +63,14 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             projy_h->SetTitle(Form("%s_proY_ch%i",SvtAna2DHisto_key.c_str(),cc));
             //Set minimum bin threshold for fit range begin
             int ntries = projy_h->GetEntries();
+            /*
             if ( ntries < 5000 ){xmin_ = 10;}
             else if ( 5000 < ntries && ntries < 10000) {xmin_ = 50;}
             else if ( 10000 < ntries && ntries < 20000) {xmin_ = 70;}
-            else if ( 20000 < ntries && ntries < 30000) {xmin_ = 150;}
-            else if ( 30000 < ntries && ntries < 100000) {xmin_ = 200;}
-            else if ( 100000 < ntries) {xmin_ = 300;}
-
+            else if ( 20000 < ntries && ntries < 30000) {xmin_ = 100;}
+            else if ( 30000 < ntries && ntries < 100000) {xmin_ = 100;}
+            else if ( 100000 < ntries) {xmin_ = 100;}
+            */
 
             double chRMS = projy_h->GetRMS();
 
@@ -288,10 +289,126 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             
 
             fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
+            double ogChi2 = fit->Chi2();
+            double ogNdf = fit->Ndf();
+            double ogMean = fit->GetParams()[1];
+            double ogSigma = fit->GetParams()[2];
+            double tempChi2 = ogChi2;
+            double tempNdf = ogNdf;
+            double improve = 0.01;
+            bool xminworse = false;
+            bool addxmaxworse = false;
+            double stopxmax = ogMean + 3*ogSigma; 
+            bool subxmaxworse = false;
+            double ogxmax = xmax;
+            bool xmaxreset = true;
+
+            
+
+            
+
+            //XMAX
+            //std::cout << "original xmax " << xmax << std::endl;
+            //std::cout << "original Chi2/Ndf " << ogChi2/ogNdf << std::endl;
+            
+            /*while (addxmaxworse != true ) 
+            {
+                xmax = xmax + 5*binwidth;
+                std::cout << "xmax = " << xmax << std::endl;
+                fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
+                std::cout << "New Chi2/Ndf " << fit->Chi2()/fit->Ndf() << std::endl;
+                if ( (fit->Chi2()/fit->Ndf())/(tempChi2/tempNdf) > 1.1 )
+                {
+                    xmax = xmax - 5*binwidth;
+                    addxmaxworse = true;
+                }
+                std::cout << "New xmax found at " << xmax << std::endl; 
+                tempChi2 = fit->Chi2();
+                tempNdf = fit->Ndf();
+            }
+            */
+                //std::cout << "mean + Nsigma = " << ogMean + 3*ogSigma << std::endl;
+                while (xmax < stopxmax)
+                {
+                    xmax = xmax + 1*binwidth;
+                    //std::cout << "xmax increased to " << xmax << std::endl;
+                    tempChi2 = fit->Chi2();
+                    tempNdf = fit->Ndf();
+                    fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
+                    //std::cout << "New Chi2/Ndf " << fit->Chi2()/fit->Ndf() << std::endl;
+                    if ( fit->Chi2()/fit->Ndf() < tempChi2/tempNdf)
+                    {
+                        while ( xmax < stopxmax) 
+                        {
+                            xmax = xmax + 1*binwidth;
+                            //std::cout << "xmax increased to " << xmax << std::endl;
+                            tempChi2 = fit->Chi2();
+                            tempNdf = fit->Ndf();
+                            fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
+                            //std::cout << "New Chi2/Ndf " << fit->Chi2()/fit->Ndf() << std::endl;
+                            if ( fit->Chi2()/fit->Ndf() > tempChi2/tempNdf) 
+                            {
+                                xmax = xmax - 1*binwidth;
+                                subxmaxworse = true;
+                                xmaxreset = false;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+            }
+
+                if (xmaxreset == true)
+                {
+                    xmax = ogxmax;
+                }
+            
+            
+            while (subxmaxworse != true && xmin > 0 ) 
+            {
+                
+                xmax = xmax - 5*binwidth;
+                //std::cout << "xmax decreased to  " << xmax << std::endl;
+                fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
+                //std::cout << "New Chi2/Ndf " << fit->Chi2()/fit->Ndf() << std::endl;
+                if ( (fit->Chi2()/fit->Ndf())/(tempChi2/tempNdf) > (1.0-improve) )
+                {
+                    xmax = xmax + 5*binwidth;
+                    subxmaxworse = true;
+                }
+                tempChi2 = fit->Chi2();
+                tempNdf = fit->Ndf();
+            }
+
+            //tempChi2 = ogChi2;
+            //tempNdf = ogNdf;
+
+            //XMIN
+            //std::cout << "original xmin " << xmin << std::endl;
+            //std::cout << "original Chi2/Ndf " << tempChi2/tempNdf << std::endl;
+            while (xminworse != true) 
+            {
+                xmin = xmin + 5*binwidth;
+                //std::cout << "xmin = " << xmin << std::endl;
+                fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
+                //std::cout << "New Chi2/Ndf " << fit->Chi2()/fit->Ndf() << std::endl;
+                if ( (fit->Chi2()/fit->Ndf())/(tempChi2/tempNdf) > (1.0-improve) )
+                {
+                    xmin = xmin - 5*binwidth;
+                    xminworse = true;
+                }
+                //std::cout << "New xmin found at " << xmin << std::endl; 
+                tempChi2 = fit->Chi2();
+                tempNdf = fit->Ndf();
+            }
+
+            fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
             const double* fitparams = fit->GetParams();
+            //std::cout << "New Chi2/Ndf " << fit->Chi2()/fit->Ndf() << std::endl; 
 
             //If fit mean > xmax, low daq threshold or bad fit
-            if ( fitparams[1] > xmax )
+            double N = 0.5;
+            if ( fitparams[1] + N*fitparams[2] > xmax )
             {
                 flat_tuple_->setVariableValue("lowdaq", 1.0);
             }
