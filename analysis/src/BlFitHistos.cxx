@@ -44,7 +44,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
         //Loop over all channels to find location of maximum chi2 2nd derivative
         for(int cc=0; cc < 640 ; ++cc) 
         {
-
+            
             //Set Channel and Hybrid information in the flat tuple
             flat_tuple_->setVariableValue("SvtAna2DHisto_key", SvtAna2DHisto_key);
             flat_tuple_->setVariableValue("channel", cc);
@@ -61,6 +61,16 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             TH1D* projy_h = histo_hh->ProjectionY(Form("%s_proY_ch%i",SvtAna2DHisto_key.c_str(),cc),cc+1,cc+1,"e");
 
             projy_h->SetTitle(Form("%s_proY_ch%i",SvtAna2DHisto_key.c_str(),cc));
+            //Set minimum bin threshold for fit range begin
+            int ntries = projy_h->GetEntries();
+            if ( ntries < 5000 ){xmin_ = 10;}
+            else if ( 5000 < ntries && ntries < 10000) {xmin_ = 50;}
+            else if ( 10000 < ntries && ntries < 20000) {xmin_ = 70;}
+            else if ( 20000 < ntries && ntries < 30000) {xmin_ = 150;}
+            else if ( 30000 < ntries && ntries < 100000) {xmin_ = 200;}
+            else if ( 100000 < ntries) {xmin_ = 300;}
+
+
             double chRMS = projy_h->GetRMS();
 
             flat_tuple_->setVariableValue("rms", chRMS);
@@ -77,21 +87,15 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
             //Minimum Entry Requirement NOT ROBUST!!!
             int firstbin = projy_h->FindFirstBinAbove(xmin_,1);
-            if (firstbin == -1) 
+            if (firstbin == -1 or projy_h->GetEntries() < minStats_ ) 
             {
-                
-                flat_tuple_->setVariableValue("statsTooLow",1.0);
-                std::cout << "Bin threshold too low" << cc << std::endl;
-                continue;
-            }
-            if(projy_h->GetEntries() < minStats_)
-            {
-
                 flat_tuple_->setVariableValue("BlFitMean", -9999.9);
                 flat_tuple_->setVariableValue("BlFitSigma", -9999.9);
                 flat_tuple_->setVariableValue("BlFitNorm", -9999.9);
                 flat_tuple_->setVariableValue("BlFitRangeLower", -9999.9);
                 flat_tuple_->setVariableValue("BlFitRangeUpper", -9999.9);
+                flat_tuple_->setVariableValue("BlFitChi2", -9999.9);
+                flat_tuple_->setVariableValue("BlFitNdf", -9999.9);
 
                 flat_tuple_->addToVector("iterMean", -9999.9);
                 flat_tuple_->addToVector("iterChi2NDF_2der",-9999.9);
@@ -100,14 +104,17 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                 flat_tuple_->addToVector("iterChi2NDF",-9999.9);
                 flat_tuple_->addToVector("ratio2derChi2", -9999.9);
                 flat_tuple_->addToVector("iterFitRangeEnd", -9999.9);
-                //If channel did not have enough entries to perform a fit, set minStats_dead_channel status to 1
-                flat_tuple_->setVariableValue("statsTooLow",1.0);
+
+                flat_tuple_->setVariableValue("lowdaq", -9999.9);
+
+      //If channel not have enough entries to fit, set minStats_dead_channel status to 1
+                flat_tuple_->setVariableValue("minbinFail",1.0);
                 std::cout << "Not enough stats in channel " << cc << std::endl;
                 continue;
             }
 
             //If minimum entry requirement is passed, set 'dead_channel' variable to 0
-            flat_tuple_->setVariableValue("statsTooLow",0.0);
+            flat_tuple_->setVariableValue("minbinFail",0.0);
 
             int iter = 0;
             
@@ -198,8 +205,8 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             std::vector<double>::const_iterator first = fit_range_end.begin()+nPointsDer_;
             std::vector<double>::const_iterator last  = fit_range_end.begin()+nPointsDer_+chi2_2D.size();
             std::vector<double> chi2_2D_range(first,last);
-            std::cout << "Chi2_2D_range size: " << chi2_2D_range.size() << std::endl;
-            std::cout << "Chi2_2D size: " << chi2_2D.size() << std::endl;
+            //std::cout << "Chi2_2D_range size: " << chi2_2D_range.size() << std::endl;
+            //std::cout << "Chi2_2D size: " << chi2_2D.size() << std::endl;
             
             first = chi2_NDF.begin()+nPointsDer_;
             last = chi2_NDF.begin() + nPointsDer_ + chi2_2D.size();
@@ -208,13 +215,13 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
             double chi2max = *std::max_element(chi2SubRange.begin(), chi2SubRange.end());
             int chi2maxIndex = std::max_element(chi2SubRange.begin(), chi2SubRange.end()) - chi2SubRange.begin();
-            std::cout << " Original Chi2 xmax: " << fit_range_end.at(chi2maxIndex) << std::endl;
-            std::cout << "Chi2 max index " << chi2maxIndex << std::endl;
+            //std::cout << " Original Chi2 xmax: " << fit_range_end.at(chi2maxIndex) << std::endl;
+            //std::cout << "Chi2 max index " << chi2maxIndex << std::endl;
 
             double chi2_2D_max = *std::max_element(chi2_2D.begin(), chi2_2D.end());
             int chi2_2D_maxIndex = std::max_element(chi2_2D.begin(), chi2_2D.end()) - chi2_2D.begin();
             double chi2_2D_xmax = chi2_2D_range.at(chi2_2D_maxIndex);
-            std::cout << "Pre-cut Chi2_2D xmax: " << chi2_2D_xmax << std::endl;
+            //std::cout << "Pre-cut Chi2_2D xmax: " << chi2_2D_xmax << std::endl;
 
             
             //subrange of chi2_2D values using chi2max as a maximum cut
@@ -223,7 +230,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             std::vector<double> cutrange(begin,end);
             double cut_maxIndex = std::max_element(cutrange.begin(), cutrange.end()) - cutrange.begin();
             double cut_xmax = chi2_2D_range.at(cut_maxIndex);
-            std::cout << "Post-cut Chi2_2D xmax: " << cut_xmax << std::endl;
+            //std::cout << "Post-cut Chi2_2D xmax: " << cut_xmax << std::endl;
 
 
             double cut1xmax = cut_xmax;
@@ -241,20 +248,20 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                 cut2 = true;
                 while (cut_xmax >= chi2_2D_xmax && chi2maxIndex > 0)
                 {
-                    std::cout << "chi2maxIndex" << chi2maxIndex << std::endl;
-                    std::cout << "chi2_2D size: " << chi2_2D.size() << std::endl;
+                    //std::cout << "chi2maxIndex" << chi2maxIndex << std::endl;
+                    //std::cout << "chi2_2D size: " << chi2_2D.size() << std::endl;
                     begin = chi2_2D.begin();
                     end  = chi2_2D.begin()+(chi2maxIndex);
                     std::vector<double> cutrange(begin,end);
 
                     cut_maxIndex = std::max_element(cutrange.begin(), cutrange.end()) - cutrange.begin();
-                    std::cout << "cut_maxIndex: " << cut_maxIndex << std::endl;
+                    //std::cout << "cut_maxIndex: " << cut_maxIndex << std::endl;
                     cut_xmax = chi2_2D_range.at(cut_maxIndex);
-                    std::cout << "Post-cut Chi2_2D xmax: " << cut_xmax << std::endl;
+                    //std::cout << "Post-cut Chi2_2D xmax: " << cut_xmax << std::endl;
                     cut2xmax = cut_xmax;
                     chi2maxIndex = chi2maxIndex - 1;
                 }
-                std::cout << "exit while loop" << std::endl;
+                //std::cout << "exit while loop" << std::endl;
                 //Fit at next lowest xmax position of chi2 second derivative
                 fit = projy_h->Fit("gaus", "QRES", "", xmin, cut2xmax);
                 sigma2 = fit->GetParams()[2];
@@ -283,12 +290,23 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
             const double* fitparams = fit->GetParams();
 
+            //If fit mean > xmax, low daq threshold or bad fit
+            if ( fitparams[1] > xmax )
+            {
+                flat_tuple_->setVariableValue("lowdaq", 1.0);
+            }
+            else 
+            {
+                flat_tuple_->setVariableValue("lowdaq", 0.0);
+            }
             //Set Fit Parameters in the flat tuple
             flat_tuple_->setVariableValue("BlFitMean", fitparams[1]);
             flat_tuple_->setVariableValue("BlFitSigma", fitparams[2]);
             flat_tuple_->setVariableValue("BlFitNorm", fitparams[0]);
             flat_tuple_->setVariableValue("BlFitRangeLower", (double)xmin);
             flat_tuple_->setVariableValue("BlFitRangeUpper", (double)xmax);
+            flat_tuple_->setVariableValue("BlFitChi2", fit->Chi2());
+            flat_tuple_->setVariableValue("BlFitNdf", fit->Ndf());
 
             for(int i=0; i < chi2_2D_range.size(); ++i) {
                 flat_tuple_->addToVector("iterChi2NDF_derRange",chi2_2D_range.at(i));

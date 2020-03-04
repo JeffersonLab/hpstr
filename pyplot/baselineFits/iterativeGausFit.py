@@ -42,6 +42,23 @@ def readhistoFromFile(inFile, histo_key):
 def getChannelFitsPlots(inFile,channels):
     inFile.cd()
 
+def getTupleFlags(inFile,key):
+    inFile.cd()
+    minbinFail=[]
+    noisy=[]
+    lowdaq=[]
+    channels=[]
+    myTree = inFile.gaus_fit
+    for fitData in myTree:
+        SvtAna2DHisto_key = str(fitData.SvtAna2DHisto_key)
+        if key == SvtAna2DHisto_key+"_hh":
+            channels.append(fitData.channel)
+            minbinFail.append(fitData.minbinFail)
+            noisy.append(fitData.noisy)
+            lowdaq.append(fitData.lowdaq)
+    return channels, minbinFail, noisy, lowdaq
+
+
 
 def getGausFitParameters(inFile, key):
     inFile.cd()
@@ -52,6 +69,8 @@ def getGausFitParameters(inFile, key):
     norm = []
     range_lower=[]
     range_upper=[]
+    Chi2=[]
+    Ndf=[]
 
     myTree = inFile.gaus_fit
     for fitData in myTree:
@@ -64,8 +83,10 @@ def getGausFitParameters(inFile, key):
             norm.append(fitData.BlFitNorm)
             range_lower.append(fitData.BlFitRangeLower)
             range_upper.append(fitData.BlFitRangeUpper)
+            Chi2.append(fitData.BlFitChi2)
+            Ndf.append(fitData.BlFitNdf)
 
-    return channel,mean, sigma, histo_key,norm, range_lower, range_upper
+    return channel,mean, sigma, histo_key,norm, range_lower, range_upper, Chi2, Ndf
                
 def buildTGraph(name,title, n_points, x, y,color):
     g = r.TGraph(n_points,np.array(x, dtype = float), np.array(y, dtype = float))
@@ -135,7 +156,10 @@ for key in histokeys_hh:
         continue
 
     #Get baseline fit parameters from TTree
-    channel, mean, sigma, histo_key,norm, range_lower, range_upper = getGausFitParameters(inFile,key)
+    channel, mean, sigma, histo_key,norm, range_lower, range_upper, Chi2, Ndf = getGausFitParameters(inFile,key)
+    #Get Status Flags
+    flagChannels, minbinFail, noisy, lowdaq = getTupleFlags(inFile,key)
+
     #Output ROOT FILE
     outFile = r.TFile(directory+"/%s_fit_analysis%s.root"%(key[:-3],options.tag), "RECREATE")
     outFile.cd()
@@ -159,6 +183,7 @@ for key in histokeys_hh:
         sigma_h.Fill(sigma[i],1.)
     sigma_h.Write()
 
+
     
     #Plot gaus Fit mean+sigma of all channels over 2D Histogram
     canvas = r.TCanvas("%s_sigma"%(sensor), "c", 1800,800)
@@ -178,7 +203,22 @@ for key in histokeys_hh:
     #savePNG(canvas,directory+"hybrid_fits/","baseline_gausFit_%s"%(key))
 
 
+    #Plot Channel Flags
 
+
+    #Plot lowdaq
+    ld_gr_y = np.array(lowdaq, dtype= float)
+    ld_gr_x = np.array(flagChannels, dtype=float)
+    ld_gr = buildTGraph("lowdaq_flag_%s"%(sensor),"Low_Daq_Threshold_%s;Channel;Status"%(sensor),len(ld_gr_x),ld_gr_x,ld_gr_y,1)
+    ld_gr.Draw()
+    ld_gr.Write()
+
+    #Plot Chi2/Ndf
+    chi2_gr_y = np.array(Chi2, dtype= float)
+    chi2_gr_x = np.array(channel, dtype=float)
+    chi2_gr = buildTGraph("BlFitChi2_%s"%(sensor),"BlFit_Chi2/Ndf_%s;Channel;Status"%(sensor),len(chi2_gr_x),chi2_gr_x,chi2_gr_y,1)
+    chi2_gr.Draw()
+    chi2_gr.Write()
     ######################################################################################################
     ###Show Channel Fits
     for cc in range(len(channel)): 
