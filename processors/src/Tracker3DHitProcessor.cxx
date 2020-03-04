@@ -84,14 +84,14 @@ bool Tracker3DHitProcessor::process(IEvent* ievent) {
             EVENT::LCObjectVec mcPart_list
                 = mcPartRel_nav->getRelatedToObjects(lc_tracker_hit);
 
-            std::cout << "Has " << mcPart_list.size() << " Related MC Particles" << std::endl;
+            if(debug_ > 0) std::cout << "Has " << mcPart_list.size() << " Related MC Particles" << std::endl;
             // Get all the MC Particle IDs associated to the hit
             for(int ipart = 0; ipart < mcPart_list.size(); ipart++)
             {
                 IMPL::MCParticleImpl* lc_particle
                     = static_cast<IMPL::MCParticleImpl*>(mcPart_list.at(ipart));
                 tracker_hit->addMCPartID(lc_particle->id());
-                std::cout << "Has Related MC Particle with ID " << lc_particle->id() << std::endl;
+                if(debug_ > 0) std::cout << "Has Related MC Particle with ID " << lc_particle->id() << std::endl;
             }
         }
 
