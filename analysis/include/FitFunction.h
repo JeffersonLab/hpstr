@@ -1,7 +1,7 @@
 #ifndef FITFUNCTION_H
 #define FITFUNCTION_H
 #include <TMath.h>
-#include <FunctionMath.h>
+#include "FunctionMath.h"
 #include <iostream>
 
 class FitFunction {

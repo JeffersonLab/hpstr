@@ -9,7 +9,7 @@
  *
  */
 
-#include <BumpHunter.h>
+#include "BumpHunter.h"
 
 BumpHunter::BumpHunter(BkgModel model, int poly_order, int res_factor, bool asymptotic_limit)
     : ofs(nullptr),

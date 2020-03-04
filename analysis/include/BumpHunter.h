@@ -35,8 +35,8 @@
 #include <Math/ProbFunc.h>
 
 //---//
-#include <HpsFitResult.h>
-#include <ChebyshevFitFunction.h>
+#include "HpsFitResult.h"
+#include "ChebyshevFitFunction.h"
 
 class BumpHunter {
     public:

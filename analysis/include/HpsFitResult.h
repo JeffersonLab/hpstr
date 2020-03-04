@@ -10,7 +10,7 @@
 #include <TFitResult.h>
 #include <TFitResultPtr.h>
 
-#include <ChebyshevFitFunction.h>
+#include "ChebyshevFitFunction.h"
 
 class HpsFitResult { 
 

@@ -1,4 +1,4 @@
-#include <FunctionMath.h>
+#include "FunctionMath.h"
 #include <TMath.h>
 
 double FunctionMath::ChebyshevFunction(double x, double* p, int order) {
