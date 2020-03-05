@@ -113,16 +113,7 @@ install(DIRECTORY analysis
         PATTERN "src" EXCLUDE
         PATTERN "include" EXCLUDE)
 
-# install JSON analysis config files
-#file(GLOB JSON_ANA_FILES "${PROJECT_SOURCE_DIR}/analysis/*/*.json")
-#message(STATUS ${JSON_ANA_FILES})
-#foreach(JSON_ANA_FILE ${JSON_ANA_FILES})
-#    get_filename_component(JSON_ANA_DIR ${JSON_ANA_FILE} DIRECTORY)
-#    string(REPLACE "${PROJECT_SOURCE_DIR}/" "" JSON_ANA_REL_DIR ${JSON_ANA_DIR})
-#    message(STATUS "${JSON_ANA_FILE} to ${JSON_ANA_REL_DIR}")
-#    install(FILES ${JSON_ANA_FILE} DESTINATION ${JSON_ANA_REL_DIR})
-#endforeach()
-
+# install python files
 install(DIRECTORY pyplot DESTINATION lib/python/pyplot)
 
 # info message about install prefix
