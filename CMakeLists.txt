@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 14)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
@@ -103,6 +102,28 @@ endforeach()
     #    add_custom_target(doc COMMAND doxygen ${PROJECT_SOURCE_DIR}/docs/doxygen.conf)
 
     #endif()
+
+# configure and install setup script
+configure_file(setup.sh.in ${CMAKE_INSTALL_PREFIX}/bin/setup.sh)
+
+# install JSON analysis config files
+install(DIRECTORY analysis 
+        DESTINATION ${CMAKE_INSTALL_PREFIX}
+        FILES_MATCHING PATTERN "*.json"
+        PATTERN "src" EXCLUDE
+        PATTERN "include" EXCLUDE)
+
+# install JSON analysis config files
+#file(GLOB JSON_ANA_FILES "${PROJECT_SOURCE_DIR}/analysis/*/*.json")
+#message(STATUS ${JSON_ANA_FILES})
+#foreach(JSON_ANA_FILE ${JSON_ANA_FILES})
+#    get_filename_component(JSON_ANA_DIR ${JSON_ANA_FILE} DIRECTORY)
+#    string(REPLACE "${PROJECT_SOURCE_DIR}/" "" JSON_ANA_REL_DIR ${JSON_ANA_DIR})
+#    message(STATUS "${JSON_ANA_FILE} to ${JSON_ANA_REL_DIR}")
+#    install(FILES ${JSON_ANA_FILE} DESTINATION ${JSON_ANA_REL_DIR})
+#endforeach()
+
+install(DIRECTORY pyplot DESTINATION lib/python/pyplot)
 
 # info message about install prefix
 message(STATUS "hpstr will be installed to: ${CMAKE_INSTALL_PREFIX}")
