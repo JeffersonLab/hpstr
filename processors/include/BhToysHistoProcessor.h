@@ -70,10 +70,20 @@ class BhToysHistoProcessor : public Processor {
         // Number of toys to throw and fit
         int nToys_{50};
 
+        // Number of samples for signal to employ in toy model generation. Defaults to zero.
+        int toy_sig_samples_{0};
+
+        // Toy background events are by default equal in number to the integral
+        // of the invariant mass distribution. The number of events may be modified
+        // by a multiplicative factor.
+        int bkg_mult_{1};
+        
+        // Whether to use the asymptotic upper limit or the power constrained. Defaults to asymptotic.
+        bool asymptotic_limit_{true};
+
         //Debug Level
         int debug_{0};
 
 };
-
 
 #endif
