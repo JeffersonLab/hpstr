@@ -250,16 +250,16 @@ void HistoManager::sumw2() {
 void HistoManager::Fill2DHisto(const std::string& histoName,float valuex, float valuey, float weight) {
     if (histos2d[m_name+"_"+histoName])
         histos2d[m_name+"_"+histoName]->Fill(valuex,valuey,weight);
-    else
-        std::cout<<"ERROR::Fill2DHisto Histogram not found! "<<m_name+"_"+histoName<<std::endl;
+    //else
+    //    std::cout<<"ERROR::Fill2DHisto Histogram not found! "<<m_name+"_"+histoName<<std::endl;
 }
 
 
 void HistoManager::Fill1DHisto(const std::string& histoName,float value, float weight) {
     if (histos1d[m_name+"_"+histoName])
         histos1d[m_name+"_"+histoName]->Fill(value,weight);
-    else
-        std::cout<<"ERROR::Fill1DHisto Histogram not found! "<<m_name+"_"+histoName<<std::endl;
+    //else
+    //    std::cout<<"ERROR::Fill1DHisto Histogram not found! "<<m_name+"_"+histoName<<std::endl;
 }
 
 

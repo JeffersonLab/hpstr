@@ -23,6 +23,8 @@ void VertexAnaProcessor::configure(const ParameterSet& parameters) {
         anaName_ = parameters.getString("anaName");
         vtxColl_ = parameters.getString("vtxColl");
         trkColl_ = parameters.getString("trkColl");
+        hitColl_ = parameters.getString("hitColl");
+        mcColl_  = parameters.getString("mcColl");
         selectionCfg_   = parameters.getString("vtxSelectionjson");
         histoCfg_ = parameters.getString("histoCfg");
         timeOffset_ = parameters.getDouble("CalTimeOffset");
@@ -43,11 +45,11 @@ void VertexAnaProcessor::configure(const ParameterSet& parameters) {
 void VertexAnaProcessor::initialize(TTree* tree) {
     tree_ = tree;
     _ah =  std::make_shared<AnaHelpers>();
-    vtxSelector  = std::make_shared<BaseSelector>("vtxSelection",selectionCfg_);
+    vtxSelector  = std::make_shared<BaseSelector>(anaName_.c_str(),selectionCfg_);
     vtxSelector->setDebug(debug_);
     vtxSelector->LoadSelection();
         
-    _vtx_histos = std::make_shared<TrackHistos>("vtxSelection");
+    _vtx_histos = std::make_shared<TrackHistos>(anaName_.c_str());
     _vtx_histos->loadHistoConfig(histoCfg_);
     _vtx_histos->DefineHistos();
 
@@ -74,9 +76,11 @@ void VertexAnaProcessor::initialize(TTree* tree) {
     
     
     //init Reading Tree
-    tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_ , &bvtxs_);
-    tree_->SetBranchAddress("EventHeader",&evth_ , &bevth_);
-    tree_->SetBranchAddress(trkColl_.c_str(),&trks_, &btrks_);
+    tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_   , &bvtxs_);
+    tree_->SetBranchAddress(hitColl_.c_str(), &hits_   , &bhits_);
+    tree_->SetBranchAddress("EventHeader"   , &evth_   , &bevth_);
+    tree_->SetBranchAddress(trkColl_.c_str(), &trks_   , &btrks_);
+    tree_->SetBranchAddress(mcColl_.c_str() , &mcParts_, &bmcParts_);
 }
 
 bool VertexAnaProcessor::process(IEvent* ievent) { 
@@ -191,6 +195,11 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         if (!vtxSelector->passCutLt("maxVtxMom_lt",(ele_mom+pos_mom).Mag(),weight))
             continue;
         
+        //Min vtx momentum
+        
+        if (!vtxSelector->passCutLt("minVtxMom_gt",(ele_mom+pos_mom).Mag(),weight))
+            continue;
+        
         _vtx_histos->Fill1DVertex(vtx,
                                   ele,
                                   pos,
@@ -298,10 +307,69 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             if (!_reg_vtx_selectors[region]->passCutEq("pos_sharedL1_eq",(int)pos_trk_gbl->getSharedLy1(),weight))
                 continue;
             
-            
+            //If this is MC check if MCParticle matched to the electron track is from rad or recoil
+            if(!isData)
+            {
+                //Build map of hits and the associated MC part ids for later
+                TRefArray* ele_trk_hits = ele_trk_gbl->getSvtHits();
+                std::map<int, std::vector<int> > trueHitIDs;
+                for(int i = 0; i < hits_->size(); i++)
+                {
+                    TrackerHit* hit = hits_->at(i);
+                    trueHitIDs[hit->getID()] = hit->getMCPartIDs();
+                }
+                //std::cout << "There are " << ele_trk_hits->GetEntries() << " hits on this track" << std::endl;
+                //Count the number of hits per part on the track
+                std::map<int, int> nHits4part;
+                for(int i = 0; i < ele_trk_hits->GetEntries(); i++)
+                {
+                    TrackerHit* eleHit = (TrackerHit*)ele_trk_hits->At(i);
+                    for(int idI = 0; idI < trueHitIDs[eleHit->getID()].size(); idI++ )
+                    {
+                        int partID = trueHitIDs[eleHit->getID()].at(idI);
+                        if ( nHits4part.find(partID) == nHits4part.end() ) 
+                        {
+                            // not found
+                            nHits4part[partID] = 1;
+                        } 
+                        else 
+                        {
+                            // found
+                            nHits4part[partID]++;
+                        }
+                    }
+                }
+
+                //Determine the MC part with the most hits on the track
+                int maxNHits = 0;
+                int maxID = 0;
+                for (std::map<int,int>::iterator it=nHits4part.begin(); it!=nHits4part.end(); ++it)
+                {
+                    if(it->second > maxNHits)
+                    {
+                        maxNHits = it->second;
+                        maxID = it->first;
+                    }
+                }
+
+                //Find the correct mc part and grab mother id
+                int isRadEle = 0;
+                int isRecEle = 0;
+                for(int i = 0; i < mcParts_->size(); i++)
+                {
+                    if(mcParts_->at(i)->getID() != maxID) continue;
+                    int momPDG = mcParts_->at(i)->getMomPDG();
+                    if(momPDG == 622) isRadEle = 1;
+                    if(momPDG == 623) isRecEle = 1;
+                }
+                if (!_reg_vtx_selectors[region]->passCutEq("isRadEle_eq", isRadEle, weight)) continue;
+                if (!_reg_vtx_selectors[region]->passCutEq("isRecEle_eq", isRecEle, weight)) continue;
+            }
+
             //N selected vertices - this is quite a silly cut to make at the end. But okay. that's how we decided atm.
             if (!_reg_vtx_selectors[region]->passCutEq("nVtxs_eq",selected_vtxs.size(),weight))
                 continue;
+
             
             _reg_vtx_histos[region]->Fill2DHistograms(vtx,weight);
             _reg_vtx_histos[region]->Fill1DVertex(vtx,

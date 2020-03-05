@@ -99,8 +99,9 @@ mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
 # Sequence which the processors will run.
-#p.sequence = [header, track, rawsvt, svthits, ecal, vtx, mcpart]
-p.sequence = [header, track, rawsvt, svthits, ecal, vtx, c_vtx]
+if options.isData == -1: print("Please specficy if this is Data or not via option -t")
+if options.isData: p.sequence = [header, track, rawsvt, svthits, ecal, vtx, c_vtx]
+else: p.sequence = [header, track, rawsvt, svthits, ecal, vtx, c_vtx, mcpart]
 
 p.input_files=[lcio_file]
 p.output_files = [root_file]
