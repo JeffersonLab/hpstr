@@ -197,7 +197,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         
         //Min vtx momentum
         
-        if (!vtxSelector->passCutLt("minVtxMom_gt",(ele_mom+pos_mom).Mag(),weight))
+        if (!vtxSelector->passCutGt("minVtxMom_gt",(ele_mom+pos_mom).Mag(),weight))
             continue;
         
         _vtx_histos->Fill1DVertex(vtx,
