@@ -156,7 +156,18 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
         double corr_eleClusterTime = ele->getCluster().getTime() - timeOffset_;
         double corr_posClusterTime = pos->getCluster().getTime() - timeOffset_;
+
+        double botClusTime = 0.0;
+        if(ele->getCluster().getPosition().at(1) < 0.0) botClusTime = ele->getCluster().getTime();
+        else botClusTime = pos->getCluster().getTime();
                 
+        //Bottom Cluster Time
+        if (!vtxSelector->passCutLt("botCluTime_lt", botClusTime, weight))
+            continue;
+
+        if (!vtxSelector->passCutGt("botCluTime_gt", botClusTime, weight))
+            continue;
+        
         //Ele Pos Cluster Tme Difference
         if (!vtxSelector->passCutLt("eleposCluTimeDiff_lt",fabs(corr_eleClusterTime - corr_posClusterTime),weight))
             continue;
