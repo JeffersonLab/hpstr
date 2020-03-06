@@ -92,8 +92,15 @@ bool MCParticleProcessor::process(IEvent* ievent) {
         // Set the PDG of the particle
         particle->setPDG(lc_particle->getPDG());    
 
+        // Set the PDG of the particle
+        std::vector<EVENT::MCParticle*> parentVec = lc_particle->getParents();
+        if(parentVec.size() > 0) particle->setMomPDG(parentVec.at(0)->getPDG());    
+
         // Set the generator status of the particle
         particle->setGenStatus(lc_particle->getGeneratorStatus());    
+
+        // Set the generator status of the particle
+        particle->setSimStatus(lc_particle->getSimulatorStatus());    
 
         // Loop through all of the tracks associated with the particle
         // and add references to the MCParticle object.
