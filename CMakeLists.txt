@@ -107,14 +107,14 @@ endforeach()
 configure_file(setup.sh.in ${CMAKE_INSTALL_PREFIX}/bin/setup.sh)
 
 # install JSON analysis config files
-install(DIRECTORY analysis 
-        DESTINATION ${CMAKE_INSTALL_PREFIX}
-        FILES_MATCHING PATTERN "*.json"
-        PATTERN "src" EXCLUDE
-        PATTERN "include" EXCLUDE)
+#install(DIRECTORY analysis 
+#        DESTINATION ${CMAKE_INSTALL_PREFIX}
+#        FILES_MATCHING PATTERN "*.json"
+#        PATTERN "src" EXCLUDE
+#        PATTERN "include" EXCLUDE)
 
 # install python files
-install(DIRECTORY pyplot DESTINATION lib/python/pyplot)
+install(DIRECTORY pyplot DESTINATION lib/python)
 
 # info message about install prefix
 message(STATUS "hpstr will be installed to: ${CMAKE_INSTALL_PREFIX}")
