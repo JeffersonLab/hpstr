@@ -305,6 +305,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             //Add the momenta to the tracks
             ele_trk_gbl->setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
             pos_trk_gbl->setMomentum(pos->getMomentum()[0],pos->getMomentum()[1],pos->getMomentum()[2]);
+            TVector3 recEleP(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
                        
             bool foundL1ele = false;
             bool foundL2ele = false;
@@ -390,13 +391,25 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 //Find the correct mc part and grab mother id
                 int isRadEle = 0;
                 int isRecEle = 0;
+                TVector3 trueEleP;
                 for(int i = 0; i < mcParts_->size(); i++)
                 {
-                    if(mcParts_->at(i)->getID() != maxID) continue;
                     int momPDG = mcParts_->at(i)->getMomPDG();
+                    if(mcParts_->at(i)->getPDG() == 11 && momPDG == 622) 
+                    {
+                        std::vector<double> lP = mcParts_->at(i)->getMomentum();
+                        trueEleP.SetXYZ(lP[0],lP[1],lP[2]);
+                    }
+                    if(mcParts_->at(i)->getID() != maxID) continue;
                     if(momPDG == 622) isRadEle = 1;
                     if(momPDG == 623) isRecEle = 1;
                 }
+                double momRatio = recEleP.Mag() / trueEleP.Mag();
+                double momAngle = trueEleP.Angle(recEleP) * TMath::RadToDeg();
+                if (!_reg_vtx_selectors[region]->passCutLt("momRatio_lt", momRatio, weight)) continue;
+                if (!_reg_vtx_selectors[region]->passCutGt("momRatio_gt", momRatio, weight)) continue;
+                if (!_reg_vtx_selectors[region]->passCutLt("momAngle_lt", momAngle, weight)) continue;
+
                 if (!_reg_vtx_selectors[region]->passCutEq("isRadEle_eq", isRadEle, weight)) continue;
                 if (!_reg_vtx_selectors[region]->passCutEq("isRecEle_eq", isRecEle, weight)) continue;
             }
@@ -417,8 +430,6 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             _reg_vtx_histos[region]->Fill2DTrack(ele_trk_gbl,weight,"ele_");
             _reg_vtx_histos[region]->Fill2DTrack(pos_trk_gbl,weight,"pos_");
             _reg_vtx_histos[region]->Fill1DHisto("mcMass622_h",apMass);
-            
-
             
             if (trks_)
                 _reg_vtx_histos[region]->Fill1DHisto("n_tracks_h",trks_->size(),weight);

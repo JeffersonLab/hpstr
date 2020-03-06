@@ -61,6 +61,7 @@ bhana.parameters["CalTimeOffset"]=CalTimeOffset
 RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/"
 bhana.parameters["regionDefinitions"] = [RegionPath+'bhTight.json',
                                          RegionPath+'bhRadFracRad.json',
+                                         RegionPath+'bhRadFracRadRafo.json',
                                          RegionPath+'bhRadFracRecoil.json'
                                         ]
 
