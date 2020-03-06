@@ -4,11 +4,6 @@
         "id"   : 0,
         "info" : "#Delta_{t}(clu_{e^{-}},clu_{e^{+}})<1.5ns"
     },
-    "minVtxMom_gt" : {
-        "cut" : 1.9,
-        "id"  : 1,
-        "info" : "p_{vtx}>1.9 [GeV]"
-    },
     "eleMom_gt" : {
         "cut" : 0.4,
         "id"  : 2,
@@ -23,5 +18,10 @@
         "cut" : 2.4,
         "id"  : 4,
         "info" : "p_{vtx}<2.4 [GeV]"
+    },
+    "minVtxMom_gt" : {
+        "cut" : 1.9,
+        "id"  : 1,
+        "info" : "p_{vtx}>1.9 [GeV]"
     }
 }
