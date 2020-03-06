@@ -65,17 +65,25 @@ bool VertexProcessor::process(IEvent* ievent) {
     // Get the collection of LCRelations between GBL tracks and kink data and track data variables.
     EVENT::LCCollection* gbl_kink_data{nullptr};
     EVENT::LCCollection* track_data{nullptr};
+        
     try
     {
-        gbl_kink_data = static_cast<EVENT::LCCollection*>(event->getLCCollection(kinkRelCollLcio_.c_str()));
-        track_data = static_cast<EVENT::LCCollection*>(event->getLCCollection(trkRelCollLcio_.c_str()));
+        if (!kinkRelCollLcio_.empty())
+            gbl_kink_data = static_cast<EVENT::LCCollection*>(event->getLCCollection(kinkRelCollLcio_.c_str()));
+        if (!trkRelCollLcio_.empty())
+            track_data = static_cast<EVENT::LCCollection*>(event->getLCCollection(trkRelCollLcio_.c_str()));
     }
     catch (EVENT::DataNotAvailableException e)
     {
         std::cout << e.what() << std::endl;
+        if (!gbl_kink_data)
+            std::cout<<"Failed retrieving " << kinkRelCollLcio_ <<std::endl;
+        if (!track_data)
+            std::cout<<"Failed retrieving " << trkRelCollLcio_ <<std::endl;
+        
     }
     
-
+    
     if (debug_ > 0) std::cout << "VertexProcessor: Converting Verteces" << std::endl;
     for (int ivtx = 0 ; ivtx < lc_vtxs->getNumberOfElements(); ++ivtx) 
     {
