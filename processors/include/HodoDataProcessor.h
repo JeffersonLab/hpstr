@@ -18,18 +18,14 @@
 //   LCIO   //
 //----------//
 #include "EVENT/CalorimeterHit.h"
-#include "EVENT/LCGenericObject.h"
+
+#include "IMPL/LCGenericObjectImpl.h"
 #include "IMPL/CalorimeterHitImpl.h"
 #include "IMPL/ClusterImpl.h"
 #include "UTIL/BitField64.h"
 
 // Forward declarations
 class TTree;
-
-constexpr const char* HODO_HITS{"HodoCalHits"};
-constexpr const char* HODO_GENERIC_HITS{"HodoGenericHits"};
-constexpr const char* HODO_CLUSTERS{"HodoCluster"};
-
 class HodoDataProcessor : public Processor {
     
 public:
@@ -45,6 +41,14 @@ public:
     
     /** Destructor */
     ~HodoDataProcessor(){};
+    
+    /**
+     * Callback from ConfigurePython step for the Processor to configure itself from the given set of parameters.
+     * Parameters are set in the Python configuration file as: hodo.parameters["debug"] = 0  where "debug" is the name of the parameter.
+     * @param parameters ParameterSet for configuration.
+     */
+    virtual void configure(const ParameterSet& parameters);
+
     
     /**
      * Process the event and put new data products into it.
@@ -64,7 +68,7 @@ public:
      */
     virtual void finalize(){};
     
-private:
+// private:
     
     /**
      * Method to unpack field value from a hodoscope hit ID from the ID string.
@@ -77,14 +81,27 @@ private:
     UTIL::BitFieldValue getIdentifierFieldValue(std::string field, EVENT::CalorimeterHit* hit);
     
     /** TClonesArray collection containing all ECal hits. */
-    std::vector<HodoHit*> cal_hits_;
-    
+    std::vector<HodoHit*> hits_;
+
     /** TClonesArray collection containing all ECal clusters. */
     std::vector<HodoCluster*> clusters_;
     
     /** Encoding string describing cell ID. */
     const std::string encoder_string_{"system:6,barrel:3,layer:4,ix:4,iy:-3,hole:-3"};
     
+    /** Configurable parameters.
+     * Defaults are passed to the "configure" step, so can be set here.
+     */
+    int debug_{1};  // Debug level. 0 is very quiet, 1 info, 2 debug
+
+    std::string hitCollLcio_{"HodoCalHits"};
+    std::string hitCollLcio_Generic_{"HodoGenericHits"};
+    std::string hitCollRoot_{"HodoHits"};
+    
+    std::string clusCollLcio_{"HodoGenericClusters"};
+    std::string clusCollRoot_{"HodoClusters"};
+    
+
 }; // ECalDataProcessor
 
 

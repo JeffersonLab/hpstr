@@ -49,6 +49,8 @@
 #pragma link C++ class vector<CalHit*> +;
 #pragma link C++ class vector<CalCluster>  +;
 #pragma link C++ class vector<CalCluster*> +;
+#pragma link C++ class vector<HodoHit*>    +;
+#pragma link C++ class vector<HodoCluster*>+;
 #pragma link C++ class vector<Track>       +;
 #pragma link C++ class vector<Track*>      +;
 #pragma link C++ class vector<Vertex*>     +;
