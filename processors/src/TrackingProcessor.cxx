@@ -14,14 +14,14 @@ void TrackingProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring TrackingProcessor" << std::endl;
     try
     {
-        debug_          = parameters.getInteger("debug");
-        trkCollLcio_    = parameters.getString("trkCollLcio");
-        trkCollRoot_    = parameters.getString("trkCollRoot");
-        kinkRelCollLcio_    = parameters.getString("kinkRelCollLcio");
-        trkRelCollLcio_    = parameters.getString("trkRelCollLcio");
-        trkhitCollRoot_    = parameters.getString("trkhitCollRoot");
-        hitFitsCollLcio_    = parameters.getString("hitFitsCollLcio");
-        rawhitCollRoot_    = parameters.getString("rawhitCollRoot");
+        debug_           = parameters.getInteger("debug", debug_);
+        trkCollLcio_     = parameters.getString("trkCollLcio", trkCollLcio_);
+        trkCollRoot_     = parameters.getString("trkCollRoot", trkCollRoot_);
+        kinkRelCollLcio_ = parameters.getString("kinkRelCollLcio", kinkRelCollLcio_);
+        trkRelCollLcio_  = parameters.getString("trkRelCollLcio", trkRelCollLcio_);
+        trkhitCollRoot_  = parameters.getString("trkhitCollRoot", trkhitCollRoot_);
+        hitFitsCollLcio_ = parameters.getString("hitFitsCollLcio", hitFitsCollLcio_);
+        rawhitCollRoot_  = parameters.getString("rawhitCollRoot", rawhitCollRoot_);
     }
     catch (std::runtime_error& error)
     {

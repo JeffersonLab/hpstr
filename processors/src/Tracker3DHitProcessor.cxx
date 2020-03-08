@@ -13,10 +13,10 @@ void Tracker3DHitProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring Tracker3DHitProcessor" << std::endl;
     try
     {
-        debug_          = parameters.getInteger("debug");
-        hitCollLcio_    = parameters.getString("hitCollLcio");
-        hitCollRoot_    = parameters.getString("hitCollRoot");
-        mcPartRelLcio_ = parameters.getString("mcPartRelLcio");
+        debug_          = parameters.getInteger("debug", debug_);
+        hitCollLcio_    = parameters.getString("hitCollLcio", hitCollLcio_);
+        hitCollRoot_    = parameters.getString("hitCollRoot", hitCollRoot_);
+        mcPartRelLcio_ = parameters.getString("mcPartRelLcio", mcPartRelLcio_);
     }
     catch (std::runtime_error& error)
     {
