@@ -20,14 +20,14 @@ void EventProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring EventProcessor" << std::endl;
     try
     {
-        debug_         = parameters.getInteger("debug");
-        headCollRoot_  = parameters.getString("headCollRoot");
-        trigCollLcio_    = parameters.getString("trigCollLcio");
-        rfCollLcio_    = parameters.getString("rfCollLcio");
-        vtpCollLcio_   = parameters.getString("vtpCollLcio");
-        vtpCollRoot_   = parameters.getString("vtpCollRoot");
-        tsCollLcio_  = parameters.getString("tsCollLcio");
-        tsCollRoot_  = parameters.getString("tsCollRoot");
+        debug_         = parameters.getInteger("debug", debug_);
+        headCollRoot_  = parameters.getString("headCollRoot", headCollRoot_);
+        trigCollLcio_    = parameters.getString("trigCollLcio", trigCollLcio_);
+        rfCollLcio_    = parameters.getString("rfCollLcio", rfCollLcio_ );
+        vtpCollLcio_   = parameters.getString("vtpCollLcio", vtpCollLcio_);
+        vtpCollRoot_   = parameters.getString("vtpCollRoot", vtpCollRoot_ );
+        tsCollLcio_  = parameters.getString("tsCollLcio", tsCollLcio_);
+        tsCollRoot_  = parameters.getString("tsCollRoot", tsCollRoot_);
     }
     catch (std::runtime_error& error)
     {

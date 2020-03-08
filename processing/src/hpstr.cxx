@@ -90,8 +90,8 @@ int main(int argc, char **argv) {
         std::cout << "---- [ hpstr ]: Event processing complete  --------" << std::endl;
 
     } catch (exception& e) { 
-        //std::cerr << "Error! [" << e.name() << "] : " << e.message() << std::endl;
-        //std::cerr << "  at " << e.module() << ":" << e.line() << " in " << e.function() << std::endl;
+        std::cerr << "Error! [" << e.what() << "] \n";
+        std::cerr << "Program aborted. " << std::endl;
 
     } 
 

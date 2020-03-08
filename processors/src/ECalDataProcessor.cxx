@@ -19,11 +19,11 @@ void ECalDataProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring ECalDataProcessor" << std::endl;
     try
     {
-        debug_         = parameters.getInteger("debug");
-        hitCollLcio_   = parameters.getString("hitCollLcio");
-        hitCollRoot_   = parameters.getString("hitCollRoot");
-        clusCollLcio_  = parameters.getString("clusCollLcio");
-        clusCollRoot_  = parameters.getString("clusCollRoot");
+        debug_         = parameters.getInteger("debug", debug_);
+        hitCollLcio_   = parameters.getString("hitCollLcio", hitCollLcio_);
+        hitCollRoot_   = parameters.getString("hitCollRoot", hitCollRoot_);
+        clusCollLcio_  = parameters.getString("clusCollLcio", clusCollLcio_);
+        clusCollRoot_  = parameters.getString("clusCollRoot", clusCollRoot_);
     }
     catch (std::runtime_error& error)
     {
