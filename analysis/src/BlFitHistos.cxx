@@ -42,7 +42,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
 
         //Loop over all channels to find location of maximum chi2 2nd derivative
-        for(int cc=498; cc < 600 ; ++cc) 
+        for(int cc=0; cc < 600 ; ++cc) 
         {
             
             //Set Channel and Hybrid information in the flat tuple
@@ -97,6 +97,9 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                 flat_tuple_->setVariableValue("BlFitRangeUpper", -9999.9);
                 flat_tuple_->setVariableValue("BlFitChi2", -9999.9);
                 flat_tuple_->setVariableValue("BlFitNdf", -9999.9);
+
+                flat_tuple_->setVariableValue("ogxmax", -9999.9);
+                flat_tuple_->setVariableValue("ogxmin", -9999.9);
 
                 flat_tuple_->addToVector("iterMean", -9999.9);
                 flat_tuple_->addToVector("iterChi2NDF_2der",-9999.9);
@@ -285,8 +288,10 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                 xmax = cut1xmax;
             }
 
+            std::cout << "Xmax - Xmin = " << xmax - xmin << std::endl; 
             
-            
+            flat_tuple_->setVariableValue("ogxmax", xmax);
+            flat_tuple_->setVariableValue("ogxmin", xmin);
 
             fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
             double ogChi2 = fit->Chi2();
@@ -400,8 +405,6 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             {
                 xmin = xmin + 5*binwidth;
                 if (xmax-xmin < 80) { break;}
-                std::cout << "xmin = " << xmin << std::endl;
-                std::cout << "xmax = " << xmax << std::endl;
                 fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
                 std::cout << "Ndf is " << fit->Ndf() << std::endl;
                 std::cout << "New Chi2/Ndf " << fit->Chi2()/fit->Ndf() << std::endl;
@@ -430,6 +433,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                 flat_tuple_->setVariableValue("lowdaq", 0.0);
             }
             //Set Fit Parameters in the flat tuple
+            std::cout << "New Xmax-Xmin = " << xmax - xmin << std::endl;
             flat_tuple_->setVariableValue("BlFitMean", fitparams[1]);
             flat_tuple_->setVariableValue("BlFitSigma", fitparams[2]);
             flat_tuple_->setVariableValue("BlFitNorm", fitparams[0]);

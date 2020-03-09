@@ -71,6 +71,9 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     flat_tuple_->addVector("iterChi2NDF_1der");
     flat_tuple_->addVector("ratio2derChi2");
     flat_tuple_->addVector("iterChi2NDF_derRange");
+
+    flat_tuple_->addVariable("ogxmax");
+    flat_tuple_->addVariable("ogxmin");
 }
 
 
