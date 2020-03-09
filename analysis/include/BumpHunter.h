@@ -100,7 +100,7 @@ class BumpHunter {
         void getUpperLimitPower(TH1* histogram, HpsFitResult* result);
         
         /** */
-        std::vector<TH1*> generateToys(TH1* histogram, double n_toys, int seed, int toy_sig_samples, int bkg_mult = 1);
+        std::vector<TH1*> generateToys(TH1* histogram, double n_toys, int seed, int toy_sig_samples, int bkg_mult = 1, TH1* signal_hist = nullptr);
         
     private:
         /**

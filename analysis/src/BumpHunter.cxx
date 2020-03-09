@@ -387,7 +387,7 @@ void BumpHunter::getUpperLimitPower(TH1* histogram, HpsFitResult* result) {
     }
 }
 
-std::vector<TH1*> BumpHunter::generateToys(TH1* histogram, double n_toys, int seed, int toy_sig_samples, int bkg_mult) {
+std::vector<TH1*> BumpHunter::generateToys(TH1* histogram, double n_toys, int seed, int toy_sig_samples, int bkg_mult, TH1* signal_hist) {
     gRandom->SetSeed(seed);
     
     TF1* bkg_toys = histogram->GetFunction("bkg_toys");
@@ -406,7 +406,9 @@ std::vector<TH1*> BumpHunter::generateToys(TH1* histogram, double n_toys, int se
             hist->Fill(bkg_toys->GetRandom(window_start_, window_end_));
         }
         for(int i = 0; i < toy_sig_samples; i++) {
-            double sig_sample = sig_toys->GetRandom(window_start_, window_end_);
+            double sig_sample = 0;
+            if(signal_hist != NULL) { sig_sample = signal_hist->GetRandom(); }
+            else { sig_sample = sig_toys->GetRandom(window_start_, window_end_); }
             hist->Fill(sig_sample);
         }
         hists.push_back(hist); 
