@@ -327,6 +327,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                 tempNdf = fit->Ndf();
             }
             */
+            /*
                 std::cout << "mean + Nsigma = " << ogMean + 3*ogSigma << std::endl;
                 if ( xmax < ogMean + 0.3*ogSigma) 
                 {
@@ -342,7 +343,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                         fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
                         std::cout << "New Chi2/Ndf " << fit->Chi2()/fit->Ndf() << std::endl;
                         minChi2.push_back(fit->Chi2()/fit->Ndf());
-                        /*if ( fit->Chi2()/fit->Ndf() < tempChi2/tempNdf)
+                        if ( fit->Chi2()/fit->Ndf() < tempChi2/tempNdf)
                         {
                             while ( xmax < stopxmax) 
                             {
@@ -361,19 +362,15 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                                 }
                             }
                             break;
-                        }*/
+                        }
                     }
+        */
 
-                int chi2mindex = std::min_element(minChi2.begin(), minChi2.end()) - minChi2.begin();
-                xmax = xmaxpos.at(chi2mindex);
-                std::cout << "Xmax using min chi2 " << xmax << std::endl;
-                }
+               // int chi2mindex = std::min_element(minChi2.begin(), minChi2.end()) - minChi2.begin();
+                //xmax = xmaxpos.at(chi2mindex);
+                //std::cout << "Xmax using min chi2 " << xmax << std::endl;
+               // }
 
-                /*if (xmaxreset == true)
-                {
-                    xmax = ogxmax;
-                }*/
-            
             
             while (subxmaxworse != true && xmin > 0 ) 
             {
@@ -393,8 +390,8 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                 tempNdf = fit->Ndf();
             }
 
-            //tempChi2 = ogChi2;
-            //tempNdf = ogNdf;
+            tempChi2 = ogChi2;
+            tempNdf = ogNdf;
 
             //XMIN
             std::cout << "original xmin " << xmin << std::endl;
@@ -402,8 +399,11 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             while (xminworse != true) 
             {
                 xmin = xmin + 5*binwidth;
+                if (xmax-xmin < 80) { break;}
                 std::cout << "xmin = " << xmin << std::endl;
+                std::cout << "xmax = " << xmax << std::endl;
                 fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
+                std::cout << "Ndf is " << fit->Ndf() << std::endl;
                 std::cout << "New Chi2/Ndf " << fit->Chi2()/fit->Ndf() << std::endl;
                 if ( (fit->Chi2()/fit->Ndf())/(tempChi2/tempNdf) > (1.0-improve) )
                 {
