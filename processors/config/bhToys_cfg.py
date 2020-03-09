@@ -18,6 +18,10 @@ parser.add_option("-s", "--spec", type="string", dest="mass_spec",
 parser.add_option("-a", "--sig", type="int", dest="toy_sig_samples",
         help="Number of signal events to add to toy models.", metavar="toy_sig_samples",
         default=0)
+parser.add_option("-af", "--sig_file", type="string", dest="signal_shape_h_file",
+        help="Name of the file containing the signal shape injection histogram.", metavar="signal_shape_h_file");
+parser.add_option("-ah", "--sig_hist", type="string", dest="signal_shape_h_name",
+        help="Name of the signal shape injection histogram.", metavar="signal_shape_h_name");
 parser.add_option("-b", "--bkg", type="int", dest="toy_bkg_mult",
         help="Number of toy background events in units of the integral of the input distribution.",
         metavar="toy_bkg_mult", default=1)

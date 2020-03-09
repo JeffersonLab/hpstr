@@ -53,6 +53,17 @@ class BhToysHistoProcessor : public Processor {
         // The mass spectrum to fit
         TH1* mass_spec_h{nullptr};
 
+        // The signal shape histogram name to use, if defined.
+        //std::string* signal_shape_h_name_{"bhTight/bhTight_vtx_InvM_h"};
+        std::string* signal_shape_h_name_{nullptr};
+
+        // The signal shpae histogram file path, if defined.
+        //std::string* signal_shape_h_file_{"/volatile/hallb/hps/mccarty/anaBhAp100.root"};
+        std::string* signal_shape_h_file_{nullptr};
+
+        // The signal shape histogram to use.
+        TH1* signal_shape_h_{nullptr};
+
         // The signal hypothesis to use in the fit.
         double mass_hypo_{100.0};
         
