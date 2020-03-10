@@ -116,155 +116,69 @@ def savePNG(canvas,directory,name):
 
 
 ######################################################################################################
+import numpy as np
 directory = "/home/alic/src/hpstr/pyplot/baselineFits/fit_data/"
 SvtBl2D_file = options.inFilename
 inFile = r.TFile(SvtBl2D_file, "READ")
 hybrid =options.hybrid
 
 r.gROOT.SetBatch(r.kTRUE)
-#Read in channels to be examined
-#channels_in = options.channels
-#if options.channels is not None:
-#    if options.channels == "all":
-#        channels_in = range(0,640)
-#    else:
-#        channels_in = [int(i) for i in options.channels]
-#        for i in range(len(channels_in)):
-#            if i > 0:
-#                temp = range(channels_in[i-1],channels_in[i])
-#                print temp
-#        channels_in=[]
-#        for cc in temp:
-#            channels_in.append(cc)
-
 #Get SvtBl2D histogram keys from input file
 histokeys_hh = getHistoKeys(inFile,"TH2", options.hybrid,"")
 print histokeys_hh
 
 #Plot 1D Histogram of window size
-winOut = r.TFile("./fit_data/minwin.root","UPDATE")
+winOut = r.TFile("./fit_data/minwin.root","RECREATE")
 winOut.cd()
-win_h = r.TH1F("Window_Size","WindowSize_Distribution;Size;events",1000,0,3000)
+
+lowdaqwin_h = r.TH1F("lowdaq_window_size","lowdaq_windowsize_distribution;size;events",1000,0,3000)
 myTree = inFile.gaus_fit
 for fitData in myTree:
-    dif = fitData.BlFitRangeUpper - fitData.BlFitRangeLower
+    if fitData.lowdaq == 1:
+        dif = fitData.ogxmax - fitData.ogxmin
+        lowdaqwin_h.Fill(dif,1.)
+lowdaqwin_h.Write()
+
+win_h = r.TH1F("window_size","windowsize_distribution;size;events",1000,0,3000)
+myTree = inFile.gaus_fit
+for fitData in myTree:
+    dif = fitData.ogxmax - fitData.ogxmin
     win_h.Fill(dif,1.)
 win_h.Write()
+
+
+#N sigma value that makes a channel flagged as lowdaq
+channel = []
+mean = []
+sigma = []
+norm = []
+range_lower = []
+range_upper = []
+minbinFail = []
+for fitData in myTree:
+    channel.append(fitData.channel)
+    mean.append(fitData.BlFitMean)
+    sigma.append(fitData.BlFitSigma)
+    norm.append(fitData.BlFitNorm)
+    range_lower.append(fitData.BlFitRangeLower)
+    range_upper.append(fitData.BlFitRangeUpper)
+    minbinFail.append(fitData.minbinFail)
+
+print "Length of Channels is %i"%(len(channel))
+lowdaqN_h = r.TH1F("N*Sigma","N*Sigma for LowDaq;N Sigma;events",50,0,5)
+rang = np.linspace(0,5,50)
+for cc in range(len(channel)): 
+    if minbinFail == 1.0:
+        continue
+    for N in rang:
+        if range_upper[cc] < mean[cc] + N*sigma[cc]:
+            lowdaqN_h.Fill(N)
+            break
+lowdaqN_h.Write()
+    #func = r.TF1("m1","gaus",range_lower[cc],range_upper[cc])
+    #func.SetParameter(0,norm[cc])
+    #func.SetParameter(2,sigma[cc])
+    #func.SetParameter(1,mean[cc])
 winOut.Close()
 
-for key in histokeys_hh:
-
-    histo_hh = readhistoFromFile(inFile, key)
-    print key
-    sensor= key.replace('raw_hits_','').replace('_hh','')
-    channels_in= range(0,int(histo_hh.GetNbinsX()))
-
-    ##If 2D histogram is empty, skip histogram
-    if histo_hh.GetEntries() == 0:
-        continue
-
-    #Get baseline fit parameters from TTree
-    channel, mean, sigma, histo_key,norm, range_lower, range_upper = getGausFitParameters(inFile,key)
-    #Get Status Flags
-    #flagChannels, minbinFail, noisy, lowdaq = getTupleFlags(inFile,key)
-
-    #Output ROOT FILE
-    outFile = r.TFile(directory+"/%s_fit_analysis%s.root"%(key[:-3],options.tag), "RECREATE")
-    #outFile = r.TFile(directory+"/_fit_analysis%s.root"%(options.tag), "RECREATE")
-    outFile.cd()
-
-    #Plot gaus Fit mean of all channels over 2D Histogram
-    canvas = r.TCanvas("%s_mean"%(sensor), "c", 1800,800)
-    canvas.cd()
-    mean_gr_x = np.array(channel, dtype = float)
-    mean_gr_y = np.array(mean, dtype=float)
-    mean_gr = buildTGraph("BlFitMean_%s"%(sensor),"BlFitMean_%s;Channel;ADC"%(sensor),len(mean_gr_x),mean_gr_x,mean_gr_y,2)
-
-    histo_hh.Draw("colz")
-    mean_gr.Draw("same")
-    canvas.Write()
-    savePNG(canvas,directory+"hybrid_fits/","%s_gausFit"%(key))
-    canvas.Close()
-
-    #1D Histogram of channel fit sigma
-    sigma_h = r.TH1F("Fit_Sigma_%s"%(sensor),"Sigma_Distribution_%s;sigma;events"%(sensor),len(sigma),0.,max((sigma)))
-    for i in range(len(sigma)):
-        sigma_h.Fill(sigma[i],1.)
-    sigma_h.Write()
-
-
-
-    
-
-    
-    #Plot gaus Fit mean+sigma of all channels over 2D Histogram
-    canvas = r.TCanvas("%s_sigma"%(sensor), "c", 1800,800)
-    canvas.cd()
-
-    sigma_gr_y = np.array(sigma, dtype= float)
-    sigma_gr_x = np.array(channel, dtype=float)
-    sigma_gr = buildTGraph("BlFit_sigma_%s"%(sensor),"BlFit_sigma_%s;Channel;Sigma"%(sensor),len(sigma_gr_x),sigma_gr_x,sigma_gr_y,3)
-    sigma_gr.Draw()
-    sigma_gr.Write()
-
-    histo_hh.Draw("colz")
-    sigma_gr.Draw("same")
-    mean_gr.Draw("same")
-    canvas.Write()
-    canvas.Close()
-    #savePNG(canvas,directory+"hybrid_fits/","baseline_gausFit_%s"%(key))
-
-
-    #Plot Channel Flags
-
-
-    ######################################################################################################
-    ###Show Channel Fits
-    for cc in range(len(channel)): 
-        canvas = r.TCanvas("%s_ch_%i_h"%(sensor,channel[cc]), "c", 1800,800)
-        canvas.cd()
-        yproj_h = histo_hh.ProjectionY('%s_ch%i_h'%(sensor,channel[cc]),int(channel[cc]+1),int(channel[cc]+1),"e")
-        if yproj_h.GetEntries() == 0:
-            continue
-        func = r.TF1("m1","gaus",range_lower[cc],range_upper[cc])
-        func.SetParameter(0,norm[cc])
-        func.SetParameter(2,sigma[cc])
-        func.SetParameter(1,mean[cc])
-
-        yproj_h.SetTitle("%s_ch_%i_h"%(sensor,channel[cc]))
-        yproj_h.Draw()
-        func.Draw("same")
-        canvas.Write()
-        canvas.Close()
-        #savePNG(canvas,directory+"channel_fits/","baseline_gausFit_%s_ch_%i"%(key[:-3],cc))
-
-#########################################################################################################
-    ###Show Channel Graphs
-    bw=histo_hh.GetXaxis().GetBinWidth(1)
-    if options.show_graphs == "show":
-        myTree = inFile.gaus_fit
-        for fitData in myTree:
-            SvtAna2DHisto_key = str(fitData.SvtAna2DHisto_key)
-            if key == SvtAna2DHisto_key+"_hh":
-                cc=(fitData.channel)
-
-                mean_gr = buildTGraph("iterMean_%s_ch_%i"%(sensor,cc),"iterMean_vs_Position_%s_ch_%i;FitRangeEnd;mean"%(sensor,cc),len(fitData.iterFitRangeEnd),np.array(fitData.iterFitRangeEnd, dtype = float) ,np.array(fitData.iterMean, dtype = float),1)
-
-                chi2_gr = buildTGraph("iterChi2_%s_ch_%i"%(sensor,cc),"iterChi2/NDF_vs_Position_%s_ch_%i;FitRangeEnd;chi2"%(sensor,cc),len(fitData.iterFitRangeEnd),np.array(fitData.iterFitRangeEnd, dtype = float) ,np.array(fitData.iterChi2NDF, dtype = float),1)
-                chi2_2Der_gr = buildTGraph("iterFit_chi2/NDF_2Der_%s_ch_%i"%(sensor,cc),"iterChi2_2Der_%s_ch_%i;FitRangeEnd;chi2_2ndDeriv"%(sensor,cc),len(fitData.iterChi2NDF_derRange),np.array(fitData.iterChi2NDF_derRange, dtype = float) ,np.array(fitData.iterChi2NDF_2der, dtype = float),1)
-
-                chi2_1Der_gr = buildTGraph("iterFit_chi2/NDF_1Der_%s_ch_%i"%(sensor,cc),"iterChi2_1Der_%s_ch_%i;FitRangeEnd;chi2_1ndDeriv"%(sensor,cc),len(fitData.iterChi2NDF_derRange),np.array(fitData.iterChi2NDF_derRange, dtype = float) ,np.array(fitData.iterChi2NDF_1der, dtype = float),1)
-
-                temp=fitData.iterChi2NDF
-                ratio = [i / j for i,j in zip(fitData.iterChi2NDF_2der,temp[3:])]
-
-                ratio_gr = buildTGraph("ratio_%s_ch_%i"%(sensor,cc),"ratio_2Der/Chi2_%s_ch_%i;FitRangeEnd;chi2NDF_2der/chi2NDF"%(sensor,cc),len(fitData.iterChi2NDF_derRange),np.array(fitData.iterChi2NDF_derRange, dtype = float) ,np.array(ratio, dtype = float),1)
-
-
-                mean_gr.Write()
-                chi2_gr.Write()
-                chi2_1Der_gr.Write()
-                chi2_2Der_gr.Write()
-                ratio_gr.Write()
-                
-
+   
