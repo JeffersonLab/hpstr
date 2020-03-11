@@ -25,7 +25,9 @@ void BlFitHistos::FillHistograms() {
 
 
 void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int rebin_,int xmin_, int minStats_, FlatTupleMaker* flat_tuple_) {
-
+     
+    //Minstats = minimum number of stats required for a channel to be fit. Default 8500 for run 10648
+    minStats_ = 8500;
 
     //Loop over all 2D histogram names from the input TFile
     for (std::vector<std::string>::iterator jj = inputHistos_->histos2dNamesfromTFile.begin();
@@ -348,7 +350,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                                 std::cout << "xmax increased to " << xmax << std::endl;
                                 tempChi2 = fit->Chi2();
                                 tempNdf = fit->Ndf();
-                                fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
+                                fit 0projy_h->Fit("gaus", "QRES", "", xmin, xmax);
                                 std::cout << "New Chi2/Ndf " << fit->Chi2()/fit->Ndf() << std::endl;
                                 if ( fit->Chi2()/fit->Ndf() > tempChi2/tempNdf) 
                                 {

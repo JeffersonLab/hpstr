@@ -123,27 +123,57 @@ inFile = r.TFile(SvtBl2D_file, "READ")
 hybrid =options.hybrid
 
 r.gROOT.SetBatch(r.kTRUE)
+
 #Get SvtBl2D histogram keys from input file
 histokeys_hh = getHistoKeys(inFile,"TH2", options.hybrid,"")
-print histokeys_hh
-
+histo = readhistoFromFile(inFile,histokeys_hh[0])
+projy = histo.ProjectionY("%s_proY_ch%i"%(histokeys_hh[0],1),2,2,"e");
+binwidth = projy.GetBinWidth(0)
+print binwidth
 #Plot 1D Histogram of window size
 winOut = r.TFile("./fit_data/minwin.root","RECREATE")
 winOut.cd()
 
-lowdaqwin_h = r.TH1F("lowdaq_window_size","lowdaq_windowsize_distribution;size;events",1000,0,3000)
+oglowdaqwin_h = r.TH1F("og_lowdaq_window_size","og_lowdaq_windowsize_distribution;size;events",375,0,1500)
 myTree = inFile.gaus_fit
 for fitData in myTree:
     if fitData.lowdaq == 1:
         dif = fitData.ogxmax - fitData.ogxmin
-        lowdaqwin_h.Fill(dif,1.)
-lowdaqwin_h.Write()
+        oglowdaqwin_h.Fill(dif,1.)
+oglowdaqwin_h.Write()
 
-win_h = r.TH1F("window_size","windowsize_distribution;size;events",1000,0,3000)
+ogwin_h = r.TH1F("og_window_size","og_windowsize_distribution;size;events",375,0,1500)
 myTree = inFile.gaus_fit
 for fitData in myTree:
     dif = fitData.ogxmax - fitData.ogxmin
+    ogwin_h.Fill(dif,1.)
+ogwin_h.SetLineColor(3)
+    #if dif > 1000:
+     #   print fitData.SvtAna2DHisto_key
+      #  print fitData.channel
+ogwin_h.Write()
+
+lowdaqwin_h = r.TH1F("final_lowdaq_window_size","final_lowdaq_windowsize_distribution;size;events",375,0,1500)
+myTree = inFile.gaus_fit
+for fitData in myTree:
+    if fitData.lowdaq == 1:
+        dif = fitData.BlFitRangeUpper - fitData.BlFitRangeLower
+        lowdaqwin_h.Fill(dif,1.)
+        if dif > 1000:
+            print fitData.SvtAna2DHisto_key
+            print fitData.channel
+lowdaqwin_h.SetLineColor(6)
+lowdaqwin_h.Write()
+
+win_h = r.TH1F("final_window_size","final_windowsize_distribution;size;events",375,0,1500)
+myTree = inFile.gaus_fit
+for fitData in myTree:
+    dif = fitData.BlFitRangeUpper - fitData.BlFitRangeLower
     win_h.Fill(dif,1.)
+win_h.SetLineColor(2)
+    #if dif > 1000:
+    #    print fitData.SvtAna2DHisto_key
+    #    print fitData.channel
 win_h.Write()
 
 
@@ -165,11 +195,11 @@ for fitData in myTree:
     minbinFail.append(fitData.minbinFail)
 
 print "Length of Channels is %i"%(len(channel))
-lowdaqN_h = r.TH1F("N*Sigma","N*Sigma for LowDaq;N Sigma;events",50,0,5)
-rang = np.linspace(0,5,50)
+lowdaqN_h = r.TH1F("N*Sigma","N*Sigma for LowDaq;N Sigma;events",100,-5,5)
+rang = np.linspace(-5,5,500)
 for cc in range(len(channel)): 
-    if minbinFail == 1.0:
-        continue
+    #if minbinFail == 1.0:
+    #    continue
     for N in rang:
         if range_upper[cc] < mean[cc] + N*sigma[cc]:
             lowdaqN_h.Fill(N)
