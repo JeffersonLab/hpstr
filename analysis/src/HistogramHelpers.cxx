@@ -318,10 +318,52 @@ void HistogramHelpers::profileYwithIterativeGaussFit(TH2* hist, TH1* mu_graph, T
         mu_graph->SetTitle("");
     }
 
-    if (fDebug && num_skipped)  std::cout<<" Number of skipped bins: "<<num_skipped<<std::endl;
+    double value_x = (hist->GetXaxis()->GetBinLowEdge(i) + hist->GetXaxis()->GetBinUpEdge(i+num_bins-1))/2;
 
-    return;
+    //Important!! Use Fill to increment the graph with each iteration, or SetBinContent to replace contents...
 
+    if (sigma_graph) sigma_graph->Fill(value_x, sigma);
+    if (mu_graph) mu_graph->Fill(value_x, mu);
+        
+    errs_mu[index + 1] = mu_err;
+    errs_sigma[index + 1] = sigma_err;
+    
+    /*
+    std::cout<<hist->GetName()<<" "<<index+1<<"  mu = " <<mu<<"+/-"<<mu_err<<std::endl;
+    std::cout<<hist->GetName()<<" "<<index+1<<"  sigma = " <<sigma<<"+/-"<<sigma_err<<std::endl;
+    */
+
+    delete current_proj;
+  }
+
+  if (sigma_graph) {
+     sigma_graph->SetError(errs_sigma);
+    //sigma_graph->SetMaximum(max_sigma+0.15*(max_sigma - min_sigma));
+    //sigma_graph->SetMinimum(min_sigma-0.15*(max_sigma - min_sigma));
+    sigma_graph->GetYaxis()->SetTitleOffset(1.5);
+    //sigma_graph->GetYaxis()->SetTitle(hist->GetYaxis()->GetTitle());
+    //sigma_graph->GetXaxis()->SetTitle(hist->GetXaxis()->GetTitle());
+    sigma_graph->GetYaxis()->SetTitle(sigma_graph->GetYaxis()->GetTitle());
+    sigma_graph->GetXaxis()->SetTitle(sigma_graph->GetXaxis()->GetTitle());
+    sigma_graph->SetTitle("");
+  }
+
+  if (mu_graph) {
+      mu_graph->SetError(errs_mu);
+    //mu_graph->SetMaximum(max_mu+0.15*(max_mu - min_mu));
+    //mu_graph->SetMinimum(min_mu-0.15*(max_mu - min_mu));
+    mu_graph->GetYaxis()->SetTitleOffset(1.5);
+    //    mu_graph->GetYaxis()->SetTitle(hist->GetYaxis()->GetTitle());
+    // mu_graph->GetXaxis()->SetTitle(hist->GetXaxis()->GetTitle());
+    mu_graph->GetYaxis()->SetTitle(mu_graph->GetYaxis()->GetTitle());
+    mu_graph->GetXaxis()->SetTitle(mu_graph->GetXaxis()->GetTitle());
+    mu_graph->SetTitle("");
+  }
+
+  if (fDebug && num_skipped)  std::cout<<" Number of skipped bins: "<<num_skipped<<std::endl;
+
+  return;
+  
 }
 
 
@@ -523,20 +565,61 @@ int HistogramHelpers::IterativeGaussFit(TH1* hist, double &mu, double &mu_err, d
         cout << " ** IterativeGaussFit ** Please type RETURN to continue:\n>";
         getline(cin, input);
     }
-
-    /*
-       TCanvas q; 
-       q.cd();
-       hist->Draw();
-       fit_func->Draw("same");
-       std::string str = "";
-       q.SaveAs((str+"_"+hist->GetName()+".pdf").c_str());
-       */
-
-
-    return 0;
-
+  }
+  
+  if (iteration == iteration_limit) {
+    if (fDebug ) std::cout<<"WARNING: Fit did not converge to < "<<percent_limit*100<<"% in "<< hist->GetTitle() <<" in "<<iteration_limit<<" iterations. Percent Diffs: "<<mu_percent_diff*100<<"% (Mu),"<<" "<<sigma_percent_diff*100<<"% (Sigma)"<<std::endl;
+    //possibly return a value other than 0 to indicate not converged?
+  }
+  
+  mu = current_mu;
+  mu_err = fit_func->GetParError(1);
+  sigma = current_sigma;
+  sigma_err = fit_func->GetParError(2);
+  
+  hist->GetListOfFunctions()->Add(fit_func);
+  
+  if (m_PrintLevel >= 1 ) {
+    cout << " ** IterativeGaussFit ** fit result: histo name " << hist->GetName() << "    title: " << hist->GetTitle()  << endl
+	 << "    mu = " << mu << " +- " << mu_err << endl
+	 << " sigma = " << sigma << " +- " << sigma_err
+	 << endl;
+    //if (TempCanvasIterGaussFit == NULL) {
+    //TempCanvasIterGaussFit = new TCanvas ("TempCanvasIterGaussFit","Iter Gauss fit", 400, 400);
+    //}
+    //hist->DrawCopy();
+    //TempCanvasIterGaussFit->Update();
+    //hist->Print();
+    string input = "";
+    cout << " ** IterativeGaussFit ** Please type RETURN to continue:\n>";
+    getline(cin, input);
+  }
+  
+  
+  if (outFile_for_projections->IsOpen()) {
+      TCanvas q; 
+      q.cd();
+      hist->Draw();
+      fit_func->Draw("same");
+      std::string str = "";
+      //q.SaveAs((str+"_"+hist->GetName()+".pdf").c_str());
+      outFile_for_projections->cd();
+      q.Write((str+"_"+hist->GetName()).c_str()); 
+  }
+      
+  return 0;
 }
+
+void HistogramHelpers::OpenProjectionFile() {
+    outFile_for_projections = new TFile("debug_projections_histogramHelpers.root","RECREATE");
+}
+
+void HistogramHelpers::CloseProjectionFile() {
+    
+    if (outFile_for_projections->IsOpen())  
+        outFile_for_projections->Close();
+}
+
 
 void HistogramHelpers::HistogramConditioning (TH1* hist,int m_PrintLevel)
 {

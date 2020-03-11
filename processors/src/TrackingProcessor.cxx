@@ -14,14 +14,14 @@ void TrackingProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring TrackingProcessor" << std::endl;
     try
     {
-        debug_          = parameters.getInteger("debug");
-        trkCollLcio_    = parameters.getString("trkCollLcio");
-        trkCollRoot_    = parameters.getString("trkCollRoot");
-        kinkRelCollLcio_    = parameters.getString("kinkRelCollLcio");
-        trkRelCollLcio_    = parameters.getString("trkRelCollLcio");
-        trkhitCollRoot_    = parameters.getString("trkhitCollRoot");
-        hitFitsCollLcio_    = parameters.getString("hitFitsCollLcio");
-        rawhitCollRoot_    = parameters.getString("rawhitCollRoot");
+        debug_           = parameters.getInteger("debug", debug_);
+        trkCollLcio_     = parameters.getString("trkCollLcio", trkCollLcio_);
+        trkCollRoot_     = parameters.getString("trkCollRoot", trkCollRoot_);
+        kinkRelCollLcio_ = parameters.getString("kinkRelCollLcio", kinkRelCollLcio_);
+        trkRelCollLcio_  = parameters.getString("trkRelCollLcio", trkRelCollLcio_);
+        trkhitCollRoot_  = parameters.getString("trkhitCollRoot", trkhitCollRoot_);
+        hitFitsCollLcio_ = parameters.getString("hitFitsCollLcio", hitFitsCollLcio_);
+        rawhitCollRoot_  = parameters.getString("rawhitCollRoot", rawhitCollRoot_);
     }
     catch (std::runtime_error& error)
     {
@@ -32,8 +32,12 @@ void TrackingProcessor::configure(const ParameterSet& parameters) {
 
 void TrackingProcessor::initialize(TTree* tree) {
     tree->Branch(trkCollRoot_.c_str(), &tracks_);
-    tree->Branch(trkhitCollRoot_.c_str(), &hits_);
-    tree->Branch(rawhitCollRoot_.c_str(), &rawhits_);
+    
+    if (!trkhitCollRoot_.empty())
+        tree->Branch(trkhitCollRoot_.c_str(), &hits_);
+    
+    if (!rawhitCollRoot_.empty())
+        tree->Branch(rawhitCollRoot_.c_str(), &rawhits_);
 
 }
 
@@ -119,12 +123,19 @@ bool TrackingProcessor::process(IEvent* ievent) {
         EVENT::LCCollection* track_data{nullptr};
         try
         {
-            gbl_kink_data = static_cast<EVENT::LCCollection*>(event->getLCCollection(kinkRelCollLcio_.c_str()));
-            track_data = static_cast<EVENT::LCCollection*>(event->getLCCollection(trkRelCollLcio_.c_str()));
+            if (!kinkRelCollLcio_.empty())
+                gbl_kink_data = static_cast<EVENT::LCCollection*>(event->getLCCollection(kinkRelCollLcio_.c_str()));
+            if (!trkRelCollLcio_.empty())
+                track_data = static_cast<EVENT::LCCollection*>(event->getLCCollection(trkRelCollLcio_.c_str()));
         }
         catch (EVENT::DataNotAvailableException e)
         {
             std::cout << e.what() << std::endl;
+            if (!gbl_kink_data)
+                std::cout<<"Failed retrieving " << kinkRelCollLcio_ <<std::endl;
+            if (!track_data)
+                std::cout<<"Failed retrieving " << trkRelCollLcio_ <<std::endl;
+            
         }
 
         // Add a track to the event

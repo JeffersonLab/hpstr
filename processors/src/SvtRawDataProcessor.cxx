@@ -17,11 +17,10 @@ void SvtRawDataProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring SvtRawDataProcessor" << std::endl;
     try
     {
-        debug_         = parameters.getInteger("debug");
-        hitCollLcio_   = parameters.getString("hitCollLcio");
-        hitfitCollLcio_   = parameters.getString("hitfitCollLcio");
-        trueHitRelLcio_   = parameters.getString("trueHitRelLcio");
-        hitCollRoot_   = parameters.getString("hitCollRoot");
+        debug_         = parameters.getInteger("debug", debug_);
+        hitCollLcio_   = parameters.getString("hitCollLcio", hitCollLcio_);
+        hitfitCollLcio_   = parameters.getString("hitfitCollLcio", hitfitCollLcio_);
+        hitCollRoot_   = parameters.getString("hitCollRoot", hitCollRoot_);
     }
     catch (std::runtime_error& error)
     {

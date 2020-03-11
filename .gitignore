@@ -33,3 +33,8 @@
 
 # Byte code
 *.pyc
+
+# Eclipse files
+.cproject
+.project
+.settings/

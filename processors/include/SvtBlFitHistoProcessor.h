@@ -10,7 +10,6 @@
 //HPSTR
 #include "IEvent.h"
 #include "anaUtils.h"
-#include "HistogramHelpers.h"
 #include "BlFitHistos.h"
 #include "HistoManager.h"
 #include "BlFitFunction.h"

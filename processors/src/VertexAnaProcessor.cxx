@@ -43,6 +43,7 @@ void VertexAnaProcessor::configure(const ParameterSet& parameters) {
 void VertexAnaProcessor::initialize(TTree* tree) {
     tree_ = tree;
     _ah =  std::make_shared<AnaHelpers>();
+    
     vtxSelector  = std::make_shared<BaseSelector>("vtxSelection",selectionCfg_);
     vtxSelector->setDebug(debug_);
     vtxSelector->LoadSelection();
@@ -76,7 +77,10 @@ void VertexAnaProcessor::initialize(TTree* tree) {
     //init Reading Tree
     tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_ , &bvtxs_);
     tree_->SetBranchAddress("EventHeader",&evth_ , &bevth_);
-    tree_->SetBranchAddress(trkColl_.c_str(),&trks_, &btrks_);
+    
+    //If track collection name is empty take the tracks from the particles. TODO:: change this
+    if (!trkColl_.empty())
+        tree_->SetBranchAddress(trkColl_.c_str(),&trks_, &btrks_);
 }
 
 bool VertexAnaProcessor::process(IEvent* ievent) { 
@@ -106,16 +110,21 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 
         bool foundParts = _ah->GetParticlesFromVtx(vtx,ele,pos);
         if (!foundParts) {
-            //std::cout<<"VertexAnaProcessor::WARNING::Found vtx without ele/pos. Skip.";
+            //std::cout<<"VertexAnaProcessor::WARNING::Found vtx without ele/pos. Skip."
             continue;
         }
         
-        bool foundTracks = _ah->MatchToGBLTracks((ele->getTrack()).getID(),(pos->getTrack()).getID(),
-                                                 ele_trk, pos_trk, *trks_);
-        
-        if (!foundTracks) {
-            //std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
-            continue;  
+        if (!trkColl_.empty()) {
+            bool foundTracks = _ah->MatchToGBLTracks((ele->getTrack()).getID(),(pos->getTrack()).getID(),
+                                                     ele_trk, pos_trk, *trks_);
+            if (!foundTracks) {
+                //std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
+                continue;  
+            }
+        }
+        else {
+            ele_trk = (Track*)ele->getTrack().Clone();
+            pos_trk = (Track*)pos->getTrack().Clone();
         }
         
         //Add the momenta to the tracks
@@ -183,7 +192,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             continue;
 
         //Pos min momentum cut
-        if (!vtxSelector->passCutGt("posMom_gt",ele_mom.Mag(),weight))
+        if (!vtxSelector->passCutGt("posMom_gt",pos_mom.Mag(),weight))
             continue;
 
         //Max vtx momentum
@@ -207,7 +216,8 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
     }
     
     _vtx_histos->Fill1DHisto("n_vertices_h",selected_vtxs.size()); 
-    _vtx_histos->Fill1DHisto("n_tracks_h",trks_->size()); 
+    if (trks_)
+        _vtx_histos->Fill1DHisto("n_tracks_h",trks_->size()); 
     
     
     //not working atm
@@ -250,14 +260,21 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             Track* ele_trk_gbl = nullptr;
             Track* pos_trk_gbl = nullptr;
             
-            bool foundTracks = _ah->MatchToGBLTracks(ele_trk.getID(),pos_trk.getID(),
-                                                     ele_trk_gbl, pos_trk_gbl, *trks_);
-
-            if (!foundTracks) {
-                //std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
-                continue;  
+            if (!trkColl_.empty()) {
+                bool foundTracks = _ah->MatchToGBLTracks(ele_trk.getID(),pos_trk.getID(),
+                                                         ele_trk_gbl, pos_trk_gbl, *trks_);
+                
+                if (!foundTracks) {
+                    //std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
+                    continue;  
+                }
             }
-
+            else {
+                
+                ele_trk_gbl = (Track*) ele_trk.Clone();
+                pos_trk_gbl = (Track*) pos_trk.Clone();
+            }
+            
             //Add the momenta to the tracks
             ele_trk_gbl->setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
             pos_trk_gbl->setMomentum(pos->getMomentum()[0],pos->getMomentum()[1],pos->getMomentum()[2]);
@@ -316,7 +333,8 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             
 
             
-            _reg_vtx_histos[region]->Fill1DHisto("n_tracks_h",trks_->size(),weight);
+            if (trks_)
+                _reg_vtx_histos[region]->Fill1DHisto("n_tracks_h",trks_->size(),weight);
             _reg_vtx_histos[region]->Fill1DHisto("n_vertices_h",selected_vtxs.size(),weight);
             
             

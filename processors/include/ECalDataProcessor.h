@@ -92,7 +92,7 @@ class ECalDataProcessor : public Processor {
 
         /** TClonesArray collection containing all ECal hits. */ 
         std::vector<CalHit*> cal_hits_; 
-        std::string hitCollLcio_{"TimeCorrEcalHits"};
+        std::string hitCollLcio_{"EcalCalHits"};
         std::string hitCollRoot_{"RecoEcalHits"};
 
         /** TClonesArray collection containing all ECal clusters. */

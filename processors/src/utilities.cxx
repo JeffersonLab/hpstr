@@ -2,15 +2,15 @@
 #include <algorithm>
 #include <memory>
 /*
-  void utils::buildTrackCollection(std::vector<Track*>& tracks, 
-  Event* event,
-  const char* LCTrackCollection)
-  {
+   void utils::buildTrackCollection(std::vector<Track*>& tracks, 
+   Event* event,
+   const char* LCTrackCollection)
+   {
 
-  EVENT::LCCollection* lc_tracks event->getLCCollection(LCTrackCollection);
+   EVENT::LCCollection* lc_tracks event->getLCCollection(LCTrackCollection);
 
 
-  }
+   }
 
 */
 
@@ -54,11 +54,11 @@ Vertex* utils::buildVertex(EVENT::Vertex* lc_vertex) {
 }
 
 Particle* utils::buildParticle(EVENT::ReconstructedParticle* lc_particle,
-                               EVENT::LCCollection* gbl_kink_data,
-                               EVENT::LCCollection* track_data)
-    
+        EVENT::LCCollection* gbl_kink_data,
+        EVENT::LCCollection* track_data)
+
 { 
-    
+
     if (!lc_particle) 
         return nullptr;
 
@@ -133,21 +133,21 @@ CalCluster* utils::buildCalCluster(EVENT::Cluster* lc_cluster)
 bool utils::IsSameTrack(Track* trk1, Track* trk2) {
     double tol = 1e-6;
     if (fabs(trk1->getD0()        - trk2->getD0())        > tol ||
-        fabs(trk1->getPhi()       - trk2->getPhi())       > tol ||
-        fabs(trk1->getOmega()     - trk2->getOmega())     > tol ||
-        fabs(trk1->getTanLambda() - trk2->getTanLambda()) > tol ||
-        fabs(trk1->getZ0()        - trk2->getZ0())        > tol ||
-        fabs(trk1->getChi2Ndf()   - trk2->getChi2Ndf())   > tol 
-        ) 
+            fabs(trk1->getPhi()       - trk2->getPhi())       > tol ||
+            fabs(trk1->getOmega()     - trk2->getOmega())     > tol ||
+            fabs(trk1->getTanLambda() - trk2->getTanLambda()) > tol ||
+            fabs(trk1->getZ0()        - trk2->getZ0())        > tol ||
+            fabs(trk1->getChi2Ndf()   - trk2->getChi2Ndf())   > tol 
+       ) 
         return false;
-    
+
     return true;
 }
 
 
 Track* utils::buildTrack(EVENT::Track* lc_track,
-                         EVENT::LCCollection* gbl_kink_data,
-                         EVENT::LCCollection* track_data) {
+        EVENT::LCCollection* gbl_kink_data,
+        EVENT::LCCollection* track_data) {
 
     if (!lc_track)
         return nullptr;
@@ -155,14 +155,14 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
     Track* track = new Track();
     // Set the track parameters
     track->setTrackParameters(lc_track->getD0(), 
-                              lc_track->getPhi(), 
-                              lc_track->getOmega(), 
-                              lc_track->getTanLambda(), 
-                              lc_track->getZ0());
+            lc_track->getPhi(), 
+            lc_track->getOmega(), 
+            lc_track->getTanLambda(), 
+            lc_track->getZ0());
 
     // Set the track id
     track->setID(lc_track->id());
-    
+
     // Set the track type
     track->setType(lc_track->getType()); 
 
@@ -199,24 +199,24 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
         // single object. If not, throw an exception
         if (gbl_kink_data_list.size() == 1) {
 
-	  /*
-	  std::cout<<"[ Utilities ]: The collection " 
-	    + std::string(Collections::KINK_DATA)
-	    + " has the wrong data structure for this track"<<std::endl; 
-	  */
-	  
-	  // Get the list GBLKinkData GenericObject associated with the LCIO Track
-	  IMPL::LCGenericObjectImpl* gbl_kink_datum 
-	    = static_cast<IMPL::LCGenericObjectImpl*>(gbl_kink_data_list.at(0));
-	  
-	  // Set the lambda and phi kink values
-	  for (int ikink = 0; ikink < gbl_kink_datum->getNDouble(); ++ikink) { 
-	    track->setLambdaKink(ikink, gbl_kink_datum->getFloatVal(ikink));
-	    track->setPhiKink(ikink, gbl_kink_datum->getDoubleVal(ikink));
-	  }
-	  
-	}//gbl_kink_data has right structure
-	
+            /*
+               std::cout<<"[ Utilities ]: The collection " 
+               + std::string(Collections::KINK_DATA)
+               + " has the wrong data structure for this track"<<std::endl; 
+               */
+
+            // Get the list GBLKinkData GenericObject associated with the LCIO Track
+            IMPL::LCGenericObjectImpl* gbl_kink_datum 
+                = static_cast<IMPL::LCGenericObjectImpl*>(gbl_kink_data_list.at(0));
+
+            // Set the lambda and phi kink values
+            for (int ikink = 0; ikink < gbl_kink_datum->getNDouble(); ++ikink) { 
+                track->setLambdaKink(ikink, gbl_kink_datum->getFloatVal(ikink));
+                track->setPhiKink(ikink, gbl_kink_datum->getDoubleVal(ikink));
+            }
+
+        }//gbl_kink_data has right structure
+
     } // add gbl kink data
 
     if (track_data) { 
@@ -238,10 +238,10 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
             // Check that the TrackData data structure is correct.  If it's
             // not, throw a runtime exception.   
             if (track_datum->getNDouble() > 14 || track_datum->getNFloat() != 1 
-                || track_datum->getNInt() != 1) {
+                    || track_datum->getNInt() != 1) {
                 throw std::runtime_error("[ TrackingProcessor ]: The collection " 
-                                         + std::string(Collections::TRACK_DATA)
-                                         + " has the wrong structure.");
+                        + std::string(Collections::TRACK_DATA)
+                        + " has the wrong structure.");
             }
 
             // Set the SvtTrack isolation values
@@ -262,7 +262,7 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 }
 
 RawSvtHit* utils::buildRawHit(EVENT::TrackerRawData* rawTracker_hit,
-                              EVENT::LCCollection* raw_svt_hit_fits) {
+        EVENT::LCCollection* raw_svt_hit_fits) {
 
     EVENT::long64 value =
         EVENT::long64(rawTracker_hit->getCellID0() & 0xffffffff) |
@@ -351,8 +351,8 @@ TrackerHit* utils::buildTrackerHit(IMPL::TrackerHitImpl* lc_tracker_hit) {
 }
 
 bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit, 
-                              IMPL::TrackerHitImpl* lc_tracker_hit,
-                              EVENT::LCCollection* raw_svt_fits, std::vector<RawSvtHit*>* rawHits) {
+        IMPL::TrackerHitImpl* lc_tracker_hit,
+        EVENT::LCCollection* raw_svt_fits, std::vector<RawSvtHit*>* rawHits) {
 
     if (!tracker_hit || !lc_tracker_hit)
         return false;
@@ -404,7 +404,7 @@ bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit,
 //TODO-improve shared finding algorithm 
 
 bool utils::isUsedByTrack(IMPL::TrackerHitImpl* lc_tracker_hit,
-                          EVENT::Track* lc_track) {
+        EVENT::Track* lc_track) {
 
     EVENT::TrackerHitVec trk_lc_tracker_hits = lc_track->getTrackerHits();
 
@@ -417,7 +417,7 @@ bool utils::isUsedByTrack(IMPL::TrackerHitImpl* lc_tracker_hit,
 }
 
 bool utils::isUsedByTrack(TrackerHit* tracker_hit,
-                          EVENT::Track* lc_track) {
+        EVENT::Track* lc_track) {
 
     EVENT::TrackerHitVec trk_lc_tracker_hits = lc_track->getTrackerHits();
 
@@ -430,7 +430,7 @@ bool utils::isUsedByTrack(TrackerHit* tracker_hit,
 
 
 bool utils::getParticlesFromVertex(Vertex* vtx, Particle* ele, Particle* pos) {
-    
+
     for (int ipart = 0; ipart < vtx->getParticles()->GetEntries(); ++ipart) {
         int pdg_id = ((Particle*)vtx->getParticles()->At(ipart))->getPDG();
         if (pdg_id == 11) {
@@ -439,18 +439,18 @@ bool utils::getParticlesFromVertex(Vertex* vtx, Particle* ele, Particle* pos) {
         else if (pdg_id == -11) {
             pos = (Particle*)vtx->getParticles()->At(ipart);
         }
-        
+
         else {
             std::cout<<"Utilities::Wrong particle ID "<< pdg_id <<"associated to vertex. Skip."<<std::endl;
             return false;
         }
     }
-        
+
     if (!ele || !pos) {
         std::cout<<"Utilities::Vertex formed without ele/pos. Skip."<<std::endl;
         return false;
     }
-    
+
     return true;
 }
 

@@ -1,4 +1,7 @@
-#include <FitFunction.h>
+#ifndef __CHEBYSHEV_FUNC_H__
+#define __CHEBYSHEV_FUNC_H__
+
+#include "FitFunction.h"
 
 class ChebyshevFitFunction: public FitFunction {
     using FitFunction::FitFunction;
@@ -6,3 +9,5 @@ class ChebyshevFitFunction: public FitFunction {
     protected:
     double calculateBackground(double *x, double *par);
 };
+
+#endif

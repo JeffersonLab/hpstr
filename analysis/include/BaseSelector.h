@@ -14,7 +14,6 @@
 using json = nlohmann::json;
 
 class BaseSelector { 
-
     public: 
         BaseSelector();
         BaseSelector(const std::string& inputName);
@@ -34,6 +33,8 @@ class BaseSelector {
         bool passCutEq(const std::string& cutname,double val,double weight);
         bool passCutLt(const std::string& cutname,double val,double weight);
         bool passCutGt(const std::string& cutname,double val,double weight);
+
+        void clearSelector() { passSelection = true; }
 
 
         void clearSelector(){passSelection = true;}
@@ -56,7 +57,6 @@ class BaseSelector {
         bool passSelection{false};
 
         typedef std::map<std::string,std::pair<double,int> >::iterator cut_it;
-
 };
 
 #endif

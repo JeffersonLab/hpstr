@@ -10,29 +10,24 @@ BhToysHistoProcessor::BhToysHistoProcessor(const std::string& name, Process& pro
     : Processor(name, process) { 
     }
 
-BhToysHistoProcessor::~BhToysHistoProcessor() { 
-}
+BhToysHistoProcessor::~BhToysHistoProcessor() { }
 
 void BhToysHistoProcessor::configure(const ParameterSet& parameters) {
-
     std::cout << "Configuring BhToysHistoProcessor" << std::endl;
-    try
-    {
-        debug_          = parameters.getInteger("debug");
-        massSpectrum_   = parameters.getString("massSpectrum");
-        mass_hypo_      = parameters.getDouble("mass_hypo");
-        win_factor_     = parameters.getInteger("win_factor");
-        poly_order_     = parameters.getInteger("poly_order");
-        seed_           = parameters.getInteger("seed");
-        nToys_          = parameters.getInteger("nToys");
+    try {
+        debug_           = parameters.getInteger("debug");
+        massSpectrum_    = parameters.getString("massSpectrum");
+        mass_hypo_       = parameters.getDouble("mass_hypo");
+        win_factor_      = parameters.getInteger("win_factor");
+        poly_order_      = parameters.getInteger("poly_order");
+        seed_            = parameters.getInteger("seed");
+        nToys_           = parameters.getInteger("nToys");
         toy_sig_samples_ = parameters.getInteger("toy_sig_samples");
-    }
-    catch (std::runtime_error& error)
-    {
+        bkg_mult_        = parameters.getInteger("toy_bkg_mult");
+        //asymptotic_limit_ = parameters.getBoolean("asymptoticLimit");
+    } catch(std::runtime_error& error) {
         std::cout << error.what() << std::endl;
     }
-
-
 }
 
 void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFilename) {
@@ -43,7 +38,7 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
     mass_spec_h = (TH1*) inF_->Get(massSpectrum_.c_str());
 
     // Init bump hunter manager
-    bump_hunter_ = new BumpHunter(bkg_model_, poly_order_, win_factor_);
+    bump_hunter_ = new BumpHunter(bkg_model_, poly_order_, win_factor_, asymptotic_limit_);
     bump_hunter_->setBounds(mass_spec_h->GetXaxis()->GetBinUpEdge(mass_spec_h->FindFirstBinAbove()),
             mass_spec_h->GetXaxis()->GetBinLowEdge(mass_spec_h->FindLastBinAbove()));
     if(debug_ > 0) bump_hunter_->enableDebug();
@@ -69,6 +64,8 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
     flat_tuple_->addVariable("nll");
     flat_tuple_->addVariable("p_value");
     flat_tuple_->addVariable("q0");
+    flat_tuple_->addVariable("bkg_rate_mass_hypo");
+    flat_tuple_->addVariable("bkg_rate_mass_hypo_err");
     flat_tuple_->addVariable("sig_yield");
     flat_tuple_->addVariable("sig_yield_err");
     flat_tuple_->addVariable("upper_limit");
@@ -79,6 +76,8 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
 
     flat_tuple_->addVariable("seed");
     flat_tuple_->addVariable("toy_sig_samples");
+    flat_tuple_->addVariable("toy_bkg_mult");
+    flat_tuple_->addVector("toy_model_index");
     flat_tuple_->addVector("toy_bkg_chi2_prob");
     flat_tuple_->addVector("toy_bkg_edm");
     flat_tuple_->addVector("toy_bkg_minuit_status");
@@ -87,6 +86,8 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
     flat_tuple_->addVector("toy_nll");
     flat_tuple_->addVector("toy_p_value");
     flat_tuple_->addVector("toy_q0");
+    flat_tuple_->addVector("toy_bkg_rate_mass_hypo");
+    flat_tuple_->addVector("toy_bkg_rate_mass_hypo_err");
     flat_tuple_->addVector("toy_sig_yield");
     flat_tuple_->addVector("toy_sig_yield_err");
     flat_tuple_->addVector("toy_upper_limit");
@@ -94,14 +95,13 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
 }
 
 bool BhToysHistoProcessor::process() {
-
     std::cout << "Running on mass spectrum: " << massSpectrum_ << std::endl;
     std::cout << "Running with polynomial order: " << poly_order_ << std::endl;
     std::cout << "Running with window factor: " << win_factor_ << std::endl;
     std::cout << "Running on mass hypo: " << mass_hypo_ << std::endl;
 
     // Search for a resonance at the given mass hypothesis
-    HpsFitResult* result = bump_hunter_->performSearch(mass_spec_h, mass_hypo_, false, true);
+    HpsFitResult* result = bump_hunter_->performSearch(mass_spec_h, mass_hypo_, false, false);
     mass_spec_h->Write();
 
     // Get the result of the background fit
@@ -130,38 +130,42 @@ bool BhToysHistoProcessor::process() {
     flat_tuple_->setVariableValue("nll",                    sig_result->MinFcnValue());
     flat_tuple_->setVariableValue("p_value",                result->getPValue());
     flat_tuple_->setVariableValue("q0",                     result->getQ0());
+    flat_tuple_->setVariableValue("bkg_rate_mass_hypo",     result->getFullBkgRate());
+    flat_tuple_->setVariableValue("bkg_rate_mass_hypo_err", result->getFullBkgRateError());
     flat_tuple_->setVariableValue("sig_yield",              result->getSignalYield());
     flat_tuple_->setVariableValue("sig_yield_err",          result->getSignalYieldErr());
     flat_tuple_->setVariableValue("upper_limit",            result->getUpperLimit());
     flat_tuple_->setVariableValue("upper_limit_p_value",    result->getUpperLimitPValue());
 
-    for (auto& likelihood : result->getLikelihoods()) {
+    for(auto& likelihood : result->getLikelihoods()) {
         flat_tuple_->addToVector("nlls", likelihood);
     }
 
-    for (auto& yield : result->getSignalYields()) {
+    for(auto& yield : result->getSignalYields()) {
         flat_tuple_->addToVector("sig_yields", yield);
     }
 
     std::vector<HpsFitResult*> toy_results;
     flat_tuple_->setVariableValue("seed", seed_);
+    flat_tuple_->setVariableValue("toy_bkg_mult", bkg_mult_);
     flat_tuple_->setVariableValue("toy_sig_samples", toy_sig_samples_);
     
-    if (nToys_ > 0) {
-
-        std::cout << "Generating " << nToys_ << " Toys" <<std::endl;
-        std::vector<TH1*> toys_hist = bump_hunter_->generateToys(mass_spec_h, nToys_, seed_, toy_sig_samples_);
+    if(nToys_ > 0) {
+        std::cout << "Generating " << nToys_ << " Toys" << std::endl;
+        std::cout << "    Signal Injection      :: " << toy_sig_samples_ << std::endl;
+        std::cout << "    Background Multiplier :: " << bkg_mult_ << std::endl;
+        std::vector<TH1*> toys_hist = bump_hunter_->generateToys(mass_spec_h, nToys_, seed_, toy_sig_samples_, bkg_mult_); 
 
         int toyFitN = 0;
-        for (TH1* hist : toys_hist) {
+        for(TH1* hist : toys_hist) {
             std::cout << "Fitting Toy " << toyFitN << std::endl;
-            toy_results.push_back(bump_hunter_->performSearch(hist, mass_hypo_, false, true));
+            toy_results.push_back(bump_hunter_->performSearch(hist, mass_hypo_, false, false));
             toyFitN++;
         }
     }
 
-    for (auto& toy_result : toy_results) {
-
+    int toyModelIndex = 0;
+    for(auto& toy_result : toy_results) {
         // Get the result of the background fit
         TFitResultPtr toy_bkg_result = toy_result->getBkgFitResult();
 
@@ -174,13 +178,17 @@ bool BhToysHistoProcessor::process() {
         TFitResultPtr toy_sig_result = toy_result->getCompFitResult();
 
         // Retrieve all of the result of interest. 
-        flat_tuple_->addToVector("toy_minuit_status", toy_sig_result->Status());
-        flat_tuple_->addToVector("toy_nll",           toy_sig_result->MinFcnValue());
-        flat_tuple_->addToVector("toy_p_value",       toy_result->getPValue());
-        flat_tuple_->addToVector("toy_q0",            toy_result->getQ0());
-        flat_tuple_->addToVector("toy_sig_yield",     toy_result->getSignalYield());
-        flat_tuple_->addToVector("toy_sig_yield_err", toy_result->getSignalYieldErr());
-        flat_tuple_->addToVector("toy_upper_limit",   toy_result->getUpperLimit());
+        flat_tuple_->addToVector("toy_minuit_status",          toy_sig_result->Status());
+        flat_tuple_->addToVector("toy_nll",                    toy_sig_result->MinFcnValue());
+        flat_tuple_->addToVector("toy_p_value",                toy_result->getPValue());
+        flat_tuple_->addToVector("toy_q0",                     toy_result->getQ0());
+        flat_tuple_->addToVector("toy_bkg_rate_mass_hypo",     toy_result->getFullBkgRate());
+        flat_tuple_->addToVector("toy_bkg_rate_mass_hypo_err", toy_result->getFullBkgRateError());
+        flat_tuple_->addToVector("toy_sig_yield",              toy_result->getSignalYield());
+        flat_tuple_->addToVector("toy_sig_yield_err",          toy_result->getSignalYieldErr());
+        flat_tuple_->addToVector("toy_upper_limit",            toy_result->getUpperLimit());
+        flat_tuple_->addToVector("toy_model_index",   toyModelIndex);
+        toyModelIndex++;
     }
 
     // Fill and write the flat tuple
