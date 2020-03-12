@@ -69,7 +69,7 @@ bool SvtRawDataProcessor::process(IEvent* ievent) {
     auto shI = std::find (evColls->begin(), evColls->end(), trueHitRelLcio_.c_str());
     bool hasSimHits = true;
     EVENT::LCCollection* svtSimHits;
-    if(shI == evColls->end()) hasFits = false;
+    if(shI == evColls->end()) hasSimHits = false;
     if(hasSimHits) 
     {
         svtSimHits = event->getLCCollection(trueHitRelLcio_.c_str()); 
