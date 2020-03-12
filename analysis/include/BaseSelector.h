@@ -37,8 +37,6 @@ class BaseSelector {
         void clearSelector() { passSelection = true; }
 
 
-        void clearSelector(){passSelection = true;}
-
 
     private:
         json _h_selections;

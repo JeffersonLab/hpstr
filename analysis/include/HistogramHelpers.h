@@ -16,9 +16,7 @@ using namespace std;
 
 namespace HistogramHelpers { 
   double GaussExpTails_f(double* x, double *par);
-
   double twoGaussExp_f(double* x, double *par);
-
   double twoGauss_f(double*x, double* par);
   int IterativeGaussFit(TH1* hist, double &mu, double &mu_err, double &sigma, double &sigma_err,int m_PrintLevel = 0);
   TF1* IterativeGeneralFit(TH1* hist, double(*fcn)(double *, double *),const std::vector<float>& initial, const std::vector<float>& fitRange, TFitResultPtr *fitr_p, int m_PrintLevel);
@@ -30,6 +28,6 @@ namespace HistogramHelpers {
   TFile* outFile_for_projections; 
   
 } 
-
-#endif
   
+#endif
+   
