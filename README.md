@@ -62,6 +62,12 @@ The configuration to produce ntuples from LCIO files is ```recoTuple_cfg.py```. 
 hpstr recoTuple_cfg.py -i <inLcioFile> -o <outROOTFile>
 ```
 
+### SvtBl2D Histograms production
+The configuration to produce rawSVThit 2D histogram root files from ntuples is ```anaSvtBl2D_cfg.py```. Typical usage is:
+```bash
+hpstr anaSvtBl2D_cfg.py <inNtupleROOTFile> 
+```
+
 ### Making Plots
 
 A working example on how to make some plots out of hpstr ntuple is 
@@ -89,3 +95,5 @@ where ```-c``` is used to specify the configurationFile for hpstr, ```-i``` and 
 ## Contributing to Hpstr
 
 Fork the repository first. Open an issue to first discuss what needs to be changed and then open a pull request using the issue number. 
+
+
