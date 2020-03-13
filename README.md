@@ -67,6 +67,11 @@ The configuration to produce rawSVThit 2D histogram root files from ntuples is `
 ```bash
 hpstr anaSvtBl2D_cfg.py <inNtupleROOTFile> 
 ```
+### SvtBlFits production
+The configuration to produce baseline fits from an svtBl2D file is ```fitBL_cfg.py```. Typical usage
+is:
+```bash
+hpstr fitBL_cfg.py -i <inSvtBl2DROOTFile> -s baseline<0,3>_L<0-6>
 
 ### Making Plots
 

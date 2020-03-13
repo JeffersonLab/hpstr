@@ -99,7 +99,7 @@ class HistoManager {
 
     protected:
 
-        int debug_ = 1;
+        int debug_ = 0;
         std::string m_name;
         ModuleMapper* mmapper_{nullptr};
 

@@ -59,7 +59,6 @@ void HistoManager::DefineHistos(){
         //Get the extension of the name to decide the histogram to create
         //i.e. _h = TH1D, _hh = TH2D, _ge = TGraphErrors, _p = TProfile ...
         if (std::string(hist.key()).find("SvtHybrids") != std::string::npos) {
-            if (debug_ > 0) std::cout << "[HistoManager] histkey" <<  hist.key() << std::endl;
             if (debug_ > 0) std::cout << "[HistoManager] Hyb size" <<  hybNames.size() << std::endl;
             for(std::vector<std::string>::iterator it = hybNames.begin(); it != hybNames.end(); ++it) {
                 if (hist.value().at("type") == "h") 
@@ -88,7 +87,6 @@ void HistoManager::DefineHistos(){
                             hist.value().at("minY"),
                             hist.value().at("maxY"));
                    if (debug_ > 0) std::cout << histos2d[h_name]->GetName() << std::endl;
-                   if (debug_ > 0) std::cout << hist.value().at("prefix") << std::endl;
                     histos2dNamesfromJson.push_back(h_name);
                 }  
             }

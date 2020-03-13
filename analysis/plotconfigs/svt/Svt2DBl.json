@@ -48,60 +48,8 @@
             "maxY" : 20000
 
         },
-    "SvtHybrids1" : {
-            "prefix" : "baseline1",
-            "type" : "hh",
-            "xtitle" : "Strip Number",
-            "binsX" : 640,
-            "minX" : -0.5,
-            "maxX" : 639.5,
-            "ytitle" : "ADC Value",
-            "binsY" : 5000,
-            "minY" : 0,
-            "maxY" : 20000
-
-        },
-    "SvtHybrids2" : {
-            "prefix" : "baseline2",
-            "type" : "hh",
-            "xtitle" : "Strip Number",
-            "binsX" : 640,
-            "minX" : -0.5,
-            "maxX" : 639.5,
-            "ytitle" : "ADC Value",
-            "binsY" : 5000,
-            "minY" : 0,
-            "maxY" : 20000
-
-        },
     "SvtHybrids3" : {
             "prefix" : "baseline3",
-            "type" : "hh",
-            "xtitle" : "Strip Number",
-            "binsX" : 640,
-            "minX" : -0.5,
-            "maxX" : 639.5,
-            "ytitle" : "ADC Value",
-            "binsY" : 5000,
-            "minY" : 0,
-            "maxY" : 20000
-
-        },
-    "SvtHybrids4" : {
-            "prefix" : "baseline4",
-            "type" : "hh",
-            "xtitle" : "Strip Number",
-            "binsX" : 640,
-            "minX" : -0.5,
-            "maxX" : 639.5,
-            "ytitle" : "ADC Value",
-            "binsY" : 5000,
-            "minY" : 0,
-            "maxY" : 20000
-
-        },
-    "SvtHybrids5" : {
-            "prefix" : "baseline5",
             "type" : "hh",
             "xtitle" : "Strip Number",
             "binsX" : 640,

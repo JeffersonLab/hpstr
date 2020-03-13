@@ -35,6 +35,7 @@ class Svt2DBlHistos : public HistoManager{
     private:
 
         int Event_number=0;
+        int debug_ = 1;
 
         TH1F* svtCondHisto{nullptr};  
 
