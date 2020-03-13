@@ -73,7 +73,7 @@ This example will run the standard vertex selection on a data file (to specify t
 
 ### Bump Hunt Analysis
 
-hpstr also includes the HPS 2019 resoancne search analysis functionality. A brief description of the capabilities of this code, and how to use it, is included here.
+hpstr also includes the HPS 2019 resonance search analysis functionality. A brief description of the capabilities of this code, and how to use it, is included here.
 
 A resonance search job may be called with the following form:
 
@@ -89,7 +89,7 @@ The variables correspond to:
 
 This will run a test to determine the p-value, signal yield, and other basic values for the resonance search at the specified point. Multiple jobs must be run to analyze multiple points.
 
-In addition to the above mentioned variables, it is also possible to sacle the mass resolution by an arbitrary float by adding the argument "-r ${scalingFactor}".
+In addition to the above mentioned variables, it is also possible to scale the mass resolution by an arbitrary float by adding the argument "-r ${scalingFactor}".
 
 The resonance search code is also capable of performing toy model analysis. The number of toy models to generate and analyze is specified by the argument "-n ${toyModelCount}". Toy models will automatically be generated from a fit polynomial one order higher than that specified by "-p ${backgroundFitPolynomialOrder}". By default, toy models will be generated with the same number of entries as the input invariant mass histogram. This may be scaled by an integer factor using the argument "-b ${toyModelScalingFactor}". Lastly, signal may be injected into toy models. This is done by adding the argument "--sig ${signalEventCount}", which will add an integer number of signal events at ${mass} using a Gaussian distribution. If a different distribution is desired, it is also possible to specify it using a histogram. This is done with the arguments "--sig_file ${signalShapeHistogramFile.root" --sig_hist ${signalHistogramPath}". Note that the signal histogram should have the same binning as the invariant mass histogram.
 
