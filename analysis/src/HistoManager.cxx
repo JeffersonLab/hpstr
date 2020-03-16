@@ -7,11 +7,13 @@
 #include <vector>
 
 HistoManager::HistoManager() {
+    mmapper_ = new ModuleMapper();
     m_name = "default";
 }
 
 HistoManager::HistoManager(const std::string& inputName) {
     m_name = inputName;
+    mmapper_ = new ModuleMapper();
 }
 
 void HistoManager::Clear() {
@@ -48,10 +50,12 @@ void HistoManager::Clear() {
 HistoManager::~HistoManager() { delete mmapper_;}
 
 void HistoManager::DefineHistos(){
+    std::cout << "HELLO" << std::endl;
     if (debug_ > 0) std::cout << "[HistoManager] DefineHistos" << std::endl;
     std::string h_name = "";
     std::vector<std::string> hybNames;
     mmapper_->getStrings(hybNames);
+    std::cout << "mmapper defined" << std::endl;
     if (debug_ > 0) std::cout << "[HistoManager] hybrids names retrieved" << std::endl;
     for (auto hist : _h_configs.items()) {
 

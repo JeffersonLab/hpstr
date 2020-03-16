@@ -99,7 +99,6 @@ class HistoManager {
 
     protected:
 
-        int debug_ = 0;
         std::string m_name;
         ModuleMapper* mmapper_{nullptr};
 
@@ -114,6 +113,7 @@ class HistoManager {
         std::map<std::string, TH3F*> histos3d;
         typedef std::map<std::string, TH3F*>::iterator it3d;
 
+        int debug_ = 1;
         //bool debug_{false};
         json _h_configs;
 };
