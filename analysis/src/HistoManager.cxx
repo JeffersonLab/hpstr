@@ -50,7 +50,6 @@ void HistoManager::Clear() {
 HistoManager::~HistoManager() { delete mmapper_;}
 
 void HistoManager::DefineHistos(){
-    std::cout << "HELLO" << std::endl;
     if (debug_ > 0) std::cout << "[HistoManager] DefineHistos" << std::endl;
     std::string h_name = "";
     std::vector<std::string> hybNames;
