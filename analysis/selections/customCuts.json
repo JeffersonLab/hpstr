@@ -18,15 +18,5 @@
         "cut"   : 20,
         "id"    : 3,
         "info"  : "#chi^{2}_{unc}<10"
-    },
-    "eleMom_gt" : {
-        "cut" : 0.4,
-        "id"  : 4,
-        "info" : "p_e^{-}>0.4 [GeV]"
-    },
-    "posMom_gt" : {
-        "cut" : 0.4,
-        "id"  : 5,
-        "info" : "p_e^{+}>0.4 [GeV]"
     }
 }

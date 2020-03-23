@@ -78,8 +78,10 @@ class TrackingAnaProcessor : public Processor {
 
         // Containers to hold histogrammer info
         std::string histCfgFilename_;
-        TrackHistos* trkHistos_;
-
+        std::string truthHistCfgFilename_;
+        TrackHistos* trkHistos_{nullptr};
+        TrackHistos* truthHistos_{nullptr};
+        bool doTruth_{false};
         int debug_{0};
 
 

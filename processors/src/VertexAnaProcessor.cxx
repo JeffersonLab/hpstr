@@ -44,11 +44,11 @@ void VertexAnaProcessor::initialize(TTree* tree) {
     tree_ = tree;
     _ah =  std::make_shared<AnaHelpers>();
     
-    vtxSelector  = std::make_shared<BaseSelector>("vtxSelection",selectionCfg_);
+    vtxSelector  = std::make_shared<BaseSelector>(anaName_+"_"+"vtxSelection",selectionCfg_);
     vtxSelector->setDebug(debug_);
     vtxSelector->LoadSelection();
         
-    _vtx_histos = std::make_shared<TrackHistos>("vtxSelection");
+    _vtx_histos = std::make_shared<TrackHistos>(anaName_+"_"+"vtxSelection");
     _vtx_histos->loadHistoConfig(histoCfg_);
     _vtx_histos->DefineHistos();
 
@@ -58,15 +58,15 @@ void VertexAnaProcessor::initialize(TTree* tree) {
     for (unsigned int i_reg = 0; i_reg < regionSelections_.size(); i_reg++) {
         std::string regname = AnaHelpers::getFileName(regionSelections_[i_reg],false);
         std::cout<<"Setting up region:: " << regname <<std::endl;   
-        _reg_vtx_selectors[regname] = std::make_shared<BaseSelector>(regname, regionSelections_[i_reg]);
+        _reg_vtx_selectors[regname] = std::make_shared<BaseSelector>(anaName_+"_"+regname, regionSelections_[i_reg]);
         _reg_vtx_selectors[regname]->setDebug(debug_);
         _reg_vtx_selectors[regname]->LoadSelection();
         
-        _reg_vtx_histos[regname] = std::make_shared<TrackHistos>(regname);
+        _reg_vtx_histos[regname] = std::make_shared<TrackHistos>(anaName_+"_"+regname);
         _reg_vtx_histos[regname]->loadHistoConfig(histoCfg_);
         _reg_vtx_histos[regname]->DefineHistos();
 
-        _reg_tuples[regname] = std::make_shared<FlatTupleMaker>(regname+"_tree");
+        _reg_tuples[regname] = std::make_shared<FlatTupleMaker>(anaName_+"_"+regname+"_tree");
         _reg_tuples[regname]->addVariable("unc_vtx_mass");
         _reg_tuples[regname]->addVariable("unc_vtx_z");
         
@@ -127,9 +127,9 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             pos_trk = (Track*)pos->getTrack().Clone();
         }
         
-        //Add the momenta to the tracks
-        ele_trk->setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
-        pos_trk->setMomentum(pos->getMomentum()[0],pos->getMomentum()[1],pos->getMomentum()[2]);
+        //Add the momenta to the tracks - do not do that
+        //ele_trk->setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
+        //pos_trk->setMomentum(pos->getMomentum()[0],pos->getMomentum()[1],pos->getMomentum()[2]);
                 
         
         //Tracks in opposite volumes - useless
@@ -160,14 +160,21 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             continue;
         
         TVector3 ele_mom;
-        ele_mom.SetX(ele->getMomentum()[0]);
-        ele_mom.SetY(ele->getMomentum()[1]);
-        ele_mom.SetZ(ele->getMomentum()[2]);
+        //ele_mom.SetX(ele->getMomentum()[0]);
+        //ele_mom.SetY(ele->getMomentum()[1]);
+        //ele_mom.SetZ(ele->getMomentum()[2]);
+        ele_mom.SetX(ele_trk->getMomentum()[0]);
+        ele_mom.SetX(ele_trk->getMomentum()[1]);
+        ele_mom.SetX(ele_trk->getMomentum()[2]);
+
 
         TVector3 pos_mom;
-        pos_mom.SetX(pos->getMomentum()[0]);
-        pos_mom.SetY(pos->getMomentum()[1]);
-        pos_mom.SetZ(pos->getMomentum()[2]);
+        //pos_mom.SetX(pos->getMomentum()[0]);
+        //pos_mom.SetY(pos->getMomentum()[1]);
+        //pos_mom.SetZ(pos->getMomentum()[2]);
+        pos_mom.SetX(pos_trk->getMomentum()[0]);
+        pos_mom.SetY(pos_trk->getMomentum()[1]);
+        pos_mom.SetZ(pos_trk->getMomentum()[2]);
         
         
         //Beam Electron cut
@@ -276,8 +283,8 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             }
             
             //Add the momenta to the tracks
-            ele_trk_gbl->setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
-            pos_trk_gbl->setMomentum(pos->getMomentum()[0],pos->getMomentum()[1],pos->getMomentum()[2]);
+            //ele_trk_gbl->setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
+            //pos_trk_gbl->setMomentum(pos->getMomentum()[0],pos->getMomentum()[1],pos->getMomentum()[2]);
                        
             bool foundL1ele = false;
             bool foundL2ele = false;
@@ -368,8 +375,9 @@ void VertexAnaProcessor::finalize() {
         
     
     for (reg_it it = _reg_vtx_histos.begin(); it!=_reg_vtx_histos.end(); ++it) {
-        (it->second)->saveHistos(outF_,it->first);
-        outF_->cd((it->first).c_str());
+        std::string dirName = anaName_+"_"+it->first;
+        (it->second)->saveHistos(outF_,dirName);
+        outF_->cd(dirName.c_str());
         _reg_vtx_selectors[it->first]->getCutFlowHisto()->Write();
         //Save tuples
         _reg_tuples[it->first]->writeTree();

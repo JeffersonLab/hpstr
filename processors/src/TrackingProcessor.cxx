@@ -22,6 +22,9 @@ void TrackingProcessor::configure(const ParameterSet& parameters) {
         trkhitCollRoot_  = parameters.getString("trkhitCollRoot", trkhitCollRoot_);
         hitFitsCollLcio_ = parameters.getString("hitFitsCollLcio", hitFitsCollLcio_);
         rawhitCollRoot_  = parameters.getString("rawhitCollRoot", rawhitCollRoot_);
+        truthTracksCollLcio_     = parameters.getString("truthTrackCollLcio",truthTracksCollLcio_);
+        truthTracksCollRoot_     = parameters.getString("truthTrackCollRoot",truthTracksCollRoot_);
+        bfield_                  = parameters.getDouble("bfield",bfield_);
     }
     catch (std::runtime_error& error)
     {
@@ -38,7 +41,9 @@ void TrackingProcessor::initialize(TTree* tree) {
     
     if (!rawhitCollRoot_.empty())
         tree->Branch(rawhitCollRoot_.c_str(), &rawhits_);
-
+    
+    if (!truthTracksCollRoot_.empty())
+        tree->Branch(truthTracksCollRoot_.c_str(),&truthTracks_);
 }
 
 bool TrackingProcessor::process(IEvent* ievent) {
@@ -50,25 +55,32 @@ bool TrackingProcessor::process(IEvent* ievent) {
         }
         tracks_.clear();
     }
-
+    
     if (hits_.size() > 0) {
         for (std::vector<TrackerHit *>::iterator it = hits_.begin(); it != hits_.end(); ++it) {
             delete *it;
         }
         hits_.clear();
     }
-
+    
     if (rawhits_.size() > 0) {
         for (std::vector<RawSvtHit *>::iterator it = rawhits_.begin(); it != rawhits_.end(); ++it) {
             delete *it;
         }
         rawhits_.clear();
     }
-
+    
+    if (truthTracks_.size() > 0) {
+        for (std::vector<Track *>::iterator it = truthTracks_.begin(); it != truthTracks_.end(); ++it) {
+            delete *it;
+        }
+        truthTracks_.clear();
+    }
+    
     Event* event = static_cast<Event*> (ievent);
     // Get the collection of 3D hits from the LCIO event. If no such collection 
     // exist, a DataNotAvailableException is thrown
-
+    
     // Get decoders to read cellids
     UTIL::BitField64 decoder("system:6,barrel:3,layer:4,module:12,sensor:1,side:32:-2,strip:12");
 
@@ -141,6 +153,10 @@ bool TrackingProcessor::process(IEvent* ievent) {
         // Add a track to the event
         Track* track = utils::buildTrack(lc_track,gbl_kink_data,track_data);
 
+        //Add the momentum
+        
+        track->setMomentum(bfield_);
+
         // Get the collection of 3D hits associated with a LCIO Track
         EVENT::TrackerHitVec lc_tracker_hits = lc_track->getTrackerHits();
 
@@ -195,8 +211,56 @@ bool TrackingProcessor::process(IEvent* ievent) {
         track->setNShared(SharedHits[itrack].size());
         track->setSharedLy0(SharedHitsLy0[itrack]);
         track->setSharedLy1(SharedHitsLy1[itrack]);
+        
+
+        //Get the truth tracks relations:
+        
+        // Get the collection of LCRelations between GBL kink data and track data variables 
+        // and the corresponding track.
+        EVENT::LCCollection* truth_tracks_rel{nullptr};
+        
+        try
+        {
+            if (!truthTracksCollLcio_.empty())
+                truth_tracks_rel = static_cast<EVENT::LCCollection*>(event->getLCCollection(truthTracksCollLcio_.c_str()));
+        }
+        catch (EVENT::DataNotAvailableException e)
+        {
+            std::cout << e.what() << std::endl;
+            if (!truth_tracks_rel)
+                std::cout<<"Failed retrieving " << truthTracksCollLcio_ <<std::endl;
+        }
+        
+
+        if (truth_tracks_rel) { 
+            
+            std::shared_ptr<UTIL::LCRelationNavigator> truth_tracks_nav = std::make_shared<UTIL::LCRelationNavigator>(truth_tracks_rel);
+            //Get the truth_track associated with the lcio_track
+            EVENT::LCObjectVec lc_truth_tracks = truth_tracks_nav->getRelatedToObjects(lc_track);
+            if (lc_truth_tracks.size() < 1) {
+                std::cout<<"Track with id "<<lc_track->id()<< " doesn't have a truth matched track "<<std::endl;
+            }
+            else {
+                EVENT::Track* lc_truth_track = static_cast<EVENT::Track*> (lc_truth_tracks.at(0));
+                Track* truth_track = utils::buildTrack(lc_truth_track,nullptr,nullptr);
+                track->setTruthLink(truth_track);
+                truth_track->setMomentum(bfield_);
+                //truth tracks phi needs to be corrected
+                if (truth_track->getPhi() > TMath::Pi())
+                    truth_track->setPhi(truth_track->getPhi() - (TMath::Pi()) * 2.);
+                
+                truthTracks_.push_back(truth_track);
+            }
+            
+        }
+        
+        
         tracks_.push_back(track);
     }// tracks
+
+    
+
+    
     
     //delete
     if (rawTracker_hit_fits_nav) {
