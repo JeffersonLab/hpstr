@@ -242,7 +242,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             std::cout << "chi2_2D_xmax: " << chi2_2D_xmax << std::endl;
             std::cout << "cut_xmax: " << cut_xmax << std::endl;
 
-
+/*
             //Perform fit regardless if chi2 max cut made any difference
             TFitResultPtr fit = projy_h->Fit("gaus", "QRES", "", xmin, cut1xmax);
             double sigma1 = fit->GetParams()[2];
@@ -293,14 +293,14 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             {
                 xmax = cut1xmax;
             }
-        
+  */      
             std::cout << "xmax is " << xmax << std::endl;
             //original fit window size
             std::cout << "Xmax - Xmin = " << xmax - xmin << std::endl; 
             flat_tuple_->setVariableValue("ogxmax", xmax);
             flat_tuple_->setVariableValue("ogxmin", xmin);
 
-            fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
+            TFitResultPtr fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
 
             double ogChi2 = fit->Chi2();
             double ogNdf = fit->Ndf();
