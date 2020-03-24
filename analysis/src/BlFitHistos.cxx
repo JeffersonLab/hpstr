@@ -44,7 +44,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
 
         //Loop over all channels to find location of maximum chi2 2nd derivative
-        for(int cc=358; cc < 640 ; ++cc) 
+        for(int cc=0; cc < 640 ; ++cc) 
         {
             
             //Set Channel and Hybrid information in the flat tuple
@@ -82,7 +82,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             //Minimum Entry Requirement NOT ROBUST!!!
             double maxbin = projy_h->GetBinContent(projy_h->GetMaximumBin());
             std::cout << "maxbin is " << maxbin << std::endl;
-            double frac = 0.12;
+            double frac = 0.05;
             std::cout << "frac of maxbin is " << frac*maxbin << std::endl;
             int firstbin = projy_h->FindFirstBinAbove((double)frac*maxbin,1);
             //int firstbin = projy_h->FindFirstBinAbove(50,1);
@@ -242,15 +242,15 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             std::cout << "chi2_2D_xmax: " << chi2_2D_xmax << std::endl;
             std::cout << "cut_xmax: " << cut_xmax << std::endl;
 
-/*
+
             //Perform fit regardless if chi2 max cut made any difference
             TFitResultPtr fit = projy_h->Fit("gaus", "QRES", "", xmin, cut1xmax);
-            double sigma1 = fit->GetParams()[2];
+            double chi21 = fit->Chi2()/fit->Ndf();
             
             //Check if chi2 max cut was applied. If no, perform additional cut
             double cut2xmax;
-            double sigma2;
-            bool cut2;
+            double chi22;
+            bool cut2=false;
             //If original xmax was not decreased by chi2max cut, move chi2max down until a new
             //maximum chi2 2nd derivative is found
             if(cut_xmax >= chi2_2D_xmax) 
@@ -272,13 +272,13 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
                 //Fit at next lowest xmax position of chi2 second derivative
                 fit = projy_h->Fit("gaus", "QRES", "", xmin, cut2xmax);
-                sigma2 = fit->GetParams()[2];
+                chi22 = fit->Chi2()/fit->Ndf();
             }
             
             //if second cut is applied, keep whichever has lowest sigma
             if (cut2 == true) 
             {
-                if (sigma1 < sigma2)
+                if (chi21 < chi22)
                 {
                     xmax = cut1xmax;
                 }
@@ -293,14 +293,14 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             {
                 xmax = cut1xmax;
             }
-  */      
+        
             std::cout << "xmax is " << xmax << std::endl;
             //original fit window size
             std::cout << "Xmax - Xmin = " << xmax - xmin << std::endl; 
             flat_tuple_->setVariableValue("ogxmax", xmax);
             flat_tuple_->setVariableValue("ogxmin", xmin);
 
-            TFitResultPtr fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
+            fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
 
             double ogChi2 = fit->Chi2();
             double ogNdf = fit->Ndf();
@@ -308,7 +308,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             double ogSigma = fit->GetParams()[2];
             double tempChi2 = ogChi2;
             double tempNdf = ogNdf;
-            double improve = 0.1;
+            double improve = 0.5;
             bool xminworse = false;
             bool addxmaxworse = false;
             double stopxmax = ogMean + 3*ogSigma; 
