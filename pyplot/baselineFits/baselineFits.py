@@ -149,7 +149,8 @@ for key in histokeys_hh:
     ld_gr.Write()
 
     #Plot Chi2/Ndf
-    chi2_gr_y = np.array(Chi2, dtype= float)
+    Chi2Ndf = [i / j for i, j in zip(Chi2,Ndf)]
+    chi2_gr_y = np.array(Chi2Ndf, dtype= float)
     chi2_gr_x = np.array(channel, dtype=float)
     chi2_gr = buildTGraph("BlFitChi2_%s"%(sensor),"BlFit_Chi2/Ndf_%s;Channel;Status"%(sensor),len(chi2_gr_x),chi2_gr_x,chi2_gr_y,1)
     chi2_gr.Draw()

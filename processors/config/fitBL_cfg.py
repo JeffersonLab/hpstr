@@ -30,9 +30,9 @@ parser.add_option('-s', '--hybrid', type='string', dest="hybrid",default="", hel
 histo_file = options.inFilename
 hybrid = options.hybrid[0]
 if hybrid != "":
-    fit_file = '%s/%s_%s_BaselineFit.root'%(options.outDir, histo_file[:-5],hybrid)
+    fit_file = './%s_%s_BaselineFit.root'%(histo_file[:-5],hybrid)
 else:
-    fit_file = '%s/%s_all_sensors_BaselineFit.root'%(options.outDir, histo_file[:-5])
+    fit_file = './%s_all_sensors_BaselineFit.root'%(histo_file[:-5])
 
 p = HpstrConf.Process()
 
@@ -51,7 +51,6 @@ fitBL = HpstrConf.Processor('fitBL', 'SvtBlFitHistoProcessor')
 #   Processor Configuration   #
 ###############################
 fitBL.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/SvtBlFits.json'
-fitBL.parameters["outDir"] = options.outDir
 fitBL.parameters["hybrid"] = options.hybrid
 fitBL.parameters["rebin"] = options.rebin
 fitBL.parameters["nPoints"] = options.nPoints
