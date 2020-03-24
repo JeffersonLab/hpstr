@@ -48,7 +48,7 @@ class BumpHunter {
         };
         
         /** Default Constructor */
-        BumpHunter(BkgModel model, int poly_order, int res_factor, double res_scale = 1.56, bool asymptotic_limit = true);
+        BumpHunter(BkgModel model, int poly_order, int res_factor, double res_scale = 1.00, bool asymptotic_limit = true);
         
         /** Destructor */
         ~BumpHunter();
