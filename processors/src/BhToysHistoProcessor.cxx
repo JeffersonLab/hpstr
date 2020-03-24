@@ -71,6 +71,8 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
     flat_tuple_->addVariable("resolution_scale");
 
     flat_tuple_->addVariable("bkg_chi2_prob");
+    flat_tuple_->addVariable("bkgsig_chi2_prob");
+    flat_tuple_->addVariable("toyfit_chi2_prob");
     flat_tuple_->addVariable("bkg_edm");
     flat_tuple_->addVariable("bkg_minuit_status");
     flat_tuple_->addVariable("bkg_nll");
@@ -138,6 +140,8 @@ bool BhToysHistoProcessor::process() {
 
     // Set the Fit Results in the flat tuple
     flat_tuple_->setVariableValue("bkg_chi_prob",           bkg_result->Prob());
+    flat_tuple_->setVariableValue("bkgsig_chi2_prob",       sig_result->Prob());
+    flat_tuple_->setVariableValue("toyfit_chi2_prob",       result->getBkgToysFitResult()->Prob());
     flat_tuple_->setVariableValue("bkg_edm",                bkg_result->Edm());
     flat_tuple_->setVariableValue("bkg_minuit_status",      bkg_result->Status());
     flat_tuple_->setVariableValue("bkg_nll",                bkg_result->MinFcnValue());
