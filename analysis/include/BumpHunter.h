@@ -181,8 +181,9 @@ class BumpHunter {
         /** Polynomial order used to model the background. */
         int poly_order_{0};
 
-        /** The scaling factor for the mass resolution. */
-        double res_scale_{1.56};
+        /** The scaling factor for the mass resolution. Was 1.56 for Sebouh's, should 1.00 for Rafo's. */
+        //double res_scale_{1.56};
+        double res_scale_{1.00};
         
         /** 
          * Flag denoting if application should run in batch mode.  If set to 
