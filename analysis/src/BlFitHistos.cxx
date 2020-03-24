@@ -44,7 +44,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
 
         //Loop over all channels to find location of maximum chi2 2nd derivative
-        for(int cc=0; cc < 640 ; ++cc) 
+        for(int cc=358; cc < 640 ; ++cc) 
         {
             
             //Set Channel and Hybrid information in the flat tuple
@@ -82,7 +82,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             //Minimum Entry Requirement NOT ROBUST!!!
             double maxbin = projy_h->GetBinContent(projy_h->GetMaximumBin());
             std::cout << "maxbin is " << maxbin << std::endl;
-            double frac = 0.20;
+            double frac = 0.12;
             std::cout << "frac of maxbin is " << frac*maxbin << std::endl;
             int firstbin = projy_h->FindFirstBinAbove((double)frac*maxbin,1);
             //int firstbin = projy_h->FindFirstBinAbove(50,1);
@@ -136,10 +136,10 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             //end of the iterative fit range window, fiting JUST the gaussian.
             std::cout << "[BlFitHistos] Starting Iterative Fit Procedure" << std::endl;
             double currentChi2 = 0.0;
-            while(xmax < 6800.0 && currentChi2 < 100.0)
+            while(xmax < 6800.0 && currentChi2 < 100.0 || iter < 10)
             {
 
-                //std::cout << "current xmax is " << xmax << std::endl;
+                std::cout << "current xmax is " << xmax << std::endl;
                 TFitResultPtr cc_fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
                 if(cc_fit->Ndf() == 0){
 
@@ -165,7 +165,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                 xmax = xmax + binwidth;
                 iter++;
                 currentChi2 = cc_fit->Chi2()/cc_fit->Ndf();
-                //std::cout << "Chi2 at xmax = " << xmax << "is " << currentChi2 << std::endl;
+                std::cout << "Chi2 at xmax = " << xmax << "is " << currentChi2 << std::endl;
             }
 
             //Calculate the 2nd derivative of chi2 by taking slope on either side of one point
