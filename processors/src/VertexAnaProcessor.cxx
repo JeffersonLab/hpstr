@@ -168,7 +168,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         if (!vtxSelector->passCutGt("botCluTime_gt", botClusTime, weight))
             continue;
         
-        //Ele Pos Cluster Tme Difference
+        //Ele Pos Cluster Time Difference
         if (!vtxSelector->passCutLt("eleposCluTimeDiff_lt",fabs(corr_eleClusterTime - corr_posClusterTime),weight))
             continue;
         
