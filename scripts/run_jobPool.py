@@ -123,6 +123,14 @@ if __name__ == '__main__':
 
   fnList = range(1,len(listfiles)+1)
 
+  #create folder if doesn't exists
+  if not os.path.exists(config.outDir):
+    os.makedirs(config.outDir)
+    print "Created outdir", config.outDir," and logsDir ", config.outDir+"/logs"
+    os.makedirs(config.outDir+"/logs")
+
+
+  
   if options.debug:
     print "Testing %i jobs in parallel mode (using Pool(%i))"%(len(fnList),options.poolSize)
     print list(

@@ -17,9 +17,9 @@ void MCEcalHitProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring MCEcalHitProcessor" << std::endl;
     try
     {
-        debug_         = parameters.getInteger("debug");
-        hitCollLcio_   = parameters.getString("hitCollLcio");
-        hitCollRoot_   = parameters.getString("hitCollRoot");
+        debug_         = parameters.getInteger("debug", debug_);
+        hitCollLcio_   = parameters.getString("hitCollLcio", hitCollLcio_);
+        hitCollRoot_   = parameters.getString("hitCollRoot", hitCollRoot_);
     }
     catch (std::runtime_error& error)
     {

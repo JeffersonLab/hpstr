@@ -115,6 +115,7 @@ configure_file(setup.sh.in ${CMAKE_INSTALL_PREFIX}/bin/setup.sh)
 
 # install python files
 install(DIRECTORY pyplot DESTINATION lib/python)
+install(FILES processors/config/baseConfig.py DESTINATION lib/python)
 
 # info message about install prefix
 message(STATUS "hpstr will be installed to: ${CMAKE_INSTALL_PREFIX}")

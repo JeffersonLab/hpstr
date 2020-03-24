@@ -60,6 +60,7 @@ void Track::setMomentum(double bfield) {
     py_ = pt*tan_lambda_;
     px_ = pt*sin(phi0_);
     pz_ = pt*cos(phi0_);
+    //pterr_ = pow(1./omega,2)*sqrt(cov_[5])*bfield*mom_param;
 }
 
 

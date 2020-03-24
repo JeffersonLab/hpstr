@@ -171,7 +171,10 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 
     // Set the track ndf 
     track->setNdf(lc_track->getNdf());
-
+    
+    // Set the track covariance matrix
+    track->setCov(static_cast<std::vector<float> > (lc_track->getCovMatrix()));
+    
     // Set the position of the extrapolated track at the ECal face.  The
     // extrapolation uses the full 3D field map.
     const EVENT::TrackState* track_state 

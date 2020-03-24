@@ -10,8 +10,8 @@ parser = baseConfig.parser
 lcio_file = options.inFilename
 root_file = options.outFilename
 
-print 'LCIO file: %s' % lcio_file
-print 'Root file: %s' % root_file
+print('LCIO file: %s' % lcio_file)
+print('Root file: %s' % root_file)
 
 p = HpstrConf.Process()
 

@@ -18,12 +18,12 @@ void VertexProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring VertexProcessor" << std::endl;
     try
     {
-        debug_             = parameters.getInteger("debug");
-        vtxCollLcio_       = parameters.getString("vtxCollLcio");
-        vtxCollRoot_       = parameters.getString("vtxCollRoot");
-        partCollRoot_      = parameters.getString("partCollRoot");
-        kinkRelCollLcio_   = parameters.getString("kinkRelCollLcio");
-        trkRelCollLcio_    = parameters.getString("trkRelCollLcio");
+        debug_             = parameters.getInteger("debug", debug_);
+        vtxCollLcio_       = parameters.getString("vtxCollLcio", vtxCollLcio_);
+        vtxCollRoot_       = parameters.getString("vtxCollRoot", vtxCollRoot_);
+        partCollRoot_      = parameters.getString("partCollRoot", partCollRoot_);
+        kinkRelCollLcio_   = parameters.getString("kinkRelCollLcio", kinkRelCollLcio_);
+        trkRelCollLcio_    = parameters.getString("trkRelCollLcio", trkRelCollLcio_);
         
     }
     catch (std::runtime_error& error)

@@ -19,9 +19,9 @@ void MCParticleProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring MCParticleProcessor" << std::endl;
     try
     {
-        debug_          = parameters.getInteger("debug");
-        mcPartCollLcio_    = parameters.getString("mcPartCollLcio");
-        mcPartCollRoot_    = parameters.getString("mcPartCollRoot");
+        debug_          = parameters.getInteger("debug", debug_ );
+        mcPartCollLcio_    = parameters.getString("mcPartCollLcio", mcPartCollLcio_);
+        mcPartCollRoot_    = parameters.getString("mcPartCollRoot", mcPartCollRoot_);
     }
     catch (std::runtime_error& error)
     {
