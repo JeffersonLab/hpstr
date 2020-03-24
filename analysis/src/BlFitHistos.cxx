@@ -139,7 +139,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             while(xmax < 6800.0 && currentChi2 < 100.0 || iter < 10)
             {
 
-                std::cout << "current xmax is " << xmax << std::endl;
+                //std::cout << "current xmax is " << xmax << std::endl;
                 TFitResultPtr cc_fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
                 if(cc_fit->Ndf() == 0){
 
@@ -165,7 +165,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                 xmax = xmax + binwidth;
                 iter++;
                 currentChi2 = cc_fit->Chi2()/cc_fit->Ndf();
-                std::cout << "Chi2 at xmax = " << xmax << "is " << currentChi2 << std::endl;
+                //std::cout << "Chi2 at xmax = " << xmax << "is " << currentChi2 << std::endl;
             }
 
             //Calculate the 2nd derivative of chi2 by taking slope on either side of one point
