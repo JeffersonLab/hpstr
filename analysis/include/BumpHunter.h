@@ -48,7 +48,7 @@ class BumpHunter {
         };
         
         /** Default Constructor */
-        BumpHunter(BkgModel model, int poly_order, int res_factor, bool asymptotic_limit = true);
+        BumpHunter(BkgModel model, int poly_order, int res_factor, double res_scale = 1.56, bool asymptotic_limit = true);
         
         /** Destructor */
         ~BumpHunter();
@@ -115,7 +115,8 @@ class BumpHunter {
             //return 0.0389938364847*mass - 0.0000713783511061; // ideal
             //return 0.0501460737193*mass - 0.0000917925595224; // scaled to moller mass from data
             //return 0.0532190838657*mass - 0.0000922283032152; // scaled to moller mass + sys
-            return 1.56*(0.000955 - 0.004198 * mass + 0.2367 * mass * mass - 0.7009 * mass * mass * mass);
+            //return res_scale_*(0.000955 - 0.004198 * mass + 0.2367 * mass * mass - 0.7009 * mass * mass * mass);
+            return res_scale_ * (0.000379509 + (0.0416842 * mass) - (0.271364 * mass * mass) + (3.49537 * mass * mass * mass) - (11.1153 * mass * mass * mass * mass));
         };
         
         /**
@@ -179,6 +180,9 @@ class BumpHunter {
         
         /** Polynomial order used to model the background. */
         int poly_order_{0};
+
+        /** The scaling factor for the mass resolution. */
+        double res_scale_{1.56};
         
         /** 
          * Flag denoting if application should run in batch mode.  If set to 

@@ -11,11 +11,12 @@
 
 #include "BumpHunter.h"
 
-BumpHunter::BumpHunter(BkgModel model, int poly_order, int res_factor, bool asymptotic_limit)
+BumpHunter::BumpHunter(BkgModel model, int poly_order, int res_factor, double res_scale, bool asymptotic_limit)
     : ofs(nullptr),
       res_factor_(res_factor), 
       poly_order_(poly_order),
-      asymptotic_limit_(asymptotic_limit) { }
+      asymptotic_limit_(asymptotic_limit),
+      res_scale_(res_scale) { }
 
 BumpHunter::~BumpHunter() { }
 
