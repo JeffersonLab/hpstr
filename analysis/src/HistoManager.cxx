@@ -134,6 +134,9 @@ void HistoManager::DefineHistos(){
     }
 }
 
+void HistoManager::GetHistosFromFile(TFile* inFile, const std::string& name, const std::string& folder) 
+{
+}
 void HistoManager::GetHistosFromFile(TFile* inFile, const std::vector<std::string>& name, const std::string& folder) {
 
     //Todo: use folder to choose a folder. 

@@ -17,6 +17,8 @@ parser.add_option("-f", type="string", dest="show_fits", help="If == show, print
 
 parser.add_option("-i", type="string", dest="inFilename", help="Input SvtBlFitHistoProcessor output root file",default="")
 
+parser.add_option("-d", type="string", dest="hpstrpath", help="Path to hpstr directory",default="")
+
 parser.add_option("-t", type="string", dest="tag", help="file extension tag",default="")
 
 parser.add_option("-s", "--hybrid", type="string", dest="hybrid",
@@ -117,7 +119,8 @@ def savePNG(canvas,directory,name):
 
 ######################################################################################################
 import numpy as np
-directory = "/home/alic/src/hpstr/pyplot/baselineFits/fit_data/"
+hpstrpath = options.hpstrpath
+directory = "%s/pyplot/baselineFits/fit_data/"% (hpstrpath)
 SvtBl2D_file = options.inFilename
 inFile = r.TFile(SvtBl2D_file, "READ")
 hybrid =options.hybrid

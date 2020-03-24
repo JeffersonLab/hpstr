@@ -1,10 +1,23 @@
 import HpstrConf
 import sys
 import os
+from optparse import OptionParser
+
+parser = OptionParser()
+
+parser.add_option("-i", "--inFile", type="string", dest="inFilename", help="Input filename.", 
+        metavar="inFilename", default="")
+
+parser.add_option("-o", "--outFile", type="string", dest="outFilename", help="Output filename.", 
+        metavar = "outFilename", default="")
+(options,args) = parser.parse_args()
 
 # Use the input file to set the output file name
-infile = sys.argv[1].strip()
-outfile = '%s_svtBl2D.root' % infile[:-5]
+infile = options.inFilename 
+if options.outFilename == "":
+    outfile = '%s_svtBl2D.root' % infile[:-5]
+else:
+    outfile = options.outFilename
 
 print 'Input file: %s' % infile
 print 'Output file: %s' % outfile

@@ -17,6 +17,8 @@ parser.add_option("-f", type="string", dest="show_fits", help="If == show, print
 
 parser.add_option("-i", type="string", dest="inFilename", help="Input SvtBlFitHistoProcessor output root file",default="")
 
+parser.add_option("-d", type="string", dest="hpstrpath", help="Path to hpstr",default="")
+
 parser.add_option("-t", type="string", dest="tag", help="file extension tag",default="")
 
 parser.add_option("-s", "--hybrid", type="string", dest="hybrid",
@@ -118,47 +120,60 @@ def savePNG(canvas,directory,name):
 
 
 ######################################################################################################
-directory = "/home/alic/src/hpstr/pyplot/baselineFits/fit_data/"
+hpstrpath = options.hpstrpath
+directory = "%s/pyplot/baselineFits/fit_data/"%(hpstrpath)
 SvtBl2D_file = options.inFilename
 inFile = r.TFile(SvtBl2D_file, "READ")
 hybrid =options.hybrid
 
 r.gROOT.SetBatch(r.kTRUE)
-#Read in channels to be examined
-#channels_in = options.channels
-#if options.channels is not None:
-#    if options.channels == "all":
-#        channels_in = range(0,640)
-#    else:
-#        channels_in = [int(i) for i in options.channels]
-#        for i in range(len(channels_in)):
-#            if i > 0:
-#                temp = range(channels_in[i-1],channels_in[i])
-#                print temp
-#        channels_in=[]
-#        for cc in temp:
-#            channels_in.append(cc)
 
 #Get SvtBl2D histogram keys from input file
 histokeys_hh = getHistoKeys(inFile,"TH2", options.hybrid,"")
 print histokeys_hh
-
 
 for key in histokeys_hh:
 
     histo_hh = readhistoFromFile(inFile, key)
     print key
     sensor= key.replace('raw_hits_','').replace('_hh','')
-    channels_in= range(0,int(histo_hh.GetNbinsX()))
+
+    inFile.cd()
+    #Fit Parameters
+    histo_key=[]
+    channel=[]
+    mean=[]
+    sigma=[]
+    norm = []
+    range_lower=[]
+    range_upper=[]
+    Chi2=[]
+    Ndf=[]
+    #Flags
+    minbinFail=[]
+    noisy=[]
+    lowdaq=[]
 
     ##If 2D histogram is empty, skip histogram
     if histo_hh.GetEntries() == 0:
         continue
 
-    #Get baseline fit parameters from TTree
-    channel, mean, sigma, histo_key,norm, range_lower, range_upper, Chi2, Ndf = getGausFitParameters(inFile,key)
-    #Get Status Flags
-    flagChannels, minbinFail, noisy, lowdaq = getTupleFlags(inFile,key)
+    myTree = inFile.gaus_fit
+    for fitData in myTree:
+        SvtAna2DHisto_key = str(fitData.SvtAna2DHisto_key)
+        if key == SvtAna2DHisto_key+"_hh":
+            histo_key.append(SvtAna2DHisto_key)
+            channel.append(fitData.channel)
+            mean.append(fitData.BlFitMean)
+            sigma.append(fitData.BlFitSigma)
+            norm.append(fitData.BlFitNorm)
+            range_lower.append(fitData.BlFitRangeLower)
+            range_upper.append(fitData.BlFitRangeUpper)
+            Chi2.append(fitData.BlFitChi2)
+            Ndf.append(fitData.BlFitNdf)
+            minbinFail.append(fitData.minbinFail)
+            noisy.append(fitData.noisy)
+            lowdaq.append(fitData.lowdaq)
 
     #Output ROOT FILE
     outFile = r.TFile(directory+"/%s_fit_analysis%s.root"%(key[:-3],options.tag), "RECREATE")
@@ -196,8 +211,6 @@ for key in histokeys_hh:
     win_h.Write()
 
     
-
-    
     #Plot gaus Fit mean+sigma of all channels over 2D Histogram
     canvas = r.TCanvas("%s_sigma"%(sensor), "c", 1800,800)
     canvas.cd()
@@ -215,13 +228,9 @@ for key in histokeys_hh:
     canvas.Close()
     #savePNG(canvas,directory+"hybrid_fits/","baseline_gausFit_%s"%(key))
 
-
-    #Plot Channel Flags
-
-
     #Plot lowdaq
     ld_gr_y = np.array(lowdaq, dtype= float)
-    ld_gr_x = np.array(flagChannels, dtype=float)
+    ld_gr_x = np.array(channel, dtype=float)
     ld_gr = buildTGraph("lowdaq_flag_%s"%(sensor),"Low_Daq_Threshold_%s;Channel;Status"%(sensor),len(ld_gr_x),ld_gr_x,ld_gr_y,1)
     ld_gr.Draw()
     ld_gr.Write()
