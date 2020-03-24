@@ -15,10 +15,8 @@ void SvtBlFitHistoProcessor::configure(const ParameterSet& parameters) {
     std::cout << "[SvtBlFitHistoProcessor] Configuring" << std::endl;
     try
     {
-        outDir_ = parameters.getString("outDir");
         histCfgFilename_ = parameters.getString("histCfg");
         hybrid_ = parameters.getVString("hybrid");
-        IterativeGaussFitCut_ = parameters.getInteger("nhitsFitCut");
         rebin_ = parameters.getInteger("rebin");
         nPointsDer_ = parameters.getInteger("nPoints");
         xmin_ = parameters.getInteger("xmin");
@@ -79,25 +77,16 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
 
 bool SvtBlFitHistoProcessor::process() { 
     outputHistos_->Chi2GausFit(inputHistos_,nPointsDer_,rebin_,xmin_,minStats_, flat_tuple_);
-    //outputHistos_->Mean2DHistoOverlay(inputHistos_,outputHistos_);
     return true;
-    
-
-    
 }
 
 void SvtBlFitHistoProcessor::finalize() {
 
     std::cout << "finalizing SvtBlFitHistoProcessor" << std::endl;
-    //outputHistos_->saveHistos(outF_,"");
     flat_tuple_->close();
     outF_->Close();
-    //delete outputHistos_;
-    //outputHistos_ = nullptr;
     delete inputHistos_;
     inputHistos_ = nullptr;
-    //delete flat_tuple_;
-    //flat_tuple_ = nullptr;
 }
 
 DECLARE_PROCESSOR(SvtBlFitHistoProcessor);

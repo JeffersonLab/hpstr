@@ -27,15 +27,11 @@ class BlFitHistos : public HistoManager{
         ~BlFitHistos();
     
         void Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int rebin_i, int xmin_,int minStats_, FlatTupleMaker* flat_tuple_);
-        void FillHistograms();
-        void Mean2DHistoOverlay(HistoManager* inputHistos_, BlFitHistos* outputHistos_);
         
     private:
         
         TH1F* fitHistos{nullptr};
         std::map<std::string, TGraphErrors*> baselineGraphs;
-        //int rebin_{};
-        //int nPointsDer_{};
 };
 
 #endif

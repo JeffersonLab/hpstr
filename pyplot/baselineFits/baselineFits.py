@@ -9,8 +9,6 @@ def get_comma_separated_args(option, opt, value, parser):
 
 parser=OptionParser()
 
-parser.add_option('-c', '--channels', type='string',action='callback', callback=get_comma_separated_args,dest = "channels")
-
 parser.add_option("-g", type="string", dest="show_graphs", help="If == show, print all graphs associate with specified channels", default="")
 
 parser.add_option("-f", type="string", dest="show_fits", help="If == show, print all channel fits for selected channels",default="")
@@ -25,6 +23,8 @@ parser.add_option("-s", "--hybrid", type="string", dest="hybrid",
         help="L<#><T/B>_<axial/stereo>_<ele/pos>", default="")
 
 (options, args) = parser.parse_args()
+
+r.gROOT.SetBatch(r.kTRUE)
 ######################################################################################################
 
 def getHistoKeys(inFile,cType="", attr1="", attr2=""):
@@ -41,72 +41,12 @@ def readhistoFromFile(inFile, histo_key):
     histo = deepcopy(getattr(inFile, histo_key))
     return histo
 
-def getChannelFitsPlots(inFile,channels):
-    inFile.cd()
-
-def getTupleFlags(inFile,key):
-    inFile.cd()
-    minbinFail=[]
-    noisy=[]
-    lowdaq=[]
-    channels=[]
-    myTree = inFile.gaus_fit
-    for fitData in myTree:
-        SvtAna2DHisto_key = str(fitData.SvtAna2DHisto_key)
-        if key == SvtAna2DHisto_key+"_hh":
-            channels.append(fitData.channel)
-            minbinFail.append(fitData.minbinFail)
-            noisy.append(fitData.noisy)
-            lowdaq.append(fitData.lowdaq)
-    return channels, minbinFail, noisy, lowdaq
-
-
-
-def getGausFitParameters(inFile, key):
-    inFile.cd()
-    histo_key=[]
-    channel=[]
-    mean=[]
-    sigma=[]
-    norm = []
-    range_lower=[]
-    range_upper=[]
-    Chi2=[]
-    Ndf=[]
-
-    myTree = inFile.gaus_fit
-    for fitData in myTree:
-        SvtAna2DHisto_key = str(fitData.SvtAna2DHisto_key)
-        if key == SvtAna2DHisto_key+"_hh":
-            histo_key.append(SvtAna2DHisto_key)
-            channel.append(fitData.channel)
-            mean.append(fitData.BlFitMean)
-            sigma.append(fitData.BlFitSigma)
-            norm.append(fitData.BlFitNorm)
-            range_lower.append(fitData.BlFitRangeLower)
-            range_upper.append(fitData.BlFitRangeUpper)
-            Chi2.append(fitData.BlFitChi2)
-            Ndf.append(fitData.BlFitNdf)
-
-    return channel,mean, sigma, histo_key,norm, range_lower, range_upper, Chi2, Ndf
-               
 def buildTGraph(name,title, n_points, x, y,color):
     g = r.TGraph(n_points,np.array(x, dtype = float), np.array(y, dtype = float))
     g.SetName("%s"%(name))
     g.SetTitle("%s"%(title))
     g.SetLineColor(color)
     return g
-
-def getVarWithKey(var,var_length, key, tuple_key, datatype):
-    x=[]
-    for i in range(var_length):
-        if key == tuple_key[i]:
-            x.append(var[i])
-    x=np.array(x,dtype = datatype)
-    if len(x) == 0:
-        print "No tuple_key was found matching input key"
-        return 0
-    return x
 
 def newCanvas(name):
         canvas = r.TCanvas("%s"%(name), "c", 1800,800)
@@ -126,7 +66,6 @@ SvtBl2D_file = options.inFilename
 inFile = r.TFile(SvtBl2D_file, "READ")
 hybrid =options.hybrid
 
-r.gROOT.SetBatch(r.kTRUE)
 
 #Get SvtBl2D histogram keys from input file
 histokeys_hh = getHistoKeys(inFile,"TH2", options.hybrid,"")
@@ -139,6 +78,7 @@ for key in histokeys_hh:
     sensor= key.replace('raw_hits_','').replace('_hh','')
 
     inFile.cd()
+
     #Fit Parameters
     histo_key=[]
     channel=[]
@@ -149,6 +89,7 @@ for key in histokeys_hh:
     range_upper=[]
     Chi2=[]
     Ndf=[]
+
     #Flags
     minbinFail=[]
     noisy=[]
@@ -158,6 +99,7 @@ for key in histokeys_hh:
     if histo_hh.GetEntries() == 0:
         continue
 
+    #Get variables from Flat Tuple stored in input file
     myTree = inFile.gaus_fit
     for fitData in myTree:
         SvtAna2DHisto_key = str(fitData.SvtAna2DHisto_key)
@@ -177,7 +119,6 @@ for key in histokeys_hh:
 
     #Output ROOT FILE
     outFile = r.TFile(directory+"/%s_fit_analysis%s.root"%(key[:-3],options.tag), "RECREATE")
-    #outFile = r.TFile(directory+"/_fit_analysis%s.root"%(options.tag), "RECREATE")
     outFile.cd()
 
     #Plot gaus Fit mean of all channels over 2D Histogram
@@ -190,7 +131,7 @@ for key in histokeys_hh:
     histo_hh.Draw("colz")
     mean_gr.Draw("same")
     canvas.Write()
-    savePNG(canvas,directory+"hybrid_fits/","%s_gausFit"%(key))
+    #savePNG(canvas,directory+"hybrid_fits/","%s_gausFit"%(key))
     canvas.Close()
 
     #1D Histogram of channel fit sigma
@@ -200,38 +141,10 @@ for key in histokeys_hh:
     sigma_h.Write()
 
 
-    #Plot 1D Histogram of window size
-    win_h = r.TH1F("Window_Size_%s"%(sensor),"WindowSize_Distribution_%s;Size;events"%(sensor),1000,0,3000)
-    myTree = inFile.gaus_fit
-    for fitData in myTree:
-        SvtAna2DHisto_key = str(fitData.SvtAna2DHisto_key)
-        if key == SvtAna2DHisto_key+"_hh":
-            dif = fitData.BlFitRangeUpper - fitData.BlFitRangeLower
-            win_h.Fill(dif,1.)
-    win_h.Write()
-
-    
-    #Plot gaus Fit mean+sigma of all channels over 2D Histogram
-    canvas = r.TCanvas("%s_sigma"%(sensor), "c", 1800,800)
-    canvas.cd()
-
-    sigma_gr_y = np.array(sigma, dtype= float)
-    sigma_gr_x = np.array(channel, dtype=float)
-    sigma_gr = buildTGraph("BlFit_sigma_%s"%(sensor),"BlFit_sigma_%s;Channel;Sigma"%(sensor),len(sigma_gr_x),sigma_gr_x,sigma_gr_y,3)
-    sigma_gr.Draw()
-    sigma_gr.Write()
-
-    histo_hh.Draw("colz")
-    sigma_gr.Draw("same")
-    mean_gr.Draw("same")
-    canvas.Write()
-    canvas.Close()
-    #savePNG(canvas,directory+"hybrid_fits/","baseline_gausFit_%s"%(key))
-
     #Plot lowdaq
     ld_gr_y = np.array(lowdaq, dtype= float)
     ld_gr_x = np.array(channel, dtype=float)
-    ld_gr = buildTGraph("lowdaq_flag_%s"%(sensor),"Low_Daq_Threshold_%s;Channel;Status"%(sensor),len(ld_gr_x),ld_gr_x,ld_gr_y,1)
+    ld_gr = buildTGraph("lowdaq_flags_%s"%(sensor),"Low_Daq_Threshold_%s;Channel;(1 = lowdaq)"%(sensor),len(ld_gr_x),ld_gr_x,ld_gr_y,1)
     ld_gr.Draw()
     ld_gr.Write()
 
@@ -241,6 +154,7 @@ for key in histokeys_hh:
     chi2_gr = buildTGraph("BlFitChi2_%s"%(sensor),"BlFit_Chi2/Ndf_%s;Channel;Status"%(sensor),len(chi2_gr_x),chi2_gr_x,chi2_gr_y,1)
     chi2_gr.Draw()
     chi2_gr.Write()
+
     ######################################################################################################
     ###Show Channel Fits
     for cc in range(len(channel)): 

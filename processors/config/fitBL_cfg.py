@@ -11,17 +11,11 @@ parser = OptionParser()
 parser.add_option("-i", "--inFile", type="string", dest="inFilename",
         help="Input filename.", metavar="inFilename", default="")
 
-parser.add_option("-c", "--nhitsFitCut", type="int", dest="nhitsFitCut",
-        help="set the min number of hits required for Gauss Fit of channels", metavar="nhitsFitCut", default="0")
-
-parser.add_option("-d", "--outDir", type="string", dest="outDir",
-        help="Specify the output directory.", metavar="outDir", default=".")
-
 parser.add_option("-t", "--xmin", type="int", dest="xmin",
         help="Set threshold for xmin of iterative fit range", metavar="xmin", default="50")
 
 parser.add_option("-m", "--minStats", type="int", dest="minStats",
-        help="Minimum Statistics required per bin to perform fit", metavar="minStats", default="1000")
+        help="Minimum Statistics required per bin to perform fit", metavar="minStats", default="8500")
 
 parser.add_option("-n", "--nPoints", type="int", dest="nPoints",
         help="Select number of points for second derivative.", metavar="nPoints", default="3")
@@ -43,7 +37,6 @@ else:
 p = HpstrConf.Process()
 
 p.run_mode = 2
-#p.max_events = 1000
 
 # Library containing processors
 p.libraries.append("libprocessors.so")
@@ -60,7 +53,6 @@ fitBL = HpstrConf.Processor('fitBL', 'SvtBlFitHistoProcessor')
 fitBL.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/SvtBlFits.json'
 fitBL.parameters["outDir"] = options.outDir
 fitBL.parameters["hybrid"] = options.hybrid
-fitBL.parameters["nhitsFitCut"] = options.nhitsFitCut
 fitBL.parameters["rebin"] = options.rebin
 fitBL.parameters["nPoints"] = options.nPoints
 fitBL.parameters["xmin"] = options.xmin
