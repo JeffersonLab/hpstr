@@ -90,7 +90,7 @@ class BhToysHistoProcessor : public Processor {
         int bkg_mult_{1};
 
         // The factor by which to scale the mass resolution function.
-        double res_scale_{1.56};
+        double res_scale_{1.00};
         
         // Whether to use the asymptotic upper limit or the power constrained. Defaults to asymptotic.
         bool asymptotic_limit_{true};
