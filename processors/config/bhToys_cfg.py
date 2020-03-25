@@ -27,6 +27,8 @@ parser.add_option("-b", "--bkg", type="int", dest="toy_bkg_mult",
         metavar="toy_bkg_mult", default=1)
 parser.add_option("-r", "--res_scale", type="float", dest="res_scale",
         help="Factor by which to scale the mass resolution.", metavar="res_scale", default=1.56)
+parser.add_option("-M", "--bkg_model", type="int", dest="bkg_model", default="1",
+        help="The type of background fit model. 0 = Chebyshev; 1 = Exponential Chebyshev; 2 = Legendre; 3 = Exponential Legendre.", metavar="bkg_model")
 (options, args) = parser.parse_args()
 
 # Use the input file to set the output file name
@@ -70,6 +72,7 @@ bhtoys.parameters["toy_bkg_mult"] = options.toy_bkg_mult
 bhtoys.parameters["res_scale"] = options.res_scale
 bhtoys.parameters["signal_shape_h_name"] = options.signal_shape_h_name
 bhtoys.parameters["signal_shape_h_file"] = options.signal_shape_h_file
+bhtoys.parameters["bkg_model"] = options.bkg_model
 
 # Sequence which the processors will run.
 p.sequence = [bhtoys]

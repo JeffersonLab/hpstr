@@ -41,9 +41,6 @@ class BhToysHistoProcessor : public Processor {
         // The bump hunter manager
         BumpHunter* bump_hunter_{nullptr};
 
-        // The bkg model
-        BumpHunter::BkgModel bkg_model_{BumpHunter::BkgModel::EXP_POLY};
-
         // The flat tuple manager
         FlatTupleMaker* flat_tuple_{nullptr};
 
@@ -94,6 +91,9 @@ class BhToysHistoProcessor : public Processor {
         
         // Whether to use the asymptotic upper limit or the power constrained. Defaults to asymptotic.
         bool asymptotic_limit_{true};
+
+        // What background model type to use.
+        int bkg_model_{1};
 
         //Debug Level
         int debug_{0};
