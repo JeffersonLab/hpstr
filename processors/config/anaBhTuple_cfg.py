@@ -34,7 +34,9 @@ bhana = HpstrConf.Processor('bhana', 'VertexAnaProcessor')
 bhana.parameters["debug"] = 1
 bhana.parameters["anaName"] = "bhana"
 bhana.parameters["trkColl"] = "GBLTracks"
+bhana.parameters["hitColl"] = "RotatedHelicalTrackHits"
 bhana.parameters["vtxColl"] = "TargetConstrainedV0Vertices"
+bhana.parameters["mcColl"]  = "MCParticle"
 bhana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/bhSelection.json'
 bhana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
 bhana.parameters["beamE"] = 2.3
@@ -57,7 +59,11 @@ bhana.parameters["CalTimeOffset"]=CalTimeOffset
 #Region definitions
 
 RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/"
-bhana.parameters["regionDefinitions"] = [RegionPath+'bhTight.json']
+bhana.parameters["regionDefinitions"] = [RegionPath+'bhTight.json',
+                                         RegionPath+'bhRadFracRad.json',
+                                         RegionPath+'bhRadFracRadRafo.json',
+                                         RegionPath+'bhRadFracRecoil.json'
+                                        ]
 
 # Sequence which the processors will run.
 p.sequence = [bhana]
