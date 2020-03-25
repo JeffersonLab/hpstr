@@ -2,6 +2,8 @@
  * @file FlatTupleMaker.cxx
  * @author Omar Moreno
  * @date January 18, 2016
+ * @author PF
+ * @date Jan, 2020
  * @brief 
  *
  */
@@ -9,16 +11,24 @@
 #include <FlatTupleMaker.h>
 
 FlatTupleMaker::FlatTupleMaker(std::string file_name, std::string tree_name) { 
-
+    
     file = new TFile(file_name.c_str(), "RECREATE");
 
     tree = new TTree(tree_name.c_str(), tree_name.c_str());   
     
 }
 
+//Will save it in current open file
+FlatTupleMaker::FlatTupleMaker(std::string tree_name) { 
+    file = nullptr;
+    tree = new TTree(tree_name.c_str(), tree_name.c_str());
+}
+
 FlatTupleMaker::~FlatTupleMaker() { 
-    delete file; 
-    delete tree; 
+    if (file)
+        delete file; 
+    if (tree)
+        delete tree; 
 }
 
 void FlatTupleMaker::addVariable(std::string variable_name) { 
@@ -49,8 +59,10 @@ bool FlatTupleMaker::hasVariable(std::string variable_name) {
 }
 
 void FlatTupleMaker::close() { 
-    file->Write();
-    file->Close(); 
+    if (file) {
+        file->Write();
+        file->Close(); 
+    }
 }
 
 

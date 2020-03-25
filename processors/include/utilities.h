@@ -39,12 +39,17 @@ namespace utils {
     bool hasCollection(EVENT::LCEvent* lc_event,const std::string& collection);
 
     Vertex* buildVertex(EVENT::Vertex* lc_vertex);
-
-    Particle* buildParticle(EVENT::ReconstructedParticle* lc_particle);
+    
+    Particle* buildParticle(EVENT::ReconstructedParticle* lc_particle, 
+                            EVENT::LCCollection* gbl_kink_data,
+                            EVENT::LCCollection* track_data);
 
     Track* buildTrack(EVENT::Track* lc_track, 
             EVENT::LCCollection* gbl_kink_data, 
             EVENT::LCCollection* track_data);
+
+
+    bool IsSameTrack(Track* trk1, Track* trk2);
 
     RawSvtHit* buildRawHit(EVENT::TrackerRawData* rawTracker_hit,
             EVENT::LCCollection* raw_svt_hit_fits);
@@ -65,7 +70,8 @@ namespace utils {
     bool isUsedByTrack(TrackerHit* tracker_hit,
             EVENT::Track* lc_track);
 
-
+    bool getParticlesFromVertex(Vertex* vtx, Particle* ele, Particle* pos);
+    
     //TODO: extern?
     static UTIL::BitField64 decoder("system:6,barrel:3,layer:4,module:12,sensor:1,side:32:-2,strip:12");
 

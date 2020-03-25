@@ -53,7 +53,10 @@ Vertex* utils::buildVertex(EVENT::Vertex* lc_vertex) {
     return vertex;
 }
 
-Particle* utils::buildParticle(EVENT::ReconstructedParticle* lc_particle) 
+Particle* utils::buildParticle(EVENT::ReconstructedParticle* lc_particle,
+        EVENT::LCCollection* gbl_kink_data,
+        EVENT::LCCollection* track_data)
+
 { 
 
     if (!lc_particle) 
@@ -82,7 +85,7 @@ Particle* utils::buildParticle(EVENT::ReconstructedParticle* lc_particle)
     part->setPDG(lc_particle->getParticleIDUsed()->getPDG());
 
     // Set the Track for the HpsParticle
-    part->setTrack(utils::buildTrack(lc_particle->getTracks()[0], nullptr, nullptr));
+    part->setTrack(utils::buildTrack(lc_particle->getTracks()[0], gbl_kink_data, track_data));
 
     // Set the Track for the HpsParticle
     if (lc_particle->getClusters().size() > 0)
@@ -127,6 +130,21 @@ CalCluster* utils::buildCalCluster(EVENT::Cluster* lc_cluster)
     return cluster;
 }
 
+bool utils::IsSameTrack(Track* trk1, Track* trk2) {
+    double tol = 1e-6;
+    if (fabs(trk1->getD0()        - trk2->getD0())        > tol ||
+            fabs(trk1->getPhi()       - trk2->getPhi())       > tol ||
+            fabs(trk1->getOmega()     - trk2->getOmega())     > tol ||
+            fabs(trk1->getTanLambda() - trk2->getTanLambda()) > tol ||
+            fabs(trk1->getZ0()        - trk2->getZ0())        > tol ||
+            fabs(trk1->getChi2Ndf()   - trk2->getChi2Ndf())   > tol 
+       ) 
+        return false;
+
+    return true;
+}
+
+
 Track* utils::buildTrack(EVENT::Track* lc_track,
         EVENT::LCCollection* gbl_kink_data,
         EVENT::LCCollection* track_data) {
@@ -142,6 +160,9 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
             lc_track->getTanLambda(), 
             lc_track->getZ0());
 
+    // Set the track id
+    track->setID(lc_track->id());
+
     // Set the track type
     track->setType(lc_track->getType()); 
 
@@ -150,7 +171,10 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 
     // Set the track ndf 
     track->setNdf(lc_track->getNdf());
-
+    
+    // Set the track covariance matrix
+    track->setCov(static_cast<std::vector<float> > (lc_track->getCovMatrix()));
+    
     // Set the position of the extrapolated track at the ECal face.  The
     // extrapolation uses the full 3D field map.
     const EVENT::TrackState* track_state 
@@ -176,21 +200,25 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 
         // The container of GBLKinkData objects should only contain a 
         // single object. If not, throw an exception
-        if (gbl_kink_data_list.size() != 1) { 
-            throw std::runtime_error("[ TrackingProcessor ]: The collection " 
-                    + std::string(Collections::TRACK_DATA_REL)
-                    + " has the wrong data structure."); 
-        }
+        if (gbl_kink_data_list.size() == 1) {
 
-        // Get the list GBLKinkData GenericObject associated with the LCIO Track
-        IMPL::LCGenericObjectImpl* gbl_kink_datum 
-            = static_cast<IMPL::LCGenericObjectImpl*>(gbl_kink_data_list.at(0));
+            /*
+               std::cout<<"[ Utilities ]: The collection " 
+               + std::string(Collections::KINK_DATA)
+               + " has the wrong data structure for this track"<<std::endl; 
+               */
 
-        // Set the lambda and phi kink values
-        for (int ikink = 0; ikink < gbl_kink_datum->getNDouble(); ++ikink) { 
-            track->setLambdaKink(ikink, gbl_kink_datum->getFloatVal(ikink));
-            track->setPhiKink(ikink, gbl_kink_datum->getDoubleVal(ikink));
-        }
+            // Get the list GBLKinkData GenericObject associated with the LCIO Track
+            IMPL::LCGenericObjectImpl* gbl_kink_datum 
+                = static_cast<IMPL::LCGenericObjectImpl*>(gbl_kink_data_list.at(0));
+
+            // Set the lambda and phi kink values
+            for (int ikink = 0; ikink < gbl_kink_datum->getNDouble(); ++ikink) { 
+                track->setLambdaKink(ikink, gbl_kink_datum->getFloatVal(ikink));
+                track->setPhiKink(ikink, gbl_kink_datum->getDoubleVal(ikink));
+            }
+
+        }//gbl_kink_data has right structure
 
     } // add gbl kink data
 
@@ -402,3 +430,30 @@ bool utils::isUsedByTrack(TrackerHit* tracker_hit,
     }
     return false;
 }
+
+
+bool utils::getParticlesFromVertex(Vertex* vtx, Particle* ele, Particle* pos) {
+
+    for (int ipart = 0; ipart < vtx->getParticles()->GetEntries(); ++ipart) {
+        int pdg_id = ((Particle*)vtx->getParticles()->At(ipart))->getPDG();
+        if (pdg_id == 11) {
+            ele = (Particle*)vtx->getParticles()->At(ipart);
+        }
+        else if (pdg_id == -11) {
+            pos = (Particle*)vtx->getParticles()->At(ipart);
+        }
+
+        else {
+            std::cout<<"Utilities::Wrong particle ID "<< pdg_id <<"associated to vertex. Skip."<<std::endl;
+            return false;
+        }
+    }
+
+    if (!ele || !pos) {
+        std::cout<<"Utilities::Vertex formed without ele/pos. Skip."<<std::endl;
+        return false;
+    }
+
+    return true;
+}
+

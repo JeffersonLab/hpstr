@@ -60,11 +60,25 @@ class MCParticle : public TObject {
         void setPDG(const int pdg) { pdg_ = pdg; }; 
 
         /**
+         * Set the PDG ID of the mother of this particle.
+         *
+         * @param momPDG The PDG ID of the mother of this particle
+         */
+        void setMomPDG(const int momPDG) { momPDG_ = momPDG; }; 
+
+        /**
          * Set the generator status of the particle.
          *
          * @param gen_ MCParticle generator status
          */
         void setGenStatus(const int gen) { gen_ = gen; };
+
+        /**
+         * Set the generator status of the particle.
+         *
+         * @param sim_ MCParticle generator status
+         */
+        void setSimStatus(const int sim) { sim_ = sim; };
        
         /**
          * Set the energy of the particle in GeV.
@@ -117,8 +131,14 @@ class MCParticle : public TObject {
         /** @return The particle ID. */
         int getPDG() const { return pdg_; }; 
         
+        /** @return The particle ID of the mother. */
+        int getMomPDG() const { return momPDG_; }; 
+        
         /** @return The particle generator status. */
         int getGenStatus() const { return gen_; }; 
+        
+        /** @return The particle simulator status. */
+        int getSimStatus() const { return sim_; }; 
         
         /** @return The particle energy in GeV. */
         double getEnergy() const { return energy_; }; 
@@ -157,8 +177,14 @@ class MCParticle : public TObject {
         /** The PDG ID of this particle */
         int pdg_{-9999}; 
 
+        /** The PDG ID of this particle */
+        int momPDG_{-9999}; 
+
         /** The generator status of the particle */ 
         int gen_{-9999}; 
+
+        /** The generator status of the particle */ 
+        int sim_{-9999}; 
 
         /** The x component of the momentum of this particle in GeV */
         double px_{-9999}; 

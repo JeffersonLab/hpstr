@@ -1,12 +1,17 @@
 import HpstrConf
 import sys
 
-# Use the input file to set the output file name
-lcio_file = sys.argv[1].strip()
-root_file = '%s.root' % lcio_file[:-6]
+import baseConfig
 
-print 'LCIO file: %s' % lcio_file
-print 'Root file: %s' % root_file
+parser = baseConfig.parser
+(options,args) = parser.parse_args()
+
+# Use the input file to set the output file name
+lcio_file = options.inFilename
+root_file = options.outFilename
+
+print('LCIO file: %s' % lcio_file)
+print('Root file: %s' % root_file)
 
 p = HpstrConf.Process()
 
@@ -14,7 +19,7 @@ p = HpstrConf.Process()
 p.run_mode = 0
 
 # Library containing processors
-p.libraries.append("libprocessors.so")
+p.add_library("libprocessors")
 
 ###############################
 #          Processors         #
@@ -25,6 +30,7 @@ svthits = HpstrConf.Processor('svthits', 'Tracker3DHitProcessor')
 rawsvt = HpstrConf.Processor('rawsvt', 'SvtRawDataProcessor')
 ecal = HpstrConf.Processor('ecal', 'ECalDataProcessor')
 vtx = HpstrConf.Processor('vtx', 'VertexProcessor')
+c_vtx = HpstrConf.Processor('c_vtx', 'VertexProcessor')
 mcpart = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
 
 ###############################
@@ -50,6 +56,8 @@ rawsvt.parameters["hitCollRoot"]    = 'SVTRawTrackerHits'
 svthits.parameters["debug"] = 0
 svthits.parameters["hitCollLcio"]    = 'RotatedHelicalTrackHits'
 svthits.parameters["hitCollRoot"]    = 'RotatedHelicalTrackHits'
+svthits.parameters["mcPartRelLcio"]  = 'RotatedHelicalTrackMCRelations'
+
 
 #Tracking
 track.parameters["debug"] = 0 
@@ -73,6 +81,16 @@ vtx.parameters["debug"] = 0
 vtx.parameters["vtxCollLcio"]    = 'UnconstrainedV0Vertices'
 vtx.parameters["vtxCollRoot"]    = 'UnconstrainedV0Vertices'
 vtx.parameters["partCollRoot"]   = 'ParticlesOnVertices'
+vtx.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
+vtx.parameters["trkRelCollLcio"] = 'TrackDataRelations'
+
+#Constrained Vertex
+c_vtx.parameters["debug"] = 0
+c_vtx.parameters["vtxCollLcio"]     = 'TargetConstrainedV0Vertices'
+c_vtx.parameters["vtxCollRoot"]     = 'TargetConstrainedV0Vertices'
+c_vtx.parameters["partCollRoot"]    = 'ParticlesOnConstrainedVertices'
+c_vtx.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
+c_vtx.parameters["trkRelCollLcio"]  = 'TrackDataRelations'
 
 
 #MCParticle
@@ -82,7 +100,7 @@ mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
 # Sequence which the processors will run.
 #p.sequence = [header, track, rawsvt, svthits, ecal, vtx, mcpart]
-p.sequence = [header, track, rawsvt, svthits, ecal, vtx]
+p.sequence = [header, track, rawsvt, svthits, ecal, vtx, c_vtx]
 
 p.input_files=[lcio_file]
 p.output_files = [root_file]

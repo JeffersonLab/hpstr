@@ -74,12 +74,6 @@ class Vertex : public TObject {
         /** Set the ID */
         void setID (const int id) {id_=id;}
 
-        /** Set the invariant mass */
-        float setInvMass() const {return invM_;}
-
-        /** Set the invariant mass error */
-        float setInvMassErr() const {return invMerr_;}
-
         /** Sets the covariance matrix as a simple vector of values
          *  Covariance matrix of the position (stored as lower triangle matrix, i.e.
          *  cov(xx),cov(y,x),cov(y,y) ).
@@ -89,7 +83,7 @@ class Vertex : public TObject {
         /** Set the probability */
         void setProbability(const float probability) {probability_ = probability;}
 
-        TRefArray* getParticles(); 
+        TRefArray* getParticles(){return parts_;}; 
 
         /** Returns the covariance matrix as a simple vector of values */
         const std::vector<float>& getCovariance() const {return covariance_;}
@@ -139,13 +133,27 @@ class Vertex : public TObject {
         double   getP2Y      () const {return p2_.Y();}
         double   getP2Z      () const {return p2_.Z();}
 
+        TVector3 getP        () const {return p_;}
+        
+        /** Get the Target Constrained Sigma X */
+        double getTgtConstrSigmaX() const {return parameters_[9];}
+        
+        /** Get the Target Constrained X */
+        double getTgtConstrX() const {return parameters_[7];}
+        
+        /** Get the Target Constrained Sigma Y */
+        double getTgtConstrSigmaY() const {return parameters_[11];}
+        
+        /** Get the Target Constrained Y */
+        double getTgtConstrY() const {return parameters_[20];}
+        
         ClassDef(Vertex,1);
 
     private:
 
         double chi2_{-999};
         int ndf_{-999};  
-        TVector3 pos_,p1_,p2_,p1e_,p2e_;
+        TVector3 pos_,p1_,p2_,p_;
 
         float invM_{-999};
         float invMerr_{-999};
