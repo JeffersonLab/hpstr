@@ -75,7 +75,7 @@ hpstr also includes the HPS 2019 resonance search analysis functionality. A brie
 
 A resonance search job may be called with the following form:
 ```
-hpstr bhToys_cfg.py -i ${invariantMassDistro.root} -s ${pathToInvariantMassPlot} -d ${outputDirectory} -m ${mass} -p ${backgroundFitPolynomialOrder} -w ${windowSize} -n 0
+hpstr bhToys_cfg.py -i ${invariantMassDistro.root} -s ${pathToInvariantMassPlot} -d ${outputDirectory} -m ${mass} -p ${backgroundFitPolynomialOrder} -w ${windowSize} -N 0
 ```
 The variables correspond to:
 - ```${invariantMassDistro.root}```: A ROOT file containing the invariant mass histogram that is to be searched.
@@ -95,7 +95,7 @@ While by default, the resonance search code employs a background fit function of
 
 In addition to the above mentioned variables, it is also possible to scale the mass resolution by an arbitrary float by adding the argument ```-r ${scalingFactor}```.
 
-The resonance search code is also capable of performing toy model analysis. The number of toy models to generate and analyze is specified by the argument ```-n ${toyModelCount}```. Toy models will automatically be generated from a fit polynomial one order higher than that specified by ```-p ${backgroundFitPolynomialOrder}```. By default, toy models will be generated with the same number of entries as the input invariant mass histogram. This may be scaled by an integer factor using the argument ```-b ${toyModelScalingFactor}```. Lastly, signal may be injected into toy models. This is done by adding the argument ```--sig ${signalEventCount}```, which will add an integer number of signal events at ${mass} using a Gaussian distribution. If a different distribution is desired, it is also possible to specify it using a histogram. This is done with the arguments ```--sig_file ${signalShapeHistogramFile.root --sig_hist ${signalHistogramPath}```. Note that the signal histogram should have the same binning as the invariant mass histogram.
+The resonance search code is also capable of performing toy model analysis. The number of toy models to generate and analyze is specified by the argument ```-N ${toyModelCount}```. Toy models will automatically be generated from a fit polynomial one order higher than that specified by ```-p ${backgroundFitPolynomialOrder}```. By default, toy models will be generated with the same number of entries as the input invariant mass histogram. This may be scaled by an integer factor using the argument ```-b ${toyModelScalingFactor}```. Lastly, signal may be injected into toy models. This is done by adding the argument ```--sig ${signalEventCount}```, which will add an integer number of signal events at ${mass} using a Gaussian distribution. If a different distribution is desired, it is also possible to specify it using a histogram. This is done with the arguments ```--sig_file ${signalShapeHistogramFile.root --sig_hist ${signalHistogramPath}```. Note that the signal histogram should have the same binning as the invariant mass histogram.
 
 ## Available Scripts 
 
