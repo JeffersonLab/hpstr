@@ -131,7 +131,7 @@ for key in histokeys_hh:
     histo_hh.Draw("colz")
     mean_gr.Draw("same")
     canvas.Write()
-    #savePNG(canvas,directory+"hybrid_fits/","%s_gausFit"%(key))
+    savePNG(canvas,directory+"hybrid_fits/","%s_gausFit"%(key))
     canvas.Close()
 
     #1D Histogram of channel fit sigma

@@ -37,7 +37,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
 
         //Perform fitting procedure over all channels on a sensor
-        for(int cc=0; cc < 30 ; ++cc) 
+        for(int cc=0; cc < 640 ; ++cc) 
         {
             
             //Set Channel and Hybrid information and paramaters in the flat tuple
@@ -79,8 +79,17 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             double maxbin = projy_h->GetBinContent(projy_h->GetMaximumBin());
             //std::cout << "[BlFitHistos] Maximum Bin Value Is " << maxbin << std::endl;
             //Fraction of maximum bin value required to start fit
-            double frac = 0.05;
-            int firstbin = projy_h->FindFirstBinAbove((double)frac*maxbin,1);
+            //THIS MAY NEED TO BE ADJUSTeD FOR QUALITY OF FITS
+            int firstbin = 0;
+            double frac = 0.15;
+            if (frac*maxbin <= xmin_)
+            {
+                firstbin = projy_h->FindFirstBinAbove((double)xmin_,1);
+            }
+            else 
+            {
+                firstbin = projy_h->FindFirstBinAbove((double)frac*maxbin,1);
+            }
             
             //If channel does not have the minimum statistics required, set all variables to -9999.9
             //and skip the fit procedure on this channel
@@ -300,7 +309,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             double ogSigma = fit->GetParams()[2];
             double tempChi2 = ogChi2;
             double tempNdf = ogNdf;
-            double improve = 0.1;
+            double improve = 0.08;
             bool xminworse = false;
             bool addxmaxworse = false;
             double stopxmax = ogMean + 3*ogSigma; 
