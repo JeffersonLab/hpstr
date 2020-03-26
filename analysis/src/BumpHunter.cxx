@@ -11,7 +11,7 @@
 
 #include "BumpHunter.h"
 
-BumpHunter::BumpHunter(BkgModel model, int poly_order, int res_factor, double res_scale, bool asymptotic_limit)
+BumpHunter::BumpHunter(FitFunction::BkgModel model, int poly_order, int res_factor, double res_scale, bool asymptotic_limit)
     : ofs(nullptr),
       res_factor_(res_factor), 
       poly_order_(poly_order),
@@ -104,10 +104,11 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
     // Instantiate a new fit result object to store all of the results.
     HpsFitResult* fit_result = new HpsFitResult();
     fit_result->setPolyOrder(poly_order_);
+    fit_result->setBkgModelType(bkg_model_);
 
     // Determine whether to use an exponential polynomial or normal polynomial.
-    bool isChebyshev = (bkg_model_ == BumpHunter::BkgModel::CHEBYSHEV || bkg_model_ == BumpHunter::BkgModel::EXP_CHEBYSHEV);
-    bool isExp = (bkg_model_ == BumpHunter::BkgModel::EXP_CHEBYSHEV || bkg_model_ == BumpHunter::BkgModel::EXP_LEGENDRE);
+    bool isChebyshev = (bkg_model_ == FitFunction::BkgModel::CHEBYSHEV || bkg_model_ == FitFunction::BkgModel::EXP_CHEBYSHEV);
+    bool isExp = (bkg_model_ == FitFunction::BkgModel::EXP_CHEBYSHEV || bkg_model_ == FitFunction::BkgModel::EXP_LEGENDRE);
     
     // If not fitting toys, start by performing a background only fit.
     if(!skip_bkg_fit) {
@@ -124,10 +125,10 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
 
         std::cout << "Defining fit functions." << std::endl;
         std::cout << "    Model :: ";
-        if(bkg_model_ == BumpHunter::BkgModel::CHEBYSHEV) { std::cout << "Chebyshev Polynomial" << std::endl; }
-        else if(bkg_model_ == BumpHunter::BkgModel::EXP_CHEBYSHEV) { std::cout << "Exponential Chebyshev Polynomial" << std::endl; }
-        else if(bkg_model_ == BumpHunter::BkgModel::LEGENDRE) { std::cout << "Legendre Polynomial" << std::endl; }
-        else if(bkg_model_ == BumpHunter::BkgModel::EXP_LEGENDRE) { std::cout << "Exponential Legendre Polynomial" << std::endl; }
+        if(bkg_model_ == FitFunction::BkgModel::CHEBYSHEV) { std::cout << "Chebyshev Polynomial" << std::endl; }
+        else if(bkg_model_ == FitFunction::BkgModel::EXP_CHEBYSHEV) { std::cout << "Exponential Chebyshev Polynomial" << std::endl; }
+        else if(bkg_model_ == FitFunction::BkgModel::LEGENDRE) { std::cout << "Legendre Polynomial" << std::endl; }
+        else if(bkg_model_ == FitFunction::BkgModel::EXP_LEGENDRE) { std::cout << "Exponential Legendre Polynomial" << std::endl; }
         std::cout << "    Order :: ";
         if(poly_order_ == 1) { std::cout << "1" << std::endl; }
         else if(poly_order_ == 3) { std::cout << "3" << std::endl; }
@@ -348,8 +349,8 @@ void BumpHunter::getUpperLimitAsymptotic(TH1* histogram, HpsFitResult* result) {
 
 void BumpHunter::getUpperLimitPower(TH1* histogram, HpsFitResult* result) {
     // Determine whether to use an exponential polynomial or normal polynomial.
-    bool isChebyshev = (bkg_model_ == BumpHunter::BkgModel::CHEBYSHEV || bkg_model_ == BumpHunter::BkgModel::EXP_CHEBYSHEV);
-    bool isExp = (bkg_model_ == BumpHunter::BkgModel::EXP_CHEBYSHEV || bkg_model_ == BumpHunter::BkgModel::EXP_LEGENDRE);
+    bool isChebyshev = (bkg_model_ == FitFunction::BkgModel::CHEBYSHEV || bkg_model_ == FitFunction::BkgModel::EXP_CHEBYSHEV);
+    bool isExp = (bkg_model_ == FitFunction::BkgModel::EXP_CHEBYSHEV || bkg_model_ == FitFunction::BkgModel::EXP_LEGENDRE);
     
     // Instantiate a fit function for the appropriate polynomial order.
     TF1* comp{nullptr};

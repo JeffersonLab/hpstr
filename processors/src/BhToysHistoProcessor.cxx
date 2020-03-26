@@ -54,10 +54,19 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
     }
     
     // Get the appropriate background model.
-    BumpHunter::BkgModel bkg_fit_model = BumpHunter::BkgModel::EXP_CHEBYSHEV;
-    if(bkg_model_ == 0) { bkg_fit_model = BumpHunter::BkgModel::CHEBYSHEV; }
-    else if(bkg_model_ == 2) { bkg_fit_model = BumpHunter::BkgModel::LEGENDRE; }
-    else if(bkg_model_ == 3) { bkg_fit_model = BumpHunter::BkgModel::EXP_LEGENDRE; }
+    FitFunction::BkgModel bkg_fit_model;
+    std::cout << "Background Model ID: " << bkg_model_ << std::endl;
+    switch(bkg_model_) {
+        case 0: bkg_fit_model = FitFunction::BkgModel::EXP_CHEBYSHEV;
+                break;
+        case 1: bkg_fit_model = FitFunction::BkgModel::EXP_CHEBYSHEV;
+                break;
+        case 2: bkg_fit_model = FitFunction::BkgModel::LEGENDRE;
+                break;
+        case 3: bkg_fit_model = FitFunction::BkgModel::EXP_LEGENDRE;
+                break;
+        default: bkg_fit_model = FitFunction::BkgModel::EXP_CHEBYSHEV;
+    }
     
     // Init bump hunter manager
     bump_hunter_ = new BumpHunter(bkg_fit_model, poly_order_, win_factor_, res_scale_, asymptotic_limit_);
