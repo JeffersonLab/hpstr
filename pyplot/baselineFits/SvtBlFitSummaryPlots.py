@@ -28,7 +28,7 @@ sigmaDict = {}
 lowdaq_hh = r.TH2F("lowdaq_ch_hh","Number of LowDaq Threshold Channels;layer;module",14,0.5,14.5,4,-0.5,3.5)
 
 lowwin = 100 #This parameter is determined by looking at window size distributions 
-lowwinsize_hh = r.TH2F("low_window_size_hh","Channels with window size <  %i layer;module"%(lowwin),14,0.5,14.5,4,-0.5,3.5)
+lowwinsize_hh = r.TH2F("low_window_size_hh","Channels with window size <  %i;layer;module"%(lowwin),14,0.5,14.5,4,-0.5,3.5)
 
 totwinsize_h = r.TH1F("totwinsize_h","Fit Window Size for Detector;Window Size [ADC];Entries",250,0,1000)
 
@@ -47,7 +47,8 @@ for fitData in myTree:
 
     #Fill 2D Histograms
     lowdaq_hh.Fill(float(ly),float(mod),fitData.lowdaq)
-    lowwinsize_hh.Fill(ly,mod,fitData.BlFitRangeUpper - fitData.BlFitRangeLower)
+    if fitData.BlFitRangeUpper - fitData.BlFitRangeLower < lowwin: 
+        lowwinsize_hh.Fill(ly,mod,1.)
     r.gStyle.SetNumberContours(999)
     lowdaq_hh.SetContour(999)
     lowwinsize_hh.SetContour(999)
@@ -59,7 +60,7 @@ lowwinsize_hh.Write()
 
 for sensor in channelDict:
 
-    winsize_h = r.TH1F("%s_winsize_h"%(sensor),"Fit Window Size %s;Channel;Window Size [ADC]"%(sensor),250,0,1000)
+    winsize_h = r.TH1F("%s_winsize_h"%(sensor),"Fit Window Size %s;Window Size [ADC];Entries"%(sensor),250,0,1000)
 
     lowdaq_h = r.TH1F("%s_lowdaq_h"%(sensor),"Low DAQ Threshold %s;Channel;Status (1=low)"%(sensor),640,0.0,640.0)
 

@@ -49,10 +49,10 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
 
             //Update display with sensor and channel information periodically 
-            if(cc%20 == 0)
-            {
+           // if(cc%20 == 0)
+           // {
                 std::cout <<"Hybrid: "<< SvtAna2DHisto_key << " channel #" << cc << std::endl;
-            }
+           // }
 
             //Get YProjection (1D Channel Histo) from 2D Histogram 
             TH1D* projy_h = histo_hh->ProjectionY(Form("%s_proY_ch%i",SvtAna2DHisto_key.c_str(),cc),
@@ -81,14 +81,17 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             //Fraction of maximum bin value required to start fit
             //THIS MAY NEED TO BE ADJUSTeD FOR QUALITY OF FITS
             int firstbin = 0;
-            double frac = 0.15;
+            double frac = 0.05;
+            std::cout << "frac*maxbin is " << frac*maxbin << std::endl;
             if (frac*maxbin <= xmin_)
             {
                 firstbin = projy_h->FindFirstBinAbove((double)xmin_,1);
+                std::cout << "firstbin is " << firstbin << std::endl;
             }
             else 
             {
                 firstbin = projy_h->FindFirstBinAbove((double)frac*maxbin,1);
+                std::cout << "firstbin is " << firstbin << std::endl;
             }
             
             //If channel does not have the minimum statistics required, set all variables to -9999.9
@@ -317,7 +320,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             double ogxmax = xmax;
             bool xmaxreset = true;
 
-                       
+/*                       
             //Iteratively decrease xmax, refit, and calculate Chi2/Ndf
             //If Chi2/Ndf improves after an iteration by set amount, continue iterating
             while (subxmaxworse != true && xmin > 0 && xmax - xmin > 50.0 ) 
@@ -339,8 +342,9 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                 tempChi2 = fit->Chi2();
                 tempNdf = fit->Ndf();
             }
+*/
 
-
+            /*
             //XMIN
             //Iteratively increase xmin, refit, calculate Chi2/Ndf
             //Iterate unless or until Chi2/Ndf starts increasing
@@ -366,7 +370,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                 tempChi2 = fit->Chi2();
                 tempNdf = fit->Ndf();
             }
-
+*/
 
             //Now that xmax and xmin have both been separately incremented to find the fit range 
             //that returns the smallest Chi2/Ndf, redo the fit using this new range
