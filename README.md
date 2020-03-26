@@ -78,12 +78,12 @@ A resonance search job may be called with the following form:
 hpstr bhToys_cfg.py -i ${invariantMassDistro.root} -s ${pathToInvariantMassPlot} -d ${outputDirectory} -m ${mass} -p ${backgroundFitPolynomialOrder} -w ${windowSize} -n 0
 
 The variables correspond to:
-   ${invariantMassDistro.root}: A ROOT file containing the invariant mass histogram that is to be searched.
-   ${pathToInvariantMassPlot}: The path to the invariant mass histogram within the ROOT file.
-   ${outputDirectory}: The directory in which to output the result ROOT ntuple.
-   ${mass}: The mass to probe. This must be in units of MeV.
-   ${backgroundFitPolynomialOrder}: The resonance search uses background fit polynomials of the form 10^(T_n(m)), where T_n(m) is a Chebyshev polynomial of the first kind of order n. This argument specifies n, which may be any value from 0 - 5.
-   ${windowSize}: The size of the fit window. This is in units of the mass resolution, so a window size of 5 is equivalent to (5 * massResolution(m)).
+-${invariantMassDistro.root}: A ROOT file containing the invariant mass histogram that is to be searched.
+-${pathToInvariantMassPlot}: The path to the invariant mass histogram within the ROOT file.
+-${outputDirectory}: The directory in which to output the result ROOT ntuple.
+-${mass}: The mass to probe. This must be in units of MeV.
+-${backgroundFitPolynomialOrder}: The resonance search uses background fit polynomials of the form 10^(T_n(m)), where T_n(m) is a Chebyshev polynomial of the first kind of order n. This argument specifies n, which may be any value from 0 - 5.
+-${windowSize}: The size of the fit window. This is in units of the mass resolution, so a window size of 5 is equivalent to (5 * massResolution(m)).
 
 This will run a test to determine the p-value, signal yield, and other basic values for the resonance search at the specified point. Multiple jobs must be run to analyze multiple points.
 
