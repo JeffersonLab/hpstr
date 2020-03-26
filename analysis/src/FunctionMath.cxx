@@ -14,6 +14,19 @@ double FunctionMath::ChebyshevFunction(double x, double* p, int order) {
     return total;
 }
 
+double FunctionMath::LegendreFunction(double x, double* p, int order) {
+    double total = p[0];
+    if(order >= 1) { total += p[1] * x; }
+    if(order >= 2) { total += p[2] * (3 * x * x - 1) / 2; }
+    if(order >= 3) { total += p[3] * (5 * x * x * x - 3 * x) / 2; }
+    if(order >= 4) { total += p[4] * (35 * x * x * x * x - 30 * x * x - 3) / 8; }
+    if(order >= 5) { total += p[5] * (63 * x * x * x * x * x - 70 * x * x * x + 15 * x) / 8; }
+    if(order >= 6) { total += p[6] * (231 * x * x * x * x * x * x - 315 * x * x * x * x + 105 * x * x - 5) / 16; }
+    if(order >= 7) { total += p[7] * (429 * x * x * x * x * x * x * x - 693 * x * x * x * x * x + 315 * x * x * x - 35 * x) / 16; }
+
+    return total;
+}
+
 double FunctionMath::Gaussian(double x, double amplitude, double mean, double stddev) {
     return amplitude * 1.0 / (sqrt(2.0 * TMath::Pi() * pow(stddev, 2))) * TMath::Exp(-pow((x - mean), 2) / (2.0 * pow(stddev, 2)));
 }

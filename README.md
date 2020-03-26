@@ -74,22 +74,28 @@ This example will run the standard vertex selection on a data file (to specify t
 hpstr also includes the HPS 2019 resonance search analysis functionality. A brief description of the capabilities of this code, and how to use it, is included here.
 
 A resonance search job may be called with the following form:
-
+```
 hpstr bhToys_cfg.py -i ${invariantMassDistro.root} -s ${pathToInvariantMassPlot} -d ${outputDirectory} -m ${mass} -p ${backgroundFitPolynomialOrder} -w ${windowSize} -n 0
-
+```
 The variables correspond to:
-   ${invariantMassDistro.root}: A ROOT file containing the invariant mass histogram that is to be searched.
-   ${pathToInvariantMassPlot}: The path to the invariant mass histogram within the ROOT file.
-   ${outputDirectory}: The directory in which to output the result ROOT ntuple.
-   ${mass}: The mass to probe. This must be in units of MeV.
-   ${backgroundFitPolynomialOrder}: The resonance search uses background fit polynomials of the form 10^(T_n(m)), where T_n(m) is a Chebyshev polynomial of the first kind of order n. This argument specifies n, which may be any value from 0 - 5.
-   ${windowSize}: The size of the fit window. This is in units of the mass resolution, so a window size of 5 is equivalent to (5 * massResolution(m)).
+- ```${invariantMassDistro.root}```: A ROOT file containing the invariant mass histogram that is to be searched.
+- ```${pathToInvariantMassPlot}```: The path to the invariant mass histogram within the ROOT file.
+- ```${outputDirectory}```: The directory in which to output the result ROOT ntuple.
+- ```${mass}```: The mass to probe. This must be in units of MeV.
+- ```${backgroundFitPolynomialOrder}```: The resonance search uses background fit polynomials of the form 10^(T_n(m)), where T_n(m) is a Chebyshev polynomial of the first kind of order n. This argument specifies n, which may be any value from 0 - 5.
+- ```${windowSize}```: The size of the fit window. This is in units of the mass resolution, so a window size of 5 is equivalent to (5 * massResolution(m)).
 
 This will run a test to determine the p-value, signal yield, and other basic values for the resonance search at the specified point. Multiple jobs must be run to analyze multiple points.
 
-In addition to the above mentioned variables, it is also possible to scale the mass resolution by an arbitrary float by adding the argument "-r ${scalingFactor}".
+While by default, the resonance search code employs a background fit function of the form 10^(T_n(m)). This is configurable using the ```-M ${fitFunctionID}``` command, which allows for the selection of one of four fit functions. The fit function IDs corrspond to:
+- (0) Chebyshev Polynomial
+- (1) Exponential Chebyshev Polynomial
+- (2) Legendre Polynomial
+- (3) Exponential Legendre Polynomial
 
-The resonance search code is also capable of performing toy model analysis. The number of toy models to generate and analyze is specified by the argument "-n ${toyModelCount}". Toy models will automatically be generated from a fit polynomial one order higher than that specified by "-p ${backgroundFitPolynomialOrder}". By default, toy models will be generated with the same number of entries as the input invariant mass histogram. This may be scaled by an integer factor using the argument "-b ${toyModelScalingFactor}". Lastly, signal may be injected into toy models. This is done by adding the argument "--sig ${signalEventCount}", which will add an integer number of signal events at ${mass} using a Gaussian distribution. If a different distribution is desired, it is also possible to specify it using a histogram. This is done with the arguments "--sig_file ${signalShapeHistogramFile.root" --sig_hist ${signalHistogramPath}". Note that the signal histogram should have the same binning as the invariant mass histogram.
+In addition to the above mentioned variables, it is also possible to scale the mass resolution by an arbitrary float by adding the argument ```-r ${scalingFactor}```.
+
+The resonance search code is also capable of performing toy model analysis. The number of toy models to generate and analyze is specified by the argument ```-n ${toyModelCount}```. Toy models will automatically be generated from a fit polynomial one order higher than that specified by ```-p ${backgroundFitPolynomialOrder}```. By default, toy models will be generated with the same number of entries as the input invariant mass histogram. This may be scaled by an integer factor using the argument ```-b ${toyModelScalingFactor}```. Lastly, signal may be injected into toy models. This is done by adding the argument ```--sig ${signalEventCount}```, which will add an integer number of signal events at ${mass} using a Gaussian distribution. If a different distribution is desired, it is also possible to specify it using a histogram. This is done with the arguments ```--sig_file ${signalShapeHistogramFile.root --sig_hist ${signalHistogramPath}```. Note that the signal histogram should have the same binning as the invariant mass histogram.
 
 ## Available Scripts 
 

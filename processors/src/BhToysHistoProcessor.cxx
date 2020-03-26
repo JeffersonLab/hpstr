@@ -27,6 +27,7 @@ void BhToysHistoProcessor::configure(const ParameterSet& parameters) {
         res_scale_           = parameters.getDouble("res_scale");
         signal_shape_h_name_ = parameters.getString("signal_shape_h_name", "");
         signal_shape_h_file_ = parameters.getString("signal_shape_h_file", "");
+        bkg_model_           = parameters.getInteger("bkg_model");
         //asymptotic_limit_ = parameters.getBoolean("asymptoticLimit");
     } catch(std::runtime_error& error) {
         std::cout << error.what() << std::endl;
@@ -52,8 +53,23 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
         std::cout << "[BumpHunter] :: !! WARNING !! Signal injection histogram, but no file, specified! Defaulting to Gaussian.";
     }
     
+    // Get the appropriate background model.
+    FitFunction::BkgModel bkg_fit_model;
+    std::cout << "Background Model ID: " << bkg_model_ << std::endl;
+    switch(bkg_model_) {
+        case 0: bkg_fit_model = FitFunction::BkgModel::EXP_CHEBYSHEV;
+                break;
+        case 1: bkg_fit_model = FitFunction::BkgModel::EXP_CHEBYSHEV;
+                break;
+        case 2: bkg_fit_model = FitFunction::BkgModel::LEGENDRE;
+                break;
+        case 3: bkg_fit_model = FitFunction::BkgModel::EXP_LEGENDRE;
+                break;
+        default: bkg_fit_model = FitFunction::BkgModel::EXP_CHEBYSHEV;
+    }
+    
     // Init bump hunter manager
-    bump_hunter_ = new BumpHunter(bkg_model_, poly_order_, win_factor_, res_scale_, asymptotic_limit_);
+    bump_hunter_ = new BumpHunter(bkg_fit_model, poly_order_, win_factor_, res_scale_, asymptotic_limit_);
     bump_hunter_->setBounds(mass_spec_h->GetXaxis()->GetBinUpEdge(mass_spec_h->FindFirstBinAbove()),
             mass_spec_h->GetXaxis()->GetBinLowEdge(mass_spec_h->FindLastBinAbove()));
     if(debug_ > 0) bump_hunter_->enableDebug();
@@ -69,6 +85,7 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
     flat_tuple_->addVariable("win_factor");
     flat_tuple_->addVariable("window_size");
     flat_tuple_->addVariable("resolution_scale");
+    flat_tuple_->addVariable("bkg_model");
 
     flat_tuple_->addVariable("bkg_chi2_prob");
     flat_tuple_->addVariable("bkgsig_chi2_prob");
@@ -137,6 +154,7 @@ bool BhToysHistoProcessor::process() {
     flat_tuple_->setVariableValue("win_factor",             win_factor_);
     flat_tuple_->setVariableValue("window_size",            result->getWindowSize());
     flat_tuple_->setVariableValue("resolution_scale",       res_scale_);
+    flat_tuple_->setVariableValue("bkg_model",              bkg_model_);
 
     // Set the Fit Results in the flat tuple
     flat_tuple_->setVariableValue("bkg_chi_prob",           bkg_result->Prob());

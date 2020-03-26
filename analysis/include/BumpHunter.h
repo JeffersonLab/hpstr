@@ -37,18 +37,12 @@
 //---//
 #include "HpsFitResult.h"
 #include "ChebyshevFitFunction.h"
+#include "LegendreFitFunction.h"
 
 class BumpHunter {
     public:
-        /** Enum constants used to denote the different background models. */
-        enum BkgModel {
-            POLY     = 0,
-            EXP_POLY = 1,
-            EXP_POLY_X_POLY = 2,
-        };
-        
         /** Default Constructor */
-        BumpHunter(BkgModel model, int poly_order, int res_factor, double res_scale = 1.00, bool asymptotic_limit = true);
+        BumpHunter(FitFunction::BkgModel model, int poly_order, int res_factor, double res_scale = 1.00, bool asymptotic_limit = true);
         
         /** Destructor */
         ~BumpHunter();
@@ -157,6 +151,9 @@ class BumpHunter {
         /** The total number of events within the fit window. */
         double integral_{0};
         
+        /** The background fit function model to use. */
+        FitFunction::BkgModel bkg_model_{FitFunction::BkgModel::EXP_CHEBYSHEV};
+
         /**
          * Flag to specify whether the power constrained or asymptotic upper
          * limit should be employed.
