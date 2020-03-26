@@ -37,18 +37,12 @@
 //---//
 #include "HpsFitResult.h"
 #include "ChebyshevFitFunction.h"
+#include "LegendreFitFunction.h"
 
 class BumpHunter {
     public:
-        /** Enum constants used to denote the different background models. */
-        enum BkgModel {
-            POLY     = 0,
-            EXP_POLY = 1,
-            EXP_POLY_X_POLY = 2,
-        };
-        
         /** Default Constructor */
-        BumpHunter(BkgModel model, int poly_order, int res_factor, bool asymptotic_limit = true);
+        BumpHunter(FitFunction::BkgModel model, int poly_order, int res_factor, double res_scale = 1.00, bool asymptotic_limit = true);
         
         /** Destructor */
         ~BumpHunter();
@@ -100,7 +94,7 @@ class BumpHunter {
         void getUpperLimitPower(TH1* histogram, HpsFitResult* result);
         
         /** */
-        std::vector<TH1*> generateToys(TH1* histogram, double n_toys, int seed, int toy_sig_samples, int bkg_mult = 1);
+        std::vector<TH1*> generateToys(TH1* histogram, double n_toys, int seed, int toy_sig_samples, int bkg_mult = 1, TH1* signal_hist = nullptr);
         
     private:
         /**
@@ -115,7 +109,8 @@ class BumpHunter {
             //return 0.0389938364847*mass - 0.0000713783511061; // ideal
             //return 0.0501460737193*mass - 0.0000917925595224; // scaled to moller mass from data
             //return 0.0532190838657*mass - 0.0000922283032152; // scaled to moller mass + sys
-            return 1.56*(0.000955 - 0.004198 * mass + 0.2367 * mass * mass - 0.7009 * mass * mass * mass);
+            //return res_scale_*(0.000955 - 0.004198 * mass + 0.2367 * mass * mass - 0.7009 * mass * mass * mass);
+            return res_scale_ * (0.000379509 + (0.0416842 * mass) - (0.271364 * mass * mass) + (3.49537 * mass * mass * mass) - (11.1153 * mass * mass * mass * mass));
         };
         
         /**
@@ -156,6 +151,9 @@ class BumpHunter {
         /** The total number of events within the fit window. */
         double integral_{0};
         
+        /** The background fit function model to use. */
+        FitFunction::BkgModel bkg_model_{FitFunction::BkgModel::EXP_CHEBYSHEV};
+
         /**
          * Flag to specify whether the power constrained or asymptotic upper
          * limit should be employed.
@@ -179,6 +177,10 @@ class BumpHunter {
         
         /** Polynomial order used to model the background. */
         int poly_order_{0};
+
+        /** The scaling factor for the mass resolution. Was 1.56 for Sebouh's, should 1.00 for Rafo's. */
+        //double res_scale_{1.56};
+        double res_scale_{1.00};
         
         /** 
          * Flag denoting if application should run in batch mode.  If set to 

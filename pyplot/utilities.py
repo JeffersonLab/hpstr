@@ -206,6 +206,141 @@ def SetStyle():
     TColor.CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
     gStyle.SetNumberContours(NCont);
 
+def MakeRadFrac(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,noErrors=False,RebinFactor=0,runNumber="",additionalText=[],RatioType="Alternate",LogX=False,LogY=False,RatioMin=0.0,RatioMax=0.15,WriteMean=False,Normalise=False):
+    
+    
+    if not os.path.exists(outdir):
+        os.mkdir(outdir)
+        
+    Xmin=0
+    Xmax=1
+        
+    can = TCanvas(name, name, 1200, 800)
+    can.SetMargin(0,0,0,0)
+    top = TPad("top","top",0,0.42,1,1)
+    if LogX:
+        top.SetLogx(1)
+        bot.SetLogx(1)
+    if LogY:
+        top.SetLogy(1)
+    
+    bot = TPad("bot","bot",0,0,1,0.38)
+
+    #----------Histogram------------#
+    
+    top.Draw()
+    top.SetBottomMargin(0)
+    top.SetTopMargin(gStyle.GetPadTopMargin()*topScale)
+    bot.Draw()
+    bot.SetTopMargin(0)
+    bot.SetBottomMargin(0.4)
+    top.cd()
+    plotsProperties=[]
+    histoStack = THStack(name+"_sh","")
+    
+    for ih in xrange(len(histos)):
+
+        if (Normalise):
+            histos[ih].Scale(1./histos[ih].Integral())
+            histos[ih].GetYaxis().SetRangeUser(0.00001,histos[ih].GetMaximum()*15000)
+            
+                    
+        histos[ih].GetXaxis().SetRangeUser(0.03,0.2)
+        histos[ih].SetMarkerColor(colors[ih])
+        histos[ih].SetMarkerStyle(markers[ih])
+        histos[ih].SetLineColor(colors[ih])
+        histos[ih].GetXaxis().CenterTitle()
+        histos[ih].GetYaxis().CenterTitle()
+        histos[ih].GetYaxis().SetTitleOffset(0.4)
+        
+        plotsProperties.append(("#mu=%.4f"%round(histos[ih].GetMean(),4))+(" #sigma=%.4f"%round(histos[ih].GetRMS(),4)))
+        
+        
+        if RebinFactor>0:
+            histos[ih].Rebin(RebinFactor)
+
+        if ih>0:
+            histoStack.Add(histos[ih])
+            if ih == 1:
+                histoSum = deepcopy(histos[ih])
+            else:
+                histoSum.Add(histos[ih])
+
+    histoStack.Draw('ep')
+    histoStack.GetXaxis().SetRangeUser(0.03, 0.2)
+    histos[0].Draw('same ep')
+
+
+    InsertText(runNumber,additionalText,0.8,xoffset=0.75)
+    if (WriteMean):
+        InsertText("",plotsProperties,0.8,0.6,False)
+
+    if len(legends)>0:
+        #print "building legend"
+        #upperY=0.6
+        upperY=0.76
+        linesep = 0.07
+        lowerY=upperY - len(legends)* linesep
+        #minX = 0.51
+        minX  = 0.75
+        maxX = minX+0.15
+        leg=TLegend(minX,upperY,maxX,lowerY)
+        leg.SetBorderSize(0)
+        leg.SetFillColor(0)
+        leg.SetTextSize(0.04)
+        for i_leg in xrange(len(legends)):
+            #print "Adding Entry",i_leg, legends[i_leg] 
+            leg.AddEntry(histos[i_leg],legends[i_leg],"lpf") 
+            pass
+        leg.Draw()
+        pass
+        
+    #-------------Ratio---------------------#
+        
+    bot.cd()
+    numerator = histos[0].Clone("numerator")
+    numerator.GetYaxis().SetTitle("f_{rad}")
+    numerator.GetYaxis().SetTitleSize(0.08)
+    numerator.GetYaxis().SetTitleOffset(0.5)
+    numerator.GetXaxis().SetTitleSize(0.1)
+    numerator.GetXaxis().SetLabelSize(0.12)
+    numerator.GetYaxis().SetRangeUser(RatioMin,RatioMax)
+    numerator.GetXaxis().SetRangeUser(0.03,0.2)
+    numerator.GetYaxis().SetNdivisions(508)
+    numerator.GetYaxis().SetDecimals(True)
+    numerator.Draw("axis")
+
+    numerator.Divide(histoSum)
+    nPoints = 0
+    nBins = numerator.GetNbinsX()
+    for ibin in range(nBins):
+        if numerator.GetBinContent(ibin) > 0: nPoints += 1
+        pass
+
+    chi2s = []
+    fstats = []
+    for polyO in range(1):
+        fitResult = numerator.Fit('pol%i'%polyO,"ES")
+        chi2s.append(fitResult.Chi2())
+        if polyO > 0:
+            fstats.append((chi2s[polyO-1]-chi2s[polyO])*(nPoints-polyO-1)/(chi2s[polyO]))
+        else:
+            fitCon = fitResult.GetParams()[0]
+
+    print "nPoints: %i"%nPoints
+    #for polyO in range(1,10):
+    #    print "Order: %i    chi2: %f    f-stat: %f"%(polyO, chi2s[polyO], fstats[polyO-1])
+    fitResult = numerator.Fit('pol5',"ES")
+    fitFunc = numerator.GetListOfFunctions().FindObject("pol5")
+    fitFunc.SetLineColor(colors[3])
+    numerator.DrawCopy("pe same")
+          
+    line = TLine()
+    line.SetLineStyle(kDashed)
+    line.DrawLine(0.03,fitCon,0.2,fitCon)
+    
+    can.SaveAs(outdir+"/"+name+oFext)
+    return deepcopy(can)
 
 def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,noErrors=False,RebinFactor=0,runNumber="",additionalText=[],RatioType="Alternate",LogX=False,LogY=False,RatioMin=0.25,RatioMax=1.75,WriteMean=False,Normalise=False):
     

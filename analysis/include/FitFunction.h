@@ -19,6 +19,13 @@ class FitFunction {
             SEVENTH = 3
         };
 
+        enum BkgModel {
+            CHEBYSHEV     = 0,
+            EXP_CHEBYSHEV = 1,
+            LEGENDRE      = 2,
+            EXP_LEGENDRE  = 3
+        };
+
         /** Constructor */
         FitFunction(double m_mass_hypothesis, double m_window_size, double m_bin_size, ModelOrder m_model_order,
                 SignalFitModel m_sig_model = FitFunction::SignalFitModel::NONE,

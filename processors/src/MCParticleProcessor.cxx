@@ -92,6 +92,9 @@ bool MCParticleProcessor::process(IEvent* ievent) {
         // Set the PDG of the particle
         particle->setPDG(lc_particle->getPDG());    
 
+        // Set the LCIO id of the particle
+        particle->setID(lc_particle->id());    
+
         // Set the PDG of the particle
         std::vector<EVENT::MCParticle*> parentVec = lc_particle->getParents();
         if(parentVec.size() > 0) particle->setMomPDG(parentVec.at(0)->getPDG());    
