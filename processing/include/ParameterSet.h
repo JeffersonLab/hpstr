@@ -146,57 +146,57 @@ class ParameterSet {
          */
         void insert(const std::string& name, const std::vector<std::string>& values);
 
-            /**
-             * @enum Specifies the type of a parameter in a ParameterSet.
-             */
-            typedef enum {
-	            et_NoType, 
-                et_Bool, 
-                et_Integer, 
-                et_Double, 
-                et_String,
-                et_VInteger,
-                et_VDouble,
-                et_VString, 
-                et_ParameterSet
-            } ElementType;
+        /**
+         * @enum Specifies the type of a parameter in a ParameterSet.
+         */
+        typedef enum {
+            et_NoType, 
+            et_Bool, 
+            et_Integer, 
+            et_Double, 
+            et_String,
+            et_VInteger,
+            et_VDouble,
+            et_VString, 
+            et_ParameterSet
+        } ElementType;
 
-            /**
-             * @struct Element
-             * @brief Backing data structure containing parameter values
-             *
-             * @todo Fully document me!
-             */
-            struct Element {
+        /**
+         * @struct Element
+         * @brief Backing data structure containing parameter values
+         *
+         * @todo Fully document me!
+         */
+        struct Element {
 
-                    Element() : et_{et_NoType} {;}
+            Element() : et_{et_NoType} {;}
 
-    	            Element(bool inval) : et_{et_Bool}, boolval_{inval} {;}
-	      
-                    Element(int inval) : et_{et_Integer}, intval_{inval} {;}
+            Element(bool inval) : et_{et_Bool}, boolval_{inval} {;}
 
-                    Element(double inval) : et_ {et_Double}, doubleval_{inval} {;}
+            Element(int inval) : et_{et_Integer}, intval_{inval} {;}
 
-                    Element(const std::string& inval) : et_ { et_String }, strval_ { inval } {;}
+            Element(double inval) : et_ {et_Double}, doubleval_{inval} {;}
 
-                    Element(const std::vector<int>& inval);
+            Element(const std::string& inval) : et_ { et_String }, strval_ { inval } {;}
 
-                    Element(const std::vector<double>& inval);
+            Element(const std::vector<int>& inval);
 
-                    Element(const std::vector<std::string>& inval);
+            Element(const std::vector<double>& inval);
 
-                    ElementType et_;
-	            bool boolval_{false};
-	            int intval_{0};
-                    double doubleval_{0};
-                    std::string strval_;
-                    std::vector<int> ivecVal_;
-                    std::vector<double> dvecVal_;
-                    std::vector<std::string> svecVal_;
-                    ParameterSet* subsetVal_ { 0 };
-            };
+            Element(const std::vector<std::string>& inval);
 
-            std::map<std::string, Element> elements_;
+            ElementType et_;
+            bool boolval_{false};
+            int intval_{0};
+            double doubleval_{0};
+            std::string strval_;
+            std::vector<int> ivecVal_;
+            std::vector<double> dvecVal_;
+            std::vector<std::string> svecVal_;
+            ParameterSet* subsetVal_ { 0 };
+        };
+
+        std::map<std::string, Element> elements_;
 }; 
 
 #endif // _PARAMETER_SET_H_
