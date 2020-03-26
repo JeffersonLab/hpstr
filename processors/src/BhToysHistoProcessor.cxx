@@ -157,7 +157,7 @@ bool BhToysHistoProcessor::process() {
     flat_tuple_->setVariableValue("bkg_model",              bkg_model_);
 
     // Set the Fit Results in the flat tuple
-    flat_tuple_->setVariableValue("bkg_chi_prob",           bkg_result->Prob());
+    flat_tuple_->setVariableValue("bkg_chi2_prob",          bkg_result->Prob());
     flat_tuple_->setVariableValue("bkgsig_chi2_prob",       sig_result->Prob());
     flat_tuple_->setVariableValue("toyfit_chi2_prob",       result->getBkgToysFitResult()->Prob());
     flat_tuple_->setVariableValue("bkg_edm",                bkg_result->Edm());
