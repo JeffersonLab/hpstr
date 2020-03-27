@@ -54,14 +54,14 @@ def newCanvas(name):
 
 def savePNG(canvas,directory,name):
         canvas.Draw()
-        canvas.SaveAs("%s/%s.png"%(directory,name))
+        #canvas.SaveAs("%s/%s.png"%(directory,name))
         canvas.Close()
 
 
 
 ######################################################################################################
 hpstrpath = options.hpstrpath
-directory = "%s/pyplot/baselineFits/fit_data/"%(hpstrpath)
+#directory = "%s/pyplot/baselineFits/fit_data/"%(hpstrpath)
 SvtBl2D_file = options.inFilename
 inFile = r.TFile(SvtBl2D_file, "READ")
 hybrid =options.hybrid
@@ -71,6 +71,7 @@ hybrid =options.hybrid
 histokeys_hh = getHistoKeys(inFile,"TH2", options.hybrid,"")
 print histokeys_hh
 
+outFile = r.TFile("%s_analysis.root"%(options.inFilename[:-5]),"RECREATE")
 for key in histokeys_hh:
 
     histo_hh = readhistoFromFile(inFile, key)
@@ -118,7 +119,7 @@ for key in histokeys_hh:
             lowdaq.append(fitData.lowdaq)
 
     #Output ROOT FILE
-    outFile = r.TFile(directory+"/%s_fit_analysis%s.root"%(key[:-3],options.tag), "RECREATE")
+    #outFile = r.TFile(directory+"/%s_fit_analysis%s.root"%(key[:-3],options.tag), "RECREATE")
     outFile.cd()
 
     #Plot gaus Fit mean of all channels over 2D Histogram
@@ -131,7 +132,7 @@ for key in histokeys_hh:
     histo_hh.Draw("colz")
     mean_gr.Draw("same")
     canvas.Write()
-    savePNG(canvas,directory+"hybrid_fits/","%s_gausFit"%(key))
+    #savePNG(canvas,directory+"hybrid_fits/","%s_gausFit"%(key))
     canvas.Close()
 
     #1D Histogram of channel fit sigma

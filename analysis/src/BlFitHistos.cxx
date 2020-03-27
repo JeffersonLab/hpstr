@@ -96,6 +96,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             
             //If channel does not have the minimum statistics required, set all variables to -9999.9
             //and skip the fit procedure on this channel
+            std::cout << " skip channel?" << std::endl;
             if (firstbin == -1 or projy_h->GetEntries() < minStats_ ) 
             {
                 flat_tuple_->setVariableValue("BlFitMean", -9999.9);
@@ -121,9 +122,11 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
                 flat_tuple_->setVariableValue("minbinFail",1.0);
                 std::cout << "Not enough stats in channel " << cc << std::endl;
+                flat_tuple_->fill();
                 continue;
             }
 
+            std::cout << " didnt skip channel" << std::endl;
             //If minimum entry requirement is passed, set 'dead_channel' variable to 0
             flat_tuple_->setVariableValue("minbinFail",0.0);
 
@@ -382,7 +385,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             //LOWDAQ THRESHOLD FLAG
             //If fit mean + N*Sigma > xmax, channel has low daq threshold *or* bad fit
             double N = 0.2;
-            if ( fitparams[1] + N*fitparams[2] > xmax )
+            if ( fitparams[1] + N*fitparams[2] > xmax || fitparams[1] - N*fitparams[2] < xmin  )
             {
                 flat_tuple_->setVariableValue("lowdaq", 1.0);
             }
