@@ -115,6 +115,9 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
     // Determine whether to use an exponential polynomial or normal polynomial.
     bool isChebyshev = (bkg_model_ == FitFunction::BkgModel::CHEBYSHEV || bkg_model_ == FitFunction::BkgModel::EXP_CHEBYSHEV);
     bool isExp = (bkg_model_ == FitFunction::BkgModel::EXP_CHEBYSHEV || bkg_model_ == FitFunction::BkgModel::EXP_LEGENDRE);
+    TF1* bkg{nullptr};
+    TF1* bkg_toys{nullptr};
+
     
     // If not fitting toys, start by performing a background only fit.
     if(!skip_bkg_fit) {
@@ -126,9 +129,6 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         std::cout << "*************************************************" << std::endl;
         std::cout << "*************************************************" << std::endl;
         
-        TF1* bkg{nullptr};
-        TF1* bkg_toys{nullptr};
-
         std::cout << "Defining fit functions." << std::endl;
         std::cout << "    Model :: ";
         if(bkg_model_ == FitFunction::BkgModel::CHEBYSHEV) { std::cout << "Chebyshev Polynomial" << std::endl; }
@@ -269,6 +269,10 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
     //full->FixParameter(0, initNorm);
     //TFitResultPtr full_result = histogram->Fit("full", "VLS", "", window_start_, window_end_);
     //full->ReleaseParameter(0);
+    for(int parI = 0; parI < poly_order_ + 1; parI++)
+    {
+        full->SetParameter(parI, bkg->GetParameter(parI));
+    }
     TFitResultPtr full_result = histogram->Fit("full", "VLES+", "", window_start_, window_end_);
     fit_result->setCompFitResult(full_result);
     
