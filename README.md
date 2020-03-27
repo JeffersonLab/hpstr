@@ -57,7 +57,7 @@ Hpstr can both run on LCIO files to produce ROOT ntuples, producing the hpstr ev
 
 The configuration to produce ntuples from LCIO files is ```recoTuple_cfg.py```. Typical usage is:
 ```bash
-hpstr recoTuple_cfg.py -i <inLcioFile> -o <outROOTFile> -t <1=isData|2=isMC>
+hpstr recoTuple_cfg.py -i <inLcioFile> -o <outROOTFile> -t <1=isData|0=isMC>
 ```
 
 where the ```-t ``` flag is used to distinguish between data and MC. 
