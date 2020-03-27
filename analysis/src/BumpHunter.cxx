@@ -23,6 +23,9 @@ BumpHunter::~BumpHunter() { }
 
 void BumpHunter::initialize(TH1* histogram, double &mass_hypothesis) {
     mass_hypothesis_ = mass_hypothesis; 
+
+    //Set Minuit Minimizer options
+    ROOT::Math::MinimizerOptions::SetDefaultStrategy(2);
     
     // Shift the mass hypothesis so it sits in the middle of a bin.  
     std::cout << "[ BumpHunter ]: Shifting mass hypothesis to nearest bin center "
@@ -40,10 +43,11 @@ void BumpHunter::initialize(TH1* histogram, double &mass_hypothesis) {
     }
     
     // Correct the mass to take into account the mass scale systematic
-    corr_mass_ = this->correctMass(mass_hypothesis);
+    //corr_mass_ = this->correctMass(mass_hypothesis);
+    //corr_mass_ = mass_hypothesis;
     
     // Get the mass resolution at the corrected mass 
-    mass_resolution_ = this->getMassResolution(corr_mass_);
+    mass_resolution_ = this->getMassResolution(mass_hypothesis_);
     std::cout << "[ BumpHunter ]: Mass resolution: " << mass_resolution_ << " GeV" << std::endl;
     
     // Calculate the fit window size
@@ -68,7 +72,7 @@ void BumpHunter::initialize(TH1* histogram, double &mass_hypothesis) {
     // the upper bound of the histogram, set it to the upper bound.
     // Furthermore, check that the bin serving as the upper boundary contains
     // events. If the upper bound is shifted, reset the lower window bound.
-    window_end_ = window_start_ + window_size_;
+    window_end_ = mass_hypothesis + window_size_/2;
     int window_end_bin = histogram->GetXaxis()->FindBin(window_end_);
     window_end_ = histogram->GetXaxis()->GetBinUpEdge(window_end_bin);
     if(window_end_ > upper_bound_) {
@@ -83,6 +87,7 @@ void BumpHunter::initialize(TH1* histogram, double &mass_hypothesis) {
         window_start_bin = histogram->GetXaxis()->FindBin(window_end_ - window_size_);
         window_start_ = histogram->GetXaxis()->GetBinLowEdge(window_start_bin);
     }
+    window_size_ = window_end_ - window_start_;
     bins_ = window_end_bin - window_start_bin + 1;
     std::cout << "[ BumpHunter ]: Setting starting edge of fit window to "
               << window_start_ << " GeV. Bin " << window_start_bin << std::endl;
@@ -100,6 +105,7 @@ void BumpHunter::initialize(TH1* histogram, double &mass_hypothesis) {
 HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, bool skip_bkg_fit, bool skip_ul) {
     // Calculate all of the fit parameters e.g. window size, mass hypothesis
     this->initialize(histogram, mass_hypothesis);
+    double initNorm = log10(integral_);
     
     // Instantiate a new fit result object to store all of the results.
     HpsFitResult* fit_result = new HpsFitResult();
@@ -134,6 +140,7 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         else if(poly_order_ == 3) { std::cout << "3" << std::endl; }
         else if(poly_order_ == 5) { std::cout << "5" << std::endl; }
 
+
         if(poly_order_ == 1) {
             // Define the fit functions for the data and toy generator fits.
             if(isChebyshev) {
@@ -149,9 +156,9 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
             }
 
             // Set the parameters for the fit models.
-            bkg->SetParameters(4, 0);
+            bkg->SetParameters(initNorm, 0);
             bkg->SetParNames("pol0", "pol1");
-            bkg_toys->SetParameters(4, 0, 0, 0);
+            bkg_toys->SetParameters(initNorm, 0, 0, 0);
             bkg_toys->SetParNames("pol0", "pol1", "pol2", "pol3");
         } else if(poly_order_ == 3) {
             // Define the fit functions for the data and toy generator fits.
@@ -168,9 +175,9 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
             }
 
             // Set the parameters for the fit models.
-            bkg->SetParameters(4, 0, 0, 0);
+            bkg->SetParameters(initNorm, 0, 0, 0);
             bkg->SetParNames("pol0", "pol1", "pol2", "pol3");
-            bkg_toys->SetParameters(4, 0, 0, 0, 0, 0);
+            bkg_toys->SetParameters(initNorm, 0, 0, 0, 0, 0);
             bkg_toys->SetParNames("pol0", "pol1", "pol2", "pol3", "pol4", "pol5");
         } else {
             // Define the fit functions for the data and toy generator fits.
@@ -187,15 +194,30 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
             }
 
             // Set the parameters for the fit models.
-            bkg->SetParameters(4, 0, 0, 0, 0, 0);
+            bkg->SetParameters(initNorm, 0, 0, 0, 0, 0);
             bkg->SetParNames("pol0", "pol1", "pol2", "pol3", "pol4", "pol5");
-            bkg_toys->SetParameters(4, 0, 0, 0, 0, 0, 0, 0);
+            bkg_toys->SetParameters(initNorm, 0, 0, 0, 0, 0, 0, 0);
             bkg_toys->SetParNames("pol0", "pol1", "pol2", "pol3", "pol4", "pol5", "pol6", "pol7");
         }
         
-        TFitResultPtr result = histogram->Fit("bkg", "LES+", "", window_start_, window_end_);
+        //bkg->FixParameter(0, initNorm);
+        //TFitResultPtr result = histogram->Fit("bkg", "VLS", "", window_start_, window_end_);
+        //bkg->ReleaseParameter(0);
+        //std::cout << "[ BumpHunter ]:  Released bkg norm parameter." << std::endl;
+        TFitResultPtr result = histogram->Fit("bkg", "VLES+", "", window_start_, window_end_);
         fit_result->setBkgFitResult(result);
-        TFitResultPtr result_toys = histogram->Fit("bkg_toys", "LES+", "", window_start_, window_end_);
+
+        std::cout << "*************************************************" << std::endl;
+        std::cout << "*************************************************" << std::endl;
+        std::cout << "[ BumpHunter ]:  Performing background Toy fit." << std::endl;
+        std::cout << "*************************************************" << std::endl;
+        std::cout << "*************************************************" << std::endl;
+
+        //bkg_toys->FixParameter(0, initNorm);
+        //TFitResultPtr result_toys = histogram->Fit("bkg_toys", "VLS", "", window_start_, window_end_);
+        //bkg_toys->ReleaseParameter(0);
+        //std::cout << "[ BumpHunter ]:  Released toy bkg norm parameter." << std::endl;
+        TFitResultPtr result_toys = histogram->Fit("bkg_toys", "VLES+", "", window_start_, window_end_);
         fit_result->setBkgToysFitResult(result_toys);
     }
     
@@ -214,10 +236,10 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
             LegendreFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIRST, FitFunction::SignalFitModel::GAUSSIAN, isExp);
             full = new TF1("full", full_func, -1, 1, 5);
         }
-        full->SetParameters(4, 0, 0, 0, 0);
+        full->SetParameters(initNorm, 0, 0, 0, 0);
         full->SetParNames("pol0", "pol1", "signal norm", "mean", "sigma");
         full->FixParameter(3, mass_hypothesis);
-        full->FixParameter(4, mass_resolution_);
+        full->FixParameter(initNorm, mass_resolution_);
     } else if (poly_order_ == 3) {
         if(isChebyshev) {
             ChebyshevFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD, FitFunction::SignalFitModel::GAUSSIAN, isExp);
@@ -226,7 +248,7 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
             LegendreFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD, FitFunction::SignalFitModel::GAUSSIAN, isExp);
             full = new TF1("full", full_func, -1, 1, 7);
         }
-        full->SetParameters(4, 0, 0, 0, 0, 0, 0);
+        full->SetParameters(initNorm, 0, 0, 0, 0, 0, 0);
         full->SetParNames("pol0", "pol1", "pol2", "pol3", "signal norm", "mean", "sigma");
         full->FixParameter(5, mass_hypothesis);
         full->FixParameter(6, mass_resolution_);
@@ -238,13 +260,16 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
             LegendreFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH, FitFunction::SignalFitModel::GAUSSIAN, isExp);
             full = new TF1("full", full_func, -1, 1, 9);
         }
-        full->SetParameters(4, 0, 0, 0, 0, 0, 0, 0, 0);
+        full->SetParameters(initNorm, 0, 0, 0, 0, 0, 0, 0, 0);
         full->SetParNames("pol0", "pol1", "pol2", "pol3", "pol4", "pol5", "signal norm", "mean", "sigma");
         full->FixParameter(7, mass_hypothesis);
         full->FixParameter(8, mass_resolution_);
     }
     
-    TFitResultPtr full_result = histogram->Fit("full", "LES+", "", window_start_, window_end_);
+    //full->FixParameter(0, initNorm);
+    //TFitResultPtr full_result = histogram->Fit("full", "VLS", "", window_start_, window_end_);
+    //full->ReleaseParameter(0);
+    TFitResultPtr full_result = histogram->Fit("full", "VLES+", "", window_start_, window_end_);
     fit_result->setCompFitResult(full_result);
     
     this->calculatePValue(fit_result);
@@ -351,6 +376,7 @@ void BumpHunter::getUpperLimitPower(TH1* histogram, HpsFitResult* result) {
     // Determine whether to use an exponential polynomial or normal polynomial.
     bool isChebyshev = (bkg_model_ == FitFunction::BkgModel::CHEBYSHEV || bkg_model_ == FitFunction::BkgModel::EXP_CHEBYSHEV);
     bool isExp = (bkg_model_ == FitFunction::BkgModel::EXP_CHEBYSHEV || bkg_model_ == FitFunction::BkgModel::EXP_LEGENDRE);
+    double initNorm = log10(integral_);
     
     // Instantiate a fit function for the appropriate polynomial order.
     TF1* comp{nullptr};
@@ -362,10 +388,10 @@ void BumpHunter::getUpperLimitPower(TH1* histogram, HpsFitResult* result) {
             LegendreFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIRST, FitFunction::SignalFitModel::GAUSSIAN, isExp);
             comp = new TF1("comp_ul", comp_func, -1, 1, 5);
         }
-        comp->SetParameters(4, 0, 0, 0, 0);
+        comp->SetParameters(initNorm, 0, 0, 0, 0);
         comp->SetParNames("pol0", "pol1", "signal norm", "mean", "sigma");
         comp->FixParameter(3, 0.0);
-        comp->FixParameter(4, mass_resolution_);
+        comp->FixParameter(initNorm, mass_resolution_);
     } else if(poly_order_ == 3) {
         if(isChebyshev) {
             ChebyshevFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD, FitFunction::SignalFitModel::GAUSSIAN, isExp);
@@ -374,7 +400,7 @@ void BumpHunter::getUpperLimitPower(TH1* histogram, HpsFitResult* result) {
             LegendreFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD, FitFunction::SignalFitModel::GAUSSIAN, isExp);
             comp = new TF1("comp_ul", comp_func, -1, 1, 7);
         }
-        comp->SetParameters(4, 0, 0, 0, 0, 0, 0);
+        comp->SetParameters(initNorm, 0, 0, 0, 0, 0, 0);
         comp->SetParNames("pol0", "pol1", "pol2", "pol3", "signal norm", "mean", "sigma");
         comp->FixParameter(5, 0.0);
         comp->FixParameter(6, mass_resolution_);
@@ -386,7 +412,7 @@ void BumpHunter::getUpperLimitPower(TH1* histogram, HpsFitResult* result) {
             LegendreFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH, FitFunction::SignalFitModel::GAUSSIAN, isExp);
             comp = new TF1("comp_ul", comp_func, -1, 1, 9);
         }
-        comp->SetParameters(4, 0, 0, 0, 0, 0, 0, 0, 0);
+        comp->SetParameters(initNorm, 0, 0, 0, 0, 0, 0, 0, 0);
         comp->SetParNames("pol0", "pol1", "pol2", "pol3", "pol4", "pol5", "signal norm", "mean", "sigma");
         comp->FixParameter(7, 0.0);
         comp->FixParameter(8, mass_resolution_);
@@ -423,7 +449,7 @@ void BumpHunter::getUpperLimitPower(TH1* histogram, HpsFitResult* result) {
         //std::cout << "[ BumpHunter ]: Current p-value: " << p_value << std::endl;
         comp->FixParameter(poly_order_ + 1, signal_yield);
         
-        TFitResultPtr full_result = histogram->Fit("comp_ul", "LES+", "", window_start_, window_end_);
+        TFitResultPtr full_result = histogram->Fit("comp_ul", "VLES+", "", window_start_, window_end_);
         double cond_nll = full_result->MinFcnValue();
         
         // 1) Calculate the likelihood ratio which is chi2 distributed.

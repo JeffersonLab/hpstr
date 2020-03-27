@@ -33,6 +33,7 @@
 #include <TRandom.h>
 
 #include <Math/ProbFunc.h>
+#include <Math/MinimizerOptions.h>
 
 //---//
 #include "HpsFitResult.h"
