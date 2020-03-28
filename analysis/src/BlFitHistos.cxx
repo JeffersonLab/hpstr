@@ -39,7 +39,6 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
         //Perform fitting procedure over all channels on a sensor
         for(int cc=0; cc < 640 ; ++cc) 
         {
-            
             //Set Channel and Hybrid information and paramaters in the flat tuple
             flat_tuple_->setVariableValue("SvtAna2DHisto_key", SvtAna2DHisto_key);
             flat_tuple_->setVariableValue("channel", cc);
@@ -133,6 +132,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             //Initialize the minimum and maximum fit range positions
             int iter = 0;
             double xmin = projy_h->GetBinLowEdge(firstbin);
+            
             //std::cout << "[BlFitHistos] Initial xmin is " << xmin << std::endl;
             double binwidth = projy_h->GetBinWidth(firstbin);
             double xmax = xmin + 20.0*binwidth;
@@ -384,7 +384,31 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
             //LOWDAQ THRESHOLD FLAG
             //If fit mean + N*Sigma > xmax, channel has low daq threshold *or* bad fit
+
+             
+
             double N = 0.2;
+            if ( fitparams[1] + N*fitparams[2] > xmax || fitparams[1] - N*fitparams[2] < xmin  )
+            {
+                std::vector<double> chi2ndf = {};
+                std::vector<double> tempxmin = {};
+                xmax = projy_h->GetBinLowEdge(projy_h->GetMaximumBin());
+                while(xmin < (xmax - 50.0))
+                {
+                    std::cout << "lowdaq xmin is " << xmin << std::endl;
+                    xmin = xmin + binwidth;
+                    tempxmin.push_back(xmin);
+                    TFitResultPtr cc_fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
+                    chi2ndf.push_back(cc_fit->Chi2()/cc_fit->Ndf());
+                    std::cout << "chi2/ndf is " << cc_fit->Chi2()/cc_fit->Ndf() << std::endl;
+                }
+                int chi2ndfmindex = std::min_element(chi2ndf.begin(), chi2ndf.end()) - chi2ndf.begin();
+                xmin = tempxmin.at(chi2ndfmindex);
+                fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
+                fitparams = fit->GetParams();
+
+            }
+
             if ( fitparams[1] + N*fitparams[2] > xmax || fitparams[1] - N*fitparams[2] < xmin  )
             {
                 flat_tuple_->setVariableValue("lowdaq", 1.0);
@@ -404,14 +428,14 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             flat_tuple_->setVariableValue("BlFitChi2", fit->Chi2());
             flat_tuple_->setVariableValue("BlFitNdf", fit->Ndf());
             //std::cout << "Final Chi2/Ndf is " << fit->Chi2()/fit->Ndf();
-            for(int i=0; i < chi2_2D_range.size(); ++i) {
+            for(int i=0; i < chi2_2D_range.size(); ++i) 
+            {
                 flat_tuple_->addToVector("iterChi2NDF_derRange",chi2_2D_range.at(i));
-            } 
+            }
 
-            flat_tuple_->fill();
-            delete projy_h;
+        flat_tuple_->fill();
+        delete projy_h;
         }
-
     }
 
 }
