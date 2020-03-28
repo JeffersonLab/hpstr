@@ -388,12 +388,25 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
              
 
             double N = 0.2;
-            if ( fitparams[1] + N*fitparams[2] > xmax || fitparams[1] - N*fitparams[2] < xmin  )
+            if (fitparams[1] + N*fitparams[2] > xmax || fitparams[1] - N*fitparams[2] < xmin || (projy_h->GetBinLowEdge(projy_h->GetMaximumBin()) > fitparams[1] + 0.1*fitparams[2]))
             {
                 std::vector<double> chi2ndf = {};
                 std::vector<double> tempxmin = {};
-                xmax = projy_h->GetBinLowEdge(projy_h->GetMaximumBin());
-                while(xmin < (xmax - 50.0))
+
+                std::cout << "fit norm is "<< fitparams[0] << std::endl;
+                std::cout << "maximumbin is " << projy_h->GetMaximumBin() << std::endl;
+                xmax = projy_h->GetBinLowEdge(projy_h->GetMaximumBin()) - 2*binwidth;
+                
+                
+                chi2ndf.push_back(fit->Chi2()/fit->Ndf());
+                tempxmin.push_back(xmin);
+
+                if (xmax-xmin < 300)
+                {
+                    xmin = xmax - 300;
+                    
+                }
+                while(xmin < (xmax - 200.0))
                 {
                     std::cout << "lowdaq xmin is " << xmin << std::endl;
                     xmin = xmin + binwidth;
