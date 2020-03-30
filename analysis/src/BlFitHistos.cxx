@@ -37,7 +37,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
 
         //Perform fitting procedure over all channels on a sensor
-        for(int cc=0; cc < 640 ; ++cc) 
+        for(int cc=0; cc < 10 ; ++cc) 
         {
             //Set Channel and Hybrid information and paramaters in the flat tuple
             flat_tuple_->setVariableValue("SvtAna2DHisto_key", SvtAna2DHisto_key);
@@ -385,16 +385,29 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             //LOWDAQ THRESHOLD FLAG
             //If fit mean + N*Sigma > xmax, channel has low daq threshold *or* bad fit
 
-             
+            std::cout << "2nd stage xmin is" << xmin << std::endl; 
+            std::cout << "2nd stage xmax is" << xmax << std::endl; 
 
             double N = 0.2;
-            if (fitparams[1] + N*fitparams[2] > xmax || fitparams[1] - N*fitparams[2] < xmin || (projy_h->GetBinLowEdge(projy_h->GetMaximumBin()) > fitparams[1] + 0.1*fitparams[2]))
+            double maxvalavg = 0;
+            for( int n=0; n < 10; n++) 
+            {
+               maxvalavg = maxvalavg + projy_h->GetBinContent(projy_h->GetMaximumBin()+n);
+               if ( n == 9)
+               {
+                    maxvalavg = maxvalavg/10.0;
+               }
+            }
+
+            std::cout << "maxvalavg is: " << maxvalavg << std::endl;
+            std::cout << "fit norm is "<< fitparams[0] << std::endl;
+            std::cout << "maximumbin is " << projy_h->GetMaximumBin() << std::endl;
+
+            if (fitparams[1] + N*fitparams[2] > xmax || fitparams[1] - N*fitparams[2] < xmin || ( (maxbin > fitparams[1] + 0.1*fitparams[2]) && (maxvalavg > fitparams[0]))) 
             {
                 std::vector<double> chi2ndf = {};
                 std::vector<double> tempxmin = {};
 
-                std::cout << "fit norm is "<< fitparams[0] << std::endl;
-                std::cout << "maximumbin is " << projy_h->GetMaximumBin() << std::endl;
                 xmax = projy_h->GetBinLowEdge(projy_h->GetMaximumBin()) - 2*binwidth;
                 
                 
@@ -428,8 +441,32 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             }
             else 
             {
+                double ogChi2Ndf = fit->Chi2()/fit->Ndf();
+                std::cout << "original Chi2/Ndf is: " << ogChi2Ndf << std::endl;
+                while ( xmax > (xmin + 100))
+                {
+                   double tempxmax = xmax;
+                   tempxmax = tempxmax - 5*binwidth; 
+                   TFitResultPtr newfit = projy_h->Fit("gaus", "QRES", "", xmin, tempxmax);
+                   std::cout << "New Chi2/Ndf is: " << newfit->Chi2()/newfit->Ndf() << std::endl;
+                   if ( newfit->Chi2()/newfit->Ndf() < 0.8*ogChi2Ndf )
+                   {
+                        ogChi2Ndf = newfit->Chi2()/newfit->Ndf();
+                        xmax = tempxmax;
+                        std::cout << "Stepping back xmax to: " << xmax << std::endl;
+                        std::cout << "xmin is: " << xmin << std::endl;
+                   }
+                   else 
+                   {
+                        break;
+                   }
+                }
+
                 flat_tuple_->setVariableValue("lowdaq", 0.0);
             }
+
+            fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
+            fitparams = fit->GetParams();
 
             //Store Final Fit Parameters in the flat tuple
             //std::cout << "New Xmax-Xmin = " << xmax - xmin << std::endl;

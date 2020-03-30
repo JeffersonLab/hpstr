@@ -48,11 +48,12 @@ for fitData in myTree:
     mod = float(hw.split('_')[1][1:])
     
     #Fill Dictionaries
-    lowdaqDict.setdefault(sensor,[]).append(fitData.lowdaq)
-    channelDict.setdefault(sensor,[]).append(fitData.channel)
-    winsizeDict.setdefault(sensor,[]).append(fitData.BlFitRangeUpper - fitData.BlFitRangeLower)
-    sigmaDict.setdefault(sensor,[]).append(fitData.BlFitSigma)
-    chi2NdfDict.setdefault(sensor,[]).append(fitData.BlFitChi2/fitData.BlFitNdf)
+    if fitData.minbinFail == 0.0:
+        lowdaqDict.setdefault(sensor,[]).append(fitData.lowdaq)
+        channelDict.setdefault(sensor,[]).append(fitData.channel)
+        winsizeDict.setdefault(sensor,[]).append(fitData.BlFitRangeUpper - fitData.BlFitRangeLower)
+        sigmaDict.setdefault(sensor,[]).append(fitData.BlFitSigma)
+        chi2NdfDict.setdefault(sensor,[]).append(fitData.BlFitChi2/fitData.BlFitNdf)
 
     #Fill 2D Histograms
 
@@ -64,16 +65,17 @@ for fitData in myTree:
         nofit_hh.Fill(float(ly),float(mod),1.)
         nofitloca_h.Fill(fitData.channel)
 
-    #lowdaq flagged channels
-    lowdaq_hh.Fill(float(ly),float(mod),fitData.lowdaq)
+    if fitData.minbinFail == 0.0:
+        #lowdaq flagged channels
+        lowdaq_hh.Fill(float(ly),float(mod),fitData.lowdaq)
 
-    #Fit Window Sizes
-    if fitData.BlFitRangeUpper - fitData.BlFitRangeLower < lowwin: 
-        lowwinsize_hh.Fill(ly,mod,1.)
-    r.gStyle.SetNumberContours(999)
-    lowdaq_hh.SetContour(999)
-    lowwinsize_hh.SetContour(999)
-    lowdaq_hh.SetContour(999)
+        #Fit Window Sizes
+        if fitData.BlFitRangeUpper - fitData.BlFitRangeLower < lowwin: 
+            lowwinsize_hh.Fill(ly,mod,1.)
+        r.gStyle.SetNumberContours(999)
+        lowdaq_hh.SetContour(999)
+        lowwinsize_hh.SetContour(999)
+        lowdaq_hh.SetContour(999)
     
 outFile.cd()
 fit_hh.Write()
