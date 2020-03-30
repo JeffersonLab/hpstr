@@ -80,7 +80,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             //Fraction of maximum bin value required to start fit
             //THIS MAY NEED TO BE ADJUSTeD FOR QUALITY OF FITS
             int firstbin = 0;
-            double frac = 0.05;
+            double frac = 0.15;
             std::cout << "frac*maxbin is " << frac*maxbin << std::endl;
             if (frac*maxbin <= xmin_)
             {
