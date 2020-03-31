@@ -152,12 +152,11 @@ bool TrackingProcessor::process(IEvent* ievent) {
         }
 
         // Add a track to the event
-        Track* track = utils::buildTrack(lc_track,gbl_kink_data,track_data);
-
-        //Add the momentum
-        
-        track->setMomentum(bfield_);
-
+	Track* track = utils::buildTrack(lc_track,gbl_kink_data,track_data);
+	
+        //Add the momentum - this should go in the new reco files by TongTong
+	track->setMomentum(bfield_);
+	
         // Get the collection of 3D hits associated with a LCIO Track
         EVENT::TrackerHitVec lc_tracker_hits = lc_track->getTrackerHits();
 

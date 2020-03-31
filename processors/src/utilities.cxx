@@ -251,10 +251,14 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
             for (int iso_index = 0; iso_index < track_datum->getNDouble(); ++iso_index) { 
                 track->setIsolation(iso_index, track_datum->getDoubleVal(iso_index));
             }
-
+	    
             // Set the SvtTrack time
             track->setTrackTime(track_datum->getFloatVal(0));
 
+	    // Set the Track momentum
+	    if (track_datum->getNFloat()==4)
+	      track->setMomentum(track_datum->getFloatVal(1),track_datum->getFloatVal(2),track_datum->getFloatVal(3));
+	    
             // Set the volume (top/bottom) in which the SvtTrack resides
             track->setTrackVolume(track_datum->getIntVal(0));
         }

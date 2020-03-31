@@ -185,8 +185,8 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         //ele_mom.SetY(ele->getMomentum()[1]);
         //ele_mom.SetZ(ele->getMomentum()[2]);
         ele_mom.SetX(ele_trk->getMomentum()[0]);
-        ele_mom.SetX(ele_trk->getMomentum()[1]);
-        ele_mom.SetX(ele_trk->getMomentum()[2]);
+        ele_mom.SetY(ele_trk->getMomentum()[1]);
+        ele_mom.SetZ(ele_trk->getMomentum()[2]);
 
 
         TVector3 pos_mom;
