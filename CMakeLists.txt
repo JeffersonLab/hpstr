@@ -114,7 +114,7 @@ configure_file(setup.sh.in ${CMAKE_INSTALL_PREFIX}/bin/setup.sh)
 #        PATTERN "include" EXCLUDE)
 
 # install python files
-install(DIRECTORY pyplot DESTINATION lib/python)
+install(DIRECTORY plotUtils DESTINATION lib/python)
 install(FILES processors/config/baseConfig.py DESTINATION lib/python)
 
 # info message about install prefix
