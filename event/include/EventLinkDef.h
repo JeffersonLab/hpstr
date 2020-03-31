@@ -8,7 +8,9 @@
 
 #pragma link C++ class CalCluster+;
 #pragma link C++ class CalHit+;
-#pragma link C++ class EventHeader+; 
+#pragma link C++ class EventHeader+;
+#pragma link C++ class HodoCluster+;
+#pragma link C++ class HodoHit+;
 #pragma link C++ class TriggerData+;
 #pragma link C++ class VTPData+;
 #pragma link C++ class VTPData::bHeader+;
@@ -43,6 +45,12 @@
 #pragma link C++ class vector<MCTrackerHit*> +;
 #pragma link C++ class vector<MCEcalHit>  +;
 #pragma link C++ class vector<MCEcalHit*> +;
+#pragma link C++ class vector<CalHit>  +;
+#pragma link C++ class vector<CalHit*> +;
+#pragma link C++ class vector<CalCluster>  +;
+#pragma link C++ class vector<CalCluster*> +;
+#pragma link C++ class vector<HodoHit*>    +;
+#pragma link C++ class vector<HodoCluster*>+;
 #pragma link C++ class vector<Track>       +;
 #pragma link C++ class vector<Track*>      +;
 #pragma link C++ class vector<Vertex*>     +;

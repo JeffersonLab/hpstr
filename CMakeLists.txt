@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 14)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
@@ -39,7 +38,12 @@ endif()
 find_package(LCIO REQUIRED)
 
 # find Python installation
-find_package(PythonLibs 2.7 REQUIRED)
+if (PYTHON3)
+  find_package(PythonLibs 3 REQUIRED)
+else()
+  find_package(PythonLibs 2.7 REQUIRED)
+endif()
+
 message(STATUS "Python lib found at: ${PYTHON_LIBRARIES}")
 message(STATUS "Python include dir found at: ${PYTHON_INCLUDE_DIRS}")
 get_filename_component(PYTHON_LIBRARY_DIR ${PYTHON_LIBRARIES} DIRECTORY)
@@ -98,6 +102,20 @@ endforeach()
     #    add_custom_target(doc COMMAND doxygen ${PROJECT_SOURCE_DIR}/docs/doxygen.conf)
 
     #endif()
+
+# configure and install setup script
+configure_file(setup.sh.in ${CMAKE_INSTALL_PREFIX}/bin/setup.sh)
+
+# install JSON analysis config files
+#install(DIRECTORY analysis 
+#        DESTINATION ${CMAKE_INSTALL_PREFIX}
+#        FILES_MATCHING PATTERN "*.json"
+#        PATTERN "src" EXCLUDE
+#        PATTERN "include" EXCLUDE)
+
+# install python files
+install(DIRECTORY pyplot DESTINATION lib/python)
+install(FILES processors/config/baseConfig.py DESTINATION lib/python)
 
 # info message about install prefix
 message(STATUS "hpstr will be installed to: ${CMAKE_INSTALL_PREFIX}")

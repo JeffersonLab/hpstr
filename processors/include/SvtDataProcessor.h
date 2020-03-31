@@ -10,6 +10,7 @@
 //-----------------//
 #include <iostream>
 #include <string>
+#include <vector>
 
 //----------//
 //   LCIO   //
@@ -21,11 +22,6 @@
 #include <IMPL/LCGenericObjectImpl.h>
 #include <IMPL/TrackerHitImpl.h>
 #include <UTIL/LCRelationNavigator.h>
-
-//----------//
-//   ROOT   //
-//----------//
-#include "TClonesArray.h"
 
 //-----------//
 //   hpstr   //
@@ -76,10 +72,10 @@ class SvtDataProcessor : public Processor {
     private: 
 
         /** Container to hold all TrackerHit objects. */
-        TClonesArray* hits_{nullptr}; 
+        std::vector<TrackerHit*> hits_; 
 
         /** Container to hold all Track objects. */
-        TClonesArray* tracks_{nullptr};
+        std::vector<Track*> tracks_;
 
 
 }; // SvtDataProcessor

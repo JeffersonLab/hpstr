@@ -54,6 +54,13 @@ class ConfigurePython {
 
     private: 
 
+        /** The run mode of the process:
+         *  0: LCIO to ROOT
+         *  1: ROOT to Histo
+         *  2: Histo Analysis
+         * */
+        int run_mode_{-1};
+
         /** The maximum number of events to process, if provided in python file. */
         int event_limit_{-1};
 
