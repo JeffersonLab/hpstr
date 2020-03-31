@@ -2,6 +2,7 @@
  * @file Process.h
  * @brief Class which represents the process under execution.
  * @author Omar Moreno, SLAC National Accelerator Laboratory
+ * @author Cameron Bravo, SLAC National Accelerator Laboratory
  */
 
 #ifndef __PROCESS_H__
@@ -17,7 +18,8 @@
 //----------//
 //   ROOT   //
 //----------//
-#include <TFile.h>
+#include "TObject.h"
+#include "TFile.h"
 
 //-----------//
 //   hpstr   //
@@ -55,32 +57,51 @@ class Process {
         void addOutputFileName(const std::string& output_filename);
 
         /**
+         * Set the run mode of the process.
+         * @param run_mode Maximum number of events to process.  
+         *     0 indicates LCIO to ROOT.
+         *     1 indicates ROOT to Histo.
+         *     2 indicates Histo Analysis.
+         */
+        void setRunMode(int run_mode=-1) {
+            run_mode_ = run_mode;
+        }
+
+        /**
          * Set the maximum number of events to process.  Processing will stop 
          * when either there are no more input events or when this number of events have been processed.
          * @param event_limit Maximum number of events to process.  -1 indicates no limit.
          */
         void setEventLimit(int event_limit=-1) {
-            event_limit_=event_limit;
+            event_limit_ = event_limit;
         }
 
-        /** Run the process. */
+        /**
+         * Get the run mode of the process.
+         */
+        int getRunMode() {
+            return run_mode_;
+        }
+
+        /** Run the LCIO to ROOT process. */
         void run();
 
-        /** Run the process on root files. */
-        //TODO Write this better
+        /** Run the ROOT to Histo process. */
         void runOnRoot();
 
-        /** Request that the processing finish with this event. */ 
-        void requestFinish() { event_limit_=0; }
+        /** Run the Histo Analysis process. */
+        void runOnHisto();
 
-        //TODO add a check on consistent extensions of the input files
-        /** Check if the input_files_ are rootFiles  */
-       bool processRootFiles();
+        /** Request that the processing finish with this event. */ 
+        void requestFinish() { event_limit_ = 0; }
 
     private:
 
         /** Reader used to parse either binary or EVIO files. */
         //DataRead* data_reader{nullptr}; 
+
+        /** Run mode of the process. */
+        int run_mode_{-1};
 
         /** Limit on events to process. */
         int event_limit_{-1};

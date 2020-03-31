@@ -2,6 +2,7 @@
  * @file Track.h
  * @brief Class used to encapsulate track information.
  * @author Omar Moreno, SLAC National Accelerator Laboratory
+ * @author PF, SLAC National Accelerator Laboratory
  */
 
 #ifndef _TRACK_H_
@@ -12,14 +13,16 @@
 //----------------//
 #include <cstdio>
 #include <vector>
+#include <cmath>
 
 //----------//
 //   ROOT   //
 //----------//
-#include <TObject.h>
-#include <TClonesArray.h>
-#include <TRefArray.h>
-#include <TRef.h>
+#include "TObject.h"
+#include "TClonesArray.h"
+#include "TRefArray.h"
+#include "TRef.h"
+
 
 //TODO static?
 namespace TRACKINFO {
@@ -45,12 +48,21 @@ class Track : public TObject {
          * @param hit : A TrackerHit object
          */
         void addHit(TObject* hit); 
-
+        
+        /**
+         * Set the reference to a truth object
+         * 
+         * @param track : A truth object (truth track)
+         */
+        
+        void setTruthLink(TObject* obj) {truth_link_ = obj;};
+        TRef getTruthLink() {return truth_link_;}
+        
         /** 
          * @return A reference to the hits associated with this track. 
          */
         TRefArray* getSvtHits() const { return tracker_hits_; };
-
+        
         /**
          * Set the track parameters.
          *
@@ -63,24 +75,37 @@ class Track : public TObject {
          *           approach.
          */
         void setTrackParameters(const double d0, 
-                const double phi0, 
-                const double omega, 
-                const double tan_lambda,
-                const double z0);
-
+                                const double phi0, 
+                                const double omega, 
+                                const double tan_lambda,
+                                const double z0);
+        
         /** @return The track parameters. */ 
         std::vector<double> getTrackParameters(); 
+        
+        
+        double getD0       () const {return d0_;}
+        double getPhi      () const {return phi0_;}
+        void   setPhi      (const double phi0) {phi0_ = phi0;}
+        double getOmega    () const {return omega_;}
+        double getTanLambda() const {return tan_lambda_;}
+        double getZ0       () const {return z0_;}
+        
+        /** Set the covariance matrix **/
+        void setCov(const std::vector<float>& cov) {cov_ = cov;}
+        
+        std::vector<float> getCov() {return cov_;}
+        
+        
+        double getD0Err () const {return sqrt(cov_[0]);}
+        double getPhiErr () const {return sqrt(cov_[2]);}
+        double getOmegaErr () const {return sqrt(cov_[5]);}
+        double getTanLambdaErr () const {return sqrt(cov_[14]);}
+        double getZ0Err() const {return sqrt(cov_[9]);}
+        //double getPtErr() const { return pt_err;}
 
-
-        double getD0       () const {return d0_;};
-        double getPhi      () const {return phi0_;};
-        double getOmega    () const {return omega_;};
-        double getTanLambda() const {return tan_lambda_;};
-        double getZ0       () const {return z0_;};
-
-
-        void setNdf(const float ndf) {ndf_ = ndf;};
-        double getNdf() const {return ndf_;};
+        void setNdf(const float ndf) {ndf_ = ndf;}
+        double getNdf() const {return ndf_;}
 
         /**
          * Set the chi^2 of the fit to the track.
@@ -96,7 +121,7 @@ class Track : public TObject {
         double getChi2Ndf() const { 
             //avoid check for 0
             if (ndf_ > 1e-6) 
-                return chi2_;
+                return chi2_ / ndf_;
             else  
                 return -999;
         };
@@ -183,6 +208,8 @@ class Track : public TObject {
         bool isMatchedTrack() const  { return    (type_ & 0x1);}
 
         bool isGBLTrack    () const  { return   ((type_ >> 5)  & 0x1);}
+        
+        bool isKalmanTrack () const  { return   type_ == 1 ; }
 
         bool isStrategy(TRACKINFO::STRATEGY strategy) {return (type_ >> strategy) & 0x1;};
 
@@ -200,6 +227,31 @@ class Track : public TObject {
          */
         int getCharge() const { return charge_; };  
 
+
+        /** 
+         * Set the track id.
+         *
+         */
+        
+        void setID(const int id){id_ = id;};
+        
+        /** 
+         * Get the track id.
+         *
+         */
+        
+        int getID() const {return id_;};
+
+
+        /**
+         * Set the momentum of the track from track parameters and b-field
+         *
+         * @param bfield
+         */
+        
+        void setMomentum(double bfield = 0.52);
+        
+
         /** 
          * Set the momentum of the track.  The momentum is extracted from
          * the corresponding ReconstructedParticle.
@@ -208,9 +260,19 @@ class Track : public TObject {
          */
         void setMomentum(std::vector<double> momentum); 
 
+        void setMomentum(double px, double py, double pz);
+
         /** @return The track momentum. */
         std::vector<double> getMomentum() { return {px_, py_, pz_}; }; 
-
+        
+        /**
+         * @return momentum magnitude
+         */
+        
+        double getP(){return sqrt(px_*px_ + py_*py_ + pz_*pz_);};
+        
+        double getPt() {return sqrt(px_*px_ + pz_*pz_);}
+        
         /**
          * Set the lambda kink of the given layer.
          *
@@ -218,7 +280,7 @@ class Track : public TObject {
          * @param lambda_kink The lambda kink value.
          */
         void setLambdaKink(const int layer, const double lambda_kink) { lambda_kinks_[layer] = lambda_kink; }
-
+        
         /**
          * Get the lambda kink value of the given layer.
          *
@@ -226,7 +288,7 @@ class Track : public TObject {
          * @return The lambda kink value of the given layer.
          */
         double getLambdaKink(const int layer) const { return lambda_kinks_[layer]; }
-
+        
         /**
          * Set the phi kink of the given layer.
          *
@@ -294,6 +356,10 @@ class Track : public TObject {
         /** The track type. */
         int type_{-999}; 
 
+        /** Cov matrix */
+        std::vector<float> cov_;
+            
+
         /** The distance of closest approach to the reference point. */
         double d0_{-999}; 
 
@@ -352,6 +418,9 @@ class Track : public TObject {
         double px_{-9999}; 
         double py_{-9999}; 
         double pz_{-9999};
+                
+        /** Track id. */
+        int id_{0};
 
         /** Track charge. */
         int charge_{0};
@@ -361,11 +430,16 @@ class Track : public TObject {
 
         /** Has Ly0 Shared hits. */
         bool SharedLy0_{false};
-
+        
         /** Has Ly1 Shared hits. */
         bool SharedLy1_{false};
-
-
+        
+        /** Reference to a truth track */
+        TRef truth_link_;
+        
+        /** Reference to MC Particle. */
+        TRef mcp_link_;
+        
         ClassDef(Track, 1);
 }; // Track
 

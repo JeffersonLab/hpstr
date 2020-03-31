@@ -1,9 +1,6 @@
 #ifndef MCANAHISTOS_H
 #define MCANAHISTOS_H
 
-// ROOT
-#include "TClonesArray.h"
-
 // HPSTR
 #include "HistoManager.h"
 #include "MCParticle.h"
@@ -22,9 +19,9 @@ class MCAnaHistos : public HistoManager {
         virtual void Define2DHistos(){};
         virtual void Define1DHistos();
 
-        void FillMCParticles(TClonesArray* mcParts, float weight = 1.);
-        void FillMCTrackerHits(TClonesArray* mcTrkrHits, float weight = 1.);
-        void FillMCEcalHits(TClonesArray* mcEcalHits, float weight = 1.);
+        void FillMCParticles(std::vector<MCParticle*> *mcParts, float weight = 1.);
+        void FillMCTrackerHits(std::vector<MCTrackerHit*> *mcTrkrHits, float weight = 1.);
+        void FillMCEcalHits(std::vector<MCEcalHit*> *mcEcalHits, float weight = 1.);
 
 };
 

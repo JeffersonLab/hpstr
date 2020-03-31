@@ -18,19 +18,20 @@ EventFile::EventFile(const std::string ifilename, const std::string& ofilename) 
 
 EventFile::~EventFile() {}
 
+// Close out the previous event before moving on.
+void EventFile::FillEvent() {
+    if (entry_ > 0) {
+        event_->getTree()->Fill();
+    }
+}
+
 bool EventFile::nextEvent() { 
 
-    // Close out the previous event before moving on.
-    if (entry_ > 0) { 
-        event_->getTree()->Fill(); 
-    }
-   
     // Read the next event.  If it doesn't exist, stop processing events.
     if ((lc_event_ = lc_reader_->readNextEvent())  == 0) return false;
     
     event_->setLCEvent(lc_event_); 
     event_->setEntry(entry_); 
-
     ++entry_; 
     return true; 
 }

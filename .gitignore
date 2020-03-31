@@ -33,3 +33,18 @@
 
 # Byte code
 *.pyc
+
+# Emacs temporary files
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Eclipse files
+.cproject
+.project
+.settings/
