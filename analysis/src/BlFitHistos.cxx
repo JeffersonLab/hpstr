@@ -37,7 +37,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
 
         //Perform fitting procedure over all channels on a sensor
-        for(int cc=0; cc < 30 ; ++cc) 
+        for(int cc=0; cc < 50 ; ++cc) 
         {
             //Set Channel and Hybrid information and paramaters in the flat tuple
             flat_tuple_->setVariableValue("SvtAna2DHisto_key", SvtAna2DHisto_key);
@@ -249,8 +249,8 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             double cut_maxIndex = std::max_element(cutrange.begin(),cutrange.end())-cutrange.begin();
             double cut_xmax = chi2_2D_range.at(cut_maxIndex);
             double cut1xmax = cut_xmax;
-            //std::cout << "[BlFitHistos] xmax before Chi2Max cut: " << chi2_2D_xmax << std::endl;
-            //std::cout << "[BlFitHistos] xmax after Chi2Max cut: " << cut_xmax << std::endl;
+            std::cout << "[BlFitHistos] xmax before Chi2Max cut: " << chi2_2D_xmax << std::endl;
+            std::cout << "[BlFitHistos] xmax after Chi2Max cut: " << cut_xmax << std::endl;
 
 
             //Perform fit regardless if chi2 max cut made any difference
@@ -292,10 +292,13 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             std::cout << "Sigma1 is " << sigma1 << std::endl;
             std::cout << "Sigma2 is " << sigma2 << std::endl;
             
+            //N references how many sigma away from mean
+            double N = 0.2;
+
             //If second cut was applied, keep whichever fit has smallest Chi2/Ndf
             if (cut2 == true) 
             {
-                if (chi22 < chi21 && sigma2 < sigma1)
+                if (chi22 < 0.8*chi21 &&  cut2xmax > fit->GetParams()[1] + N*fit->GetParams()[2]) // && sigma2 < sigma1)
                 {
                     xmax = cut2xmax;
                 }
@@ -398,7 +401,6 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             //If fit mean + N*Sigma > xmax, channel has low daq threshold *or* bad fit
 
 
-            double N = 0.2;
 
             std::cout << "2nd stage xmin is" << xmin << std::endl; 
             std::cout << "2nd stage xmax is" << xmax << std::endl; 
@@ -424,35 +426,37 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             if ((fitparams[1] + N*fitparams[2] > xmax) || (fitparams[1] - N*fitparams[2] < xmin) || ( (projy_h->GetBinLowEdge(projy_h->GetMaximumBin()) > fitparams[1] + 0.1*fitparams[2]) && (maxvalavg > fitparams[0]))) 
             //if (fitparams[1] + N*fitparams[2] > xmax || fitparams[1] - N*fitparams[2] < xmin || (maxvalavg > fitparams[0])) 
             {
-                std::vector<double> chi2ndf = {};
-                std::vector<double> tempxmin = {};
+                double tempxmin = xmin;
 
                 xmax = projy_h->GetBinLowEdge(projy_h->GetMaximumBin()) - 2*binwidth;
-                
-                
-                chi2ndf.push_back(fit->Chi2()/fit->Ndf());
-                tempxmin.push_back(xmin);
-
+                double ogChi2Ndf = fit->Chi2()/fit->Ndf();
                 if (xmax-xmin < 300)
                 {
-                    xmin = xmax - 300;
+                    tempxmin = xmax - 300;
                     
                 }
                 while(xmin < (xmax - 200.0))
                 {
-                    std::cout << "lowdaq xmin is " << xmin << std::endl;
-                    xmin = xmin + binwidth;
-                    tempxmin.push_back(xmin);
-                    TFitResultPtr cc_fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
-                    chi2ndf.push_back(cc_fit->Chi2()/cc_fit->Ndf());
-                    std::cout << "chi2/ndf is " << cc_fit->Chi2()/cc_fit->Ndf() << std::endl;
-                }
-                int chi2ndfmindex = std::min_element(chi2ndf.begin(), chi2ndf.end()) - chi2ndf.begin();
-                xmin = tempxmin.at(chi2ndfmindex);
-                fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
-                fitparams = fit->GetParams();
+                    std::cout << "lowdaq xmin is " << tempxmin << std::endl;
+                    tempxmin = tempxmin + binwidth;
+                    TFitResultPtr fit = projy_h->Fit("gaus", "QRES", "", tempxmin, xmax);
+                    if ( fit->Chi2()/fit->Ndf() < 0.8*ogChi2Ndf )
+                    {
+                        ogChi2Ndf = fit->Chi2()/fit->Ndf();
+                        xmin = tempxmin;
+                        std::cout << "Increasing xmin to: " << xmax << std::endl;
+                    }
+                   else 
+                   {
+                        break;
+                   }
 
+                std::cout << "chi2/ndf is " << fit->Chi2()/fit->Ndf() << std::endl;
+
+                }
             }
+
+
 
             if ( fitparams[1] + N*fitparams[2] > xmax || fitparams[1] - N*fitparams[2] < xmin  )
             {
