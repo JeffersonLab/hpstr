@@ -19,20 +19,20 @@ void VertexAnaProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring VertexAnaProcessor" <<std::endl;
     try 
     {
-        debug_   = parameters.getInteger("debug");
-        anaName_ = parameters.getString("anaName");
-        vtxColl_ = parameters.getString("vtxColl");
-        trkColl_ = parameters.getString("trkColl");
-        hitColl_ = parameters.getString("hitColl");
-        mcColl_  = parameters.getString("mcColl");
-        selectionCfg_   = parameters.getString("vtxSelectionjson");
-        histoCfg_ = parameters.getString("histoCfg");
-        timeOffset_ = parameters.getDouble("CalTimeOffset");
-        beamE_  = parameters.getDouble("beamE");
-        isData  = parameters.getInteger("isData");
+        debug_   = parameters.getInteger("debug",debug_);
+        anaName_ = parameters.getString("anaName",anaName_);
+        vtxColl_ = parameters.getString("vtxColl",vtxColl_);
+        trkColl_ = parameters.getString("trkColl",trkColl_);
+        hitColl_ = parameters.getString("hitColl",hitColl_);
+        mcColl_  = parameters.getString("mcColl",mcColl_);
+        selectionCfg_   = parameters.getString("vtxSelectionjson",selectionCfg_);
+        histoCfg_ = parameters.getString("histoCfg",histoCfg_);
+        timeOffset_ = parameters.getDouble("CalTimeOffset",timeOffset_);
+        beamE_  = parameters.getDouble("beamE",beamE_);
+        isData  = parameters.getInteger("isData",isData);
 
         //region definitions
-        regionSelections_ = parameters.getVString("regionDefinitions");
+        regionSelections_ = parameters.getVString("regionDefinitions",regionSelections_);
         
 
     }
@@ -185,8 +185,8 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         //ele_mom.SetY(ele->getMomentum()[1]);
         //ele_mom.SetZ(ele->getMomentum()[2]);
         ele_mom.SetX(ele_trk->getMomentum()[0]);
-        ele_mom.SetX(ele_trk->getMomentum()[1]);
-        ele_mom.SetX(ele_trk->getMomentum()[2]);
+        ele_mom.SetY(ele_trk->getMomentum()[1]);
+        ele_mom.SetZ(ele_trk->getMomentum()[2]);
 
 
         TVector3 pos_mom;
