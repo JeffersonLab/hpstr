@@ -59,7 +59,9 @@ vtxana.parameters["CalTimeOffset"]=CalTimeOffset
 #Region definitions
 
 RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/"
-vtxana.parameters["regionDefinitions"] = [RegionPath+'Tight.json']
+vtxana.parameters["regionDefinitions"] = [RegionPath+'simpTight.json',
+                                          RegionPath+'simpTightL1L1.json',
+                                          RegionPath+'simpTightL1L1NoSharedL0.json']
 
 # Sequence which the processors will run.
 p.sequence = [vtxana]
