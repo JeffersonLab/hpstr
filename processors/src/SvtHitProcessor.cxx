@@ -56,14 +56,20 @@ void SvtHitProcessor::initialize(TTree* tree) {
     ntuple_->addVariable( "sim_hit_count" ); 
     ntuple_->addVector(   "sim_hit_layer" ); 
     ntuple_->addVector(   "sim_hit_module" );
+    ntuple_->addVector(   "sim_hit_is_top" );  
+    ntuple_->addVector(   "sim_hit_is_bot" ); 
+    ntuple_->addVector(   "sim_hit_is_ele_side");  
+    ntuple_->addVector(   "sim_hit_is_pos_side");  
     ntuple_->addVector(   "sim_hit_raw_strip" ); 
     ntuple_->addVector(   "sim_hit_strip_res_x" );
     ntuple_->addVector(   "sim_hit_strip_res_y" );
     ntuple_->addVector(   "sim_hit_strip_res_z" );
+    ntuple_->addVector(   "sim_hit_strip_res_xerr" );
+    ntuple_->addVector(   "sim_hit_strip_res_yerr" );
+    ntuple_->addVector(   "sim_hit_strip_res_zerr" );
     ntuple_->addVector(   "sim_hit_x" );  
     ntuple_->addVector(   "sim_hit_y" );  
     ntuple_->addVector(   "sim_hit_z" );  
-
 }
 
 bool SvtHitProcessor::process(IEvent* ievent) {
@@ -170,6 +176,10 @@ bool SvtHitProcessor::process(IEvent* ievent) {
 
         ntuple_->addToVector("sim_hit_layer",  decoder["layer"] ); 
         ntuple_->addToVector("sim_hit_module", decoder["module"] ); 
+        ntuple_->addToVector("sim_hit_is_top", isTopLayer(decoder["module"])); 
+        ntuple_->addToVector("sim_hit_is_bot", isBottomLayer(decoder["module"]));
+        ntuple_->addToVector("sim_hit_is_ele_side",  isElectronSide(decoder["module"])); 
+        ntuple_->addToVector("sim_hit_is_pos_side",  isPositronSide(decoder["module"])); 
 
         auto raw_hit_vec{raw_sim_nav->getRelatedFromObjects(sim_hit)};
         
@@ -198,7 +208,8 @@ bool SvtHitProcessor::process(IEvent* ievent) {
         raw_decoder.setValue(max_value); 
         ntuple_->addToVector("sim_hit_raw_strip", raw_decoder["strip"]);
 
-        double delta_x{-9999}, delta_y{-9999}, delta_z{-9999}; 
+        double delta_x{-9999}, delta_y{-9999}, delta_z{-9999};
+        double x_err{-9999}, y_err{-9999}, z_err{-9999};  
         auto strip_hit_sim{hit_map[raw_hit_max]};
        
         if (strip_hit_sim != nullptr) {
@@ -206,11 +217,17 @@ bool SvtHitProcessor::process(IEvent* ievent) {
             delta_x = strip_hit_sim->getPosition()[0] - sim_hit->getPosition()[0];
             delta_y = strip_hit_sim->getPosition()[1] - sim_hit->getPosition()[1];
             delta_z = strip_hit_sim->getPosition()[2] - sim_hit->getPosition()[2];
+            x_err = sqrt(strip_hit_sim->getCovMatrix()[0]); 
+            y_err = sqrt(strip_hit_sim->getCovMatrix()[2]); 
+            z_err = sqrt(strip_hit_sim->getCovMatrix()[5]); 
         }
 
         ntuple_->addToVector("sim_hit_strip_res_x", delta_x); 
         ntuple_->addToVector("sim_hit_strip_res_y", delta_y); 
         ntuple_->addToVector("sim_hit_strip_res_z", delta_z); 
+        ntuple_->addToVector("sim_hit_strip_res_xerr", x_err); 
+        ntuple_->addToVector("sim_hit_strip_res_yerr", y_err); 
+        ntuple_->addToVector("sim_hit_strip_res_zerr", z_err); 
     }
     ntuple_->fill();
 
