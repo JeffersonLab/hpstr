@@ -3,6 +3,7 @@
  * @brief Class which represents the process under execution.
  * @author Omar Moreno, SLAC National Accelerator Laboratory
  * @author Cameron Bravo, SLAC National Accelerator Laboratory
+ * @author PF, SLAC National Accelerator Laboratory
  */
 
 #include "Process.h"
@@ -132,13 +133,19 @@ void Process::run() {
                 if (n_events_processed%1000 == 0)
                     std::cout << "---- [ hpstr ][ Process ]: Event: " << n_events_processed << std::endl;
                 event.Clear(); 
+                bool passEvent = true;
+                
                 for (auto module : sequence_) {
-                    //TODO: actually pass the flag to the filling of the tree
-                    if (!module->process(&event))
+                    passEvent = passEvent && module->process(&event);
+                    //if (!module->process(&event))
+                    if (!passEvent)
                         break;
                 }
                 ++n_events_processed;
                 event_h->Fill(0.0);
+                if (passEvent) {
+                    file->FillEvent();
+                }
             }
             ++cfile; 
 

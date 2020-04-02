@@ -106,7 +106,7 @@ if __name__ == '__main__':
     print "Testing %i jobs in parallel mode (using Pool(%i))"%(len(shList),options.poolSize)
     print list(
               itertools.izip(shList,
-                             [options.outDir     for x in range(len(shList))],
+                             [options.logDir     for x in range(len(shList))],
                              range(len(shList))
                             )
               )

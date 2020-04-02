@@ -9,6 +9,7 @@
 #include "Vertex.h"
 #include "Track.h"
 #include "TrackerHit.h"
+#include "MCParticle.h"
 #include "Particle.h"
 #include "Processor.h"
 #include "BaseSelector.h"
@@ -20,6 +21,7 @@
 //ROOT
 #include "TFile.h"
 #include "TTree.h"
+#include "TRefArray.h"
 #include "TBranch.h"
 #include "TVector3.h"
 
@@ -46,16 +48,22 @@ private:
     
     std::string selectionCfg_;
     TBranch* bvtxs_{nullptr};
+    TBranch* bhits_{nullptr};
     TBranch* btrks_{nullptr};
+    TBranch* bmcParts_{nullptr};
     TBranch* bevth_{nullptr};
     
     std::vector<Vertex*> * vtxs_{};
     std::vector<Track*>  * trks_{};
+    std::vector<TrackerHit*>  * hits_{};
+    std::vector<MCParticle*>  * mcParts_{};
     EventHeader* evth_{nullptr};
     
     std::string anaName_{"vtxAna"};
     std::string vtxColl_{"Vertices"};
+    std::string hitColl_{"RotatedHelicalTrackHits"};
     std::string trkColl_{"GBLTracks"};
+    std::string mcColl_{"MCParticle"};
     TTree* tree_{nullptr};
 
     std::shared_ptr<TrackHistos> _vtx_histos;

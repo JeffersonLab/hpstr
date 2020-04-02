@@ -20,14 +20,17 @@ void EventProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring EventProcessor" << std::endl;
     try
     {
-        debug_         = parameters.getInteger("debug");
-        headCollRoot_  = parameters.getString("headCollRoot");
-        trigCollLcio_    = parameters.getString("trigCollLcio");
-        rfCollLcio_    = parameters.getString("rfCollLcio");
-        vtpCollLcio_   = parameters.getString("vtpCollLcio");
-        vtpCollRoot_   = parameters.getString("vtpCollRoot");
-        tsCollLcio_  = parameters.getString("tsCollLcio");
-        tsCollRoot_  = parameters.getString("tsCollRoot");
+        debug_         = parameters.getInteger("debug", debug_);
+        headCollRoot_  = parameters.getString("headCollRoot", headCollRoot_);
+        trigCollLcio_    = parameters.getString("trigCollLcio", trigCollLcio_);
+        rfCollLcio_    = parameters.getString("rfCollLcio", rfCollLcio_ );
+        vtpCollLcio_   = parameters.getString("vtpCollLcio", vtpCollLcio_);
+        vtpCollRoot_   = parameters.getString("vtpCollRoot", vtpCollRoot_ );
+        tsCollLcio_  = parameters.getString("tsCollLcio", tsCollLcio_);
+        tsCollRoot_  = parameters.getString("tsCollRoot", tsCollRoot_);
+        
+        //For single events debugging pass a txt list of <runN> <evtN> to only select specific events
+        run_evt_list_ = parameters.getString("debugSingleEvents",run_evt_list_);
     }
     catch (std::runtime_error& error)
     {
@@ -42,36 +45,63 @@ void EventProcessor::initialize(TTree* tree) {
     tree->Branch(headCollRoot_.c_str(), &header_);
     tree->Branch(vtpCollRoot_.c_str(), &vtpData);
     tree->Branch(tsCollRoot_.c_str(),  &tsData);
+    
+    //Cache everything in a map
+    if (!run_evt_list_.empty()) {
+        std::cout<<"EventProcessor::Setting up the run/evt map from "<< run_evt_list_<<std::endl;
+        int runN=-999, evtN=-999;
+        std::ifstream runEvt_ifile(run_evt_list_);
+        if (runEvt_ifile.is_open()) {
+            while(!runEvt_ifile.eof()) {
+                runEvt_ifile >> runN >> evtN;
+                //std::cout<<"Adding " <<runN<<" "<<evtN<<std::endl;
+                run_evts_map_[runN].push_back(evtN);
+            }// fill the map
+            runEvt_ifile.close();
+        } // file is open
+    }//empty list of run/evts
 }
 
 bool EventProcessor::process(IEvent* ievent) {
-
+    
     Event* event = static_cast<Event*> (ievent);
     *header_ = event->getEventHeaderMutable(); 
-
+    
     EVENT::LCEvent* lc_event = event->getLCEvent(); 
-
+    int runNumber = lc_event->getRunNumber();
+    int evtNumber = lc_event->getEventNumber();
     if (debug_) {
-        std::cout<<"Event Number: "<<lc_event->getEventNumber()<<std::endl;
-        std::cout<<"Run Number: "<<lc_event->getRunNumber()<<std::endl;
+        std::cout<<"Event Number: "<<evtNumber<<std::endl;
+        std::cout<<"Run Number: "<<runNumber<<std::endl;
     }
-
+    
+    if (!run_evt_list_.empty()) {
+        if (run_evts_map_.find(runNumber)!=run_evts_map_.end()) {
+            auto it = std::find(run_evts_map_[runNumber].begin(), run_evts_map_[runNumber].end(), evtNumber);
+            if ( it != run_evts_map_[runNumber].end())
+                std::cout<<"Save: "<<runNumber<<" "<<evtNumber<<std::endl;
+            else 
+                return false;
+        }
+    }
+    
+    
     // Set the event number
     header_->setEventNumber(lc_event->getEventNumber());
-
+    
     // Set the run number
     header_->setRunNumber(lc_event->getRunNumber());
-
+    
     // Set the trigger timestamp 
     header_->setEventTime(lc_event->getTimeStamp()); 
-
+    
     // Set the SVT bias state
     header_->setSvtBiasState(lc_event->getParameters().getIntVal("svt_bias_good")); 
-
+    
     // Set the flag indicating whether the event was affected by SVT burst
     // mode noise 
     header_->setSvtBurstModeNoise(lc_event->getParameters().getIntVal("svt_burstmode_noise_good"));
-
+    
     // Set the flag indicating whether the SVT latency was correct during an
     // event.
     header_->setSvtLatencyState(lc_event->getParameters().getIntVal("svt_latency_good")); 

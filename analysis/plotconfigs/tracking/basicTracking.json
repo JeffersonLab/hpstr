@@ -6,6 +6,13 @@
         "xtitle" : "N_{tracks}",
         "ytitle" : "Events"
     },
+    "nHits_2d_h" : {
+        "bins"  : 15,
+        "minX"  : 0,
+        "maxX"  : 15,
+        "xtitle" : "N_{2Dhits}",
+        "ytitle" : "Tracks"
+    },
     "strategy_h" : {
         "bins" : 6,
         "minX" : -0.5,
@@ -55,6 +62,20 @@
         "minX" : -0.002,
         "maxX" : 0.002,
         "xtitle" : "#omega",
+        "ytitle" : "Tracks"
+    },
+    "invpT_h" : {
+        "bins" : 100,
+        "minX" : -2.5,
+        "maxX" : 2.5,
+        "xtitle" : "q/pT [GeV^{-1}]",
+        "ytitle" : "Tracks"
+    },
+    "pT_h" : {
+        "bins" : 100,
+        "minX" : -3,
+        "maxX" : 3,
+        "xtitle" : "q*pT [GeV^{-1}]",
         "ytitle" : "Tracks"
     },
     "TanLambda_h" : {

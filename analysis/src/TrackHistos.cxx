@@ -44,11 +44,6 @@ void TrackHistos::Fill1DVertex(Vertex* vtx,
     
     Fill1DVertex(vtx,weight);
 
-    //TODO remove copy => useless loss of time.
-    
-    //Track ele_trk = ele->getTrack();
-    //Track pos_trk = pos->getTrack();
-
     //TODO remove hardcode!
     if (ele_trk)
         Fill1DTrack(ele_trk,weight,"ele_");
@@ -57,11 +52,13 @@ void TrackHistos::Fill1DVertex(Vertex* vtx,
     
     
     TLorentzVector p_ele;
-    p_ele.SetPxPyPzE(ele->getMomentum()[0], ele->getMomentum()[1],ele->getMomentum()[2],ele->getEnergy());
+    //p_ele.SetPxPyPzE(ele->getMomentum()[0], ele->getMomentum()[1],ele->getMomentum()[2],ele->getEnergy());
+    p_ele.SetPxPyPzE(ele_trk->getMomentum()[0],ele_trk->getMomentum()[1],ele_trk->getMomentum()[2],ele->getEnergy());
     
     TLorentzVector p_pos;
-    p_pos.SetPxPyPzE(pos->getMomentum()[0], pos->getMomentum()[1],pos->getMomentum()[2],pos->getEnergy());
-
+    //p_pos.SetPxPyPzE(pos->getMomentum()[0], pos->getMomentum()[1],pos->getMomentum()[2],pos->getEnergy());
+    p_pos.SetPxPyPzE(pos_trk->getMomentum()[0],pos_trk->getMomentum()[1],pos_trk->getMomentum()[2],pos->getEnergy());
+    
     //Fill ele and pos information
     Fill1DHisto("ele_p_h",p_ele.P(),weight);
     Fill1DHisto("pos_p_h",p_pos.P(),weight);
@@ -133,14 +130,24 @@ void TrackHistos::Fill2DTrack(Track* track, float weight, const std::string& trk
 
 void TrackHistos::Fill1DTrack(Track* track, float weight, const std::string& trkname) {
     
+    double charge = (double) track->getCharge();
+
+    //2D hits
+    int n_hits_2d = track->getTrackerHitCount();
+    if (!track->isKalmanTrack())
+        n_hits_2d*=2;
+
     Fill1DHisto(trkname+"d0_h"       ,track->getD0()          ,weight);
     Fill1DHisto(trkname+"Phi_h"      ,track->getPhi()         ,weight);
     Fill1DHisto(trkname+"Omega_h"    ,track->getOmega()       ,weight);
+    Fill1DHisto(trkname+"pT_h"       ,-1*charge*track->getPt()   ,weight);
+    Fill1DHisto(trkname+"invpT_h"    ,-1*charge/track->getPt()   ,weight);
     Fill1DHisto(trkname+"TanLambda_h",track->getTanLambda()   ,weight);
     Fill1DHisto(trkname+"Z0_h"       ,track->getZ0()          ,weight);
     Fill1DHisto(trkname+"time_h"     ,track->getTrackTime()   ,weight);
     Fill1DHisto(trkname+"chi2_h"     ,track->getChi2Ndf()     ,weight);
     Fill1DHisto(trkname+"nShared_h"  ,track->getNShared()     ,weight);
+    Fill1DHisto(trkname+"nHits_2d_h" ,n_hits_2d               ,weight);
         
     //All Tracks
     Fill1DHisto(trkname+"sharingHits_h",0,weight);
@@ -218,6 +225,62 @@ void TrackHistos::Fill1DHistograms(Track *track, Vertex* vtx, float weight ) {
         Fill1DVertex(vtx);
     }
 }
+
+
+void TrackHistos::Fill1DTrackTruth(Track *track, Track* truth_track, float weight, const std::string& trkname) {
+    
+    if (!track || !truth_track)
+        return;
+    
+    //Momentum 
+    std::vector<double> trk_mom = track->getMomentum();
+    std::vector<double> trk_truth_mom = truth_track->getMomentum();
+    
+    double d0 = track->getD0();
+    double d0err = track->getD0Err();
+    double d0_truth = truth_track->getD0();
+    double phi = track->getPhi();
+    double phi_truth = truth_track->getPhi();
+    double phierr = track->getPhiErr();
+    double omega = track->getOmega();
+    double omega_truth = truth_track->getOmega();
+    double omegaerr = track->getOmegaErr();
+    double tanLambda = track->getTanLambda();
+    double tanLambda_truth = truth_track->getTanLambda();
+    double tanLambdaerr = track->getTanLambdaErr();
+    double z0 = track->getZ0();
+    double z0_truth = truth_track->getZ0();
+    double z0err = track->getZ0Err();
+    double p = track->getP();
+    //Charge different wrt Robert's plots.
+    double invPt = -1.*(double) track->getCharge()/track->getPt();  
+    double p_truth = truth_track->getP();
+    double invPt_truth = -1*(double) track->getCharge()/truth_track->getPt();
+        
+    double diff_percent_invpT = ((invPt - invPt_truth) / invPt_truth) * 100.;
+    
+    // truth residuals
+    Fill1DHisto(trkname+"d0_truth_res_h",       d0 - d0_truth                  , weight);
+    Fill1DHisto(trkname+"Phi_truth_res_h",      phi - phi_truth                , weight);
+    Fill1DHisto(trkname+"Omega_truth_res_h",    omega - omega_truth            , weight);
+    Fill1DHisto(trkname+"TanLambda_truth_res_h",tanLambda - tanLambda_truth    , weight);
+    Fill1DHisto(trkname+"Z0_truth_res_h",       z0 - z0_truth                  , weight);
+    Fill1DHisto(trkname+"p_truth_res_h",        p  - p_truth                   , weight);
+    Fill1DHisto(trkname+"invpT_truth_res_h",    invPt - invPt_truth            , weight);
+    Fill1DHisto(trkname+"invpT_truth_res_percent_h", diff_percent_invpT        , weight);
+    Fill1DHisto(trkname+"px_truth_res_h",       trk_mom[0]  - trk_truth_mom[0] , weight);
+    Fill1DHisto(trkname+"py_truth_res_h",       trk_mom[1]  - trk_truth_mom[1] , weight);
+    Fill1DHisto(trkname+"pz_truth_res_h",       trk_mom[2]  - trk_truth_mom[2] , weight);
+    
+    // truth pulls
+    Fill1DHisto(trkname+"d0_truth_pull_h",       (d0 - d0_truth)               / d0err, weight);
+    Fill1DHisto(trkname+"Phi_truth_pull_h",      (phi - phi_truth)             / phierr  , weight);
+    Fill1DHisto(trkname+"Omega_truth_pull_h",    (omega - omega_truth)         / omegaerr, weight);
+    Fill1DHisto(trkname+"TanLambda_truth_pull_h",(tanLambda - tanLambda_truth) / tanLambdaerr, weight);
+    Fill1DHisto(trkname+"Z0_truth_pull_h",       (z0 - z0_truth)               / z0err, weight);
+    
+}
+
 
 
 void TrackHistos::Fill2DHistograms(Vertex* vtx, float weight) {    

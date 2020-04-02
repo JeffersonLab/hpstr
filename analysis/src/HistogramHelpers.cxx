@@ -1,7 +1,6 @@
 //Authors: F.Sforza, PF, Alignment Team
 
 #include "HistogramHelpers.h"
-
 #include "TMath.h" 
 
 double HistogramHelpers::GaussExpTails_f(double* x, double *par) {
@@ -295,15 +294,20 @@ void HistogramHelpers::profileYwithIterativeGaussFit(TH2* hist, TH1* mu_graph, T
 
     if (sigma_graph) sigma_graph->Fill(value_x, sigma);
     if (mu_graph) mu_graph->Fill(value_x, mu);
-
+        
     errs_mu[index + 1] = mu_err;
     errs_sigma[index + 1] = sigma_err;
+    
+    /*
+    std::cout<<hist->GetName()<<" "<<index+1<<"  mu = " <<mu<<"+/-"<<mu_err<<std::endl;
+    std::cout<<hist->GetName()<<" "<<index+1<<"  sigma = " <<sigma<<"+/-"<<sigma_err<<std::endl;
+    */
 
     delete current_proj;
   }
 
   if (sigma_graph) {
-    sigma_graph->SetError(errs_sigma);
+     sigma_graph->SetError(errs_sigma);
     //sigma_graph->SetMaximum(max_sigma+0.15*(max_sigma - min_sigma));
     //sigma_graph->SetMinimum(min_sigma-0.15*(max_sigma - min_sigma));
     sigma_graph->GetYaxis()->SetTitleOffset(1.5);
@@ -315,7 +319,7 @@ void HistogramHelpers::profileYwithIterativeGaussFit(TH2* hist, TH1* mu_graph, T
   }
 
   if (mu_graph) {
-    mu_graph->SetError(errs_mu);
+      mu_graph->SetError(errs_mu);
     //mu_graph->SetMaximum(max_mu+0.15*(max_mu - min_mu));
     //mu_graph->SetMinimum(min_mu-0.15*(max_mu - min_mu));
     mu_graph->GetYaxis()->SetTitleOffset(1.5);
@@ -533,17 +537,29 @@ int HistogramHelpers::IterativeGaussFit(TH1* hist, double &mu, double &mu_err, d
     getline(cin, input);
   }
   
-  /*
-  TCanvas q; 
-  q.cd();
-  hist->Draw();
-  fit_func->Draw("same");
-  std::string str = "";
-  q.SaveAs((str+"_"+hist->GetName()+".pdf").c_str());
-  */
   
-  
+  if (outFile_for_projections->IsOpen()) {
+      TCanvas q; 
+      q.cd();
+      hist->Draw();
+      fit_func->Draw("same");
+      std::string str = "";
+      //q.SaveAs((str+"_"+hist->GetName()+".pdf").c_str());
+      outFile_for_projections->cd();
+      q.Write((str+"_"+hist->GetName()).c_str()); 
+  }
+      
   return 0;
+}
+
+void HistogramHelpers::OpenProjectionFile() {
+    outFile_for_projections = new TFile("debug_projections_histogramHelpers.root","RECREATE");
+}
+
+void HistogramHelpers::CloseProjectionFile() {
+    
+    if (outFile_for_projections->IsOpen())  
+        outFile_for_projections->Close();
 }
 
 

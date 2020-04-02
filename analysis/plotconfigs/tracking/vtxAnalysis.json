@@ -335,7 +335,13 @@
         "xtitle" : "trk(#lamdba)",
         "ytitle" : "trk d0 [mm]"
     },
-        
+    "mcMass622_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 0.2,
+        "xtitle" : "MC m_{pdg=622} [GeV]",
+        "ytitle" : "Vertices"
+    },
     "n_vertices_h" : {
         "bins"   : 6,
         "minX"   : -0.5,
@@ -392,7 +398,7 @@
         "xtitle" : "vtx Z pos [mm]",
         "ytitle" : "Vertices"
     },
-     "vtx_sigma_X_h" : {
+    "vtx_sigma_X_h" : {
         "bins" : 100,
         "minX" : 0,
         "maxX" : 5,
@@ -495,40 +501,40 @@
         "maxX" : 1,
         "xtitle" : "(pT_{e^{-}} - pT_{e^{+}}) / (pT_{e^{-}} + pT_{e^{+}})}",
         "ytitle" : "events"
-    },
-    "thetax_v0_h" : {
-        "bins" : 100,
-        "minX" : -0.5,
-        "maxX" : 0.5,
-        "xtitle" : "#theta_{vtx}",
-        "ytitle" : "events"
-    },
-    "thetax_pos_h" : {
-        "bins" : 100,
-        "minX" : -0.5,
-        "maxX" : 0.5,
-        "xtitle" : "#thetaX_{e^{+}}",
-        "ytitle" : "events"
-    },
-    "thetay_pos_h" : {
-        "bins" : 100,
-        "minX" : -0.5,
-        "maxX" : 0.5,
-        "xtitle" : "#thetaY_{e^{+}}",
-        "ytitle" : "events"
-    },
-    "thetay_miss_h" : {
-        "bins" : 100,
-        "minX" : -0.5,
-        "maxX" : 0.5,
-        "xtitle" : "#theta_{miss}",
-        "ytitle" : "events"
-    },    
-    "thetay_diff_h" : {
-        "bins" : 100,
-        "minX" : -0.5,
-        "maxX" : 0.5,
-        "xtitle" : "#Delta#theta(miss,e^{+})",
-        "ytitle" : "events"
-    }
+},
+"thetax_v0_h" : {
+    "bins" : 100,
+    "minX" : -0.5,
+    "maxX" : 0.5,
+    "xtitle" : "#theta_{vtx}",
+    "ytitle" : "events"
+},
+"thetax_pos_h" : {
+    "bins" : 100,
+    "minX" : -0.5,
+    "maxX" : 0.5,
+    "xtitle" : "#thetaX_{e^{+}}",
+    "ytitle" : "events"
+},
+"thetay_pos_h" : {
+    "bins" : 100,
+    "minX" : -0.5,
+    "maxX" : 0.5,
+    "xtitle" : "#thetaY_{e^{+}}",
+    "ytitle" : "events"
+},
+"thetay_miss_h" : {
+    "bins" : 100,
+    "minX" : -0.5,
+    "maxX" : 0.5,
+    "xtitle" : "#theta_{miss}",
+    "ytitle" : "events"
+},    
+"thetay_diff_h" : {
+    "bins" : 100,
+    "minX" : -0.5,
+    "maxX" : 0.5,
+    "xtitle" : "#Delta#theta(miss,e^{+})",
+    "ytitle" : "events"
+}
 }

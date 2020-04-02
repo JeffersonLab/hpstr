@@ -10,6 +10,9 @@
 #include <TFitResult.h>
 #include <TFitResultPtr.h>
 
+#include "ChebyshevFitFunction.h"
+#include "LegendreFitFunction.h"
+
 class HpsFitResult { 
 
     public: 
@@ -35,7 +38,7 @@ class HpsFitResult {
         double getIntegral() { return _integral; };
 
         /** @return The mass hypothesis used for this fit. */
-        double getMass() const { return _mass; };
+        double getMass() const { return mass_hypo_; };
 
         /** */
         double getQ0() { return q0_; };
@@ -43,7 +46,13 @@ class HpsFitResult {
         /** */
         double getPValue() { return p_value_; };
 
-        /** @return The signal yield obstained from the sig+bkg fit. */
+        /** @return The bkg rate obtained from the sig+bkg fit at the mass hypo. */
+        double getFullBkgRate();
+         
+        /** @return The bkg rate error from the sig+bkg fit at the mass hypo. */
+        double getFullBkgRateError();
+         
+        /** @return The signal yield obtained from the sig+bkg fit. */
         float getSignalYield() { return comp_result_->Parameter(poly_order_ + 1);  };
          
         /** @return The error on the signal yield. */
@@ -55,7 +64,7 @@ class HpsFitResult {
         double getUpperLimitPValue() { return _upper_limit_p_value; }; 
 
         /** @return The size of the fit window used. */
-        double getWindowSize() { return this->window_size; }; 
+        double getWindowSize() { return window_size_; }; 
 
         std::vector<double> getLikelihoods() { return _likelihoods; }
         
@@ -99,7 +108,7 @@ class HpsFitResult {
          * 
          * @param mass The mass hypothesis. 
          */
-        void setMass(double mass) { _mass = mass; };
+        void setMass(double mass) { mass_hypo_ = mass; };
 
         /**
          *
@@ -113,6 +122,13 @@ class HpsFitResult {
          * @param poly_order Polynomial order used by the fitter.
          */
         void setPolyOrder(int poly_order) { poly_order_ = poly_order; };
+
+        /**
+         * Sets the type of background fit function used by the fitter.
+         *
+         * @param bkg_model The background fit model.
+         */
+        void setBkgModelType(FitFunction::BkgModel bkg_model) { bkg_model_ = bkg_model; };
 
         /**
          * Set the 2 sigma upper limit.
@@ -129,7 +145,14 @@ class HpsFitResult {
          *
          * @oaram window_size The size of the fit window.
          */
-        void setWindowSize(double window_size) { this->window_size = window_size; }; 
+        void setWindowSize(double window_size) { window_size_ = window_size; }; 
+
+        /**
+         * Set the size of the fit window used to get this results.
+         *
+         * @oaram bin_width The size of the fit window.
+         */
+        void setBinWidth(double bin_width) { bin_width_ = bin_width; }; 
 
     private: 
 
@@ -150,7 +173,7 @@ class HpsFitResult {
         double _integral{0};
 
         /** Mass hypothesis. */
-        double _mass{0}; 
+        double mass_hypo_; 
 
         double _cmass{0}; 
 
@@ -161,7 +184,10 @@ class HpsFitResult {
         double p_value_;
 
         /** Order polynomial used by the fitter. */
-        double poly_order_{0}; 
+        double poly_order_{0};
+
+        /** Type of background fit function to use. */
+        FitFunction::BkgModel bkg_model_{FitFunction::BkgModel::EXP_CHEBYSHEV};
 
         /** 2 sigma upper limit on the signal. */
         double upper_limit_; 
@@ -170,7 +196,10 @@ class HpsFitResult {
         double _upper_limit_p_value{-9999};
 
         /*** Size of the fit window. */
-        double window_size;
+        double window_size_;
+
+        /*** Size of the fit window. */
+        double bin_width_;
 
 }; // HpsFitResult
 

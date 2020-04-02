@@ -1,9 +1,14 @@
 import HpstrConf
 import sys
 
+import baseConfig
+
+parser = baseConfig.parser
+(options,args) = parser.parse_args()
+
 # Use the input file to set the output file name
-lcio_file = sys.argv[1].strip()
-root_file = '%s.root' % lcio_file[:-6]
+lcio_file = options.inFilename
+root_file = options.outFilename
 
 print('LCIO file: %s' % lcio_file)
 print('Root file: %s' % root_file)

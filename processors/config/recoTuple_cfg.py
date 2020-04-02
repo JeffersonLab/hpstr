@@ -10,12 +10,12 @@ parser = baseConfig.parser
 lcio_file = options.inFilename
 root_file = options.outFilename
 
-print 'LCIO file: %s' % lcio_file
-print 'Root file: %s' % root_file
+print('LCIO file: %s' % lcio_file)
+print('Root file: %s' % root_file)
 
 p = HpstrConf.Process()
 
-#p.max_events = 1000
+
 p.run_mode = 0
 
 # Library containing processors
@@ -99,10 +99,14 @@ mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
 # Sequence which the processors will run.
-#p.sequence = [header, track, rawsvt, svthits, ecal, vtx, mcpart]
-p.sequence = [header, track, rawsvt, svthits, ecal, vtx, c_vtx]
+if options.isData == -1: print("Please specficy if this is Data or not via option -t")
+if options.isData: p.sequence = [header, track, rawsvt, svthits, ecal, vtx, c_vtx]
+else: p.sequence = [header, track, rawsvt, svthits, ecal, vtx, c_vtx, mcpart]
 
 p.input_files=[lcio_file]
 p.output_files = [root_file]
+
+if (options.nevents > -1):
+    p.max_events = options.nevents
 
 p.printProcess()

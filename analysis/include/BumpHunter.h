@@ -33,24 +33,18 @@
 #include <TRandom.h>
 
 #include <Math/ProbFunc.h>
+#include <Math/MinimizerOptions.h>
 
 //---//
-#include <HpsFitResult.h>
+#include "HpsFitResult.h"
+#include "ChebyshevFitFunction.h"
+#include "LegendreFitFunction.h"
 
 class BumpHunter {
-
     public:
-
-        /** Enum constants used to denote the different background models. */
-        enum BkgModel { 
-            POLY     = 0,
-            EXP_POLY = 1,
-            EXP_POLY_X_POLY = 2,
-        };
-
         /** Default Constructor */
-        BumpHunter(BkgModel model, int poly_order, int res_factor);
-
+        BumpHunter(FitFunction::BkgModel model, int poly_order, int res_factor, double res_scale = 1.00, bool asymptotic_limit = true);
+        
         /** Destructor */
         ~BumpHunter();
         
@@ -61,8 +55,8 @@ class BumpHunter {
          *                  used to search for a resonance.
          * @param mass_hypothesis The mass of interest.
          */
-        HpsFitResult* performSearch(TH1* histogram, double mass_hypothesis, bool skip_bkg_fit, bool skip_ul); 
-
+        HpsFitResult* performSearch(TH1* histogram, double mass_hypothesis, bool skip_bkg_fit, bool skip_ul);
+        
         /** 
          * Given the mass of interest, setup the window parameters and 
          * initialize the fit parameters.  This includes setting the size of the
@@ -73,37 +67,37 @@ class BumpHunter {
          *                  used to search for a resonance.
          * @param mass_hypothesis The mass of interest.
          */
-        void initialize(TH1* histogram, double &mass_hypothesis); 
-
+        void initialize(TH1* histogram, double &mass_hypothesis);
+        
         /**
          *
          */
-        void calculatePValue(HpsFitResult* result); 
-
-
+        void calculatePValue(HpsFitResult* result);
+        
         /** Fit using a background only model. */
         void fitBkgOnly();
-
+        
         /** Set the histogram bounds. */
-        void setBounds(double low_bound, double high_bound); 
-
+        void setBounds(double low_bound, double high_bound);
+        
         /** Enable/disable debug */
         void enableDebug(bool debug = true) { this->debug = debug; };
-
+        
         /** Enable batch running. */
         void runBatchMode(bool batch = true) { _batch = batch; };
-
+        
         /** Write the fit results to a text file */
-        void writeResults(bool write_results = true) { _write_results = write_results; }; 
-
+        void writeResults(bool write_results = true) { _write_results = write_results; };
+        
         /** Get the signal upper limit. */
-        void getUpperLimit(TH1* histogram, HpsFitResult* result); 
-
+        void getUpperLimit(TH1* histogram, HpsFitResult* result);
+        void getUpperLimitAsymptotic(TH1* histogram, HpsFitResult* result);
+        void getUpperLimitPower(TH1* histogram, HpsFitResult* result);
+        
         /** */
-        std::vector<TH1*> generateToys(TH1* histogram, double n_toys, int seed);
-
+        std::vector<TH1*> generateToys(TH1* histogram, double n_toys, int seed, int toy_sig_samples, int bkg_mult = 1, TH1* signal_hist = nullptr);
+        
     private:
-
         /**
          * Get the HPS mass resolution at the given mass.  The functional form 
          * of the mass resolution was determined using MC.
@@ -116,216 +110,98 @@ class BumpHunter {
             //return 0.0389938364847*mass - 0.0000713783511061; // ideal
             //return 0.0501460737193*mass - 0.0000917925595224; // scaled to moller mass from data
             //return 0.0532190838657*mass - 0.0000922283032152; // scaled to moller mass + sys
-            return 1.56*(0.000955 - 0.004198 * mass + 0.2367 * mass * mass - 0.7009 * mass * mass * mass);
+            //return res_scale_*(0.000955 - 0.004198 * mass + 0.2367 * mass * mass - 0.7009 * mass * mass * mass);
+            return res_scale_ * (0.000379509 + (0.0416842 * mass) - (0.271364 * mass * mass) + (3.49537 * mass * mass * mass) - (11.1153 * mass * mass * mass * mass));
         };
-
+        
         /**
          *
          */
-        double correctMass(double mass); 
-  
+        double correctMass(double mass);
+        
         /** 
          * Print debug statement.
          *
          * @param message Debug statement to print.
          */
-        void printDebug(std::string message); 
+        void printDebug(std::string message);
          
         /**
          *
          */
-        void getChi2Prob(double min_nll_null, double min_nll, double &q0, double &p_value); 
-
-
+        void getChi2Prob(double min_nll_null, double min_nll, double &q0, double &p_value);
+        
         /** Background only fit result. */
         HpsFitResult* bkg_only_result_{nullptr};
-
+        
         /** Output file stream */
         std::ofstream* ofs;
-
+        
         //
         // Variable definitions
         //
-
         /** The mass after the mass scale correction. */
         double corr_mass_{0};
-
+        
         /** The lower bound of the histogram. */
         double lower_bound_{0.016};
-
+        
         /** The upper bound of the histogram. */
         double upper_bound_{0.115};
-
+        
         /** The total number of events within the fit window. */
-        double integral_{0}; 
+        double integral_{0};
+        
+        /** The background fit function model to use. */
+        FitFunction::BkgModel bkg_model_{FitFunction::BkgModel::EXP_CHEBYSHEV};
 
+        /**
+         * Flag to specify whether the power constrained or asymptotic upper
+         * limit should be employed.
+         */
+        bool asymptotic_limit_{true};
+        
         /** 
          * Resolution multiplicative factor used in determining the fit window 
          * size.
          */
-        double res_factor_{13}; 
-
+        double res_factor_{13};
+        
         /** Size of the background window that will be used to fit. */
         double window_size_{0};
-
+        
         /** The total number of bins */
         int bins_{0};
-
+        
+        /** The bin width */
+        double bin_width_{0.0};
+        
         /** Polynomial order used to model the background. */
         int poly_order_{0};
 
+        /** The scaling factor for the mass resolution. Was 1.56 for Sebouh's, should 1.00 for Rafo's. */
+        //double res_scale_{1.56};
+        double res_scale_{1.00};
+        
         /** 
          * Flag denoting if application should run in batch mode.  If set to 
          * true, plots aren't generated and fit results aren't logged.
          */
-        bool _batch{false}; 
-
+        bool _batch{false};
+        
         /** Debug flag */
         bool debug{false};
-
+        
         /** Write the results to a file. */
         bool _write_results{false};
-
-        double window_start_{0}; 
-
+        
+        double window_start_{0};
+        
         double window_end_{0};
-
-        double mass_hypothesis_{0}; 
-
-        double mass_resolution_{0};  
-};
-
-//
-// TODO: Move the classes externally 
-//
-
-class ExpPol1BkgFunction { 
-    
-    public: 
-
-        /** Constructor */
-        ExpPol1BkgFunction(double mass_hypothesis, double window_size); 
-
-        double operator() (double* x, double* par); 
-
-    private: 
-
-        /** Mass hypothesis */
-        double mass_hypothesis_{0}; 
-
-        /** Size of the search window. */
-        double window_size_{0};
-
-         
-};
-
-class ExpPol1FullFunction { 
-    
-    public: 
-
-        /** Constructor */
-        ExpPol1FullFunction(double mass_hypothesis, double window_size); 
-
-        double operator() (double* x, double* par); 
-
-    private: 
-
-        double mass_hypothesis_{0}; 
-
-        double window_size_{0}; 
-};
-
-class ExpPol3BkgFunction { 
-    
-    public: 
-
-        /** Constructor */
-        ExpPol3BkgFunction(double mass_hypothesis, double window_size); 
-
-        double operator() (double* x, double* par); 
-
-    private: 
-
-        /** Mass hypothesis */
-        double mass_hypothesis_{0}; 
-
-        /** Size of the search window. */
-        double window_size_{0};
-
-         
-};
-
-class ExpPol3FullFunction { 
-    
-    public: 
-
-        /** Constructor */
-        ExpPol3FullFunction(double mass_hypothesis, double window_size); 
-
-        double operator() (double* x, double* par); 
-
-    private: 
-
-        double mass_hypothesis_{0}; 
-
-        double window_size_{0}; 
-};
-
-class ExpPol5BkgFunction { 
-    
-    public: 
-
-        /** Constructor */
-        ExpPol5BkgFunction(double mass_hypothesis, double window_size); 
-
-        double operator() (double* x, double* par); 
-
-    private: 
-
-        /** Mass hypothesis */
-        double mass_hypothesis_{0}; 
-
-        /** Size of the search window. */
-        double window_size_{0};
-
-         
-};
-
-
-class ExpPol5FullFunction { 
-    
-    public: 
-
-        /** Constructor */
-        ExpPol5FullFunction(double mass_hypothesis, double window_size); 
-
-        double operator() (double* x, double* par); 
-
-    private: 
-
-        double mass_hypothesis_{0}; 
-
-        double window_size_{0}; 
-};
-
-class ExpPol7BkgFunction { 
-    
-    public: 
-
-        /** Constructor */
-        ExpPol7BkgFunction(double mass_hypothesis, double window_size); 
-
-        double operator() (double* x, double* par); 
-
-    private: 
-
-        /** Mass hypothesis */
-        double mass_hypothesis_{0}; 
-
-        /** Size of the search window. */
-        double window_size_{0};
-
-         
+        
+        double mass_hypothesis_{0};
+        
+        double mass_resolution_{0};
 };
 
 #endif // __BUMP_HUNTER_H__
