@@ -8,6 +8,8 @@ parser.add_option("-m", "--mass", type="int", dest="mass_hypo",
         help="Mass hypothesis in MeV.", metavar="mass_hypo", default=145)
 parser.add_option("-p", "--poly", type="int", dest="poly_order",
         help="Polynomial order of background model.", metavar="poly_order", default=3)
+parser.add_option("-P", "--toy_poly", type="int", dest="toy_poly_order",
+        help="Polynomial order of toy generator fit.", metavar="toy_poly_order", default=5)
 parser.add_option("-w", "--win", type="int", dest="win_factor",
         help="Window factor for determining fit window size.", metavar="win_factor", default=11)
 parser.add_option("-N", "--toys", type="int", dest="nToys",
@@ -36,7 +38,6 @@ histo_file = options.inFilename
 mass_hypo = options.mass_hypo/1000.0
 poly_order = options.poly_order
 win_factor = options.win_factor
-# toy_file = '%s/bhToys_m%iw%ip%is%i.root'%(options.outDir, options.mass_hypo, win_factor, poly_order, options.toy_sig_samples)
 toy_file = '%s/bhToys_m%iw%ip%ir%is%i.root'%(options.outDir, options.mass_hypo, win_factor, poly_order, int(options.res_scale * 100), options.toy_sig_samples)
 
 print('Histo file: %s' % histo_file)
@@ -64,6 +65,7 @@ bhtoys.parameters["debug"] = 1
 bhtoys.parameters["massSpectrum"] = options.mass_spec
 bhtoys.parameters["mass_hypo"] = mass_hypo
 bhtoys.parameters["poly_order"] = poly_order
+bhtoys.parameters["toy_poly_order"] = options.toy_poly_order
 bhtoys.parameters["win_factor"] = win_factor
 bhtoys.parameters["seed"] = 0
 bhtoys.parameters["nToys"] = options.nToys
