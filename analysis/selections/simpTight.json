@@ -1,0 +1,28 @@
+{
+    "eSum_lt"  : {
+	"cut"  : 0.83,
+        "id"   : 0,
+        "info" : "E_{e^{-}} +  E_{e^{+}}<0.83Ebeam"
+    },
+    "eleMom_lt" : {
+	"cut" : 1.5,
+	"id"  : 1,
+	"info" : "p e^{-}<1.5GeV"
+    },
+    "posMom_lt" : {
+	"cut" : 1.5,
+	"id"  : 2,
+	"info" : "p e^{+}<1.5GeV"
+    },
+    "maxVtxMom_lt" : {
+	"cut" : 2.0,
+	"id"  : 3,
+	"info": "p_{vtx}<2.0GeV"
+    },
+    "nVtxs_eq" : {
+        "cut"  : 1,
+        "id"   : 4,
+        "info" : "N_{vtx}=1"
+    }
+
+}

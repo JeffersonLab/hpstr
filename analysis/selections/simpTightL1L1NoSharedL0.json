@@ -1,0 +1,42 @@
+{
+    "L1Requirement_eq" : {
+	"cut"  : 1,
+	"id"   : 0,
+	"info" : "pass L1L1"
+    },
+    "eSum_lt"  : {
+	"cut"  : 0.83,
+        "id"   : 1,
+        "info" : "E_{e^{-}} +  E_{e^{+}}<0.83Ebeam"
+    },
+    "eleMom_lt" : {
+	"cut" : 1.5,
+	"id"  : 2,
+	"info" : "p e^{-}<1.5GeV"
+    },
+    "posMom_lt" : {
+	"cut" : 1.5,
+	"id"  : 3,
+	"info" : "p e^{+}<1.5GeV"
+    },
+    "maxVtxMom_lt" : {
+	"cut" : 2.0,
+	"id"  : 4,
+	"info": "p_{vtx}<2.0GeV"
+    },
+    "ele_sharedL0_eq" : {
+        "cut"  : 0,
+        "id"   : 5,
+        "info" : "N^{e^{-}}_{Shared} L0=0"
+    },
+    "pos_sharedL0_eq" : {
+        "cut"  : 0,
+        "id"   : 6,
+        "info" : "N^{e^{+}}_{Shared} L0=0"
+    },
+    "nVtxs_eq" : {
+        "cut"  : 1,
+        "id"   : 7,
+        "info" : "N_{vtx}=1"
+    }
+}

@@ -352,9 +352,10 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
             _ah->GetParticlesFromVtx(vtx,ele,pos);
 
-            CalCluster eleClus = ele->getCluster();
-            CalCluster posClus = pos->getCluster();
-
+            //vtx Z position
+	    if (!_reg_vtx_selectors[region]->passCutGt("uncVtxZ_gt",vtx->getZ(),weight))
+	        continue;
+	    
             //Chi2
             if (!_reg_vtx_selectors[region]->passCutLt("chi2unc_lt",vtx->getChi2(),weight))
                 continue;
@@ -362,11 +363,22 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             double ele_E = ele->getEnergy();
             double pos_E = pos->getEnergy();
 
-
             //Compute analysis variables here.
 
             Track ele_trk = ele->getTrack();
             Track pos_trk = pos->getTrack();
+
+	    TVector3 ele_mom;
+	    ele_mom.SetX(ele->getMomentum()[0]);
+	    ele_mom.SetY(ele->getMomentum()[1]);
+	    ele_mom.SetZ(ele->getMomentum()[2]);
+
+	    TVector3 pos_mom;
+	    pos_mom.SetX(pos->getMomentum()[0]);
+	    pos_mom.SetY(pos->getMomentum()[1]);
+	    pos_mom.SetZ(pos->getMomentum()[2]);
+
+            
             //Get the shared info - TODO change and improve
 
             Track* ele_trk_gbl = nullptr;
@@ -459,6 +471,24 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             //Require Electron Cluster does NOT exists
             if (!_reg_vtx_selectors[region]->passCutLt("eleClusE_lt",eleClus.getEnergy(),weight))
                 continue;
+             
+            //ESum high cut
+            if (!_reg_vtx_selectors[region]->passCutGt("eSum_gt",(ele_E+pos_E)/beamE_,weight))
+                continue;
+            
+	    //Max ele momentum
+	    if (!_reg_vtx_selectors[region]->passCutLt("eleMom_lt",ele_mom.Mag(),weight))
+	        continue;
+
+	    //Max pos momentum
+	    if (!_reg_vtx_selectors[region]->passCutLt("posMom_lt",pos_mom.Mag(),weight))
+	        continue;
+
+	    //Max vtx momentum
+	    
+	    if (!_reg_vtx_selectors[region]->passCutLt("maxVtxMom_lt",(ele_mom+pos_mom).Mag(),weight))
+	        continue;
+
 
             //No shared hits requirement
             if (!_reg_vtx_selectors[region]->passCutEq("ele_sharedL0_eq",(int)ele_trk_gbl->getSharedLy0(),weight))
@@ -469,6 +499,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 continue;
             if (!_reg_vtx_selectors[region]->passCutEq("pos_sharedL1_eq",(int)pos_trk_gbl->getSharedLy1(),weight))
                 continue;
+
 
             //If this is MC check if MCParticle matched to the electron track is from rad or recoil
             if(!isData_)
@@ -519,6 +550,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 int isRadEle = -999;
                 int isRecEle = -999;
                 TVector3 trueEleP;
+
                 trueEleP.SetXYZ(-999,-999,-999);
                 if (mcParts_) {
                     for(int i = 0; i < mcParts_->size(); i++)

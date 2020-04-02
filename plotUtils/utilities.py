@@ -378,12 +378,12 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
     for ih in xrange(len(histos)):
 
         if (Normalise):
-            if (histos[ih].Integral() == 0):
-                return None
-            histos[ih].Scale(1./histos[ih].Integral())
-            histos[ih].GetYaxis().SetRangeUser(0.00001,histos[ih].GetMaximum()*15000)
-            
-                    
+            if histos[ih].Integral()!=0: histos[ih].Scale(1./histos[ih].Integral())
+            if LogY:
+                histos[ih].GetYaxis().SetRangeUser(0.00001,histos[ih].GetMaximum()*15000)
+            else:
+                histos[ih].GetYaxis().SetRangeUser(0.00001,histos[ih].GetMaximum()*2.2)
+ 
         histos[ih].SetMarkerColor(colors[ih])
         histos[ih].SetMarkerStyle(markers[ih])
         histos[ih].SetLineColor(colors[ih])
@@ -422,10 +422,10 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
             if noErrors:
                 #histos[ih].GetXaxis().SetTextSize(0.045)
                 #histos[ih].GetYaxis().SetTextSize(0.045)
-                histos[ih].Draw("pe")
+                histos[ih].Draw("e")
                 
             else:
-                histos[ih].Draw("pe")
+                histos[ih].Draw("e")
             if xtitle:
                 histos[ih].GetXaxis().SetTitle(xtitle)
             if ytitle:
