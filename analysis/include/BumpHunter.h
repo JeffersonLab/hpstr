@@ -31,6 +31,7 @@
 #include <TCanvas.h>
 #include <TFile.h>
 #include <TRandom.h>
+#include <TString.h>
 
 #include <Math/ProbFunc.h>
 #include <Math/MinimizerOptions.h>
@@ -43,7 +44,7 @@
 class BumpHunter {
     public:
         /** Default Constructor */
-        BumpHunter(FitFunction::BkgModel model, int poly_order, int res_factor, double res_scale = 1.00, bool asymptotic_limit = true);
+        BumpHunter(FitFunction::BkgModel model, int poly_order, int toy_poly_order, int res_factor, double res_scale = 1.00, bool asymptotic_limit = true);
         
         /** Destructor */
         ~BumpHunter();
@@ -178,6 +179,9 @@ class BumpHunter {
         
         /** Polynomial order used to model the background. */
         int poly_order_{0};
+
+        /** Polynomial order used to model the toy fit. */
+        int toy_poly_order_{0};
 
         /** The scaling factor for the mass resolution. Was 1.56 for Sebouh's, should 1.00 for Rafo's. */
         //double res_scale_{1.56};
