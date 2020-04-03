@@ -114,8 +114,7 @@ class HistoManager {
         std::map<std::string, TH3F*> histos3d;
         typedef std::map<std::string, TH3F*>::iterator it3d;
 
-        int debug_ = 1;
-        //bool debug_{false};
+        bool debug_{false};
         json _h_configs;
         int maxWarnings_{10};
         int printWarnings_{0};
