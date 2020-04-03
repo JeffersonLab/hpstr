@@ -5,6 +5,9 @@ class FunctionMath {
     public:
         /** Defines a Chebyshev polynomial function. */
         static double ChebyshevFunction(double x, double* p, int order);
+        
+        /** Define a Legendre polynomial function. */
+        static double LegendreFunction(double x, double* p, int order);
 
         /** Defines a Gaussian function for signal-fitting. */
         static double Gaussian(double x, double amplitude, double mean, double stddev);

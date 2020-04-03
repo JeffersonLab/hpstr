@@ -15,15 +15,20 @@ BhToysHistoProcessor::~BhToysHistoProcessor() { }
 void BhToysHistoProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring BhToysHistoProcessor" << std::endl;
     try {
-        debug_           = parameters.getInteger("debug");
-        massSpectrum_    = parameters.getString("massSpectrum");
-        mass_hypo_       = parameters.getDouble("mass_hypo");
-        win_factor_      = parameters.getInteger("win_factor");
-        poly_order_      = parameters.getInteger("poly_order");
-        seed_            = parameters.getInteger("seed");
-        nToys_           = parameters.getInteger("nToys");
-        toy_sig_samples_ = parameters.getInteger("toy_sig_samples");
-        bkg_mult_        = parameters.getInteger("toy_bkg_mult");
+        debug_               = parameters.getInteger("debug");
+        massSpectrum_        = parameters.getString("massSpectrum");
+        mass_hypo_           = parameters.getDouble("mass_hypo");
+        win_factor_          = parameters.getInteger("win_factor");
+        poly_order_          = parameters.getInteger("poly_order");
+        toy_poly_order_      = parameters.getInteger("toy_poly_order");
+        seed_                = parameters.getInteger("seed");
+        nToys_               = parameters.getInteger("nToys");
+        toy_sig_samples_     = parameters.getInteger("toy_sig_samples");
+        bkg_mult_            = parameters.getInteger("toy_bkg_mult");
+        res_scale_           = parameters.getDouble("res_scale");
+        signal_shape_h_name_ = parameters.getString("signal_shape_h_name", "");
+        signal_shape_h_file_ = parameters.getString("signal_shape_h_file", "");
+        bkg_model_           = parameters.getInteger("bkg_model");
         //asymptotic_limit_ = parameters.getBoolean("asymptoticLimit");
     } catch(std::runtime_error& error) {
         std::cout << error.what() << std::endl;
@@ -37,8 +42,35 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
     // Get mass spectrum from file
     mass_spec_h = (TH1*) inF_->Get(massSpectrum_.c_str());
 
+    // Initialize the signal histogram, if a file name and histogram name are provided.
+    std::cout << "Signal Shape File :: " << signal_shape_h_file_ << std::endl;
+    std::cout << "Signal Shape Hist :: " << signal_shape_h_name_ << std::endl;
+    if(signal_shape_h_file_ != "" && signal_shape_h_name_ != "") {
+        TFile *file = new TFile(signal_shape_h_file_.c_str());
+        signal_shape_h_ = (TH1*) file->Get(signal_shape_h_name_.c_str());
+    } else if(signal_shape_h_file_ != "" && signal_shape_h_name_ == "") {
+        std::cout << "[BumpHunter] :: !! WARNING !! Signal injection file, but no histogram, specified! Defaulting to Gaussian.";
+    } else if(signal_shape_h_file_ == "" && signal_shape_h_name_ != "") {
+        std::cout << "[BumpHunter] :: !! WARNING !! Signal injection histogram, but no file, specified! Defaulting to Gaussian.";
+    }
+    
+    // Get the appropriate background model.
+    FitFunction::BkgModel bkg_fit_model;
+    std::cout << "Background Model ID: " << bkg_model_ << std::endl;
+    switch(bkg_model_) {
+        case 0: bkg_fit_model = FitFunction::BkgModel::EXP_CHEBYSHEV;
+                break;
+        case 1: bkg_fit_model = FitFunction::BkgModel::EXP_CHEBYSHEV;
+                break;
+        case 2: bkg_fit_model = FitFunction::BkgModel::LEGENDRE;
+                break;
+        case 3: bkg_fit_model = FitFunction::BkgModel::EXP_LEGENDRE;
+                break;
+        default: bkg_fit_model = FitFunction::BkgModel::EXP_CHEBYSHEV;
+    }
+    
     // Init bump hunter manager
-    bump_hunter_ = new BumpHunter(bkg_model_, poly_order_, win_factor_, asymptotic_limit_);
+    bump_hunter_ = new BumpHunter(bkg_fit_model, poly_order_, toy_poly_order_, win_factor_, res_scale_, asymptotic_limit_);
     bump_hunter_->setBounds(mass_spec_h->GetXaxis()->GetBinUpEdge(mass_spec_h->FindFirstBinAbove()),
             mass_spec_h->GetXaxis()->GetBinLowEdge(mass_spec_h->FindLastBinAbove()));
     if(debug_ > 0) bump_hunter_->enableDebug();
@@ -53,8 +85,12 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
     flat_tuple_->addVariable("poly_order");
     flat_tuple_->addVariable("win_factor");
     flat_tuple_->addVariable("window_size");
+    flat_tuple_->addVariable("resolution_scale");
+    flat_tuple_->addVariable("bkg_model");
 
     flat_tuple_->addVariable("bkg_chi2_prob");
+    flat_tuple_->addVariable("bkgsig_chi2_prob");
+    flat_tuple_->addVariable("toyfit_chi2_prob");
     flat_tuple_->addVariable("bkg_edm");
     flat_tuple_->addVariable("bkg_minuit_status");
     flat_tuple_->addVariable("bkg_nll");
@@ -118,9 +154,13 @@ bool BhToysHistoProcessor::process() {
     flat_tuple_->setVariableValue("poly_order",             poly_order_);
     flat_tuple_->setVariableValue("win_factor",             win_factor_);
     flat_tuple_->setVariableValue("window_size",            result->getWindowSize());
+    flat_tuple_->setVariableValue("resolution_scale",       res_scale_);
+    flat_tuple_->setVariableValue("bkg_model",              bkg_model_);
 
     // Set the Fit Results in the flat tuple
-    flat_tuple_->setVariableValue("bkg_chi_prob",           bkg_result->Prob());
+    flat_tuple_->setVariableValue("bkg_chi2_prob",          bkg_result->Prob());
+    flat_tuple_->setVariableValue("bkgsig_chi2_prob",       sig_result->Prob());
+    flat_tuple_->setVariableValue("toyfit_chi2_prob",       result->getBkgToysFitResult()->Prob());
     flat_tuple_->setVariableValue("bkg_edm",                bkg_result->Edm());
     flat_tuple_->setVariableValue("bkg_minuit_status",      bkg_result->Status());
     flat_tuple_->setVariableValue("bkg_nll",                bkg_result->MinFcnValue());
@@ -153,8 +193,13 @@ bool BhToysHistoProcessor::process() {
     if(nToys_ > 0) {
         std::cout << "Generating " << nToys_ << " Toys" << std::endl;
         std::cout << "    Signal Injection      :: " << toy_sig_samples_ << std::endl;
+        if(signal_shape_h_ != NULL) {
+            std::cout << "    Signal Shape          :: " << signal_shape_h_name_.c_str() << std::endl;
+        } else {
+            std::cout << "    Signal Shape          :: Gaussian" << std::endl;
+        }
         std::cout << "    Background Multiplier :: " << bkg_mult_ << std::endl;
-        std::vector<TH1*> toys_hist = bump_hunter_->generateToys(mass_spec_h, nToys_, seed_, toy_sig_samples_, bkg_mult_); 
+        std::vector<TH1*> toys_hist = bump_hunter_->generateToys(mass_spec_h, nToys_, seed_, toy_sig_samples_, bkg_mult_, signal_shape_h_);
 
         int toyFitN = 0;
         for(TH1* hist : toys_hist) {

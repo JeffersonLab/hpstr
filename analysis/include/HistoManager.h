@@ -117,6 +117,9 @@ class HistoManager {
         int debug_ = 1;
         //bool debug_{false};
         json _h_configs;
+        int maxWarnings_{10};
+        int printWarnings_{0};
+        bool doPrintWarnings_{true};
 };
 
 

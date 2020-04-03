@@ -60,6 +60,13 @@ class MCParticle : public TObject {
         void setPDG(const int pdg) { pdg_ = pdg; }; 
 
         /**
+         * Set the LCIO ID of this particle.
+         *
+         * @param id The LCIO ID of this particle
+         */
+        void setID(const int id) { id_ = id; }; 
+
+        /**
          * Set the PDG ID of the mother of this particle.
          *
          * @param momPDG The PDG ID of the mother of this particle
@@ -128,8 +135,11 @@ class MCParticle : public TObject {
         /** @return The particle charge. */
         int getCharge() const { return charge_; };
        
-        /** @return The particle ID. */
+        /** @return The particle PDG ID. */
         int getPDG() const { return pdg_; }; 
+        
+        /** @return The particle LCIO ID. */
+        int getID() const { return id_; }; 
         
         /** @return The particle ID of the mother. */
         int getMomPDG() const { return momPDG_; }; 
@@ -168,6 +178,9 @@ class MCParticle : public TObject {
          */  
         TRefArray* daughters_{new TRefArray{}}; 
     
+        /** The LCIO ID of this particle */
+        int id_{-9999}; 
+
         /** The number of daughters associated with this particle */    
         int n_daughters_{0};
 
