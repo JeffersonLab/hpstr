@@ -70,8 +70,10 @@ track.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 track.parameters["trkhitCollRoot"] = ''
 track.parameters["hitFitsCollLcio"] = ''
 track.parameters["rawhitCollRoot"] = ''
-track.parameters["truthTrackCollLcio"] = 'KalmanFullTracksToTruthTrackRelations'
-track.parameters["truthTrackCollRoot"] = 'Truth_KFTracks'
+if (not options.isData):
+    track.parameters["truthTrackCollLcio"] = 'KalmanFullTracksToTruthTrackRelations'
+    track.parameters["truthTrackCollRoot"] = 'Truth_KFTracks'
+
 track.parameters["bfield"] = 1.034000
 
 trackgbl.parameters["debug"] = 0 
@@ -82,8 +84,9 @@ trackgbl.parameters["trkRelCollLcio"] = 'TrackDataRelations'
 trackgbl.parameters["trkhitCollRoot"] = 'RotatedHelicalOnTrackHits'
 trackgbl.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 trackgbl.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack'
-trackgbl.parameters["truthTrackCollLcio"] = 'GBLTracksToTruthTrackRelations'
-trackgbl.parameters["truthTrackCollRoot"] = 'Truth_GBLTracks'
+if (not options.isData):
+    trackgbl.parameters["truthTrackCollLcio"] = 'GBLTracksToTruthTrackRelations'
+    trackgbl.parameters["truthTrackCollRoot"] = 'Truth_GBLTracks'
 trackgbl.parameters["bfield"] = 1.034000
 
 #ECalData
