@@ -15,7 +15,6 @@
 #include "EVENT/SimTrackerHit.h"
 #include "EVENT/TrackerHit.h"
 #include "EVENT/TrackerRawData.h"
-#include "UTIL/BitField64.h"
 #include "UTIL/LCRelationNavigator.h"
 
 SvtHitProcessor::SvtHitProcessor(const std::string& name, Process& process) 
@@ -46,11 +45,18 @@ void SvtHitProcessor::initialize(TTree* tree) {
     ntuple_->addVector(   "raw_hit_is_pos_side");  
     
     // 1D Strip hits
-    ntuple_->addVariable( "strip_hit_count" ); 
-    ntuple_->addVector(   "strip_cluster_size" ); 
-    ntuple_->addVector(   "strip_hit_x" ); 
-    ntuple_->addVector(   "strip_hit_y" ); 
-    ntuple_->addVector(   "strip_hit_z" ); 
+    ntuple_->addVariable( "strip_cluster_count"  ); 
+    ntuple_->addVector(   "strip_cluster_amp"    ); 
+    ntuple_->addVector(   "strip_cluster_layer"  ); 
+    ntuple_->addVector(   "strip_cluster_module" );
+    ntuple_->addVector(   "strip_cluster_is_top" );  
+    ntuple_->addVector(   "strip_cluster_is_bot" );
+    ntuple_->addVector(   "strip_cluster_is_ele_side" );  
+    ntuple_->addVector(   "strip_cluster_is_pos_side" );
+    ntuple_->addVector(   "strip_cluster_size"   );
+    ntuple_->addVector(   "strip_cluster_x" ); 
+    ntuple_->addVector(   "strip_cluster_y" ); 
+    ntuple_->addVector(   "strip_cluster_z" ); 
 
     // Simulated tracker hits
     ntuple_->addVariable( "sim_hit_count" ); 
@@ -79,59 +85,63 @@ bool SvtHitProcessor::process(IEvent* ievent) {
 
     // Check for the existence of RawTrackerHits.  If they don't exists, 
     // stop processing the event.
-    if (!event->hasLCCollection("SVTRawTrackerHits")) return false; 
+    if (!event->hasLCCollection("SVTRawTrackerHits")) return false;
 
     // Get the collection of raw tracker hits from the event.
     auto raw_hits{event->getLCCollection("SVTRawTrackerHits")}; 
 
-    UTIL::BitField64 raw_decoder("system:6,barrel:3,layer:4,module:12,sensor:1,side:32:-2,strip:12");
-    
     auto raw_hit_count{raw_hits->getNumberOfElements()}; 
     ntuple_->setVariableValue("raw_hit_count", raw_hit_count); 
 
     for (int ihit{0}; ihit< raw_hit_count; ++ihit) {
          
         auto raw_hit{static_cast<EVENT::TrackerRawData*>(raw_hits->getElementAt(ihit))};
+        
+        // Decode the cell ID
+        auto fields{decodeID(raw_hit)}; 
 
-        //Decode the cellid
-        auto value{ EVENT::long64( raw_hit->getCellID0() & 0xffffffff ) | 
-                  ( EVENT::long64( raw_hit->getCellID1() ) << 32 ) };
-        raw_decoder.setValue(value);
-
-        ntuple_->addToVector("raw_hit_layer", raw_decoder["layer"]); 
-        ntuple_->addToVector("raw_hit_strip", raw_decoder["strip"]); 
-        ntuple_->addToVector("raw_hit_module", raw_decoder["module"]);
-        ntuple_->addToVector("raw_hit_is_top", isTopLayer(raw_decoder["module"])); 
-        ntuple_->addToVector("raw_hit_is_bot", isBottomLayer(raw_decoder["module"]));
-        ntuple_->addToVector("raw_hit_is_ele_side",  isElectronSide(raw_decoder["module"])); 
-        ntuple_->addToVector("raw_hit_is_pos_side",  isPositronSide(raw_decoder["module"])); 
+        ntuple_->addToVector("raw_hit_layer", std::get< 0 >(fields)); 
+        ntuple_->addToVector("raw_hit_strip", std::get< 2 >(fields)); 
+        ntuple_->addToVector("raw_hit_module", std::get< 1 >(fields));
+        ntuple_->addToVector("raw_hit_is_top", isTopLayer(std::get< 1 >(fields))); 
+        ntuple_->addToVector("raw_hit_is_bot", isBottomLayer(std::get< 1 >(fields)));
+        ntuple_->addToVector("raw_hit_is_ele_side",  isElectronSide(std::get< 1 >(fields))); 
+        ntuple_->addToVector("raw_hit_is_pos_side",  isPositronSide(std::get< 1 >(fields))); 
         
         std::vector< short > adc_values = raw_hit->getADCValues();
         for (int iadc{0}; iadc < adc_values.size(); ++iadc) {
             ntuple_->addToVector("raw_hit_adc" + std::to_string(iadc), adc_values[iadc]); 
         }
-
     }
-
     std::map < EVENT::TrackerRawData*, EVENT::TrackerHit* > hit_map; 
     if (event->hasLCCollection("StripClusterer_SiTrackerHitStrip1D")) { 
         
         auto strip_hits{event->getLCCollection("StripClusterer_SiTrackerHitStrip1D")}; 
 
         auto strip_hit_count{strip_hits->getNumberOfElements()};
-        ntuple_->setVariableValue("strip_hit_count", strip_hit_count); 
+        ntuple_->setVariableValue("strip_cluster_count", strip_hit_count); 
 
         for (int ihit{0}; ihit < strip_hit_count; ++ihit) { 
             
             auto hit{static_cast<EVENT::TrackerHit*>(strip_hits->getElementAt(ihit))}; 
 
             auto position{hit->getPosition()}; 
-            ntuple_->addToVector("strip_hit_x", position[0]); 
-            ntuple_->addToVector("strip_hit_y", position[1]); 
-            ntuple_->addToVector("strip_hit_z", position[2]); 
+            ntuple_->addToVector("strip_cluster_x", position[0]); 
+            ntuple_->addToVector("strip_cluster_y", position[1]); 
+            ntuple_->addToVector("strip_cluster_z", position[2]); 
         
             auto strip_raw_hits{hit->getRawHits()}; 
-            ntuple_->addToVector("strip_cluster_size", strip_raw_hits.size()); 
+            ntuple_->addToVector("strip_cluster_size", strip_raw_hits.size());
+            
+            // Decode the cell ID
+            auto fields{decodeID(static_cast<EVENT::TrackerRawData*>(strip_raw_hits[0]))}; 
+            
+            ntuple_->addToVector("strip_cluster_layer", std::get<0>(fields));  
+            ntuple_->addToVector("strip_cluster_module", std::get<1>(fields));  
+            ntuple_->addToVector("strip_cluster_is_top", isTopLayer(std::get< 1 >(fields))); 
+            ntuple_->addToVector("strip_cluster_is_bot", isBottomLayer(std::get< 1 >(fields)));
+            ntuple_->addToVector("strip_cluster_is_ele_side",  isElectronSide(std::get< 1 >(fields))); 
+            ntuple_->addToVector("strip_cluster_is_pos_side",  isPositronSide(std::get< 1 >(fields))); 
 
             for (const auto& strip_raw_hit : strip_raw_hits) 
                 hit_map[static_cast<EVENT::TrackerRawData*>(strip_raw_hit)] = hit; 
@@ -140,7 +150,10 @@ bool SvtHitProcessor::process(IEvent* ievent) {
 
     // Check for the existence of simulated tracker hits.  If they don't 
     // exists, stop processing the event. 
-    if (!event->hasLCCollection("TrackerHits")) return false;
+    if (!event->hasLCCollection("TrackerHits")) {
+        ntuple_->fill(); 
+        return false;
+    }
 
     // Get the collection of simulated tracker hits from the event. 
     auto sim_hits{event->getLCCollection("TrackerHits")}; 
@@ -184,44 +197,44 @@ bool SvtHitProcessor::process(IEvent* ievent) {
         auto raw_hit_vec{raw_sim_nav->getRelatedFromObjects(sim_hit)};
         
         EVENT::TrackerRawData* raw_hit_max{nullptr};
-        short max_amp{-9999};  
-        long max_value;     
-        for (const auto& hit_obj : raw_hit_vec) { 
-        
-            auto hit = static_cast<EVENT::TrackerRawData*>(hit_obj); 
-            //Decode the cellid
-            auto value{ EVENT::long64( hit->getCellID0() & 0xffffffff ) | 
-                      ( EVENT::long64( hit->getCellID1() ) << 32 ) };
-        
-            raw_decoder.setValue(value); 
-
-            std::vector< short > adc_values = hit->getADCValues(); 
-            short max{*std::max_element(adc_values.begin(), adc_values.end())}; 
-            
-            if (max > max_amp) {
-                max_amp = max; 
-                raw_hit_max = hit;
-                max_value = value;  
-            }
-        }
-
-        raw_decoder.setValue(max_value); 
-        ntuple_->addToVector("sim_hit_raw_strip", raw_decoder["strip"]);
-
+        int max_amp{-9999}, strip{-9999};    
         double delta_x{-9999}, delta_y{-9999}, delta_z{-9999};
         double x_err{-9999}, y_err{-9999}, z_err{-9999};  
-        auto strip_hit_sim{hit_map[raw_hit_max]};
-       
-        if (strip_hit_sim != nullptr) {
+        long max_value;    
         
-            delta_x = strip_hit_sim->getPosition()[0] - sim_hit->getPosition()[0];
-            delta_y = strip_hit_sim->getPosition()[1] - sim_hit->getPosition()[1];
-            delta_z = strip_hit_sim->getPosition()[2] - sim_hit->getPosition()[2];
-            x_err = sqrt(strip_hit_sim->getCovMatrix()[0]); 
-            y_err = sqrt(strip_hit_sim->getCovMatrix()[2]); 
-            z_err = sqrt(strip_hit_sim->getCovMatrix()[5]); 
-        }
+        // TODO: Investigate why not all sim hits have raw hits associated with 
+        //       them. 
+        if (!raw_hit_vec.empty()) {
+            for (const auto& hit_obj : raw_hit_vec) { 
+        
+                auto hit = static_cast<EVENT::TrackerRawData*>(hit_obj); 
+            
+                std::vector< short > adc_values = hit->getADCValues(); 
+                short max{*std::max_element(adc_values.begin(), adc_values.end())}; 
+            
+                if (max > max_amp) {
+                    max_amp = max; 
+                    raw_hit_max = hit;
+                    max_value = value;  
+                }
+            }
 
+            auto fields{decodeID(raw_hit_max)};
+            strip = std::get< 2 >(fields);  
+            
+            auto strip_hit_sim{hit_map[raw_hit_max]};
+       
+            if (strip_hit_sim != nullptr) {
+        
+                delta_x = strip_hit_sim->getPosition()[0] - sim_hit->getPosition()[0];
+                delta_y = strip_hit_sim->getPosition()[1] - sim_hit->getPosition()[1];
+                delta_z = strip_hit_sim->getPosition()[2] - sim_hit->getPosition()[2];
+                x_err = sqrt(strip_hit_sim->getCovMatrix()[0]); 
+                y_err = sqrt(strip_hit_sim->getCovMatrix()[2]); 
+                z_err = sqrt(strip_hit_sim->getCovMatrix()[5]); 
+            }
+        }
+        ntuple_->addToVector("sim_hit_raw_strip", strip);
         ntuple_->addToVector("sim_hit_strip_res_x", delta_x); 
         ntuple_->addToVector("sim_hit_strip_res_y", delta_y); 
         ntuple_->addToVector("sim_hit_strip_res_z", delta_z); 
@@ -229,6 +242,7 @@ bool SvtHitProcessor::process(IEvent* ievent) {
         ntuple_->addToVector("sim_hit_strip_res_yerr", y_err); 
         ntuple_->addToVector("sim_hit_strip_res_zerr", z_err); 
     }
+
     ntuple_->fill();
 
     return true; 
@@ -244,6 +258,17 @@ bool SvtHitProcessor::isElectronSide(int module) {
 bool SvtHitProcessor::isPositronSide(int module) { 
     if (module >= 2) return true;
     return false;  
+}
+
+std::tuple<int, int, int> SvtHitProcessor::decodeID(EVENT::TrackerRawData* hit) { 
+
+    //Decode the cellid
+    auto value{ EVENT::long64( hit->getCellID0() & 0xffffffff ) | 
+              ( EVENT::long64( hit->getCellID1() ) << 32 ) };
+    raw_decoder_.setValue(value);
+
+    return std::make_tuple(raw_decoder_["layer"], raw_decoder_["module"], raw_decoder_["strip"]); 
+
 }
 
 DECLARE_PROCESSOR(SvtHitProcessor)

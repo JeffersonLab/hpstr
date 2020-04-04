@@ -11,17 +11,29 @@
 /*~~~~~~~~~~~~~~~~*/
 #include <memory> 
 #include <string> 
+#include <tuple>
 
 /*~~~~~~~~~~~*/
 /*   hpstr   */
 /*~~~~~~~~~~~*/
 #include "Processor.h" 
 
+/*~~~~~~~~~~*/
+/*   LCIO   */
+/*~~~~~~~~~~*/
+#include "UTIL/BitField64.h"
+
+
 /// Forward declarations
 class IEvent; 
 class FlatTupleMaker; 
 class Process; 
-class TTree; 
+class TTree;
+
+// Forward declarations in namespace EVENT
+namespace EVENT { 
+    class TrackerRawData; 
+}
 
 class SvtHitProcessor : public Processor { 
 
@@ -98,8 +110,19 @@ class SvtHitProcessor : public Processor {
     
     private: 
         
+        /**
+         * Decode the raw hit cell ID. 
+         *
+         * @param hit  Raw tracker hit. 
+         */
+        std::tuple<int, int, int> decodeID(EVENT::TrackerRawData* hit); 
+
+
         /// Ntuple maker 
-        std::shared_ptr< FlatTupleMaker > ntuple_;  
+        std::shared_ptr< FlatTupleMaker > ntuple_; 
+
+        // Raw hit decoder
+        UTIL::BitField64 raw_decoder_{"system:6,barrel:3,layer:4,module:12,sensor:1,side:32:-2,strip:12"};
 
 }; // SvtHitProcessor 
 
