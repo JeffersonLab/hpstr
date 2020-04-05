@@ -77,22 +77,24 @@ hybrid =options.hybrid
 histokeys_hh = getHistoKeys(inFile,"TH2", options.hybrid,"")
 print histokeys_hh
 outFile = r.TFile("%s_analysis.root"%(options.inFilename[:-5]),"RECREATE")
-
+loadonline = False
 
 for key in histokeys_hh:
 
 #######Read online baseline fit values from root file
-    onBlKey = key.replace('raw_hits_baseline0_','').replace('_hh','')
-
     if options.onlineBaselines != "":
-        hwtag = mmap.str_to_hw(onBlKey)
-        plotname = "baseline_%s_ge"%(hwtag)
-        bf_inFile = r.TFile(options.onlineBaselines,"READ")
-        tgraph = bf_inFile.Get("baseline/%s"%(plotname))
-        bf_inFile.Close()
+        loadonline = True
+        onBlKey = key.replace('raw_hits_baseline0_','').replace('_hh','')
 
-    bl_ch = tgraph.GetX()
-    bl_mean = tgraph.GetY()
+        if options.onlineBaselines != "":
+            hwtag = mmap.str_to_hw(onBlKey)
+            plotname = "baseline_%s_ge"%(hwtag)
+            bf_inFile = r.TFile(options.onlineBaselines,"READ")
+            tgraph = bf_inFile.Get("baseline/%s"%(plotname))
+            bf_inFile.Close()
+
+        bl_ch = tgraph.GetX()
+        bl_mean = tgraph.GetY()
 
 #############################################################################
 
@@ -152,9 +154,10 @@ for key in histokeys_hh:
     mean_gr_y = np.array(mean, dtype=float)
     mean_gr = buildTGraph("BlFitMean_%s"%(sensor),"BlFitMean_%s;Channel;ADC"%(sensor),len(mean_gr_x),mean_gr_x,mean_gr_y,2)
 
-    bl_gr_x = np.array(bl_ch, dtype = float)
-    bl_gr_y = np.array(bl_mean, dtype = float)
-    bl_gr = buildTGraph("onlineBlFits_%s"%(sensor),"Online Baseline Fits_%s;Channel;ADC"%(sensor),len(bl_gr_x),bl_gr_x,bl_gr_y,1)
+    if loadonline == True:
+        bl_gr_x = np.array(bl_ch, dtype = float)
+        bl_gr_y = np.array(bl_mean, dtype = float)
+        bl_gr = buildTGraph("onlineBlFits_%s"%(sensor),"Online Baseline Fits_%s;Channel;ADC"%(sensor),len(bl_gr_x),bl_gr_x,bl_gr_y,1)
 
     lowdaq_gr_x = np.array(channel, dtype = float)
     lowdaq_gr_y = np.array([3500.0 * x for x in lowdaq], dtype=float)
@@ -165,7 +168,10 @@ for key in histokeys_hh:
         histo_hh.GetXaxis().SetRangeUser(0.0,512.0)
     histo_hh.Draw("colz")
     mean_gr.Draw("same")
-    bl_gr.Draw("same")
+
+    if loadonline == True:
+        bl_gr.Draw("same")
+
     lowdaq_gr.SetMarkerStyle(8)
     lowdaq_gr.SetMarkerSize(1)
     lowdaq_gr.SetMarkerColor(utils.colors[10])
@@ -173,52 +179,54 @@ for key in histokeys_hh:
 
     legend = r.TLegend(0.1,0.75,0.28,0.9)
     legend.AddEntry(mean_gr,"offline baselines using hpstr processor","l")
-    legend.AddEntry(bl_gr,"online baseline fits","l")
+    if loadonline == True:
+        legend.AddEntry(bl_gr,"online baseline fits","l")
     legend.AddEntry(lowdaq_gr,"low-daq threshold","p")
     legend.Draw()
     canvas.Write()
     savePNG(canvas,".","%s_gausFit"%(key))
     canvas.Close()
-
-    #Plot Difference between online and offline baselines
-    canvas = r.TCanvas("%s_diff"%(sensor), "c", 1800,800)
-    canvas.cd()
-    canvas.SetTicky()
-    canvas.SetTickx()
-    diff_ch = []
-    diff_mean = []
-    diff_bl_mean = []
     
-    for i in range(len(channel)):
-        if mean[i] > 0:
-            diff_ch.append(channel[i])
-            diff_mean.append(mean[i])
-            diff_bl_mean.append(bl_mean[i])
+    if loadonline == True:
+        #Plot Difference between online and offline baselines
+        canvas = r.TCanvas("%s_diff"%(sensor), "c", 1800,800)
+        canvas.cd()
+        canvas.SetTicky()
+        canvas.SetTickx()
+        diff_ch = []
+        diff_mean = []
+        diff_bl_mean = []
+        
+        for i in range(len(channel)):
+            if mean[i] > 0:
+                diff_ch.append(channel[i])
+                diff_mean.append(mean[i])
+                diff_bl_mean.append(bl_mean[i])
 
-    diff_gr_x = np.array(diff_ch, dtype = float)
-    diff_gr_y = np.array([x - y for x,y in zip(diff_mean,diff_bl_mean)], dtype=float)
-    diff_gr = buildTGraph("FitDiff_%s"%(sensor),"(Offline - Online) BlFit Mean_%s;Channel;ADC Difference"%(sensor),len(diff_gr_x),diff_gr_x,diff_gr_y,1)
+        diff_gr_x = np.array(diff_ch, dtype = float)
+        diff_gr_y = np.array([x - y for x,y in zip(diff_mean,diff_bl_mean)], dtype=float)
+        diff_gr = buildTGraph("FitDiff_%s"%(sensor),"(Offline - Online) BlFit Mean_%s;Channel;ADC Difference"%(sensor),len(diff_gr_x),diff_gr_x,diff_gr_y,1)
 
-    diff_gr.GetYaxis().SetRangeUser(-400.0,400.0)
-    if sensor.find("L0") != -1 or sensor.find("L1") != -1:
-        diff_gr.GetXaxis().SetRangeUser(0.0,512.0)
-    else:
-        diff_gr.GetXaxis().SetRangeUser(0.0,640.0)
+        diff_gr.GetYaxis().SetRangeUser(-400.0,400.0)
+        if sensor.find("L0") != -1 or sensor.find("L1") != -1:
+            diff_gr.GetXaxis().SetRangeUser(0.0,512.0)
+        else:
+            diff_gr.GetXaxis().SetRangeUser(0.0,640.0)
 
-    lowdaq_gr_x = np.array(channel, dtype = float)
-    lowdaq_gr_y = np.array([-1000.0 + 600.0* x for x in lowdaq], dtype=float)
-    lowdaq_gr = buildTGraph("lowdaqflag_%s"%(sensor),"low-daq channels_%s;Channel;ADC"%(sensor),len(lowdaq_gr_x),lowdaq_gr_x, lowdaq_gr_y,utils.colors[2])
+        lowdaq_gr_x = np.array(channel, dtype = float)
+        lowdaq_gr_y = np.array([-1000.0 + 600.0* x for x in lowdaq], dtype=float)
+        lowdaq_gr = buildTGraph("lowdaqflag_%s"%(sensor),"low-daq channels_%s;Channel;ADC"%(sensor),len(lowdaq_gr_x),lowdaq_gr_x, lowdaq_gr_y,utils.colors[2])
 
-    diff_gr.Draw()
+        diff_gr.Draw()
 
-    lowdaq_gr.SetMarkerStyle(8)
-    lowdaq_gr.SetMarkerSize(1)
-    lowdaq_gr.SetMarkerColor(utils.colors[10])
-    lowdaq_gr.Draw("psame")
+        lowdaq_gr.SetMarkerStyle(8)
+        lowdaq_gr.SetMarkerSize(1)
+        lowdaq_gr.SetMarkerColor(utils.colors[10])
+        lowdaq_gr.Draw("psame")
 
-    canvas.Write()
-    savePNG(canvas,".","%s_fitdiff"%(key))
-    canvas.Close()
+        canvas.Write()
+        savePNG(canvas,".","%s_fitdiff"%(key))
+        canvas.Close()
 
     #1D Histogram of channel fit sigma
     sigma_h = r.TH1F("Fit_Sigma_%s"%(sensor),"Sigma_Distribution_%s;sigma;events"%(sensor),len(sigma),0.,max((sigma)))
