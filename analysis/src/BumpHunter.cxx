@@ -221,13 +221,14 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
     // Define the background+signal fit model.
     if(isChebyshev) {
         ChebyshevFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);
-        full = new TF1("full", full_func, -1, 1, poly_order_ + 3);
+        full = new TF1("full", full_func, -1, 1, poly_order_ + 4);
     } else {
         LegendreFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);
-        full = new TF1("full", full_func, -1, 1, poly_order_ + 3);
+        full = new TF1("full", full_func, -1, 1, poly_order_ + 4);
     }
     full->SetParameter(0, initNorm);
     full->SetParName(0, "pol0");
+    full->SetParameter(poly_order_ + 1, 0.0);
     full->SetParName(poly_order_ + 1, "signal norm");
     full->SetParName(poly_order_ + 2, "mean");
     full->SetParName(poly_order_ + 3, "sigma");
@@ -236,7 +237,7 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         full->SetParName(i, Form("pol%i", i));
     }
     full->FixParameter(poly_order_ + 2, mass_hypothesis);
-    full->FixParameter(initNorm, mass_resolution_);
+    full->FixParameter(poly_order_ + 3, mass_resolution_);
     
     for(int parI = 0; parI < poly_order_ + 1; parI++) {
         full->SetParameter(parI, bkg->GetParameter(parI));
@@ -358,13 +359,14 @@ void BumpHunter::getUpperLimitPower(TH1* histogram, HpsFitResult* result) {
     else if(poly_order_ == 5) { bkg_order_model = FitFunction::ModelOrder::FIFTH; }
     if(isChebyshev) {
         ChebyshevFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);
-        comp = new TF1("comp_ul", comp_func, -1, 1, poly_order_ + 3);
+        comp = new TF1("comp_ul", comp_func, -1, 1, poly_order_ + 4);
     } else {
         LegendreFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);
-        comp = new TF1("comp_ul", comp_func, -1, 1, poly_order_ + 3);
+        comp = new TF1("comp_ul", comp_func, -1, 1, poly_order_ + 4);
     }
     comp->SetParameter(0, initNorm);
     comp->SetParName(0, "pol0");
+    comp->SetParameter(poly_order_ + 1, 0.0);
     comp->SetParName(poly_order_ + 1, "signal norm");
     comp->SetParName(poly_order_ + 2, "mean");
     comp->SetParName(poly_order_ + 3, "sigma");
@@ -373,7 +375,7 @@ void BumpHunter::getUpperLimitPower(TH1* histogram, HpsFitResult* result) {
         comp->SetParName(i, Form("pol%i", i));
     }
     comp->FixParameter(poly_order_ + 2, mass_hypothesis_);
-    comp->FixParameter(initNorm, mass_resolution_);
+    comp->FixParameter(poly_order_ + 3, mass_resolution_);
     
     std::cout << "Mass resolution: " << mass_resolution_ << std::endl;
     std::cout << "[ BumpHunter ]: Calculating upper limit." << std::endl;
