@@ -72,6 +72,8 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
 
     flat_tuple_->addVariable("ogxmax");
     flat_tuple_->addVariable("ogxmin");
+    
+    flat_tuple_->addVariable("TFitResultError");
 }
 
 

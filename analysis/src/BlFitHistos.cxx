@@ -254,9 +254,19 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
 
             //Perform fit regardless if chi2 max cut made any difference
+            double chi21;
+            double sigma1;
             TFitResultPtr fit = projy_h->Fit("gaus", "QRES", "", xmin, cut1xmax);
-            double chi21 = fit->Chi2()/fit->Ndf();
-            double sigma1 = fit->GetParams()[2];
+            if ( fit == -1) 
+            {
+                flat_tuple_->setVariableValue("TFitResultError",1.0);
+                continue;
+            }
+            else
+            {
+                chi21 = fit->Chi2()/fit->Ndf();
+                sigma1 = fit->GetParams()[2];
+            }
             
             //Check if chi2 max cut was applied. If not, perform additional cut
             double cut2xmax;
@@ -284,8 +294,16 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
                 //Fit at next lowest xmax position of chi2 second derivative
                 fit = projy_h->Fit("gaus", "QRES", "", xmin, cut2xmax);
-                chi22 = fit->Chi2()/fit->Ndf();
-                sigma2 = fit->GetParams()[2];
+                if ( fit == -1) 
+                {
+                    flat_tuple_->setVariableValue("TFitResultError",1.0);
+                    continue;
+                }
+                else
+                {
+                    chi22 = fit->Chi2()/fit->Ndf();
+                    sigma2 = fit->GetParams()[2];
+                }
             }
             std::cout << "Chi21 is " << chi21 << std::endl;
             std::cout << "Chi22 is " << chi22 << std::endl;
@@ -321,7 +339,11 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
 
             //Again fit the baseline using xmax as predetermined above
             fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
-
+            if ( fit == -1) 
+            {
+                flat_tuple_->setVariableValue("TFitResultError",1.0);
+                continue;
+            }
 
             //Collection of variables/parameters used in improving fit through iteration
             double ogChi2 = fit->Chi2();
@@ -394,8 +416,17 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             //that returns the smallest Chi2/Ndf, redo the fit using this new range
             //std::cout << "[BlFitHistos] Final Fit" << std::endl;
 
+            const double* fitparams;
             fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
-            const double* fitparams = fit->GetParams();
+            if ( fit == -1) 
+            {
+                flat_tuple_->setVariableValue("TFitResultError",1.0);
+                continue;
+            }
+            else
+            {
+                fitparams = fit->GetParams();
+            }
 
             //LOWDAQ THRESHOLD FLAG
             //If fit mean + N*Sigma > xmax, channel has low daq threshold *or* bad fit
@@ -440,17 +471,24 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                     std::cout << "lowdaq xmin is " << tempxmin << std::endl;
                     tempxmin = tempxmin + binwidth;
                     TFitResultPtr fit = projy_h->Fit("gaus", "QRES", "", tempxmin, xmax);
-                    if ( fit->Chi2()/fit->Ndf() < 0.8*ogChi2Ndf )
+                    if ( fit == -1) 
                     {
-                        ogChi2Ndf = fit->Chi2()/fit->Ndf();
-                        xmin = tempxmin;
-                        std::cout << "Increasing xmin to: " << xmax << std::endl;
+                        flat_tuple_->setVariableValue("TFitResultError",1.0);
+                        continue;
                     }
-                   else 
-                   {
-                        break;
-                   }
-
+                    else
+                    {
+                        if ( fit->Chi2()/fit->Ndf() < 0.8*ogChi2Ndf )
+                        {
+                            ogChi2Ndf = fit->Chi2()/fit->Ndf();
+                            xmin = tempxmin;
+                            std::cout << "Increasing xmin to: " << xmax << std::endl;
+                        }
+                       else 
+                       {
+                            break;
+                       }
+                    }
                 std::cout << "chi2/ndf is " << fit->Chi2()/fit->Ndf() << std::endl;
 
                 }
@@ -471,17 +509,25 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                    double tempxmax = xmax;
                    tempxmax = tempxmax - 5*binwidth; 
                    TFitResultPtr newfit = projy_h->Fit("gaus", "QRES", "", xmin, tempxmax);
-                   std::cout << "New Chi2/Ndf is: " << newfit->Chi2()/newfit->Ndf() << std::endl;
-                   if ( newfit->Chi2()/newfit->Ndf() < 0.8*ogChi2Ndf )
-                   {
-                        ogChi2Ndf = newfit->Chi2()/newfit->Ndf();
-                        xmax = tempxmax;
-                        std::cout << "Stepping back xmax to: " << xmax << std::endl;
-                        std::cout << "xmin is: " << xmin << std::endl;
-                   }
+                    if ( newfit == -1) 
+                    {
+                        flat_tuple_->setVariableValue("TFitResultError",1.0);
+                        continue;
+                    }
                    else 
                    {
-                        break;
+                       std::cout << "New Chi2/Ndf is: " << newfit->Chi2()/newfit->Ndf() << std::endl;
+                       if ( newfit->Chi2()/newfit->Ndf() < 0.8*ogChi2Ndf )
+                       {
+                            ogChi2Ndf = newfit->Chi2()/newfit->Ndf();
+                            xmax = tempxmax;
+                            std::cout << "Stepping back xmax to: " << xmax << std::endl;
+                            std::cout << "xmin is: " << xmin << std::endl;
+                       }
+                       else 
+                       {
+                            break;
+                       }
                    }
                 }
 
@@ -489,7 +535,16 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             }
 
             fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
-            fitparams = fit->GetParams();
+            if ( fit == -1) 
+            {
+                flat_tuple_->setVariableValue("TFitResultError",1.0);
+                continue;
+            }
+            else
+            {
+                fitparams = fit->GetParams();
+                flat_tuple_->setVariableValue("TFitResultError",0.0);
+            }
 
             //Store Final Fit Parameters in the flat tuple
             //std::cout << "New Xmax-Xmin = " << xmax - xmin << std::endl;
