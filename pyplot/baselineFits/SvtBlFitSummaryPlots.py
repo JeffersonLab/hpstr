@@ -28,7 +28,7 @@ chi2NdfDict = {}
 
 fit_hh = r.TH2F("fit_hh","Channels that were Fit;layer;module",14,0.5,14.5,4,-0.5,3.5)
 fitloca_h = r.TH1F("fitloc_h","Location of Fit Channels;Channel;Entries",640,0,640)
-nofit_hh = r.TH2F("nofit_hh","Channels that were Not Fit;layer;module",14,0.5,14.5,4,-0.5,3.5)
+badch_hh = r.TH2F("badch_hh","LowDaq or Low-Stats Channels;layer;module",14,0.5,14.5,4,-0.5,3.5)
 nofitloca_h = r.TH1F("nofitloc_h","Location of No-Fit Channels;Channel;Entries",640,0,640)
 
 lowdaq_hh = r.TH2F("lowdaq_ch_hh","Number of LowDaq Threshold Channels;layer;module",14,0.5,14.5,4,-0.5,3.5)
@@ -61,9 +61,14 @@ for fitData in myTree:
     if fitData.minbinFail == 0.0:
         fit_hh.Fill(float(ly),float(mod),1.)
         fitloca_h.Fill(fitData.channel)
-    if fitData.minbinFail == 1.0:
-        nofit_hh.Fill(float(ly),float(mod),1.)
-        nofitloca_h.Fill(fitData.channel)
+
+    if sensor.find("L0") != -1 or sensor.find("L1") != -1:
+        chlimit = 511.0
+    else:
+        chlimit = 640.0
+    if (fitData.minbinFail == 1.0 or fitData.lowdaq == 1.0) and fitData.channel <= chlimit:
+        badch_hh.Fill(float(ly),float(mod),1.)
+   #     nofitloca_h.Fill(fitData.channel)
 
     if fitData.minbinFail == 0.0:
         #lowdaq flagged channels
@@ -80,8 +85,8 @@ for fitData in myTree:
 outFile.cd()
 fit_hh.Write()
 fitloca_h.Write()
-nofit_hh.Write()
-nofitloca_h.Write()
+badch_hh.Write()
+#nofitloca_h.Write()
 lowdaq_hh.Write()
 lowwinsize_hh.Write()
 

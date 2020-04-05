@@ -45,6 +45,12 @@ class EventFile : public IEventFile {
         virtual bool nextEvent();
 
         /**
+         * Persists the event
+         *
+         */
+        virtual void FillEvent();
+
+        /**
          * Setup the event object that will be used by this file.
          *
          * @param event The Event container.

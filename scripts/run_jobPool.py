@@ -118,11 +118,22 @@ if __name__ == '__main__':
   fnList = range(1,10001)
 
   listfiles=glob.glob(options.inDir+"/*"+options.fileExt)
+  if (len(listfiles)==0):
+    print "Try */*"+options.fileExt
+    listfiles=glob.glob(options.inDir+"/*/*"+options.fileExt)
 
   print options.inDir
 
   fnList = range(1,len(listfiles)+1)
 
+  #create folder if doesn't exists
+  if not os.path.exists(options.outDir):
+    os.makedirs(options.outDir)
+    print "Created outdir", options.outDir," and logsDir ", options.outDir+"/logs"
+    os.makedirs(options.outDir+"/logs")
+
+
+  
   if options.debug:
     print "Testing %i jobs in parallel mode (using Pool(%i))"%(len(fnList),options.poolSize)
     print list(

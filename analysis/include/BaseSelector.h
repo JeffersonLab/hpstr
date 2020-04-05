@@ -37,7 +37,6 @@ class BaseSelector {
         void clearSelector() { passSelection = true; }
 
 
-
     private:
         json _h_selections;
         std::string m_name{""};

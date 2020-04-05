@@ -13,6 +13,8 @@ path="/nfs/slac/g/hps3/users/pbutti/hpstr_histos/"
 
 #nb-1
 Lumi = 1100.861649 
+ScaleFactor = 0.6
+Lumi = Lumi*ScaleFactor
 Selections=["vtxSelection"]
 
 #Samples dictionary: key is the name of the sample, value is the location of the file
@@ -21,7 +23,7 @@ Selections=["vtxSelection"]
 samplesDict = {
     "RADBeam" : path+"rad/radTuple.root",
     "wabBeam" : path+"wab/wabTuple.root",
-    "tritrigBeam" : path+"tritrig/tritrigTuple_hists.root"
+    "tritrigBeam" : path+"tritrig/tritrigTuple.root"
 }
 
 samplesToStack = ["wabBeam","tritrigBeam"]
@@ -193,36 +195,3 @@ for sel in Selections:
 
 outF.Close()
             
-'''
-
-stack=stack_and_tot[0]
-
-c = r.TCanvas()
-c.cd()
-stack.Draw("histo")
-stack.GetHistogram().GetXaxis().SetTitle("ele_p [GeV]")
-
-tot = stack_and_tot[1]
-tot.SetLineColor(r.kRed)
-tot.SetLineWidth(2)
-tot.SetMarkerColor(r.kRed)
-tot.Draw("histosame")
-#draw rad
-hRad.Scale(hists["RADBeam"][0])
-hRad.SetLineColor(r.kGreen+3)
-hRad.Draw("histosame")
-
-
-leg = r.TLegend(0.6,0.8,0.8,0.6)
-leg.AddEntry(tot,"MC S1imulation","l")
-
-for h in stack.GetHists():
-    entry = leg.AddEntry(h,h.GetName(),"lpf")
-    
-leg.AddEntry(hRad,hRad.GetName(),"l")
-
-
-leg.Draw()
-c.Write()
-outF.Close()
-'''

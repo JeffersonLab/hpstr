@@ -35,6 +35,9 @@ class TrackHistos : public HistoManager {
         void Fill1DHistograms(Track* track = nullptr, Vertex* vtx = nullptr, float weight = 1.);
         void Fill2DHistograms(Vertex* vtx = nullptr, float weight = 1.);
 
+        //Truth comparison
+        void Fill1DTrackTruth(Track* track, Track* truth_track, float weight=1.,const std::string& ="");
+
         //track_x goes for x axis, and y for y axis
         void FillTrackComparisonHistograms(Track* track_x, Track* track_y, float weight = 1.);
         void doTrackComparisonPlots(bool doplots) {doTrkCompPlots = doplots;};

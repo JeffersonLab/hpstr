@@ -3,6 +3,7 @@
  * @brief Processor used to write event info.
  * @author Omar Moreno, SLAC National Accelerator Laboratory
  * @author Cameron Bravo, SLAC National Accelerator Laboratory
+ * @author PF, SLAC National Accelerator Laboratory
  */
 
 #ifndef _EVENT_HEADER_PROCESSOR_H__
@@ -13,6 +14,7 @@
 //-----------------//
 #include <string>
 #include <iostream>
+#include <fstream>
 
 //----------//
 //   LCIO   //
@@ -101,6 +103,10 @@ class EventProcessor : public Processor {
         void parseVTPData(EVENT::LCGenericObject* vtp_data_lcio);
         void parseTSData(EVENT::LCGenericObject* ts_data_lcio);
 
+        //single events checks
+        std::string run_evt_list_{""};
+        std::map<int,std::vector<int > > run_evts_map_;
+        
         //Debug Level
         int debug_{0};
 

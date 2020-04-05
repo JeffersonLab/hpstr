@@ -9,8 +9,7 @@
 class ModuleMapper {
 
  public:
-  ModuleMapper();
-  ModuleMapper(const int year);
+  ModuleMapper(const int year = 2019);
   
   //TODO, clean up?
   ~ModuleMapper();

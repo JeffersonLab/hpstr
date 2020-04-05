@@ -1,7 +1,7 @@
 #include "ModuleMapper.h"
 #include <iostream>
 #include "TString.h"
-ModuleMapper::ModuleMapper() {
+ModuleMapper::ModuleMapper(const int year) {
 
     std::cout << "[ModuleMapper] Initialized" << std::endl;
     if (year_ == 2019) {
@@ -513,12 +513,7 @@ ModuleMapper::ModuleMapper() {
     {
         std::cout << "ERROR: Module Mapper cannot be setup for this year " << year_ << std::endl;
     }
-} //constructor
-
-ModuleMapper::ModuleMapper(const int year) {
-    year_ = year;
-    ModuleMapper();
-}
+} 
 
 ModuleMapper::~ModuleMapper() {
 }

@@ -2,7 +2,10 @@ import ROOT as r
 from copy import deepcopy
 import os.path
 import numpy as np
+import ModuleMapper as mmap
+import utilities as utils
 from optparse import OptionParser
+
 
 def get_comma_separated_args(option, opt, value, parser):
     setattr(parser.values, option.dest, value.split(','))
@@ -11,9 +14,9 @@ parser=OptionParser()
 
 parser.add_option("-g", type="string", dest="show_graphs", help="If == show, print all graphs associate with specified channels", default="")
 
-parser.add_option("-f", type="string", dest="show_fits", help="If == show, print all channel fits for selected channels",default="")
-
 parser.add_option("-i", type="string", dest="inFilename", help="Input SvtBlFitHistoProcessor output root file",default="")
+
+parser.add_option("-b", type="string", dest="onlineBaselines", help="online baseline fits root file",default="")
 
 parser.add_option("-d", type="string", dest="hpstrpath", help="Path to hpstr",default="")
 
@@ -25,6 +28,8 @@ parser.add_option("-s", "--hybrid", type="string", dest="hybrid",
 (options, args) = parser.parse_args()
 
 r.gROOT.SetBatch(r.kTRUE)
+r.gStyle.SetOptStat(0)
+#utils.SetStyle()
 ######################################################################################################
 
 def getHistoKeys(inFile,cType="", attr1="", attr2=""):
@@ -53,8 +58,9 @@ def newCanvas(name):
         return canvas
 
 def savePNG(canvas,directory,name):
-        canvas.Draw()
-        #canvas.SaveAs("%s/%s.png"%(directory,name))
+        #canvas.Draw()
+
+        canvas.SaveAs("%s/%s.png"%(directory,name))
         canvas.Close()
 
 
@@ -70,14 +76,31 @@ hybrid =options.hybrid
 #Get SvtBl2D histogram keys from input file
 histokeys_hh = getHistoKeys(inFile,"TH2", options.hybrid,"")
 print histokeys_hh
-
 outFile = r.TFile("%s_analysis.root"%(options.inFilename[:-5]),"RECREATE")
+loadonline = False
+
 for key in histokeys_hh:
 
-    histo_hh = readhistoFromFile(inFile, key)
-    print key
-    sensor= key.replace('raw_hits_','').replace('_hh','')
+#######Read online baseline fit values from root file
+    if options.onlineBaselines != "":
+        loadonline = True
+        onBlKey = key.replace('raw_hits_baseline0_','').replace('_hh','')
 
+        if options.onlineBaselines != "":
+            hwtag = mmap.str_to_hw(onBlKey)
+            plotname = "baseline_%s_ge"%(hwtag)
+            bf_inFile = r.TFile(options.onlineBaselines,"READ")
+            tgraph = bf_inFile.Get("baseline/%s"%(plotname))
+            bf_inFile.Close()
+
+        bl_ch = tgraph.GetX()
+        bl_mean = tgraph.GetY()
+
+#############################################################################
+
+    print key
+    sensor = key.replace('raw_hits_','').replace('_hh','')
+    histo_hh = readhistoFromFile(inFile, key)
     inFile.cd()
 
     #Fit Parameters
@@ -125,15 +148,85 @@ for key in histokeys_hh:
     #Plot gaus Fit mean of all channels over 2D Histogram
     canvas = r.TCanvas("%s_mean"%(sensor), "c", 1800,800)
     canvas.cd()
+    canvas.SetTicky()
+    canvas.SetTickx()
     mean_gr_x = np.array(channel, dtype = float)
     mean_gr_y = np.array(mean, dtype=float)
     mean_gr = buildTGraph("BlFitMean_%s"%(sensor),"BlFitMean_%s;Channel;ADC"%(sensor),len(mean_gr_x),mean_gr_x,mean_gr_y,2)
 
+    if loadonline == True:
+        bl_gr_x = np.array(bl_ch, dtype = float)
+        bl_gr_y = np.array(bl_mean, dtype = float)
+        bl_gr = buildTGraph("onlineBlFits_%s"%(sensor),"Online Baseline Fits_%s;Channel;ADC"%(sensor),len(bl_gr_x),bl_gr_x,bl_gr_y,1)
+
+    lowdaq_gr_x = np.array(channel, dtype = float)
+    lowdaq_gr_y = np.array([3500.0 * x for x in lowdaq], dtype=float)
+    lowdaq_gr = buildTGraph("lowdaqflag_%s"%(sensor),"low-daq channels_%s;Channel;ADC"%(sensor),len(lowdaq_gr_x),lowdaq_gr_x, lowdaq_gr_y,utils.colors[2])
+
+    histo_hh.GetYaxis().SetRangeUser(3000.0,7500.0)
+    if histo_hh.GetName().find("L0") != -1 or histo_hh.GetName().find("L1") != -1:
+        histo_hh.GetXaxis().SetRangeUser(0.0,512.0)
     histo_hh.Draw("colz")
     mean_gr.Draw("same")
+
+    if loadonline == True:
+        bl_gr.Draw("same")
+
+    lowdaq_gr.SetMarkerStyle(8)
+    lowdaq_gr.SetMarkerSize(1)
+    lowdaq_gr.SetMarkerColor(utils.colors[10])
+    lowdaq_gr.Draw("psame")
+
+    legend = r.TLegend(0.1,0.75,0.28,0.9)
+    legend.AddEntry(mean_gr,"offline baselines using hpstr processor","l")
+    if loadonline == True:
+        legend.AddEntry(bl_gr,"online baseline fits","l")
+    legend.AddEntry(lowdaq_gr,"low-daq threshold","p")
+    legend.Draw()
     canvas.Write()
-    #savePNG(canvas,directory+"hybrid_fits/","%s_gausFit"%(key))
+    savePNG(canvas,".","%s_gausFit"%(key))
     canvas.Close()
+    
+    if loadonline == True:
+        #Plot Difference between online and offline baselines
+        canvas = r.TCanvas("%s_diff"%(sensor), "c", 1800,800)
+        canvas.cd()
+        canvas.SetTicky()
+        canvas.SetTickx()
+        diff_ch = []
+        diff_mean = []
+        diff_bl_mean = []
+        
+        for i in range(len(channel)):
+            if mean[i] > 0:
+                diff_ch.append(channel[i])
+                diff_mean.append(mean[i])
+                diff_bl_mean.append(bl_mean[i])
+
+        diff_gr_x = np.array(diff_ch, dtype = float)
+        diff_gr_y = np.array([x - y for x,y in zip(diff_mean,diff_bl_mean)], dtype=float)
+        diff_gr = buildTGraph("FitDiff_%s"%(sensor),"(Offline - Online) BlFit Mean_%s;Channel;ADC Difference"%(sensor),len(diff_gr_x),diff_gr_x,diff_gr_y,1)
+
+        diff_gr.GetYaxis().SetRangeUser(-400.0,400.0)
+        if sensor.find("L0") != -1 or sensor.find("L1") != -1:
+            diff_gr.GetXaxis().SetRangeUser(0.0,512.0)
+        else:
+            diff_gr.GetXaxis().SetRangeUser(0.0,640.0)
+
+        lowdaq_gr_x = np.array(channel, dtype = float)
+        lowdaq_gr_y = np.array([-1000.0 + 600.0* x for x in lowdaq], dtype=float)
+        lowdaq_gr = buildTGraph("lowdaqflag_%s"%(sensor),"low-daq channels_%s;Channel;ADC"%(sensor),len(lowdaq_gr_x),lowdaq_gr_x, lowdaq_gr_y,utils.colors[2])
+
+        diff_gr.Draw()
+
+        lowdaq_gr.SetMarkerStyle(8)
+        lowdaq_gr.SetMarkerSize(1)
+        lowdaq_gr.SetMarkerColor(utils.colors[10])
+        lowdaq_gr.Draw("psame")
+
+        canvas.Write()
+        savePNG(canvas,".","%s_fitdiff"%(key))
+        canvas.Close()
 
     #1D Histogram of channel fit sigma
     sigma_h = r.TH1F("Fit_Sigma_%s"%(sensor),"Sigma_Distribution_%s;sigma;events"%(sensor),len(sigma),0.,max((sigma)))
@@ -159,6 +252,8 @@ for key in histokeys_hh:
 
     ######################################################################################################
     ###Show Channel Fits
+    cfdir = outFile.mkdir("%s_channel_fits"%(sensor))
+    cfdir.cd()
     for cc in range(len(channel)): 
         canvas = r.TCanvas("%s_ch_%i_h"%(sensor,channel[cc]), "c", 1800,800)
         canvas.cd()
@@ -176,9 +271,12 @@ for key in histokeys_hh:
         canvas.Write()
         canvas.Close()
         #savePNG(canvas,directory+"channel_fits/","baseline_gausFit_%s_ch_%i"%(key[:-3],cc))
+    cfdir.Close()
 
 #########################################################################################################
     ###Show Channel Graphs
+    cgdir = outFile.mkdir("%s_channel_graphs"%(sensor))
+    cgdir.cd()
     bw=histo_hh.GetXaxis().GetBinWidth(1)
     if options.show_graphs == "show":
         myTree = inFile.gaus_fit
@@ -205,5 +303,5 @@ for key in histokeys_hh:
                 chi2_1Der_gr.Write()
                 chi2_2Der_gr.Write()
                 ratio_gr.Write()
-                
+    cgdir.Close() 
 
