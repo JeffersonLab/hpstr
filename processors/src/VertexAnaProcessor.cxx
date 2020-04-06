@@ -80,7 +80,7 @@ void VertexAnaProcessor::initialize(TTree* tree) {
     tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_ , &bvtxs_);
     tree_->SetBranchAddress(hitColl_.c_str(), &hits_   , &bhits_);
     tree_->SetBranchAddress("EventHeader",&evth_ , &bevth_);
-    if(!isData) tree_->SetBranchAddress(mcColl_.c_str() , &mcParts_, &bmcParts_);
+    if(!isData && !mcColl_.empty()) tree_->SetBranchAddress(mcColl_.c_str() , &mcParts_, &bmcParts_);
     //If track collection name is empty take the tracks from the particles. TODO:: change this
     if (!trkColl_.empty())
         tree_->SetBranchAddress(trkColl_.c_str(),&trks_, &btrks_);
@@ -91,13 +91,16 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
     HpsEvent* hps_evt = (HpsEvent*) ievent;
     double weight = 1.;
 
+    
     //Get "true" mass
     double apMass = -0.9;
-    for(int i = 0; i < mcParts_->size(); i++)
-    {
-        if(mcParts_->at(i)->getPDG() == 622) apMass = mcParts_->at(i)->getMass();
-    }
 
+    if (mcParts_) {
+        for(int i = 0; i < mcParts_->size(); i++)
+        {
+            if(mcParts_->at(i)->getPDG() == 622) apMass = mcParts_->at(i)->getMass();
+        }
+    }
     //Store processed number of events
     std::vector<Vertex*> selected_vtxs;
     
@@ -201,19 +204,22 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         //Beam Electron cut
         if (!vtxSelector->passCutLt("eleMom_lt",ele_mom.Mag(),weight))
             continue;
-
-        //Ele Track Quality
-        if (!vtxSelector->passCutLt("eleTrkChi2_lt",ele_trk->getChi2Ndf(),weight))
+        
+        //Ele Track Quality - Chi2
+        if (!vtxSelector->passCutLt("eleTrkChi2_lt",ele_trk->getChi2(),weight))
             continue;
         
-        //Pos Track Quality
-        if (!vtxSelector->passCutLt("posTrkChi2_lt",pos_trk->getChi2Ndf(),weight))
-            continue;
-
-        //Vertex Quality
-        if (!vtxSelector->passCutLt("chi2unc_lt",vtx->getChi2(),weight))
+        //Pos Track Quality - Chi2
+        if (!vtxSelector->passCutLt("posTrkChi2_lt",pos_trk->getChi2(),weight))
             continue;
         
+        //Ele Track Quality - Chi2Ndf
+        if (!vtxSelector->passCutLt("eleTrkChi2Ndf_lt",ele_trk->getChi2Ndf(),weight))
+            continue;
+        
+        //Pos Track Quality - Chi2Ndf
+        if (!vtxSelector->passCutLt("posTrkChi2Ndf_lt",pos_trk->getChi2Ndf(),weight))
+            continue;
 
         //Ele min momentum cut
         if (!vtxSelector->passCutGt("eleMom_gt",ele_mom.Mag(),weight))
@@ -221,6 +227,38 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
         //Pos min momentum cut
         if (!vtxSelector->passCutGt("posMom_gt",pos_mom.Mag(),weight))
+            continue;
+        
+        //Ele nHits
+        int ele2dHits = ele_trk->getTrackerHitCount();
+        if (!ele_trk->isKalmanTrack()) 
+            ele2dHits*=2;
+        
+        if (!vtxSelector->passCutGt("eleN2Dhits_gt",ele2dHits,weight))  {
+            continue;
+        }
+        
+        //Pos nHits
+        int pos2dHits = pos_trk->getTrackerHitCount();
+        if (!pos_trk->isKalmanTrack()) 
+            pos2dHits*=2;
+        
+        if (!vtxSelector->passCutGt("posN2Dhits_gt",pos2dHits,weight))  {
+            continue;
+        }
+
+        //Less than 4 shared hits for ele/pos track
+        if (!vtxSelector->passCutLt("eleNshared_lt",ele_trk->getNShared(),weight)) {
+            continue;
+        }
+        
+        if (!vtxSelector->passCutLt("posNshared_lt",pos_trk->getNShared(),weight)) {
+            continue;
+        }
+        
+        
+        //Vertex Quality
+        if (!vtxSelector->passCutLt("chi2unc_lt",vtx->getChi2(),weight))
             continue;
 
         //Max vtx momentum
@@ -396,20 +434,23 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 }
 
                 //Find the correct mc part and grab mother id
-                int isRadEle = 0;
-                int isRecEle = 0;
+                int isRadEle = -999;
+                int isRecEle = -999;
                 TVector3 trueEleP;
-                for(int i = 0; i < mcParts_->size(); i++)
-                {
-                    int momPDG = mcParts_->at(i)->getMomPDG();
-                    if(mcParts_->at(i)->getPDG() == 11 && momPDG == 622) 
+                trueEleP.SetXYZ(-999,-999,-999);
+                if (mcParts_) {
+                    for(int i = 0; i < mcParts_->size(); i++)
                     {
-                        std::vector<double> lP = mcParts_->at(i)->getMomentum();
-                        trueEleP.SetXYZ(lP[0],lP[1],lP[2]);
+                        int momPDG = mcParts_->at(i)->getMomPDG();
+                        if(mcParts_->at(i)->getPDG() == 11 && momPDG == 622) 
+                        {
+                            std::vector<double> lP = mcParts_->at(i)->getMomentum();
+                            trueEleP.SetXYZ(lP[0],lP[1],lP[2]);
+                        }
+                        if(mcParts_->at(i)->getID() != maxID) continue;
+                        if(momPDG == 622) isRadEle = 1;
+                        if(momPDG == 623) isRecEle = 1;
                     }
-                    if(mcParts_->at(i)->getID() != maxID) continue;
-                    if(momPDG == 622) isRadEle = 1;
-                    if(momPDG == 623) isRecEle = 1;
                 }
                 double momRatio = recEleP.Mag() / trueEleP.Mag();
                 double momAngle = trueEleP.Angle(recEleP) * TMath::RadToDeg();
