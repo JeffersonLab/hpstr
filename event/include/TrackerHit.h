@@ -40,7 +40,7 @@ class TrackerHit : public TObject {
          *
          * @param position The hit position.
          */
-        void setPosition(const double* position, bool rotate = false);
+        void setPosition(const double* position, bool rotate = false, int type = 0);
 
         //TODO: avoid returning a vector, rather pass by ref.
         /** @return The hit position. */
