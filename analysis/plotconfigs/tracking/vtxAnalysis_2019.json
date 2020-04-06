@@ -6,6 +6,27 @@
         "xtitle" : "N_{tracks}",
         "ytitle" : "Events"
     },
+    "ele_nHits_2d_h" : {
+        "bins"  : 15,
+        "minX"  : 0,
+        "maxX"  : 15,
+        "xtitle" : "N_{2Dhits}",
+        "ytitle" : "Tracks"
+    },
+    "ele_invpT_h" : {
+        "bins" : 100,
+        "minX" : -2.5,
+        "maxX" : 2.5,
+        "xtitle" : "q/pT [GeV^{-1}]",
+        "ytitle" : "Tracks"
+    },
+    "ele_pT_h" : {
+        "bins" : 100,
+        "minX" : -5,
+        "maxX" : 5,
+        "xtitle" : "q*pT [GeV^{-1}]",
+        "ytitle" : "Tracks"
+    },
     "ele_strategy_h" : {
         "bins" : 6,
         "minX" : -0.5,
@@ -81,8 +102,15 @@
     "ele_chi2_h" : {
         "bins" : 200,
         "minX" : 0,
-        "maxX" : 20,
+        "maxX" : 100,
         "xtitle" : "track #chi^{2}",
+        "ytitle" : "Tracks"
+    },
+    "ele_chi2ndf_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 20,
+        "xtitle" : "track #chi^{2} / ndf",
         "ytitle" : "Tracks"
     },
     
@@ -170,7 +198,27 @@
         "xtitle" : "trk(#lamdba)",
         "ytitle" : "trk z0 [mm]"
     },
-    
+    "pos_nHits_2d_h" : {
+        "bins"  : 15,
+        "minX"  : 0,
+        "maxX"  : 15,
+        "xtitle" : "N_{2Dhits}",
+        "ytitle" : "Tracks"
+    },
+    "pos_invpT_h" : {
+        "bins" : 100,
+        "minX" : -2.5,
+        "maxX" : 2.5,
+        "xtitle" : "q/pT [GeV^{-1}]",
+        "ytitle" : "Tracks"
+    },
+    "pos_pT_h" : {
+        "bins" : 100,
+        "minX" : -5,
+        "maxX" : 5,
+        "xtitle" : "q*pT [GeV^{-1}]",
+        "ytitle" : "Tracks"
+    },
     "pos_strategy_h" : {
         "bins" : 6,
         "minX" : -0.5,
@@ -246,8 +294,15 @@
     "pos_chi2_h" : {
         "bins" : 200,
         "minX" : 0,
-        "maxX" : 20,
+        "maxX" : 100,
         "xtitle" : "track #chi^{2}",
+        "ytitle" : "Tracks"
+    },
+    "pos_chi2ndf_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 20,
+        "xtitle" : "track #chi^{2} / ndf",
         "ytitle" : "Tracks"
     },
     
@@ -372,7 +427,7 @@
         "ytitle" : "Vertices"
     },
     "vtx_X_svt_h" : {
-        "bins" : 200,
+        "bins" : 400,
         "minX" : -5,
         "maxX" : 5,
         "xtitle" : "vtx x pos [mm]",
@@ -386,7 +441,7 @@
         "ytitle" : "Vertices"
     },
     "vtx_Z_svt_h" : {
-        "bins" : 200,
+        "bins" : 400,
         "minX" : -50,
         "maxX" : 50,
         "xtitle" : "vtx Z pos [mm]",
