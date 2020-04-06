@@ -1,22 +1,42 @@
 {
     "eleMom_lt" : {
-        "cut" : 1.75,
+        "cut" : 3.4,
         "id"  : 0,
-        "info" : "p e^{-}<1.75GeV"
+        "info" : "p e^{-}<3.4GeV"
     },
     "eleTrkChi2_lt" : {
-        "cut"  : 6,
+        "cut"  : 25,
         "id"   : 1,
-        "info" : "e^{-} Track #chi^{2}<6"
+        "info" : "e^{-} Track #chi^{2}<25"
     },
     "posTrkChi2_lt" : {
-        "cut"  : 6,
+        "cut"  : 25,
         "id"   : 2,
-        "info" : "e^{+} Track #chi^{2}<6"
+        "info" : "e^{+} Track #chi^{2}<25"
+    },
+    "eleN2Dhits_gt" :  {
+        "cut"  : 8,
+        "id"   : 3,
+        "info" : "e^{-} Track n2d Hits >=8"
+    },
+    "posN2Dhits_gt" :  {
+        "cut"  : 8,
+        "id"   : 4,
+        "info" : "p^{+} Track n2d Hits >=8"
+    },
+    "eleNshared_lt" :  {
+        "cut"  : 5,
+        "id"   : 5,
+        "info" : "e^{-} Track nSh<=5"
+    },
+    "posNshared_lt" :  {
+        "cut"  : 5,
+        "id"   : 6,
+        "info" : "p^{+} Track nSh<=5"
     },
     "chi2unc_lt" : {
         "cut"   : 20,
-        "id"    : 3,
-        "info"  : "#chi^{2}_{unc}<10"
+        "id"    : 7,
+        "info"  : "#chi^{2}_{unc}<20"
     }
 }
