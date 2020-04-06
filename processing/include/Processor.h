@@ -115,7 +115,7 @@ class Processor {
         /** output file pointer */
         TFile* outF_{nullptr};
 
-    private:
+    protected:
 
         /** The name of the Processor. */
         std::string name_;
