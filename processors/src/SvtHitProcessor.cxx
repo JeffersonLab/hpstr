@@ -70,6 +70,7 @@ void SvtHitProcessor::initialize(TTree* tree) {
     ntuple_->addVector(   "sim_hit_strip_res_x" );
     ntuple_->addVector(   "sim_hit_strip_res_y" );
     ntuple_->addVector(   "sim_hit_strip_res_z" );
+    ntuple_->addVector(   "sim_hit_strip_size" ); 
     ntuple_->addVector(   "sim_hit_strip_res_xerr" );
     ntuple_->addVector(   "sim_hit_strip_res_yerr" );
     ntuple_->addVector(   "sim_hit_strip_res_zerr" );
@@ -197,7 +198,7 @@ bool SvtHitProcessor::process(IEvent* ievent) {
         auto raw_hit_vec{raw_sim_nav->getRelatedFromObjects(sim_hit)};
         
         EVENT::TrackerRawData* raw_hit_max{nullptr};
-        int max_amp{-9999}, strip{-9999};    
+        int max_amp{-9999}, strip{-9999}, cluster_size{-9999}; 
         double delta_x{-9999}, delta_y{-9999}, delta_z{-9999};
         double x_err{-9999}, y_err{-9999}, z_err{-9999};  
         long max_value;    
@@ -232,6 +233,7 @@ bool SvtHitProcessor::process(IEvent* ievent) {
                 x_err = sqrt(strip_hit_sim->getCovMatrix()[0]); 
                 y_err = sqrt(strip_hit_sim->getCovMatrix()[2]); 
                 z_err = sqrt(strip_hit_sim->getCovMatrix()[5]); 
+                cluster_size = strip_hit_sim->getRawHits().size(); 
             }
         }
         ntuple_->addToVector("sim_hit_raw_strip", strip);
@@ -241,6 +243,7 @@ bool SvtHitProcessor::process(IEvent* ievent) {
         ntuple_->addToVector("sim_hit_strip_res_xerr", x_err); 
         ntuple_->addToVector("sim_hit_strip_res_yerr", y_err); 
         ntuple_->addToVector("sim_hit_strip_res_zerr", z_err); 
+        ntuple_->addToVector("sim_hit_strip_size", cluster_size); 
     }
 
     ntuple_->fill();
