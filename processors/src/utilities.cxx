@@ -323,8 +323,8 @@ RawSvtHit* utils::buildRawHit(EVENT::TrackerRawData* rawTracker_hit,
 
 }//build raw hit
 
-
-TrackerHit* utils::buildTrackerHit(IMPL::TrackerHitImpl* lc_tracker_hit) { 
+//type = 0 RotatedHelicalTrackHit type = 1 SiCluster
+TrackerHit* utils::buildTrackerHit(IMPL::TrackerHitImpl* lc_tracker_hit, bool rotate, int type) { 
 
     if (!lc_tracker_hit)
         return nullptr;
@@ -334,11 +334,11 @@ TrackerHit* utils::buildTrackerHit(IMPL::TrackerHitImpl* lc_tracker_hit) {
     // Get the position of the LCIO TrackerHit and set the position of 
     // the TrackerHit
     double hit_position[3] = { 
-        lc_tracker_hit->getPosition()[0], 
-        lc_tracker_hit->getPosition()[1], 
-        lc_tracker_hit->getPosition()[2]
+        lc_tracker_hit->getPosition()[0],  //lcio x
+        lc_tracker_hit->getPosition()[1],  //lcio y
+        lc_tracker_hit->getPosition()[2]   //lcio z
     };
-    tracker_hit->setPosition(hit_position, true);
+    tracker_hit->setPosition(hit_position, rotate, type);
 
     // Set the covariance matrix of the SvtHit
     tracker_hit->setCovarianceMatrix(lc_tracker_hit->getCovMatrix());
@@ -357,9 +357,10 @@ TrackerHit* utils::buildTrackerHit(IMPL::TrackerHitImpl* lc_tracker_hit) {
 
 }
 
+//type 0 rotatedHelicalHit  type 1 SiClusterHit
 bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit, 
-        IMPL::TrackerHitImpl* lc_tracker_hit,
-        EVENT::LCCollection* raw_svt_fits, std::vector<RawSvtHit*>* rawHits) {
+                              IMPL::TrackerHitImpl* lc_tracker_hit,
+                              EVENT::LCCollection* raw_svt_fits, std::vector<RawSvtHit*>* rawHits,int type) {
 
     if (!tracker_hit || !lc_tracker_hit)
         return false;
@@ -367,7 +368,7 @@ bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit,
     float rawcharge = 0;
     //0 top 1 bottom
     int volume = -1;
-    //1-6
+    //1-6(7) for rotated  0-13 for SiCluster
     int layer = -1;
 
     //Get the Raw content of the tracker hits
@@ -380,6 +381,8 @@ bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit,
         rawcharge += rawHit->getAmp();
         int currentHitVolume = rawHit->getModule() % 2 ? 1 : 0;
         int currentHitLayer  = (rawHit->getLayer() - 1 ) / 2;
+        if (type == 1) 
+            currentHitLayer = rawHit->getLayer() - 1;
         if (volume == -1 )
             volume = currentHitVolume;
         else {
