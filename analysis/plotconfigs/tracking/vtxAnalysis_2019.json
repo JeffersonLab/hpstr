@@ -74,7 +74,7 @@
     "ele_Omega_h" : {
         "bins" : 100,
         "minX" : -0.001,
-        "maxX" : 0.001,
+        "maxX" : 0.003,
         "xtitle" : "#omega",
         "ytitle" : "Tracks"
     },
@@ -94,8 +94,8 @@
     },
     "ele_time_h" : {
         "bins" : 200,
-        "minX" : -10,
-        "maxX" : 10,
+        "minX" : -30,
+        "maxX" : 30,
         "xtitle" : "track time [ns]",
         "ytitle" : "Tracks"
     },
@@ -117,7 +117,7 @@
     "ele_p_h" : {
         "bins" : 100,
         "minX" : 0,
-        "maxX" : 4.5,
+        "maxX" : 5,
         "xtitle" : "p_{e^{-}} [GeV]",
         "ytitle" : "Tracks"
     },
@@ -136,7 +136,7 @@
     "ele_d0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
-        "maxX"   : 4.5,
+        "maxX"   : 5,
         "binsY"  : 200,
         "minY"   : -10,
         "maxY"   : 10,
@@ -169,7 +169,7 @@
     "ele_z0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
-        "maxX"   : 4.5,
+        "maxX"   : 5,
         "binsY"  : 200,
         "minY"   : -5,
         "maxY"   : 5,
@@ -265,7 +265,7 @@
     },
     "pos_Omega_h" : {
         "bins" : 100,
-        "minX" : -0.001,
+        "minX" : -0.003,
         "maxX" : 0.001,
         "xtitle" : "#omega",
         "ytitle" : "Tracks"
@@ -286,8 +286,8 @@
     },
     "pos_time_h" : {
         "bins" : 200,
-        "minX" : -10,
-        "maxX" : 10,
+        "minX" : -30,
+        "maxX" : 30,
         "xtitle" : "track time [ns]",
         "ytitle" : "Tracks"
     },
@@ -309,7 +309,7 @@
     "pos_p_h" : {
         "bins" : 100,
         "minX" : 0,
-        "maxX" : 4.5,
+        "maxX" : 5,
         "xtitle" : "p_{e^{+}} [GeV]",
         "ytitle" : "Tracks"
     },
@@ -328,7 +328,7 @@
     "pos_d0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
-        "maxX"   : 4.5,
+        "maxX"   : 5,
         "binsY"  : 200,
         "minY"   : -10,
         "maxY"   : 10,
@@ -361,7 +361,7 @@
     "pos_z0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
-        "maxX"   : 4.5,
+        "maxX"   : 5,
         "binsY"  : 200,
         "minY"   : -5,
         "maxY"   : 5,
@@ -506,7 +506,7 @@
     "vtx_p_h" : {
         "bins" : 100,
         "minX" : 0,
-        "maxX" : 4.5,
+        "maxX" : 5,
         "xtitle" : "vtx p [GeV]",
         "ytitle" : "Vertices"
     },
@@ -523,7 +523,7 @@
     "vtx_p_svt_z_hh" : {
         "binsX"  : 200,
         "minX"   : 0.0,
-        "maxX"   : 4.5,
+        "maxX"   : 5,
         "binsY"  : 400,
         "minY"   : -100,
         "maxY"   : 100,
@@ -533,7 +533,7 @@
     "vtx_p_svt_x_hh" : {
         "binsX"  : 200,
         "minX"   : 0.0,
-        "maxX"   : 4.5,
+        "maxX"   : 5,
         "binsY"  : 400,
         "minY"   : -100,
         "maxY"   : 100,
@@ -543,7 +543,7 @@
     "vtx_p_svt_y_hh" : {
         "binsX"  : 200,
         "minX"   : 0.0,
-        "maxX"   : 4.5,
+        "maxX"   : 5,
         "binsY"  : 400,
         "minY"   : -100,
         "maxY"   : 100,
@@ -563,7 +563,7 @@
     "vtx_p_sigmaZ_hh" : {
         "binsX"  : 200,
         "minX"   : 0.0,
-        "maxX"   : 4.5,
+        "maxX"   : 5,
         "binsY"  : 100,
         "minY"   : 0,
         "maxY"   : 10,
@@ -573,7 +573,7 @@
     "vtx_p_sigmaX_hh" : {
         "binsX"  : 200,
         "minX"   : 0.0,
-        "maxX"   : 4.5,
+        "maxX"   : 5,
         "binsY"  : 100,
         "minY"   : 0,
         "maxY"   : 10,
@@ -583,7 +583,7 @@
     "vtx_p_sigmaY_hh" : {
         "binsX"  : 200,
         "minX"   : 0.0,
-        "maxX"   : 4.5,
+        "maxX"   : 5,
         "binsY"  : 100,
         "minY"   : 0,
         "maxY"   : 10,
@@ -591,16 +591,16 @@
         "ytitle" : "#sigmay_{vtx} [mm]"
     },
     "Esum_h" : {
-        "bins" : 100,
+        "bins" : 200,
         "minX" : 0,
-        "maxX" : 3,
+        "maxX" : 5,
         "xtitle" : "E_{e^{-}} + E_{e^{+}} [GeV]",
         "ytitle" : "events"
     },
     "Psum_h" : {
-        "bins" :  100,
+        "bins" :  200,
         "minX" :  0,
-        "maxX" :  3,
+        "maxX" :  5,
         "xtitle" : "p_{e^{-}} + p_{e^{+}} [GeV]",
         "ytitle" : "events"
     },
