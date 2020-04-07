@@ -223,19 +223,19 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
         //Ele min momentum cut
         if (!vtxSelector->passCutGt("eleMom_gt",ele_mom.Mag(),weight))
-            continue;
+	  continue;
 
         //Pos min momentum cut
         if (!vtxSelector->passCutGt("posMom_gt",pos_mom.Mag(),weight))
-            continue;
+	  continue;
         
         //Ele nHits
         int ele2dHits = ele_trk->getTrackerHitCount();
         if (!ele_trk->isKalmanTrack()) 
-            ele2dHits*=2;
+	  ele2dHits*=2;
         
         if (!vtxSelector->passCutGt("eleN2Dhits_gt",ele2dHits,weight))  {
-            continue;
+	  continue;
         }
         
         //Pos nHits
@@ -337,8 +337,9 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                                                          ele_trk_gbl, pos_trk_gbl, *trks_);
                 
                 if (!foundTracks) {
-                    //std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
-                    continue;  
+		  if (debug_)
+		    std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the "<<trkColl_ <<"collection"<<std::endl;
+		  continue;  
                 }
             }
             else {
@@ -351,24 +352,45 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             //ele_trk_gbl->setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
             //pos_trk_gbl->setMomentum(pos->getMomentum()[0],pos->getMomentum()[1],pos->getMomentum()[2]);
             TVector3 recEleP(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
-                       
-            bool foundL1ele = false;
-            bool foundL2ele = false;
+	    
+	    if (debug_) {
+	      std::cout<<"Check on ele_Track"<<std::endl;
+	      std::cout<<"Number of hits:"<<ele_trk_gbl->getTrackerHitCount()<<std::endl;
+	    }
+	    
+	    bool foundL1ele = false;
+	    bool foundL2ele = false;
             _ah->InnermostLayerCheck(ele_trk_gbl, foundL1ele, foundL2ele);   
-            
+
+
+	    if (debug_) {
+	      std::cout<<"Check on pos_Track"<<std::endl;
+	      std::cout<<"Number of hits:"<<ele_trk_gbl->getTrackerHitCount()<<std::endl;
+	    }
             bool foundL1pos = false;
             bool foundL2pos = false;
+	    
             _ah->InnermostLayerCheck(pos_trk_gbl, foundL1pos, foundL2pos);  
-            
+
+	    if (debug_) {
+	      std::cout<<"Check on pos_Track"<<std::endl;
+	      std::cout<<"Innermost:"<<foundL1pos<<" Second Innermost:"<<foundL2pos<<std::endl;
+	    }
+	    
             //L1 requirement
-            if (!vtxSelector->passCutEq("L1Requirement_eq",(int)(foundL1ele&&foundL1pos),weight))
+            if (!_reg_vtx_selectors[region]->passCutEq("L1Requirement_eq",(int)(foundL1ele&&foundL1pos),weight))
                 continue;
             
             //L2 requirement
-            if (!vtxSelector->passCutEq("L2Requirement_eq",(int)(foundL2ele&&foundL2pos),weight))
-                continue;
-            
-            
+            if (!_reg_vtx_selectors[region]->passCutEq("L2Requirement_eq",(int)(foundL2ele&&foundL2pos),weight))
+	      continue;
+	    
+	    //L1 requirement for positron
+	    if (!_reg_vtx_selectors[region]->passCutEq("L1PosReq_eq",(int)(foundL1pos),weight))
+	      continue;
+	    if (debug_)
+	      std::cout<<"Track passed"<<std::endl;
+		  
             //ESum low cut 
             if (!_reg_vtx_selectors[region]->passCutLt("eSum_lt",(ele_E+pos_E)/beamE_,weight))
                 continue;

@@ -26,7 +26,7 @@ std::string AnaHelpers::getFileName(std::string filePath, bool withExtension)
 void AnaHelpers::InnermostLayerCheck(Track* trk, bool& foundL1, bool& foundL2) {
     for (int ihit=0; ihit<trk->getSvtHits()->GetEntries();++ihit) {
         TrackerHit* hit3d = (TrackerHit*) trk->getSvtHits()->At(ihit);
-        if (hit3d->getLayer() == 0 ) {
+	if (hit3d->getLayer() == 0 ) {
             foundL1 = true;
         }
         if (hit3d->getLayer() == 1) {
