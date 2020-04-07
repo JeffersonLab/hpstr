@@ -39,53 +39,49 @@ void VtxHistoProcessor::initialize(std::string inFilename, std::string outFilena
     
     //Get the vtx vs InvM and p 
     
-    if (debug_) {
-        std::cout<<"Getting..."<< (std::string("/")+selection_+"/"+selection_+"_vtx_p_svt_z_hh").c_str() << std::endl;
-    }
-    
     for (auto selection_ : selections_) { 
-      for (auto projection_ : projections_) {
-        if (debug_) {
-	  std::cout<<"Getting... " <<(std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str() << std::endl;
-        }
-	
-	TH2F* proj2d = (TH2F*) inF_->Get((std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str());
-	
-	if (proj2d) {
-	  _histos2d[projection_] = (TH2F*) inF_->Get((std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str());
-	  _histos2d[projection_]->SetDirectory(0);
-	  _histos2d[projection_]->RebinX(rebin_);
-	}
-	else
-	  std::cout<<"histo::"<<(std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str()<<" does not exists."<<std::endl;
-      }//projection	
-    }//projections
+        for (auto projection_ : projections_) {
+            if (debug_) {
+                std::cout<<"Getting... " <<(std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str() << std::endl;
+            }
+            
+            TH2F* proj2d = (TH2F*) inF_->Get((std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str());
+            
+            if (proj2d) {
+                _histos2d[projection_] = (TH2F*) inF_->Get((std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str());
+                _histos2d[projection_]->SetDirectory(0);
+                _histos2d[projection_]->RebinX(rebin_);
+            }
+            else
+                std::cout<<"histo::"<<(std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str()<<" does not exists."<<std::endl;
+        }//projection	
+    }//selections
 }
 
 bool VtxHistoProcessor::process() {
-  
-  for (it2d_ it = _histos2d.begin(); it!=_histos2d.end();++it) { 
-    _histos1d[it->first+"_mu"] = new TH1F(
-					  (it->first+"_mu").c_str(),
-					  (it->first+"_mu").c_str(),
-					  it->second->GetXaxis()->GetNbins(),
-					  it->second->GetXaxis()->GetXmin(),
-					  it->second->GetXaxis()->GetXmax());
     
-    _histos1d[it->first+"_sigma"] = new TH1F(
-					     (it->first+"_sigma").c_str(),
-					     (it->first+"_sigma").c_str(),
-					     it->second->GetXaxis()->GetNbins(),
-					     it->second->GetXaxis()->GetXmin(),
-					     it->second->GetXaxis()->GetXmax());
-    
-    _histos1d[it->first+"_mu"]->Sumw2();
-    _histos1d[it->first+"_sigma"]->Sumw2();
-
-    
-    HistogramHelpers::profileYwithIterativeGaussFit(it->second,_histos1d[it->first+"_mu"],_histos1d[it->first+"_sigma"],1,0);
-  }       
-  return true;
+    for (it2d_ it = _histos2d.begin(); it!=_histos2d.end();++it) { 
+        _histos1d[it->first+"_mu"] = new TH1F(
+            (it->first+"_mu").c_str(),
+            (it->first+"_mu").c_str(),
+            it->second->GetXaxis()->GetNbins(),
+            it->second->GetXaxis()->GetXmin(),
+            it->second->GetXaxis()->GetXmax());
+        
+        _histos1d[it->first+"_sigma"] = new TH1F(
+            (it->first+"_sigma").c_str(),
+            (it->first+"_sigma").c_str(),
+            it->second->GetXaxis()->GetNbins(),
+            it->second->GetXaxis()->GetXmin(),
+            it->second->GetXaxis()->GetXmax());
+        
+        _histos1d[it->first+"_mu"]->Sumw2();
+        _histos1d[it->first+"_sigma"]->Sumw2();
+        
+        
+        HistogramHelpers::profileYwithIterativeGaussFit(it->second,_histos1d[it->first+"_mu"],_histos1d[it->first+"_sigma"],1,0);
+    }       
+    return true;
 }
 
 void VtxHistoProcessor::finalize() { 
