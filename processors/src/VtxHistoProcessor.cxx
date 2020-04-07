@@ -47,10 +47,18 @@ void VtxHistoProcessor::initialize(std::string inFilename, std::string outFilena
         if (debug_) {
             std::cout<<"Getting... " <<(std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str() << std::endl;
         }
-        
-        _histos2d[projection_] = (TH2F*) inF_->Get((std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str());
-        _histos2d[projection_]->SetDirectory(0);
-        _histos2d[projection_]->RebinX(rebin_);
+	
+	TH2F* proj2d = (TH2F*) inF_->Get((std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str());
+	
+	if (proj2d) {
+	  _histos2d[projection_] = (TH2F*) inF_->Get((std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str());
+	  _histos2d[projection_]->SetDirectory(0);
+	  _histos2d[projection_]->RebinX(rebin_);
+	}
+	else
+	  std::cout<<"histo::"<<(std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str()<<" does not exists."<<std::endl;
+    
+	
     }
 }
 
