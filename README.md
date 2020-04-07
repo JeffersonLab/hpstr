@@ -1,4 +1,4 @@
-updated: 27 March 2020
+updated: 6 April 2020
 
 # Heavy Photon Search Toolkit for Reconstruction
 
@@ -112,7 +112,7 @@ Here is an example on how to run it
 python run_jobPool.py -t hpstr -c <configFile.py>  -i <inDir> -z <isData> -o <outDir> -r <root|slcio>
 ```
 
-where ```-c``` is used to specify the configurationFile for hpstr, ```-i``` and ```-o``` are for specifying the input and output directory respectively, ```-z``` is to choose between data (=1) and MC simulation (=0) input type, and finally ```-r``` is needed to tell hpstr to run on root or slcio files. The script runs one hpstr process for each file on the input folder matching the required extension and places the results in the output directory. Before running the user needs to create a folder ```<outDir>/logs``` otherwise the script fails [will be fixed soon]. 
+where ```-c``` is used to specify the configurationFile for hpstr, ```-i``` and ```-o``` are for specifying the input and output directory respectively, ```-z``` is to choose between data (=1) and MC simulation (=0) input type, and finally ```-r``` is needed to tell hpstr to run on root or slcio files. The script runs one hpstr process for each file on the input folder matching the required extension and places the results in the output directory. It is also possible to run with extra command flags that will be attached to the hpstr command. For example to pass ```-w GBL``` to the hpstr command, specify ```-e "-wGBL"``` to the submission script. 
 
 ## Contributing to Hpstr
 
