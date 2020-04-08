@@ -89,6 +89,7 @@ def str_to_sw(string):
     return string_to_sw[string]
 
 def hw_to_str(string):
+    hw_to_string = {}
     hw_to_string["F0H0"] = "L0T_axial"     
     hw_to_string["F0H1"] = "L0T_stereo"    
     hw_to_string["F0H2"] = "L1T_axial"     
