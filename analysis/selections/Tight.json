@@ -9,29 +9,14 @@
         "id"   : 1,
         "info" : "E_{e^{-}} +  E_{e^{+}}>0.8Ebeam"
     },
-    "sigmaX_lt" : {
-        "cut"  : 3,
+    "L1Requirement_eq" : {
+        "cut"  : 1,
         "id"   : 2,
-        "info" : "|x_{vtx} - <x_{vtx}>| / #sigma_{x}) < 3"
-    },
-    "sigmaY_lt" : {
-        "cut"  : 3,
-        "id"   : 3,
-        "info" : "|y_{vtx} - <y_{vtx}>| / #sigma_{y}) < 3"
-    },
-    "sigmaXtgt_lt" : {
-        "cut"  : 3,
-        "id"   : 4,
-        "info" : "|x_{vtx}^{tgt} - <x_{vtx}^{tgt}>| / #sigma_{x}^{tgt}) < 3"
-    },
-    "sigmaYtgt_lt" : {
-        "cut"  : 3,
-        "id"   : 5,
-        "info" : "|y_{vtx}^{tgt} - <y_{vtx}^{tgt}>| / #sigma_{y}^{tgt}) < 3"
+        "info" : "L1L1"
     },
     "nVtxs_eq" : {
         "cut"  : 1,
-        "id"   : 6,
+        "id"   : 3,
         "info" : "N_{vtx}=1"
     }
 
