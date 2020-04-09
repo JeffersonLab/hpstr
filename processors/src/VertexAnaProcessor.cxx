@@ -94,11 +94,16 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
     //Get "true" mass
     double apMass = -0.9;
+    double apZ = -0.9;
 
     if (mcParts_) {
         for(int i = 0; i < mcParts_->size(); i++)
         {
-            if(mcParts_->at(i)->getPDG() == 622) apMass = mcParts_->at(i)->getMass();
+            if(mcParts_->at(i)->getPDG() == 622) 
+            {
+                apMass = mcParts_->at(i)->getMass();
+                apZ = mcParts_->at(i)->getVertexPosition().at(2);
+            }
         }
     }
     //Store processed number of events
@@ -282,6 +287,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         _vtx_histos->Fill2DTrack(ele_trk,weight,"ele_");
         _vtx_histos->Fill2DTrack(pos_trk,weight,"pos_");
         _vtx_histos->Fill1DHisto("mcMass622_h",apMass); 
+        _vtx_histos->Fill1DHisto("mcZ622_h",apZ); 
 
         selected_vtxs.push_back(vtx);       
         vtxSelector->clearSelector();
@@ -500,6 +506,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             _reg_vtx_histos[region]->Fill2DTrack(ele_trk_gbl,weight,"ele_");
             _reg_vtx_histos[region]->Fill2DTrack(pos_trk_gbl,weight,"pos_");
             _reg_vtx_histos[region]->Fill1DHisto("mcMass622_h",apMass);
+            _reg_vtx_histos[region]->Fill1DHisto("mcZ622_h",apZ);
 
             if (trks_)
                 _reg_vtx_histos[region]->Fill1DHisto("n_tracks_h",trks_->size(),weight);
