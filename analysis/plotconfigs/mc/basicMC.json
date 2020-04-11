@@ -6,11 +6,25 @@
         "xtitle" : "Number of Sim Particles",
         "ytitle" : "Events"
     },
+    "mc622Mass_h" : {
+        "bins" : 450,
+        "minX" : 0,
+        "maxX" : 450.0,
+        "xtitle" : "Mass of PDGID=622 Particle [MeV]",
+        "ytitle" : "Sim Particles / 1 MeV"
+    },
+    "mc622Z_h" : {
+        "bins" : 400,
+        "minX" : -50.0,
+        "maxX" : 150.0,
+        "xtitle" : "Z Position of PDGID=622 Particle [mm]",
+        "ytitle" : "Sim Particles / 0.5 mm"
+    },
     "MCpartsEnergy_h" : {
         "bins" : 450,
         "minX" : 0,
         "maxX" : 4.5,
-        "xtitle" : "Energy of Sim Particle [MeV]",
+        "xtitle" : "Energy of Sim Particle [GeV]",
         "ytitle" : "Sim Particles / 10 MeV"
     },
     "MCpartsEnergyLow_h" : {
@@ -18,7 +32,7 @@
         "minX" : 0,
         "maxX" : 200,
         "xtitle" : "Energy of Sim Particle [MeV]",
-        "ytitle" : "Sim Particles / 10 MeV"
+        "ytitle" : "Sim Particles / 1 MeV"
     },
     "numMuons_h" : {
         "bins" : 10,
