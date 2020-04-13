@@ -78,7 +78,7 @@ ecal.parameters["clusCollLcio"] = "EcalClustersCorr"
 ecal.parameters["clusCollRoot"] = "RecoEcalClusters"
 
 #FinalStateParticles
-fsp.parameters["debug"] = 1
+fsp.parameters["debug"] = 0
 fsp.parameters["fspCollLcio"]    = 'FinalStateParticles'
 fsp.parameters["fspCollRoot"]    = 'FinalStateParticles'
 fsp.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
