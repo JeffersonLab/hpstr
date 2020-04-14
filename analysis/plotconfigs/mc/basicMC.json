@@ -14,11 +14,11 @@
         "ytitle" : "Sim Particles / 1 MeV"
     },
     "mc622Z_h" : {
-        "bins" : 400,
+        "bins" : 100,
         "minX" : -50.0,
         "maxX" : 150.0,
         "xtitle" : "Z Position of PDGID=622 Particle [mm]",
-        "ytitle" : "Sim Particles / 0.5 mm"
+        "ytitle" : "Sim Particles / 2 mm"
     },
     "MCpartsEnergy_h" : {
         "bins" : 450,
