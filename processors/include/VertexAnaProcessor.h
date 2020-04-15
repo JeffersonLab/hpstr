@@ -74,7 +74,6 @@ private:
     std::map<std::string, std::shared_ptr<FlatTupleMaker> > _reg_tuples;
     
     std::vector<std::string> _regions;
-    
 
     typedef std::map<std::string,std::shared_ptr<TrackHistos> >::iterator reg_it;
 
@@ -82,7 +81,7 @@ private:
     double timeOffset_{-999};
     //In GeV. Default is 2016 value;
     double beamE_{2.3};
-    int isData{0};
+    int isData_{0};
     std::shared_ptr<AnaHelpers> _ah;
 
 

@@ -29,7 +29,7 @@ void VertexAnaProcessor::configure(const ParameterSet& parameters) {
         histoCfg_ = parameters.getString("histoCfg",histoCfg_);
         timeOffset_ = parameters.getDouble("CalTimeOffset",timeOffset_);
         beamE_  = parameters.getDouble("beamE",beamE_);
-        isData  = parameters.getInteger("isData",isData);
+        isData_  = parameters.getInteger("isData",isData_);
 
         //region definitions
         regionSelections_ = parameters.getVString("regionDefinitions",regionSelections_);
@@ -71,6 +71,11 @@ void VertexAnaProcessor::initialize(TTree* tree) {
         _reg_tuples[regname] = std::make_shared<FlatTupleMaker>(anaName_+"_"+regname+"_tree");
         _reg_tuples[regname]->addVariable("unc_vtx_mass");
         _reg_tuples[regname]->addVariable("unc_vtx_z");
+        if(!isData_) 
+        {
+            _reg_tuples[regname]->addVariable("true_vtx_z");
+            _reg_tuples[regname]->addVariable("true_vtx_mass");
+        }
 
         _regions.push_back(regname);
     }
@@ -80,7 +85,7 @@ void VertexAnaProcessor::initialize(TTree* tree) {
     tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_ , &bvtxs_);
     tree_->SetBranchAddress(hitColl_.c_str(), &hits_   , &bhits_);
     tree_->SetBranchAddress("EventHeader",&evth_ , &bevth_);
-    if(!isData && !mcColl_.empty()) tree_->SetBranchAddress(mcColl_.c_str() , &mcParts_, &bmcParts_);
+    if(!isData_ && !mcColl_.empty()) tree_->SetBranchAddress(mcColl_.c_str() , &mcParts_, &bmcParts_);
     //If track collection name is empty take the tracks from the particles. TODO:: change this
     if (!trkColl_.empty())
         tree_->SetBranchAddress(trkColl_.c_str(),&trks_, &btrks_);
@@ -121,7 +126,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
         //Trigger requirement - *really hate* having to do it here for each vertex.
 
-        if (isData) {
+        if (isData_) {
             if (!vtxSelector->passCutEq("Pair1_eq",(int)evth_->isPair1Trigger(),weight))
                 break;
         }
@@ -417,7 +422,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 continue;
 
             //If this is MC check if MCParticle matched to the electron track is from rad or recoil
-            if(!isData)
+            if(!isData_)
             {
                 //Build map of hits and the associated MC part ids for later
                 TRefArray* ele_trk_hits = ele_trk_gbl->getSvtHits();
@@ -515,6 +520,11 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
             //Just for the selected vertex
             _reg_tuples[region]->setVariableValue("unc_vtx_mass", vtx->getInvMass());
+            if(!isData_) 
+            {
+                _reg_tuples[region]->setVariableValue("true_vtx_z", apZ);
+                _reg_tuples[region]->setVariableValue("true_vtx_mass", apMass);
+            }
 
             //TODO put this in the Vertex!
             TVector3 vtxPosSvt;

@@ -343,11 +343,11 @@
         "ytitle" : "Vertices"
     },
     "mcZ622_h" : {
-        "bins" : 100,
-        "minX" : -50.0,
-        "maxX" : 150.0,
+        "bins" : 200,
+        "minX" : -50.3,
+        "maxX" : 149.7,
         "xtitle" : "MC z_{pdg=622} [mm]",
-        "ytitle" : "Vertices / 2 mm"
+        "ytitle" : "Vertices / 1 mm"
     },
     "n_vertices_h" : {
         "bins"   : 6,
