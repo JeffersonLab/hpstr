@@ -85,7 +85,8 @@ Particle* utils::buildParticle(EVENT::ReconstructedParticle* lc_particle,
     part->setPDG(lc_particle->getParticleIDUsed()->getPDG());
 
     // Set the Track for the HpsParticle
-    part->setTrack(utils::buildTrack(lc_particle->getTracks()[0], gbl_kink_data, track_data));
+    if (lc_particle->getTracks().size()>0)
+      part->setTrack(utils::buildTrack(lc_particle->getTracks()[0], gbl_kink_data, track_data));
 
     // Set the Track for the HpsParticle
     if (lc_particle->getClusters().size() > 0)
