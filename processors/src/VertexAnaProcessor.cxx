@@ -154,6 +154,14 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         //ele_trk->setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
         //pos_trk->setMomentum(pos->getMomentum()[0],pos->getMomentum()[1],pos->getMomentum()[2]);
 
+        double ele_E = ele->getEnergy();
+        double pos_E = pos->getEnergy();
+
+        //Compute analysis variables here.
+        TLorentzVector p_ele;
+        p_ele.SetPxPyPzE(ele_trk->getMomentum()[0],ele_trk->getMomentum()[1],ele_trk->getMomentum()[2],ele->getEnergy());
+        TLorentzVector p_pos;
+        p_pos.SetPxPyPzE(pos_trk->getMomentum()[0],pos_trk->getMomentum()[1],pos_trk->getMomentum()[2],ele->getEnergy());
 
         //Tracks in opposite volumes - useless
         //if (!vtxSelector->passCutLt("eleposTanLambaProd_lt",ele_trk->getTanLambda() * pos_trk->getTanLambda(),weight)) 
@@ -288,6 +296,10 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 pos_trk,
                 weight);
 
+        _vtx_histos->Fill1DHisto("vtx_Psum_h", p_ele.P()+p_pos.P(), weight);
+        _vtx_histos->Fill1DHisto("vtx_Esum_h", ele_E + pos_E, weight);
+        _vtx_histos->Fill2DHisto("ele_vtxZ_iso_hh", TMath::Min(ele_trk->getIsolation(0), ele_trk->getIsolation(1)), vtx->getZ(), weight);
+        _vtx_histos->Fill2DHisto("pos_vtxZ_iso_hh", TMath::Min(pos_trk->getIsolation(0), pos_trk->getIsolation(1)), vtx->getZ(), weight);
         _vtx_histos->Fill2DHistograms(vtx,weight);
         _vtx_histos->Fill2DTrack(ele_trk,weight,"ele_");
         _vtx_histos->Fill2DTrack(pos_trk,weight,"pos_");
@@ -337,7 +349,6 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
             Track ele_trk = ele->getTrack();
             Track pos_trk = pos->getTrack();
-
             //Get the shared info - TODO change and improve
 
             Track* ele_trk_gbl = nullptr;
@@ -363,6 +374,11 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             //ele_trk_gbl->setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
             //pos_trk_gbl->setMomentum(pos->getMomentum()[0],pos->getMomentum()[1],pos->getMomentum()[2]);
             TVector3 recEleP(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
+            TLorentzVector p_ele;
+            p_ele.SetPxPyPzE(ele_trk_gbl->getMomentum()[0],ele_trk_gbl->getMomentum()[1],ele_trk_gbl->getMomentum()[2],ele_E);
+            TLorentzVector p_pos;
+            p_pos.SetPxPyPzE(pos_trk_gbl->getMomentum()[0],pos_trk_gbl->getMomentum()[1],pos_trk_gbl->getMomentum()[2],ele_E);
+
 
             if (debug_) {
                 std::cout<<"Check on ele_Track"<<std::endl;
@@ -403,13 +419,20 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 std::cout<<"Track passed"<<std::endl;
 
             //ESum low cut 
-            if (!_reg_vtx_selectors[region]->passCutLt("eSum_lt",(ele_E+pos_E)/beamE_,weight))
+            if (!_reg_vtx_selectors[region]->passCutLt("eSum_lt",(ele_E+pos_E),weight))
                 continue;
 
-            //ESum hight cut
-            if (!_reg_vtx_selectors[region]->passCutGt("eSum_gt",(ele_E+pos_E)/beamE_,weight))
+            //ESum high cut
+            if (!_reg_vtx_selectors[region]->passCutGt("eSum_gt",(ele_E+pos_E),weight))
                 continue;
 
+            //PSum low cut 
+            if (!_reg_vtx_selectors[region]->passCutLt("pSum_lt",(p_ele.P()+p_pos.P()),weight))
+                continue;
+
+            //PSum high cut
+            if (!_reg_vtx_selectors[region]->passCutGt("pSum_gt",(p_ele.P()+p_pos.P()),weight))
+                continue;
 
             //No shared hits requirement
             if (!_reg_vtx_selectors[region]->passCutEq("ele_sharedL0_eq",(int)ele_trk_gbl->getSharedLy0(),weight))
@@ -508,6 +531,10 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                     pos_trk_gbl,
                     weight);
 
+            _reg_vtx_histos[region]->Fill1DHisto("vtx_Psum_h", p_ele.P()+p_pos.P(), weight);
+            _reg_vtx_histos[region]->Fill1DHisto("vtx_Esum_h", ele_E+pos_E, weight);
+            _reg_vtx_histos[region]->Fill2DHisto("ele_vtxZ_iso_hh", TMath::Min(ele_trk_gbl->getIsolation(0), ele_trk_gbl->getIsolation(1)), vtx->getZ(), weight);
+            _reg_vtx_histos[region]->Fill2DHisto("pos_vtxZ_iso_hh", TMath::Min(pos_trk_gbl->getIsolation(0), pos_trk_gbl->getIsolation(1)), vtx->getZ(), weight);
             _reg_vtx_histos[region]->Fill2DTrack(ele_trk_gbl,weight,"ele_");
             _reg_vtx_histos[region]->Fill2DTrack(pos_trk_gbl,weight,"pos_");
             _reg_vtx_histos[region]->Fill1DHisto("mcMass622_h",apMass);
