@@ -9,7 +9,13 @@
 /*~~~~~~~~~~*/
 /*   ROOT   */
 /*~~~~~~~~~~*/
-#include <TObject.h>
+#include "TObject.h"
+#include "TRef.h" 
+
+/*~~~~~~~~~~~*/
+/*   event   */
+/*~~~~~~~~~~~*/
+#include "MCParticle.h" 
 
 /**
  * Class which encapsulates information from a hit in a simulated tracking 
@@ -127,6 +133,21 @@ class MCTrackerHit : public TObject {
          */
         int getPDG() const { return pdg_; }
 
+        /**
+         * Set the Monte Carlo particle that created this hit in the simulation.
+         * 
+         * @param mc_particle The particle that created the hit.
+         */
+        void setMCParticle(MCParticle* mc_particle) { mc_particle_ = static_cast< TObject* >(mc_particle); }
+
+        /**
+         * Set the Monte Carlo particle that created this hit in the simulation.
+         *
+         * @return A pointer to the MC particle that created this hit in the 
+         *      simulation.
+         */
+        MCParticle* getMCParticle() const { return static_cast< MCParticle* >(mc_particle_.GetObject()); }
+
         ClassDef(MCTrackerHit, 2);	
 
     private:
@@ -161,6 +182,9 @@ class MCTrackerHit : public TObject {
 
         /// PDG ID of particle the particle that made the hit.
         int pdg_{-999};
+
+        /// The MC particle that created this hit.
+        TRef mc_particle_{nullptr};
 
 }; // MCTrackerHit
 
