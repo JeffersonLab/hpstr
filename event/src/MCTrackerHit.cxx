@@ -9,7 +9,7 @@ ClassImp(MCTrackerHit)
 
 MCTrackerHit::MCTrackerHit()
     : TObject() { 
-}
+    }
 
 MCTrackerHit::~MCTrackerHit() { 
     Clear(); 
@@ -17,6 +17,16 @@ MCTrackerHit::~MCTrackerHit() {
 
 void MCTrackerHit::Clear(Option_t* /* options */) { 
     TObject::Clear(); 
+}
+
+void MCTrackerHit::Print(Option_t *option) const {
+    std::cout << "MCTrackerHit { PDG ID: " << pdg_ <<  
+        "Layer: " << layer_ << ", " <<
+        "Module: " << module_ << ", " <<
+        "Position (mm): ( " << x_ << ", " << y_ << ", " << z_ << " ), " <<
+        "Energy Deposition (MeV): " << edep_ << ", " <<
+        "Global Time (ns): " << time_ <<
+        " }" << std::endl;
 }
 
 void MCTrackerHit::setPosition(const double* position, bool rotate) {

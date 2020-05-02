@@ -29,10 +29,13 @@ class MCTrackerHit : public TObject {
         MCTrackerHit();
 
         /// Destructor
-        virtual ~MCTrackerHit();
+        ~MCTrackerHit();
 
         /// Reset this MCTrackHit object
-        void Clear(Option_t *option="");
+        void Clear(Option_t *option="") final override;
+
+        /// Print a string representation of this object
+        void Print(Option_t *option="") const final override; 
 
         /**
          * Set the hit position in mm. 
@@ -154,6 +157,7 @@ class MCTrackerHit : public TObject {
 
 
         /// The angle of rotation of the SVT.
+        // TODO: Move this to a constants header.
         const float svt_angle_{30.5e-3}; 
 
         /// The x position of the hit in mm.
