@@ -1,38 +1,26 @@
-/**
- *
- */
-
-#ifndef __MCTRACKERHIT_PROCESSOR_H__
-#define __MCTRACKERHIT_PROCESSOR_H__
+#ifndef MCTRACKERHIT_PROCESSOR_H
+#define MCTRACKERHIT_PROCESSOR_H
 
 //-----------------//
 //   C++  StdLib   //
 //-----------------//
-#include <iostream>
-#include <algorithm>
 #include <string>
 
 //----------//
 //   LCIO   //
 //----------//
-#include <EVENT/LCCollection.h>
-#include <EVENT/SimTrackerHit.h>
-#include <EVENT/MCParticle.h>
 #include <UTIL/BitField64.h>
-
-//----------//
-//   ROOT   //
-//----------//
-#include "TClonesArray.h"
-#include "TTree.h"
 
 //-----------//
 //   hpstr   //
 //-----------//
-#include "Collections.h"
 #include "Processor.h"
-#include "MCTrackerHit.h"
-#include "Event.h"
+
+// Forward declarations
+class Event;
+class MCParticle; 
+class MCTrackerHit; 
+class TTree;
 
 class MCTrackerHitProcessor : public Processor { 
 
@@ -54,33 +42,49 @@ class MCTrackerHitProcessor : public Processor {
          * Callback for the Processor to configure itself from the given set of parameters.
          * @param parameters ParameterSet for configuration.
          */
-        virtual void configure(const ParameterSet& parameters);
+        virtual void configure(const ParameterSet& parameters) final override;
 
         /**
          * Callback for the Processor to take any necessary
          * action when the processing of events starts.
          */
-        virtual void initialize(TTree* tree);
+        virtual void initialize(TTree* tree) final override;
 
         /**
          * Process the event and put new data products into it.
          * @param event The Event to process.
          */
-        virtual bool process(IEvent* ievent);
+        virtual bool process(IEvent* ievent) final override;
 
         /**
          * Callback for the Processor to take any necessary
          * action when the processing of events finishes.
          */
-        virtual void finalize();
+        virtual void finalize() final override;
 
     private: 
 
-        /** Containers to hold all TrackerHit objects, and collection names. */
-        std::vector<MCTrackerHit*> trackerhits_; 
-        std::string   hitCollLcio_{"TrackerHits"};
-        std::string   hitCollRoot_{"TrackerHits"};
+        /// Clear the collection of tracker hits
+        void clear(); 
 
+        /// Container for MC particles
+        std::vector<MCParticle*>* mc_particles_{nullptr};
+        
+        /// Container for MC tracker hits 
+        std::vector<MCTrackerHit*>* sim_tracker_hits_{nullptr};  
+       
+        /// Collection of MC particles
+        std::string mc_particle_col_{"MCParticles"}; 
+
+        /// LCIO sim tracker hit collection
+        std::string sim_tracker_hit_col_{"TrackerHits"};
+
+        /// Output collection name
+        std::string mc_tracker_hit_col_{"TrackerHits"};
+
+        /// 
+        UTIL::BitField64 decoder_{"system:0:6,barrel:6:3,layer:9:4,module:13:12,sensor:25:1,side:32:-2,strip:34:12"};
+        
         //Debug Level
         int debug_{0};
 
