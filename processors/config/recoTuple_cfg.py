@@ -69,6 +69,7 @@ track.parameters["trkRelCollLcio"] = 'TrackDataRelations'
 track.parameters["trkhitCollRoot"] = 'RotatedHelicalOnTrackHits'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 track.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack'
+track.parameters["bfield"] = 1.034000
 
 #ECalData
 ecal.parameters["debug"] = 0 

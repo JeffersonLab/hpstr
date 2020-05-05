@@ -15,8 +15,8 @@
     },
     "mc622Z_h" : {
         "bins" : 200,
-        "minX" : -50.3,
-        "maxX" : 149.7,
+        "minX" : -47.51,
+        "maxX" : 152.49,
         "xtitle" : "Z Position of PDGID=622 Particle [mm]",
         "ytitle" : "Sim Particles / 1 mm"
     },
