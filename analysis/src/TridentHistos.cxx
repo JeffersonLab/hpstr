@@ -1,11 +1,11 @@
-#include "TrackHistos.h"
+#include "TridentHistos.h"
 #include "TLorentzVector.h"
 #include "TVector3.h"
 #include <iostream>
 
-void TrackHistos::BuildAxes(){}
+void TridentHistos::BuildAxes(){}
 
-void TrackHistos::Define2DHistos() {
+void TridentHistos::Define2DHistos() {
 
     //TODO improve naming
     std::string h_name = "";
@@ -35,7 +35,7 @@ void TrackHistos::Define2DHistos() {
 }//define 2dhistos
 
 
-void TrackHistos::Fill1DVertex(Vertex* vtx, 
+void TridentHistos::Fill1DVertex(Vertex* vtx, 
                                Particle* ele, 
                                Particle* pos, 
                                Track* ele_trk,
@@ -108,7 +108,7 @@ void TrackHistos::Fill1DVertex(Vertex* vtx,
 }
 
 
-void TrackHistos::Fill2DTrack(Track* track, float weight, const std::string& trkname) {
+void TridentHistos::Fill2DTrack(Track* track, float weight, const std::string& trkname) {
     
     
     if (track) {
@@ -127,7 +127,7 @@ void TrackHistos::Fill2DTrack(Track* track, float weight, const std::string& trk
     }
 }
 
-void TrackHistos::Fill1DTrack(Track* track, float weight, const std::string& trkname) {
+void TridentHistos::Fill1DTrack(Track* track, float weight, const std::string& trkname) {
     
     double charge = (double) track->getCharge();
 
@@ -182,7 +182,7 @@ void TrackHistos::Fill1DTrack(Track* track, float weight, const std::string& trk
     Fill1DHisto(trkname+"type_h",track->getType(),weight);
 }
 
-void TrackHistos::Fill1DVertex(Vertex* vtx, float weight) {
+void TridentHistos::Fill1DVertex(Vertex* vtx, float weight) {
     
     Fill1DHisto("vtx_chi2_h"   ,vtx->getChi2(),weight);
     Fill1DHisto("vtx_X_h"      ,vtx->getX(),weight);
@@ -213,7 +213,7 @@ void TrackHistos::Fill1DVertex(Vertex* vtx, float weight) {
     Fill1DHisto("vtx_p_h" ,vtx->getP().Mag());
 }
 
-void TrackHistos::Fill1DHistograms(Track *track, Vertex* vtx, float weight ) {
+void TridentHistos::Fill1DHistograms(Track *track, Vertex* vtx, float weight ) {
     
     if (track) {
         Fill1DTrack(track);
@@ -227,7 +227,7 @@ void TrackHistos::Fill1DHistograms(Track *track, Vertex* vtx, float weight ) {
 }
 
 
-void TrackHistos::Fill1DTrackTruth(Track *track, Track* truth_track, float weight, const std::string& trkname) {
+void TridentHistos::Fill1DTrackTruth(Track *track, Track* truth_track, float weight, const std::string& trkname) {
     
     if (!track || !truth_track)
         return;
@@ -283,7 +283,7 @@ void TrackHistos::Fill1DTrackTruth(Track *track, Track* truth_track, float weigh
 
 
 
-void TrackHistos::Fill2DHistograms(Vertex* vtx, float weight) {    
+void TridentHistos::Fill2DHistograms(Vertex* vtx, float weight) {    
 
     if (vtx) {
                 
@@ -310,7 +310,7 @@ void TrackHistos::Fill2DHistograms(Vertex* vtx, float weight) {
     }
 }
 
-void TrackHistos::FillTrackComparisonHistograms(Track* track_x, Track* track_y, float weight) {
+void TridentHistos::FillTrackComparisonHistograms(Track* track_x, Track* track_y, float weight) {
 
     if (doTrkCompPlots) {
         /*
@@ -332,7 +332,7 @@ void TrackHistos::FillTrackComparisonHistograms(Track* track_x, Track* track_y, 
 //Residual Plots ============ They should probably go somewhere else ====================
 
 
-void TrackHistos::FillResidualHistograms(Track* track, int ly, double res, double sigma) {
+void TridentHistos::FillResidualHistograms(Track* track, int ly, double res, double sigma) {
     
     double trk_mom = track->getP();
     std::string lyr = std::to_string(ly);
@@ -366,4 +366,49 @@ void TrackHistos::FillResidualHistograms(Track* track, int ly, double res, doubl
     Fill1DHisto("u_res_ly_"+lyr+"_"+vol+"_h",res);
     Fill2DHisto("u_res_ly_"+lyr+"_"+vol+"_vsp_hh",trk_mom,res);
         
+}
+
+
+std::pair<CalCluster*, Track*> TridentHistos::getTrackClusterPair(Track* trk,std::vector<CalCluster*>& clusters, float weight){
+
+  double minDelta=666666;
+  double minDeltaX=666666;
+  double minDeltaY=666666;
+  CalCluster* bestCluster=NULL; 
+  double minDeltaCut=20.0;
+  double clXMin=666666; 
+  double clYMin=666666; 
+  for(auto clu:clusters){
+    double clX=(clu->getPosition()).at(0);
+    double clY=(clu->getPosition()).at(1);
+    if(trk->getTanLambda()*clY<0)//trk and cluster in same half
+      continue; 
+    int trkCh=trk->getCharge();
+    if(trkCh*clX>0)  //positrons on positron side and vice/versa...sign is flipped in track collection? 
+      continue;
+    std::vector<double> posAtECal=trk->getPositionAtEcal();
+    double delY=clY-posAtECal.at(1);
+    double delX=clX-posAtECal.at(0);
+    if(abs(delY)<minDelta){//right now, just take delta Y
+      bestCluster=clu;
+      minDelta=abs(delY);
+      minDeltaX=delX;
+      minDeltaY=delY;
+      clXMin=clX; 
+      clYMin=clY; 
+    }
+  }
+
+  if(minDelta<minDeltaCut){
+    Fill1DHisto("trkClMinDelta_h",minDelta,weight);  //should equal deltaY for now
+    Fill1DHisto("trkClDeltaX_h",minDeltaX,weight); 
+    Fill1DHisto("trkClDeltaY_h",minDeltaY,weight);
+    Fill2DHisto("trkClDeltaXY_hh",minDeltaX,minDeltaY,weight);
+    Fill2DHisto("trkClDeltaXvsX_hh",clXMin,minDeltaX,weight);
+    Fill2DHisto("trkClDeltaYvsY_hh",clYMin,minDeltaY,weight);
+    Fill2DHisto("trkClDeltaYvsX_hh",clXMin,minDeltaY,weight);
+    Fill2DHisto("trkClDeltaXvsY_hh",clYMin,minDeltaX,weight);
+  }
+
+  return std::pair<CalCluster*,Track*>(bestCluster,trk);
 }
