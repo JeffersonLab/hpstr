@@ -1,8 +1,27 @@
-updated: 6 April 2020
+updated: 6 May 2020
 
 # Heavy Photon Search Toolkit for Reconstruction
 
 The Heavy Photon Search Toolkit for Reconstruction (hpstr) provides an interface to physics data from the HPS experiment saved in the LCIO format and converts it into an ROOT based format. It also provides tools which can be used to analyze the ROOT format of the data.
+
+## Installation
+
+Hpstr can be installed on the following operating systems with some adjustments depending on the tool set available for compilation. 
+
+- MacOSX
+- Ubuntu 20.4
+- Centos7 
+
+### Prerequisites
+
+Hpstr depends on the LCIO package https://github.com/iLCSoft/LCIO and ROOT https://root.cern.ch/ 
+So a full working installation of those packages is necessary before trying to checkout and install hpstr. 
+
+### Example: Installation on Ubuntu 20.4 from scratch
+
+Here is given the full set of instructions on how to install hpstr on Ubuntu 20.4 LTS which is running inside a virtual machine. This tutorial gives a working solution for an user that doesn't have an operating system compatible with the hpstr installation to start with. 
+
+#### Install Virtual Box
 
 
 ## Checkout
