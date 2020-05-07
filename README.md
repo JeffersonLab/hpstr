@@ -14,7 +14,7 @@ Hpstr can be installed on the following operating systems with some adjustments 
 
 ### Prerequisites
 
-Hpstr depends on the LCIO package https://github.com/iLCSoft/LCIO and ROOT https://root.cern.ch/ 
+Hpstr depends on LCIO (2.12.01) https://github.com/iLCSoft/LCIO and ROOT (6.19.02) https://root.cern.ch/ 
 So a full working installation of those packages is necessary before trying to checkout and install hpstr. 
 
 ### Example: Installation on Ubuntu 20.4 from scratch
@@ -84,8 +84,22 @@ export LD_LIBRARY_PATH=$LCIO_DIR/lib:$LD_LIBRARY_PATH
 export PATH=$LCIO_DIR/bin:$PATH
 ```
 
+10. Install ROOT
+Get the source file from https://root.cern.ch/content/release-61902
+```bash
+mkdir root
+cd root
+mkdir install build
+mv <pathTo>/root_v6.19.02.source.tar.gz ./
+tar -xzvf root_v6.19.02.source.tar.gz
+rm root_v6.19.02.source.tar.gz
+cd ../build
+cmake -DCMAKE_INSTALL_PREFIX=../install ../root_v6.19/
+cmake --build . 
+```
 
-## Checkout
+
+## Checkout hpstr
 
 ```bash
 mkdir hpstr
