@@ -127,6 +127,25 @@
         "xtitle" : "p_{e^{-}} [GeV]",
         "ytitle" : "Tracks"
     },
+    "ele_dEdX_h" : {
+        "bins"  : 200,
+        "minX"  : 0,
+        "maxX"  : 0.14e-3,
+        "xtitle" : "prop to dEdX",
+        "ytitle" : "Tracks"
+    },
+
+    "ele_dEdx_vs_p_hh" : {
+        "binsX"  : 200,
+        "minX"   : 0,
+        "maxX"   : 2,
+        "binsY"  : 200,
+        "minY"   : 0,
+        "maxY"   : 0.14e-3,
+        "xtitle" : "track p [GeV]",
+        "ytitle" : "prop to dEdX"
+    },
+   
     "mcMass622_h" : {
         "bins" : 500,
         "minX" : 0,
@@ -141,7 +160,6 @@
         "xtitle" : "MC z_{pdg=622} [mm]",
         "ytitle" : "Vertices / 1 mm"
     },
-
     "ele_tanlambda_vs_phi0_hh" : {
         "binsX"  : 100,
         "minX"   : -0.4,
@@ -218,6 +236,8 @@
         "xtitle" : "trk(#lamdba)",
         "ytitle" : "trk z0 [mm]"
     },
+    
+
     "pos_nHits_2d_h" : {
         "bins"  : 15,
         "minX"  : 0,
@@ -339,6 +359,25 @@
         "xtitle" : "p_{e^{+}} [GeV]",
         "ytitle" : "Tracks"
     },
+    "pos_dEdX_h" : {
+        "bins"  : 200,
+        "minX"  : 0,
+        "maxX"  : 0.14e-3,
+        "xtitle" : "prop to dEdX",
+        "ytitle" : "Tracks"
+    },
+
+    "pos_dEdx_vs_p_hh" : {
+        "binsX"  : 200,
+        "minX"   : 0,
+        "maxX"   : 2,
+        "binsY"  : 200,
+        "minY"   : 0,
+        "maxY"   : 0.14e-3,
+        "xtitle" : "track p [GeV]",
+        "ytitle" : "prop to dEdX"
+    },
+    
     "pos_tanlambda_vs_phi0_hh" : {
         "binsX"  : 100,
         "minX"   : -0.4,
@@ -415,7 +454,21 @@
         "xtitle" : "trk(#lamdba)",
         "ytitle" : "trk z0 [mm]"
     },
+    "ep_InvMass_h" : {
+        "bins" : 400,
+        "minX" : 0,
+        "maxX" : 1.0,
+        "xtitle" : "vtx Mass [GeV]",
+        "ytitle" : "Vertices"
+    },
 
+    "kk_InvMass_h" : {
+        "bins" : 400,
+        "minX" : 0.8,
+        "maxX" : 1.2,
+        "xtitle" : "vtx Mass [GeV]",
+        "ytitle" : "Vertices"
+    },
     "n_vertices_h" : {
         "bins"   : 6,
         "minX"   : -0.5,
