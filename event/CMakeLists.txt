@@ -10,4 +10,4 @@ module(
 root_generate_dictionary(EventDict ${event_INCLUDE_DIR}/EventDef.h LINKDEF ${event_INCLUDE_DIR}/EventLinkDef.h)
 
 # install ROOT pcm file
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib${PROJECT_NAME}_rdict.pcm DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libEventDict_rdict.pcm DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
