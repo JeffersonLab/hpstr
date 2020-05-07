@@ -1,11 +1,105 @@
-updated: 6 April 2020
+updated: 6 May 2020
 
 # Heavy Photon Search Toolkit for Reconstruction
 
 The Heavy Photon Search Toolkit for Reconstruction (hpstr) provides an interface to physics data from the HPS experiment saved in the LCIO format and converts it into an ROOT based format. It also provides tools which can be used to analyze the ROOT format of the data.
 
+## Installation
 
-## Checkout
+Hpstr can be installed on the following operating systems with some adjustments depending on the tool set available for compilation. 
+
+- MacOSX
+- Ubuntu 20.4
+- Centos7 
+
+### Prerequisites
+
+Hpstr depends on LCIO (2.12.01) https://github.com/iLCSoft/LCIO and ROOT (6.19.02) https://root.cern.ch/ 
+So a full working installation of those packages is necessary before trying to checkout and install hpstr. 
+
+### Example: Installation on Ubuntu 20.4 from scratch
+
+Here is given the full set of instructions on how to install hpstr on Ubuntu 20.4 LTS which is running inside a virtual machine. This tutorial gives a working solution for an user that doesn't have an operating system compatible with the hpstr installation to start with. 
+
+#### Install Virtual Box and setup Ubuntu 20.4
+
+1. Download VirtualBox, latest version 6.1.6 https://www.virtualbox.org/
+2. Download ubuntu 20.4 LST image. In this tutorial desktop version was used (about 2.5 GB)
+3. Create a virtual machine using the ubuntu image that has been downloaded. This is a pretty straightforward step, if you aren't familiar with virtual box just follow: https://www.wikihow.com/Install-Ubuntu-on-VirtualBox. I selected 2GB RAM, 10GB HD dynamically allocated. When the ubuntu installation setup pops up select "normal installation"
+4. After successful start of the Ubuntu VM, install the developer tools:
+
+```bash
+sudo apt install build-essential
+sudo apt install cmake
+sudo apt install git
+```
+5. Enable the copy paste from guest<->host by selecting
+(a) Devices-> Shared Clipboard -> Bidirectional
+(b) Devices-> Insert Guest Additions CD images -> then install it
+(c) Restart the Virtual machine
+More infos here: https://stackoverflow.com/questions/22885658/copy-paste-from-mac-to-virtual-box
+
+6. Install X11 dependencies that are needed to install ROOT
+
+```bash
+sudo apt-get install libx11-dev
+sudo apt-get install libxpm-dev
+sudo apt-get install libxft-dev
+sudo apt-get install libxext-dev
+```
+7. Help CMake finding python  (this is for Python3, use python-dev for 2.7)
+```bash
+sudo apt-get install python3-dev
+```
+
+8. Prepare an installation work directory:
+
+```bash
+cd ~
+mkdir sw
+cd sw
+```
+
+9. Install LCIO 
+
+```bash
+mkdir LCIO
+cd LCIO
+mkdir src build install
+cd src
+git clone https://github.com/iLCSoft/LCIO.git
+git checkout -b v02-12-01 tags/v02-12-01
+cd ../../build
+cmake -DCMAKE_INSTALL_PREFIX=../install/ ../src/LCIO/
+make install
+```
+I suggest to make a script file to export this in the path which include (again I'll assume we are working in ~/sw, otherwise modify accordingly):
+
+```bash
+export LCIO_DIR=~/sw/LCIO/install
+export LCIO_INCLUDE_DIRS=~/sw/LCIO/install/include
+export IO_LCIO_LIBRARY=~/sw/LCIO/install/lib/liblcio.so
+export LD_LIBRARY_PATH=$LCIO_DIR/lib:$LD_LIBRARY_PATH
+
+export PATH=$LCIO_DIR/bin:$PATH
+```
+
+10. Install ROOT
+Get the source file from https://root.cern.ch/content/release-61902
+```bash
+mkdir root
+cd root
+mkdir install build
+mv <pathTo>/root_v6.19.02.source.tar.gz ./
+tar -xzvf root_v6.19.02.source.tar.gz
+rm root_v6.19.02.source.tar.gz
+cd ../build
+cmake -DCMAKE_INSTALL_PREFIX=../install ../root_v6.19/
+cmake --build . 
+```
+
+
+## Checkout hpstr
 
 ```bash
 mkdir hpstr
@@ -24,7 +118,13 @@ cmake3 -DCMAKE_INSTALL_PREFIX=../install/ -DLCIO_DIR=$LCIO_DIR  ../src/hpstr/
 make -j4 install
 ```
 
-To compile with debug information, just add -DCMAKE_BUILD_TYPE=Debug to the cmake3 command. After compilation it is necessary to source the setup script in the ```intall/bin``` directory by
+NOTE:: On SLAC machines ```cmake3``` is needed to call cmake version 3+, you might just need to call ```cmake``` to call the right version on your machine. 
+
+To compile with debug information, just add -DCMAKE_BUILD_TYPE=Debug to the cmake3 command. 
+
+To compile with Python3, just add -DPYTHON3=true to the cmake3 command.
+
+After compilation it is necessary to source the setup script in the ```intall/bin``` directory by
 
 ```bash
 source install/bin/setup.sh 
