@@ -2,6 +2,7 @@ import HpstrConf
 import sys
 
 import baseConfig
+from baseConfig import bfield
 
 parser = baseConfig.parser
 (options,args) = parser.parse_args()
@@ -74,7 +75,7 @@ if (not options.isData):
     track.parameters["truthTrackCollLcio"] = 'KalmanFullTracksToTruthTrackRelations'
     track.parameters["truthTrackCollRoot"] = 'Truth_KFTracks'
 
-track.parameters["bfield"] = 1.034000
+track.parameters["bfield"] = bfield[str(options.year)]
 
 trackgbl.parameters["debug"] = 0 
 trackgbl.parameters["trkCollLcio"] = 'GBLTracks'
@@ -83,16 +84,16 @@ trackgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
 trackgbl.parameters["trkRelCollLcio"] = 'TrackDataRelations'
 trackgbl.parameters["trkhitCollRoot"] = 'RotatedHelicalOnTrackHits'
 trackgbl.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
-trackgbl.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack'
+trackgbl.parameters["rawhitCollRoot"] = ''#'SVTRawHitsOnTrack'
 if (not options.isData):
     trackgbl.parameters["truthTrackCollLcio"] = 'GBLTracksToTruthTrackRelations'
     trackgbl.parameters["truthTrackCollRoot"] = 'Truth_GBLTracks'
-trackgbl.parameters["bfield"] = 1.034000
+trackgbl.parameters["bfield"] = bfield[str(options.year)]
 
 #ECalData
 ecal.parameters["debug"] = 0 
 ecal.parameters["hitCollLcio"] = 'EcalCalHits'
-ecal.parameters["hitCollRoot"] = 'RecoEcalHits'
+ecal.parameters["hitCollRoot"] = ''#'RecoEcalHits'
 ecal.parameters["clusCollLcio"] = "EcalClustersCorr"
 ecal.parameters["clusCollRoot"] = "RecoEcalClusters"
 
