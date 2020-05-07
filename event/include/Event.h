@@ -36,10 +36,10 @@ class Event : public IEvent {
 
     public: 
 
-        /** Constructor */
+        /// Constructor 
         Event(); 
 
-        /** Destructor */
+        /// Destructor 
         ~Event(); 
 
         /** 
@@ -59,8 +59,8 @@ class Event : public IEvent {
          * Add a collection (std::vector) of objects to the event. */
 
         template<typename T>
-        void addCollection(const std::string& name, std::vector<T*>* collection ){
-        branches_[name] = tree_->Branch(name.c_str(),&collection);};
+            void addCollection(const std::string& name, std::vector<T*>* collection ){
+                branches_[name] = tree_->Branch(name.c_str(),&collection);};
 
         /** 
          * @param name Name of the collection
@@ -85,10 +85,10 @@ class Event : public IEvent {
 
         /** @return Get a mutable copy of the EventHeader. */
         EventHeader& getEventHeaderMutable() const { return *event_header_; }
-	
-	//TODO document
-	void setTree(TTree* tree) {tree_ = tree;};
-      
+
+        //TODO document
+        void setTree(TTree* tree) {tree_ = tree;};
+
         /** @return The ROOT tree containing the event. */
         TTree* getTree() { return tree_; }
 
@@ -101,7 +101,14 @@ class Event : public IEvent {
         /** Get the LCIO event. */
         EVENT::LCCollection* getLCCollection(std::string name) { 
             return static_cast<EVENT::LCCollection*>(lc_event_->getCollection(name)); 
-        }; 
+        };
+
+        /**
+         * Check if an LCEvent has a collection of the given name.  
+         *
+         * @return True if the collection exists, False otherwise.
+         */
+        bool hasLCCollection(const std::string name); 
 
         /**
          * Set the current entry. 
@@ -117,7 +124,7 @@ class Event : public IEvent {
 
         /** The ROOT tree containing the event. */
         TTree* tree_{nullptr}; 
-        
+
         /** Object used to load all of current LCIO event information. */
         EVENT::LCEvent* lc_event_{nullptr};
 

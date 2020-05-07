@@ -19,11 +19,11 @@ void ECalDataProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring ECalDataProcessor" << std::endl;
     try
     {
-        debug_         = parameters.getInteger("debug");
-        hitCollLcio_   = parameters.getString("hitCollLcio");
-        hitCollRoot_   = parameters.getString("hitCollRoot");
-        clusCollLcio_  = parameters.getString("clusCollLcio");
-        clusCollRoot_  = parameters.getString("clusCollRoot");
+        debug_         = parameters.getInteger("debug", debug_);
+        hitCollLcio_   = parameters.getString("hitCollLcio", hitCollLcio_);
+        hitCollRoot_   = parameters.getString("hitCollRoot", hitCollRoot_);
+        clusCollLcio_  = parameters.getString("clusCollLcio", clusCollLcio_);
+        clusCollRoot_  = parameters.getString("clusCollRoot", clusCollRoot_);
     }
     catch (std::runtime_error& error)
     {
@@ -32,7 +32,8 @@ void ECalDataProcessor::configure(const ParameterSet& parameters) {
 }
 
 void ECalDataProcessor::initialize(TTree* tree) {
-    tree->Branch(hitCollRoot_.c_str(), &cal_hits_);
+    if (!hitCollRoot_.empty())
+        tree->Branch(hitCollRoot_.c_str(), &cal_hits_);
     tree->Branch(clusCollRoot_.c_str(), &clusters_);
 }
 

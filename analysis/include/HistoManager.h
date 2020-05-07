@@ -86,6 +86,8 @@ class HistoManager {
         virtual void sumw2();
 
         virtual void Clear();
+        
+        virtual std::string getName(){return m_name;}
 
         void debugMode(bool debug) {debug_ = debug;}
 
@@ -106,6 +108,9 @@ class HistoManager {
 
         bool debug_{false};
         json _h_configs;
+        int maxWarnings_{10};
+        int printWarnings_{0};
+        bool doPrintWarnings_{true};
 };
 
 

@@ -20,6 +20,7 @@
 //   hpstr   //
 //-----------//
 #include "Processor.h"
+#include "BaseSelector.h"
 #include "Track.h"
 #include "Event.h"
 #include "TrackHistos.h"
@@ -76,11 +77,18 @@ class TrackingAnaProcessor : public Processor {
         // Track Collection name
         std::string trkCollName_;
 
+        // Track Selector configuration
+        std::string selectionCfg_;
+        std::shared_ptr<BaseSelector> trkSelector_;
+
         // Containers to hold histogrammer info
         std::string histCfgFilename_;
-        TrackHistos* trkHistos_;
-
+        std::string truthHistCfgFilename_;
+        TrackHistos* trkHistos_{nullptr};
+        TrackHistos* truthHistos_{nullptr};
+        bool doTruth_{false};
         int debug_{0};
+        
 
 
 

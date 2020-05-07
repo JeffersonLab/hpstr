@@ -68,10 +68,23 @@ class Processor {
         virtual void initialize(TTree* tree) = 0;
 
         /**
+         * Callback for the Processor to take any necessary
+         * action when the processing of events starts, such as
+         * initializing files.
+         */
+        virtual void initialize(std::string inFilename, std::string outFilename) {};
+
+        /**
          * Set output TFile for AnaProcessors
          * @param pointer to output TFile
          */
         virtual void setFile(TFile* outFile) {outF_ = outFile;};
+
+        /**
+         * Process the histograms and generate analysis output.
+         * @return status of the processing.
+         */
+        virtual bool process() {return true;};
 
         /**
          * Process the event and put new data products into it.
@@ -102,7 +115,7 @@ class Processor {
         /** output file pointer */
         TFile* outF_{nullptr};
 
-    private:
+    protected:
 
         /** The name of the Processor. */
         std::string name_;

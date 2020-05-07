@@ -1,0 +1,27 @@
+{
+    "botCluTime_lt" : {
+        "cut"  : 48.0,
+        "id"   : 0,
+        "info" : "Bottom Cluster Time < 48.0 ns"
+    },
+    "botCluTime_gt" : {
+        "cut"  : 38.0,
+        "id"   : 1,
+        "info" : "Bottom Cluster Time > 38.0 ns"
+    },
+    "eleposCluTimeDiff_lt" : {
+        "cut"  : 1.43,
+        "id"   : 2,
+        "info" : "#Delta_{t}(clu_{e^{-}},clu_{e^{+}})<1.43ns"
+    },
+    "maxVtxMom_lt" : {
+        "cut" : 2.4,
+        "id"  : 3,
+        "info" : "p_{vtx}<2.4 [GeV]"
+    },
+    "minVtxMom_gt" : {
+        "cut" : 1.9,
+        "id"  : 4,
+        "info" : "p_{vtx}>1.9 [GeV]"
+    }
+}

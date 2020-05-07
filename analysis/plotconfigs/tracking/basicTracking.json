@@ -6,6 +6,13 @@
         "xtitle" : "N_{tracks}",
         "ytitle" : "Events"
     },
+    "nHits_2d_h" : {
+        "bins"  : 15,
+        "minX"  : 0,
+        "maxX"  : 15,
+        "xtitle" : "N_{2Dhits}",
+        "ytitle" : "Tracks"
+    },
     "strategy_h" : {
         "bins" : 6,
         "minX" : -0.5,
@@ -57,6 +64,20 @@
         "xtitle" : "#omega",
         "ytitle" : "Tracks"
     },
+    "invpT_h" : {
+        "bins" : 100,
+        "minX" : -2.5,
+        "maxX" : 2.5,
+        "xtitle" : "q/pT [GeV^{-1}]",
+        "ytitle" : "Tracks"
+    },
+    "pT_h" : {
+        "bins" : 100,
+        "minX" : -3,
+        "maxX" : 3,
+        "xtitle" : "q*pT [GeV^{-1}]",
+        "ytitle" : "Tracks"
+    },
     "TanLambda_h" : {
         "bins" : 200,
         "minX" : -0.6,
@@ -81,14 +102,21 @@
     "chi2_h" : {
         "bins" : 200,
         "minX" : 0,
-        "maxX" : 30,
+        "maxX" : 100,
         "xtitle" : "track #chi^{2}",
         "ytitle" : "Tracks"
     },
+    "chi2ndf_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 30,
+        "xtitle" : "track #chi^{2} / ndf",
+        "ytitle" : "Tracks"
+    },
     "n_vertices_h" : {
-        "bins"   : 4,
+        "bins"   : 6,
         "minX"   : -0.5,
-        "maxX"   : 3.5,
+        "maxX"   : 5.5,
         "xtitle" : "N_{vertices}",
         "ytitle" : "Events"
     },
@@ -155,6 +183,34 @@
         "xtitle" : "vtx #sigma_{z} [mm]",
         "ytitle" : "Vertices"
     },
+    "vtx_px_h" : {
+        "bins" : 100,
+        "minX" : -1.5,
+        "maxX" : 1.5,
+        "xtitle" : "vtx p_{x} [GeV]",
+        "ytitle" : "Vertices"
+    },
+    "vtx_py_h" : {
+        "bins" : 100,
+        "minX" : -1.5,
+        "maxX" : 1.5,
+        "xtitle" : "vtx p_{y} [GeV]",
+        "ytitle" : "Vertices"
+    },
+    "vtx_pz_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 3.5,
+        "xtitle" : "vtx p_{z} [GeV]",
+        "ytitle" : "Vertices"
+    },
+    "vtx_p_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 3.5,
+        "xtitle" : "vtx p [GeV]",
+        "ytitle" : "Vertices"
+    },
     "tanlambda_vs_phi0_hh" : {
         "binsX"  : 100,
         "minX"   : -0.4,
@@ -164,5 +220,15 @@
         "maxY"   : 0.2,
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk tan(#lambda)"
+    },
+    "vtx_InvM_vtx_z_hh" : {
+        "binsX"  : 100,
+        "minX"   : 0.0,
+        "maxX"   : 0.2,
+        "binsY"  : 100,
+        "minY"   : -60,
+        "maxY"   : 60,
+        "xtitle" : "M_{vtx} [GeV]",
+        "ytitle" : "z_{vtx} [mm]"
     }
 }

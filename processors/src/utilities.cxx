@@ -53,7 +53,10 @@ Vertex* utils::buildVertex(EVENT::Vertex* lc_vertex) {
     return vertex;
 }
 
-Particle* utils::buildParticle(EVENT::ReconstructedParticle* lc_particle) 
+Particle* utils::buildParticle(EVENT::ReconstructedParticle* lc_particle,
+        EVENT::LCCollection* gbl_kink_data,
+        EVENT::LCCollection* track_data)
+
 { 
 
     if (!lc_particle) 
@@ -82,7 +85,8 @@ Particle* utils::buildParticle(EVENT::ReconstructedParticle* lc_particle)
     part->setPDG(lc_particle->getParticleIDUsed()->getPDG());
 
     // Set the Track for the HpsParticle
-    part->setTrack(utils::buildTrack(lc_particle->getTracks()[0], nullptr, nullptr));
+    if (lc_particle->getTracks().size()>0)
+      part->setTrack(utils::buildTrack(lc_particle->getTracks()[0], gbl_kink_data, track_data));
 
     // Set the Track for the HpsParticle
     if (lc_particle->getClusters().size() > 0)
@@ -127,6 +131,21 @@ CalCluster* utils::buildCalCluster(EVENT::Cluster* lc_cluster)
     return cluster;
 }
 
+bool utils::IsSameTrack(Track* trk1, Track* trk2) {
+    double tol = 1e-6;
+    if (fabs(trk1->getD0()        - trk2->getD0())        > tol ||
+            fabs(trk1->getPhi()       - trk2->getPhi())       > tol ||
+            fabs(trk1->getOmega()     - trk2->getOmega())     > tol ||
+            fabs(trk1->getTanLambda() - trk2->getTanLambda()) > tol ||
+            fabs(trk1->getZ0()        - trk2->getZ0())        > tol ||
+            fabs(trk1->getChi2Ndf()   - trk2->getChi2Ndf())   > tol 
+       ) 
+        return false;
+
+    return true;
+}
+
+
 Track* utils::buildTrack(EVENT::Track* lc_track,
         EVENT::LCCollection* gbl_kink_data,
         EVENT::LCCollection* track_data) {
@@ -142,6 +161,9 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
             lc_track->getTanLambda(), 
             lc_track->getZ0());
 
+    // Set the track id
+    track->setID(lc_track->id());
+
     // Set the track type
     track->setType(lc_track->getType()); 
 
@@ -150,7 +172,10 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 
     // Set the track ndf 
     track->setNdf(lc_track->getNdf());
-
+    
+    // Set the track covariance matrix
+    track->setCov(static_cast<std::vector<float> > (lc_track->getCovMatrix()));
+    
     // Set the position of the extrapolated track at the ECal face.  The
     // extrapolation uses the full 3D field map.
     const EVENT::TrackState* track_state 
@@ -176,21 +201,25 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 
         // The container of GBLKinkData objects should only contain a 
         // single object. If not, throw an exception
-        if (gbl_kink_data_list.size() != 1) { 
-            throw std::runtime_error("[ TrackingProcessor ]: The collection " 
-                    + std::string(Collections::TRACK_DATA_REL)
-                    + " has the wrong data structure."); 
-        }
+        if (gbl_kink_data_list.size() == 1) {
 
-        // Get the list GBLKinkData GenericObject associated with the LCIO Track
-        IMPL::LCGenericObjectImpl* gbl_kink_datum 
-            = static_cast<IMPL::LCGenericObjectImpl*>(gbl_kink_data_list.at(0));
+            /*
+               std::cout<<"[ Utilities ]: The collection " 
+               + std::string(Collections::KINK_DATA)
+               + " has the wrong data structure for this track"<<std::endl; 
+               */
 
-        // Set the lambda and phi kink values
-        for (int ikink = 0; ikink < gbl_kink_datum->getNDouble(); ++ikink) { 
-            track->setLambdaKink(ikink, gbl_kink_datum->getFloatVal(ikink));
-            track->setPhiKink(ikink, gbl_kink_datum->getDoubleVal(ikink));
-        }
+            // Get the list GBLKinkData GenericObject associated with the LCIO Track
+            IMPL::LCGenericObjectImpl* gbl_kink_datum 
+                = static_cast<IMPL::LCGenericObjectImpl*>(gbl_kink_data_list.at(0));
+
+            // Set the lambda and phi kink values
+            for (int ikink = 0; ikink < gbl_kink_datum->getNDouble(); ++ikink) { 
+                track->setLambdaKink(ikink, gbl_kink_datum->getFloatVal(ikink));
+                track->setPhiKink(ikink, gbl_kink_datum->getDoubleVal(ikink));
+            }
+
+        }//gbl_kink_data has right structure
 
     } // add gbl kink data
 
@@ -212,21 +241,25 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 
             // Check that the TrackData data structure is correct.  If it's
             // not, throw a runtime exception.   
-            if (track_datum->getNDouble() > 14 || track_datum->getNFloat() != 1 
-                    || track_datum->getNInt() != 1) {
+            if (track_datum->getNDouble() > 14 || track_datum->getNFloat() > 4 
+                || track_datum->getNInt() != 1) {
                 throw std::runtime_error("[ TrackingProcessor ]: The collection " 
-                        + std::string(Collections::TRACK_DATA)
-                        + " has the wrong structure.");
+                                         + std::string(Collections::TRACK_DATA)
+                                         + " has the wrong structure.");
             }
 
             // Set the SvtTrack isolation values
             for (int iso_index = 0; iso_index < track_datum->getNDouble(); ++iso_index) { 
                 track->setIsolation(iso_index, track_datum->getDoubleVal(iso_index));
             }
-
+	    
             // Set the SvtTrack time
             track->setTrackTime(track_datum->getFloatVal(0));
 
+	    // Set the Track momentum
+	    if (track_datum->getNFloat()==4)
+	      track->setMomentum(track_datum->getFloatVal(1),track_datum->getFloatVal(2),track_datum->getFloatVal(3));
+	    
             // Set the volume (top/bottom) in which the SvtTrack resides
             track->setTrackVolume(track_datum->getIntVal(0));
         }
@@ -291,8 +324,8 @@ RawSvtHit* utils::buildRawHit(EVENT::TrackerRawData* rawTracker_hit,
 
 }//build raw hit
 
-
-TrackerHit* utils::buildTrackerHit(IMPL::TrackerHitImpl* lc_tracker_hit) { 
+//type = 0 RotatedHelicalTrackHit type = 1 SiCluster
+TrackerHit* utils::buildTrackerHit(IMPL::TrackerHitImpl* lc_tracker_hit, bool rotate, int type) { 
 
     if (!lc_tracker_hit)
         return nullptr;
@@ -302,11 +335,11 @@ TrackerHit* utils::buildTrackerHit(IMPL::TrackerHitImpl* lc_tracker_hit) {
     // Get the position of the LCIO TrackerHit and set the position of 
     // the TrackerHit
     double hit_position[3] = { 
-        lc_tracker_hit->getPosition()[0], 
-        lc_tracker_hit->getPosition()[1], 
-        lc_tracker_hit->getPosition()[2]
+        lc_tracker_hit->getPosition()[0],  //lcio x
+        lc_tracker_hit->getPosition()[1],  //lcio y
+        lc_tracker_hit->getPosition()[2]   //lcio z
     };
-    tracker_hit->setPosition(hit_position, true);
+    tracker_hit->setPosition(hit_position, rotate, type);
 
     // Set the covariance matrix of the SvtHit
     tracker_hit->setCovarianceMatrix(lc_tracker_hit->getCovMatrix());
@@ -325,9 +358,10 @@ TrackerHit* utils::buildTrackerHit(IMPL::TrackerHitImpl* lc_tracker_hit) {
 
 }
 
+//type 0 rotatedHelicalHit  type 1 SiClusterHit
 bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit, 
-        IMPL::TrackerHitImpl* lc_tracker_hit,
-        EVENT::LCCollection* raw_svt_fits, std::vector<RawSvtHit*>* rawHits) {
+                              IMPL::TrackerHitImpl* lc_tracker_hit,
+                              EVENT::LCCollection* raw_svt_fits, std::vector<RawSvtHit*>* rawHits,int type) {
 
     if (!tracker_hit || !lc_tracker_hit)
         return false;
@@ -335,7 +369,7 @@ bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit,
     float rawcharge = 0;
     //0 top 1 bottom
     int volume = -1;
-    //1-6
+    //1-6(7) for rotated  0-13 for SiCluster
     int layer = -1;
 
     //Get the Raw content of the tracker hits
@@ -348,6 +382,8 @@ bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit,
         rawcharge += rawHit->getAmp();
         int currentHitVolume = rawHit->getModule() % 2 ? 1 : 0;
         int currentHitLayer  = (rawHit->getLayer() - 1 ) / 2;
+        if (type == 1) 
+            currentHitLayer = rawHit->getLayer() - 1;
         if (volume == -1 )
             volume = currentHitVolume;
         else {
@@ -402,3 +438,30 @@ bool utils::isUsedByTrack(TrackerHit* tracker_hit,
     }
     return false;
 }
+
+
+bool utils::getParticlesFromVertex(Vertex* vtx, Particle* ele, Particle* pos) {
+
+    for (int ipart = 0; ipart < vtx->getParticles()->GetEntries(); ++ipart) {
+        int pdg_id = ((Particle*)vtx->getParticles()->At(ipart))->getPDG();
+        if (pdg_id == 11) {
+            ele = (Particle*)vtx->getParticles()->At(ipart);
+        }
+        else if (pdg_id == -11) {
+            pos = (Particle*)vtx->getParticles()->At(ipart);
+        }
+
+        else {
+            std::cout<<"Utilities::Wrong particle ID "<< pdg_id <<"associated to vertex. Skip."<<std::endl;
+            return false;
+        }
+    }
+
+    if (!ele || !pos) {
+        std::cout<<"Utilities::Vertex formed without ele/pos. Skip."<<std::endl;
+        return false;
+    }
+
+    return true;
+}
+
