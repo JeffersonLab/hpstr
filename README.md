@@ -118,6 +118,7 @@ cmake3 -DCMAKE_INSTALL_PREFIX=../install/ -DLCIO_DIR=$LCIO_DIR  ../src/hpstr/
 make -j4 install
 ```
 
+NOTE:: On SLAC machines ```cmake3``` is needed to call cmake version 3+, you might just need to call ```cmake``` to call the right version on your machine. 
 To compile with debug information, just add -DCMAKE_BUILD_TYPE=Debug to the cmake3 command. 
 To compile with Python3, just add -DPYTHON3=true to the cmake3 command.
 
