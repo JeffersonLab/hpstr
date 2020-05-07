@@ -60,6 +60,31 @@ mkdir sw
 cd sw
 ```
 
+9. Install LCIO 
+
+```bash
+mkdir LCIO
+cd LCIO
+mkdir src build install
+cd src
+git clone https://github.com/iLCSoft/LCIO.git
+git checkout -b v02-12-01 tags/v02-12-01
+cd ../../build
+cmake -DCMAKE_INSTALL_PREFIX=../install/ ../src/LCIO/
+make install
+```
+I suggest to make a script file to export this in the path which include (again I'll assume we are working in ~/sw, otherwise modify accordingly):
+
+```bash
+export LCIO_DIR=~/sw/LCIO/install
+export LCIO_INCLUDE_DIRS=~/sw/LCIO/install/include
+export IO_LCIO_LIBRARY=~/sw/LCIO/install/lib/liblcio.so
+export LD_LIBRARY_PATH=$LCIO_DIR/lib:$LD_LIBRARY_PATH
+
+export PATH=$LCIO_DIR/bin:$PATH
+```
+
+
 ## Checkout
 
 ```bash
