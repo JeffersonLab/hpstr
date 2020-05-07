@@ -118,7 +118,10 @@ cmake3 -DCMAKE_INSTALL_PREFIX=../install/ -DLCIO_DIR=$LCIO_DIR  ../src/hpstr/
 make -j4 install
 ```
 
-To compile with debug information, just add -DCMAKE_BUILD_TYPE=Debug to the cmake3 command. After compilation it is necessary to source the setup script in the ```intall/bin``` directory by
+To compile with debug information, just add -DCMAKE_BUILD_TYPE=Debug to the cmake3 command. 
+To compile with Python3, just add -DPYTHON3=true to the cmake3 command.
+
+After compilation it is necessary to source the setup script in the ```intall/bin``` directory by
 
 ```bash
 source install/bin/setup.sh 
