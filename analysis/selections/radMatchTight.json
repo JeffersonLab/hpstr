@@ -7,16 +7,22 @@
     "pSum_gt"  : {
         "cut"  : 2.0,
         "id"   : 1,
-        "info" : "P_{e^{-}} + P_{e^{+}} > 2.0 GeV"
+        "info" : "P_{e^{-}} +  P_{e^{+}} > 2.0 GeV"
     },
     "L1Requirement_eq" : {
         "cut"  : 1,
         "id"   : 2,
         "info" : "L1L1"
     },
-    "nVtxs_eq" : {
+    "isRadEle_eq" : {
         "cut"  : 1,
         "id"   : 3,
+        "info" : "isRadEle"
+    },
+
+    "nVtxs_eq" : {
+        "cut"  : 1,
+        "id"   : 4,
         "info" : "N_{vtx}=1"
     }
 

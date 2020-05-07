@@ -69,7 +69,7 @@ track.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
 track.parameters["trkRelCollLcio"] = 'TrackDataRelations'
 track.parameters["trkhitCollRoot"] = 'RotatedHelicalOnTrackHits'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
-track.parameters["rawhitCollRoot"] = ''#'SVTRawHitsOnTrack'
+track.parameters["rawhitCollRoot"] = '' #'SVTRawHitsOnTrack'
 track.parameters["bfield"]         = bfield[str(options.year)]
 
 #ECalData
@@ -114,7 +114,8 @@ if options.isData == 1:
     #p.sequence = [header, track, rawsvt, svthits, ecal, fsp, vtx, c_vtx]
     p.sequence = [header, track, ecal, fsp, vtx, c_vtx]
 else: 
-    p.sequence = [header, track, rawsvt, svthits, ecal, fsp, vtx, c_vtx, mcpart]
+    p.sequence = [header, track, ecal, fsp, vtx, c_vtx, mcpart]
+    #p.sequence = [header, track, rawsvt, svthits, ecal, fsp, vtx, c_vtx, mcpart]
 
 p.input_files=[lcio_file]
 p.output_files = [root_file]
