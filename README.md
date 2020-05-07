@@ -21,8 +21,44 @@ So a full working installation of those packages is necessary before trying to c
 
 Here is given the full set of instructions on how to install hpstr on Ubuntu 20.4 LTS which is running inside a virtual machine. This tutorial gives a working solution for an user that doesn't have an operating system compatible with the hpstr installation to start with. 
 
-#### Install Virtual Box
+#### Install Virtual Box and setup Ubuntu 20.4
 
+1. Download VirtualBox, latest version 6.1.6 https://www.virtualbox.org/
+2. Download ubuntu 20.4 LST image. In this tutorial desktop version was used (about 2.5 GB)
+3. Create a virtual machine using the ubuntu image that has been downloaded. This is a pretty straightforward step, if you aren't familiar with virtual box just follow: https://www.wikihow.com/Install-Ubuntu-on-VirtualBox. I selected 2GB RAM, 10GB HD dynamically allocated. When the ubuntu installation setup pops up select "normal installation"
+4. After successful start of the Ubuntu VM, install the developer tools:
+
+```bash
+sudo apt install build-essential
+sudo apt install cmake
+sudo apt install git
+```
+5. Enable the copy paste from guest<->host by selecting
+(a) Devices-> Shared Clipboard -> Bidirectional
+(b) Devices-> Insert Guest Additions CD images -> then install it
+(c) Restart the Virtual machine
+More infos here: https://stackoverflow.com/questions/22885658/copy-paste-from-mac-to-virtual-box
+
+6. Install X11 dependencies that are needed to install ROOT
+
+```bash
+sudo apt-get install libx11-dev
+sudo apt-get install libxpm-dev
+sudo apt-get install libxft-dev
+sudo apt-get install libxext-dev
+```
+7. Help CMake finding python  (this is for Python3, use python-dev for 2.7)
+```bash
+sudo apt-get install python3-dev
+```
+
+8. Prepare an installation work directory:
+
+```bash
+cd ~
+mkdir sw
+cd sw
+```
 
 ## Checkout
 
