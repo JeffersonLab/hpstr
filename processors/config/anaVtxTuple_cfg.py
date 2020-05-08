@@ -34,12 +34,12 @@ vtxana = HpstrConf.Processor('vtxana', 'VertexAnaProcessor')
 vtxana.parameters["debug"] = 1
 vtxana.parameters["anaName"] = "vtxana"
 vtxana.parameters["trkColl"] = "GBLTracks"
-vtxana.parameters["hitColl"]  = "RotatedHelicalTrackHits"
+vtxana.parameters["hitColl"] = "RotatedHelicalOnTrackHits"
 vtxana.parameters["vtxColl"] = "UnconstrainedV0Vertices"
 vtxana.parameters["mcColl"]  = "MCParticle"
 vtxana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/vertexSelection.json'
 vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
-vtxana.parameters["beamE"] = 2.3
+vtxana.parameters["beamE"] = baseConfig.beamE[str(options.year)]
 vtxana.parameters["isData"] = options.isData
 CalTimeOffset=-999
 
