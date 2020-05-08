@@ -339,7 +339,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
     for (auto region : _regions ) {
 
         int nGoodVtx = 0;
-        Vertex* goodVtx;
+        Vertex* goodVtx = nullptr;
 
         for ( auto vtx : selected_vtxs) {
 
@@ -552,14 +552,15 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         //N selected vertices - this is quite a silly cut to make at the end. But okay. that's how we decided atm.
         if (!_reg_vtx_selectors[region]->passCutEq("nVtxs_eq", nGoodVtx, weight))
             continue;
-
+        
         Vertex* vtx = goodVtx;
 
         Particle* ele = nullptr;
         Particle* pos = nullptr;
 
-        _ah->GetParticlesFromVtx(vtx,ele,pos);
-
+        if (!vtx || !_ah->GetParticlesFromVtx(vtx,ele,pos))
+            continue;
+        
         CalCluster eleClus = ele->getCluster();
         CalCluster posClus = pos->getCluster();
 
