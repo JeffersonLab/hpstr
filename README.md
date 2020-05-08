@@ -158,12 +158,19 @@ Hpstr can both run on LCIO files to produce ROOT ntuples, producing the hpstr ev
 
 ### Ntuples production
 
-The configuration to produce ntuples from LCIO files is ```recoTuple_cfg.py```. Typical usage is:
+The configuration to produce the nominal ntuples from LCIO files is ```recoTuple_cfg.py```. Typical usage is:
 ```bash
 hpstr recoTuple_cfg.py -i <inLcioFile> -o <outROOTFile> -t <1=isData|0=isMC> -y <2016|2019>
 ```
 
 where the ```-t ``` flag is used to distinguish between data and MC and ```-y``` to distinguish between 2016 and 2019. 
+There are alternative configurations that produce different ntuples and the main are listed here:
+
+#### Kalman / GBL vertex performance comparison ntuples
+
+```bash
+hpstr  kalTuple_cfg.py -i <inLcioFile> -o <outROOTFile> -t <1=isData|0=isMC> -y <2016|2019> 
+```
 
 ### Making Plots
 
@@ -173,6 +180,14 @@ A working example on how to make some plots out of hpstr ntuple is
 hpstr anaVtxTuple_cfg.py -i /nfs/slac/g/hps3/users/bravo/data/physrun2016/7800/hps_007800.123_v0_4.2_4.4-SNAPSHOT_rereco.root -o hps_007800.123.root -t 1 
 ```
 This example will run the standard vertex selection on a data file (to specify that this file is data one has to use the ```-t``` flag and passing 0 will tell hpstr that we are processing MonteCarlo. Plots will be produced according to the selections specified. 
+
+#### Special plotting configurations
+
+Comparison plots between Kalman and GBL tracks can be made via the following command 
+```bash
+hpstr  anaKalVtxTuple_cfg.py -i <inLcioFile> -o <outROOTFile> -t <1=isData|0=isMC> -y <2016|2019> -w <"GBL"|"KF">
+```
+the switch -w is to select the two different track reconstruction types and it's only available for this particular configuration. 
 
 ### Bump Hunt Analysis
 
