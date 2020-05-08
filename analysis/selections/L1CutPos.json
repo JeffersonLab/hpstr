@@ -1,0 +1,7 @@
+{
+    "L1PosReq_eq" : {
+	"cut" : 1,
+	"id"  : 0,
+	"info" : "pos has innermost hit"
+    }
+}

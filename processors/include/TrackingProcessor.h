@@ -38,6 +38,9 @@
 #include "TrackerHit.h"
 #include "Event.h"
 #include "RawSvtHit.h"
+#include "TrackHistos.h"
+
+
 
 // Forward declarations
 class TTree; 
@@ -104,9 +107,17 @@ class TrackingProcessor : public Processor {
         std::vector<Track*> truthTracks_{};
         std::string truthTracksCollRoot_{""};
         std::string truthTracksCollLcio_{""};
-
+        
         //Debug Level
         int debug_{false};
+        
+        //do Residuals
+        int doResiduals_{0};
+        std::string trackResDataLcio_{""};
+        TrackHistos* trkResHistos_{nullptr};
+        std::string resCfgFilename_{""};
+        std::string resoutname_{""};
+        
         
         //Bfield
         double bfield_{0.52};

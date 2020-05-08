@@ -6,6 +6,27 @@
         "xtitle" : "N_{tracks}",
         "ytitle" : "Events"
     },
+    "ele_nHits_2d_h" : {
+        "bins"  : 15,
+        "minX"  : 0,
+        "maxX"  : 15,
+        "xtitle" : "N_{2Dhits}",
+        "ytitle" : "Tracks"
+    },
+    "ele_invpT_h" : {
+        "bins" : 100,
+        "minX" : -2.5,
+        "maxX" : 2.5,
+        "xtitle" : "q/pT [GeV^{-1}]",
+        "ytitle" : "Tracks"
+    },
+    "ele_pT_h" : {
+        "bins" : 100,
+        "minX" : -5,
+        "maxX" : 5,
+        "xtitle" : "q*pT [GeV^{-1}]",
+        "ytitle" : "Tracks"
+    },
     "ele_strategy_h" : {
         "bins" : 6,
         "minX" : -0.5,
@@ -53,7 +74,7 @@
     "ele_Omega_h" : {
         "bins" : 100,
         "minX" : -0.001,
-        "maxX" : 0.001,
+        "maxX" : 0.003,
         "xtitle" : "#omega",
         "ytitle" : "Tracks"
     },
@@ -73,27 +94,72 @@
     },
     "ele_time_h" : {
         "bins" : 200,
-        "minX" : -10,
-        "maxX" : 10,
+        "minX" : -30,
+        "maxX" : 30,
         "xtitle" : "track time [ns]",
         "ytitle" : "Tracks"
     },
     "ele_chi2_h" : {
         "bins" : 200,
         "minX" : 0,
-        "maxX" : 20,
+        "maxX" : 100,
         "xtitle" : "track #chi^{2}",
         "ytitle" : "Tracks"
     },
-    
-    "ele_p_h" : {
+    "ele_chi2ndf_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 20,
+        "xtitle" : "track #chi^{2} / ndf",
+        "ytitle" : "Tracks"
+    },
+    "ele_clusE_h" : {
         "bins" : 100,
         "minX" : 0,
-        "maxX" : 4.5,
+        "maxX" : 5,
         "xtitle" : "p_{e^{-}} [GeV]",
         "ytitle" : "Tracks"
     },
-    
+    "ele_p_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 5,
+        "xtitle" : "p_{e^{-}} [GeV]",
+        "ytitle" : "Tracks"
+    },
+    "ele_dEdX_h" : {
+        "bins"  : 200,
+        "minX"  : 0,
+        "maxX"  : 0.14e-3,
+        "xtitle" : "prop to dEdX",
+        "ytitle" : "Tracks"
+    },
+
+    "ele_dEdx_vs_p_hh" : {
+        "binsX"  : 200,
+        "minX"   : 0,
+        "maxX"   : 2,
+        "binsY"  : 200,
+        "minY"   : 0,
+        "maxY"   : 0.14e-3,
+        "xtitle" : "track p [GeV]",
+        "ytitle" : "prop to dEdX"
+    },
+   
+    "mcMass622_h" : {
+        "bins" : 500,
+        "minX" : 0,
+        "maxX" : 0.5,
+        "xtitle" : "MC m_{pdg=622} [GeV]",
+        "ytitle" : "Vertices"
+    },
+    "mcZ622_h" : {
+        "bins" : 200,
+        "minX" : -50.3,
+        "maxX" : 149.7,
+        "xtitle" : "MC z_{pdg=622} [mm]",
+        "ytitle" : "Vertices / 1 mm"
+    },
     "ele_tanlambda_vs_phi0_hh" : {
         "binsX"  : 100,
         "minX"   : -0.4,
@@ -104,11 +170,11 @@
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk tan(#lambda)"
     },
-    
+
     "ele_d0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
-        "maxX"   : 4.5,
+        "maxX"   : 5,
         "binsY"  : 200,
         "minY"   : -10,
         "maxY"   : 10,
@@ -126,7 +192,7 @@
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk d0 [mm]"
     },
-    
+
     "ele_d0_vs_tanlambda_hh" : {
         "binsX"  : 200,
         "minX"   : -0.2,
@@ -137,11 +203,11 @@
         "xtitle" : "trk(#lamdba)",
         "ytitle" : "trk d0 [mm]"
     },
-    
+
     "ele_z0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
-        "maxX"   : 4.5,
+        "maxX"   : 5,
         "binsY"  : 200,
         "minY"   : -5,
         "maxY"   : 5,
@@ -159,7 +225,7 @@
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk z0 [mm]"
     },
-    
+
     "ele_z0_vs_tanlambda_hh" : {
         "binsX"  : 200,
         "minX"   : -0.2,
@@ -171,6 +237,28 @@
         "ytitle" : "trk z0 [mm]"
     },
     
+
+    "pos_nHits_2d_h" : {
+        "bins"  : 15,
+        "minX"  : 0,
+        "maxX"  : 15,
+        "xtitle" : "N_{2Dhits}",
+        "ytitle" : "Tracks"
+    },
+    "pos_invpT_h" : {
+        "bins" : 100,
+        "minX" : -2.5,
+        "maxX" : 2.5,
+        "xtitle" : "q/pT [GeV^{-1}]",
+        "ytitle" : "Tracks"
+    },
+    "pos_pT_h" : {
+        "bins" : 100,
+        "minX" : -5,
+        "maxX" : 5,
+        "xtitle" : "q*pT [GeV^{-1}]",
+        "ytitle" : "Tracks"
+    },
     "pos_strategy_h" : {
         "bins" : 6,
         "minX" : -0.5,
@@ -217,7 +305,7 @@
     },
     "pos_Omega_h" : {
         "bins" : 100,
-        "minX" : -0.001,
+        "minX" : -0.003,
         "maxX" : 0.001,
         "xtitle" : "#omega",
         "ytitle" : "Tracks"
@@ -238,27 +326,58 @@
     },
     "pos_time_h" : {
         "bins" : 200,
-        "minX" : -10,
-        "maxX" : 10,
+        "minX" : -30,
+        "maxX" : 30,
         "xtitle" : "track time [ns]",
         "ytitle" : "Tracks"
     },
     "pos_chi2_h" : {
         "bins" : 200,
         "minX" : 0,
-        "maxX" : 20,
+        "maxX" : 100,
         "xtitle" : "track #chi^{2}",
         "ytitle" : "Tracks"
     },
-    
-    "pos_p_h" : {
+    "pos_chi2ndf_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 20,
+        "xtitle" : "track #chi^{2} / ndf",
+        "ytitle" : "Tracks"
+    },
+    "pos_clusE_h" : {
         "bins" : 100,
         "minX" : 0,
-        "maxX" : 4.5,
+        "maxX" : 5,
         "xtitle" : "p_{e^{+}} [GeV]",
         "ytitle" : "Tracks"
     },
+    "pos_p_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 5,
+        "xtitle" : "p_{e^{+}} [GeV]",
+        "ytitle" : "Tracks"
+    },
+    "pos_dEdX_h" : {
+        "bins"  : 200,
+        "minX"  : 0,
+        "maxX"  : 0.14e-3,
+        "xtitle" : "prop to dEdX",
+        "ytitle" : "Tracks"
+    },
 
+    "pos_dEdx_vs_p_hh" : {
+        "binsX"  : 200,
+        "minX"   : 0,
+        "maxX"   : 2,
+        "binsY"  : 200,
+        "minY"   : 0,
+        "maxY"   : 0.14e-3,
+        "xtitle" : "track p [GeV]",
+        "ytitle" : "prop to dEdX"
+    },
+    
     "pos_tanlambda_vs_phi0_hh" : {
         "binsX"  : 100,
         "minX"   : -0.4,
@@ -269,11 +388,11 @@
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk tan(#lambda)"
     },
-    
+
     "pos_d0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
-        "maxX"   : 4.5,
+        "maxX"   : 5,
         "binsY"  : 200,
         "minY"   : -10,
         "maxY"   : 10,
@@ -291,7 +410,7 @@
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk d0 [mm]"
     },
-    
+
     "pos_d0_vs_tanlambda_hh" : {
         "binsX"  : 200,
         "minX"   : -0.2,
@@ -302,11 +421,11 @@
         "xtitle" : "trk(#lamdba)",
         "ytitle" : "trk d0 [mm]"
     },
-    
+
     "pos_z0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
-        "maxX"   : 4.5,
+        "maxX"   : 5,
         "binsY"  : 200,
         "minY"   : -5,
         "maxY"   : 5,
@@ -324,7 +443,7 @@
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk z0 [mm]"
     },
-    
+
     "pos_z0_vs_tanlambda_hh" : {
         "binsX"  : 200,
         "minX"   : -0.2,
@@ -335,7 +454,21 @@
         "xtitle" : "trk(#lamdba)",
         "ytitle" : "trk z0 [mm]"
     },
-        
+    "ep_InvMass_h" : {
+        "bins" : 400,
+        "minX" : 0,
+        "maxX" : 1.0,
+        "xtitle" : "vtx Mass [GeV]",
+        "ytitle" : "Vertices"
+    },
+
+    "kk_InvMass_h" : {
+        "bins" : 400,
+        "minX" : 0.8,
+        "maxX" : 1.2,
+        "xtitle" : "vtx Mass [GeV]",
+        "ytitle" : "Vertices"
+    },
     "n_vertices_h" : {
         "bins"   : 6,
         "minX"   : -0.5,
@@ -372,7 +505,7 @@
         "ytitle" : "Vertices"
     },
     "vtx_X_svt_h" : {
-        "bins" : 200,
+        "bins" : 400,
         "minX" : -5,
         "maxX" : 5,
         "xtitle" : "vtx x pos [mm]",
@@ -386,13 +519,13 @@
         "ytitle" : "Vertices"
     },
     "vtx_Z_svt_h" : {
-        "bins" : 200,
+        "bins" : 400,
         "minX" : -50,
         "maxX" : 50,
         "xtitle" : "vtx Z pos [mm]",
         "ytitle" : "Vertices"
     },
-     "vtx_sigma_X_h" : {
+    "vtx_sigma_X_h" : {
         "bins" : 100,
         "minX" : 0,
         "maxX" : 5,
@@ -414,11 +547,11 @@
         "ytitle" : "Vertices"
     },
     "vtx_InvM_h" : {
-        "bins" : 100,
+        "bins" : 500,
         "minX" : 0,
-        "maxX" : 0.2,
+        "maxX" : 0.5,
         "xtitle" : "vtx Mass [GeV]",
-        "ytitle" : "Vertices"
+        "ytitle" : "Vertices / 1 MeV"
     },
     "vtx_InvMErr_Z_h" : {
         "bins" : 100,
@@ -451,14 +584,14 @@
     "vtx_p_h" : {
         "bins" : 100,
         "minX" : 0,
-        "maxX" : 4.5,
+        "maxX" : 5,
         "xtitle" : "vtx p [GeV]",
         "ytitle" : "Vertices"
     },
     "vtx_InvM_vtx_z_hh" : {
-        "binsX"  : 160,
+        "binsX"  : 500,
         "minX"   : 0.0,
-        "maxX"   : 0.2,
+        "maxX"   : 0.5,
         "binsY"  : 400,
         "minY"   : -100,
         "maxY"   : 100,
@@ -468,7 +601,7 @@
     "vtx_p_svt_z_hh" : {
         "binsX"  : 200,
         "minX"   : 0.0,
-        "maxX"   : 4.5,
+        "maxX"   : 5,
         "binsY"  : 400,
         "minY"   : -100,
         "maxY"   : 100,
@@ -478,7 +611,7 @@
     "vtx_p_svt_x_hh" : {
         "binsX"  : 200,
         "minX"   : 0.0,
-        "maxX"   : 4.5,
+        "maxX"   : 5,
         "binsY"  : 400,
         "minY"   : -100,
         "maxY"   : 100,
@@ -488,7 +621,7 @@
     "vtx_p_svt_y_hh" : {
         "binsX"  : 200,
         "minX"   : 0.0,
-        "maxX"   : 4.5,
+        "maxX"   : 5,
         "binsY"  : 400,
         "minY"   : -100,
         "maxY"   : 100,
@@ -496,9 +629,9 @@
         "ytitle" : "z_{vtx} [mm]"
     },
     "vtx_InvM_vtx_svt_z_hh" : {
-        "binsX"  : 160,
+        "binsX"  : 500,
         "minX"   : 0.0,
-        "maxX"   : 0.4,
+        "maxX"   : 0.5,
         "binsY"  : 400,
         "minY"   : -100,
         "maxY"   : 100,
@@ -508,7 +641,7 @@
     "vtx_p_sigmaZ_hh" : {
         "binsX"  : 200,
         "minX"   : 0.0,
-        "maxX"   : 4.5,
+        "maxX"   : 5,
         "binsY"  : 100,
         "minY"   : 0,
         "maxY"   : 10,
@@ -518,7 +651,7 @@
     "vtx_p_sigmaX_hh" : {
         "binsX"  : 200,
         "minX"   : 0.0,
-        "maxX"   : 4.5,
+        "maxX"   : 5,
         "binsY"  : 100,
         "minY"   : 0,
         "maxY"   : 10,
@@ -528,7 +661,7 @@
     "vtx_p_sigmaY_hh" : {
         "binsX"  : 200,
         "minX"   : 0.0,
-        "maxX"   : 4.5,
+        "maxX"   : 5,
         "binsY"  : 100,
         "minY"   : 0,
         "maxY"   : 10,
@@ -536,16 +669,16 @@
         "ytitle" : "#sigmay_{vtx} [mm]"
     },
     "Esum_h" : {
-        "bins" : 100,
+        "bins" : 200,
         "minX" : 0,
-        "maxX" : 3,
+        "maxX" : 5,
         "xtitle" : "E_{e^{-}} + E_{e^{+}} [GeV]",
         "ytitle" : "events"
     },
     "Psum_h" : {
-        "bins" :  100,
+        "bins" :  200,
         "minX" :  0,
-        "maxX" :  3,
+        "maxX" :  5,
         "xtitle" : "p_{e^{-}} + p_{e^{+}} [GeV]",
         "ytitle" : "events"
     },
@@ -555,40 +688,40 @@
         "maxX" : 1,
         "xtitle" : "(pT_{e^{-}} - pT_{e^{+}}) / (pT_{e^{-}} + pT_{e^{+}})}",
         "ytitle" : "events"
-    },
-    "thetax_v0_h" : {
-        "bins" : 100,
-        "minX" : -0.5,
-        "maxX" : 0.5,
-        "xtitle" : "#theta_{vtx}",
-        "ytitle" : "events"
-    },
-    "thetax_pos_h" : {
-        "bins" : 100,
-        "minX" : -0.5,
-        "maxX" : 0.5,
-        "xtitle" : "#thetaX_{e^{+}}",
-        "ytitle" : "events"
-    },
-    "thetay_pos_h" : {
-        "bins" : 100,
-        "minX" : -0.5,
-        "maxX" : 0.5,
-        "xtitle" : "#thetaY_{e^{+}}",
-        "ytitle" : "events"
-    },
-    "thetay_miss_h" : {
-        "bins" : 100,
-        "minX" : -0.5,
-        "maxX" : 0.5,
-        "xtitle" : "#theta_{miss}",
-        "ytitle" : "events"
-    },    
-    "thetay_diff_h" : {
-        "bins" : 100,
-        "minX" : -0.5,
-        "maxX" : 0.5,
-        "xtitle" : "#Delta#theta(miss,e^{+})",
-        "ytitle" : "events"
-    }
+},
+"thetax_v0_h" : {
+    "bins" : 100,
+    "minX" : -0.5,
+    "maxX" : 0.5,
+    "xtitle" : "#theta_{vtx}",
+    "ytitle" : "events"
+},
+"thetax_pos_h" : {
+    "bins" : 100,
+    "minX" : -0.5,
+    "maxX" : 0.5,
+    "xtitle" : "#thetaX_{e^{+}}",
+    "ytitle" : "events"
+},
+"thetay_pos_h" : {
+    "bins" : 100,
+    "minX" : -0.5,
+    "maxX" : 0.5,
+    "xtitle" : "#thetaY_{e^{+}}",
+    "ytitle" : "events"
+},
+"thetay_miss_h" : {
+    "bins" : 100,
+    "minX" : -0.5,
+    "maxX" : 0.5,
+    "xtitle" : "#theta_{miss}",
+    "ytitle" : "events"
+},    
+"thetay_diff_h" : {
+    "bins" : 100,
+    "minX" : -0.5,
+    "maxX" : 0.5,
+    "xtitle" : "#Delta#theta(miss,e^{+})",
+    "ytitle" : "events"
+}
 }

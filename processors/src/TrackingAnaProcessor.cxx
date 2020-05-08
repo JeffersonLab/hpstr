@@ -14,11 +14,12 @@ void TrackingAnaProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring TrackingAnaProcessor" << std::endl;
     try
     {
-        debug_           = parameters.getInteger("debug");
-        trkCollName_     = parameters.getString("trkCollName");
-        histCfgFilename_ = parameters.getString("histCfg");
-        doTruth_         = (bool) parameters.getInteger("doTruth");
-        truthHistCfgFilename_ = parameters.getString("truthHistCfg");
+        debug_                = parameters.getInteger("debug",debug_);
+        trkCollName_          = parameters.getString("trkCollName",trkCollName_);
+        histCfgFilename_      = parameters.getString("histCfg",histCfgFilename_);
+        doTruth_              = (bool) parameters.getInteger("doTruth",doTruth_);
+        truthHistCfgFilename_ = parameters.getString("truthHistCfg",truthHistCfgFilename_);
+        selectionCfg_         = parameters.getString("selectionjson",selectionCfg_); 
     }
     catch (std::runtime_error& error)
     {
@@ -37,6 +38,11 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
     // Init tree
     tree->SetBranchAddress(trkCollName_.c_str(), &tracks_, &btracks_);
     
+    if (!selectionCfg_.empty()) {
+        trkSelector_ = std::make_shared<BaseSelector>(name_+"_trkSelector",selectionCfg_);
+        trkSelector_->setDebug(debug_);
+        trkSelector_->LoadSelection();
+    }
     
     if (doTruth_) {
         truthHistos_ = new TrackHistos(trkCollName_+"_truthComparison");
@@ -53,17 +59,23 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
 
 bool TrackingAnaProcessor::process(IEvent* ievent) {
 
+    double weight = 1.;
     // Loop over all the LCIO Tracks and add them to the HPS event.
+    int n_sel_tracks = 0;
     for (int itrack = 0; itrack < tracks_->size(); ++itrack) {
-
+        
+        if (trkSelector_) trkSelector_->getCutFlowHisto()->Fill(0.,weight);
+        
         // Get a track
         Track* track = tracks_->at(itrack);
-
-        //Select Kalman Tracks with at least 10 hits
-        if (track->isKalmanTrack()) {
-            if (track->getTrackerHitCount() < 10 )
-                continue;
-        }
+        int n2dhits_onTrack = !track->isKalmanTrack() ? track->getTrackerHitCount() * 2 : track->getTrackerHitCount();
+        
+        //Track Selection
+        if (trkSelector_ && !trkSelector_->passCutGt("n_hits_gt",n2dhits_onTrack,weight))
+            continue;
+        
+        if (trkSelector_ && !trkSelector_->passCutGt("pt_gt",fabs(track->getPt()),weight))
+            continue;
 
         Track* truth_track = nullptr;
 
@@ -91,9 +103,11 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
             truthHistos_->Fill1DTrackTruth(track, truth_track);
         }
         
+        n_sel_tracks++;
     }//Loop on tracks
 
-    trkHistos_->Fill1DHisto("n_tracks_h",tracks_->size());
+    trkHistos_->Fill1DHisto("n_tracks_h",n_sel_tracks);
+    
 
     return true;
 }
@@ -103,6 +117,8 @@ void TrackingAnaProcessor::finalize() {
     trkHistos_->saveHistos(outF_,trkCollName_);
     delete trkHistos_;
     trkHistos_ = nullptr;
+    if (trkSelector_)
+        trkSelector_->getCutFlowHisto()->Write();
 
     if (truthHistos_) {
         truthHistos_->saveHistos(outF_,trkCollName_+"_truth");

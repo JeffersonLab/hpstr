@@ -20,11 +20,38 @@ void TrackerHit::Clear(Option_t* /* options */) {
     TObject::Clear(); 
 }
 
-void TrackerHit::setPosition(const double* position, bool rotate) {
-
+void TrackerHit::setPosition(const double* position, bool rotate, int type) {
+    
     //svt angle: it's already with minus sign.
     float svtAngle = 30.5e-3;
     //Rotate the the input position automatically to match with the SVT tracker system
+    
+    //Rotated Helical Track Hit
+    if (type == 0) {
+        x_ = position[1];
+        y_ = position[2];
+        z_ = position[0];
+    }
+    else if (type==1) {
+        x_ = position[0];
+        y_ = position[1];
+        z_ = position[2];
+    }
+    else {
+        std::cout<<"ERROR::TrackerHit SetPosition"<<std::endl;
+    }
+    
+    if (rotate) {
+        
+        double tmpx = x_;
+        double tmpz = z_;
+        
+        x_ = tmpx*cos(svtAngle) - tmpz*sin(svtAngle);
+        z_ = tmpx*sin(svtAngle) + tmpz*cos(svtAngle);
+    }
+        
+    
+    /*
     if (rotate)
       {
       //x_ = position[1];
@@ -37,6 +64,7 @@ void TrackerHit::setPosition(const double* position, bool rotate) {
         y_ = position[2];
         z_ = position[0];
     }
+    */
 }
 
 void TrackerHit::setCovarianceMatrix(const std::vector<float> covariance_matrix) {

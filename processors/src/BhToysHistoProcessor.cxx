@@ -20,6 +20,7 @@ void BhToysHistoProcessor::configure(const ParameterSet& parameters) {
         mass_hypo_           = parameters.getDouble("mass_hypo");
         win_factor_          = parameters.getInteger("win_factor");
         poly_order_          = parameters.getInteger("poly_order");
+        toy_poly_order_      = parameters.getInteger("toy_poly_order");
         seed_                = parameters.getInteger("seed");
         nToys_               = parameters.getInteger("nToys");
         toy_sig_samples_     = parameters.getInteger("toy_sig_samples");
@@ -67,9 +68,12 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
                 break;
         default: bkg_fit_model = FitFunction::BkgModel::EXP_CHEBYSHEV;
     }
+
+    // If the toy fit order is -1, it is undefined.
+    if(toy_poly_order_ == -1) { toy_poly_order_ = poly_order_ + 2; }
     
     // Init bump hunter manager
-    bump_hunter_ = new BumpHunter(bkg_fit_model, poly_order_, win_factor_, res_scale_, asymptotic_limit_);
+    bump_hunter_ = new BumpHunter(bkg_fit_model, poly_order_, toy_poly_order_, win_factor_, res_scale_, asymptotic_limit_);
     bump_hunter_->setBounds(mass_spec_h->GetXaxis()->GetBinUpEdge(mass_spec_h->FindFirstBinAbove()),
             mass_spec_h->GetXaxis()->GetBinLowEdge(mass_spec_h->FindLastBinAbove()));
     if(debug_ > 0) bump_hunter_->enableDebug();

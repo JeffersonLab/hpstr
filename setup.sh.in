@@ -4,7 +4,7 @@
 export HPSTR_BASE=@PROJECT_SOURCE_DIR@
 
 # Set python path.
-export PYTHONPATH=@CMAKE_INSTALL_PREFIX@/lib/python:@CMAKE_INSTALL_PREFIX@/lib/python/pyplot:$PYTHONPATH
+export PYTHONPATH=@CMAKE_INSTALL_PREFIX@/lib/python:@CMAKE_INSTALL_PREFIX@/lib/python/plotUtils:$PYTHONPATH
 
 # Set system path.
 export PATH=@CMAKE_INSTALL_PREFIX@/bin:$PATH

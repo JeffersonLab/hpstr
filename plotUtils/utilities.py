@@ -83,7 +83,7 @@ def MakeHistoListFromSameFile(infile,path,histoNames):
     return histolist    
 
 
-def InsertText(runNumber="",texts=[],line=0.87,xoffset=0.18,Hps=True):
+def InsertText(runNumber="",texts=[],line=0.87,xoffset=0.18,Hps=True,Colors=False):
 
     
     newline = 0.06
@@ -105,8 +105,11 @@ def InsertText(runNumber="",texts=[],line=0.87,xoffset=0.18,Hps=True):
     for iText in xrange(len(texts)):
         if texts[iText]:
             line=line-newline
+            if (Colors):
+                text.SetTextColor(colors[iText])
             text.DrawLatex(xoffset,line,texts[iText])
-        
+            
+    return line
 
 
 def SetStyle():
@@ -134,7 +137,7 @@ def SetStyle():
     # use large fonts
 #font=72
     font=42
-    tsize=0.045
+    tsize=0.08
     tzsize = 0.045
     hpsStyle.SetTextFont(font)
 
@@ -154,7 +157,7 @@ def SetStyle():
     hpsStyle.SetLabelSize(tzsize,"z")
     hpsStyle.SetTitleSize(tzsize,"z")
 
-    hpsStyle.SetTitleOffset(1.2,"y")
+    hpsStyle.SetTitleOffset(0.7,"y")
     hpsStyle.SetTitleOffset(1.15,"x")
     
     
@@ -241,6 +244,8 @@ def MakeRadFrac(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax
     for ih in xrange(len(histos)):
 
         if (Normalise):
+            if (histos[ih].Integral()==0):
+                return None
             histos[ih].Scale(1./histos[ih].Integral())
             histos[ih].GetYaxis().SetRangeUser(0.00001,histos[ih].GetMaximum()*15000)
             
@@ -342,14 +347,11 @@ def MakeRadFrac(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax
     can.SaveAs(outdir+"/"+name+oFext)
     return deepcopy(can)
 
-def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,noErrors=False,RebinFactor=0,runNumber="",additionalText=[],RatioType="Alternate",LogX=False,LogY=False,RatioMin=0.25,RatioMax=1.75,WriteMean=False,Normalise=False):
+def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,noErrors=False,RebinFactor=0,runNumber="",additionalText=[],RatioType="Alternate",LogX=False,LogY=False,RatioMin=0.25,RatioMax=1.75,WriteMean=False,Normalise=False,doFit=False,drawOptions="hist",Xmin=-999,Xmax=-999):
     
     
     if not os.path.exists(outdir):
         os.mkdir(outdir)
-        
-    Xmin=0
-    Xmax=1
         
     can = TCanvas(name, name, 1200, 800)
     can.SetMargin(0,0,0,0)
@@ -376,6 +378,8 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
     for ih in xrange(len(histos)):
 
         if (Normalise):
+            if (histos[ih].Integral() == 0):
+                return None
             histos[ih].Scale(1./histos[ih].Integral())
             histos[ih].GetYaxis().SetRangeUser(0.00001,histos[ih].GetMaximum()*15000)
             
@@ -386,14 +390,35 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
         histos[ih].GetXaxis().CenterTitle()
         histos[ih].GetYaxis().CenterTitle()
         
-        plotsProperties.append(("#mu=%.4f"%round(histos[ih].GetMean(),4))+(" #sigma=%.4f"%round(histos[ih].GetRMS(),4)))
+        if (not doFit):
+            plotsProperties.append(("#mu=%.4f"%round(histos[ih].GetMean(),4))+(" #sigma=%.4f"%round(histos[ih].GetRMS(),4)))
         
         
         if RebinFactor>0:
             histos[ih].Rebin(RebinFactor)
 
+
+        if doFit:
+            #histo = histos[ih].Clone()
+            fit_funcs.append(TF1("fit_func"+str(ih),"gaus",-2.5,2.5))
+            print len(fit_funcs)
+            bad_fit = histos[ih].Fit(fit_funcs[ih],"RQN")
+            
+            mu = fit_funcs[ih].GetParameter(1)
+            mu_err  = fit_funcs[ih].GetParError(1)
+            sigma = fit_funcs[ih].GetParameter(2)
+            sigma_err = fit_funcs[ih].GetParError(2)    
+            
+            plotsProperties.append((" #mu=%.3f"%round(mu,3))+("+/- %.3f"%round(mu_err,3))
+                                   +(" #sigma=%.3f"%round(sigma,3)) +("+/- %.3f"%round(sigma_err,3) ))
+            
+            fit_funcs[ih].SetLineColor(histos[ih].GetLineColor())
+
         if ih==0:
-            #histos[ih].GetYaxis().SetRangeUser(ymin,ymax)
+            print ymin, ymax
+            histos[ih].GetYaxis().SetRangeUser(ymin,ymax)
+            if (Xmin !=-999 and Xmax !=-999):
+                histos[ih].GetXaxis().SetRangeUser(Xmin,Xmax)
             if noErrors:
                 #histos[ih].GetXaxis().SetTextSize(0.045)
                 #histos[ih].GetYaxis().SetTextSize(0.045)
@@ -407,19 +432,23 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
                 histos[ih].GetYaxis().SetTitle(ytitle)
         else:
             if noErrors:
-                histos[ih].Draw("same hist")
+                histos[ih].Draw("same "+drawOptions)
             else:
-                histos[ih].Draw("same hist")
+                histos[ih].Draw("same "+drawOptions)
+        
+        if (doFit):
+            fit_funcs[ih].Draw("same")
+            
 
 
-    InsertText(runNumber,additionalText,0.8,xoffset=0.75)
+    linevalue = InsertText(runNumber,additionalText,0.8,xoffset=0.75)
     if (WriteMean):
-        InsertText("",plotsProperties,0.8,0.6,False)
+        InsertText("",plotsProperties,0.8,0.6,False,True)
 
     if len(legends)>0:
         #print "building legend"
         #upperY=0.6
-        upperY=0.76
+        upperY=linevalue-0.04
         linesep = 0.07
         lowerY=upperY - len(legends)* linesep
         #minX = 0.51
@@ -440,10 +469,12 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
         
     bot.cd()
     reference = histos[0].Clone("reference")
-    reference.GetYaxis().SetTitle("Ratio")
-    reference.GetYaxis().SetTitleSize(0.06)
+    reference.GetXaxis().SetLabelSize(0.1)
     reference.GetXaxis().SetTitleSize(0.1)
-    reference.GetXaxis().SetLabelSize(0.12)
+    reference.GetYaxis().SetTitle("Ratio")
+    reference.GetYaxis().SetTitleSize(0.1)
+    reference.GetYaxis().SetLabelSize(0.1)
+    reference.GetYaxis().SetTitleOffset(reference.GetYaxis().GetTitleOffset()*0.7)
     reference.GetYaxis().SetRangeUser(RatioMin,RatioMax)
     reference.GetYaxis().SetNdivisions(508)
     reference.GetYaxis().SetDecimals(True)
@@ -498,7 +529,10 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
           
     line = TLine()
     line.SetLineStyle(kDashed)
-    line.DrawLine(reference.GetXaxis().GetXmin(),1,reference.GetXaxis().GetXmax(),1)
+    if (Xmin!=-999 and Xmax!=-999):
+        line.DrawLine(Xmin,1,Xmax,1)
+    else:
+        line.DrawLine(reference.GetXaxis().GetXmin(),1,reference.GetXaxis().GetXmax(),1)
     
     can.SaveAs(outdir+"/"+name+oFext)
     return deepcopy(can)

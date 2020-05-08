@@ -11,10 +11,11 @@
 
 #include "BumpHunter.h"
 
-BumpHunter::BumpHunter(FitFunction::BkgModel model, int poly_order, int res_factor, double res_scale, bool asymptotic_limit)
+BumpHunter::BumpHunter(FitFunction::BkgModel model, int poly_order, int toy_poly_order, int res_factor, double res_scale, bool asymptotic_limit)
     : ofs(nullptr),
       res_factor_(res_factor), 
       poly_order_(poly_order),
+      toy_poly_order_(toy_poly_order),
       asymptotic_limit_(asymptotic_limit),
       res_scale_(res_scale),
       bkg_model_(model) { }
@@ -117,7 +118,42 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
     bool isExp = (bkg_model_ == FitFunction::BkgModel::EXP_CHEBYSHEV || bkg_model_ == FitFunction::BkgModel::EXP_LEGENDRE);
     TF1* bkg{nullptr};
     TF1* bkg_toys{nullptr};
-
+        
+    std::cout << "Defining fit functions." << std::endl;
+    std::cout << "    Model :: ";
+    if(bkg_model_ == FitFunction::BkgModel::CHEBYSHEV) { std::cout << "Chebyshev Polynomial" << std::endl; }
+    else if(bkg_model_ == FitFunction::BkgModel::EXP_CHEBYSHEV) { std::cout << "Exponential Chebyshev Polynomial" << std::endl; }
+    else if(bkg_model_ == FitFunction::BkgModel::LEGENDRE) { std::cout << "Legendre Polynomial" << std::endl; }
+    else if(bkg_model_ == FitFunction::BkgModel::EXP_LEGENDRE) { std::cout << "Exponential Legendre Polynomial" << std::endl; }
+    
+    std::cout << "    Background Order :: ";
+    FitFunction::ModelOrder bkg_order_model;
+    if(poly_order_ == 1) {
+        std::cout << "1" << std::endl;
+        bkg_order_model = FitFunction::ModelOrder::FIRST;
+    } else if(poly_order_ == 3) {
+        std::cout << "3" << std::endl;
+        bkg_order_model = FitFunction::ModelOrder::THIRD;
+    } else if(poly_order_ == 5) {
+        std::cout << "5" << std::endl;
+        bkg_order_model = FitFunction::ModelOrder::FIFTH;
+    }
+    
+    std::cout << "    Toy Generator Order :: ";
+    FitFunction::ModelOrder toy_order_model;
+    if(toy_poly_order_ == 1) {
+        std::cout << "1" << std::endl;
+        toy_order_model = FitFunction::ModelOrder::FIRST;
+    } else if(toy_poly_order_ == 3) {
+        std::cout << "3" << std::endl;
+        toy_order_model = FitFunction::ModelOrder::THIRD;
+    } else if(toy_poly_order_ == 5) {
+        std::cout << "5" << std::endl;
+        toy_order_model = FitFunction::ModelOrder::FIFTH;
+    } else if(toy_poly_order_ == 7) {
+        std::cout << "7" << std::endl;
+        toy_order_model = FitFunction::ModelOrder::SEVENTH;
+    }
     
     // If not fitting toys, start by performing a background only fit.
     if(!skip_bkg_fit) {
@@ -129,81 +165,37 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         std::cout << "*************************************************" << std::endl;
         std::cout << "*************************************************" << std::endl;
         
-        std::cout << "Defining fit functions." << std::endl;
-        std::cout << "    Model :: ";
-        if(bkg_model_ == FitFunction::BkgModel::CHEBYSHEV) { std::cout << "Chebyshev Polynomial" << std::endl; }
-        else if(bkg_model_ == FitFunction::BkgModel::EXP_CHEBYSHEV) { std::cout << "Exponential Chebyshev Polynomial" << std::endl; }
-        else if(bkg_model_ == FitFunction::BkgModel::LEGENDRE) { std::cout << "Legendre Polynomial" << std::endl; }
-        else if(bkg_model_ == FitFunction::BkgModel::EXP_LEGENDRE) { std::cout << "Exponential Legendre Polynomial" << std::endl; }
-        std::cout << "    Order :: ";
-        if(poly_order_ == 1) { std::cout << "1" << std::endl; }
-        else if(poly_order_ == 3) { std::cout << "3" << std::endl; }
-        else if(poly_order_ == 5) { std::cout << "5" << std::endl; }
-
-
-        if(poly_order_ == 1) {
-            // Define the fit functions for the data and toy generator fits.
-            if(isChebyshev) {
-                ChebyshevFitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIRST, FitFunction::SignalFitModel::NONE, isExp);
-                ChebyshevFitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD, FitFunction::SignalFitModel::NONE, isExp);
-                bkg = new TF1("bkg", bkg_func, -1, 1, 2);
-                bkg_toys = new TF1("bkg_toys", bkg_toy_func, -1, 1, 4);
-            } else {
-                LegendreFitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIRST, FitFunction::SignalFitModel::NONE, isExp);
-                LegendreFitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD, FitFunction::SignalFitModel::NONE, isExp);
-                bkg = new TF1("bkg", bkg_func, -1, 1, 2);
-                bkg_toys = new TF1("bkg_toys", bkg_toy_func, -1, 1, 4);
-            }
-
-            // Set the parameters for the fit models.
-            bkg->SetParameters(initNorm, 0);
-            bkg->SetParNames("pol0", "pol1");
-            bkg_toys->SetParameters(initNorm, 0, 0, 0);
-            bkg_toys->SetParNames("pol0", "pol1", "pol2", "pol3");
-        } else if(poly_order_ == 3) {
-            // Define the fit functions for the data and toy generator fits.
-            if(isChebyshev) {
-                ChebyshevFitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD, FitFunction::SignalFitModel::NONE, isExp);
-                ChebyshevFitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH, FitFunction::SignalFitModel::NONE, isExp);
-                bkg = new TF1("bkg", bkg_func, -1, 1, 4);
-                bkg_toys = new TF1("bkg_toys", bkg_toy_func, -1, 1, 6);
-            } else {
-                LegendreFitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD, FitFunction::SignalFitModel::NONE, isExp);
-                LegendreFitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH, FitFunction::SignalFitModel::NONE, isExp);
-                bkg = new TF1("bkg", bkg_func, -1, 1, 4);
-                bkg_toys = new TF1("bkg_toys", bkg_toy_func, -1, 1, 6);
-            }
-
-            // Set the parameters for the fit models.
-            bkg->SetParameters(initNorm, 0, 0, 0);
-            bkg->SetParNames("pol0", "pol1", "pol2", "pol3");
-            bkg_toys->SetParameters(initNorm, 0, 0, 0, 0, 0);
-            bkg_toys->SetParNames("pol0", "pol1", "pol2", "pol3", "pol4", "pol5");
+        // Define the background-only fit model.
+        if(isChebyshev) {
+            ChebyshevFitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::NONE, isExp);
+            bkg = new TF1("bkg", bkg_func, -1, 1, poly_order_ + 1);
         } else {
-            // Define the fit functions for the data and toy generator fits.
-            if(isChebyshev) {
-                ChebyshevFitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH, FitFunction::SignalFitModel::NONE, isExp);
-                ChebyshevFitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::SEVENTH, FitFunction::SignalFitModel::NONE, isExp);
-                bkg = new TF1("bkg", bkg_func, -1, 1, 6);
-                bkg_toys = new TF1("bkg_toys", bkg_toy_func, -1, 1, 8);
-            } else {
-                LegendreFitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH, FitFunction::SignalFitModel::NONE, isExp);
-                LegendreFitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::SEVENTH, FitFunction::SignalFitModel::NONE, isExp);
-                bkg = new TF1("bkg", bkg_func, -1, 1, 6);
-                bkg_toys = new TF1("bkg_toys", bkg_toy_func, -1, 1, 8);
-            }
-
-            // Set the parameters for the fit models.
-            bkg->SetParameters(initNorm, 0, 0, 0, 0, 0);
-            bkg->SetParNames("pol0", "pol1", "pol2", "pol3", "pol4", "pol5");
-            bkg_toys->SetParameters(initNorm, 0, 0, 0, 0, 0, 0, 0);
-            bkg_toys->SetParNames("pol0", "pol1", "pol2", "pol3", "pol4", "pol5", "pol6", "pol7");
+            LegendreFitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::NONE, isExp);
+            bkg = new TF1("bkg", bkg_func, -1, 1, poly_order_ + 1);
+        }
+        bkg->SetParameter(0, initNorm);
+        bkg->SetParName(0, "pol0");
+        for(int i = 1; i < poly_order_ + 1; i++) {
+            bkg->SetParameter(i, 0);
+            bkg->SetParName(i, Form("pol%i", i));
         }
         
-        //bkg->FixParameter(0, initNorm);
-        //TFitResultPtr result = histogram->Fit("bkg", "VLS", "", window_start_, window_end_);
-        //bkg->ReleaseParameter(0);
-        //std::cout << "[ BumpHunter ]:  Released bkg norm parameter." << std::endl;
+        // Define the toy generator fit model.
+        if(isChebyshev) {
+            ChebyshevFitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::NONE, isExp);
+            bkg_toys = new TF1("bkg_toys", bkg_toy_func, -1, 1, toy_poly_order_ + 1);
+        } else {
+            LegendreFitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::NONE, isExp);
+            bkg_toys = new TF1("bkg_toys", bkg_toy_func, -1, 1, toy_poly_order_ + 1);
+        }
+        bkg_toys->SetParameter(0, initNorm);
+        bkg_toys->SetParName(0, "pol0");
+        for(int i = 1; i < toy_poly_order_ + 1; i++) {
+            bkg_toys->SetParameter(i, 0);
+            bkg_toys->SetParName(i, Form("pol%i", i));
+        }
+        
+        // Perform the background-only fit and store the result.
         TFitResultPtr result = histogram->Fit("bkg", "VLES+", "", window_start_, window_end_);
         fit_result->setBkgFitResult(result);
 
@@ -213,10 +205,7 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         std::cout << "*************************************************" << std::endl;
         std::cout << "*************************************************" << std::endl;
 
-        //bkg_toys->FixParameter(0, initNorm);
-        //TFitResultPtr result_toys = histogram->Fit("bkg_toys", "VLS", "", window_start_, window_end_);
-        //bkg_toys->ReleaseParameter(0);
-        //std::cout << "[ BumpHunter ]:  Released toy bkg norm parameter." << std::endl;
+        // Perform the toy model fit and store the result.
         TFitResultPtr result_toys = histogram->Fit("bkg_toys", "VLES+", "", window_start_, window_end_);
         fit_result->setBkgToysFitResult(result_toys);
     }
@@ -228,49 +217,29 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
     std::cout << "***************************************************" << std::endl;
     
     TF1* full{nullptr};
-    if(poly_order_ == 1) {
-        if(isChebyshev) {
-            ChebyshevFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIRST, FitFunction::SignalFitModel::GAUSSIAN, isExp);
-            full = new TF1("full", full_func, -1, 1, 5);
-        } else {
-            LegendreFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIRST, FitFunction::SignalFitModel::GAUSSIAN, isExp);
-            full = new TF1("full", full_func, -1, 1, 5);
-        }
-        full->SetParameters(initNorm, 0, 0, 0, 0);
-        full->SetParNames("pol0", "pol1", "signal norm", "mean", "sigma");
-        full->FixParameter(3, mass_hypothesis);
-        full->FixParameter(initNorm, mass_resolution_);
-    } else if (poly_order_ == 3) {
-        if(isChebyshev) {
-            ChebyshevFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD, FitFunction::SignalFitModel::GAUSSIAN, isExp);
-            full = new TF1("full", full_func, -1, 1, 7);
-        } else {
-            LegendreFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD, FitFunction::SignalFitModel::GAUSSIAN, isExp);
-            full = new TF1("full", full_func, -1, 1, 7);
-        }
-        full->SetParameters(initNorm, 0, 0, 0, 0, 0, 0);
-        full->SetParNames("pol0", "pol1", "pol2", "pol3", "signal norm", "mean", "sigma");
-        full->FixParameter(5, mass_hypothesis);
-        full->FixParameter(6, mass_resolution_);
-    } else {
-        if(isChebyshev) {
-            ChebyshevFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH, FitFunction::SignalFitModel::GAUSSIAN, isExp);
-            full = new TF1("full", full_func, -1, 1, 9);
-        } else {
-            LegendreFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH, FitFunction::SignalFitModel::GAUSSIAN, isExp);
-            full = new TF1("full", full_func, -1, 1, 9);
-        }
-        full->SetParameters(initNorm, 0, 0, 0, 0, 0, 0, 0, 0);
-        full->SetParNames("pol0", "pol1", "pol2", "pol3", "pol4", "pol5", "signal norm", "mean", "sigma");
-        full->FixParameter(7, mass_hypothesis);
-        full->FixParameter(8, mass_resolution_);
-    }
     
-    //full->FixParameter(0, initNorm);
-    //TFitResultPtr full_result = histogram->Fit("full", "VLS", "", window_start_, window_end_);
-    //full->ReleaseParameter(0);
-    for(int parI = 0; parI < poly_order_ + 1; parI++)
-    {
+    // Define the background+signal fit model.
+    if(isChebyshev) {
+        ChebyshevFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);
+        full = new TF1("full", full_func, -1, 1, poly_order_ + 4);
+    } else {
+        LegendreFitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);
+        full = new TF1("full", full_func, -1, 1, poly_order_ + 4);
+    }
+    full->SetParameter(0, initNorm);
+    full->SetParName(0, "pol0");
+    full->SetParameter(poly_order_ + 1, 0.0);
+    full->SetParName(poly_order_ + 1, "signal norm");
+    full->SetParName(poly_order_ + 2, "mean");
+    full->SetParName(poly_order_ + 3, "sigma");
+    for(int i = 1; i < poly_order_ + 1; i++) {
+        full->SetParameter(i, 0);
+        full->SetParName(i, Form("pol%i", i));
+    }
+    full->FixParameter(poly_order_ + 2, mass_hypothesis);
+    full->FixParameter(poly_order_ + 3, mass_resolution_);
+    
+    for(int parI = 0; parI < poly_order_ + 1; parI++) {
         full->SetParameter(parI, bkg->GetParameter(parI));
     }
     TFitResultPtr full_result = histogram->Fit("full", "VLES+", "", window_start_, window_end_);
@@ -384,43 +353,29 @@ void BumpHunter::getUpperLimitPower(TH1* histogram, HpsFitResult* result) {
     
     // Instantiate a fit function for the appropriate polynomial order.
     TF1* comp{nullptr};
-    if(poly_order_ == 1) {
-        if(isChebyshev) {
-            ChebyshevFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIRST, FitFunction::SignalFitModel::GAUSSIAN, isExp);
-            comp = new TF1("comp_ul", comp_func, -1, 1, 5);
-        } else {
-            LegendreFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIRST, FitFunction::SignalFitModel::GAUSSIAN, isExp);
-            comp = new TF1("comp_ul", comp_func, -1, 1, 5);
-        }
-        comp->SetParameters(initNorm, 0, 0, 0, 0);
-        comp->SetParNames("pol0", "pol1", "signal norm", "mean", "sigma");
-        comp->FixParameter(3, 0.0);
-        comp->FixParameter(initNorm, mass_resolution_);
-    } else if(poly_order_ == 3) {
-        if(isChebyshev) {
-            ChebyshevFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD, FitFunction::SignalFitModel::GAUSSIAN, isExp);
-            comp = new TF1("comp_ul", comp_func, -1, 1, 7);
-        } else {
-            LegendreFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::THIRD, FitFunction::SignalFitModel::GAUSSIAN, isExp);
-            comp = new TF1("comp_ul", comp_func, -1, 1, 7);
-        }
-        comp->SetParameters(initNorm, 0, 0, 0, 0, 0, 0);
-        comp->SetParNames("pol0", "pol1", "pol2", "pol3", "signal norm", "mean", "sigma");
-        comp->FixParameter(5, 0.0);
-        comp->FixParameter(6, mass_resolution_);
+    FitFunction::ModelOrder bkg_order_model;
+    if(poly_order_ == 1) { bkg_order_model = FitFunction::ModelOrder::FIRST; }
+    else if(poly_order_ == 3) { bkg_order_model = FitFunction::ModelOrder::THIRD; }
+    else if(poly_order_ == 5) { bkg_order_model = FitFunction::ModelOrder::FIFTH; }
+    if(isChebyshev) {
+        ChebyshevFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);
+        comp = new TF1("comp_ul", comp_func, -1, 1, poly_order_ + 4);
     } else {
-        if(isChebyshev) {
-            ChebyshevFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH, FitFunction::SignalFitModel::GAUSSIAN, isExp);
-            comp = new TF1("comp_ul", comp_func, -1, 1, 9);
-        } else {
-            LegendreFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, FitFunction::ModelOrder::FIFTH, FitFunction::SignalFitModel::GAUSSIAN, isExp);
-            comp = new TF1("comp_ul", comp_func, -1, 1, 9);
-        }
-        comp->SetParameters(initNorm, 0, 0, 0, 0, 0, 0, 0, 0);
-        comp->SetParNames("pol0", "pol1", "pol2", "pol3", "pol4", "pol5", "signal norm", "mean", "sigma");
-        comp->FixParameter(7, 0.0);
-        comp->FixParameter(8, mass_resolution_);
+        LegendreFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);
+        comp = new TF1("comp_ul", comp_func, -1, 1, poly_order_ + 4);
     }
+    comp->SetParameter(0, initNorm);
+    comp->SetParName(0, "pol0");
+    comp->SetParameter(poly_order_ + 1, 0.0);
+    comp->SetParName(poly_order_ + 1, "signal norm");
+    comp->SetParName(poly_order_ + 2, "mean");
+    comp->SetParName(poly_order_ + 3, "sigma");
+    for(int i = 1; i < poly_order_ + 1; i++) {
+        comp->SetParameter(i, 0);
+        comp->SetParName(i, Form("pol%i", i));
+    }
+    comp->FixParameter(poly_order_ + 2, mass_hypothesis_);
+    comp->FixParameter(poly_order_ + 3, mass_resolution_);
     
     std::cout << "Mass resolution: " << mass_resolution_ << std::endl;
     std::cout << "[ BumpHunter ]: Calculating upper limit." << std::endl;

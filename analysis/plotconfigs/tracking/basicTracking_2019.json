@@ -80,8 +80,8 @@
     },
     "TanLambda_h" : {
         "bins" : 200,
-        "minX" : -0.6,
-        "maxX" : 0.6,
+        "minX" : -0.3,
+        "maxX" : 0.3,
         "xtitle" : "tan(#lambda)",
         "ytitle" : "Tracks"
     },
@@ -94,8 +94,8 @@
     },
     "time_h" : {
         "bins" : 200,
-        "minX" : -10,
-        "maxX" : 10,
+        "minX" : -40,
+        "maxX" : 40,
         "xtitle" : "track time [ns]",
         "ytitle" : "Tracks"
     },
@@ -113,6 +113,90 @@
         "xtitle" : "track #chi^{2} / ndf",
         "ytitle" : "Tracks"
     },
+    
+    "d0_vs_p_hh" : {
+        "binsX"  : 100,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 200,
+        "minY"   : -10,
+        "maxY"   : 10,
+        "xtitle" : "trk p [GeV]",
+        "ytitle" : "trk d0 [mm]"
+    },
+    
+    "d0_vs_phi0_hh" : {
+        "binsX"  : 100,
+        "minX"   : -0.4,
+        "maxX"   : 0.4,
+        "binsY"  : 200,
+        "minY"   : -10,
+        "maxY"   : 10,
+        "xtitle" : "trk #phi_{0}",
+        "ytitle" : "trk d0 [mm]"
+    },
+    
+    "d0_vs_tanlambda_hh" : {
+        "binsX"  : 200,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "binsY"  : 200,
+        "minY"   : -10,
+        "maxY"   : 10,
+        "xtitle" : "trk(#lamdba)",
+        "ytitle" : "trk d0 [mm]"
+    },
+    
+    "z0_vs_p_hh" : {
+        "binsX"  : 100,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 200,
+        "minY"   : -5,
+        "maxY"   : 5,
+        "xtitle" : "trk p [GeV]",
+        "ytitle" : "trk z0 [mm]"
+    },
+
+    "z0_vs_phi0_hh" : {
+        "binsX"  : 100,
+        "minX"   : -0.4,
+        "maxX"   : 0.4,
+        "binsY"  : 200,
+        "minY"   : -5,
+        "maxY"   : 5,
+        "xtitle" : "trk #phi_{0}",
+        "ytitle" : "trk z0 [mm]"
+    },
+    
+    "z0_vs_tanlambda_hh" : {
+        "binsX"  : 200,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "binsY"  : 200,
+        "minY"   : -5,
+        "maxY"   : 5,
+        "xtitle" : "trk(#lamdba)",
+        "ytitle" : "trk z0 [mm]"
+    },
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     "n_vertices_h" : {
         "bins"   : 6,
         "minX"   : -0.5,
