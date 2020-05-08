@@ -68,9 +68,13 @@ track.parameters["trkCollLcio"] = 'KalmanFullTracks'
 track.parameters["trkCollRoot"] = 'KalmanFullTracks'
 track.parameters["kinkRelCollLcio"] = ''
 track.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
-track.parameters["trkhitCollRoot"] = ''
-track.parameters["hitFitsCollLcio"] = ''
+track.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
+track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 track.parameters["rawhitCollRoot"] = ''
+
+#Only for detail studies
+track.parameters["rawhitCollRoot"] = ''#'SCTRawHitsOnTrack_KF'
+
 if (not options.isData):
     track.parameters["truthTrackCollLcio"] = 'KalmanFullTracksToTruthTrackRelations'
     track.parameters["truthTrackCollRoot"] = 'Truth_KFTracks'
@@ -84,7 +88,10 @@ trackgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
 trackgbl.parameters["trkRelCollLcio"] = 'TrackDataRelations'
 trackgbl.parameters["trkhitCollRoot"] = 'RotatedHelicalOnTrackHits'
 trackgbl.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
+
+#Only for detail studies
 trackgbl.parameters["rawhitCollRoot"] = ''#'SVTRawHitsOnTrack'
+
 if (not options.isData):
     trackgbl.parameters["truthTrackCollLcio"] = 'GBLTracksToTruthTrackRelations'
     trackgbl.parameters["truthTrackCollRoot"] = 'Truth_GBLTracks'
@@ -129,9 +136,9 @@ mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
 # Sequence which the processors will run.
 if (not options.isData):
-    p.sequence = [header, vtx, vtxgbl, cvtxgbl, track, trackgbl, mcpart]
+    p.sequence = [header, vtx, vtxgbl, cvtxgbl, ecal, track, trackgbl, mcpart]
 else:
-    p.sequence = [header, vtx, vtxgbl, cvtxgbl, track, trackgbl]
+    p.sequence = [header, vtx, vtxgbl, cvtxgbl, ecal, track, trackgbl]
 
 if (options.nevents > -1 ):
     p.max_events = options.nevents
