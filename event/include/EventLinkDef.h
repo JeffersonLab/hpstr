@@ -57,8 +57,9 @@
 #pragma link C++ class vector<Vertex>      +;
 #pragma link C++ class vector<Particle>      +;
 #pragma link C++ class vector<Particle*>      +;
-#pragma link C++ class vector<MCParticle>      +;
-#pragma link C++ class vector<MCParticle*>      +;
+//#pragma link C++ class vector<MCParticle>      +;
+//#pragma link C++ class vector<MCParticle*>      +;
+#pragma link C++ class map< int, MCParticle* > +; 
 #pragma link C++ class vector<VTPData::hpsCluster>      +;
 #pragma link C++ class vector<VTPData::hpsSingleTrig>   +;
 #pragma link C++ class vector<VTPData::hpsPairTrig>     +;
