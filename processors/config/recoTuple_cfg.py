@@ -2,6 +2,7 @@ import HpstrConf
 import sys
 
 import baseConfig
+from baseConfig import bfield
 
 parser = baseConfig.parser
 (options,args) = parser.parse_args()
@@ -29,6 +30,7 @@ track = HpstrConf.Processor('track', 'TrackingProcessor')
 svthits = HpstrConf.Processor('svthits', 'Tracker3DHitProcessor')
 rawsvt = HpstrConf.Processor('rawsvt', 'SvtRawDataProcessor')
 ecal = HpstrConf.Processor('ecal', 'ECalDataProcessor')
+fsp = HpstrConf.Processor('fsp', 'FinalStateParticleProcessor')
 vtx = HpstrConf.Processor('vtx', 'VertexProcessor')
 c_vtx = HpstrConf.Processor('c_vtx', 'VertexProcessor')
 mcpart = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
@@ -67,14 +69,22 @@ track.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
 track.parameters["trkRelCollLcio"] = 'TrackDataRelations'
 track.parameters["trkhitCollRoot"] = 'RotatedHelicalOnTrackHits'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
-track.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack'
+track.parameters["rawhitCollRoot"] = '' #'SVTRawHitsOnTrack'
+track.parameters["bfield"]         = bfield[str(options.year)]
 
 #ECalData
 ecal.parameters["debug"] = 0 
 ecal.parameters["hitCollLcio"] = 'EcalCalHits'
-ecal.parameters["hitCollRoot"] = 'RecoEcalHits'
+ecal.parameters["hitCollRoot"] = ''#'RecoEcalHits'
 ecal.parameters["clusCollLcio"] = "EcalClustersCorr"
 ecal.parameters["clusCollRoot"] = "RecoEcalClusters"
+
+#FinalStateParticles
+fsp.parameters["debug"] = 0
+fsp.parameters["fspCollLcio"]    = 'FinalStateParticles'
+fsp.parameters["fspCollRoot"]    = 'FinalStateParticles'
+fsp.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
+fsp.parameters["trkRelCollLcio"] = 'TrackDataRelations'
 
 #Vertex
 vtx.parameters["debug"] = 0
@@ -100,8 +110,12 @@ mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
 # Sequence which the processors will run.
 if options.isData == -1: print("Please specficy if this is Data or not via option -t")
-if options.isData: p.sequence = [header, track, rawsvt, svthits, ecal, vtx, c_vtx]
-else: p.sequence = [header, track, rawsvt, svthits, ecal, vtx, c_vtx, mcpart]
+if options.isData == 1: 
+    #p.sequence = [header, track, rawsvt, svthits, ecal, fsp, vtx, c_vtx]
+    p.sequence = [header, track, ecal, fsp, vtx, c_vtx]
+else: 
+    p.sequence = [header, track, ecal, fsp, vtx, c_vtx, mcpart]
+    #p.sequence = [header, track, rawsvt, svthits, ecal, fsp, vtx, c_vtx, mcpart]
 
 p.input_files=[lcio_file]
 p.output_files = [root_file]

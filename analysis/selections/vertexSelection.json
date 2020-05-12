@@ -34,15 +34,15 @@
         "id"  : 6,
         "info" : "p e^{-}<1.75GeV"
     },
-    "eleTrkChi2_lt" : {
+    "eleTrkChi2Ndf_lt" : {
         "cut"  : 6,
         "id"   : 7,
-        "info" : "e^{-} Track #chi^{2}<6"
+        "info" : "e^{-} Track #chi^{2}/Ndf<6"
     },
-    "posTrkChi2_lt" : {
+    "posTrkChi2Ndf_lt" : {
         "cut"  : 6,
         "id"   : 8,
-        "info" : "e^{+} Track #chi^{2}<6"
+        "info" : "e^{+} Track #chi^{2}/Ndf<6"
     },
     "chi2unc_lt" : {
         "cut"   : 10,

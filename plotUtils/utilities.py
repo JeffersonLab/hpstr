@@ -137,7 +137,7 @@ def SetStyle():
     # use large fonts
 #font=72
     font=42
-    tsize=0.045
+    tsize=0.08
     tzsize = 0.045
     hpsStyle.SetTextFont(font)
 
@@ -157,7 +157,7 @@ def SetStyle():
     hpsStyle.SetLabelSize(tzsize,"z")
     hpsStyle.SetTitleSize(tzsize,"z")
 
-    hpsStyle.SetTitleOffset(1.2,"y")
+    hpsStyle.SetTitleOffset(0.7,"y")
     hpsStyle.SetTitleOffset(1.15,"x")
     
     
@@ -244,6 +244,8 @@ def MakeRadFrac(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax
     for ih in xrange(len(histos)):
 
         if (Normalise):
+            if (histos[ih].Integral()==0):
+                return None
             histos[ih].Scale(1./histos[ih].Integral())
             histos[ih].GetYaxis().SetRangeUser(0.00001,histos[ih].GetMaximum()*15000)
             
@@ -345,14 +347,11 @@ def MakeRadFrac(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax
     can.SaveAs(outdir+"/"+name+oFext)
     return deepcopy(can)
 
-def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,noErrors=False,RebinFactor=0,runNumber="",additionalText=[],RatioType="Alternate",LogX=False,LogY=False,RatioMin=0.25,RatioMax=1.75,WriteMean=False,Normalise=False,doFit=False):
+def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,noErrors=False,RebinFactor=0,runNumber="",additionalText=[],RatioType="Alternate",LogX=False,LogY=False,RatioMin=0.25,RatioMax=1.75,WriteMean=False,Normalise=False,doFit=False,drawOptions="hist",Xmin=-999,Xmax=-999):
     
     
     if not os.path.exists(outdir):
         os.mkdir(outdir)
-        
-    Xmin=0
-    Xmax=1
         
     can = TCanvas(name, name, 1200, 800)
     can.SetMargin(0,0,0,0)
@@ -379,12 +378,14 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
     for ih in xrange(len(histos)):
 
         if (Normalise):
-            if histos[ih].Integral()!=0: histos[ih].Scale(1./histos[ih].Integral())
-            if LogY:
-                histos[ih].GetYaxis().SetRangeUser(0.00001,histos[ih].GetMaximum()*15000)
-            else:
-                histos[ih].GetYaxis().SetRangeUser(0.00001,histos[ih].GetMaximum()*2.2)
- 
+
+            if (histos[ih].Integral() == 0):
+                return None
+            histos[ih].Scale(1./histos[ih].Integral())
+            histos[ih].GetYaxis().SetRangeUser(0.00001,histos[ih].GetMaximum()*15000)
+            
+                    
+
         histos[ih].SetMarkerColor(colors[ih])
         histos[ih].SetMarkerStyle(markers[ih])
         histos[ih].SetLineColor(colors[ih])
@@ -416,7 +417,10 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
             fit_funcs[ih].SetLineColor(histos[ih].GetLineColor())
 
         if ih==0:
-            #histos[ih].GetYaxis().SetRangeUser(ymin,ymax)
+            print ymin, ymax
+            histos[ih].GetYaxis().SetRangeUser(ymin,ymax)
+            if (Xmin !=-999 and Xmax !=-999):
+                histos[ih].GetXaxis().SetRangeUser(Xmin,Xmax)
             if noErrors:
                 #histos[ih].GetXaxis().SetTextSize(0.045)
                 #histos[ih].GetYaxis().SetTextSize(0.045)
@@ -430,9 +434,9 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
                 histos[ih].GetYaxis().SetTitle(ytitle)
         else:
             if noErrors:
-                histos[ih].Draw("same hist")
+                histos[ih].Draw("same "+drawOptions)
             else:
-                histos[ih].Draw("same hist")
+                histos[ih].Draw("same "+drawOptions)
         
         if (doFit):
             fit_funcs[ih].Draw("same")
@@ -527,7 +531,10 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
           
     line = TLine()
     line.SetLineStyle(kDashed)
-    line.DrawLine(reference.GetXaxis().GetXmin(),1,reference.GetXaxis().GetXmax(),1)
+    if (Xmin!=-999 and Xmax!=-999):
+        line.DrawLine(Xmin,1,Xmax,1)
+    else:
+        line.DrawLine(reference.GetXaxis().GetXmin(),1,reference.GetXaxis().GetXmax(),1)
     
     can.SaveAs(outdir+"/"+name+oFext)
     return deepcopy(can)
