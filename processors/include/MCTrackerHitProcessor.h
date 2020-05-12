@@ -67,15 +67,9 @@ class MCTrackerHitProcessor : public Processor {
         /// Clear the collection of tracker hits
         void clear(); 
 
-        /// Container for MC particles
-        std::vector<MCParticle*>* mc_particles_{nullptr};
-        
         /// Container for MC tracker hits 
         std::vector<MCTrackerHit*>* sim_tracker_hits_{nullptr};  
        
-        /// Collection of MC particles
-        std::string mc_particle_col_{"MCParticles"}; 
-
         /// LCIO sim tracker hit collection
         std::string sim_tracker_hit_col_{"TrackerHits"};
 

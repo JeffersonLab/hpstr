@@ -39,7 +39,6 @@ void MCTrackerHitProcessor::configure(const ParameterSet& parameters) {
         debug_               = parameters.getInteger("debug", debug_ );
         mc_tracker_hit_col_  = parameters.getString("mc_tracker_hit_col",  mc_tracker_hit_col_);
         sim_tracker_hit_col_ = parameters.getString("sim_tracker_hit_col", sim_tracker_hit_col_);  
-        mc_particle_col_     = parameters.getString("mc_particle_col", mc_particle_col_);
     } catch (std::runtime_error& error) {
         std::cout << error.what() << std::endl;
     }
@@ -48,16 +47,13 @@ void MCTrackerHitProcessor::configure(const ParameterSet& parameters) {
 void MCTrackerHitProcessor::initialize(TTree* tree) {
 
     tree->Branch(mc_tracker_hit_col_.c_str(), &sim_tracker_hits_);
-
-    auto b_mc_particles{tree->GetBranch(mc_particle_col_.c_str())};
-    b_mc_particles->SetAddress(&mc_particles_); 
 }
 
 bool MCTrackerHitProcessor::process(IEvent* ievent) {
 
     // Cast the event to an LCEvent
     auto event{static_cast<Event*>(ievent)};
-    
+
     // Get the collection of simulated tracker hits from the LCIO event.
     EVENT::LCCollection* sim_tracker_hits{nullptr};
     try {
@@ -104,11 +100,7 @@ bool MCTrackerHitProcessor::process(IEvent* ievent) {
         auto mc_particle{sim_tracker_hit->getMCParticle()}; 
         if(mc_particle != nullptr) {    
             mc_tracker_hit->setPDG(sim_tracker_hit->getMCParticle()->getPDG());
-            /*auto particle_it = std::find_if (mc_particles_->begin(), mc_particles_->end(), 
-                    [&mc_particle](auto& particle) { 
-                    return mc_particle->id() == particle->getID();
-                    }); */
-            //mc_tracker_hit->setMCParticle(sim_tracker_hit->getMCParticle()); 
+            mc_tracker_hit->setLcioID(sim_tracker_hit->getMCParticle()->id()); 
         }
 
         // Set the time of the hit

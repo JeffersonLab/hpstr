@@ -93,6 +93,20 @@ class MCTrackerHit : public TObject {
         double getEdep() const { return edep_; }
 
         /**
+         * Set the LCIO ID of the particle that created this hit.
+         *
+         * @param[in] lcio_id the LCIO ID.
+         */
+        void setLcioID(const int lcio_id) { lcio_id_ = lcio_id; }
+
+        /**
+         * Get the LCIO ID of the particle that created this hit.
+         *
+         * @return The LCIO ID.
+         */
+        int getLcioID() const { return lcio_id_; }
+
+        /**
          * Set the module ID associated with this hit.  This is used to 
          * uniquely identify a sensor within a layer. 
          *
@@ -186,6 +200,9 @@ class MCTrackerHit : public TObject {
 
         /// PDG ID of particle the particle that made the hit.
         int pdg_{-999};
+
+        /// The LCIO ID of the MC particle that created this hit
+        int lcio_id_{-9999}; 
 
         /// The MC particle that created this hit.
         TRef mc_particle_{nullptr};
