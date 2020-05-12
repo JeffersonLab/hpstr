@@ -3,7 +3,7 @@ from array import array
 from copy import deepcopy
 import os,sys
 
-colors  = [kBlack,kBlue+2,kRed+2,kGreen-1,kYellow+2,kRed+2,kAzure-2,kGreen-8,kOrange+3,kYellow+2,kRed+2,kBlue+2,kGreen-8,kOrange+3,kYellow+2,kRed+2,kBlue+2,kGreen-8,kOrange+3,kYellow+2,kRed+2,kBlue+2,kGreen-8,kOrange+3,kYellow+2,kRed+2,kBlue+2,kGreen-8,kOrange+3]
+colors  = [kBlue+2, kCyan+2, kRed+2,kOrange+10,kYellow+2,kGreen-1,kAzure-2,kGreen-8,kOrange+3,kYellow+2,kRed+2,kBlue+2,kGreen-8,kOrange+3,kYellow+2,kRed+2,kBlue+2,kGreen-8,kOrange+3,kYellow+2,kRed+2,kBlue+2,kGreen-8,kOrange+3,kYellow+2,kRed+2,kBlue+2,kGreen-8,kOrange+3]
 markers = [kFullCircle,kFullTriangleUp,kFullSquare,kOpenSquare,kOpenTriangleUp,kOpenCircle,kFullCircle,kOpenSquare,kFullSquare,kOpenTriangleUp,kOpenCircle,kFullCircle,kOpenSquare,kFullSquare,kOpenTriangleUp,kOpenCircle,kFullCircle,kOpenSquare,kFullSquare,kOpenTriangleUp,kOpenCircle,kFullCircle,kOpenSquare,kFullSquare,kOpenTriangleUp,kOpenCircle,kFullCircle,kOpenSquare,kFullSquare,kOpenTriangleUp]
 
 fillColors = [kRed-6+3,kAzure-4,kYellow+2]
@@ -352,7 +352,10 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
     
     if not os.path.exists(outdir):
         os.mkdir(outdir)
-        
+    
+    #Make 1D plots only
+    if "_hh" in name: return None
+
     can = TCanvas(name, name, 1200, 800)
     can.SetMargin(0,0,0,0)
     top = TPad("top","top",0,0.42,1,1)
@@ -378,12 +381,14 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
     for ih in xrange(len(histos)):
 
         if (Normalise):
-            if histos[ih].Integral()!=0: histos[ih].Scale(1./histos[ih].Integral())
-            if LogY:
-                histos[ih].GetYaxis().SetRangeUser(0.00001,histos[ih].GetMaximum()*15000)
-            else:
-                histos[ih].GetYaxis().SetRangeUser(0.00001,histos[ih].GetMaximum()*2.2)
- 
+
+            if (histos[ih].Integral() == 0):
+                return None
+            histos[ih].Scale(1./histos[ih].Integral())
+            if LogY: histos[ih].GetYaxis().SetRangeUser(0.00001,histos[ih].GetMaximum()*15000)
+            else:    histos[ih].GetYaxis().SetRangeUser(0.00001,histos[ih].GetMaximum()*2.2)
+                                
+
         histos[ih].SetMarkerColor(colors[ih])
         histos[ih].SetMarkerStyle(markers[ih])
         histos[ih].SetLineColor(colors[ih])
@@ -415,8 +420,8 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
             fit_funcs[ih].SetLineColor(histos[ih].GetLineColor())
 
         if ih==0:
-            print ymin, ymax
-            histos[ih].GetYaxis().SetRangeUser(ymin,ymax)
+            #print ymin, ymax
+            #histos[ih].GetYaxis().SetRangeUser(ymin,ymax)
             if (Xmin !=-999 and Xmax !=-999):
                 histos[ih].GetXaxis().SetRangeUser(Xmin,Xmax)
             if noErrors:
@@ -434,7 +439,7 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
             if noErrors:
                 histos[ih].Draw("same "+drawOptions)
             else:
-                histos[ih].Draw("same "+drawOptions)
+                histos[ih].Draw("same e "+drawOptions)
         
         if (doFit):
             fit_funcs[ih].Draw("same")
@@ -679,7 +684,7 @@ def Make2DRatio(name,outdir,histo1,histo2,xtitle="",ytitle="",ztitle="",runNumbe
     
     
 
-def Make2DPlots(name,outdir,histolist,xtitle="",ytitle="",ztitle="",text="",zmin="",zmax=""):
+def Make2DPlots(name,outdir,histolist,xtitle,ytitle,ztitle="",text="",zmin="",zmax=""):
     oFext=".pdf"
     if not os.path.exists(outdir):
         os.mkdir(outdir)
@@ -688,8 +693,8 @@ def Make2DPlots(name,outdir,histolist,xtitle="",ytitle="",ztitle="",text="",zmin
         can = TCanvas()
         can.SetRightMargin(0.2)
         
-        histolist[ih].GetZaxis().SetRangeUser(zmin,zmax)
-        histolist[ih].GetXaxis().SetTitle(xtitle)
+        #histolist[ih].GetZaxis().SetRangeUser(zmin,zmax)
+        histolist[ih].GetXaxis().SetTitle(xtitle[ih])
         histolist[ih].GetXaxis().SetTitleSize(
             histolist[ih].GetXaxis().GetTitleSize()*0.7)
         histolist[ih].GetXaxis().SetLabelSize(
@@ -703,7 +708,7 @@ def Make2DPlots(name,outdir,histolist,xtitle="",ytitle="",ztitle="",text="",zmin
             histolist[ih].GetYaxis().GetLabelSize()*0.75)
         histolist[ih].GetYaxis().SetTitleOffset(
             histolist[ih].GetYaxis().GetTitleOffset()*1.7)
-        histolist[ih].GetYaxis().SetTitle(ytitle)
+        histolist[ih].GetYaxis().SetTitle(ytitle[ih])
         
         
         histolist[ih].Draw("colz")
@@ -712,7 +717,7 @@ def Make2DPlots(name,outdir,histolist,xtitle="",ytitle="",ztitle="",text="",zmin
         
         print "saving..."
         #if (len(legends) == len(histolist)):
-        can.SaveAs(outdir+"/"+name+oFext)
+        can.SaveAs(outdir+"/"+name[ih]+oFext)
         #else:            
         #    print "ERROR: Not enough names for all the histos"
             
