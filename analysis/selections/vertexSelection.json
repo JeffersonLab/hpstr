@@ -44,26 +44,24 @@
         "id"   : 8,
         "info" : "e^{+} Track #chi^{2}/Ndf<6"
     },
-    "chi2unc_lt" : {
-        "cut"   : 10,
-        "id"    : 9,
-        "info"  : "#chi^{2}_{unc}<10"
-    },
     "eleMom_gt" : {
         "cut" : 0.4,
-        "id"  : 10,
+        "id"  : 9,
         "info" : "p_e^{-}>0.4 [GeV]"
     },
     "posMom_gt" : {
         "cut" : 0.4,
-        "id"  : 11,
+        "id"  : 10,
         "info" : "p_e^{+}>0.4 [GeV]"
+    },
+    "chi2unc_lt" : {
+        "cut"   : 10,
+        "id"    : 11,
+        "info"  : "#chi^{2}_{unc}<10"
     },
     "maxVtxMom_lt" : {
         "cut" : 2.4,
         "id"  : 12,
         "info" : "p_{vtx}<2.4 [GeV]"
     }
-    
-    
 }
