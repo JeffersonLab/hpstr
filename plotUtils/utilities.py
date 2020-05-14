@@ -1,7 +1,7 @@
 from ROOT import *
 from array import array
 from copy import deepcopy
-import os,sys
+import os,sys,glob
 
 colors  = [kBlue+2, kCyan+2, kRed+2,kOrange+10,kYellow+2,kGreen-1,kAzure-2,kGreen-8,kOrange+3,kYellow+2,kRed+2,kBlue+2,kGreen-8,kOrange+3,kYellow+2,kRed+2,kBlue+2,kGreen-8,kOrange+3,kYellow+2,kRed+2,kBlue+2,kGreen-8,kOrange+3,kYellow+2,kRed+2,kBlue+2,kGreen-8,kOrange+3]
 markers = [kFullCircle,kFullTriangleUp,kFullSquare,kOpenSquare,kOpenTriangleUp,kOpenCircle,kFullCircle,kOpenSquare,kFullSquare,kOpenTriangleUp,kOpenCircle,kFullCircle,kOpenSquare,kFullSquare,kOpenTriangleUp,kOpenCircle,kFullCircle,kOpenSquare,kFullSquare,kOpenTriangleUp,kOpenCircle,kFullCircle,kOpenSquare,kFullSquare,kOpenTriangleUp,kOpenCircle,kFullCircle,kOpenSquare,kFullSquare,kOpenTriangleUp]
@@ -94,7 +94,7 @@ def InsertText(runNumber="",texts=[],line=0.87,xoffset=0.18,Hps=True,Colors=Fals
     text.SetTextSize(0.05)
     text.SetTextColor(kBlack)
     if (Hps):
-        text.DrawLatex(xoffset,line,'#bf{#it{HPS} Internal}')
+        text.DrawLatex(xoffset,line,'#bf{#it{HPS}} Internal')
     if runNumber:
         line=line-newline
         if "MC" in runNumber:
@@ -710,12 +710,15 @@ def Make2DPlots(name,outdir,histolist,xtitle,ytitle,ztitle="",text="",zmin="",zm
             histolist[ih].GetYaxis().GetTitleOffset()*1.7)
         histolist[ih].GetYaxis().SetTitle(ytitle[ih])
         
+        pname = name[ih].replace('vtxana_vtxSelection_','')
+        histolist[ih].SetTitle(pname)
         
         histolist[ih].Draw("colz")
         
+        
         InsertText(text,"")
         
-        print "saving..."
+        #print "saving..."
         #if (len(legends) == len(histolist)):
         can.SaveAs(outdir+"/"+name[ih]+oFext)
         #else:            
@@ -732,3 +735,31 @@ def Profile2DPlot(name,outdir,histolist,axis="X",xtitle="",ytitle="",ztitle="",r
     if (axis == "X"):
         p = ProjectionX()
     
+def makeHTML(outDir,title,selection):
+    os.chdir(outDir)
+    plots = glob.glob('*.png') + glob.glob('*.pdf')
+    plots.sort()
+    f = open(outDir+'.html',"w+")
+    f.write("<!DOCTYPE html\n")
+    f.write(" PUBLIC \"-//W3C//DTD HTML 3.2//EN\">\n")
+    f.write("<html>\n")
+    f.write("<head><title>"+ title +" </title></head>\n")
+    f.write("<body bgcolor=\"EEEEEE\">\n")
+    f.write("<table border=\"0\" cellspacing=\"5\" width=\"100%\">\n")
+    for i in range(0,len(plots)):
+        pname = ""
+        if selection in plots[i]:
+            pname = plots[i].replace(selection+'_','')
+            
+        offset = 1
+        if i==0 or i%2==0: f.write("<tr>\n")
+        f.write("<td width=\"10%\"><a target=\"_blank\" href=\"" + plots[i] + "\"><img src=\"" + plots[i] + "\" alt=\"" + plots[i] + "\" title=\"" + pname + "\" width=\"85%\" ></a></td>\n")
+        if i==offset: 
+            f.write("</tr>\n")
+        elif (i>offset and (i-offset)%2==0) or i==len(plots): 
+            f.write("</tr>\n")
+            
+    f.write("</table>\n")
+    f.write("</body>\n")
+    f.write("</html>")
+    f.close()
