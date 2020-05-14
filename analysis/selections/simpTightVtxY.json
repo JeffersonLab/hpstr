@@ -24,9 +24,29 @@
 	"id"  : 4,
 	"info": "p_{vtx}<2.0GeV"
     },
+    "ele_sharedL0_eq" : {
+        "cut"  : 0,
+        "id"   : 5,
+        "info" : "N^{e^{-}}_{Shared} L0=0"
+    },
+    "pos_sharedL0_eq" : {
+        "cut"  : 0,
+        "id"   : 6,
+        "info" : "N^{e^{+}}_{Shared} L0=0"
+    },
     "nVtxs_eq" : {
         "cut"  : 1,
-        "id"   : 5,
+        "id"   : 7,
         "info" : "N_{vtx}=1"
+    },
+    "VtxYPos_gt" : {
+	"cut"  : -0.4,
+	"id"   : 8, 
+	"info" : "vtx Y>-0.4"
+    },
+    "VtxYPos_lt" : {
+	"cut"  : 0.4,
+	"id"   : 9, 
+	"info" : "vtx Y<0.4"
     }
 }
