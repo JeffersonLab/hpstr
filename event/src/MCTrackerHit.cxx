@@ -1,10 +1,9 @@
-/**
- * @file MCTrackerHit.cxx
- * @brief Class used to encapsulate mc tracker hit information
- * @author Cameron Bravo, SLAC National Accelerator Laboratory
- */
-
 #include "MCTrackerHit.h"
+
+/*~~~~~~~~~~~~~~~~*/
+/*   C++ StdLib   */
+/*~~~~~~~~~~~~~~~~*/
+#include <cmath>
 
 ClassImp(MCTrackerHit)
 
@@ -20,17 +19,25 @@ void MCTrackerHit::Clear(Option_t* /* options */) {
     TObject::Clear(); 
 }
 
+void MCTrackerHit::Print(Option_t *option) const {
+    std::cout << "MCTrackerHit { PDG ID: " << pdg_ <<  
+        "Layer: " << layer_ << ", " <<
+        "Module: " << module_ << ", " <<
+        "Position (mm): ( " << x_ << ", " << y_ << ", " << z_ << " ), " <<
+        "Energy Deposition (MeV): " << edep_ << ", " <<
+        "Global Time (ns): " << time_ <<
+        " }" << std::endl;
+}
+
 void MCTrackerHit::setPosition(const double* position, bool rotate) {
 
-    //svt angle: it's already with minus sign.
-    float svtAngle = 30.5e-3;
-    //Rotate the the input position automatically to match with the SVT tracker system
-    if (rotate)
-    {
+    // Rotate the the input position automatically to match with the 
+    // SVT tracker system
+    if (rotate) {
         //x_ = position[1];
         y_ = position[2];
-        z_ = position[1] * sin(svtAngle) + position[0]*cos(svtAngle);
-        x_ = position[1] * cos(svtAngle) - position[0]*sin(svtAngle);
+        z_ = position[1] * sin(svt_angle_) + position[0]*cos(svt_angle_);
+        x_ = position[1] * cos(svt_angle_) - position[0]*sin(svt_angle_);
     }
     else {
         x_ = position[0]; 

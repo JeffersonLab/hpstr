@@ -1,121 +1,212 @@
-/**
- * @file MCTrackerHit.h
- * @brief Class used to encapsulate mc tracker hit information
- * @author Cameron Bravo, SLAC National Accelerator Laboratory
- */
+#ifndef MCTRACKER_HIT_H
+#define MCTRACKER_HIT_H
 
-#ifndef _MCTRACKER_HIT_H_
-#define _MCTRACKER_HIT_H_
-
-//----------------//
-//   C++ StdLib   //
-//----------------//
+/*~~~~~~~~~~~~~~~~*/
+/*   C++ StdLib   */
+/*~~~~~~~~~~~~~~~~*/
 #include <iostream>
 
-//----------//
-//   ROOT   //
-//----------//
-#include <TObject.h>
-#include <TClonesArray.h>
-#include <TRefArray.h>
+/*~~~~~~~~~~*/
+/*   ROOT   */
+/*~~~~~~~~~~*/
+#include "TObject.h"
+#include "TRef.h" 
 
+/*~~~~~~~~~~~*/
+/*   event   */
+/*~~~~~~~~~~~*/
+#include "MCParticle.h" 
+
+/**
+ * Class which encapsulates information from a hit in a simulated tracking 
+ * detector.
+ */
 class MCTrackerHit : public TObject { 
 
     public: 
 
-        /** Constructor */
+        /// Constructor 
         MCTrackerHit();
 
-        /** Destructor */
-        virtual ~MCTrackerHit();
+        /// Destructor
+        ~MCTrackerHit();
 
-        /** Reset the Hit object. */
-        void Clear(Option_t *option="");
+        /// Reset this MCTrackHit object
+        void Clear(Option_t *option="") final override;
+
+        /// Print a string representation of this object
+        void Print(Option_t *option="") const final override; 
 
         /**
-         * Set the hit position.
+         * Set the hit position in mm. 
          *
-         * @param position The hit position.
+         * If the rotate flag is set to true, the hits will be rotated by 
+         * 30 mrad.
+         * TODO: Make this more generic by passing the rotation angle instead.
+         *
+         * @param[in] position The hit position.
          */
         void setPosition(const double* position, bool rotate = false);
 
-        /** @return The hit position. */
-        std::vector<double> getPosition() const { return {x_, y_, z_}; };
-
-        /** @return the global X coordinate of the hit */
-        double getGlobalX() const {return x_;}
-
-        /** @return the global X coordinate of the hit */
-        double getGlobalY() const {return y_;}
-
-        /** @return the global X coordinate of the hit */
-        double getGlobalZ() const {return z_;}
+        /**
+         * Get a vector with the x, y, z coordinates of the hit in mm.
+         *
+         * @return A vector containing the hit position. 
+         */
+        std::vector<double> getPosition() const { return {x_, y_, z_}; }
 
         /**
-         * Set the hit time.
+         * Get a vector with the global hit position in mm.
          *
-         * @param time The hit time.
+         * @return A vector containing the global position of the hit.
+         * TODO: What is this meant for? Doesn't seem to be any different than
+         *       just getting the position. 
          */
-        void setTime(const double time) { time_ = time; };
-
-        /** @return The hit time. */
-        double getTime() const { return time_; };
+        std::vector< double > getGlobalPosition() const { return { x_, y_, z_ }; } 
 
         /**
-         * Set the hit energy deposit.
+         * Set the hit time in ns.
          *
-         * @param charge The hit energy.
+         * @param[in] time The hit time in ns.
          */
-        void setEdep(const double edep) { edep_ = edep; };
+        void setTime(const double time) { time_ = time; }
 
-        /** @return The hit energy deposit. */
-        double getEdep() const { return edep_; };
+        /**
+         * Get the global hit time in ns.
+         *
+         * @return The global hit time in ns.
+         */
+        double getTime() const { return time_; }
 
-        void setModule(const int module ) {module_ = module;} ;
+        /**
+         * Set the energy deposited by the hit MeV.
+         *
+         * @param charge The energy deposited by the hit.
+         */
+        void setEdep(const double edep) { edep_ = edep; }
 
-        //** @return the tracker hit volume from the raw hit content */
-        int getModule() { return module_;} ;
+        /**
+         * Get the energy deposited by the hit in MeV.
+         *
+         * @return The energy deposited by the hit.  
+         */
+        double getEdep() const { return edep_; }
 
-        //** set the tracker hit layer from the raw hit content */
-        void setLayer(const int layer) {layer_ = layer;};
+        /**
+         * Set the LCIO ID of the particle that created this hit.
+         *
+         * @param[in] lcio_id the LCIO ID.
+         */
+        void setLcioID(const int lcio_id) { lcio_id_ = lcio_id; }
 
-        //** @return the tracker hit layer from the raw hit content */
-        int getLayer() const {return layer_;};
+        /**
+         * Get the LCIO ID of the particle that created this hit.
+         *
+         * @return The LCIO ID.
+         */
+        int getLcioID() const { return lcio_id_; }
 
-        //** set the pdg id of particle that made the hit */
-        void setPDG(const int pdg) {pdg_ = pdg;};
+        /**
+         * Set the module ID associated with this hit.  This is used to 
+         * uniquely identify a sensor within a layer. 
+         *
+         * @param[in] module the module ID.
+         */
+        void setModule(const int module ) { module_ = module; }
+        
+        /**
+         * Get the module ID associated with this hit. This isued to uniquely
+         * identify a sensor within a layer.
+         *
+         * @return the module ID.  
+         */
+        int getModule() const { return module_; }
 
-        //** @return the pdg id of particle that made the hit */
-        int getPDG() const {return pdg_;};
+        /**
+         * Set the geometric layer ID of the hit.
+         *
+         * @param[in] layer The geometric layer ID of the hit.
+         */
+        void setLayer(const int layer) { layer_ = layer; }
 
-        ClassDef(MCTrackerHit, 1);	
+        /**
+         * Get the geometric layer ID of the hit.
+         *
+         * @return The geometric layer ID of the hit. 
+         */
+        int getLayer() const { return layer_; }
+
+        /** 
+         * Set the PDG id of particle that made the hit. 
+         *
+         * param[in] pdg The PDG ID of the hit.
+         */
+        void setPDG(const int pdg) { pdg_ = pdg; }
+
+        /**
+         * Get the PDG id of the particle that made this hit.
+         * 
+         * @return The PDG ID of particle that made this hit. 
+         */
+        int getPDG() const { return pdg_; }
+
+        /**
+         * Set the Monte Carlo particle that created this hit in the simulation.
+         * 
+         * @param mc_particle The particle that created the hit.
+         */
+        void setMCParticle(MCParticle* mc_particle) { mc_particle_ = static_cast< TObject* >(mc_particle); }
+
+        /**
+         * Set the Monte Carlo particle that created this hit in the simulation.
+         *
+         * @return A pointer to the MC particle that created this hit in the 
+         *      simulation.
+         */
+        MCParticle* getMCParticle() const { return static_cast< MCParticle* >(mc_particle_.GetObject()); }
+
+        ClassDef(MCTrackerHit, 2);	
 
     private:
 
-        /** The x position of the hit. */
+
+        /// The angle of rotation of the SVT.
+        // TODO: Move this to a constants header.
+        const float svt_angle_{30.5e-3}; 
+
+        /// The x position of the hit in mm.
         double x_{-999}; 
 
-        /** The x position of the hit. */
+        /// The y position of the hit in mm.
         double y_{-999}; 
 
-        /** The x position of the hit. */
+        /// The z position of the hit in mm. 
         double z_{-999};
 
-        /** The hit time. */
+        /// The hit time in ns. 
         double time_{-999};
 
-        /** Layer (Axial + Stereo). 1-12 in 2015/2016 geometry, 1-14 in 2019 geometry */
+        /**
+         *  Layer (Axial + Stereo). 1-12 in 2015/2016 geometry, 
+         *  1-14 in 2019 geometry 
+         */
         int layer_{-999};
 
-        /** Module */
+        /// Module ID (0 - 2)
         int module_{-999};
 
-        /** Energy deposit of hit */
+        /// Energy deposit of hit MeV
         float edep_{-999};
 
-        /** pdg id of particle that made the hit */
+        /// PDG ID of particle the particle that made the hit.
         int pdg_{-999};
+
+        /// The LCIO ID of the MC particle that created this hit
+        int lcio_id_{-9999}; 
+
+        /// The MC particle that created this hit.
+        TRef mc_particle_{nullptr};
 
 }; // MCTrackerHit
 
-#endif // _MCTRACKER_HIT_H_
+#endif // MCTRACKER_HIT_H

@@ -82,8 +82,11 @@ class MCParticleProcessor : public Processor {
 
     private:
 
-        /** Map to hold all particle collections. */
-        std::vector<MCParticle*> mc_particles_{}; 
+        void clear(); 
+
+        /// Map between a particle and its LCIO ID.
+        std::map<int, MCParticle*> mc_particles_; 
+        
         std::string mcPartCollLcio_{"MCParticle"};
         std::string mcPartCollRoot_{"MCParticle"};
 
