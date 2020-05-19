@@ -28,8 +28,6 @@ plotDirectory = options.plot_dir
 # Thre should be no empty lines. These should ideally be
 # in ascending order. Unexpected behavior may otherwise
 # be observed.
-maxMass = -1
-minMass = 99999
 masses = [ ]
 polOrder = { }
 winSize = { }
