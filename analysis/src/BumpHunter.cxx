@@ -52,7 +52,9 @@ void BumpHunter::initialize(TH1* histogram, double &mass_hypothesis) {
     std::cout << "[ BumpHunter ]: Mass resolution: " << mass_resolution_ << " GeV" << std::endl;
     
     // Calculate the fit window size
-    window_size_ = mass_resolution_*res_factor_;
+    window_size_ = 0;
+    if(window_use_res_scale_) { window_size_ = res_factor_ * mass_resolution_; }
+    else { window_size_ = res_factor_ * this->getMassResolution(mass_hypothesis_, 1.0); }
     this->printDebug("Window size: " + std::to_string(window_size_));
     
     // Find the starting position of the window. This is set to the low edge of 
