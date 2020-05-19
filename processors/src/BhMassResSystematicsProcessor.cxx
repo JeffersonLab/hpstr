@@ -66,7 +66,8 @@ void BhMassResSystematicsProcessor::initialize(std::string inFilename, std::stri
         std::cout << "[ DEBUG ] :: Function name is \"" << function_name_ << "\"." << std::endl;
         TF1* massResSysFunc = (TF1*) function_file_->Get(function_name_.c_str());
         std::cout << "[ DEBUG ] :: Acquired function object." << std::endl;
-        res_width_ = massResSysFunc->Eval(mass_hypo_ / 1000.0);
+        res_width_ = massResSysFunc->Eval(mass_hypo_);
+        std::cout << "[ DEBUG ] :: Resolution width for " << mass_hypo_ << " MeV is " << res_width_ << "." << std::endl;
         std::cout << "Using mass resolution error parameterization function " << function_name_ << " from file." << std::endl;
     } else {
         std::cout << "Using constant mass resolution error " << res_width_ << "." << std::endl;
