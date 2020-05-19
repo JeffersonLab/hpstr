@@ -14,7 +14,15 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, float weigh
     {
         MCParticle *part = mcParts->at(i);
         int pdg = part->getPDG();
+        int momPdg = part->getMomPDG();
         double energy = part->getEnergy();
+        double massMeV = 1000.0*part->getMass();
+        double zPos = part->getVertexPosition().at(2);
+        if(pdg == 622)
+        {
+            Fill1DHisto("mc622Mass_h", massMeV, weight);
+            Fill1DHisto("mc622Z_h", zPos, weight);
+        }
         if (fabs(pdg) == 13)
         {
             nMuons++;

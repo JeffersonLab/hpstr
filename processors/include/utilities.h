@@ -54,14 +54,14 @@ namespace utils {
     RawSvtHit* buildRawHit(EVENT::TrackerRawData* rawTracker_hit,
             EVENT::LCCollection* raw_svt_hit_fits);
 
-    TrackerHit* buildTrackerHit(IMPL::TrackerHitImpl* lc_trackerHit);
+    TrackerHit* buildTrackerHit(IMPL::TrackerHitImpl* lc_trackerHit,bool rotate=true, int type = 0);
 
     CalCluster* buildCalCluster(EVENT::Cluster* lc_cluster);
 
     bool addRawInfoTo3dHit(TrackerHit* tracker_hit,
-            IMPL::TrackerHitImpl* lc_tracker_hit,
-            EVENT::LCCollection* raw_svt_fits,
-            std::vector<RawSvtHit*>* rawHits = nullptr);
+                           IMPL::TrackerHitImpl* lc_tracker_hit,
+                           EVENT::LCCollection* raw_svt_fits,
+                           std::vector<RawSvtHit*>* rawHits = nullptr, int type = 0);
 
 
     bool isUsedByTrack(IMPL::TrackerHitImpl* lc_tracker_hit,

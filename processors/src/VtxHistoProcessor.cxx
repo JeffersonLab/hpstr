@@ -20,7 +20,7 @@ void VtxHistoProcessor::configure(const ParameterSet& parameters) {
     {
         debug_          = parameters.getInteger("debug");
         rebin_          = parameters.getInteger("rebin");
-        selection_      = parameters.getString("selection");
+        selections_     = parameters.getVString("selections");
         projections_    = parameters.getVString("projections");
     }
     catch (std::runtime_error& error)
@@ -39,19 +39,23 @@ void VtxHistoProcessor::initialize(std::string inFilename, std::string outFilena
     
     //Get the vtx vs InvM and p 
     
-    if (debug_) {
-        std::cout<<"Getting..."<< (std::string("/")+selection_+"/"+selection_+"_vtx_p_svt_z_hh").c_str() << std::endl;
-    }
-
-    for (auto projection_ : projections_) {
-        if (debug_) {
-            std::cout<<"Getting... " <<(std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str() << std::endl;
-        }
-        
-        _histos2d[projection_] = (TH2F*) inF_->Get((std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str());
-        _histos2d[projection_]->SetDirectory(0);
-        _histos2d[projection_]->RebinX(rebin_);
-    }
+    for (auto selection_ : selections_) { 
+        for (auto projection_ : projections_) {
+            if (debug_) {
+                std::cout<<"Getting... " <<(std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str() << std::endl;
+            }
+            
+            TH2F* proj2d = (TH2F*) inF_->Get((std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str());
+            
+            if (proj2d) {
+                _histos2d[selection_+"_"+projection_] = (TH2F*) inF_->Get((std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str());
+                _histos2d[selection_+"_"+projection_]->SetDirectory(0);
+                _histos2d[selection_+"_"+projection_]->RebinX(rebin_);
+            }
+            else
+                std::cout<<"histo::"<<(std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str()<<" does not exists."<<std::endl;
+        }//projection	
+    }//selections
 }
 
 bool VtxHistoProcessor::process() {
@@ -74,7 +78,7 @@ bool VtxHistoProcessor::process() {
         _histos1d[it->first+"_mu"]->Sumw2();
         _histos1d[it->first+"_sigma"]->Sumw2();
         
-        
+        std::cout<<"Fitting::"<<it->first<<std::endl;
         HistogramHelpers::profileYwithIterativeGaussFit(it->second,_histos1d[it->first+"_mu"],_histos1d[it->first+"_sigma"],1,0);
     }       
     return true;

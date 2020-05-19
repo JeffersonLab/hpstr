@@ -81,12 +81,14 @@ void HistoManager::DefineHistos(){
                 }//bins
             }//labels
         }//1D histo
-
+        
         else if (extension == "hh") {
             histos2d[h_name] = plot2D(h_name,
                     hist.value().at("xtitle"),hist.value().at("binsX"),hist.value().at("minX"),hist.value().at("maxX"),
-                    hist.value().at("ytitle"),hist.value().at("binsY"),hist.value().at("minY"),hist.value().at("maxY"));
+                                      hist.value().at("ytitle"),hist.value().at("binsY"),hist.value().at("minY"),hist.value().at("maxY"));
         }
+        else 
+            std::cout<<"Error in histo definition "<<h_name<<std::endl;
     }//loop on config
 }
 

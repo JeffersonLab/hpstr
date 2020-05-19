@@ -49,7 +49,7 @@ int rebin_{1};
 
 //Selection folder
 
-std::string selection_{""};
+ std::vector<std::string> selections_{};
 
 //2D histos to project
 

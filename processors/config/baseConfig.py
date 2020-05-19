@@ -14,3 +14,12 @@ parser.add_option("-y", "--year", type="int", dest="year",
                   help="Select year of the data", metavar="year", default=2019)
 parser.add_option("-n", "--nevents", type="int", dest="nevents",
                   help="Number of events to process", metavar="nevents",default=-1)
+
+
+beamE = {}
+beamE["2016"] = 2.3
+beamE["2019"] = 4.55
+
+bfield = {}
+bfield["2016"] = 0.52
+bfield["2019"] = 1.034

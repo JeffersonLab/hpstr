@@ -1,0 +1,12 @@
+{
+    "L1PosReq_eq" : {
+	"cut" : 1,
+	"id"  : 0,
+	"info" : "pos has innermost hit"
+    },
+    "chi2unc_lt" : {
+	"cut"  : 10,
+	"id"   : 1,
+	"info" : "Chi2 < 10 for Vtxs"
+    }
+}
