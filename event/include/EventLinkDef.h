@@ -9,6 +9,7 @@
 #pragma link C++ class CalCluster+;
 #pragma link C++ class CalHit+;
 #pragma link C++ class EventHeader+;
+#pragma link C++ class FindableTrack+;
 #pragma link C++ class HodoCluster+;
 #pragma link C++ class HodoHit+;
 #pragma link C++ class TriggerData+;
@@ -67,4 +68,6 @@
 #pragma link C++ class vector<VTPData::hpsClusterMult>  +;
 #pragma link C++ class vector<VTPData::hpsFEETrig>      +;
 #pragma link C++ class vector<TSData::tsBits>           +;
+#pragma link C++ class vector< FindableTrack* >+; 
+#pragma link C++ class vector< FindableTrack >+; 
 #endif
