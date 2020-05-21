@@ -66,7 +66,7 @@ void BhMassResSystematicsProcessor::initialize(std::string inFilename, std::stri
         std::cout << "[ DEBUG ] :: Function name is \"" << function_name_ << "\"." << std::endl;
         TF1* massResSysFunc = (TF1*) function_file_->Get(function_name_.c_str());
         std::cout << "[ DEBUG ] :: Acquired function object." << std::endl;
-        res_width_ = massResSysFunc->Eval(mass_hypo_);
+        res_width_ = massResSysFunc->Eval(mass_hypo_) / 100.0;
         std::cout << "[ DEBUG ] :: Resolution width for " << mass_hypo_ << " MeV is " << res_width_ << "." << std::endl;
         std::cout << "Using mass resolution error parameterization function " << function_name_ << " from file." << std::endl;
     } else {
@@ -144,9 +144,6 @@ bool BhMassResSystematicsProcessor::process() {
     std::cout << "Running with window factor: " << win_factor_ << std::endl;
     std::cout << "Running on mass hypothesis: " << mass_hypo_ << std::endl;
     
-    // Write the invariant mass histogram to the output file.
-    mass_spec_h->Write();
-    
     // Set the tuple values which are the same for all runs.
     flat_tuple_->setVariableValue("seed",       seed_);
     flat_tuple_->setVariableValue("bkg_model",  bkg_model_);
@@ -159,6 +156,9 @@ bool BhMassResSystematicsProcessor::process() {
     HpsFitResult* nominal_result = bump_hunter_->performSearch(mass_spec_h, mass_hypo_, false, false);
     TFitResultPtr nominal_bkg_result = nominal_result->getBkgFitResult();
     TFitResultPtr nominal_sig_result = nominal_result->getCompFitResult();
+    
+    // Write the invariant mass histogram to the output file.
+    mass_spec_h->Write();
     
     // Set the tuple values.
     flat_tuple_->setVariableValue("nominal_bkg_total",              nominal_result->getIntegral());
