@@ -75,9 +75,9 @@ track.parameters["rawhitCollRoot"] = ''
 #Only for detail studies
 track.parameters["rawhitCollRoot"] = ''#'SCTRawHitsOnTrack_KF'
 
-if (not options.isData):
-    track.parameters["truthTrackCollLcio"] = 'KalmanFullTracksToTruthTrackRelations'
-    track.parameters["truthTrackCollRoot"] = 'Truth_KFTracks'
+#if (not options.isData):
+#    track.parameters["truthTrackCollLcio"] = 'KalmanFullTracksToTruthTrackRelations'
+#    track.parameters["truthTrackCollRoot"] = 'Truth_KFTracks'
 
 track.parameters["bfield"] = bfield[str(options.year)]
 
@@ -92,9 +92,9 @@ trackgbl.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 #Only for detail studies
 trackgbl.parameters["rawhitCollRoot"] = ''#'SVTRawHitsOnTrack'
 
-if (not options.isData):
-    trackgbl.parameters["truthTrackCollLcio"] = 'GBLTracksToTruthTrackRelations'
-    trackgbl.parameters["truthTrackCollRoot"] = 'Truth_GBLTracks'
+#if (not options.isData):
+#    trackgbl.parameters["truthTrackCollLcio"] = 'GBLTracksToTruthTrackRelations'
+#    trackgbl.parameters["truthTrackCollRoot"] = 'Truth_GBLTracks'
 trackgbl.parameters["bfield"] = bfield[str(options.year)]
 
 #ECalData
