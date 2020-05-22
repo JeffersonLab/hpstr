@@ -32,6 +32,7 @@ p.libraries.append("libprocessors.so")
 
 recoana_kf = HpstrConf.Processor('vtxana_kf', 'VertexAnaProcessor')
 recoana_gbl = HpstrConf.Processor('vtxana_gbl', 'VertexAnaProcessor')
+recoana_bckf = HpstrConf.Processor('vtxana_bckf', 'VertexAnaProcessor')
 
 ###############################
 #   Processor Configuration   #
@@ -73,6 +74,16 @@ recoana_gbl.parameters["vtxColl"] = "UnconstrainedV0Vertices"
 recoana_gbl.parameters["hitColl"] = "RotatedHelicalOnTrackHits"
 recoana_gbl.parameters["trkColl"] = "GBLTracks"
 
+recoana_bckf.parameters["anaName"] = "vtxana_bckf"
+recoana_bckf.parameters["trkColl"] = "KalmanFullTracks"
+recoana_bckf.parameters["vtxColl"] = "BeamspotConstrainedV0Vertices_KF"
+recoana_bckf.parameters["mcColl"]  = ""#"MCParticle"
+recoana_bckf.parameters["hitColl"] = "SiClustersOnTrack"
+recoana_bckf.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/customCuts.json'
+recoana_bckf.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis_2019.json"
+recoana_bckf.parameters["beamE"] = baseConfig.beamE[str(options.year)]
+recoana_bckf.parameters["isData"] = options.isData
+recoana_bckf.parameters["debug"] = 0
 #    
 #    RegionPath+'ESumCR.json',
 #    RegionPath+'TightNoSharedL0.json',
@@ -82,7 +93,7 @@ recoana_gbl.parameters["trkColl"] = "GBLTracks"
 #p.sequence = [recoana_kf,recoana_gbl]
 if (options.tracking == "KF"):
     print("Run KalmanFullTracks analysis")
-    p.sequence = [recoana_kf]
+    p.sequence = [recoana_kf, recoana_bckf]
 elif (options.tracking == "GBL"):
     print("Run GBL analysis")
     p.sequence = [recoana_gbl]

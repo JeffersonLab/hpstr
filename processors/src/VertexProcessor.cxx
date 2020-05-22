@@ -83,6 +83,7 @@ bool VertexProcessor::process(IEvent* ievent) {
         
     }
     
+    std::cout << "trac_data: " << track_data << std::endl;
     
     if (debug_ > 0) std::cout << "VertexProcessor: Converting Verteces" << std::endl;
     for (int ivtx = 0 ; ivtx < lc_vtxs->getNumberOfElements(); ++ivtx) 

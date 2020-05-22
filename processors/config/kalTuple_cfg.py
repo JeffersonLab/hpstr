@@ -33,6 +33,7 @@ svthits = HpstrConf.Processor('svthits', 'Tracker3DHitProcessor')
 rawsvt  = HpstrConf.Processor('rawsvt', 'SvtRawDataProcessor')
 ecal    = HpstrConf.Processor('ecal', 'ECalDataProcessor')
 vtx     = HpstrConf.Processor('vtx', 'VertexProcessor')
+bcvtxkf     = HpstrConf.Processor('bcvtxkf', 'VertexProcessor')
 vtxgbl   = HpstrConf.Processor('vtxgbl', 'VertexProcessor')
 cvtxgbl   = HpstrConf.Processor('cvtxgbl', 'VertexProcessor')
 mcpart  = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
@@ -112,6 +113,12 @@ vtx.parameters["partCollRoot"]   = 'ParticlesOnVertices_KF'
 vtx.parameters["kinkRelCollLcio"] = ''
 vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
+bcvtxkf.parameters["debug"] = 1
+bcvtxkf.parameters["vtxCollLcio"]    = 'BeamspotConstrainedV0Vertices_KF'
+bcvtxkf.parameters["vtxCollRoot"]    = 'BeamspotConstrainedV0Vertices_KF'
+bcvtxkf.parameters["partCollRoot"]   = 'ParticlesOnVertices_KF'
+bcvtxkf.parameters["kinkRelCollLcio"] = ''
+bcvtxkf.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
 vtxgbl.parameters["debug"] = 1
 vtxgbl.parameters["vtxCollLcio"]     = 'UnconstrainedV0Vertices'
@@ -128,9 +135,6 @@ cvtxgbl.parameters["partCollRoot"]    = 'ParticlesOnVertices'
 cvtxgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
 cvtxgbl.parameters["trkRelCollLcio"]  = 'TrackDataRelations'
 
-cvtxgbl.parameters["vtxCollLcio"]     = 'BeamspotConstrainedV0Vertices_KF'
-cvtxgbl.parameters["vtxCollRoot"]     = 'BeamspotConstrainedV0Vertices_KF'
-
 #MCParticle
 mcpart.parameters["debug"] = 0 
 mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
@@ -138,9 +142,9 @@ mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
 # Sequence which the processors will run.
 if (not options.isData):
-    p.sequence = [header, vtx, vtxgbl, cvtxgbl, ecal, track, trackgbl, mcpart]
+    p.sequence = [header, vtx, bcvtxkf, vtxgbl, cvtxgbl, ecal, track, trackgbl, mcpart]
 else:
-    p.sequence = [header, vtx, vtxgbl, cvtxgbl, ecal, track, trackgbl]
+    p.sequence = [header, vtx, bcvtxkf, vtxgbl, cvtxgbl, ecal, track, trackgbl]
 
 if (options.nevents > -1 ):
     p.max_events = options.nevents
