@@ -44,16 +44,16 @@ void BumpHunter::initialize(TH1* histogram, double &mass_hypothesis) {
     }
     
     // Correct the mass to take into account the mass scale systematic
-    //corr_mass_ = this->correctMass(mass_hypothesis);
+    //corr_mass_ = correctMass(mass_hypothesis);
     //corr_mass_ = mass_hypothesis;
     
     // Get the mass resolution at the corrected mass 
-    mass_resolution_ = this->getMassResolution(mass_hypothesis_);
+    mass_resolution_ = getMassResolution(mass_hypothesis_);
     std::cout << "[ BumpHunter ]: Mass resolution: " << mass_resolution_ << " GeV" << std::endl;
     
     // Calculate the fit window size
     window_size_ = mass_resolution_*res_factor_;
-    this->printDebug("Window size: " + std::to_string(window_size_));
+    printDebug("Window size: " + std::to_string(window_size_));
     
     // Find the starting position of the window. This is set to the low edge of 
     // the bin closest to the calculated value. If the start position falls 
@@ -105,7 +105,7 @@ void BumpHunter::initialize(TH1* histogram, double &mass_hypothesis) {
 
 HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, bool skip_bkg_fit, bool skip_ul) {
     // Calculate all of the fit parameters e.g. window size, mass hypothesis
-    this->initialize(histogram, mass_hypothesis);
+    initialize(histogram, mass_hypothesis);
     double initNorm = log10(integral_);
     
     // Instantiate a new fit result object to store all of the results.
@@ -245,11 +245,11 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
     TFitResultPtr full_result = histogram->Fit("full", "VLES+", "", window_start_, window_end_);
     fit_result->setCompFitResult(full_result);
     
-    this->calculatePValue(fit_result);
+    calculatePValue(fit_result);
     std::cout << "[ BumpHunter ]: Bkg Fit Status: " << fit_result->getBkgFitResult()->IsValid() <<  std::endl;
     std::cout << "[ BumpHunter ]: Bkg Toys Fit Status: " << fit_result->getBkgToysFitResult()->IsValid() <<  std::endl;
     std::cout << "[ BumpHunter ]: Full Fit Status: " << fit_result->getCompFitResult()->IsValid() <<  std::endl;
-    if((!skip_ul) && full_result->IsValid()) { this->getUpperLimit(histogram, fit_result); }
+    if((!skip_ul) && full_result->IsValid()) { getUpperLimit(histogram, fit_result); }
     
     // Persist the mass hypothesis used for this fit
     fit_result->setMass(mass_hypothesis_);
@@ -270,7 +270,7 @@ void BumpHunter::calculatePValue(HpsFitResult* result) {
     std::cout << "[ BumpHunter ]: Calculating p-value: " << std::endl;
     
     double signal_yield = result->getCompFitResult()->Parameter(poly_order_ + 1);
-    this->printDebug("Signal yield: " + std::to_string(signal_yield));
+    printDebug("Signal yield: " + std::to_string(signal_yield));
     
     // In searching for a resonance, a signal is expected to lead to an 
     // excess of events.  In this case, a signal yield of < 0 is  
@@ -278,14 +278,14 @@ void BumpHunter::calculatePValue(HpsFitResult* result) {
     // put forth by Cowen et al. in https://arxiv.org/pdf/1007.1727.pdf. 
     if(signal_yield <= 0) {
         result->setPValue(1);
-        this->printDebug("Signal yield is negative ... setting p-value = 1");
+        printDebug("Signal yield is negative ... setting p-value = 1");
         return;
     }
     
     // Get the NLL obtained by minimizing the composite model with the signal
     // yield floating.
     double mle_nll = result->getCompFitResult()->MinFcnValue();
-    this->printDebug("NLL when mu = " + std::to_string(signal_yield) + ": " + std::to_string(mle_nll));
+    printDebug("NLL when mu = " + std::to_string(signal_yield) + ": " + std::to_string(mle_nll));
     
     // Get the NLL obtained from the Bkg only fit.
     double cond_nll = result->getBkgFitResult()->MinFcnValue();
@@ -295,7 +295,7 @@ void BumpHunter::calculatePValue(HpsFitResult* result) {
     // 2) From the chi2, calculate the p-value.
     double q0 = 0;
     double p_value = 0;
-    this->getChi2Prob(cond_nll, mle_nll, q0, p_value);
+    getChi2Prob(cond_nll, mle_nll, q0, p_value);
     
     std::cout << "[ BumpHunter ]: p-value: " << p_value << std::endl;
     
@@ -382,7 +382,7 @@ void BumpHunter::getUpperLimitPower(TH1* histogram, HpsFitResult* result) {
     
     //  Get the signal yield obtained from the signal+bkg fit
     double signal_yield = result->getCompFitResult()->Parameter(poly_order_ + 1);
-    this->printDebug("Signal yield: " + std::to_string(signal_yield));
+    printDebug("Signal yield: " + std::to_string(signal_yield));
     
     // Get the minimum NLL value that will be used for testing upper limits.
     // If the signal yield (mu estimator) at the min NLL is < 0, use the NLL
@@ -390,21 +390,21 @@ void BumpHunter::getUpperLimitPower(TH1* histogram, HpsFitResult* result) {
     double mle_nll = result->getCompFitResult()->MinFcnValue();
     
     if(signal_yield < 0) {
-        this->printDebug("Signal yield @ min NLL is < 0. Using NLL when signal yield = 0");
+        printDebug("Signal yield @ min NLL is < 0. Using NLL when signal yield = 0");
         
         // Get the NLL obtained assuming the background only hypothesis
         mle_nll = result->getBkgFitResult()->MinFcnValue();
         
         signal_yield = 0;
     }
-    this->printDebug("MLE NLL: " + std::to_string(mle_nll));
+    printDebug("MLE NLL: " + std::to_string(mle_nll));
     
     signal_yield = floor(signal_yield) + 1;
     
     double p_value = 1;
     double q0 = 0;
     while(true) {
-        this->printDebug("Setting signal yield to: " + std::to_string(signal_yield));
+        printDebug("Setting signal yield to: " + std::to_string(signal_yield));
         //std::cout << "[ BumpHunter ]: Current p-value: " << p_value << std::endl;
         comp->FixParameter(poly_order_ + 1, signal_yield);
         
@@ -413,9 +413,9 @@ void BumpHunter::getUpperLimitPower(TH1* histogram, HpsFitResult* result) {
         
         // 1) Calculate the likelihood ratio which is chi2 distributed.
         // 2) From the chi2, calculate the p-value.
-        this->getChi2Prob(cond_nll, mle_nll, q0, p_value);
+        getChi2Prob(cond_nll, mle_nll, q0, p_value);
         
-        this->printDebug("p-value after fit : " + std::to_string(p_value));
+        printDebug("p-value after fit : " + std::to_string(p_value));
         std::cout << "[ BumpHunter ]: Current Signal Yield: " << signal_yield << std::endl;
         std::cout << "[ BumpHunter ]: Current p-value: " << p_value << std::endl;
         
@@ -476,18 +476,18 @@ std::vector<TH1*> BumpHunter::generateToys(TH1* histogram, double n_toys, int se
 }
 
 void BumpHunter::getChi2Prob(double cond_nll, double mle_nll, double &q0, double &p_value) {
-    this->printDebug("Cond NLL: " + std::to_string(cond_nll));
-    this->printDebug("Uncod NLL: " + std::to_string(mle_nll));
+    printDebug("Cond NLL: " + std::to_string(cond_nll));
+    printDebug("Uncod NLL: " + std::to_string(mle_nll));
     double diff = cond_nll - mle_nll;
-    this->printDebug("Delta NLL: " + std::to_string(diff));
+    printDebug("Delta NLL: " + std::to_string(diff));
     
     q0 = 2 * diff;
-    this->printDebug("q0: " + std::to_string(q0));
+    printDebug("q0: " + std::to_string(q0));
     
     p_value = ROOT::Math::chisquared_cdf_c(q0, 1);
-    this->printDebug("p-value before dividing: " + std::to_string(p_value));
+    printDebug("p-value before dividing: " + std::to_string(p_value));
     p_value *= 0.5;
-    this->printDebug("p-value: " + std::to_string(p_value));
+    printDebug("p-value: " + std::to_string(p_value));
 }
 
 void BumpHunter::setBounds(double lower_bound, double upper_bound) {
@@ -499,8 +499,8 @@ void BumpHunter::setBounds(double lower_bound, double upper_bound) {
 double BumpHunter::correctMass(double mass) {
     double offset = -1.19892320e4 * pow(mass, 3) + 1.50196798e3 * pow(mass, 2) - 8.38873712e1 * mass + 6.23215746;
     offset /= 100;
-    this->printDebug("Offset: " + std::to_string(offset));
+    printDebug("Offset: " + std::to_string(offset));
     double cmass = mass - mass * offset;
-    this->printDebug("Corrected Mass: " + std::to_string(cmass));
+    printDebug("Corrected Mass: " + std::to_string(cmass));
     return cmass;
 }
