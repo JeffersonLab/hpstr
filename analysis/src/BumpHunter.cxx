@@ -276,11 +276,11 @@ void BumpHunter::calculatePValue(HpsFitResult* result) {
     // excess of events.  In this case, a signal yield of < 0 is  
     // meaningless so we set the p-value = 1.  This follows the formulation
     // put forth by Cowen et al. in https://arxiv.org/pdf/1007.1727.pdf. 
-    if(signal_yield <= 0) {
-        result->setPValue(1);
-        printDebug("Signal yield is negative ... setting p-value = 1");
-        return;
-    }
+    //if(signal_yield <= 0) {
+    //    result->setPValue(1);
+    //    printDebug("Signal yield is negative ... setting p-value = 1");
+    //    return;
+    //}
     
     // Get the NLL obtained by minimizing the composite model with the signal
     // yield floating.
@@ -288,15 +288,22 @@ void BumpHunter::calculatePValue(HpsFitResult* result) {
     printDebug("NLL when mu = " + std::to_string(signal_yield) + ": " + std::to_string(mle_nll));
     
     // Get the NLL obtained from the Bkg only fit.
-    double cond_nll = result->getBkgFitResult()->MinFcnValue();
-    printDebug("NLL when mu = 0: " + std::to_string(cond_nll));
+    double bkg_nll = result->getBkgFitResult()->MinFcnValue();
+    printDebug("NLL when mu = 0: " + std::to_string(bkg_nll));
     
     // 1) Calculate the likelihood ratio which is chi2 distributed.
     // 2) From the chi2, calculate the p-value.
     double q0 = 0;
     double p_value = 0;
-    getChi2Prob(cond_nll, mle_nll, q0, p_value);
-    
+    getChi2Prob(bkg_nll, mle_nll, q0, p_value);
+
+    // Calculate r0 stat
+    double r0 = -2.0*(mle_nll - bkg_nll);
+    if(signal_yield < 0.0 ) r0 = 2.0*(mle_nll - bkg_nll);
+    printDebug("r0: " + std::to_string(r0));
+    printDebug("Z0: " + std::to_string(r0*TMath::Sqrt(fabs(r0))/fabs(r0)));
+    p_value = 1 - ROOT::Math::gaussian_cdf( r0*TMath::Sqrt(fabs(r0))/fabs(r0) );
+
     std::cout << "[ BumpHunter ]: p-value: " << p_value << std::endl;
     
     // Update the result
@@ -310,7 +317,7 @@ void BumpHunter::printDebug(std::string message) {
 
 void BumpHunter::getUpperLimit(TH1* histogram, HpsFitResult* result) {
     if(asymptotic_limit_) {
-        BumpHunter::getUpperLimitAsymptotic(histogram, result);
+        BumpHunter::getUpperLimitAsymCLs(histogram, result);
     } else {
         BumpHunter::getUpperLimitPower(histogram, result);
     }
@@ -343,6 +350,127 @@ void BumpHunter::getUpperLimitAsymptotic(TH1* histogram, HpsFitResult* result) {
     // Set the upper limit and upper limit p-value.
     result->setUpperLimit(upper_limit);
     result->setUpperLimitPValue(p_value);
+}
+
+void BumpHunter::getUpperLimitAsymCLs(TH1* histogram, HpsFitResult* result) {
+    // Determine whether to use an exponential polynomial or normal polynomial.
+    bool isChebyshev = (bkg_model_ == FitFunction::BkgModel::CHEBYSHEV || bkg_model_ == FitFunction::BkgModel::EXP_CHEBYSHEV);
+    bool isExp = (bkg_model_ == FitFunction::BkgModel::EXP_CHEBYSHEV || bkg_model_ == FitFunction::BkgModel::EXP_LEGENDRE);
+    double initNorm = log10(integral_);
+    
+    // Instantiate a fit function for the appropriate polynomial order.
+    TF1* comp{nullptr};
+    FitFunction::ModelOrder bkg_order_model;
+    if(poly_order_ == 1) { bkg_order_model = FitFunction::ModelOrder::FIRST; }
+    else if(poly_order_ == 3) { bkg_order_model = FitFunction::ModelOrder::THIRD; }
+    else if(poly_order_ == 5) { bkg_order_model = FitFunction::ModelOrder::FIFTH; }
+    if(isChebyshev) {
+        ChebyshevFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);
+        comp = new TF1("comp_ul", comp_func, -1, 1, poly_order_ + 4);
+    } else {
+        LegendreFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);
+        comp = new TF1("comp_ul", comp_func, -1, 1, poly_order_ + 4);
+    }
+    comp->SetParameter(0, initNorm);
+    comp->SetParName(0, "pol0");
+    comp->SetParameter(poly_order_ + 1, 0.0);
+    comp->SetParName(poly_order_ + 1, "signal norm");
+    comp->SetParName(poly_order_ + 2, "mean");
+    comp->SetParName(poly_order_ + 3, "sigma");
+    for(int i = 1; i < poly_order_ + 1; i++) {
+        comp->SetParameter(i, 0);
+        comp->SetParName(i, Form("pol%i", i));
+    }
+    comp->FixParameter(poly_order_ + 2, mass_hypothesis_);
+    comp->FixParameter(poly_order_ + 3, mass_resolution_);
+    //for(int parI = 1; parI < poly_order_ + 1; parI++) {
+    //    comp->FixParameter(parI, result->getCompFitResult()->Parameter(parI));
+    //}
+    
+    std::cout << "Mass resolution: " << mass_resolution_ << std::endl;
+    std::cout << "[ BumpHunter ]: Calculating upper limit." << std::endl;
+    
+    //  Get the signal yield obtained from the signal+bkg fit
+    double mu_hat = result->getCompFitResult()->Parameter(poly_order_ + 1);
+    double sigma = result->getCompFitResult()->ParError(poly_order_ + 1);
+    printDebug("Signal yield: " + std::to_string(mu_hat));
+    printDebug("Sigma: " + std::to_string(sigma));
+    
+    // Get the minimum NLL value that will be used for testing upper limits.
+    double mle_nll = result->getCompFitResult()->MinFcnValue();
+        
+    // Get the NLL obtained assuming the background only hypothesis
+    double bkg_nll = result->getBkgFitResult()->MinFcnValue();
+
+    printDebug("MLE NLL: " + std::to_string(mle_nll));
+    printDebug("mu=0 NLL: " + std::to_string(bkg_nll));
+    
+    double mu95up = fabs(mu_hat + 1.64*sigma); //This should give us something close to start
+    
+    double CLs = 1.0;
+    double p_mu = 1;
+    double p_b = 1;
+    double r_mu = -9999999.9;
+    while(true) {
+        comp->FixParameter(poly_order_ + 1, mu95up);
+        
+        TFitResultPtr full_result = histogram->Fit("comp_ul", "NQLES", "", window_start_, window_end_);
+        double mu_nll = full_result->MinFcnValue();
+
+        double nllamb_mu = mu_nll - mle_nll;
+        if(mu_hat < 0.0) nllamb_mu = mu_nll - bkg_nll;
+
+        r_mu = 2.0*nllamb_mu;
+        if(mu_hat > mu95up) r_mu = -2.0*nllamb_mu;
+
+        if(r_mu < 0.0)
+        {
+            p_mu = 1.0 - ROOT::Math::gaussian_cdf( -1.0*TMath::Sqrt(-1.0*r_mu) );
+            p_b =  1.0 - ROOT::Math::gaussian_cdf( -1.0*TMath::Sqrt(-1.0*r_mu) - (mu95up/sigma) );
+        }
+        else if(r_mu > mu95up*mu95up/(sigma*sigma))
+        {
+            p_mu =  1.0 - ROOT::Math::gaussian_cdf( (r_mu + mu95up*mu95up/(sigma*sigma))/(2.0*mu95up/sigma) );
+            p_b =   1.0 - ROOT::Math::gaussian_cdf( (r_mu - mu95up*mu95up/(sigma*sigma))/(2.0*mu95up/sigma) );
+        }
+        else
+        {
+            p_mu = 1.0 - ROOT::Math::gaussian_cdf( TMath::Sqrt(r_mu) );
+            p_b =  1.0 - ROOT::Math::gaussian_cdf( TMath::Sqrt(r_mu) - (mu95up/sigma) );
+        }
+
+        
+        CLs = p_mu/p_b;
+        
+        std::cout << "[ BumpHunter ]: mu: " << mu95up << std::endl;
+        //std::cout << "[ BumpHunter ]: mle_nll: " << mle_nll << std::endl;
+        //std::cout << "[ BumpHunter ]: bkg_nll: " << bkg_nll << std::endl;
+        //std::cout << "[ BumpHunter ]: mu_nll: " << mu_nll << std::endl;
+        //std::cout << "[ BumpHunter ]: nllamb_mu: " << nllamb_mu << std::endl;
+        //std::cout << "[ BumpHunter ]: r_mu: " << r_mu << std::endl;
+        //std::cout << "[ BumpHunter ]: p_mu: " << p_mu << std::endl;
+        //std::cout << "[ BumpHunter ]: p_b: " << p_b << std::endl;
+        std::cout << "[ BumpHunter ]: CLs: " << CLs << std::endl;
+        if((CLs <= 0.051 && CLs > 0.049)) 
+        {
+            std::cout << "[ BumpHunter ]: Upper limit: " << mu95up << std::endl;
+            std::cout << "[ BumpHunter ]: CLs: " << CLs << std::endl;
+            
+            result->setUpperLimit(mu95up);
+            result->setUpperLimitPValue(CLs);
+            
+            break;
+        } 
+        else if(CLs <= 1e-10) { mu95up = mu95up*0.1; }
+        else if(CLs <= 1e-8) { mu95up = mu95up*0.5; }
+        else if(CLs <= 1e-4) { mu95up = mu95up*0.8; }
+        else if(CLs <= 0.01) { mu95up = mu95up*0.9; }
+        else if(CLs <= 0.04) { mu95up = mu95up*0.99; }
+        else if(CLs <= 0.049) { mu95up = mu95up*0.999; }
+        else if(CLs <= 0.1) { mu95up = mu95up*1.01; }
+        else { mu95up = mu95up*1.5; }
+        printDebug("Setting mu to: " + std::to_string(mu95up));
+    }
 }
 
 void BumpHunter::getUpperLimitPower(TH1* histogram, HpsFitResult* result) {
@@ -476,18 +604,18 @@ std::vector<TH1*> BumpHunter::generateToys(TH1* histogram, double n_toys, int se
 }
 
 void BumpHunter::getChi2Prob(double cond_nll, double mle_nll, double &q0, double &p_value) {
-    printDebug("Cond NLL: " + std::to_string(cond_nll));
-    printDebug("Uncod NLL: " + std::to_string(mle_nll));
+    //printDebug("Cond NLL: " + std::to_string(cond_nll));
+    //printDebug("Uncod NLL: " + std::to_string(mle_nll));
     double diff = cond_nll - mle_nll;
-    printDebug("Delta NLL: " + std::to_string(diff));
+    //printDebug("Delta NLL: " + std::to_string(diff));
     
     q0 = 2 * diff;
-    printDebug("q0: " + std::to_string(q0));
+    //printDebug("q0: " + std::to_string(q0));
     
     p_value = ROOT::Math::chisquared_cdf_c(q0, 1);
-    printDebug("p-value before dividing: " + std::to_string(p_value));
+    //printDebug("p-value before dividing: " + std::to_string(p_value));
     p_value *= 0.5;
-    printDebug("p-value: " + std::to_string(p_value));
+    //printDebug("p-value: " + std::to_string(p_value));
 }
 
 void BumpHunter::setBounds(double lower_bound, double upper_bound) {
