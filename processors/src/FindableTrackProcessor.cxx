@@ -23,6 +23,9 @@ FindableTrackProcessor::FindableTrackProcessor(const std::string& name, Process&
 }
 
 FindableTrackProcessor::~FindableTrackProcessor() { 
+    delete output_file_;
+    clear(); 
+    delete findable_tracks_;  
 }
 
 void FindableTrackProcessor::configure(const ParameterSet& parameters) {
