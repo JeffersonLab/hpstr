@@ -50,8 +50,10 @@ void FindableTrackProcessor::initialize(TTree* tree) {
     // NOTE: This is a hack that allows me to write a ROOT collection 
     // when processing a ROOT file. This will be removed once the 
     // processing class is made more generic. 
-    output_tree_ = new TTree("HPS_Event", "HPS_Event");  
-    output_tree_->Branch("FindableTracks", &findable_tracks_);  
+    output_tree_ = tree->CloneTree();  
+    output_tree_->Branch("FindableTracks", &findable_tracks_); 
+    //output_tree_->Branch(mc_particle_col_.c_str(), &mc_particles_);  
+    //output_tree_->Branch(sim_tracker_hit_col_.c_str(), &sim_tracker_hits_);  
 
 }
 
@@ -85,7 +87,7 @@ bool FindableTrackProcessor::process(IEvent* event) {
 }
 
 void FindableTrackProcessor::finalize() {
-    output_tree_->Write(); 
+    output_tree_->AutoSave(); 
     output_file_->Close(); 
 }
 
