@@ -52,8 +52,6 @@ void FindableTrackProcessor::initialize(TTree* tree) {
     // processing class is made more generic. 
     output_tree_ = tree->CloneTree();  
     output_tree_->Branch("FindableTracks", &findable_tracks_); 
-    //output_tree_->Branch(mc_particle_col_.c_str(), &mc_particles_);  
-    //output_tree_->Branch(sim_tracker_hit_col_.c_str(), &sim_tracker_hits_);  
 
 }
 
