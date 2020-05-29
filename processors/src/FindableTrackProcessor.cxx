@@ -37,14 +37,18 @@ void FindableTrackProcessor::configure(const ParameterSet& parameters) {
 }
 
 void FindableTrackProcessor::initialize(TTree* tree) {
-    tree->Branch("FindableTracks", &findable_tracks_);  
     
     auto b_mc_particles{tree->GetBranch(mc_particle_col_.c_str())};
     b_mc_particles->SetAddress(&mc_particles_); 
 
     auto b_sim_tracker_hits{tree->GetBranch(sim_tracker_hit_col_.c_str())}; 
-    b_sim_tracker_hits->SetAddress(&sim_tracker_hits_); 
+    b_sim_tracker_hits->SetAddress(&sim_tracker_hits_);
 
+    // NOTE: This is a hack that allows me to write a ROOT collection 
+    // when processing a ROOT file. This will be removed once the 
+    // processing class is made more generic. 
+    output_tree_ = new TTree("HPS_Event", "HPS_Event");  
+    output_tree_->Branch("FindableTracks", &findable_tracks_);  
 
 }
 
@@ -54,7 +58,7 @@ bool FindableTrackProcessor::process(IEvent* event) {
     hitMap_.clear();
 
     // Clear any previously created tracks
-    //clear();  
+    clear();  
 
     // If the collection of sim tracker hits doesn't exists, skip the event.
     if (sim_tracker_hits_->empty()) return false; 
@@ -74,9 +78,12 @@ bool FindableTrackProcessor::process(IEvent* event) {
 
         }
     }
+    output_tree_->Fill(); 
 }
 
-void FindableTrackProcessor::finalize() { 
+void FindableTrackProcessor::finalize() {
+    output_tree_->Write(); 
+    output_file_->Close(); 
 }
 
 void FindableTrackProcessor::createHitMap(const std::vector< MCTrackerHit* >* hits) { 
@@ -108,8 +115,7 @@ void FindableTrackProcessor::isFindable(int lcio_id, std::vector< int > hit_coun
     }
     
     bool is_findable = (stereo_hit_count >= 5) ? true : false;
-    std::cout << "Track is findable: " << is_findable << std::endl;
-    //findable_tracks_->push_back(new FindableTrack(lcio_id, stereo_hit_count, is_findable));  
+    findable_tracks_->push_back(new FindableTrack(lcio_id, stereo_hit_count, is_findable));  
 }
 
 

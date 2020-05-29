@@ -9,7 +9,8 @@
 /*~~~~~~~~~~*/
 /*   ROOT   */
 /*~~~~~~~~~~*/
-#include "TBranch.h" 
+#include "TBranch.h"
+#include "TFile.h" 
 
 /// Forward declarations
 class FindableTrack;
@@ -98,7 +99,13 @@ class FindableTrackProcessor : public Processor {
         std::map< int, std::vector< int >> hitMap_; 
 
         /// Collection of findable tracks
-        std::vector< FindableTrack* >* findable_tracks_;  
+        std::vector< FindableTrack* >* findable_tracks_{new std::vector< FindableTrack*>()};  
+
+        /// Output file
+        TFile* output_file_{new TFile("findable_tracks.root", "recreate")}; 
+
+        /// Output tree
+        TTree* output_tree_{nullptr}; 
 
 }; // FindableTrackProcessor 
 
