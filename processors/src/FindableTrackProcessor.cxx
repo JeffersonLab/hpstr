@@ -23,7 +23,6 @@ FindableTrackProcessor::FindableTrackProcessor(const std::string& name, Process&
 }
 
 FindableTrackProcessor::~FindableTrackProcessor() { 
-    delete output_file_;
     clear(); 
     delete findable_tracks_;  
 }
@@ -86,7 +85,6 @@ bool FindableTrackProcessor::process(IEvent* event) {
 
 void FindableTrackProcessor::finalize() {
     output_tree_->AutoSave(); 
-    output_file_->Close(); 
 }
 
 void FindableTrackProcessor::createHitMap(const std::vector< MCTrackerHit* >* hits) { 

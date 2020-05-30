@@ -101,9 +101,6 @@ class FindableTrackProcessor : public Processor {
         /// Collection of findable tracks
         std::vector< FindableTrack* >* findable_tracks_{new std::vector< FindableTrack*>()};  
 
-        /// Output file
-        TFile* output_file_{new TFile("findable_tracks.root", "recreate")}; 
-
         /// Output tree
         TTree* output_tree_{nullptr}; 
 
