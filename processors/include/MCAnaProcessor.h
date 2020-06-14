@@ -8,6 +8,8 @@
 #include "MCTrackerHit.h"
 #include "MCEcalHit.h"
 #include "MCAnaHistos.h"
+#include "AnaHelpers.h"
+#include "BaseSelector.h"
 
 
 //ROOT
@@ -35,6 +37,8 @@ class MCAnaProcessor : public Processor {
         virtual void finalize();
 
         virtual void configure(const ParameterSet& parameters);
+	int countModuleHits(std::vector<int> hitmap);
+	bool hasHitsInModule(std::vector<int> hitmap,int mod);
 
     private:
 
@@ -42,6 +46,11 @@ class MCAnaProcessor : public Processor {
         MCAnaHistos* histos{nullptr};
         std::string  histCfgFilename_;
 
+	//region definitions & histos
+	std::vector<std::string> regionSelections_;
+	std::map<std::string, std::shared_ptr<BaseSelector> > _reg_mc_selectors;
+	std::map<std::string, std::shared_ptr<MCAnaHistos> > _reg_mc_histos;
+	std::vector<std::string> _regions;
         //TODO Change this to be held from HPSEvent
         TTree* tree_;
         TBranch* bmcParts_{nullptr};
@@ -56,8 +65,11 @@ class MCAnaProcessor : public Processor {
         std::string partColl_{"MCParticle"};
         std::string trkrHitColl_{"TrackerHits"};
         std::string ecalHitColl_{"EcalHits"};
+	std::string histoCfg_{""};
+	std::shared_ptr<AnaHelpers> _ah;
 
-
+	typedef std::map<std::string,std::shared_ptr<MCAnaHistos> >::iterator reg_it;
+	
         //Debug Level
         int debug_{0};
 

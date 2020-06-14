@@ -162,6 +162,8 @@ int AnaHelpers::CountSharedTrackHits(Track* trk1,Track* trk2){
  *  this was copied from my DST code -- mg
  */
 bool AnaHelpers::IsECalFiducial(CalCluster* clu){
+  if(clu==NULL)
+    return false;
   bool in_fid=false; 
   double x_edge_low = -262.74; 
   double x_edge_high = 347.7; 
@@ -211,6 +213,22 @@ double AnaHelpers::GetClusterCoplanarity(CalCluster* cl1,CalCluster* cl2){
 }
 
 
+std::vector<int> AnaHelpers::getMCParticleLayersHit(MCParticle* mcpart, std::vector<MCTrackerHit*>& mchits){
+  
+  std::vector<int> layersHit; 
+  for(auto mchit: mchits){
+    if(mchit->getMCParticleID()==mcpart->getID()){ //hit has MCParticle under consideration
+      if(std::find(layersHit.begin(), layersHit.end(), mchit->getLayer()) == layersHit.end())
+	std::cout<<"Found hit in layer = "<<mchit->getLayer()<<std::endl;
+	layersHit.push_back(mchit->getLayer());
+    }
+  }  
+  std::cout<<"Number of layers hit = "<<layersHit.size()<<std::endl;
+  return layersHit; 
+}
+
+
+
  AnaHelpers::AnaHelpers() {
      rotSvt.RotateY(SVT_ANGLE);
     
@@ -229,8 +247,7 @@ double AnaHelpers::GetClusterCoplanarity(CalCluster* cl1,CalCluster* cl2){
     (*rotSvt_sym)(1,2) = cos(SVT_ANGLE);
 }
 
-TVector3 AnaHelpers::rotateToSvtFrame(TVector3 v) {
-    
+TVector3 AnaHelpers::rotateToSvtFrame(TVector3 v) {    
     v.RotateY(SVT_ANGLE);
     return v;   
 }

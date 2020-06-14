@@ -102,12 +102,19 @@ bool TrackEfficiencyProcessor::process(IEvent* ievent) {
     for (int i_clu=0;i_clu<clus_->size(); i_clu++){
       CalCluster* cluster=clus_->at(i_clu);
       std::pair<CalCluster*, Track*> clTrkPair=_trkeff_histos->getClusterTrackPair(cluster,*trks_);
-
+      //      if(cluster->getPosition().at(0)<-270.0){
+      //	std::cout<<"large -X cluster:  clX = "<<cluster->getPosition().at(0)<<std::endl;
+      //}
+      if (!cluSelector->passCutGt("cluEne_gt",cluster->getEnergy(),weight))
+	continue;
       if (!cluSelector->passCutLt("cluTime_lt",cluster->getTime()-timeOffset_,weight))
 	continue;
       if (!cluSelector->passCutGt("cluTime_gt",cluster->getTime()-timeOffset_,weight))
 	continue;
       //  found a good cluster...check if ele or pos side and match to particle if there is one
+      //      if(cluster->getPosition().at(0)<-270.0){
+      //std::cout<<"GOOD large -X cluster:  clX = "<<cluster->getPosition().at(0)<<std::endl;
+      //      }
       double clX=cluster->getPosition().at(0);
       if(clX>0){
 	goodPosSide.push_back(clTrkPair);
@@ -129,15 +136,19 @@ bool TrackEfficiencyProcessor::process(IEvent* ievent) {
 	CalCluster* cluPos=(goodPosSide.at(j_clu)).first;
 	double cluEleY=cluEle->getPosition().at(1);
 	double cluPosY=cluPos->getPosition().at(1);
+	double cluEleTime=cluEle->getTime();
+	double cluPosTime=cluPos->getTime();
+	//	if(cluEle->getPosition().at(0)<-265.0){
+	//  std::cout<<"large -X cluster:  clX = "<<cluEle->getPosition().at(0)<<"  time = "<<cluEleTime<<"  diff = "<<abs(cluEleTime-cluPosTime)<<std::endl;
+	//}
 	if(cluEleY*cluPosY>0) { //just want top/bottom tracks
 	  std::cout<<"Both top or bottom"<<std::endl;
 	  continue;
 	}
 	_trkeff_histos->FillPairSelectionPlots(cluEle,cluPos,weight);
-	double cluEleTime=cluEle->getTime();
-	double cluPosTime=cluPos->getTime();
+
 	if (!cluSelector->passCutLt("cluTimeDiff_lt",abs(cluEleTime-cluPosTime),weight)){
-	  std::cout<<"Cluster time different too big "<<abs(cluEleTime-cluPosTime)<<std::endl;
+	  std::cout<<"Cluster time difference too big "<<abs(cluEleTime-cluPosTime)<<std::endl;
 	  continue;
 	}
 	

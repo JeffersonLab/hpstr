@@ -1,0 +1,12 @@
+{ 
+    "LayerRequirement" : {
+        "cut"  : 3,
+        "id"   : 0,
+        "info" : "L1{e^{+}}=1 and L1{e^{-}}=1"
+    },	
+    "nVtxs_eq" : {
+        "cut"  : 1,
+        "id"   : 1,
+        "info" : "N_{vtx}=1"
+    }    
+}

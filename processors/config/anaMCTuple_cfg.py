@@ -30,12 +30,18 @@ mcana = HpstrConf.Processor('mcana', 'MCAnaProcessor')
 #   Processor Configuration   #
 ###############################
 #RecoHitAna
-mcana.parameters["debug"] = 0
+mcana.parameters["debug"] = 1
 mcana.parameters["anaName"] = "mcAna"
 mcana.parameters["partColl"] = "MCParticle"
 mcana.parameters["trkrHitColl"] = "TrackerHits"
 mcana.parameters["ecalHitColl"] = "EcalHits"
-mcana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
+mcana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/findableMC.json'
+
+# Define regions
+RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/mc"
+print(RegionPath+'/mcFindablePair.json')
+mcana.parameters["regionDefinitions"] = [RegionPath+'/mcNoCuts.json',RegionPath+'/mcFindablePair.json']
+#mcana.parameters["regionDefinitions"] = ['./mcFindablePair.json']
 
 # Sequence which the processors will run.
 p.sequence = [mcana]

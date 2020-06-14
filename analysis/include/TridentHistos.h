@@ -46,11 +46,13 @@ class TridentHistos : public HistoManager {
         //track_x goes for x axis, and y for y axis
         void FillTrackComparisonHistograms(Track* track_x, Track* track_y, float weight = 1.);
         void doTrackComparisonPlots(bool doplots) {doTrkCompPlots = doplots;};
-
+	void FillTrackClusterHistos(std::pair<CalCluster*, Track*> ele, std::pair<CalCluster*, Track*> posOrGamma, double timeOffset, double weight); 
+	void FillWABHistos(std::pair<CalCluster*, Track*> ele, CalCluster* gamma,  double weight);
     private:
 
         // Vertices
         std::vector<std::string> vPs{"vtx_chi2", "vtx_X", "vtx_Y", "vtx_Z", "vtx_sigma_X","vtx_sigma_Y","vtx_sigma_Z","vtx_InvM","vtx_InvMErr"};
+	
 
         bool doTrkCompPlots{false};
 

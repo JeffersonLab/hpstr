@@ -60,3 +60,55 @@ void MCAnaHistos::FillMCEcalHits(std::vector<MCEcalHit*> *mcEcalHits, float weig
         Fill1DHisto("mcEcalHitEnergy_h", hit->getEnergy()*1000.0, weight); // Scaled to MeV
     }
 }
+
+void MCAnaHistos::FillMCParticleHistos(MCParticle* mcpart, std::string label, double weight){
+  double px=mcpart->getMomentum().at(0);
+  double py=mcpart->getMomentum().at(1);
+  double pz=mcpart->getMomentum().at(2);
+
+  double p=sqrt(px*px+py*py+pz*pz);
+
+  Fill1DHisto(label+"_px_h",px,weight);
+  Fill1DHisto(label+"_py_h",py,weight);
+  Fill1DHisto(label+"_pz_h",pz,weight);
+  Fill1DHisto(label+"_p_h",p,weight);
+
+  double thetaX=px/p;  
+  double thetaY=py/p;
+  Fill1DHisto(label+"_thetax_h",thetaX,weight);
+  Fill1DHisto(label+"_thetay_h",thetaY,weight);
+
+  return;
+}
+
+void MCAnaHistos::FillMCPairHistos(MCParticle* ele,MCParticle* pos,std::string label, double weight){
+  double px1=ele->getMomentum().at(0);
+  double py1=ele->getMomentum().at(1);
+  double pz1=ele->getMomentum().at(2);
+  double px2=pos->getMomentum().at(0);
+  double py2=pos->getMomentum().at(1);
+  double pz2=pos->getMomentum().at(2);
+
+  double E1=sqrt(px1*px1+py1*py1+pz1*pz1);
+  double E2=sqrt(px2*px2+py2*py2+pz2*pz2);
+
+  double pxTot=px1+px2;
+  double pyTot=py1+py2;
+  double pzTot=pz1+pz2;
+  double pTotSq=pxTot*pxTot+pyTot*pyTot+pzTot*pzTot;
+  double Etot=E1+E2;
+
+  double mass=sqrt(Etot*Etot-pTotSq);
+
+  Fill1DHisto(label+"_pxV0_h",pxTot,weight);
+  Fill1DHisto(label+"_pyV0_h",pyTot,weight);
+  Fill1DHisto(label+"_pzV0_h",pzTot,weight);
+  Fill1DHisto(label+"_pV0_h",sqrt(pTotSq),weight);
+  Fill1DHisto(label+"_mass_h",mass,weight);
+  
+  double thetaX=pxTot/sqrt(pTotSq);  
+  double thetaY=pyTot/sqrt(pTotSq);
+  Fill1DHisto(label+"_thetaxV0_h",thetaX,weight);
+  Fill1DHisto(label+"_thetayV0_h",thetaY,weight);
+
+}

@@ -19,7 +19,8 @@
 #include "Particle.h"
 #include "Vertex.h"
 #include "TrackerHit.h"
-
+#include "MCTrackerHit.h"
+#include "MCParticle.h"
 
 
 class AnaHelpers {
@@ -69,6 +70,7 @@ public :
     Particle* GetParticleFromCluster(CalCluster*, std::vector<Particle*>&);
     bool IsECalFiducial(CalCluster* clu);
     double GetClusterCoplanarity(CalCluster* cl1,CalCluster* cl2); 
+    std::vector<int> getMCParticleLayersHit(MCParticle* mcpart, std::vector<MCTrackerHit*>& mchits);
 
     static std::string getFileName(std::string filePath, bool withExtension);    
     

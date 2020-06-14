@@ -60,8 +60,8 @@ void TridentHistos::Fill1DVertex(Vertex* vtx,
     p_pos.SetPxPyPzE(pos_trk->getMomentum()[0],pos_trk->getMomentum()[1],pos_trk->getMomentum()[2],pos->getEnergy());
     
     //Fill ele and pos information
-    Fill1DHisto("ele_p_h",p_ele.P(),weight);
-    Fill1DHisto("pos_p_h",p_pos.P(),weight);
+    //  Fill1DHisto("ele_p_h",p_ele.P(),weight);
+    // Fill1DHisto("pos_p_h",p_pos.P(),weight);
 
     //Compute some extra variables 
     
@@ -136,6 +136,11 @@ void TridentHistos::Fill1DTrack(Track* track, float weight, const std::string& t
     if (!track->isKalmanTrack())
         n_hits_2d*=2;
 
+    TVector3 p_trk;
+    p_trk.SetXYZ(track->getMomentum()[0],track->getMomentum()[1],track->getMomentum()[2]);
+    
+    
+    Fill1DHisto(trkname+"p_h",p_trk.Mag(),weight);
     Fill1DHisto(trkname+"d0_h"       ,track->getD0()          ,weight);
     Fill1DHisto(trkname+"Phi_h"      ,track->getPhi()         ,weight);
     Fill1DHisto(trkname+"Omega_h"    ,track->getOmega()       ,weight);
@@ -411,4 +416,70 @@ std::pair<CalCluster*, Track*> TridentHistos::getTrackClusterPair(Track* trk,std
   }
 
   return std::pair<CalCluster*,Track*>(bestCluster,trk);
+}
+
+/*
+ *  fill cluster/track times and other ecal stuff for both WAB and trident events
+ *  mg...5/9/20 currently just do time
+ */
+void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster*, Track*> ele, std::pair<CalCluster*, Track*> posOrGamma, double timeOffset, double weight){
+  CalCluster* eleClu=ele.first;
+  Track* eleTrk=ele.second;
+  CalCluster* posClu=posOrGamma.first; 
+  Track* posTrk=posOrGamma.second; //these "positrons" may be gammas
+
+
+  if(eleClu){
+    Fill1DHisto("ele_cl_time_h", eleClu->getTime()-timeOffset,weight);
+    Fill1DHisto("ele_cl_ene_h",eleClu->getEnergy(),weight);
+    if(eleTrk){
+      double pele=sqrt(eleTrk->getMomentum()[0]*eleTrk->getMomentum()[0]+
+		       eleTrk->getMomentum()[1]*eleTrk->getMomentum()[1]+
+		       eleTrk->getMomentum()[2]*eleTrk->getMomentum()[2]);
+      Fill1DHisto("ele_cltrk_time_diff_h", eleClu->getTime()-timeOffset-eleTrk->getTrackTime(),weight);
+      Fill1DHisto("ele_pOverE_h",pele/eleClu->getEnergy(),weight);
+    }
+  }
+
+  if(posClu && posTrk){
+    Fill1DHisto("pos_cl_time_h", posClu->getTime()-timeOffset,weight);
+    Fill1DHisto("pos_cl_ene_h",posClu->getEnergy(),weight);
+    Fill1DHisto("pos_cltrk_time_diff_h", posClu->getTime()-timeOffset-posTrk->getTrackTime(),weight);
+    double ppos=sqrt(posTrk->getMomentum()[0]*posTrk->getMomentum()[0]+
+		     posTrk->getMomentum()[1]*posTrk->getMomentum()[1]+
+		     posTrk->getMomentum()[2]*posTrk->getMomentum()[2]);
+    Fill1DHisto("pos_pOverE_h",ppos/posClu->getEnergy(),weight);
+  }
+
+  if(posClu && eleClu){ //get cluster time difference
+    Fill1DHisto("cl_time_diff_h", posClu->getTime()-eleClu->getTime(),weight);
+    
+  }
+
+  if(posTrk && eleTrk){ //get cluster time difference
+    Fill1DHisto("trk_time_diff_h", posTrk->getTrackTime()-eleTrk->getTrackTime(),weight);    
+  }
+
+  if(posClu && !posTrk){ //this is actually a WAB event!  call these gamma
+    Fill1DHisto("gamma_cl_time_h", posClu->getTime()-timeOffset,weight);
+    Fill1DHisto("gamma_cl_ene_h",posClu->getEnergy(),weight);
+  }
+
+}
+/*
+ *  fill  WAB specific histos
+ *  already have track and cluster plots from above methods
+ */
+void TridentHistos::FillWABHistos(std::pair<CalCluster*, Track*> ele, CalCluster* gamma,double weight){
+  CalCluster* eleClu=ele.first;
+  Track* eleTrk=ele.second;
+  double esum=0;
+  if(eleClu)
+    esum=eleClu->getEnergy()+gamma->getEnergy();
+  double psum=sqrt(eleTrk->getMomentum()[0]*eleTrk->getMomentum()[0]+
+		   eleTrk->getMomentum()[1]*eleTrk->getMomentum()[1]+
+		   eleTrk->getMomentum()[2]*eleTrk->getMomentum()[2])+ gamma->getEnergy();
+  if(eleClu)
+    Fill1DHisto("wab_esum_h",esum,weight); 
+  Fill1DHisto("wab_psum_h",psum,weight);   
 }
