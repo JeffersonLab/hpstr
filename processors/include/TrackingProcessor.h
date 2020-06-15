@@ -120,7 +120,7 @@ class TrackingProcessor : public Processor {
         
         
         //Bfield
-        double bfield_{0.52};
+        double bfield_{-1.};
 
 
 

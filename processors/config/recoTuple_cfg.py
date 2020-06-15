@@ -70,7 +70,8 @@ track.parameters["trkRelCollLcio"] = 'TrackDataRelations'
 track.parameters["trkhitCollRoot"] = 'RotatedHelicalOnTrackHits'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 track.parameters["rawhitCollRoot"] = '' #'SVTRawHitsOnTrack'
-track.parameters["bfield"]         = bfield[str(options.year)]
+#track.parameters["bfield"]         = bfield[str(options.year)]
+
 
 #ECalData
 ecal.parameters["debug"] = 0 
