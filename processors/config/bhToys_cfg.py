@@ -9,7 +9,7 @@ parser.add_option("-m", "--mass", type="int", dest="mass_hypo",
 parser.add_option("-p", "--poly", type="int", dest="poly_order",
         help="Polynomial order of background model.", metavar="poly_order", default=3)
 parser.add_option("-P", "--toy_poly", type="int", dest="toy_poly_order",
-        help="Polynomial order of toy generator fit.", metavar="toy_poly_order", default=5)
+        help="Polynomial order of toy generator fit.", metavar="toy_poly_order", default=-1)
 parser.add_option("-w", "--win", type="int", dest="win_factor",
         help="Window factor for determining fit window size.", metavar="win_factor", default=11)
 parser.add_option("-N", "--toys", type="int", dest="nToys",

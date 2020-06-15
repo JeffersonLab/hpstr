@@ -43,6 +43,9 @@ void TrackHistos::Fill1DVertex(Vertex* vtx,
                                float weight) {
     
     Fill1DVertex(vtx,weight);
+    
+    CalCluster eleClus = ele->getCluster();
+    CalCluster posClus = pos->getCluster();
 
     //TODO remove hardcode!
     if (ele_trk)
@@ -62,6 +65,9 @@ void TrackHistos::Fill1DVertex(Vertex* vtx,
     //Fill ele and pos information
     Fill1DHisto("ele_p_h",p_ele.P(),weight);
     Fill1DHisto("pos_p_h",p_pos.P(),weight);
+    Fill1DHisto("ele_clusE_h",eleClus.getEnergy(),weight);
+    Fill1DHisto("pos_clusE_h",posClus.getEnergy(),weight);
+
 
     //Compute some extra variables 
     

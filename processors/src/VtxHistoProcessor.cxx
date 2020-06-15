@@ -48,9 +48,9 @@ void VtxHistoProcessor::initialize(std::string inFilename, std::string outFilena
             TH2F* proj2d = (TH2F*) inF_->Get((std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str());
             
             if (proj2d) {
-                _histos2d[projection_] = (TH2F*) inF_->Get((std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str());
-                _histos2d[projection_]->SetDirectory(0);
-                _histos2d[projection_]->RebinX(rebin_);
+                _histos2d[selection_+"_"+projection_] = (TH2F*) inF_->Get((std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str());
+                _histos2d[selection_+"_"+projection_]->SetDirectory(0);
+                _histos2d[selection_+"_"+projection_]->RebinX(rebin_);
             }
             else
                 std::cout<<"histo::"<<(std::string("/")+selection_+"/"+selection_+"_"+projection_).c_str()<<" does not exists."<<std::endl;
@@ -78,7 +78,7 @@ bool VtxHistoProcessor::process() {
         _histos1d[it->first+"_mu"]->Sumw2();
         _histos1d[it->first+"_sigma"]->Sumw2();
         
-        
+        std::cout<<"Fitting::"<<it->first<<std::endl;
         HistogramHelpers::profileYwithIterativeGaussFit(it->second,_histos1d[it->first+"_mu"],_histos1d[it->first+"_sigma"],1,0);
     }       
     return true;
