@@ -1,7 +1,12 @@
 {
-    "chi2unc_lt" : {
+    "chi2unc_gt" : {
         "cut"   : 0,
         "id"    : 9,
+        "info"  : "#chi^{2}_{unc}>0"
+    },
+    "chi2unc_lt" : {
+        "cut"   : 999,
+        "id"    : 10,
         "info"  : "#chi^{2}_{unc}<20"
     }
 }

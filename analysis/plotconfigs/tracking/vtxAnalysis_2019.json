@@ -723,5 +723,25 @@
     "maxX" : 0.5,
     "xtitle" : "#Delta#theta(miss,e^{+})",
     "ytitle" : "events"
-}
+},
+    "ele_vs_pos_Z0_hh" : {
+        "binsX"  : 200,
+        "minX"   : -10,
+        "maxX"   : 10,
+        "binsY"  : 200,
+        "minY"   : -10,
+        "maxY"   : 10,
+        "xtitle" : "ele_trk_Z0 [mm]",
+        "ytitle" : "pos_trk Z0 [mm]"
+    },
+    "ele_vs_pos_d0_hh" : {
+        "binsX"  : 200,
+        "minX"   : -10,
+        "maxX"   : 10,
+        "binsY"  : 200,
+        "minY"   : -10,
+        "maxY"   : 10,
+        "xtitle" : "ele_trk_d0 [mm]",
+        "ytitle" : "pos_trk d0 [mm]"
+    }
 }

@@ -150,6 +150,8 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             pos_trk = (Track*)pos->getTrack().Clone();
         }
 
+        //std::cout << "ele_trk params: " << ele_trk->getTrackParameters()[0] << std::endl;
+
         //Add the momenta to the tracks - do not do that
         //ele_trk->setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
         //pos_trk->setMomentum(pos->getMomentum()[0],pos->getMomentum()[1],pos->getMomentum()[2]);
@@ -291,6 +293,9 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         if (!vtxSelector->passCutLt("chi2unc_lt",vtx->getChi2(),weight))
             continue;
 
+        if (!vtxSelector->passCutGt("chi2unc_gt",vtx->getChi2(),weight))
+            continue;
+
         //Max vtx momentum
 
         if (!vtxSelector->passCutLt("maxVtxMom_lt",(ele_mom+pos_mom).Mag(),weight))
@@ -313,13 +318,19 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         _vtx_histos->Fill2DHisto("ele_vtxZ_iso_hh", TMath::Min(ele_trk->getIsolation(0), ele_trk->getIsolation(1)), vtx->getZ(), weight);
         _vtx_histos->Fill2DHisto("pos_vtxZ_iso_hh", TMath::Min(pos_trk->getIsolation(0), pos_trk->getIsolation(1)), vtx->getZ(), weight);
         _vtx_histos->Fill2DHistograms(vtx,weight);
+        _vtx_histos->FillPosEleTracks(ele_trk,pos_trk,weight,"");
         _vtx_histos->Fill2DTrack(ele_trk,weight,"ele_");
         _vtx_histos->Fill2DTrack(pos_trk,weight,"pos_");
         _vtx_histos->Fill1DHisto("mcMass622_h",apMass); 
         _vtx_histos->Fill1DHisto("mcZ622_h",apZ); 
 
+        //Adding histos for comparing ele and pos track params
+
+
         selected_vtxs.push_back(vtx);       
         vtxSelector->clearSelector();
+
+
     }
 
     _vtx_histos->Fill1DHisto("n_vertices_h",selected_vtxs.size()); 

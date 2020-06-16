@@ -93,7 +93,7 @@ recoana_bckf.parameters["debug"] = 0
 #p.sequence = [recoana_kf,recoana_gbl]
 if (options.tracking == "KF"):
     print("Run KalmanFullTracks analysis")
-    p.sequence = [recoana_kf, recoana_bckf]
+    p.sequence = [recoana_kf]
 elif (options.tracking == "GBL"):
     print("Run GBL analysis")
     p.sequence = [recoana_gbl]

@@ -114,6 +114,19 @@ void TrackHistos::Fill1DVertex(Vertex* vtx,
 }
 
 
+void TrackHistos::FillPosEleTracks( Track* ele_trk, Track* pos_trk, float weight, const std::string& trkname) {
+
+        
+    double ele_d0 = ele_trk->getD0();
+    double pos_d0 = pos_trk->getD0();
+    double ele_Z0 = ele_trk->getZ0();
+    double pos_Z0 = pos_trk->getZ0();
+    Fill2DHisto(trkname+"ele_vs_pos_d0_hh", ele_d0, pos_d0,weight);
+    Fill2DHisto(trkname+"ele_vs_pos_Z0_hh", ele_Z0, pos_Z0,weight);
+    
+
+}
+
 void TrackHistos::Fill2DTrack(Track* track, float weight, const std::string& trkname) {
     
     
