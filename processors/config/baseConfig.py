@@ -1,8 +1,8 @@
 import argparse
 
-parser = argparse.ArgumentParser(description="The baseCongig options for hpstr")
+parser = argparse.ArgumentParser(description="The baseConfig options for hpstr. ")
 
-parser.add_argument('--debug', '-D', action="count", help="Increase debug level.")
+parser.add_argument('--debug', '-D', action="count", dest="debug", help="Increase debug level.", default=0)
 
 #parser.add_option("-i", "--inFile", type="string", dest="inFilename",
 #                  help="Input filename.", metavar="inFilename", default="")
