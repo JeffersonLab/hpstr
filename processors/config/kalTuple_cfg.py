@@ -1,18 +1,17 @@
 import HpstrConf
 import sys
 
-import baseConfig
+import baseConfig as base
 from baseConfig import bfield
 
-parser = baseConfig.parser
-(options,args) = parser.parse_args()
+options = base.parser.parse_args()
 
 # Use the input file to set the output file name
 lcio_file = options.inFilename
 root_file = options.outFilename
 
-print 'LCIO file: %s' % lcio_file
-print 'Root file: %s' % root_file
+print('LCIO file: %s' % lcio_file)
+print('Root file: %s' % root_file)
 
 p = HpstrConf.Process()
 
@@ -20,7 +19,7 @@ p = HpstrConf.Process()
 p.run_mode = 0
 
 # Library containing processors
-p.libraries.append("libprocessors.so")
+p.add_library("libprocessors")
 
 ###############################
 #          Processors         #
@@ -144,7 +143,7 @@ if (options.nevents > -1 ):
     p.max_events = options.nevents
 
 
-p.input_files=[lcio_file]
+p.input_files = lcio_file
 p.output_files = [root_file]
 
 

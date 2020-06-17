@@ -1,15 +1,11 @@
 import HpstrConf
-import sys
+import baseConfig as base
 
-import baseConfig
-from baseConfig import bfield
-
-parser = baseConfig.parser
-(options,args) = parser.parse_args()
+options = base.parser.parse_args()
 
 # Use the input file to set the output file name
 lcio_file = options.inFilename
-root_file = options.outFilename
+root_file = [options.outFilename]
 
 print('LCIO file: %s' % lcio_file)
 print('Root file: %s' % root_file)
@@ -118,8 +114,8 @@ else:
     p.sequence = [header, track, ecal, fsp, vtx, c_vtx, mcpart]
     #p.sequence = [header, track, rawsvt, svthits, ecal, fsp, vtx, c_vtx, mcpart]
 
-p.input_files=[lcio_file]
-p.output_files = [root_file]
+p.input_files= lcio_file
+p.output_files = root_file
 
 if (options.nevents > -1):
     p.max_events = options.nevents
