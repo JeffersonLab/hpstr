@@ -142,7 +142,6 @@ void TrackHistos::Fill2DTrack(Track* track, float weight, const std::string& trk
         Fill2DHisto(trkname+"z0_vs_p_hh",track->getP(),z0,weight);
         Fill2DHisto(trkname+"z0_vs_phi0_hh",track->getPhi(),z0,weight);
         Fill2DHisto(trkname+"z0_vs_tanlambda_hh",track->getTanLambda(),z0,weight);
-        
     }
 }
 

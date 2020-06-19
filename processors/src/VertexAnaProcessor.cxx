@@ -288,6 +288,9 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             continue;
         }
 
+        //CURRENTLY MODIFYING
+        ele_trk->getCovEigenvalues({1,2});
+
 
         //Vertex Quality
         if (!vtxSelector->passCutLt("chi2unc_lt",vtx->getChi2(),weight))
@@ -295,6 +298,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
         if (!vtxSelector->passCutGt("chi2unc_gt",vtx->getChi2(),weight))
             continue;
+
 
         //Max vtx momentum
 

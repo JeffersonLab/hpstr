@@ -14,6 +14,7 @@
 #include <cstdio>
 #include <vector>
 #include <cmath>
+#include <iostream>
 
 //----------//
 //   ROOT   //
@@ -22,6 +23,7 @@
 #include "TClonesArray.h"
 #include "TRefArray.h"
 #include "TRef.h"
+#include "TMatrixDSym.h"
 
 
 //TODO static?
@@ -330,6 +332,10 @@ class Track : public TObject {
 
         bool getSharedLy0() const {return SharedLy0_;};
         bool getSharedLy1() const {return SharedLy1_;};
+
+        void getCovEigenvalues(std::vector<double> cov);
+
+
 
 
         //TODO doc
