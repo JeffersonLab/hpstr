@@ -55,16 +55,15 @@ class BhMassResSystematicsProcessor : public Processor {
 
         // The signal hypothesis to use in the fit.
         double mass_hypo_{100.0};
+		
+		// The toy generator seed. This is always zero.
+		double seed_ = 0.0;
         
         // Order of polynomial used to model the background.
         int poly_order_{3};
 
         // The factor that determines the size of the mass window as
         int win_factor_{10};
-
-        // The seed used in generating random numbers.  The default of 0 causes
-        // the generator to use the system time.
-        int seed_{10};
         
         // Whether to use the asymptotic upper limit or the power constrained. Defaults to asymptotic.
         bool asymptotic_limit_{true};
@@ -77,6 +76,12 @@ class BhMassResSystematicsProcessor : public Processor {
 		
 		// How many resolution variance runs to make.
 		int res_runs_{1000};
+		
+		// How many resolution variance runs to make.
+		int toy_res_runs_{100};
+		
+		// How many toys to generated.
+		int nToys_{1000};
 
         //Debug Level
         int debug_{0};

@@ -23,6 +23,8 @@ void BhMassResSystematicsProcessor::configure(const ParameterSet& parameters) {
         res_width_           = parameters.getDouble("res_sigma");
         temp_file_name       = parameters.getString("function_file");
         function_name_       = parameters.getString("function_name");
+		toy_res_runs_        = parameters.getInteger("toy_num_iters");
+		nToys_               = parameters.getInteger("num_toys");
     } catch(std::runtime_error& error) {
         std::cout << error.what() << std::endl;
     }
@@ -296,6 +298,104 @@ bool BhMassResSystematicsProcessor::process() {
     flat_tuple_->setVariableValue("p_value_median", vec_pValue[median]);
     flat_tuple_->setVariableValue("p_value_sigma1u", vec_pValue[sigma_1_u]);
     flat_tuple_->setVariableValue("p_value_sigma1l", vec_pValue[sigma_1_l]);
+    
+    
+    // Set the parameters for toy generation. Most of these should be
+    // defaults. Systematic studies should not require the more
+    // advanced options.
+    int seed_ = 0;
+    int toy_sig_samples_ = 0;
+    double bkg_mult_ = 1.00;
+    TH1* signal_shape_h_ = nullptr;
+    
+    // Generate the toys and perform the toy fits.
+    if(nToys_ > 0) {
+		// Generate the vector entries for the toy results.
+		flat_tuple_->addVector("toy_bkg_total");
+		flat_tuple_->addVector("toy_corr_mass");
+		flat_tuple_->addVector("toy_mass_hypo");
+		flat_tuple_->addVector("toy_window_size");
+		flat_tuple_->addVector("toy_resolution_scale");
+		flat_tuple_->addVector("toy_mass_resolution");
+		flat_tuple_->addVector("toy_bkg_chi2_prob");
+		flat_tuple_->addVector("toy_bkgsig_chi2_prob");
+		flat_tuple_->addVector("toy_bkg_edm");
+		flat_tuple_->addVector("toy_bkg_minuit_status");
+		flat_tuple_->addVector("toy_bkg_nll");
+		
+		flat_tuple_->addVector("toy_edm");
+		flat_tuple_->addVector("toy_minuit_status");
+		flat_tuple_->addVector("toy_nll");
+		flat_tuple_->addVector("toy_p_value");
+		flat_tuple_->addVector("toy_q0");
+		flat_tuple_->addVector("toy_bkg_rate_mass_hypo");
+		flat_tuple_->addVector("toy_bkg_rate_mass_hypo_err");
+		flat_tuple_->addVector("toy_sig_yield");
+		flat_tuple_->addVector("toy_sig_yield_err");
+		flat_tuple_->addVector("toy_upper_limit");
+		flat_tuple_->addVector("toy_ul_p_value");
+		
+        // Generate toy models.
+        std::cout << "Generating " << nToys_ << " Toys" << std::endl;
+        std::vector<TH1*> toys_hist = bump_hunter_->generateToys(mass_spec_h, nToys_, seed_, toy_sig_samples_, bkg_mult_, signal_shape_h_);
+        
+        // Perform the fits for each toy model.
+        int toyFitN = 0;
+        for(TH1* hist : toys_hist) {
+            // Store the results of the mass resolution variance for
+            // this toy.
+            std::cout << "Fitting Toy " << toyFitN << std::endl;
+            
+            // Fit the toy multiple times with different mass
+            // resolution values.
+            for(int i = 0; i < toy_res_runs_; i++) {
+                // Set the resolution scale to a random value according to a
+                // normal distribution around the actual resolution with a
+                // width as specified by the user.
+                double res_scale = rng->Gaus(1.00, res_width_);
+                bump_hunter_->setResolutionScale(res_scale);
+                
+                // Perform the resonance search.
+                HpsFitResult* result = bump_hunter_->performSearch(hist, mass_hypo_, false, false);
+        
+				// Get the result of the background fit.
+				TFitResultPtr bkg_result = result->getBkgFitResult();
+				
+				// Get the result of the signal+background fit.
+				TFitResultPtr sig_result = result->getCompFitResult();
+        
+				// Set the fit parameters in the tuple.
+				flat_tuple_->addToVector("toy_bkg_total",              result->getIntegral());
+				flat_tuple_->addToVector("toy_corr_mass",              result->getCorrectedMass());
+				flat_tuple_->addToVector("toy_mass_hypo",              result->getMass());
+				flat_tuple_->addToVector("toy_window_size",            result->getWindowSize());
+				flat_tuple_->addToVector("toy_resolution_scale",       res_scale);
+				flat_tuple_->addToVector("toy_mass_resolution",        bump_hunter_->getMassResolution(mass_hypo_));
+				
+				// Set the fit results in the tuple.
+				flat_tuple_->addToVector("toy_bkg_chi2_prob",          bkg_result->Prob());
+				flat_tuple_->addToVector("toy_bkgsig_chi2_prob",       sig_result->Prob());
+				flat_tuple_->addToVector("toy_bkg_edm",                bkg_result->Edm());
+				flat_tuple_->addToVector("toy_bkg_minuit_status",      bkg_result->Status());
+				flat_tuple_->addToVector("toy_bkg_nll",                bkg_result->MinFcnValue());
+				
+				flat_tuple_->addToVector("toy_edm",                    sig_result->Edm());
+				flat_tuple_->addToVector("toy_minuit_status",          sig_result->Status());
+				flat_tuple_->addToVector("toy_nll",                    sig_result->MinFcnValue());
+				flat_tuple_->addToVector("toy_p_value",                result->getPValue());
+				flat_tuple_->addToVector("toy_q0",                     result->getQ0());
+				flat_tuple_->addToVector("toy_bkg_rate_mass_hypo",     result->getFullBkgRate());
+				flat_tuple_->addToVector("toy_bkg_rate_mass_hypo_err", result->getFullBkgRateError());
+				flat_tuple_->addToVector("toy_sig_yield",              result->getSignalYield());
+				flat_tuple_->addToVector("toy_sig_yield_err",          result->getSignalYieldErr());
+				flat_tuple_->addToVector("toy_upper_limit",            result->getUpperLimit());
+				flat_tuple_->addToVector("toy_ul_p_value",             result->getUpperLimitPValue());
+            }
+            
+            // Step to the next toy.
+            toyFitN++;
+        }
+    }
     
     // Fill and write the tuple
     flat_tuple_->fill();

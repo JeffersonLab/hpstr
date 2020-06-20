@@ -23,6 +23,10 @@ parser.add_option("-f", "--func_file", type="string", dest="function_file",
         help="The name of the file containing the mass resolution error parameterization function.", metavar="function_file", default="")
 parser.add_option("-F", "--func_name", type="string", dest="function_name",
         help="The name of the function object that describes the mass resolution parameterization.", metavar="function_name", default="")
+parser.add_option("-u", "--num_toys", type="int", dest="num_toys",
+		help="Number of toys to generate.", metavar="num_toys", default=1000)
+parser.add_option("-U", "--num_toy_iterations", type="int", dest="toy_num_iters",
+		help="Number of iterations to run.", metavar="toy_num_iters", default=100)
 (options, args) = parser.parse_args()
 
 # Use the input file to set the output file name
@@ -63,6 +67,8 @@ bhressys.parameters["num_iters"] = options.num_iters
 bhressys.parameters["res_sigma"] = options.res_sigma
 bhressys.parameters["function_file"] = options.function_file
 bhressys.parameters["function_name"] = options.function_name
+bhressys.parameters["num_toys"] = options.num_toys
+bhressys.parameters["toy_num_iters"] = options.toy_num_iters
 
 # Sequence which the processors will run.
 p.sequence = [bhressys]
