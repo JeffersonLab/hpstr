@@ -88,6 +88,8 @@ void BhMassResSystematicsProcessor::initialize(std::string inFilename, std::stri
     flat_tuple_->addVariable("bkg_model");
     flat_tuple_->addVariable("iterations");
     flat_tuple_->addVariable("res_width");
+    flat_tuple_->addVariable("num_toys");
+    flat_tuple_->addVariable("toy_iterations");
     
     // Create the nominal value variables.
     flat_tuple_->addVariable("nominal_bkg_total");
@@ -147,12 +149,14 @@ bool BhMassResSystematicsProcessor::process() {
     std::cout << "Running on mass hypothesis: " << mass_hypo_ << std::endl;
     
     // Set the tuple values which are the same for all runs.
-    flat_tuple_->setVariableValue("seed",       seed_);
-    flat_tuple_->setVariableValue("bkg_model",  bkg_model_);
-    flat_tuple_->setVariableValue("poly_order", poly_order_);
-    flat_tuple_->setVariableValue("win_factor", win_factor_);
-    flat_tuple_->setVariableValue("iterations", res_runs_);
-    flat_tuple_->setVariableValue("res_width",  res_width_);
+    flat_tuple_->setVariableValue("seed",           seed_);
+    flat_tuple_->setVariableValue("bkg_model",      bkg_model_);
+    flat_tuple_->setVariableValue("poly_order",     poly_order_);
+    flat_tuple_->setVariableValue("win_factor",     win_factor_);
+    flat_tuple_->setVariableValue("iterations",     res_runs_);
+    flat_tuple_->setVariableValue("res_width",      res_width_);
+    flat_tuple_->setVariableValue("num_toys",       nToys_);
+    flat_tuple_->setVariableValue("toy_iterations", toy_res_runs_);
     
     // Run one fit with the nominal resolution.
     HpsFitResult* nominal_result = bump_hunter_->performSearch(mass_spec_h, mass_hypo_, false, false);
@@ -310,31 +314,6 @@ bool BhMassResSystematicsProcessor::process() {
     
     // Generate the toys and perform the toy fits.
     if(nToys_ > 0) {
-		// Generate the vector entries for the toy results.
-		flat_tuple_->addVector("toy_bkg_total");
-		flat_tuple_->addVector("toy_corr_mass");
-		flat_tuple_->addVector("toy_mass_hypo");
-		flat_tuple_->addVector("toy_window_size");
-		flat_tuple_->addVector("toy_resolution_scale");
-		flat_tuple_->addVector("toy_mass_resolution");
-		flat_tuple_->addVector("toy_bkg_chi2_prob");
-		flat_tuple_->addVector("toy_bkgsig_chi2_prob");
-		flat_tuple_->addVector("toy_bkg_edm");
-		flat_tuple_->addVector("toy_bkg_minuit_status");
-		flat_tuple_->addVector("toy_bkg_nll");
-		
-		flat_tuple_->addVector("toy_edm");
-		flat_tuple_->addVector("toy_minuit_status");
-		flat_tuple_->addVector("toy_nll");
-		flat_tuple_->addVector("toy_p_value");
-		flat_tuple_->addVector("toy_q0");
-		flat_tuple_->addVector("toy_bkg_rate_mass_hypo");
-		flat_tuple_->addVector("toy_bkg_rate_mass_hypo_err");
-		flat_tuple_->addVector("toy_sig_yield");
-		flat_tuple_->addVector("toy_sig_yield_err");
-		flat_tuple_->addVector("toy_upper_limit");
-		flat_tuple_->addVector("toy_ul_p_value");
-		
         // Generate toy models.
         std::cout << "Generating " << nToys_ << " Toys" << std::endl;
         std::vector<TH1*> toys_hist = bump_hunter_->generateToys(mass_spec_h, nToys_, seed_, toy_sig_samples_, bkg_mult_, signal_shape_h_);
@@ -342,6 +321,34 @@ bool BhMassResSystematicsProcessor::process() {
         // Perform the fits for each toy model.
         int toyFitN = 0;
         for(TH1* hist : toys_hist) {
+			// Generate the vector entries for the toy results. A
+			// different set of tuples must be generated for each
+			// toy distribution.
+			std::string prefix = std::to_string(toyFitN).append("_");
+			flat_tuple_->addVector(prefix + "toy_bkg_total");
+			flat_tuple_->addVector(prefix + "toy_corr_mass");
+			flat_tuple_->addVector(prefix + "toy_mass_hypo");
+			flat_tuple_->addVector(prefix + "toy_window_size");
+			flat_tuple_->addVector(prefix + "toy_resolution_scale");
+			flat_tuple_->addVector(prefix + "toy_mass_resolution");
+			flat_tuple_->addVector(prefix + "toy_bkg_chi2_prob");
+			flat_tuple_->addVector(prefix + "toy_bkgsig_chi2_prob");
+			flat_tuple_->addVector(prefix + "toy_bkg_edm");
+			flat_tuple_->addVector(prefix + "toy_bkg_minuit_status");
+			flat_tuple_->addVector(prefix + "toy_bkg_nll");
+			
+			flat_tuple_->addVector(prefix + "toy_edm");
+			flat_tuple_->addVector(prefix + "toy_minuit_status");
+			flat_tuple_->addVector(prefix + "toy_nll");
+			flat_tuple_->addVector(prefix + "toy_p_value");
+			flat_tuple_->addVector(prefix + "toy_q0");
+			flat_tuple_->addVector(prefix + "toy_bkg_rate_mass_hypo");
+			flat_tuple_->addVector(prefix + "toy_bkg_rate_mass_hypo_err");
+			flat_tuple_->addVector(prefix + "toy_sig_yield");
+			flat_tuple_->addVector(prefix + "toy_sig_yield_err");
+			flat_tuple_->addVector(prefix + "toy_upper_limit");
+			flat_tuple_->addVector(prefix + "toy_ul_p_value");
+			
             // Store the results of the mass resolution variance for
             // this toy.
             std::cout << "Fitting Toy " << toyFitN << std::endl;
@@ -365,31 +372,31 @@ bool BhMassResSystematicsProcessor::process() {
 				TFitResultPtr sig_result = result->getCompFitResult();
         
 				// Set the fit parameters in the tuple.
-				flat_tuple_->addToVector("toy_bkg_total",              result->getIntegral());
-				flat_tuple_->addToVector("toy_corr_mass",              result->getCorrectedMass());
-				flat_tuple_->addToVector("toy_mass_hypo",              result->getMass());
-				flat_tuple_->addToVector("toy_window_size",            result->getWindowSize());
-				flat_tuple_->addToVector("toy_resolution_scale",       res_scale);
-				flat_tuple_->addToVector("toy_mass_resolution",        bump_hunter_->getMassResolution(mass_hypo_));
+				flat_tuple_->addToVector(prefix + "toy_bkg_total",              result->getIntegral());
+				flat_tuple_->addToVector(prefix + "toy_corr_mass",              result->getCorrectedMass());
+				flat_tuple_->addToVector(prefix + "toy_mass_hypo",              result->getMass());
+				flat_tuple_->addToVector(prefix + "toy_window_size",            result->getWindowSize());
+				flat_tuple_->addToVector(prefix + "toy_resolution_scale",       res_scale);
+				flat_tuple_->addToVector(prefix + "toy_mass_resolution",        bump_hunter_->getMassResolution(mass_hypo_));
 				
 				// Set the fit results in the tuple.
-				flat_tuple_->addToVector("toy_bkg_chi2_prob",          bkg_result->Prob());
-				flat_tuple_->addToVector("toy_bkgsig_chi2_prob",       sig_result->Prob());
-				flat_tuple_->addToVector("toy_bkg_edm",                bkg_result->Edm());
-				flat_tuple_->addToVector("toy_bkg_minuit_status",      bkg_result->Status());
-				flat_tuple_->addToVector("toy_bkg_nll",                bkg_result->MinFcnValue());
+				flat_tuple_->addToVector(prefix + "toy_bkg_chi2_prob",          bkg_result->Prob());
+				flat_tuple_->addToVector(prefix + "toy_bkgsig_chi2_prob",       sig_result->Prob());
+				flat_tuple_->addToVector(prefix + "toy_bkg_edm",                bkg_result->Edm());
+				flat_tuple_->addToVector(prefix + "toy_bkg_minuit_status",      bkg_result->Status());
+				flat_tuple_->addToVector(prefix + "toy_bkg_nll",                bkg_result->MinFcnValue());
 				
-				flat_tuple_->addToVector("toy_edm",                    sig_result->Edm());
-				flat_tuple_->addToVector("toy_minuit_status",          sig_result->Status());
-				flat_tuple_->addToVector("toy_nll",                    sig_result->MinFcnValue());
-				flat_tuple_->addToVector("toy_p_value",                result->getPValue());
-				flat_tuple_->addToVector("toy_q0",                     result->getQ0());
-				flat_tuple_->addToVector("toy_bkg_rate_mass_hypo",     result->getFullBkgRate());
-				flat_tuple_->addToVector("toy_bkg_rate_mass_hypo_err", result->getFullBkgRateError());
-				flat_tuple_->addToVector("toy_sig_yield",              result->getSignalYield());
-				flat_tuple_->addToVector("toy_sig_yield_err",          result->getSignalYieldErr());
-				flat_tuple_->addToVector("toy_upper_limit",            result->getUpperLimit());
-				flat_tuple_->addToVector("toy_ul_p_value",             result->getUpperLimitPValue());
+				flat_tuple_->addToVector(prefix + "toy_edm",                    sig_result->Edm());
+				flat_tuple_->addToVector(prefix + "toy_minuit_status",          sig_result->Status());
+				flat_tuple_->addToVector(prefix + "toy_nll",                    sig_result->MinFcnValue());
+				flat_tuple_->addToVector(prefix + "toy_p_value",                result->getPValue());
+				flat_tuple_->addToVector(prefix + "toy_q0",                     result->getQ0());
+				flat_tuple_->addToVector(prefix + "toy_bkg_rate_mass_hypo",     result->getFullBkgRate());
+				flat_tuple_->addToVector(prefix + "toy_bkg_rate_mass_hypo_err", result->getFullBkgRateError());
+				flat_tuple_->addToVector(prefix + "toy_sig_yield",              result->getSignalYield());
+				flat_tuple_->addToVector(prefix + "toy_sig_yield_err",          result->getSignalYieldErr());
+				flat_tuple_->addToVector(prefix + "toy_upper_limit",            result->getUpperLimit());
+				flat_tuple_->addToVector(prefix + "toy_ul_p_value",             result->getUpperLimitPValue());
             }
             
             // Step to the next toy.
