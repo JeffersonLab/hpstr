@@ -52,8 +52,10 @@ void BumpHunter::initialize(TH1* histogram, double &mass_hypothesis) {
     std::cout << "[ BumpHunter ]: Mass resolution: " << mass_resolution_ << " GeV" << std::endl;
     
     // Calculate the fit window size
-    window_size_ = mass_resolution_*res_factor_;
-    printDebug("Window size: " + std::to_string(window_size_));
+    window_size_ = 0;
+    if(window_use_res_scale_) { window_size_ = res_factor_ * mass_resolution_; }
+    else { window_size_ = res_factor_ * this->getMassResolution(mass_hypothesis_, 1.0); }
+    this->printDebug("Window size: " + std::to_string(window_size_));
     
     // Find the starting position of the window. This is set to the low edge of 
     // the bin closest to the calculated value. If the start position falls 
@@ -196,7 +198,7 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         }
         
         // Perform the background-only fit and store the result.
-        TFitResultPtr result = histogram->Fit("bkg", "VLES+", "", window_start_, window_end_);
+        TFitResultPtr result = histogram->Fit("bkg", "QLES+", "", window_start_, window_end_);
         fit_result->setBkgFitResult(result);
 
         std::cout << "*************************************************" << std::endl;
@@ -206,7 +208,7 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         std::cout << "*************************************************" << std::endl;
 
         // Perform the toy model fit and store the result.
-        TFitResultPtr result_toys = histogram->Fit("bkg_toys", "VLES+", "", window_start_, window_end_);
+        TFitResultPtr result_toys = histogram->Fit("bkg_toys", "QLES+", "", window_start_, window_end_);
         fit_result->setBkgToysFitResult(result_toys);
     }
     
@@ -242,7 +244,7 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
     for(int parI = 0; parI < poly_order_ + 1; parI++) {
         full->SetParameter(parI, bkg->GetParameter(parI));
     }
-    TFitResultPtr full_result = histogram->Fit("full", "VLES+", "", window_start_, window_end_);
+    TFitResultPtr full_result = histogram->Fit("full", "QLES+", "", window_start_, window_end_);
     fit_result->setCompFitResult(full_result);
     
     calculatePValue(fit_result);
@@ -411,7 +413,9 @@ void BumpHunter::getUpperLimitAsymCLs(TH1* histogram, HpsFitResult* result) {
     double p_mu = 1;
     double p_b = 1;
     double r_mu = -9999999.9;
+    int tryN = 0;
     while(true) {
+        tryN++;
         comp->FixParameter(poly_order_ + 1, mu95up);
         
         TFitResultPtr full_result = histogram->Fit("comp_ul", "NQLES", "", window_start_, window_end_);
@@ -443,14 +447,23 @@ void BumpHunter::getUpperLimitAsymCLs(TH1* histogram, HpsFitResult* result) {
         CLs = p_mu/p_b;
         
         std::cout << "[ BumpHunter ]: mu: " << mu95up << std::endl;
-        //std::cout << "[ BumpHunter ]: mle_nll: " << mle_nll << std::endl;
-        //std::cout << "[ BumpHunter ]: bkg_nll: " << bkg_nll << std::endl;
-        //std::cout << "[ BumpHunter ]: mu_nll: " << mu_nll << std::endl;
-        //std::cout << "[ BumpHunter ]: nllamb_mu: " << nllamb_mu << std::endl;
-        //std::cout << "[ BumpHunter ]: r_mu: " << r_mu << std::endl;
-        //std::cout << "[ BumpHunter ]: p_mu: " << p_mu << std::endl;
-        //std::cout << "[ BumpHunter ]: p_b: " << p_b << std::endl;
+        std::cout << "[ BumpHunter ]: mle_nll: " << mle_nll << std::endl;
+        std::cout << "[ BumpHunter ]: bkg_nll: " << bkg_nll << std::endl;
+        std::cout << "[ BumpHunter ]: mu_nll: " << mu_nll << std::endl;
+        std::cout << "[ BumpHunter ]: nllamb_mu: " << nllamb_mu << std::endl;
+        std::cout << "[ BumpHunter ]: r_mu: " << r_mu << std::endl;
+        std::cout << "[ BumpHunter ]: p_mu: " << p_mu << std::endl;
+        std::cout << "[ BumpHunter ]: p_b: " << p_b << std::endl;
         std::cout << "[ BumpHunter ]: CLs: " << CLs << std::endl;
+        if(tryN > 1000) 
+        {
+            std::cout << "[ BumpHunter ]: Upper limit aborting, too many tries" << std::endl;
+            
+            result->setUpperLimit(1.64*sigma);
+            result->setUpperLimitPValue(-9.0);
+            
+            break;
+        } 
         if((CLs <= 0.051 && CLs > 0.049)) 
         {
             std::cout << "[ BumpHunter ]: Upper limit: " << mu95up << std::endl;
@@ -468,7 +481,7 @@ void BumpHunter::getUpperLimitAsymCLs(TH1* histogram, HpsFitResult* result) {
         else if(CLs <= 0.04) { mu95up = mu95up*0.99; }
         else if(CLs <= 0.049) { mu95up = mu95up*0.999; }
         else if(CLs <= 0.1) { mu95up = mu95up*1.01; }
-        else { mu95up = mu95up*1.5; }
+        else { mu95up = mu95up*1.1; }
         printDebug("Setting mu to: " + std::to_string(mu95up));
     }
 }
@@ -536,7 +549,7 @@ void BumpHunter::getUpperLimitPower(TH1* histogram, HpsFitResult* result) {
         //std::cout << "[ BumpHunter ]: Current p-value: " << p_value << std::endl;
         comp->FixParameter(poly_order_ + 1, signal_yield);
         
-        TFitResultPtr full_result = histogram->Fit("comp_ul", "VLES+", "", window_start_, window_end_);
+        TFitResultPtr full_result = histogram->Fit("comp_ul", "QLES+", "", window_start_, window_end_);
         double cond_nll = full_result->MinFcnValue();
         
         // 1) Calculate the likelihood ratio which is chi2 distributed.

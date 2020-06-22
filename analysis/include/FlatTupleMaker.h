@@ -61,8 +61,9 @@ class FlatTupleMaker {
         /**
          *
          */
-        void close(); 
+        void close();
 
+        std::vector<double> getVector(std::string variable_name);
 
         /** 
          *
