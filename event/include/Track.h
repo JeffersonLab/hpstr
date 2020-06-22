@@ -335,7 +335,7 @@ class Track : public TObject {
         bool getSharedLy0() const {return SharedLy0_;};
         bool getSharedLy1() const {return SharedLy1_;};
 
-        std::vector<double> getCovEigenvalues(std::vector<float> cov);
+        std::vector<float> getCovEigenvalues(std::vector<float> cov);
 
 
 

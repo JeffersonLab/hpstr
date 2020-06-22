@@ -87,7 +87,7 @@ void Track::Print (Option_t *option) const {
     printf("type: %d\n", type_);
 }
 
-std::vector<double> Track::getCovEigenvalues(std::vector<float> cov) {
+std::vector<float> Track::getCovEigenvalues(std::vector<float> cov) {
     //std::vector<double> V{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14};
     int dim = 5;
     TMatrixFSym covM(dim);
@@ -120,7 +120,7 @@ std::vector<double> Track::getCovEigenvalues(std::vector<float> cov) {
     
     TMatrixDSymEigen eigen(covM);
     TVectorD eigenVal = eigen.GetEigenValues();
-    std::vector<double> eigenvals;
+    std::vector<float> eigenvals;
     for (int i = 0; i < dim; i++)
     {
         eigenvals.push_back(eigenVal[i]);

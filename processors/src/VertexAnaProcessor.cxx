@@ -309,8 +309,8 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             continue;
 
         //CURRENTLY MODIFYING
-        std::vector<float> cov = ele_trk->getCov();
-        std::vector<double> eigenvals = ele_trk->getCovEigenvalues(cov);
+        //std::vector<float> cov = ele_trk->getCov();
+        //std::vector<double> eigenvals = ele_trk->getCovEigenvalues(cov);
 
         _vtx_histos->Fill1DVertex(vtx,
                 ele,

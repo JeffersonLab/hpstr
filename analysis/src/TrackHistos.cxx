@@ -142,6 +142,10 @@ void TrackHistos::Fill2DTrack(Track* track, float weight, const std::string& trk
         Fill2DHisto(trkname+"z0_vs_p_hh",track->getP(),z0,weight);
         Fill2DHisto(trkname+"z0_vs_phi0_hh",track->getPhi(),z0,weight);
         Fill2DHisto(trkname+"z0_vs_tanlambda_hh",track->getTanLambda(),z0,weight);
+        for(int i=0; i < track->getCovEigenvalues(track->getCov()).size(); i++)
+        {
+            Fill2DHisto(trkname+"covEigenVals_hh", (float)i,track->getCovEigenvalues(track->getCov())[i],weight);
+        }
     }
 }
 
@@ -166,6 +170,7 @@ void TrackHistos::Fill1DTrack(Track* track, float weight, const std::string& trk
     Fill1DHisto(trkname+"chi2ndf_h"  ,track->getChi2Ndf()     ,weight);
     Fill1DHisto(trkname+"nShared_h"  ,track->getNShared()     ,weight);
     Fill1DHisto(trkname+"nHits_2d_h" ,n_hits_2d               ,weight);
+
         
     //All Tracks
     Fill1DHisto(trkname+"sharingHits_h",0,weight);
