@@ -87,35 +87,46 @@ void Track::Print (Option_t *option) const {
     printf("type: %d\n", type_);
 }
 
-void Track::getCovEigenvalues(std::vector<double> cov) {
-    std::vector<double> V{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14};
+std::vector<double> Track::getCovEigenvalues(std::vector<float> cov) {
+    //std::vector<double> V{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14};
     int dim = 5;
-    TMatrixDSym covM(dim);
-    std::vector<std::vector<double>> row; 
+    TMatrixFSym covM(dim);
+    std::vector<std::vector<float>> row; 
     int s=0;
     for(int i=0; i < dim; i++)
     {   row.push_back({});
-        if(i==0){row[i].push_back(V.at(i));}
+        if(i==0){row[i].push_back(cov.at(i));}
         else
         {
             s=s+i;
             for(int j=0; j < i+1; j++)
             {
-                row[i].push_back(V.at(s+j));
+                row[i].push_back(cov.at(s+j));
 
             }
         }
             
     }
+    
     for(int i=0; i < row.size(); i++)
     {
         for(int j=0; j < row[i].size(); j++)
         {
-           std::cout << "COVEIGVECS " << row[i][j] << ","; 
+            covM(i,j) = row[i][j];
+            covM(j,i) = row[i][j];
         }
-        std::cout << "next row" << std::endl;
-    }
 
+    }
+    
+    TMatrixDSymEigen eigen(covM);
+    TVectorD eigenVal = eigen.GetEigenValues();
+    std::vector<double> eigenvals;
+    for (int i = 0; i < dim; i++)
+    {
+        eigenvals.push_back(eigenVal[i]);
+    }
+    
+    return eigenvals;
     
 
 

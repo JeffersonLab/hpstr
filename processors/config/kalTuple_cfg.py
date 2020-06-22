@@ -142,9 +142,9 @@ mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
 # Sequence which the processors will run.
 if (not options.isData):
-    p.sequence = [header, vtx, bcvtxkf, vtxgbl, cvtxgbl, ecal, track, trackgbl, mcpart]
+    p.sequence = [header, vtx, vtxgbl, cvtxgbl, ecal, track, trackgbl, mcpart]
 else:
-    p.sequence = [header, vtx, bcvtxkf, vtxgbl, cvtxgbl, ecal, track, trackgbl]
+    p.sequence = [header, vtx, vtxgbl, cvtxgbl, ecal, track, trackgbl]
 
 if (options.nevents > -1 ):
     p.max_events = options.nevents
