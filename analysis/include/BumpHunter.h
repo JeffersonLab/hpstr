@@ -93,6 +93,7 @@ class BumpHunter {
         /** Get the signal upper limit. */
         void getUpperLimit(TH1* histogram, HpsFitResult* result);
         void getUpperLimitAsymptotic(TH1* histogram, HpsFitResult* result);
+        void getUpperLimitAsymCLs(TH1* histogram, HpsFitResult* result);
         void getUpperLimitPower(TH1* histogram, HpsFitResult* result);
         
         /** Set the resolution after instantiation. */
