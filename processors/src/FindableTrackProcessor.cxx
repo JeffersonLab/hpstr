@@ -56,6 +56,8 @@ void FindableTrackProcessor::initialize(TTree* tree) {
 
 bool FindableTrackProcessor::process(IEvent* event) {
 
+    counter_++; 
+
     // Clear the hit map to remove any previous relations 
     hitMap_.clear();
 
@@ -91,7 +93,6 @@ void FindableTrackProcessor::createHitMap(const std::vector< MCTrackerHit* >* hi
     
     // Loop over all sim tracker hits and check which layers, if any, the sim
     // particle deposited energy in.
-    std::vector< int > hit_count(14, 0); 
     for ( const auto& hit : *hits ) {
 
         // Get the LCIO ID associated with a specific sim particle
@@ -116,7 +117,8 @@ void FindableTrackProcessor::isFindable(int lcio_id, std::vector< int > hit_coun
     }
     
     bool is_findable = (stereo_hit_count >= 5) ? true : false;
-    findable_tracks_->push_back(new FindableTrack(lcio_id, stereo_hit_count, is_findable));  
+    auto findable_track{new FindableTrack(lcio_id, stereo_hit_count, is_findable)}; 
+    findable_tracks_->push_back(findable_track);  
 }
 
 

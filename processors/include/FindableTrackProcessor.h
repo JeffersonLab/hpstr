@@ -102,7 +102,9 @@ class FindableTrackProcessor : public Processor {
         std::vector< FindableTrack* >* findable_tracks_{new std::vector< FindableTrack*>()};  
 
         /// Output tree
-        TTree* output_tree_{nullptr}; 
+        TTree* output_tree_{nullptr};
+
+        int counter_{0};  
 
 }; // FindableTrackProcessor 
 
