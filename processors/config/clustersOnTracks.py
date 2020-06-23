@@ -5,8 +5,8 @@ import sys,os
 infilename = sys.argv[1].strip()
 outfilename = sys.argv[2].strip()
 
-print 'Input file:  %s' % infilename
-print 'Output file: %s' % outfilename
+print('Input file:  %s' % infilename)
+print('Output file: %s' % outfilename)
 
 p = HpstrConf.Process()
 
