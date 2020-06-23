@@ -4,30 +4,31 @@ import baseConfig
 
 parser = baseConfig.parser
 
-parser.add_option("-s", "--spec", type="string", dest="mass_spec",
+parser.add_argument("-s", "--spec", type=str, dest="mass_spec",
         help="Name of mass spectrum histogram.", metavar="mass_spec",
         default="mass_tweak__p_tot_min_cut")
-parser.add_option("-m", "--mass", type="int", dest="mass_hypo",
+parser.add_argument("-m", "--mass", type=int, dest="mass_hypo",
         help="Mass hypothesis in MeV.", metavar="mass_hypo", default=145)
-parser.add_option("-p", "--poly", type="int", dest="poly_order",
+parser.add_argument("-p", "--poly", type=int, dest="poly_order",
         help="Polynomial order of background model.", metavar="poly_order", default=3)
-parser.add_option("-w", "--win", type="int", dest="win_factor",
+parser.add_argument("-w", "--win", type=int, dest="win_factor",
         help="Window factor for determining fit window size.", metavar="win_factor", default=11)
-parser.add_option("-M", "--bkg_model", type="int", dest="bkg_model", default="1",
+parser.add_argument("-M", "--bkg_model", type=int, dest="bkg_model", default="1",
         help="The type of background fit model. 0 = Chebyshev; 1 = Exponential Chebyshev; 2 = Legendre; 3 = Exponential Legendre.", metavar="bkg_model")
-parser.add_option("-N", "--num_iterations", type="int", dest="num_iters",
+parser.add_argument("-N", "--num_iterations", type=int, dest="num_iters",
 		help="Number of iterations to run.", metavar="num_iters", default=1000)
-parser.add_option("-S", "--res_sigma", type="float", dest="res_sigma",
+parser.add_argument("-S", "--res_sigma", type=float, dest="res_sigma",
 		help="Width of the Guassian distriubtion of the mass resolution.", metavar="res_sigma", default=0.05)
-parser.add_option("-f", "--func_file", type="string", dest="function_file",
+parser.add_argument("-f", "--func_file", type=str, dest="function_file",
         help="The name of the file containing the mass resolution error parameterization function.", metavar="function_file", default="")
-parser.add_option("-F", "--func_name", type="string", dest="function_name",
+parser.add_argument("-F", "--func_name", type=str, dest="function_name",
         help="The name of the function object that describes the mass resolution parameterization.", metavar="function_name", default="")
-parser.add_option("-u", "--num_toys", type="int", dest="num_toys",
+parser.add_argument("-u", "--num_toys", type=int, dest="num_toys",
 		help="Number of toys to generate.", metavar="num_toys", default=1000)
-parser.add_option("-U", "--num_toy_iterations", type="int", dest="toy_num_iters",
+parser.add_argument("-U", "--num_toy_iterations", type=int, dest="toy_num_iters",
 		help="Number of iterations to run.", metavar="toy_num_iters", default=100)
-(options, args) = parser.parse_args()
+
+options = parser.parse_args()
 
 # Use the input file to set the output file name
 histo_file = options.inFilename
