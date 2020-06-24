@@ -3,6 +3,7 @@ from copy import deepcopy
 import os.path
 import numpy as np
 import ModuleMapper as MM
+import csv
 from optparse import OptionParser
 
 parser=OptionParser()
@@ -21,6 +22,11 @@ outFile = r.TFile("%s_SvtBLFitSummary.root"%(options.inFilename[:-5]),"RECREATE"
 myTree = inFile.gaus_fit
 
 lowdaqDict = {}
+<<<<<<< HEAD
+=======
+nofitposDict = {}
+lowdaqposDict = {}
+>>>>>>> 730c4d174360a93940735b9849bba756e7ab3207
 channelDict = {}
 winsizeDict = {}
 sigmaDict = {}
@@ -61,6 +67,7 @@ for fitData in myTree:
     if fitData.minbinFail == 0.0:
         fit_hh.Fill(float(ly),float(mod),1.)
         fitloca_h.Fill(fitData.channel)
+<<<<<<< HEAD
 
     if sensor.find("L0") != -1 or sensor.find("L1") != -1:
         chlimit = 511.0

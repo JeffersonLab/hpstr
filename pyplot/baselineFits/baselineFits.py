@@ -7,6 +7,7 @@ import utilities as utils
 from optparse import OptionParser
 
 
+
 def get_comma_separated_args(option, opt, value, parser):
     setattr(parser.values, option.dest, value.split(','))
 

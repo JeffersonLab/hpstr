@@ -1,13 +1,16 @@
 import HpstrConf
 import sys
 import os
+import baseConfig as base
+
+options = base.parser.parse_args()
 
 # Use the input file to set the output file name
-infile = sys.argv[1].strip()
-outfile = '%s_anaMC.root' % infile[:-5]
+infile = options.inFilename
+outfile = options.outFilename
 
-print 'Input file: %s' % infile
-print 'Output file: %s' % outfile
+print('Input file: %s' % infile)
+print('Output file: %s' % outfile)
 
 p = HpstrConf.Process()
 
@@ -37,7 +40,7 @@ mcana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc
 # Sequence which the processors will run.
 p.sequence = [mcana]
 
-p.input_files=[infile]
+p.input_files = infile
 p.output_files = [outfile]
 
 p.printProcess()

@@ -54,14 +54,15 @@ def launchTestsArgs(options, infilename, fileN, jobN):
   
   #outDir = "/nfs/slac/g/hps3/users/pbutti/hpstr_histos/ap/80MeV/"
   
-  logfilename = options.outDir+"logs/"+filenameBase+".log"
+  logfilename = options.outDir+"logs/"+filenameBase+"_"+str(fileN)+".log"
   cfgname = ((options.configFile).split("/")[-1]).split(".")[0]
-  outfilename = options.outDir+filenameBase+"_"+cfgname+".root"
+  outfilename = options.outDir+filenameBase+"_"+cfgname+"_"+str(fileN)+".root"
   print("%i. Generating %s"%(jobN, outfilename))
   cmd = [ options.tool, options.configFile, 
           "-i", infilename,
           "-o", outfilename,
-          "-t", str(options.isData)
+          "-t", str(options.isData),
+          options.extraFlags,
           ]
   print cmd
 
@@ -110,6 +111,8 @@ if __name__ == '__main__':
                     help="Specify the input directory with the files", metavar="inDir",default="")
   parser.add_option("-z", "--isData", type="int",dest="isData",
                     help="Specify if the input file is data or MC", metavar="isData",default=0)
+  parser.add_option("-e", "--extraFlags", type="string",dest="extraFlags",
+                    help="Specify extra flags to be added to the hpstr command",metavar="extraFlags",default="")
   
   
   (options, args) = parser.parse_args()

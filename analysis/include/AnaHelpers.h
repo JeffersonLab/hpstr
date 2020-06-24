@@ -70,6 +70,7 @@ private:
     const double SVT_ANGLE = -30.5e-3;
     TRotation rotSvt;
     TMatrixDSym* rotSvt_sym;
+    bool debug_{false};
 };
 
 

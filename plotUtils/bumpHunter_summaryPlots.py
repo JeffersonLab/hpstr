@@ -33,7 +33,7 @@ for filename in filenames:
     # Break the filename apart into its parameters.
     params = re.split('[mwprs.]', filename)[2:7]
     windowSize = int(params[1])
-    
+
     # Track the window size range.
     if(smallestWindow > windowSize): smallestWindow = windowSize
     if(largestWindow < windowSize): largestWindow = windowSize
@@ -54,21 +54,24 @@ for filename in filenames:
     order      = int(params[2])
     resScale   = int(params[3])
     sigInj     = int(params[4])
-    
+
     # Generate the unique key set name for the plot.
     keyName = 'm%ip%ir%is%i' % (mass, order, resScale, sigInj)
-    
+
     # If the plot dictionaries lack this key, create a new plot.
     if keyName not in sigYield:
         # Determine the plot range.
         winMin = smallestWindow - 0.5
         winMax = largestWindow + 0.5
         winBin = winMax - winMin
-        
+
         # Create a TProfile for this key set.
         sigYield[keyName] = r.TProfile('%s_toySig'  % (keyName), '%s Toy Signal Yield;Window Size (Mass Resolution);Signal Yield'             % (keyName), int(winBin), float(winMin), float(winMax))
         sigError[keyName] = r.TProfile('%s_toyErr'  % (keyName), '%s Toy Signal Yield Error;Window Size (Mass Resolution);Signal Yield Error' % (keyName), int(winBin), float(winMin), float(winMax))
         sigPull[keyName]  = r.TProfile('%s_toyPull' % (keyName), '%s Toy Pull;Window Size (Mass Resolution);Signal Pull'                      % (keyName), int(winBin), float(winMin), float(winMax))
+        sigYield[keyName].SetErrorOption('s')
+        sigError[keyName].SetErrorOption('s')
+        sigPull[keyName].SetErrorOption('s')
     pass
 
 
@@ -80,7 +83,7 @@ print("Processing data...")
 for filename in filenames:
     processedFiles += 1
     print('    %f%%' % (100.0 * processedFiles / totalFiles))
-    
+
     # Exclude non-ROOT files.
     if not filename.endswith(".root"): continue
 
@@ -97,10 +100,10 @@ for filename in filenames:
         windowSize = model.win_factor
         sigInject = model.toy_sig_samples
         resScale = int(model.resolution_scale * 100)
-        
+
         # Get the key set unique name.
         keyName = 'm%ip%ir%is%i' % (mass, order, resScale, sigInject)
-        
+
         # Get the tracked values.
         for toy in range(len(model.toy_sig_yield)):
             if model.toy_minuit_status[toy] > 0.0: continue
@@ -137,7 +140,7 @@ for keyName in sigYield.keys():
         plot.SetLineWidth(3)
         plot.GetXaxis().SetTitleOffset(1.2)
         plot.GetYaxis().SetTitleOffset(1.0)
-    
+
     # The pull plot should have a special range.
     pullPlot.GetYaxis().SetRangeUser(-5, 5)
 
@@ -151,12 +154,12 @@ for keyName in sigYield.keys():
     yieldPlot.Draw()
     utils.InsertText("",[],0.15,0.15)
     yieldCanvas.SaveAs('%s/%s%s_yield.png' % (plotDirectory, prefix, keyName))
-    
+
     errorCanvas.cd()
     errorPlot.Draw()
     utils.InsertText("",[],0.15,0.15)
     errorCanvas.SaveAs('%s/%s%s_error.png' % (plotDirectory, prefix, keyName))
-    
+
     pullCanvas.cd()
     pullPlot.Draw()
     utils.InsertText("",[],0.15,0.15)

@@ -102,8 +102,15 @@
     "chi2_h" : {
         "bins" : 200,
         "minX" : 0,
-        "maxX" : 30,
+        "maxX" : 100,
         "xtitle" : "track #chi^{2}",
+        "ytitle" : "Tracks"
+    },
+    "chi2ndf_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 30,
+        "xtitle" : "track #chi^{2} / ndf",
         "ytitle" : "Tracks"
     },
     "n_vertices_h" : {

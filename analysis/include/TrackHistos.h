@@ -3,6 +3,7 @@
 
 #include "HistoManager.h"
 #include "Track.h"
+#include "TrackerHit.h"
 #include "Vertex.h"
 #include "Particle.h"
 #include <string>
@@ -26,6 +27,10 @@ class TrackHistos : public HistoManager {
 
         void Fill1DTrack(Track* track, float weight = 1., const std::string& trkname = "");
         void Fill2DTrack(Track* track, float weight = 1., const std::string& trkname = "");
+        void FillPosEleTracks( Track* ele_trk, Track* pos_trk, float weight = 1., const std::string& trkname = "");
+
+        //This should probably go somewhere else
+        void FillResidualHistograms(Track* track, int ly, double res, double sigma);
         
         void Fill1DVertex(Vertex* vtx, float weight = 1.);
         

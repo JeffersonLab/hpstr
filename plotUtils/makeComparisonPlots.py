@@ -54,7 +54,7 @@ print "Loading plots..."
 plots_json = open(os.environ["HPSTR_BASE"] + "/analysis/plotconfigs/tracking/vtxAnalysis.json")
 plots = json.load(plots_json)
 
-outF = r.TFile("test.root","RECREATE")
+outF = r.TFile("allHistos.root","RECREATE")
 
 for sel in Selections:
     
@@ -65,8 +65,7 @@ for sel in Selections:
         stackHists = []
         hists      = []
         norms      = []
-        
-        
+                
         data_histo = None
         
         if (not MCOnly):
@@ -95,7 +94,6 @@ for sel in Selections:
 
         top = r.TPad("top","top",0,0.42,1,1)
         bot = r.TPad("bot","bot",0,0,1,0.38)
-
         
         if (not MCOnly):
             top.Draw()

@@ -68,7 +68,7 @@ class BhToysHistoProcessor : public Processor {
         int poly_order_{3};
 
         // Order of polynomial used to create the toy generator function.
-        int toy_poly_order_{5};
+        int toy_poly_order_{-1};
 
         // The factor that determines the size of the mass window as
         //      window_size = (mass_resolution*win_factor)
