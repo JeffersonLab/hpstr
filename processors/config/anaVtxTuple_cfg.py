@@ -1,17 +1,17 @@
 import HpstrConf
 import sys
 import os
-import baseConfig
+import baseConfig as base
 
-(options,args) = baseConfig.parser.parse_args()
+options = base.parser.parse_args()
 
 
 # Use the input file to set the output file name
 infile = options.inFilename
 outfile = options.outFilename
 
-print 'Input file: %s' % infile
-print 'Output file: %s' % outfile
+print('Input file: %s' % infile)
+print('Output file: %s' % outfile)
 
 p = HpstrConf.Process()
 
@@ -39,19 +39,19 @@ vtxana.parameters["vtxColl"] = "UnconstrainedV0Vertices"
 vtxana.parameters["mcColl"]  = "MCParticle"
 vtxana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/vertexSelection.json'
 vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
-vtxana.parameters["beamE"] = baseConfig.beamE[str(options.year)]
+vtxana.parameters["beamE"] = base.beamE[str(options.year)]
 vtxana.parameters["isData"] = options.isData
 CalTimeOffset=-999
 
 if (options.isData==1):
     CalTimeOffset=56.
-    print "Running on data file: Setting CalTimeOffset %d"  % CalTimeOffset
+    print("Running on data file: Setting CalTimeOffset %d"  % CalTimeOffset)
     
 elif (options.isData==0):
     CalTimeOffset=43.
-    print "Running on MC file: Setting CalTimeOffset %d"  % CalTimeOffset
+    print("Running on MC file: Setting CalTimeOffset %d"  % CalTimeOffset)
 else:
-    print "Specify which type of ntuple you are running on: -t 1 [for Data] / -t 0 [for MC]"
+    print("Specify which type of ntuple you are running on: -t 1 [for Data] / -t 0 [for MC]")
 
 
 vtxana.parameters["CalTimeOffset"]=CalTimeOffset
@@ -64,7 +64,7 @@ vtxana.parameters["regionDefinitions"] = [RegionPath+'Tight.json', RegionPath+'r
 # Sequence which the processors will run.
 p.sequence = [vtxana]
 
-p.input_files=[infile]
+p.input_files = infile
 p.output_files = [outfile]
 
 p.printProcess()

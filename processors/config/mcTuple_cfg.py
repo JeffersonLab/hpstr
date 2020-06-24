@@ -1,10 +1,9 @@
 import HpstrConf
 import sys
 
-import baseConfig
+import baseConfig as base
 
-parser = baseConfig.parser
-(options,args) = parser.parse_args()
+options = base.parser.parse_args()
 
 # Use the input file to set the output file name
 lcio_file = options.inFilename
@@ -16,7 +15,7 @@ print('Root file: %s' % root_file)
 p = HpstrConf.Process()
 
 p.run_mode = 0
-#p.max_events = 1000
+p.max_events = options.nevents
 
 # Library containing processors
 p.add_library("libprocessors")
@@ -50,7 +49,7 @@ mcehits.parameters["hitCollRoot"] = 'EcalHits'
 # Sequence which the processors will run.
 p.sequence = [mcpart, mcthits, mcehits]
 
-p.input_files=[lcio_file]
+p.input_files = lcio_file
 p.output_files = [root_file]
 
 p.printProcess()

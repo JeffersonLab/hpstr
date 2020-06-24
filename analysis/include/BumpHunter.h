@@ -93,27 +93,42 @@ class BumpHunter {
         /** Get the signal upper limit. */
         void getUpperLimit(TH1* histogram, HpsFitResult* result);
         void getUpperLimitAsymptotic(TH1* histogram, HpsFitResult* result);
+        void getUpperLimitAsymCLs(TH1* histogram, HpsFitResult* result);
         void getUpperLimitPower(TH1* histogram, HpsFitResult* result);
+        
+        /** Set the resolution after instantiation. */
+        void setResolutionScale(double res_scale) { res_scale_ = res_scale; }
+
+        /** Sets whether the window size is scaled according to the resolution scaling factor. */
+        void setWindowSizeUsesResScale(bool window_use_res_scale) { window_use_res_scale_ = window_use_res_scale; }
         
         /** */
         std::vector<TH1*> generateToys(TH1* histogram, double n_toys, int seed, int toy_sig_samples, int bkg_mult = 1, TH1* signal_hist = nullptr);
-        
-    private:
+
         /**
-         * Get the HPS mass resolution at the given mass.  The functional form 
+         * Get the HPS mass resolution at the given mass.  The functional form
          * of the mass resolution was determined using MC.
          *
          * @param mass The mass of interest.
          * @return The mass resolution at the given mass.
          */
-        inline double getMassResolution(double mass) { 
-            //return -6.2*mass*mass*mass + 0.91*mass*mass - 0.00297*mass + 0.000579; 
+        double getMassResolution(double mass) {
+            // Omar's 2015 mass resolution.
+            //return res_scale_ * ((-6.2 * mass * mass * mass) + (0.91 * mass * mass) - (0.00297 * mass) + 0.000579);
             //return 0.0389938364847*mass - 0.0000713783511061; // ideal
             //return 0.0501460737193*mass - 0.0000917925595224; // scaled to moller mass from data
             //return 0.0532190838657*mass - 0.0000922283032152; // scaled to moller mass + sys
             //return res_scale_*(0.000955 - 0.004198 * mass + 0.2367 * mass * mass - 0.7009 * mass * mass * mass);
-            return res_scale_ * (0.000379509 + (0.0416842 * mass) - (0.271364 * mass * mass) + (3.49537 * mass * mass * mass) - (11.1153 * mass * mass * mass * mass));
+
+            // Rafo's 2016 mass resolution.
+            //return res_scale_ * (0.000379509 + (0.0416842 * mass) - (0.271364 * mass * mass) + (3.49537 * mass * mass * mass) - (11.1153 * mass * mass * mass * mass));
+            return getMassResolution(mass, res_scale_);
         };
+        
+    private:
+        inline double getMassResolution(double mass, double res_scale) {
+            return res_scale * (0.000379509 + (0.0416842 * mass) - (0.271364 * mass * mass) + (3.49537 * mass * mass * mass) - (11.1153 * mass * mass * mass * mass));
+        }
         
         /**
          *
@@ -131,7 +146,7 @@ class BumpHunter {
          *
          */
         void getChi2Prob(double min_nll_null, double min_nll, double &q0, double &p_value);
-        
+
         /** Background only fit result. */
         HpsFitResult* bkg_only_result_{nullptr};
         
@@ -206,6 +221,8 @@ class BumpHunter {
         double mass_hypothesis_{0};
         
         double mass_resolution_{0};
+
+        bool window_use_res_scale_{true};
 };
 
 #endif // __BUMP_HUNTER_H__

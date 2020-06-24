@@ -65,6 +65,9 @@ void FlatTupleMaker::close() {
     }
 }
 
+std::vector<double> FlatTupleMaker::getVector(std::string variable_name) {
+    return vectors[variable_name];
+}
 
 void FlatTupleMaker::fill() { 
     
