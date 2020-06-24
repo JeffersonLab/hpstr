@@ -294,8 +294,8 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         if (!vtxSelector->passCutLt("chi2unc_lt",vtx->getChi2(),weight))
             continue;
 
-        if (!vtxSelector->passCutGt("chi2unc_gt",vtx->getChi2(),weight))
-            continue;
+        //if (!vtxSelector->passCutGt("chi2unc_gt",vtx->getChi2(),weight))
+           // continue;
 
 
         //Max vtx momentum
