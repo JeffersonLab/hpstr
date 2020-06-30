@@ -36,6 +36,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
         //Perform fitting procedure over all channels on a sensor
         for(int cc=0; cc < 640 ; ++cc) 
         {
+            double TFRE = 0.0;
             //Set Channel and Hybrid information and paramaters in the flat tuple
             flat_tuple_->setVariableValue("SvtAna2DHisto_key", SvtAna2DHisto_key);
             flat_tuple_->setVariableValue("channel", cc);
@@ -110,6 +111,7 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                 flat_tuple_->addToVector("iterFitRangeEnd", -9999.9);
 
                 flat_tuple_->setVariableValue("lowdaq", -9999.9);
+                flat_tuple_->setVariableValue("TFitResultError", -9999.9);
 
                 flat_tuple_->setVariableValue("minbinFail",1.0);
                 std::cout << "Not enough stats in channel " << cc << std::endl;
@@ -286,7 +288,8 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             TFitResultPtr fit = projy_h->Fit("gaus", "QRES", "", xmin, cutxmax_1);
             if ( fit == -1) 
             {
-                flat_tuple_->setVariableValue("TFitResultError",1.0);
+                TFRE = TFRE + 1.0;
+                flat_tuple_->setVariableValue("TFitResultError",TFRE);
                 continue;
             }
             else
@@ -328,7 +331,8 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                 fit = projy_h->Fit("gaus", "QRES", "", xmin, cutxmax_2);
                 if ( fit == -1) 
                 {
-                    flat_tuple_->setVariableValue("TFitResultError",1.0);
+                    TFRE = TFRE + 1.0;
+                    flat_tuple_->setVariableValue("TFitResultError",TFRE);
                     continue;
                 }
                 else
@@ -372,7 +376,8 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
             if ( fit == -1) 
             {
-                flat_tuple_->setVariableValue("TFitResultError",1.0);
+                TFRE = TFRE + 1.0;
+                flat_tuple_->setVariableValue("TFitResultError",TFRE);
                 continue;
             }
             else
@@ -424,7 +429,8 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                     TFitResultPtr fit = projy_h->Fit("gaus", "QRES", "", tempxmin, xmax);
                     if ( fit == -1) 
                     {
-                        flat_tuple_->setVariableValue("TFitResultError",1.0);
+                        TFRE = TFRE + 1.0;
+                        flat_tuple_->setVariableValue("TFitResultError",TFRE);
                         continue;
                     }
                     else
@@ -464,7 +470,8 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
                    TFitResultPtr newfit = projy_h->Fit("gaus", "QRES", "", xmin, tempxmax);
                     if ( newfit == -1) 
                     {
-                        flat_tuple_->setVariableValue("TFitResultError",1.0);
+                        TFRE = TFRE + 1.0;
+                        flat_tuple_->setVariableValue("TFitResultError",TFRE);
                         continue;
                     }
                    else 
@@ -490,13 +497,14 @@ void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int r
             fit = projy_h->Fit("gaus", "QRES", "", xmin, xmax);
             if ( fit == -1) 
             {
-                flat_tuple_->setVariableValue("TFitResultError",1.0);
+                TFRE = TFRE + 1.0;
+                flat_tuple_->setVariableValue("TFitResultError",TFRE);
                 continue;
             }
             else
             {
+                flat_tuple_->setVariableValue("TFitResultError",TFRE);
                 fitparams = fit->GetParams();
-                flat_tuple_->setVariableValue("TFitResultError",0.0);
             }
 
             //Store Final Fit Parameters in the flat tuple
