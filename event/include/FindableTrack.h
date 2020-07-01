@@ -6,7 +6,7 @@
 /*~~~~~~~~~~*/
 #include "TObject.h" 
 
-class FindableTrack { 
+class FindableTrack : public TObject {
 
     public: 
         

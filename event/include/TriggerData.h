@@ -10,9 +10,10 @@
 //----------//
 //   LCIO   //
 //----------//
+#include "TObject.h"
 #include <EVENT/LCGenericObject.h>
 
-class TriggerData { 
+class TriggerData : public TObject {
     
     public: 
 

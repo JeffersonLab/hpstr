@@ -116,7 +116,7 @@ void FindableTrackProcessor::isFindable(int lcio_id, std::vector< int > hit_coun
         }
     }
     
-    bool is_findable = (stereo_hit_count >= 5) ? true : false;
+    bool is_findable = (stereo_hit_count >= 5);
     auto findable_track{new FindableTrack(lcio_id, stereo_hit_count, is_findable)}; 
     findable_tracks_->push_back(findable_track);  
 }
