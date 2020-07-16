@@ -189,6 +189,7 @@ bool TridentAnaProcessorRedoParticles::process(IEvent* ievent) {
       }
     }
     
+    std::cout<<"Found "<<vtxs_->size()<<" Unconstrained Vertices"<<std::endl;
     std::cout<<"Found "<<matched_tri.size()<<" Matched Vertices"<<std::endl;
     for ( int i_vtx = 0; i_vtx < matched_tri.size(); i_vtx++ ) {
         
@@ -204,23 +205,23 @@ bool TridentAnaProcessorRedoParticles::process(IEvent* ievent) {
 	CalCluster* pos_clu=cand.posClu;
 
 	//        Trigger requirement - *really hate* having to do it here for each vertex.
-	//std::cout<<"Checking Trigger"<<std::endl;
+	if(debug_)  std::cout<<"Checking Trigger"<<std::endl;
 	if (isData) {
 	  if (!vtxSelector->passCutEq("Singles2_eq",((int)tsdata_->prescaled.Single_2_Top)||((int)tsdata_->prescaled.Single_2_Bot),weight))
-	    break;
+	    continue;
 	  if (!vtxSelector->passCutEq("Singles3_eq",((int)tsdata_->prescaled.Single_3_Top)||((int)tsdata_->prescaled.Single_3_Bot),weight))
-	    break;
+	    continue;
 	}
-                
+	
         bool foundParts = _ah->GetParticlesFromVtx(vtx,ele,pos);
-	//	std::cout<<"Checking Particles"<<std::endl;
+	if(debug_)	std::cout<<"Checking Particles"<<std::endl;
         if (!foundParts) {
-            //std::cout<<"TridentAnaProcessorRedoParticles::WARNING::Found vtx without ele/pos. Skip."
-            continue;
+	  std::cout<<"TridentAnaProcessorRedoParticles::WARNING::Found vtx without ele/pos. Skip."<<std::endl;
+	  continue;
         }
         
         if (!trkColl_.empty()) {
-	  //	  std::cout<<"Checking Tracks"<<std::endl;
+	  if(debug_)std::cout<<"Checking Tracks"<<std::endl;
             bool foundTracks = _ah->MatchToGBLTracks((ele->getTrack()).getID(),(pos->getTrack()).getID(),
                                                      ele_trk, pos_trk, *trks_);
             if (!foundTracks) {
@@ -263,10 +264,11 @@ bool TridentAnaProcessorRedoParticles::process(IEvent* ievent) {
         pos_mom.SetY(pos->getMomentum()[1]);
         pos_mom.SetZ(pos->getMomentum()[2]);
         
-        
+	if(debug_)std::cout<<" Going through cuts "<<std::endl;
         //Beam Electron cut
         if (!vtxSelector->passCutLt("eleMom_lt",ele_mom.Mag(),weight))
             continue;
+	//	std::cout<<" Pass beam electron "<<std::endl;
 
         //Ele Track Quality
         if (!vtxSelector->passCutLt("eleTrkChi2_lt",ele_trk->getChi2Ndf(),weight))
@@ -275,6 +277,7 @@ bool TridentAnaProcessorRedoParticles::process(IEvent* ievent) {
         //Pos Track Quality
         if (!vtxSelector->passCutLt("posTrkChi2_lt",pos_trk->getChi2Ndf(),weight))
             continue;
+	std::cout<<"track qual "<<std::endl;
 
         //Vertex Quality
         if (!vtxSelector->passCutLt("chi2unc_lt",vtx->getChi2(),weight))
@@ -293,8 +296,8 @@ bool TridentAnaProcessorRedoParticles::process(IEvent* ievent) {
         
         if (!vtxSelector->passCutLt("maxVtxMom_lt",(ele_mom+pos_mom).Mag(),weight))
             continue;
-	   
-        if (!vtxSelector->passCutGt("minVtxMom_gt",(ele_mom+pos_mom).Mag()/beamE_,weight))
+		
+        if (!vtxSelector->passCutGt("minVtxMom_gt",(ele_mom+pos_mom).Mag(),weight))
             continue;
 
         _vtx_histos->Fill1DVertex(vtx,
@@ -636,6 +639,7 @@ Vertex* TridentAnaProcessorRedoParticles::matchPairToVertex(Track* eleTrk,Track*
     bool foundParts = _ah->GetParticlesFromVtx(vtx,ele,pos);
     Track eleVtx=ele->getTrack();
     Track posVtx=pos->getTrack();   
+    std::cout<<eleVtx.getID()<<"  "<<eleTrk->getID()<<"   "<<posVtx.getID()<<"   "<<posTrk->getID()<<std::endl;
     if (eleVtx.getID()==eleTrk->getID() && posVtx.getID()==posTrk->getID())
       matchedVert=vtx;
   }

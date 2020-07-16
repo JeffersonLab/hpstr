@@ -205,7 +205,6 @@ void TridentHistos::Fill1DVertex(Vertex* vtx, float weight) {
     Fill1DHisto("vtx_Y_svt_h",vtxPosSvt.Y(),weight);
     Fill1DHisto("vtx_Z_svt_h",vtxPosSvt.Z(),weight);
     
-
     // 0 xx 1 xy 2 xz 3 yy 4 yz 5 zz
     Fill1DHisto("vtx_sigma_X_h",sqrt(vtx->getCovariance()[0]),weight);
     Fill1DHisto("vtx_sigma_Y_h",sqrt(vtx->getCovariance()[3]),weight);

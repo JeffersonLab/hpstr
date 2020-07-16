@@ -132,7 +132,6 @@ bool TrackEfficiencyProcessor::process(IEvent* ievent) {
       CalCluster* cluEle=(goodEleSide.at(i_clu)).first;         
       //std::cout<<"Got electron cluster"<<std::endl;
       for (int j_clu=0; j_clu<goodPosSide.size();j_clu++){
-	std::cout<<"Checking this pair"<<std::endl;
 	CalCluster* cluPos=(goodPosSide.at(j_clu)).first;
 	double cluEleY=cluEle->getPosition().at(1);
 	double cluPosY=cluPos->getPosition().at(1);
@@ -159,7 +158,7 @@ bool TrackEfficiencyProcessor::process(IEvent* ievent) {
 	
       }
     }
-    std::cout<<"#Good cluster pairs = "<<triPairs.size()<<std::endl;
+    //    std::cout<<"#Good cluster pairs = "<<triPairs.size()<<std::endl;
     for (auto region : _regions ) {
       for (int i_pair=0; i_pair<triPairs.size();i_pair++){
 	TridentCand epemPair(triPairs.at(i_pair));

@@ -1,8 +1,8 @@
 {
-    "Singles3_eq" : {
+    "Singles2_eq" : {
 	"cut" : 1, 
 	"id" : 0, 
-	"info":  "Singles3 Trigger"
+	"info":  "Singles2 Trigger"
     },
     "eleMom_lt" : {
         "cut" : 3.5,
@@ -40,8 +40,8 @@
         "info" : "p_{vtx}<6 [GeV]"
     },
     "minVtxMom_gt"  : { 
-        "cut"  : 0.0,
+        "cut"  : 2.0,
         "id"   : 8,
-        "info" : "P_{e^{-}} +  P_{e^{+}}>0.0*Ebeam"
+        "info" : "P_{e^{-}} +  P_{e^{+}}>2.0*Ebeam"
     }  
 }

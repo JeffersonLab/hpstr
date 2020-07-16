@@ -34,6 +34,7 @@ vtxana = HpstrConf.Processor('vtxana', 'TrackEfficiencyProcessor')
 vtxana.parameters["debug"] = 1
 vtxana.parameters["anaName"] = "vtxana"
 vtxana.parameters["trkColl"] = "GBLTracks"
+#vtxana.parameters["trkColl"] = "KalmanFullTracks"
 vtxana.parameters["cluColl"] = "RecoEcalClusters"
 vtxana.parameters["fspartColl"] = "FinalStateParticles"
 vtxana.parameters["cluSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/clusterSelection-2019.json'

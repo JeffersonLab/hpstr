@@ -35,6 +35,7 @@ vtxana.parameters["debug"] = 1
 vtxana.parameters["anaName"] = "vtxana"
 vtxana.parameters["cluColl"] = "RecoEcalClusters"
 vtxana.parameters["trkColl"] = "GBLTracks"
+#vtxana.parameters["trkColl"] = "KalmanFullTracks"
 vtxana.parameters["vtxColl"] = "UnconstrainedV0Vertices"
 vtxana.parameters["hitColl"]  = "RotatedHelicalTrackHits"
 vtxana.parameters["mcColl"]  = "MCParticle"
