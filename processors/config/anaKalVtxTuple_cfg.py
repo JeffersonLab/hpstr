@@ -1,12 +1,12 @@
 import HpstrConf
 import sys
 import os
-import baseConfig
+import baseConfig as base
 
 
-baseConfig.parser.add_option("-w","--tracking", type="string", dest="tracking",
+base.parser.add_argument("-w", "--tracking", type=str, dest="tracking",
                   help="Which tracking to use to make plots", metavar="tracking", default="KF")
-(options,args) = baseConfig.parser.parse_args()
+options = base.parser.parse_args()
 
 
 # Use the input file to set the output file name
@@ -15,8 +15,8 @@ outfile = options.outFilename
 
 outfile = outfile.split(".root")[0]+"_"+options.tracking+".root"
 
-print 'Input file: %s' % infile
-print 'Output file: %s' % outfile
+print('Input file: %s' % infile)
+print('Output file: %s' % outfile)
 
 p = HpstrConf.Process()
 
@@ -24,7 +24,7 @@ p.run_mode = 1
 #p.max_events = 1000
 
 # Library containing processors
-p.libraries.append("libprocessors.so")
+p.add_library("libprocessors")
 
 ###############################
 #          Processors         #
@@ -44,20 +44,20 @@ recoana_kf.parameters["mcColl"]  = ""#"MCParticle"
 recoana_kf.parameters["hitColl"] = "SiClustersOnTrack"
 recoana_kf.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/customCuts.json'
 recoana_kf.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis_2019.json"
-recoana_kf.parameters["beamE"] = baseConfig.beamE[str(options.year)]
+recoana_kf.parameters["beamE"] = base.beamE[str(options.year)]
 recoana_kf.parameters["isData"] = options.isData
 recoana_kf.parameters["debug"] = 0
 CalTimeOffset=-999.
 
 if (options.isData==1):
     CalTimeOffset=56.
-    print "Running on data file: Setting CalTimeOffset %d"  % CalTimeOffset
+    print("Running on data file: Setting CalTimeOffset %d"  % CalTimeOffset)
     
 elif (options.isData==0):
     CalTimeOffset=43.
-    print "Running on MC file: Setting CalTimeOffset %d"  % CalTimeOffset
+    print("Running on MC file: Setting CalTimeOffset %d"  % CalTimeOffset)
 else:
-    print "Specify which type of ntuple you are running on: -t 1 [for Data] / -t 0 [for MC]"
+    print("Specify which type of ntuple you are running on: -t 1 [for Data] / -t 0 [for MC]")
 
 
 recoana_kf.parameters["CalTimeOffset"]=CalTimeOffset
@@ -93,7 +93,7 @@ else :
 if (options.nevents > 0):
     p.max_events = options.nevents
 
-p.input_files=[infile]
+p.input_files=infile
 p.output_files = [outfile]
 
 p.printProcess()

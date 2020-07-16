@@ -171,8 +171,9 @@ bool TrackingProcessor::process(IEvent* ievent) {
         // Add a track to the event
         Track* track = utils::buildTrack(lc_track,gbl_kink_data,track_data);
         
-        //Add the momentum - this should go in the new reco files by TongTong
-        track->setMomentum(bfield_);
+        //Override the momentum of the track if the bfield_ > 0
+        if (bfield_>0)
+            track->setMomentum(bfield_);
 	
         // Get the collection of hits associated with a LCIO Track
         EVENT::TrackerHitVec lc_tracker_hits = lc_track->getTrackerHits();
@@ -264,7 +265,8 @@ bool TrackingProcessor::process(IEvent* ievent) {
                 EVENT::Track* lc_truth_track = static_cast<EVENT::Track*> (lc_truth_tracks.at(0));
                 Track* truth_track = utils::buildTrack(lc_truth_track,nullptr,nullptr);
                 track->setTruthLink(truth_track);
-                truth_track->setMomentum(bfield_);
+                if (bfield_>0)
+                    truth_track->setMomentum(bfield_);
                 //truth tracks phi needs to be corrected
                 if (truth_track->getPhi() > TMath::Pi())
                     truth_track->setPhi(truth_track->getPhi() - (TMath::Pi()) * 2.);
