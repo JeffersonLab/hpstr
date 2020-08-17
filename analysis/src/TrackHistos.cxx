@@ -132,6 +132,7 @@ void TrackHistos::Fill2DTrack(Track* track, float weight, const std::string& trk
     
     if (track) {
         
+        bool negcov = false;
         double d0 = track->getD0();
         double z0 = track->getZ0();
         Fill2DHisto(trkname+"tanlambda_vs_phi0_hh",track->getPhi(),track->getTanLambda(), weight);
@@ -145,6 +146,29 @@ void TrackHistos::Fill2DTrack(Track* track, float weight, const std::string& trk
         for(int i=0; i < track->getCovEigenvalues(track->getCov()).size(); i++)
         {
             Fill2DHisto(trkname+"covEigenVals_hh", (float)i,track->getCovEigenvalues(track->getCov())[i],weight);
+            if(track->getCovEigenvalues(track->getCov())[i] < 0)
+            {
+                negcov = true;       
+            }
+        }
+        if(negcov == true)
+        {
+            std::cout << "Track " << track << " has negative covariance eigenvalue" << std::endl;
+            std::cout << "Track type: " << track->getType() << std::endl;
+            std::cout << "Charge: " << track->getCharge() << std::endl;
+            std::cout << "Chi2/Ndf: " << track->getChi2() << "/" << track->getNdf() << std::endl;
+            std::cout << "momentum: " << track->getP() << std::endl;
+            std::cout << "Tracker Hit Count " << track->getTrackerHitCount() << std::endl;
+            std::cout << "d0: " << track->getD0() << std::endl;
+            std::cout << "d0: " << track->getD0() << std::endl;
+            std::cout << "phi0: " << track->getPhi() << std::endl;
+            std::cout << "Omega: " << track->getOmega() << std::endl;
+            std::cout << "tan_lambda: " << track->getTanLambda() << std::endl;
+            std::cout << "Z0: " << track->getZ0() << std::endl;
+            for(int j=0; j < track->getCovEigenvalues(track->getCov()).size(); j++)
+            {
+                std::cout << "Track cov eigenvalue " << j << " :" << track->getCovEigenvalues(track->getCov())[j] << std::endl;;
+            }
         }
     }
 }
