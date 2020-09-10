@@ -34,19 +34,19 @@
         "id"   : 6,
         "info" : "N^{e^{+}}_{Shared} L0=0"
     },
-    "nVtxs_eq" : {
-        "cut"  : 1,
-        "id"   : 7,
-        "info" : "N_{vtx}=1"
-    },
     "VtxYPos_gt" : {
 	"cut"  : -0.4,
-	"id"   : 8, 
+	"id"   : 7, 
 	"info" : "vtx Y>-0.4"
     },
     "VtxYPos_lt" : {
 	"cut"  : 0.4,
-	"id"   : 9, 
+	"id"   : 8, 
 	"info" : "vtx Y<0.4"
+    },
+    "nVtxs_eq" : {
+        "cut"  : 1,
+        "id"   : 9,
+        "info" : "N_{vtx}=1"
     }
 }

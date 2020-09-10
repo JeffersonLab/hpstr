@@ -377,9 +377,13 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
     bot.SetBottomMargin(0.4)
     top.cd()
     plotsProperties=[]
-    
+    Ymax = -999
     for ih in xrange(len(histos)):
+        if Ymax < histos[ih].GetMaximum()*1.9:
+            Ymax = histos[ih].GetMaximum()*1.9
 
+    for ih in xrange(len(histos)):
+        
         if (Normalise):
 
             if (histos[ih].Integral() == 0):
@@ -387,13 +391,21 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
             histos[ih].Scale(1./histos[ih].Integral())
             if LogY: histos[ih].GetYaxis().SetRangeUser(0.00001,histos[ih].GetMaximum()*15000)
             else:    histos[ih].GetYaxis().SetRangeUser(0.00001,histos[ih].GetMaximum()*2.2)
-                                
+            
+        elif not Normalise: 
+            if LogY: 
+                histos[ih].GetYaxis().SetRangeUser(0.00001,histos[ih].GetMaximum()*15000)
+            else:    
+                histos[ih].GetYaxis().SetRangeUser(0,Ymax)
+            
 
         histos[ih].SetMarkerColor(colors[ih])
         histos[ih].SetMarkerStyle(markers[ih])
         histos[ih].SetLineColor(colors[ih])
         histos[ih].GetXaxis().CenterTitle()
         histos[ih].GetYaxis().CenterTitle()
+        
+
         
         if (not doFit):
             plotsProperties.append(("#mu=%.4f"%round(histos[ih].GetMean(),4))+(" #sigma=%.4f"%round(histos[ih].GetRMS(),4)))
@@ -419,9 +431,9 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
             
             fit_funcs[ih].SetLineColor(histos[ih].GetLineColor())
 
+
         if ih==0:
-            #print ymin, ymax
-            #histos[ih].GetYaxis().SetRangeUser(ymin,ymax)
+                
             if (Xmin !=-999 and Xmax !=-999):
                 histos[ih].GetXaxis().SetRangeUser(Xmin,Xmax)
             if noErrors:
@@ -436,6 +448,7 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
             if ytitle:
                 histos[ih].GetYaxis().SetTitle(ytitle)
         else:
+
             if noErrors:
                 histos[ih].Draw("same "+drawOptions)
             else:
@@ -688,7 +701,7 @@ def Make2DPlots(name,outdir,histolist,xtitle,ytitle,ztitle="",text="",zmin="",zm
     oFext=".pdf"
     if not os.path.exists(outdir):
         os.mkdir(outdir)
-
+    canvs = []
     for ih in range(0,len(histolist)):
         can = TCanvas()
         can.SetRightMargin(0.2)
@@ -710,9 +723,6 @@ def Make2DPlots(name,outdir,histolist,xtitle,ytitle,ztitle="",text="",zmin="",zm
             histolist[ih].GetYaxis().GetTitleOffset()*1.7)
         histolist[ih].GetYaxis().SetTitle(ytitle[ih])
         
-        pname = name[ih].replace('vtxana_vtxSelection_','')
-        histolist[ih].SetTitle(pname)
-        
         histolist[ih].Draw("colz")
         
         
@@ -721,6 +731,8 @@ def Make2DPlots(name,outdir,histolist,xtitle,ytitle,ztitle="",text="",zmin="",zm
         #print "saving..."
         #if (len(legends) == len(histolist)):
         can.SaveAs(outdir+"/"+name[ih]+oFext)
+        canvs.append(can)
+    return deepcopy(canvs)
         #else:            
         #    print "ERROR: Not enough names for all the histos"
             
@@ -739,6 +751,7 @@ def makeHTML(outDir,title,selection):
     os.chdir(outDir)
     plots = glob.glob('*.png') + glob.glob('*.pdf')
     plots.sort()
+
     f = open(outDir+'.html',"w+")
     f.write("<!DOCTYPE html\n")
     f.write(" PUBLIC \"-//W3C//DTD HTML 3.2//EN\">\n")
@@ -748,8 +761,8 @@ def makeHTML(outDir,title,selection):
     f.write("<table border=\"0\" cellspacing=\"5\" width=\"100%\">\n")
     for i in range(0,len(plots)):
         pname = ""
-        if selection in plots[i]:
-            pname = plots[i].replace(selection+'_','')
+        if selection[0] in plots[i]:
+            pname = plots[i].replace(selection[0]+'_','')
             
         offset = 1
         if i==0 or i%2==0: f.write("<tr>\n")
