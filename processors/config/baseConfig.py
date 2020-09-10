@@ -12,9 +12,9 @@ parser.add_argument("-o", "--outFile", type=str, dest="outFilename", action='sto
                   help="Output filename.", metavar="outFilename", default="out.root")
 parser.add_argument("-t", "--isData", type=int, dest="isData",
                   help="Type of lcio ntuple: 1=data, 0=MC", metavar="isData", default=-1)
-parser.add_argument("-y", "--year", type=int, dest="year",
-                  help="Select year of the data", metavar="year", default=2019)
-parser.add_argument("-n", "--nevents", type=int, dest="nevents",
+parser.add_option("-y", "--year", type="int", dest="year",
+                  help="Select year of the data", metavar="year", default=2016)
+parser.add_option("-n", "--nevents", type="int", dest="nevents",
                   help="Number of events to process", metavar="nevents",default=-1)
 
 parser.add_argument('--infile','-i', type=str, dest="inFilename", metavar='infiles', nargs="+",
