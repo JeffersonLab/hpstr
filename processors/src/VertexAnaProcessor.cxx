@@ -389,6 +389,9 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
             _ah->GetParticlesFromVtx(vtx,ele,pos);
 
+	    CalCluster eleClus = ele->getCluster();
+	    CalCluster posClus = pos->getCluster();
+
             //vtx Z position
 	    if (!_reg_vtx_selectors[region]->passCutGt("uncVtxZ_gt",vtx->getZ(),weight))
 	        continue;

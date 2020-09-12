@@ -38,7 +38,7 @@ vtxana.parameters["hitColl"] = "RotatedHelicalOnTrackHits"
 vtxana.parameters["vtxColl"] = "UnconstrainedV0Vertices"
 vtxana.parameters["mcColl"]  = "MCParticle"
 vtxana.parameters["ecalColl"] = "RecoEcalClusters"
-vtxana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/empty.json'
+vtxana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/vertexSelection.json'
 vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
 vtxana.parameters["beamE"] = base.beamE[str(options.year)]
 vtxana.parameters["isData"] = options.isData
@@ -70,7 +70,7 @@ vtxana.parameters["regionDefinitions"] = [RegionPath+'vertexSelection.json',
 # Sequence which the processors will run.
 p.sequence = [vtxana]
 
-p.input_files=[infile]
+p.input_files=infile
 p.output_files=[outfile]
 
 p.printProcess()
