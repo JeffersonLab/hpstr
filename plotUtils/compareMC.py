@@ -6,8 +6,8 @@ import utilities as utils
 utils.SetStyle()
 
 path = "/gpfs/slac/atlas/fs1/d/ssevova/hps/hpstr/histos"
-inFileList = ["simp/simp_100_60_33p3_recon_ctau10mm_anaVtx.root",
-              "simp/kftrackstight/simp_100_60_33p3_recon_ctau10mm_anaVtx.root"]
+inFileList = ["simp/gbl/simp_100_60_33p3_recon_ctau10mm_anaGBLVtx.root",
+              "simp/kftrackstight/latest/simp_100_60_33p3_recon_ctau10mm_anaKalVtx.root"]
     #"tritrig/tritrig_anaVtx.root",
     #"wab/wab_anaVtx.root",
     #"simp/simp_100_60_33p3_recon_ctau10mm_anaVtx.root",
@@ -22,12 +22,12 @@ colors = [r.kBlack, r.kRed, r.kBlue, r.kGreen+2, r.kOrange-2]
 inputFiles = []
 legends     = [#"tritrig",
                #"wab",
-               "simp_100_60_33p3",
+               "gbl_simp_100_60_33p3",
                "kf_simp_100_60_33p3"]
 #               "simp_100_40_30",
 #               "simp_50_30_16p7"]
-outdir     = "KF_vs_GBL_simp_100_60_33p3_noPresel"
-selection  = ["vtxana_vtxSelection","vtxana_kf_vtxSelection"]
+outdir     = "KF_vs_GBL_simp_100_60_33p3_vtxPresel"
+selection  = ["vtxana_gbl_vtxSelection","vtxana_kf_vtxSelection"]
 
 if not os.path.exists(outdir):
     os.makedirs(outdir)
@@ -48,12 +48,12 @@ for key in inputFiles[0].Get(selection[0]).GetListOfKeys():
     ytitle = []
     name   = []
 
-    print key.GetName()
+    print(key.GetName())
     c = r.TCanvas()
     for i_f in range(0,len(inputFiles)):
         keyname = ''
         if '_kf_' in selection[i_f]:
-            keyname = (key.GetName()).replace("vtxana_vtx","vtxana_kf_vtx")
+            keyname = (key.GetName()).replace("vtxana_gbl_vtx","vtxana_kf_vtx")
         else:
             keyname = key.GetName()
 
@@ -76,8 +76,8 @@ for key in inputFiles[0].Get(selection[0]).GetListOfKeys():
     canvs.append(utils.MakePlot(key.GetName()+"_log",outdir,histos,legends,".png",LogY=True,RatioType="Sequential",Normalise=False))
     pass
 
-utils.makeHTML(outdir,'SIMPs plots', selection)
-outF = r.TFile("KF_vs_GBL_simp_100_60_33p3_noPresel.root","RECREATE")
+utils.makeHTML(outdir,'SIMPs KF vs GBL (vtxPresel)', selection)
+outF = r.TFile("KF_vs_GBL_simp_100_60_33p3_vtxPresel.root","RECREATE")
 outF.cd()
 for canv in canvs: 
     if canv != None: canv.Write()
