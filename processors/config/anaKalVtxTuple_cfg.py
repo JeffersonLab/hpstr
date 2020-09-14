@@ -42,12 +42,12 @@ recoana_kf.parameters["trkColl"] = "KalmanFullTracks"
 recoana_kf.parameters["vtxColl"] = "UnconstrainedV0Vertices_KF"
 recoana_kf.parameters["mcColl"]  = "MCParticle"
 recoana_kf.parameters["hitColl"] = "SiClustersOnTrack"
-recoana_kf.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/empty.json'
+recoana_kf.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/vertexSelection.json'
 recoana_kf.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
-recoana_kf.parameters["beamE"] = baseConfig.beamE[str(options.year)]
+recoana_kf.parameters["beamE"] = base.beamE[str(options.year)]
 recoana_kf.parameters["isData"] = options.isData
 recoana_kf.parameters["debug"] = 1
-CalTimeOffset=-999.
+CalTimeOffset=-999
 
 if (options.isData==1):
     CalTimeOffset=56.
@@ -64,9 +64,8 @@ recoana_kf.parameters["CalTimeOffset"]=CalTimeOffset
 #Region definitions
 
 RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/"
-recoana_kf.parameters["regionDefinitions"] = [RegionPath+'vertexSelection.json',
-                                              RegionPath+'simpTight.json']
-                                              #RegionPath+'simpTightL1L1.json',
+recoana_kf.parameters["regionDefinitions"] = [RegionPath+'simpTight.json',
+                                              RegionPath+'simpTightL1L1.json']
                                               #RegionPath+'simpTightL1L1NoSharedL0.json']
 
 #RecoHitAna

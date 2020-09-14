@@ -146,6 +146,10 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
       }
     }
 
+    if(debug_){
+      std::cout<<"Number of vertices found in event: "<< vtxs_->size()<<std::endl;
+    }
+      
     // Loop over vertices in event and make selections
     for ( int i_vtx = 0; i_vtx <  vtxs_->size(); i_vtx++ ) {
           vtxSelector->getCutFlowHisto()->Fill(0.,weight);
@@ -165,15 +169,16 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
         bool foundParts = _ah->GetParticlesFromVtx(vtx,ele,pos);
         if (!foundParts) {
-            //std::cout<<"VertexAnaProcessor::WARNING::Found vtx without ele/pos. Skip."
+	  if(debug_) std::cout<<"VertexAnaProcessor::WARNING::Found vtx without ele/pos. Skip."<<std::endl;
             continue;
         }
 
         if (!trkColl_.empty()) {
             bool foundTracks = _ah->MatchToGBLTracks((ele->getTrack()).getID(),(pos->getTrack()).getID(),
                     ele_trk, pos_trk, *trks_);
+
             if (!foundTracks) {
-                //std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
+	        if(debug_) std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
                 continue;  
             }
         }
@@ -474,8 +479,6 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             //L1 requirement for positron
             if (!_reg_vtx_selectors[region]->passCutEq("L1PosReq_eq",(int)(foundL1pos),weight))
                 continue;
-            if (debug_)
-                std::cout<<"Track passed"<<std::endl;
 
             //ESum low cut 
             if (!_reg_vtx_selectors[region]->passCutLt("eSum_lt",(ele_E+pos_E),weight))
@@ -505,8 +508,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 	    if (!_reg_vtx_selectors[region]->passCutLt("posMom_lt",p_pos.P(),weight))
 	        continue;
 
-	    //Max vtx momentum
-	    
+	    //Max vtx momentum	    
 	    if (!_reg_vtx_selectors[region]->passCutLt("maxVtxMom_lt",(p_ele+p_pos).P(),weight))
 	        continue;
 
@@ -514,20 +516,6 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             //Require Electron Cluster does NOT exists
             if (!_reg_vtx_selectors[region]->passCutLt("eleClusE_lt",eleClus.getEnergy(),weight))
                 continue;
-             
-	    //Max P_ele
-	    if (!_reg_vtx_selectors[region]->passCutLt("eleMom_lt",p_ele.P(),weight))
-	        continue;
-
-	    //Max P_pos
-	    if (!_reg_vtx_selectors[region]->passCutLt("posMom_lt",p_pos.P(),weight))
-	        continue;
-
-	    //Max vtx momentum
-	    
-	    if (!_reg_vtx_selectors[region]->passCutLt("maxVtxMom_lt",(p_ele+p_pos).P(),weight))
-	        continue;
-
 
             //No shared hits requirement
             if (!_reg_vtx_selectors[region]->passCutEq("ele_sharedL0_eq",(int)ele_trk_gbl->getSharedLy0(),weight))
