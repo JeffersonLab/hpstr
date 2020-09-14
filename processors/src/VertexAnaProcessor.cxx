@@ -496,7 +496,21 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             //Require Electron Cluster exists
             if (!_reg_vtx_selectors[region]->passCutGt("eleClusE_gt",eleClus.getEnergy(),weight))
                 continue;
+             
+	    //Max P_ele
+	    if (!_reg_vtx_selectors[region]->passCutLt("eleMom_lt",p_ele.P(),weight))
+	        continue;
 
+	    //Max P_pos
+	    if (!_reg_vtx_selectors[region]->passCutLt("posMom_lt",p_pos.P(),weight))
+	        continue;
+
+	    //Max vtx momentum
+	    
+	    if (!_reg_vtx_selectors[region]->passCutLt("maxVtxMom_lt",(p_ele+p_pos).P(),weight))
+	        continue;
+
+            
             //Require Electron Cluster does NOT exists
             if (!_reg_vtx_selectors[region]->passCutLt("eleClusE_lt",eleClus.getEnergy(),weight))
                 continue;
