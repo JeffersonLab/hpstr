@@ -245,7 +245,11 @@ void EventProcessor::parseVTPData(EVENT::LCGenericObject* vtp_data_lcio)
                     case 2: // HPS Cluster
                         VTPData::hpsCluster  clus;
                         clus.X        = (data      )&0x0003F;
+                        // If the first bit of the index is 1, then it is a negative number
+                        if((clus.X >> 5 & 0x1) == 0x1) clus.X = -((clus.X ^ 0x3F) + 1);
                         clus.Y        = (data >>  6)&0x0000F;
+                       // If the first bit of the index is 1, then it is a negative number
+                        if((clus.Y  >> 3 & 0x1) == 0x1) clus.Y  = -((clus.Y ^ 0xF) + 1);
                         clus.E        = (data >> 10)&0x01FFF;
                         clus.subtype  = (data >> 23)&0x0000F;
                         clus.type     = (data >> 27)&0x0000F;

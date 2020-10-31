@@ -47,6 +47,12 @@ class CalCluster : public TObject {
         TRefArray* getHits() const { return hits_; }
 
         /**
+         * @return number of references to the calorimeter hits composing
+         * this cluster.
+         */
+        int getNHits() const { return n_hits_; }
+
+        /**
          * Set the position of the calorimeter cluster.
          *
          * @param position : The position of the calorimeter cluster
