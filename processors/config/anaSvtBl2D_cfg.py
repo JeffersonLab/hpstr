@@ -10,6 +10,9 @@ parser.add_option("-i", "--inFile", type="string", dest="inFilename", help="Inpu
 
 parser.add_option("-o", "--outFile", type="string", dest="outFilename", help="Output filename.", 
         metavar = "outFilename", default="")
+
+parser.add_option("-t", "--isData", type="int", dest="isData", help="Type of lcio ntuple: 1=data, 0=MC", metavar="isData", default=-1)
+
 (options,args) = parser.parse_args()
 
 # Use the input file to set the output file name
