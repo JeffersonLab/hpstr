@@ -35,9 +35,7 @@ bool HpsEventFile::nextEvent() {
     return false;
 
   //TODO Really don't like having the tree associated to the event object. Should be associated to the EventFile.
-  intree_->GetEntry(entry_);
-
-  ++entry_;
+  intree_->GetEntry(entry_++);
   
   return true;
 } 
