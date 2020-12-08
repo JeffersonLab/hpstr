@@ -1,36 +1,22 @@
 import HpstrConf
-import sys
 import os
-from optparse import OptionParser
+import baseConfig as base
 
-parser = OptionParser()
-
-parser.add_option("-i", "--inFile", type="string", dest="inFilename", help="Input filename.", 
-        metavar="inFilename", default="")
-
-parser.add_option("-o", "--outFile", type="string", dest="outFilename", help="Output filename.", 
-        metavar = "outFilename", default="")
-
-parser.add_option("-t", "--isData", type="int", dest="isData", help="Type of lcio ntuple: 1=data, 0=MC", metavar="isData", default=-1)
-
-(options,args) = parser.parse_args()
+options = base.parser.parse_args()
 
 # Use the input file to set the output file name
-infile = options.inFilename 
-if options.outFilename == "":
-    outfile = '%s_svtBl2D.root' % infile[:-5]
-else:
-    outfile = options.outFilename
+lcio_file = options.inFilename[0]
+root_file = options.outFilename
 
-print 'Input file: %s' % infile
-print 'Output file: %s' % outfile
+print('LCIO file: %s' % lcio_file)
+print('Root file: %s' % root_file)
 
 p = HpstrConf.Process()
 p.run_mode = 1
 
 #Set files to process
-p.input_files=[infile]
-p.output_files = [outfile]
+p.input_files=[lcio_file]
+p.output_files = [root_file]
 
 # Library containing processors
 p.libraries.append("libprocessors.so")

@@ -1,38 +1,40 @@
 import HpstrConf
-import sys
+import baseConfig as base
 import os
-from optparse import OptionParser
+
+
 
 def timeSample_callback(options, opt, value, parser):
-    setattr(parser.values, options.dest, value.split(','))
+        setattr(parser.values, options.dest, value.split(','))
 
-parser = OptionParser()
-
-parser.add_option("-i", "--inFile", type="string", dest="inFilename",
-        help="Input filename.", metavar="inFilename", default="")
-
-parser.add_option("-t", "--xmin", type="int", dest="xmin",
+base.parser.add_argument("-x", '--xmin', type=int, dest="xmin", 
         help="Set threshold for xmin of iterative fit range", metavar="xmin", default="50")
-
-parser.add_option("-m", "--minStats", type="int", dest="minStats",
+base.parser.add_argument("-m", "--minStats", type=int, dest="minStats", 
         help="Minimum Statistics required per bin to perform fit", metavar="minStats", default="8500")
-
-parser.add_option("-n", "--nPoints", type="int", dest="nPoints",
+base.parser.add_argument("-p", "--nPoints", type=int, dest="nPoints", 
         help="Select number of points for second derivative.", metavar="nPoints", default="3")
+base.parser.add_argument("-b", "--rebin", type=int, dest="rebin",
+                help="rebin factor.", metavar="rebin", default="1")
+base.parser.add_argument('-s', '--hybrid', nargs='+', type=str, dest="hybrid",default="", 
+        help="Enter baseline<#><hybrid_name>")
 
-parser.add_option("-b", "--rebin", type="int", dest="rebin",
-        help="rebin factor.", metavar="rebin", default="1")
 
-parser.add_option('-s', '--hybrid', type='string', dest="hybrid",default="", help="Enter baseline<#><hybrid_name>", action='callback', callback=timeSample_callback)
-(options, args) = parser.parse_args()
+options = base.parser.parse_args()
 
 # Use the input file to set the output file name
-histo_file = options.inFilename
-hybrid = options.hybrid[0]
-if hybrid != "":
-    fit_file = './%s_%s_BaselineFit.root'%(histo_file[:-5],hybrid)
-else:
-    fit_file = './%s_all_sensors_BaselineFit.root'%(histo_file[:-5])
+lcio_file = options.inFilename[0]
+root_file = options.outFilename[0]
+
+print('LCIO file: %s' % lcio_file)
+print('Root file: %s' % root_file)
+
+# Use the input file to set the output file name
+histo_file = options.inFilename[0]
+hybrid = options.hybrid
+#if hybrid != "":
+#    fit_file = '%s_%s_BaselineFit.root'%(histo_file[:-5],hybrid)
+#else:
+#    fit_file = '%s_all_sensors_BaselineFit.root'%(histo_file[:-5])
 
 p = HpstrConf.Process()
 
@@ -61,6 +63,6 @@ fitBL.parameters["minStats"] = options.minStats
 p.sequence = [fitBL]
 
 p.input_files=[histo_file]
-p.output_files = [fit_file]
+p.output_files = [root_file]
 
 p.printProcess()
