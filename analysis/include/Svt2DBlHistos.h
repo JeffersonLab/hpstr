@@ -18,7 +18,7 @@
 class Svt2DBlHistos : public HistoManager{
 
     public:
-        Svt2DBlHistos(const std::string& inputName);
+        Svt2DBlHistos(const std::string& inputName, ModuleMapper* mmapper_);
         ~Svt2DBlHistos();
 
         virtual void Define3DHistos(){};
@@ -26,7 +26,7 @@ class Svt2DBlHistos : public HistoManager{
         virtual void Define1DHistos(){};
 
 
-        void DefineHistos(ModuleMapper* mmapper_);
+        void DefineHistos();
         void FillHistograms(std::vector<RawSvtHit*> *rawSvtHits_,float weight = 1.);
         void get2DHistoOccupancy(std::vector<std::string> histos2dNames);
         void setBaselineFitsDir(const std::string& baselineFits) {baselineFits_ = baselineFits;};
@@ -44,6 +44,8 @@ class Svt2DBlHistos : public HistoManager{
         std::string baselineRun_{""};
 
         std::map<std::string, TGraphErrors*> baselineGraphs;
+        //ModuleMapper
+        ModuleMapper* mmapper_;
 
 };
 

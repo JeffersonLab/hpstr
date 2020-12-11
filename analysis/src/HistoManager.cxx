@@ -47,21 +47,19 @@ void HistoManager::Clear() {
 
 HistoManager::~HistoManager() {}
 
-void HistoManager::DefineHistos(){
+void HistoManager::DefineHistos(std::vector<std::string> histoConfigCopies, std::string makeCopiesJsonTag){
     if (debug_ > 0) std::cout << "[HistoManager] DefineHistos" << std::endl;
     std::string h_name = "";
     for (auto hist : _h_configs.items()) {
+        bool singleCopy = true;
+        std::cout << "hist copy list size " << histoConfigCopies.size() << std::endl;
+        for(int i = 0; i < histoConfigCopies.size(); i++){
+            h_name = m_name+"_" + hist.key() ;
+            if (histoConfigCopies.size() > 1 && std::string(hist.key()).find(makeCopiesJsonTag) != std::string::npos){ 
+                h_name = m_name+"_"+ histoConfigCopies.at(i) + "_" + hist.key() ;
+                singleCopy = false;
+            }
 
-        if(makeHistoCopiesFromJson == 1){
-            if (std::string(hist.key()).find(makeCopiesFromJsonTag) != std::string::npos) 
-               histoCopies= setHistoCopyNames("gethistoCopyNames");
-            else
-                histoCopies = setHistoCopyNames("default");
-        }
-
-        //for(std::vector<std::string>::iterator it = histoCopies.begin(); it != histoCopies.end(); it++) {
-        for(int i = 0; i < histoCopies.size(); i++){
-            h_name = m_name+"_"+ histoCopies.at(i) + "_" + hist.key() ;
             std::cout << "DefineHisto: " << h_name << std::endl;
             std::size_t found = (hist.key()).find_last_of("_");
             std::string extension = hist.key().substr(found+1);
@@ -95,6 +93,8 @@ void HistoManager::DefineHistos(){
                         hist.value().at("ytitle"),hist.value().at("binsY"),hist.value().at("minY"),hist.value().at("maxY"));
             }
 
+            if(singleCopy)
+                break;
 
         }
     }//loop on config
@@ -126,15 +126,6 @@ void HistoManager::GetHistosFromFile(TFile* inFile, const std::vector<std::strin
             histos3d[key->GetName()] = (TH3F*) key->ReadObj();
     }
     }
-}
-
-std::vector<std::string> HistoManager::setHistoCopyNames(const std::string histoNames){
-    if(histoNames == "default"){
-        std::vector<std::string> defaultvec(1,"");
-        return defaultvec; 
-    }
-    else
-        return histoCopyNames;
 }
 
 

@@ -2,8 +2,9 @@
 #include <math.h>
 #include "TCanvas.h"
 
-Svt2DBlHistos::Svt2DBlHistos(const std::string& inputName) {
+Svt2DBlHistos::Svt2DBlHistos(const std::string& inputName, ModuleMapper* mmapper) {
     m_name = inputName;
+    mmapper_ = mmapper;
 }
 
 Svt2DBlHistos::~Svt2DBlHistos() {
@@ -21,7 +22,7 @@ Svt2DBlHistos::~Svt2DBlHistos() {
 void Svt2DBlHistos::get2DHistoOccupancy(std::vector<std::string> histos2dNames) {
 }
 
-void Svt2DBlHistos::DefineHistos(ModuleMapper* mmapper_){
+void Svt2DBlHistos::DefineHistos(){
     //Define hybrid names to make copies of JSON config histograms
     std::vector<std::string> hybridNames;
     mmapper_->getStrings(hybridNames);
@@ -29,21 +30,15 @@ void Svt2DBlHistos::DefineHistos(ModuleMapper* mmapper_){
         for(int i = 0; i< hybridNames.size(); i++) 
             std::cout << "Hybrid: " << hybridNames.at(i) << std::endl;
     }
-    histoCopyNames = hybridNames;
 
-    //If <string> found in JSON primary node name, make multiple copies of the same histogram, but for each hybrid
-    makeCopiesFromJsonTag = "SvtHybrids";
-    //int value to activate multiple copies in HistoManager
-    makeHistoCopiesFromJson = 1;
     //Define histos
-    HistoManager::DefineHistos();
+    //All histogram keys in the JSON file that contain special tag will have multiple copies of that histogram template made, one for each string
+    std::string makeMultiplesTag = "SvtHybrids";
+    HistoManager::DefineHistos(hybridNames, makeMultiplesTag );
 
 }
 
 void Svt2DBlHistos::FillHistograms(std::vector<RawSvtHit*> *rawSvtHits_,float weight) {
-
-    for(std::map<std::string, TH2F*>::iterator it = histos2d.begin(); it != histos2d.end(); ++it)
-        std::cout << "2D Histogram Defined: " << it->first  << std::endl;
 
     //std::cout << "[Svt2DBlHistos] FillHistograms" << std::endl;
     int nhits = rawSvtHits_->size();
@@ -71,12 +66,12 @@ void Svt2DBlHistos::FillHistograms(std::vector<RawSvtHit*> *rawSvtHits_,float we
             {   
                 std::string swTag = mmapper_->getStringFromSw("ly"+std::to_string(j)+"_m"+std::to_string(i));
                 hybridStrings.push_back(swTag);
-                Fill1DHisto("hitN_"+swTag+"_h", svtHybMulti[i][j],weight);
+                Fill1DHisto(swTag+ "_SvtHybridsHitN_h", svtHybMulti[i][j],weight);
             }
         }
     }
 
-    Fill1DHisto("svtHitN_h", nhits,weight);
+    Fill1DHisto("SvtHitMulti_h", nhits,weight);
     //End of counting block
 
     //Populates histograms for each hybrid
@@ -92,7 +87,7 @@ void Svt2DBlHistos::FillHistograms(std::vector<RawSvtHit*> *rawSvtHits_,float we
         int ss = 0;
         
             //if(debug_ > 0) std::cout << "Filling Histogram with RawSvtHit" << std::endl; 
-            histokey = "baseline"+std::to_string(ss)+"_"+swTag+"_hh";
+            histokey = swTag + "_SvtHybrids"+std::to_string(ss)+"_hh";
                         Fill2DHisto(histokey, 
                     (float)rawSvtHit->getStrip(),
                     (float)rawSvtHit->getADCs()[ss], 
@@ -103,7 +98,7 @@ void Svt2DBlHistos::FillHistograms(std::vector<RawSvtHit*> *rawSvtHits_,float we
         ss = 3;
         
             //if(debug_ > 0) std::cout << "Filling Histogram with RawSvtHit" << std::endl; 
-            histokey = "baseline"+std::to_string(ss)+"_"+swTag+"_hh";
+            histokey = swTag + "_SvtHybrids"+std::to_string(ss)+"_hh";
                         Fill2DHisto(histokey, 
                     (float)rawSvtHit->getStrip(),
                     (float)rawSvtHit->getADCs()[ss], 

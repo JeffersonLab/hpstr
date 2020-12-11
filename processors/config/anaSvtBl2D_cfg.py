@@ -38,7 +38,8 @@ svtblana.parameters["runNumber"] = 135
 svtblana.parameters["rawSvtHitsColl"] = "SVTRawTrackerHits"
 svtblana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/Svt2DBl.json'
 
-#p.max_events = 1000
+if (options.nevents > -1):
+    p.max_events = options.nevents
 
 # Sequence which the processors will run.
 p.sequence = [svtblana]

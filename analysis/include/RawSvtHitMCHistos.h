@@ -29,6 +29,7 @@ class RawSvtHitMCHistos : public HistoManager{
     private:
 
         int Event_number=0;
+        ModuleMapper* mmapper_;
 
 };
 

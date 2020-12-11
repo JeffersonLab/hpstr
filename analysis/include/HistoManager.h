@@ -10,7 +10,6 @@
 #include <map>
 #include <vector>
 #include "json.hpp"
-#include "ModuleMapper.h"
 
 //for convenience 
 using json = nlohmann::json;
@@ -73,7 +72,7 @@ class HistoManager {
         virtual void Define1DHistos(){};
         
         //Definition of histograms from json config
-        virtual void DefineHistos();
+        virtual void DefineHistos(std::vector<std::string> histoConfigCopies = std::vector<std::string> (1, "default = single_copy"), std::string makeCopiesJsonTag = "default=single_copy");
 
         void Fill1DHisto(const std::string& histoName, float value, float weight=1.);
         void Fill2DHisto(const std::string& histoName, float valuex, float valuey, float weight=1.);
@@ -97,15 +96,9 @@ class HistoManager {
         std::vector<std::string> histos2dNamesfromTFile;
         std::vector<std::string> histos1dNamesfromJson;
 
-        //If making multiple histo copies from a single JSON configuration key,
-        //method is called to set names for copies
-        //Can ignore otherwise
-        std::vector<std::string> setHistoCopyNames(const std::string histoNames);
-
     protected:
 
         std::string m_name;
-        ModuleMapper* mmapper_{nullptr};
 
         std::map<std::string, std::vector<double> > Axes;
 
@@ -124,11 +117,6 @@ class HistoManager {
         int printWarnings_{0};
         bool doPrintWarnings_{true};
 
-        //
-        std::vector<std::string> histoCopies{std::vector<std::string>(1,"")};
-        std::vector<std::string> histoCopyNames{std::vector<std::string>(1,"")};
-        std::string makeCopiesFromJsonTag;
-        int makeHistoCopiesFromJson = 0;
 };
 
 
