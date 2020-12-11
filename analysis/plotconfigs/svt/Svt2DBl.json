@@ -25,7 +25,7 @@
             "ytitle" : "Events"
 
         },
-    "SvtHybridsHitMulti" : {
+    "SvtHitMulti_h" : {
             "prefix" : "hitN",
             "type" : "h",
             "xtitle" : "# of Strips",
@@ -35,7 +35,7 @@
             "ytitle" : "Events"
 
         },
-    "SvtHybrids0" : {
+    "SvtHybrids0_hh" : {
             "prefix" : "baseline0",
             "type" : "hh",
             "xtitle" : "Strip Number",
@@ -48,7 +48,7 @@
             "maxY" : 20000
 
         },
-    "SvtHybrids3" : {
+    "SvtHybrids3_hh" : {
             "prefix" : "baseline3",
             "type" : "hh",
             "xtitle" : "Strip Number",

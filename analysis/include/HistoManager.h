@@ -96,7 +96,11 @@ class HistoManager {
         std::vector<std::string> histos1dNamesfromTFile;
         std::vector<std::string> histos2dNamesfromTFile;
         std::vector<std::string> histos1dNamesfromJson;
-        std::vector<std::string> histos2dNamesfromJson;
+
+        //If making multiple histo copies from a single JSON configuration key,
+        //method is called to set names for copies
+        //Can ignore otherwise
+        std::vector<std::string> setHistoCopyNames(const std::string histoNames);
 
     protected:
 
@@ -119,6 +123,12 @@ class HistoManager {
         int maxWarnings_{10};
         int printWarnings_{0};
         bool doPrintWarnings_{true};
+
+        //
+        std::vector<std::string> histoCopies{std::vector<std::string>(1,"")};
+        std::vector<std::string> histoCopyNames{std::vector<std::string>(1,"")};
+        std::string makeCopiesFromJsonTag;
+        int makeHistoCopiesFromJson = 0;
 };
 
 

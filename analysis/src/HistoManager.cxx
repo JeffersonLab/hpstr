@@ -7,13 +7,11 @@
 #include <vector>
 
 HistoManager::HistoManager() {
-    mmapper_ = new ModuleMapper();
     m_name = "default";
 }
 
 HistoManager::HistoManager(const std::string& inputName) {
     m_name = inputName;
-    mmapper_ = new ModuleMapper();
 }
 
 void HistoManager::Clear() {
@@ -47,56 +45,24 @@ void HistoManager::Clear() {
 
 }
 
-HistoManager::~HistoManager() { delete mmapper_;}
+HistoManager::~HistoManager() {}
 
 void HistoManager::DefineHistos(){
     if (debug_ > 0) std::cout << "[HistoManager] DefineHistos" << std::endl;
     std::string h_name = "";
-    std::vector<std::string> hybNames;
-    mmapper_->getStrings(hybNames);
-    std::cout << "mmapper defined" << std::endl;
-    if (debug_ > 0) std::cout << "[HistoManager] hybrids names retrieved" << std::endl;
     for (auto hist : _h_configs.items()) {
 
-
-        //Get the extension of the name to decide the histogram to create
-        //i.e. _h = TH1D, _hh = TH2D, _ge = TGraphErrors, _p = TProfile ...
-        if (std::string(hist.key()).find("SvtHybrids") != std::string::npos) {
-            if (debug_ > 0) std::cout << "[HistoManager] Hyb size" <<  hybNames.size() << std::endl;
-            for(std::vector<std::string>::iterator it = hybNames.begin(); it != hybNames.end(); ++it) {
-                if (hist.value().at("type") == "h") 
-                {
-                    h_name = m_name+"_"+std::string(hist.value().at("prefix"))+"_"+*it+"_h";
-                    histos1d[h_name] = plot1D(h_name,
-                            hist.value().at("xtitle"),
-                            hist.value().at("bins"),
-                            hist.value().at("minX"),
-                            hist.value().at("maxX"));
-                            
-                    std::string ytitle = hist.value().at("ytitle");
-                    histos1d[h_name]->GetYaxis()->SetTitle(ytitle.c_str());
-                   // std::cout << histos1d[h_name]->GetName() << std::endl;
-                    histos1dNamesfromJson.push_back(h_name);
-                }
-                if (hist.value().at("type") == "hh") {
-                    h_name = m_name+"_"+std::string(hist.value().at("prefix"))+"_"+*it+"_hh";
-                    histos2d[h_name] = plot2D(h_name,
-                            hist.value().at("xtitle"),
-                            hist.value().at("binsX"),
-                            hist.value().at("minX"),
-                            hist.value().at("maxX"),
-                            hist.value().at("ytitle"),
-                            hist.value().at("binsY"),
-                            hist.value().at("minY"),
-                            hist.value().at("maxY"));
-                   if (debug_ > 0) std::cout << histos2d[h_name]->GetName() << std::endl;
-                    histos2dNamesfromJson.push_back(h_name);
-                }  
-            }
+        if(makeHistoCopiesFromJson == 1){
+            if (std::string(hist.key()).find(makeCopiesFromJsonTag) != std::string::npos) 
+               histoCopies= setHistoCopyNames("gethistoCopyNames");
+            else
+                histoCopies = setHistoCopyNames("default");
         }
-        else 
-        {
-            h_name = m_name+"_"+hist.key();
+
+        //for(std::vector<std::string>::iterator it = histoCopies.begin(); it != histoCopies.end(); it++) {
+        for(int i = 0; i < histoCopies.size(); i++){
+            h_name = m_name+"_"+ histoCopies.at(i) + "_" + hist.key() ;
+            std::cout << "DefineHisto: " << h_name << std::endl;
             std::size_t found = (hist.key()).find_last_of("_");
             std::string extension = hist.key().substr(found+1);
 
@@ -130,8 +96,8 @@ void HistoManager::DefineHistos(){
             }
 
 
-        }//loop on config
-    }
+        }
+    }//loop on config
 }
 
 void HistoManager::GetHistosFromFile(TFile* inFile, const std::string& name, const std::string& folder) 
@@ -160,6 +126,15 @@ void HistoManager::GetHistosFromFile(TFile* inFile, const std::vector<std::strin
             histos3d[key->GetName()] = (TH3F*) key->ReadObj();
     }
     }
+}
+
+std::vector<std::string> HistoManager::setHistoCopyNames(const std::string histoNames){
+    if(histoNames == "default"){
+        std::vector<std::string> defaultvec(1,"");
+        return defaultvec; 
+    }
+    else
+        return histoCopyNames;
 }
 
 

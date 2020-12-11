@@ -4,7 +4,6 @@
 
 Svt2DBlHistos::Svt2DBlHistos(const std::string& inputName) {
     m_name = inputName;
-    mmapper_ = new ModuleMapper();
 }
 
 Svt2DBlHistos::~Svt2DBlHistos() {
@@ -22,7 +21,29 @@ Svt2DBlHistos::~Svt2DBlHistos() {
 void Svt2DBlHistos::get2DHistoOccupancy(std::vector<std::string> histos2dNames) {
 }
 
+void Svt2DBlHistos::DefineHistos(ModuleMapper* mmapper_){
+    //Define hybrid names to make copies of JSON config histograms
+    std::vector<std::string> hybridNames;
+    mmapper_->getStrings(hybridNames);
+    if(debug_ > 0){
+        for(int i = 0; i< hybridNames.size(); i++) 
+            std::cout << "Hybrid: " << hybridNames.at(i) << std::endl;
+    }
+    histoCopyNames = hybridNames;
+
+    //If <string> found in JSON primary node name, make multiple copies of the same histogram, but for each hybrid
+    makeCopiesFromJsonTag = "SvtHybrids";
+    //int value to activate multiple copies in HistoManager
+    makeHistoCopiesFromJson = 1;
+    //Define histos
+    HistoManager::DefineHistos();
+
+}
+
 void Svt2DBlHistos::FillHistograms(std::vector<RawSvtHit*> *rawSvtHits_,float weight) {
+
+    for(std::map<std::string, TH2F*>::iterator it = histos2d.begin(); it != histos2d.end(); ++it)
+        std::cout << "2D Histogram Defined: " << it->first  << std::endl;
 
     //std::cout << "[Svt2DBlHistos] FillHistograms" << std::endl;
     int nhits = rawSvtHits_->size();

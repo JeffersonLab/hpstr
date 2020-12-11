@@ -4,6 +4,7 @@
 //HPSTR
 #include "HpsEvent.h"
 #include "RawSvtHit.h"
+#include "ModuleMapper.h"
 
 //ROOT
 #include "Svt2DBlHistos.h"
@@ -36,6 +37,9 @@ class SvtBl2DAnaProcessor : public Processor {
         int Event_number=0;
         std::string histCfgFilename_;
         Svt2DBlHistos* svtCondHistos{nullptr};
+
+        //Initialize ModuleMapper
+        ModuleMapper * mmapper_;
 
         int rmBl_{0};
         std::string blFitFile_{""};

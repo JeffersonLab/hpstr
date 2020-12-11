@@ -26,6 +26,7 @@ class Svt2DBlHistos : public HistoManager{
         virtual void Define1DHistos(){};
 
 
+        void DefineHistos(ModuleMapper* mmapper_);
         void FillHistograms(std::vector<RawSvtHit*> *rawSvtHits_,float weight = 1.);
         void get2DHistoOccupancy(std::vector<std::string> histos2dNames);
         void setBaselineFitsDir(const std::string& baselineFits) {baselineFits_ = baselineFits;};
