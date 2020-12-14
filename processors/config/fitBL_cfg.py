@@ -31,10 +31,6 @@ print('Root file: %s' % root_file)
 # Use the input file to set the output file name
 histo_file = options.inFilename[0]
 hybrid = options.hybrid
-#if hybrid != "":
-#    fit_file = '%s_%s_BaselineFit.root'%(histo_file[:-5],hybrid)
-#else:
-#    fit_file = '%s_all_sensors_BaselineFit.root'%(histo_file[:-5])
 
 p = HpstrConf.Process()
 

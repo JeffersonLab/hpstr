@@ -37,16 +37,12 @@ void BlFitHistos::getHistosFromFile(TFile* inFile, std::vector<std::string> hybr
 void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsDer_,int rebin_,int xmin_, int minStats_, FlatTupleMaker* flat_tuple_) {
      
 
-    //Loop over all 2D histogram keys found in input ROOT File
-    //for (std::vector<std::string>::iterator jj = inputHistos_->histos2dNamesfromTFile.begin();
+    //Loop over all 2D histogram that were retrieved from input file
     for(std::map<std::string, TH2F*>::iterator it = histos2d.begin(); it != histos2d.end(); ++it)
     {
-        //Get 2D Histograms from input ROOT File using keys, and rebin based on configuration setting
         TH2F* histo_hh = it->second; 
         histo_hh->RebinY(rebin_);
         histo_hh->Write();
-        //Extract histogram key by removing _hh from key
-        //std::string SvtAna2DHisto_key = histo_hh->GetName();
         std::string SvtAna2DHisto_key = it->first;
         SvtAna2DHisto_key.erase(SvtAna2DHisto_key.end()-3,SvtAna2DHisto_key.end());
 

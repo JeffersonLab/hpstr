@@ -42,7 +42,6 @@ class SvtBlFitHistoProcessor : public Processor {
         std::vector<std::string> hybrid_{};
         //parameter defining json file
         std::string histCfgFilename_;
-        int xmin_{};
 
         //Histogram handlers
         BlFitHistos* fitHistos_{nullptr};
@@ -52,6 +51,7 @@ class SvtBlFitHistoProcessor : public Processor {
         int rebin_{};
         int nPointsDer_{};
         int minStats_{};
+        int xmin_{};
 
         //Maps for sensor histograms and channels
         std::vector<std::string> histos2dk_{};
