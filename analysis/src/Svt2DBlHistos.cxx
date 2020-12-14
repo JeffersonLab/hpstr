@@ -8,29 +8,17 @@ Svt2DBlHistos::Svt2DBlHistos(const std::string& inputName, ModuleMapper* mmapper
 }
 
 Svt2DBlHistos::~Svt2DBlHistos() {
-
-    for (std::map<std::string, TGraphErrors*>::iterator it = baselineGraphs.begin(); 
-            it!=baselineGraphs.end(); ++it) {
-        if (it->second) {
-            delete (it->second);
-            it->second = nullptr;
-        }
-    }
-    baselineGraphs.clear();
-}
-
-void Svt2DBlHistos::get2DHistoOccupancy(std::vector<std::string> histos2dNames) {
 }
 
 void Svt2DBlHistos::DefineHistos(){
-    //Define hybrid names to make copies of JSON config histograms
+    //Define vector of hybrid names using ModuleMapper 
+    //Use this list to define multiple copies of histograms, one for each hybrid, from json file
     std::vector<std::string> hybridNames;
     mmapper_->getStrings(hybridNames);
     if(debug_ > 0){
         for(int i = 0; i< hybridNames.size(); i++) 
             std::cout << "Hybrid: " << hybridNames.at(i) << std::endl;
     }
-
     //Define histos
     //All histogram keys in the JSON file that contain special tag will have multiple copies of that histogram template made, one for each string
     std::string makeMultiplesTag = "SvtHybrids";
@@ -40,13 +28,13 @@ void Svt2DBlHistos::DefineHistos(){
 
 void Svt2DBlHistos::FillHistograms(std::vector<RawSvtHit*> *rawSvtHits_,float weight) {
 
-    //std::cout << "[Svt2DBlHistos] FillHistograms" << std::endl;
+    if(debug_ > 0) std::cout << "[Svt2DBlHistos] FillHistograms" << std::endl;
+
     int nhits = rawSvtHits_->size();
     std::vector<std::string> hybridStrings={};
     std::string histokey;
-    if(Event_number%1000 == 0) std::cout << "Event: " << Event_number 
+    if(Event_number%10000 == 0) std::cout << "Event: " << Event_number 
         << " Number of RawSvtHits: " << nhits << std::endl;
-    //std::cout << "Event: " << Event_number 
 
     //Following Block counts the total number of hits each hybrid records per event
     int svtHybMulti[4][15] = {0};

@@ -37,9 +37,12 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     outF_ = new TFile(outFilename.c_str(),"RECREATE");
     flat_tuple_ = new FlatTupleMaker(outFilename.c_str(), "gaus_fit");
 
-    inputHistos_ = new HistoManager("");
+    fitHistos_ = new BlFitHistos();
     std::cout << "[BlFitHistos] Loading 2D Histos" << std::endl;
-    inputHistos_->GetHistosFromFile(inF_, hybrid_);
+    fitHistos_->getHistosFromFile(inF_,hybrid_);
+
+    //inputHistos_->GetHistosFromFile(inF_, hybrid_);
+    
 
    //Setup flat tuple branches
     flat_tuple_->addString("SvtAna2DHisto_key");
@@ -78,7 +81,12 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
 
 
 bool SvtBlFitHistoProcessor::process() { 
-    outputHistos_->Chi2GausFit(inputHistos_,nPointsDer_,rebin_,xmin_,minStats_, flat_tuple_);
+    std::map<std::string,TH2F*> histos2d = fitHistos_->get2dHistos();
+    std::cout << "size of 2dhisto map: " << histos2d.size() << std::endl;
+    std::map<std::string, TH2F*>::iterator it;
+    for(it = histos2d.begin(); it != histos2d.end(); it++)
+        std::cout << "2d Histo Loaded: " << it->first << std::endl;
+    fitHistos_->Chi2GausFit(histos2d,nPointsDer_,rebin_,xmin_,minStats_, flat_tuple_);
     return true;
 }
 
@@ -87,8 +95,6 @@ void SvtBlFitHistoProcessor::finalize() {
     std::cout << "finalizing SvtBlFitHistoProcessor" << std::endl;
     flat_tuple_->close();
     outF_->Close();
-    delete inputHistos_;
-    inputHistos_ = nullptr;
 }
 
 DECLARE_PROCESSOR(SvtBlFitHistoProcessor);

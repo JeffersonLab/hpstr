@@ -1,36 +1,53 @@
 #include "BlFitHistos.h"
 
-BlFitHistos::BlFitHistos(const std::string& inputName) {
-    m_name = inputName;
-    mmapper_ = new ModuleMapper();
+BlFitHistos::BlFitHistos() {
 }
 
 BlFitHistos::~BlFitHistos() {
-    for (std::map<std::string, TGraphErrors*>::iterator it = baselineGraphs.begin();
-                it!=baselineGraphs.end(); ++it) {
-            if (it->second) {
-                delete (it->second);
-                it->second = nullptr;
-            }
+}
+
+void BlFitHistos::getHistosFromFile(TFile* inFile, std::vector<std::string> hybrid){
+    
+    TIter next(inFile->GetListOfKeys());
+    TKey *key;
+    while ((key = (TKey*)next())) {
+        std::string classType = key->GetClassName();
+        std::string s(key->GetName());
+    for(std::vector<std::string>::const_iterator i = hybrid.begin(); i != hybrid.end(); i++) {
+        std::cout << "checking for hybrid: " << *i << std::endl;
+        if (s.find(*i) == std::string::npos) continue;
+        if (classType.find("TH1")!=std::string::npos) {
+            histos1d[key->GetName()] = (TH1F*) key->ReadObj();
+            histos1dNamesfromTFile.push_back(key->GetName());
         }
-        baselineGraphs.clear();
+        if (classType.find("TH2")!=std::string::npos) {
+            std::cout << "Found TH2: " << key->GetName()  << std::endl;
+            histos2d[key->GetName()] = (TH2F*) key->ReadObj();
+            histos2dNamesfromTFile.push_back(key->GetName());
+            std::cout << histos2d[key->GetName()]->GetName() << std::endl;
+        }
+    }
+    }
+ 
 }
 
 
 
-void BlFitHistos::Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int rebin_,int xmin_, int minStats_, FlatTupleMaker* flat_tuple_) {
+
+void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsDer_,int rebin_,int xmin_, int minStats_, FlatTupleMaker* flat_tuple_) {
      
 
     //Loop over all 2D histogram keys found in input ROOT File
-    for (std::vector<std::string>::iterator jj = inputHistos_->histos2dNamesfromTFile.begin();
-            jj != inputHistos_->histos2dNamesfromTFile.end(); ++jj)
+    //for (std::vector<std::string>::iterator jj = inputHistos_->histos2dNamesfromTFile.begin();
+    for(std::map<std::string, TH2F*>::iterator it = histos2d.begin(); it != histos2d.end(); ++it)
     {
         //Get 2D Histograms from input ROOT File using keys, and rebin based on configuration setting
-        TH2F* histo_hh = inputHistos_->get2dHisto(*jj);
+        TH2F* histo_hh = it->second; 
         histo_hh->RebinY(rebin_);
         histo_hh->Write();
         //Extract histogram key by removing _hh from key
-        std::string SvtAna2DHisto_key = histo_hh->GetName();
+        //std::string SvtAna2DHisto_key = histo_hh->GetName();
+        std::string SvtAna2DHisto_key = it->first;
         SvtAna2DHisto_key.erase(SvtAna2DHisto_key.end()-3,SvtAna2DHisto_key.end());
 
         //Perform fitting procedure over all channels on a sensor

@@ -47,16 +47,60 @@ void HistoManager::Clear() {
 
 HistoManager::~HistoManager() {}
 
-void HistoManager::DefineHistos(std::vector<std::string> histoConfigCopies, std::string makeCopiesJsonTag){
+void HistoManager::DefineHistos(){
+
+    if (debug_ > 0) std::cout << "[HistoManager] DefineHistos" << std::endl;
+    std::string h_name = "";
+    for (auto hist : _h_configs.items()) {
+            h_name = m_name+"_" + hist.key() ;
+            std::size_t found = (hist.key()).find_last_of("_");
+            std::string extension = hist.key().substr(found+1);
+
+            if (extension == "h") {
+                histos1d[h_name] = plot1D(h_name,hist.value().at("xtitle"),
+                        hist.value().at("bins"),
+                        hist.value().at("minX"),
+                        hist.value().at("maxX"));
+
+                std::string ytitle = hist.value().at("ytitle");
+
+                histos1d[h_name]->GetYaxis()->SetTitle(ytitle.c_str());
+
+                if (hist.value().contains("labels")) {
+                    std::vector<std::string> labels = hist.value().at("labels").get<std::vector<std::string> >();
+
+                    if (labels.size() < hist.value().at("bins")) {
+                        std::cout<<"Cannot apply labels to histogram:"<<h_name<<std::endl;
+                    }
+                    else {
+                        for (int i = 1; i<=hist.value().at("bins");++i)
+                            histos1d[h_name]->GetXaxis()->SetBinLabel(i,labels[i-1].c_str());
+                    }//bins
+                }//labels
+            }//1D histo
+
+            else if (extension == "hh") {
+                histos2d[h_name] = plot2D(h_name,
+                        hist.value().at("xtitle"),hist.value().at("binsX"),hist.value().at("minX"),hist.value().at("maxX"),
+                        hist.value().at("ytitle"),hist.value().at("binsY"),hist.value().at("minY"),hist.value().at("maxY"));
+            }
+
+    }//loop on config
+}
+
+//This DefineHistos method is only used if you want to make multiple differently named copies of a particular json file histogram configuration. 
+//The json histo config entry key value must contain a special string tag that indicates whether or not to make copies.
+//Must also provide a list of names that will be appended to the histo config key
+void HistoManager::DefineHistos(std::vector<std::string> histoCopyNames, std::string makeCopyJsonTag){
     if (debug_ > 0) std::cout << "[HistoManager] DefineHistos" << std::endl;
     std::string h_name = "";
     for (auto hist : _h_configs.items()) {
         bool singleCopy = true;
-        std::cout << "hist copy list size " << histoConfigCopies.size() << std::endl;
-        for(int i = 0; i < histoConfigCopies.size(); i++){
+        std::cout << "hist copy list size " << histoCopyNames.size() << std::endl;
+        for(int i = 0; i < histoCopyNames.size(); i++){
             h_name = m_name+"_" + hist.key() ;
-            if (histoConfigCopies.size() > 1 && std::string(hist.key()).find(makeCopiesJsonTag) != std::string::npos){ 
-                h_name = m_name+"_"+ histoConfigCopies.at(i) + "_" + hist.key() ;
+            if (histoCopyNames.size() > 1 && std::string(hist.key()).find(makeCopyJsonTag) != std::string::npos){ 
+                h_name = m_name+"_"+ histoCopyNames.at(i) + "_" + hist.key() ;
                 singleCopy = false;
             }
 

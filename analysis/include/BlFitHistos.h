@@ -23,15 +23,26 @@
 class BlFitHistos : public HistoManager{
     
     public:
-        BlFitHistos(const std::string& inputName);
+        BlFitHistos();
         ~BlFitHistos();
     
-        void Chi2GausFit( HistoManager* inputHistos_, int nPointsDer_,int rebin_i, int xmin_,int minStats_, FlatTupleMaker* flat_tuple_);
+        std::map<std::string,TH1F*> get1dHistos() {
+                return histos1d;
+        }
+        std::map<std::string,TH2F*> get2dHistos() {
+                return histos2d;
+        }
+
+        void getHistosFromFile(TFile* inFile, std::vector<std::string> hybrid);
+        void Chi2GausFit(std::map<std::string, TH2F*> histos2d, int nPointsDer_,int rebin_i, int xmin_,int minStats_, FlatTupleMaker* flat_tuple_);
         
     private:
         
         TH1F* fitHistos{nullptr};
-        std::map<std::string, TGraphErrors*> baselineGraphs;
+
+    protected:
+        std::map<std::string, TH2F*> histos2d;
+        std::map<std::string, TH1F*> histos1d;
 };
 
 #endif

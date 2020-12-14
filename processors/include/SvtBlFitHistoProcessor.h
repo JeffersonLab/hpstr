@@ -45,8 +45,7 @@ class SvtBlFitHistoProcessor : public Processor {
         int xmin_{};
 
         //Histogram handlers
-        BlFitHistos* outputHistos_{nullptr};
-        HistoManager* inputHistos_{nullptr};
+        BlFitHistos* fitHistos_{nullptr};
 
         //binning for profileYIterativeGauss
         //int binning_{1};

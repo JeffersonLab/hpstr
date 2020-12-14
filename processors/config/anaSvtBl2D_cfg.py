@@ -32,9 +32,6 @@ svtblana = HpstrConf.Processor('svtblana', 'SvtBl2DAnaProcessor')
 ###############################
 #SvtBl2D
 svtblana.parameters["debug"] = 1
-svtblana.parameters["removeBaseline"] = 0
-svtblana.parameters["baselineFits"] = "filename"
-svtblana.parameters["runNumber"] = 135
 svtblana.parameters["rawSvtHitsColl"] = "SVTRawTrackerHits"
 svtblana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/Svt2DBl.json'
 

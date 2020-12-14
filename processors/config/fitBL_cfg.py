@@ -23,7 +23,7 @@ options = base.parser.parse_args()
 
 # Use the input file to set the output file name
 lcio_file = options.inFilename[0]
-root_file = options.outFilename[0]
+root_file = options.outFilename
 
 print('LCIO file: %s' % lcio_file)
 print('Root file: %s' % root_file)

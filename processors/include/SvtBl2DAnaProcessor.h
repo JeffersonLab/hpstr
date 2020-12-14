@@ -35,22 +35,17 @@ class SvtBl2DAnaProcessor : public Processor {
     private:
 
         int Event_number=0;
-        std::string histCfgFilename_;
         Svt2DBlHistos* svtCondHistos{nullptr};
 
         //Initialize ModuleMapper
         ModuleMapper * mmapper_;
 
-        int rmBl_{0};
-        std::string blFitFile_{""};
-        int runNum_{-9999};
-
+        //configuration parameters
+        std::string histCfgFilename_;
         std::string               rawSvtHitsColl_{"SVTRawTrackerHits"};
         std::vector<RawSvtHit*> * rawSvtHits_{};
         TBranch*                 brawSvtHits_{nullptr};
-
         TTree* tree_;
-
         int debug_{0};
 
 };

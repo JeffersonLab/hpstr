@@ -14,9 +14,6 @@ void SvtBl2DAnaProcessor::configure(const ParameterSet& parameters) {
     try
     {
         debug_           = parameters.getInteger("debug");
-        rmBl_            = parameters.getInteger("removeBaseline");
-        blFitFile_       = parameters.getString("baselineFits");
-        runNum_          = parameters.getInteger("runNumber");
         rawSvtHitsColl_  = parameters.getString("rawSvtHitsColl");
         histCfgFilename_  = parameters.getString("histCfg");
     }
@@ -52,12 +49,6 @@ bool SvtBl2DAnaProcessor::process(IEvent* ievent) {
 
 void SvtBl2DAnaProcessor::finalize() {
     std::cout << "[SvtBl2DAnaProcessor] Finalizing" << std::endl;
-
-   /* for(std::vector<std::string>::iterator it = svtCondHistos->histos2dNamesfromJson.begin(); it != svtCondHistos->histos2dNamesfromJson.end(); ++it) {
-        std::cout << *it << std::endl;
-    }
-    svtCondHistos->get2DHistoOccupancy(svtCondHistos->histos2dNamesfromJson);
-    std::cout << "svtCondHistos get2dHistoOccupancy" << std::endl;*/
     svtCondHistos->saveHistos(outF_,"");
     delete svtCondHistos;
     svtCondHistos = nullptr;
