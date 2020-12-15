@@ -28,8 +28,6 @@ void Svt2DBlHistos::DefineHistos(){
 
 void Svt2DBlHistos::FillHistograms(std::vector<RawSvtHit*> *rawSvtHits_,float weight) {
 
-    if(debug_ > 0) std::cout << "[Svt2DBlHistos] FillHistograms" << std::endl;
-
     int nhits = rawSvtHits_->size();
     std::vector<std::string> hybridStrings={};
     std::string histokey;

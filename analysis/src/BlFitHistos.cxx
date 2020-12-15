@@ -13,10 +13,12 @@ void BlFitHistos::getHistosFromFile(TFile* inFile, std::vector<std::string> hybr
     while ((key = (TKey*)next())) {
         std::string classType = key->GetClassName();
         std::string s(key->GetName());
-    for(std::vector<std::string>::const_iterator i = hybrid.begin(); i != hybrid.end(); i++) {
-        std::cout << "checking for hybrid: " << *i << std::endl;
-        if (s.find(*i) == std::string::npos) continue;
-        if(s.find("SvtHybrids0") == std::string::npos) continue;
+        int tagFound = 1;
+        for(std::vector<std::string>::const_iterator i = hybrid.begin(); i != hybrid.end(); i++) {
+            if (s.find(*i) == std::string::npos) tagFound = tagFound*0;
+        }
+        if(tagFound ==0) continue;
+
         if (classType.find("TH1")!=std::string::npos) {
             histos1d[key->GetName()] = (TH1F*) key->ReadObj();
             histos1dNamesfromTFile.push_back(key->GetName());
@@ -27,7 +29,6 @@ void BlFitHistos::getHistosFromFile(TFile* inFile, std::vector<std::string> hybr
             histos2dNamesfromTFile.push_back(key->GetName());
             std::cout << histos2d[key->GetName()]->GetName() << std::endl;
         }
-    }
     }
  
 }
