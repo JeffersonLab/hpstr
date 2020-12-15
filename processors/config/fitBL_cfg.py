@@ -17,6 +17,10 @@ base.parser.add_argument("-b", "--rebin", type=int, dest="rebin",
                 help="rebin factor.", metavar="rebin", default="1")
 base.parser.add_argument('-s', '--hybrid', nargs='+', type=str, dest="hybrid",default="", 
         help="Enter baseline<#><hybrid_name>")
+base.parser.add_argument("-noisy", '--noisy', type=int, dest="noisy", 
+        help="Define noisy channel by RMS threshold", metavar="noisy", default="400")
+base.parser.add_argument("-deadRMS", '--deadRMS', type=int, dest="deadRMS", 
+        help="Define dead channel by setting low RMS threshold", metavar="deadRMS", default="150")
 
 
 options = base.parser.parse_args()
@@ -54,6 +58,8 @@ fitBL.parameters["rebin"] = options.rebin
 fitBL.parameters["nPoints"] = options.nPoints
 fitBL.parameters["xmin"] = options.xmin
 fitBL.parameters["minStats"] = options.minStats
+fitBL.parameters["noisy"] = options.noisy
+fitBL.parameters["deadRMS"] = options.deadRMS
 
 # Sequence which the processors will run.
 p.sequence = [fitBL]

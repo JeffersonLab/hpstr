@@ -52,6 +52,10 @@ class SvtBlFitHistoProcessor : public Processor {
         int nPointsDer_{};
         int minStats_{};
         int xmin_{};
+        int deadRMS_{};
+
+        //Define RMS threshold for noisy channels
+        int noisyRMS_{};
 
         //Maps for sensor histograms and channels
         std::vector<std::string> histos2dk_{};

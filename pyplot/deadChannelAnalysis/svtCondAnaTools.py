@@ -4,107 +4,66 @@ import numpy as np
 from copy import deepcopy
 import utilities as utils
 
-#RMS cutoff at 150 or less
-def RatioDeadAlive(RMScut, scADCyps):
-    #ratio of dead/alive channels for each half_module
-    hName = scADCyps.GetNames
-    numDead=0
-    numChannels=0
-    ratio=float(0.0)
-    deadChannels=[]
-    for idx, cc in enumerate(scADCrms[0:cmax]):
-      # print cc
-        if cc >= 0.0:
-            numChannels=numChannels+1
-        if cc >= 0.0 and cc <= RMScut:
-            numDead=numDead+1
-            deadChannels.append(idx)
-    if numChannels!=0:
-        ratio=float (numChannels-numDead)/numChannels
-        return round(ratio*100,1), deadChannels
-    else:
-        return 0
 
-def AvgRMS(scADCrms,cmax):
-    Total=0.0
-    for e in scADCrms[0:cmax]:
-        Total=Total+e
-    return Total/cmax
+def getRMS(histo1d):
+    rms = histo1d.GetRMS()
+    return rms
 
-def RMSrms(scADCrms, cmax):
-    squares=[]
-    summ=0
-    for e in scADCrms[0:cmax]:
-       squares.append(np.square(e))
-    for i in range(len(squares)):
-        summ=summ+squares[i]
-    return np.sqrt(summ/len(squares))
-        
 
 #Build Half Module Names
-def BuildHybridKeys(sampleNumber):
-    module="raw_hits_"
+def BuildHybridKeys(prefix, suffix):
+    module=""
     ster="_stereo_"
     ax="_axial_"
     #layer 4-6
     ele="ele_"
     pos="pos_"
-    ts="timesample_"
     half_module_names=["L0T","L0B","L1T","L1B","L2T","L2B","L3T","L3B","L4T","L4B","L5T","L5B","L6T","L6B"]
     hybrid_names=[]
     for i in range(len(half_module_names)):
         if i < 8:
-            key=module+half_module_names[i]+ax+ts+str(sampleNumber)
+            key=prefix+module+half_module_names[i]+ax+suffix
             hybrid_names.append(key)
-            key=module+half_module_names[i]+ster+ts+str(sampleNumber)
+            key=prefix+module+half_module_names[i]+ster+suffix
             hybrid_names.append(key)
         elif i >= 8:
-            key=module+half_module_names[i]+ax+ele+ts+str(sampleNumber)
+            key=prefix+module+half_module_names[i]+ax+ele+suffix
             hybrid_names.append(key)
-            key=module+half_module_names[i]+ax+pos+ts+str(sampleNumber)
+            key=prefix+module+half_module_names[i]+ax+pos+suffix
             hybrid_names.append(key)
             
-            key=module+half_module_names[i]+ster+ele+ts+str(sampleNumber)
+            key=prefix+module+half_module_names[i]+ster+ele+suffix
             hybrid_names.append(key)
 
-            key=module+half_module_names[i]+ster+pos+ts+str(sampleNumber)
+            key=prefix+module+half_module_names[i]+ster+pos+suffix
             hybrid_names.append(key)
     return hybrid_names
 
 #Get a DeepCopy of hybrid_keys from TFile
-def DeepCopy(inFile, hybrid_keys, plotTail):
-   plots=[]
-   for i in range(len(hybrid_keys)):
-       plot = deepcopy(getattr(inFile, hybrid_keys[i]+plotTail))
-       plots.append(plot)
+def DeepCopy(inFile, plotNames):
+   plots={}
+   for plotName in plotNames:
+       plot = deepcopy(getattr(inFile, plotName))
+       plots[plotName] = plot
    return plots
 
-#Get the RMS Value of an array of 2D Histograms
-def GetYPs(hybridHistos):
-    #Get Y Projection and RMs Values
-    scADCyps={}
-    for i, histo in enumerate(hybridHistos):
-        layers, modules = swModuleMapper()
-        layer = layers[i]
-        if layer > 4.5: cmax = 640
-        else: cmax = 510
-        hName = histo.GetName()
-        scADCyps[hName] = []
-        for cc in range(cmax):
-            scADCyps[hname].append(histo.ProjectionY('%s_ch%i_h'%(hName, cc),cc+1,cc+1,"e"))
-    return scADCyps
+def getYprojections(histo2d):
+    yproj={}
+    for cc in range(histo2d.GetNbinsX()):
+        yproj[cc] = (histo2d.ProjectionY('%s_ch%i_h'%(histo2d.GetName(), cc),cc+1,cc+1,"e"))
+    return yproj
 
-def DrawGraph(outFile, Name, titles, xdata_in, ydata_in):
+
+def DrawGraph(outFile, Name, titles, x_in, data_in):
 
     outFile.cd()
     x=[]
     j=0.00
-    for i in range(len(data_in)):
+    for i in range(x_in):
         x.append(j)
         j=j+1.0
     n=len(x)
     gr=[]
-    num=len(data_in)
 
     gr=r.TGraph(n,np.array(x),np.array(data_in))
     utils.SetStyle()
@@ -127,9 +86,9 @@ def SetStyle(histo,label_size=0.05, title_size=0.05, title_offset=1,line_width=1
     histo.SetLineColor(line_color)
 
 def swModuleMapper():
-    layer=[1.,2.,3.,4.,4.,3.,2.,1.,5.,6.,8.,7.,5.,6.,7.,8.,9.,9.,10.,10.,9.,9.,10.,10.,11.,11.,12.,12.,11.,11.,12.,12.,13.,13.,14.,14.,13.,13.,14.,14.]
-    module=[0.,0.,0.,0.,1.,1.,1.,1.,0.,0.,0.,0.,1.,1.,1.,1.,0.,2.,0.,2.,1.,3.,1.,3.,0.,2.,0.,2.,1.,3.,1.,3.,0.,2.,0.,2.,1.,3.,1.,3.]
-    return layer, module
+    layers=[1.,2.,3.,4.,4.,3.,2.,1.,5.,6.,8.,7.,5.,6.,7.,8.,9.,9.,10.,10.,9.,9.,10.,10.,11.,11.,12.,12.,11.,11.,12.,12.,13.,13.,14.,14.,13.,13.,14.,14.]
+    modules=[0.,0.,0.,0.,1.,1.,1.,1.,0.,0.,0.,0.,1.,1.,1.,1.,0.,2.,0.,2.,1.,3.,1.,3.,0.,2.,0.,2.,1.,3.,1.,3.,0.,2.,0.,2.,1.,3.,1.,3.]
+    return layers, modules
 
 def Histo1D(out_file_name,Name, Title, Xlabel, Ylabel, xbins, xlow, xmax, data_in=[], update="RECREATE", end=False):
 
