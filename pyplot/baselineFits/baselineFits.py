@@ -85,11 +85,14 @@ for key in histokeys_hh:
 #######Read online baseline fit values from root file
     if options.onlineBaselines != "":
         loadonline = True
-        onBlKey = key.replace('raw_hits_baseline0_','').replace('_hh','')
+        onBlKey = key.replace('raw_hits_','').replace('_SvtHybrids0_hh','')
+        print onBlKey
 
         if options.onlineBaselines != "":
             hwtag = mmap.str_to_hw(onBlKey)
+            print hwtag
             plotname = "baseline_%s_ge"%(hwtag)
+            print plotname
             bf_inFile = r.TFile(options.onlineBaselines,"READ")
             tgraph = bf_inFile.Get("baseline/%s"%(plotname))
             bf_inFile.Close()
@@ -116,7 +119,7 @@ for key in histokeys_hh:
     Ndf=[]
 
     #Flags
-    minbinFail=[]
+    minStatsFailure=[]
     noisy=[]
     lowdaq=[]
 
@@ -138,7 +141,7 @@ for key in histokeys_hh:
             range_upper.append(fitData.BlFitRangeUpper)
             Chi2.append(fitData.BlFitChi2)
             Ndf.append(fitData.BlFitNdf)
-            minbinFail.append(fitData.minbinFail)
+            minStatsFailure.append(fitData.minStatsFailure)
             noisy.append(fitData.noisy)
             lowdaq.append(fitData.lowdaq)
 

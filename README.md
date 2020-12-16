@@ -174,7 +174,7 @@ hpstr anaSvtBl2D_cfg.py <inNtupleROOTFile>
 The configuration to produce baseline fits from an svtBl2D file is ```fitBL_cfg.py```. Typical usage
 is:
 ```bash
-hpstr fitBL_cfg.py -i <inSvtBl2DROOTFile> -s baseline<0,3>_L<0-6>
+hpstr fitBL_cfg.py -i <inSvtBl2DROOTFile> -s <Layer/Feb> <SvtHybrids0>
 
 #### Kalman / GBL vertex performance comparison ntuples
 
