@@ -53,6 +53,7 @@ class SvtBlFitHistoProcessor : public Processor {
         int minStats_{};
         int xmin_{};
         int deadRMS_{};
+        std::string simpleGausFit_;
 
         //Define RMS threshold for noisy channels
         int noisyRMS_{};

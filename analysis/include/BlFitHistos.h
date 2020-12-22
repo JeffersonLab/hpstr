@@ -33,6 +33,13 @@ class BlFitHistos : public HistoManager{
                 return histos2d;
         }
 
+        void setSimpleGausFit(std::string simpleGausFit){
+            if(simpleGausFit.find("rue") != std::string::npos)
+                simpleGausFit_ = true ;
+            else
+                simpleGausFit_ = false;
+        }
+
         void getHistosFromFile(TFile* inFile, std::vector<std::string> hybrid);
         void Chi2GausFit(std::map<std::string, TH2F*> histos2d, int nPointsDer_,int rebin_i, int xmin_,int minStats_, int noisyRMS_, int deadRMS_, FlatTupleMaker* flat_tuple_);
         
@@ -43,6 +50,9 @@ class BlFitHistos : public HistoManager{
     protected:
         std::map<std::string, TH2F*> histos2d;
         std::map<std::string, TH1F*> histos1d;
+        std::map<std::string,std::map<int,int>> svtIDMap;
+        bool simpleGausFit_;
+        ModuleMapper * mmapper_;
 };
 
 #endif
