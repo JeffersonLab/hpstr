@@ -1,7 +1,12 @@
 #include "BlFitHistos.h"
 
 BlFitHistos::BlFitHistos() {
+    mmapper_ = new ModuleMapper();
+    svtIDMap = mmapper_->buildChannelSvtIDMap();
 }
+
+
+
 
 BlFitHistos::~BlFitHistos() {
 }
@@ -32,12 +37,36 @@ void BlFitHistos::getHistosFromFile(TFile* inFile, std::vector<std::string> hybr
     }
  
 }
-
-
+/*
+void BlFitHistos::buildChannelSvtIDMap(){
+    
+    std::map<std::string, std::map<int,int>> channel_map;
+    std::map<int,int> local_to_svtid_map;
+    int channel_index = 0;
+    for(int feb; feb < 10; ++feb){
+        str_feb = "F" + std::to_string(feb);
+        int max_channel = 640;
+        if (feb == 0 || feb == 1) max_channel = 512;
+        for(int hybrid; hybrid < 4; ++hybrid){
+            str_hybrid = "H" + std::to_string(hybrid);
+            for(int channel=0; channel < max_channel; channel++){
+                int svtid = channel_index + channel;
+                local_to_svtid_map[channel] = svtid;
+            }
+            channel_map[str_feb + str_hybrid] = local_to_svtid_map ;
+            channel_index += max_channel;
+        }
+    }
+    
+}
+*/
 
 
 void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsDer_,int rebin_,int xmin_, int minStats_, int noisyRMS_, int deadRMS_, FlatTupleMaker* flat_tuple_) {
      
+
+    //Get all hybrid strings, aka L<n><T,B>_<axial,stereo>_<ele,pos>
+    std::vector<std::string> hybridStrings = mmapper_->getHybridStrings();
 
     //Loop over all 2D histogram that were retrieved from input file
     for(std::map<std::string, TH2F*>::iterator it = histos2d.begin(); it != histos2d.end(); ++it)
@@ -48,13 +77,34 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
         std::string SvtAna2DHisto_key = it->first;
         SvtAna2DHisto_key.erase(SvtAna2DHisto_key.end()-3,SvtAna2DHisto_key.end());
 
+        //Look for hybrid string within 2d histogram key
+        std::string hybridString;
+        for(std::vector<std::string>::iterator it = hybridStrings.begin(); it != hybridStrings.end(); ++it){
+            if(SvtAna2DHisto_key.find(*it) != std::string::npos){
+                hybridString = *it;
+                std::cout << "hybridString is " << hybridString << std::endl;
+                break;
+            }
+        }
+        
+        //get the hardware tag for this F<n>H<M>
+        std::string hwTag = mmapper_->getHwFromString(hybridString);
+        std::cout << "hwTag: " << hwTag << std::endl;
+        for(std::map<std::string,std::map<int,int>>::iterator it = svtIDMap.begin(); it != svtIDMap.end(); it++)
+            std::cout << "maptag: " << it->first << std::endl;
+
         //Perform fitting procedure over all channels on a sensor
         for(int cc=0; cc < 640 ; ++cc) 
         {
+            int svt_id = mmapper_->getSvtIDFromHWChannel(cc, hwTag, svtIDMap);
+            if(svt_id == 99999) //Feb 0-1 have max_channel = 512. svt_id = 99999 means max_channel reached. Skip cc > 512 
+                continue;
+
             double TFRE = 1.0;
             //Set Channel and Hybrid information and paramaters in the flat tuple
             flat_tuple_->setVariableValue("SvtAna2DHisto_key", SvtAna2DHisto_key);
             flat_tuple_->setVariableValue("channel", cc);
+            flat_tuple_->setVariableValue("svt_id", svt_id);
             flat_tuple_->setVariableValue("minbinThresh",(double)xmin_);
             flat_tuple_->setVariableValue("minStats", (double)minStats_);
             flat_tuple_->setVariableValue("rebin", (double)rebin_);
@@ -104,6 +154,7 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
             //and skip the fit procedure on this channel
             if (firstbin == -1 || projy_h->GetEntries() < minStats_ ) 
             {
+                std::cout << "FAILED TO FIT CHANNEL" << std::endl;
                 flat_tuple_->setVariableValue("BlFitMean", -9999.9);
                 flat_tuple_->setVariableValue("BlFitSigma", -9999.9);
                 flat_tuple_->setVariableValue("BlFitNorm", -9999.9);
@@ -155,6 +206,25 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
             //a fit on the histogram. Add Chi2/Ndf for the iterxmax of each fit to a vector.
             //Locate the iterxmax value that corresponds to the maximum Chi2/Ndf 2nd derivative. This
             //is where the fit window should end (xmax) 
+
+
+            if(simpleGausFit_ == true){
+                
+                TFitResultPtr simpleFit = projy_h->Fit("gaus", "QRES", "", projy_h->GetBinLowEdge(projy_h->FindFirstBinAbove(0.0,1)), projy_h->GetBinLowEdge(projy_h->FindLastBinAbove(0.0,1)));
+                const double* parameters;
+                parameters = simpleFit->GetParams();
+                flat_tuple_->setVariableValue("BlFitMean", parameters[1]);
+                flat_tuple_->setVariableValue("BlFitSigma", parameters[2]);
+                flat_tuple_->setVariableValue("BlFitNorm", parameters[0]);
+                flat_tuple_->setVariableValue("BlFitChi2", simpleFit->Chi2());
+                flat_tuple_->setVariableValue("BlFitNdf", simpleFit->Ndf());
+                flat_tuple_->setVariableValue("BlFitRangeLower", (double)projy_h->GetBinLowEdge(projy_h->FindFirstBinAbove(0.0,1)));
+                flat_tuple_->setVariableValue("BlFitRangeUpper", (double)projy_h->GetBinLowEdge(projy_h->FindLastBinAbove(0.0,1)));
+
+                flat_tuple_->fill();
+                delete projy_h;
+                continue;
+            }
 
             double currentChi2 = 0.0;
             while(iterxmax < 6800.0 && currentChi2 < 100.0 || iter < 10)

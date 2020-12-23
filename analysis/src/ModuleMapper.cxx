@@ -515,6 +515,42 @@ ModuleMapper::ModuleMapper(const int year) {
     }
 } 
 
+std::map<std::string, std::map<int,int>> ModuleMapper::buildChannelSvtIDMap(){
+
+    std::map<std::string, std::map<int,int>> channel_map;
+    std::map<int,int> local_to_svtid_map;
+    int channel_index = 0;
+    for(int feb=0; feb < 10; feb++){
+        std::string str_feb = "F" + std::to_string(feb);
+        int max_channel = 640;
+        if (feb == 0 || feb == 1) max_channel = 512;
+        for(int hybrid=0; hybrid < 4; hybrid++){
+            std::string str_hybrid = "H" + std::to_string(hybrid);
+            for(int channel=0; channel < max_channel; channel++){
+                int svtid = channel_index + channel;
+                local_to_svtid_map[channel] = svtid;
+            }
+            channel_map[str_feb + str_hybrid] = local_to_svtid_map ;
+            channel_index += max_channel;
+        }
+    }
+    return channel_map;
+
+}
+
+int ModuleMapper::getSvtIDFromHWChannel(int channel, std::string hwTag, std::map<std::string,std::map<int,int>> svtid_map) {
+      std::map<int,int> channelMap = svtid_map[hwTag];
+      std::map<int,int>::iterator it = channelMap.find(channel);
+      if(it != channelMap.end()){
+        return it->second;
+      }
+      else
+          return 99999; //Indicates channel not found in map. Feb 0-1 have max_channel = 512. If function receives channel > 512 in these    cases, returns 99999 for svt_id
+  }
+
+
+
+
 ModuleMapper::~ModuleMapper() {
 }
 

@@ -23,6 +23,7 @@ void SvtBlFitHistoProcessor::configure(const ParameterSet& parameters) {
         minStats_ = parameters.getInteger("minStats");
         noisyRMS_ = parameters.getInteger("noisy");
         deadRMS_ = parameters.getInteger("deadRMS");
+        simpleGausFit_ = parameters.getString("simpleGausFit");
     }
     catch (std::runtime_error& error)
     {
@@ -40,6 +41,8 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     flat_tuple_ = new FlatTupleMaker(outFilename.c_str(), "gaus_fit");
 
     fitHistos_ = new BlFitHistos();
+    //To fit channels with a simple gaussian, set configurable param to true
+    fitHistos_->setSimpleGausFit(simpleGausFit_);
     std::cout << "[BlFitHistos] Loading 2D Histos" << std::endl;
     fitHistos_->getHistosFromFile(inF_,hybrid_);
 
@@ -57,6 +60,8 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     flat_tuple_->addVariable("rebin");
     //channel number
     flat_tuple_->addVariable("channel");
+    //svt_id
+    flat_tuple_->addVariable("svt_id");
     //if 1.0, channel stats too low to perform fit
     flat_tuple_->addVariable("minStatsFailure");
     //channel rms. Use to flag dead channels
