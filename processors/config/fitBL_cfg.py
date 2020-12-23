@@ -15,6 +15,8 @@ base.parser.add_argument("-p", "--nPoints", type=int, dest="nPoints",
         help="Select number of points for second derivative.", metavar="nPoints", default="3")
 base.parser.add_argument("-b", "--rebin", type=int, dest="rebin",
                 help="rebin factor.", metavar="rebin", default="1")
+base.parser.add_argument("-N", "--lowdaqNsigma", type=int, dest="lowdaqNsigma",
+                help="Hard to explain....don't touch if you don't know", metavar="lowdaqNsigma", default="")
 base.parser.add_argument('-s', '--hybrid', nargs='+', type=str, dest="hybrid",default="", 
         help="Enter baseline<#><hybrid_name>")
 base.parser.add_argument("-noisy", '--noisy', type=int, dest="noisy", 
