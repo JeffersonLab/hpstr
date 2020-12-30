@@ -72,13 +72,13 @@ for key in keys_hh:
     markerStyle = markerStyle + 1
     if(markerStyle > 4):
         markerStyle = 1
-    gr.Draw()
+    gr.Draw("P")
     gr.Write()
     #multigr1.Add(gr, "LP")
     if(key.find("L0") != -1 or key.find("L1") != -1 or key.find("L2") != -1  or key.find("L3") != -1):
-        multigr1.Add(gr)
+        multigr1.Add(gr,"LP")
     else:
-        multigr2.Add(gr)
+        multigr2.Add(gr,"LP")
 
 outFile.cd()
 multigr1.GetHistogram().GetYaxis().SetRangeUser(-15.,500.)
