@@ -5,24 +5,18 @@ import os.path
 from os import path
 import numpy as np
 import ModuleMapper as mmap
-import py3utilities as utils
 import argparse
 import csv
 
 
 parser=argparse.ArgumentParser(description="Configuration options for baseline fit")
 
-
 parser.add_argument("-i", type=str, dest="inFilename", help="Input SvtBlFitHistoProcessor output root file",default="")
 parser.add_argument("-o", type=str, dest="outFilename", help="output root file",default="baselineFitTool.root")
-
 parser.add_argument("-b", type=str, dest="onlineBaselines", help="online baseline fits root file",default="")
 parser.add_argument("-csv", type=str, dest="csvOut", help="File name for CSV output file",default="offline_baseline_fits.csv")
-
-
 parser.add_argument("-s", "--hybrids", type=str, dest="hybrids",nargs="+",
         help="L<#><T/B>_<axial/stereo>_<ele/pos>", default="L")
-
 parser.add_argument("-r", type=str, dest="runNumber", help="Run Number",default="")
 parser.add_argument("-g", type=str, dest="show_graphs", help="If == show, print all graphs associate with specified channels", default="")
 options = parser.parse_args()
@@ -42,45 +36,12 @@ def getKeysFromFile(inFile,cType="", attr1=[""], attr2=""):
                 histo_keys.append(kname)
     return histo_keys
               
-def readhistoFromFile(inFile, histo_key):
-    histo = deepcopy(getattr(inFile, histo_key))
-    return histo
-
 def buildTGraph(name,title, n_points, x, y,color):
     g = r.TGraph(n_points,np.array(x, dtype = float), np.array(y, dtype = float))
     g.SetName("%s"%(name))
     g.SetTitle("%s"%(title))
     g.SetLineColor(color)
     return g
-
-def newCanvas(name):
-        canvas = r.TCanvas("%s"%(name), "c", 1800,800)
-        return canvas
-
-def savePNG(canvas,directory,name):
-        #canvas.Draw()
-
-        canvas.SaveAs("%s/%s.png"%(directory,name))
-        canvas.Close()
-
-def getOnlineBaselineFits(offlineHybrids):
-    for hybrid in hybridsFromFile:
-        if options.onlineBaselines != "":
-            loadOnlineBaselines = True
-            onBlKey = hybrid.replace('raw_hits_','').replace('_SvtHybrids0_hh','')
-            print(onBlKey)
-
-            if options.onlineBaselines != "":
-                hwtag = mmap.str_to_hw(onBlKey)
-                print(hwtag)
-                plotname = "baseline_%s_ge"%(hwtag)
-                print(plotname)
-                bf_inFile = r.TFile(options.onlineBaselines,"READ")
-                tgraph = bf_inFile.Get("baseline/%s"%(plotname))
-                bf_inFile.Close()
-
-            bl_ch = tgraph.GetX()
-            bl_mean = tgraph.GetY()
 
 def getPlotFromTFile(inFile, plotname):
     inFile.cd()
@@ -90,21 +51,6 @@ def getPlotFromTFile(inFile, plotname):
     else:
         print(plotname,'NOT FOUND in file',inFile)
     return plot
-
-
-def getValuesFromTGraph(inFile, graphname):
-    inFile.cd()
-    gr = inFile.Get(graphname)
-    if gr:
-        print(graphname,'Found in file file',inFile)
-        x = gr.GetX()
-        y = gr.GetY()
-    else:
-        print(graphname,'NOT FOUND in file',inFile)
-        x = [0]
-        y = [0]
-    return x,y
-
 
 
 ######################################################################################################
@@ -186,33 +132,6 @@ for hybrid in hybridsFromFile:
         for c in onlineChannel:
             onlineSigma.append(onlinePlot.GetErrorY(c))
 
-    #Write baselines to csv file
-    csvMean, csvSigma, csvType, csvHybrid, csvFeb = ([] for i in range(5)) 
-    for c in range(len(channel)):
-        csvFeb.append(feb)
-        csvHybrid.append(hyb)
-        if(lowdaq[c] == 1.0 or minStatsFailure[c] == 1.0 or RMS[c] < 10):
-            if(loadOnlineBaslines):
-                csvMean.append(round(onlineMean[c],3))
-                csvSigma.append(round(onlineSigma[c],3))
-                csvType.append("online_baseline")
-            else:
-                csvMean.append(99999)
-                csvSigma.append(99999)
-                csvType.append("offline_fit_failure")
-        else:
-            csvMean.append(mean[c])
-            csvSigma.append(sigma[c])
-            csvType.append("offline_baseline")
-    csvRows = zip(csvFeb, csvHybrid, channel, csvMean, csvSigma, csvType)
-    with open(csvOutFile,'a') as f:
-        writer = csv.writer(f)
-        for row in csvRows:
-            writer.writerow(row)
-
-            
-
-    
     #Plot baseline fit values overlaid on 2d histograms
     outFile.cd()
     canvas = r.TCanvas("%s_mean"%(hybrid), "c", 1800,800)
@@ -224,10 +143,10 @@ for hybrid in hybridsFromFile:
     mean_gr = buildTGraph("%s_BlFitMean_%s"%(run,hybrid),"%s_BlFitMean_%s;Channel;ADC"%(run,hybrid),len(mean_gr_x),mean_gr_x,mean_gr_y,2)
     lowdaq_gr_x = np.array(channel, dtype = float)
     lowdaq_gr_y = np.array([3500.0 * x for x in lowdaq], dtype=float)
-    lowdaq_gr = buildTGraph("lowdaqflag_%s"%(hybrid),"low-daq channels_%s;Channel;ADC"%(hybrid),len(lowdaq_gr_x),lowdaq_gr_x, lowdaq_gr_y,utils.colors[2])
+    lowdaq_gr = buildTGraph("lowdaqflag_%s"%(hybrid),"low-daq channels_%s;Channel;ADC"%(hybrid),len(lowdaq_gr_x),lowdaq_gr_x, lowdaq_gr_y,2)
     lowdaq_gr.SetMarkerStyle(8)
     lowdaq_gr.SetMarkerSize(1)
-    lowdaq_gr.SetMarkerColor(utils.colors[10])
+    lowdaq_gr.SetMarkerColor(3)
 
     hybrid_hh.GetYaxis().SetRangeUser(3000.0,7500.0)
     if hybrid_hh.GetName().find("L0") != -1 or hybrid_hh.GetName().find("L1") != -1:
@@ -250,7 +169,6 @@ for hybrid in hybridsFromFile:
     legend.AddEntry(lowdaq_gr,"low-daq threshold","p")
     legend.Draw()
     canvas.Write()
-    savePNG(canvas,".","%s_%s_gausFit"%(run,hybrid))
     canvas.Close()
     
     if loadOnlineBaselines == True:
@@ -281,17 +199,16 @@ for hybrid in hybridsFromFile:
 
         lowdaq_gr_x = np.array(channel, dtype = float)
         lowdaq_gr_y = np.array([-1000.0 + 600.0* x for x in lowdaq], dtype=float)
-        lowdaq_gr = buildTGraph("lowdaqflag_%s"%(hybrid),"low-daq channels_%s;Channel;ADC"%(hybrid),len(lowdaq_gr_x),lowdaq_gr_x, lowdaq_gr_y,utils.colors[2])
+        lowdaq_gr = buildTGraph("lowdaqflag_%s"%(hybrid),"low-daq channels_%s;Channel;ADC"%(hybrid),len(lowdaq_gr_x),lowdaq_gr_x, lowdaq_gr_y,2)
 
         diff_gr.Draw()
 
         lowdaq_gr.SetMarkerStyle(8)
         lowdaq_gr.SetMarkerSize(1)
-        lowdaq_gr.SetMarkerColor(utils.colors[10])
+        lowdaq_gr.SetMarkerColor(3)
         lowdaq_gr.Draw("psame")
 
         canvas.Write()
-        #savePNG(canvas,".","%s_fitdiff"%(hybrid))
         canvas.Close()
 
     ############################################################################################################################
@@ -324,16 +241,12 @@ for hybrid in hybridsFromFile:
 
     #####################################################################################################
     #Channel Noise Plots
-    #canvas = r.TCanvas("%s_RMS"%(hybrid), "c", 1800,800)
-    #canvas.cd()
     RMS_gr = buildTGraph("%s_noise"%(hybrid),"%s_noise;Channel;Noise"%(hybrid),len(channel),np.array(channel,dtype=float),np.array(RMS,dtype=float),1)
     RMS_gr.Draw()
     RMS_gr.Write()
     
-
-
     ######################################################################################################
-    ####Show Channel Fits
+    #Show Channel Fits
     cfdir = outFile.mkdir("%s_channel_fits"%(hybrid))
     for cc in range(len(channel)): 
         canvas = r.TCanvas("%s_ch_%i_h"%(hybrid,channel[cc]), "c", 1800,800)
@@ -352,8 +265,7 @@ for hybrid in hybridsFromFile:
         func.Draw("same")
         canvas.Write()
         canvas.Close()
-        #savePNG(canvas,directory+"channel_fits/","baseline_gausFit_%s_ch_%i"%(key[:-3],cc))
-    #cfdir.Close()
+
 outFile.Write()
 
 

@@ -5,7 +5,6 @@ import os.path
 from os import path
 import numpy as np
 import ModuleMapper as mmap
-import py3utilities as utils
 import argparse
 import csv
 
@@ -79,6 +78,7 @@ outFile = r.TFile(options.outFilename,"RECREATE")
 loadOnlineBaselines = False
 
 for hybrid in hybridsFromFile:
+    print("Checking Hybrid",hybrid)
     #Get 2d histogram for hybrid
     inFile.cd()
     hybrid_hh = getPlotFromTFile(inFile, hybrid)
@@ -96,6 +96,7 @@ for hybrid in hybridsFromFile:
     onlineMean=[]
     onlineSigma=[]
 
+    print("Grabbing Ntuples from TTree")
     myTree = inFile.gaus_fit
     for fitData in myTree:
         hybridFitKey = str(fitData.SvtAna2DHisto_key)
@@ -133,13 +134,15 @@ for hybrid in hybridsFromFile:
         graphName = "baseline/baseline_"+hwtag + "_ge"
         print('retrieving online baseline fits from graph:',graphName)
         onlinePlot = getPlotFromTFile(onlineFile,graphName)
+        print("successfully loaded online baseline")
         x = (onlinePlot.GetX())
         onlineChannel = list(x)
         y =(onlinePlot.GetY())
         onlineMean = list(y)
         for c in onlineChannel:
-            onlineSigma.append(onlinePlot.GetErrorY(c))
+            onlineSigma.append(onlinePlot.GetErrorY(int(c)))
 
+    
     #Write baselines to csv file
     csvMean, csvSigma, csvType, csvHybrid, csvFeb = ([] for i in range(5)) 
     for c in range(len(channel)):
@@ -166,7 +169,6 @@ for hybrid in hybridsFromFile:
 
             
 
-    
     #Plot baseline fit values overlaid on 2d histograms
     outFile.cd()
     canvas = r.TCanvas("%s_mean"%(hybrid), "c", 1800,800)
@@ -207,7 +209,11 @@ for hybrid in hybridsFromFile:
     #savePNG(canvas,".","%s_%s_gausFit"%(run,hybrid))
     canvas.Close()
     
+    if(hybrid_hh.GetEntries() == 0):
+        continue
     if loadOnlineBaselines == True:
+        if(len(mean) == 0 and len(onlineMean) == 0):
+            continue;
         #Plot Difference between online and offline baselines
         canvas = r.TCanvas("%s_diff"%(hybrid), "c", 1800,800)
         canvas.cd()
@@ -223,6 +229,7 @@ for hybrid in hybridsFromFile:
                 diff_mean.append(mean[i])
                 diff_bl_mean.append(onlineMean[i])
 
+        
         diff_gr_x = np.array(diff_ch, dtype = float)
         diff_gr_y = np.array([x - y for x,y in zip(diff_mean,diff_bl_mean)], dtype=float)
         diff_gr = buildTGraph("FitDiff_%s"%(hybrid),"(Offline - Online) BlFit Mean_%s;Channel;ADC Difference"%(hybrid),len(diff_gr_x),diff_gr_x,diff_gr_y,1)
@@ -246,5 +253,6 @@ for hybrid in hybridsFromFile:
 
         canvas.Write()
         canvas.Close()
+
 outFile.Write()
 

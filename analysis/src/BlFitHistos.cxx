@@ -147,7 +147,7 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
                 firstbin = projy_h->FindFirstBinAbove((double)frac*maxbin,1);
             }
             
-            if(chRMS < deadRMS_)
+            if(chRMS < deadRMS_ || projy_h->GetEntries() == 0)
                 flat_tuple_->setVariableValue("dead",1.0);
 
             //If channel does not have the minimum statistics required, set all variables to -9999.9
