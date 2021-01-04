@@ -11,7 +11,7 @@ def timeSample_callback(options, opt, value, parser):
 #To fit 2d histograms from file, provide a list of strings that match histograms of interest
 #If attempting to run over all hybrids, aka by not specifying the Layer number, RAM requirements may crash the program.
 base.parser.add_argument('-s', '--hybrid', nargs='+', type=str, dest="hybrid",default="", 
-        help="Examples: -s SvtHybrids0_L1 or SvtHybrids0_L1T_axial or SvtHybrids0")
+        help="Examples: -s SvtHybrids0 L1 or SvtHybrids0 L1T_axial or SvtHybrids0")
 
 #Choose the RMS value that indicates a "dead" channel. This is a channel with low RMS compared to other channels, and varies based on Run
 base.parser.add_argument("-deadRMS", '--deadRMS', type=int, dest="deadRMS", 
