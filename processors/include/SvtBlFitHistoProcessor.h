@@ -39,20 +39,22 @@ class SvtBlFitHistoProcessor : public Processor {
 
         TFile* inF_{nullptr};
         TFile* outF_chi2{nullptr};
+
+        //Vector that holds hybrid names
         std::vector<std::string> hybrid_{};
-        //parameter defining json file
+        //json file for histo config
         std::string histCfgFilename_;
 
         //Histogram handlers
         BlFitHistos* fitHistos_{nullptr};
 
-        //binning for profileYIterativeGauss
-        //int binning_{1};
+        //configurable parameters for fitting. All have default settings.
         int rebin_{};
         int nPointsDer_{};
         int minStats_{};
         int xmin_{};
         int deadRMS_{};
+        //Set simpleGausFit_ to true in config file if fitting online baseline
         std::string simpleGausFit_;
 
         //Define RMS threshold for noisy channels

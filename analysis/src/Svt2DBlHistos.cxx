@@ -69,27 +69,19 @@ void Svt2DBlHistos::FillHistograms(std::vector<RawSvtHit*> *rawSvtHits_,float we
         std::string swTag= mmapper_->getStringFromSw("ly"+lay+"_m"+mod);
         
         //Manually select which baselines (0 - 6) are included. THIS MUST MATCH THE JSON FILE!
-
         int ss = 0;
-        
-            //if(debug_ > 0) std::cout << "Filling Histogram with RawSvtHit" << std::endl; 
-            histokey = swTag + "_SvtHybrids"+std::to_string(ss)+"_hh";
-                        Fill2DHisto(histokey, 
-                    (float)rawSvtHit->getStrip(),
-                    (float)rawSvtHit->getADCs()[ss], 
-                    weight);
-            //if(debug_ > 0) std::cout << "Histogram Filled" << std::endl; 
-        
+        histokey = swTag + "_SvtHybrids"+std::to_string(ss)+"_hh";
+                    Fill2DHisto(histokey, 
+                (float)rawSvtHit->getStrip(),
+                (float)rawSvtHit->getADCs()[ss], 
+                weight);
 
         ss = 3;
-        
-            //if(debug_ > 0) std::cout << "Filling Histogram with RawSvtHit" << std::endl; 
-            histokey = swTag + "_SvtHybrids"+std::to_string(ss)+"_hh";
-                        Fill2DHisto(histokey, 
-                    (float)rawSvtHit->getStrip(),
-                    (float)rawSvtHit->getADCs()[ss], 
-                    weight);
-            //if(debug_ > 0) std::cout << "Histogram Filled" << std::endl; 
+        histokey = swTag + "_SvtHybrids"+std::to_string(ss)+"_hh";
+                    Fill2DHisto(histokey, 
+                (float)rawSvtHit->getStrip(),
+                (float)rawSvtHit->getADCs()[ss], 
+                weight);
         
     }
 

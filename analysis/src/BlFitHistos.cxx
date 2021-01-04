@@ -37,30 +37,6 @@ void BlFitHistos::getHistosFromFile(TFile* inFile, std::vector<std::string> hybr
     }
  
 }
-/*
-void BlFitHistos::buildChannelSvtIDMap(){
-    
-    std::map<std::string, std::map<int,int>> channel_map;
-    std::map<int,int> local_to_svtid_map;
-    int channel_index = 0;
-    for(int feb; feb < 10; ++feb){
-        str_feb = "F" + std::to_string(feb);
-        int max_channel = 640;
-        if (feb == 0 || feb == 1) max_channel = 512;
-        for(int hybrid; hybrid < 4; ++hybrid){
-            str_hybrid = "H" + std::to_string(hybrid);
-            for(int channel=0; channel < max_channel; channel++){
-                int svtid = channel_index + channel;
-                local_to_svtid_map[channel] = svtid;
-            }
-            channel_map[str_feb + str_hybrid] = local_to_svtid_map ;
-            channel_index += max_channel;
-        }
-    }
-    
-}
-*/
-
 
 void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsDer_,int rebin_,int xmin_, int minStats_, int noisyRMS_, int deadRMS_, FlatTupleMaker* flat_tuple_) {
      
@@ -89,18 +65,18 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
         
         //get the hardware tag for this F<n>H<M>
         std::string hwTag = mmapper_->getHwFromString(hybridString);
-        std::cout << "hwTag: " << hwTag << std::endl;
-        for(std::map<std::string,std::map<int,int>>::iterator it = svtIDMap.begin(); it != svtIDMap.end(); it++)
-            std::cout << "maptag: " << it->first << std::endl;
 
         //Perform fitting procedure over all channels on a sensor
         for(int cc=0; cc < 640 ; ++cc) 
         {
+            //get the global svt_id for channel
             int svt_id = mmapper_->getSvtIDFromHWChannel(cc, hwTag, svtIDMap);
             if(svt_id == 99999) //Feb 0-1 have max_channel = 512. svt_id = 99999 means max_channel reached. Skip cc > 512 
                 continue;
 
+            //TFRE used to determine fit result pointer errors
             double TFRE = 1.0;
+
             //Set Channel and Hybrid information and paramaters in the flat tuple
             flat_tuple_->setVariableValue("SvtAna2DHisto_key", SvtAna2DHisto_key);
             flat_tuple_->setVariableValue("channel", cc);
@@ -208,8 +184,8 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
             //is where the fit window should end (xmax) 
 
 
+            //If baseline fitting an online baseline, must set simpleGauseFit_ to true!
             if(simpleGausFit_ == true){
-                
                 TFitResultPtr simpleFit = projy_h->Fit("gaus", "QRES", "", projy_h->GetBinLowEdge(projy_h->FindFirstBinAbove(0.0,1)), projy_h->GetBinLowEdge(projy_h->FindLastBinAbove(0.0,1)));
                 const double* parameters;
                 parameters = simpleFit->GetParams();
