@@ -71,7 +71,7 @@ class HistoManager {
         virtual void Define2DHistos(){};
         virtual void Define1DHistos(){};
 
-        //Definition of histograms from json onfig
+        //Definition of histograms from json config
         virtual void DefineHistos();
         virtual void DefineHistos(std::vector<std::string> histoCopyNames, std::string makeCopyJsonTag = "default=single_copy");
 
