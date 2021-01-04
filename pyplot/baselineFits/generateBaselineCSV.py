@@ -148,7 +148,7 @@ for hybrid in hybridsFromFile:
     for c in range(len(channel)):
         csvFeb.append(feb)
         csvHybrid.append(hyb)
-        if(lowdaq[c] == 1.0 or minStatsFailure[c] == 1.0 or RMS[c] < 10):
+        if(lowdaq[c] == 1.0 or minStatsFailure[c] == 1.0 or RMS[c] < 10 or dead[c] == 1.0):
             if(loadOnlineBaselines):
                 csvMean.append(round(onlineMean[c],3))
                 csvSigma.append(round(onlineSigma[c],3))
