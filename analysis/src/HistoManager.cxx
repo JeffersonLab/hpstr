@@ -7,6 +7,7 @@
 #include <vector>
 
 HistoManager::HistoManager() {
+    HistoManager("default");
     m_name = "default";
 }
 
@@ -144,34 +145,22 @@ void HistoManager::DefineHistos(std::vector<std::string> histoCopyNames, std::st
     }//loop on config
 }
 
-void HistoManager::GetHistosFromFile(TFile* inFile, const std::string& name, const std::string& folder) 
-{
-}
-void HistoManager::GetHistosFromFile(TFile* inFile, const std::vector<std::string>& name, const std::string& folder) {
+void HistoManager::GetHistosFromFile(TFile* inFile, const std::string& name, const std::string& folder) {
 
+    //Todo: use name as regular expression.
     //Todo: use folder to choose a folder. 
     TIter next(inFile->GetListOfKeys());
     TKey *key;
     while ((key = (TKey*)next())) {
         std::string classType = key->GetClassName();
-        std::string s(key->GetName());
-    for(std::vector<std::string>::const_iterator i = name.begin(); i != name.end(); i++) {
-        if (s.find(*i) == std::string::npos) continue;
-        if (classType.find("TH1")!=std::string::npos) {
+        if (classType.find("TH1")!=std::string::npos)
             histos1d[key->GetName()] = (TH1F*) key->ReadObj();
-            histos1dNamesfromTFile.push_back(key->GetName());
-        }
-        if (classType.find("TH2")!=std::string::npos) {
+        if (classType.find("TH2")!=std::string::npos)
             histos2d[key->GetName()] = (TH2F*) key->ReadObj();
-            histos2dNamesfromTFile.push_back(key->GetName());
-            std::cout << histos2d[key->GetName()]->GetName() << std::endl;
-        }
         if (classType.find("TH3")!=std::string::npos)
             histos3d[key->GetName()] = (TH3F*) key->ReadObj();
     }
-    }
 }
-
 
 
 TH1F* HistoManager::plot1D(const std::string& name,const std::string& xtitle, int nbinsX, float xmin, float xmax) {
@@ -363,7 +352,6 @@ void HistoManager::loadHistoConfig(const std::string histoConfigFile) {
 
 void HistoManager::saveHistos(TFile* outF,std::string folder) {
 
-    std::cout << "saveHistos: " << outF << " " << folder << std::endl;
     if (outF) outF->cd();
     TDirectory* dir{nullptr};
 
@@ -381,13 +369,11 @@ void HistoManager::saveHistos(TFile* outF,std::string folder) {
     }
 
     for (it2d it = histos2d.begin(); it!=histos2d.end(); ++it) {
-        std::cout << " preparing to write 2d histos" << std::endl;
         if (!(it->second)) {
             std::cout<<it->first<<" Null ptr in saving.."<<std::endl;
             continue;
         }
         it->second->Write();
-        std::cout << "successful write histo" << std::endl;
     }
 
     for (it1d it = histos1d.begin(); it!=histos1d.end(); ++it) {

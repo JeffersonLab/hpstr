@@ -38,7 +38,6 @@ bool SvtRawDataProcessor::process(IEvent* ievent) {
 
     Event* event = static_cast<Event*>(ievent);
     UTIL::LCRelationNavigator* rawTracker_hit_fits_nav;
-    UTIL::LCRelationNavigator* svtSimHits_nav;
     // Get the collection of 3D hits from the LCIO event. If no such collection 
     // exist, a DataNotAvailableException is thrown
     EVENT::LCCollection* raw_svt_hits{nullptr};
@@ -53,28 +52,16 @@ bool SvtRawDataProcessor::process(IEvent* ievent) {
 
     //Check to see if fits are in the file
     auto evColls = event->getLCEvent()->getCollectionNames();
-    auto fitI = std::find (evColls->begin(), evColls->end(), hitfitCollLcio_.c_str());
+    auto it = std::find (evColls->begin(), evColls->end(), hitfitCollLcio_.c_str());
     bool hasFits = true;
     EVENT::LCCollection* raw_svt_hit_fits;
-    if(fitI == evColls->end()) hasFits = false;
+    if(it == evColls->end()) hasFits = false;
     if(hasFits) 
     {
         raw_svt_hit_fits = event->getLCCollection(hitfitCollLcio_.c_str()); 
         // Heap an LCRelation navigator which will allow faster access 
         rawTracker_hit_fits_nav = new UTIL::LCRelationNavigator(raw_svt_hit_fits);
 
-    }
-
-    //Check to see if sim hits are in the file
-    auto shI = std::find (evColls->begin(), evColls->end(), trueHitRelLcio_.c_str());
-    bool hasSimHits = true;
-    EVENT::LCCollection* svtSimHits;
-    if(shI == evColls->end()) hasSimHits = false;
-    if(hasSimHits) 
-    {
-        svtSimHits = event->getLCCollection(trueHitRelLcio_.c_str()); 
-        // Heap an LCRelation navigator which will allow faster access 
-        svtSimHits_nav = new UTIL::LCRelationNavigator(svtSimHits);
     }
 
     // Get decoders to read cellids
@@ -138,30 +125,6 @@ bool SvtRawDataProcessor::process(IEvent* ievent) {
             };
 
             rawHit->setFit(fit_params);
-        }
-        if (hasSimHits)
-        {
-            // Get the list of fit params associated with the raw tracker hit
-            EVENT::LCObjectVec svtSimHits_list
-                = svtSimHits_nav->getRelatedToObjects(rawTracker_hit);
-
-            if(svtSimHits_list.size() > 0)
-            {
-                // Get the list SimTrackerHit associated with the SVTRawTrackerHit
-                EVENT::SimTrackerHit* svtSimHit_lcio
-                    = static_cast<EVENT::SimTrackerHit*>(svtSimHits_list.at(0));
-
-                double hitPos[3] = { 
-                    hitPos[0] = svtSimHit_lcio->getPosition()[0],
-                    hitPos[1] = svtSimHit_lcio->getPosition()[1],
-                    hitPos[2] = svtSimHit_lcio->getPosition()[2]
-                };
-
-                double hitEdep = svtSimHit_lcio->getEDep();
-
-                rawHit->setSimPos(hitPos);
-                rawHit->setSimEdep(hitEdep);
-            }
         }
         rawhits_.push_back(rawHit);
     }

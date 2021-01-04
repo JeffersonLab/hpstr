@@ -70,20 +70,8 @@ class HistoManager {
         virtual void Define3DHistos(){};
         virtual void Define2DHistos(){};
         virtual void Define1DHistos(){};
-        
-        //Definition of histograms from json config
-        //IF you want to create one instance of each histogram configuration
-        //from json file, just use standard DefineHistos()
         virtual void DefineHistos();
 
-        //If you want to create multiple, differently named instances of a
-        //histogram configuration from json file, use DefineHistos(args,args)
-        //histoCopyNames: names of the different instances that will be
-        //appended to histo key
-        //makeCopyJsonTag: define special tag to be found in json histo config
-        //key that indicates whether or not to make multiple copies. IF tag is
-        //not found, original single instance of histogram will be defined for
-        //that particular json histo config key
         virtual void DefineHistos(std::vector<std::string> histoCopyNames, std::string makeCopyJsonTag = "default=single_copy");
 
         void Fill1DHisto(const std::string& histoName, float value, float weight=1.);

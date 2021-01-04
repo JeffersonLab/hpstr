@@ -114,25 +114,11 @@ void TrackHistos::Fill1DVertex(Vertex* vtx,
 }
 
 
-void TrackHistos::FillPosEleTracks( Track* ele_trk, Track* pos_trk, float weight, const std::string& trkname) {
-
-        
-    double ele_d0 = ele_trk->getD0();
-    double pos_d0 = pos_trk->getD0();
-    double ele_Z0 = ele_trk->getZ0();
-    double pos_Z0 = pos_trk->getZ0();
-    Fill2DHisto(trkname+"ele_vs_pos_d0_hh", ele_d0, pos_d0,weight);
-    Fill2DHisto(trkname+"ele_vs_pos_Z0_hh", ele_Z0, pos_Z0,weight);
-    
-
-}
-
 void TrackHistos::Fill2DTrack(Track* track, float weight, const std::string& trkname) {
     
     
     if (track) {
         
-        bool negcov = false;
         double d0 = track->getD0();
         double z0 = track->getZ0();
         Fill2DHisto(trkname+"tanlambda_vs_phi0_hh",track->getPhi(),track->getTanLambda(), weight);
@@ -143,33 +129,7 @@ void TrackHistos::Fill2DTrack(Track* track, float weight, const std::string& trk
         Fill2DHisto(trkname+"z0_vs_p_hh",track->getP(),z0,weight);
         Fill2DHisto(trkname+"z0_vs_phi0_hh",track->getPhi(),z0,weight);
         Fill2DHisto(trkname+"z0_vs_tanlambda_hh",track->getTanLambda(),z0,weight);
-        for(int i=0; i < track->getCovEigenvalues(track->getCov()).size(); i++)
-        {
-            Fill2DHisto(trkname+"covEigenVals_hh", (float)i,track->getCovEigenvalues(track->getCov())[i],weight);
-            if(track->getCovEigenvalues(track->getCov())[i] < 0)
-            {
-                negcov = true;       
-            }
-        }
-        if(negcov == true)
-        {
-            std::cout << "Track " << track << " has negative covariance eigenvalue" << std::endl;
-            std::cout << "Track type: " << track->getType() << std::endl;
-            std::cout << "Charge: " << track->getCharge() << std::endl;
-            std::cout << "Chi2/Ndf: " << track->getChi2() << "/" << track->getNdf() << std::endl;
-            std::cout << "momentum: " << track->getP() << std::endl;
-            std::cout << "Tracker Hit Count " << track->getTrackerHitCount() << std::endl;
-            std::cout << "d0: " << track->getD0() << std::endl;
-            std::cout << "d0: " << track->getD0() << std::endl;
-            std::cout << "phi0: " << track->getPhi() << std::endl;
-            std::cout << "Omega: " << track->getOmega() << std::endl;
-            std::cout << "tan_lambda: " << track->getTanLambda() << std::endl;
-            std::cout << "Z0: " << track->getZ0() << std::endl;
-            for(int j=0; j < track->getCovEigenvalues(track->getCov()).size(); j++)
-            {
-                std::cout << "Track cov eigenvalue " << j << " :" << track->getCovEigenvalues(track->getCov())[j] << std::endl;;
-            }
-        }
+        
     }
 }
 
@@ -194,7 +154,6 @@ void TrackHistos::Fill1DTrack(Track* track, float weight, const std::string& trk
     Fill1DHisto(trkname+"chi2ndf_h"  ,track->getChi2Ndf()     ,weight);
     Fill1DHisto(trkname+"nShared_h"  ,track->getNShared()     ,weight);
     Fill1DHisto(trkname+"nHits_2d_h" ,n_hits_2d               ,weight);
-
         
     //All Tracks
     Fill1DHisto(trkname+"sharingHits_h",0,weight);

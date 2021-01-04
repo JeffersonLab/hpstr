@@ -162,6 +162,7 @@ The configuration to produce the nominal ntuples from LCIO files is ```recoTuple
 ```bash
 hpstr recoTuple_cfg.py -i <inLcioFile> -o <outROOTFile> -t <1=isData|0=isMC> -y <2016|2019>
 ```
+
 where the ```-t ``` flag is used to distinguish between data and MC and ```-y``` to distinguish between 2016 and 2019. 
 There are alternative configurations that produce different ntuples and the main are listed here:
 

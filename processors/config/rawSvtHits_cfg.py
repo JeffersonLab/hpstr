@@ -1,11 +1,10 @@
 import HpstrConf
-import baseConfig as base
-
-options = base.parser.parse_args()
+import sys
 
 # Use the input file to set the output file name
-lcio_file = options.inFilename[0]
-root_file = options.outFilename
+lcio_file = sys.argv[1].strip()
+root_file = '%s.root' % lcio_file[:-6]
+#root_file = 'testRun.root'
 
 print('LCIO file: %s' % lcio_file)
 print('Root file: %s' % root_file)
@@ -42,7 +41,6 @@ header.parameters["tsCollRoot"]   = "TSBank"
 rawsvt.parameters["debug"] = 0
 rawsvt.parameters["hitCollLcio"]    = 'SVTRawTrackerHits'
 rawsvt.parameters["hitfitCollLcio"] = 'SVTFittedRawTrackerHits'
-rawsvt.parameters["trueHitRelLcio"] = 'SVTTrueHitRelations'
 rawsvt.parameters["hitCollRoot"]    = 'SVTRawTrackerHits'
 
 # Sequence which the processors will run.

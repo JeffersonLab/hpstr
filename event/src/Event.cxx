@@ -57,7 +57,6 @@ void Event::addCollection(const std::string name, TClonesArray* collection) {
 TClonesArray* Event::getCollection(const std::string name) { 
     
     // Check if the collection already exist
-    std::cout << "getCollection: " << name << std::endl;
     auto itc = objects_.find(name);
     auto itb = branches_.find(name); 
 

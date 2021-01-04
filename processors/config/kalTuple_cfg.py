@@ -32,7 +32,6 @@ svthits = HpstrConf.Processor('svthits', 'Tracker3DHitProcessor')
 rawsvt  = HpstrConf.Processor('rawsvt', 'SvtRawDataProcessor')
 ecal    = HpstrConf.Processor('ecal', 'ECalDataProcessor')
 vtx     = HpstrConf.Processor('vtx', 'VertexProcessor')
-bcvtxkf     = HpstrConf.Processor('bcvtxkf', 'VertexProcessor')
 vtxgbl   = HpstrConf.Processor('vtxgbl', 'VertexProcessor')
 cvtxgbl   = HpstrConf.Processor('cvtxgbl', 'VertexProcessor')
 mcpart  = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
@@ -41,7 +40,7 @@ mcpart  = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
 #   Processor Configuration   #
 ###############################
 #Event
-header.parameters["debug"] = 1
+header.parameters["debug"] = 0
 header.parameters["headCollRoot"] = "EventHeader"
 header.parameters["trigCollLcio"] = "TriggerBank"
 header.parameters["rfCollLcio"]   = "RFHits"
@@ -63,7 +62,7 @@ svthits.parameters["hitCollRoot"]    = 'RotatedHelicalTrackHits'
 
 
 #Tracking
-track.parameters["debug"] = 1 
+track.parameters["debug"] = 0 
 track.parameters["trkCollLcio"] = 'KalmanFullTracks'
 track.parameters["trkCollRoot"] = 'KalmanFullTracks'
 track.parameters["kinkRelCollLcio"] = ''
@@ -81,7 +80,7 @@ if (not options.isData):
 
 track.parameters["bfield"] = bfield[str(options.year)]
 
-trackgbl.parameters["debug"] = 1 
+trackgbl.parameters["debug"] = 0 
 trackgbl.parameters["trkCollLcio"] = 'GBLTracks'
 trackgbl.parameters["trkCollRoot"] = 'GBLTracks'
 trackgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
@@ -105,21 +104,15 @@ ecal.parameters["clusCollLcio"] = "EcalClustersCorr"
 ecal.parameters["clusCollRoot"] = "RecoEcalClusters"
 
 #Vertex
-vtx.parameters["debug"] = 1
+vtx.parameters["debug"] = 0
 vtx.parameters["vtxCollLcio"]    = 'UnconstrainedV0Vertices_KF'
 vtx.parameters["vtxCollRoot"]    = 'UnconstrainedV0Vertices_KF'
 vtx.parameters["partCollRoot"]   = 'ParticlesOnVertices_KF'
 vtx.parameters["kinkRelCollLcio"] = ''
 vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
-bcvtxkf.parameters["debug"] = 1
-bcvtxkf.parameters["vtxCollLcio"]    = 'BeamspotConstrainedV0Vertices_KF'
-bcvtxkf.parameters["vtxCollRoot"]    = 'BeamspotConstrainedV0Vertices_KF'
-bcvtxkf.parameters["partCollRoot"]   = 'ParticlesOnVertices_KF'
-bcvtxkf.parameters["kinkRelCollLcio"] = ''
-bcvtxkf.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
-vtxgbl.parameters["debug"] = 1
+vtxgbl.parameters["debug"] = 0
 vtxgbl.parameters["vtxCollLcio"]     = 'UnconstrainedV0Vertices'
 vtxgbl.parameters["vtxCollRoot"]     = 'UnconstrainedV0Vertices'
 vtxgbl.parameters["partCollRoot"]    = 'ParticlesOnVertices'
@@ -127,12 +120,13 @@ vtxgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
 vtxgbl.parameters["trkRelCollLcio"]  = 'TrackDataRelations'
 
 
-cvtxgbl.parameters["debug"] = 1
+cvtxgbl.parameters["debug"] = 0
 cvtxgbl.parameters["vtxCollLcio"]     = 'TargetConstrainedV0Vertices'
 cvtxgbl.parameters["vtxCollRoot"]     = 'TargetConstrainedV0Vertices'
 cvtxgbl.parameters["partCollRoot"]    = 'ParticlesOnVertices'
 cvtxgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
 cvtxgbl.parameters["trkRelCollLcio"]  = 'TrackDataRelations'
+
 
 #MCParticle
 mcpart.parameters["debug"] = 0 

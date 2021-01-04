@@ -3,7 +3,6 @@
 #include "TString.h"
 ModuleMapper::ModuleMapper(const int year) {
 
-    std::cout << "[ModuleMapper] Initialized" << std::endl;
     if (year_ == 2019) {
 
         //TODO Insert the correct mapping!!
