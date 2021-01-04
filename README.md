@@ -189,7 +189,6 @@ hpstr fitBL_cfg.py -i <inSvtBl2DROOTFile> -o <outROOTFile> -s SvtHybrids0 L<0..6
 ```bash
 hpstr  kalTuple_cfg.py -i <inLcioFile> -o <outROOTFile> -t <1=isData|0=isMC> -y <2016|2019> 
 ```
->>>>>>> 730c4d174360a93940735b9849bba756e7ab3207
 
 ### Making Plots
 
@@ -254,5 +253,3 @@ where ```-c``` is used to specify the configurationFile for hpstr, ```-i``` and 
 ## Contributing to Hpstr
 
 Fork the repository first. Open an issue to first discuss what needs to be changed and then open a pull request using the issue number. 
-
-

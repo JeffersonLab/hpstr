@@ -70,8 +70,9 @@ class HistoManager {
         virtual void Define3DHistos(){};
         virtual void Define2DHistos(){};
         virtual void Define1DHistos(){};
-        virtual void DefineHistos();
 
+        //Definition of histograms from json onfig
+        virtual void DefineHistos();
         virtual void DefineHistos(std::vector<std::string> histoCopyNames, std::string makeCopyJsonTag = "default=single_copy");
 
         void Fill1DHisto(const std::string& histoName, float value, float weight=1.);
