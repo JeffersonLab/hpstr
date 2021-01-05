@@ -65,7 +65,6 @@ csvOutFile = options.csvOut
 if(path.exists(csvOutFile)):
     csvOutFile = os.path.splitext(csvOutFile)[0] + "_" + time.strftime("%H%M%S") + ".csv"
 
-onlineFile = r.TFile(options.onlineBaselines, "READ")
 inFile = r.TFile(options.inFilename, "READ")
 hybrids = options.hybrids
 run = options.runNumber
@@ -114,7 +113,7 @@ for hybrid in hybridsFromFile:
             lowdaq.append(fitData.lowdaq)
             dead.append(fitData.dead)
             TFRerror.append(fitData.TFitResultError)
-            svt_id.append(fitData.svt_id)
+            svt_id.append(int(fitData.svt_id))
 
     #Get offline baseline RMS value, used to determine if channel is "dead" based on config param
     for cc in range(len(channel)): 
@@ -124,6 +123,7 @@ for hybrid in hybridsFromFile:
 
     #Remove extra phrases in input plots to isolate Hybrid name
     hybrid = hybrid.replace('raw_hits_','').replace('_SvtHybrids0_hh','')
+    #hybrid = hybrid.replace('raw_hits_','').replace('baseline0_','').replace('_hh','')
     hwtag = mmap.str_to_hw(hybrid)
     feb = hwtag[0:2]
     hyb = hwtag[2:]
@@ -131,16 +131,46 @@ for hybrid in hybridsFromFile:
     #Read online baseline fit values from root file
     if(options.onlineBaselines) != "":
         loadOnlineBaselines = True
-        graphName = "baseline/baseline_"+hwtag + "_ge"
-        print('retrieving online baseline fits from graph:',graphName)
-        onlinePlot = getPlotFromTFile(onlineFile,graphName)
-        print("successfully loaded online baseline")
-        x = (onlinePlot.GetX())
-        onlineChannel = list(x)
-        y =(onlinePlot.GetY())
-        onlineMean = list(y)
-        for c in onlineChannel:
-            onlineSigma.append(onlinePlot.GetErrorY(int(c)))
+        if(options.onlineBaselines.find(".root") != -1):
+            onlineFile = r.TFile(options.onlineBaselines, "READ")
+            graphName = "baseline/baseline_"+hwtag + "_ge"
+            print('retrieving online baseline fits from graph:',graphName)
+            onlinePlot = getPlotFromTFile(onlineFile,graphName)
+            print("successfully loaded online baseline")
+            x = (onlinePlot.GetX())
+            onlineChannel = list(x)
+            y =(onlinePlot.GetY())
+            onlineMean = list(y)
+            for c in onlineChannel:
+                onlineSigma.append(onlinePlot.GetErrorY(int(c)))
+
+        elif(options.onlineBaselines.find(".dat")):
+            for line in open(options.onlineBaselines, 'r'):
+                datsvtID = int(line.split()[0])
+                if datsvtID in svt_id: 
+                    #for i in range(6):
+                        #onlineMean.append([])
+                        #onlineSigma.append([])
+                        onlineChannel.append(float(svt_id.index(datsvtID)))
+                        onlineMean.append(float(line.split()[1]))
+                        onlineSigma.append(float(line.split()[7]))
+                        #onlineChannel.append(float(svt_id.index(datsvtID)))
+                        #onlineMean[i].append(float(line.split()[1+i]))
+                        #onlineSigma[i].append(float(line.split()[i+7]))
+                    
+    if loadOnlineBaselines == True:
+        outFile.cd()
+        #Take the difference between Online and Offline Sample0 mean and sigma
+        diffMean = [x1 - x2 for (x1,x2) in zip(mean,onlineMean)]
+        testing = True
+        if(testing == True):
+            #Test comparison of two loaded baseline files
+            canvas = r.TCanvas("%s_mean_diff"%(hybrid), "testCanv",1800,800)
+            canvas.cd()
+            gr = r.TGraph(len(channel),np.array(channel, dtype = float), np.array(diffMean, dtype = float))
+            gr.SetName("%s_baseline_mean_diff;channel;Mean [ADC]"%(hybrid))
+            gr.Draw()
+            gr.Write()
 
     
     #Write baselines to csv file
@@ -148,7 +178,7 @@ for hybrid in hybridsFromFile:
     for c in range(len(channel)):
         csvFeb.append(feb)
         csvHybrid.append(hyb)
-        if(lowdaq[c] == 1.0 or minStatsFailure[c] == 1.0 or RMS[c] < 10 or dead[c] == 1.0):
+        if(lowdaq[c] == 1.0 or minStatsFailure[c] == 1.0 or dead[c] == 1.0):
             if(loadOnlineBaselines):
                 csvMean.append(round(onlineMean[c],3))
                 csvSigma.append(round(onlineSigma[c],3))

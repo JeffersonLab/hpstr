@@ -18,6 +18,11 @@ def str_to_hw(string):
     string_to_hw["L2B_axial"     ] = "F3H3" #swapped with 3B_axial (Real Val F3H1)
     string_to_hw["L3B_stereo"    ] = "F3H0" #(real val F3H0)
     string_to_hw["L3B_axial"     ] = "F3H1" #(real val F3H3)
+
+   # string_to_hw["L2B_stereo"    ] = "F3H0" 
+   # string_to_hw["L2B_axial"     ] = "F3H1" 
+   # string_to_hw["L3B_stereo"    ] = "F3H2" 
+   # string_to_hw["L3B_axial"     ] = "F3H3" 
     string_to_hw["L4T_axial_ele" ] = "F4H0"
     string_to_hw["L4T_axial_pos" ] = "F4H1"
     string_to_hw["L4T_stereo_ele"] = "F4H2"
