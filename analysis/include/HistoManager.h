@@ -78,7 +78,6 @@ class HistoManager {
         void Fill1DHisto(const std::string& histoName, float value, float weight=1.);
         void Fill2DHisto(const std::string& histoName, float valuex, float valuey, float weight=1.);
 
-        virtual void GetHistosFromFile(TFile* inFile, const std::vector<std::string>& name,const std::string& folder = "");
         virtual void GetHistosFromFile(TFile* inFile, const std::string& name,const std::string& folder = "");
 
         virtual void saveHistos(TFile* outF = nullptr,std::string folder = "");
