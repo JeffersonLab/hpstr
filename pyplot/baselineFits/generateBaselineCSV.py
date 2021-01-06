@@ -72,15 +72,27 @@ run = options.runNumber
 
 #Get SvtBl2D histogram hybrids from input file
 hybridsFromFile = getKeysFromFile(inFile,"TH2", hybrids,"")
-print(hybridsFromFile)
 outFile = r.TFile(options.outFilename,"RECREATE")
 loadOnlineBaselines = False
 
+#organize hybrid names in order of svt_id starting at 0
+hybridHwDict = {}
 for hybrid in hybridsFromFile:
-    print("Checking Hybrid",hybrid)
+    hybstr = hybrid.replace('raw_hits_','').replace('_SvtHybrids0_hh','')
+    hwtag = mmap.str_to_hw(hybstr)
+    hybridHwDict[hwtag] = hybrid
+hybridHwDict = sorted(hybridHwDict.items())
+
+for entry in hybridHwDict:
+    hybrid = entry[1]
     #Get 2d histogram for hybrid
     inFile.cd()
     hybrid_hh = getPlotFromTFile(inFile, hybrid)
+    if hybrid_hh:
+        print("")
+    else:
+        print("WARNING! HYBRID %s IS MISSING!"%(hybrid))
+        continue
 
     #Get offline baseline fit values from SvtBlFitProcessor output
     #Fit values are stored in Flat Tuple
@@ -124,7 +136,7 @@ for hybrid in hybridsFromFile:
     #Remove extra phrases in input plots to isolate Hybrid name
     hybrid = hybrid.replace('raw_hits_','').replace('_SvtHybrids0_hh','')
     #hybrid = hybrid.replace('raw_hits_','').replace('baseline0_','').replace('_hh','')
-    hwtag = mmap.str_to_hw(hybrid)
+    hwtag = entry[0] 
     feb = hwtag[0:2]
     hyb = hwtag[2:]
 
@@ -145,23 +157,60 @@ for hybrid in hybridsFromFile:
                 onlineSigma.append(onlinePlot.GetErrorY(int(c)))
 
         elif(options.onlineBaselines.find(".dat")):
-            for line in open(options.onlineBaselines, 'r'):
-                datsvtID = int(line.split()[0])
-                if datsvtID in svt_id: 
-                    #for i in range(6):
-                        #onlineMean.append([])
-                        #onlineSigma.append([])
-                        onlineChannel.append(float(svt_id.index(datsvtID)))
-                        onlineMean.append(float(line.split()[1]))
-                        onlineSigma.append(float(line.split()[7]))
+            for i in range(6):
+                onlineChannel.append([])
+                onlineMean.append([])
+                onlineSigma.append([])
+                for line in open(options.onlineBaselines, 'r'):
+                    datsvtID = int(line.split()[0])
+                    if datsvtID in svt_id: 
+                        onlineChannel[i].append(float(svt_id.index(datsvtID)))
+                        onlineMean[i].append(float(line.split()[1+i]))
+                        onlineSigma[i].append(float(line.split()[i+7]))
+
                         #onlineChannel.append(float(svt_id.index(datsvtID)))
-                        #onlineMean[i].append(float(line.split()[1+i]))
-                        #onlineSigma[i].append(float(line.split()[i+7]))
+                        #onlineMean.append(float(line.split()[1]))
+                        #onlineSigma.append(float(line.split()[7]))
                     
+
+    
+    #Write baselines to csv file
+    with open(csvOutFile,'a') as f:
+        writer = csv.writer(f, delimiter = ' ')
+        for c in range(len(channel)):
+            row = [svt_id[c]]
+            #csvFeb.append(feb)
+            #csvHybrid.append(hyb)
+            if(lowdaq[c] == 1.0 or minStatsFailure[c] == 1.0 or dead[c] == 1.0):
+                    if(loadOnlineBaselines):
+                        for i in range(6):
+                            row.append(onlineMean[i][c])
+                        for i in range(6):
+                            row.append(onlineSigma[i][c])
+            #            csvMean.append(round(onlineMean[i][c],3))
+            #            csvSigma.append(round(onlineSigma[i][c],3))
+            #            csvType.append("online_baseline")
+            #        else:
+            #            csvMean.append(99999)
+            #            csvSigma.append(99999)
+            #            csvType.append("offline_fit_failure")
+            else:
+                row.append(mean[c])
+           #     csvMean.append(mean[c])
+                for i in range(5):
+                    row.append(round(onlineMean[i+1][c],3))
+                row.append(sigma[c])
+           #     csvSigma.append(sigma[c])
+                for i in range(5):
+                    row.append(round(onlineSigma[i+1][c],3))
+           #     csvType.append("offline_baseline")
+            writer.writerow(row)
+
+            
     if loadOnlineBaselines == True:
         outFile.cd()
         #Take the difference between Online and Offline Sample0 mean and sigma
-        diffMean = [x1 - x2 for (x1,x2) in zip(mean,onlineMean)]
+        diffMean = [x1 - x2 for (x1,x2) in zip(mean,onlineMean[0])]
         testing = True
         if(testing == True):
             #Test comparison of two loaded baseline files
@@ -171,33 +220,6 @@ for hybrid in hybridsFromFile:
             gr.SetName("%s_baseline_mean_diff;channel;Mean [ADC]"%(hybrid))
             gr.Draw()
             gr.Write()
-
-    
-    #Write baselines to csv file
-    csvMean, csvSigma, csvType, csvHybrid, csvFeb = ([] for i in range(5)) 
-    for c in range(len(channel)):
-        csvFeb.append(feb)
-        csvHybrid.append(hyb)
-        if(lowdaq[c] == 1.0 or minStatsFailure[c] == 1.0 or dead[c] == 1.0):
-            if(loadOnlineBaselines):
-                csvMean.append(round(onlineMean[c],3))
-                csvSigma.append(round(onlineSigma[c],3))
-                csvType.append("online_baseline")
-            else:
-                csvMean.append(99999)
-                csvSigma.append(99999)
-                csvType.append("offline_fit_failure")
-        else:
-            csvMean.append(mean[c])
-            csvSigma.append(sigma[c])
-            csvType.append("offline_baseline")
-    csvRows = zip(csvFeb, csvHybrid, channel, svt_id, csvMean, csvSigma, csvType)
-    with open(csvOutFile,'a') as f:
-        writer = csv.writer(f)
-        for row in csvRows:
-            writer.writerow(row)
-
-            
 
     #Plot baseline fit values overlaid on 2d histograms
     outFile.cd()
@@ -223,8 +245,8 @@ for hybrid in hybridsFromFile:
     lowdaq_gr.Draw("psame")
 
     if loadOnlineBaselines == True:
-        bl_gr_x = np.array(onlineChannel, dtype = float)
-        bl_gr_y = np.array(onlineMean, dtype = float)
+        bl_gr_x = np.array(onlineChannel[0], dtype = float)
+        bl_gr_y = np.array(onlineMean[0], dtype = float)
         bl_gr = buildTGraph("onlineBlFits_%s"%(hybrid),"Online Baseline Fits_%s;Channel;ADC"%(hybrid),len(bl_gr_x),bl_gr_x,bl_gr_y,1)
         bl_gr.Draw("same")
 
@@ -242,7 +264,7 @@ for hybrid in hybridsFromFile:
     if(hybrid_hh.GetEntries() == 0):
         continue
     if loadOnlineBaselines == True:
-        if(len(mean) == 0 and len(onlineMean) == 0):
+        if(len(mean) == 0 and len(onlineMean[0]) == 0):
             continue;
         #Plot Difference between online and offline baselines
         canvas = r.TCanvas("%s_diff"%(hybrid), "c", 1800,800)
@@ -257,7 +279,7 @@ for hybrid in hybridsFromFile:
             if mean[i] > 0:
                 diff_ch.append(channel[i])
                 diff_mean.append(mean[i])
-                diff_bl_mean.append(onlineMean[i])
+                diff_bl_mean.append(onlineMean[0][i])
 
         
         diff_gr_x = np.array(diff_ch, dtype = float)
