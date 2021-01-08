@@ -341,7 +341,7 @@ def MakeRadFrac(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax
     numerator.DrawCopy("pe same")
           
     line = r.TLine()
-    line.SetLineStyle(kDashed)
+    line.SetLineStyle(r.kDashed)
     line.DrawLine(0.03,fitCon,0.2,fitCon)
     
     can.SaveAs(outdir+"/"+name+oFext)
@@ -528,7 +528,7 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
           
           
     line = r.TLine()
-    line.SetLineStyle(kDashed)
+    line.SetLineStyle(r.kDashed)
     if (Xmin!=-999 and Xmax!=-999):
         line.DrawLine(Xmin,1,Xmax,1)
     else:
@@ -707,7 +707,7 @@ def Make2DPlots(name,outdir,histolist,legList,xtitle="",ytitle="",ztitle="",text
         
         histolist[ih].Draw("colz")
         
-        InsertText(legList[ih],[],0.85,xoffset=0.45)
+        InsertText(legList[ih],[],0.85,xoffset=0.4)
         
         print("saving...")
         #if (len(legends) == len(histolist)):
