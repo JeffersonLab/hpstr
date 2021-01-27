@@ -23,9 +23,6 @@ def getKeysFromFile(inFile,cType="", attr1=[""], attr2=""):
     return histo_keys
 
 
-
-
-
 ################################################################################################################################
 
 outFile = r.TFile(options.outFilename,"RECREATE")
@@ -50,9 +47,12 @@ for key in keys_hh:
     inFile.cd()
     hh = inFile.Get(key)
 
+    maxchannel = 640
+    if(key.find("L0") != -1 or key.find("L1") != -1):
+        maxchannel = 512
     RMS = []
     channel = []
-    for cc in range(hh.GetNbinsX()):
+    for cc in range(maxchannel):
         channel.append(cc)
         #print(hh.GetBinContent(cc+1))
         #if(hh.GetBinContent(cc+1) == 0):
@@ -81,7 +81,7 @@ for key in keys_hh:
         multigr2.Add(gr,"LP")
 
 outFile.cd()
-multigr1.GetHistogram().GetYaxis().SetRangeUser(-15.,500.)
+#multigr1.GetHistogram().GetYaxis().SetRangeUser(-15.,500.)
 multigr1.Draw("A pmc plc")
 legend = canvas1.BuildLegend()
 canvas1.Write()

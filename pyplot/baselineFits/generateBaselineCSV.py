@@ -78,7 +78,8 @@ loadOnlineBaselines = False
 #organize hybrid names in order of svt_id starting at 0
 hybridHwDict = {}
 for hybrid in hybridsFromFile:
-    hybstr = hybrid.replace('raw_hits_','').replace('_SvtHybrids0_hh','')
+    #hybstr = hybrid.replace('raw_hits_','').replace('_SvtHybrids0_hh','')
+    hybstr = hybrid.replace('raw_hits_','').replace('baseline0_','').replace('_hh','')
     hwtag = mmap.str_to_hw(hybstr)
     hybridHwDict[hwtag] = hybrid
 hybridHwDict = sorted(hybridHwDict.items())
