@@ -55,7 +55,6 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
     // Set the command line arguments passed to the python script to be 
     // executed. Note that the first parameter in the list or arguments 
     // should refer to the script to be executed.
-    
 #if PY_MAJOR_VERSION >= 3
       wchar_t** targs = new wchar_t*[nargs + 1];
 
@@ -72,6 +71,7 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
           targs[i + 1] = PyUnicode_AsWideCharString(tmpstr,NULL);
           Py_DECREF(tmpstr);
         }
+
 
 #endif      
       PySys_SetArgvEx(nargs+1, targs,1);
@@ -233,7 +233,7 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
         sequence_.push_back(pi);
     }
     Py_DECREF(p_sequence);
-    
+
     py_list = PyObject_GetAttrString(p_process, "input_files");
     if (!PyList_Check(py_list)) {
         throw std::runtime_error("[ ConfigurePython ]: Input files is not a python list as expected."); 
@@ -249,6 +249,7 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
         input_files_.push_back(PyString_AsString(elem));
 #endif
     }
+
     Py_DECREF(py_list);
 
     py_list = PyObject_GetAttrString(p_process, "output_files");
@@ -299,7 +300,7 @@ Process* ConfigurePython::makeProcess() {
     Process* p = new Process();
 
     for (auto lib : libraries_) {
-        ProcessorFactory::instance().loadLibrary(lib);
+      ProcessorFactory::instance().loadLibrary(lib);
     }
 
     for (auto proc : sequence_) {

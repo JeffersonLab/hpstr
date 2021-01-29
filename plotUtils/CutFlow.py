@@ -51,16 +51,16 @@ def getEff(thisCut,previousCut=[],initialCut=[]):
 if __name__ == '__main__':
     
 
-    #Get the normalisation file
-    norm_json =open(os.environ["HPSTR_BASE"] + "/analysis/data/samples_xsections.json")
-    norms = json.load(norm_json)
-    norm_dict = {}
-    #Get the normalization factors
-    for entry in norms:
-        normFactor =  (norms[entry]["xsec"] * Lumi) / norms[entry]["nGen"]
-        normFactorE = (norms[entry]["xsecerr"] * Lumi) / norms[entry]["nGen"]
-        norm_dict[entry]=normFactor
-    print norm_dict
+    # #Get the normalisation file
+    # norm_json =open(os.environ["HPSTR_BASE"] + "/analysis/data/samples_xsections.json")
+    # norms = json.load(norm_json)
+    # norm_dict = {}
+    # #Get the normalization factors
+    # for entry in norms:
+    #     normFactor =  (norms[entry]["xsec"] * Lumi) / norms[entry]["nGen"]
+    #     normFactorE = (norms[entry]["xsecerr"] * Lumi) / norms[entry]["nGen"]
+    #     norm_dict[entry]=normFactor
+    # print norm_dict
 
     #Parse the command line
     parser=utils.parser

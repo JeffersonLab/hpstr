@@ -53,7 +53,9 @@ private:
     TBranch* btrks_{nullptr};
     TBranch* bmcParts_{nullptr};
     TBranch* bevth_{nullptr};
+    TBranch* becal_{nullptr};
     
+    std::vector<CalCluster*> * ecal_{};
     std::vector<Vertex*> * vtxs_{};
     std::vector<Track*>  * trks_{};
     std::vector<TrackerHit*>  * hits_{};
@@ -64,6 +66,7 @@ private:
     std::string vtxColl_{"Vertices"};
     std::string hitColl_{"RotatedHelicalTrackHits"};
     std::string trkColl_{"GBLTracks"};
+    std::string ecalColl_{"RecoEcalClusters"};
     std::string mcColl_{"MCParticle"};
     TTree* tree_{nullptr};
 
