@@ -1,4 +1,8 @@
-## Installation instructions (for Jess)
+## Hpstr Installation instructions 
+
+## Fork hpstr
+
+Follow [these instructions](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo) to fork from [JeffersonLab/hpstr](https://github.com/JeffersonLab/hpstr)
 
 ### Make a directory for all hps-related things
 ```bash
@@ -10,6 +14,7 @@ cd hps
 ```bash
 source /cvmfs/sft.cern.ch/lcg/views/LCG_97python3/x86_64-centos7-gcc8-opt/setup.sh
 ```
+
 ### Install LCIO (something hpstr depends on)
 ```bash
 mkdir LCIO
@@ -31,8 +36,8 @@ mkdir hpstr
 cd hpstr
 mkdir src build install
 cd src
-git clone https://github.com/ssevova/hpstr.git
-(or if you use SSH: git clone git@github.com:ssevova/hpstr.git)
+git clone https://github.com/YOURGITHUBUSERNAME/hpstr.git
+(or if you use SSH: git clone git@github.com:YOURGITHUBUSERNAME/hpstr.git)
 cd ..
 ```
 
@@ -65,3 +70,27 @@ make -j4 install
 cd ..
 source install/bin/setup.sh
 ```
+
+### You can set this repo as a remote 
+
+In the directory where you checked out hpstr:
+
+```
+git remote add lt https://github.com/latompkins/hpstr.git
+```
+
+You can fetch and pull from this repo by doing
+
+```
+git fetch lt
+```
+
+```
+git pull lt
+```
+Pulling will get you my latest changes.  You can also set the original JeffersonLab hpstr repo as a remote by doing:
+
+```
+git  remote add upstream https://githubm.com/JeffersonLab/hpstr.git
+```
+
