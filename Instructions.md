@@ -2,7 +2,7 @@
 
 ## Fork hpstr
 
-Follow [these instructions](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo) to fork from [JeffersonLab/hpstr](https://github.com/JeffersonLab/hpstr)
+Follow [these instructions](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo) to fork from [JeffersonLab/hpstr](https://github.com/JeffersonLab/hpstr) or from [this repo](https://github.com/latompkins/hpstr).    
 
 ### Make a directory for all hps-related things
 ```bash
