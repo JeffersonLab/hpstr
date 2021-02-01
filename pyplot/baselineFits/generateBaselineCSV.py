@@ -84,7 +84,9 @@ for hybrid in hybridsFromFile:
     hybridHwDict[hwtag] = hybrid
 hybridHwDict = sorted(hybridHwDict.items())
 
+csviter = 0
 for entry in hybridHwDict:
+    csviter = csviter + 1
     hybrid = entry[1]
     #Get 2d histogram for hybrid
     inFile.cd()
@@ -177,7 +179,9 @@ for entry in hybridHwDict:
     
     #Write baselines to csv file
     with open(csvOutFile,'a') as f:
-        writer = csv.writer(f, delimiter = ' ')
+        writer = csv.writer(f, delimiter = ',')
+        if(csviter == 1):
+            writer.writerow(["svt_channel_id","pedestal_0","pedestal_1","pedestal_2","pedestal_3","pedestal_4","pedestal_5","noise_0","noise_1","noise_2","noise_3","noise_4","noise_5"])
         for c in range(len(channel)):
             row = [svt_id[c]]
             #csvFeb.append(feb)
@@ -199,11 +203,11 @@ for entry in hybridHwDict:
                 row.append(mean[c])
            #     csvMean.append(mean[c])
                 for i in range(5):
-                    row.append(round(onlineMean[i+1][c],3))
+                    row.append(round((mean[c] - onlineMean[0][c]) + onlineMean[i+1][c] ,3))
                 row.append(sigma[c])
            #     csvSigma.append(sigma[c])
                 for i in range(5):
-                    row.append(round(onlineSigma[i+1][c],3))
+                    row.append(round((sigma[c]/onlineSigma[0][c])*onlineSigma[i+1][c],3))
            #     csvType.append("offline_baseline")
             writer.writerow(row)
 
