@@ -40,14 +40,14 @@ recoana_gbl = HpstrConf.Processor('vtxana_gbl', 'VertexAnaProcessor')
 recoana_kf.parameters["anaName"] = "vtxana_kf"
 recoana_kf.parameters["trkColl"] = "KalmanFullTracks"
 recoana_kf.parameters["vtxColl"] = "UnconstrainedV0Vertices_KF"
-recoana_kf.parameters["mcColl"]  = "MCParticle"
+recoana_kf.parameters["mcColl"]  = ""#"MCParticle"
 recoana_kf.parameters["hitColl"] = "SiClustersOnTrack"
-recoana_kf.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/vertexSelection.json'
-recoana_kf.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
+recoana_kf.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/customCuts.json'
+recoana_kf.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis_2019.json"
 recoana_kf.parameters["beamE"] = base.beamE[str(options.year)]
 recoana_kf.parameters["isData"] = options.isData
-recoana_kf.parameters["debug"] = 1
-CalTimeOffset=-999
+recoana_kf.parameters["debug"] = 0
+CalTimeOffset=-999.
 
 if (options.isData==1):
     CalTimeOffset=56.
@@ -64,9 +64,7 @@ recoana_kf.parameters["CalTimeOffset"]=CalTimeOffset
 #Region definitions
 
 RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/"
-recoana_kf.parameters["regionDefinitions"] = [RegionPath+'simpTight.json',
-                                              RegionPath+'simpTightL1L1.json']
-                                              #RegionPath+'simpTightL1L1NoSharedL0.json']
+recoana_kf.parameters["regionDefinitions"] = [RegionPath+'L1CutPos.json',RegionPath+'tightUncVChi2.json']
 
 #RecoHitAna
 recoana_gbl.parameters = recoana_kf.parameters.copy()

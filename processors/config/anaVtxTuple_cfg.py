@@ -31,14 +31,13 @@ vtxana = HpstrConf.Processor('vtxana', 'VertexAnaProcessor')
 #   Processor Configuration   #
 ###############################
 #Vertex Analysis
-vtxana.parameters["debug"] = 0
+vtxana.parameters["debug"] = 1
 vtxana.parameters["anaName"] = "vtxana"
 vtxana.parameters["trkColl"] = "GBLTracks"
 vtxana.parameters["hitColl"] = "RotatedHelicalOnTrackHits"
 vtxana.parameters["vtxColl"] = "UnconstrainedV0Vertices"
 vtxana.parameters["mcColl"]  = "MCParticle"
-vtxana.parameters["ecalColl"] = "RecoEcalClusters"
-vtxana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/empty.json'
+vtxana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/vertexSelection.json'
 vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
 vtxana.parameters["beamE"] = base.beamE[str(options.year)]
 vtxana.parameters["isData"] = options.isData
@@ -60,18 +59,13 @@ vtxana.parameters["CalTimeOffset"]=CalTimeOffset
 #Region definitions
 
 RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/"
-
-vtxana.parameters["regionDefinitions"] = [RegionPath+'vertexSelection.json',
-                                          RegionPath+'simpTight.json',
-                                          RegionPath+'simpTightL1L1.json',
-                                          RegionPath+'simpTightL1L1NoSharedL0.json',
-                                          RegionPath+'simpTightVtxY.json']
+vtxana.parameters["regionDefinitions"] = [RegionPath+'Tight.json', RegionPath+'radMatchTight.json']
 
 # Sequence which the processors will run.
 p.sequence = [vtxana]
 
-p.input_files=infile
-p.output_files=[outfile]
+p.input_files = infile
+p.output_files = [outfile]
 
 p.printProcess()
 
