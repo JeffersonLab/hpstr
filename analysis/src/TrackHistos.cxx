@@ -103,8 +103,9 @@ void TrackHistos::Fill1DVertex(Vertex* vtx,
     //Fill event information
 
     //Esum
+    Fill1DHisto("Pmiss_h", p_miss.P(),weight);
     Fill1DHisto("Esum_h",ele->getEnergy() + pos->getEnergy(),weight);
-    Fill1DHisto("Psum_h",p_ele.P() + p_pos.P());
+    Fill1DHisto("Psum_h",p_ele.P() + p_pos.P(),weight);
     Fill1DHisto("PtAsym_h",pt_asym_val,weight);
     Fill1DHisto("thetax_v0_h",thetax_v0_val,weight);
     Fill1DHisto("thetax_pos_h",thetax_pos_val,weight);
@@ -310,6 +311,8 @@ void TrackHistos::Fill2DHistograms(Vertex* vtx, float weight) {
         Fill2DHisto("vtx_p_svt_x_hh",vtxP,vtxPosSvt.X(),weight);
         Fill2DHisto("vtx_p_svt_y_hh",vtxP,vtxPosSvt.Y(),weight);
         
+	Fill2DHisto("vtx_svt_y_svt_z_hh",vtxPosSvt.Y(),vtxPosSvt.Z(),weight);
+	
         Fill2DHisto("vtx_p_sigmaZ_hh",vtxP,vtx->getCovariance()[5],weight);
         Fill2DHisto("vtx_p_sigmaX_hh",vtxP,vtx->getCovariance()[3],weight);
         Fill2DHisto("vtx_p_sigmaY_hh",vtxP,vtx->getCovariance()[0],weight);

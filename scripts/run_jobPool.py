@@ -48,7 +48,7 @@ def launchTestsArgs(options, infilename, fileN, jobN):
   #Build Commands
   setupCmds = []
   preCmd = None
-  print options.inDir
+  print (options.inDir)
   #filenameBase = "apsignalv2-beamv6_2500kBunches_displaced_10mm_%i"%fileN
   filenameBase = (infilename.split("/")[-1]).split(".")[0]
   
@@ -64,21 +64,23 @@ def launchTestsArgs(options, infilename, fileN, jobN):
           "-t", str(options.isData),
           options.extraFlags,
           ]
-  print cmd
+  print (cmd)
 
   #Execute Commands
   try:
     for setupCmd in setupCmds:
       runCommand(setupCmd)
       pass
-    log = file(logfilename,"w")
+    print("Right before log declare")
+    log = open(logfilename,"w")
+    print("Right after log declare")
     if preCmd and config:
       runCommand(preCmd,log)
       pass
     runCommand(cmd,log)
     print("%i. Finished %s"%(jobN, outfilename))
   except CalledProcessError as e:
-    print "Caught exception",e
+    print("Caught exception",e)
     pass
   return
 
@@ -122,35 +124,35 @@ if __name__ == '__main__':
 
   listfiles=glob.glob(options.inDir+"/*"+options.fileExt)
   if (len(listfiles)==0):
-    print "Try */*"+options.fileExt
+    print ("Try */*"+options.fileExt)
     listfiles=glob.glob(options.inDir+"/*/*"+options.fileExt)
 
-  print options.inDir
+  print (options.inDir)
 
   fnList = range(1,len(listfiles)+1)
 
   #create folder if doesn't exists
   if not os.path.exists(options.outDir):
     os.makedirs(options.outDir)
-    print "Created outdir", options.outDir," and logsDir ", options.outDir+"/logs"
+    print ("Created outdir", options.outDir," and logsDir ", options.outDir+"/logs")
     os.makedirs(options.outDir+"/logs")
 
 
   
   if options.debug:
-    print "Testing %i jobs in parallel mode (using Pool(%i))"%(len(fnList),options.poolSize)
-    print list(
-              itertools.izip([options.tool for x in range(len(fnList))],
-                             [listfiles[x] for x in range(len(fnList))],
-                             [options.outDir     for x in range(len(fnList))],
-                             [options.isData for x in range(len(fnList))],
-                             [options.configFile for x in range(len(fnList))],
-                             fnList,
-                             fnList
-                            )
-              )
+    print ("Testing %i jobs in parallel mode (using Pool(%i))"%(len(fnList),options.poolSize))
+    print (list(
+                     zip([options.tool for x in range(len(fnList))],
+                     [listfiles[x] for x in range(len(fnList))],
+                     [options.outDir     for x in range(len(fnList))],
+                     [options.isData for x in range(len(fnList))],
+                     [options.configFile for x in range(len(fnList))],
+                     fnList,
+                     fnList
+                   )
+    ))
   else:
-    print "Running %i jobs in parallel mode (using Pool(%i))"%(len(fnList),options.poolSize)
+    print ("Running %i jobs in parallel mode (using Pool(%i))"%(len(fnList),options.poolSize))
     freeze_support()
     # from: https://stackoverflow.com/questions/11312525/catch-ctrlc-sigint-and-exit-multiprocesses-gracefully-in-python
     original_sigint_handler = signal.signal(signal.SIGINT, signal.SIG_IGN)
@@ -158,14 +160,14 @@ if __name__ == '__main__':
     signal.signal(signal.SIGINT, original_sigint_handler)
     try:
       res = pool.map_async(launchTests,
-                           itertools.izip([options for x in range(len(fnList))],
-                                          [listfiles[x] for x in range(len(fnList))],
-                                          fnList,
-                                          fnList
-                                         )
-                           )
+                           zip([options for x in range(len(fnList))],
+                               [listfiles[x] for x in range(len(fnList))],
+                               fnList,
+                               fnList
+                             )
+                         )
       # timeout must be properly set, otherwise tasks will crash
-      print res.get(999999999)
+      print (res.get(999999999))
       print("Normal termination")
       pool.close()
       pool.join()

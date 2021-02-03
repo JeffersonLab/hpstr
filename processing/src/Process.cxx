@@ -42,7 +42,7 @@ void Process::runOnRoot() {
         TH1D * event_h = new TH1D("event_h","Number of Events Processed;;Events", 21, -10.5, 10.5);
         int cfile =0 ;
         for (auto ifile : input_files_) {
-            std::cout<<"Processing file"<<ifile<<std::endl;
+            std::cout<<"Processing file "<<ifile<<std::endl;
             HpsEventFile* file(nullptr);
             if (!output_files_.empty()) {
                 file = new HpsEventFile(ifile, output_files_[cfile]);
