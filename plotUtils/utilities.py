@@ -1,21 +1,20 @@
-#from ROOT import *
-import ROOT
+import ROOT as r
 from array import array
 from copy import deepcopy
 import os,sys,glob
 
-colors  = [ROOT.kBlue+2, ROOT.kCyan+2, ROOT.kRed+2,ROOT.kOrange+10,ROOT.kYellow+2,ROOT.kGreen-1,ROOT.kAzure-2,ROOT.kGreen-8,ROOT.kOrange+3,ROOT.kYellow+2,ROOT.kRed+2,ROOT.kBlue+2,ROOT.kGreen-8,ROOT.kOrange+3,ROOT.kYellow+2,ROOT.kRed+2,ROOT.kBlue+2,ROOT.kGreen-8,ROOT.kOrange+3,ROOT.kYellow+2,ROOT.kRed+2,ROOT.kBlue+2,ROOT.kGreen-8,ROOT.kOrange+3,ROOT.kYellow+2,ROOT.kRed+2,ROOT.kBlue+2,ROOT.kGreen-8,ROOT.kOrange+3]
-markers = [ROOT.kFullCircle,ROOT.kFullTriangleUp,ROOT.kFullSquare,ROOT.kOpenSquare,ROOT.kOpenTriangleUp,ROOT.kOpenCircle,ROOT.kFullCircle,ROOT.kOpenSquare,ROOT.kFullSquare,ROOT.kOpenTriangleUp,ROOT.kOpenCircle,ROOT.kFullCircle,ROOT.kOpenSquare,ROOT.kFullSquare,ROOT.kOpenTriangleUp,ROOT.kOpenCircle,ROOT.kFullCircle,ROOT.kOpenSquare,ROOT.kFullSquare,ROOT.kOpenTriangleUp,ROOT.kOpenCircle,ROOT.kFullCircle,ROOT.kOpenSquare,ROOT.kFullSquare,ROOT.kOpenTriangleUp,ROOT.kOpenCircle,ROOT.kFullCircle,ROOT.kOpenSquare,ROOT.kFullSquare,ROOT.kOpenTriangleUp]
+colors  = [r.kBlue+2, r.kCyan+2, r.kRed+2,r.kOrange+10,r.kYellow+2,r.kGreen-1,r.kAzure-2,r.kGreen-8,r.kOrange+3,r.kYellow+2,r.kRed+2,r.kBlue+2,r.kGreen-8,r.kOrange+3,r.kYellow+2,r.kRed+2,r.kBlue+2,r.kGreen-8,r.kOrange+3,r.kYellow+2,r.kRed+2,r.kBlue+2,r.kGreen-8,r.kOrange+3,r.kYellow+2,r.kRed+2,r.kBlue+2,r.kGreen-8,r.kOrange+3]
+markers = [r.kFullCircle,r.kFullTriangleUp,r.kFullSquare,r.kOpenSquare,r.kOpenTriangleUp,r.kOpenCircle,r.kFullCircle,r.kOpenSquare,r.kFullSquare,r.kOpenTriangleUp,r.kOpenCircle,r.kFullCircle,r.kOpenSquare,r.kFullSquare,r.kOpenTriangleUp,r.kOpenCircle,r.kFullCircle,r.kOpenSquare,r.kFullSquare,r.kOpenTriangleUp,r.kOpenCircle,r.kFullCircle,r.kOpenSquare,r.kFullSquare,r.kOpenTriangleUp,r.kOpenCircle,r.kFullCircle,r.kOpenSquare,r.kFullSquare,r.kOpenTriangleUp]
 
-fillColors = [ROOT.kRed-6+3,ROOT.kAzure-4,ROOT.kYellow+2]
-blueColors = [ROOT.kBlue,ROOT.kBlue+1,ROOT.kBlue+2]
+fillColors = [r.kRed-6+3,r.kAzure-4,r.kYellow+2]
+blueColors = [r.kBlue,r.kBlue+1,r.kBlue+2]
 
 #General configuration
 
 bottomFraction = 0.4
 bottomScale = 1./bottomFraction
 topScale    = 1./(1. - bottomFraction)
-ROOT.TProfile.Approximate(True)
+r.TProfile.Approximate(True)
 
 
 from optparse import OptionParser
@@ -89,11 +88,11 @@ def InsertText(runNumber="",texts=[],line=0.87,xoffset=0.18,Hps=True,Colors=Fals
     
     newline = 0.06
 
-    text = ROOT.TLatex()
+    text = r.TLatex()
     text.SetNDC()
     text.SetTextFont(42)
     text.SetTextSize(0.05)
-    text.SetTextColor(ROOT.kBlack)
+    text.SetTextColor(r.kBlack)
     if (Hps):
         text.DrawLatex(xoffset,line,'#bf{#it{HPS}} Internal')
     if runNumber:
@@ -114,9 +113,9 @@ def InsertText(runNumber="",texts=[],line=0.87,xoffset=0.18,Hps=True,Colors=Fals
 
 
 def SetStyle():
-    ROOT.gROOT.SetBatch(1)
+    r.gROOT.SetBatch(1)
 
-    hpsStyle= ROOT.TStyle("HPS","HPS style")
+    hpsStyle= r.TStyle("HPS","HPS style")
     
     # use plain black on white colors
     icol=0
@@ -182,15 +181,15 @@ def SetStyle():
     hpsStyle.SetPadTickX(1) 
     hpsStyle.SetPadTickY(1)
     
-    ROOT.gROOT.SetStyle("Plain")
+    r.gROOT.SetStyle("Plain")
 
 #gStyle.SetPadTickX(1)
 #gStyle.SetPadTickY(1)
-    ROOT.gROOT.SetStyle("HPS")
-    ROOT.gROOT.ForceStyle() 
-    ROOT.gStyle.SetOptTitle(0)
-    ROOT.gStyle.SetOptStat(0) 
-    ROOT.gStyle.SetOptFit(0) 
+    r.gROOT.SetStyle("HPS")
+    r.gROOT.ForceStyle() 
+    r.gStyle.SetOptTitle(0)
+    r.gStyle.SetOptStat(0) 
+    r.gStyle.SetOptFit(0) 
 
 
 # overwrite hps styles
@@ -207,8 +206,8 @@ def SetStyle():
     red   = array("d",[ 0.00, 0.00, 0.87, 1.00, 0.51 ])
     green = array("d",[ 0.00, 0.81, 1.00, 0.20, 0.00 ])
     blue  = array("d",[ 0.51, 1.00, 0.12, 0.00, 0.00 ])
-    ROOT.TColor.CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
-    ROOT.gStyle.SetNumberContours(NCont);
+    r.TColor.CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
+    r.gStyle.SetNumberContours(NCont);
 
 def MakeRadFrac(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,noErrors=False,RebinFactor=0,runNumber="",additionalText=[],RatioType="Alternate",LogX=False,LogY=False,RatioMin=0.0,RatioMax=0.15,WriteMean=False,Normalise=False):
     
@@ -219,28 +218,28 @@ def MakeRadFrac(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax
     Xmin=0
     Xmax=1
         
-    can = ROOT.TCanvas(name, name, 1200, 800)
+    can = r.TCanvas(name, name, 1200, 800)
     can.SetMargin(0,0,0,0)
-    top = ROOT.TPad("top","top",0,0.42,1,1)
+    top = r.TPad("top","top",0,0.42,1,1)
     if LogX:
         top.SetLogx(1)
         bot.SetLogx(1)
     if LogY:
         top.SetLogy(1)
     
-    bot = ROOT.TPad("bot","bot",0,0,1,0.38)
+    bot = r.TPad("bot","bot",0,0,1,0.38)
 
     #----------Histogram------------#
     
     top.Draw()
     top.SetBottomMargin(0)
-    top.SetTopMargin(ROOT.gStyle.GetPadTopMargin()*topScale)
+    top.SetTopMargin(r.gStyle.GetPadTopMargin()*topScale)
     bot.Draw()
     bot.SetTopMargin(0)
     bot.SetBottomMargin(0.4)
     top.cd()
     plotsProperties=[]
-    histoStack = ROOT.THStack(name+"_sh","")
+    histoStack = r.THStack(name+"_sh","")
     
     for ih in range(len(histos)):
 
@@ -290,7 +289,7 @@ def MakeRadFrac(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax
         #minX = 0.51
         minX  = 0.75
         maxX = minX+0.15
-        leg=ROOT.TLegend(minX,upperY,maxX,lowerY)
+        leg=r.TLegend(minX,upperY,maxX,lowerY)
         leg.SetBorderSize(0)
         leg.SetFillColor(0)
         leg.SetTextSize(0.04)
@@ -341,8 +340,8 @@ def MakeRadFrac(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax
     fitFunc.SetLineColor(colors[3])
     numerator.DrawCopy("pe same")
           
-    line = ROOT.TLine()
-    line.SetLineStyle(ROOT.kDashed)
+    line = r.TLine()
+    line.SetLineStyle(r.kDashed)
     line.DrawLine(0.03,fitCon,0.2,fitCon)
     
     can.SaveAs(outdir+"/"+name+oFext)
@@ -357,22 +356,22 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
     #Make 1D plots only
     if "_hh" in name: return None
 
-    can = ROOT.TCanvas(name, name, 1200, 800)
+    can = r.TCanvas(name, name, 1200, 800)
     can.SetMargin(0,0,0,0)
-    top = ROOT.TPad("top","top",0,0.42,1,1)
+    top = r.TPad("top","top",0,0.42,1,1)
     if LogX:
         top.SetLogx(1)
         bot.SetLogx(1)
     if LogY:
         top.SetLogy(1)
     
-    bot = ROOT.TPad("bot","bot",0,0,1,0.38)
+    bot = r.TPad("bot","bot",0,0,1,0.38)
 
     #----------Histogram------------#
     
     top.Draw()
     top.SetBottomMargin(0)
-    top.SetTopMargin(ROOT.gStyle.GetPadTopMargin()*topScale)
+    top.SetTopMargin(r.gStyle.GetPadTopMargin()*topScale)
     bot.Draw()
     bot.SetTopMargin(0)
     bot.SetBottomMargin(0.4)
@@ -473,7 +472,7 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
         #minX = 0.51
         minX  = 0.75
         maxX = minX+0.15
-        leg=ROOT.TLegend(minX,upperY,maxX,lowerY)
+        leg=r.TLegend(minX,upperY,maxX,lowerY)
         leg.SetBorderSize(0)
         leg.SetFillColor(0)
         leg.SetTextSize(0.04)
@@ -546,8 +545,8 @@ def MakePlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,
           
           
           
-    line = ROOT.TLine()
-    line.SetLineStyle(ROOT.kDashed)
+    line = r.TLine()
+    line.SetLineStyle(r.kDashed)
     if (Xmin!=-999 and Xmax!=-999):
         line.DrawLine(Xmin,1,Xmax,1)
     else:
@@ -573,7 +572,7 @@ def Make1Dplots(name,outdir,histos,colors,markers,legends,oFext,xtitle="",ytitle
         os.mkdir(outdir)
 
                 
-    can = ROOT.TCanvas(name,name,1500,1000)
+    can = r.TCanvas(name,name,1500,1000)
     if LogY:
         can.SetLogy(1)
 
@@ -627,7 +626,7 @@ def Make1Dplots(name,outdir,histos,colors,markers,legends,oFext,xtitle="",ytitle
         leg2 = None
 
         if len(legends) > 10:
-            leg2=ROOT.TLegend(minX,upperY,maxX-0.02,lowerY)
+            leg2=r.TLegend(minX,upperY,maxX-0.02,lowerY)
             leg2.SetBorderSize(0)
             leg2.SetFillColor(0)
             entry=leg2.AddEntry("Todo","To do","p")
@@ -643,7 +642,7 @@ def Make1Dplots(name,outdir,histos,colors,markers,legends,oFext,xtitle="",ytitle
             maxX=minX+0.12
             
 
-        leg=ROOT.TLegend(minX,upperY,maxX,lowerY)
+        leg=r.TLegend(minX,upperY,maxX,lowerY)
         leg.SetBorderSize(0)
         leg.SetFillColor(0)
         leg.SetTextSize(0.031)
@@ -685,7 +684,7 @@ def Make2DRatio(name,outdir,histo1,histo2,xtitle="",ytitle="",ztitle="",runNumbe
     ratio = histo1.Clone()
     ratio.Divide(histo2)
     
-    can = ROOT.TCanvas()
+    can = r.TCanvas()
     can.SetRightMargin(0.2)
     
     ratio.GetZaxis().SetRangeUser(0.9,1.1)
@@ -704,7 +703,7 @@ def Make2DPlots(name,outdir,histolist,xtitle,ytitle,ztitle="",text="",zmin="",zm
         os.mkdir(outdir)
     canvs = []
     for ih in range(0,len(histolist)):
-        can = ROOT.TCanvas()
+        can = r.TCanvas()
         can.SetRightMargin(0.2)
         
         #histolist[ih].GetZaxis().SetRangeUser(zmin,zmax)
