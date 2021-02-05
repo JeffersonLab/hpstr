@@ -1,4 +1,4 @@
-## Hpstr Installation instructions 
+## Hpstr Installation instructions at SLAC using CVMFS
 
 ## Fork hpstr
 
