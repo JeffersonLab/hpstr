@@ -11,6 +11,7 @@
 #include <TFitResultPtr.h>
 
 #include "ChebyshevFitFunction.h"
+#include "LegendreFitFunction.h"
 
 class HpsFitResult { 
 
@@ -123,6 +124,13 @@ class HpsFitResult {
         void setPolyOrder(int poly_order) { poly_order_ = poly_order; };
 
         /**
+         * Sets the type of background fit function used by the fitter.
+         *
+         * @param bkg_model The background fit model.
+         */
+        void setBkgModelType(FitFunction::BkgModel bkg_model) { bkg_model_ = bkg_model; };
+
+        /**
          * Set the 2 sigma upper limit.
          *
          * @param upper_limit The 2 sigma upper limit.
@@ -176,7 +184,10 @@ class HpsFitResult {
         double p_value_;
 
         /** Order polynomial used by the fitter. */
-        double poly_order_{0}; 
+        double poly_order_{0};
+
+        /** Type of background fit function to use. */
+        FitFunction::BkgModel bkg_model_{FitFunction::BkgModel::EXP_CHEBYSHEV};
 
         /** 2 sigma upper limit on the signal. */
         double upper_limit_; 

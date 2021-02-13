@@ -1,6 +1,8 @@
 # minimum cmake version
 cmake_minimum_required(VERSION 3.0)
 
+project(hpstr)
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 14)
@@ -114,7 +116,7 @@ configure_file(setup.sh.in ${CMAKE_INSTALL_PREFIX}/bin/setup.sh)
 #        PATTERN "include" EXCLUDE)
 
 # install python files
-install(DIRECTORY pyplot DESTINATION lib/python)
+install(DIRECTORY plotUtils DESTINATION lib/python)
 install(FILES processors/config/baseConfig.py DESTINATION lib/python)
 
 # info message about install prefix

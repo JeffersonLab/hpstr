@@ -43,6 +43,9 @@ void TrackHistos::Fill1DVertex(Vertex* vtx,
                                float weight) {
     
     Fill1DVertex(vtx,weight);
+    
+    CalCluster eleClus = ele->getCluster();
+    CalCluster posClus = pos->getCluster();
 
     //TODO remove hardcode!
     if (ele_trk)
@@ -62,6 +65,9 @@ void TrackHistos::Fill1DVertex(Vertex* vtx,
     //Fill ele and pos information
     Fill1DHisto("ele_p_h",p_ele.P(),weight);
     Fill1DHisto("pos_p_h",p_pos.P(),weight);
+    Fill1DHisto("ele_clusE_h",eleClus.getEnergy(),weight);
+    Fill1DHisto("pos_clusE_h",posClus.getEnergy(),weight);
+
 
     //Compute some extra variables 
     
@@ -97,8 +103,9 @@ void TrackHistos::Fill1DVertex(Vertex* vtx,
     //Fill event information
 
     //Esum
+    Fill1DHisto("Pmiss_h", p_miss.P(),weight);
     Fill1DHisto("Esum_h",ele->getEnergy() + pos->getEnergy(),weight);
-    Fill1DHisto("Psum_h",p_ele.P() + p_pos.P());
+    Fill1DHisto("Psum_h",p_ele.P() + p_pos.P(),weight);
     Fill1DHisto("PtAsym_h",pt_asym_val,weight);
     Fill1DHisto("thetax_v0_h",thetax_v0_val,weight);
     Fill1DHisto("thetax_pos_h",thetax_pos_val,weight);
@@ -125,7 +132,6 @@ void TrackHistos::Fill2DTrack(Track* track, float weight, const std::string& trk
         Fill2DHisto(trkname+"z0_vs_tanlambda_hh",track->getTanLambda(),z0,weight);
         
     }
-    
 }
 
 void TrackHistos::Fill1DTrack(Track* track, float weight, const std::string& trkname) {
@@ -145,7 +151,8 @@ void TrackHistos::Fill1DTrack(Track* track, float weight, const std::string& trk
     Fill1DHisto(trkname+"TanLambda_h",track->getTanLambda()   ,weight);
     Fill1DHisto(trkname+"Z0_h"       ,track->getZ0()          ,weight);
     Fill1DHisto(trkname+"time_h"     ,track->getTrackTime()   ,weight);
-    Fill1DHisto(trkname+"chi2_h"     ,track->getChi2Ndf()     ,weight);
+    Fill1DHisto(trkname+"chi2_h"     ,track->getChi2()        ,weight);
+    Fill1DHisto(trkname+"chi2ndf_h"  ,track->getChi2Ndf()     ,weight);
     Fill1DHisto(trkname+"nShared_h"  ,track->getNShared()     ,weight);
     Fill1DHisto(trkname+"nHits_2d_h" ,n_hits_2d               ,weight);
         
@@ -304,6 +311,8 @@ void TrackHistos::Fill2DHistograms(Vertex* vtx, float weight) {
         Fill2DHisto("vtx_p_svt_x_hh",vtxP,vtxPosSvt.X(),weight);
         Fill2DHisto("vtx_p_svt_y_hh",vtxP,vtxPosSvt.Y(),weight);
         
+	Fill2DHisto("vtx_svt_y_svt_z_hh",vtxPosSvt.Y(),vtxPosSvt.Z(),weight);
+	
         Fill2DHisto("vtx_p_sigmaZ_hh",vtxP,vtx->getCovariance()[5],weight);
         Fill2DHisto("vtx_p_sigmaX_hh",vtxP,vtx->getCovariance()[3],weight);
         Fill2DHisto("vtx_p_sigmaY_hh",vtxP,vtx->getCovariance()[0],weight);
@@ -325,6 +334,47 @@ void TrackHistos::FillTrackComparisonHistograms(Track* track_x, Track* track_y, 
                                                          weight);
         */
     }
+
+}
+
+
+//Residual Plots ============ They should probably go somewhere else ====================
+
+
+void TrackHistos::FillResidualHistograms(Track* track, int ly, double res, double sigma) {
+    
+    double trk_mom = track->getP();
+    std::string lyr = std::to_string(ly);
+    
+    TrackerHit* hit = nullptr;
+    //Get the hits on track 
+    for (int ihit = 0; ihit<track->getSvtHits()->GetEntries();++ihit) {
+        TrackerHit* tmphit = (TrackerHit*) track->getSvtHits()->At(ihit);
+        if (tmphit->getLayer() == ly) {
+            hit = tmphit;
+            break;
+        }
+    }
+    
+    if (!hit) {
+        std::cout<<"Hit-on-track residual infos not found on hit on track list for ly="<<ly<<std::endl;
+    }
+    
+    double hit_y = -9999.;
+    if (hit) {
+        hit_y = hit->getPosition()[1];
+    }
+    
+    //General Plots
+    Fill1DHisto("u_res_ly_"+lyr+"_h",res);
+    Fill2DHisto("u_res_ly_"+lyr+"_vsp_hh",trk_mom,res);
+    Fill2DHisto("u_res_ly_"+lyr+"_vsy_hh",hit_y,res);
+    
+    //Top = 0 bottom=1 - Per Volume
+    std::string vol = track->getTanLambda()>0 ? "top" : "bot";
+    Fill1DHisto("u_res_ly_"+lyr+"_"+vol+"_h",res);
+    Fill2DHisto("u_res_ly_"+lyr+"_"+vol+"_vsp_hh",trk_mom,res);
+        
 }
 
 

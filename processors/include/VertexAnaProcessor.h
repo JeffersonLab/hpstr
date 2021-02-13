@@ -9,6 +9,7 @@
 #include "Vertex.h"
 #include "Track.h"
 #include "TrackerHit.h"
+#include "MCParticle.h"
 #include "Particle.h"
 #include "Processor.h"
 #include "BaseSelector.h"
@@ -20,8 +21,10 @@
 //ROOT
 #include "TFile.h"
 #include "TTree.h"
+#include "TRefArray.h"
 #include "TBranch.h"
 #include "TVector3.h"
+#include "TLorentzVector.h"
 
 //C++ 
 #include <memory>
@@ -46,16 +49,25 @@ private:
     
     std::string selectionCfg_;
     TBranch* bvtxs_{nullptr};
+    TBranch* bhits_{nullptr};
     TBranch* btrks_{nullptr};
+    TBranch* bmcParts_{nullptr};
     TBranch* bevth_{nullptr};
+    TBranch* becal_{nullptr};
     
+    std::vector<CalCluster*> * ecal_{};
     std::vector<Vertex*> * vtxs_{};
     std::vector<Track*>  * trks_{};
+    std::vector<TrackerHit*>  * hits_{};
+    std::vector<MCParticle*>  * mcParts_{};
     EventHeader* evth_{nullptr};
     
     std::string anaName_{"vtxAna"};
     std::string vtxColl_{"Vertices"};
+    std::string hitColl_{"RotatedHelicalTrackHits"};
     std::string trkColl_{"GBLTracks"};
+    std::string ecalColl_{"RecoEcalClusters"};
+    std::string mcColl_{"MCParticle"};
     TTree* tree_{nullptr};
 
     std::shared_ptr<TrackHistos> _vtx_histos;
@@ -66,7 +78,6 @@ private:
     std::map<std::string, std::shared_ptr<FlatTupleMaker> > _reg_tuples;
     
     std::vector<std::string> _regions;
-    
 
     typedef std::map<std::string,std::shared_ptr<TrackHistos> >::iterator reg_it;
 
@@ -74,7 +85,7 @@ private:
     double timeOffset_{-999};
     //In GeV. Default is 2016 value;
     double beamE_{2.3};
-    int isData{0};
+    int isData_{0};
     std::shared_ptr<AnaHelpers> _ah;
 
 

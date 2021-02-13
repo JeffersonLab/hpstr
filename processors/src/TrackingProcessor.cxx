@@ -14,17 +14,24 @@ void TrackingProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring TrackingProcessor" << std::endl;
     try
     {
-        debug_           = parameters.getInteger("debug", debug_);
-        trkCollLcio_     = parameters.getString("trkCollLcio", trkCollLcio_);
-        trkCollRoot_     = parameters.getString("trkCollRoot", trkCollRoot_);
-        kinkRelCollLcio_ = parameters.getString("kinkRelCollLcio", kinkRelCollLcio_);
-        trkRelCollLcio_  = parameters.getString("trkRelCollLcio", trkRelCollLcio_);
-        trkhitCollRoot_  = parameters.getString("trkhitCollRoot", trkhitCollRoot_);
-        hitFitsCollLcio_ = parameters.getString("hitFitsCollLcio", hitFitsCollLcio_);
-        rawhitCollRoot_  = parameters.getString("rawhitCollRoot", rawhitCollRoot_);
+        debug_                   = parameters.getInteger("debug", debug_);
+        trkCollLcio_             = parameters.getString("trkCollLcio", trkCollLcio_);
+        trkCollRoot_             = parameters.getString("trkCollRoot", trkCollRoot_);
+        kinkRelCollLcio_         = parameters.getString("kinkRelCollLcio", kinkRelCollLcio_);
+        trkRelCollLcio_          = parameters.getString("trkRelCollLcio", trkRelCollLcio_);
+        trkhitCollRoot_          = parameters.getString("trkhitCollRoot", trkhitCollRoot_);
+        hitFitsCollLcio_         = parameters.getString("hitFitsCollLcio", hitFitsCollLcio_);
+        rawhitCollRoot_          = parameters.getString("rawhitCollRoot", rawhitCollRoot_);
         truthTracksCollLcio_     = parameters.getString("truthTrackCollLcio",truthTracksCollLcio_);
         truthTracksCollRoot_     = parameters.getString("truthTrackCollRoot",truthTracksCollRoot_);
         bfield_                  = parameters.getDouble("bfield",bfield_);
+
+        //Residual plotting is done in this processor for the moment.
+        doResiduals_             = parameters.getInteger("doResiduals",doResiduals_);
+        trackResDataLcio_        = parameters.getString("trackResDataLcio",trackResDataLcio_);
+        resCfgFilename_          = parameters.getString("resPlots",resCfgFilename_);
+        resoutname_              = parameters.getString("resoutname",resoutname_);
+
     }
     catch (std::runtime_error& error)
     {
@@ -44,6 +51,17 @@ void TrackingProcessor::initialize(TTree* tree) {
     
     if (!truthTracksCollRoot_.empty())
         tree->Branch(truthTracksCollRoot_.c_str(),&truthTracks_);
+
+
+    //Residual plotting
+    if (doResiduals_) {
+        trkResHistos_ = new TrackHistos(trkCollLcio_);
+        trkResHistos_->debugMode(debug_);
+        trkResHistos_->loadHistoConfig(resCfgFilename_);
+        trkResHistos_->doTrackComparisonPlots(false);
+        trkResHistos_->DefineHistos();
+    }
+    
 }
 
 bool TrackingProcessor::process(IEvent* ievent) {
@@ -107,6 +125,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
     catch (EVENT::DataNotAvailableException e)
     {
         std::cout << e.what() << std::endl;
+        return false;
     }
 
 
@@ -121,7 +140,6 @@ bool TrackingProcessor::process(IEvent* ievent) {
         SharedHitsLy0[itrack] = false;
         SharedHitsLy1[itrack] = false;
     }
-
     
     // Loop over all the LCIO Tracks and add them to the HPS event.
     for (int itrack = 0; itrack < tracks->getNumberOfElements(); ++itrack) {
@@ -144,35 +162,38 @@ bool TrackingProcessor::process(IEvent* ievent) {
         {
             std::cout << e.what() << std::endl;
             if (!gbl_kink_data)
-                std::cout<<"Failed retrieving " << kinkRelCollLcio_ <<std::endl;
+                std::cout<<"TrackingProcessor::Failed retrieving " << kinkRelCollLcio_ <<std::endl;
             if (!track_data)
-                std::cout<<"Failed retrieving " << trkRelCollLcio_ <<std::endl;
+                std::cout<<"TrackingProcessor::Failed retrieving " << trkRelCollLcio_ <<std::endl;
             
         }
 
         // Add a track to the event
         Track* track = utils::buildTrack(lc_track,gbl_kink_data,track_data);
-
-        //Add the momentum
         
-        track->setMomentum(bfield_);
-
-        // Get the collection of 3D hits associated with a LCIO Track
+        //Override the momentum of the track if the bfield_ > 0
+        if (bfield_>0)
+            track->setMomentum(bfield_);
+	
+        // Get the collection of hits associated with a LCIO Track
         EVENT::TrackerHitVec lc_tracker_hits = lc_track->getTrackerHits();
 
         //  Iterate through the collection of 3D hits (TrackerHit objects)
         //  associated with a track, find the corresponding hits in the HPS
         //  event and add references to the track
-
+        bool rotateHits = true;
+        int hitType = 0;
+        if (track->isKalmanTrack())
+            hitType=1; //SiClusters
+        
         for (auto lc_tracker_hit : lc_tracker_hits) {
-
-            TrackerHit* tracker_hit = utils::buildTrackerHit(static_cast<IMPL::TrackerHitImpl*>(lc_tracker_hit));
-
+            
+            TrackerHit* tracker_hit = utils::buildTrackerHit(static_cast<IMPL::TrackerHitImpl*>(lc_tracker_hit),rotateHits,hitType);
+            
             std::vector<RawSvtHit*> rawSvthitsOn3d;
             utils::addRawInfoTo3dHit(tracker_hit,static_cast<IMPL::TrackerHitImpl*>(lc_tracker_hit),
-                    raw_svt_hit_fits,&rawSvthitsOn3d);
-
-
+                                     raw_svt_hit_fits,&rawSvthitsOn3d,hitType);
+            
             for (auto rhit : rawSvthitsOn3d)
                 rawhits_.push_back(rhit);
 
@@ -244,7 +265,8 @@ bool TrackingProcessor::process(IEvent* ievent) {
                 EVENT::Track* lc_truth_track = static_cast<EVENT::Track*> (lc_truth_tracks.at(0));
                 Track* truth_track = utils::buildTrack(lc_truth_track,nullptr,nullptr);
                 track->setTruthLink(truth_track);
-                truth_track->setMomentum(bfield_);
+                if (bfield_>0)
+                    truth_track->setMomentum(bfield_);
                 //truth tracks phi needs to be corrected
                 if (truth_track->getPhi() > TMath::Pi())
                     truth_track->setPhi(truth_track->getPhi() - (TMath::Pi()) * 2.);
@@ -253,14 +275,48 @@ bool TrackingProcessor::process(IEvent* ievent) {
             }
             
         }
-        
-        
         tracks_.push_back(track);
-    }// tracks
+        
+        
+        
+        //Do the residual plots -- should be in another function
+        if (doResiduals_)  {
+            EVENT::LCCollection* trackRes_data_rel{nullptr};
+            try {
+                if (!trackResDataLcio_.empty())
+                    trackRes_data_rel = static_cast<EVENT::LCCollection*>(event->getLCCollection(trackResDataLcio_.c_str()));
+            }
+            catch (EVENT::DataNotAvailableException e)
+            {
+                std::cout<<e.what()<<std::endl;
+            }
+            
+            if (trackRes_data_rel) {
+                std::shared_ptr<UTIL::LCRelationNavigator> trackRes_data_nav = std::make_shared<UTIL::LCRelationNavigator>(trackRes_data_rel);
+                EVENT::LCObjectVec trackRes_data_vec = trackRes_data_nav->getRelatedFromObjects(lc_track);
+                IMPL::LCGenericObjectImpl* trackRes_data = static_cast<IMPL::LCGenericObjectImpl*>(trackRes_data_vec.at(0)); 
 
-    
+                /*
+                  //Some of the residuals do not get saved because sigma is negative. Will be fixed.
+                if (track->getTrackerHitCount() != trackRes_data->getNDouble()) {
+                    std::cout<<"WARNING-Different number of hit on track residuals wrt measurements"<<std::endl;
+                    std::cout<<"Hits::"<<track->getTrackerHitCount()<<" Residuals:"<<trackRes_data->getNDouble()<<std::endl;
+                }
+                */
+                
+                //Last int is the volume
+                for (int i_res = 0; i_res < trackRes_data->getNInt()-1;i_res++) {
+                    //std::cout<<"Residual ly " << trackRes_data->getIntVal(i_res)<<" res="<< trackRes_data->getDoubleVal(i_res)<<" sigma="<<trackRes_data->getFloatVal(i_res)<<std::endl;
+                    int ly = trackRes_data->getIntVal(i_res);
+                    double res = trackRes_data->getDoubleVal(i_res);
+                    double sigma = trackRes_data->getFloatVal(i_res);
+                    trkResHistos_->FillResidualHistograms(track,ly,res,sigma);
+                }
+            }//trackResData exists
+        }//doResiduals
 
-    
+        
+    }// tracks    
     
     //delete
     if (rawTracker_hit_fits_nav) {
@@ -274,6 +330,13 @@ bool TrackingProcessor::process(IEvent* ievent) {
 }
 
 void TrackingProcessor::finalize() { 
+
+    if (doResiduals_) {
+        TFile* outfile = new TFile(resoutname_.c_str(),"RECREATE");
+        trkResHistos_->saveHistos(outfile,trkCollLcio_);
+        if (trkResHistos_) delete trkResHistos_;
+        trkResHistos_=nullptr;
+    }
 }
 
 DECLARE_PROCESSOR(TrackingProcessor); 

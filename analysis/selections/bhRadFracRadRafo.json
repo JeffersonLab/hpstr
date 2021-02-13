@@ -1,0 +1,22 @@
+{
+    "momRatio_lt" : {
+        "cut"  : 1.1,
+        "id"   : 0,
+        "info" : "recP/trueP < 1.1"
+    },
+    "momRatio_gt" : {
+        "cut"  : 0.8,
+        "id"   : 1,
+        "info" : "recP/trueP > 0.8"
+    },
+    "momAngle_lt" : {
+        "cut"  : 1.0,
+        "id"   : 2,
+        "info" : "angle(recP, trueP) < 1 degree"
+    },
+    "nVtxs_eq" : {
+        "cut"  : 1,
+        "id"   : 3,
+        "info" : "N_{vtx}=1"
+    }
+}

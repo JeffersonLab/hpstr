@@ -32,7 +32,8 @@ void ECalDataProcessor::configure(const ParameterSet& parameters) {
 }
 
 void ECalDataProcessor::initialize(TTree* tree) {
-    tree->Branch(hitCollRoot_.c_str(), &cal_hits_);
+    if (!hitCollRoot_.empty())
+        tree->Branch(hitCollRoot_.c_str(), &cal_hits_);
     tree->Branch(clusCollRoot_.c_str(), &clusters_);
 }
 

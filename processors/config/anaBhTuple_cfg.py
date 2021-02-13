@@ -1,17 +1,17 @@
 import HpstrConf
 import sys
 import os
-import baseConfig
+import baseConfig as base
 
-(options,args) = baseConfig.parser.parse_args()
+options = base.parser.parse_args()
 
 
 # Use the input file to set the output file name
 infile = options.inFilename
 outfile = options.outFilename
 
-print 'Input file: %s' % infile
-print 'Output file: %s' % outfile
+print('Input file: {}'.format(infile))
+print('Output file: {}'.format(outfile))
 
 p = HpstrConf.Process()
 
@@ -34,7 +34,9 @@ bhana = HpstrConf.Processor('bhana', 'VertexAnaProcessor')
 bhana.parameters["debug"] = 1
 bhana.parameters["anaName"] = "bhana"
 bhana.parameters["trkColl"] = "GBLTracks"
+bhana.parameters["hitColl"] = "RotatedHelicalTrackHits"
 bhana.parameters["vtxColl"] = "TargetConstrainedV0Vertices"
+bhana.parameters["mcColl"]  = "MCParticle"
 bhana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/bhSelection.json'
 bhana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
 bhana.parameters["beamE"] = 2.3
@@ -43,13 +45,13 @@ CalTimeOffset=-999
 
 if (options.isData==1):
     CalTimeOffset=56.
-    print "Running on data file: Setting CalTimeOffset %d"  % CalTimeOffset
+    print("Running on data file: Setting CalTimeOffset %d"  % CalTimeOffset)
     
 elif (options.isData==0):
     CalTimeOffset=43.
-    print "Running on MC file: Setting CalTimeOffset %d"  % CalTimeOffset
+    print("Running on MC file: Setting CalTimeOffset %d"  % CalTimeOffset)
 else:
-    print "Specify which type of ntuple you are running on: -t 1 [for Data] / -t 0 [for MC]"
+    print("Specify which type of ntuple you are running on: -t 1 [for Data] / -t 0 [for MC]")
 
 
 bhana.parameters["CalTimeOffset"]=CalTimeOffset
@@ -57,12 +59,16 @@ bhana.parameters["CalTimeOffset"]=CalTimeOffset
 #Region definitions
 
 RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/"
-bhana.parameters["regionDefinitions"] = [RegionPath+'bhTight.json']
+bhana.parameters["regionDefinitions"] = [RegionPath+'bhTight.json',
+                                         RegionPath+'bhRadFracRad.json',
+                                         RegionPath+'bhRadFracRadRafo.json',
+                                         RegionPath+'bhRadFracRecoil.json'
+                                        ]
 
 # Sequence which the processors will run.
 p.sequence = [bhana]
 
-p.input_files=[infile]
+p.input_files = infile
 p.output_files = [outfile]
 
 p.printProcess()
