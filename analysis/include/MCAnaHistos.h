@@ -1,6 +1,9 @@
 #ifndef MCANAHISTOS_H
 #define MCANAHISTOS_H
 
+// ROOT
+#include "TLorentzVector.h"
+
 // HPSTR
 #include "HistoManager.h"
 #include "MCParticle.h"
@@ -16,8 +19,8 @@ class MCAnaHistos : public HistoManager {
         MCAnaHistos(const std::string& inputName) : HistoManager(inputName) { m_name = inputName; };
 
         virtual void Define3DHistos(){};
-        virtual void Define2DHistos(){};
-        virtual void Define1DHistos();
+        virtual void Define2DHistos();
+        virtual void Define1DHistos(){};
 
         void FillMCParticles(std::vector<MCParticle*> *mcParts, float weight = 1.);
         void FillMCTrackerHits(std::vector<MCTrackerHit*> *mcTrkrHits, float weight = 1.);

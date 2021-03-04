@@ -34,7 +34,7 @@ void MCAnaProcessor::initialize(TTree* tree) {
     histos = new MCAnaHistos(anaName_);
     histos->loadHistoConfig(histCfgFilename_);
     histos->DefineHistos();
-    //histos->Define2DHistos();
+    histos->Define2DHistos();
 
     // init TTree
     tree_->SetBranchAddress(partColl_.c_str(), &mcParts_, &bmcParts_);

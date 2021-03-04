@@ -1,4 +1,30 @@
 {
+    "pos_pxpy_hh" : {
+        "lowPxz" : 100,
+        "highPxz": 4700,
+        "stepPxz": 100,
+        "binsX"  : 200,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "binsY"  : 100,
+        "minY"   : -0.2,
+        "maxY"   : 0.2,
+        "xtitle" : "pos p_{x}",
+        "ytitle" : "pos p_{y}"
+    },
+    "ele_pxpy_hh" : {
+        "lowPxz" : 0,
+        "highPxz": 4700,
+        "stepPxz": 100,
+        "binsX"  : 200,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "binsY"  : 100,
+        "minY"   : -0.2,
+        "maxY"   : 0.2,
+        "xtitle" : "ele p_{x}",
+        "ytitle" : "ele p_{y}"
+    },
     "numMCparts_h" : {
         "bins"   : 60,
         "minX"   : -0.5,
