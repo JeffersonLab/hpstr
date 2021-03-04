@@ -38,16 +38,16 @@ void MCAnaProcessor::initialize(TTree* tree) {
 
     // init TTree
     tree_->SetBranchAddress(partColl_.c_str(), &mcParts_, &bmcParts_);
-    tree_->SetBranchAddress(trkrHitColl_.c_str(), &mcTrkrHits_, &bmcTrkrHits_);
-    tree_->SetBranchAddress(ecalHitColl_.c_str(), &mcEcalHits_, &bmcEcalHits_);
+    // tree_->SetBranchAddress(trkrHitColl_.c_str(), &mcTrkrHits_, &bmcTrkrHits_);
+    // tree_->SetBranchAddress(ecalHitColl_.c_str(), &mcEcalHits_, &bmcEcalHits_);
 
 }
 
 bool MCAnaProcessor::process(IEvent* ievent) {
 
     histos->FillMCParticles(mcParts_);
-    histos->FillMCTrackerHits(mcTrkrHits_);
-    histos->FillMCEcalHits(mcEcalHits_);
+    // histos->FillMCTrackerHits(mcTrkrHits_);
+    // histos->FillMCEcalHits(mcEcalHits_);
 
     return true;
 }

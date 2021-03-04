@@ -15,6 +15,9 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, float weigh
         MCParticle *part = mcParts->at(i);
         int pdg = part->getPDG();
         int momPdg = part->getMomPDG();
+	//	if ( momPdg == 622 )
+	//  std::cout<<"Found particle with momPDG = 622, part = " << pdg << std::endl;
+ 
         double energy = part->getEnergy();
         double massMeV = 1000.0*part->getMass();
         double zPos = part->getVertexPosition().at(2);
@@ -23,6 +26,20 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, float weigh
             Fill1DHisto("mc622Mass_h", massMeV, weight);
             Fill1DHisto("mc622Z_h", zPos, weight);
         }
+
+        if(pdg == 625)
+        {
+            Fill1DHisto("mc625Mass_h", massMeV, weight);
+            Fill1DHisto("mc625Z_h", zPos, weight);
+        }
+
+        if(pdg == 624)
+        {
+            Fill1DHisto("mc624Mass_h", massMeV, weight);
+            Fill1DHisto("mc624Z_h", zPos, weight);
+        }
+
+
         if (fabs(pdg) == 13)
         {
             nMuons++;
@@ -31,6 +48,27 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, float weigh
                 minMuonE = energy;
             }
         }
+
+	//	if (momPdg > 600)
+	// std::cout<< i <<" : mom is "<<momPdg<<", mine is "<<pdg<<std::endl;
+
+	if (pdg == 11 && momPdg == 625){
+	  std::vector<double> p = part->getMomentum();
+	  Fill1DHisto("truthRadElecE_h",energy,weight);
+	  Fill1DHisto("truthRadEleczPos_h",zPos,weight);
+	  Fill1DHisto("truthRadElecPt_h",sqrt(p[0]*p[0] + p[1]*p[1]),weight);
+	  Fill1DHisto("truthRadElecPz_h",p[2],weight);
+	}
+
+	if (pdg == -11 && momPdg == 625){
+	  std::vector<double> p = part->getMomentum();
+	  Fill1DHisto("truthRadPosE_h",energy,weight);
+	  Fill1DHisto("truthRadPoszPos_h",zPos,weight);
+	  Fill1DHisto("truthRadPosPt_h",sqrt(p[0]*p[0] + p[1]*p[1]),weight);
+	  Fill1DHisto("truthRadPosPz_h",p[2],weight);
+	}
+ 
+
         Fill1DHisto("MCpartsEnergy_h", energy, weight);
         Fill1DHisto("MCpartsEnergyLow_h", energy*1000.0, weight);// Scaled to MeV
     }

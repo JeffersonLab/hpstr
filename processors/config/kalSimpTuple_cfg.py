@@ -76,9 +76,9 @@ track.parameters["rawhitCollRoot"] = ''
 track.parameters["rawhitCollRoot"] = ''#'SCTRawHitsOnTrack_KF'
 
 #LT uncommented
-if (not options.isData):
-    track.parameters["truthTrackCollLcio"] = 'KalmanFullTracksToTruthTrackRelations'
-    track.parameters["truthTrackCollRoot"] = 'Truth_KFTracks'
+#if (not options.isData):
+#    track.parameters["truthTrackCollLcio"] = 'KalmanFullTracksToTruthTrackRelations'
+#    track.parameters["truthTrackCollRoot"] = 'Truth_KFTracks'
 
 #LT check if we need the b field or not -- version of HPS java
 # for Jess's files need to give it b-field
@@ -98,9 +98,9 @@ trackgbl.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 trackgbl.parameters["rawhitCollRoot"] = ''#'SVTRawHitsOnTrack'
 
 #LT uncommented
-if (not options.isData):
-    trackgbl.parameters["truthTrackCollLcio"] = 'GBLTracksToTruthTrackRelations'
-    trackgbl.parameters["truthTrackCollRoot"] = 'Truth_GBLTracks'
+#if (not options.isData):
+#    trackgbl.parameters["truthTrackCollLcio"] = 'GBLTracksToTruthTrackRelations'
+#    trackgbl.parameters["truthTrackCollRoot"] = 'Truth_GBLTracks'
 
 #LT check if we need the b field or not -- version of HPS java                                     
 trackgbl.parameters["bfield"] = bfield[str(options.year)]

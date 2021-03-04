@@ -32,7 +32,7 @@ p.add_library("libprocessors")
 
 recoana_kf = HpstrConf.Processor('vtxana_kf', 'VertexAnaProcessor')
 recoana_gbl = HpstrConf.Processor('vtxana_gbl', 'VertexAnaProcessor')
-
+mcana =  HpstrConf.Processor('mcpartana', 'MCAnaProcessor')
 ###############################
 #   Processor Configuration   #
 ###############################
@@ -75,6 +75,15 @@ recoana_gbl.parameters["vtxColl"] = "UnconstrainedV0Vertices"
 recoana_gbl.parameters["hitColl"] = "RotatedHelicalOnTrackHits"
 recoana_gbl.parameters["trkColl"] = "GBLTracks"
 
+
+#MCParticleAna
+mcana.parameters["debug"] = 0
+mcana.parameters["anaName"] = "mcAna"
+mcana.parameters["partColl"] = "MCParticle"
+mcana.parameters["trkrHitColl"] = "TrackerHits"
+mcana.parameters["ecalHitColl"] = "EcalHits"
+mcana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
+
 #    
 #    RegionPath+'ESumCR.json',
 #    RegionPath+'TightNoSharedL0.json',
@@ -84,10 +93,10 @@ recoana_gbl.parameters["trkColl"] = "GBLTracks"
 #p.sequence = [recoana_kf,recoana_gbl]
 if (options.tracking == "KF"):
     print("Run KalmanFullTracks analysis")
-    p.sequence = [recoana_kf]
+    p.sequence = [recoana_kf,mcana]
 elif (options.tracking == "GBL"):
     print("Run GBL analysis")
-    p.sequence = [recoana_gbl]
+    p.sequence = [recoana_gbl]#,mcana]
 else :
     print ("ERROR::Need to specify which tracks KF or GBL")
     exit(1)
