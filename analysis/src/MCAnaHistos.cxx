@@ -50,7 +50,7 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, float weigh
         double zPos = part->getVertexPosition().at(2);
         std::vector<double> partP = part->getMomentum();
         TLorentzVector part4P(partP.at(0), partP.at(1), partP.at(2), energy);
-        part4P.RotateY(-0.03);
+        part4P.RotateY(-0.0305);
         if(pdg == 622)
         {
             Fill1DHisto("mc622Mass_h", massMeV, weight);
