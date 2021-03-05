@@ -84,7 +84,7 @@
     "truthRadElecPt_h" : {
 	"bins" : 200,
 	"minX" : 0,
-	"maxX" : 1.0,
+	"maxX" : 0.2,
 	"xtitle" : "p_{T} of daughter Electron Particle [GeV]",
 	"ytitle" : "Sim Particles / 10 MeV"
     },
@@ -113,7 +113,7 @@
     "truthRadPosPt_h" : {
 	"bins" : 200,
 	"minX" : 0,
-	"maxX" : 1.0,
+	"maxX" : 0.2,
 	"xtitle" : "p_{T} of daughter Electron Particle [GeV]",
 	"ytitle" : "Sim Particles / 10 MeV"
     },

@@ -21,7 +21,7 @@ void MCAnaProcessor::configure(const ParameterSet& parameters) {
         trkrHitColl_     = parameters.getString("trkrHitColl");
         ecalHitColl_     = parameters.getString("ecalHitColl");
         histCfgFilename_ = parameters.getString("histCfg");
-	//	analysisFlag_    = parameters.getString("
+       	analysis_        = parameters.getString("analysis");
     }
     catch (std::runtime_error& error)
     {
@@ -53,7 +53,7 @@ void MCAnaProcessor::initialize(TTree* tree) {
 
 bool MCAnaProcessor::process(IEvent* ievent) {
 
-    histos->FillMCParticles(mcParts_);
+  histos->FillMCParticles(mcParts_, analysis_);
     if(mcTrkrHits_)
       histos->FillMCTrackerHits(mcTrkrHits_);
     if(mcEcalHits_)

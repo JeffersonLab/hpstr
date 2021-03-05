@@ -9,8 +9,13 @@ options = base.parser.parse_args()
 infile = options.inFilename
 outfile = options.outFilename
 
+analysis = options.analysis
+
+
+
 print('Input file: %s' % infile)
 print('Output file: %s' % outfile)
+print('Analysis : %s' % analysis)
 
 p = HpstrConf.Process()
 
@@ -35,6 +40,7 @@ mcana.parameters["anaName"] = "mcAna"
 mcana.parameters["partColl"] = "MCParticle"
 mcana.parameters["trkrHitColl"] = "TrackerHit"
 mcana.parameters["ecalHitColl"] = "CalHit"
+mcana.parameters["analysis"] = analysis
 mcana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
 
 # Sequence which the processors will run.

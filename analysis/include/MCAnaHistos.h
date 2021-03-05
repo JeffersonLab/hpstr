@@ -22,7 +22,7 @@ class MCAnaHistos : public HistoManager {
         virtual void Define2DHistos();
         virtual void Define1DHistos(){};
 
-        void FillMCParticles(std::vector<MCParticle*> *mcParts, float weight = 1.);
+        void FillMCParticles(std::vector<MCParticle*> *mcParts,std::string analysis, float weight = 1.);
         void FillMCTrackerHits(std::vector<MCTrackerHit*> *mcTrkrHits, float weight = 1.);
         void FillMCEcalHits(std::vector<MCEcalHit*> *mcEcalHits, float weight = 1.);
 
