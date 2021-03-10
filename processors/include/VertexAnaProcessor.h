@@ -14,6 +14,9 @@
 #include "Processor.h"
 #include "BaseSelector.h"
 #include "TrackHistos.h"
+#include "MCAnaHistos.h"
+
+
 #include "FlatTupleMaker.h"
 #include "AnaHelpers.h"
 
@@ -71,21 +74,27 @@ private:
     TTree* tree_{nullptr};
 
     std::shared_ptr<TrackHistos> _vtx_histos;
+    std::shared_ptr<MCAnaHistos> _mc_vtx_histos;
     
     //Duplicate.. We can make a single class.. ?
     std::map<std::string, std::shared_ptr<BaseSelector> > _reg_vtx_selectors;
     std::map<std::string, std::shared_ptr<TrackHistos> > _reg_vtx_histos;
+    std::map<std::string, std::shared_ptr<MCAnaHistos> > _reg_mc_vtx_histos;
     std::map<std::string, std::shared_ptr<FlatTupleMaker> > _reg_tuples;
     
     std::vector<std::string> _regions;
 
     typedef std::map<std::string,std::shared_ptr<TrackHistos> >::iterator reg_it;
+    typedef std::map<std::string,std::shared_ptr<MCAnaHistos> >::iterator reg_mc_it;
 
     std::string histoCfg_{""};
+    std::string mcHistoCfg_{""};
     double timeOffset_{-999};
     //In GeV. Default is 2016 value;
     double beamE_{2.3};
     int isData_{0};
+    std::string analysis_{"vertex"};
+
     std::shared_ptr<AnaHelpers> _ah;
 
 

@@ -89,7 +89,7 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, std::string
 	bool partOfInt = false;
 	//	std::cout<<analysis<<std::endl;
 	if (analysis == "simps"){
-	  if (fabs(pdg) == 11 && momPdg == 625)
+	  if (fabs(pdg) == 11 && momPdg == 622)
 	    partOfInt = true;
 	}else{
 	  if ((momPdg == 623 || momPdg == 622) && (fabs(pdg) == 11))

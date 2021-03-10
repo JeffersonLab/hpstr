@@ -3,7 +3,15 @@ import sys
 import os
 import baseConfig as base
 
+#options = base.parser.parse_args()
+
+
+base.parser.add_argument("-w", "--tracking", type=str, dest="tracking",
+                  help="Which tracking to use to make plots", metavar="tracking", default="KF")
 options = base.parser.parse_args()
+
+
+print(options)
 
 # Use the input file to set the output file name
 infile = options.inFilename

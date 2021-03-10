@@ -42,12 +42,12 @@ void MCAnaProcessor::initialize(TTree* tree) {
     if (tree_->FindBranch(trkrHitColl_.c_str()))
       tree_->SetBranchAddress(trkrHitColl_.c_str(), &mcTrkrHits_, &bmcTrkrHits_);
     else
-      std::cout<<"No tracker hit collection"<<std::endl;
+      std::cout<<"WARNING: No tracker hit collection, will skip FillMCTrackerHits! "<<std::endl;
 
     if ( tree_->FindBranch(ecalHitColl_.c_str()))
       tree_->SetBranchAddress(ecalHitColl_.c_str(), &mcEcalHits_, &bmcEcalHits_);
     else
-      std::cout<<"No Ecal hit collection"<<std::endl;
+      std::cout<<"WARNING: No Ecal hit collection, will skip FillMCEcalHits"<<std::endl;
 
 }
 

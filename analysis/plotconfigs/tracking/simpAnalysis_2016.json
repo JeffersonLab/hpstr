@@ -723,7 +723,7 @@
     "maxX" : 0.5,
     "xtitle" : "#Delta#theta(miss,e^{+})",
     "ytitle" : "events"
-}
+},
 "ele_pos_clusTimeDiff_h" : {"bins": 200, "minX": 0, "maxX": 16, "xtitle": "#Delta_{t}(e^{-},e^{+})_{clus} [ns]", "ytitle": "Events"}
 ,
 "n_tracks_noVtxs_h" : 
@@ -767,4 +767,5 @@
 ,
 "Pmiss_h" : 
 {"bins": 100, "minX": 0, "maxX": 2, "xtitle": "p^{miss} [GeV]", "ytitle": "Events"}
+
 }
