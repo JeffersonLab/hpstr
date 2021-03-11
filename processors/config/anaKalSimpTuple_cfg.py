@@ -32,7 +32,7 @@ p.add_library("libprocessors")
 
 recoana_kf = HpstrConf.Processor('vtxana_kf', 'VertexAnaProcessor')
 recoana_gbl = HpstrConf.Processor('vtxana_gbl', 'VertexAnaProcessor')
-
+mcana =  HpstrConf.Processor('mcpartana', 'MCAnaProcessor')
 ###############################
 #   Processor Configuration   #
 ###############################
@@ -43,10 +43,12 @@ recoana_kf.parameters["vtxColl"] = "UnconstrainedV0Vertices_KF"
 recoana_kf.parameters["mcColl"]  = "MCParticle"
 recoana_kf.parameters["hitColl"] = "SiClustersOnTrack"
 recoana_kf.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/vertexSelection.json'
-recoana_kf.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
+recoana_kf.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/simpAnalysis_2016.json"
+recoana_kf.parameters["mcHistoCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
 recoana_kf.parameters["beamE"] = base.beamE[str(options.year)]
 recoana_kf.parameters["isData"] = options.isData
-recoana_kf.parameters["debug"] = 1
+recoana_kf.parameters["analysis"] = options.analysis
+recoana_kf.parameters["debug"] = 0
 CalTimeOffset=-999
 
 if (options.isData==1):
@@ -75,6 +77,15 @@ recoana_gbl.parameters["vtxColl"] = "UnconstrainedV0Vertices"
 recoana_gbl.parameters["hitColl"] = "RotatedHelicalOnTrackHits"
 recoana_gbl.parameters["trkColl"] = "GBLTracks"
 
+
+#MCParticleAna
+mcana.parameters["debug"] = 0
+mcana.parameters["anaName"] = "mcAna"
+mcana.parameters["partColl"] = "MCParticle"
+mcana.parameters["trkrHitColl"] = "TrackerHits"
+mcana.parameters["ecalHitColl"] = "EcalHits"
+mcana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
+
 #    
 #    RegionPath+'ESumCR.json',
 #    RegionPath+'TightNoSharedL0.json',
@@ -84,10 +95,10 @@ recoana_gbl.parameters["trkColl"] = "GBLTracks"
 #p.sequence = [recoana_kf,recoana_gbl]
 if (options.tracking == "KF"):
     print("Run KalmanFullTracks analysis")
-    p.sequence = [recoana_kf]
+    p.sequence = [recoana_kf] #,mcana]
 elif (options.tracking == "GBL"):
     print("Run GBL analysis")
-    p.sequence = [recoana_gbl]
+    p.sequence = [recoana_gbl]#,mcana]
 else :
     print ("ERROR::Need to specify which tracks KF or GBL")
     exit(1)

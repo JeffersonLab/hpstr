@@ -29,9 +29,11 @@ void VertexAnaProcessor::configure(const ParameterSet& parameters) {
 	
         selectionCfg_   = parameters.getString("vtxSelectionjson",selectionCfg_);
         histoCfg_ = parameters.getString("histoCfg",histoCfg_);
+        mcHistoCfg_ = parameters.getString("mcHistoCfg",mcHistoCfg_);
         timeOffset_ = parameters.getDouble("CalTimeOffset",timeOffset_);
         beamE_  = parameters.getDouble("beamE",beamE_);
         isData_  = parameters.getInteger("isData",isData_);
+	analysis_        = parameters.getString("analysis");
 
         //region definitions
         regionSelections_ = parameters.getVString("regionDefinitions",regionSelections_);
@@ -56,7 +58,18 @@ void VertexAnaProcessor::initialize(TTree* tree) {
     _vtx_histos->loadHistoConfig(histoCfg_);
     _vtx_histos->DefineHistos();
 
+    _mc_vtx_histos = std::make_shared<MCAnaHistos>(anaName_+"_mc_"+"vtxSelection");
+    _mc_vtx_histos->loadHistoConfig(mcHistoCfg_);
+    _mc_vtx_histos->DefineHistos();
+    _mc_vtx_histos->Define2DHistos();
 
+
+    //    histos = new MCAnaHistos(anaName_);
+    //histos->loadHistoConfig(histCfgFilename_);
+    //histos->DefineHistos();
+    //histos->Define2DHistos();
+
+   
     //For each region initialize plots
 
     for (unsigned int i_reg = 0; i_reg < regionSelections_.size(); i_reg++) {
@@ -69,6 +82,13 @@ void VertexAnaProcessor::initialize(TTree* tree) {
         _reg_vtx_histos[regname] = std::make_shared<TrackHistos>(anaName_+"_"+regname);
         _reg_vtx_histos[regname]->loadHistoConfig(histoCfg_);
         _reg_vtx_histos[regname]->DefineHistos();
+
+
+        _reg_mc_vtx_histos[regname] = std::make_shared<MCAnaHistos>(anaName_+"_mc_"+regname);
+        _reg_mc_vtx_histos[regname]->loadHistoConfig(mcHistoCfg_);
+        _reg_mc_vtx_histos[regname]->DefineHistos();
+
+
 
         _reg_tuples[regname] = std::make_shared<FlatTupleMaker>(anaName_+"_"+regname+"_tree");
         _reg_tuples[regname]->addVariable("unc_vtx_mass");
@@ -115,6 +135,8 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 apZ = mcParts_->at(i)->getVertexPosition().at(2);
             }
         }
+  
+	_mc_vtx_histos->FillMCParticles(mcParts_, analysis_);
     }
     //Store processed number of events
     std::vector<Vertex*> selected_vtxs;
@@ -358,6 +380,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 	
 	passVtxPresel = true;
 
+
         selected_vtxs.push_back(vtx);       
         vtxSelector->clearSelector();
     }
@@ -538,6 +561,10 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             //If this is MC check if MCParticle matched to the electron track is from rad or recoil
             if(!isData_)
             {
+
+	      //Fill MC plots after all selections
+	      _reg_mc_vtx_histos[region]->FillMCParticles(mcParts_, analysis_);
+
                 //Build map of hits and the associated MC part ids for later
                 TRefArray* ele_trk_hits = ele_trk_gbl->getSvtHits();
                 std::map<int, std::vector<int> > trueHitIDs;
@@ -718,6 +745,11 @@ void VertexAnaProcessor::finalize() {
     _vtx_histos->saveHistos(outF_,_vtx_histos->getName());
     outF_->cd(_vtx_histos->getName().c_str());
     vtxSelector->getCutFlowHisto()->Write();
+    
+    outF_->cd();
+    _mc_vtx_histos->saveHistos(outF_, _mc_vtx_histos->getName());
+    //delete histos;
+    //histos = nullptr;
 
 
     for (reg_it it = _reg_vtx_histos.begin(); it!=_reg_vtx_histos.end(); ++it) {
@@ -727,6 +759,12 @@ void VertexAnaProcessor::finalize() {
         _reg_vtx_selectors[it->first]->getCutFlowHisto()->Write();
         //Save tuples
         _reg_tuples[it->first]->writeTree();
+    }
+
+    for (reg_mc_it it = _reg_mc_vtx_histos.begin(); it!=_reg_mc_vtx_histos.end(); ++it) {
+        std::string dirName = anaName_+"_mc_"+it->first;
+        (it->second)->saveHistos(outF_,dirName);
+        outF_->cd(dirName.c_str());
     }
 
     outF_->Close();

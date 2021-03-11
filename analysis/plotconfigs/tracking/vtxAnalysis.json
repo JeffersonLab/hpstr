@@ -1,66 +1,66 @@
 {
     "ele_pos_clusTimeDiff_h": {
-	"bins" : 200,
-	"minX" : 0, 
-	"maxX" : 16,
-	"xtitle" : "#Delta_{t}(e^{-},e^{+})_{clus} [ns]",
-	"ytitle" : "Events"
+        "bins" : 200,
+        "minX" : 0, 
+        "maxX" : 16,
+        "xtitle" : "#Delta_{t}(e^{-},e^{+})_{clus} [ns]",
+        "ytitle" : "Events"
     },
     "n_tracks_noVtxs_h" : {
-	"bins" : 10,
-	"minX" : 0,
-	"maxX" : 10,
-	"xtitle": "N_{trks}",
-	"ytitle": "Events"
+        "bins" : 10,
+        "minX" : 0,
+        "maxX" : 10,
+        "xtitle": "N_{trks}",
+        "ytitle": "Events"
     },
     "n_tracks_isVtxs_h" : {
-	"bins" : 10,
-	"minX" : 0,
-	"maxX" : 10,
-	"xtitle": "N_{trks}",
-	"ytitle": "Events"
+        "bins" : 10,
+        "minX" : 0,
+        "maxX" : 10,
+        "xtitle": "N_{trks}",
+        "ytitle": "Events"
     },
     "n_ecalClus_noVtxs_h" : {
-	"bins" : 10,
-	"minX" : 0,
-	"maxX" : 10,
-	"xtitle": "N_{clusters}",
-	"ytitle": "Events"
+        "bins" : 10,
+        "minX" : 0,
+        "maxX" : 10,
+        "xtitle": "N_{clusters}",
+        "ytitle": "Events"
     },
     "n_ecalClus_isVtxs_h" : {
-	"bins" : 10,
-	"minX" : 0,
-	"maxX" : 10,
-	"xtitle": "N_{clusters}",
-	"ytitle": "Events"
+        "bins" : 10,
+        "minX" : 0,
+        "maxX" : 10,
+        "xtitle": "N_{clusters}",
+        "ytitle": "Events"
     },
     "EecalClus_noVtxs_h" : {
-	"bins" : 100,
-	"minX" : 0,
-	"maxX" : 2.5,
-	"xtitle": "Cluster E [GeV]",
-	"ytitle": "Events"
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 2.5,
+        "xtitle": "Cluster E [GeV]",
+        "ytitle": "Events"
     },
     "EecalClus_isVtxs_h" : {
-	"bins" : 100,
-	"minX" : 0,
-	"maxX" : 2.5,
-	"xtitle": "Cluster E [GeV]",
-	"ytitle": "Events"
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 2.5,
+        "xtitle": "Cluster E [GeV]",
+        "ytitle": "Events"
     },
     "Ptracks_noVtxs_h" : {
-	"bins" : 100,
-	"minX" : 0,
-	"maxX" : 3.0,
-	"xtitle": "P_{trks} [GeV]",
-	"ytitle": "Events"
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 3.0,
+        "xtitle": "P_{trks} [GeV]",
+        "ytitle": "Events"
     },
     "Ptracks_isVtxs_h" : {
-	"bins" : 100,
-	"minX" : 0,
-	"maxX" : 3.0,
-	"xtitle": "P_{trks} [GeV]",
-	"ytitle": "Events"
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 3.0,
+        "xtitle": "P_{trks} [GeV]",
+        "ytitle": "Events"
     },
     "n_tracks_h" : {
         "bins"   : 10,
@@ -586,21 +586,21 @@
         "ytitle" : "z_{vtx} [mm]"
     },
     "vtx_svt_y_svt_z_hh" : {
-	"binsX" : 200,
-	"minX"  : -5.0,
-	"maxX"  : 5.0,
-	"binsY" : 400,
-	"minY"  : -100,
-	"maxY"  : 100,
-	"xtitle": "vtx Y pos [mm]",
-	"ytitle": "vtx Z pos [mm]"
+        "binsX" : 200,
+        "minX"  : -5.0,
+        "maxX"  : 5.0,
+        "binsY" : 400,
+        "minY"  : -100,
+        "maxY"  : 100,
+        "xtitle": "vtx Y pos [mm]",
+        "ytitle": "vtx Z pos [mm]"
     },
     "Pmiss_h" : {
-	"bins" : 100,
-	"minX" : 0,
-	"maxX" : 2,
-	"xtitle" : "p^{miss} [GeV]",
-	"ytitle" : "Events"
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 2,
+        "xtitle" : "p^{miss} [GeV]",
+        "ytitle" : "Events"
     },
     "Esum_h" : {
         "bins" : 100,
