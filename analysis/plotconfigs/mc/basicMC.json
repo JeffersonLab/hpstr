@@ -75,25 +75,25 @@
         "ytitle" : "Sim Particles / 1 mm"
     },
     "truthRadElecE_h" : {
-	"bins" : 200,
-	"minX" : 0,
-	"maxX" : 4.5,
-	"xtitle" : "Energy of daughter Electron Particle [GeV]",
-	"ytitle" : "Sim Particles / 10 MeV"
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 4.5,
+        "xtitle" : "Energy of daughter Electron Particle [GeV]",
+        "ytitle" : "Sim Particles / 10 MeV"
     },
     "truthRadElecPt_h" : {
-	"bins" : 200,
-	"minX" : 0,
-	"maxX" : 0.2,
-	"xtitle" : "p_{T} of daughter Electron Particle [GeV]",
-	"ytitle" : "Sim Particles / 10 MeV"
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 0.2,
+        "xtitle" : "p_{T} of daughter Electron Particle [GeV]",
+        "ytitle" : "Sim Particles / 10 MeV"
     },
     "truthRadElecPz_h" : {
-	"bins" : 200,
-	"minX" : 0,
-	"maxX" : 4.5,
-	"xtitle" : "p_{z} of daughter Electron Particle [GeV]",
-	"ytitle" : "Sim Particles / 10 MeV"
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 4.5,
+        "xtitle" : "p_{z} of daughter Electron Particle [GeV]",
+        "ytitle" : "Sim Particles / 10 MeV"
     },
     "truthRadEleczPos_h" : {
         "bins" : 200,
@@ -102,27 +102,26 @@
         "xtitle" : "Z Position of Daughter Electron [mm]",
         "ytitle" : "Sim Particles / 1 mm"
     },
-
     "truthRadPosE_h" : {
-	"bins" : 200,
-	"minX" : 0,
-	"maxX" : 4.5,
-	"xtitle" : "Energy of daughter Electron Particle [GeV]",
-	"ytitle" : "Sim Particles / 10 MeV"
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 4.5,
+        "xtitle" : "Energy of daughter Electron Particle [GeV]",
+        "ytitle" : "Sim Particles / 10 MeV"
     },
     "truthRadPosPt_h" : {
-	"bins" : 200,
-	"minX" : 0,
-	"maxX" : 0.2,
-	"xtitle" : "p_{T} of daughter Electron Particle [GeV]",
-	"ytitle" : "Sim Particles / 10 MeV"
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 0.2,
+        "xtitle" : "p_{T} of daughter Electron Particle [GeV]",
+        "ytitle" : "Sim Particles / 10 MeV"
     },
     "truthRadPosPz_h" : {
-	"bins" : 200,
-	"minX" : 0,
-	"maxX" : 4.5,
-	"xtitle" : "p_{z} of daughter Electron Particle [GeV]",
-	"ytitle" : "Sim Particles / 10 MeV"
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 4.5,
+        "xtitle" : "p_{z} of daughter Electron Particle [GeV]",
+        "ytitle" : "Sim Particles / 10 MeV"
     },
     "truthRadPoszPos_h" : {
         "bins" : 200,
@@ -131,7 +130,6 @@
         "xtitle" : "Z Position of Daughter Electron [mm]",
         "ytitle" : "Sim Particles / 1 mm"
     },
-
     "MCpartsEnergy_h" : {
         "bins" : 450,
         "minX" : 0,

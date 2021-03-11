@@ -40,6 +40,7 @@ recoana.parameters["ecalHitColl"] = "RecoEcalHits"
 recoana.parameters["ecalClusColl"] = "RecoEcalClusters"
 recoana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/basicRecoHit.json'
 recoana.parameters["mcHistoCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
+recoana.parameters["analysis"] = options.analysis
 
 # Sequence which the processors will run.
 p.sequence = [recoana]
