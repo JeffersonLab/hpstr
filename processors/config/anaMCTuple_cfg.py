@@ -46,8 +46,8 @@ mcana = HpstrConf.Processor('mcana', 'MCAnaProcessor')
 mcana.parameters["debug"] = 0
 mcana.parameters["anaName"] = "mcAna"
 mcana.parameters["partColl"] = "MCParticle"
-mcana.parameters["trkrHitColl"] = "TrackerHit"
-mcana.parameters["ecalHitColl"] = "CalHit"
+mcana.parameters["trkrHitColl"] = "TrackerHits"
+mcana.parameters["ecalHitColl"] = "EcalHits"
 mcana.parameters["analysis"] = analysis
 mcana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
 
