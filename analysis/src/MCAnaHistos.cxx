@@ -35,7 +35,7 @@ void MCAnaHistos::Define2DHistos() {
     }
 }
 
-void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, float weight ) {
+void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, std::string analysis, float weight ) {
     int nParts = mcParts->size();
     Fill1DHisto("numMCparts_h", (float)nParts, weight);
     int nMuons = 0;
@@ -49,8 +49,8 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, float weigh
         MCParticle *part = mcParts->at(i);
         int pdg = part->getPDG();
         int momPdg = part->getMomPDG();
-        if ( pdg > 600)
-            std::cout<<"Found particle with momPDG = "<<momPdg<<" part = " << pdg << " mass " << part->getMass() << std::endl;
+        //if ( pdg > 600)
+        //    std::cout<<"Found particle with momPDG = "<<momPdg<<" part = " << pdg << " mass " << part->getMass() << std::endl;
 
         double energy = part->getEnergy();
         double massMeV = 1000.0*part->getMass();
@@ -85,7 +85,18 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, float weigh
                 minMuonE = energy;
             }
         }
-        if ((momPdg == 623 || momPdg == 622) && (fabs(pdg) == 11))
+
+        bool partOfInt = false;
+        //	std::cout<<analysis<<std::endl;
+        if (analysis == "simps"){
+            if (fabs(pdg) == 11 && momPdg == 622)
+                partOfInt = true;
+        }else{
+            if ((momPdg == 623 || momPdg == 622) && (fabs(pdg) == 11))
+                partOfInt = true;
+        }
+
+        if (partOfInt == true)
         {
             double PperpB = 1000.0*sqrt( (part4P.Px()*part4P.Px()) + (part4P.Pz()*part4P.Pz()) );
             int Pxz = int(floor(PperpB));
@@ -104,7 +115,7 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, float weigh
         }
 
 
-        if (pdg == 11 && momPdg == 625){
+        if (pdg == 11 && partOfInt == true){
             ele = part4P;
             Fill1DHisto("truthRadElecE_h",energy,weight);
             Fill1DHisto("truthRadEleczPos_h",zPos,weight);
@@ -112,7 +123,7 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, float weigh
             Fill1DHisto("truthRadElecPz_h",part4P.Pz(),weight);
         }
 
-        if (pdg == -11 && momPdg == 625){
+        if (pdg == -11 && partOfInt == true){
             pos = part4P;
             Fill1DHisto("truthRadPosE_h",energy,weight);
             Fill1DHisto("truthRadPoszPos_h",zPos,weight);
@@ -124,8 +135,8 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, float weigh
         Fill1DHisto("MCpartsEnergyLow_h", energy*1000.0, weight);// Scaled to MeV
     }
 
-    TLorentzVector res = ele + pos;
-    std::cout<<" My resonance mass is "<< res.M()<< std::endl;
+    //TLorentzVector res = ele + pos;
+    //std::cout<<" My resonance mass is "<< res.M()<< std::endl;
 
     Fill1DHisto("numMuons_h", nMuons, weight);
     Fill1DHisto("minMuonE_h", minMuonE, weight);

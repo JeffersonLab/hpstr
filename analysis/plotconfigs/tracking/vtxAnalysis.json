@@ -148,7 +148,6 @@
         "xtitle" : "track #chi^{2}",
         "ytitle" : "Tracks"
     },
-
     "ele_p_h" : {
         "bins" : 100,
         "minX" : 0,
@@ -156,7 +155,6 @@
         "xtitle" : "p_{e^{-}} [GeV]",
         "ytitle" : "Tracks"
     },
-
     "ele_tanlambda_vs_phi0_hh" : {
         "binsX"  : 100,
         "minX"   : -0.4,
@@ -167,7 +165,6 @@
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk tan(#lambda)"
     },
-
     "ele_d0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
@@ -178,7 +175,6 @@
         "xtitle" : "p_{e^{-}} [GeV]",
         "ytitle" : "trk d0 [mm]"
     },
-
     "ele_d0_vs_phi0_hh" : {
         "binsX"  : 100,
         "minX"   : -0.4,
@@ -189,7 +185,6 @@
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk d0 [mm]"
     },
-
     "ele_d0_vs_tanlambda_hh" : {
         "binsX"  : 200,
         "minX"   : -0.2,
@@ -200,7 +195,6 @@
         "xtitle" : "trk(#lambda)",
         "ytitle" : "trk d0 [mm]"
     },
-
     "ele_z0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
@@ -211,7 +205,6 @@
         "xtitle" : "p_{e^{-}} [GeV]",
         "ytitle" : "trk z0 [mm]"
     },
-
     "ele_z0_vs_phi0_hh" : {
         "binsX"  : 100,
         "minX"   : -0.4,
@@ -222,7 +215,6 @@
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk z0 [mm]"
     },
-
     "ele_z0_vs_tanlambda_hh" : {
         "binsX"  : 200,
         "minX"   : -0.2,
@@ -233,7 +225,6 @@
         "xtitle" : "trk(#lambda)",
         "ytitle" : "trk z0 [mm]"
     },
-
     "pos_strategy_h" : {
         "bins" : 6,
         "minX" : -0.5,
@@ -313,7 +304,6 @@
         "xtitle" : "track #chi^{2}",
         "ytitle" : "Tracks"
     },
-
     "pos_p_h" : {
         "bins" : 100,
         "minX" : 0,
@@ -321,7 +311,6 @@
         "xtitle" : "p_{e^{+}} [GeV]",
         "ytitle" : "Tracks"
     },
-
     "pos_tanlambda_vs_phi0_hh" : {
         "binsX"  : 100,
         "minX"   : -0.4,
@@ -332,7 +321,6 @@
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk tan(#lambda)"
     },
-
     "pos_d0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
@@ -343,7 +331,6 @@
         "xtitle" : "p_{e^{-}} [GeV]",
         "ytitle" : "trk d0 [mm]"
     },
-
     "pos_d0_vs_phi0_hh" : {
         "binsX"  : 100,
         "minX"   : -0.4,
@@ -354,7 +341,6 @@
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk d0 [mm]"
     },
-
     "pos_d0_vs_tanlambda_hh" : {
         "binsX"  : 200,
         "minX"   : -0.2,
@@ -365,7 +351,6 @@
         "xtitle" : "trk(#lambda)",
         "ytitle" : "trk d0 [mm]"
     },
-
     "pos_z0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
@@ -376,7 +361,6 @@
         "xtitle" : "p_{e^{+}} [GeV]",
         "ytitle" : "trk z0 [mm]"
     },
-
     "pos_z0_vs_phi0_hh" : {
         "binsX"  : 100,
         "minX"   : -0.4,
@@ -387,7 +371,6 @@
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk z0 [mm]"
     },
-
     "pos_z0_vs_tanlambda_hh" : {
         "binsX"  : 200,
         "minX"   : -0.2,

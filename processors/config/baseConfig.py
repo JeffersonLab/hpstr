@@ -16,10 +16,15 @@ parser.add_argument("-y", "--year", type=int, dest="year",
                   help="Select year of the data", metavar="year", default=2019)
 parser.add_argument("-n", "--nevents", type=int, dest="nevents",
                   help="Number of events to process", metavar="nevents",default=-1)
-
+parser.add_argument("-a", "--analysis", type=str, dest="analysis",
+                    help="Which analysis is being run ", metavar="analysis",default="vertex")
 parser.add_argument('--infile','-i', type=str, dest="inFilename", metavar='infiles', nargs="+",
                     help="Input files, specify on or more.")
 
+
+#options = parser.parse_args()
+#if options.analysis != "simps" and options.analysis != "vertex":
+#    print("WARNING analysis not set to simps or vertex -- truth info will be weird")
 
 beamE = {}
 beamE["2016"] = 2.3
