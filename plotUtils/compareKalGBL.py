@@ -20,6 +20,8 @@ parser.add_argument("--doMC", dest="doMC", action='store_true',
                   help="Make MC folder plots", default=False)
 parser.add_argument("--doSimp", dest="doSimp", action='store_true',
                   help="Make Simp vtxana_kf_vtxSelection plots", default=False)
+parser.add_argument("--dir", dest="dir_suffix", action='store', type=str,
+                  help="Add something to top level directory name", default=None)
 
 options = parser.parse_args()
 ifb = options.inFileBase
@@ -27,7 +29,7 @@ fkal = options.kalFile
 fgbl = options.gblFile
 doMC = options.doMC
 doSimp = options.doSimp
-
+dir_suffix = options.dir_suffix
 print(ifb)
 
 inFileList=[]
@@ -76,8 +78,11 @@ if doMC:
                 mcselection.append("mc_"+sel)
         selection.extend(mcselection)
 
-if not os.path.exists("plots"):
-    os.makedirs("plots")
+outbase = "plots"
+if dir_suffix:
+    outbase = outbase+"_" +dir_suffix
+if not os.path.exists(outbase):
+    os.makedirs(outbase)
 
 basedir=os.getcwd()
 
@@ -87,7 +92,7 @@ algs=["gbl","kf"]
 
 for sel in selection:
     print("plotting selection " + sel)
-    outdir     = "plots/KF_vs_GBL_simp_100_60_33p3_" + sel
+    outdir     = outbase+"/KF_vs_GBL_simp_100_60_33p3_" + sel
 
 #selection  = ["vtxana_gbl_vtxSelection","vtxana_kf_vtxSelection"]
     os.chdir(basedir)
@@ -109,6 +114,7 @@ for sel in selection:
     print("vtxana_gbl_"+sel)
     for key in inputFiles[0].Get("vtxana_gbl_"+sel).GetListOfKeys():
         #hack because its picking up a tree
+        print(key)
         if "tree" in key.GetName():
             continue
         print("My key " + key.GetName())
