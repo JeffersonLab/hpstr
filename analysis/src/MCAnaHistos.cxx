@@ -40,7 +40,7 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, std::string
     Fill1DHisto("numMCparts_h", (float)nParts, weight);
     int nMuons = 0;
     double minMuonE = -99.9;
-    
+
     TLorentzVector ele; 
     TLorentzVector pos; 
 
@@ -49,9 +49,9 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, std::string
         MCParticle *part = mcParts->at(i);
         int pdg = part->getPDG();
         int momPdg = part->getMomPDG();
-	//	if ( pdg > 600)
-	//  std::cout<<"Found particle with momPDG = "<<momPdg<<" part = " << pdg << " mass " << part->getMass() << std::endl;
- 
+        //if ( pdg > 600)
+        //    std::cout<<"Found particle with momPDG = "<<momPdg<<" part = " << pdg << " mass " << part->getMass() << std::endl;
+
         double energy = part->getEnergy();
         double massMeV = 1000.0*part->getMass();
         double zPos = part->getVertexPosition().at(2);
@@ -86,15 +86,15 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, std::string
             }
         }
 
-	bool partOfInt = false;
-	//	std::cout<<analysis<<std::endl;
-	if (analysis == "simps"){
-	  if (fabs(pdg) == 11 && momPdg == 622)
-	    partOfInt = true;
-	}else{
-	  if ((momPdg == 623 || momPdg == 622) && (fabs(pdg) == 11))
-	    partOfInt = true;
-	}
+        bool partOfInt = false;
+        //	std::cout<<analysis<<std::endl;
+        if (analysis == "simps"){
+            if (fabs(pdg) == 11 && momPdg == 622)
+                partOfInt = true;
+        }else{
+            if ((momPdg == 623 || momPdg == 622) && (fabs(pdg) == 11))
+                partOfInt = true;
+        }
 
         if (partOfInt == true)
         {
@@ -102,31 +102,39 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, std::string
             int Pxz = int(floor(PperpB));
             int round = Pxz%100;
             Pxz = Pxz - round;
-            if (pdg == 11)  Fill2DHisto("ele_pxpy_"+std::to_string(Pxz)+"_hh",part4P.Px(),part4P.Py(), weight);
-            if (pdg == -11) Fill2DHisto("pos_pxpy_"+std::to_string(Pxz)+"_hh",part4P.Px(),part4P.Py(), weight);
+            if (pdg == 11)  
+            {
+                Fill1DHisto("ele_pxz_h", PperpB, weight);
+                Fill2DHisto("ele_pxpy_"+std::to_string(Pxz)+"_hh",part4P.Px(),part4P.Py(), weight);
+            }
+            if (pdg == -11) 
+            {
+                Fill1DHisto("pos_pxz_h", PperpB, weight);
+                Fill2DHisto("pos_pxpy_"+std::to_string(Pxz)+"_hh",part4P.Px(),part4P.Py(), weight);
+            }
         }
 
 
-	if (pdg == 11 && partOfInt == true){
-	  ele = part4P;
-	  Fill1DHisto("truthRadElecE_h",energy,weight);
-	  Fill1DHisto("truthRadEleczPos_h",zPos,weight);
-	  Fill1DHisto("truthRadElecPt_h",part4P.Pt(),weight);
-	  Fill1DHisto("truthRadElecPz_h",part4P.Pz(),weight);
-	}
+        if (pdg == 11 && partOfInt == true){
+            ele = part4P;
+            Fill1DHisto("truthRadElecE_h",energy,weight);
+            Fill1DHisto("truthRadEleczPos_h",zPos,weight);
+            Fill1DHisto("truthRadElecPt_h",part4P.Pt(),weight);
+            Fill1DHisto("truthRadElecPz_h",part4P.Pz(),weight);
+        }
 
-	if (pdg == -11 && partOfInt == true){
-	  pos = part4P;
-	  Fill1DHisto("truthRadPosE_h",energy,weight);
-	  Fill1DHisto("truthRadPoszPos_h",zPos,weight);
-	  Fill1DHisto("truthRadPosPt_h",part4P.Pt(),weight);
-	  Fill1DHisto("truthRadPosPz_h",part4P.Pz(),weight);
-	}
- 
+        if (pdg == -11 && partOfInt == true){
+            pos = part4P;
+            Fill1DHisto("truthRadPosE_h",energy,weight);
+            Fill1DHisto("truthRadPoszPos_h",zPos,weight);
+            Fill1DHisto("truthRadPosPt_h",part4P.Pt(),weight);
+            Fill1DHisto("truthRadPosPz_h",part4P.Pz(),weight);
+        }
+
         Fill1DHisto("MCpartsEnergy_h", energy, weight);
         Fill1DHisto("MCpartsEnergyLow_h", energy*1000.0, weight);// Scaled to MeV
     }
-    
+
     //TLorentzVector res = ele + pos;
     //std::cout<<" My resonance mass is "<< res.M()<< std::endl;
 

@@ -21,7 +21,7 @@ void MCAnaProcessor::configure(const ParameterSet& parameters) {
         trkrHitColl_     = parameters.getString("trkrHitColl");
         ecalHitColl_     = parameters.getString("ecalHitColl");
         histCfgFilename_ = parameters.getString("histCfg");
-       	analysis_        = parameters.getString("analysis");
+        analysis_        = parameters.getString("analysis");
     }
     catch (std::runtime_error& error)
     {
@@ -40,14 +40,14 @@ void MCAnaProcessor::initialize(TTree* tree) {
     // init TTree
     tree_->SetBranchAddress(partColl_.c_str(), &mcParts_, &bmcParts_);
     if (tree_->FindBranch(trkrHitColl_.c_str()))
-      tree_->SetBranchAddress(trkrHitColl_.c_str(), &mcTrkrHits_, &bmcTrkrHits_);
+        tree_->SetBranchAddress(trkrHitColl_.c_str(), &mcTrkrHits_, &bmcTrkrHits_);
     else
-      std::cout<<"WARNING: No tracker hit collection, will skip FillMCTrackerHits! "<<std::endl;
+        std::cout<<"WARNING: No tracker hit collection, will skip FillMCTrackerHits! "<<std::endl;
 
     if ( tree_->FindBranch(ecalHitColl_.c_str()))
-      tree_->SetBranchAddress(ecalHitColl_.c_str(), &mcEcalHits_, &bmcEcalHits_);
+        tree_->SetBranchAddress(ecalHitColl_.c_str(), &mcEcalHits_, &bmcEcalHits_);
     else
-      std::cout<<"WARNING: No Ecal hit collection, will skip FillMCEcalHits"<<std::endl;
+        std::cout<<"WARNING: No Ecal hit collection, will skip FillMCEcalHits"<<std::endl;
 
 }
 
@@ -55,9 +55,9 @@ bool MCAnaProcessor::process(IEvent* ievent) {
 
   histos->FillMCParticles(mcParts_, analysis_);
     if(mcTrkrHits_)
-      histos->FillMCTrackerHits(mcTrkrHits_);
+        histos->FillMCTrackerHits(mcTrkrHits_);
     if(mcEcalHits_)
-      histos->FillMCEcalHits(mcEcalHits_);
+        histos->FillMCEcalHits(mcEcalHits_);
 
     return true;
 }

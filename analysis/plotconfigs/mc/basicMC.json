@@ -25,6 +25,20 @@
         "xtitle" : "ele p_{x}",
         "ytitle" : "ele p_{y}"
     },
+    "pos_pxz_h" : {
+        "bins"  : 50,
+        "minX"   : 0,
+        "maxX"   : 5000,
+        "xtitle" : "pos p_{xz} [MeV]",
+        "ytitle" : "Primary Positrons"
+    },
+    "ele_pxz_h" : {
+        "bins"  : 50,
+        "minX"   : 0,
+        "maxX"   : 5000,
+        "xtitle" : "ele p_{xz} [MeV]",
+        "ytitle" : "Primary Electrons"
+    },
     "numMCparts_h" : {
         "bins"   : 60,
         "minX"   : -0.5,
