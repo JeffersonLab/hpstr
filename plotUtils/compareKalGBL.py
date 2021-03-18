@@ -22,6 +22,9 @@ parser.add_argument("--doSimp", dest="doSimp", action='store_true',
                   help="Make Simp vtxana_kf_vtxSelection plots", default=False)
 parser.add_argument("--dir", dest="dir_suffix", action='store', type=str,
                   help="Add something to top level directory name", default=None)
+parser.add_argument("--samples", dest="samples", action='store', type=str,
+                    help="samples for legend", default="simp_100_60_33p3")
+
 
 options = parser.parse_args()
 ifb = options.inFileBase
@@ -58,10 +61,10 @@ utils.SetStyle()
 
 colors = [r.kBlack, r.kRed, r.kBlue, r.kGreen+2, r.kOrange-2]
 
-legends     = [#"tritrig",
+legends     = ["gbl_tritrig","kf_tritrig"]
                #"wab",
-               "gbl_simp_100_60_33p3",
-               "kf_simp_100_60_33p3"]
+               #"gbl_simp_100_60_33p3",
+               #"kf_simp_100_60_33p3"]
 #               "simp_100_40_30",
 #               "simp_50_30_16p7"]
 

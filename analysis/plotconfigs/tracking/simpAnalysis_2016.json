@@ -498,9 +498,9 @@
         "ytitle" : "Vertices"
     },
     "vtx_Z_h" : {
-        "bins" : 400,
-        "minX" : -100,
-        "maxX" : 100,
+        "bins" : 100,
+        "minX" : -10,
+        "maxX" : 250,
         "xtitle" : "vtx Z pos [mm]",
         "ytitle" : "Vertices"
     },
@@ -519,7 +519,7 @@
         "ytitle" : "Vertices"
     },
     "vtx_Z_svt_h" : {
-        "bins" : 400,
+        "bins" : 200,
         "minX" : -50,
         "maxX" : 50,
         "xtitle" : "vtx Z pos [mm]",

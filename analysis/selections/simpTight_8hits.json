@@ -1,32 +1,28 @@
 {
-    "L1Requirement_eq" : {
-	"cut"  : 1,
-	"id"   : 0,
-	"info" : "pass L1L1"
-    },
     "eSum_lt"  : {
-	"cut"  : 2.5,
-        "id"   : 1,
+	"cut"  : 1.9,
+        "id"   : 0,
         "info" : "E_{e^{-}} +  E_{e^{+}}<0.83Ebeam"
     },
     "eleMom_lt" : {
 	"cut" : 1.5,
-	"id"  : 2,
+	"id"  : 1,
 	"info" : "p e^{-}<1.5GeV"
     },
     "posMom_lt" : {
 	"cut" : 1.5,
-	"id"  : 3,
+	"id"  : 2,
 	"info" : "p e^{+}<1.5GeV"
     },
     "maxVtxMom_lt" : {
 	"cut" : 2.0,
-	"id"  : 4,
+	"id"  : 3,
 	"info": "p_{vtx}<2.0GeV"
     },
     "nVtxs_eq" : {
         "cut"  : 1,
-        "id"   : 5,
+        "id"   : 4,
         "info" : "N_{vtx}=1"
     }
+
 }
