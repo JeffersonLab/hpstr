@@ -6,12 +6,15 @@
 #include "Collections.h"
 #include "EventHeader.h"
 #include "RawSvtHit.h"
+#include "ModuleMapper.h"
 // #include "Apv25XtalkAnaHistos.h"
 
 //ROOT
 #include "Processor.h"
 #include "TClonesArray.h"
 #include "TBranch.h"
+#include "TH1D.h"
+#include "TH2D.h"
 #include "TTree.h"
 #include "TFile.h"
 
@@ -39,6 +42,7 @@ class Apv25RoXtalkAnaProcessor : public Processor {
         //Containers to hold histogrammer info
         //RecoHitAnaHistos* histos{nullptr};
         std::string  histCfgFilename_;
+        ModuleMapper * modMap_{nullptr};
 
         //TODO Change this to be held from HPSEvent
         TTree* tree_;
