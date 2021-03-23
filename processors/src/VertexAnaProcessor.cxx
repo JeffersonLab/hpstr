@@ -25,15 +25,15 @@ void VertexAnaProcessor::configure(const ParameterSet& parameters) {
         trkColl_ = parameters.getString("trkColl",trkColl_);
         hitColl_ = parameters.getString("hitColl",hitColl_);
         ecalColl_ = parameters.getString("ecalColl",ecalColl_);
-	mcColl_  = parameters.getString("mcColl",mcColl_);
-	
+        mcColl_  = parameters.getString("mcColl",mcColl_);
+
         selectionCfg_   = parameters.getString("vtxSelectionjson",selectionCfg_);
         histoCfg_ = parameters.getString("histoCfg",histoCfg_);
         mcHistoCfg_ = parameters.getString("mcHistoCfg",mcHistoCfg_);
         timeOffset_ = parameters.getDouble("CalTimeOffset",timeOffset_);
         beamE_  = parameters.getDouble("beamE",beamE_);
         isData_  = parameters.getInteger("isData",isData_);
-	analysis_        = parameters.getString("analysis");
+        analysis_        = parameters.getString("analysis");
 
         //region definitions
         regionSelections_ = parameters.getVString("regionDefinitions",regionSelections_);
@@ -69,7 +69,7 @@ void VertexAnaProcessor::initialize(TTree* tree) {
     //histos->DefineHistos();
     //histos->Define2DHistos();
 
-   
+
     //For each region initialize plots
 
     for (unsigned int i_reg = 0; i_reg < regionSelections_.size(); i_reg++) {
@@ -116,7 +116,7 @@ void VertexAnaProcessor::initialize(TTree* tree) {
 
 bool VertexAnaProcessor::process(IEvent* ievent) { 
     if(debug_) {
-      std:: cout << "----------------- Event " << evth_->getEventNumber() << " -----------------" << std::endl;
+        std:: cout << "----------------- Event " << evth_->getEventNumber() << " -----------------" << std::endl;
     }
     HpsEvent* hps_evt = (HpsEvent*) ievent;
     double weight = 1.;
@@ -135,8 +135,8 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 apZ = mcParts_->at(i)->getVertexPosition().at(2);
             }
         }
-  
-	_mc_vtx_histos->FillMCParticles(mcParts_, analysis_);
+
+        _mc_vtx_histos->FillMCParticles(mcParts_, analysis_);
     }
     //Store processed number of events
     std::vector<Vertex*> selected_vtxs;
@@ -145,36 +145,36 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
     // Fill some diagnostic histos
     for ( int i_ecal = 0; i_ecal < ecal_->size(); i_ecal++ ) {
 
-      if (vtxs_->size() == 0){
-	_vtx_histos->Fill1DHisto("EecalClus_noVtxs_h",ecal_->at(i_ecal)->getEnergy());
-      } else {
-	_vtx_histos->Fill1DHisto("EecalClus_isVtxs_h",ecal_->at(i_ecal)->getEnergy());
-      }
+        if (vtxs_->size() == 0){
+            _vtx_histos->Fill1DHisto("EecalClus_noVtxs_h",ecal_->at(i_ecal)->getEnergy());
+        } else {
+            _vtx_histos->Fill1DHisto("EecalClus_isVtxs_h",ecal_->at(i_ecal)->getEnergy());
+        }
     }
 
-    
+
     if (vtxs_->size() == 0){
-      _vtx_histos->Fill1DHisto("n_ecalClus_noVtxs_h",ecal_->size());
-      _vtx_histos->Fill1DHisto("n_tracks_noVtxs_h",trks_->size());
-      for (int i_trk = 0; i_trk < trks_->size(); i_trk++ ){
-	_vtx_histos->Fill1DHisto("Ptracks_noVtxs_h",trks_->at(i_trk)->getP());
-      }
-      
+        _vtx_histos->Fill1DHisto("n_ecalClus_noVtxs_h",ecal_->size());
+        _vtx_histos->Fill1DHisto("n_tracks_noVtxs_h",trks_->size());
+        for (int i_trk = 0; i_trk < trks_->size(); i_trk++ ){
+            _vtx_histos->Fill1DHisto("Ptracks_noVtxs_h",trks_->at(i_trk)->getP());
+        }
+
     } else {
-      _vtx_histos->Fill1DHisto("n_ecalClus_isVtxs_h",ecal_->size());
-      _vtx_histos->Fill1DHisto("n_tracks_isVtxs_h",trks_->size());
-      for (int i_trk = 0; i_trk < trks_->size(); i_trk++ ){
-	_vtx_histos->Fill1DHisto("Ptracks_isVtxs_h",trks_->at(i_trk)->getP());
-      }
+        _vtx_histos->Fill1DHisto("n_ecalClus_isVtxs_h",ecal_->size());
+        _vtx_histos->Fill1DHisto("n_tracks_isVtxs_h",trks_->size());
+        for (int i_trk = 0; i_trk < trks_->size(); i_trk++ ){
+            _vtx_histos->Fill1DHisto("Ptracks_isVtxs_h",trks_->at(i_trk)->getP());
+        }
     }
 
     if(debug_){
-      std::cout<<"Number of vertices found in event: "<< vtxs_->size()<<std::endl;
+        std::cout<<"Number of vertices found in event: "<< vtxs_->size()<<std::endl;
     }
-      
+
     // Loop over vertices in event and make selections
     for ( int i_vtx = 0; i_vtx <  vtxs_->size(); i_vtx++ ) {
-          vtxSelector->getCutFlowHisto()->Fill(0.,weight);
+        vtxSelector->getCutFlowHisto()->Fill(0.,weight);
 
         Vertex* vtx = vtxs_->at(i_vtx);
         Particle* ele = nullptr;
@@ -191,7 +191,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
         bool foundParts = _ah->GetParticlesFromVtx(vtx,ele,pos);
         if (!foundParts) {
-	  if(debug_) std::cout<<"VertexAnaProcessor::WARNING::Found vtx without ele/pos. Skip."<<std::endl;
+            if(debug_) std::cout<<"VertexAnaProcessor::WARNING::Found vtx without ele/pos. Skip."<<std::endl;
             continue;
         }
 
@@ -200,7 +200,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                     ele_trk, pos_trk, *trks_);
 
             if (!foundTracks) {
-	        if(debug_) std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
+                if(debug_) std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
                 continue;  
             }
         }
@@ -369,7 +369,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
         _vtx_histos->Fill1DHisto("vtx_Psum_h", p_ele.P()+p_pos.P(), weight);
         _vtx_histos->Fill1DHisto("vtx_Esum_h", ele_E + pos_E, weight);
-	_vtx_histos->Fill1DHisto("ele_pos_clusTimeDiff_h", fabs(corr_eleClusterTime - corr_posClusterTime), weight);
+        _vtx_histos->Fill1DHisto("ele_pos_clusTimeDiff_h", fabs(corr_eleClusterTime - corr_posClusterTime), weight);
         _vtx_histos->Fill2DHisto("ele_vtxZ_iso_hh", TMath::Min(ele_trk->getIsolation(0), ele_trk->getIsolation(1)), vtx->getZ(), weight);
         _vtx_histos->Fill2DHisto("pos_vtxZ_iso_hh", TMath::Min(pos_trk->getIsolation(0), pos_trk->getIsolation(1)), vtx->getZ(), weight);
         _vtx_histos->Fill2DHistograms(vtx,weight);
@@ -377,19 +377,19 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         _vtx_histos->Fill2DTrack(pos_trk,weight,"pos_");
         _vtx_histos->Fill1DHisto("mcMass622_h",apMass); 
         _vtx_histos->Fill1DHisto("mcZ622_h",apZ); 
-	
-	passVtxPresel = true;
+
+        passVtxPresel = true;
 
 
         selected_vtxs.push_back(vtx);       
         vtxSelector->clearSelector();
     }
-    
+
     // std::cout << "Number of selected vtxs: " << selected_vtxs.size() << std::endl;
 
     _vtx_histos->Fill1DHisto("n_vertices_h",selected_vtxs.size()); 
     if (trks_)
-      _vtx_histos->Fill1DHisto("n_tracks_h",trks_->size()); 
+        _vtx_histos->Fill1DHisto("n_tracks_h",trks_->size()); 
 
 
     //not working atm
@@ -417,13 +417,13 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
             _ah->GetParticlesFromVtx(vtx,ele,pos);
 
-	    CalCluster eleClus = ele->getCluster();
-	    CalCluster posClus = pos->getCluster();
+            CalCluster eleClus = ele->getCluster();
+            CalCluster posClus = pos->getCluster();
 
             //vtx Z position
-	    if (!_reg_vtx_selectors[region]->passCutGt("uncVtxZ_gt",vtx->getZ(),weight))
-	        continue;
-	    
+            if (!_reg_vtx_selectors[region]->passCutGt("uncVtxZ_gt",vtx->getZ(),weight))
+                continue;
+
             //Chi2
             if (!_reg_vtx_selectors[region]->passCutLt("chi2unc_lt",vtx->getChi2(),weight))
                 continue;
@@ -522,20 +522,20 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             //Require Electron Cluster exists
             if (!_reg_vtx_selectors[region]->passCutGt("eleClusE_gt",eleClus.getEnergy(),weight))
                 continue;
-             
-	    //Max P_ele
-	    if (!_reg_vtx_selectors[region]->passCutLt("eleMom_lt",p_ele.P(),weight))
-	        continue;
 
-	    //Max P_pos
-	    if (!_reg_vtx_selectors[region]->passCutLt("posMom_lt",p_pos.P(),weight))
-	        continue;
+            //Max P_ele
+            if (!_reg_vtx_selectors[region]->passCutLt("eleMom_lt",p_ele.P(),weight))
+                continue;
 
-	    //Max vtx momentum	    
-	    if (!_reg_vtx_selectors[region]->passCutLt("maxVtxMom_lt",(p_ele+p_pos).P(),weight))
-	        continue;
+            //Max P_pos
+            if (!_reg_vtx_selectors[region]->passCutLt("posMom_lt",p_pos.P(),weight))
+                continue;
 
-            
+            //Max vtx momentum	    
+            if (!_reg_vtx_selectors[region]->passCutLt("maxVtxMom_lt",(p_ele+p_pos).P(),weight))
+                continue;
+
+
             //Require Electron Cluster does NOT exists
             if (!_reg_vtx_selectors[region]->passCutLt("eleClusE_lt",eleClus.getEnergy(),weight))
                 continue;
@@ -550,20 +550,20 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             if (!_reg_vtx_selectors[region]->passCutEq("pos_sharedL1_eq",(int)pos_trk_gbl->getSharedLy1(),weight))
                 continue;
 
-	    //Min vtx Y pos
-	    if (!_reg_vtx_selectors[region]->passCutGt("VtxYPos_gt", vtx->getY(), weight))
-	        continue;
-	
-	    //Max vtx Y pos
-	    if (!_reg_vtx_selectors[region]->passCutLt("VtxYPos_lt", vtx->getY(), weight))
-	        continue;
+            //Min vtx Y pos
+            if (!_reg_vtx_selectors[region]->passCutGt("VtxYPos_gt", vtx->getY(), weight))
+                continue;
+
+            //Max vtx Y pos
+            if (!_reg_vtx_selectors[region]->passCutLt("VtxYPos_lt", vtx->getY(), weight))
+                continue;
 
             //If this is MC check if MCParticle matched to the electron track is from rad or recoil
             if(!isData_)
             {
 
-	      //Fill MC plots after all selections
-	      _reg_mc_vtx_histos[region]->FillMCParticles(mcParts_, analysis_);
+                //Fill MC plots after all selections
+                _reg_mc_vtx_histos[region]->FillMCParticles(mcParts_, analysis_);
 
                 //Build map of hits and the associated MC part ids for later
                 TRefArray* ele_trk_hits = ele_trk_gbl->getSvtHits();
@@ -645,9 +645,9 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         //N selected vertices - this is quite a silly cut to make at the end. But okay. that's how we decided atm.
         if (!_reg_vtx_selectors[region]->passCutEq("nVtxs_eq", nGoodVtx, weight))
             continue;
-	//Move to after N vertices cut (was filled before)
+        //Move to after N vertices cut (was filled before)
         _reg_vtx_histos[region]->Fill1DHisto("n_vertices_h", nGoodVtx, weight);
-            
+
         Vertex* vtx = goodVtx;
 
         Particle* ele = nullptr;
@@ -655,7 +655,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
         if (!vtx || !_ah->GetParticlesFromVtx(vtx,ele,pos))
             continue;
-        
+
         CalCluster eleClus = ele->getCluster();
         CalCluster posClus = pos->getCluster();
 
@@ -745,7 +745,7 @@ void VertexAnaProcessor::finalize() {
     _vtx_histos->saveHistos(outF_,_vtx_histos->getName());
     outF_->cd(_vtx_histos->getName().c_str());
     vtxSelector->getCutFlowHisto()->Write();
-    
+
     outF_->cd();
     _mc_vtx_histos->saveHistos(outF_, _mc_vtx_histos->getName());
     //delete histos;
