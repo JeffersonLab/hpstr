@@ -2,6 +2,7 @@
 #define __APV25ROXTALK_ANAPROCESSOR_H__
 
 //HPSTR
+#include "Processor.h"
 #include "HpsEvent.h"
 #include "Collections.h"
 #include "EventHeader.h"
@@ -10,13 +11,13 @@
 // #include "Apv25XtalkAnaHistos.h"
 
 //ROOT
-#include "Processor.h"
 #include "TClonesArray.h"
 #include "TBranch.h"
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TTree.h"
 #include "TFile.h"
+#include "TString.h"
 
 class TTree;
 
@@ -37,7 +38,10 @@ class Apv25RoXtalkAnaProcessor : public Processor {
 
         virtual void configure(const ParameterSet& parameters);
 
+
     private:
+
+        void emulateApv25Buff(int buffIter);
 
         //Containers to hold histogrammer info
         //RecoHitAnaHistos* histos{nullptr};
@@ -54,10 +58,13 @@ class Apv25RoXtalkAnaProcessor : public Processor {
 
         std::string anaName_{"apvRoXtalkAna"};
         std::string rawHitColl_{"SVTRawTrackerHits"};
-        int initSyncPhase_{224};
+        int syncPhase_{224};
+        int trigPhase_{8};
         int trigDel_{6696};
 
-        std::vector<int> eventTimes;
+        std::vector<long> reads;
+        std::vector<long> readEvs;
+        std::vector<long> eventTimes;
         std::vector<int>  hitMultis;
         std::vector<int>  lFEBMultis;
         std::vector<int>  hFEBMultis;

@@ -18,7 +18,9 @@ void Apv25RoXtalkAnaProcessor::configure(const ParameterSet& parameters) {
         debug_           = parameters.getInteger("debug");
         anaName_         = parameters.getString("anaName");
         rawHitColl_      = parameters.getString("rawHitColl");
-        initSyncPhase_   = parameters.getInteger("debug");
+        syncPhase_       = parameters.getInteger("syncPhase");
+        trigPhase_       = syncPhase_%24;
+        trigDel_         = parameters.getInteger("trigDel");
         histCfgFilename_ = parameters.getString("histCfg");
     }
     catch (std::runtime_error& error)
@@ -52,7 +54,8 @@ bool Apv25RoXtalkAnaProcessor::process(IEvent* ievent) {
     {
         int lay = rawHits_->at(i)->getLayer();
         int mod = rawHits_->at(i)->getModule();
-        int feb = std::atoi(&modMap_->getHwFromSw("ly" + std::to_string(lay) + "_m" + std::to_string(mod) ).at(1));
+        int feb = std::atoi(&modMap_->getHwFromSw(
+                    "ly"+std::to_string(lay)+"_m"+std::to_string(mod)).at(1) );
         if (feb > 4) hFEBMulti++;
         else lFEBMulti++;
     }
@@ -76,14 +79,73 @@ void Apv25RoXtalkAnaProcessor::finalize() {
         hFEBN_h->Fill(hFEBMultis[i]);
         FEBN_hh->Fill(hFEBMultis[i], lFEBMultis[i]);
     }
-    TFile * outF = new TFile((anaName_+".root").c_str(), "RECREATE");
-    outF->cd();
+    outF_->cd();
     hitN_h->Write();
     lFEBN_h->Write();
     hFEBN_h->Write();
     FEBN_hh->Write();
-    outF->Close();
+    emulateApv25Buff(0);
 
+}
+
+void Apv25RoXtalkAnaProcessor::emulateApv25Buff(int buffIter) {
+    reads.clear();
+    readEvs.clear();
+    TH1D readN_h(Form("readN_iter%i_h", buffIter), Form("readN_iter%i_h", buffIter), 21, -0.5, 20.5);
+    TH2D lFEBread_hh(Form("lFEBread_iter%i_hh", buffIter), ";Read Time minus Event Time [ns];Read Event Time mod 840", 500, -2000.0, 14000.0, 210, 0, 35*24);
+    TH2D hFEBread_hh(Form("hFEBread_iter%i_hh", buffIter), ";Read Time minus Event Time [ns];Read Event Time mod 840", 500, -2000.0, 14000.0, 210, 0, 35*24);
+    for (int iEv = 0; iEv < hitMultis.size(); iEv++)
+    {
+        // Calculate the relevant times wrt this event
+        long evTime = eventTimes[iEv];
+        long trigArrT = evTime + trigDel_ + (24 - (evTime+trigPhase_)%24);
+        long trigSyncTime = trigArrT + (35*24 - (trigArrT+syncPhase_)%(35*24));
+
+        // Remove reads from buffer which are in the past wrt this event
+        for (int ir = reads.size() - 1; ir >= 0; ir--)
+        {
+            if ( reads[ir] < evTime - 840 )
+            {
+                reads.erase(reads.begin() + ir);
+                readEvs.erase(readEvs.begin() + ir);
+            }
+        }
+        int buffNstart = reads.size();
+        //std::cout << "reads before adding: " << reads.size() << std::endl;
+        for (int ss = 0; ss < 6; ss++)
+        {
+            if (ss > 0)
+            {
+                reads.push_back(reads[reads.size()-1] + 3360);
+                readEvs.push_back(evTime);
+            }
+            else
+            {
+                if (buffNstart == 0)
+                {
+                    reads.push_back(trigSyncTime);
+                    readEvs.push_back(evTime);
+                }
+                else if (reads[reads.size()-1] + 3360 > trigSyncTime)
+                {
+                    reads.push_back(reads[reads.size()-1] + 3360);
+                    readEvs.push_back(evTime);
+                }
+                else
+                {
+                    reads.push_back(trigSyncTime);
+                    readEvs.push_back(evTime);
+                }
+            }
+        }
+        //std::cout << "reads after adding: " << reads.size() << std::endl;
+        readN_h.Fill((double)reads.size());
+        if (lFEBMultis[iEv] > 400) lFEBread_hh.Fill( reads[0] - evTime, readEvs[0]%(24*35) );
+        if (hFEBMultis[iEv] > 300) hFEBread_hh.Fill( reads[0] - evTime, readEvs[0]%(24*35) );
+    }
+    readN_h.Write();
+    lFEBread_hh.Write();
+    hFEBread_hh.Write();
 }
 
 DECLARE_PROCESSOR(Apv25RoXtalkAnaProcessor);
