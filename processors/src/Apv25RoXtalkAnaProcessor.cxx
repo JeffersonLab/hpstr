@@ -37,6 +37,12 @@ void Apv25RoXtalkAnaProcessor::initialize(TTree* tree) {
     // init TTree
     tree_->SetBranchAddress(rawHitColl_.c_str() , &rawHits_ , &brawHits_ );
     tree_->SetBranchAddress("EventHeader"       , &evth_    , &bevth_    );
+    for (int i = 0; i < 210; i++)
+    {
+        //////////////////lFEBrms[i] = 0.0;
+        //hFEBrms[i] = 0.0;
+        sps[i] = 0.0;
+    }
 
 }
 
@@ -84,7 +90,20 @@ void Apv25RoXtalkAnaProcessor::finalize() {
     lFEBN_h->Write();
     hFEBN_h->Write();
     FEBN_hh->Write();
-    emulateApv25Buff(0);
+    for(int sp = 0; sp < 840; sp += 4)
+    {
+        syncPhase_ = sp;
+        trigPhase_ = syncPhase_%24;
+        emulateApv25Buff(sp);
+    }
+
+    TGraph lFEBreadRms_g(210, sps, lFEBrms);
+    lFEBreadRms_g.SetName("lFEBreadRms_g");
+    lFEBreadRms_g.Write();
+
+    TGraph hFEBreadRms_g(210, sps, hFEBrms);
+    hFEBreadRms_g.SetName("hFEBreadRms_g");
+    hFEBreadRms_g.Write();
 
 }
 
@@ -93,7 +112,9 @@ void Apv25RoXtalkAnaProcessor::emulateApv25Buff(int buffIter) {
     readEvs.clear();
     TH1D readN_h(Form("readN_iter%i_h", buffIter), Form("readN_iter%i_h", buffIter), 21, -0.5, 20.5);
     TH2D lFEBread_hh(Form("lFEBread_iter%i_hh", buffIter), ";Read Time minus Event Time [ns];Read Event Time mod 840", 500, -2000.0, 14000.0, 210, 0, 35*24);
+    TH1D lFEBread_h(Form("lFEBread_iter%i_h", buffIter), ";Read Time minus Event Time [ns];Events / 8 ns", 500, -2000.0, 2000.0);
     TH2D hFEBread_hh(Form("hFEBread_iter%i_hh", buffIter), ";Read Time minus Event Time [ns];Read Event Time mod 840", 500, -2000.0, 14000.0, 210, 0, 35*24);
+    TH1D hFEBread_h(Form("hFEBread_iter%i_h", buffIter), ";Read Time minus Event Time [ns];Events / 8 ns", 500, -2000.0, 2000.0);
     for (int iEv = 0; iEv < hitMultis.size(); iEv++)
     {
         // Calculate the relevant times wrt this event
@@ -139,12 +160,25 @@ void Apv25RoXtalkAnaProcessor::emulateApv25Buff(int buffIter) {
             }
         }
         //std::cout << "reads after adding: " << reads.size() << std::endl;
-        readN_h.Fill((double)reads.size());
-        if (lFEBMultis[iEv] > 400) lFEBread_hh.Fill( reads[0] - evTime, readEvs[0]%(24*35) );
-        if (hFEBMultis[iEv] > 300) hFEBread_hh.Fill( reads[0] - evTime, readEvs[0]%(24*35) );
+        //readN_h.Fill((double)reads.size());
+        if (lFEBMultis[iEv] > 400) 
+        {
+            lFEBread_h.Fill( reads[0] - evTime);
+            lFEBread_hh.Fill( reads[0] - evTime, readEvs[0]%(24*35) );
+        }
+        if (hFEBMultis[iEv] > 300) 
+        {
+            hFEBread_h.Fill( reads[0] - evTime);
+            hFEBread_hh.Fill( reads[0] - evTime, readEvs[0]%(24*35) );
+        }
     }
+    lFEBrms[buffIter/4] = lFEBread_h.GetRMS();
+    hFEBrms[buffIter/4] = hFEBread_h.GetRMS();
+    sps[buffIter/4] = (double)buffIter;
     readN_h.Write();
+    lFEBread_h.Write();
     lFEBread_hh.Write();
+    hFEBread_h.Write();
     hFEBread_hh.Write();
 }
 

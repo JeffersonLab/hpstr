@@ -15,6 +15,7 @@
 #include "TBranch.h"
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TGraph.h"
 #include "TTree.h"
 #include "TFile.h"
 #include "TString.h"
@@ -67,7 +68,10 @@ class Apv25RoXtalkAnaProcessor : public Processor {
         std::vector<long> eventTimes;
         std::vector<int>  hitMultis;
         std::vector<int>  lFEBMultis;
+        double  lFEBrms[210];
         std::vector<int>  hFEBMultis;
+        double  hFEBrms[210];
+        double  sps[210];
 
         //Debug Level
         int debug_{0};
