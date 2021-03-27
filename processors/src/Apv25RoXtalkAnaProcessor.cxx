@@ -5,6 +5,7 @@
  */     
 #include "Apv25RoXtalkAnaProcessor.h"
 #include <iostream>
+#include <fstream>
 
 Apv25RoXtalkAnaProcessor::Apv25RoXtalkAnaProcessor(const std::string& name, Process& process) : Processor(name,process){}
 //TODO CHECK THIS DESTRUCTOR
@@ -92,18 +93,61 @@ void Apv25RoXtalkAnaProcessor::finalize() {
     FEBN_hh->Write();
     for(int sp = 0; sp < 840; sp += 4)
     {
-        syncPhase_ = sp;
-        trigPhase_ = syncPhase_%24;
         emulateApv25Buff(sp);
     }
 
     TGraph lFEBreadRms_g(210, sps, lFEBrms);
     lFEBreadRms_g.SetName("lFEBreadRms_g");
+    lFEBreadRms_g.SetTitle("lFEBreadRms_g;syncPhase;RMS(Read Time minus Event Time)");
     lFEBreadRms_g.Write();
 
     TGraph hFEBreadRms_g(210, sps, hFEBrms);
     hFEBreadRms_g.SetName("hFEBreadRms_g");
+    hFEBreadRms_g.SetTitle("hFEBreadRms_g;syncPhase;RMS(Read Time minus Event Time)");
     hFEBreadRms_g.Write();
+
+    int lFEBminI = -1;
+    double lFEBmin = 10000.0;
+    int hFEBminI = -1;
+    double hFEBmin = 10000.0;
+    for(int i = 0; i < 210; i++)
+    {
+        if (lFEBrms[i] < lFEBmin)
+        {
+            lFEBmin = lFEBrms[i];
+            lFEBminI = i;
+        }
+        if (hFEBrms[i] < hFEBmin)
+        {
+            hFEBmin = hFEBrms[i];
+            hFEBminI = i;
+        }
+    }
+
+    std::cout << "lFEBmin: " << lFEBminI*4 << std::endl;
+    emulateApv25Buff(lFEBminI*4);
+    int phase0 = (int)lFEBminI*4;
+    int cut0L = (int)lLowCut;
+    int cut0H = (int)lHighCut;
+    std::cout << "lLowCut: " << lLowCut << "  lHighCut: " << lHighCut << std::endl;
+
+    std::cout << "hFEBmin: " << hFEBminI*4 << std::endl;
+    emulateApv25Buff(hFEBminI*4);
+    int phase1 = (int)hFEBminI*4;
+    int cut1L = (int)hLowCut;
+    int cut1H = (int)hHighCut;
+    std::cout << "hLowCut: " << hLowCut << "  hHighCut: " << hHighCut << std::endl;
+
+    std::ofstream calFile("calApvXtalk.txt");
+    calFile << "trigDel,phase0,phase1,cut0L,cut0H,cut1L,cut1H\n";
+    calFile << trigDel_ << ",";
+    calFile << phase0 << ",";
+    calFile << phase1 << ",";
+    calFile << cut0L << ",";
+    calFile << cut0H << ",";
+    calFile << cut1L << ",";
+    calFile << cut1H << std::endl;
+    calFile.close();
 
 }
 
@@ -115,6 +159,8 @@ void Apv25RoXtalkAnaProcessor::emulateApv25Buff(int buffIter) {
     TH1D lFEBread_h(Form("lFEBread_iter%i_h", buffIter), ";Read Time minus Event Time [ns];Events / 8 ns", 500, -2000.0, 2000.0);
     TH2D hFEBread_hh(Form("hFEBread_iter%i_hh", buffIter), ";Read Time minus Event Time [ns];Read Event Time mod 840", 500, -2000.0, 14000.0, 210, 0, 35*24);
     TH1D hFEBread_h(Form("hFEBread_iter%i_h", buffIter), ";Read Time minus Event Time [ns];Events / 8 ns", 500, -2000.0, 2000.0);
+    syncPhase_ = buffIter;
+    trigPhase_ = syncPhase_%24;
     for (int iEv = 0; iEv < hitMultis.size(); iEv++)
     {
         // Calculate the relevant times wrt this event
@@ -173,7 +219,11 @@ void Apv25RoXtalkAnaProcessor::emulateApv25Buff(int buffIter) {
         }
     }
     lFEBrms[buffIter/4] = lFEBread_h.GetRMS();
+    lLowCut = lFEBread_h.GetXaxis()->GetBinCenter(lFEBread_h.FindFirstBinAbove(5.0)) - 12.0;
+    lHighCut = lFEBread_h.GetXaxis()->GetBinCenter(lFEBread_h.FindLastBinAbove(5.0)) + 12.0;
     hFEBrms[buffIter/4] = hFEBread_h.GetRMS();
+    hLowCut = hFEBread_h.GetXaxis()->GetBinCenter(hFEBread_h.FindFirstBinAbove(5.0)) - 12.0;
+    hHighCut = hFEBread_h.GetXaxis()->GetBinCenter(hFEBread_h.FindLastBinAbove(5.0)) + 12.0;
     sps[buffIter/4] = (double)buffIter;
     readN_h.Write();
     lFEBread_h.Write();

@@ -69,8 +69,12 @@ class Apv25RoXtalkAnaProcessor : public Processor {
         std::vector<int>  hitMultis;
         std::vector<int>  lFEBMultis;
         double  lFEBrms[210];
+        double  lLowCut;
+        double  lHighCut;
         std::vector<int>  hFEBMultis;
         double  hFEBrms[210];
+        double  hLowCut;
+        double  hHighCut;
         double  sps[210];
 
         //Debug Level

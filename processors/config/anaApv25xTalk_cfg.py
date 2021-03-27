@@ -34,7 +34,7 @@ apvana.parameters["debug"] = 0
 apvana.parameters["anaName"] = "apvAna"
 apvana.parameters["rawHitColl"] = "SVTRawTrackerHits"
 apvana.parameters["syncPhase"] = 168
-apvana.parameters["trigDel"] = 6720
+apvana.parameters["trigDel"] = 6696
 apvana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
 
 # Sequence which the processors will run.
