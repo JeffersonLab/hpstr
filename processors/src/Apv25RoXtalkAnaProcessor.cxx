@@ -207,7 +207,7 @@ void Apv25RoXtalkAnaProcessor::emulateApv25Buff(int buffIter) {
         }
         //std::cout << "reads after adding: " << reads.size() << std::endl;
         //readN_h.Fill((double)reads.size());
-        if (lFEBMultis[iEv] > 400) 
+        if (lFEBMultis[iEv] > 500) 
         {
             lFEBread_h.Fill( reads[0] - evTime);
             lFEBread_hh.Fill( reads[0] - evTime, readEvs[0]%(24*35) );
