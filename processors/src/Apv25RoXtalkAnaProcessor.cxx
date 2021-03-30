@@ -75,9 +75,9 @@ bool Apv25RoXtalkAnaProcessor::process(IEvent* ievent) {
 void Apv25RoXtalkAnaProcessor::finalize() {
 
     std::cout << "[Apv25RoXtalkAnaProcessor] Finalizing" << std::endl;
-    TH1D * hitN_h = new TH1D("hitN_h", "hitN_h", 500, 0, 2000);
-    TH1D * lFEBN_h = new TH1D("lFEBN_h", "lFEBN_h", 500, 0, 2000);
-    TH1D * hFEBN_h = new TH1D("hFEBN_h", "hFEBN_h", 500, 0, 2000);
+    TH1D * hitN_h = new TH1D("hitN_h", "hitN_h;Raw SVT Hit Multi;Events/10", 500, 0, 5000);
+    TH1D * lFEBN_h = new TH1D("lFEBN_h", "lFEBN_h;Raw SVT Hit Multi;Events/10", 500, 0, 5000);
+    TH1D * hFEBN_h = new TH1D("hFEBN_h", "hFEBN_h;Raw SVT Hit Multi;Events/10", 500, 0, 5000);
     TH2D * FEBN_hh = new TH2D("FEBN_hh", "FEBN_hh", 500, 0, 2000, 500, 0, 2000);
     for (int i = 0; i < hitMultis.size(); i++)
     {
@@ -207,7 +207,7 @@ void Apv25RoXtalkAnaProcessor::emulateApv25Buff(int buffIter) {
         }
         //std::cout << "reads after adding: " << reads.size() << std::endl;
         //readN_h.Fill((double)reads.size());
-        if (lFEBMultis[iEv] > 500) 
+        if (lFEBMultis[iEv] > 700) 
         {
             lFEBread_h.Fill( reads[0] - evTime);
             lFEBread_hh.Fill( reads[0] - evTime, readEvs[0]%(24*35) );
@@ -219,8 +219,8 @@ void Apv25RoXtalkAnaProcessor::emulateApv25Buff(int buffIter) {
         }
     }
     lFEBrms[buffIter/4] = lFEBread_h.GetRMS();
-    lLowCut = lFEBread_h.GetXaxis()->GetBinCenter(lFEBread_h.FindFirstBinAbove(5.0)) - 12.0;
-    lHighCut = lFEBread_h.GetXaxis()->GetBinCenter(lFEBread_h.FindLastBinAbove(5.0)) + 12.0;
+    lLowCut = lFEBread_h.GetXaxis()->GetBinCenter(lFEBread_h.FindFirstBinAbove(5.0)) - 28.0;
+    lHighCut = lFEBread_h.GetXaxis()->GetBinCenter(lFEBread_h.FindLastBinAbove(5.0)) + 28.0;
     hFEBrms[buffIter/4] = hFEBread_h.GetRMS();
     hLowCut = hFEBread_h.GetXaxis()->GetBinCenter(hFEBread_h.FindFirstBinAbove(5.0)) - 12.0;
     hHighCut = hFEBread_h.GetXaxis()->GetBinCenter(hFEBread_h.FindLastBinAbove(5.0)) + 12.0;
