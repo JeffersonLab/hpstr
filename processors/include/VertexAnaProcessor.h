@@ -6,6 +6,7 @@
 #include "HpsEvent.h"
 #include "Collections.h"
 #include "EventHeader.h"
+#include "TSData.h"
 #include "Vertex.h"
 #include "Track.h"
 #include "TrackerHit.h"
@@ -51,6 +52,7 @@ private:
     std::vector<std::string> regionSelections_;
     
     std::string selectionCfg_;
+    TBranch* bts_{nullptr};
     TBranch* bvtxs_{nullptr};
     TBranch* bhits_{nullptr};
     TBranch* btrks_{nullptr};
@@ -58,14 +60,16 @@ private:
     TBranch* bevth_{nullptr};
     TBranch* becal_{nullptr};
     
+    EventHeader * evth_{nullptr};
+    TSData      * ts_{nullptr};
     std::vector<CalCluster*> * ecal_{};
     std::vector<Vertex*> * vtxs_{};
     std::vector<Track*>  * trks_{};
     std::vector<TrackerHit*>  * hits_{};
     std::vector<MCParticle*>  * mcParts_{};
-    EventHeader* evth_{nullptr};
     
     std::string anaName_{"vtxAna"};
+    std::string tsColl_{"TSBank"};
     std::string vtxColl_{"Vertices"};
     std::string hitColl_{"RotatedHelicalTrackHits"};
     std::string trkColl_{"GBLTracks"};
