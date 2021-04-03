@@ -130,8 +130,16 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
     //Plot info about which trigger bits are present in the event
     _vtx_histos->Fill2DHisto("trig_count_hh", 
-            ((int)ts_->prescaled.Single_3_Top)+((int)ts_->prescaled.Single_3_Top),
-            ((int)ts_->prescaled.Single_2_Top)+((int)ts_->prescaled.Single_2_Top));
+            ((int)ts_->prescaled.Single_3_Top)+((int)ts_->prescaled.Single_3_Bot),
+            ((int)ts_->prescaled.Single_2_Top)+((int)ts_->prescaled.Single_2_Bot));
+    int NposTrks = 0;
+    int NeleTrks = 0;
+    for (int iT = 0; iT < trks_->size(); iT++)
+    {
+        if (trks_->at(iT)->getCharge() > 0) NposTrks++;
+        else NeleTrks++;
+    }
+    _vtx_histos->Fill2DHisto("n_tracks_hh", NeleTrks, NposTrks); 
 
     if (mcParts_) {
         for(int i = 0; i < mcParts_->size(); i++)
@@ -693,8 +701,16 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             pos_trk_gbl = (Track*) pos_trk.Clone();
         }
         _reg_vtx_histos[region]->Fill2DHisto("trig_count_hh", 
-                ((int)ts_->prescaled.Single_3_Top)+((int)ts_->prescaled.Single_3_Top),
-                ((int)ts_->prescaled.Single_2_Top)+((int)ts_->prescaled.Single_2_Top));
+                ((int)ts_->prescaled.Single_3_Top)+((int)ts_->prescaled.Single_3_Bot),
+                ((int)ts_->prescaled.Single_2_Top)+((int)ts_->prescaled.Single_2_Bot));
+        int NposTrks = 0;
+        int NeleTrks = 0;
+        for (int iT = 0; iT < trks_->size(); iT++)
+        {
+            if (trks_->at(iT)->getCharge() > 0) NposTrks++;
+            else NeleTrks++;
+        }
+        _reg_vtx_histos[region]->Fill2DHisto("n_tracks_hh", NeleTrks, NposTrks); 
 
         //Add the momenta to the tracks
         //ele_trk_gbl->setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
