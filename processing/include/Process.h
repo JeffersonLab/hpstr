@@ -62,6 +62,7 @@ class Process {
          *     0 indicates LCIO to ROOT.
          *     1 indicates ROOT to Histo.
          *     2 indicates Histo Analysis.
+         *     3 indicates EVIO to Root via EvioTool.
          */
         void setRunMode(int run_mode=-1) {
             run_mode_ = run_mode;
@@ -91,6 +92,9 @@ class Process {
 
         /** Run the Histo Analysis process. */
         void runOnHisto();
+
+        /** Run the EVIO to Root process. */
+        void runOnHPSEvioReader();
 
         /** Request that the processing finish with this event. */ 
         void requestFinish() { event_limit_ = 0; }

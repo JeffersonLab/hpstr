@@ -58,6 +58,7 @@ class ConfigurePython {
          *  0: LCIO to ROOT
          *  1: ROOT to Histo
          *  2: Histo Analysis
+         *  3: HPSEvioReader
          * */
         int run_mode_{-1};
 

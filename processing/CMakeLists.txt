@@ -4,5 +4,6 @@ module(
     NAME processing 
     EXECUTABLES src/hpstr.cxx
     DEPENDENCIES event 
-    EXTERNAL_DEPENDENCIES ROOT Python LCIO
+    EXTERNAL_DEPENDENCIES ROOT Python LCIO HPSEvioReader 
 )
+

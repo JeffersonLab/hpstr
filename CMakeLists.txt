@@ -39,6 +39,29 @@ if (LCIO_DIR)
 endif()
 find_package(LCIO REQUIRED)
 
+
+# find the HPSEvioReader and EvioTool directory
+if (HPSEvioReader_DIR)
+    set(HPSEvioReader_INCLUDE_DIR "${HPSEvioReader_DIR}/include")
+
+    if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(HPSEvioReader_LIBRARY "${HPSEvioReader_DIR}/lib/libHPSEvioReader.dylib")
+    else()
+    set(HPSEvioReader_LIBRARY "${HPSEvioReader_DIR}/lib/libHPSEvioReader.so")
+    endif()	       
+
+
+    if (NOT EXISTS "${HPSEvioReader_DIR}")
+        message(FATAL_ERROR "Unable to find HPSEvioReader library")
+    endif()
+    message(STATUS "HPSEvioReader dir set to: ${HPSEvioReader_DIR}")
+    message(STATUS "HPSEvioReader include dir set to: ${HPSEvioReader_INCLUDE_DIR}")
+    message(STATUS "HPSEvioReader library set to: ${HPSEvioReader_LIBRARY}")
+endif()
+#where the following find package was recently made by Maurik.
+find_package(EvioTool CONFIG REQUIRED)
+
+
 # find Python installation
 if (PYTHON3)
   find_package(PythonLibs 3 REQUIRED)
