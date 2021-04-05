@@ -3,5 +3,5 @@
 module( 
     NAME processors
     DEPENDENCIES event processing analysis utils
-    EXTERNAL_DEPENDENCIES ROOT LCIO 
+    EXTERNAL_DEPENDENCIES ROOT LCIO HPSEvioReader 
 )

@@ -17,6 +17,7 @@
 //-----------//
 //   hpstr   //
 //-----------//
+//TODO: update ConfigurePython.h to include new processor______
 #include "ConfigurePython.h"
 
 using namespace std; 
@@ -81,6 +82,13 @@ int main(int argc, char **argv) {
         {
             std::cout<<"---- [ hpstr ]: Running Histo Analysis Process --------" << std::endl;
             p->runOnHisto();
+        }
+//where the following is an additional runmode centered around the to be made (repurposed) new procesor,
+//EvioTool.
+        else if (run_mode == 3)
+        {
+            std::cout<<"---- [ hpstr ]: Running EVIO -> ROOT Process --------" << std::endl;
+            p->runOnHPSEvioReader();
         }
         else 
         {

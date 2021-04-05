@@ -49,6 +49,30 @@ message(STATUS "Python executable found at: ${Python3_EXECUTABLE}")
 message(STATUS "Python lib found at: ${Python3_LIBRARIES}")
 message(STATUS "Python include dir found at: ${Python3_INCLUDE_DIRS}")
 
+# find the HPSEvioReader and EvioTool directory
+if (HPSEvioReader_DIR)
+    set(HPSEvioReader_INCLUDE_DIR "${HPSEvioReader_DIR}/include")
+
+    if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(HPSEvioReader_LIBRARY "${HPSEvioReader_DIR}/lib/libHPSEvioReader.dylib")
+    else()
+    set(HPSEvioReader_LIBRARY "${HPSEvioReader_DIR}/lib/libHPSEvioReader.so")
+    endif()	       
+
+
+    if (NOT EXISTS "${HPSEvioReader_DIR}")
+        message(FATAL_ERROR "Unable to find HPSEvioReader library")
+    endif()
+    message(STATUS "HPSEvioReader dir set to: ${HPSEvioReader_DIR}")
+    message(STATUS "HPSEvioReader include dir set to: ${HPSEvioReader_INCLUDE_DIR}")
+    message(STATUS "HPSEvioReader library set to: ${HPSEvioReader_LIBRARY}")
+endif()
+#where the following find package was recently made by Maurik.
+find_package(EvioTool CONFIG REQUIRED)
+
+# this is from old evio CMakeFile, might need to remove
+get_filename_component(PYTHON_LIBRARY_DIR ${PYTHON_LIBRARIES} DIRECTORY)
+
 # find ROOT installation
 find_package(ROOT REQUIRED COMPONENTS Core RIO Geom Eve Gui)
 message(STATUS "ROOT found at: ${ROOT_DIR}")

@@ -13,7 +13,22 @@
 
 Process::Process() {}
 
+
 //TODO Fix this better
+
+//where the following process uses the HPSEvioReaderProcessor file to read an evio file and turn it into a root file among other things
+
+void Process::runOnHPSEvioReader(){
+
+	std::cout << "I exist.";
+
+}
+
+
+
+
+
+
 
 void Process::runOnHisto() {
     try {
