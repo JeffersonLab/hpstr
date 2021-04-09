@@ -31,15 +31,15 @@ vtxana = HpstrConf.Processor('vtxana', 'VertexAnaProcessor')
 #   Processor Configuration   #
 ###############################
 #Vertex Analysis
-vtxana.parameters["debug"] = 1
+vtxana.parameters["debug"] = 0
 vtxana.parameters["anaName"] = "vtxana"
 vtxana.parameters["tsColl"]  = "TSBank"
-vtxana.parameters["trkColl"] = "GBLTracks"
-vtxana.parameters["hitColl"] = "RotatedHelicalOnTrackHits"
-vtxana.parameters["vtxColl"] = "UnconstrainedV0Vertices"
-#vtxana.parameters["trkColl"] = "KalmanFullTracks"
-#vtxana.parameters["hitColl"] = "SiClustersOnTrack"
-#vtxana.parameters["vtxColl"] = "UnconstrainedV0Vertices_KF"
+#vtxana.parameters["trkColl"] = "GBLTracks"
+#vtxana.parameters["hitColl"] = "RotatedHelicalOnTrackHits"
+#vtxana.parameters["vtxColl"] = "UnconstrainedV0Vertices"
+vtxana.parameters["trkColl"] = "KalmanFullTracks"
+vtxana.parameters["hitColl"] = "SiClustersOnTrack"
+vtxana.parameters["vtxColl"] = "UnconstrainedV0Vertices_KF"
 vtxana.parameters["mcColl"]  = "MCParticle"
 vtxana.parameters["analysis"]  = "vertex"
 vtxana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/vertexSelection_2019.json'

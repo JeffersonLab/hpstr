@@ -19,6 +19,13 @@
         "xtitle" : "N_{e-} Tracks",
         "ytitle" : "N_{e+} Tracks"
     },
+    "n_vtx_h" : {
+        "bins"   : 50,
+        "minX"   : -0.5,
+        "maxX"   : 49.5,
+        "xtitle" : "N_{vtx}",
+        "ytitle" : "Events"
+    },
     "n_ele_tracks_h" : {
         "bins"   : 10,
         "minX"   : 0,

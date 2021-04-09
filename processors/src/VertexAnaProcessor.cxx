@@ -6,6 +6,14 @@
 
 #include "VertexAnaProcessor.h"
 #include <iostream>
+#include <map>
+
+struct char_cmp {
+    bool operator () (const char *a,const char *b) const
+    {
+        return strcmp(a,b)<0;
+    }
+};
 
 VertexAnaProcessor::VertexAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
@@ -103,6 +111,16 @@ void VertexAnaProcessor::initialize(TTree* tree) {
         _regions.push_back(regname);
     }
 
+    // Get list of branches in tree to help protect accessing them
+    std::map<const char *, int, char_cmp> brMap;
+    int nBr = tree_->GetListOfBranches()->GetEntries();
+    std::cout << "Tree has " << nBr << " branches" << std::endl;
+    for(int iBr = 0; iBr < nBr; iBr++)
+    {
+        TBranch *br = dynamic_cast<TBranch*>(tree_->GetListOfBranches()->At(iBr));
+        brMap.insert(std::map<const char *, int, char_cmp>::value_type(br->GetName(), 1));
+        std::cout << br->GetName() << ": " << brMap[br->GetName()] << std::endl;
+    }
 
     //init Reading Tree
     tree_->SetBranchAddress("EventHeader",&evth_ , &bevth_);
@@ -140,6 +158,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         else NeleTrks++;
     }
     _vtx_histos->Fill2DHisto("n_tracks_hh", NeleTrks, NposTrks); 
+    _vtx_histos->Fill1DHisto("n_vtx_h", vtxs_->size()); 
 
     if (mcParts_) {
         for(int i = 0; i < mcParts_->size(); i++)
@@ -151,7 +170,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             }
         }
 
-        _mc_vtx_histos->FillMCParticles(mcParts_, analysis_);
+        if (!isData_) _mc_vtx_histos->FillMCParticles(mcParts_, analysis_);
     }
     //Store processed number of events
     std::vector<Vertex*> selected_vtxs;
@@ -578,7 +597,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             {
 
                 //Fill MC plots after all selections
-                _reg_mc_vtx_histos[region]->FillMCParticles(mcParts_, analysis_);
+                if (!isData_) _reg_mc_vtx_histos[region]->FillMCParticles(mcParts_, analysis_);
 
                 //Build map of hits and the associated MC part ids for later
                 TRefArray* ele_trk_hits = ele_trk_gbl->getSvtHits();
@@ -703,6 +722,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         _reg_vtx_histos[region]->Fill2DHisto("trig_count_hh", 
                 ((int)ts_->prescaled.Single_3_Top)+((int)ts_->prescaled.Single_3_Bot),
                 ((int)ts_->prescaled.Single_2_Top)+((int)ts_->prescaled.Single_2_Bot));
+        _reg_vtx_histos[region]->Fill1DHisto("n_vtx_h", vtxs_->size()); 
         int NposTrks = 0;
         int NeleTrks = 0;
         for (int iT = 0; iT < trks_->size(); iT++)
