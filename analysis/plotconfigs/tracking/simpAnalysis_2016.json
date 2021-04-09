@@ -134,7 +134,6 @@
         "xtitle" : "prop to dEdX",
         "ytitle" : "Tracks"
     },
-
     "ele_dEdx_vs_p_hh" : {
         "binsX"  : 200,
         "minX"   : 0,
@@ -145,7 +144,6 @@
         "xtitle" : "track p [GeV]",
         "ytitle" : "prop to dEdX"
     },
-
     "mcMass622_h" : {
         "bins" : 500,
         "minX" : 0,
@@ -170,7 +168,6 @@
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk tan(#lambda)"
     },
-
     "ele_d0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
@@ -181,7 +178,6 @@
         "xtitle" : "p_{e^{-}} [GeV]",
         "ytitle" : "trk d0 [mm]"
     },
-
     "ele_d0_vs_phi0_hh" : {
         "binsX"  : 100,
         "minX"   : -0.4,
@@ -192,7 +188,6 @@
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk d0 [mm]"
     },
-
     "ele_d0_vs_tanlambda_hh" : {
         "binsX"  : 200,
         "minX"   : -0.2,
@@ -203,7 +198,6 @@
         "xtitle" : "trk(#lamdba)",
         "ytitle" : "trk d0 [mm]"
     },
-
     "ele_z0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
@@ -214,7 +208,6 @@
         "xtitle" : "p_{e^{-}} [GeV]",
         "ytitle" : "trk z0 [mm]"
     },
-
     "ele_z0_vs_phi0_hh" : {
         "binsX"  : 100,
         "minX"   : -0.4,
@@ -225,7 +218,6 @@
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk z0 [mm]"
     },
-
     "ele_z0_vs_tanlambda_hh" : {
         "binsX"  : 200,
         "minX"   : -0.2,
@@ -236,8 +228,6 @@
         "xtitle" : "trk(#lamdba)",
         "ytitle" : "trk z0 [mm]"
     },
-
-
     "pos_nHits_2d_h" : {
         "bins"  : 15,
         "minX"  : 0,
@@ -366,7 +356,6 @@
         "xtitle" : "prop to dEdX",
         "ytitle" : "Tracks"
     },
-
     "pos_dEdx_vs_p_hh" : {
         "binsX"  : 200,
         "minX"   : 0,
@@ -377,7 +366,6 @@
         "xtitle" : "track p [GeV]",
         "ytitle" : "prop to dEdX"
     },
-
     "pos_tanlambda_vs_phi0_hh" : {
         "binsX"  : 100,
         "minX"   : -0.4,
@@ -388,7 +376,6 @@
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk tan(#lambda)"
     },
-
     "pos_d0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
@@ -399,7 +386,6 @@
         "xtitle" : "p_{e^{-}} [GeV]",
         "ytitle" : "trk d0 [mm]"
     },
-
     "pos_d0_vs_phi0_hh" : {
         "binsX"  : 100,
         "minX"   : -0.4,
@@ -410,7 +396,6 @@
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk d0 [mm]"
     },
-
     "pos_d0_vs_tanlambda_hh" : {
         "binsX"  : 200,
         "minX"   : -0.2,
@@ -421,7 +406,6 @@
         "xtitle" : "trk(#lamdba)",
         "ytitle" : "trk d0 [mm]"
     },
-
     "pos_z0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
@@ -432,7 +416,6 @@
         "xtitle" : "p_{e^{-}} [GeV]",
         "ytitle" : "trk z0 [mm]"
     },
-
     "pos_z0_vs_phi0_hh" : {
         "binsX"  : 100,
         "minX"   : -0.4,
@@ -443,7 +426,6 @@
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk z0 [mm]"
     },
-
     "pos_z0_vs_tanlambda_hh" : {
         "binsX"  : 200,
         "minX"   : -0.2,
@@ -461,7 +443,6 @@
         "xtitle" : "vtx Mass [GeV]",
         "ytitle" : "Vertices"
     },
-
     "kk_InvMass_h" : {
         "bins" : 400,
         "minX" : 0.8,
@@ -688,181 +669,181 @@
         "maxX" : 1,
         "xtitle" : "(pT_{e^{-}} - pT_{e^{+}}) / (pT_{e^{-}} + pT_{e^{+}})}",
         "ytitle" : "events"
-},
-"thetax_v0_h" : {
-    "bins" : 100,
-    "minX" : -0.5,
-    "maxX" : 0.5,
-    "xtitle" : "#theta_{vtx}",
-    "ytitle" : "events"
-},
-"thetax_pos_h" : {
-    "bins" : 100,
-    "minX" : -0.5,
-    "maxX" : 0.5,
-    "xtitle" : "#thetaX_{e^{+}}",
-    "ytitle" : "events"
-},
-"thetay_pos_h" : {
-    "bins" : 100,
-    "minX" : -0.5,
-    "maxX" : 0.5,
-    "xtitle" : "#thetaY_{e^{+}}",
-    "ytitle" : "events"
-},
-"thetay_miss_h" : {
-    "bins" : 100,
-    "minX" : -0.5,
-    "maxX" : 0.5,
-    "xtitle" : "#theta_{miss}",
-    "ytitle" : "events"
-},
-"thetay_diff_h" : {
-    "bins" : 100,
-    "minX" : -0.5,
-    "maxX" : 0.5,
-    "xtitle" : "#Delta#theta(miss,e^{+})",
-    "ytitle" : "events"
-},
-"ele_pos_clusTimeDiff_h" : {
-"bins" :  200 ,
-"minX" :  0 ,
-"maxX" :  16 ,
-"xtitle" : " #Delta_{t}(e^{-},e^{+})_{clus} [ns] ",
-"ytitle" : " Events "
-},
-"n_tracks_noVtxs_h" : {
-"bins" :  10 ,
-"minX" :  0 ,
-"maxX" :  10 ,
-"xtitle" : " N_{trks} ",
-"ytitle" : " Events "
-},
-"n_tracks_isVtxs_h" : {
-"bins" :  10 ,
-"minX" :  0 ,
-"maxX" :  10 ,
-"xtitle" : " N_{trks} ",
-"ytitle" : " Events "
-},
-"n_ecalClus_noVtxs_h" : {
-"bins" :  10 ,
-"minX" :  0 ,
-"maxX" :  10 ,
-"xtitle" : " N_{clusters} ",
-"ytitle" : " Events "
-},
-"n_ecalClus_isVtxs_h" : {
-"bins" :  10 ,
-"minX" :  0 ,
-"maxX" :  10 ,
-"xtitle" : " N_{clusters} ",
-"ytitle" : " Events "
-},
-"EecalClus_noVtxs_h" : {
-"bins" :  100 ,
-"minX" :  0 ,
-"maxX" :  2.5 ,
-"xtitle" : " Cluster E [GeV] ",
-"ytitle" : " Events "
-},
-"EecalClus_isVtxs_h" : {
-"bins" :  100 ,
-"minX" :  0 ,
-"maxX" :  2.5 ,
-"xtitle" : " Cluster E [GeV] ",
-"ytitle" : " Events "
-},
-"Ptracks_noVtxs_h" : {
-"bins" :  100 ,
-"minX" :  0 ,
-"maxX" :  3.0 ,
-"xtitle" : " P_{trks} [GeV] ",
-"ytitle" : " Events "
-},
-"Ptracks_isVtxs_h" : {
-"bins" :  100 ,
-"minX" :  0 ,
-"maxX" :  3.0 ,
-"xtitle" : " P_{trks} [GeV] ",
-"ytitle" : " Events "
-},
-"vtx_Psum_h" : {
-"bins" :  100 ,
-"minX" :  0 ,
-"maxX" :  3.5 ,
-"xtitle" : " vtx p_{sum} [GeV] ",
-"ytitle" : " Vertices "
-},
-"vtx_Esum_h" : {
-"bins" :  100 ,
-"minX" :  0 ,
-"maxX" :  3.5 ,
-"xtitle" : " vtx E_{sum} [GeV] ",
-"ytitle" : " Vertices "
-},
-"ele_vtxZ_iso_hh" : {
-"binsX" :  150 ,
-"minX" :  -5.0 ,
-"maxX" :  10.0 ,
-"binsY" :  280 ,
-"minY" :  -40.0 ,
-"maxY" :  100.0 ,
-"xtitle" : " e^{-} Isolation ",
-"ytitle" : " z_{vtx} "
-},
-"pos_vtxZ_iso_hh" : {
-"binsX" :  150 ,
-"minX" :  -5.0 ,
-"maxX" :  10.0 ,
-"binsY" :  280 ,
-"minY" :  -40.0 ,
-"maxY" :  100.0 ,
-"xtitle" : " e^{+} Isolation ",
-"ytitle" : " z_{vtx} "
-},
-"vtx_svt_y_svt_z_hh" : {
-"binsX" :  200 ,
-"minX" :  -5.0 ,
-"maxX" :  5.0 ,
-"binsY" :  400 ,
-"minY" :  -100 ,
-"maxY" :  100 ,
-"xtitle" : " vtx Y pos [mm] ",
-"ytitle" : " vtx Z pos [mm] "
-},
-"Pmiss_h" : {
-"bins" :  100 ,
-"minX" :  0 ,
-"maxX" :  2 ,
-"xtitle" : " p^{miss} [GeV] ",
-"ytitle" : " Events "
-},
-"vtx_Esum_vs_true_Esum_hh" : {
-"binsX" :  100 ,
-"minX" :  0 ,
-"maxX" :  2.5 ,
-"binsY" :  100 ,
-"minY" :  0 ,
-"maxY" :  2.5 ,
-"xtitle" : " Reco E Sum ",
-"ytitle" : " True E Sum "
-},
-"vtx_Psum_vs_true_Psum_hh" : {
-"binsX" :  100 ,
-"minX" :  0 ,
-"maxX" :  2.5 ,
-"binsY" :  100 ,
-"minY" :  0 ,
-"maxY" :  2.5 ,
-"xtitle" : " Reco P Sum ",
-"ytitle" : " True P Sum "
-},
-"true_vtx_psum_h" : {
-"bins" :  100 ,
-"minX" :  0 ,
-"maxX" :  2 ,
-"xtitle" : " p^{sum} [GeV] ",
-"ytitle" : " Events "
-}
+    },
+    "thetax_v0_h" : {
+        "bins" : 100,
+        "minX" : -0.5,
+        "maxX" : 0.5,
+        "xtitle" : "#theta_{vtx}",
+        "ytitle" : "events"
+    },
+    "thetax_pos_h" : {
+        "bins" : 100,
+        "minX" : -0.5,
+        "maxX" : 0.5,
+        "xtitle" : "#thetaX_{e^{+}}",
+        "ytitle" : "events"
+    },
+    "thetay_pos_h" : {
+        "bins" : 100,
+        "minX" : -0.5,
+        "maxX" : 0.5,
+        "xtitle" : "#thetaY_{e^{+}}",
+        "ytitle" : "events"
+    },
+    "thetay_miss_h" : {
+        "bins" : 100,
+        "minX" : -0.5,
+        "maxX" : 0.5,
+        "xtitle" : "#theta_{miss}",
+        "ytitle" : "events"
+    },
+    "thetay_diff_h" : {
+        "bins" : 100,
+        "minX" : -0.5,
+        "maxX" : 0.5,
+        "xtitle" : "#Delta#theta(miss,e^{+})",
+        "ytitle" : "events"
+    },
+    "ele_pos_clusTimeDiff_h" : {
+        "bins" :  200 ,
+        "minX" :  0 ,
+        "maxX" :  16 ,
+        "xtitle" : " #Delta_{t}(e^{-},e^{+})_{clus} [ns] ",
+        "ytitle" : " Events "
+    },
+    "n_tracks_noVtxs_h" : {
+        "bins" :  10 ,
+        "minX" :  0 ,
+        "maxX" :  10 ,
+        "xtitle" : " N_{trks} ",
+        "ytitle" : " Events "
+    },
+    "n_tracks_isVtxs_h" : {
+        "bins" :  10 ,
+        "minX" :  0 ,
+        "maxX" :  10 ,
+        "xtitle" : " N_{trks} ",
+        "ytitle" : " Events "
+    },
+    "n_ecalClus_noVtxs_h" : {
+        "bins" :  10 ,
+        "minX" :  0 ,
+        "maxX" :  10 ,
+        "xtitle" : " N_{clusters} ",
+        "ytitle" : " Events "
+    },
+    "n_ecalClus_isVtxs_h" : {
+        "bins" :  10 ,
+        "minX" :  0 ,
+        "maxX" :  10 ,
+        "xtitleA" : " N_{clusters} ",
+        "ytitle" : " Events "
+    },
+    "EecalClus_noVtxs_h" : {
+        "bins" :  100 ,
+        "minX" :  0 ,
+        "maxX" :  2.5 ,
+        "xtitle" : " Cluster E [GeV] ",
+        "ytitle" : " Events "
+    },
+    "EecalClus_isVtxs_h" : {
+        "bins" :  100 ,
+        "minX" :  0 ,
+        "maxX" :  2.5 ,
+        "xtitle" : " Cluster E [GeV] ",
+        "ytitle" : " Events "
+    },
+    "Ptracks_noVtxs_h" : {
+        "bins" :  100 ,
+        "minX" :  0 ,
+        "maxX" :  3.0 ,
+        "xtitle" : " P_{trks} [GeV] ",
+        "ytitle" : " Events "
+    },
+    "Ptracks_isVtxs_h" : {
+        "bins" :  100 ,
+        "minX" :  0 ,
+        "maxX" :  3.0 ,
+        "xtitle" : " P_{trks} [GeV] ",
+        "ytitle" : " Events "
+    },
+    "vtx_Psum_h" : {
+        "bins" :  100 ,
+        "minX" :  0 ,
+        "maxX" :  3.5 ,
+        "xtitle" : " vtx p_{sum} [GeV] ",
+        "ytitle" : " Vertices "
+    },
+    "vtx_Esum_h" : {
+        "bins" :  100 ,
+        "minX" :  0 ,
+        "maxX" :  3.5 ,
+        "xtitle" : " vtx E_{sum} [GeV] ",
+        "ytitle" : " Vertices "
+    },
+    "ele_vtxZ_iso_hh" : {
+        "binsX" :  150 ,
+        "minX" :  -5.0 ,
+        "maxX" :  10.0 ,
+        "binsY" :  280 ,
+        "minY" :  -40.0 ,
+        "maxY" :  100.0 ,
+        "xtitle" : " e^{-} Isolation ",
+        "ytitle" : " z_{vtx} "
+    },
+    "pos_vtxZ_iso_hh" : {
+        "binsX" :  150 ,
+        "minX" :  -5.0 ,
+        "maxX" :  10.0 ,
+        "binsY" :  280 ,
+        "minY" :  -40.0 ,
+        "maxY" :  100.0 ,
+        "xtitle" : " e^{+} Isolation ",
+        "ytitle" : " z_{vtx} "
+    },
+    "vtx_svt_y_svt_z_hh" : {
+        "binsX" :  200 ,
+        "minX" :  -5.0 ,
+        "maxX" :  5.0 ,
+        "binsY" :  400 ,
+        "minY" :  -100 ,
+        "maxY" :  100 ,
+        "xtitle" : " vtx Y pos [mm] ",
+        "ytitle" : " vtx Z pos [mm] "
+    },
+    "Pmiss_h" : {
+        "bins" :  100 ,
+        "minX" :  0 ,
+        "maxX" :  2 ,
+        "xtitle" : " p^{miss} [GeV] ",
+        "ytitle" : " Events "
+    },
+    "vtx_Esum_vs_true_Esum_hh" : {
+        "binsX" :  100 ,
+        "minX" :  0 ,
+        "maxX" :  2.5 ,
+        "binsY" :  100 ,
+        "minY" :  0 ,
+        "maxY" :  2.5 ,
+        "xtitle" : " Reco E Sum ",
+        "ytitle" : " True E Sum "
+    },
+    "vtx_Psum_vs_true_Psum_hh" : {
+        "binsX" :  100 ,
+        "minX" :  0 ,
+        "maxX" :  2.5 ,
+        "binsY" :  100 ,
+        "minY" :  0 ,
+        "maxY" :  2.5 ,
+        "xtitle" : " Reco P Sum ",
+        "ytitle" : " True P Sum "
+    },
+    "true_vtx_psum_h" : {
+        "bins" :  100 ,
+        "minX" :  0 ,
+        "maxX" :  2 ,
+        "xtitle" : " p^{sum} [GeV] ",
+        "ytitle" : " Events "
+    }
 }

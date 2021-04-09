@@ -18,7 +18,6 @@ parser.add_argument("-n", "--nevents", type=int, dest="nevents",
                   help="Number of events to process", metavar="nevents",default=-1)
 parser.add_argument("-a", "--analysis", type=str, dest="analysis",
                     help="Which analysis is being run ", metavar="analysis",default="vertex")
-
 parser.add_argument('--infile','-i', type=str, dest="inFilename", metavar='infiles', nargs="+",
                     help="Input files, specify on or more.")
 
