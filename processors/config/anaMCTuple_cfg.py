@@ -3,14 +3,27 @@ import sys
 import os
 import baseConfig as base
 
+#options = base.parser.parse_args()
+
+
+base.parser.add_argument("-w", "--tracking", type=str, dest="tracking",
+                  help="Which tracking to use to make plots", metavar="tracking", default="KF")
 options = base.parser.parse_args()
+
+
+print(options)
 
 # Use the input file to set the output file name
 infile = options.inFilename
 outfile = options.outFilename
 
+analysis = options.analysis
+
+
+
 print('Input file: %s' % infile)
 print('Output file: %s' % outfile)
+print('Analysis : %s' % analysis)
 
 p = HpstrConf.Process()
 
@@ -35,6 +48,7 @@ mcana.parameters["anaName"] = "mcAna"
 mcana.parameters["partColl"] = "MCParticle"
 mcana.parameters["trkrHitColl"] = "TrackerHits"
 mcana.parameters["ecalHitColl"] = "EcalHits"
+mcana.parameters["analysis"] = analysis
 mcana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
 
 # Sequence which the processors will run.
