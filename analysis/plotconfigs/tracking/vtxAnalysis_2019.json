@@ -604,12 +604,12 @@
         "ytitle" : "Vertices"
     },
     "vtx_InvM_vtx_z_hh" : {
-        "binsX"  : 500,
+        "binsX"  : 600,
         "minX"   : 0.0,
-        "maxX"   : 0.5,
-        "binsY"  : 400,
-        "minY"   : -100,
-        "maxY"   : 100,
+        "maxX"   : 0.6,
+        "binsY"  : 800,
+        "minY"   : -200,
+        "maxY"   : 200,
         "xtitle" : "M_{vtx} [GeV]",
         "ytitle" : "z_{vtx} [mm]"
     },
@@ -644,12 +644,12 @@
         "ytitle" : "z_{vtx} [mm]"
     },
     "vtx_InvM_vtx_svt_z_hh" : {
-        "binsX"  : 500,
+        "binsX"  : 600,
         "minX"   : 0.0,
-        "maxX"   : 0.5,
-        "binsY"  : 400,
-        "minY"   : -100,
-        "maxY"   : 100,
+        "maxX"   : 0.6,
+        "binsY"  : 800,
+        "minY"   : -200,
+        "maxY"   : 200,
         "xtitle" : "M_{vtx} [GeV]",
         "ytitle" : "z_{vtx} [mm]"
     },

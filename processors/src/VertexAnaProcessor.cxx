@@ -8,13 +8,6 @@
 #include <iostream>
 #include <map>
 
-struct char_cmp {
-    bool operator () (const char *a,const char *b) const
-    {
-        return strcmp(a,b)<0;
-    }
-};
-
 VertexAnaProcessor::VertexAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
 }
@@ -112,19 +105,18 @@ void VertexAnaProcessor::initialize(TTree* tree) {
     }
 
     // Get list of branches in tree to help protect accessing them
-    std::map<const char *, int, char_cmp> brMap;
     int nBr = tree_->GetListOfBranches()->GetEntries();
-    std::cout << "Tree has " << nBr << " branches" << std::endl;
+    if (debug_) std::cout << "Tree has " << nBr << " branches" << std::endl;
     for(int iBr = 0; iBr < nBr; iBr++)
     {
         TBranch *br = dynamic_cast<TBranch*>(tree_->GetListOfBranches()->At(iBr));
-        brMap.insert(std::map<const char *, int, char_cmp>::value_type(br->GetName(), 1));
-        std::cout << br->GetName() << ": " << brMap[br->GetName()] << std::endl;
+        brMap_.insert(std::map<const char *, int, char_cmp>::value_type(br->GetName(), 1));
+        if (debug_) std::cout << br->GetName() << ": " << brMap_[br->GetName()] << std::endl;
     }
 
     //init Reading Tree
-    tree_->SetBranchAddress("EventHeader",&evth_ , &bevth_);
-    tree_->SetBranchAddress(tsColl_.c_str(), &ts_ , &bts_);
+    tree_->SetBranchAddress("EventHeader", &evth_ , &bevth_);
+    if (brMap_.find(tsColl_.c_str()) != brMap_.end()) tree_->SetBranchAddress(tsColl_.c_str(), &ts_ , &bts_);
     tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_ , &bvtxs_);
     tree_->SetBranchAddress(hitColl_.c_str(), &hits_   , &bhits_);
     tree_->SetBranchAddress(ecalColl_.c_str(), &ecal_  , &becal_);
@@ -147,9 +139,12 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
     double apZ = -0.9;
 
     //Plot info about which trigger bits are present in the event
-    _vtx_histos->Fill2DHisto("trig_count_hh", 
-            ((int)ts_->prescaled.Single_3_Top)+((int)ts_->prescaled.Single_3_Bot),
-            ((int)ts_->prescaled.Single_2_Top)+((int)ts_->prescaled.Single_2_Bot));
+    if (ts_ != nullptr)
+    {
+        _vtx_histos->Fill2DHisto("trig_count_hh", 
+                ((int)ts_->prescaled.Single_3_Top)+((int)ts_->prescaled.Single_3_Bot),
+                ((int)ts_->prescaled.Single_2_Top)+((int)ts_->prescaled.Single_2_Bot));
+    }
     int NposTrks = 0;
     int NeleTrks = 0;
     for (int iT = 0; iT < trks_->size(); iT++)
@@ -719,9 +714,12 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             ele_trk_gbl = (Track*) ele_trk.Clone();
             pos_trk_gbl = (Track*) pos_trk.Clone();
         }
-        _reg_vtx_histos[region]->Fill2DHisto("trig_count_hh", 
-                ((int)ts_->prescaled.Single_3_Top)+((int)ts_->prescaled.Single_3_Bot),
-                ((int)ts_->prescaled.Single_2_Top)+((int)ts_->prescaled.Single_2_Bot));
+        if(ts_ != nullptr)
+        {
+            _reg_vtx_histos[region]->Fill2DHisto("trig_count_hh", 
+                    ((int)ts_->prescaled.Single_3_Top)+((int)ts_->prescaled.Single_3_Bot),
+                    ((int)ts_->prescaled.Single_2_Top)+((int)ts_->prescaled.Single_2_Bot));
+        }
         _reg_vtx_histos[region]->Fill1DHisto("n_vtx_h", vtxs_->size()); 
         int NposTrks = 0;
         int NeleTrks = 0;
