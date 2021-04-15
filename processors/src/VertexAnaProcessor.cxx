@@ -6,6 +6,7 @@
 
 #include "VertexAnaProcessor.h"
 #include <iostream>
+#include <map>
 
 VertexAnaProcessor::VertexAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
@@ -21,6 +22,7 @@ void VertexAnaProcessor::configure(const ParameterSet& parameters) {
     {
         debug_   = parameters.getInteger("debug",debug_);
         anaName_ = parameters.getString("anaName",anaName_);
+        tsColl_  = parameters.getString("tsColl",tsColl_);
         vtxColl_ = parameters.getString("vtxColl",vtxColl_);
         trkColl_ = parameters.getString("trkColl",trkColl_);
         hitColl_ = parameters.getString("hitColl",hitColl_);
@@ -102,12 +104,22 @@ void VertexAnaProcessor::initialize(TTree* tree) {
         _regions.push_back(regname);
     }
 
+    // Get list of branches in tree to help protect accessing them
+    int nBr = tree_->GetListOfBranches()->GetEntries();
+    if (debug_) std::cout << "Tree has " << nBr << " branches" << std::endl;
+    for(int iBr = 0; iBr < nBr; iBr++)
+    {
+        TBranch *br = dynamic_cast<TBranch*>(tree_->GetListOfBranches()->At(iBr));
+        brMap_.insert(std::map<const char *, int, char_cmp>::value_type(br->GetName(), 1));
+        if (debug_) std::cout << br->GetName() << ": " << brMap_[br->GetName()] << std::endl;
+    }
 
     //init Reading Tree
+    tree_->SetBranchAddress("EventHeader", &evth_ , &bevth_);
+    if (brMap_.find(tsColl_.c_str()) != brMap_.end()) tree_->SetBranchAddress(tsColl_.c_str(), &ts_ , &bts_);
     tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_ , &bvtxs_);
     tree_->SetBranchAddress(hitColl_.c_str(), &hits_   , &bhits_);
     tree_->SetBranchAddress(ecalColl_.c_str(), &ecal_  , &becal_);
-    tree_->SetBranchAddress("EventHeader",&evth_ , &bevth_);
     if(!isData_ && !mcColl_.empty()) tree_->SetBranchAddress(mcColl_.c_str() , &mcParts_, &bmcParts_);
     //If track collection name is empty take the tracks from the particles. TODO:: change this
     if (!trkColl_.empty())
@@ -126,6 +138,23 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
     double apMass = -0.9;
     double apZ = -0.9;
 
+    //Plot info about which trigger bits are present in the event
+    if (ts_ != nullptr)
+    {
+        _vtx_histos->Fill2DHisto("trig_count_hh", 
+                ((int)ts_->prescaled.Single_3_Top)+((int)ts_->prescaled.Single_3_Bot),
+                ((int)ts_->prescaled.Single_2_Top)+((int)ts_->prescaled.Single_2_Bot));
+    }
+    int NposTrks = 0;
+    int NeleTrks = 0;
+    for (int iT = 0; iT < trks_->size(); iT++)
+    {
+        if (trks_->at(iT)->getCharge() > 0) NposTrks++;
+        else NeleTrks++;
+    }
+    _vtx_histos->Fill2DHisto("n_tracks_hh", NeleTrks, NposTrks); 
+    _vtx_histos->Fill1DHisto("n_vtx_h", vtxs_->size()); 
+
     if (mcParts_) {
         for(int i = 0; i < mcParts_->size(); i++)
         {
@@ -136,7 +165,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             }
         }
 
-        _mc_vtx_histos->FillMCParticles(mcParts_, analysis_);
+        if (!isData_) _mc_vtx_histos->FillMCParticles(mcParts_, analysis_);
     }
     //Store processed number of events
     std::vector<Vertex*> selected_vtxs;
@@ -389,7 +418,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
     _vtx_histos->Fill1DHisto("n_vertices_h",selected_vtxs.size());
     if (trks_)
-        _vtx_histos->Fill1DHisto("n_tracks_h",trks_->size());
+        _vtx_histos->Fill1DHisto("n_tracks_h",trks_->size()); 
 
 
     //not working atm
@@ -422,9 +451,6 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
             CalCluster eleClus = ele->getCluster();
             CalCluster posClus = pos->getCluster();
-
-
-
 
             //vtx Z position
             if (!_reg_vtx_selectors[region]->passCutGt("uncVtxZ_gt",vtx->getZ(),weight))
@@ -567,14 +593,12 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             if (!_reg_vtx_selectors[region]->passCutLt("VtxYPos_lt", vtx->getY(), weight))
                 continue;
 
-
-
             //If this is MC check if MCParticle matched to the electron track is from rad or recoil
             if(!isData_)
             {
 
                 //Fill MC plots after all selections
-                _reg_mc_vtx_histos[region]->FillMCParticles(mcParts_, analysis_);
+                if (!isData_) _reg_mc_vtx_histos[region]->FillMCParticles(mcParts_, analysis_);
 
                 //Build map of hits and the associated MC part ids for later
                 TRefArray* ele_trk_hits = ele_trk_gbl->getSvtHits();
@@ -714,6 +738,21 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             ele_trk_gbl = (Track*) ele_trk.Clone();
             pos_trk_gbl = (Track*) pos_trk.Clone();
         }
+        if(ts_ != nullptr)
+        {
+            _reg_vtx_histos[region]->Fill2DHisto("trig_count_hh", 
+                    ((int)ts_->prescaled.Single_3_Top)+((int)ts_->prescaled.Single_3_Bot),
+                    ((int)ts_->prescaled.Single_2_Top)+((int)ts_->prescaled.Single_2_Bot));
+        }
+        _reg_vtx_histos[region]->Fill1DHisto("n_vtx_h", vtxs_->size()); 
+        int NposTrks = 0;
+        int NeleTrks = 0;
+        for (int iT = 0; iT < trks_->size(); iT++)
+        {
+            if (trks_->at(iT)->getCharge() > 0) NposTrks++;
+            else NeleTrks++;
+        }
+        _reg_vtx_histos[region]->Fill2DHisto("n_tracks_hh", NeleTrks, NposTrks); 
 
         //Add the momenta to the tracks
         //ele_trk_gbl->setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);

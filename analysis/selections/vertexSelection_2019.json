@@ -5,14 +5,14 @@
         "info" : "p e^{-} < 3.8 GeV"
     },
     "eleTrkChi2_lt" : {
-        "cut"  : 30,
+        "cut"  : 60,
         "id"   : 1,
-        "info" : "e^{-} Track #chi^{2} < 30"
+        "info" : "e^{-} Track #chi^{2} < 60"
     },
     "posTrkChi2_lt" : {
-        "cut"  : 30,
+        "cut"  : 60,
         "id"   : 2,
-        "info" : "e^{+} Track #chi^{2} < 30"
+        "info" : "e^{+} Track #chi^{2} < 60"
     },
     "eleMom_gt" : {
         "cut" : 1.0,
