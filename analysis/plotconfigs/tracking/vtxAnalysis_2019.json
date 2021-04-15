@@ -1,4 +1,38 @@
 {
+    "trig_count_hh" : {
+        "binsX" :  3,
+        "minX" :  -0.5,
+        "maxX" :  2.5,
+        "binsY" :  3,
+        "minY" :  -0.5,
+        "maxY" :  2.5,
+        "xtitle" : "Singles3 Sum",
+        "ytitle" : "Singles2 Sum"
+    },
+    "n_tracks_hh" : {
+        "binsX" :  10,
+        "minX" :  -0.5,
+        "maxX" :  9.5,
+        "binsY" :  10,
+        "minY" :  -0.5,
+        "maxY" :  9.5,
+        "xtitle" : "N_{e-} Tracks",
+        "ytitle" : "N_{e+} Tracks"
+    },
+    "n_vtx_h" : {
+        "bins"   : 50,
+        "minX"   : -0.5,
+        "maxX"   : 49.5,
+        "xtitle" : "N_{vtx}",
+        "ytitle" : "Events"
+    },
+    "n_ele_tracks_h" : {
+        "bins"   : 10,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "N_{e-} Tracks",
+        "ytitle" : "Events"
+    },
     "n_tracks_h" : {
         "bins"   : 10,
         "minX"   : 0,
@@ -570,12 +604,12 @@
         "ytitle" : "Vertices"
     },
     "vtx_InvM_vtx_z_hh" : {
-        "binsX"  : 500,
+        "binsX"  : 600,
         "minX"   : 0.0,
-        "maxX"   : 0.5,
-        "binsY"  : 400,
-        "minY"   : -100,
-        "maxY"   : 100,
+        "maxX"   : 0.6,
+        "binsY"  : 800,
+        "minY"   : -200,
+        "maxY"   : 200,
         "xtitle" : "M_{vtx} [GeV]",
         "ytitle" : "z_{vtx} [mm]"
     },
@@ -610,12 +644,12 @@
         "ytitle" : "z_{vtx} [mm]"
     },
     "vtx_InvM_vtx_svt_z_hh" : {
-        "binsX"  : 500,
+        "binsX"  : 600,
         "minX"   : 0.0,
-        "maxX"   : 0.5,
-        "binsY"  : 400,
-        "minY"   : -100,
-        "maxY"   : 100,
+        "maxX"   : 0.6,
+        "binsY"  : 800,
+        "minY"   : -200,
+        "maxY"   : 200,
         "xtitle" : "M_{vtx} [GeV]",
         "ytitle" : "z_{vtx} [mm]"
     },
