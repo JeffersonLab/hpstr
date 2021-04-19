@@ -1,0 +1,42 @@
+{
+    "eleMom_lt" : {
+        "cut" : 3.8,
+        "id"  : 0,
+        "info" : "p e^{-} < 3.8 GeV"
+    },
+    "eleTrkChi2_lt" : {
+        "cut"  : 30,
+        "id"   : 1,
+        "info" : "e^{-} Track #chi^{2} < 30"
+    },
+    "posTrkChi2_lt" : {
+        "cut"  : 30,
+        "id"   : 2,
+        "info" : "e^{+} Track #chi^{2} < 30"
+    },
+    "eleMom_gt" : {
+        "cut" : 0.5,
+        "id"  : 3,
+        "info" : "p_e^{-} > 0.5 [GeV]"
+    },
+    "posMom_gt" : {
+        "cut" : 0.5,
+        "id"  : 4,
+        "info" : "p_e^{+} > 0.5 [GeV]"
+    },
+    "chi2unc_lt" : {
+        "cut"   : 20,
+        "id"    : 5,
+        "info"  : "#chi^{2}_{unc} < 30"
+    },
+    "maxVtxMom_lt" : {
+        "cut" : 4.6,
+        "id"  : 6,
+        "info" : "p_{vtx} < 4.6 [GeV]"
+    },
+	"minVtxMom_gt" : {
+        "cut" : 2.0,
+        "id"  : 7,
+        "info" : "p_{vtx} > 2.0 [GeV]"
+    }
+}
