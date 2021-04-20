@@ -43,7 +43,7 @@ recoana_kf.parameters["tsColl"] = "TSData"
 recoana_kf.parameters["vtxColl"] = "UnconstrainedV0Vertices_KF"
 recoana_kf.parameters["mcColl"]  = "MCParticle"
 recoana_kf.parameters["hitColl"] = "SiClustersOnTrack"
-recoana_kf.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/vertexSelection.json'
+recoana_kf.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/vertexSelection_8hit.json'
 recoana_kf.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/simpAnalysis_2016.json"
 recoana_kf.parameters["mcHistoCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
 recoana_kf.parameters["beamE"] = base.beamE[str(options.year)]
@@ -55,7 +55,7 @@ CalTimeOffset=-999
 if (options.isData==1):
     CalTimeOffset=56.
     print("Running on data file: Setting CalTimeOffset %d"  % CalTimeOffset)
-    
+
 elif (options.isData==0):
     CalTimeOffset=43.
     print("Running on MC file: Setting CalTimeOffset %d"  % CalTimeOffset)
@@ -88,7 +88,7 @@ mcana.parameters["trkrHitColl"] = "TrackerHits"
 mcana.parameters["ecalHitColl"] = "EcalHits"
 mcana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
 
-#    
+#
 #    RegionPath+'ESumCR.json',
 #    RegionPath+'TightNoSharedL0.json',
 #    RegionPath+'TightNoShared.json',

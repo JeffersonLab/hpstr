@@ -1,4 +1,4 @@
-/** 
+/**
  *@file VertexAnaProcessor.cxx
  *@brief Main vertex analysis processor
  *@author PF, SLAC
@@ -18,7 +18,7 @@ VertexAnaProcessor::~VertexAnaProcessor(){}
 
 void VertexAnaProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring VertexAnaProcessor" <<std::endl;
-    try 
+    try
     {
         debug_   = parameters.getInteger("debug",debug_);
         anaName_ = parameters.getString("anaName",anaName_);
@@ -42,7 +42,7 @@ void VertexAnaProcessor::configure(const ParameterSet& parameters) {
 
 
     }
-    catch (std::runtime_error& error) 
+    catch (std::runtime_error& error)
     {
         std::cout<<error.what()<<std::endl;
     }
@@ -67,7 +67,7 @@ void VertexAnaProcessor::initialize(TTree* tree) {
 
 
     //    histos = new MCAnaHistos(anaName_);
-    //histos->loadHistoConfig(histCfgFilename_);
+    //histos->loadHistoConfig(histCfgFilename_)
     //histos->DefineHistos();
     //histos->Define2DHistos();
 
@@ -76,7 +76,7 @@ void VertexAnaProcessor::initialize(TTree* tree) {
 
     for (unsigned int i_reg = 0; i_reg < regionSelections_.size(); i_reg++) {
         std::string regname = AnaHelpers::getFileName(regionSelections_[i_reg],false);
-        std::cout<<"Setting up region:: " << regname <<std::endl;   
+        std::cout<<"Setting up region:: " << regname <<std::endl;
         _reg_vtx_selectors[regname] = std::make_shared<BaseSelector>(anaName_+"_"+regname, regionSelections_[i_reg]);
         _reg_vtx_selectors[regname]->setDebug(debug_);
         _reg_vtx_selectors[regname]->LoadSelection();
@@ -95,7 +95,7 @@ void VertexAnaProcessor::initialize(TTree* tree) {
         _reg_tuples[regname] = std::make_shared<FlatTupleMaker>(anaName_+"_"+regname+"_tree");
         _reg_tuples[regname]->addVariable("unc_vtx_mass");
         _reg_tuples[regname]->addVariable("unc_vtx_z");
-        if(!isData_) 
+        if(!isData_)
         {
             _reg_tuples[regname]->addVariable("true_vtx_z");
             _reg_tuples[regname]->addVariable("true_vtx_mass");
@@ -126,7 +126,7 @@ void VertexAnaProcessor::initialize(TTree* tree) {
         tree_->SetBranchAddress(trkColl_.c_str(),&trks_, &btrks_);
 }
 
-bool VertexAnaProcessor::process(IEvent* ievent) { 
+bool VertexAnaProcessor::process(IEvent* ievent) {
     if(debug_) {
         std:: cout << "----------------- Event " << evth_->getEventNumber() << " -----------------" << std::endl;
     }
@@ -158,7 +158,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
     if (mcParts_) {
         for(int i = 0; i < mcParts_->size(); i++)
         {
-            if(mcParts_->at(i)->getPDG() == 622) 
+            if(mcParts_->at(i)->getPDG() == 622)
             {
                 apMass = mcParts_->at(i)->getMass();
                 apZ = mcParts_->at(i)->getVertexPosition().at(2);
@@ -230,7 +230,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
             if (!foundTracks) {
                 if(debug_) std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
-                continue;  
+                continue;
             }
         }
         else {
@@ -256,7 +256,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         p_pos.SetPxPyPzE(pos_trk->getMomentum()[0],pos_trk->getMomentum()[1],pos_trk->getMomentum()[2],ele->getEnergy());
 
         //Tracks in opposite volumes - useless
-        //if (!vtxSelector->passCutLt("eleposTanLambaProd_lt",ele_trk->getTanLambda() * pos_trk->getTanLambda(),weight)) 
+        //if (!vtxSelector->passCutLt("eleposTanLambaProd_lt",ele_trk->getTanLambda() * pos_trk->getTanLambda(),weight))
         //  continue;
 
         //Ele Track-cluster match
@@ -350,7 +350,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
         //Ele nHits
         int ele2dHits = ele_trk->getTrackerHitCount();
-        if (!ele_trk->isKalmanTrack()) 
+        if (!ele_trk->isKalmanTrack())
             ele2dHits*=2;
 
         if (!vtxSelector->passCutGt("eleN2Dhits_gt",ele2dHits,weight))  {
@@ -359,7 +359,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
         //Pos nHits
         int pos2dHits = pos_trk->getTrackerHitCount();
-        if (!pos_trk->isKalmanTrack()) 
+        if (!pos_trk->isKalmanTrack())
             pos2dHits*=2;
 
         if (!vtxSelector->passCutGt("posN2Dhits_gt",pos2dHits,weight))  {
@@ -404,19 +404,19 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         _vtx_histos->Fill2DHistograms(vtx,weight);
         _vtx_histos->Fill2DTrack(ele_trk,weight,"ele_");
         _vtx_histos->Fill2DTrack(pos_trk,weight,"pos_");
-        _vtx_histos->Fill1DHisto("mcMass622_h",apMass); 
-        _vtx_histos->Fill1DHisto("mcZ622_h",apZ); 
+        _vtx_histos->Fill1DHisto("mcMass622_h",apMass);
+        _vtx_histos->Fill1DHisto("mcZ622_h",apZ);
 
         passVtxPresel = true;
 
 
-        selected_vtxs.push_back(vtx);       
+        selected_vtxs.push_back(vtx);
         vtxSelector->clearSelector();
     }
 
     // std::cout << "Number of selected vtxs: " << selected_vtxs.size() << std::endl;
 
-    _vtx_histos->Fill1DHisto("n_vertices_h",selected_vtxs.size()); 
+    _vtx_histos->Fill1DHisto("n_vertices_h",selected_vtxs.size());
     if (trks_)
         _vtx_histos->Fill1DHisto("n_tracks_h",trks_->size()); 
 
@@ -425,15 +425,18 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
     //hps_evt->addVertexCollection("selected_vtxs", selected_vtxs);
 
     //Make Plots for each region: loop on each region. Check if the region has the cut and apply it
-    //TODO Clean this up => Cuts should be implemented in each region? 
+    //TODO Clean this up => Cuts should be implemented in each region?
     //TODO Bring the preselection out of this stupid loop
 
 
-    //TODO add yields. => Quite terrible way to loop. 
+    //TODO add yields. => Quite terrible way to loop.
     for (auto region : _regions ) {
 
         int nGoodVtx = 0;
         Vertex* goodVtx = nullptr;
+
+        float truePsum = -1;
+        float trueEsum = -1;
 
         for ( auto vtx : selected_vtxs) {
 
@@ -477,7 +480,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 if (!foundTracks) {
                     if (debug_)
                         std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the "<<trkColl_ <<"collection"<<std::endl;
-                    continue;  
+                    continue;
                 }
             }
             else {
@@ -495,6 +498,9 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             TLorentzVector p_pos;
             p_pos.SetPxPyPzE(pos_trk_gbl->getMomentum()[0],pos_trk_gbl->getMomentum()[1],pos_trk_gbl->getMomentum()[2], pos_E);
 
+            //Defining these here so they are in scope elsewhere
+            TVector3 trueEleP;
+            TVector3 truePosP;
 
             if (debug_) {
                 std::cout<<"Check on ele_Track"<<std::endl;
@@ -503,7 +509,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
             bool foundL1ele = false;
             bool foundL2ele = false;
-            _ah->InnermostLayerCheck(ele_trk_gbl, foundL1ele, foundL2ele);   
+            _ah->InnermostLayerCheck(ele_trk_gbl, foundL1ele, foundL2ele);
 
 
             if (debug_) {
@@ -513,7 +519,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             bool foundL1pos = false;
             bool foundL2pos = false;
 
-            _ah->InnermostLayerCheck(pos_trk_gbl, foundL1pos, foundL2pos);  
+            _ah->InnermostLayerCheck(pos_trk_gbl, foundL1pos, foundL2pos);
 
             if (debug_) {
                 std::cout<<"Check on pos_Track"<<std::endl;
@@ -532,7 +538,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             if (!_reg_vtx_selectors[region]->passCutEq("L1PosReq_eq",(int)(foundL1pos),weight))
                 continue;
 
-            //ESum low cut 
+            //ESum low cut
             if (!_reg_vtx_selectors[region]->passCutLt("eSum_lt",(ele_E+pos_E),weight))
                 continue;
 
@@ -540,7 +546,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             if (!_reg_vtx_selectors[region]->passCutGt("eSum_gt",(ele_E+pos_E),weight))
                 continue;
 
-            //PSum low cut 
+            //PSum low cut
             if (!_reg_vtx_selectors[region]->passCutLt("pSum_lt",(p_ele.P()+p_pos.P()),weight))
                 continue;
 
@@ -560,7 +566,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             if (!_reg_vtx_selectors[region]->passCutLt("posMom_lt",p_pos.P(),weight))
                 continue;
 
-            //Max vtx momentum	    
+            //Max vtx momentum
             if (!_reg_vtx_selectors[region]->passCutLt("maxVtxMom_lt",(p_ele+p_pos).P(),weight))
                 continue;
 
@@ -611,12 +617,12 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                     for(int idI = 0; idI < trueHitIDs[eleHit->getID()].size(); idI++ )
                     {
                         int partID = trueHitIDs[eleHit->getID()].at(idI);
-                        if ( nHits4part.find(partID) == nHits4part.end() ) 
+                        if ( nHits4part.find(partID) == nHits4part.end() )
                         {
                             // not found
                             nHits4part[partID] = 1;
-                        } 
-                        else 
+                        }
+                        else
                         {
                             // found
                             nHits4part[partID]++;
@@ -639,18 +645,35 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 //Find the correct mc part and grab mother id
                 int isRadEle = -999;
                 int isRecEle = -999;
-                TVector3 trueEleP;
+
 
                 trueEleP.SetXYZ(-999,-999,-999);
+                truePosP.SetXYZ(-999,-999,-999);
                 if (mcParts_) {
+                    float trueEleE = -1;
+                    float truePosE = -1;
                     for(int i = 0; i < mcParts_->size(); i++)
                     {
                         int momPDG = mcParts_->at(i)->getMomPDG();
-                        if(mcParts_->at(i)->getPDG() == 11 && momPDG == 622) 
+                        if(mcParts_->at(i)->getPDG() == 11 && momPDG == 622)
                         {
                             std::vector<double> lP = mcParts_->at(i)->getMomentum();
                             trueEleP.SetXYZ(lP[0],lP[1],lP[2]);
+                            trueEleE = mcParts_->at(i)->getEnergy();
+
                         }
+                        if(mcParts_->at(i)->getPDG() == -11 && momPDG == 622)
+                        {
+                            std::vector<double> lP = mcParts_->at(i)->getMomentum();
+                            truePosP.SetXYZ(lP[0],lP[1],lP[2]);
+                            truePosE = mcParts_->at(i)->getEnergy();
+
+                        }
+                        if(trueEleP.X() != -999 && truePosP.X() != -999){
+                            truePsum =  trueEleP.Mag() + trueEleP.Mag();
+                            trueEsum = trueEleE + truePosE;
+                        }
+
                         if(mcParts_->at(i)->getID() != maxID) continue;
                         if(momPDG == 625) isRadEle = 1;
                         if(momPDG == 623) isRecEle = 1;
@@ -688,6 +711,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         CalCluster eleClus = ele->getCluster();
         CalCluster posClus = pos->getCluster();
 
+
         double ele_E = ele->getEnergy();
         double pos_E = pos->getEnergy();
 
@@ -706,7 +730,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             if (!foundTracks) {
                 if (debug_)
                     std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the "<<trkColl_ <<"collection"<<std::endl;
-                continue;  
+                continue;
             }
         }
         else {
@@ -760,10 +784,13 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
         //Just for the selected vertex
         _reg_tuples[region]->setVariableValue("unc_vtx_mass", vtx->getInvMass());
-        if(!isData_) 
+        if(!isData_)
         {
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_Esum_vs_true_Esum_hh",eleClus.getEnergy()+posClus.getEnergy(), trueEsum, weight);
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_Psum_vs_true_Psum_hh",p_ele.P()+p_pos.P(), truePsum, weight);
             _reg_tuples[region]->setVariableValue("true_vtx_z", apZ);
             _reg_tuples[region]->setVariableValue("true_vtx_mass", apMass);
+            _reg_vtx_histos[region]->Fill1DHisto("true_vtx_psum_h",truePsum,weight);
         }
 
         //TODO put this in the Vertex!

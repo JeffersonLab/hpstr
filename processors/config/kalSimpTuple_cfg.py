@@ -62,7 +62,7 @@ svthits.parameters["hitCollRoot"]    = 'RotatedHelicalTrackHits'
 
 
 #Tracking
-track.parameters["debug"] = 0 
+track.parameters["debug"] = 0
 track.parameters["trkCollLcio"] = 'KalmanFullTracks'
 track.parameters["trkCollRoot"] = 'KalmanFullTracks'
 track.parameters["kinkRelCollLcio"] = ''
@@ -85,7 +85,7 @@ track.parameters["rawhitCollRoot"] = ''#'SCTRawHitsOnTrack_KF'
 
 track.parameters["bfield"] = bfield[str(options.year)]
 
-trackgbl.parameters["debug"] = 0 
+trackgbl.parameters["debug"] = 0
 trackgbl.parameters["trkCollLcio"] = 'GBLTracks'
 trackgbl.parameters["trkCollRoot"] = 'GBLTracks'
 trackgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
@@ -102,11 +102,11 @@ trackgbl.parameters["rawhitCollRoot"] = ''#'SVTRawHitsOnTrack'
 #    trackgbl.parameters["truthTrackCollLcio"] = 'GBLTracksToTruthTrackRelations'
 #    trackgbl.parameters["truthTrackCollRoot"] = 'Truth_GBLTracks'
 
-#LT check if we need the b field or not -- version of HPS java                                     
+#LT check if we need the b field or not -- version of HPS java
 trackgbl.parameters["bfield"] = bfield[str(options.year)]
 
 #ECalData
-ecal.parameters["debug"] = 0 
+ecal.parameters["debug"] = 0
 ecal.parameters["hitCollLcio"] = 'EcalCalHits'
 ecal.parameters["hitCollRoot"] = ''#'RecoEcalHits'
 ecal.parameters["clusCollLcio"] = "EcalClustersCorr"
@@ -138,7 +138,7 @@ cvtxgbl.parameters["trkRelCollLcio"]  = 'TrackDataRelations'
 
 
 #MCParticle
-mcpart.parameters["debug"] = 0 
+mcpart.parameters["debug"] = 0
 mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 

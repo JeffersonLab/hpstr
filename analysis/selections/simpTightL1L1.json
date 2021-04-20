@@ -5,7 +5,7 @@
 	"info" : "pass L1L1"
     },
     "eSum_lt"  : {
-	"cut"  : 1.9,
+	"cut"  : 2.5,
         "id"   : 1,
         "info" : "E_{e^{-}} +  E_{e^{+}}<0.83Ebeam"
     },
