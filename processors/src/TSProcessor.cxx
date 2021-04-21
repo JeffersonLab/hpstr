@@ -55,7 +55,7 @@ void TSProcessor::parseTSData(EVENT::LCGenericObject* ts_data_lcio)
     tsData->T = static_cast<unsigned long>(ts_data_lcio->getIntVal(3)) + ( (static_cast<unsigned long>(ts_data_lcio->getIntVal(4)&0xFFFF)<<32));
     tsData->EN = static_cast<unsigned long>(ts_data_lcio->getIntVal(2)) + ( (static_cast<unsigned long>(ts_data_lcio->getIntVal(4)&0xFFFF0000)<<16));
     // Parse out prescaled word
-    tsData->prescaled.intval = ts_data_lcio->getIntVal(4); // Full word
+    tsData->prescaled.intval = ts_data_lcio->getIntVal(5); // Full word
     tsData->prescaled.Single_0_Top = (tsData->prescaled.intval      )&0x001; //  0 Low energy cluster
     tsData->prescaled.Single_1_Top = (tsData->prescaled.intval >>  1)&0x001; //  1 e+
     tsData->prescaled.Single_2_Top = (tsData->prescaled.intval >>  2)&0x001; //  2 e+ : Position dependent energy cut
