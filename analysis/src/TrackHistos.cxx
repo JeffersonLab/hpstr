@@ -67,6 +67,9 @@ void TrackHistos::Fill1DVertex(Vertex* vtx,
     Fill1DHisto("pos_p_h",p_pos.P(),weight);
     Fill1DHisto("ele_clusE_h",eleClus.getEnergy(),weight);
     Fill1DHisto("pos_clusE_h",posClus.getEnergy(),weight);
+    Fill1DHisto("ele_EoP_h",eleClus.getEnergy()/p_ele.P(),weight);
+    Fill1DHisto("pos_EoP_h",posClus.getEnergy()/p_pos.P(),weight);
+    Fill2DHisto("EoP_hh", eleClus.getEnergy()/p_ele.P(), posClus.getEnergy()/p_pos.P(),weight);
 
 
     //Compute some extra variables 
@@ -105,6 +108,8 @@ void TrackHistos::Fill1DVertex(Vertex* vtx,
     //Esum
     Fill1DHisto("Pmiss_h", p_miss.P(),weight);
     Fill1DHisto("Esum_h",ele->getEnergy() + pos->getEnergy(),weight);
+    Fill1DHisto("EsumClus_h",eleClus.getEnergy() + posClus.getEnergy(),weight);
+    Fill2DHisto("EClus_hh", eleClus.getEnergy() , posClus.getEnergy(),weight);
     Fill1DHisto("Psum_h",p_ele.P() + p_pos.P(),weight);
     Fill1DHisto("PtAsym_h",pt_asym_val,weight);
     Fill1DHisto("thetax_v0_h",thetax_v0_val,weight);

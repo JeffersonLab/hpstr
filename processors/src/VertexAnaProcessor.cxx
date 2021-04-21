@@ -593,6 +593,13 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             if (!_reg_vtx_selectors[region]->passCutLt("VtxYPos_lt", vtx->getY(), weight))
                 continue;
 
+            //Tracking Volume for positron
+            if (!_reg_vtx_selectors[region]->passCutGt("volPos_top", p_pos.Py(), weight))
+                continue;
+
+            if (!_reg_vtx_selectors[region]->passCutLt("volPos_bot", p_pos.Py(), weight))
+                continue;
+
             //If this is MC check if MCParticle matched to the electron track is from rad or recoil
             if(!isData_)
             {

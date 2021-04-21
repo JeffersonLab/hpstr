@@ -151,7 +151,7 @@
         "bins" : 100,
         "minX" : 0,
         "maxX" : 5,
-        "xtitle" : "p_{e^{-}} [GeV]",
+        "xtitle" : "Cluster E_{e^{-}} [GeV]",
         "ytitle" : "Tracks"
     },
     "ele_p_h" : {
@@ -160,6 +160,13 @@
         "maxX" : 5,
         "xtitle" : "p_{e^{-}} [GeV]",
         "ytitle" : "Tracks"
+    },
+    "ele_EoP_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 2,
+        "xtitle" : "e^{-} E/p",
+        "ytitle" : "Electrons Particles"
     },
     "ele_dEdX_h" : {
         "bins"  : 200,
@@ -373,7 +380,7 @@
         "bins" : 100,
         "minX" : 0,
         "maxX" : 5,
-        "xtitle" : "p_{e^{+}} [GeV]",
+        "xtitle" : "Cluster E_{e^{+}} [GeV]",
         "ytitle" : "Tracks"
     },
     "pos_p_h" : {
@@ -382,6 +389,13 @@
         "maxX" : 5,
         "xtitle" : "p_{e^{+}} [GeV]",
         "ytitle" : "Tracks"
+    },
+    "pos_EoP_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 2,
+        "xtitle" : "e^{+} E/p",
+        "ytitle" : "Positron Particles"
     },
     "pos_dEdX_h" : {
         "bins"  : 200,
@@ -592,7 +606,7 @@
     "vtx_pz_h" : {
         "bins" : 100,
         "minX" : 0,
-        "maxX" : 3.5,
+        "maxX" : 5.0,
         "xtitle" : "vtx p_{z} [GeV]",
         "ytitle" : "Vertices"
     },
@@ -687,13 +701,40 @@
         "bins" : 200,
         "minX" : 0,
         "maxX" : 5,
-        "xtitle" : "E_{e^{-}} + E_{e^{+}} [GeV]",
+        "xtitle" : "Particle E_{e^{-}} + E_{e^{+}} [GeV]",
         "ytitle" : "events"
+    },
+    "EsumClus_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 5,
+        "xtitle" : "E_{e^{-}} Cluster + E_{e^{+}} Cluster [GeV]",
+        "ytitle" : "events"
+    },
+    "EClus_hh" : {
+        "binsX"  : 200,
+        "minX"   : 0.0,
+        "maxX"   : 5,
+        "binsY"  : 200,
+        "minY"   : 0,
+        "maxY"   : 5,
+        "xtitle" : "e^{-} Cluster E [GeV]",
+        "ytitle" : "e^{+} Cluster E [GeV]"
+    },
+    "EoP_hh" : {
+        "binsX"  : 100,
+        "minX"   : 0.0,
+        "maxX"   : 2,
+        "binsY"  : 100,
+        "minY"   : 0,
+        "maxY"   : 2,
+        "xtitle" : "e^{-} E/p",
+        "ytitle" : "e^{+} E/p"
     },
     "Psum_h" : {
         "bins" :  200,
         "minX" :  0,
-        "maxX" :  5,
+        "maxX" :  5.5,
         "xtitle" : "p_{e^{-}} + p_{e^{+}} [GeV]",
         "ytitle" : "events"
     },
@@ -791,28 +832,28 @@
     "Ptracks_noVtxs_h" : {
         "bins" :  100 ,
         "minX" :  0 ,
-        "maxX" :  3.0 ,
+        "maxX" :  5.0 ,
         "xtitle" : " P_{trks} [GeV] ",
         "ytitle" : " Events "
     },
     "Ptracks_isVtxs_h" : {
         "bins" :  100 ,
         "minX" :  0 ,
-        "maxX" :  3.0 ,
+        "maxX" :  5.0 ,
         "xtitle" : " P_{trks} [GeV] ",
         "ytitle" : " Events "
     },
     "vtx_Psum_h" : {
         "bins" :  100 ,
         "minX" :  0 ,
-        "maxX" :  3.5 ,
+        "maxX" :  5.5 ,
         "xtitle" : " vtx p_{sum} [GeV] ",
         "ytitle" : " Vertices "
     },
     "vtx_Esum_h" : {
         "bins" :  100 ,
         "minX" :  0 ,
-        "maxX" :  3.5 ,
+        "maxX" :  5.0 ,
         "xtitle" : " vtx E_{sum} [GeV] ",
         "ytitle" : " Vertices "
     },
