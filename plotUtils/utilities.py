@@ -676,8 +676,7 @@ def Make1Dplots(name,outdir,histos,colors,markers,legends,oFext,xtitle="",ytitle
 
 
 
-def Make2DRatio(name,outdir,histo1,histo2,xtitle="",ytitle="",ztitle="",runNumber="",legends=[]):
-    oFext=".pdf"
+def Make2DRatio(name,outdir,histo1,histo2,xtitle="",ytitle="",ztitle="",runNumber="",legends=[],oFext=".png"):
     if not os.path.exists(outdir):
         os.mkdir(outdir)
 
