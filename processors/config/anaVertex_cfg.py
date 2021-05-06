@@ -46,4 +46,7 @@ p.sequence = [vtxAna]
 p.input_files = infile
 p.output_files = [outfile]
 
+if (options.nevents > -1):
+    p.max_events = options.nevents
+
 p.printProcess()

@@ -20,6 +20,7 @@
 
 //C++
 #include <memory>
+#include <vector>
 
 class VtxAnaProcessor : public Processor {
 
@@ -58,6 +59,12 @@ private:
     int debug_{0};
 
     double beamE_{4.55};
+
+    std::vector<Vertex> vect_all_uc_v0s;
+    std::vector<Track> vect_all_track_ele;
+    std::vector<Track> vect_all_track_pos;
+
+    std::shared_ptr<AnaHelpers> _ah;
 };
 
 #endif
