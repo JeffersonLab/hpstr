@@ -1,0 +1,191 @@
+{
+     "ts_h" : {
+        "bins" : 20,
+        "minX" : -0.5,
+        "maxX" : 19.5,
+        "xtitle" : "TS Bit",
+        "ytitle" : "Events"
+    },   
+    "numEcalClusters_h" : {
+        "bins" : 10,
+        "minX" : -0.5,
+        "maxX" : 9.5,
+        "xtitle" : "Number of Reco Ecal Clusters",
+        "ytitle" : "Events"
+    },
+    "ecalClusterEnergy_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 5000,
+        "xtitle" : "Reco Ecal Cluster Energy [MeV]",
+        "ytitle" : "Clusters / 50 MeV"
+    },
+	"ecalClusterTime_h" : {
+        "bins" : 200,
+        "minX" : 16,
+        "maxX" : 80,
+        "xtitle" : "Reco Ecal Cluster Tims [ns]",
+        "ytitle" : "Clusters / 0.32 ns"
+    },
+	"ecalClusterTimeVsEnergy_hh" : {
+        "binsX" : 200,
+        "minX" : 0,
+        "maxX" : 5000,
+        "binsY" : 200,
+        "minY" : 16,
+        "maxY" : 80,
+		"xtitle" : "Reco Ecal Cluster Energy [MeV]",
+        "ytitle" : "Reco Ecal Cluster Tims [ns]"
+    },
+	"ecalClusterX_h" : {
+        "bins" : 200,
+        "minX" : -400,
+        "maxX" : 400,
+        "xtitle" : "Reco Ecal Cluster X [mm]",
+        "ytitle" : "Clusters / 4 mm"
+    },
+	"ecalClusterXVsEnergy_hh" : {
+        "binsX" : 200,
+        "minX" : 0,
+        "maxX" : 5000,
+        "binsY" : 200,
+        "minY" : -400,
+        "maxY" : 400,
+		"xtitle" : "Reco Ecal Cluster Energy [MeV]",
+        "ytitle" : "Reco Ecal Cluster X [mm]"
+    },
+ 	"ecalClusterY_h" : {
+        "bins" : 200,
+        "minX" : -100,
+        "maxX" : 100,
+        "xtitle" : "Reco Ecal Cluster Y [mm]",
+        "ytitle" : "Clusters / 1 mm"
+    },
+	"ecalClusterXY_hh" : {
+        "binsX" : 200,
+        "minX" : -400,
+        "maxX" : 400,
+        "binsY" : 200,
+        "minY" : -100,
+        "maxY" : 100,
+		"xtitle" : "Reco Ecal Cluster X [mm]",
+        "ytitle" : "Reco Ecal Cluster Y [mm]"
+    },
+	"ecalClusterTimeVsEnergyNegX_hh" : {
+        "binsX" : 200,
+        "minX" : 0,
+        "maxX" : 5000,
+        "binsY" : 200,
+        "minY" : 16,
+        "maxY" : 80,
+		"xtitle" : "Reco Ecal Cluster Energy [MeV]",
+        "ytitle" : "Reco Ecal Cluster Tims [ns]"
+    },
+ 	"ecalClusterTimeVsEnergyPosX_hh" : {
+        "binsX" : 200,
+        "minX" : 0,
+        "maxX" : 5000,
+        "binsY" : 200,
+        "minY" : 16,
+        "maxY" : 80,
+		"xtitle" : "Reco Ecal Cluster Energy [MeV]",
+        "ytitle" : "Reco Ecal Cluster Tims [ns]"
+    },    
+	"numTargetConstrainedVertices_h" : {
+        "bins" : 10,
+        "minX" : -0.5,
+        "maxX" : 9.5,
+        "xtitle" : "Number of Reco Target Constrained Vertices",
+        "ytitle" : "Events"
+    },
+	"eleChi2TargetConstrainedVertices_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 100,
+        "xtitle" : "Chi2 for electron tracks",
+        "ytitle" : "electron tracks"
+    },
+	"eleClusterEnergyTargetConstrainedVertices_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 5000,
+        "xtitle" : "Reco Ecal Cluster Energy [MeV]",
+        "ytitle" : "Clusters / 50 MeV"
+    },
+	"eleClusterTimeTargetConstrainedVertices_h" : {
+        "bins" : 200,
+        "minX" : 16,
+        "maxX" : 80,
+        "xtitle" : "Reco Ecal Cluster Tims [ns]",
+        "ytitle" : "Clusters / 0.32 ns"
+    },
+	"eleClusterTimeVsEnergyTargetConstrainedVertices_hh" : {
+        "binsX" : 200,
+        "minX" : 0,
+        "maxX" : 5000,
+        "binsY" : 200,
+        "minY" : 16,
+        "maxY" : 80,
+		"xtitle" : "Reco Ecal Cluster Energy [MeV]",
+        "ytitle" : "Reco Ecal Cluster Tims [ns]"
+    },
+	"posClusterEnergyTargetConstrainedVertices_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 5000,
+        "xtitle" : "Reco Ecal Cluster Energy [MeV]",
+        "ytitle" : "Clusters / 50 MeV"
+    },
+	"posClusterTimeTargetConstrainedVertices_h" : {
+        "bins" : 200,
+        "minX" : 16,
+        "maxX" : 80,
+        "xtitle" : "Reco Ecal Cluster Tims [ns]",
+        "ytitle" : "Clusters / 0.32 ns"
+    },
+	"posClusterTimeVsEnergyTargetConstrainedVertices_hh" : {
+        "binsX" : 200,
+        "minX" : 0,
+        "maxX" : 5000,
+        "binsY" : 200,
+        "minY" : 16,
+        "maxY" : 80,
+		"xtitle" : "Reco Ecal Cluster Energy [MeV]",
+        "ytitle" : "Reco Ecal Cluster Tims [ns]"
+    },
+    	"eleClusterXTargetConstrainedVertices_h" : {
+        "bins" : 200,
+        "minX" : -400,
+        "maxX" : 400,
+        "xtitle" : "Reco Ecal Cluster X [mm]",
+        "ytitle" : "Clusters / 4 mm"
+    },
+	"posClusterXTargetConstrainedVertices_h" : {
+        "bins" : 200,
+        "minX" : -400,
+        "maxX" : 400,
+        "xtitle" : "Reco Ecal Cluster X [mm]",
+        "ytitle" : "Clusters / 4 mm"
+    },
+	"eleClusterYTargetConstrainedVertices_h" : {
+        "bins" : 200,
+        "minX" : -100,
+        "maxX" : 100,
+        "xtitle" : "Reco Ecal Cluster Y [mm]",
+        "ytitle" : "Clusters / 1 mm"
+    },
+	"posClusterYTargetConstrainedVertices_h" : {
+        "bins" : 200,
+        "minX" : -100,
+        "maxX" : 100,
+        "xtitle" : "Reco Ecal Cluster Y [mm]",
+        "ytitle" : "Clusters / 1 mm"
+    },
+	"clusterTimeDifferenceTargetConstrainedVertices_h" : {
+        "bins" : 200,
+        "minX" : -15,
+        "maxX" : 15,
+        "xtitle" : "Time difference between clusters of ele and pos [ns]",
+        "ytitle" : "Cluster pairs / 0.15 ns"
+    }
+}
