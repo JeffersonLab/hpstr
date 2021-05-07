@@ -1,0 +1,139 @@
+{ 
+     "ts_h" : {
+        "bins" : 20,
+        "minX" : -0.5,
+        "maxX" : 19.5,
+        "xtitle" : "TS Bit",
+        "ytitle" : "Events"
+    }, 
+    "numUnconstrainedVertices_h" : { 
+        "bins" : 10,
+        "minX" : -0.5,
+        "maxX" : 9.5,
+        "xtitle" : "# of vertices",
+        "ytitle" : "Counts"
+    },
+	"xUnconstrainedVertices_h" : { 
+        "bins" : 100,
+        "minX" : -10,
+        "maxX" : 10,
+        "xtitle" : "x",
+        "ytitle" : "Counts"
+    },
+	"yUnconstrainedVertices_h" : { 
+        "bins" : 100,
+        "minX" : -5,
+        "maxX" : 5,
+        "xtitle" : "y",
+        "ytitle" : "Counts"
+    },
+	"zUnconstrainedVertices_h" : { 
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "z",
+        "ytitle" : "Counts"
+    },
+	"xyUnconstrainedVertices_hh" : {
+        "binsX"  : 100,
+        "minX"   : -10,
+        "maxX"   : 10,
+        "binsY"  : 100,
+        "minY"   : -5,
+        "maxY"   : 5,
+        "xtitle" : "x",
+        "ytitle" : "y"
+    },
+ 	"yzUnconstrainedVertices_hh" : {
+        "binsX"  : 100,
+        "minX"   : -5,
+        "maxX"   : 5,
+        "binsY"  : 100,
+        "minY"   : -50,
+        "maxY"   : 50,
+        "xtitle" : "y",
+        "ytitle" : "z"
+    },
+	"zxUnconstrainedVertices_hh" : {
+        "binsX"  : 100,
+        "minX"   : -50,
+        "maxX"   : 50,
+        "binsY"  : 100,
+        "minY"   : -10,
+        "maxY"   : 10,
+        "xtitle" : "z",
+        "ytitle" : "x"
+    },
+	"chi2PerNdfUnconstrainedVertices_h" : { 
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 100,
+        "xtitle" : "chi2/NDF for V0",
+        "ytitle" : "Counts"
+    },
+	"chi2PerNdfEleUnconstrainedVertices_h" : { 
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 100,
+        "xtitle" : "chi2/NDF for e^{+} of V0",
+        "ytitle" : "Counts"
+    },
+	"chi2PerNdfPosUnconstrainedVertices_h" : { 
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 100,
+        "xtitle" : "chi2/NDF for e^{-} of V0",
+        "ytitle" : "Counts"
+    },
+	"logChi2PerNdfUnconstrainedVertices_h" : { 
+        "bins" : 100,
+        "minX" : -30,
+        "maxX" : 30,
+        "xtitle" : "log(chi2/NDF) for V0",
+        "ytitle" : "Counts"
+    },
+	"logChi2PerNdfEleUnconstrainedVertices_h" : { 
+        "bins" : 100,
+        "minX" : -30,
+        "maxX" : 30,
+        "xtitle" : "log(chi2/NDF) for e^{-} of V0",
+        "ytitle" : "Counts"
+    },
+	"logChi2PerNdfPosUnconstrainedVertices_h" : { 
+        "bins" : 100,
+        "minX" : -30,
+        "maxX" : 30,
+        "xtitle" : "log(chi2/NDF) for e^{+} of V0",
+        "ytitle" : "Counts"
+    },
+	"logChi2PerNdfEleVsPosUnconstrainedVertices_hh" : {
+        "binsX"  : 100,
+        "minX"   : -30,
+        "maxX"   : 30,
+        "binsY"  : 100,
+        "minY"   : -30,
+        "maxY"   : 30,
+        "xtitle" : "log(chi2/NDF) for e^{-} of V0",
+        "ytitle" : "log(chi2/NDF) for e^{+} of V0"
+    }, 
+	"logChi2PerNdfVertexVsEleUnconstrainedVertices_hh" : {
+        "binsX"  : 100,
+        "minX"   : -30,
+        "maxX"   : 30,
+        "binsY"  : 100,
+        "minY"   : -30,
+        "maxY"   : 30,
+        "xtitle" : "log(chi2/NDF) for V0",
+        "ytitle" : "log(chi2/NDF) for e^{-} of V0"
+    }, 
+	"logChi2PerNdfVertexVsPosUnconstrainedVertices_hh" : {
+        "binsX"  : 100,
+        "minX"   : -30,
+        "maxX"   : 30,
+        "binsY"  : 100,
+        "minY"   : -30,
+        "maxY"   : 30,
+        "xtitle" : "log(chi2/NDF) for V0",
+        "ytitle" : "log(chi2/NDF) for e^{+} of V0"
+    }        
+}
