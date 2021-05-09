@@ -24,6 +24,7 @@ class TrackHistos : public HistoManager {
         virtual void Define2DHistos();
         
         void BuildAxes();
+        void DefineTrkHitHistos();
 
         void Fill1DTrack(Track* track, float weight = 1., const std::string& trkname = "");
         void Fill2DTrack(Track* track, float weight = 1., const std::string& trkname = "");

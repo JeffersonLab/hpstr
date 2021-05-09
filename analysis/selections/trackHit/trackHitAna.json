@@ -1,0 +1,22 @@
+{
+    "n_hits_gt"  : {
+        "cut"  : 10,
+        "id"   : 0,
+        "info" : "N Hits >= 10"
+    },
+    "chi2ndf_lt"  : {
+        "cut"  : 60.0,
+        "id"   : 0,
+        "info" : "#chi^{2}/ndf <= 60.0"
+    },
+    "p_gt"  : {
+        "cut"  : 1.1,
+        "id"   : 1,
+        "info" : "p_{T} > 1.1"
+    },
+    "p_lt"  : {
+        "cut"  : 3.8,
+        "id"   : 2,
+        "info" : "p_{T} < 3.8"
+    }
+}
