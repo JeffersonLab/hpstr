@@ -269,6 +269,16 @@
         "xtitle" : "trk(#lamdba)",
         "ytitle" : "trk z0 [mm]"
     },
+    "ele_phi0_vs_p_hh" : {
+        "binsX"  : 100,
+        "minX"   : 0,
+        "maxX"   : 5,
+        "binsY"  : 100,
+        "minY"   : -0.4,
+        "maxY"   : 0.4,
+        "xtitle" : "p_{e^{-}} [GeV]",
+        "ytitle" : "trk #phi_{0}"
+    },
     "pos_nHits_2d_h" : {
         "bins"  : 15,
         "minX"  : 0,
@@ -424,6 +434,16 @@
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk tan(#lambda)"
     },
+    "pos_phi0_vs_p_hh" : {
+        "binsX"  : 100,
+        "minX"   : 0,
+        "maxX"   : 5,
+        "binsY"  : 100,
+        "minY"   : -0.4,
+        "maxY"   : 0.4,
+        "xtitle" : "p_{e^{+}} [GeV]",
+        "ytitle" : "trk #phi_{0}"
+    },
     "pos_d0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
@@ -431,7 +451,7 @@
         "binsY"  : 200,
         "minY"   : -10,
         "maxY"   : 10,
-        "xtitle" : "p_{e^{-}} [GeV]",
+        "xtitle" : "p_{e^{+}} [GeV]",
         "ytitle" : "trk d0 [mm]"
     },
     "pos_d0_vs_phi0_hh" : {
