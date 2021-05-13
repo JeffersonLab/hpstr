@@ -13,6 +13,16 @@
         "xtitle" : "hit code",
         "ytitle" : "Tracks"
     },
+    "hitCode_trkType_hh" : {
+        "binsX"   : 16,
+        "minX"   : -0.5,
+        "maxX"   : 15.5,
+        "binsY"   : 4,
+        "minY"   : -0.5,
+        "maxY"   : 3.5,
+        "xtitle" : "hit combo",
+        "ytitle" : "track type"
+    },
     "p_h" : {
         "bins"   : 650,
         "minX"   : 0,

@@ -89,8 +89,9 @@ bool TrackHitAnaProcessor::process(IEvent* ievent) {
         // Get a track
         Track* track = tracks_->at(itrack);
         bool isTop = (track->getTanLambda() > 0.0);
-        bool isPos = (track->getOmega() > 0.0);
+        bool isPos = (track->getOmega() < 0.0);
         bool isKF = track->isKalmanTrack();
+        int trkType = (int)isTop*2 + (int)isPos;
         int n2dhits_onTrack = !track->isKalmanTrack() ? track->getTrackerHitCount() * 2 : track->getTrackerHitCount();
         
         //Track Selection
@@ -125,6 +126,7 @@ bool TrackHitAnaProcessor::process(IEvent* ievent) {
             }
         }
         trkHistos_->Fill1DHisto("hitCode_h", hitCode);
+        trkHistos_->Fill2DHisto("hitCode_trkType_hh", hitCode, trkType);
         trkHistos_->Fill1DTrack(track, weight, "");
 
         n_sel_tracks++;
@@ -133,14 +135,19 @@ bool TrackHitAnaProcessor::process(IEvent* ievent) {
         {
 
             reg_selectors_[region]->getCutFlowHisto()->Fill(0.,weight);
-            if(debug_) std::cout<<"Check for region "<<region<<std::endl;
+            if(debug_) std::cout<<"Check for region "<<region
+                <<" hc "<<hitCode
+                <<" lt:"<< !reg_selectors_[region]->passCutLt("hitCode_lt", ((double)hitCode)-0.5, weight)
+                <<" gt:"<< !reg_selectors_[region]->passCutGt("hitCode_gt", ((double)hitCode)+0.5, weight)
+                << std::endl;
             //Hit code req
-            if ( reg_selectors_[region]->passCutLt("hitCode_eq", double(hitCode) + 0.5, weight) )
-                continue;
-            if ( reg_selectors_[region]->passCutGt("hitCode_eq", double(hitCode) - 0.5, weight) )
-                continue;
+            if ( !reg_selectors_[region]->passCutLt("hitCode_lt", ((double)hitCode)-0.5, weight) ) continue;
 
-            if(debug_) std::cout<<"hit code "<<hitCode<<std::endl;
+            if(debug_) std::cout<<"Pass Lt cut"<<std::endl;
+            if ( !reg_selectors_[region]->passCutGt("hitCode_gt", ((double)hitCode)+0.5, weight) ) continue;
+
+            if(debug_) std::cout<<"Pass Gt cut"<<std::endl;
+
             if(debug_) std::cout<<"Pass region "<<region<<std::endl;
             reg_histos_[region]->Fill1DHisto("hitCode_h", hitCode,weight);
             if(isTop&&isPos) reg_histos_[region]->Fill1DTrack(track, weight, "topPos_");

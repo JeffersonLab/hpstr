@@ -1,7 +1,12 @@
 {
-    "hitCode_eq"  : {
+    "hitCode_lt"  : {
         "cut"  : 1.0,
         "id"   : 0,
-        "info" : "hit code 0001"
+        "info" : "< hit code 0001"
+    },
+    "hitCode_gt"  : {
+        "cut"  : 1.0,
+        "id"   : 1,
+        "info" : "> hit code 0001"
     }
 }
