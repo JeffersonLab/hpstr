@@ -14,31 +14,31 @@
         "ytitle" : "Tracks"
     },
     "p_pos_tracks_h": {
-		"bins"   : 200,
+		"bins"   : 100,
         "minX"   : 0,
         "maxX"   : 8,
         "xtitle" : "p [GeV]",
         "ytitle" : "Tracks"
     },
 	"p_neg_tracks_h": {
-		"bins"   : 200,
+		"bins"   : 100,
         "minX"   : 0,
         "maxX"   : 8,
         "xtitle" : "p [GeV]",
         "ytitle" : "Tracks"
     },
     "chi2ndf_tracks_h" : {
-        "bins" : 200,
+        "bins" : 100,
         "minX" : 0,
         "maxX" : 30,
         "xtitle" : "track #chi^{2} / ndf",
         "ytitle" : "Tracks"
     },
 	"xy_positionAtEcal_tracks_hh" : {
-        "binsX" : 200,
+        "binsX" : 100,
         "minX" : -400,
         "maxX" : 400,
-        "binsY" : 200,
+        "binsY" : 100,
         "minY" : -100,
         "maxY" : 100,
 		"xtitle" : "X [mm]",
@@ -52,64 +52,64 @@
         "ytitle" : "Events"
     },
 	"xy_clusters_hh" : {
-        "binsX" : 200,
+        "binsX" : 100,
         "minX" : -400,
         "maxX" : 400,
-        "binsY" : 200,
+        "binsY" : 100,
         "minY" : -100,
         "maxY" : 100,
 		"xtitle" : "X [mm]",
         "ytitle" : "Y [mm]"
     },
     "deltaR_vs_p_pos_top_hh": { 
-		"binsX" : 200,
+		"binsX" : 100,
         "minX" : 0,
         "maxX" : 4,
-        "binsY" : 200,
+        "binsY" : 100,
         "minY" : 0,
         "maxY" : 60,
 		"xtitle" : "p [GeV]",
         "ytitle" : "#Deltar [mm]"
     },
 	"deltaR_vs_p_neg_top_hh": { 
-		"binsX" : 200,
+		"binsX" : 100,
         "minX" : 0,
         "maxX" : 4,
-        "binsY" : 200,
+        "binsY" : 100,
         "minY" : 0,
         "maxY" : 60,
 		"xtitle" : "p [GeV]",
         "ytitle" : "#Deltar [mm]"
     },
 	"deltaR_vs_p_pos_bot_hh": { 
-		"binsX" : 200,
+		"binsX" : 100,
         "minX" : 0,
         "maxX" : 4,
-        "binsY" : 200,
+        "binsY" : 100,
         "minY" : 0,
         "maxY" : 60,
 		"xtitle" : "p [GeV]",
         "ytitle" : "#Deltar [mm]"
     },
 	"deltaR_vs_p_neg_bot_hh": { 
-		"binsX" : 200,
+		"binsX" : 100,
         "minX" : 0,
         "maxX" : 4,
-        "binsY" : 200,
+        "binsY" : 100,
         "minY" : 0,
         "maxY" : 60,
 		"xtitle" : "p [GeV]",
         "ytitle" : "#Deltar [mm]"
     },
     "seed_energy_cluster_h": { 
- 		"bins"   : 200,
+ 		"bins"   : 100,
         "minX"   : 0,
         "maxX"   : 4,
         "xtitle" : "Seed energy of cluster [GeV]",
         "ytitle" : "Clusters"
     },
 	"energy_cluster_h": { 
- 		"bins"   : 200,
+ 		"bins"   : 100,
         "minX"   : 0,
         "maxX"   : 4,
         "xtitle" : "Energy of cluster [GeV]",
@@ -126,7 +126,7 @@
 		"binsX" : 10,
         "minX" : 0.5,
         "maxX" : 10.5,
-        "binsY" : 200,
+        "binsY" : 100,
         "minY" : 0,
         "maxY" : 4,
 		"xtitle" : "Hit counts of cluster",
@@ -136,9 +136,9 @@
 		"binsX" : 47,
         "minX" : -23.5,
         "maxX" : 23.5,
-        "binsY" : 200,
+        "binsY" : 100,
         "minY" : 0,
-        "maxY" : 4,
+        "maxY" : 3.5,
 		"xtitle" : "X index of cluster",
         "ytitle" : "Energy of cluster [GeV]"
     }, 
@@ -146,21 +146,21 @@
 		"binsX" : 23,
         "minX" : 0.5,
         "maxX" : 23.5,
-        "binsY" : 200,
+        "binsY" : 100,
         "minY" : 0,
-        "maxY" : 4,
+        "maxY" : 3.5,
 		"xtitle" : "X index of cluster",
         "ytitle" : "Energy of cluster [GeV]"
     },
 	"energy_sum_cluster_h": { 
- 		"bins"   : 200,
+ 		"bins"   : 100,
         "minX"   : 0,
         "maxX"   : 4,
         "xtitle" : "Energy sum of cluster pair [GeV]",
         "ytitle" : "Cluster Pairs"
     },
 	"energy_difference_cluster_h": { 
- 		"bins"   : 200,
+ 		"bins"   : 100,
         "minX"   : 0,
         "maxX"   : 4,
         "xtitle" : "Energy difference of cluster pair [GeV]",
@@ -174,10 +174,10 @@
         "ytitle" : "Cluster Pairs"
     },
 	"energy_vs_r_lowerest_energy_cluster_hh": { 
-		"binsX" : 200,
+		"binsX" : 100,
         "minX" : 0,
         "maxX" : 400,
-        "binsY" : 200,
+        "binsY" : 100,
         "minY" : 0,
         "maxY" : 2,
 		"xtitle" : "r_{low} [mm]",
