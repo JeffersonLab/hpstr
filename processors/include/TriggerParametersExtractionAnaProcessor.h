@@ -7,6 +7,7 @@
 #include "Collections.h"
 #include "Track.h"
 #include "CalCluster.h"
+#include "CalHit.h"
 #include "Processor.h"
 #include "HistoManager.h"
 #include "TriggerParametersExtractionAnaHistos.h"

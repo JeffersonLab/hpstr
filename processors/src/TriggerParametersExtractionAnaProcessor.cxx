@@ -94,19 +94,31 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 	int n_cl = ecalClusters_->size();
 	histos->Fill1DHisto("n_clusters_h", n_cl, weight);
 
-	std::vector<CalCluster> clulsters_top;
-	std::vector<CalCluster> clulsters_bot;
+	std::vector<CalCluster> clulsters_pos_top;
+	std::vector<CalCluster> clulsters_neg_top;
+	std::vector<CalCluster> clulsters_pos_bot;
+	std::vector<CalCluster> clulsters_neg_bot;
 	for(int i = 0; i < n_cl; i++){
 		CalCluster* cluster = ecalClusters_->at(i);
 		std::vector<double> positionCluster = cluster->getPosition();
 		histos->Fill2DHisto("xy_clusters_hh",positionCluster[0], positionCluster[1], weight);
-		if(positionCluster[1] > 0 ) clulsters_top.push_back(*cluster);
-		else if(positionCluster[1] < 0 ) clulsters_bot.push_back(*cluster);
+
+		CalHit* seed = (CalHit*)cluster->getSeed();
+		int x_index = seed -> getCrystalIndices()[0];
+		int y_index = seed -> getCrystalIndices()[1];
+		if(y_index > 0 ){
+			if(x_index > 0) clulsters_pos_top.push_back(*cluster);
+			else clulsters_neg_top.push_back(*cluster);
+		}
+		else {
+			if(x_index > 0) clulsters_pos_bot.push_back(*cluster);
+			else clulsters_neg_bot.push_back(*cluster);
+		}
 	}
 
 	if( ( tracks_pos_top.size() >= 1 && tracks_neg_bot.size() >= 1 ) || ( tracks_pos_bot.size() >= 1 && tracks_neg_top.size() >= 1)  ){
-		for(int i = 0; i < clulsters_top.size(); i++){
-			CalCluster cluster = clulsters_top.at(i);
+		for(int i = 0; i < clulsters_pos_top.size(); i++){
+			CalCluster cluster = clulsters_pos_top.at(i);
 			std::vector<double> positionCluster = cluster.getPosition();
 
 			for(int j = 0; j < tracks_pos_top.size(); j++){
@@ -115,7 +127,11 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 				double delta_r = sqrt(pow(positionCluster[0] - positionAtEcal[0],2) + pow(positionCluster[1] - positionAtEcal[1],2));
 				histos->Fill2DHisto("deltaR_vs_p_pos_top_hh", track.getP(), delta_r, weight);
 			}
+		}
 
+		for(int i = 0; i < clulsters_neg_top.size(); i++){
+			CalCluster cluster = clulsters_neg_top.at(i);
+			std::vector<double> positionCluster = cluster.getPosition();
 			for(int j = 0; j < tracks_neg_top.size(); j++){
 				Track track = tracks_neg_top.at(j);
 				std::vector<double> positionAtEcal = track.getPositionAtEcal();
@@ -124,8 +140,8 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 			}
 		}
 
-		for(int i = 0; i < clulsters_bot.size(); i++){
-			CalCluster cluster = clulsters_bot.at(i);
+		for(int i = 0; i < clulsters_pos_bot.size(); i++){
+			CalCluster cluster = clulsters_pos_bot.at(i);
 			std::vector<double> positionCluster = cluster.getPosition();
 
 			for(int j = 0; j < tracks_pos_bot.size(); j++){
@@ -134,7 +150,11 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 				double delta_r = sqrt(pow(positionCluster[0] - positionAtEcal[0],2) + pow(positionCluster[1] - positionAtEcal[1],2));
 				histos->Fill2DHisto("deltaR_vs_p_pos_bot_hh", track.getP(), delta_r, weight);
 			}
+		}
 
+		for(int i = 0; i < clulsters_neg_bot.size(); i++){
+			CalCluster cluster = clulsters_neg_bot.at(i);
+			std::vector<double> positionCluster = cluster.getPosition();
 			for(int j = 0; j < tracks_neg_bot.size(); j++){
 				Track track = tracks_neg_bot.at(j);
 				std::vector<double> positionAtEcal = track.getPositionAtEcal();
@@ -142,6 +162,23 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 				histos->Fill2DHisto("deltaR_vs_p_neg_bot_hh", track.getP(), delta_r, weight);
 			}
 		}
+	}
+
+	for(int i = 0; i < n_cl; i++){
+		CalCluster* cluster = ecalClusters_->at(i);
+		CalHit* seed = (CalHit*)cluster->getSeed();
+
+		histos->Fill1DHisto("seed_energy_cluster_h", seed->getEnergy(), weight);
+
+		histos->Fill1DHisto("energy_cluster_h", cluster->getEnergy(), weight);
+
+		histos->Fill1DHisto("n_hits_cluster_h", cluster->getNHits(), weight);
+
+		histos->Fill2DHisto("energy_vs_n_hits_cluster_hh", cluster->getNHits(), cluster->getEnergy(), weight);
+
+		int x_index = seed -> getCrystalIndices()[0];
+		histos->Fill2DHisto("energy_vs_x_index_hh", x_index, cluster->getEnergy(), weight);
+		if(x_index > 0) histos->Fill2DHisto("energy_vs_x_index_pos_hh", x_index, cluster->getEnergy(), weight);
 
 	}
 

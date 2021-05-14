@@ -100,5 +100,57 @@
         "maxY" : 60,
 		"xtitle" : "p [GeV]",
         "ytitle" : "#Deltar [mm]"
+    },
+    "seed_energy_cluster_h": { 
+ 		"bins"   : 200,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "Seed energy of cluster [GeV]",
+        "ytitle" : "Clusters"
+    },
+	"energy_cluster_h": { 
+ 		"bins"   : 200,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "Energy of cluster [GeV]",
+        "ytitle" : "Clusters"
+    },
+	"n_hits_cluster_h": { 
+ 		"bins"   : 8,
+        "minX"   : 0.5,
+        "maxX"   : 8.5,
+        "xtitle" : "Hit counts of cluster",
+        "ytitle" : "Clusters"
+    },
+	"energy_vs_n_hits_cluster_hh": { 
+		"binsX" : 5,
+        "minX" : 0.5,
+        "maxX" : 8.5,
+        "binsY" : 200,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "Hit counts of cluster",
+        "ytitle" : "Energy of cluster [GeV]"
+    },
+   	"energy_vs_x_index_hh": { 
+		"binsX" : 47,
+        "minX" : -23.5,
+        "maxX" : 23.5,
+        "binsY" : 200,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "X index of cluster",
+        "ytitle" : "Energy of cluster [GeV]"
+    }, 
+	"energy_vs_x_index_pos_hh": { 
+		"binsX" : 23,
+        "minX" : 0.5,
+        "maxX" : 23.5,
+        "binsY" : 200,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "X index of cluster",
+        "ytitle" : "Energy of cluster [GeV]"
     }
+    
 }
