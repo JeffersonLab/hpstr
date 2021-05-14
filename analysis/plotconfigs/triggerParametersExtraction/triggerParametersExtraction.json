@@ -116,16 +116,16 @@
         "ytitle" : "Clusters"
     },
 	"n_hits_cluster_h": { 
- 		"bins"   : 8,
+ 		"bins"   : 10,
         "minX"   : 0.5,
-        "maxX"   : 8.5,
+        "maxX"   : 10.5,
         "xtitle" : "Hit counts of cluster",
         "ytitle" : "Clusters"
     },
 	"energy_vs_n_hits_cluster_hh": { 
-		"binsX" : 5,
+		"binsX" : 10,
         "minX" : 0.5,
-        "maxX" : 8.5,
+        "maxX" : 10.5,
         "binsY" : 200,
         "minY" : 0,
         "maxY" : 4,
@@ -151,6 +151,36 @@
         "maxY" : 4,
 		"xtitle" : "X index of cluster",
         "ytitle" : "Energy of cluster [GeV]"
-    }
-    
+    },
+	"energy_sum_cluster_h": { 
+ 		"bins"   : 200,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "Energy sum of cluster pair [GeV]",
+        "ytitle" : "Cluster Pairs"
+    },
+	"energy_difference_cluster_h": { 
+ 		"bins"   : 200,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "Energy difference of cluster pair [GeV]",
+        "ytitle" : "Cluster Pairs"
+    },
+	"coplanarity_cluster_h": { 
+ 		"bins"   : 181,
+        "minX"   : -0.5,
+        "maxX"   : 180.5,
+        "xtitle" : "Coplanarity [deg]",
+        "ytitle" : "Cluster Pairs"
+    },
+	"energy_vs_r_lowerest_energy_cluster_hh": { 
+		"binsX" : 200,
+        "minX" : 0,
+        "maxX" : 400,
+        "binsY" : 200,
+        "minY" : 0,
+        "maxY" : 2,
+		"xtitle" : "r_{low} [mm]",
+		"ytitle" : "E_{low} [GeV]"
+    }    
 }
