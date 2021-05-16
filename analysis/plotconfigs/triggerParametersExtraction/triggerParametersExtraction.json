@@ -174,10 +174,10 @@
         "ytitle" : "Cluster Pairs"
     },
 	"energy_vs_r_lowerest_energy_cluster_hh": { 
-		"binsX" : 100,
+		"binsX" : 50,
         "minX" : 0,
         "maxX" : 400,
-        "binsY" : 100,
+        "binsY" : 50,
         "minY" : 0,
         "maxY" : 2,
 		"xtitle" : "r_{low} [mm]",
