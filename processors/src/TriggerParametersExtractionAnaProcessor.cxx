@@ -136,8 +136,17 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 		histos->Fill2DHisto("xy_clusters_hh",positionCluster[0], positionCluster[1], weight);
 
 		CalHit* seed = (CalHit*)cluster->getSeed();
+		histos->Fill1DHisto("seed_energy_cluster_without_cut_h", seed->getEnergy(), weight);
+		histos->Fill1DHisto("energy_cluster_without_cut_h", cluster->getEnergy(), weight);
+		histos->Fill1DHisto("n_hits_cluster_without_cut_h", cluster->getNHits(), weight);
+		histos->Fill2DHisto("energy_vs_n_hits_cluster_without_cut_hh", cluster->getNHits(), cluster->getEnergy(), weight);
+
 		int ix = seed -> getCrystalIndices()[0];
 		int iy = seed -> getCrystalIndices()[1];
+
+		if(ix < 0) histos->Fill1DHisto("n_clusters_xAxis_without_cut_h", ix + 1, weight);
+		else histos->Fill1DHisto("n_clusters_xAxis_without_cut_h", ix, weight);
+
 		if(iy > 0 ){
 			if(ix > 0) clulsters_pos_top.push_back(*cluster);
 			else clulsters_neg_top.push_back(*cluster);

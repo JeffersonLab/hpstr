@@ -51,6 +51,44 @@
         "xtitle" : "N_{clusters}",
         "ytitle" : "Events"
     },
+    "seed_energy_cluster_without_cut_h": { 
+ 		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "Seed energy of cluster [GeV]",
+        "ytitle" : "Clusters"
+    },
+	"energy_cluster_without_cut_h": { 
+ 		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "Energy of cluster [GeV]",
+        "ytitle" : "Clusters"
+    },
+	"n_hits_cluster_without_cut_h": { 
+ 		"bins"   : 10,
+        "minX"   : 0.5,
+        "maxX"   : 10.5,
+        "xtitle" : "Hit counts of cluster",
+        "ytitle" : "Clusters"
+    },
+	"energy_vs_n_hits_cluster_without_cut_hh": { 
+		"binsX" : 10,
+        "minX" : 0.5,
+        "maxX" : 10.5,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "Hit counts of cluster",
+        "ytitle" : "Energy of cluster [GeV]"
+    },
+	"n_clusters_xAxis_without_cut_h": { 
+ 		"bins"   : 46,
+        "minX"   : -22.5,
+        "maxX"   : 23.5,
+        "xtitle" : "X index",
+        "ytitle" : "Clusters"
+    },
 	"xy_clusters_hh" : {
         "binsX" : 100,
         "minX" : -400,
