@@ -36,9 +36,9 @@ void Track::setTrackParameters(double d0, double phi0, double omega,
     tan_lambda_ = tan_lambda;
     z0_         = z0;
     if (omega_ < 0)
-        charge_   = -1;
+        charge_   = 1;
     else
-        charge_   =  1;
+        charge_   =  -1;
 
 }
 
