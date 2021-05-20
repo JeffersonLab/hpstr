@@ -20,7 +20,23 @@ Process::Process() {}
 
 void Process::runOnHPSEvioReader(){
 
-	std::cout << "I exist.";
+    try {
+        int cfile = 0;
+        for (auto ifile : input_files_) {
+            std::cout << "Processing file " << ifile << std::endl;
+
+            for (auto module : sequence_) {
+                module->initialize(ifile, output_files_[cfile]);
+                module->process();
+                module->finalize();
+            }
+            //Pass to next file
+            ++cfile;
+
+        } //ifile
+    } catch (std::exception& e) {
+        std::cerr<<"Error:"<<e.what()<<std::endl;
+    }
 
 }
 
