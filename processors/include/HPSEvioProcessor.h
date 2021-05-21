@@ -8,8 +8,8 @@
 
 //ROOT
 #include "TFile.h"
-#include "TH1F.h"
-#include "TH2F.h"
+#include "TH1D.h"
+#include "TH2D.h"
 #include "TAxis.h"
 
 //CPLUSPLUS
@@ -49,6 +49,7 @@ class HPSEvioProcessor : public Processor {
         
         //configuration parameters
         std::string trigFilename_{""};
+        std::string inFilename_{""};
 
         //evio interface 
         HPSEvioReader * etool{nullptr};
