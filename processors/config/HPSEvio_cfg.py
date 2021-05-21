@@ -5,8 +5,8 @@ import baseConfig
 args = baseConfig.parser.parse_args()
 
 # Use the input file to set the output file name
-in_file = args.inFilename[0]
-out_file   = args.outFilename[0]
+in_file  = args.inFilename[0]
+out_file = args.outFilename
 
 print('In file: %s' % in_file)
 print('Out file: %s' % out_file)
@@ -30,7 +30,7 @@ evio = HpstrConf.Processor('evio', 'HPSEvioProcessor')
 ###############################
 
 #evio
-evio.parameters["debug"]    = 1
+evio.parameters["debug"]    = 0  
 evio.parameters["trigConf"] = "hps_v12_1.cnf"
 
 # Sequence which the processors will run.
