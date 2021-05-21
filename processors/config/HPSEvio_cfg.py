@@ -30,7 +30,8 @@ evio = HpstrConf.Processor('evio', 'HPSEvioProcessor')
 ###############################
 
 #evio
-evio.parameters["debug"] = 1
+evio.parameters["debug"]    = 1
+evio.parameters["trigConf"] = "hps_v12_1.cnf"
 
 # Sequence which the processors will run.
 p.sequence = [evio]
