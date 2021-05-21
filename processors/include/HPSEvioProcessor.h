@@ -3,7 +3,6 @@
 
 //HPSTR
 #include "Processor.h"
-
 //EVIO
 #include "EvioTool/HPSEvioReader.h"
 
@@ -47,7 +46,15 @@ class HPSEvioProcessor : public Processor {
 
         //Debug Level
         int debug_{0};
+        
+        //configuration parameters
+        std::string trigFilename_{""};
 
+        //evio interface 
+        HPSEvioReader * etool{nullptr};
+        
+        int run_number_{0};
+        unsigned long trigtime_start_{0};
 };
 
 
