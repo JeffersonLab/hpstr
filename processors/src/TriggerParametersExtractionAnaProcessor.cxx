@@ -157,7 +157,6 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 		}
 	}
 
-
 	// Extract analyzable GTP clusters
 	// Require events with at least one pos_top + one neg_bot or one pos_bot + one neg_top tracks
 	// In each categories: analyzable clusters pass through cut functions for detal_r (between position at Ecal face where tracks extrapolate and position of clusters) vs p of tracks
@@ -177,6 +176,8 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 				double delta_r = sqrt(pow(positionCluster[0] - positionAtEcal[0],2) + pow(positionCluster[1] - positionAtEcal[1],2));
 				double p = track.getP();
 				histos->Fill2DHisto("deltaR_vs_p_pos_top_hh", p, delta_r, weight);
+				histos->Fill2DHisto("trackX_vs_ClusterX_pos_top_hh", positionCluster[0], positionAtEcal[0], weight);
+				histos->Fill2DHisto("trackY_vs_ClusterY_pos_top_hh", positionCluster[1], positionAtEcal[1], weight);
 
 				if(delta_r < func_pos_top_topCut->Eval(p) && delta_r > func_pos_top_botCut->Eval(p)){
 					clulsters_pos_top_cut.push_back(cluster);
@@ -194,6 +195,8 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 				double delta_r = sqrt(pow(positionCluster[0] - positionAtEcal[0],2) + pow(positionCluster[1] - positionAtEcal[1],2));
 				double p = track.getP();
 				histos->Fill2DHisto("deltaR_vs_p_neg_top_hh", p, delta_r, weight);
+				histos->Fill2DHisto("trackX_vs_ClusterX_neg_top_hh", positionCluster[0], positionAtEcal[0], weight);
+				histos->Fill2DHisto("trackY_vs_ClusterY_neg_top_hh", positionCluster[1], positionAtEcal[1], weight);
 
 				if(delta_r < func_neg_top_topCut->Eval(p) && delta_r > func_neg_top_botCut->Eval(p)){
 					clulsters_neg_top_cut.push_back(cluster);
@@ -212,6 +215,8 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 				double delta_r = sqrt(pow(positionCluster[0] - positionAtEcal[0],2) + pow(positionCluster[1] - positionAtEcal[1],2));
 				double p = track.getP();
 				histos->Fill2DHisto("deltaR_vs_p_pos_bot_hh", p, delta_r, weight);
+				histos->Fill2DHisto("trackX_vs_ClusterX_pos_bot_hh", positionCluster[0], positionAtEcal[0], weight);
+				histos->Fill2DHisto("trackY_vs_ClusterY_pos_bot_hh", positionCluster[1], positionAtEcal[1], weight);
 
 				if(delta_r < func_pos_bot_topCut->Eval(p) && delta_r > func_pos_bot_botCut->Eval(p)){
 					clulsters_pos_bot_cut.push_back(cluster);
@@ -229,6 +234,8 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 				double delta_r = sqrt(pow(positionCluster[0] - positionAtEcal[0],2) + pow(positionCluster[1] - positionAtEcal[1],2));
 				double p = track.getP();
 				histos->Fill2DHisto("deltaR_vs_p_neg_bot_hh", p, delta_r, weight);
+				histos->Fill2DHisto("trackX_vs_ClusterX_neg_bot_hh", positionCluster[0], positionAtEcal[0], weight);
+				histos->Fill2DHisto("trackY_vs_ClusterY_neg_bot_hh", positionCluster[1], positionAtEcal[1], weight);
 
 				if(delta_r < func_neg_bot_topCut->Eval(p) && delta_r > func_neg_bot_botCut->Eval(p)){
 					clulsters_neg_bot_cut.push_back(cluster);
