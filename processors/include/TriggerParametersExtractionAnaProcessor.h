@@ -87,31 +87,57 @@ class TriggerParametersExtractionAnaProcessor : public Processor {
         //Debug level
         int debug_{0};
 
-        //Parameters of cut functions
-        double pos_top_topCut[3] = {78.2264, -32.6353, 5.39639};
-        double pos_top_botCut[3] = {42.621, -31.2879, 6.26569};
+        //Parameters of cut functions for X
+        double pos_top_topCutX[2] = {22.8233, 0.89744};
+        double pos_top_botCutX[2] = {-17.0817, 0.854249};
 
-        double neg_top_topCut[3] = {69.0785, -33.036, 6.1368};
-        double neg_top_botCut[3] = {42.1042, -35.702, 8.36184};
+        double neg_top_topCutX[2] = {23.5889, 0.863178};
+        double neg_top_botCutX[2] = {-22.2234, 0.891663};
 
-        double pos_bot_topCut[3] = {66.6732, -20.9723, 2.01131};
-        double pos_bot_botCut[3] = {46.5423, -32.2998, 6.6451};
+        double pos_bot_topCutX[2] = {18.8858, 0.907092};
+        double pos_bot_botCutX[2] = {-14.2754, 0.84925};
 
-        double neg_bot_topCut[3] = {69.5454, -36.956, 7.62771};
-        double neg_bot_botCut[3] = {37.7787, -31.8226, 7.60407};
+        double neg_bot_topCutX[2] = {22.3398, 0.858012};
+        double neg_bot_botCutX[2] = {-21.9003, 0.891466};
 
-        //Cut functions
-        TF1 *func_pos_top_topCut;
-        TF1 *func_pos_top_botCut;
+        //Cut functions for X
+        TF1 *func_pos_top_topCutX;
+        TF1 *func_pos_top_botCutX;
 
-        TF1 *func_neg_top_topCut;
-        TF1 *func_neg_top_botCut;
+        TF1 *func_neg_top_topCutX;
+        TF1 *func_neg_top_botCutX;
 
-        TF1 *func_pos_bot_topCut;
-        TF1 *func_pos_bot_botCut;
+        TF1 *func_pos_bot_topCutX;
+        TF1 *func_pos_bot_botCutX;
 
-        TF1 *func_neg_bot_topCut;
-        TF1 *func_neg_bot_botCut;
+        TF1 *func_neg_bot_topCutX;
+        TF1 *func_neg_bot_botCutX;
+
+        //Parameters of cut functions for Y
+        double pos_top_topCutY[2] = {7.28334, 0.921226};
+        double pos_top_botCutY[2] = {-5.41515, 0.866316};
+
+        double neg_top_topCutY[2] = {7.51399, 0.902999};
+        double neg_top_botCutY[2] = {-6.38928, 0.902303};
+
+        double pos_bot_topCutY[2] = {4.12919, 0.848877 };
+        double pos_bot_botCutY[2] = {-5.90072, 0.943033};
+
+        double neg_bot_topCutY[2] = {5.65196, 0.896218};
+        double neg_bot_botCutY[2] = {-7.49475, 0.897917};
+
+        //Cut functions for Y
+        TF1 *func_pos_top_topCutY;
+        TF1 *func_pos_top_botCutY;
+
+        TF1 *func_neg_top_topCutY;
+        TF1 *func_neg_top_botCutY;
+
+        TF1 *func_pos_bot_topCutY;
+        TF1 *func_pos_bot_botCutY;
+
+        TF1 *func_neg_bot_topCutY;
+        TF1 *func_neg_bot_botCutY;
 
         /**
          * An array of the form <code>position[iy][ix]</code> that contains the hardware

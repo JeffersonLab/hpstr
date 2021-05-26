@@ -49,28 +49,47 @@ void TriggerParametersExtractionAnaProcessor::initialize(TTree* tree) {
     tree_->SetBranchAddress(trkColl_.c_str() , &trks_, &btrks_);
     tree_->SetBranchAddress(ecalClusColl_.c_str() , &ecalClusters_, &becalClusters_);\
 
-    //Cut functions
-    func_pos_top_topCut = new TF1("func_pos_top_topCut", "pol2", 0, 4);
-    func_pos_top_topCut->SetParameters(pos_top_topCut);
-    func_pos_top_botCut = new TF1("func_pos_top_botCut", "pol2", 0, 4);
-    func_pos_top_botCut->SetParameters(pos_top_botCut);
+    //Cut functions for X
+    func_pos_top_topCutX = new TF1("func_pos_top_topCutX", "pol1", 50, 390);
+    func_pos_top_topCutX->SetParameters(pos_top_topCutX);
+    func_pos_top_botCutX = new TF1("func_pos_top_botCutX", "pol1", 50, 390);
+    func_pos_top_botCutX->SetParameters(pos_top_botCutX);
 
+    func_neg_top_topCutX = new TF1("func_neg_top_topCutX", "pol1", -300, 40);
+    func_neg_top_topCutX->SetParameters(neg_top_topCutX);
+    func_neg_top_botCutX = new TF1("func_neg_top_botCutX", "pol1", -300, 40);
+    func_neg_top_botCutX->SetParameters(neg_top_botCutX);
 
-    func_neg_top_topCut = new TF1("func_neg_top_topCut", "pol2", 0, 4);
-    func_neg_top_topCut->SetParameters(neg_top_topCut);
-    func_neg_top_botCut = new TF1("func_neg_top_botCut", "pol2", 0, 4);
-    func_neg_top_botCut->SetParameters(neg_top_botCut);
+    func_pos_bot_topCutX = new TF1("func_pos_bot_topCutX", "pol1", 50, 390);
+    func_pos_bot_topCutX->SetParameters(pos_bot_topCutX);
+    func_pos_bot_botCutX = new TF1("func_pos_bot_botCutX", "pol1", 50, 390);
+    func_pos_bot_botCutX->SetParameters(pos_bot_botCutX);
 
-    func_pos_bot_topCut = new TF1("func_pos_bot_topCut", "pol2", 0, 4);
-    func_pos_bot_topCut->SetParameters(pos_bot_topCut);
-    func_pos_bot_botCut = new TF1("func_pos_bot_botCut", "pol2", 0, 4);
-    func_pos_bot_botCut->SetParameters(pos_bot_botCut);
+    func_neg_bot_topCutX = new TF1("func_neg_bot_topCutX", "pol1", -300, 40);
+    func_neg_bot_topCutX->SetParameters(neg_bot_topCutX);
+    func_neg_bot_botCutX = new TF1("func_neg_bot_botCutX", "pol1", -300, 40);
+    func_neg_bot_botCutX->SetParameters(neg_bot_botCutX);
 
+    //Cut functions for Y
+    func_pos_top_topCutY = new TF1("func_pos_top_topCutY", "pol1", 30, 90);
+    func_pos_top_topCutY->SetParameters(pos_top_topCutY);
+    func_pos_top_botCutY = new TF1("func_pos_top_botCutY", "pol1", 30, 90);
+    func_pos_top_botCutY->SetParameters(pos_top_botCutY);
 
-    func_neg_bot_topCut = new TF1("func_neg_bot_topCut", "pol2", 0, 4);
-    func_neg_bot_topCut->SetParameters(neg_bot_topCut);
-    func_neg_bot_botCut = new TF1("func_neg_bot_botCut", "pol2", 0, 4);
-    func_neg_bot_botCut->SetParameters(neg_bot_botCut);
+    func_neg_top_topCutY = new TF1("func_neg_top_topCutY", "pol1", 30, 90);
+    func_neg_top_topCutY->SetParameters(neg_top_topCutY);
+    func_neg_top_botCutY = new TF1("func_neg_top_botCutY", "pol1", 30, 90);
+    func_neg_top_botCutY->SetParameters(neg_top_botCutY);
+
+    func_pos_bot_topCutY = new TF1("func_pos_bot_topCutY", "pol1", -90, -30);
+    func_pos_bot_topCutY->SetParameters(pos_bot_topCutY);
+    func_pos_bot_botCutY = new TF1("func_pos_bot_botCutY", "pol1", -90, -30);
+    func_pos_bot_botCutY->SetParameters(pos_bot_botCutY);
+
+    func_neg_bot_topCutY = new TF1("func_neg_bot_topCutY", "pol1", -90, -30);
+    func_neg_bot_topCutY->SetParameters(neg_bot_topCutY);
+    func_neg_bot_botCutY = new TF1("func_neg_bot_botCutY", "pol1", -90, -30);
+    func_neg_bot_botCutY->SetParameters(neg_bot_botCutY);
 }
 
 bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
@@ -179,7 +198,10 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 				histos->Fill2DHisto("trackX_vs_ClusterX_pos_top_hh", positionCluster[0], positionAtEcal[0], weight);
 				histos->Fill2DHisto("trackY_vs_ClusterY_pos_top_hh", positionCluster[1], positionAtEcal[1], weight);
 
-				if(delta_r < func_pos_top_topCut->Eval(p) && delta_r > func_pos_top_botCut->Eval(p)){
+				if (positionAtEcal[0]< func_pos_top_topCutX->Eval(positionCluster[0])
+						&& positionAtEcal[0] > func_pos_top_botCutX->Eval(positionCluster[0])
+						&& positionAtEcal[1] < func_pos_top_topCutY->Eval(positionCluster[1])
+						&& positionAtEcal[1] > func_pos_top_botCutY->Eval(positionCluster[1])) {
 					clulsters_pos_top_cut.push_back(cluster);
 					break;
 				}
@@ -198,7 +220,10 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 				histos->Fill2DHisto("trackX_vs_ClusterX_neg_top_hh", positionCluster[0], positionAtEcal[0], weight);
 				histos->Fill2DHisto("trackY_vs_ClusterY_neg_top_hh", positionCluster[1], positionAtEcal[1], weight);
 
-				if(delta_r < func_neg_top_topCut->Eval(p) && delta_r > func_neg_top_botCut->Eval(p)){
+				if (positionAtEcal[0]< func_neg_top_topCutX->Eval(positionCluster[0])
+						&& positionAtEcal[0] > func_neg_top_botCutX->Eval(positionCluster[0])
+						&& positionAtEcal[1] < func_neg_top_topCutY->Eval(positionCluster[1])
+						&& positionAtEcal[1] > func_neg_top_botCutY->Eval(positionCluster[1])) {
 					clulsters_neg_top_cut.push_back(cluster);
 					break;
 				}
@@ -218,7 +243,10 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 				histos->Fill2DHisto("trackX_vs_ClusterX_pos_bot_hh", positionCluster[0], positionAtEcal[0], weight);
 				histos->Fill2DHisto("trackY_vs_ClusterY_pos_bot_hh", positionCluster[1], positionAtEcal[1], weight);
 
-				if(delta_r < func_pos_bot_topCut->Eval(p) && delta_r > func_pos_bot_botCut->Eval(p)){
+				if (positionAtEcal[0]< func_pos_bot_topCutX->Eval(positionCluster[0])
+						&& positionAtEcal[0] > func_pos_bot_botCutX->Eval(positionCluster[0])
+						&& positionAtEcal[1] < func_pos_bot_topCutY->Eval(positionCluster[1])
+						&& positionAtEcal[1] > func_pos_bot_botCutY->Eval(positionCluster[1])) {
 					clulsters_pos_bot_cut.push_back(cluster);
 					break;
 				}
@@ -237,7 +265,10 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 				histos->Fill2DHisto("trackX_vs_ClusterX_neg_bot_hh", positionCluster[0], positionAtEcal[0], weight);
 				histos->Fill2DHisto("trackY_vs_ClusterY_neg_bot_hh", positionCluster[1], positionAtEcal[1], weight);
 
-				if(delta_r < func_neg_bot_topCut->Eval(p) && delta_r > func_neg_bot_botCut->Eval(p)){
+				if (positionAtEcal[0]< func_neg_bot_topCutX->Eval(positionCluster[0])
+						&& positionAtEcal[0] > func_neg_bot_botCutX->Eval(positionCluster[0])
+						&& positionAtEcal[1] < func_neg_bot_topCutY->Eval(positionCluster[1])
+						&& positionAtEcal[1] > func_neg_bot_botCutY->Eval(positionCluster[1])) {
 					clulsters_neg_bot_cut.push_back(cluster);
 					break;
 				}
