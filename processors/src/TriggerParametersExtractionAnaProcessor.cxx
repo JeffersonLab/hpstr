@@ -11,9 +11,14 @@
 #include "TF1.h"
 #include "math.h"
 
-#define CLUSTERENERGYTHRESHOLD 0.1
-#define CHI2NDFTHRESHOLD 20
+#define ELECTRONMASS 0.000510998950 // GeV
 #define PI 3.14159265358979
+#define CHI2NDFTHRESHOLD 20
+#define CLUSTERENERGYTHRESHOLD 0.1 // threshold of cluster energy for analyzable events
+#define CLUSTERENERGYMIN 0.3 // minimum of cluster energy for singles trigger
+#define CLUSTERENERGYMAX 2.7 // maximum of cluster energy for singles trigger
+#define CLUSTERNHTSMIN 2 // minimum for number of cluster's hits for singles trigger
+
 
 TriggerParametersExtractionAnaProcessor::TriggerParametersExtractionAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
@@ -30,12 +35,12 @@ void TriggerParametersExtractionAnaProcessor::configure(const ParameterSet& para
         histCfgFilename_      = parameters.getString("histCfg",histCfgFilename_);
         trkColl_    = parameters.getString("trkColl");
         ecalClusColl_    = parameters.getString("ecalClusColl");
+        mcColl_  = parameters.getString("mcColl",mcColl_);
     }
     catch (std::runtime_error& error)
     {
         std::cout << error.what() << std::endl;
     }
-
 }
 
 void TriggerParametersExtractionAnaProcessor::initialize(TTree* tree) {
@@ -47,7 +52,8 @@ void TriggerParametersExtractionAnaProcessor::initialize(TTree* tree) {
 
     // init TTree
     tree_->SetBranchAddress(trkColl_.c_str() , &trks_, &btrks_);
-    tree_->SetBranchAddress(ecalClusColl_.c_str() , &ecalClusters_, &becalClusters_);\
+    tree_->SetBranchAddress(ecalClusColl_.c_str() , &ecalClusters_, &becalClusters_);
+    tree_->SetBranchAddress(mcColl_.c_str() , &mcParts_, &bmcParts_);
 
     //Cut functions for X
     func_pos_top_topCutX = new TF1("func_pos_top_topCutX", "pol1", 50, 390);
@@ -90,6 +96,10 @@ void TriggerParametersExtractionAnaProcessor::initialize(TTree* tree) {
     func_neg_bot_topCutY->SetParameters(neg_bot_topCutY);
     func_neg_bot_botCutY = new TF1("func_neg_bot_botCutY", "pol1", -90, -30);
     func_neg_bot_botCutY->SetParameters(neg_bot_botCutY);
+
+    //Cut function for PDE
+    func_pde = new TF1("func_pde", "pol3", 0, 23);
+    func_pde->SetParameters(pars_pde);
 }
 
 bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
@@ -178,7 +188,7 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 
 	// Extract analyzable GTP clusters
 	// Require events with at least one pos_top + one neg_bot or one pos_bot + one neg_top tracks
-	// In each categories: analyzable clusters pass through cut functions for detal_r (between position at Ecal face where tracks extrapolate and position of clusters) vs p of tracks
+	// In each categories: analyzable clusters pass through cut functions for X/Y of track extrapolation at Ecal face vs. GTP cluster
 	std::vector<CalCluster> clulsters_pos_top_cut;
 	std::vector<CalCluster> clulsters_neg_top_cut;
 	std::vector<CalCluster> clulsters_pos_bot_cut;
@@ -276,10 +286,24 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 		}
 	}
 
-	// tuning singles trigger; events contain at least one cluster which energy is larger than threshold
+	// Tuning singles trigger; events contain at least one cluster which energy is larger than threshold
 	bool flag_singles = false;
+	// Further, events contain at least one cluster in positive region which passes PDE cut
+	bool flag_pde = false;
+	// Further, the cluster passes through energy and nhits cuts
+	bool flag_energy_nhits = false;
+
 	for(int i = 0; i < clulsters_pos_top_cut.size(); i++){
-		if(clulsters_pos_top_cut.at(i).getEnergy() > CLUSTERENERGYTHRESHOLD) flag_singles = true;
+		CalCluster cluster = clulsters_pos_top_cut.at(i);
+
+		if(cluster.getEnergy() > CLUSTERENERGYTHRESHOLD) flag_singles = true;
+
+		CalHit* seed = (CalHit*) cluster.getSeed();
+		int ix = seed->getCrystalIndices()[0];
+		if (flag_singles && cluster.getEnergy() >= func_pde->Eval(ix)) flag_pde = true;
+
+		if(flag_singles && flag_pde && cluster.getEnergy() >= CLUSTERENERGYMIN && cluster.getEnergy() <= CLUSTERENERGYMAX && cluster.getNHits() >= CLUSTERNHTSMIN)
+			flag_energy_nhits = true;
 	}
 
 	for(int i = 0; i < clulsters_neg_top_cut.size(); i++){
@@ -287,7 +311,16 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 	}
 
 	for(int i = 0; i < clulsters_pos_bot_cut.size(); i++){
-		if(clulsters_pos_bot_cut.at(i).getEnergy() > CLUSTERENERGYTHRESHOLD) flag_singles = true;
+		CalCluster cluster = clulsters_pos_bot_cut.at(i);
+
+		if(cluster.getEnergy() > CLUSTERENERGYTHRESHOLD) flag_singles = true;
+
+		CalHit* seed = (CalHit*)cluster.getSeed();
+		int ix = seed -> getCrystalIndices()[0];
+		if(cluster.getEnergy() > func_pde->Eval(ix)) flag_pde = true;
+
+		if(flag_singles && flag_pde && cluster.getEnergy() >= CLUSTERENERGYMIN && cluster.getEnergy() <= CLUSTERENERGYMAX && cluster.getNHits() >= CLUSTERNHTSMIN)
+			flag_energy_nhits = true;
 	}
 
 	for(int i = 0; i < clulsters_neg_bot_cut.size(); i++){
@@ -310,6 +343,16 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 			int ix = seed -> getCrystalIndices()[0];
 			histos->Fill2DHisto("energy_vs_x_index_hh", ix, cluster.getEnergy(), weight);
 			if(ix > 0) histos->Fill2DHisto("energy_vs_x_index_pos_hh", ix, cluster.getEnergy(), weight);
+
+			if(flag_pde){
+				histos->Fill1DHisto("seed_energy_cluster_with_pde_h", seed->getEnergy(), weight);
+
+				histos->Fill1DHisto("energy_cluster_with_pde_h", cluster.getEnergy(), weight);
+
+				histos->Fill1DHisto("n_hits_cluster_with_pde_h", cluster.getNHits(), weight);
+
+				histos->Fill2DHisto("energy_vs_n_hits_cluster_with_pde_hh", cluster.getNHits(), cluster.getEnergy(), weight);
+			}
 		}
 
 		for(int i = 0; i < clulsters_neg_top_cut.size(); i++){
@@ -327,6 +370,16 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 			int ix = seed -> getCrystalIndices()[0];
 			histos->Fill2DHisto("energy_vs_x_index_hh", ix, cluster.getEnergy(), weight);
 			if(ix > 0) histos->Fill2DHisto("energy_vs_x_index_pos_hh", ix, cluster.getEnergy(), weight);
+
+			if(flag_pde){
+				histos->Fill1DHisto("seed_energy_cluster_with_pde_h", seed->getEnergy(), weight);
+
+				histos->Fill1DHisto("energy_cluster_with_pde_h", cluster.getEnergy(), weight);
+
+				histos->Fill1DHisto("n_hits_cluster_with_pde_h", cluster.getNHits(), weight);
+
+				histos->Fill2DHisto("energy_vs_n_hits_cluster_with_pde_hh", cluster.getNHits(), cluster.getEnergy(), weight);
+			}
 		}
 
 		for(int i = 0; i < clulsters_pos_bot_cut.size(); i++){
@@ -344,6 +397,16 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 			int ix = seed -> getCrystalIndices()[0];
 			histos->Fill2DHisto("energy_vs_x_index_hh", ix, cluster.getEnergy(), weight);
 			if(ix > 0) histos->Fill2DHisto("energy_vs_x_index_pos_hh", ix, cluster.getEnergy(), weight);
+
+			if(flag_pde){
+				histos->Fill1DHisto("seed_energy_cluster_with_pde_h", seed->getEnergy(), weight);
+
+				histos->Fill1DHisto("energy_cluster_with_pde_h", cluster.getEnergy(), weight);
+
+				histos->Fill1DHisto("n_hits_cluster_with_pde_h", cluster.getNHits(), weight);
+
+				histos->Fill2DHisto("energy_vs_n_hits_cluster_with_pde_hh", cluster.getNHits(), cluster.getEnergy(), weight);
+			}
 		}
 
 		for(int i = 0; i < clulsters_neg_bot_cut.size(); i++){
@@ -361,6 +424,101 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 			int ix = seed -> getCrystalIndices()[0];
 			histos->Fill2DHisto("energy_vs_x_index_hh", ix, cluster.getEnergy(), weight);
 			if(ix > 0) histos->Fill2DHisto("energy_vs_x_index_pos_hh", ix, cluster.getEnergy(), weight);
+
+			if(flag_pde){
+				histos->Fill1DHisto("seed_energy_cluster_with_pde_h", seed->getEnergy(), weight);
+
+				histos->Fill1DHisto("energy_cluster_with_pde_h", cluster.getEnergy(), weight);
+
+				histos->Fill1DHisto("n_hits_cluster_with_pde_h", cluster.getNHits(), weight);
+
+				histos->Fill2DHisto("energy_vs_n_hits_cluster_with_pde_hh", cluster.getNHits(), cluster.getEnergy(), weight);
+			}
+		}
+	}
+
+	double truthMass = -999;
+	double truthEnergy = -999;
+	TLorentzVector *lorentzVectorTruth = new TLorentzVector();
+
+	for (int i = 0; i < mcParts_->size(); i++) {
+		MCParticle* mc_particle = mcParts_->at(i);
+
+		if (mc_particle->getPDG() == 622) {
+			truthMass = mc_particle->getMass();
+			truthEnergy = mc_particle->getEnergy();
+			std::vector<double> mom = mc_particle->getMomentum();
+			lorentzVectorTruth->SetXYZM(mom[0], mom[1], mom[2], ELECTRONMASS);
+		}
+	}
+
+	for (int i = 0; i < tracks_pos_top.size(); i++) {
+		Track trackPos = tracks_pos_top.at(i);
+		std::vector<double> momPos = trackPos.getMomentum();
+		TLorentzVector *lorentzVectorPos = new TLorentzVector();
+		lorentzVectorPos->SetXYZM(momPos[0], momPos[1], momPos[2], ELECTRONMASS);
+
+		for(int j = 0; j < tracks_neg_bot.size(); j++){
+			histos->Fill1DHisto("truth_mass_without_cuts_h", truthMass, weight);
+			if (flag_singles) histos->Fill1DHisto("truth_mass_singles_analyzable_h", truthMass, weight);
+			if (flag_singles && flag_pde && flag_energy_nhits) histos->Fill1DHisto("truth_mass_singles_triggered_h", truthMass, weight);
+
+			Track trackNeg = tracks_neg_bot.at(j);
+			std::vector<double> momNeg = trackNeg.getMomentum();
+			TLorentzVector *lorentzVectorNeg = new TLorentzVector();
+			lorentzVectorNeg->SetXYZM(momNeg[0], momNeg[1], momNeg[2], ELECTRONMASS);
+
+			double invariant_mass = (*lorentzVectorPos + *lorentzVectorNeg).M();
+			histos->Fill1DHisto("invariant_mass_without_cuts_h", invariant_mass, weight);
+			if(flag_singles) histos->Fill1DHisto("invariant_mass_singles_analyzable_h", invariant_mass, weight);
+			if(flag_singles && flag_pde && flag_energy_nhits) histos->Fill1DHisto("invariant_mass_singles_triggered_h", invariant_mass, weight);
+
+			histos->Fill2DHisto("truth_vs_invariant_mass_without_cuts_hh", truthMass, invariant_mass, weight);
+
+			double pSum = trackPos.getP() + trackNeg.getP();
+			histos->Fill1DHisto("p_sum_without_cuts_h", pSum, weight);
+
+			TLorentzVector *lorentzVectorBeam = new TLorentzVector();
+			lorentzVectorBeam->SetXYZM(0, 0, sqrt(pow(beamE_, 2) - pow(ELECTRONMASS, 2)), ELECTRONMASS);
+			TLorentzVector *lorentzVectorRecoiledElectron = new TLorentzVector();
+			*lorentzVectorRecoiledElectron = *lorentzVectorBeam - *lorentzVectorTruth;
+			histos->Fill2DHisto("theta_recoiled_electron_vs_true_mass_without_cuts_hh", truthMass, lorentzVectorRecoiledElectron->Theta(), weight);
+			histos->Fill2DHisto("p_recoiled_electron_vs_true_mass_without_cuts_hh", truthMass, lorentzVectorRecoiledElectron->P(), weight);
+		}
+	}
+
+	for(int i = 0; i < tracks_pos_bot.size(); i++){
+		Track trackPos = tracks_pos_bot.at(i);
+		std::vector<double> momPos = trackPos.getMomentum();
+		TLorentzVector *lorentzVectorPos = new TLorentzVector();
+		lorentzVectorPos->SetXYZM(momPos[0], momPos[1], momPos[2], ELECTRONMASS);
+
+		for(int j = 0; j < tracks_neg_top.size(); j++){
+			histos->Fill1DHisto("truth_mass_without_cuts_h", truthMass, weight);
+			if (flag_singles) histos->Fill1DHisto("truth_mass_singles_analyzable_h", truthMass, weight);
+			if (flag_singles && flag_pde && flag_energy_nhits) histos->Fill1DHisto("truth_mass_singles_triggered_h", truthMass, weight);
+
+			Track trackNeg = tracks_neg_top.at(j);
+			std::vector<double> momNeg = trackNeg.getMomentum();
+			TLorentzVector *lorentzVectorNeg = new TLorentzVector();
+			lorentzVectorNeg->SetXYZM(momNeg[0], momNeg[1], momNeg[2], ELECTRONMASS);
+
+			double invariant_mass = (*lorentzVectorPos + *lorentzVectorNeg).M();
+			histos->Fill1DHisto("invariant_mass_without_cuts_h", invariant_mass, weight);
+			if(flag_singles) histos->Fill1DHisto("invariant_mass_singles_analyzable_h", invariant_mass, weight);
+			if(flag_singles && flag_pde && flag_energy_nhits) histos->Fill1DHisto("invariant_mass_singles_triggered_h", invariant_mass, weight);
+
+			histos->Fill2DHisto("truth_vs_invariant_mass_without_cuts_hh", truthMass, invariant_mass, weight);
+
+			double pSum = trackPos.getP() + trackNeg.getP();
+			histos->Fill1DHisto("p_sum_without_cuts_h", pSum, weight);
+
+			TLorentzVector *lorentzVectorBeam = new TLorentzVector();
+			lorentzVectorBeam->SetXYZM(0, 0, sqrt(pow(beamE_, 2) - pow(ELECTRONMASS, 2)), ELECTRONMASS);
+			TLorentzVector *lorentzVectorRecoiledElectron = new TLorentzVector();
+			*lorentzVectorRecoiledElectron = *lorentzVectorBeam - *lorentzVectorTruth;
+			histos->Fill2DHisto("theta_recoiled_electron_vs_true_mass_without_cuts_hh", truthMass, lorentzVectorRecoiledElectron->Theta(), weight);
+			histos->Fill2DHisto("p_recoiled_electron_vs_true_mass_without_cuts_hh", truthMass, lorentzVectorRecoiledElectron->P(), weight);
 		}
 	}
 

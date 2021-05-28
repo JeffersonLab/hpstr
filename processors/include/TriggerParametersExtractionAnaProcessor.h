@@ -8,6 +8,8 @@
 #include "Track.h"
 #include "CalCluster.h"
 #include "CalHit.h"
+#include "MCParticle.h"
+#include "Particle.h"
 #include "Processor.h"
 #include "HistoManager.h"
 #include "TriggerParametersExtractionAnaHistos.h"
@@ -71,13 +73,16 @@ class TriggerParametersExtractionAnaProcessor : public Processor {
         TTree* tree_{nullptr};
         TBranch* btrks_{nullptr};
         TBranch* becalClusters_{nullptr};
+        TBranch* bmcParts_{nullptr};
 
         std::vector<Track*>  * trks_{};
         std::vector<CalCluster*> * ecalClusters_{};
+        std::vector<MCParticle*>  * mcParts_{};
 
         std::string anaName_{"vtxAna"};
         std::string trkColl_{"GBLTracks"};
         std::string ecalClusColl_{"EcalClustersCorr"};
+        std::string mcColl_{"MCParticle"};
 
 
         double beamE_{3.7};
@@ -87,18 +92,10 @@ class TriggerParametersExtractionAnaProcessor : public Processor {
         //Debug level
         int debug_{0};
 
-        //Parameters of cut functions for X
-        double pos_top_topCutX[2] = {22.8233, 0.89744};
-        double pos_top_botCutX[2] = {-17.0817, 0.854249};
-
-        double neg_top_topCutX[2] = {23.5889, 0.863178};
-        double neg_top_botCutX[2] = {-22.2234, 0.891663};
-
-        double pos_bot_topCutX[2] = {18.8858, 0.907092};
-        double pos_bot_botCutX[2] = {-14.2754, 0.84925};
-
-        double neg_bot_topCutX[2] = {22.3398, 0.858012};
-        double neg_bot_botCutX[2] = {-21.9003, 0.891466};
+        /*
+         * Parameters for all cut functions depend on beam energy.
+         * Here, the setup is for 3.7 GeV.
+         */
 
         //Cut functions for X
         TF1 *func_pos_top_topCutX;
@@ -113,6 +110,35 @@ class TriggerParametersExtractionAnaProcessor : public Processor {
         TF1 *func_neg_bot_topCutX;
         TF1 *func_neg_bot_botCutX;
 
+        //Cut functions for Y
+        TF1 *func_pos_top_topCutY;
+        TF1 *func_pos_top_botCutY;
+
+        TF1 *func_neg_top_topCutY;
+        TF1 *func_neg_top_botCutY;
+
+        TF1 *func_pos_bot_topCutY;
+        TF1 *func_pos_bot_botCutY;
+
+        TF1 *func_neg_bot_topCutY;
+        TF1 *func_neg_bot_botCutY;
+
+        //Cut function for PDE
+        TF1 *func_pde;
+
+        //Parameters of cut functions for X
+        double pos_top_topCutX[2] = {22.8233, 0.89744};
+        double pos_top_botCutX[2] = {-17.0817, 0.854249};
+
+        double neg_top_topCutX[2] = {23.5889, 0.863178};
+        double neg_top_botCutX[2] = {-22.2234, 0.891663};
+
+        double pos_bot_topCutX[2] = {18.8858, 0.907092};
+        double pos_bot_botCutX[2] = {-14.2754, 0.84925};
+
+        double neg_bot_topCutX[2] = {22.3398, 0.858012};
+        double neg_bot_botCutX[2] = {-21.9003, 0.891466};
+
         //Parameters of cut functions for Y
         double pos_top_topCutY[2] = {7.28334, 0.921226};
         double pos_top_botCutY[2] = {-5.41515, 0.866316};
@@ -126,18 +152,8 @@ class TriggerParametersExtractionAnaProcessor : public Processor {
         double neg_bot_topCutY[2] = {5.65196, 0.896218};
         double neg_bot_botCutY[2] = {-7.49475, 0.897917};
 
-        //Cut functions for Y
-        TF1 *func_pos_top_topCutY;
-        TF1 *func_pos_top_botCutY;
-
-        TF1 *func_neg_top_topCutY;
-        TF1 *func_neg_top_botCutY;
-
-        TF1 *func_pos_bot_topCutY;
-        TF1 *func_pos_bot_botCutY;
-
-        TF1 *func_neg_bot_topCutY;
-        TF1 *func_neg_bot_botCutY;
+        //Parameters of cut function for PDE
+        double pars_pde[4] = {0.898609, -0.0674418, 0.00189565, -1.37617e-05}; // 99%
 
         /**
          * An array of the form <code>position[iy][ix]</code> that contains the hardware

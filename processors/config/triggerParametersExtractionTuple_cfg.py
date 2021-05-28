@@ -24,6 +24,7 @@ p.add_library("libprocessors")
 track = HpstrConf.Processor('track', 'TrackingProcessor')
 ecal = HpstrConf.Processor('ecal', 'ECalDataProcessor')
 gtp = HpstrConf.Processor('gtp', 'ECalDataProcessor')
+mcpart = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
 
 ###############################
 #   Processor Configuration   #
@@ -54,10 +55,15 @@ gtp.parameters["hitCollRoot"] = 'RecoEcalHitsGTP'
 gtp.parameters["clusCollLcio"] = "EcalClustersGTP"
 gtp.parameters["clusCollRoot"] = "RecoEcalClustersGTP"
 
+#MCParticle
+mcpart.parameters["debug"] = 0 
+mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
+mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
+
 # Sequence which the processors will run.
 if options.isData == -1: print("Please specficy if this is Data or not via option -t")
 
-p.sequence = [track, ecal, gtp]
+p.sequence = [track, ecal, gtp, mcpart]
 
 p.input_files= lcio_file
 p.output_files = root_file
