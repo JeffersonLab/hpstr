@@ -10,6 +10,7 @@
 #include "CalHit.h"
 #include "MCParticle.h"
 #include "Particle.h"
+#include "Vertex.h"
 #include "Processor.h"
 #include "HistoManager.h"
 #include "TriggerParametersExtractionMollerAnaHistos.h"
@@ -74,15 +75,18 @@ class TriggerParametersExtractionMollerAnaProcessor : public Processor {
         TBranch* btrks_{nullptr};
         TBranch* becalClusters_{nullptr};
         TBranch* bmcParts_{nullptr};
+        TBranch* bvtxs_{nullptr};
 
         std::vector<Track*>  * trks_{};
         std::vector<CalCluster*> * ecalClusters_{};
         std::vector<MCParticle*>  * mcParts_{};
+        std::vector<Vertex*> * vtxs_{};
 
         std::string anaName_{"vtxAna"};
         std::string trkColl_{"GBLTracks"};
         std::string ecalClusColl_{"EcalClustersCorr"};
         std::string mcColl_{"MCParticle"};
+        std::string vtxColl_{"Vertices"};
 
 
         double beamE_{3.7};

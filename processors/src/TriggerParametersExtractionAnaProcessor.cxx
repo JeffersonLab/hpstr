@@ -135,7 +135,6 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 			histos->Fill1DHisto("chi2ndf_tracks_h", track->getChi2Ndf(), weight);
 
 			if(track->getChi2Ndf() < CHI2NDFTHRESHOLD){
-				std::vector<double> positionAtEcal = track->getPositionAtEcal();
 				histos->Fill2DHisto("xy_positionAtEcal_tracks_hh",positionAtEcal[0], positionAtEcal[1], weight);
 
 				if (charge == 1 && positionAtEcal[1] > 0) tracks_pos_top.push_back(*track);

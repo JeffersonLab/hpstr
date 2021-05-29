@@ -43,6 +43,7 @@ triggerParametersExtractionMollerAna.parameters["debug"] = 0
 triggerParametersExtractionMollerAna.parameters["anaName"] = "triggerParameterExtractionAna"
 triggerParametersExtractionMollerAna.parameters["trkColl"] = "GBLTracks"
 triggerParametersExtractionMollerAna.parameters["ecalClusColl"] = "RecoEcalClustersGTP"
+triggerParametersExtractionMollerAna.parameters["vtxColl"] = "UnconstrainedMollerVertices"
 triggerParametersExtractionMollerAna.parameters["analysis"] = analysis
 triggerParametersExtractionMollerAna.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/triggerParametersExtraction/triggerParametersExtractionMoller.json'
 
