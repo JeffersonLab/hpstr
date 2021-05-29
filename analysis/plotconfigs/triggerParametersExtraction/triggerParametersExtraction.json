@@ -322,6 +322,27 @@
         "xtitle" : "Coplanarity [deg]",
         "ytitle" : "Cluster Pairs"
     },
+	"energy_sum_cluster_with_energy_slope_cut_h": { 
+ 		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "Energy sum of cluster pair [GeV]",
+        "ytitle" : "Cluster Pairs"
+    },
+	"energy_difference_cluster_with_energy_slope_cut_h": { 
+ 		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "Energy difference of cluster pair [GeV]",
+        "ytitle" : "Cluster Pairs"
+    },
+	"coplanarity_cluster_with_energy_slope_cut_h": { 
+ 		"bins"   : 181,
+        "minX"   : -0.5,
+        "maxX"   : 180.5,
+        "xtitle" : "Coplanarity [deg]",
+        "ytitle" : "Cluster Pairs"
+    },
 	"energy_vs_r_lowerest_energy_cluster_hh": { 
 		"binsX" : 50,
         "minX" : 0,

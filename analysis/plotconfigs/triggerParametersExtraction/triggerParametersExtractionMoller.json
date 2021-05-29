@@ -1,23 +1,23 @@
 {
-    "n_tracks_h" : {
-        "bins"   : 10,
+    "n_vtxs_h" : {
+        "bins"   : 4,
         "minX"   : -0.5,
-        "maxX"   : 9.5,
+        "maxX"   : 3.5,
         "xtitle" : "N_{tracks}",
         "ytitle" : "Events"
     },
-	"chi2ndf_tracks_h" : {
+	"chi2ndf_tracks_top_h" : {
         "bins" : 100,
         "minX" : 0,
         "maxX" : 30,
         "xtitle" : "track #chi^{2} / ndf",
         "ytitle" : "Tracks"
     },
-	"charge_tracks_h" : {
-        "bins"   : 3,
-        "minX"   : -1.5,
-        "maxX"   : 1.5,
-        "xtitle" : "Charge",
+	"chi2ndf_tracks_bot_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 30,
+        "xtitle" : "track #chi^{2} / ndf",
         "ytitle" : "Tracks"
     },
  	"xy_positionAtEcal_tracks_hh" : {

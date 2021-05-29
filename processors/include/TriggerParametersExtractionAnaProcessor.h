@@ -126,34 +126,40 @@ class TriggerParametersExtractionAnaProcessor : public Processor {
         //Cut function for PDE
         TF1 *func_pde;
 
+        //Cut function for energy slope
+        TF1 *func_energy_slope;
+
         //Parameters of cut functions for X
-        double pos_top_topCutX[2] = {22.8233, 0.89744};
-        double pos_top_botCutX[2] = {-17.0817, 0.854249};
+        double pos_top_topCutX[2] = {19.7899, 0.902732};
+        double pos_top_botCutX[2] = {-14.515, 0.850882};
 
-        double neg_top_topCutX[2] = {23.5889, 0.863178};
-        double neg_top_botCutX[2] = {-22.2234, 0.891663};
+        double neg_top_topCutX[2] = {22.4311, 0.865347};
+        double neg_top_botCutX[2] = {-20.9517, 0.889685};
 
-        double pos_bot_topCutX[2] = {18.8858, 0.907092};
-        double pos_bot_botCutX[2] = {-14.2754, 0.84925};
+        double pos_bot_topCutX[2] = {17.7478, 0.910524};
+        double pos_bot_botCutX[2] = {-13.286, 0.846081};
 
-        double neg_bot_topCutX[2] = {22.3398, 0.858012};
-        double neg_bot_botCutX[2] = {-21.9003, 0.891466};
+        double neg_bot_topCutX[2] = {23.5512, 0.867873};
+        double neg_bot_botCutX[2] = {-21.6512, 0.888276};
 
         //Parameters of cut functions for Y
-        double pos_top_topCutY[2] = {7.28334, 0.921226};
-        double pos_top_botCutY[2] = {-5.41515, 0.866316};
+        double pos_top_topCutY[2] = {7.21456, 0.921233};
+        double pos_top_botCutY[2] = {-5.25623, 0.869386};
 
-        double neg_top_topCutY[2] = {7.51399, 0.902999};
-        double neg_top_botCutY[2] = {-6.38928, 0.902303};
+        double neg_top_topCutY[2] = {7.1885, 0.900118};
+        double neg_top_botCutY[2] = {-5.84294, 0.903104};
 
-        double pos_bot_topCutY[2] = {4.12919, 0.848877 };
-        double pos_bot_botCutY[2] = {-5.90072, 0.943033};
+        double pos_bot_topCutY[2] = {4.31765, 0.854};
+        double pos_bot_botCutY[2] = {-6.24903, 0.933162};
 
-        double neg_bot_topCutY[2] = {5.65196, 0.896218};
-        double neg_bot_botCutY[2] = {-7.49475, 0.897917};
+        double neg_bot_topCutY[2] = {4.91401, 0.88867};
+        double neg_bot_botCutY[2] = {-6.39967, 0.910099};
 
         //Parameters of cut function for PDE
-        double pars_pde[4] = {0.898609, -0.0674418, 0.00189565, -1.37617e-05}; // 99%
+        double pars_pde[4] = {0.625718, -0.0307272, 2.43162e-05, 1.99737e-05}; // 99%
+
+        //Parameters of cut function for energy slope
+        double pars_energy_slope[2] = {1.1814, -0.00286496}; // 99%
 
         /**
          * An array of the form <code>position[iy][ix]</code> that contains the hardware

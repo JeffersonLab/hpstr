@@ -14,9 +14,9 @@
 #define PI 3.14159265358979
 #define CHI2NDFTHRESHOLD 20
 #define CLUSTERENERGYTHRESHOLD 0.1 // threshold of cluster energy for analyzable events
-#define CLUSTERENERGYMIN 0.3 // minimum of cluster energy for singles trigger
-#define CLUSTERENERGYMAX 2.7 // maximum of cluster energy for singles trigger
-#define CLUSTERNHTSMIN 2 // minimum for number of cluster's hits for singles trigger
+#define CLUSTERENERGYMIN 0.3 // minimum of cluster energy
+#define CLUSTERENERGYMAX 2.7 // maximum of cluster energy
+#define CLUSTERNHTSMIN 2 // minimum for number of cluster's hits
 
 
 TriggerParametersExtractionAnaProcessor::TriggerParametersExtractionAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
@@ -99,6 +99,10 @@ void TriggerParametersExtractionAnaProcessor::initialize(TTree* tree) {
     //Cut function for PDE
     func_pde = new TF1("func_pde", "pol3", 0, 23);
     func_pde->SetParameters(pars_pde);
+
+    //Cut function for energy slope
+    func_energy_slope = new TF1("func_pde", "pol1", 0, 400);
+    func_energy_slope->SetParameters(pars_energy_slope);
 }
 
 bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
@@ -471,7 +475,7 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 			histos->Fill2DHisto("truth_vs_invariant_mass_track_chi2_cut_hh", truthMass, invariant_mass, weight);
 
 			double pSum = trackPos.getP() + trackNeg.getP();
-			histos->Fill1DHisto("p_sum_with_track_chi2_cut_h", pSum, weight);
+			histos->Fill1DHisto("p_sum_track_chi2_cut_h", pSum, weight);
 
 			TLorentzVector *lorentzVectorBeam = new TLorentzVector();
 			lorentzVectorBeam->SetXYZM(0, 0, sqrt(pow(beamE_, 2) - pow(ELECTRONMASS, 2)), ELECTRONMASS);
@@ -523,6 +527,8 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 	bool flag_pairs_pos_bot = false;
 	bool flag_pairs_neg_bot = false;
 	bool flag_pairs = false;
+	// Further, passes through energy slope for cluster with lowest energy
+	bool flag_energy_slope = false;
 	for(int i = 0; i < clulsters_pos_top_cut.size(); i++){
 		if(clulsters_pos_top_cut.at(i).getEnergy() > CLUSTERENERGYTHRESHOLD) flag_pairs_pos_top = true;
 	}
@@ -554,6 +560,12 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 
 				std::vector<double> variablesForEnergySlopeCut = getVariablesForEnergySlopeCut(clusterTop, clusterBot);
 				histos->Fill2DHisto("energy_vs_r_lowerest_energy_cluster_hh", variablesForEnergySlopeCut[0], variablesForEnergySlopeCut[1], weight);
+
+				if(variablesForEnergySlopeCut[1] > func_energy_slope->Eval(variablesForEnergySlopeCut[0])){
+					histos->Fill1DHisto("energy_sum_cluster_with_energy_slope_cut_h", clusterTop.getEnergy() + clusterBot.getEnergy(), weight);
+					histos->Fill1DHisto("energy_difference_cluster_with_energy_slope_cut_h", fabs(clusterTop.getEnergy() - clusterBot.getEnergy()), weight);
+					histos->Fill1DHisto("coplanarity_cluster_with_energy_slope_cut_h", getValueCoplanarity(clusterTop, clusterBot), weight);
+				}
 			}
 		}
 
@@ -569,6 +581,12 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 
 				std::vector<double> variablesForEnergySlopeCut = getVariablesForEnergySlopeCut(clusterTop, clusterBot);
 				histos->Fill2DHisto("energy_vs_r_lowerest_energy_cluster_hh", variablesForEnergySlopeCut[0], variablesForEnergySlopeCut[1], weight);
+
+				if(variablesForEnergySlopeCut[1] > func_energy_slope->Eval(variablesForEnergySlopeCut[0])){
+					histos->Fill1DHisto("energy_sum_cluster_with_energy_slope_cut_h", clusterTop.getEnergy() + clusterBot.getEnergy(), weight);
+					histos->Fill1DHisto("energy_difference_cluster_with_energy_slope_cut_h", fabs(clusterTop.getEnergy() - clusterBot.getEnergy()), weight);
+					histos->Fill1DHisto("coplanarity_cluster_with_energy_slope_cut_h", getValueCoplanarity(clusterTop, clusterBot), weight);
+				}
 			}
 		}
 	}

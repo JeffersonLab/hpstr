@@ -14,6 +14,7 @@
 #include "Processor.h"
 #include "HistoManager.h"
 #include "TriggerParametersExtractionMollerAnaHistos.h"
+#include "AnaHelpers.h"
 
 #include "BaseSelector.h"
 
@@ -67,6 +68,8 @@ class TriggerParametersExtractionMollerAnaProcessor : public Processor {
         std::vector<double> getVariablesForEnergySlopeCut(CalCluster clusterTop, CalCluster clusterBot);
 
     private:
+        std::shared_ptr<AnaHelpers> _ah;
+
         //Containers to hold histogrammer info
         TriggerParametersExtractionMollerAnaHistos* histos{nullptr};
         std::string  histCfgFilename_;

@@ -12,11 +12,11 @@
 
 #define ELECTRONMASS 0.000510998950 // GeV
 #define PI 3.14159265358979
-#define CHI2NDFTHRESHOLD 2000
+#define CHI2NDFTHRESHOLD 20
 #define CLUSTERENERGYTHRESHOLD 0.1 // threshold of cluster energy for analyzable events
-#define CLUSTERENERGYMIN 0.3 // minimum of cluster energy for singles trigger
-#define CLUSTERENERGYMAX 2.7 // maximum of cluster energy for singles trigger
-#define CLUSTERNHTSMIN 2 // minimum for number of cluster's hits for singles trigger
+#define CLUSTERENERGYMIN 0.3 // minimum of cluster energy
+#define CLUSTERENERGYMAX 2.7 // maximum of cluster energy
+#define CLUSTERNHTSMIN 2 // minimum for number of cluster's hits
 
 
 TriggerParametersExtractionMollerAnaProcessor::TriggerParametersExtractionMollerAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
@@ -44,6 +44,8 @@ void TriggerParametersExtractionMollerAnaProcessor::configure(const ParameterSet
 }
 
 void TriggerParametersExtractionMollerAnaProcessor::initialize(TTree* tree) {
+	_ah =  std::make_shared<AnaHelpers>();
+
     tree_= tree;
     // init histos
     histos = new TriggerParametersExtractionMollerAnaHistos(anaName_.c_str());
@@ -63,8 +65,6 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
     // Apply tracks collection to filter events
     // Require available tracks with non-nan position at Ecal face and chi2/ndf less than threshold
     // Tracks are splits into four categories based on charge and position at Ecal face: pos at top, neg at top, pos at bot, neg at bot
-	int n_tracks = trks_->size();
-	histos->Fill1DHisto("n_tracks_h", n_tracks, weight);
 
 	std::vector<Track> tracks_top;
 	std::vector<Track> tracks_bot;
@@ -72,34 +72,8 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 	tracks_top.clear();
 	tracks_bot.clear();
 
-	for(int i = 0; i < n_tracks; i++){
-		Track* track = trks_->at(i);
 
-		int charge = track->getCharge();
-		histos->Fill1DHisto("charge_tracks_h", charge, weight);
-
-		std::vector<double> positionAtEcal = track->getPositionAtEcal();
-		//if(!isnan(positionAtEcal[2])) {
-
-			histos->Fill1DHisto("chi2ndf_tracks_h", track->getChi2Ndf(), weight);
-
-			if(track->getChi2Ndf() < CHI2NDFTHRESHOLD){
-
-				histos->Fill2DHisto("xy_positionAtEcal_tracks_hh",positionAtEcal[0], positionAtEcal[1], weight);
-
-				//if(charge == -1){
-					if (positionAtEcal[1] > 0) tracks_top.push_back(*track);
-					else if (positionAtEcal[1] < 0) tracks_bot.push_back(*track);
-				//}
-			}
-		//}
-	}
-
-	int n_tracks_top = tracks_top.size();
-	int n_tracks_bot = tracks_bot.size();
-
-	histos->Fill1DHisto("n_tracks_top_h", n_tracks_top, weight);
-	histos->Fill1DHisto("n_tracks_bot_h", n_tracks_bot, weight);
+/*
 
 	for(int i = 0; i < n_tracks_top; i++){
 		Track trackTop = tracks_top.at(i);
@@ -127,38 +101,89 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
 		}
 	}
+	*/
 
 	int n_vtxs = vtxs_->size();
-	for(int i = 0; i < n_vtxs; i++){
-		Vertex* vtx = vtxs_->at(i);
 
-		//std::cout<< vtx->getInvMass()<<std::endl;
-	}
+	histos->Fill1DHisto("n_vtxs_h", n_vtxs, weight);
 
-	if(n_vtxs >=1 ) std::cout << n_vtxs << " " << n_tracks << std::endl;
-	//std::cout << "!!!!!" << std::endl;
+    for(int i = 0; i < n_vtxs; i++){
+        Vertex* vtx = vtxs_->at(i);
 
-	/*
-	if(n_tracks >= 2){
-		std::cout << "!!!!!" << std::endl;
+        int n_entries = vtx->getParticles()->GetEntries();
+        if(n_entries != 2) {
+        	std::cout << "Warning: entries of Moller vertex is not 2." << std::endl;
+        	return false;
+        }
 
-		std::cout << n_vtxs << " " << n_tracks << std::endl;
+        Particle* particleTop = (Particle*)vtx->getParticles()->At(0);
+        Particle* particleBot = (Particle*)vtx->getParticles()->At(1);
 
-		for(int i = 0; i < n_tracks; i++){
-			Track* track = trks_->at(i);
+        Track trackTop = particleTop->getTrack();
+        Track trackBot = particleBot->getTrack();
 
-			int charge = track->getCharge();
+		histos->Fill1DHisto("chi2ndf_tracks_top_h", trackTop.getChi2Ndf(), weight);
+		histos->Fill1DHisto("chi2ndf_tracks_bot_h", trackBot.getChi2Ndf(), weight);
 
-			std::vector<double> positionAtEcal = track->getPositionAtEcal();
+		std::vector<double> positionAtEcalTop = trackTop.getPositionAtEcal();
+		std::vector<double> positionAtEcalBot = trackBot.getPositionAtEcal();
 
-			std::cout<< "charge: " << charge << "  " << "; y:" << positionAtEcal[1] <<std::endl;
+		histos->Fill2DHisto("xy_positionAtEcal_tracks_hh",positionAtEcalTop[0], positionAtEcalTop[1], weight);
+		histos->Fill2DHisto("xy_positionAtEcal_tracks_hh",positionAtEcalBot[0], positionAtEcalBot[1], weight);
+
+		std::vector<double> momTop;
+		TLorentzVector* lorentzVectorTop = new TLorentzVector();
+		double theta_top = -999;
+		double energy_top = -999;
+
+		std::vector<double> momBot;
+		TLorentzVector* lorentzVectorBot = new TLorentzVector();
+		double theta_bot = -999;
+		double energy_bot = -999;
+
+		std::cout << positionAtEcalTop[1] << "  " << positionAtEcalBot[1] << std::endl;
+
+		std::cout << trackTop.getChi2Ndf() << "  " << trackBot.getChi2Ndf() << std::endl;
+
+		if(!isnan(positionAtEcalTop[2]) && trackTop.getChi2Ndf() < CHI2NDFTHRESHOLD) {
+			tracks_top.push_back(trackTop);
+
+			momTop= trackTop.getMomentum();
+			lorentzVectorTop = new TLorentzVector();
+			lorentzVectorTop->SetXYZM(momTop[0], momTop[1], momTop[2], ELECTRONMASS);
+			theta_top = lorentzVectorTop->Theta();
+			energy_top = lorentzVectorTop->Energy();
+
+			histos->Fill2DHisto("energy_vs_theta_with_chi2_cut_hh",theta_top, energy_top, weight);
 		}
 
+		if(!isnan(positionAtEcalBot[2]) && trackBot.getChi2Ndf() < CHI2NDFTHRESHOLD){
+			tracks_bot.push_back(trackBot);
 
+			momBot= trackBot.getMomentum();
+			lorentzVectorBot = new TLorentzVector();
+			lorentzVectorBot->SetXYZM(momBot[0], momBot[1], momBot[2], ELECTRONMASS);
+			theta_bot = lorentzVectorBot->Theta();
+			energy_bot = lorentzVectorBot->Energy();
 
-	}
+			histos->Fill2DHisto("energy_vs_theta_with_chi2_cut_hh",theta_bot, energy_bot, weight);
+		}
 
-*/
+		histos->Fill2DHisto("thetaTop_vs_thetaBot_with_chi2_cut_hh",theta_bot, theta_top, weight);
+
+		std::cout << "IM: " << (*lorentzVectorTop + *lorentzVectorBot).M() << std::endl;
+
+		std::cout << momTop[0] << " " << momTop[1] << "  " << momTop[2] << std::endl;
+
+		std::cout << momBot[0] << " " << momBot[1] << "  " << momBot[2] << std::endl;
+    }
+
+	int n_tracks_top = tracks_top.size();
+	int n_tracks_bot = tracks_bot.size();
+
+	histos->Fill1DHisto("n_tracks_top_h", n_tracks_top, weight);
+	histos->Fill1DHisto("n_tracks_bot_h", n_tracks_bot, weight);
+
 
     return true;
 }
