@@ -3,7 +3,6 @@
  *@author Tongtong, UNH
  */
 
-#include "CalHit.h"
 #include "TriggerParametersExtractionAnaProcessor.h"
 
 #include <iostream>
@@ -120,9 +119,6 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 	tracks_pos_bot.clear();
 	tracks_neg_top.clear();
 	tracks_neg_bot.clear();
-
-	std::vector<Track> tracks_with_preselect;
-	tracks_with_preselect.clear();
 
 	for(int i = 0; i < n_tracks; i++){
 		Track* track = trks_->at(i);
@@ -459,7 +455,7 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 		lorentzVectorPos->SetXYZM(momPos[0], momPos[1], momPos[2], ELECTRONMASS);
 
 		for(int j = 0; j < tracks_neg_bot.size(); j++){
-			histos->Fill1DHisto("truth_mass_without_cuts_h", truthMass, weight);
+			histos->Fill1DHisto("truth_mass_track_chi2_cut_h", truthMass, weight);
 			if (flag_singles) histos->Fill1DHisto("truth_mass_singles_analyzable_h", truthMass, weight);
 			if (flag_singles && flag_pde && flag_energy_nhits) histos->Fill1DHisto("truth_mass_singles_triggered_h", truthMass, weight);
 
@@ -469,21 +465,21 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 			lorentzVectorNeg->SetXYZM(momNeg[0], momNeg[1], momNeg[2], ELECTRONMASS);
 
 			double invariant_mass = (*lorentzVectorPos + *lorentzVectorNeg).M();
-			histos->Fill1DHisto("invariant_mass_without_cuts_h", invariant_mass, weight);
+			histos->Fill1DHisto("invariant_mass_track_chi2_cut_h", invariant_mass, weight);
 			if(flag_singles) histos->Fill1DHisto("invariant_mass_singles_analyzable_h", invariant_mass, weight);
 			if(flag_singles && flag_pde && flag_energy_nhits) histos->Fill1DHisto("invariant_mass_singles_triggered_h", invariant_mass, weight);
 
-			histos->Fill2DHisto("truth_vs_invariant_mass_without_cuts_hh", truthMass, invariant_mass, weight);
+			histos->Fill2DHisto("truth_vs_invariant_mass_track_chi2_cut_hh", truthMass, invariant_mass, weight);
 
 			double pSum = trackPos.getP() + trackNeg.getP();
-			histos->Fill1DHisto("p_sum_without_cuts_h", pSum, weight);
+			histos->Fill1DHisto("p_sum_with_track_chi2_cut_h", pSum, weight);
 
 			TLorentzVector *lorentzVectorBeam = new TLorentzVector();
 			lorentzVectorBeam->SetXYZM(0, 0, sqrt(pow(beamE_, 2) - pow(ELECTRONMASS, 2)), ELECTRONMASS);
 			TLorentzVector *lorentzVectorRecoiledElectron = new TLorentzVector();
 			*lorentzVectorRecoiledElectron = *lorentzVectorBeam - *lorentzVectorTruth;
-			histos->Fill2DHisto("theta_recoiled_electron_vs_true_mass_without_cuts_hh", truthMass, lorentzVectorRecoiledElectron->Theta(), weight);
-			histos->Fill2DHisto("p_recoiled_electron_vs_true_mass_without_cuts_hh", truthMass, lorentzVectorRecoiledElectron->P(), weight);
+			histos->Fill2DHisto("theta_recoiled_electron_vs_true_mass_track_chi2_cut_hh", truthMass, lorentzVectorRecoiledElectron->Theta(), weight);
+			histos->Fill2DHisto("p_recoiled_electron_vs_true_mass_track_chi2_cut_hh", truthMass, lorentzVectorRecoiledElectron->P(), weight);
 		}
 	}
 
@@ -494,7 +490,7 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 		lorentzVectorPos->SetXYZM(momPos[0], momPos[1], momPos[2], ELECTRONMASS);
 
 		for(int j = 0; j < tracks_neg_top.size(); j++){
-			histos->Fill1DHisto("truth_mass_without_cuts_h", truthMass, weight);
+			histos->Fill1DHisto("truth_mass_track_chi2_cut_h", truthMass, weight);
 			if (flag_singles) histos->Fill1DHisto("truth_mass_singles_analyzable_h", truthMass, weight);
 			if (flag_singles && flag_pde && flag_energy_nhits) histos->Fill1DHisto("truth_mass_singles_triggered_h", truthMass, weight);
 
@@ -504,21 +500,21 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 			lorentzVectorNeg->SetXYZM(momNeg[0], momNeg[1], momNeg[2], ELECTRONMASS);
 
 			double invariant_mass = (*lorentzVectorPos + *lorentzVectorNeg).M();
-			histos->Fill1DHisto("invariant_mass_without_cuts_h", invariant_mass, weight);
+			histos->Fill1DHisto("invariant_mass_track_chi2_cut_h", invariant_mass, weight);
 			if(flag_singles) histos->Fill1DHisto("invariant_mass_singles_analyzable_h", invariant_mass, weight);
 			if(flag_singles && flag_pde && flag_energy_nhits) histos->Fill1DHisto("invariant_mass_singles_triggered_h", invariant_mass, weight);
 
-			histos->Fill2DHisto("truth_vs_invariant_mass_without_cuts_hh", truthMass, invariant_mass, weight);
+			histos->Fill2DHisto("truth_vs_invariant_mass_track_chi2_cut_hh", truthMass, invariant_mass, weight);
 
 			double pSum = trackPos.getP() + trackNeg.getP();
-			histos->Fill1DHisto("p_sum_without_cuts_h", pSum, weight);
+			histos->Fill1DHisto("p_sum_track_chi2_cut_h", pSum, weight);
 
 			TLorentzVector *lorentzVectorBeam = new TLorentzVector();
 			lorentzVectorBeam->SetXYZM(0, 0, sqrt(pow(beamE_, 2) - pow(ELECTRONMASS, 2)), ELECTRONMASS);
 			TLorentzVector *lorentzVectorRecoiledElectron = new TLorentzVector();
 			*lorentzVectorRecoiledElectron = *lorentzVectorBeam - *lorentzVectorTruth;
-			histos->Fill2DHisto("theta_recoiled_electron_vs_true_mass_without_cuts_hh", truthMass, lorentzVectorRecoiledElectron->Theta(), weight);
-			histos->Fill2DHisto("p_recoiled_electron_vs_true_mass_without_cuts_hh", truthMass, lorentzVectorRecoiledElectron->P(), weight);
+			histos->Fill2DHisto("theta_recoiled_electron_vs_true_mass_track_chi2_cut_hh", truthMass, lorentzVectorRecoiledElectron->Theta(), weight);
+			histos->Fill2DHisto("p_recoiled_electron_vs_true_mass_track_chi2_cut_hh", truthMass, lorentzVectorRecoiledElectron->P(), weight);
 		}
 	}
 

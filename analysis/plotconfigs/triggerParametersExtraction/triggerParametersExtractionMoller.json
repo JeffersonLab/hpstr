@@ -1,0 +1,67 @@
+{
+    "n_tracks_h" : {
+        "bins"   : 10,
+        "minX"   : -0.5,
+        "maxX"   : 9.5,
+        "xtitle" : "N_{tracks}",
+        "ytitle" : "Events"
+    },
+	"chi2ndf_tracks_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 30,
+        "xtitle" : "track #chi^{2} / ndf",
+        "ytitle" : "Tracks"
+    },
+	"charge_tracks_h" : {
+        "bins"   : 3,
+        "minX"   : -1.5,
+        "maxX"   : 1.5,
+        "xtitle" : "Charge",
+        "ytitle" : "Tracks"
+    },
+ 	"xy_positionAtEcal_tracks_hh" : {
+        "binsX" : 100,
+        "minX" : -400,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -100,
+        "maxY" : 100,
+		"xtitle" : "X [mm]",
+        "ytitle" : "Y [mm]"
+    },
+	"n_tracks_top_h" : {
+        "bins"   : 10,
+        "minX"   : -0.5,
+        "maxX"   : 9.5,
+        "xtitle" : "N_{tracks}",
+        "ytitle" : "Events"
+    },
+	"n_tracks_bot_h" : {
+        "bins"   : 10,
+        "minX"   : -0.5,
+        "maxX"   : 9.5,
+        "xtitle" : "N_{tracks}",
+        "ytitle" : "Events"
+    },
+	"energy_vs_theta_with_chi2_cut_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 0.2,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "#theta [rad]",
+        "ytitle" : "Energy [GeV]"
+    }, 
+	"thetaTop_vs_thetaBot_with_chi2_cut_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 0.2,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 0.2,
+		"xtitle" : "#theta_{bot} [rad]",
+        "ytitle" : "#theta_{top} [rad]"
+    }     
+}
