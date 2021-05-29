@@ -156,10 +156,10 @@ class TriggerParametersExtractionAnaProcessor : public Processor {
         double neg_bot_botCutY[2] = {-6.39967, 0.910099};
 
         //Parameters of cut function for PDE
-        double pars_pde[4] = {0.625718, -0.0307272, 2.43162e-05, 1.99737e-05}; // 99%
+        double pars_pde[4] = {0.751987, -0.0527523, 0.00133877, -6.13361e-06}; // 99%
 
         //Parameters of cut function for energy slope
-        double pars_energy_slope[2] = {1.1814, -0.00286496}; // 99%
+        double pars_energy_slope[2] = {1.02439, -0.00245455}; // 99%
 
         /**
          * An array of the form <code>position[iy][ix]</code> that contains the hardware
