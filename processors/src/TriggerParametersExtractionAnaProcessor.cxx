@@ -17,6 +17,7 @@
 #define CLUSTERENERGYMIN 0.3 // minimum of cluster energy
 #define CLUSTERENERGYMAX 2.7 // maximum of cluster energy
 #define CLUSTERNHTSMIN 2 // minimum for number of cluster's hits
+#define CLUSTERXMIN 4 // x min of clusters
 
 
 TriggerParametersExtractionAnaProcessor::TriggerParametersExtractionAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
@@ -289,6 +290,8 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 	bool flag_singles = false;
 	// Further, events contain at least one cluster in positive region which passes PDE cut
 	bool flag_pde = false;
+	// Futher, the cluster pass through x min cut
+	bool flag_xmin = false;
 	// Further, the cluster passes through energy and nhits cuts
 	bool flag_energy_nhits = false;
 
@@ -301,7 +304,9 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 		int ix = seed->getCrystalIndices()[0];
 		if (flag_singles && cluster.getEnergy() >= func_pde->Eval(ix)) flag_pde = true;
 
-		if(flag_singles && flag_pde && cluster.getEnergy() >= CLUSTERENERGYMIN && cluster.getEnergy() <= CLUSTERENERGYMAX && cluster.getNHits() >= CLUSTERNHTSMIN)
+		if(flag_singles && flag_pde && ix >= CLUSTERXMIN) flag_xmin = true;
+
+		if(flag_singles && flag_pde && flag_xmin && cluster.getEnergy() >= CLUSTERENERGYMIN && cluster.getEnergy() <= CLUSTERENERGYMAX && cluster.getNHits() >= CLUSTERNHTSMIN)
 			flag_energy_nhits = true;
 	}
 
@@ -318,7 +323,9 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 		int ix = seed -> getCrystalIndices()[0];
 		if(cluster.getEnergy() > func_pde->Eval(ix)) flag_pde = true;
 
-		if(flag_singles && flag_pde && cluster.getEnergy() >= CLUSTERENERGYMIN && cluster.getEnergy() <= CLUSTERENERGYMAX && cluster.getNHits() >= CLUSTERNHTSMIN)
+		if(flag_singles && flag_pde && ix >= CLUSTERXMIN) flag_xmin = true;
+
+		if(flag_singles && flag_pde && ix >= CLUSTERXMIN && cluster.getEnergy() >= CLUSTERENERGYMIN && cluster.getEnergy() <= CLUSTERENERGYMAX && cluster.getNHits() >= CLUSTERNHTSMIN)
 			flag_energy_nhits = true;
 	}
 
@@ -470,7 +477,7 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 			double invariant_mass = (*lorentzVectorPos + *lorentzVectorNeg).M();
 			histos->Fill1DHisto("invariant_mass_track_chi2_cut_h", invariant_mass, weight);
 			if(flag_singles) histos->Fill1DHisto("invariant_mass_singles_analyzable_h", invariant_mass, weight);
-			if(flag_singles && flag_pde && flag_energy_nhits) histos->Fill1DHisto("invariant_mass_singles_triggered_h", invariant_mass, weight);
+			if(flag_singles && flag_pde && flag_xmin && flag_energy_nhits) histos->Fill1DHisto("invariant_mass_singles_triggered_h", invariant_mass, weight);
 
 			histos->Fill2DHisto("truth_vs_invariant_mass_track_chi2_cut_hh", truthMass, invariant_mass, weight);
 
