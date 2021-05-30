@@ -386,14 +386,14 @@
         "minX"   : 0,
         "maxX"   : 0.3,
         "xtitle" : "Truth mass [GeV/c^{2}]",
-        "ytitle" : "Events"
+        "ytitle" : "Counts"
     },
 	"invariant_mass_singles_triggered_h": { 
 		"bins"   : 100,
         "minX"   : 0,
         "maxX"   : 0.3,
         "xtitle" : "Invariant mass [GeV/c^{2}]",
-        "ytitle" : "Events"
+        "ytitle" : "Counts"
     }, 
 	"truth_vs_invariant_mass_track_chi2_cut_hh": { 
 		"binsX" : 100,
