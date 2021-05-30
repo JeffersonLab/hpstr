@@ -159,7 +159,7 @@ class TriggerParametersExtractionAnaProcessor : public Processor {
         double pars_pde[4] = {0.751987, -0.0527523, 0.00133877, -6.13361e-06}; // 99%
 
         //Parameters of cut function for energy slope
-        double pars_energy_slope[2] = {1.02439, -0.00245455}; // 99%
+        double pars_energy_slope[2] = {1.02439, -0.00245455}; // 3sigma
 
         /**
          * An array of the form <code>position[iy][ix]</code> that contains the hardware

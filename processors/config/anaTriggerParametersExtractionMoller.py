@@ -41,7 +41,7 @@ triggerParametersExtractionMollerAna = HpstrConf.Processor('triggerParametersExt
 #RecoHitAna
 triggerParametersExtractionMollerAna.parameters["debug"] = 0
 triggerParametersExtractionMollerAna.parameters["anaName"] = "triggerParameterExtractionAna"
-triggerParametersExtractionMollerAna.parameters["trkColl"] = "GBLTracks"
+triggerParametersExtractionMollerAna.parameters["trkColl"] = "KalmanFullTracks"
 triggerParametersExtractionMollerAna.parameters["ecalClusColl"] = "RecoEcalClustersGTP"
 triggerParametersExtractionMollerAna.parameters["vtxColl"] = "UnconstrainedMollerVertices"
 triggerParametersExtractionMollerAna.parameters["analysis"] = analysis

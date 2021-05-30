@@ -99,6 +99,46 @@ class TriggerParametersExtractionMollerAnaProcessor : public Processor {
         //Debug level
         int debug_{0};
 
+        /*
+         * Parameters for all cut functions depend on beam energy.
+         * Here, the setup is for 3.7 GeV.
+         */
+
+        //Cut functions for X
+        TF1 *func_top_topCutX;
+        TF1 *func_top_botCutX;
+
+        TF1 *func_bot_topCutX;
+        TF1 *func_bot_botCutX;
+
+        //Cut functions for Y
+        TF1 *func_top_topCutY;
+        TF1 *func_top_botCutY;
+
+        TF1 *func_bot_topCutY;
+        TF1 *func_bot_botCutY;
+
+
+        //Cut function for energy slope
+        TF1 *func_energy_slope;
+
+        //Parameters of cut functions for X
+        double top_topCutX[2] = {22.4311, 0.865347};
+        double top_botCutX[2] = {-20.9517, 0.889685};
+
+        double bot_topCutX[2] = {23.5512, 0.867873};
+        double bot_botCutX[2] = {-21.6512, 0.888276};
+
+        //Parameters of cut functions for Y
+        double top_topCutY[2] = {7.1885, 0.900118};
+        double top_botCutY[2] = {-5.84294, 0.903104};
+
+        double bot_topCutY[2] = {4.91401, 0.88867};
+        double bot_botCutY[2] = {-6.39967, 0.910099};
+
+        //Parameters of cut function for energy slope
+        double pars_energy_slope[2] = {1.02439, -0.00245455}; // 3sigma
+
 
         /**
          * An array of the form <code>position[iy][ix]</code> that contains the hardware

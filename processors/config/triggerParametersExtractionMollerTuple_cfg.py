@@ -32,14 +32,13 @@ vtx = HpstrConf.Processor('vtx', 'VertexProcessor')
 ###############################
 #Tracking
 track.parameters["debug"] = 0 
-track.parameters["trkCollLcio"] = 'GBLTracks'
-track.parameters["trkCollRoot"] = 'GBLTracks'
-track.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
-track.parameters["trkRelCollLcio"] = 'TrackDataRelations'
-track.parameters["trkhitCollRoot"] = 'RotatedHelicalOnTrackHits'
+track.parameters["trkCollLcio"] = 'KalmanFullTracks'
+track.parameters["trkCollRoot"] = 'KalmanFullTracks'
+track.parameters["kinkRelCollLcio"] = ''
+track.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
+track.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
-track.parameters["rawhitCollRoot"] = '' #'SVTRawHitsOnTrack'
-#track.parameters["bfield"]         = bfield[str(options.year)]
+track.parameters["rawhitCollRoot"] = ''
 
 
 #ECalData

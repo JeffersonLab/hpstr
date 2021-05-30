@@ -431,5 +431,5 @@
         "maxY" : 4,
 		"xtitle" : "Truth mass [GeV/c^{2}]",
 		"ytitle" : "p of recoiled electron [GeV/c]"
-    }         
+    }       
 }
