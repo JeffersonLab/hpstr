@@ -13,10 +13,10 @@
 #define ELECTRONMASS 0.000510998950 // GeV
 #define PI 3.14159265358979
 #define CHI2NDFTHRESHOLD 20
-#define TRACKPMIN 3.14 // 3 sigma
-#define TRACKPMAX 4.23 // 3 sigma
+#define TRACKPMIN 3.05 // 4 sigma
+#define TRACKPMAX 4.32 // 4 sigma
 #define CLUSTERENERGYTHRESHOLD 0.1 // threshold of cluster energy for analyzable events
-#define CLUSTERENERGYMINNOCUT 2.46 // for no cut; minimum of cluster energy; 3 sigma for double gaussians
+#define CLUSTERENERGYMINNOCUT 2.47 // for no cut; minimum of cluster energy; 3 sigma for double gaussians
 #define CLUSTERENERGYMAXNOCUT 3.60 // for no cut; maximum of cluster energy; 5 sigma for double gaussians
 #define CLUSTERENERGYMINANALYZABLE 2.52 // for analyzable events, minimum of cluster energy; 3 sigma for double gaussians
 #define CLUSTERENERGYMAXANALYZABLE 3.58 // for analyzable events, maximum of cluster energy; 5 sigma for double gaussians
@@ -141,7 +141,6 @@ bool TriggerParametersExtractionFEEAnaProcessor::process(IEvent* ievent) {
 			histos->Fill2DHisto("xy_indices_clusters_without_track_association_hh", ix, iy, weight);
 		}
 
-
 		for(int j = 0; j < tracks.size(); j++){
 			Track track = tracks.at(j);
 			std::vector<double> positionAtEcal = track.getPositionAtEcal();
@@ -171,35 +170,42 @@ bool TriggerParametersExtractionFEEAnaProcessor::process(IEvent* ievent) {
 					break;
 				}
 			}
-
 		}
 	}
 
+	bool flag = false;
 	for(int i = 0; i < clulsters_cut.size(); i++){
 		CalCluster cluster = clulsters_cut.at(i);
-		std::vector<double> positionCluster = cluster.getPosition();
+		if(cluster.getEnergy() >= CLUSTERENERGYTHRESHOLD) flag = true;
+	}
 
-		histos->Fill2DHisto("xy_clusters_analyzable_hh",positionCluster[0], positionCluster[1], weight);
+	if(flag){
+		for(int i = 0; i < clulsters_cut.size(); i++){
+			CalCluster cluster = clulsters_cut.at(i);
+			std::vector<double> positionCluster = cluster.getPosition();
 
-		CalHit* seed = (CalHit*)cluster.getSeed();
+			histos->Fill2DHisto("xy_clusters_analyzable_hh",positionCluster[0], positionCluster[1], weight);
 
-		double energy = cluster.getEnergy();
-		double nHits = cluster.getNHits();
+			CalHit* seed = (CalHit*)cluster.getSeed();
 
-		histos->Fill1DHisto("seed_energy_cluster_analyzable_h", seed->getEnergy(), weight);
-		histos->Fill1DHisto("energy_cluster_analyzable_h", energy, weight);
-		histos->Fill1DHisto("n_hits_cluster_analyzable_h", nHits, weight);
-		histos->Fill2DHisto("energy_vs_n_hits_cluster_analyzable_hh", nHits, energy, weight);
+			double energy = cluster.getEnergy();
+			double nHits = cluster.getNHits();
 
-		int ix = seed -> getCrystalIndices()[0];
-		int iy = seed -> getCrystalIndices()[1];
+			histos->Fill1DHisto("seed_energy_cluster_analyzable_h", seed->getEnergy(), weight);
+			histos->Fill1DHisto("energy_cluster_analyzable_h", energy, weight);
+			histos->Fill1DHisto("n_hits_cluster_analyzable_h", nHits, weight);
+			histos->Fill2DHisto("energy_vs_n_hits_cluster_analyzable_hh", nHits, energy, weight);
 
-		if(ix < 0) ix++;
+			int ix = seed -> getCrystalIndices()[0];
+			int iy = seed -> getCrystalIndices()[1];
 
-		histos->Fill2DHisto("xy_indices_clusters_analyzable_hh", ix, iy, weight);
+			if(ix < 0) ix++;
 
-		if(energy >= CLUSTERENERGYMINANALYZABLE && energy <= CLUSTERENERGYMAXANALYZABLE && nHits >= CLUSTERNHTSMINANALYZABLE){
-			histos->Fill2DHisto("xy_indices_clusters_with_track_association_hh", ix, iy, weight);
+			histos->Fill2DHisto("xy_indices_clusters_analyzable_hh", ix, iy, weight);
+
+			if(energy >= CLUSTERENERGYMINANALYZABLE && energy <= CLUSTERENERGYMAXANALYZABLE && nHits >= CLUSTERNHTSMINANALYZABLE){
+				histos->Fill2DHisto("xy_indices_clusters_with_track_association_hh", ix, iy, weight);
+			}
 		}
 	}
 

@@ -101,7 +101,7 @@
 	"energy_vs_theta_analyzable_events_hh" : {
         "binsX" : 100,
         "minX" : 0,
-        "maxX" : 0.2,
+        "maxX" : 0.1,
         "binsY" : 100,
         "minY" : 0,
         "maxY" : 4,
@@ -111,10 +111,10 @@
 	"thetaTop_vs_thetaBot_analyzable_events_hh" : {
         "binsX" : 100,
         "minX" : 0,
-        "maxX" : 0.2,
+        "maxX" : 0.1,
         "binsY" : 100,
         "minY" : 0,
-        "maxY" : 0.2,
+        "maxY" : 0.1,
 		"xtitle" : "#theta_{bot} [rad]",
         "ytitle" : "#theta_{top} [rad]"
     },

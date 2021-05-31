@@ -175,6 +175,8 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 			double theta_bot = lorentzVectorBot->Theta();
 			double energy_bot = lorentzVectorBot->Energy();
 
+			std::cout << momBot[0] << "  " << momBot[1]<< "  " << momBot[2] << "  " << theta_bot << std::endl;
+
 			histos->Fill2DHisto("xy_positionAtEcal_tracks_analyzable_events_hh",positionAtEcalTop[0], positionAtEcalTop[1], weight);
 			histos->Fill2DHisto("xy_positionAtEcal_tracks_analyzable_events_hh",positionAtEcalBot[0], positionAtEcalBot[1], weight);
 
@@ -225,6 +227,9 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 	int n_clusters_top = clulsters_top.size();
 	int n_clusters_bot = clulsters_bot.size();
 
+	std::vector<CalCluster> clulsters_top_cut;
+	std::vector<CalCluster> clulsters_bot_cut;
+
 	if( ( tracks_top.size() >= 1 && tracks_bot.size() >= 1 )){
 		for(int i = 0; i < n_clusters_top; i++){
 			CalCluster cluster = clulsters_top.at(i);
@@ -236,7 +241,6 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 				histos->Fill2DHisto("trackX_vs_ClusterX_top_hh", positionCluster[0], positionAtEcal[0], weight);
 				histos->Fill2DHisto("trackY_vs_ClusterY_top_hh", positionCluster[1], positionAtEcal[1], weight);
 
-				/*
 				if (positionAtEcal[0]< func_top_topCutX->Eval(positionCluster[0])
 						&& positionAtEcal[0] > func_top_botCutX->Eval(positionCluster[0])
 						&& positionAtEcal[1] < func_top_topCutY->Eval(positionCluster[1])
@@ -244,7 +248,6 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 					clulsters_top_cut.push_back(cluster);
 					break;
 				}
-				*/
 			}
 		}
 
@@ -258,7 +261,6 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 				histos->Fill2DHisto("trackX_vs_ClusterX_bot_hh", positionCluster[0], positionAtEcal[0], weight);
 				histos->Fill2DHisto("trackY_vs_ClusterY_bot_hh", positionCluster[1], positionAtEcal[1], weight);
 
-				/*
 				if (positionAtEcal[0]< func_bot_topCutX->Eval(positionCluster[0])
 						&& positionAtEcal[0] > func_bot_botCutX->Eval(positionCluster[0])
 						&& positionAtEcal[1] < func_bot_topCutY->Eval(positionCluster[1])
@@ -266,17 +268,31 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 					clulsters_bot_cut.push_back(cluster);
 					break;
 				}
-				*/
 			}
 		}
 	}
 
-	if( ( tracks_top.size() >= 1 && tracks_bot.size() >= 1 ) && (n_clusters_top >=1 || n_clusters_bot >= 1)){
-		for(int i = 0; i < n_clusters_top; i++){
-			CalCluster cluster = clulsters_top.at(i);
+	int n_clusters_top_cut = clulsters_top_cut.size();
+	int n_clusters_bot_cut = clulsters_bot_cut.size();
+
+	int flag = false;
+
+	for(int i = 0; i < n_clusters_top_cut; i++){
+		CalCluster cluster = clulsters_top_cut.at(i);
+		if(cluster.getEnergy() >= CLUSTERENERGYTHRESHOLD) flag = true;
+	}
+
+	for(int i = 0; i < n_clusters_bot_cut; i++){
+		CalCluster cluster = clulsters_bot_cut.at(i);
+		if(cluster.getEnergy() >= CLUSTERENERGYTHRESHOLD) flag = true;
+	}
+
+	if( ( tracks_top.size() >= 1 && tracks_bot.size() >= 1 ) && (n_clusters_top_cut >=1 || n_clusters_bot_cut >= 1) && flag){
+		for(int i = 0; i < n_clusters_top_cut; i++){
+			CalCluster cluster = clulsters_top_cut.at(i);
 
 			std::vector<double> positionCluster = cluster.getPosition();
-			histos->Fill2DHisto("xy_clusters_without_cut_hh",positionCluster[0], positionCluster[1], weight);
+			histos->Fill2DHisto("xy_clusters_analyzable_events_hh",positionCluster[0], positionCluster[1], weight);
 
 			CalHit* seed = (CalHit*)cluster.getSeed();
 			histos->Fill1DHisto("seed_energy_cluster_analyzable_events_h", seed->getEnergy(), weight);
@@ -298,8 +314,8 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
 		}
 
-		for(int i = 0; i < n_clusters_bot; i++){
-			CalCluster cluster = clulsters_bot.at(i);
+		for(int i = 0; i < n_clusters_bot_cut; i++){
+			CalCluster cluster = clulsters_bot_cut.at(i);
 
 			std::vector<double> positionCluster = cluster.getPosition();
 			histos->Fill2DHisto("xy_clusters_without_cut_hh",positionCluster[0], positionCluster[1], weight);
