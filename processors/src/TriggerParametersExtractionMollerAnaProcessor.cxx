@@ -1,5 +1,5 @@
 /**
- *@file TriggerParametersExtractionAnaProcessor.cxx
+ *@file TriggerParametersExtractionMollerAnaProcessor.cxx
  *@author Tongtong, UNH
  */
 
@@ -79,10 +79,6 @@ void TriggerParametersExtractionMollerAnaProcessor::initialize(TTree* tree) {
     func_bot_topCutY->SetParameters(bot_topCutY);
     func_bot_botCutY = new TF1("func_bot_botCutY", "pol1", -90, -30);
     func_bot_botCutY->SetParameters(bot_botCutY);
-
-    //Cut function for energy slope
-    func_energy_slope = new TF1("func_pde", "pol1", 0, 400);
-    func_energy_slope->SetParameters(pars_energy_slope);
 }
 
 bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {

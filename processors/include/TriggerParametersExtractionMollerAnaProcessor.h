@@ -118,10 +118,6 @@ class TriggerParametersExtractionMollerAnaProcessor : public Processor {
         TF1 *func_bot_topCutY;
         TF1 *func_bot_botCutY;
 
-
-        //Cut function for energy slope
-        TF1 *func_energy_slope;
-
         //Parameters of cut functions for X
         double top_topCutX[2] = {22.4311, 0.865347};
         double top_botCutX[2] = {-20.9517, 0.889685};
@@ -135,10 +131,6 @@ class TriggerParametersExtractionMollerAnaProcessor : public Processor {
 
         double bot_topCutY[2] = {4.91401, 0.88867};
         double bot_botCutY[2] = {-6.39967, 0.910099};
-
-        //Parameters of cut function for energy slope
-        double pars_energy_slope[2] = {1.02439, -0.00245455}; // 3sigma
-
 
         /**
          * An array of the form <code>position[iy][ix]</code> that contains the hardware
