@@ -175,18 +175,13 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 			double theta_bot = lorentzVectorBot->Theta();
 			double energy_bot = lorentzVectorBot->Energy();
 
-			std::cout << momBot[0] << "  " << momBot[1]<< "  " << momBot[2] << "  " << theta_bot << std::endl;
+			histos->Fill2DHisto("xy_positionAtEcal_track_pair_hh",positionAtEcalTop[0], positionAtEcalTop[1], weight);
+			histos->Fill2DHisto("xy_positionAtEcal_track_pair_hh",positionAtEcalBot[0], positionAtEcalBot[1], weight);
 
-			histos->Fill2DHisto("xy_positionAtEcal_tracks_analyzable_events_hh",positionAtEcalTop[0], positionAtEcalTop[1], weight);
-			histos->Fill2DHisto("xy_positionAtEcal_tracks_analyzable_events_hh",positionAtEcalBot[0], positionAtEcalBot[1], weight);
-
-			histos->Fill2DHisto("energy_vs_theta_analyzable_events_hh",theta_top, energy_top, weight);
-			histos->Fill2DHisto("energy_vs_theta_analyzable_events_hh",theta_bot, energy_bot, weight);
+			histos->Fill2DHisto("energy_vs_theta_track_pair_hh",theta_top, energy_top, weight);
+			histos->Fill2DHisto("energy_vs_theta_track_pair_hh",theta_bot, energy_bot, weight);
 
 			histos->Fill2DHisto("thetaTop_vs_thetaBot_analyzable_events_hh",theta_bot, theta_top, weight);
-
-			//double invariant_mass = (*lorentzVectorTop + *lorentzVectorBot).M();
-
 		}
 	}
 
@@ -344,6 +339,35 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 	        histos->Fill1DHisto("invariant_mass_vertex_analyzable_events_h", vtx->getInvMass(), weight);
 	    }
 
+		for(int i = 0; i < n_tracks_top; i++) {
+			Track trackTop = tracks_top.at(i);
+			std::vector<double> positionAtEcalTop = trackTop.getPositionAtEcal();
+			std::vector<double> momTop= trackTop.getMomentum();
+			TLorentzVector* lorentzVectorTop = new TLorentzVector();
+			lorentzVectorTop->SetXYZM(momTop[0], momTop[1], momTop[2], ELECTRONMASS);
+			double theta_top = lorentzVectorTop->Theta();
+			double energy_top = lorentzVectorTop->Energy();
+
+			for(int j = 0; j < n_tracks_bot; j++) {
+				Track trackBot = tracks_bot.at(i);
+				std::vector<double> positionAtEcalBot = trackBot.getPositionAtEcal();
+				std::vector<double> momBot= trackBot.getMomentum();
+				TLorentzVector* lorentzVectorBot = new TLorentzVector();
+				lorentzVectorBot->SetXYZM(momBot[0], momBot[1], momBot[2], ELECTRONMASS);
+				double theta_bot = lorentzVectorBot->Theta();
+				double energy_bot = lorentzVectorBot->Energy();
+
+				histos->Fill2DHisto("xy_positionAtEcal_tracks_analyzable_events_hh",positionAtEcalTop[0], positionAtEcalTop[1], weight);
+				histos->Fill2DHisto("xy_positionAtEcal_tracks_analyzable_events_hh",positionAtEcalBot[0], positionAtEcalBot[1], weight);
+
+				histos->Fill2DHisto("energy_vs_theta_analyzable_events_hh",theta_top, energy_top, weight);
+				histos->Fill2DHisto("energy_vs_theta_analyzable_events_hh",theta_bot, energy_bot, weight);
+
+				histos->Fill2DHisto("thetaTop_vs_thetaBot_analyzable_events_hh",theta_bot, theta_top, weight);
+
+			}
+		}
+
 	}
 
 
@@ -356,69 +380,6 @@ void TriggerParametersExtractionMollerAnaProcessor::finalize() {
     histos->saveHistos(outF_, anaName_.c_str());
     delete histos;
     histos = nullptr;
-
-}
-
-std::vector<double> TriggerParametersExtractionMollerAnaProcessor::getCrystalPosition(CalCluster cluster){
-	CalHit* seed = (CalHit*)cluster.getSeed();
-	int ix = seed->getCrystalIndices()[0];
-	int iy = seed->getCrystalIndices()[1];
-
-    // Get the position map.
-	std::vector<double> position;
-    if (ix < 1) {
-    	position.push_back(positionMap[5 - iy][22 - ix][0]);
-    	position.push_back(positionMap[5 - iy][22 - ix][2]);
-    	position.push_back(positionMap[5 - iy][22 - ix][1]);
-    } else {
-    	position.push_back(positionMap[5 - iy][23 - ix][0]);
-    	position.push_back(positionMap[5 - iy][23 - ix][2]);
-    	position.push_back(positionMap[5 - iy][23 - ix][1]);
-    }
-
-    // Return the corrected mapped position.
-    return position;
-}
-
-double TriggerParametersExtractionMollerAnaProcessor::getValueCoplanarity(CalCluster clusterTop, CalCluster clusterBot) {
-    // Get the variables used by the calculation.
-	std::vector<double> positionTop = getCrystalPosition(clusterTop);
-	std::vector<double> positionBot = getCrystalPosition(clusterBot);
-
-	int angleTop = (int) std::round(atan(positionTop[0] / positionTop[1]) * 180.0 / PI);
-	int angleBot = (int) std::round(atan(positionBot[0] / positionBot[1]) * 180.0 / PI);
-
-	 // Calculate the coplanarity cut value.
-	return abs(angleTop - angleBot);
-}
-
-std::vector<double> TriggerParametersExtractionMollerAnaProcessor::getVariablesForEnergySlopeCut(CalCluster clusterTop, CalCluster clusterBot){
-	double energyTop = clusterTop.getEnergy();
-	double energyBot = clusterBot.getEnergy();
-
-	std::vector<double> variables;
-
-	if(energyTop < energyBot){
-		// Get the low energy cluster radial distance
-		std::vector<double> positionTop = getCrystalPosition(clusterTop);
-		double slopeParamR = sqrt( pow(positionTop[0],2) + pow( positionTop[1], 2) );
-
-		variables.push_back(slopeParamR);
-		variables.push_back(energyTop);
-
-		return variables;
-	}
-
-	else{
-		// Get the low energy cluster radial distance
-		std::vector<double> positionBot = getCrystalPosition(clusterBot);
-		double slopeParamR = sqrt( pow(positionBot[0],2) + pow( positionBot[1], 2) );
-
-		variables.push_back(slopeParamR);
-		variables.push_back(energyBot);
-
-		return variables;
-	}
 
 }
 
