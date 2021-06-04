@@ -14,6 +14,7 @@
 #define PI 3.14159265358979
 #define CHI2NDFTHRESHOLD 20
 #define CLUSTERENERGYTHRESHOLD 0.1 // threshold of cluster energy for analyzable events
+#define CLUSTERENERGYMIN 0.71 // minimum of cluster energy
 #define CLUSTERENERGYMAX 1.56 // maximum of cluster energy
 #define CLUSTERNHTSMIN 2 // minimum for number of cluster's hits
 #define ROTATIONANGLEAROUNDY 0.0305 // rad
@@ -291,7 +292,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 				histos->Fill2DHisto("xy_indices_clusters_analyzable_events_hh",ix, iy, weight);
 			}
 
-			if(cluster.getEnergy() < CLUSTERENERGYMAX && cluster.getEnergy() < func_nhde->Eval(cluster.getNHits())) flag_triggered_analyzable_event = true;
+			if(cluster.getEnergy() < CLUSTERENERGYMAX && cluster.getEnergy() > CLUSTERENERGYMIN) flag_triggered_analyzable_event = true;
 
 		}
 
@@ -319,7 +320,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 				histos->Fill2DHisto("xy_indices_clusters_analyzable_events_hh",ix, iy, weight);
 			}
 
-			if(cluster.getEnergy() < CLUSTERENERGYMAX && cluster.getEnergy() < func_nhde->Eval(cluster.getNHits())) flag_triggered_analyzable_event = true;
+			if(cluster.getEnergy() < CLUSTERENERGYMAX && cluster.getEnergy() > CLUSTERENERGYMIN) flag_triggered_analyzable_event = true;
 		}
 
 		for(int i = 0; i < n_tracks_top; i++) {
@@ -356,27 +357,6 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
         std::vector<double> momTop =  particleTop->getMomentum();
         std::vector<double> momBot =  particleBot->getMomentum();
-
-        /*
-        double pTop = sqrt(pow(momTop[0], 2) + pow(momTop[1], 2) + pow(momTop[2], 2));
-        double pBot = sqrt(pow(momBot[0], 2) + pow(momBot[1], 2) + pow(momBot[2], 2));
-
-        double thetaTopX = acos(momTop[0]/pTop);
-        if(thetaTopX > PI/2) thetaTopX = thetaTopX - PI/2;
-
-        double thetaTopY = acos(momTop[1]/pTop);
-        if(thetaTopY > PI/2) thetaTopY = thetaTopY - PI/2;
-
-        std::cout << momTop[0] << "  " << pTop << std::endl;
-        std::cout << momTop[1] << "  " << pTop << std::endl;
-        std::cout << thetaTopX << "  " << thetaTopY << std::endl;
-
-        double thetaBotX = acos(momBot[0]/pBot);
-        if(thetaBotX > PI/2) thetaBotX = thetaBotX - PI/2;
-
-        double thetaBotY = acos(momTop[1]/pTop);
-        if(thetaBotY > PI/2) thetaBotY = thetaBotY - PI/2;
-         */
 
 		histos->Fill2DHisto("px_vs_py_vertex_hh", momTop[0], momTop[1], weight);
 		histos->Fill2DHisto("px_vs_py_vertex_hh", momBot[0], momBot[1], weight);
@@ -487,13 +467,8 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
 			histos->Fill1DHisto("diff_energy_between_recon_clulster_and_track_energy_triggered_analyzable_events_with_kinematic_cuts_h", clTop.getEnergy() - energy_top, weight);
 			histos->Fill1DHisto("diff_energy_between_recon_clulster_and_track_energy_triggered_analyzable_events_with_kinematic_cuts_h", clBot.getEnergy() - energy_bot, weight);
-
         }
-
     }
-
-
-
 
     return true;
 }
