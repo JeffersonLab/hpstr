@@ -98,26 +98,6 @@
 		"xtitle" : "X [mm]",
         "ytitle" : "Y [mm]"
     },
-	"energy_vs_theta_track_pair_hh" : {
-        "binsX" : 100,
-        "minX" : 0,
-        "maxX" : 0.1,
-        "binsY" : 100,
-        "minY" : 0,
-        "maxY" : 4,
-		"xtitle" : "#theta [rad]",
-        "ytitle" : "Energy [GeV]"
-    }, 
-	"thetaTop_vs_thetaBot_track_pair_hh" : {
-        "binsX" : 100,
-        "minX" : 0,
-        "maxX" : 0.1,
-        "binsY" : 100,
-        "minY" : 0,
-        "maxY" : 0.1,
-		"xtitle" : "#theta_{bot} [rad]",
-        "ytitle" : "#theta_{top} [rad]"
-    },
 	"n_clusters_xAxis_without_cut_h": { 
  		"bins"   : 46,
         "minX"   : -22.5,
@@ -274,13 +254,6 @@
 		"xtitle" : "Hit counts of cluster",
         "ytitle" : "Energy of cluster [GeV]"
     },
-	"invariant_mass_vertex_analyzable_events_h": { 
-		"bins"   : 100,
-        "minX"   : 0,
-        "maxX"   : 0.12,
-        "xtitle" : "Invariant mass [GeV/c^{2}]",
-        "ytitle" : "Vertices"
-    },
 	"xy_positionAtEcal_tracks_analyzable_events_hh" : {
         "binsX" : 100,
         "minX" : -400,
@@ -291,25 +264,204 @@
 		"xtitle" : "X [mm]",
         "ytitle" : "Y [mm]"
     },
-	"energy_vs_theta_analyzable_events_hh" : {
+	"invariant_mass_vertex_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.12,
+        "xtitle" : "Invariant mass [GeV/c^{2}]",
+        "ytitle" : "Vertices"
+    },
+	"px_vs_py_vertex_hh" : {
+        "binsX" : 100,
+        "minX" : -0.3,
+        "maxX" : 0.3,
+        "binsY" : 100,
+        "minY" : -0.2,
+        "maxY" : 0.2,
+		"xtitle" : "p_{x} [GeV/c]",
+        "ytitle" : "p_{y} [GeV/c]"
+    },
+	"energy_vs_theta_track_pair_from_vertex_before_rotation_hh" : {
         "binsX" : 100,
         "minX" : 0,
         "maxX" : 0.1,
         "binsY" : 100,
         "minY" : 0,
         "maxY" : 4,
-		"xtitle" : "#theta [rad]",
+		"xtitle" : "#theta before rotation [rad]",
         "ytitle" : "Energy [GeV]"
     }, 
-	"thetaTop_vs_thetaBot_analyzable_events_hh" : {
+	"thetaTop_vs_thetaBot_track_pair_from_vertex_before_rotation_hh" : {
         "binsX" : 100,
         "minX" : 0,
         "maxX" : 0.1,
         "binsY" : 100,
         "minY" : 0,
         "maxY" : 0.1,
-		"xtitle" : "#theta_{bot} [rad]",
-        "ytitle" : "#theta_{top} [rad]"
+		"xtitle" : "#theta_{bot} before rotation [rad] [rad]",
+        "ytitle" : "#theta_{top} before rotation [rad] [rad]"
+    },
+	"diff_E_vertex_before_rotation_h" : {
+		"bins"   : 100,
+        "minX"   : -1,
+        "maxX"   : 1,
+        "xtitle" : "Differnce between measured and calculated energy",
+        "ytitle" : "Vertices"
+    },      
+	"diff_theta_vertex_before_rotation_h" : {
+		"bins"   : 100,
+        "minX"   : -0.025,
+        "maxX"   : 0.025,
+        "xtitle" : "Differnce between measured and calculated #theta before rotation [rad]",
+        "ytitle" : "Vertices"
+    }, 
+	"diff_energy_between_recon_clulster_and_track_energy_vertex_h" : {
+        "bins" : 100,
+        "minX" : -1,
+        "maxX" : 1,
+        "xtitle" : "Difference of energy between recon clulster and track energy[GeV]",
+		"ytitle" : "Counts"
+    },        
+	"invariant_mass_vertex_analyzable_events_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.12,
+        "xtitle" : "Invariant mass [GeV/c^{2}]",
+        "ytitle" : "Vertices"
+    },
+	"px_vs_py_vertex_analyzable_events_hh" : {
+        "binsX" : 100,
+        "minX" : -0.3,
+        "maxX" : 0.3,
+        "binsY" : 100,
+        "minY" : -0.2,
+        "maxY" : 0.2,
+		"xtitle" : "p_{x} [GeV/c]",
+        "ytitle" : "p_{y} [GeV/c]"
+    },
+	"energy_vs_theta_analyzable_events_before_rotation_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 0.1,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "#theta before rotation [rad]",
+        "ytitle" : "Energy [GeV]"
+    }, 
+	"thetaTop_vs_thetaBot_analyzable_events_before_rotation_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 0.1,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 0.1,
+		"xtitle" : "#theta_{bot} before rotation [rad]",
+        "ytitle" : "#theta_{top} before rotation [rad]"
+    },      
+	"diff_E_analyzable_events_before_rotation_h" : {
+		"bins"   : 100,
+        "minX"   : -1,
+        "maxX"   : 1,
+        "xtitle" : "Differnce between measured and calculated energy",
+        "ytitle" : "Vertices"
+    },      
+	"diff_theta_analyzable_events_before_rotation_h" : {
+		"bins"   : 100,
+        "minX"   : -0.025,
+        "maxX"   : 0.025,
+        "xtitle" : "Differnce between measured and calculated #theta before rotation [rad]",
+        "ytitle" : "Vertices"
+    },
+	"diff_energy_between_recon_clulster_and_track_energy_analyzable_events_h" : {
+        "bins" : 100,
+        "minX" : -1,
+        "maxX" : 1,
+        "xtitle" : "Difference of energy between recon clulster and track energy[GeV]",
+		"ytitle" : "Counts"
+    },
+	"invariant_mass_vertex_triggered_analyzable_events_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.12,
+        "xtitle" : "Invariant mass [GeV/c^{2}]",
+        "ytitle" : "Vertices"
+    },
+	"px_vs_py_vertex_triggered_analyzable_events_hh" : {
+        "binsX" : 100,
+        "minX" : -0.3,
+        "maxX" : 0.3,
+        "binsY" : 100,
+        "minY" : -0.2,
+        "maxY" : 0.2,
+		"xtitle" : "p_{x} [GeV/c]",
+        "ytitle" : "p_{y} [GeV/c]"
+    },
+	"energy_vs_theta_triggered_analyzable_events_before_rotation_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 0.1,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "#theta before rotation [rad]",
+        "ytitle" : "Energy [GeV]"
+    }, 
+	"thetaTop_vs_thetaBot_triggered_analyzable_events_before_rotation_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 0.1,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 0.1,
+		"xtitle" : "#theta_{bot} before rotation [rad]",
+        "ytitle" : "#theta_{top} before rotation [rad]"
+    },      
+	"diff_E_triggered_analyzable_events_before_rotation_h" : {
+		"bins"   : 100,
+        "minX"   : -1,
+        "maxX"   : 1,
+        "xtitle" : "Differnce between measured and calculated energy",
+        "ytitle" : "Vertices"
+    },      
+	"diff_theta_triggered_analyzable_events_before_rotation_h" : {
+		"bins"   : 100,
+        "minX"   : -0.025,
+        "maxX"   : 0.025,
+        "xtitle" : "Differnce between measured and calculated #theta before rotation [rad]",
+        "ytitle" : "Vertices"
+    },
+	"diff_energy_between_recon_clulster_and_track_energy_triggered_analyzable_events_h" : {
+        "bins" : 100,
+        "minX" : -1,
+        "maxX" : 1,
+        "xtitle" : "Difference of energy between recon clulster and track energy[GeV]",
+		"ytitle" : "Counts"
+    },
+                
+	"invariant_mass_vertex_triggered_analyzable_events_with_kinematic_cuts_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.12,
+        "xtitle" : "Invariant mass [GeV/c^{2}]",
+        "ytitle" : "Vertices"
+    },
+	"px_vs_py_vertex_triggered_analyzable_events_with_kinematic_cuts_hh" : {
+        "binsX" : 100,
+        "minX" : -0.3,
+        "maxX" : 0.3,
+        "binsY" : 100,
+        "minY" : -0.2,
+        "maxY" : 0.2,
+		"xtitle" : "p_{x} [GeV/c]",
+        "ytitle" : "p_{y} [GeV/c]"
+    },      
+	"diff_energy_between_recon_clulster_and_track_energy_triggered_analyzable_events_with_kinematic_cuts_h" : {
+        "bins" : 100,
+        "minX" : -1,
+        "maxX" : 1,
+        "xtitle" : "Difference of energy between recon clulster and track energy[GeV]",
+		"ytitle" : "Counts"
     }
     
 }
