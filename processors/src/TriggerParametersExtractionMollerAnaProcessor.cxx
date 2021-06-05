@@ -18,10 +18,10 @@
 #define CLUSTERENERGYMAX 1.56 // maximum of cluster energy
 #define CLUSTERNHTSMIN 2 // minimum for number of cluster's hits
 #define ROTATIONANGLEAROUNDY 0.0305 // rad
-#define DIFFENERGYMIN -0.37 // minimum for difference between measured and calculated energy
-#define DIFFENERGYMAX 0.33 // maximum for difference between measured and calculated energy
-#define DIFFTHETAMIN -0.0031 // minimum for difference between measured and calculated theta before rotation
-#define DIFFTHETAMAX 0.0048 // maximum for difference between measured and calculated theta before rotation
+#define DIFFENERGYMIN -0.35 // minimum for difference between measured and calculated energy
+#define DIFFENERGYMAX 0.34 // maximum for difference between measured and calculated energy
+#define DIFFTHETAMIN -0.0028 // minimum for difference between measured and calculated theta before rotation
+#define DIFFTHETAMAX 0.0046 // maximum for difference between measured and calculated theta before rotation
 
 TriggerParametersExtractionMollerAnaProcessor::TriggerParametersExtractionMollerAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
