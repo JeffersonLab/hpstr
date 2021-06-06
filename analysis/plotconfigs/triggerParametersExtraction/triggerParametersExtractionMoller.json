@@ -1,0 +1,467 @@
+{
+    "n_tracks_h" : {
+        "bins"   : 5,
+        "minX"   : -0.5,
+        "maxX"   : 4.5,
+        "xtitle" : "N_{tracks}",
+        "ytitle" : "Events"
+    },
+ 	"n_clusters_h" : {
+        "bins"   : 5,
+        "minX"   : -0.5,
+        "maxX"   : 4.5,
+        "xtitle" : "N_{clusters}",
+        "ytitle" : "Events"
+    },
+	"n_vtxs_h" : {
+        "bins"   : 3,
+        "minX"   : -0.5,
+        "maxX"   : 2.5,
+        "xtitle" : "N_{vertices}",
+        "ytitle" : "Events"
+    },
+	"n_clusters_vs_n_tracks_hh" : {
+        "binsX"   : 5,
+        "minX"   : -0.5,
+        "maxX"   : 4.5,
+		"binsY"   : 5,
+        "minY"   : -0.5,
+        "maxY"   : 4.5,
+        "xtitle" : "N_{tracks}",
+        "ytitle" : "N_{clusters}"
+    },
+	"n_clusters_vs_n_vtxs_hh" : {
+        "binsX"   : 3,
+        "minX"   : -0.5,
+        "maxX"   : 2.5,
+		"binsY"   : 5,
+        "minY"   : -0.5,
+        "maxY"   : 4.5,
+        "xtitle" : "N_{vertices}",
+        "ytitle" : "N_{clusters}"
+    },
+	"n_tracks_vs_n_vtxs_hh" : {
+        "binsX"   : 3,
+        "minX"   : -0.5,
+        "maxX"   : 2.5,
+		"binsY"   : 5,
+        "minY"   : -0.5,
+        "maxY"   : 4.5,
+        "xtitle" : "N_{vertices}",
+        "ytitle" : "N_{tracks}"
+    },
+	"n_tracks_top_with_chi2_cut_h" : {
+        "bins"   : 10,
+        "minX"   : -0.5,
+        "maxX"   : 9.5,
+        "xtitle" : "N_{tracks}",
+        "ytitle" : "Events"
+    },
+	"n_tracks_bot_with_chi2_cut_h" : {
+        "bins"   : 10,
+        "minX"   : -0.5,
+        "maxX"   : 9.5,
+        "xtitle" : "N_{tracks}",
+        "ytitle" : "Events"
+    },
+	"xy_positionAtEcal_vertices_hh" : {
+        "binsX" : 100,
+        "minX" : -400,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -100,
+        "maxY" : 100,
+		"xtitle" : "X [mm]",
+        "ytitle" : "Y [mm]"
+    },
+	"charge_tracks_h" : {
+        "bins"   : 3,
+        "minX"   : -1.5,
+        "maxX"   : 1.5,
+        "xtitle" : "charge",
+        "ytitle" : "Tracks"
+    },
+	"chi2ndf_tracks_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 30,
+        "xtitle" : "track #chi^{2} / ndf",
+        "ytitle" : "Tracks"
+    },
+	"xy_positionAtEcal_track_pair_hh" : {
+        "binsX" : 100,
+        "minX" : -400,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -100,
+        "maxY" : 100,
+		"xtitle" : "X [mm]",
+        "ytitle" : "Y [mm]"
+    },
+	"n_clusters_xAxis_without_cut_h": { 
+ 		"bins"   : 46,
+        "minX"   : -22.5,
+        "maxX"   : 23.5,
+        "xtitle" : "X index",
+        "ytitle" : "Clusters"
+    },
+	"xy_indices_clusters_without_cut_hh" : {
+        "binsX" : 46,
+        "minX" : -22.5,
+        "maxX" : 23.5,
+        "binsY" : 11,
+        "minY" : -5.5,
+        "maxY" : 5.5,
+		"xtitle" : "X index",
+        "ytitle" : "Y index"
+    },
+	"xy_clusters_without_cut_hh" : {
+        "binsX" : 100,
+        "minX" : -400,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -100,
+        "maxY" : 100,
+		"xtitle" : "X [mm]",
+        "ytitle" : "Y [mm]"
+    },
+	"seed_energy_cluster_without_cut_h": { 
+ 		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "Seed energy of cluster [GeV]",
+        "ytitle" : "Clusters"
+    },
+	"energy_cluster_without_cut_h": { 
+ 		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "Energy of cluster [GeV]",
+        "ytitle" : "Clusters"
+    },
+	"n_hits_cluster_without_cut_h": { 
+ 		"bins"   : 10,
+        "minX"   : 0.5,
+        "maxX"   : 10.5,
+        "xtitle" : "Hit counts of cluster",
+        "ytitle" : "Clusters"
+    },
+	"energy_vs_n_hits_cluster_without_cut_hh": { 
+		"binsX" : 10,
+        "minX" : 0.5,
+        "maxX" : 10.5,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "Hit counts of cluster",
+        "ytitle" : "Energy of cluster [GeV]"
+    },
+	"trackX_vs_ClusterX_top_hh": { 
+		"binsX" : 100,
+        "minX" : -320,
+        "maxX" : 80,
+        "binsY" : 100,
+        "minY" : -320,
+        "maxY" : 80,
+		"xtitle" : "X of cluster [mm]",
+        "ytitle" : "X of track extrapolation at Ecal face [mm]"
+    },
+	"trackX_vs_ClusterX_bot_hh": { 
+		"binsX" : 100,
+        "minX" : -320,
+        "maxX" : 80,
+        "binsY" : 100,
+        "minY" : -320,
+        "maxY" : 80,
+		"xtitle" : "X of cluster [mm]",
+        "ytitle" : "X of track extrapolation at Ecal face [mm]"
+    },
+ 	"trackY_vs_ClusterY_top_hh": { 
+		"binsX" : 100,
+        "minX" : 0,
+        "maxX" : 100,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 100,
+		"xtitle" : "Y of cluster [mm]",
+        "ytitle" : "Y of track extrapolation at Ecal face [mm]"
+    },
+	"trackY_vs_ClusterY_bot_hh": { 
+		"binsX" : 100,
+        "minX" : -100,
+        "maxX" : 0,
+        "binsY" : 100,
+        "minY" : -100,
+        "maxY" : 0,
+		"xtitle" : "Y of cluster [mm]",
+        "ytitle" : "Y of track extrapolation at Ecal face [mm]"
+    },
+ 	"n_clusters_xAxis_analyzable_events_h": { 
+ 		"bins"   : 46,
+        "minX"   : -22.5,
+        "maxX"   : 23.5,
+        "xtitle" : "X index",
+        "ytitle" : "Clusters"
+    },
+	"xy_indices_clusters_analyzable_events_hh" : {
+        "binsX" : 46,
+        "minX" : -22.5,
+        "maxX" : 23.5,
+        "binsY" : 11,
+        "minY" : -5.5,
+        "maxY" : 5.5,
+		"xtitle" : "X index",
+        "ytitle" : "Y index"
+    },
+	"xy_clusters_analyzable_events_hh" : {
+        "binsX" : 100,
+        "minX" : -400,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -100,
+        "maxY" : 100,
+		"xtitle" : "X [mm]",
+        "ytitle" : "Y [mm]"
+    },
+	"seed_energy_cluster_analyzable_events_h": { 
+ 		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "Seed energy of cluster [GeV]",
+        "ytitle" : "Clusters"
+    },
+	"energy_cluster_analyzable_events_h": { 
+ 		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "Energy of cluster [GeV]",
+        "ytitle" : "Clusters"
+    },
+	"n_hits_cluster_analyzable_events_h": { 
+ 		"bins"   : 10,
+        "minX"   : 0.5,
+        "maxX"   : 10.5,
+        "xtitle" : "Hit counts of cluster",
+        "ytitle" : "Clusters"
+    },
+	"energy_vs_n_hits_cluster_analyzable_events_hh": { 
+		"binsX" : 10,
+        "minX" : 0.5,
+        "maxX" : 10.5,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "Hit counts of cluster",
+        "ytitle" : "Energy of cluster [GeV]"
+    },
+	"xy_positionAtEcal_tracks_analyzable_events_hh" : {
+        "binsX" : 100,
+        "minX" : -400,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -100,
+        "maxY" : 100,
+		"xtitle" : "X [mm]",
+        "ytitle" : "Y [mm]"
+    },
+	"invariant_mass_vertex_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.12,
+        "xtitle" : "Invariant mass [GeV/c^{2}]",
+        "ytitle" : "Vertices"
+    },
+	"px_vs_py_vertex_hh" : {
+        "binsX" : 100,
+        "minX" : -0.3,
+        "maxX" : 0.3,
+        "binsY" : 100,
+        "minY" : -0.2,
+        "maxY" : 0.2,
+		"xtitle" : "p_{x} [GeV/c]",
+        "ytitle" : "p_{y} [GeV/c]"
+    },
+	"energy_vs_theta_track_pair_from_vertex_before_rotation_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 0.1,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "#theta before rotation [rad]",
+        "ytitle" : "Energy [GeV]"
+    }, 
+	"thetaTop_vs_thetaBot_track_pair_from_vertex_before_rotation_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 0.1,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 0.1,
+		"xtitle" : "#theta_{bot} before rotation [rad] [rad]",
+        "ytitle" : "#theta_{top} before rotation [rad] [rad]"
+    },
+	"diff_E_vertex_before_rotation_h" : {
+		"bins"   : 100,
+        "minX"   : -1,
+        "maxX"   : 1,
+        "xtitle" : "Differnce between measured and calculated energy",
+        "ytitle" : "Vertices"
+    },      
+	"diff_theta_vertex_before_rotation_h" : {
+		"bins"   : 100,
+        "minX"   : -0.025,
+        "maxX"   : 0.025,
+        "xtitle" : "Differnce between measured and calculated #theta before rotation [rad]",
+        "ytitle" : "Vertices"
+    }, 
+	"diff_energy_between_recon_clulster_and_track_energy_vertex_h" : {
+        "bins" : 100,
+        "minX" : -1,
+        "maxX" : 1,
+        "xtitle" : "Difference of energy between recon clulster and track energy[GeV]",
+		"ytitle" : "Counts"
+    },        
+	"invariant_mass_vertex_analyzable_events_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.12,
+        "xtitle" : "Invariant mass [GeV/c^{2}]",
+        "ytitle" : "Vertices"
+    },
+	"px_vs_py_vertex_analyzable_events_hh" : {
+        "binsX" : 100,
+        "minX" : -0.3,
+        "maxX" : 0.3,
+        "binsY" : 100,
+        "minY" : -0.2,
+        "maxY" : 0.2,
+		"xtitle" : "p_{x} [GeV/c]",
+        "ytitle" : "p_{y} [GeV/c]"
+    },
+	"energy_vs_theta_analyzable_events_before_rotation_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 0.1,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "#theta before rotation [rad]",
+        "ytitle" : "Energy [GeV]"
+    }, 
+	"thetaTop_vs_thetaBot_analyzable_events_before_rotation_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 0.1,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 0.1,
+		"xtitle" : "#theta_{bot} before rotation [rad]",
+        "ytitle" : "#theta_{top} before rotation [rad]"
+    },      
+	"diff_E_analyzable_events_before_rotation_h" : {
+		"bins"   : 100,
+        "minX"   : -1,
+        "maxX"   : 1,
+        "xtitle" : "Differnce between measured and calculated energy",
+        "ytitle" : "Vertices"
+    },      
+	"diff_theta_analyzable_events_before_rotation_h" : {
+		"bins"   : 100,
+        "minX"   : -0.025,
+        "maxX"   : 0.025,
+        "xtitle" : "Differnce between measured and calculated #theta before rotation [rad]",
+        "ytitle" : "Vertices"
+    },
+	"diff_energy_between_recon_clulster_and_track_energy_analyzable_events_h" : {
+        "bins" : 100,
+        "minX" : -1,
+        "maxX" : 1,
+        "xtitle" : "Difference of energy between recon clulster and track energy[GeV]",
+		"ytitle" : "Counts"
+    },
+	"invariant_mass_vertex_triggered_analyzable_events_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.12,
+        "xtitle" : "Invariant mass [GeV/c^{2}]",
+        "ytitle" : "Vertices"
+    },
+	"px_vs_py_vertex_triggered_analyzable_events_hh" : {
+        "binsX" : 100,
+        "minX" : -0.3,
+        "maxX" : 0.3,
+        "binsY" : 100,
+        "minY" : -0.2,
+        "maxY" : 0.2,
+		"xtitle" : "p_{x} [GeV/c]",
+        "ytitle" : "p_{y} [GeV/c]"
+    },
+	"energy_vs_theta_triggered_analyzable_events_before_rotation_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 0.1,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "#theta before rotation [rad]",
+        "ytitle" : "Energy [GeV]"
+    }, 
+	"thetaTop_vs_thetaBot_triggered_analyzable_events_before_rotation_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 0.1,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 0.1,
+		"xtitle" : "#theta_{bot} before rotation [rad]",
+        "ytitle" : "#theta_{top} before rotation [rad]"
+    },      
+	"diff_E_triggered_analyzable_events_before_rotation_h" : {
+		"bins"   : 100,
+        "minX"   : -1,
+        "maxX"   : 1,
+        "xtitle" : "Differnce between measured and calculated energy",
+        "ytitle" : "Vertices"
+    },      
+	"diff_theta_triggered_analyzable_events_before_rotation_h" : {
+		"bins"   : 100,
+        "minX"   : -0.025,
+        "maxX"   : 0.025,
+        "xtitle" : "Differnce between measured and calculated #theta before rotation [rad]",
+        "ytitle" : "Vertices"
+    },
+	"diff_energy_between_recon_clulster_and_track_energy_triggered_analyzable_events_h" : {
+        "bins" : 100,
+        "minX" : -1,
+        "maxX" : 1,
+        "xtitle" : "Difference of energy between recon clulster and track energy[GeV]",
+		"ytitle" : "Counts"
+    },
+                
+	"invariant_mass_vertex_triggered_analyzable_events_with_kinematic_cuts_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.12,
+        "xtitle" : "Invariant mass [GeV/c^{2}]",
+        "ytitle" : "Vertices"
+    },
+	"px_vs_py_vertex_triggered_analyzable_events_with_kinematic_cuts_hh" : {
+        "binsX" : 100,
+        "minX" : -0.3,
+        "maxX" : 0.3,
+        "binsY" : 100,
+        "minY" : -0.2,
+        "maxY" : 0.2,
+		"xtitle" : "p_{x} [GeV/c]",
+        "ytitle" : "p_{y} [GeV/c]"
+    },      
+	"diff_energy_between_recon_clulster_and_track_energy_triggered_analyzable_events_with_kinematic_cuts_h" : {
+        "bins" : 100,
+        "minX" : -1,
+        "maxX" : 1,
+        "xtitle" : "Difference of energy between recon clulster and track energy[GeV]",
+		"ytitle" : "Counts"
+    }
+    
+}

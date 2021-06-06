@@ -139,6 +139,86 @@
 		"xtitle" : "p [GeV]",
         "ytitle" : "#Deltar [mm]"
     },
+	"trackX_vs_ClusterX_pos_top_hh": { 
+		"binsX" : 100,
+        "minX" : 0,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 400,
+		"xtitle" : "X of cluster [mm]",
+        "ytitle" : "X of track extrapolation at Ecal face [mm]"
+    },
+	"trackX_vs_ClusterX_neg_top_hh": { 
+		"binsX" : 100,
+        "minX" : -320,
+        "maxX" : 80,
+        "binsY" : 100,
+        "minY" : -320,
+        "maxY" : 80,
+		"xtitle" : "X of cluster [mm]",
+        "ytitle" : "X of track extrapolation at Ecal face [mm]"
+    },
+	"trackX_vs_ClusterX_pos_bot_hh": { 
+		"binsX" : 100,
+        "minX" : 0,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 400,
+		"xtitle" : "X of cluster [mm]",
+        "ytitle" : "X of track extrapolation at Ecal face [mm]"
+    },
+	"trackX_vs_ClusterX_neg_bot_hh": { 
+		"binsX" : 100,
+        "minX" : -320,
+        "maxX" : 80,
+        "binsY" : 100,
+        "minY" : -320,
+        "maxY" : 80,
+		"xtitle" : "X of cluster [mm]",
+        "ytitle" : "X of track extrapolation at Ecal face [mm]"
+    },
+	"trackY_vs_ClusterY_pos_top_hh": { 
+		"binsX" : 100,
+        "minX" : 0,
+        "maxX" : 100,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 100,
+		"xtitle" : "Y of cluster [mm]",
+        "ytitle" : "Y of track extrapolation at Ecal face [mm]"
+    },
+	"trackY_vs_ClusterY_neg_top_hh": { 
+		"binsX" : 100,
+        "minX" : 0,
+        "maxX" : 100,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 100,
+		"xtitle" : "Y of cluster [mm]",
+        "ytitle" : "Y of track extrapolation at Ecal face [mm]"
+    },
+	"trackY_vs_ClusterY_pos_bot_hh": { 
+		"binsX" : 100,
+        "minX" : -100,
+        "maxX" : 0,
+        "binsY" : 100,
+        "minY" : -100,
+        "maxY" : 0,
+		"xtitle" : "Y of cluster [mm]",
+        "ytitle" : "Y of track extrapolation at Ecal face [mm]"
+    },
+	"trackY_vs_ClusterY_neg_bot_hh": { 
+		"binsX" : 100,
+        "minX" : -100,
+        "maxX" : 0,
+        "binsY" : 100,
+        "minY" : -100,
+        "maxY" : 0,
+		"xtitle" : "Y of cluster [mm]",
+        "ytitle" : "Y of track extrapolation at Ecal face [mm]"
+    },
     "seed_energy_cluster_h": { 
  		"bins"   : 100,
         "minX"   : 0,
@@ -190,6 +270,37 @@
 		"xtitle" : "X index of cluster",
         "ytitle" : "Energy of cluster [GeV]"
     },
+ 	"seed_energy_cluster_with_pde_h": { 
+ 		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "Seed energy of cluster [GeV]",
+        "ytitle" : "Clusters"
+    },
+	"energy_cluster_with_pde_h": { 
+ 		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "Energy of cluster [GeV]",
+        "ytitle" : "Clusters"
+    },
+	"n_hits_cluster_with_pde_h": { 
+ 		"bins"   : 10,
+        "minX"   : 0.5,
+        "maxX"   : 10.5,
+        "xtitle" : "Hit counts of cluster",
+        "ytitle" : "Clusters"
+    },
+	"energy_vs_n_hits_cluster_with_pde_hh": { 
+		"binsX" : 10,
+        "minX" : 0.5,
+        "maxX" : 10.5,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "Hit counts of cluster",
+        "ytitle" : "Energy of cluster [GeV]"
+    },        
 	"energy_sum_cluster_h": { 
  		"bins"   : 100,
         "minX"   : 0,
@@ -211,6 +322,27 @@
         "xtitle" : "Coplanarity [deg]",
         "ytitle" : "Cluster Pairs"
     },
+	"energy_sum_cluster_with_energy_slope_cut_h": { 
+ 		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "Energy sum of cluster pair [GeV]",
+        "ytitle" : "Cluster Pairs"
+    },
+	"energy_difference_cluster_with_energy_slope_cut_h": { 
+ 		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "Energy difference of cluster pair [GeV]",
+        "ytitle" : "Cluster Pairs"
+    },
+	"coplanarity_cluster_with_energy_slope_cut_h": { 
+ 		"bins"   : 181,
+        "minX"   : -0.5,
+        "maxX"   : 180.5,
+        "xtitle" : "Coplanarity [deg]",
+        "ytitle" : "Cluster Pairs"
+    },
 	"energy_vs_r_lowerest_energy_cluster_hh": { 
 		"binsX" : 50,
         "minX" : 0,
@@ -220,5 +352,84 @@
         "maxY" : 2,
 		"xtitle" : "r_{low} [mm]",
 		"ytitle" : "E_{low} [GeV]"
-    }    
+    },
+    "truth_mass_track_chi2_cut_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.3,
+        "xtitle" : "Truth mass [GeV/c^{2}]",
+        "ytitle" : "Events"
+    },
+	"invariant_mass_track_chi2_cut_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.3,
+        "xtitle" : "Invariant mass [GeV/c^{2}]",
+        "ytitle" : "Events"
+    },
+	"truth_mass_singles_analyzable_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.3,
+        "xtitle" : "Truth mass [GeV/c^{2}]",
+        "ytitle" : "Events"
+    },
+	"invariant_mass_singles_analyzable_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.3,
+        "xtitle" : "Invariant mass [GeV/c^{2}]",
+        "ytitle" : "Events"
+    },
+	"truth_mass_singles_triggered_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.3,
+        "xtitle" : "Truth mass [GeV/c^{2}]",
+        "ytitle" : "Counts"
+    },
+	"invariant_mass_singles_triggered_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.3,
+        "xtitle" : "Invariant mass [GeV/c^{2}]",
+        "ytitle" : "Counts"
+    }, 
+	"truth_vs_invariant_mass_track_chi2_cut_hh": { 
+		"binsX" : 100,
+        "minX" : 0,
+        "maxX" : 0.3,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 0.3,
+		"xtitle" : "Truth mass [GeV/c^{2}]",
+		"ytitle" : "Invariant mass [GeV/c^{2}]"
+    },
+	"p_sum_track_chi2_cut_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "pSum [GeV/c]",
+        "ytitle" : "Events"
+    },
+  	"theta_recoiled_electron_vs_true_mass_track_chi2_cut_hh": { 
+		"binsX" : 100,
+        "minX" : 0,
+        "maxX" : 0.3,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 0.4,
+		"xtitle" : "Truth mass [GeV/c^{2}]",
+		"ytitle" : "#theta of recoiled electron [radian]"
+    },
+	"p_recoiled_electron_vs_true_mass_track_chi2_cut_hh": { 
+		"binsX" : 100,
+        "minX" : 0,
+        "maxX" : 0.3,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "Truth mass [GeV/c^{2}]",
+		"ytitle" : "p of recoiled electron [GeV/c]"
+    }       
 }

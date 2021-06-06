@@ -25,20 +25,20 @@ track = HpstrConf.Processor('track', 'TrackingProcessor')
 ecal = HpstrConf.Processor('ecal', 'ECalDataProcessor')
 gtp = HpstrConf.Processor('gtp', 'ECalDataProcessor')
 mcpart = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
+vtx = HpstrConf.Processor('vtx', 'VertexProcessor')
 
 ###############################
 #   Processor Configuration   #
 ###############################
 #Tracking
 track.parameters["debug"] = 0 
-track.parameters["trkCollLcio"] = 'GBLTracks'
-track.parameters["trkCollRoot"] = 'GBLTracks'
-track.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
-track.parameters["trkRelCollLcio"] = 'TrackDataRelations'
-track.parameters["trkhitCollRoot"] = 'RotatedHelicalOnTrackHits'
+track.parameters["trkCollLcio"] = 'KalmanFullTracks'
+track.parameters["trkCollRoot"] = 'KalmanFullTracks'
+track.parameters["kinkRelCollLcio"] = ''
+track.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
+track.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
-track.parameters["rawhitCollRoot"] = '' #'SVTRawHitsOnTrack'
-#track.parameters["bfield"]         = bfield[str(options.year)]
+track.parameters["rawhitCollRoot"] = ''
 
 
 #ECalData
@@ -60,10 +60,18 @@ mcpart.parameters["debug"] = 0
 mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
+#Vertex
+vtx.parameters["debug"] = 0
+vtx.parameters["vtxCollLcio"]    = 'UnconstrainedMollerVertices'
+vtx.parameters["vtxCollRoot"]    = 'UnconstrainedMollerVertices'
+vtx.parameters["partCollRoot"]   = 'ParticlesMollerOnVertices'
+vtx.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
+vtx.parameters["trkRelCollLcio"] = 'TrackDataRelations'
+
 # Sequence which the processors will run.
 if options.isData == -1: print("Please specficy if this is Data or not via option -t")
 
-p.sequence = [track, ecal, gtp, mcpart]
+p.sequence = [track, ecal, gtp, mcpart, vtx]
 
 p.input_files= lcio_file
 p.output_files = root_file

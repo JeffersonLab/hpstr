@@ -8,6 +8,8 @@
 #include "Track.h"
 #include "CalCluster.h"
 #include "CalHit.h"
+#include "MCParticle.h"
+#include "Particle.h"
 #include "Processor.h"
 #include "HistoManager.h"
 #include "TriggerParametersExtractionAnaHistos.h"
@@ -71,13 +73,16 @@ class TriggerParametersExtractionAnaProcessor : public Processor {
         TTree* tree_{nullptr};
         TBranch* btrks_{nullptr};
         TBranch* becalClusters_{nullptr};
+        TBranch* bmcParts_{nullptr};
 
         std::vector<Track*>  * trks_{};
         std::vector<CalCluster*> * ecalClusters_{};
+        std::vector<MCParticle*>  * mcParts_{};
 
         std::string anaName_{"vtxAna"};
         std::string trkColl_{"GBLTracks"};
         std::string ecalClusColl_{"EcalClustersCorr"};
+        std::string mcColl_{"MCParticle"};
 
 
         double beamE_{3.7};
@@ -87,31 +92,74 @@ class TriggerParametersExtractionAnaProcessor : public Processor {
         //Debug level
         int debug_{0};
 
-        //Parameters of cut functions
-        double pos_top_topCut[3] = {78.2264, -32.6353, 5.39639};
-        double pos_top_botCut[3] = {42.621, -31.2879, 6.26569};
+        /*
+         * Parameters for all cut functions depend on beam energy.
+         * Here, the setup is for 3.7 GeV.
+         */
 
-        double neg_top_topCut[3] = {69.0785, -33.036, 6.1368};
-        double neg_top_botCut[3] = {42.1042, -35.702, 8.36184};
+        //Cut functions for X
+        TF1 *func_pos_top_topCutX;
+        TF1 *func_pos_top_botCutX;
 
-        double pos_bot_topCut[3] = {66.6732, -20.9723, 2.01131};
-        double pos_bot_botCut[3] = {46.5423, -32.2998, 6.6451};
+        TF1 *func_neg_top_topCutX;
+        TF1 *func_neg_top_botCutX;
 
-        double neg_bot_topCut[3] = {69.5454, -36.956, 7.62771};
-        double neg_bot_botCut[3] = {37.7787, -31.8226, 7.60407};
+        TF1 *func_pos_bot_topCutX;
+        TF1 *func_pos_bot_botCutX;
 
-        //Cut functions
-        TF1 *func_pos_top_topCut;
-        TF1 *func_pos_top_botCut;
+        TF1 *func_neg_bot_topCutX;
+        TF1 *func_neg_bot_botCutX;
 
-        TF1 *func_neg_top_topCut;
-        TF1 *func_neg_top_botCut;
+        //Cut functions for Y
+        TF1 *func_pos_top_topCutY;
+        TF1 *func_pos_top_botCutY;
 
-        TF1 *func_pos_bot_topCut;
-        TF1 *func_pos_bot_botCut;
+        TF1 *func_neg_top_topCutY;
+        TF1 *func_neg_top_botCutY;
 
-        TF1 *func_neg_bot_topCut;
-        TF1 *func_neg_bot_botCut;
+        TF1 *func_pos_bot_topCutY;
+        TF1 *func_pos_bot_botCutY;
+
+        TF1 *func_neg_bot_topCutY;
+        TF1 *func_neg_bot_botCutY;
+
+        //Cut function for PDE
+        TF1 *func_pde;
+
+        //Cut function for energy slope
+        TF1 *func_energy_slope;
+
+        //Parameters of cut functions for X
+        double pos_top_topCutX[2] = {19.7899, 0.902732};
+        double pos_top_botCutX[2] = {-14.515, 0.850882};
+
+        double neg_top_topCutX[2] = {22.4311, 0.865347};
+        double neg_top_botCutX[2] = {-20.9517, 0.889685};
+
+        double pos_bot_topCutX[2] = {17.7478, 0.910524};
+        double pos_bot_botCutX[2] = {-13.286, 0.846081};
+
+        double neg_bot_topCutX[2] = {23.5512, 0.867873};
+        double neg_bot_botCutX[2] = {-21.6512, 0.888276};
+
+        //Parameters of cut functions for Y
+        double pos_top_topCutY[2] = {7.21456, 0.921233};
+        double pos_top_botCutY[2] = {-5.25623, 0.869386};
+
+        double neg_top_topCutY[2] = {7.1885, 0.900118};
+        double neg_top_botCutY[2] = {-5.84294, 0.903104};
+
+        double pos_bot_topCutY[2] = {4.31765, 0.854};
+        double pos_bot_botCutY[2] = {-6.24903, 0.933162};
+
+        double neg_bot_topCutY[2] = {4.91401, 0.88867};
+        double neg_bot_botCutY[2] = {-6.39967, 0.910099};
+
+        //Parameters of cut function for PDE
+        double pars_pde[4] = {0.751987, -0.0527523, 0.00133877, -6.13361e-06}; // 99%
+
+        //Parameters of cut function for energy slope
+        double pars_energy_slope[2] = {1.02439, -0.00245455}; // 3sigma
 
         /**
          * An array of the form <code>position[iy][ix]</code> that contains the hardware

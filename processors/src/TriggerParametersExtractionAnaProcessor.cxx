@@ -3,7 +3,6 @@
  *@author Tongtong, UNH
  */
 
-#include "CalHit.h"
 #include "TriggerParametersExtractionAnaProcessor.h"
 
 #include <iostream>
@@ -11,9 +10,15 @@
 #include "TF1.h"
 #include "math.h"
 
-#define CLUSTERENERGYTHRESHOLD 0.1
-#define CHI2NDFTHRESHOLD 20
+#define ELECTRONMASS 0.000510998950 // GeV
 #define PI 3.14159265358979
+#define CHI2NDFTHRESHOLD 20
+#define CLUSTERENERGYTHRESHOLD 0.1 // threshold of cluster energy for analyzable events
+#define CLUSTERENERGYMIN 0.3 // minimum of cluster energy
+#define CLUSTERENERGYMAX 2.7 // maximum of cluster energy
+#define CLUSTERNHTSMIN 2 // minimum for number of cluster's hits
+#define CLUSTERXMIN 4 // x min of clusters
+
 
 TriggerParametersExtractionAnaProcessor::TriggerParametersExtractionAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
@@ -30,12 +35,12 @@ void TriggerParametersExtractionAnaProcessor::configure(const ParameterSet& para
         histCfgFilename_      = parameters.getString("histCfg",histCfgFilename_);
         trkColl_    = parameters.getString("trkColl");
         ecalClusColl_    = parameters.getString("ecalClusColl");
+        mcColl_  = parameters.getString("mcColl",mcColl_);
     }
     catch (std::runtime_error& error)
     {
         std::cout << error.what() << std::endl;
     }
-
 }
 
 void TriggerParametersExtractionAnaProcessor::initialize(TTree* tree) {
@@ -47,30 +52,58 @@ void TriggerParametersExtractionAnaProcessor::initialize(TTree* tree) {
 
     // init TTree
     tree_->SetBranchAddress(trkColl_.c_str() , &trks_, &btrks_);
-    tree_->SetBranchAddress(ecalClusColl_.c_str() , &ecalClusters_, &becalClusters_);\
+    tree_->SetBranchAddress(ecalClusColl_.c_str() , &ecalClusters_, &becalClusters_);
+    tree_->SetBranchAddress(mcColl_.c_str() , &mcParts_, &bmcParts_);
 
-    //Cut functions
-    func_pos_top_topCut = new TF1("func_pos_top_topCut", "pol2", 0, 4);
-    func_pos_top_topCut->SetParameters(pos_top_topCut);
-    func_pos_top_botCut = new TF1("func_pos_top_botCut", "pol2", 0, 4);
-    func_pos_top_botCut->SetParameters(pos_top_botCut);
+    //Cut functions for X
+    func_pos_top_topCutX = new TF1("func_pos_top_topCutX", "pol1", 50, 390);
+    func_pos_top_topCutX->SetParameters(pos_top_topCutX);
+    func_pos_top_botCutX = new TF1("func_pos_top_botCutX", "pol1", 50, 390);
+    func_pos_top_botCutX->SetParameters(pos_top_botCutX);
 
+    func_neg_top_topCutX = new TF1("func_neg_top_topCutX", "pol1", -300, 40);
+    func_neg_top_topCutX->SetParameters(neg_top_topCutX);
+    func_neg_top_botCutX = new TF1("func_neg_top_botCutX", "pol1", -300, 40);
+    func_neg_top_botCutX->SetParameters(neg_top_botCutX);
 
-    func_neg_top_topCut = new TF1("func_neg_top_topCut", "pol2", 0, 4);
-    func_neg_top_topCut->SetParameters(neg_top_topCut);
-    func_neg_top_botCut = new TF1("func_neg_top_botCut", "pol2", 0, 4);
-    func_neg_top_botCut->SetParameters(neg_top_botCut);
+    func_pos_bot_topCutX = new TF1("func_pos_bot_topCutX", "pol1", 50, 390);
+    func_pos_bot_topCutX->SetParameters(pos_bot_topCutX);
+    func_pos_bot_botCutX = new TF1("func_pos_bot_botCutX", "pol1", 50, 390);
+    func_pos_bot_botCutX->SetParameters(pos_bot_botCutX);
 
-    func_pos_bot_topCut = new TF1("func_pos_bot_topCut", "pol2", 0, 4);
-    func_pos_bot_topCut->SetParameters(pos_bot_topCut);
-    func_pos_bot_botCut = new TF1("func_pos_bot_botCut", "pol2", 0, 4);
-    func_pos_bot_botCut->SetParameters(pos_bot_botCut);
+    func_neg_bot_topCutX = new TF1("func_neg_bot_topCutX", "pol1", -300, 40);
+    func_neg_bot_topCutX->SetParameters(neg_bot_topCutX);
+    func_neg_bot_botCutX = new TF1("func_neg_bot_botCutX", "pol1", -300, 40);
+    func_neg_bot_botCutX->SetParameters(neg_bot_botCutX);
 
+    //Cut functions for Y
+    func_pos_top_topCutY = new TF1("func_pos_top_topCutY", "pol1", 30, 90);
+    func_pos_top_topCutY->SetParameters(pos_top_topCutY);
+    func_pos_top_botCutY = new TF1("func_pos_top_botCutY", "pol1", 30, 90);
+    func_pos_top_botCutY->SetParameters(pos_top_botCutY);
 
-    func_neg_bot_topCut = new TF1("func_neg_bot_topCut", "pol2", 0, 4);
-    func_neg_bot_topCut->SetParameters(neg_bot_topCut);
-    func_neg_bot_botCut = new TF1("func_neg_bot_botCut", "pol2", 0, 4);
-    func_neg_bot_botCut->SetParameters(neg_bot_botCut);
+    func_neg_top_topCutY = new TF1("func_neg_top_topCutY", "pol1", 30, 90);
+    func_neg_top_topCutY->SetParameters(neg_top_topCutY);
+    func_neg_top_botCutY = new TF1("func_neg_top_botCutY", "pol1", 30, 90);
+    func_neg_top_botCutY->SetParameters(neg_top_botCutY);
+
+    func_pos_bot_topCutY = new TF1("func_pos_bot_topCutY", "pol1", -90, -30);
+    func_pos_bot_topCutY->SetParameters(pos_bot_topCutY);
+    func_pos_bot_botCutY = new TF1("func_pos_bot_botCutY", "pol1", -90, -30);
+    func_pos_bot_botCutY->SetParameters(pos_bot_botCutY);
+
+    func_neg_bot_topCutY = new TF1("func_neg_bot_topCutY", "pol1", -90, -30);
+    func_neg_bot_topCutY->SetParameters(neg_bot_topCutY);
+    func_neg_bot_botCutY = new TF1("func_neg_bot_botCutY", "pol1", -90, -30);
+    func_neg_bot_botCutY->SetParameters(neg_bot_botCutY);
+
+    //Cut function for PDE
+    func_pde = new TF1("func_pde", "pol3", 0, 23);
+    func_pde->SetParameters(pars_pde);
+
+    //Cut function for energy slope
+    func_energy_slope = new TF1("func_pde", "pol1", 0, 400);
+    func_energy_slope->SetParameters(pars_energy_slope);
 }
 
 bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
@@ -92,9 +125,6 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 	tracks_neg_top.clear();
 	tracks_neg_bot.clear();
 
-	std::vector<Track> tracks_with_preselect;
-	tracks_with_preselect.clear();
-
 	for(int i = 0; i < n_tracks; i++){
 		Track* track = trks_->at(i);
 
@@ -110,7 +140,6 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 			histos->Fill1DHisto("chi2ndf_tracks_h", track->getChi2Ndf(), weight);
 
 			if(track->getChi2Ndf() < CHI2NDFTHRESHOLD){
-				std::vector<double> positionAtEcal = track->getPositionAtEcal();
 				histos->Fill2DHisto("xy_positionAtEcal_tracks_hh",positionAtEcal[0], positionAtEcal[1], weight);
 
 				if (charge == 1 && positionAtEcal[1] > 0) tracks_pos_top.push_back(*track);
@@ -157,10 +186,9 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 		}
 	}
 
-
 	// Extract analyzable GTP clusters
 	// Require events with at least one pos_top + one neg_bot or one pos_bot + one neg_top tracks
-	// In each categories: analyzable clusters pass through cut functions for detal_r (between position at Ecal face where tracks extrapolate and position of clusters) vs p of tracks
+	// In each categories: analyzable clusters pass through cut functions for X/Y of track extrapolation at Ecal face vs. GTP cluster
 	std::vector<CalCluster> clulsters_pos_top_cut;
 	std::vector<CalCluster> clulsters_neg_top_cut;
 	std::vector<CalCluster> clulsters_pos_bot_cut;
@@ -177,8 +205,13 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 				double delta_r = sqrt(pow(positionCluster[0] - positionAtEcal[0],2) + pow(positionCluster[1] - positionAtEcal[1],2));
 				double p = track.getP();
 				histos->Fill2DHisto("deltaR_vs_p_pos_top_hh", p, delta_r, weight);
+				histos->Fill2DHisto("trackX_vs_ClusterX_pos_top_hh", positionCluster[0], positionAtEcal[0], weight);
+				histos->Fill2DHisto("trackY_vs_ClusterY_pos_top_hh", positionCluster[1], positionAtEcal[1], weight);
 
-				if(delta_r < func_pos_top_topCut->Eval(p) && delta_r > func_pos_top_botCut->Eval(p)){
+				if (positionAtEcal[0]< func_pos_top_topCutX->Eval(positionCluster[0])
+						&& positionAtEcal[0] > func_pos_top_botCutX->Eval(positionCluster[0])
+						&& positionAtEcal[1] < func_pos_top_topCutY->Eval(positionCluster[1])
+						&& positionAtEcal[1] > func_pos_top_botCutY->Eval(positionCluster[1])) {
 					clulsters_pos_top_cut.push_back(cluster);
 					break;
 				}
@@ -194,8 +227,13 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 				double delta_r = sqrt(pow(positionCluster[0] - positionAtEcal[0],2) + pow(positionCluster[1] - positionAtEcal[1],2));
 				double p = track.getP();
 				histos->Fill2DHisto("deltaR_vs_p_neg_top_hh", p, delta_r, weight);
+				histos->Fill2DHisto("trackX_vs_ClusterX_neg_top_hh", positionCluster[0], positionAtEcal[0], weight);
+				histos->Fill2DHisto("trackY_vs_ClusterY_neg_top_hh", positionCluster[1], positionAtEcal[1], weight);
 
-				if(delta_r < func_neg_top_topCut->Eval(p) && delta_r > func_neg_top_botCut->Eval(p)){
+				if (positionAtEcal[0]< func_neg_top_topCutX->Eval(positionCluster[0])
+						&& positionAtEcal[0] > func_neg_top_botCutX->Eval(positionCluster[0])
+						&& positionAtEcal[1] < func_neg_top_topCutY->Eval(positionCluster[1])
+						&& positionAtEcal[1] > func_neg_top_botCutY->Eval(positionCluster[1])) {
 					clulsters_neg_top_cut.push_back(cluster);
 					break;
 				}
@@ -212,8 +250,13 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 				double delta_r = sqrt(pow(positionCluster[0] - positionAtEcal[0],2) + pow(positionCluster[1] - positionAtEcal[1],2));
 				double p = track.getP();
 				histos->Fill2DHisto("deltaR_vs_p_pos_bot_hh", p, delta_r, weight);
+				histos->Fill2DHisto("trackX_vs_ClusterX_pos_bot_hh", positionCluster[0], positionAtEcal[0], weight);
+				histos->Fill2DHisto("trackY_vs_ClusterY_pos_bot_hh", positionCluster[1], positionAtEcal[1], weight);
 
-				if(delta_r < func_pos_bot_topCut->Eval(p) && delta_r > func_pos_bot_botCut->Eval(p)){
+				if (positionAtEcal[0]< func_pos_bot_topCutX->Eval(positionCluster[0])
+						&& positionAtEcal[0] > func_pos_bot_botCutX->Eval(positionCluster[0])
+						&& positionAtEcal[1] < func_pos_bot_topCutY->Eval(positionCluster[1])
+						&& positionAtEcal[1] > func_pos_bot_botCutY->Eval(positionCluster[1])) {
 					clulsters_pos_bot_cut.push_back(cluster);
 					break;
 				}
@@ -229,8 +272,13 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 				double delta_r = sqrt(pow(positionCluster[0] - positionAtEcal[0],2) + pow(positionCluster[1] - positionAtEcal[1],2));
 				double p = track.getP();
 				histos->Fill2DHisto("deltaR_vs_p_neg_bot_hh", p, delta_r, weight);
+				histos->Fill2DHisto("trackX_vs_ClusterX_neg_bot_hh", positionCluster[0], positionAtEcal[0], weight);
+				histos->Fill2DHisto("trackY_vs_ClusterY_neg_bot_hh", positionCluster[1], positionAtEcal[1], weight);
 
-				if(delta_r < func_neg_bot_topCut->Eval(p) && delta_r > func_neg_bot_botCut->Eval(p)){
+				if (positionAtEcal[0]< func_neg_bot_topCutX->Eval(positionCluster[0])
+						&& positionAtEcal[0] > func_neg_bot_botCutX->Eval(positionCluster[0])
+						&& positionAtEcal[1] < func_neg_bot_topCutY->Eval(positionCluster[1])
+						&& positionAtEcal[1] > func_neg_bot_botCutY->Eval(positionCluster[1])) {
 					clulsters_neg_bot_cut.push_back(cluster);
 					break;
 				}
@@ -238,10 +286,28 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 		}
 	}
 
-	// tuning singles trigger; events contain at least one cluster which energy is larger than threshold
+	// Tuning singles trigger; events contain at least one cluster which energy is larger than threshold
 	bool flag_singles = false;
+	// Further, events contain at least one cluster in positive region which passes PDE cut
+	bool flag_pde = false;
+	// Futher, the cluster pass through x min cut
+	bool flag_xmin = false;
+	// Further, the cluster passes through energy and nhits cuts
+	bool flag_energy_nhits = false;
+
 	for(int i = 0; i < clulsters_pos_top_cut.size(); i++){
-		if(clulsters_pos_top_cut.at(i).getEnergy() > CLUSTERENERGYTHRESHOLD) flag_singles = true;
+		CalCluster cluster = clulsters_pos_top_cut.at(i);
+
+		if(cluster.getEnergy() > CLUSTERENERGYTHRESHOLD) flag_singles = true;
+
+		CalHit* seed = (CalHit*) cluster.getSeed();
+		int ix = seed->getCrystalIndices()[0];
+		if (flag_singles && cluster.getEnergy() >= func_pde->Eval(ix)) flag_pde = true;
+
+		if(flag_singles && flag_pde && ix >= CLUSTERXMIN) flag_xmin = true;
+
+		if(flag_singles && flag_pde && flag_xmin && cluster.getEnergy() >= CLUSTERENERGYMIN && cluster.getEnergy() <= CLUSTERENERGYMAX && cluster.getNHits() >= CLUSTERNHTSMIN)
+			flag_energy_nhits = true;
 	}
 
 	for(int i = 0; i < clulsters_neg_top_cut.size(); i++){
@@ -249,7 +315,18 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 	}
 
 	for(int i = 0; i < clulsters_pos_bot_cut.size(); i++){
-		if(clulsters_pos_bot_cut.at(i).getEnergy() > CLUSTERENERGYTHRESHOLD) flag_singles = true;
+		CalCluster cluster = clulsters_pos_bot_cut.at(i);
+
+		if(cluster.getEnergy() > CLUSTERENERGYTHRESHOLD) flag_singles = true;
+
+		CalHit* seed = (CalHit*)cluster.getSeed();
+		int ix = seed -> getCrystalIndices()[0];
+		if(cluster.getEnergy() > func_pde->Eval(ix)) flag_pde = true;
+
+		if(flag_singles && flag_pde && ix >= CLUSTERXMIN) flag_xmin = true;
+
+		if(flag_singles && flag_pde && ix >= CLUSTERXMIN && cluster.getEnergy() >= CLUSTERENERGYMIN && cluster.getEnergy() <= CLUSTERENERGYMAX && cluster.getNHits() >= CLUSTERNHTSMIN)
+			flag_energy_nhits = true;
 	}
 
 	for(int i = 0; i < clulsters_neg_bot_cut.size(); i++){
@@ -272,6 +349,16 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 			int ix = seed -> getCrystalIndices()[0];
 			histos->Fill2DHisto("energy_vs_x_index_hh", ix, cluster.getEnergy(), weight);
 			if(ix > 0) histos->Fill2DHisto("energy_vs_x_index_pos_hh", ix, cluster.getEnergy(), weight);
+
+			if(flag_pde){
+				histos->Fill1DHisto("seed_energy_cluster_with_pde_h", seed->getEnergy(), weight);
+
+				histos->Fill1DHisto("energy_cluster_with_pde_h", cluster.getEnergy(), weight);
+
+				histos->Fill1DHisto("n_hits_cluster_with_pde_h", cluster.getNHits(), weight);
+
+				histos->Fill2DHisto("energy_vs_n_hits_cluster_with_pde_hh", cluster.getNHits(), cluster.getEnergy(), weight);
+			}
 		}
 
 		for(int i = 0; i < clulsters_neg_top_cut.size(); i++){
@@ -289,6 +376,16 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 			int ix = seed -> getCrystalIndices()[0];
 			histos->Fill2DHisto("energy_vs_x_index_hh", ix, cluster.getEnergy(), weight);
 			if(ix > 0) histos->Fill2DHisto("energy_vs_x_index_pos_hh", ix, cluster.getEnergy(), weight);
+
+			if(flag_pde){
+				histos->Fill1DHisto("seed_energy_cluster_with_pde_h", seed->getEnergy(), weight);
+
+				histos->Fill1DHisto("energy_cluster_with_pde_h", cluster.getEnergy(), weight);
+
+				histos->Fill1DHisto("n_hits_cluster_with_pde_h", cluster.getNHits(), weight);
+
+				histos->Fill2DHisto("energy_vs_n_hits_cluster_with_pde_hh", cluster.getNHits(), cluster.getEnergy(), weight);
+			}
 		}
 
 		for(int i = 0; i < clulsters_pos_bot_cut.size(); i++){
@@ -306,6 +403,16 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 			int ix = seed -> getCrystalIndices()[0];
 			histos->Fill2DHisto("energy_vs_x_index_hh", ix, cluster.getEnergy(), weight);
 			if(ix > 0) histos->Fill2DHisto("energy_vs_x_index_pos_hh", ix, cluster.getEnergy(), weight);
+
+			if(flag_pde){
+				histos->Fill1DHisto("seed_energy_cluster_with_pde_h", seed->getEnergy(), weight);
+
+				histos->Fill1DHisto("energy_cluster_with_pde_h", cluster.getEnergy(), weight);
+
+				histos->Fill1DHisto("n_hits_cluster_with_pde_h", cluster.getNHits(), weight);
+
+				histos->Fill2DHisto("energy_vs_n_hits_cluster_with_pde_hh", cluster.getNHits(), cluster.getEnergy(), weight);
+			}
 		}
 
 		for(int i = 0; i < clulsters_neg_bot_cut.size(); i++){
@@ -323,6 +430,101 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 			int ix = seed -> getCrystalIndices()[0];
 			histos->Fill2DHisto("energy_vs_x_index_hh", ix, cluster.getEnergy(), weight);
 			if(ix > 0) histos->Fill2DHisto("energy_vs_x_index_pos_hh", ix, cluster.getEnergy(), weight);
+
+			if(flag_pde){
+				histos->Fill1DHisto("seed_energy_cluster_with_pde_h", seed->getEnergy(), weight);
+
+				histos->Fill1DHisto("energy_cluster_with_pde_h", cluster.getEnergy(), weight);
+
+				histos->Fill1DHisto("n_hits_cluster_with_pde_h", cluster.getNHits(), weight);
+
+				histos->Fill2DHisto("energy_vs_n_hits_cluster_with_pde_hh", cluster.getNHits(), cluster.getEnergy(), weight);
+			}
+		}
+	}
+
+	double truthMass = -999;
+	double truthEnergy = -999;
+	TLorentzVector *lorentzVectorTruth = new TLorentzVector();
+
+	for (int i = 0; i < mcParts_->size(); i++) {
+		MCParticle* mc_particle = mcParts_->at(i);
+
+		if (mc_particle->getPDG() == 622) {
+			truthMass = mc_particle->getMass();
+			truthEnergy = mc_particle->getEnergy();
+			std::vector<double> mom = mc_particle->getMomentum();
+			lorentzVectorTruth->SetXYZM(mom[0], mom[1], mom[2], ELECTRONMASS);
+		}
+	}
+
+	for (int i = 0; i < tracks_pos_top.size(); i++) {
+		Track trackPos = tracks_pos_top.at(i);
+		std::vector<double> momPos = trackPos.getMomentum();
+		TLorentzVector *lorentzVectorPos = new TLorentzVector();
+		lorentzVectorPos->SetXYZM(momPos[0], momPos[1], momPos[2], ELECTRONMASS);
+
+		for(int j = 0; j < tracks_neg_bot.size(); j++){
+			histos->Fill1DHisto("truth_mass_track_chi2_cut_h", truthMass, weight);
+			if (flag_singles) histos->Fill1DHisto("truth_mass_singles_analyzable_h", truthMass, weight);
+			if (flag_singles && flag_pde && flag_energy_nhits) histos->Fill1DHisto("truth_mass_singles_triggered_h", truthMass, weight);
+
+			Track trackNeg = tracks_neg_bot.at(j);
+			std::vector<double> momNeg = trackNeg.getMomentum();
+			TLorentzVector *lorentzVectorNeg = new TLorentzVector();
+			lorentzVectorNeg->SetXYZM(momNeg[0], momNeg[1], momNeg[2], ELECTRONMASS);
+
+			double invariant_mass = (*lorentzVectorPos + *lorentzVectorNeg).M();
+			histos->Fill1DHisto("invariant_mass_track_chi2_cut_h", invariant_mass, weight);
+			if(flag_singles) histos->Fill1DHisto("invariant_mass_singles_analyzable_h", invariant_mass, weight);
+			if(flag_singles && flag_pde && flag_xmin && flag_energy_nhits) histos->Fill1DHisto("invariant_mass_singles_triggered_h", invariant_mass, weight);
+
+			histos->Fill2DHisto("truth_vs_invariant_mass_track_chi2_cut_hh", truthMass, invariant_mass, weight);
+
+			double pSum = trackPos.getP() + trackNeg.getP();
+			histos->Fill1DHisto("p_sum_track_chi2_cut_h", pSum, weight);
+
+			TLorentzVector *lorentzVectorBeam = new TLorentzVector();
+			lorentzVectorBeam->SetXYZM(0, 0, sqrt(pow(beamE_, 2) - pow(ELECTRONMASS, 2)), ELECTRONMASS);
+			TLorentzVector *lorentzVectorRecoiledElectron = new TLorentzVector();
+			*lorentzVectorRecoiledElectron = *lorentzVectorBeam - *lorentzVectorTruth;
+			histos->Fill2DHisto("theta_recoiled_electron_vs_true_mass_track_chi2_cut_hh", truthMass, lorentzVectorRecoiledElectron->Theta(), weight);
+			histos->Fill2DHisto("p_recoiled_electron_vs_true_mass_track_chi2_cut_hh", truthMass, lorentzVectorRecoiledElectron->P(), weight);
+		}
+	}
+
+	for(int i = 0; i < tracks_pos_bot.size(); i++){
+		Track trackPos = tracks_pos_bot.at(i);
+		std::vector<double> momPos = trackPos.getMomentum();
+		TLorentzVector *lorentzVectorPos = new TLorentzVector();
+		lorentzVectorPos->SetXYZM(momPos[0], momPos[1], momPos[2], ELECTRONMASS);
+
+		for(int j = 0; j < tracks_neg_top.size(); j++){
+			histos->Fill1DHisto("truth_mass_track_chi2_cut_h", truthMass, weight);
+			if (flag_singles) histos->Fill1DHisto("truth_mass_singles_analyzable_h", truthMass, weight);
+			if (flag_singles && flag_pde && flag_energy_nhits) histos->Fill1DHisto("truth_mass_singles_triggered_h", truthMass, weight);
+
+			Track trackNeg = tracks_neg_top.at(j);
+			std::vector<double> momNeg = trackNeg.getMomentum();
+			TLorentzVector *lorentzVectorNeg = new TLorentzVector();
+			lorentzVectorNeg->SetXYZM(momNeg[0], momNeg[1], momNeg[2], ELECTRONMASS);
+
+			double invariant_mass = (*lorentzVectorPos + *lorentzVectorNeg).M();
+			histos->Fill1DHisto("invariant_mass_track_chi2_cut_h", invariant_mass, weight);
+			if(flag_singles) histos->Fill1DHisto("invariant_mass_singles_analyzable_h", invariant_mass, weight);
+			if(flag_singles && flag_pde && flag_energy_nhits) histos->Fill1DHisto("invariant_mass_singles_triggered_h", invariant_mass, weight);
+
+			histos->Fill2DHisto("truth_vs_invariant_mass_track_chi2_cut_hh", truthMass, invariant_mass, weight);
+
+			double pSum = trackPos.getP() + trackNeg.getP();
+			histos->Fill1DHisto("p_sum_track_chi2_cut_h", pSum, weight);
+
+			TLorentzVector *lorentzVectorBeam = new TLorentzVector();
+			lorentzVectorBeam->SetXYZM(0, 0, sqrt(pow(beamE_, 2) - pow(ELECTRONMASS, 2)), ELECTRONMASS);
+			TLorentzVector *lorentzVectorRecoiledElectron = new TLorentzVector();
+			*lorentzVectorRecoiledElectron = *lorentzVectorBeam - *lorentzVectorTruth;
+			histos->Fill2DHisto("theta_recoiled_electron_vs_true_mass_track_chi2_cut_hh", truthMass, lorentzVectorRecoiledElectron->Theta(), weight);
+			histos->Fill2DHisto("p_recoiled_electron_vs_true_mass_track_chi2_cut_hh", truthMass, lorentzVectorRecoiledElectron->P(), weight);
 		}
 	}
 
@@ -332,6 +534,8 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 	bool flag_pairs_pos_bot = false;
 	bool flag_pairs_neg_bot = false;
 	bool flag_pairs = false;
+	// Further, passes through energy slope for cluster with lowest energy
+	bool flag_energy_slope = false;
 	for(int i = 0; i < clulsters_pos_top_cut.size(); i++){
 		if(clulsters_pos_top_cut.at(i).getEnergy() > CLUSTERENERGYTHRESHOLD) flag_pairs_pos_top = true;
 	}
@@ -363,6 +567,12 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 
 				std::vector<double> variablesForEnergySlopeCut = getVariablesForEnergySlopeCut(clusterTop, clusterBot);
 				histos->Fill2DHisto("energy_vs_r_lowerest_energy_cluster_hh", variablesForEnergySlopeCut[0], variablesForEnergySlopeCut[1], weight);
+
+				if(variablesForEnergySlopeCut[1] > func_energy_slope->Eval(variablesForEnergySlopeCut[0])){
+					histos->Fill1DHisto("energy_sum_cluster_with_energy_slope_cut_h", clusterTop.getEnergy() + clusterBot.getEnergy(), weight);
+					histos->Fill1DHisto("energy_difference_cluster_with_energy_slope_cut_h", fabs(clusterTop.getEnergy() - clusterBot.getEnergy()), weight);
+					histos->Fill1DHisto("coplanarity_cluster_with_energy_slope_cut_h", getValueCoplanarity(clusterTop, clusterBot), weight);
+				}
 			}
 		}
 
@@ -378,6 +588,12 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 
 				std::vector<double> variablesForEnergySlopeCut = getVariablesForEnergySlopeCut(clusterTop, clusterBot);
 				histos->Fill2DHisto("energy_vs_r_lowerest_energy_cluster_hh", variablesForEnergySlopeCut[0], variablesForEnergySlopeCut[1], weight);
+
+				if(variablesForEnergySlopeCut[1] > func_energy_slope->Eval(variablesForEnergySlopeCut[0])){
+					histos->Fill1DHisto("energy_sum_cluster_with_energy_slope_cut_h", clusterTop.getEnergy() + clusterBot.getEnergy(), weight);
+					histos->Fill1DHisto("energy_difference_cluster_with_energy_slope_cut_h", fabs(clusterTop.getEnergy() - clusterBot.getEnergy()), weight);
+					histos->Fill1DHisto("coplanarity_cluster_with_energy_slope_cut_h", getValueCoplanarity(clusterTop, clusterBot), weight);
+				}
 			}
 		}
 	}
