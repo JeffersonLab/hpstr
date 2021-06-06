@@ -164,6 +164,8 @@ void TrackHistos::Fill1DVertex(Vertex* vtx,
     Fill1DHisto("Esum_h",ele->getEnergy() + pos->getEnergy(),weight);
     Fill1DHisto("EsumClus_h",eleClus.getEnergy() + posClus.getEnergy(),weight);
     Fill2DHisto("EClus_hh", eleClus.getEnergy() , posClus.getEnergy(),weight);
+    Fill2DHisto("InvM_eleP_hh", p_ele.P(), vtx->getInvMass(),weight);
+    Fill2DHisto("InvM_posP_hh", p_pos.P(), vtx->getInvMass(), weight);
     Fill1DHisto("Psum_h",p_ele.P() + p_pos.P(),weight);
     Fill1DHisto("PtAsym_h",pt_asym_val,weight);
     Fill1DHisto("thetax_v0_h",thetax_v0_val,weight);
@@ -253,6 +255,7 @@ void TrackHistos::Fill1DTrack(Track* track, float weight, const std::string& trk
 void TrackHistos::Fill1DVertex(Vertex* vtx, float weight) {
 
     Fill1DHisto("vtx_chi2_h"   ,vtx->getChi2(),weight);
+    Fill2DHisto("vtx_XY_hh",vtx->getX(),vtx->getY(),weight);
     Fill1DHisto("vtx_X_h"      ,vtx->getX(),weight);
     Fill1DHisto("vtx_Y_h"      ,vtx->getY(),weight);
     Fill1DHisto("vtx_Z_h"      ,vtx->getZ(),weight);
@@ -264,6 +267,7 @@ void TrackHistos::Fill1DVertex(Vertex* vtx, float weight) {
 
     vtxPosSvt.RotateY(-0.0305);
 
+    Fill2DHisto("vtx_XY_svt_hh",vtxPosSvt.X(),vtxPosSvt.Y(),weight);
     Fill1DHisto("vtx_X_svt_h",vtxPosSvt.X(),weight);
     Fill1DHisto("vtx_Y_svt_h",vtxPosSvt.Y(),weight);
     Fill1DHisto("vtx_Z_svt_h",vtxPosSvt.Z(),weight);
