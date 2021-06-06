@@ -12,17 +12,6 @@
 
 #define ELECTRONMASS 0.000510998950 // GeV
 #define PI 3.14159265358979
-#define CHI2NDFTHRESHOLD 20
-#define TRACKPMIN 3.05 // 4 sigma
-#define TRACKPMAX 4.32 // 4 sigma
-#define CLUSTERENERGYTHRESHOLD 0.1 // threshold of cluster energy for analyzable events
-#define CLUSTERENERGYMINNOCUT 2.47 // for no cut; minimum of cluster energy; 3 sigma for double gaussians
-#define CLUSTERENERGYMAXNOCUT 3.60 // for no cut; maximum of cluster energy; 5 sigma for double gaussians
-#define CLUSTERENERGYMINANALYZABLE 2.52 // for analyzable events, minimum of cluster energy; 3 sigma for double gaussians
-#define CLUSTERENERGYMAXANALYZABLE 3.58 // for analyzable events, maximum of cluster energy; 5 sigma for double gaussians
-#define CLUSTERNHTSMINNOCUT 3 // for no cut, minimum for number of cluster's hits
-#define CLUSTERNHTSMINANALYZABLE  3 // for analyzable events,  minimum for number of cluster's hits
-
 
 TriggerParametersExtractionFEEAnaProcessor::TriggerParametersExtractionFEEAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
@@ -40,6 +29,7 @@ void TriggerParametersExtractionFEEAnaProcessor::configure(const ParameterSet& p
         trkColl_    = parameters.getString("trkColl");
         ecalClusColl_    = parameters.getString("ecalClusColl");
         mcColl_  = parameters.getString("mcColl",mcColl_);
+        beamE_  = parameters.getDouble("beamE",beamE_);
     }
     catch (std::runtime_error& error)
     {
@@ -48,6 +38,19 @@ void TriggerParametersExtractionFEEAnaProcessor::configure(const ParameterSet& p
 }
 
 void TriggerParametersExtractionFEEAnaProcessor::initialize(TTree* tree) {
+	if(beamE_ == 4.55){
+		double CHI2NDFTHRESHOLD = 20;
+		double TRACKPMIN = 3.77; // 4 sigma
+		double TRACKPMAX = 5.30; // 4 sigma
+		double CLUSTERENERGYTHRESHOLD = 0.1; // threshold of cluster energy for analyzable events
+		double CLUSTERENERGYMINNOCUT = 2.6; // for no cut; minimum of cluster energy; 3 sigma for double gaussians
+		double CLUSTERENERGYMAXNOCUT = 5.2; // for no cut; maximum of cluster energy; 5 sigma for double gaussians
+		double CLUSTERENERGYMINANALYZABLE = 2.6; // for analyzable events, minimum of cluster energy; 3 sigma for double gaussians
+		double CLUSTERENERGYMAXANALYZABLE = 5.2; // for analyzable events, maximum of cluster energy; 5 sigma for double gaussians
+		double CLUSTERNHTSMINNOCUT = 3; // for no cut, minimum for number of cluster's hits
+		double CLUSTERNHTSMINANALYZABLE  = 3; // for analyzable events,  minimum for number of cluster's hits
+	}
+
     tree_= tree;
     // init histos
     histos = new TriggerParametersExtractionFEEAnaHistos(anaName_.c_str());
