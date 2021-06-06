@@ -532,6 +532,16 @@
         "xtitle" : "vtx #chi^{2}",
         "ytitle" : "Vertices"
     },
+    "vtx_XY_hh" : {
+        "binsX"  : 200,
+        "minX"   : -5,
+        "maxX"   : 5,
+        "binsY"  : 200,
+        "minY"   : -5,
+        "maxY"   : 5,
+        "xtitle" : "x_{vtx} [mm]",
+        "ytitle" : "y_{vtx} [mm]"
+    },
     "vtx_X_h" : {
         "bins" : 200,
         "minX" : -5,
@@ -552,6 +562,16 @@
         "maxX" : 100,
         "xtitle" : "vtx Z pos [mm]",
         "ytitle" : "Vertices"
+    },
+    "vtx_XY_svt_hh" : {
+        "binsX"  : 200,
+        "minX"   : -5,
+        "maxX"   : 5,
+        "binsY"  : 200,
+        "minY"   : -5,
+        "maxY"   : 5,
+        "xtitle" : "x_{vtx} [mm]",
+        "ytitle" : "y_{vtx} [mm]"
     },
     "vtx_X_svt_h" : {
         "bins" : 400,
@@ -740,6 +760,26 @@
         "maxY"   : 5,
         "xtitle" : "e^{-} Cluster E [GeV]",
         "ytitle" : "e^{+} Cluster E [GeV]"
+    },
+    "InvM_eleP_hh" : {
+        "binsX"  : 100,
+        "minX"   : 0.0,
+        "maxX"   : 4,
+        "binsY"  : 200,
+        "minY"   : 0,
+        "maxY"   : 0.4,
+        "xtitle" : "e^{-} p [GeV]",
+        "ytitle" : "vtx mass [GeV]"
+    },
+    "InvM_posP_hh" : {
+        "binsX"  : 100,
+        "minX"   : 0.0,
+        "maxX"   : 4,
+        "binsY"  : 200,
+        "minY"   : 0,
+        "maxY"   : 0.4,
+        "xtitle" : "e^{-} p [GeV]",
+        "ytitle" : "vtx mass [GeV]"
     },
     "EoP_hh" : {
         "binsX"  : 100,
