@@ -737,7 +737,7 @@
         "bins" :  10 ,
         "minX" :  0 ,
         "maxX" :  10 ,
-        "xtitleA" : " N_{clusters} ",
+        "xtitle" : " N_{clusters} ",
         "ytitle" : " Events "
     },
     "EecalClus_noVtxs_h" : {
