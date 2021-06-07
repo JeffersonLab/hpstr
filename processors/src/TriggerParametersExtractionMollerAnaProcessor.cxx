@@ -37,7 +37,7 @@ void TriggerParametersExtractionMollerAnaProcessor::configure(const ParameterSet
         anaName_         = parameters.getString("anaName");
         histCfgFilename_      = parameters.getString("histCfg",histCfgFilename_);
         trkColl_    = parameters.getString("trkColl");
-        ecalClusColl_    = parameters.getString("ecalClusColl");
+        gtpClusColl_    = parameters.getString("gtpClusColl");
         mcColl_  = parameters.getString("mcColl",mcColl_);
         vtxColl_ = parameters.getString("vtxColl",vtxColl_);
     }
@@ -58,7 +58,7 @@ void TriggerParametersExtractionMollerAnaProcessor::initialize(TTree* tree) {
 
     // init TTree
     tree_->SetBranchAddress(trkColl_.c_str() , &trks_, &btrks_);
-    tree_->SetBranchAddress(ecalClusColl_.c_str() , &ecalClusters_, &becalClusters_);
+    tree_->SetBranchAddress(gtpClusColl_.c_str() , &gtpClusters_, &bgtpClusters_);
     tree_->SetBranchAddress(mcColl_.c_str() , &mcParts_, &bmcParts_);
     tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_ , &bvtxs_);
 
@@ -106,7 +106,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 	int n_tracks = trks_->size();
 	histos->Fill1DHisto("n_tracks_h", n_tracks, weight);
 
-	int n_cl = ecalClusters_->size();
+	int n_cl = gtpClusters_->size();
 	histos->Fill1DHisto("n_clusters_h", n_cl, weight);
 
 	int n_vtxs = vtxs_->size();
@@ -169,7 +169,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 	std::vector<CalCluster> clulsters_bot;
 
 	for(int i = 0; i < n_cl; i++){
-		CalCluster* cluster = ecalClusters_->at(i);
+		CalCluster* cluster = gtpClusters_->at(i);
 		std::vector<double> positionCluster = cluster->getPosition();
 		histos->Fill2DHisto("xy_clusters_without_cut_hh",positionCluster[0], positionCluster[1], weight);
 
