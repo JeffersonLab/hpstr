@@ -24,22 +24,31 @@ std::string AnaHelpers::getFileName(std::string filePath, bool withExtension)
 }
 
 void AnaHelpers::InnermostLayerCheck(Track* trk, bool& foundL1, bool& foundL2) {
+    int innerCount = 0;
     for (int ihit=0; ihit<trk->getSvtHits()->GetEntries();++ihit) {
         TrackerHit* hit3d = (TrackerHit*) trk->getSvtHits()->At(ihit);
-	if (hit3d->getLayer() == 0 ) {
-            foundL1 = true;
+        if (hit3d->getLayer() == 0 ) {
+            innerCount++;
         }
         if (hit3d->getLayer() == 1) {
-            foundL2 = true;
+            innerCount++;
+        }
+        if (hit3d->getLayer() == 2) {
+            innerCount++;
+        }
+        if (hit3d->getLayer() == 3) {
+            innerCount++;
         }
     }
+    if (innerCount == 4) foundL1 = true;
+    if (innerCount == 2) foundL2 = true;
 }
 
 bool AnaHelpers::MatchToGBLTracks(int ele_id, int pos_id, Track* & ele_trk, Track* & pos_trk, std::vector<Track*>& trks) {
-    
+
     bool foundele = false;
     bool foundpos = false;
-    
+
     for (auto trk : trks) {
         if (ele_id == trk->getID())  {
             ele_trk = trk;
@@ -56,17 +65,17 @@ bool AnaHelpers::MatchToGBLTracks(int ele_id, int pos_id, Track* & ele_trk, Trac
 
 //TODO clean bit up 
 bool AnaHelpers::GetParticlesFromVtx(Vertex* vtx, Particle*& ele, Particle*& pos) {
-    
-    
+
+
     bool foundele = false;
     bool foundpos = false;
-    
+
     for (int ipart = 0; ipart < vtx->getParticles()->GetEntries(); ++ipart) {
-        
-        
+
+
         int pdg_id = ((Particle*)vtx->getParticles()->At(ipart))->getPDG();
         if (debug_) std::cout<<"In Loop "<<pdg_id<< " "<< ipart<<std::endl;
-        
+
         if (pdg_id == 11) {
             ele =  ((Particle*)vtx->getParticles()->At(ipart));
             foundele=true;
@@ -90,27 +99,27 @@ bool AnaHelpers::GetParticlesFromVtx(Vertex* vtx, Particle*& ele, Particle*& pos
 
 AnaHelpers::AnaHelpers() {
     rotSvt.RotateY(SVT_ANGLE);
-    
+
     rotSvt_sym =  new TMatrixDSym(3);
-    
+
     (*rotSvt_sym)(0,0) = cos(SVT_ANGLE);
     (*rotSvt_sym)(0,1) = 0.;
     (*rotSvt_sym)(0,2) = sin(SVT_ANGLE);
-    
+
     (*rotSvt_sym)(1,0) = 0.;
     (*rotSvt_sym)(1,1) = 1.;
     (*rotSvt_sym)(1,2) = 0.;
-    
+
     (*rotSvt_sym)(1,0) = -sin(SVT_ANGLE);
     (*rotSvt_sym)(1,1) = 0.;
     (*rotSvt_sym)(1,2) = cos(SVT_ANGLE);
 
     debug_ = false;
-    
+
 }
 
 TVector3 AnaHelpers::rotateToSvtFrame(TVector3 v) {
-    
+
     v.RotateY(SVT_ANGLE);
     return v;   
 }
