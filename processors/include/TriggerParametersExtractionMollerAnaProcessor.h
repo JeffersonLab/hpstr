@@ -61,18 +61,18 @@ class TriggerParametersExtractionMollerAnaProcessor : public Processor {
 
         TTree* tree_{nullptr};
         TBranch* btrks_{nullptr};
-        TBranch* becalClusters_{nullptr};
+        TBranch* bgtpClusters_{nullptr};
         TBranch* bmcParts_{nullptr};
         TBranch* bvtxs_{nullptr};
 
         std::vector<Track*>  * trks_{};
-        std::vector<CalCluster*> * ecalClusters_{};
+        std::vector<CalCluster*> * gtpClusters_{};
         std::vector<MCParticle*>  * mcParts_{};
         std::vector<Vertex*> * vtxs_{};
 
         std::string anaName_{"vtxAna"};
         std::string trkColl_{"GBLTracks"};
-        std::string ecalClusColl_{"EcalClustersCorr"};
+        std::string gtpClusColl_{"RecoEcalClustersGTP"};
         std::string mcColl_{"MCParticle"};
         std::string vtxColl_{"Vertices"};
 

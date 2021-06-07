@@ -42,7 +42,7 @@ triggerParametersExtractionAna = HpstrConf.Processor('triggerParametersExtractio
 triggerParametersExtractionAna.parameters["debug"] = 0
 triggerParametersExtractionAna.parameters["anaName"] = "triggerParameterExtractionAna"
 triggerParametersExtractionAna.parameters["trkColl"] = "GBLTracks"
-triggerParametersExtractionAna.parameters["ecalClusColl"] = "RecoEcalClustersGTP"
+triggerParametersExtractionAna.parameters["gtpClusColl"] = "RecoEcalClustersGTP"
 triggerParametersExtractionAna.parameters["analysis"] = analysis
 triggerParametersExtractionAna.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/triggerParametersExtraction/triggerParametersExtraction.json'
 

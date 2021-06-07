@@ -34,7 +34,7 @@ void TriggerParametersExtractionAnaProcessor::configure(const ParameterSet& para
         anaName_         = parameters.getString("anaName");
         histCfgFilename_      = parameters.getString("histCfg",histCfgFilename_);
         trkColl_    = parameters.getString("trkColl");
-        ecalClusColl_    = parameters.getString("ecalClusColl");
+        gtpClusColl_    = parameters.getString("gtpClusColl");
         mcColl_  = parameters.getString("mcColl",mcColl_);
     }
     catch (std::runtime_error& error)
@@ -52,7 +52,7 @@ void TriggerParametersExtractionAnaProcessor::initialize(TTree* tree) {
 
     // init TTree
     tree_->SetBranchAddress(trkColl_.c_str() , &trks_, &btrks_);
-    tree_->SetBranchAddress(ecalClusColl_.c_str() , &ecalClusters_, &becalClusters_);
+    tree_->SetBranchAddress(gtpClusColl_.c_str() , &gtpClusters_, &bgtpClusters_);
     tree_->SetBranchAddress(mcColl_.c_str() , &mcParts_, &bmcParts_);
 
     //Cut functions for X
@@ -152,7 +152,7 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 
     // Apply GTP clusters collection to tune triggers
     // Clusters are splits into four categories based on xy indices of seed: pos at top, neg at top, pos at bot, neg at bot
-	int n_cl = ecalClusters_->size();
+	int n_cl = gtpClusters_->size();
 	histos->Fill1DHisto("n_clusters_h", n_cl, weight);
 
 	std::vector<CalCluster> clulsters_pos_top;
@@ -160,7 +160,7 @@ bool TriggerParametersExtractionAnaProcessor::process(IEvent* ievent) {
 	std::vector<CalCluster> clulsters_pos_bot;
 	std::vector<CalCluster> clulsters_neg_bot;
 	for(int i = 0; i < n_cl; i++){
-		CalCluster* cluster = ecalClusters_->at(i);
+		CalCluster* cluster = gtpClusters_->at(i);
 		std::vector<double> positionCluster = cluster->getPosition();
 		histos->Fill2DHisto("xy_clusters_hh",positionCluster[0], positionCluster[1], weight);
 
