@@ -9,7 +9,7 @@
 #include <iostream>
 
 #define CHI2NDFTHRESHOLD 10
-#define XMIN -60
+#define XMIN -80
 #define XMAX 40
 #define TRACKPMIN 3.77 // 3 sigma
 #define TRACKPMAX 5.34 // 3 sigma
