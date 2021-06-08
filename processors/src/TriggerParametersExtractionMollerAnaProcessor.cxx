@@ -180,16 +180,13 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		histos->Fill2DHisto("energy_vs_n_hits_cluster_without_cut_hh", cluster->getNHits(), cluster->getEnergy(), weight);
 
 		int ix = seed -> getCrystalIndices()[0];
+		if(ix < 0) ix++;
 		int iy = seed -> getCrystalIndices()[1];
 
-		if(ix < 0) {
-			histos->Fill1DHisto("n_clusters_xAxis_without_cut_h", ix + 1, weight);
-			histos->Fill2DHisto("xy_indices_clusters_without_cut_hh",ix + 1, iy, weight);
-		}
-		else {
-			histos->Fill1DHisto("n_clusters_xAxis_without_cut_h", ix, weight);
-			histos->Fill2DHisto("xy_indices_clusters_without_cut_hh",ix, iy, weight);
-		}
+		histos->Fill1DHisto("n_clusters_xAxis_without_cut_h", ix, weight);
+		histos->Fill2DHisto("xy_indices_clusters_without_cut_hh",ix, iy, weight);
+		histos->Fill2DHisto("energy_vs_ix_clusters_without_cut_hh", ix, cluster->getEnergy(), weight);
+		histos->Fill2DHisto("energy_vs_iy_clusters_without_cut_hh", iy, cluster->getEnergy(), weight);
 
 		if(iy > 0 ){
 			clulsters_top.push_back(*cluster);
@@ -281,16 +278,13 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 			histos->Fill2DHisto("energy_vs_n_hits_cluster_analyzable_events_hh", cluster.getNHits(), cluster.getEnergy(), weight);
 
 			int ix = seed -> getCrystalIndices()[0];
+			if(ix < 0) ix++;
 			int iy = seed -> getCrystalIndices()[1];
 
-			if(ix < 0) {
-				histos->Fill1DHisto("n_clusters_xAxis_analyzable_events_h", ix + 1, weight);
-				histos->Fill2DHisto("xy_indices_clusters_analyzable_events_hh",ix + 1, iy, weight);
-			}
-			else {
-				histos->Fill1DHisto("n_clusters_xAxis_analyzable_events_h", ix, weight);
-				histos->Fill2DHisto("xy_indices_clusters_analyzable_events_hh",ix, iy, weight);
-			}
+			histos->Fill1DHisto("n_clusters_xAxis_analyzable_events_h", ix, weight);
+			histos->Fill2DHisto("xy_indices_clusters_analyzable_events_hh",ix, iy, weight);
+			histos->Fill2DHisto("energy_vs_ix_clusters_analyzable_events_hh", ix, cluster.getEnergy(), weight);
+			histos->Fill2DHisto("energy_vs_iy_clusters_analyzable_events_hh", iy, cluster.getEnergy(), weight);
 
 			if(cluster.getEnergy() < CLUSTERENERGYMAX && cluster.getEnergy() > CLUSTERENERGYMIN) flag_triggered_analyzable_event = true;
 
@@ -309,16 +303,13 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 			histos->Fill2DHisto("energy_vs_n_hits_cluster_analyzable_events_hh", cluster.getNHits(), cluster.getEnergy(), weight);
 
 			int ix = seed -> getCrystalIndices()[0];
+			if(ix < 0) ix++;
 			int iy = seed -> getCrystalIndices()[1];
 
-			if(ix < 0) {
-				histos->Fill1DHisto("n_clusters_xAxis_analyzable_events_h", ix + 1, weight);
-				histos->Fill2DHisto("xy_indices_clusters_analyzable_events_hh",ix + 1, iy, weight);
-			}
-			else {
-				histos->Fill1DHisto("n_clusters_xAxis_analyzable_events_h", ix, weight);
-				histos->Fill2DHisto("xy_indices_clusters_analyzable_events_hh",ix, iy, weight);
-			}
+			histos->Fill1DHisto("n_clusters_xAxis_analyzable_events_h", ix, weight);
+			histos->Fill2DHisto("xy_indices_clusters_analyzable_events_hh",ix, iy, weight);
+			histos->Fill2DHisto("energy_vs_ix_clusters_analyzable_events_hh", ix, cluster.getEnergy(), weight);
+			histos->Fill2DHisto("energy_vs_iy_clusters_analyzable_events_hh", iy, cluster.getEnergy(), weight);
 
 			if(cluster.getEnergy() < CLUSTERENERGYMAX && cluster.getEnergy() > CLUSTERENERGYMIN) flag_triggered_analyzable_event = true;
 		}
@@ -338,6 +329,8 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		}
 
 	}
+
+	bool flag_triggered_analyzable_event_and_pass_kinematic_cuts = false;
 
     for(int i = 0; i < n_vtxs; i++){
         Vertex* vtx = vtxs_->at(i);
@@ -467,8 +460,58 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
 			histos->Fill1DHisto("diff_energy_between_recon_clulster_and_track_energy_triggered_analyzable_events_with_kinematic_cuts_h", clTop.getEnergy() - energy_top, weight);
 			histos->Fill1DHisto("diff_energy_between_recon_clulster_and_track_energy_triggered_analyzable_events_with_kinematic_cuts_h", clBot.getEnergy() - energy_bot, weight);
+
+			flag_triggered_analyzable_event_and_pass_kinematic_cuts = true;
+
         }
     }
+
+    if(flag_triggered_analyzable_event_and_pass_kinematic_cuts == true){
+		for(int i = 0; i < n_clusters_top_cut; i++){
+			CalCluster cluster = clulsters_top_cut.at(i);
+
+			std::vector<double> positionCluster = cluster.getPosition();
+			histos->Fill2DHisto("xy_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_hh",positionCluster[0], positionCluster[1], weight);
+
+			CalHit* seed = (CalHit*)cluster.getSeed();
+			histos->Fill1DHisto("seed_energy_cluster_triggered_analyzable_event_and_pass_kinematic_cuts_h", seed->getEnergy(), weight);
+			histos->Fill1DHisto("energy_cluster_triggered_analyzable_event_and_pass_kinematic_cuts_h", cluster.getEnergy(), weight);
+			histos->Fill1DHisto("n_hits_cluster_triggered_analyzable_event_and_pass_kinematic_cuts_h", cluster.getNHits(), weight);
+			histos->Fill2DHisto("energy_vs_n_hits_cluster_triggered_analyzable_event_and_pass_kinematic_cuts_hh", cluster.getNHits(), cluster.getEnergy(), weight);
+
+			int ix = seed -> getCrystalIndices()[0];
+			if(ix < 0) ix++;
+			int iy = seed -> getCrystalIndices()[1];
+
+			histos->Fill2DHisto("xy_indices_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_hh",ix, iy, weight);
+			histos->Fill2DHisto("energy_vs_ix_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_hh", ix, cluster.getEnergy(), weight);
+			histos->Fill2DHisto("energy_vs_iy_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_hh", iy, cluster.getEnergy(), weight);
+
+		}
+
+		for(int i = 0; i < n_clusters_bot_cut; i++){
+			CalCluster cluster = clulsters_bot_cut.at(i);
+
+			std::vector<double> positionCluster = cluster.getPosition();
+			histos->Fill2DHisto("xy_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_hh",positionCluster[0], positionCluster[1], weight);
+
+			CalHit* seed = (CalHit*)cluster.getSeed();
+			histos->Fill1DHisto("seed_energy_cluster_triggered_analyzable_event_and_pass_kinematic_cuts_h", seed->getEnergy(), weight);
+			histos->Fill1DHisto("energy_cluster_triggered_analyzable_event_and_pass_kinematic_cuts_h", cluster.getEnergy(), weight);
+			histos->Fill1DHisto("n_hits_cluster_triggered_analyzable_event_and_pass_kinematic_cuts_h", cluster.getNHits(), weight);
+			histos->Fill2DHisto("energy_vs_n_hits_cluster_triggered_analyzable_event_and_pass_kinematic_cuts_hh", cluster.getNHits(), cluster.getEnergy(), weight);
+
+			int ix = seed -> getCrystalIndices()[0];
+			if(ix < 0) ix++;
+			int iy = seed -> getCrystalIndices()[1];
+
+			histos->Fill2DHisto("xy_indices_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_hh",ix, iy, weight);
+			histos->Fill2DHisto("energy_vs_ix_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_hh", ix, cluster.getEnergy(), weight);
+			histos->Fill2DHisto("energy_vs_iy_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_hh", iy, cluster.getEnergy(), weight);
+		}
+
+    }
+
 
     return true;
 }
