@@ -80,18 +80,18 @@ private:
 
 
     //Parameters of cut functions for X
-    double top_topCutX[2] = {22.4311, 0.865347};
-    double top_botCutX[2] = {-20.9517, 0.889685};
+    double top_topCutX[2] = {11.9832, 0.909758};
+    double top_botCutX[2] = {-8.25902, 0.925639};
 
-    double bot_topCutX[2] = {23.5512, 0.867873};
-    double bot_botCutX[2] = {-21.6512, 0.888276};
+    double bot_topCutX[2] = {11.4547, 0.925082};
+    double bot_botCutX[2] = {-7.68077, 0.926624};
 
     //Parameters of cut functions for Y
-    double top_topCutY[2] = {7.1885, 0.900118};
-    double top_botCutY[2] = {-5.84294, 0.903104};
+    double top_topCutY[2] = {5.82916, 0.940971};
+    double top_botCutY[2] = {-0.960051, 0.922741};
 
-    double bot_topCutY[2] = {4.91401, 0.88867};
-    double bot_botCutY[2] = {-6.39967, 0.910099};
+    double bot_topCutY[2] = {0.168838, 0.944334};
+    double bot_botCutY[2] = {-9.5317, 0.916178};
 };
 
 #endif

@@ -11,8 +11,8 @@
 #define CHI2NDFTHRESHOLD 10
 #define XMIN -80
 #define XMAX 40
-#define TRACKPMIN 3.77 // 3 sigma
-#define TRACKPMAX 5.34 // 3 sigma
+#define TRACKPMIN 4.03 // 3 sigma
+#define TRACKPMAX 5.04 // 3 sigma
 
 #define DIFFIX 0 // Limit for ix difference between Ecal and VTP clusters
 #define DIFFIY 0 // Limit for iy difference between Ecal and VTP clusters
@@ -174,6 +174,7 @@ bool FEEMCAnaProcessor::process(IEvent* ievent) {
 		CalCluster *ecalCluster = ecalClulsters_cut.at(i);
 
 		double energyEcalCluster = ecalCluster->getEnergy();
+        double timeEcalCluster = ecalCluster->getTime();
 
 		histos->Fill1DHisto("ecalClusterEnergy_with_event_selction_and_track_cluster_matching_h", ecalCluster->getEnergy(), weight);
 
@@ -186,11 +187,14 @@ bool FEEMCAnaProcessor::process(IEvent* ievent) {
 		for (int j = 0; j < gtpClusters_->size(); j++){
 			CalCluster* vtpCluster = gtpClusters_->at(j);
 			double energyVTPCluster = vtpCluster->getEnergy();
+            double timeVTPCluster = vtpCluster->getTime();
 
 			CalHit* seed = (CalHit*)vtpCluster->getSeed();
 			int ixVTP = seed -> getCrystalIndices()[0];
 			int iyVTP = seed -> getCrystalIndices()[1];
 			if(ixVTP < 0) ixVTP++;
+
+            double timeDiff = timeEcalCluster - timeVTPCluster;
 
 			int ixDiff = ixEcal - ixVTP;
 			int iyDiff = iyEcal - iyVTP;
