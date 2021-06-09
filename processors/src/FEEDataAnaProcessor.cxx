@@ -9,13 +9,13 @@
 #include <iostream>
 
 #define CHI2NDFTHRESHOLD 10
-#define XMIN -60
+#define XMIN -80
 #define XMAX 40
 #define TRACKPMIN 3.77 // 3 sigma
 #define TRACKPMAX 5.34 // 3 sigma
 
-#define DIFFTIMEMIN -6 // Minimum for time difference between Ecal and VTP clusters
-#define DIFFTIMEMAX 2 // Maximum for time difference between Ecal and VTP clusters
+#define DIFFTIMEMIN -60000 // Minimum for time difference between Ecal and VTP clusters
+#define DIFFTIMEMAX 20000 // Maximum for time difference between Ecal and VTP clusters
 #define DIFFIX 0 // Limit for ix difference between Ecal and VTP clusters
 #define DIFFIY 0 // Limit for iy difference between Ecal and VTP clusters
 

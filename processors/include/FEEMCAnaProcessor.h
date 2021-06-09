@@ -1,14 +1,12 @@
-#ifndef __FEEDATA_ANAPROCESSOR_H__
-#define __FEEDATA_ANAPROCESSOR_H__
+#ifndef __FEEMC_ANAPROCESSOR_H__
+#define __FEEMC_ANAPROCESSOR_H__
 
 //HPSTR
 #include "HpsEvent.h"
-#include "TSData.h"
-#include "VTPData.h"
 #include "CalCluster.h"
 #include "Track.h"
 #include "HistoManager.h"
-#include "FEEDataAnaHistos.h"
+#include "FEEMCAnaHistos.h"
 
 
 //ROOT
@@ -24,11 +22,11 @@
 //C++
 #include <memory>
 
-class FEEDataAnaProcessor : public Processor {
+class FEEMCAnaProcessor : public Processor {
 
 public:
-	FEEDataAnaProcessor(const std::string& name, Process& process);
-    ~FEEDataAnaProcessor();
+	FEEMCAnaProcessor(const std::string& name, Process& process);
+    ~FEEMCAnaProcessor();
     virtual bool process(IEvent* ievent);
 
     virtual void initialize(TTree* tree);
@@ -39,24 +37,21 @@ public:
 
 private:
     //Containers to hold histogrammer info
-    FEEDataAnaHistos* histos{nullptr};
+    FEEMCAnaHistos* histos{nullptr};
     std::string  histCfgFilename_;
 
     //TODO Change this to be held from HPSEvent
     TTree* tree_{nullptr};
-    TBranch* bvtpData_{nullptr};
-    TBranch* btsData_{nullptr};
+    TBranch* bgtpClusters_{nullptr};
     TBranch* btrks_{nullptr};
     TBranch* becalClusters_{nullptr};
 
-    VTPData* vtpData_{};
-    TSData* tsData_{};
+    std::vector<CalCluster*> * gtpClusters_{};
     std::vector<Track*>  * trks_{};
     std::vector<CalCluster*> * ecalClusters_{};
 
     std::string anaName_{"ecalTimingAna"};
-    std::string vtpColl_{"VTPBank"};
-    std::string tsColl_{"TSBank"};
+    std::string gtpClusColl_{"RecoEcalClustersGTP"};
     std::string trkColl_{"GBLTracks"};
     std::string ecalClusColl_{"EcalClustersCorr"};
 
@@ -85,18 +80,18 @@ private:
 
 
     //Parameters of cut functions for X
-    double top_topCutX[2] = {8.08915, 0.9176};
-    double top_botCutX[2] = {-17.9579, 0.884725};
+    double top_topCutX[2] = {11.9832, 0.909758};
+    double top_botCutX[2] = {-8.25902, 0.925639};
 
-    double bot_topCutX[2] = {8.50651, 0.94637};
-    double bot_botCutX[2] = {-12.2999, 0.943741};
+    double bot_topCutX[2] = {11.4547, 0.925082};
+    double bot_botCutX[2] = {-7.68077, 0.926624};
 
     //Parameters of cut functions for Y
-    double top_topCutY[2] = {4.73733, 0.976192};
-    double top_botCutY[2] = {-1.38761, 0.944777};
+    double top_topCutY[2] = {5.82916, 0.940971};
+    double top_botCutY[2] = {-0.960051, 0.922741};
 
-    double bot_topCutY[2] = {4.53276, 0.9928};
-    double bot_botCutY[2] = {-8.09522, 0.927891};
+    double bot_topCutY[2] = {0.168838, 0.944334};
+    double bot_botCutY[2] = {-9.5317, 0.916178};
 };
 
 #endif
