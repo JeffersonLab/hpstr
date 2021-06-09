@@ -223,6 +223,16 @@
         "xtitle" : "IY difference between Ecal and VTP clusters",
         "ytitle" : "Cluster Pairs"
     },
+	"diff_ix_vs_diff_iy_between_EcalCluster_VTPCluster_with_event_selction_and_track_cluster_matching_hh" : {
+        "binsX" : 19,
+        "minX" : -9.5,
+        "maxX" : 9.5,
+        "binsY" : 9,
+        "minY" : -4.5,
+        "maxY" : 4.5,
+ 		"xtitle" : "IX difference between Ecal and VTP clusters",
+        "ytitle" : "IY difference between Ecal and VTP clusters"
+    },
 	"VTPClusterEnergy_with_Ecal_VTP_cluster_matching_h" : {
         "bins" : 100,
         "minX" : 0,

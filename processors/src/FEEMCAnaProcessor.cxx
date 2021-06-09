@@ -105,6 +105,8 @@ bool FEEMCAnaProcessor::process(IEvent* ievent) {
 		double chi2NDF = trk->getChi2Ndf();
 		std::vector<double> positionAtEcal = trk->getPositionAtEcal();
 
+		histos->Fill2DHisto("xy_positionAtEcal_tracks_hh", positionAtEcal[0], positionAtEcal[1], weight);
+
 		if(chi2NDF < CHI2NDFTHRESHOLD && positionAtEcal[0] > XMIN && positionAtEcal[0] < XMAX) {
 
 			std::vector<double> mom = trk->getMomentum();
@@ -201,6 +203,9 @@ bool FEEMCAnaProcessor::process(IEvent* ievent) {
 
 			histos->Fill1DHisto("diff_ix_between_EcalCluster_VTPCluster_with_event_selction_and_track_cluster_matching_h", ixDiff, weight);
 			histos->Fill1DHisto("diff_iy_between_EcalCluster_VTPCluster_with_event_selction_and_track_cluster_matching_h", iyDiff, weight);
+
+			histos->Fill2DHisto("diff_ix_vs_diff_iy_between_EcalCluster_VTPCluster_with_event_selction_and_track_cluster_matching_hh", ixDiff, iyDiff, weight);
+
 
 			if(ixDiff == DIFFIX && iyDiff == DIFFIX){
 				vtpClulsters_cut.push_back(vtpCluster);
