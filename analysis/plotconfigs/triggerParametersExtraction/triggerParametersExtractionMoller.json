@@ -115,6 +115,26 @@
 		"xtitle" : "X index",
         "ytitle" : "Y index"
     },
+	"energy_vs_ix_clusters_without_cut_hh" : {
+        "binsX" : 46,
+        "minX" : -22.5,
+        "maxX" : 23.5,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "X index",
+        "ytitle" : "Energy of cluster [GeV]"
+    },
+	"energy_vs_iy_clusters_without_cut_hh" : {
+        "binsX" : 11,
+        "minX" : -5.5,
+        "maxX" : 5.5,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "Y index",
+        "ytitle" : "Energy of cluster [GeV]"
+    },
 	"xy_clusters_without_cut_hh" : {
         "binsX" : 100,
         "minX" : -400,
@@ -212,6 +232,26 @@
         "maxY" : 5.5,
 		"xtitle" : "X index",
         "ytitle" : "Y index"
+    },
+	"energy_vs_ix_clusters_analyzable_events_hh" : {
+        "binsX" : 46,
+        "minX" : -22.5,
+        "maxX" : 23.5,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "X index",
+        "ytitle" : "Energy of cluster [GeV]"
+    },
+	"energy_vs_iy_clusters_analyzable_events_hh" : {
+        "binsX" : 11,
+        "minX" : -5.5,
+        "maxX" : 5.5,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "Y index",
+        "ytitle" : "Energy of cluster [GeV]"
     },
 	"xy_clusters_analyzable_events_hh" : {
         "binsX" : 100,
@@ -462,6 +502,78 @@
         "maxX" : 1,
         "xtitle" : "Difference of energy between recon clulster and track energy[GeV]",
 		"ytitle" : "Counts"
+    },
+    
+	"xy_indices_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_hh" : {
+        "binsX" : 46,
+        "minX" : -22.5,
+        "maxX" : 23.5,
+        "binsY" : 11,
+        "minY" : -5.5,
+        "maxY" : 5.5,
+		"xtitle" : "X index",
+        "ytitle" : "Y index"
+    },
+	"energy_vs_ix_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_hh" : {
+        "binsX" : 46,
+        "minX" : -22.5,
+        "maxX" : 23.5,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "X index",
+        "ytitle" : "Energy of cluster [GeV]"
+    },
+	"energy_vs_iy_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_hh" : {
+        "binsX" : 11,
+        "minX" : -5.5,
+        "maxX" : 5.5,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "Y index",
+        "ytitle" : "Energy of cluster [GeV]"
+    },
+	"xy_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_hh" : {
+        "binsX" : 100,
+        "minX" : -400,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -100,
+        "maxY" : 100,
+		"xtitle" : "X [mm]",
+        "ytitle" : "Y [mm]"
+    },
+	"seed_energy_cluster_triggered_analyzable_event_and_pass_kinematic_cuts_h": { 
+ 		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "Seed energy of cluster [GeV]",
+        "ytitle" : "Clusters"
+    },
+	"energy_cluster_triggered_analyzable_event_and_pass_kinematic_cuts_h": { 
+ 		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "Energy of cluster [GeV]",
+        "ytitle" : "Clusters"
+    },
+	"n_hits_cluster_triggered_analyzable_event_and_pass_kinematic_cuts_h": { 
+ 		"bins"   : 10,
+        "minX"   : 0.5,
+        "maxX"   : 10.5,
+        "xtitle" : "Hit counts of cluster",
+        "ytitle" : "Clusters"
+    },
+	"energy_vs_n_hits_cluster_triggered_analyzable_event_and_pass_kinematic_cuts_hh": { 
+		"binsX" : 10,
+        "minX" : 0.5,
+        "maxX" : 10.5,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "Hit counts of cluster",
+        "ytitle" : "Energy of cluster [GeV]"
     }
     
 }
