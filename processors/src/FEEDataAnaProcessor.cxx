@@ -14,8 +14,6 @@
 #define TRACKPMIN 3.77 // 3 sigma
 #define TRACKPMAX 5.34 // 3 sigma
 
-#define DIFFTIMEMIN -60000 // Minimum for time difference between Ecal and VTP clusters
-#define DIFFTIMEMAX 20000 // Maximum for time difference between Ecal and VTP clusters
 #define DIFFIX 0 // Limit for ix difference between Ecal and VTP clusters
 #define DIFFIY 0 // Limit for iy difference between Ecal and VTP clusters
 
@@ -107,6 +105,7 @@ bool FEEDataAnaProcessor::process(IEvent* ievent) {
         	Track* trk = trks_->at(0);
         	double chi2NDF = trk->getChi2Ndf();
             std::vector<double> positionAtEcal = trk->getPositionAtEcal();
+            histos->Fill2DHisto("xy_positionAtEcal_tracks_hh", positionAtEcal[0], positionAtEcal[1], weight);
 
             if(chi2NDF < CHI2NDFTHRESHOLD && positionAtEcal[0] > XMIN && positionAtEcal[0] < XMAX) {
 
@@ -204,7 +203,9 @@ bool FEEDataAnaProcessor::process(IEvent* ievent) {
         		histos->Fill1DHisto("diff_ix_between_EcalCluster_VTPCluster_with_event_selction_and_track_cluster_matching_h", ixDiff, weight);
         		histos->Fill1DHisto("diff_iy_between_EcalCluster_VTPCluster_with_event_selction_and_track_cluster_matching_h", iyDiff, weight);
 
-        		if(timeDiff > DIFFTIMEMIN && timeDiff < DIFFTIMEMAX && ixDiff == DIFFIX && iyDiff == DIFFIX){
+        		histos->Fill2DHisto("diff_ix_vs_diff_iy_between_EcalCluster_VTPCluster_with_event_selction_and_track_cluster_matching_hh", ixDiff, iyDiff, weight);
+
+        		if(ixDiff == DIFFIX && iyDiff == DIFFIX){
         			vtpClulsters_cut.push_back(vtpCluster);
         		}
 		    }
