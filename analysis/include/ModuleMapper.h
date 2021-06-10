@@ -22,6 +22,7 @@ class ModuleMapper {
   std::string getStringFromSw(const std::string& key)  {return sw_to_string[key];};
   
 
+  std::vector<std::string> getHybridStrings();
   //get list of string modules
 
   void getStrings (std::vector<std::string>& strings) {
@@ -40,6 +41,10 @@ class ModuleMapper {
     for (strmap_it it = hw_to_string.begin(); it!= hw_to_string.end(); ++it)
       sws.push_back(it->first);
   }
+
+  std::map<std::string, std::map<int,int>> buildChannelSvtIDMap();
+
+  int getSvtIDFromHWChannel(int channel, std::string hwTag, std::map<std::string,std::map<int,int>> svtid_map);  
   
   
   

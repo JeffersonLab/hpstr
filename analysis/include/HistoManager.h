@@ -70,9 +70,10 @@ class HistoManager {
         virtual void Define3DHistos(){};
         virtual void Define2DHistos(){};
         virtual void Define1DHistos(){};
-        
+
         //Definition of histograms from json config
         virtual void DefineHistos();
+        virtual void DefineHistos(std::vector<std::string> histoCopyNames, std::string makeCopyJsonTag = "default=single_copy");
 
         void Fill1DHisto(const std::string& histoName, float value, float weight=1.);
         void Fill2DHisto(const std::string& histoName, float valuex, float valuey, float weight=1.);
@@ -90,6 +91,10 @@ class HistoManager {
         virtual std::string getName(){return m_name;}
 
         void debugMode(bool debug) {debug_ = debug;}
+
+        std::vector<std::string> histos1dNamesfromTFile;
+        std::vector<std::string> histos2dNamesfromTFile;
+        std::vector<std::string> histos1dNamesfromJson;
 
     protected:
 
@@ -111,6 +116,7 @@ class HistoManager {
         int maxWarnings_{10};
         int printWarnings_{0};
         bool doPrintWarnings_{true};
+
 };
 
 

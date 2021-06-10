@@ -1,0 +1,66 @@
+{   
+    "Events_per_Channel_h" : {
+            "xtitle" : "Number of Hits per Channel",
+            "bins" : 10000,
+            "minX" : 0,
+            "maxX" : 10000,
+            "ytitle" : "Events"
+
+        },
+
+    "svtHitOccupancy_h" : {
+            "xtitle" : "# hits per channel",
+            "bins" : 100000,
+            "minX" : 0,
+            "maxX" : 100000,
+            "ytitle" : "Events"
+
+        },
+
+    "SvtHybridsHitN_h" : {
+            "xtitle" : "# of Strips",
+            "bins" : 10000,
+            "minX" : 0,
+            "maxX" : 10000,
+            "ytitle" : "Events"
+
+        },
+    "SvtHitMulti_h" : {
+            "prefix" : "hitN",
+            "type" : "h",
+            "xtitle" : "# of Strips",
+            "bins" : 4000,
+            "minX" : 0,
+            "maxX" : 4000,
+            "ytitle" : "Events"
+
+        },
+    "SvtHybrids0_hh" : {
+            "prefix" : "baseline0",
+            "type" : "hh",
+            "xtitle" : "Strip Number",
+            "binsX" : 640,
+            "minX" : -0.5,
+            "maxX" : 639.5,
+            "ytitle" : "ADC Value",
+            "binsY" : 5000,
+            "minY" : 0,
+            "maxY" : 20000
+
+        },
+    "SvtHybrids3_hh" : {
+            "prefix" : "baseline3",
+            "type" : "hh",
+            "xtitle" : "Strip Number",
+            "binsX" : 640,
+            "minX" : -0.5,
+            "maxX" : 639.5,
+            "ytitle" : "ADC Value",
+            "binsY" : 5000,
+            "minY" : 0,
+            "maxY" : 20000
+
+        }
+
+
+}
