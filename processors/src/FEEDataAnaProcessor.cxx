@@ -93,14 +93,8 @@ bool FEEDataAnaProcessor::process(IEvent* ievent) {
         	int charge = trk->getCharge();
             std::vector<double> positionAtEcal = trk->getPositionAtEcal();
 
-            if (charge == 1) {
-            	nPos++;
-            	histos->Fill2DHisto("xy_positionAtEcal_positive_tracks_hh", positionAtEcal[0], positionAtEcal[1], weight);
-            }
-            else if (charge == -1) {
-            	nNeg++;
-            	histos->Fill2DHisto("xy_positionAtEcal_negative_tracks_hh", positionAtEcal[0], positionAtEcal[1], weight);
-            }
+            if (charge == 1) nPos++;
+            else if (charge == -1) nNeg++;
         }
 
         //Event selection
