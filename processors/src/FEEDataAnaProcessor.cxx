@@ -89,13 +89,17 @@ bool FEEDataAnaProcessor::process(IEvent* ievent) {
 
     	int nPos = 0, nNeg = 0;
         for(int i=0; i < trks_->size(); i++){
-        	Track* tr = trks_->at(i);
-        	int charge = tr->getCharge();
+        	Track* trk = trks_->at(i);
+        	int charge = trk->getCharge();
+            std::vector<double> positionAtEcal = trk->getPositionAtEcal();
+
             if (charge == 1) {
             	nPos++;
+            	histos->Fill2DHisto("xy_positionAtEcal_positive_tracks_hh", positionAtEcal[0], positionAtEcal[1], weight);
             }
             else if (charge == -1) {
             	nNeg++;
+            	histos->Fill2DHisto("xy_positionAtEcal_negative_tracks_hh", positionAtEcal[0], positionAtEcal[1], weight);
             }
         }
 
@@ -105,7 +109,7 @@ bool FEEDataAnaProcessor::process(IEvent* ievent) {
         	Track* trk = trks_->at(0);
         	double chi2NDF = trk->getChi2Ndf();
             std::vector<double> positionAtEcal = trk->getPositionAtEcal();
-            histos->Fill2DHisto("xy_positionAtEcal_tracks_hh", positionAtEcal[0], positionAtEcal[1], weight);
+            histos->Fill2DHisto("xy_positionAtEcal_negative_tracks_events_with_only_one_negative_track_hh", positionAtEcal[0], positionAtEcal[1], weight);
 
             if(chi2NDF < CHI2NDFTHRESHOLD && positionAtEcal[0] > XMIN && positionAtEcal[0] < XMAX) {
 

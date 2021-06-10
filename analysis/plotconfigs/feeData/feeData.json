@@ -119,7 +119,37 @@
         "xtitle" : "p of negative tracks [GeV]",
         "ytitle" : "tracks"
     },
-	"xy_positionAtEcal_tracks_hh" : {
+	"xy_positionAtEcal_negative_tracks_hh" : {
+        "binsX" : 100,
+        "minX" : -400,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -100,
+        "maxY" : 100,
+		"xtitle" : "X [mm]",
+        "ytitle" : "Y [mm]"
+    },
+	"xy_positionAtEcal_positive_tracks_hh" : {
+        "binsX" : 100,
+        "minX" : -400,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -100,
+        "maxY" : 100,
+		"xtitle" : "X [mm]",
+        "ytitle" : "Y [mm]"
+    },
+	"xy_positionAtEcal_negative_tracks_hh" : {
+        "binsX" : 100,
+        "minX" : -400,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -100,
+        "maxY" : 100,
+		"xtitle" : "X [mm]",
+        "ytitle" : "Y [mm]"
+    },
+	"xy_positionAtEcal_negative_tracks_events_with_only_one_negative_track_hh" : {
         "binsX" : 100,
         "minX" : -400,
         "maxX" : 400,

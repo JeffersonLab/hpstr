@@ -28,7 +28,7 @@ void FEEDataAnaHistos::FillVTPData(VTPData* vtpData, float weight) {
         Fill1DHisto("VTPClusterEnergy_h", cluster.E/1000., weight);
         Fill1DHisto("VTPClusterTime_h", cluster.T * 4, weight); // ns
         Fill2DHisto("VTPClusterTimeVsEnergy_hh", cluster.E, cluster.T * 4, weight);
-        Fill2DHisto("VTPClusterXY_hh", cluster.X, cluster.Y, weight);
+        Fill2DHisto("VTPClusterXYIndex_hh", cluster.X, cluster.Y, weight);
     }
 
 }
