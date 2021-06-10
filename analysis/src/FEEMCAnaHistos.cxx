@@ -33,7 +33,7 @@ void FEEMCAnaHistos::FillGTPClusters(std::vector<CalCluster*> *gtpClusters, floa
 		int iy = seed -> getCrystalIndices()[1];
 		if(ix < 0) ix++;
 
-        Fill2DHisto("VTPClusterXY_hh", ix, iy, weight);
+        Fill2DHisto("VTPClusterXYIndex_hh", ix, iy, weight);
     }
 
 }

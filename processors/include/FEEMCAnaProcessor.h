@@ -38,6 +38,7 @@ public:
 private:
     //Containers to hold histogrammer info
     FEEMCAnaHistos* histos{nullptr};
+    FEEMCAnaHistos* histos_prescale{nullptr};
     std::string  histCfgFilename_;
 
     //TODO Change this to be held from HPSEvent
@@ -59,6 +60,24 @@ private:
     int debug_{0};
 
     double beamE_{4.55};
+
+    /* hps_v6_FEE
+    #                     prescale region
+    #                     |   region xmin
+    #                     |   |     region xmax
+    #                     |   |     |     prescale
+    #                     |   |     |     |
+    VTP_HPS_FEE_PRESCALE  0   -22   16    0
+    VTP_HPS_FEE_PRESCALE  1   -15   -9    1
+    VTP_HPS_FEE_PRESCALE  2    -8   -7    10
+    VTP_HPS_FEE_PRESCALE  3    -6   -4    100
+    VTP_HPS_FEE_PRESCALE  4    -3   -2    10
+    VTP_HPS_FEE_PRESCALE  5    -1    6    1
+    VTP_HPS_FEE_PRESCALE  6     7   23    0
+     */
+    int regionsLeft[7] = {-22, -15, -8, -6, -3, -1, 7};
+    int regionsRight[7] = {-16, -9, -7, -4, -2, 6, 23};
+    int preScale[7] = {0, 1, 10, 100, 10, 1, 0};
 
     /*
      * Track-cluster matching

@@ -17,6 +17,11 @@
 #define DIFFIX 0 // Limit for ix difference between Ecal and VTP clusters
 #define DIFFIY 0 // Limit for iy difference between Ecal and VTP clusters
 
+// hps_v6_FEE
+#define VTP_HPS_FEE_EMIN 2.6
+#define VTP_HPS_FEE_EMAX 5.2
+#define VTP_HPS_FEE_NMIN 3
+
 FEEMCAnaProcessor::FEEMCAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
 }
@@ -50,6 +55,10 @@ void FEEMCAnaProcessor::initialize(TTree* tree) {
     histos->loadHistoConfig(histCfgFilename_);
     histos->DefineHistos();
 
+    histos_prescale = new FEEMCAnaHistos((anaName_ + "_prescale").c_str());
+    histos_prescale->loadHistoConfig(histCfgFilename_);
+    histos_prescale->DefineHistos();
+
     // init TTree
     tree_->SetBranchAddress(gtpClusColl_.c_str() , &gtpClusters_, &bgtpClusters_);
     tree_->SetBranchAddress(trkColl_.c_str() , &trks_, &btrks_);
@@ -82,9 +91,44 @@ void FEEMCAnaProcessor::initialize(TTree* tree) {
 bool FEEMCAnaProcessor::process(IEvent* ievent) {
     double weight = 1.;
 
+	std::vector<int> vect_prescale;
+	for (int i = 0; i < gtpClusters_->size(); i++){
+		CalCluster* vtpCluster = gtpClusters_->at(i);
+		double energyVTPCluster = vtpCluster->getEnergy();
+        double timeVTPCluster = vtpCluster->getTime();
+        int nHits = vtpCluster->getNHits();
+
+		CalHit* seed = (CalHit*)vtpCluster->getSeed();
+		int ixVTP = seed -> getCrystalIndices()[0];
+		int iyVTP = seed -> getCrystalIndices()[1];
+		if(ixVTP < 0) ixVTP++;
+
+		if(energyVTPCluster >= VTP_HPS_FEE_EMIN && energyVTPCluster <= VTP_HPS_FEE_EMAX && nHits >= VTP_HPS_FEE_NMIN){
+			for(int j = 0; j < 7; j++){
+				if(ixVTP >= regionsLeft[j] && ixVTP <= regionsRight[j]) vect_prescale.push_back(preScale[i]);
+			}
+		}
+	}
+
+	double weight_prescale = 0;
+	for (int i = 0; i < vect_prescale.size(); i++){
+		int prescale = vect_prescale[i];
+		double w = 0;
+		if(prescale != 0) {
+			w = 1. / prescale;
+			if(w > weight_prescale) weight_prescale = w;
+		}
+	}
+
+	std::cout << weight_prescale << std::endl;
+
 	histos->FillEcalClusters(ecalClusters_);
 	histos->FillGTPClusters(gtpClusters_);
 	histos->FillTracks(trks_);
+
+	histos_prescale->FillEcalClusters(ecalClusters_, weight_prescale);
+	histos_prescale->FillGTPClusters(gtpClusters_, weight_prescale);
+	histos_prescale->FillTracks(trks_, weight_prescale);
 
 	int nPos = 0, nNeg = 0;
 	for(int i=0; i < trks_->size(); i++){
@@ -112,6 +156,8 @@ bool FEEMCAnaProcessor::process(IEvent* ievent) {
 			std::vector<double> mom = trk->getMomentum();
 			double p = sqrt(pow(mom[0], 2) + pow(mom[1], 2) + pow(mom[2], 2));
 			histos->Fill1DHisto("p_negative_tracks_with_event_selction_h", p, weight);
+			histos_prescale->Fill1DHisto("p_negative_tracks_with_event_selction_h", p, weight_prescale);
+
 
 			if(p > TRACKPMIN && p < TRACKPMAX) flag_event_selction = true;
 		}
@@ -126,6 +172,7 @@ bool FEEMCAnaProcessor::process(IEvent* ievent) {
 			CalCluster *cluster = ecalClusters_->at(i);
 			std::vector<double> positionCluster = cluster->getPosition();
 			histos->Fill1DHisto("ecalClusterEnergy_with_event_selction_h", cluster->getEnergy(), weight);
+			histos_prescale->Fill1DHisto("ecalClusterEnergy_with_event_selction_h", cluster->getEnergy(), weight_prescale);
 
 			CalHit* seed = (CalHit*)cluster->getSeed();
 
@@ -135,6 +182,7 @@ bool FEEMCAnaProcessor::process(IEvent* ievent) {
 			if(ix < 0) ix++;
 
 			histos->Fill2DHisto("xy_indices_clusters_with_event_selction_hh", ix, iy, weight);
+			histos_prescale->Fill2DHisto("xy_indices_clusters_with_event_selction_hh", ix, iy, weight_prescale);
 
 			for(int j = 0; j < trks_->size(); j++){
 				Track* track = trks_->at(j);
@@ -143,6 +191,9 @@ bool FEEMCAnaProcessor::process(IEvent* ievent) {
 				if(iy > 0 && positionAtEcal[1] > 0){
 					histos->Fill2DHisto("trackX_vs_ClusterX_top_with_event_selction_hh", positionCluster[0], positionAtEcal[0], weight);
 					histos->Fill2DHisto("trackY_vs_ClusterY_top_with_event_selction_hh", positionCluster[1], positionAtEcal[1], weight);
+
+					histos_prescale->Fill2DHisto("trackX_vs_ClusterX_top_with_event_selction_hh", positionCluster[0], positionAtEcal[0], weight_prescale);
+					histos_prescale->Fill2DHisto("trackY_vs_ClusterY_top_with_event_selction_hh", positionCluster[1], positionAtEcal[1], weight_prescale);
 
 					if (positionAtEcal[0]< func_top_topCutX->Eval(positionCluster[0])
 							&& positionAtEcal[0] > func_top_botCutX->Eval(positionCluster[0])
@@ -156,6 +207,9 @@ bool FEEMCAnaProcessor::process(IEvent* ievent) {
 				else if(iy < 0 && positionAtEcal[1] < 0){
 					histos->Fill2DHisto("trackX_vs_ClusterX_bot_with_event_selction_hh", positionCluster[0], positionAtEcal[0], weight);
 					histos->Fill2DHisto("trackY_vs_ClusterY_bot_with_event_selction_hh", positionCluster[1], positionAtEcal[1], weight);
+
+					histos_prescale->Fill2DHisto("trackX_vs_ClusterX_bot_with_event_selction_hh", positionCluster[0], positionAtEcal[0], weight_prescale);
+					histos_prescale->Fill2DHisto("trackY_vs_ClusterY_bot_with_event_selction_hh", positionCluster[1], positionAtEcal[1], weight_prescale);
 
 					if (positionAtEcal[0]< func_bot_topCutX->Eval(positionCluster[0])
 							&& positionAtEcal[0] > func_bot_botCutX->Eval(positionCluster[0])
@@ -179,6 +233,7 @@ bool FEEMCAnaProcessor::process(IEvent* ievent) {
         double timeEcalCluster = ecalCluster->getTime();
 
 		histos->Fill1DHisto("ecalClusterEnergy_with_event_selction_and_track_cluster_matching_h", ecalCluster->getEnergy(), weight);
+		histos_prescale->Fill1DHisto("ecalClusterEnergy_with_event_selction_and_track_cluster_matching_h", ecalCluster->getEnergy(), weight_prescale);
 
 		CalHit* seedEcal = (CalHit*)ecalCluster->getSeed();
 
@@ -203,8 +258,11 @@ bool FEEMCAnaProcessor::process(IEvent* ievent) {
 
 			histos->Fill1DHisto("diff_ix_between_EcalCluster_VTPCluster_with_event_selction_and_track_cluster_matching_h", ixDiff, weight);
 			histos->Fill1DHisto("diff_iy_between_EcalCluster_VTPCluster_with_event_selction_and_track_cluster_matching_h", iyDiff, weight);
-
 			histos->Fill2DHisto("diff_ix_vs_diff_iy_between_EcalCluster_VTPCluster_with_event_selction_and_track_cluster_matching_hh", ixDiff, iyDiff, weight);
+
+			histos_prescale->Fill1DHisto("diff_ix_between_EcalCluster_VTPCluster_with_event_selction_and_track_cluster_matching_h", ixDiff, weight_prescale);
+			histos_prescale->Fill1DHisto("diff_iy_between_EcalCluster_VTPCluster_with_event_selction_and_track_cluster_matching_h", iyDiff, weight_prescale);
+			histos_prescale->Fill2DHisto("diff_ix_vs_diff_iy_between_EcalCluster_VTPCluster_with_event_selction_and_track_cluster_matching_hh", ixDiff, iyDiff, weight_prescale);
 
 
 			if(ixDiff == DIFFIX && iyDiff == DIFFIX){
@@ -216,6 +274,7 @@ bool FEEMCAnaProcessor::process(IEvent* ievent) {
 	for(int i = 0; i < vtpClulsters_cut.size(); i++){
 		CalCluster* vtpCluster = vtpClulsters_cut.at(i);
 		histos->Fill1DHisto("VTPClusterEnergy_with_Ecal_VTP_cluster_matching_h", vtpCluster->getEnergy(), weight);
+		histos_prescale->Fill1DHisto("VTPClusterEnergy_with_Ecal_VTP_cluster_matching_h", vtpCluster->getEnergy(), weight_prescale);
 	}
 
     return true;
@@ -225,8 +284,11 @@ void FEEMCAnaProcessor::finalize() {
 
 
     histos->saveHistos(outF_, anaName_.c_str());
+    histos_prescale->saveHistos(outF_, (anaName_ + "_prescale").c_str());
     delete histos;
+    delete histos_prescale;
     histos = nullptr;
+    histos_prescale = nullptr;
 
 }
 

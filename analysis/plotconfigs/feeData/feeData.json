@@ -53,14 +53,14 @@
         "bins" : 100,
         "minX" : 0,
         "maxX" : 6,
-        "xtitle" : "Reco VTP Cluster Energy [GeV]",
+        "xtitle" : "VTP Cluster Energy [GeV]",
         "ytitle" : "Clusters / 0.06 GeV"
     },
 	"VTPClusterTime_h" : {
         "bins" : 100,
         "minX" : 16,
         "maxX" : 80,
-        "xtitle" : "Reco VTP Cluster Tims [ns]",
+        "xtitle" : "VTP Cluster Tims [ns]",
         "ytitle" : "Clusters / 0.64 ns"
     },
 	"VTPClusterTimeVsEnergy_hh" : {
@@ -70,18 +70,18 @@
         "binsY" : 100,
         "minY" : 16,
         "maxY" : 80,
-		"xtitle" : "Reco VTP Cluster Energy [GeV]",
-        "ytitle" : "Reco VTP Cluster Tims [ns]"
+		"xtitle" : "VTP Cluster Energy [GeV]",
+        "ytitle" : "VTP Cluster Tims [ns]"
     },
-	"VTPClusterXY_hh" : {
-        "binsX" : 100,
-        "minX" : -400,
-        "maxX" : 400,
-        "binsY" : 100,
-        "minY" : -100,
-        "maxY" : 100,
-		"xtitle" : "Reco VTP Cluster X [mm]",
-        "ytitle" : "Reco VTP Cluster Y [mm]"
+	"VTPClusterXYIndex_hh" : {
+        "binsX" : 46,
+        "minX" : -22.5,
+        "maxX" : 23.5,
+        "binsY" : 11,
+        "minY" : -5.5,
+        "maxY" : 5.5,
+		"xtitle" : "VTP Cluster IX",
+        "ytitle" : "VTP Cluster IY"
     },
    
  	 "numTracks_h" : {
