@@ -1,0 +1,43 @@
+{
+    "numEcalClusters_h" : {
+        "bins" : 10,
+        "minX" : -0.5,
+        "maxX" : 9.5,
+        "xtitle" : "Number of Reco Ecal Clusters",
+        "ytitle" : "Events"
+    },
+    "ecalClusterEnergy_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 6,
+        "xtitle" : "Reco Ecal Cluster Energy [GeV]",
+        "ytitle" : "Clusters / 0.06 GeV"
+    },
+	"ecalClusterTime_h" : {
+        "bins" : 100,
+        "minX" : 16,
+        "maxX" : 80,
+        "xtitle" : "Reco Ecal Cluster Tims [ns]",
+        "ytitle" : "Clusters / 0.64 ns"
+    },
+	"ecalClusterTimeVsEnergy_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 6,
+        "binsY" : 100,
+        "minY" : 16,
+        "maxY" : 80,
+		"xtitle" : "Reco Ecal Cluster Energy [GeV]",
+        "ytitle" : "Reco Ecal Cluster Tims [ns]"
+    },
+	"ecalClusterXY_hh" : {
+        "binsX" : 100,
+        "minX" : -300,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -100,
+        "maxY" : 100,
+		"xtitle" : "Reco Ecal Cluster X [mm]",
+        "ytitle" : "Reco Ecal Cluster Y [mm]"
+    } 
+}
