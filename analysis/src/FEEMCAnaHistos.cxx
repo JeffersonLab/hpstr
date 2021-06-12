@@ -63,6 +63,5 @@ void FEEMCAnaHistos::FillTracks(std::vector<Track*> *trks, float weight){
         	Fill1DHisto("p_negative_tracks_h", p, weight);
         	Fill2DHisto("xy_positionAtEcal_negative_tracks_hh", positionAtEcal[0], positionAtEcal[1], weight);
         }
-
     }
 }

@@ -36,6 +36,7 @@ feeMCAna.parameters["debug"] = 0
 feeMCAna.parameters["anaName"] = "feeMCAna"
 feeMCAna.parameters["gtpClusColl"] = "RecoEcalClustersGTP"
 feeMCAna.parameters["ecalClusColl"] = "RecoEcalClusters"
+feeMCAna.parameters["ecalClusColl"] = "RecoEcalClusters"
 feeMCAna.parameters["trkColl"] = "GBLTracks"
 feeMCAna.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/feeData/feeData.json'
 feeMCAna.parameters["beamE"] = base.beamE[str(options.year)]
