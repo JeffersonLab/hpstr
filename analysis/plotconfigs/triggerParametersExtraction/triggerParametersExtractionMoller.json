@@ -369,6 +369,13 @@
         "xtitle" : "Invariant mass [GeV/c^{2}]",
         "ytitle" : "Vertices"
     },
+	"invariant_mass_vertex_analyzable_events_out_of_kinematic_cuts_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.12,
+        "xtitle" : "Invariant mass [GeV/c^{2}]",
+        "ytitle" : "Vertices"
+    },
 	"px_vs_py_vertex_analyzable_events_hh" : {
         "binsX" : 100,
         "minX" : -0.3,

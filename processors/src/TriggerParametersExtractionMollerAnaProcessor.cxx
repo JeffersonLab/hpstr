@@ -428,6 +428,11 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
         	histos->Fill1DHisto("diff_energy_between_recon_clulster_and_track_energy_analyzable_events_h", clTop.getEnergy() - energy_top, weight);
         	histos->Fill1DHisto("diff_energy_between_recon_clulster_and_track_energy_analyzable_events_h", clBot.getEnergy() - energy_bot, weight);
+
+        	if( (energy_diff_top < DIFFENERGYMIN || energy_diff_top > DIFFENERGYMAX )
+            		|| (energy_diff_bot < DIFFENERGYMIN || energy_diff_bot > DIFFENERGYMAX)
+    				|| (theta_diff < DIFFTHETAMIN || theta_diff > DIFFTHETAMAX))
+        		histos->Fill1DHisto("invariant_mass_vertex_analyzable_events_out_of_kinematic_cuts_h", invariant_mass, weight);
         }
 
         if(flag_triggered_analyzable_event){
