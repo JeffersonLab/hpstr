@@ -28,7 +28,7 @@ void FEEDataAnaHistos::FillVTPData(VTPData* vtpData, float weight) {
         Fill1DHisto("VTPClusterEnergy_h", cluster.E/1000., weight);
         Fill1DHisto("VTPClusterTime_h", cluster.T * 4, weight); // ns
         Fill2DHisto("VTPClusterTimeVsEnergy_hh", cluster.E, cluster.T * 4, weight);
-        Fill2DHisto("VTPClusterXY_hh", cluster.X, cluster.Y, weight);
+        Fill2DHisto("VTPClusterXYIndex_hh", cluster.X, cluster.Y, weight);
     }
 
 }
@@ -47,11 +47,16 @@ void FEEDataAnaHistos::FillTracks(std::vector<Track*> *trks, float weight){
         std::vector<double> mom = trk->getMomentum();
         double p = sqrt(pow(mom[0], 2) + pow(mom[1], 2) + pow(mom[2], 2));
 
-        if(charge == 1) Fill1DHisto("p_positive_tracks_h", p, weight);
-        else if(charge == -1) Fill1DHisto("p_negative_tracks_h", p, weight);
-
         std::vector<double> positionAtEcal = trk->getPositionAtEcal();
         Fill2DHisto("xy_positionAtEcal_tracks_hh", positionAtEcal[0], positionAtEcal[1], weight);
 
+        if(charge == 1) {
+        	Fill1DHisto("p_positive_tracks_h", p, weight);
+        	Fill2DHisto("xy_positionAtEcal_positive_tracks_hh", positionAtEcal[0], positionAtEcal[1], weight);
+        }
+        else if(charge == -1) {
+        	Fill1DHisto("p_negative_tracks_h", p, weight);
+        	Fill2DHisto("xy_positionAtEcal_negative_tracks_hh", positionAtEcal[0], positionAtEcal[1], weight);
+        }
     }
 }
