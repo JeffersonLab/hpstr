@@ -581,6 +581,57 @@
         "maxY" : 4,
 		"xtitle" : "Hit counts of cluster",
         "ytitle" : "Energy of cluster [GeV]"
-    }
+    },
     
+	"n_tracks_triggered_h" : {
+        "bins"   : 5,
+        "minX"   : -0.5,
+        "maxX"   : 4.5,
+        "xtitle" : "N_{tracks}",
+        "ytitle" : "Events"
+    },
+ 	"n_clusters_triggered_h" : {
+        "bins"   : 5,
+        "minX"   : -0.5,
+        "maxX"   : 4.5,
+        "xtitle" : "N_{clusters}",
+        "ytitle" : "Events"
+    },
+	"n_vtxs_triggered_h" : {
+        "bins"   : 3,
+        "minX"   : -0.5,
+        "maxX"   : 2.5,
+        "xtitle" : "N_{vertices}",
+        "ytitle" : "Events"
+    },
+	"n_clusters_vs_n_tracks_triggered_hh" : {
+        "binsX"   : 5,
+        "minX"   : -0.5,
+        "maxX"   : 4.5,
+		"binsY"   : 5,
+        "minY"   : -0.5,
+        "maxY"   : 4.5,
+        "xtitle" : "N_{tracks}",
+        "ytitle" : "N_{clusters}"
+    },
+	"n_clusters_vs_n_vtxs_triggered_hh" : {
+        "binsX"   : 3,
+        "minX"   : -0.5,
+        "maxX"   : 2.5,
+		"binsY"   : 5,
+        "minY"   : -0.5,
+        "maxY"   : 4.5,
+        "xtitle" : "N_{vertices}",
+        "ytitle" : "N_{clusters}"
+    },
+	"n_tracks_vs_n_vtxs_triggered_hh" : {
+        "binsX"   : 3,
+        "minX"   : -0.5,
+        "maxX"   : 2.5,
+		"binsY"   : 5,
+        "minY"   : -0.5,
+        "maxY"   : 4.5,
+        "xtitle" : "N_{vertices}",
+        "ytitle" : "N_{tracks}"
+    }    
 }

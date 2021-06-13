@@ -16,7 +16,9 @@
 #define CLUSTERENERGYTHRESHOLD 0.1 // threshold of cluster energy for analyzable events
 #define CLUSTERENERGYMIN 0.71 // minimum of cluster energy
 #define CLUSTERENERGYMAX 1.56 // maximum of cluster energy
-#define CLUSTERNHTSMIN 2 // minimum for number of cluster's hits
+#define CLUSTERXMAX -10 // maximum of x index
+#define CLUSTERYMIN -2 // minimum of y index
+#define CLUSTERYMAX 2 // maximum of y index
 #define ROTATIONANGLEAROUNDY 0.0305 // rad
 #define DIFFENERGYMIN -0.35 // minimum for difference between measured and calculated energy
 #define DIFFENERGYMAX 0.34 // maximum for difference between measured and calculated energy
@@ -87,6 +89,10 @@ void TriggerParametersExtractionMollerAnaProcessor::initialize(TTree* tree) {
     //NHits dependence energy
     func_nhde = new TF1("func_nhde", "pol1", 0, 20);
     func_nhde->SetParameters(pars_nhde);
+
+    //Upper limit for position dependent energy
+    func_pde_moller = new TF1("func_pde_moller", "pol2", -22, 0);
+    func_pde_moller->SetParameters(pars_pde_moller);
 
     // Kinematic equations
     // E vs theta
@@ -283,11 +289,17 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
 			histos->Fill1DHisto("n_clusters_xAxis_analyzable_events_h", ix, weight);
 			histos->Fill2DHisto("xy_indices_clusters_analyzable_events_hh",ix, iy, weight);
-			histos->Fill2DHisto("energy_vs_ix_clusters_analyzable_events_hh", ix, cluster.getEnergy(), weight);
-			histos->Fill2DHisto("energy_vs_iy_clusters_analyzable_events_hh", iy, cluster.getEnergy(), weight);
+			histos->Fill2DHisto("energy_vs_ix_clusters_analyzable_events_hh",
+					ix, cluster.getEnergy(), weight);
+			histos->Fill2DHisto("energy_vs_iy_clusters_analyzable_events_hh",
+					iy, cluster.getEnergy(), weight);
 
-			if(cluster.getEnergy() < CLUSTERENERGYMAX && cluster.getEnergy() > CLUSTERENERGYMIN) flag_triggered_analyzable_event = true;
-
+			if (cluster.getEnergy() <= CLUSTERENERGYMAX
+					&& cluster.getEnergy() >= CLUSTERENERGYMIN
+					&& ix <= CLUSTERXMAX && iy >= CLUSTERYMIN
+					&& iy <= CLUSTERYMAX
+					&& cluster.getEnergy() <= func_pde_moller->Eval(ix))
+				flag_triggered_analyzable_event = true;
 		}
 
 		for(int i = 0; i < n_clusters_bot_cut; i++){
@@ -327,7 +339,6 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
 			}
 		}
-
 	}
 
 	bool flag_triggered_analyzable_event_and_pass_kinematic_cuts = false;
@@ -517,6 +528,34 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
     }
 
+    bool flag_triggered = false;
+	for(int i = 0; i < n_cl; i++){
+		CalCluster* cluster = gtpClusters_->at(i);
+		double energy = cluster->getEnergy();
+
+		CalHit* seed = (CalHit*)cluster->getSeed();
+
+		int ix = seed -> getCrystalIndices()[0];
+		if(ix < 0) ix++;
+		int iy = seed -> getCrystalIndices()[1];
+
+		if (energy <= CLUSTERENERGYMAX
+				&& energy >= CLUSTERENERGYMIN
+				&& ix <= CLUSTERXMAX && iy >= CLUSTERYMIN
+				&& iy <= CLUSTERYMAX
+				&& energy <= func_pde_moller->Eval(ix))
+			flag_triggered = true;
+	}
+
+	if(flag_triggered){
+		histos->Fill1DHisto("n_tracks_triggered_h", n_tracks, weight);
+		histos->Fill1DHisto("n_clusters_triggered_h", n_cl, weight);
+		histos->Fill1DHisto("n_vtxs_triggered_h", n_vtxs, weight);
+
+		histos->Fill2DHisto("n_clusters_vs_n_tracks_triggered_hh", n_tracks, n_cl, weight);
+		histos->Fill2DHisto("n_clusters_vs_n_vtxs_triggered_hh", n_vtxs, n_cl, weight);
+		histos->Fill2DHisto("n_tracks_vs_n_vtxs_triggered_hh", n_vtxs, n_tracks, weight);
+	}
 
     return true;
 }
