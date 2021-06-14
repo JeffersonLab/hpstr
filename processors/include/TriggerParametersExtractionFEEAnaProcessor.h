@@ -81,10 +81,10 @@ class TriggerParametersExtractionFEEAnaProcessor : public Processor {
 		double TRACKPMIN = 3.05; // 4 sigma
 		double TRACKPMAX = 4.32; // 4 sigma
 		double CLUSTERENERGYTHRESHOLD = 0.1; // threshold of cluster energy for analyzable events
-		double CLUSTERENERGYMINNOCUT = 2.47; // for no cut; minimum of cluster energy; 3 sigma for double gaussians
-		double CLUSTERENERGYMAXNOCUT = 3.60; // for no cut; maximum of cluster energy; 5 sigma for double gaussians
-		double CLUSTERENERGYMINANALYZABLE = 2.52; // for analyzable events, minimum of cluster energy; 3 sigma for double gaussians
-		double CLUSTERENERGYMAXANALYZABLE = 3.58; // for analyzable events, maximum of cluster energy; 5 sigma for double gaussians
+		double CLUSTERENERGYMINNOCUT = 2.11; // for no cut; minimum of cluster energy; 3 sigma for double gaussians
+		double CLUSTERENERGYMAXNOCUT = 3.87; // for no cut; maximum of cluster energy; 5 sigma for double gaussians
+		double CLUSTERENERGYMINANALYZABLE = 2.24; // for analyzable events, minimum of cluster energy; 3 sigma for double gaussians
+		double CLUSTERENERGYMAXANALYZABLE = 3.84; // for analyzable events, maximum of cluster energy; 5 sigma for double gaussians
 		double CLUSTERNHTSMINNOCUT = 3; // for no cut, minimum for number of cluster's hits
 		double CLUSTERNHTSMINANALYZABLE  = 3; // for analyzable events,  minimum for number of cluster's hits
 
