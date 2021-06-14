@@ -220,6 +220,6 @@
         "maxX"   : 9.5,
         "xtitle" : "N_{clusters}",
         "ytitle" : "Events"
-    },  
+    }  
     
 }
