@@ -130,30 +130,30 @@ class TriggerParametersExtractionAnaProcessor : public Processor {
         TF1 *func_energy_slope;
 
         //Parameters of cut functions for X
-        double pos_top_topCutX[2] = {19.7899, 0.902732};
-        double pos_top_botCutX[2] = {-14.515, 0.850882};
+        double pos_top_topCutX[2] = {20.5128, 0.896808};
+        double pos_top_botCutX[2] = {-13.4493, 0.845145};
 
-        double neg_top_topCutX[2] = {22.4311, 0.865347};
-        double neg_top_botCutX[2] = {-20.9517, 0.889685};
+        double neg_top_topCutX[2] = {21.9999, 0.866766};
+        double neg_top_botCutX[2] = {-20.7497, 0.903365};
 
-        double pos_bot_topCutX[2] = {17.7478, 0.910524};
-        double pos_bot_botCutX[2] = {-13.286, 0.846081};
+        double pos_bot_topCutX[2] = {20.1246, 0.898751};
+        double pos_bot_botCutX[2] = {-13.0183, 0.842857};
 
-        double neg_bot_topCutX[2] = {23.5512, 0.867873};
-        double neg_bot_botCutX[2] = {-21.6512, 0.888276};
+        double neg_bot_topCutX[2] = {23.4249, 0.867771};
+        double neg_bot_botCutX[2] = {-21.4538, 0.905457};
 
         //Parameters of cut functions for Y
-        double pos_top_topCutY[2] = {7.21456, 0.921233};
-        double pos_top_botCutY[2] = {-5.25623, 0.869386};
+        double pos_top_topCutY[2] = {7.16273, 0.929672};
+        double pos_top_botCutY[2] = {-5.67945, 0.878445};
 
-        double neg_top_topCutY[2] = {7.1885, 0.900118};
-        double neg_top_botCutY[2] = {-5.84294, 0.903104};
+        double neg_top_topCutY[2] = {7.71179, 0.902755};
+        double neg_top_botCutY[2] = {-5.92585, 0.905328};
 
-        double pos_bot_topCutY[2] = {4.31765, 0.854};
-        double pos_bot_botCutY[2] = {-6.24903, 0.933162};
+        double pos_bot_topCutY[2] = {4.62628, 0.864853};
+        double pos_bot_botCutY[2] = {-6.37296, 0.938625};
 
-        double neg_bot_topCutY[2] = {4.91401, 0.88867};
-        double neg_bot_botCutY[2] = {-6.39967, 0.910099};
+        double neg_bot_topCutY[2] = {4.7885, 0.889888};
+        double neg_bot_botCutY[2] = {-6.75031, 0.913876};
 
         //Parameters of cut function for PDE
         double pars_pde[4] = {0.751987, -0.0527523, 0.00133877, -6.13361e-06}; // 99%
