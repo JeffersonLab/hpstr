@@ -14,16 +14,16 @@
 #define PI 3.14159265358979
 #define CHI2NDFTHRESHOLD 20
 #define CLUSTERENERGYTHRESHOLD 0.1 // threshold of cluster energy for analyzable events
-#define CLUSTERENERGYMIN 0.71 // minimum of cluster energy
-#define CLUSTERENERGYMAX 1.56 // maximum of cluster energy
+#define CLUSTERENERGYMIN 0.69 // minimum of cluster energy
+#define CLUSTERENERGYMAX 1.52 // maximum of cluster energy
 #define CLUSTERXMAX -10 // maximum of x index
 #define CLUSTERYMIN -2 // minimum of y index
 #define CLUSTERYMAX 2 // maximum of y index
 #define ROTATIONANGLEAROUNDY 0.0305 // rad
-#define DIFFENERGYMIN -0.35 // minimum for difference between measured and calculated energy
-#define DIFFENERGYMAX 0.34 // maximum for difference between measured and calculated energy
-#define DIFFTHETAMIN -0.0028 // minimum for difference between measured and calculated theta before rotation
-#define DIFFTHETAMAX 0.0046 // maximum for difference between measured and calculated theta before rotation
+#define DIFFENERGYMIN -0.34 // minimum for difference between measured and calculated energy
+#define DIFFENERGYMAX 0.32 // maximum for difference between measured and calculated energy
+#define DIFFTHETAMIN -0.0030 // minimum for difference between measured and calculated theta before rotation
+#define DIFFTHETAMAX 0.0045 // maximum for difference between measured and calculated theta before rotation
 
 TriggerParametersExtractionMollerAnaProcessor::TriggerParametersExtractionMollerAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
@@ -32,7 +32,7 @@ TriggerParametersExtractionMollerAnaProcessor::TriggerParametersExtractionMoller
 TriggerParametersExtractionMollerAnaProcessor::~TriggerParametersExtractionMollerAnaProcessor(){}
 
 void TriggerParametersExtractionMollerAnaProcessor::configure(const ParameterSet& parameters) {
-    std::cout << "Configuring EcalTimingAnaProcessor" <<std::endl;
+    std::cout << "Configuring TriggerParametersExtractionMollerAnaProcessor" <<std::endl;
     try
     {
         debug_           = parameters.getInteger("debug");

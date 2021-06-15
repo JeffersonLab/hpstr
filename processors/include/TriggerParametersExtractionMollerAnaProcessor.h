@@ -119,11 +119,11 @@ class TriggerParametersExtractionMollerAnaProcessor : public Processor {
 
         //NHits dependence energy
         TF1 *func_nhde;
-        double pars_nhde[2] = {1.48511, 0.0147336}; // 5 sigma
+        double pars_nhde[2] = {1.46096, 0.0116316e}; // 5 sigma
 
         //Upper limit for position dependent energy
         TF1 *func_pde_moller;
-        double pars_pde_moller[3] = {2.73972, 0.147281, 0.00258355}; // 3 sigma
+        double pars_pde_moller[3] = {2.49146, 0.125044, 0.002076}; // 3 sigma
 
 
         // Kinematic equations

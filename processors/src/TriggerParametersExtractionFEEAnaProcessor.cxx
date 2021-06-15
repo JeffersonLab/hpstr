@@ -20,7 +20,7 @@ TriggerParametersExtractionFEEAnaProcessor::TriggerParametersExtractionFEEAnaPro
 TriggerParametersExtractionFEEAnaProcessor::~TriggerParametersExtractionFEEAnaProcessor(){}
 
 void TriggerParametersExtractionFEEAnaProcessor::configure(const ParameterSet& parameters) {
-    std::cout << "Configuring EcalTimingAnaProcessor" <<std::endl;
+    std::cout << "Configuring TriggerParametersExtractionFEEAnaProcessor" <<std::endl;
     try
     {
         debug_           = parameters.getInteger("debug");
