@@ -14,7 +14,7 @@ export LD_LIBRARY_PATH=@CMAKE_INSTALL_PREFIX@/lib:@LCIO_DIR@/lib:$LD_LIBRARY_PAT
 
 # Setup ROOT if necessary.
 if [ ! -v ROOTSYS ]; then
-    . @ROOT_DIR@/../bin/thisroot.sh
+    . @ROOT_DIR@/bin/thisroot.sh
 fi
 
 # Uncomment to debug env setup.

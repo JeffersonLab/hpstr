@@ -56,6 +56,7 @@ class MCAnaProcessor : public Processor {
         std::string partColl_{"MCParticle"};
         std::string trkrHitColl_{"TrackerHits"};
         std::string ecalHitColl_{"EcalHits"};
+	std::string analysis_{"vertex"};
 
 
         //Debug Level
