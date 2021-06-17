@@ -40,7 +40,7 @@ class BlFitHistos : public HistoManager{
                 simpleGausFit_ = false;
         }
 
-        void getHistosFromFile(TFile* inFile, std::vector<std::string> hybrid);
+        void getHistosFromFile(TFile* inFile, std::string layer = "");
         void Chi2GausFit(std::map<std::string, TH2F*> histos2d, int nPointsDer_,int rebin_i, int xmin_,int minStats_, int noisyRMS_, int deadRMS_, FlatTupleMaker* flat_tuple_);
         
     private:

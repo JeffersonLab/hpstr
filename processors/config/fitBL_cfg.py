@@ -9,9 +9,9 @@ def timeSample_callback(options, opt, value, parser):
 
 
 #To fit 2d histograms from file, provide a list of strings that match histograms of interest
-#If attempting to run over all hybrids, aka by not specifying the Layer number, RAM requirements may crash the program.
-base.parser.add_argument('-s', '--hybrid', nargs='+', type=str, dest="hybrid",default="", 
-        help="Examples: -s SvtHybrids0 L1 or SvtHybrids0 L1T_axial or SvtHybrids0")
+#If attempting to run over all layers, aka by not specifying the Layer number, RAM requirements may crash the program.
+base.parser.add_argument('-l', '--layer', type=str, dest="layer",default="", 
+        help="To run on all layers, leave default. To select specific layer: L<n><T/B>")
 
 #Choose the RMS value that indicates a "dead" channel. This is a channel with low RMS compared to other channels, and varies based on Run
 base.parser.add_argument("-deadRMS", '--deadRMS', type=int, dest="deadRMS", 
@@ -51,7 +51,7 @@ print('Root file: %s' % root_file)
 
 # Use the input file to set the output file name
 histo_file = options.inFilename[0]
-hybrid = options.hybrid
+layer = options.layer
 
 p = HpstrConf.Process()
 
@@ -70,7 +70,8 @@ fitBL = HpstrConf.Processor('fitBL', 'SvtBlFitHistoProcessor')
 #   Processor Configuration   #
 ###############################
 fitBL.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/SvtBlFits.json'
-fitBL.parameters["hybrid"] = options.hybrid
+fitBL.parameters["rawhitsHistCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/baselinefits/rawSvtHits.json'
+fitBL.parameters["layer"] = options.layer
 fitBL.parameters["rebin"] = options.rebin
 fitBL.parameters["nPoints"] = options.nPoints
 fitBL.parameters["xmin"] = options.xmin

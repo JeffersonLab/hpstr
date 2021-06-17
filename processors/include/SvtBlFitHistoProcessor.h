@@ -39,10 +39,13 @@ class SvtBlFitHistoProcessor : public Processor {
         TFile* inF_{nullptr};
         TFile* outF_chi2{nullptr};
 
-        //Vector that holds hybrid names
-        std::vector<std::string> hybrid_{};
+        //Select which layer to fit baselines. Default is all.
+        std::string layer_{""};
         //json file for histo config
         std::string histCfgFilename_;
+
+        //json file for reading in rawsvthit histograms
+        std::string rawhitsHistCfgFilename_;
 
         //Histogram handlers
         BlFitHistos* fitHistos_{nullptr};

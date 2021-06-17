@@ -1,71 +1,64 @@
 #include "BlFitHistos.h"
 
 BlFitHistos::BlFitHistos() {
+    //ModuleMapper used to translate between hw and sw names
     mmapper_ = new ModuleMapper();
+
+    //Global svtIDMap built in ModuleMapper. Required to output baselines in database format
     svtIDMap = mmapper_->buildChannelSvtIDMap();
 }
-
-
-
 
 BlFitHistos::~BlFitHistos() {
 }
 
-void BlFitHistos::getHistosFromFile(TFile* inFile, std::vector<std::string> hybrid){
+void BlFitHistos::getHistosFromFile(TFile* inFile, std::string layer){
     
-    TIter next(inFile->GetListOfKeys());
-    TKey *key;
-    while ((key = (TKey*)next())) {
-        std::string classType = key->GetClassName();
-        std::string s(key->GetName());
-        int tagFound = 1;
-        for(std::vector<std::string>::const_iterator i = hybrid.begin(); i != hybrid.end(); i++) {
-            if (s.find(*i) == std::string::npos) tagFound = tagFound*0;
-        }
-        if(tagFound ==0) continue;
+    for (auto hist: _h_configs.items()) {
+        std::string h_name = hist.key();
+        if (h_name.find(layer) == std::string::npos)
+            continue;
+        std::size_t found = (hist.key()).find_last_of("_");
+        std::string extension = hist.key().substr(found+1);
 
-        if (classType.find("TH1")!=std::string::npos) {
-            histos1d[key->GetName()] = (TH1F*) key->ReadObj();
-            histos1dNamesfromTFile.push_back(key->GetName());
-        }
-        if (classType.find("TH2")!=std::string::npos) {
-            std::cout << "Found TH2: " << key->GetName()  << std::endl;
-            histos2d[key->GetName()] = (TH2F*) key->ReadObj();
-            histos2dNamesfromTFile.push_back(key->GetName());
-            std::cout << histos2d[key->GetName()]->GetName() << std::endl;
+        TIter next(inFile->GetListOfKeys());
+        TKey *key;
+        bool got = false;
+        std::string histoname;
+        while ((key = (TKey*)next())) {
+            std::string name(key->GetName());
+            if (name.find(h_name) != std::string::npos){
+                TH2F *hh = (TH2F*) inFile-> Get(key->GetName());
+                histos2d[key->GetName()] = hh;
+            }
         }
     }
- 
 }
 
 void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsDer_,int rebin_,int xmin_, int minStats_, int noisyRMS_, int deadRMS_, FlatTupleMaker* flat_tuple_) {
      
+    //Get half module string names 
+    std::vector<std::string> halfmodule_strings;
+    mmapper_->getStrings(halfmodule_strings);
 
-    //Get all hybrid strings, aka L<n><T,B>_<axial,stereo>_<ele,pos>
-    std::vector<std::string> hybridStrings = mmapper_->getHybridStrings();
-
-    //Loop over all 2D histogram that were retrieved from input file
+    //Loop over rawsvthit 2D histograms, one for each selected halfmodule
     for(std::map<std::string, TH2F*>::iterator it = histos2d.begin(); it != histos2d.end(); ++it)
     {
-        TH2F* histo_hh = it->second; 
-        histo_hh->RebinY(rebin_);
-        histo_hh->Write();
-        std::string SvtAna2DHisto_key = it->first;
-        SvtAna2DHisto_key.erase(SvtAna2DHisto_key.end()-3,SvtAna2DHisto_key.end());
+        TH2F* halfmodule_hh = it->second; 
+        halfmodule_hh->RebinY(rebin_);
+        halfmodule_hh->Write();
+        std::string hh_name = it->first;
 
-        //Look for hybrid string within 2d histogram key
-        std::string hybridString;
-        for(std::vector<std::string>::iterator it = hybridStrings.begin(); it != hybridStrings.end(); ++it){
-            if(SvtAna2DHisto_key.find(*it) != std::string::npos){
-                hybridString = *it;
-                std::cout << "hybridString is " << hybridString << std::endl;
+        //get the hardware tag for this F<n>H<M>. Required for svtid mapping
+        std::string hwTag;
+
+        for(std::vector<std::string>::iterator it = halfmodule_strings.begin(); it != halfmodule_strings.end(); ++it){
+            if(hh_name.find(*it) != std::string::npos){
+                hwTag = mmapper_->getHwFromString(*it);
+                std::cout << "hwTag for " << hh_name << " is " << hwTag << std::endl;
                 break;
             }
         }
         
-        //get the hardware tag for this F<n>H<M>
-        std::string hwTag = mmapper_->getHwFromString(hybridString);
-
         //Perform fitting procedure over all channels on a sensor
         for(int cc=0; cc < 640 ; ++cc) 
         {
@@ -78,7 +71,7 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
             double TFRE = 1.0;
 
             //Set Channel and Hybrid information and paramaters in the flat tuple
-            flat_tuple_->setVariableValue("SvtAna2DHisto_key", SvtAna2DHisto_key);
+            flat_tuple_->setVariableValue("hh_name", hh_name);
             flat_tuple_->setVariableValue("channel", cc);
             flat_tuple_->setVariableValue("svt_id", svt_id);
             flat_tuple_->setVariableValue("minbinThresh",(double)xmin_);
@@ -87,9 +80,9 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
 
 
             //Get YProjection (1D Channel Histo) from 2D Histogram 
-            TH1D* projy_h = histo_hh->ProjectionY(Form("%s_proY_ch%i",SvtAna2DHisto_key.c_str(),cc),
+            TH1D* projy_h = halfmodule_hh->ProjectionY(Form("%s_proY_ch%i",hh_name.c_str(),cc),
                     cc+1,cc+1,"e");
-            projy_h->SetTitle(Form("%s_proY_ch%i",SvtAna2DHisto_key.c_str(),cc));
+            projy_h->SetTitle(Form("%s_proY_ch%i",hh_name.c_str(),cc));
 
             //Check number of entries and RMS of channel
             flat_tuple_->setVariableValue("n_entries", projy_h->GetEntries());

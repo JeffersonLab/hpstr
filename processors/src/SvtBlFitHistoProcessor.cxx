@@ -16,7 +16,8 @@ void SvtBlFitHistoProcessor::configure(const ParameterSet& parameters) {
     try
     {
         histCfgFilename_ = parameters.getString("histCfg");
-        hybrid_ = parameters.getVString("hybrid");
+        rawhitsHistCfgFilename_ = parameters.getString("rawhitsHistCfg");
+        layer_ = parameters.getString("layer");
         rebin_ = parameters.getInteger("rebin");
         nPointsDer_ = parameters.getInteger("nPoints");
         xmin_ = parameters.getInteger("xmin");
@@ -38,18 +39,22 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     //InFile containing 2D histograms from the SvtCondAnaProcessor
     inF_ = new TFile(inFilename.c_str());
     outF_ = new TFile(outFilename.c_str(),"RECREATE");
+
+    //init tuple to store fit values
     flat_tuple_ = new FlatTupleMaker(outFilename.c_str(), "gaus_fit");
 
+    //Initialize fit histos
     fitHistos_ = new BlFitHistos();
     //To fit channels with a simple gaussian, set configurable param to true
     fitHistos_->setSimpleGausFit(simpleGausFit_);
     std::cout << "[BlFitHistos] Loading 2D Histos" << std::endl;
-    fitHistos_->getHistosFromFile(inF_,hybrid_);
+    fitHistos_->loadHistoConfig(rawhitsHistCfgFilename_);
+    fitHistos_->getHistosFromFile(inF_,layer_);
 
 
    //Setup flat tuple branches
     //Name of each hybrid
-    flat_tuple_->addString("SvtAna2DHisto_key");
+    flat_tuple_->addString("rawhits_hname");
     //number of entries in channel
     flat_tuple_->addString("n_entries");
     //minimum required counts in bin to start fit
