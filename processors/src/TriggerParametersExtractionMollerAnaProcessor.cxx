@@ -122,7 +122,6 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 	histos->Fill2DHisto("n_clusters_vs_n_vtxs_hh", n_vtxs, n_cl, weight);
 	histos->Fill2DHisto("n_tracks_vs_n_vtxs_hh", n_vtxs, n_tracks, weight);
 
-
 	std::vector<Track> tracks_top;
 	std::vector<Track> tracks_bot;
 
@@ -163,7 +162,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		std::vector<double> positionAtEcalTop = trackTop.getPositionAtEcal();
 
 		for(int j = 0; j < n_tracks_bot; j++) {
-			Track trackBot = tracks_bot.at(i);
+			Track trackBot = tracks_bot.at(j);
 			std::vector<double> positionAtEcalBot = trackBot.getPositionAtEcal();
 
 			histos->Fill2DHisto("xy_positionAtEcal_track_pair_hh",positionAtEcalTop[0], positionAtEcalTop[1], weight);
@@ -331,7 +330,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 			std::vector<double> positionAtEcalTop = trackTop.getPositionAtEcal();
 
 			for(int j = 0; j < n_tracks_bot; j++) {
-				Track trackBot = tracks_bot.at(i);
+				Track trackBot = tracks_bot.at(j);
 				std::vector<double> positionAtEcalBot = trackBot.getPositionAtEcal();
 
 				histos->Fill2DHisto("xy_positionAtEcal_tracks_analyzable_events_hh",positionAtEcalTop[0], positionAtEcalTop[1], weight);
