@@ -212,6 +212,14 @@
         "maxY" : 5.5,
 		"xtitle" : "X index",
         "ytitle" : "Y index"
-    }
+    },
+    
+	"n_clusters_triggered_h" : {
+        "bins"   : 10,
+        "minX"   : -0.5,
+        "maxX"   : 9.5,
+        "xtitle" : "N_{clusters}",
+        "ytitle" : "Events"
+    }  
     
 }

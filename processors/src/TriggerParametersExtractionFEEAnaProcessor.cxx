@@ -20,7 +20,7 @@ TriggerParametersExtractionFEEAnaProcessor::TriggerParametersExtractionFEEAnaPro
 TriggerParametersExtractionFEEAnaProcessor::~TriggerParametersExtractionFEEAnaProcessor(){}
 
 void TriggerParametersExtractionFEEAnaProcessor::configure(const ParameterSet& parameters) {
-    std::cout << "Configuring EcalTimingAnaProcessor" <<std::endl;
+    std::cout << "Configuring TriggerParametersExtractionFEEAnaProcessor" <<std::endl;
     try
     {
         debug_           = parameters.getInteger("debug");
@@ -211,6 +211,20 @@ bool TriggerParametersExtractionFEEAnaProcessor::process(IEvent* ievent) {
 			}
 		}
 	}
+
+	bool flag_trigger = false;
+	for(int i = 0; i < n_cl; i++){
+		CalCluster* cluster = gtpClusters_->at(i);
+
+		double energy = cluster->getEnergy();
+		double nHits = cluster->getNHits();
+
+
+		if(energy >= CLUSTERENERGYMINANALYZABLE && energy <= CLUSTERENERGYMAXANALYZABLE && nHits >= CLUSTERNHTSMINANALYZABLE)
+			 flag_trigger = true;
+	}
+
+	if(flag_trigger) histos->Fill1DHisto("n_clusters_triggered_h", n_cl, weight);
 
     return true;
 }

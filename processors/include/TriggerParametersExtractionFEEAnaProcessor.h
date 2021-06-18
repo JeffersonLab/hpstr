@@ -81,10 +81,10 @@ class TriggerParametersExtractionFEEAnaProcessor : public Processor {
 		double TRACKPMIN = 3.05; // 4 sigma
 		double TRACKPMAX = 4.32; // 4 sigma
 		double CLUSTERENERGYTHRESHOLD = 0.1; // threshold of cluster energy for analyzable events
-		double CLUSTERENERGYMINNOCUT = 2.47; // for no cut; minimum of cluster energy; 3 sigma for double gaussians
-		double CLUSTERENERGYMAXNOCUT = 3.60; // for no cut; maximum of cluster energy; 5 sigma for double gaussians
-		double CLUSTERENERGYMINANALYZABLE = 2.52; // for analyzable events, minimum of cluster energy; 3 sigma for double gaussians
-		double CLUSTERENERGYMAXANALYZABLE = 3.58; // for analyzable events, maximum of cluster energy; 5 sigma for double gaussians
+		double CLUSTERENERGYMINNOCUT = 2.11; // for no cut; minimum of cluster energy; 3 sigma for double gaussians
+		double CLUSTERENERGYMAXNOCUT = 3.87; // for no cut; maximum of cluster energy; 5 sigma for double gaussians
+		double CLUSTERENERGYMINANALYZABLE = 2.24; // for analyzable events, minimum of cluster energy; 3 sigma for double gaussians
+		double CLUSTERENERGYMAXANALYZABLE = 3.84; // for analyzable events, maximum of cluster energy; 5 sigma for double gaussians
 		double CLUSTERNHTSMINNOCUT = 3; // for no cut, minimum for number of cluster's hits
 		double CLUSTERNHTSMINANALYZABLE  = 3; // for analyzable events,  minimum for number of cluster's hits
 
@@ -112,18 +112,18 @@ class TriggerParametersExtractionFEEAnaProcessor : public Processor {
         TF1 *func_energy_slope;
 
         //Parameters of cut functions for X
-        double top_topCutX[2] = {22.4311, 0.865347};
-        double top_botCutX[2] = {-20.9517, 0.889685};
+        double top_topCutX[2] = {21.9999, 0.866766};
+        double top_botCutX[2] = {-20.7497, 0.903365};
 
-        double bot_topCutX[2] = {23.5512, 0.867873};
-        double bot_botCutX[2] = {-21.6512, 0.888276};
+        double bot_topCutX[2] = {23.4249, 0.867771};
+        double bot_botCutX[2] = {-21.4538, 0.905457};
 
         //Parameters of cut functions for Y
-        double top_topCutY[2] = {7.1885, 0.900118};
-        double top_botCutY[2] = {-5.84294, 0.903104};
+        double top_topCutY[2] = {7.71179, 0.902755};
+        double top_botCutY[2] = {-5.92585, 0.905328};
 
-        double bot_topCutY[2] = {4.91401, 0.88867};
-        double bot_botCutY[2] = {-6.39967, 0.910099};
+        double bot_topCutY[2] = {4.7885, 0.889888};
+        double bot_botCutY[2] = {-6.75031, 0.913876};
 };
 
 #endif

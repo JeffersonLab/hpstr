@@ -104,22 +104,27 @@ class TriggerParametersExtractionMollerAnaProcessor : public Processor {
         TF1 *func_bot_botCutY;
 
         //Parameters of cut functions for X
-        double top_topCutX[2] = {22.4311, 0.865347};
-        double top_botCutX[2] = {-20.9517, 0.889685};
+        double top_topCutX[2] = {21.9999, 0.866766};
+        double top_botCutX[2] = {-20.7497, 0.903365};
 
-        double bot_topCutX[2] = {23.5512, 0.867873};
-        double bot_botCutX[2] = {-21.6512, 0.888276};
+        double bot_topCutX[2] = {23.4249, 0.867771};
+        double bot_botCutX[2] = {-21.4538, 0.905457};
 
         //Parameters of cut functions for Y
-        double top_topCutY[2] = {7.1885, 0.900118};
-        double top_botCutY[2] = {-5.84294, 0.903104};
+        double top_topCutY[2] = {7.71179, 0.902755};
+        double top_botCutY[2] = {-5.92585, 0.905328};
 
-        double bot_topCutY[2] = {4.91401, 0.88867};
-        double bot_botCutY[2] = {-6.39967, 0.910099};
+        double bot_topCutY[2] = {4.7885, 0.889888};
+        double bot_botCutY[2] = {-6.75031, 0.913876};
 
         //NHits dependence energy
         TF1 *func_nhde;
-        double pars_nhde[2] = {1.48511, 0.0147336}; // 5 sigma
+        double pars_nhde[2] = {1.46096, 0.0116316}; // 5 sigma
+
+        //Upper limit for position dependent energy
+        TF1 *func_pde_moller;
+        double pars_pde_moller[3] = {2.49146, 0.125044, 0.002076}; // 3 sigma
+
 
         // Kinematic equations
         TF1* func_E_vs_theta_before_roation;

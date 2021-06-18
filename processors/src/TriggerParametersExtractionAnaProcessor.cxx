@@ -27,7 +27,7 @@ TriggerParametersExtractionAnaProcessor::TriggerParametersExtractionAnaProcessor
 TriggerParametersExtractionAnaProcessor::~TriggerParametersExtractionAnaProcessor(){}
 
 void TriggerParametersExtractionAnaProcessor::configure(const ParameterSet& parameters) {
-    std::cout << "Configuring EcalTimingAnaProcessor" <<std::endl;
+    std::cout << "Configuring TriggerParametersExtractionAnaProcessor" <<std::endl;
     try
     {
         debug_           = parameters.getInteger("debug");
