@@ -91,8 +91,9 @@ for hybrid in hybridsFromFile:
 
     myTree = inFile.gaus_fit
     for fitData in myTree:
-        hybridFitKey = str(fitData.SvtAna2DHisto_key)
-        if hybrid == hybridFitKey+"_hh":
+        #hybridFitKey = str(fitData.SvtAna2DHisto_key)
+        hybridFitKey = str(fitData.halfmodule_hh)
+        if hybrid == hybridFitKey:
             channel.append(fitData.channel)
             mean.append(round(fitData.BlFitMean,3))
             sigma.append(round(fitData.BlFitSigma,3))
@@ -114,7 +115,8 @@ for hybrid in hybridsFromFile:
         RMS.append(round(rms,3))
 
     #Remove extra phrases in input plots to isolate Hybrid name
-    hybrid = hybrid.replace('raw_hits_','').replace('_SvtHybrids0_hh','')
+    #hybrid = hybrid.replace('raw_hits_','').replace('_SvtHybrids0_hh','')
+    hybrid = hybrid.replace('raw_hits_','').replace('baseline0_','').replace('_hh','')
     hwtag = mmap.str_to_hw(hybrid)
     feb = hwtag[0:2]
     hyb = hwtag[2:]
@@ -266,41 +268,47 @@ for hybrid in hybridsFromFile:
         canvas.Write()
         canvas.Close()
 
-outFile.Write()
+#outFile.Write()
 
 
 ##########################################################################################################
-#    ###Show Channel Graphs
-#    showgraphs = False
-#    if(showgraphs == True):
-#        cgdir = outFile.mkdir("%s_channel_graphs"%(hybrid))
-#        cgdir.cd()
-#        bw=hybrid_hh.GetXaxis().GetBinWidth(1)
-#        #if options.show_graphs == "show":
-#        myTree = inFile.gaus_fit
-#        print("TREE",myTree)
-#        for fitData in myTree:
-#           SvtAna2DHisto_key = str(fitData.SvtAna2DHisto_key)
-#           if hybrid == SvtAna2DHisto_key.replace('raw_hits_','').replace('_SvtHybrids0',''):
-#               cc=(fitData.channel)
-#
-#                mean_gr = buildTGraph("iterMean_%s_ch_%i"%(hybrid,cc),"iterMean_vs_Position_%s_ch_%i;FitRangeEnd;mean"%(hybrid,cc),len(fitData.iterFitRangeEnd),np.array(fitData.iterFitRangeEnd, dtype = float) ,np.array(fitData.iterMean, dtype = float),1)
-#
-#                chi2_gr = buildTGraph("iterChi2_%s_ch_%i"%(hybrid,cc),"iterChi2/NDF_vs_Position_%s_ch_%i;FitRangeEnd;chi2"%(hybrid,cc),len(fitData.iterFitRangeEnd),np.array(fitData.iterFitRangeEnd, dtype = float) ,np.array(fitData.iterChi2NDF, dtype = float),1)
-#                chi2_2Der_gr = buildTGraph("iterFit_chi2/NDF_2Der_%s_ch_%i"%(hybrid,cc),"iterChi2_2Der_%s_ch_%i;FitRangeEnd;chi2_2ndDeriv"%(hybrid,cc),len(fitData.iterChi2NDF_derRange),np.array(fitData.iterChi2NDF_derRange, dtype = float) ,np.array(fitData.iterChi2NDF_2der, dtype = float),1)
-#
-#                chi2_1Der_gr = buildTGraph("iterFit_chi2/NDF_1Der_%s_ch_%i"%(hybrid,cc),"iterChi2_1Der_%s_ch_%i;FitRangeEnd;chi2_1ndDeriv"%(hybrid,cc),len(fitData.iterChi2NDF_derRange),np.array(fitData.iterChi2NDF_derRange, dtype = float) ,np.array(fitData.iterChi2NDF_1der, dtype = float),1)
-#
-#                temp=fitData.iterChi2NDF
-#                ratio = [i / j for i,j in zip(fitData.iterChi2NDF_2der,temp[3:])]
-#
-#                ratio_gr = buildTGraph("ratio_%s_ch_%i"%(hybrid,cc),"ratio_2Der/Chi2_%s_ch_%i;FitRangeEnd;chi2NDF_2der/chi2NDF"%(hybrid,cc),len(fitData.iterChi2NDF_derRange),np.array(fitData.iterChi2NDF_derRange, dtype = float) ,np.array(ratio, dtype = float),1)
+    ###Show Channel Graphs
+    showgraphs = True
+    if(showgraphs == True):
+        cgdir = outFile.mkdir("%s_channel_graphs"%(hybrid))
+        cgdir.cd()
+        bw=hybrid_hh.GetXaxis().GetBinWidth(1)
+        #if options.show_graphs == "show":
+        myTree = inFile.gaus_fit
+        print("TREE",myTree)
+        for fitData in myTree:
+           #SvtAna2DHisto_key = str(fitData.halfmodule_hh)
+           if str(fitData.halfmodule_hh).find(hybrid) != -1:
+           #if hybrid == SvtAna2DHisto_key.replace('raw_hits_','').replace('baseline0_',''):
+               cc=(fitData.channel)
 
+               mean_gr = buildTGraph("iterMean_%s_ch_%i"%(hybrid,cc),"iterMean_vs_Position_%s_ch_%i;FitRangeEnd;mean"%(hybrid,cc),len(fitData.iterFitRangeEnd),np.array(fitData.iterFitRangeEnd, dtype = float) ,np.array(fitData.iterMean, dtype = float),1)
 
+               chi2_gr = buildTGraph("iterChi2_%s_ch_%i"%(hybrid,cc),"iterChi2/NDF_vs_Position_%s_ch_%i;FitRangeEnd;chi2"%(hybrid,cc),len(fitData.iterFitRangeEnd),np.array(fitData.iterFitRangeEnd, dtype = float) ,np.array(fitData.iterChi2NDF, dtype = float),1)
+               chi2_2Der_gr = buildTGraph("iterFit_chi2/NDF_2Der_%s_ch_%i"%(hybrid,cc),"iterChi2_2Der_%s_ch_%i;FitRangeEnd;chi2_2ndDeriv"%(hybrid,cc),len(fitData.iterChi2NDF_derRange),np.array(fitData.iterChi2NDF_derRange, dtype = float) ,np.array(fitData.iterChi2NDF_2der, dtype = float),1)
 
-#                mean_gr.Write()
-#                chi2_gr.Write()
-#                chi2_1Der_gr.Write()
-#                chi2_2Der_gr.Write()
-#                ratio_gr.Write()
+               chi2_1Der_gr = buildTGraph("iterFit_chi2/NDF_1Der_%s_ch_%i"%(hybrid,cc),"iterChi2_1Der_%s_ch_%i;FitRangeEnd;chi2_1ndDeriv"%(hybrid,cc),len(fitData.iterChi2NDF_derRange),np.array(fitData.iterChi2NDF_derRange, dtype = float) ,np.array(fitData.iterChi2NDF_1der, dtype = float),1)
+
+               #temp=fitData.iterChi2NDF
+               #ratio = [i / j for i,j in zip(fitData.iterChi2NDF_2der,temp[3:])]
+
+               #ratio_gr = buildTGraph("ratio_%s_ch_%i"%(hybrid,cc),"ratio_2Der/Chi2_%s_ch_%i;FitRangeEnd;chi2NDF_2der/chi2NDF"%(hybrid,cc),len(fitData.iterChi2NDF_derRange),np.array(fitData.iterChi2NDF_derRange, dtype = float) ,np.array(ratio, dtype = float),1)
+
+               mean_gr.Draw()
+               chi2_gr.Draw()
+               chi2_1Der_gr.Draw()
+               chi2_2Der_gr.Draw()
+               #ratio_gr.Draw()
+
+               mean_gr.Write()
+               chi2_gr.Write()
+               chi2_1Der_gr.Write()
+               chi2_2Der_gr.Write()
+               #ratio_gr.Write()
+outFile.Write()
 #####

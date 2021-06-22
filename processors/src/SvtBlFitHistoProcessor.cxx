@@ -54,7 +54,7 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
 
    //Setup flat tuple branches
     //Name of each hybrid
-    flat_tuple_->addString("rawhits_hname");
+    flat_tuple_->addString("halfmodule_hh");
     //number of entries in channel
     flat_tuple_->addString("n_entries");
     //minimum required counts in bin to start fit

@@ -71,7 +71,7 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
             double TFRE = 1.0;
 
             //Set Channel and Hybrid information and paramaters in the flat tuple
-            flat_tuple_->setVariableValue("hh_name", hh_name);
+            flat_tuple_->setVariableValue("halfmodule_hh", hh_name);
             flat_tuple_->setVariableValue("channel", cc);
             flat_tuple_->setVariableValue("svt_id", svt_id);
             flat_tuple_->setVariableValue("minbinThresh",(double)xmin_);
@@ -99,7 +99,6 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
                 flat_tuple_->setVariableValue("noisy", 0.0);
             }
 
-
             //The fit window minimum range is found to be the first bin containing a number of
             //entries >= some fraction of the maximum number of entries in the 1D histogram.
             //If that fraction is less than the configurable minimum bin threshold value, instead
@@ -116,6 +115,7 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
                 firstbin = projy_h->FindFirstBinAbove((double)frac*maxbin,1);
             }
             
+            //If channel is "dead" set flag
             if(chRMS < deadRMS_ || projy_h->GetEntries() == 0)
                 flat_tuple_->setVariableValue("dead",1.0);
 
@@ -155,19 +155,16 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
 
             //xmin is the start of the fit window. iterxmax will initially be iteratively fit and
             //then increased until some maximum allowed value, or until the chi2/Ndf > 100
-            int iter = 0;
             double xmin = projy_h->GetBinLowEdge(firstbin);
             double binwidth = projy_h->GetBinWidth(firstbin);
-            double iterxmax = xmin + 20.0*binwidth;
             
             //Define all iterative and final fit parameters
             std::vector<double> amp,mean,sigma,chi2,const_err,sigma_err,
                 fit_range_end,chi2_NDF,chi2_2D,chi2_1D,der2chi2,der2chi2R;
             std::vector<int> NDF;
 
-
             //Baseline signals are composed of a gaussian baseline, followed by a landau pile-up
-            //distribution. It is found that at the boundary of these two distributions, the
+            //It is found that at the boundary of these two distributions, the
             //second derivative of the Chi2/Ndf of a fit is maximized. 
             //Therefore, in order to determine the correct fit window, i.e. xmin and xmax, that
             //will fit a gaussian over just the baseline distribution, the fit works as follows:
@@ -175,7 +172,6 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
             //a fit on the histogram. Add Chi2/Ndf for the iterxmax of each fit to a vector.
             //Locate the iterxmax value that corresponds to the maximum Chi2/Ndf 2nd derivative. This
             //is where the fit window should end (xmax) 
-
 
             //If baseline fitting an online baseline, must set simpleGauseFit_ to true!
             if(simpleGausFit_ == true){
@@ -195,6 +191,9 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
                 continue;
             }
 
+            //iteratively fit distribution with gaussian until Chi2 blows up larger than 100
+            int iter = 0;
+            double iterxmax = xmin + 20.0*binwidth;
             double currentChi2 = 0.0;
             while(iterxmax < 6800.0 && currentChi2 < 100.0 || iter < 10)
             {
@@ -224,6 +223,7 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
             //and taking the difference between the two. The xposition of the maximum Chi2 2nd 
             //derivative is used to define the maximum fit range x-position
 
+            /*
             for(int i = nPointsDer_; i < chi2_NDF.size() - nPointsDer_; i++) 
             {
                 double derForward=(chi2_NDF.at(i+nPointsDer_)-chi2_NDF.at(i))/(nPointsDer_*binwidth);
@@ -250,6 +250,41 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
                 flat_tuple_->addToVector("iterChi2NDF_2der",der2);
                 flat_tuple_->addToVector("iterChi2NDF_1der",der);
             }
+            */
+
+            for(int i = nPointsDer_; i < chi2_NDF.size() - nPointsDer_; i++) 
+            {
+                double derForward=(chi2_NDF.at(i+nPointsDer_)-chi2_NDF.at(i))/(nPointsDer_*binwidth);
+                double derBack = (chi2_NDF.at(i)-chi2_NDF.at(i-nPointsDer_))/(nPointsDer_*binwidth);
+                double der = (derForward+derBack)/2.0;
+
+                if(der == der) 
+                {
+                    chi2_1D.push_back(der);
+                }
+                else
+                {
+                    chi2_1D.push_back(-9999.9);
+                }
+                flat_tuple_->addToVector("iterChi2NDF_1der",der);
+            }
+
+            for(int i = 3; i < chi2_1D.size() - 3; i++)
+            {
+                double derForward=(chi2_1D.at(i+3)-chi2_1D.at(i))/(3*binwidth);
+                double derBack = (chi2_1D.at(i)-chi2_1D.at(i-3))/(3*binwidth);
+                double der = (derForward+derBack)/2.0;
+
+                if(der == der) 
+                {
+                    chi2_2D.push_back(der);
+                }
+                else
+                {
+                    chi2_2D.push_back(-9999.9);
+                }
+                flat_tuple_->addToVector("iterChi2NDF_2der",der);
+            }
 
             //NO LONGER USED...
             //Take ratio of chi2/NDF 2nd derivative and chi2/NDF. ADC value of this maximum will be
@@ -263,8 +298,8 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
 
             //Create subrange for chi2_2D that accounts for derivative requiring <n> points prior  
             //and post point of interest
-            std::vector<double>::const_iterator first = fit_range_end.begin()+nPointsDer_;
-            std::vector<double>::const_iterator last=fit_range_end.begin()+nPointsDer_+chi2_2D.size();
+            std::vector<double>::const_iterator first = fit_range_end.begin()+2*nPointsDer_;
+            std::vector<double>::const_iterator last=fit_range_end.begin()+2*nPointsDer_+chi2_2D.size();
             std::vector<double> chi2_2D_range(first,last);
             
             //Find maximum Chi2/Ndf
@@ -280,24 +315,23 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
             double chi2_2D_xmax = chi2_2D_range.at(chi2_2D_maxIndex);
 
             //xmax defines the end of the fit window over the gaussian distribution. Ideally this
-            //position occurs at the boundary of the baseline and landau pile-up distributions
+            //position occurs at the boundary of the baseline and landau pile-up shapes
             double xmax = chi2_2D_xmax;
 
             //At this stage, there are a few possible outcomes from the current fit:
             //1. xmin and xmax correctly correspond to the range of the baseline distribution.
-            //The fit is a nice gaussian that closely follows the data to some degree.
+            //The fit is a nice gaussian that closely follows the data 
             //2. Chosen xmax does not correlate to the end of the baseline, and extends 
             //into the pile-up signal.The fit spans across the entire distribution and does not
             //at all resemble the baseline.
-            //3. Chosen xmax does not correlate to to to the end of the basline, and occurs too early
+            //3. Chosen xmax does not correlate to the end of the basline, and occurs too early
             //in the distribution. The fit only captures some small fraction of the baseline and 
-            //returns a gaussian with a large width.
+            //returns a gaussian with oversized width.
             //4. LowDaq-Threshold cuts off the baseline, so the fit returns a gaussian with 
             //a large width, but that accurately represents the baseline signal. These are flagged
             //as "lowdaq" channels.
             //If fit mean + N*Sigma > xmax, channel has low daq threshold *or* bad fit
    
-            
             //When using maximum Chi2/Ndf 2nd derivative to locate the fit window range, there
             //are sometimes anomalous large spikes in these vales  with no correlation to the 
             //expected fit window end. If a spike exists, the position that it occurs will be
