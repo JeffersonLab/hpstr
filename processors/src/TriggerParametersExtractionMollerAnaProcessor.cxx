@@ -358,6 +358,10 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
         Particle* particleTop = (Particle*)vtx->getParticles()->At(0);
         Particle* particleBot = (Particle*)vtx->getParticles()->At(1);
 
+        double pSum = particleTop->getEnergy() + particleBot->getEnergy();
+
+		histos->Fill1DHisto("pSum_vertex_h", pSum, weight);
+
         std::vector<double> momTop =  particleTop->getMomentum();
         std::vector<double> momBot =  particleBot->getMomentum();
 
@@ -423,6 +427,8 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
         if(flag_analyzable_event){
 			histos->Fill1DHisto("invariant_mass_vertex_analyzable_events_h", invariant_mass, weight);
 
+			histos->Fill1DHisto("pSum_vertex_analyzable_events_h", pSum, weight);
+
 			histos->Fill2DHisto("px_vs_py_vertex_analyzable_events_hh", momTop[0], momTop[1], weight);
 			histos->Fill2DHisto("px_vs_py_vertex_analyzable_events_hh", momBot[0], momBot[1], weight);
 
@@ -443,10 +449,14 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
             		|| (energy_diff_bot < DIFFENERGYMIN || energy_diff_bot > DIFFENERGYMAX)
     				|| (theta_diff < DIFFTHETAMIN || theta_diff > DIFFTHETAMAX))
         		histos->Fill1DHisto("invariant_mass_vertex_analyzable_events_out_of_kinematic_cuts_h", invariant_mass, weight);
+
+				histos->Fill1DHisto("pSum_vertex_analyzable_events_out_of_kinematic_cuts_h", pSum, weight);
         }
 
         if(flag_triggered_analyzable_event){
 			histos->Fill1DHisto("invariant_mass_vertex_triggered_analyzable_events_h", invariant_mass, weight);
+
+			histos->Fill1DHisto("pSum_vertex_triggered_analyzable_events_h", pSum, weight);
 
 			histos->Fill2DHisto("px_vs_py_vertex_triggered_analyzable_events_hh", momTop[0], momTop[1], weight);
 			histos->Fill2DHisto("px_vs_py_vertex_triggered_analyzable_events_hh", momBot[0], momBot[1], weight);
@@ -469,6 +479,8 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
         		&& energy_diff_bot > DIFFENERGYMIN && energy_diff_bot < DIFFENERGYMAX
 				&& theta_diff > DIFFTHETAMIN && theta_diff < DIFFTHETAMAX){
 			histos->Fill1DHisto("invariant_mass_vertex_triggered_analyzable_events_with_kinematic_cuts_h", invariant_mass, weight);
+
+			histos->Fill1DHisto("pSum_vertex_triggered_analyzable_events_with_kinematic_cuts_h", pSum, weight);
 
 			histos->Fill2DHisto("px_vs_py_vertex_triggered_analyzable_events_with_kinematic_cuts_hh", momTop[0], momTop[1], weight);
 			histos->Fill2DHisto("px_vs_py_vertex_triggered_analyzable_events_with_kinematic_cuts_hh", momBot[0], momBot[1], weight);
