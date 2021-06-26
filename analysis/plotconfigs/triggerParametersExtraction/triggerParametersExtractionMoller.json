@@ -311,6 +311,23 @@
         "xtitle" : "Invariant mass [GeV/c^{2}]",
         "ytitle" : "Vertices"
     },
+	"pSum_vertex_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+        "xtitle" : "pSum [GeV/c]",
+        "ytitle" : "Vertices"
+    },
+	"invariant_mass_vs_pSum_vertex_hh": { 
+		"binsX"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+  		"binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 0.12,
+        "xtitle" : "pSum [GeV/c]",
+        "ytitle" : "Invariant mass [GeV/c^{2}]"
+    },    
 	"px_vs_py_vertex_hh" : {
         "binsX" : 100,
         "minX" : -0.3,
@@ -369,12 +386,46 @@
         "xtitle" : "Invariant mass [GeV/c^{2}]",
         "ytitle" : "Vertices"
     },
+	"pSum_vertex_analyzable_events_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+        "xtitle" : "pSum [GeV/c]",
+        "ytitle" : "Vertices"
+    },
+	"invariant_mass_vs_pSum_vertex_analyzable_events_hh": { 
+		"binsX"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+  		"binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 0.12,
+        "xtitle" : "pSum [GeV/c]",
+        "ytitle" : "Invariant mass [GeV/c^{2}]"
+    },
 	"invariant_mass_vertex_analyzable_events_out_of_kinematic_cuts_h": { 
 		"bins"   : 100,
         "minX"   : 0,
         "maxX"   : 0.12,
         "xtitle" : "Invariant mass [GeV/c^{2}]",
         "ytitle" : "Vertices"
+    },
+	"pSum_vertex_analyzable_events_out_of_kinematic_cuts_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+        "xtitle" : "pSum [GeV/c]",
+        "ytitle" : "Vertices"
+    },
+	"invariant_mass_vs_pSum_vertex_analyzable_events_out_of_kinematic_cuts_hh": { 
+		"binsX"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+  		"binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 0.12,
+        "xtitle" : "pSum [GeV/c]",
+        "ytitle" : "Invariant mass [GeV/c^{2}]"
     },
 	"px_vs_py_vertex_analyzable_events_hh" : {
         "binsX" : 100,
@@ -434,6 +485,23 @@
         "xtitle" : "Invariant mass [GeV/c^{2}]",
         "ytitle" : "Vertices"
     },
+	"pSum_vertex_triggered_analyzable_events_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+        "xtitle" : "pSum [GeV/c]",
+        "ytitle" : "Vertices"
+    },
+	"invariant_mass_vs_pSum_vertex_triggered_analyzable_events_hh": { 
+		"binsX"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+  		"binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 0.12,
+        "xtitle" : "pSum [GeV/c]",
+        "ytitle" : "Invariant mass [GeV/c^{2}]"
+    },    
 	"px_vs_py_vertex_triggered_analyzable_events_hh" : {
         "binsX" : 100,
         "minX" : -0.3,
@@ -492,6 +560,23 @@
         "maxX"   : 0.12,
         "xtitle" : "Invariant mass [GeV/c^{2}]",
         "ytitle" : "Vertices"
+    },
+	"pSum_vertex_triggered_analyzable_events_with_kinematic_cuts_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+        "xtitle" : "pSum [GeV/c]",
+        "ytitle" : "Vertices"
+    },
+	"invariant_mass_vs_pSum_vertex_triggered_analyzable_events_with_kinematic_cuts_hh": { 
+		"binsX"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+  		"binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 0.12,
+        "xtitle" : "pSum [GeV/c]",
+        "ytitle" : "Invariant mass [GeV/c^{2}]"
     },
 	"px_vs_py_vertex_triggered_analyzable_events_with_kinematic_cuts_hh" : {
         "binsX" : 100,
