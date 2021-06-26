@@ -101,6 +101,8 @@ bool SvtBl2DEvioProcessor::process() {
     std::cout << "SvtBl2DEvioProcessor::process" << std::endl;
     unsigned long evt_count=0;
     unsigned long totalCount=0;
+    int l0APVmap[4] = {1, 0, 2, 3};
+    int APVmap[5] = {4, 3, 2, 1, 0};
 
     std::chrono::microseconds totalTime(0);
 
@@ -129,7 +131,7 @@ bool SvtBl2DEvioProcessor::process() {
             etool->PrintBank(10);
         }
         if( evt_count%50000 ==0 ){
-            //      /* statistics */
+            //      statistics
             auto time2 = std::chrono::system_clock::now();
             std::chrono::microseconds delta_t = std::chrono::duration_cast<std::chrono::microseconds>(time2-time1);
             totalTime += delta_t;
@@ -153,7 +155,11 @@ bool SvtBl2DEvioProcessor::process() {
                 int module = std::stoi(swTag.substr(swTag.find("m")+1, swTag.length()));
                 rawHit->setLayer(layer);
                 rawHit->setModule(module);
-                rawHit->setStrip(int(etool->SVT->svt_data[i].head.apv)*128+int(etool->SVT->svt_data[i].head.chan));
+                int apv = int(etool->SVT->svt_data[i].head.apv);
+                int strip = l0APVmap[apv]*128;
+                if ( int(etool->SVT->svt_data[i].head.feb_id) > 1 ) strip = APVmap[apv]*128;
+                strip += int(etool->SVT->svt_data[i].head.chan);
+                rawHit->setStrip(strip);
                 int adcs[6];
                 for(int adcI = 0; adcI < etool->SVT->svt_data.size(); adcI++)
                 {
