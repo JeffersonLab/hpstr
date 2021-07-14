@@ -104,6 +104,14 @@ void TriggerParametersExtractionMollerAnaProcessor::initialize(TTree* tree) {
     func_theta1_vs_theta2_before_roation = new TF1("func_theta1_vs_theta2_before_roation", "2*asin([1]/2./[0] * 1/sin(x/2.))", 0, 1);
     func_theta1_vs_theta2_before_roation->SetParameter(0, beamE_);
     func_theta1_vs_theta2_before_roation->SetParameter(1, ELECTRONMASS);
+
+    // output root/tree
+    root_output = new TFile("moller_with_vertex.root", "recreate");
+    tree_output = new TTree("moller_with_vertex", "moller_with_vertex");
+    tree_output->Branch(trkColl_.c_str() , &trks_);
+    tree_output->Branch(gtpClusColl_.c_str() , &gtpClusters_);
+    tree_output->Branch(mcColl_.c_str() , &mcParts_);
+    tree_output->Branch(vtxColl_.c_str(), &vtxs_);
 }
 
 bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
@@ -117,6 +125,8 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
 	int n_vtxs = vtxs_->size();
 	histos->Fill1DHisto("n_vtxs_h", n_vtxs, weight);
+
+	if(n_vtxs >=1) tree_output->Fill();
 
 	histos->Fill2DHisto("n_clusters_vs_n_tracks_hh", n_tracks, n_cl, weight);
 	histos->Fill2DHisto("n_clusters_vs_n_vtxs_hh", n_vtxs, n_cl, weight);
@@ -547,8 +557,8 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 			histos->Fill2DHisto("energy_vs_ix_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_hh", ix, cluster.getEnergy(), weight);
 			histos->Fill2DHisto("energy_vs_iy_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_hh", iy, cluster.getEnergy(), weight);
 		}
-
     }
+
 
     bool flag_triggered = false;
 	for(int i = 0; i < n_cl; i++){
@@ -587,6 +597,8 @@ void TriggerParametersExtractionMollerAnaProcessor::finalize() {
     delete histos;
     histos = nullptr;
 
+    tree_output->Write();
+    root_output->Write();
 }
 
 DECLARE_PROCESSOR(TriggerParametersExtractionMollerAnaProcessor);
