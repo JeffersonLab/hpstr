@@ -741,7 +741,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		histos->Fill2DHisto("cut_flag_vs_truth_flag_hh", 0, 0, weight);
 
 
-    if(flag_moller_truth &&  flag_triggered_analyzable_event_and_pass_kinematic_cuts){
+    if(flag_moller_truth && flag_triggered_analyzable_event_and_pass_kinematic_cuts){
 		for(int i = 0; i < n_clusters_top_cut; i++){
 			CalCluster cluster = clulsters_top_cut.at(i);
 
@@ -784,6 +784,66 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 			histos->Fill2DHisto("energy_vs_ix_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_and_true_Moller_hh", ix, cluster.getEnergy(), weight);
 			histos->Fill2DHisto("energy_vs_iy_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_and_true_Moller_hh", iy, cluster.getEnergy(), weight);
 		}
+
+	    for(int i = 0; i < n_vtxs; i++){
+	        Vertex* vtx = vtxs_->at(i);
+
+	        int n_entries = vtx->getParticles()->GetEntries();
+	        if(n_entries != 2) {
+	        	std::cout << "Warning: entries of Moller vertex is not 2." << std::endl;
+	        	return false;
+	        }
+
+	        double invariant_mass = vtx->getInvMass();
+
+	        Particle* particleTop = (Particle*)vtx->getParticles()->At(0);
+	        Particle* particleBot = (Particle*)vtx->getParticles()->At(1);
+
+	        std::vector<double> momTop =  particleTop->getMomentum();
+	        std::vector<double> momBot =  particleBot->getMomentum();
+
+	        double pSum = sqrt(pow(momTop[0], 2) + pow(momTop[1], 2) + pow(momTop[2], 2)) + sqrt(pow(momBot[0], 2) + pow(momBot[1], 2) + pow(momBot[2], 2));
+
+
+	        histos->Fill1DHisto("invariant_mass_vertex_triggered_analyzable_events_with_kinematic_cuts_and_true_Moller_h", invariant_mass, weight);
+
+	        histos->Fill1DHisto("pSum_vertex_triggered_analyzable_events_with_kinematic_cuts_and_true_Moller_h", pSum, weight);
+
+	        histos->Fill2DHisto("invariant_mass_vs_pSum_vertex_triggered_analyzable_events_with_kinematic_cuts_and_true_Moller_hh", pSum, invariant_mass, weight);
+	    }
+    }
+    else{
+	    for(int i = 0; i < n_vtxs; i++){
+	        Vertex* vtx = vtxs_->at(i);
+
+	        int n_entries = vtx->getParticles()->GetEntries();
+	        if(n_entries != 2) {
+	        	std::cout << "Warning: entries of Moller vertex is not 2." << std::endl;
+	        	return false;
+	        }
+
+	        double invariant_mass = vtx->getInvMass();
+
+	        Particle* particleTop = (Particle*)vtx->getParticles()->At(0);
+	        Particle* particleBot = (Particle*)vtx->getParticles()->At(1);
+
+	        std::vector<double> momTop =  particleTop->getMomentum();
+	        std::vector<double> momBot =  particleBot->getMomentum();
+
+	        double pTop = sqrt(pow(momTop[0], 2) + pow(momTop[1], 2) + pow(momTop[2], 2));
+	        double pBot = sqrt(pow(momBot[0], 2) + pow(momBot[1], 2) + pow(momBot[2], 2));
+
+	        double pSum = pTop + pBot;
+
+
+	        histos->Fill1DHisto("invariant_mass_vertex_non_triggered_analyzable_events_with_kinematic_cuts_and_true_Moller_h", invariant_mass, weight);
+
+	        histos->Fill1DHisto("pSum_vertex_non_triggered_analyzable_events_with_kinematic_cuts_and_true_Moller_h", pSum, weight);
+
+	        histos->Fill2DHisto("invariant_mass_vs_pSum_vertex_non_triggered_analyzable_events_with_kinematic_cuts_and_true_Moller_hh", pSum, invariant_mass, weight);
+
+	        histos->Fill2DHisto("pTop_vs_pBot_vertex_non_triggered_analyzable_events_with_kinematic_cuts_and_true_Moller_hh", pBot, pTop, weight);
+	    }
     }
 
     return true;

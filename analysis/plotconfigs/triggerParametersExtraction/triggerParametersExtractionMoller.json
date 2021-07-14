@@ -1109,7 +1109,68 @@
         "maxY" : 4,
 		"xtitle" : "Hit counts of cluster",
         "ytitle" : "Energy of cluster [GeV]"
+    },
+    
+	"invariant_mass_vertex_triggered_analyzable_events_with_kinematic_cuts_and_true_Moller_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.12,
+        "xtitle" : "Invariant mass [GeV/c^{2}]",
+        "ytitle" : "Vertices"
+    },
+	"pSum_vertex_triggered_analyzable_events_with_kinematic_cuts_and_true_Moller_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+        "xtitle" : "pSum [GeV/c]",
+        "ytitle" : "Vertices"
+    },
+	"invariant_mass_vs_pSum_vertex_triggered_analyzable_events_with_kinematic_cuts_and_true_Moller_hh": { 
+		"binsX"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+  		"binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 0.12,
+        "xtitle" : "pSum [GeV/c]",
+        "ytitle" : "Invariant mass [GeV/c^{2}]"
+    },
+    
+	"invariant_mass_vertex_non_triggered_analyzable_events_with_kinematic_cuts_and_true_Moller_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.12,
+        "xtitle" : "Invariant mass [GeV/c^{2}]",
+        "ytitle" : "Vertices"
+    },
+	"pSum_vertex_non_triggered_analyzable_events_with_kinematic_cuts_and_true_Moller_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+        "xtitle" : "pSum [GeV/c]",
+        "ytitle" : "Vertices"
+    },
+	"invariant_mass_vs_pSum_vertex_non_triggered_analyzable_events_with_kinematic_cuts_and_true_Moller_hh": { 
+		"binsX"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+  		"binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 0.12,
+        "xtitle" : "pSum [GeV/c]",
+        "ytitle" : "Invariant mass [GeV/c^{2}]"
+    },
+	"pTop_vs_pBot_vertex_non_triggered_analyzable_events_with_kinematic_cuts_and_true_Moller_hh": { 
+		"binsX"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+  		"binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 4,
+        "xtitle" : "p for bot [GeV/c]",
+        "ytitle" : "p for top [GeV/c]"
     }
+    
     
         
 }
