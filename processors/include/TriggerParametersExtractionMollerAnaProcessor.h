@@ -130,10 +130,6 @@ class TriggerParametersExtractionMollerAnaProcessor : public Processor {
         TF1* func_E_vs_theta_before_roation;
         TF1* func_theta1_vs_theta2_before_roation;
 
-        // Output root/tree
-        TFile *root_output;
-        TTree *tree_output;
-
 
 };
 

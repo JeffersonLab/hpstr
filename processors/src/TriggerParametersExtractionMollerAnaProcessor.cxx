@@ -104,19 +104,12 @@ void TriggerParametersExtractionMollerAnaProcessor::initialize(TTree* tree) {
     func_theta1_vs_theta2_before_roation = new TF1("func_theta1_vs_theta2_before_roation", "2*asin([1]/2./[0] * 1/sin(x/2.))", 0, 1);
     func_theta1_vs_theta2_before_roation->SetParameter(0, beamE_);
     func_theta1_vs_theta2_before_roation->SetParameter(1, ELECTRONMASS);
-
-    // output root/tree
-    root_output = new TFile("moller_with_vertex.root", "recreate");
-    tree_output = new TTree("moller_with_vertex", "moller_with_vertex");
-    tree_output->Branch(trkColl_.c_str() , &trks_);
-    tree_output->Branch(gtpClusColl_.c_str() , &gtpClusters_);
-    tree_output->Branch(mcColl_.c_str() , &mcParts_);
-    tree_output->Branch(vtxColl_.c_str(), &vtxs_);
 }
 
 bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
     double weight = 1.;
 
+    // To extract analyzable events
 	int n_tracks = trks_->size();
 	histos->Fill1DHisto("n_tracks_h", n_tracks, weight);
 
@@ -125,8 +118,6 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
 	int n_vtxs = vtxs_->size();
 	histos->Fill1DHisto("n_vtxs_h", n_vtxs, weight);
-
-	if(n_vtxs >=1) tree_output->Fill();
 
 	histos->Fill2DHisto("n_clusters_vs_n_tracks_hh", n_tracks, n_cl, weight);
 	histos->Fill2DHisto("n_clusters_vs_n_vtxs_hh", n_vtxs, n_cl, weight);
@@ -137,7 +128,6 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
 	tracks_top.clear();
 	tracks_bot.clear();
-
 
 	for(int i = 0; i < n_tracks; i++){
 		Track* track = trks_->at(i);
@@ -277,6 +267,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 	int flag_analyzable_event = false;
 	int flag_triggered_analyzable_event = false;
 
+	// To determine flags of analyzable events and triggered analyzable events
 	if( ( tracks_top.size() >= 1 && tracks_bot.size() >= 1 ) && (n_clusters_top_cut >=1 || n_clusters_bot_cut >= 1) && flag){
 		flag_analyzable_event = true;
 
@@ -350,6 +341,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		}
 	}
 
+	//To determine flag of triggered analyzable events with kinematic cuts
 	bool flag_triggered_analyzable_event_and_pass_kinematic_cuts = false;
 
     for(int i = 0; i < n_vtxs; i++){
@@ -559,7 +551,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		}
     }
 
-
+    // To determine flag of triggered events
     bool flag_triggered = false;
 	for(int i = 0; i < n_cl; i++){
 		CalCluster* cluster = gtpClusters_->at(i);
@@ -589,6 +581,211 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		histos->Fill2DHisto("n_tracks_vs_n_vtxs_triggered_hh", n_vtxs, n_tracks, weight);
 	}
 
+	// To analyze truth information
+	bool flag_moller_truth = false;
+	for (int i = 0; i < n_vtxs; i++) {
+		Vertex* vtx = vtxs_->at(i);
+
+		int n_entries = vtx->getParticles()->GetEntries();
+		if (n_entries != 2) {
+			std::cout << "Warning: entries of Moller vertex is not 2."
+					<< std::endl;
+			return false;
+		}
+
+		double invariant_mass = vtx->getInvMass();
+		histos->Fill1DHisto("invariant_mass_vertex_h", invariant_mass, weight);
+
+		Particle* particleTop = (Particle*) vtx->getParticles()->At(0);
+		Particle* particleBot = (Particle*) vtx->getParticles()->At(1);
+
+		std::vector<double> momTop = particleTop->getMomentum();
+		std::vector<double> momBot = particleBot->getMomentum();
+
+		double pTop = sqrt(pow(momTop[0], 2) + pow(momTop[1], 2) + pow(momTop[2], 2));
+		double pBot = sqrt(pow(momBot[0], 2) + pow(momBot[1], 2) + pow(momBot[2], 2));
+
+		int indexTop = 0;
+		int indexBot = 0;
+
+		double fabsDiffTrackMomentumMCPEnergyTop = 10000;
+		double fabsDiffTrackMomentumMCPEnergyBot = 10000;
+
+		// Find matched MCP for top and bot tracks, separately.
+		// Energy of matched MCP is closest to tracks's momentum.
+		if (mcParts_) {
+			for (int j = 0; j < mcParts_->size(); j++) {
+				MCParticle* mcParticle = mcParts_->at(j);
+				double mcpEnergy = mcParticle->getEnergy();
+
+				if (fabs(pTop - mcpEnergy)
+						< fabsDiffTrackMomentumMCPEnergyTop) {
+					fabsDiffTrackMomentumMCPEnergyTop = fabs(pTop - mcpEnergy);
+					indexTop = j;
+				}
+
+				if (fabs(pBot - mcpEnergy)
+						< fabsDiffTrackMomentumMCPEnergyBot) {
+					fabsDiffTrackMomentumMCPEnergyBot = fabs(pBot - mcpEnergy);
+					indexBot = j;
+				}
+			}
+		}
+
+		MCParticle* mcParticleTop = mcParts_->at(indexTop);
+		MCParticle* mcParticleBot = mcParts_->at(indexBot);
+
+		double mcpEnergyTop = mcParticleTop->getEnergy();
+		double mcpEnergyBot = mcParticleBot->getEnergy();
+
+		// Mom PDG 203: Moller
+		// Mom PDG 622: wab
+		// Mom PDG 204: beam
+		int momPDGTop = mcParticleTop->getMomPDG();
+		int momPDGBot = mcParticleBot->getMomPDG();
+
+		int momIDTop = 4;
+		if(momPDGTop == 203) momIDTop = 1;
+		else if(momPDGTop == 622) momIDTop = 2;
+		else if(momPDGTop == 204) momIDTop = 3;
+		else momIDTop = 4;
+
+		int momIDBot = 4;
+		if(momIDBot == 203) momIDBot = 1;
+		else if(momIDBot == 622) momIDBot = 2;
+		else if(momIDBot == 204) momIDBot = 3;
+		else momIDBot = 4;
+
+		// PDG 11: electron
+		// PDG -11: positron
+		// PDG 22: photon
+		int pdgTop = mcParticleTop->getPDG();
+		int pdgBot = mcParticleBot->getPDG();
+
+		int pdgIDTop = 4;
+		if(pdgTop == 11) pdgIDTop = 1;
+		else if(pdgTop == -11) pdgIDTop = 2;
+		else if(pdgTop == 22) pdgIDTop = 3;
+		else pdgIDTop = 4;
+
+		int pdgIDBot = 4;
+		if(pdgBot == 11) pdgIDBot = 1;
+		else if(pdgBot == -11) pdgIDBot = 2;
+		else if(pdgBot == 22) pdgIDBot = 3;
+		else pdgIDBot = 4;
+
+		if (flag_analyzable_event) {
+			histos->Fill2DHisto("track_momentum_vs_mcp_energy_top_analyzable_event_hh", mcpEnergyTop, pTop, weight);
+			histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_analyzable_event_hh", mcpEnergyTop, pBot, weight);
+
+			histos->Fill1DHisto("motherPDG_top_analyzable_event_h", momIDTop, weight);
+			histos->Fill1DHisto("motherPDG_bot_analyzable_event_h", momIDBot, weight);
+			histos->Fill2DHisto("motherPDGTop_vs_motherPDGBot_analyzable_event_hh", momIDBot, momIDTop, weight);
+
+			histos->Fill1DHisto("pdg_top_analyzable_event_h", pdgIDTop, weight);
+			histos->Fill1DHisto("pdg_bot_analyzable_event_h", pdgIDBot, weight);
+			histos->Fill2DHisto("pdgTop_vs_pdgBot_analyzable_event_hh", pdgIDBot, pdgIDTop, weight);
+
+		}
+
+		if (flag_triggered_analyzable_event) {
+			histos->Fill2DHisto("track_momentum_vs_mcp_energy_top_triggered_analyzable_event_hh", mcpEnergyTop, pTop, weight);
+			histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_triggered_analyzable_event_hh", mcpEnergyTop, pBot, weight);
+
+			histos->Fill1DHisto("motherPDG_top_triggered_analyzable_event_h", momIDTop, weight);
+			histos->Fill1DHisto("motherPDG_bot_triggered_analyzable_event_h", momIDBot, weight);
+			histos->Fill2DHisto("motherPDGTop_vs_motherPDGBot_triggered_analyzable_event_hh", momIDBot, momIDTop, weight);
+
+			histos->Fill1DHisto("pdg_top_triggered_analyzable_event_h", pdgIDTop, weight);
+			histos->Fill1DHisto("pdg_bot_triggered_analyzable_event_h", pdgIDBot, weight);
+			histos->Fill2DHisto("pdgTop_vs_pdgBot_triggered_analyzable_event_hh", pdgIDBot, pdgIDTop, weight);
+
+		}
+
+	    if(flag_triggered_analyzable_event_and_pass_kinematic_cuts){
+			histos->Fill2DHisto("track_momentum_vs_mcp_energy_top_triggered_analyzable_event_and_pass_kinematic_cuts_hh", mcpEnergyTop, pTop, weight);
+			histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_triggered_analyzable_event_and_pass_kinematic_cuts_hh", mcpEnergyTop, pBot, weight);
+
+			histos->Fill1DHisto("motherPDG_top_triggered_analyzable_event_and_pass_kinematic_cuts_h", momIDTop, weight);
+			histos->Fill1DHisto("motherPDG_bot_triggered_analyzable_event_and_pass_kinematic_cuts_h", momIDBot, weight);
+			histos->Fill2DHisto("motherPDGTop_vs_motherPDGBot_triggered_analyzable_event_and_pass_kinematic_cuts_hh", momIDBot, momIDTop, weight);
+
+			histos->Fill1DHisto("pdg_top_triggered_analyzable_event_and_pass_kinematic_cuts_h", pdgIDTop, weight);
+			histos->Fill1DHisto("pdg_bot_triggered_analyzable_event_and_pass_kinematic_cuts_h", pdgIDBot, weight);
+			histos->Fill2DHisto("pdgTop_vs_pdgBot_triggered_analyzable_event_and_pass_kinematic_cuts_hh", pdgIDBot, pdgIDTop, weight);
+	    }
+
+		if (flag_triggered) {
+			histos->Fill2DHisto("track_momentum_vs_mcp_energy_top_triggered_event_hh", mcpEnergyTop, pTop, weight);
+			histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_triggered_event_hh", mcpEnergyTop, pBot, weight);
+
+			histos->Fill1DHisto("motherPDG_top_triggered_event_h", momIDTop, weight);
+			histos->Fill1DHisto("motherPDG_bot_triggered_event_h", momIDBot, weight);
+			histos->Fill2DHisto("motherPDGTop_vs_motherPDGBot_triggered_event_hh", momIDBot, momIDTop, weight);
+
+			histos->Fill1DHisto("pdg_top_triggered_event_h", pdgIDTop, weight);
+			histos->Fill1DHisto("pdg_bot_triggered_event_h", pdgIDBot, weight);
+			histos->Fill2DHisto("pdgTop_vs_pdgBot_triggered_event_hh", pdgIDBot, pdgIDTop, weight);
+		}
+
+		if(pdgIDTop == 1 && pdgIDBot == 1 && momPDGTop == 1 && momPDGBot == 1) flag_moller_truth = true;
+	}
+
+	if(flag_moller_truth && flag_triggered_analyzable_event_and_pass_kinematic_cuts)
+		histos->Fill2DHisto("cut_flag_vs_truth_flag_hh", 1, 1, weight);
+	else if(!flag_moller_truth && flag_triggered_analyzable_event_and_pass_kinematic_cuts)
+		histos->Fill2DHisto("cut_flag_vs_truth_flag_hh", 0, 1, weight);
+	else if(flag_moller_truth && !flag_triggered_analyzable_event_and_pass_kinematic_cuts)
+		histos->Fill2DHisto("cut_flag_vs_truth_flag_hh", 1, 0, weight);
+	else if(!flag_moller_truth && !flag_triggered_analyzable_event_and_pass_kinematic_cuts)
+		histos->Fill2DHisto("cut_flag_vs_truth_flag_hh", 0, 0, weight);
+
+
+    if(flag_moller_truth &&  flag_triggered_analyzable_event_and_pass_kinematic_cuts){
+		for(int i = 0; i < n_clusters_top_cut; i++){
+			CalCluster cluster = clulsters_top_cut.at(i);
+
+			std::vector<double> positionCluster = cluster.getPosition();
+			histos->Fill2DHisto("xy_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_and_true_Moller_hh",positionCluster[0], positionCluster[1], weight);
+
+			CalHit* seed = (CalHit*)cluster.getSeed();
+			histos->Fill1DHisto("seed_energy_cluster_triggered_analyzable_event_and_pass_kinematic_cuts_and_true_Moller_h", seed->getEnergy(), weight);
+			histos->Fill1DHisto("energy_cluster_triggered_analyzable_event_and_pass_kinematic_cuts_and_true_Moller_h", cluster.getEnergy(), weight);
+			histos->Fill1DHisto("n_hits_cluster_triggered_analyzable_event_and_pass_kinematic_cuts_and_true_Moller_h", cluster.getNHits(), weight);
+			histos->Fill2DHisto("energy_vs_n_hits_cluster_triggered_analyzable_event_and_pass_kinematic_cuts_and_true_Moller_hh", cluster.getNHits(), cluster.getEnergy(), weight);
+
+			int ix = seed -> getCrystalIndices()[0];
+			if(ix < 0) ix++;
+			int iy = seed -> getCrystalIndices()[1];
+
+			histos->Fill2DHisto("xy_indices_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_and_true_Moller_hh",ix, iy, weight);
+			histos->Fill2DHisto("energy_vs_ix_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_and_true_Moller_hh", ix, cluster.getEnergy(), weight);
+			histos->Fill2DHisto("energy_vs_iy_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_and_true_Moller_hh", iy, cluster.getEnergy(), weight);
+
+		}
+
+		for(int i = 0; i < n_clusters_bot_cut; i++){
+			CalCluster cluster = clulsters_bot_cut.at(i);
+
+			std::vector<double> positionCluster = cluster.getPosition();
+			histos->Fill2DHisto("xy_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_and_true_Moller_hh",positionCluster[0], positionCluster[1], weight);
+
+			CalHit* seed = (CalHit*)cluster.getSeed();
+			histos->Fill1DHisto("seed_energy_cluster_triggered_analyzable_event_and_pass_kinematic_cuts_and_true_Moller_h", seed->getEnergy(), weight);
+			histos->Fill1DHisto("energy_cluster_triggered_analyzable_event_and_pass_kinematic_cuts_and_true_Moller_h", cluster.getEnergy(), weight);
+			histos->Fill1DHisto("n_hits_cluster_triggered_analyzable_event_and_pass_kinematic_cuts_and_true_Moller_h", cluster.getNHits(), weight);
+			histos->Fill2DHisto("energy_vs_n_hits_cluster_triggered_analyzable_event_and_pass_kinematic_cuts_and_true_Moller_hh", cluster.getNHits(), cluster.getEnergy(), weight);
+
+			int ix = seed -> getCrystalIndices()[0];
+			if(ix < 0) ix++;
+			int iy = seed -> getCrystalIndices()[1];
+
+			histos->Fill2DHisto("xy_indices_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_and_true_Moller_hh",ix, iy, weight);
+			histos->Fill2DHisto("energy_vs_ix_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_and_true_Moller_hh", ix, cluster.getEnergy(), weight);
+			histos->Fill2DHisto("energy_vs_iy_clusters_triggered_analyzable_event_and_pass_kinematic_cuts_and_true_Moller_hh", iy, cluster.getEnergy(), weight);
+		}
+    }
+
     return true;
 }
 
@@ -597,8 +794,6 @@ void TriggerParametersExtractionMollerAnaProcessor::finalize() {
     delete histos;
     histos = nullptr;
 
-    tree_output->Write();
-    root_output->Write();
 }
 
 DECLARE_PROCESSOR(TriggerParametersExtractionMollerAnaProcessor);

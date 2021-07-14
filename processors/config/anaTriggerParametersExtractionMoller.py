@@ -44,6 +44,7 @@ triggerParametersExtractionMollerAna.parameters["anaName"] = "triggerParameterEx
 triggerParametersExtractionMollerAna.parameters["trkColl"] = "KalmanFullTracks"
 triggerParametersExtractionMollerAna.parameters["gtpClusColl"] = "RecoEcalClustersGTP"
 triggerParametersExtractionMollerAna.parameters["vtxColl"] = "UnconstrainedMollerVertices"
+triggerParametersExtractionMollerAna.parameters["partColl"]   = 'ParticlesMollerOnVertices'
 triggerParametersExtractionMollerAna.parameters["analysis"] = analysis
 triggerParametersExtractionMollerAna.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/triggerParametersExtraction/triggerParametersExtractionMoller.json'
 
