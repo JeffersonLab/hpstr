@@ -103,7 +103,6 @@ for hybrid in hybridsFromFile:
             chi2.append(fitData.BlFitChi2)
             ndf.append(fitData.BlFitNdf)
             minStatsFailure.append(fitData.minStatsFailure)
-            noisy.append(fitData.noisy)
             lowdaq.append(fitData.lowdaq)
             dead.append(fitData.dead)
             TFRerror.append(fitData.TFitResultError)
@@ -120,6 +119,8 @@ for hybrid in hybridsFromFile:
     hwtag = mmap.str_to_hw(hybrid)
     feb = hwtag[0:2]
     hyb = hwtag[2:]
+    print("Hybrid: ", hybrid)
+    print("hwtag: ", hwtag)
 
     #Read online baseline fit values from root file
     if(options.onlineBaselines) != "":
@@ -234,12 +235,12 @@ for hybrid in hybridsFromFile:
     ld_gr.Write()
 
     #Plot Chi2/Ndf
-    Chi2Ndf = [i / j for i, j in zip(chi2,ndf)]
-    chi2_gr_y = np.array(Chi2Ndf, dtype= float)
-    chi2_gr_x = np.array(channel, dtype=float)
-    chi2_gr = buildTGraph("BlFitChi2_%s"%(hybrid),"BlFit_Chi2/Ndf_%s;Channel;Status"%(hybrid),len(chi2_gr_x),chi2_gr_x,chi2_gr_y,1)
-    chi2_gr.Draw()
-    chi2_gr.Write()
+    #Chi2Ndf = [i / j for i, j in zip(chi2,ndf)]
+    #chi2_gr_y = np.array(Chi2Ndf, dtype= float)
+    #chi2_gr_x = np.array(channel, dtype=float)
+    #chi2_gr = buildTGraph("BlFitChi2_%s"%(hybrid),"BlFit_Chi2/Ndf_%s;Channel;Status"%(hybrid),len(chi2_gr_x),chi2_gr_x,chi2_gr_y,1)
+    #chi2_gr.Draw()
+    #chi2_gr.Write()
 
     #####################################################################################################
     #Channel Noise Plots
@@ -251,6 +252,10 @@ for hybrid in hybridsFromFile:
     #Show Channel Fits
     cfdir = outFile.mkdir("%s_channel_fits"%(hybrid))
     for cc in range(len(channel)): 
+        print(hybrid," ", channel[cc])
+        print("norm = ", norm[cc])
+        print("mean = ", mean[cc])
+        print("sigma = ", sigma[cc])
         canvas = r.TCanvas("%s_ch_%i_h"%(hybrid,channel[cc]), "c", 1800,800)
         canvas.cd()
         yproj_h = hybrid_hh.ProjectionY('%s_ch%i_h'%(hybrid,channel[cc]),int(channel[cc]+1),int(channel[cc]+1),"e")
@@ -282,14 +287,15 @@ for hybrid in hybridsFromFile:
         myTree = inFile.gaus_fit
         print("TREE",myTree)
         for fitData in myTree:
-           #SvtAna2DHisto_key = str(fitData.halfmodule_hh)
-           if str(fitData.halfmodule_hh).find(hybrid) != -1:
-           #if hybrid == SvtAna2DHisto_key.replace('raw_hits_','').replace('baseline0_',''):
+           SvtAna2DHisto_key = str(fitData.halfmodule_hh)
+           #if str(fitData.halfmodule_hh).find(hybrid) != -1:
+           if hybrid == SvtAna2DHisto_key.replace('raw_hits_','').replace('baseline0_','').replace('_hh',''):
                cc=(fitData.channel)
 
                mean_gr = buildTGraph("iterMean_%s_ch_%i"%(hybrid,cc),"iterMean_vs_Position_%s_ch_%i;FitRangeEnd;mean"%(hybrid,cc),len(fitData.iterFitRangeEnd),np.array(fitData.iterFitRangeEnd, dtype = float) ,np.array(fitData.iterMean, dtype = float),1)
 
                chi2_gr = buildTGraph("iterChi2_%s_ch_%i"%(hybrid,cc),"iterChi2/NDF_vs_Position_%s_ch_%i;FitRangeEnd;chi2"%(hybrid,cc),len(fitData.iterFitRangeEnd),np.array(fitData.iterFitRangeEnd, dtype = float) ,np.array(fitData.iterChi2NDF, dtype = float),1)
+
                chi2_2Der_gr = buildTGraph("iterFit_chi2/NDF_2Der_%s_ch_%i"%(hybrid,cc),"iterChi2_2Der_%s_ch_%i;FitRangeEnd;chi2_2ndDeriv"%(hybrid,cc),len(fitData.iterChi2NDF_derRange),np.array(fitData.iterChi2NDF_derRange, dtype = float) ,np.array(fitData.iterChi2NDF_2der, dtype = float),1)
 
                chi2_1Der_gr = buildTGraph("iterFit_chi2/NDF_1Der_%s_ch_%i"%(hybrid,cc),"iterChi2_1Der_%s_ch_%i;FitRangeEnd;chi2_1ndDeriv"%(hybrid,cc),len(fitData.iterChi2NDF_derRange),np.array(fitData.iterChi2NDF_derRange, dtype = float) ,np.array(fitData.iterChi2NDF_1der, dtype = float),1)

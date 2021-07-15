@@ -71,8 +71,6 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     flat_tuple_->addVariable("minStatsFailure");
     //channel rms. Use to flag dead channels
     flat_tuple_->addVariable("rms");
-    //if RMS is > parameter value, channel flagged as noisy
-    flat_tuple_->addVariable("noisy");
     //if fit mean + N*sigma > xmax, flag as lowdaq
     flat_tuple_->addVariable("lowdaq");
     //if rms < threshold, channel is dead
@@ -93,7 +91,6 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     flat_tuple_->addVector("iterMean");
     flat_tuple_->addVector("iterChi2NDF_2der");
     flat_tuple_->addVector("iterChi2NDF_1der");
-    flat_tuple_->addVector("ratio2derChi2");
     flat_tuple_->addVector("iterChi2NDF_derRange");
     flat_tuple_->addVariable("ogxmax");
     flat_tuple_->addVariable("ogxmin");

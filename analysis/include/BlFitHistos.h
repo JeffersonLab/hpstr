@@ -19,6 +19,7 @@
 #include <vector>
 #include "ModuleMapper.h"
 #include "TFitResult.h"
+#include "TF1.h"
 
 class BlFitHistos : public HistoManager{
     
@@ -42,6 +43,9 @@ class BlFitHistos : public HistoManager{
 
         void getHistosFromFile(TFile* inFile, std::string layer = "");
         void Chi2GausFit(std::map<std::string, TH2F*> histos2d, int nPointsDer_,int rebin_i, int xmin_,int minStats_, int noisyRMS_, int deadRMS_, FlatTupleMaker* flat_tuple_);
+        TF1* singleGausIterative(TH1D* hist, double sigmaRange, double min, double max, bool iterchi2);
+        void iterativeChi2GausFit(TH1D* hist, TF1* fit, double min, double max);
+        //TFitResultPtr singleGausIterative(TH1D* hist, double sigmaRange, double min, double max);
         
     private:
         
