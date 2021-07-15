@@ -690,7 +690,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
 		if (flag_triggered_analyzable_event) {
 			histos->Fill2DHisto("track_momentum_vs_mcp_energy_top_triggered_analyzable_event_hh", mcpEnergyTop, pTop, weight);
-			histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_triggered_analyzable_event_hh", mcpEnergyTop, pBot, weight);
+			histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_triggered_analyzable_event_hh", mcpEnergyBot, pBot, weight);
 
 			histos->Fill1DHisto("motherPDG_top_triggered_analyzable_event_h", momIDTop, weight);
 			histos->Fill1DHisto("motherPDG_bot_triggered_analyzable_event_h", momIDBot, weight);
@@ -704,7 +704,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
 	    if(flag_triggered_analyzable_event_and_pass_kinematic_cuts){
 			histos->Fill2DHisto("track_momentum_vs_mcp_energy_top_triggered_analyzable_event_and_pass_kinematic_cuts_hh", mcpEnergyTop, pTop, weight);
-			histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_triggered_analyzable_event_and_pass_kinematic_cuts_hh", mcpEnergyTop, pBot, weight);
+			histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_triggered_analyzable_event_and_pass_kinematic_cuts_hh", mcpEnergyBot, pBot, weight);
 
 			histos->Fill1DHisto("motherPDG_top_triggered_analyzable_event_and_pass_kinematic_cuts_h", momIDTop, weight);
 			histos->Fill1DHisto("motherPDG_bot_triggered_analyzable_event_and_pass_kinematic_cuts_h", momIDBot, weight);
@@ -717,7 +717,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
 		if (flag_triggered) {
 			histos->Fill2DHisto("track_momentum_vs_mcp_energy_top_triggered_event_hh", mcpEnergyTop, pTop, weight);
-			histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_triggered_event_hh", mcpEnergyTop, pBot, weight);
+			histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_triggered_event_hh", mcpEnergyBot, pBot, weight);
 
 			histos->Fill1DHisto("motherPDG_top_triggered_event_h", momIDTop, weight);
 			histos->Fill1DHisto("motherPDG_bot_triggered_event_h", momIDBot, weight);
