@@ -651,9 +651,9 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		else momIDTop = 4;
 
 		int momIDBot = 4;
-		if(momIDBot == 203) momIDBot = 1;
-		else if(momIDBot == 622) momIDBot = 2;
-		else if(momIDBot == 204) momIDBot = 3;
+		if(momPDGBot == 203) momIDBot = 1;
+		else if(momPDGBot == 622) momIDBot = 2;
+		else if(momPDGBot == 204) momIDBot = 3;
 		else momIDBot = 4;
 
 		// PDG 11: electron
@@ -676,7 +676,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
 		if (flag_analyzable_event) {
 			histos->Fill2DHisto("track_momentum_vs_mcp_energy_top_analyzable_event_hh", mcpEnergyTop, pTop, weight);
-			histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_analyzable_event_hh", mcpEnergyTop, pBot, weight);
+			histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_analyzable_event_hh", mcpEnergyBot, pBot, weight);
 
 			histos->Fill1DHisto("motherPDG_top_analyzable_event_h", momIDTop, weight);
 			histos->Fill1DHisto("motherPDG_bot_analyzable_event_h", momIDBot, weight);
