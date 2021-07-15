@@ -720,6 +720,23 @@
         "ytitle" : "N_{tracks}"
     },
     
+
+ 	"diff_track_momentum_and_mcp_energy_top_no_cuts_h" : {
+        "bins"   : 100,
+        "minX"   : -1,
+        "maxX"   : 1,
+        "xtitle" : "Diff between Energy of MCP and Momentum of Track for top",
+        "ytitle" : "Counts"
+    }, 
+    
+	"diff_track_momentum_and_mcp_energy_bot_no_cuts_h" : {
+        "bins"   : 100,
+        "minX"   : -1,
+        "maxX"   : 1,
+        "xtitle" : "Diff between Energy of MCP and Momentum of Track for bot",
+        "ytitle" : "Counts"
+    }, 
+
     
  	"track_momentum_vs_mcp_energy_top_analyzable_event_hh" : {
         "binsX"   : 100,
@@ -742,7 +759,7 @@
         "xtitle" : "Energy of MCP [GeV]",
         "ytitle" : "Momentum of Track [GeV/c]"
     },
-    
+        
 	"motherPDG_top_analyzable_event_h" : {
         "bins"   : 4,
         "minX"   : 0.5,
@@ -796,6 +813,11 @@
         "xtitle" : "PDG for bot",
         "ytitle" : "PDG for top"
     },
+    
+   
+    
+          
+    
     
 	"track_momentum_vs_mcp_energy_top_triggered_analyzable_event_hh" : {
         "binsX"   : 100,
@@ -1169,8 +1191,83 @@
         "maxY"   : 4,
         "xtitle" : "p for bot [GeV/c]",
         "ytitle" : "p for top [GeV/c]"
-    }
+    },
     
+    
+    
+    
+    
+    
+    
+    
+	"invariant_mass_vertex_analyzable_events_both_tracks_from_moller_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.12,
+        "xtitle" : "Invariant mass [GeV/c^{2}]",
+        "ytitle" : "Vertices"
+    },
+	"pSum_vertex_analyzable_events_both_tracks_from_moller_h": { 
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+        "xtitle" : "pSum [GeV/c]",
+        "ytitle" : "Vertices"
+    },
+	"invariant_mass_vs_pSum_vertex_analyzable_events_both_tracks_from_moller_hh": { 
+		"binsX"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+  		"binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 0.12,
+        "xtitle" : "pSum [GeV/c]",
+        "ytitle" : "Invariant mass [GeV/c^{2}]"
+    },
+	"px_vs_py_vertex_analyzable_events_both_tracks_from_moller_hh" : {
+        "binsX" : 100,
+        "minX" : -0.3,
+        "maxX" : 0.3,
+        "binsY" : 100,
+        "minY" : -0.2,
+        "maxY" : 0.2,
+		"xtitle" : "p_{x} [GeV/c]",
+        "ytitle" : "p_{y} [GeV/c]"
+    },
+	"energy_vs_theta_analyzable_events_before_rotation_both_tracks_from_moller_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 0.1,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "#theta before rotation [rad]",
+        "ytitle" : "Energy [GeV]"
+    }, 
+	"thetaTop_vs_thetaBot_analyzable_events_before_rotation_both_tracks_from_moller_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 0.1,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 0.1,
+		"xtitle" : "#theta_{bot} before rotation [rad]",
+        "ytitle" : "#theta_{top} before rotation [rad]"
+    },      
+	"diff_E_analyzable_events_before_rotation_both_tracks_from_moller_h" : {
+		"bins"   : 100,
+        "minX"   : -1,
+        "maxX"   : 1,
+        "xtitle" : "Differnce between measured and calculated energy",
+        "ytitle" : "Vertices"
+    },      
+	"diff_theta_analyzable_events_before_rotation_both_tracks_from_moller_h" : {
+		"bins"   : 100,
+        "minX"   : -0.025,
+        "maxX"   : 0.025,
+        "xtitle" : "Differnce between measured and calculated #theta before rotation [rad]",
+        "ytitle" : "Vertices"
+    }
     
         
 }

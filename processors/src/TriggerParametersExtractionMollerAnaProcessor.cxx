@@ -602,8 +602,48 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		std::vector<double> momTop = particleTop->getMomentum();
 		std::vector<double> momBot = particleBot->getMomentum();
 
+		double momTopX_before_beam_rotation = momTop[0] * cos(ROTATIONANGLEAROUNDY) - momTop[2] * sin(ROTATIONANGLEAROUNDY);
+		double momTopZ_before_beam_rotation = momTop[0] * sin(ROTATIONANGLEAROUNDY) + momTop[2] * cos(ROTATIONANGLEAROUNDY);
+		double momTopY_before_beam_rotation = momTop[1];
+
+		double momBotX_before_beam_rotation = momBot[0] * cos(ROTATIONANGLEAROUNDY) - momBot[2] * sin(ROTATIONANGLEAROUNDY);
+		double momBotZ_before_beam_rotation = momBot[0] * sin(ROTATIONANGLEAROUNDY) + momBot[2] * cos(ROTATIONANGLEAROUNDY);
+		double momBotY_before_beam_rotation = momBot[1];
+
+		TLorentzVector* lorentzVectorTop_beam_rotation = new TLorentzVector();
+		lorentzVectorTop_beam_rotation->SetXYZM(momTopX_before_beam_rotation, momTopY_before_beam_rotation, momTopZ_before_beam_rotation, ELECTRONMASS);
+
+		TLorentzVector* lorentzVectorBot_beam_rotation = new TLorentzVector();
+		lorentzVectorBot_beam_rotation->SetXYZM(momBotX_before_beam_rotation, momBotY_before_beam_rotation, momBotZ_before_beam_rotation, ELECTRONMASS);
+
+		double energy_top = lorentzVectorTop_beam_rotation->E();
+		double energy_bot = lorentzVectorBot_beam_rotation->E();
+
+		double thate_top_before_rotation = lorentzVectorTop_beam_rotation->Theta();
+		double thate_bot_before_rotation = lorentzVectorBot_beam_rotation->Theta();
+
+		double energy_calcuated_top = func_E_vs_theta_before_roation->Eval(thate_top_before_rotation);
+		double energy_calcuated_bot = func_E_vs_theta_before_roation->Eval(thate_bot_before_rotation);
+
+		double theta_bot_calculated_before_rotation = func_theta1_vs_theta2_before_roation->Eval(thate_top_before_rotation);
+
+		double energy_diff_top = energy_top - energy_calcuated_top;
+		double energy_diff_bot = energy_bot - energy_calcuated_bot;
+		double theta_diff = thate_bot_before_rotation - theta_bot_calculated_before_rotation;
+
 		double pTop = sqrt(pow(momTop[0], 2) + pow(momTop[1], 2) + pow(momTop[2], 2));
 		double pBot = sqrt(pow(momBot[0], 2) + pow(momBot[1], 2) + pow(momBot[2], 2));
+		double pSum = pTop + pBot;
+
+        Track trackTop = particleTop->getTrack();
+        Track trackBot = particleBot->getTrack();
+
+        std::vector<double> positionAtEcalTop = trackTop.getPositionAtEcal();
+        std::vector<double> positionAtEcalBot = trackBot.getPositionAtEcal();
+
+        CalCluster clTop = particleTop->getCluster();
+        CalCluster clBot = particleBot->getCluster();
+
 
 		int indexTop = 0;
 		int indexBot = 0;
@@ -631,6 +671,11 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 				}
 			}
 		}
+
+		histos->Fill1DHisto("diff_track_momentum_and_mcp_energy_top_no_cuts_h", fabsDiffTrackMomentumMCPEnergyTop, weight);
+		histos->Fill1DHisto("diff_track_momentum_and_mcp_energy_bot_no_cuts_h", fabsDiffTrackMomentumMCPEnergyBot, weight);
+
+		if(fabsDiffTrackMomentumMCPEnergyTop > 0.1 || fabsDiffTrackMomentumMCPEnergyBot > 0.1) break;
 
 		MCParticle* mcParticleTop = mcParts_->at(indexTop);
 		MCParticle* mcParticleBot = mcParts_->at(indexBot);
@@ -685,6 +730,28 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 			histos->Fill1DHisto("pdg_top_analyzable_event_h", pdgIDTop, weight);
 			histos->Fill1DHisto("pdg_bot_analyzable_event_h", pdgIDBot, weight);
 			histos->Fill2DHisto("pdgTop_vs_pdgBot_analyzable_event_hh", pdgIDBot, pdgIDTop, weight);
+
+			if(pdgIDTop == 1 && pdgIDBot == 1){
+					histos->Fill1DHisto("invariant_mass_vertex_analyzable_events_both_tracks_from_moller_h", invariant_mass, weight);
+
+					histos->Fill1DHisto("pSum_vertex_analyzable_events_both_tracks_from_moller_h", pSum, weight);
+
+					histos->Fill2DHisto("invariant_mass_vs_pSum_vertex_analyzable_events_both_tracks_from_moller_hh", pSum, invariant_mass, weight);
+
+					histos->Fill2DHisto("px_vs_py_vertex_analyzable_events_both_tracks_from_moller_hh", momTop[0], momTop[1], weight);
+					histos->Fill2DHisto("px_vs_py_vertex_analyzable_events_both_tracks_from_moller_hh", momBot[0], momBot[1], weight);
+
+		    		histos->Fill2DHisto("energy_vs_theta_analyzable_events_before_rotation_both_tracks_from_moller_hh",thate_top_before_rotation, energy_top, weight);
+		    		histos->Fill2DHisto("energy_vs_theta_analyzable_events_before_rotation_both_tracks_from_moller_hh",thate_bot_before_rotation, energy_bot, weight);
+
+		    		histos->Fill2DHisto("thetaTop_vs_thetaBot_analyzable_events_before_rotation_both_tracks_from_moller_hh",thate_bot_before_rotation, thate_top_before_rotation, weight);
+
+		    		histos->Fill1DHisto("diff_E_analyzable_events_before_rotation_both_tracks_from_moller_h", energy_diff_top, weight);
+		    		histos->Fill1DHisto("diff_E_analyzable_events_before_rotation_both_tracks_from_moller_h", energy_diff_bot, weight);
+
+		    		histos->Fill1DHisto("diff_theta_analyzable_events_before_rotation_both_tracks_from_moller_h", theta_diff, weight);
+
+			}
 
 		}
 
@@ -812,7 +879,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 	        histos->Fill2DHisto("invariant_mass_vs_pSum_vertex_triggered_analyzable_events_with_kinematic_cuts_and_true_Moller_hh", pSum, invariant_mass, weight);
 	    }
     }
-    else{
+    else if(!flag_moller_truth && flag_triggered_analyzable_event_and_pass_kinematic_cuts){
 	    for(int i = 0; i < n_vtxs; i++){
 	        Vertex* vtx = vtxs_->at(i);
 
