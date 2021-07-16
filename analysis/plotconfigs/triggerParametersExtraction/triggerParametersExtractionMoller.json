@@ -735,7 +735,30 @@
         "maxX"   : 1,
         "xtitle" : "Diff between Energy of MCP and Momentum of Track for bot",
         "ytitle" : "Counts"
-    }, 
+    },
+     
+    
+	"track_momentum_vs_mcp_energy_top_no_cuts_hh" : {
+        "binsX"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+		"binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 4,
+        "xtitle" : "Energy of MCP [GeV]",
+        "ytitle" : "Momentum of Track [GeV/c]"
+    },
+    
+	"track_momentum_vs_mcp_energy_bot_no_cuts_hh" : {
+        "binsX"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+		"binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 4,
+        "xtitle" : "Energy of MCP [GeV]",
+        "ytitle" : "Momentum of Track [GeV/c]"
+    },
 
     
  	"track_momentum_vs_mcp_energy_top_analyzable_event_hh" : {

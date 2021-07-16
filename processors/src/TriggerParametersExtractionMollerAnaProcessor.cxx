@@ -648,8 +648,8 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		int indexTop = 0;
 		int indexBot = 0;
 
-		double fabsDiffTrackMomentumMCPEnergyTop = 10000;
-		double fabsDiffTrackMomentumMCPEnergyBot = 10000;
+		double diffTrackMomentumMCPEnergyTop = 10000;
+		double diffTrackMomentumMCPEnergyBot = 10000;
 
 		// Find matched MCP for top and bot tracks, separately.
 		// Energy of matched MCP is closest to tracks's momentum.
@@ -659,29 +659,32 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 				double mcpEnergy = mcParticle->getEnergy();
 
 				if (fabs(pTop - mcpEnergy)
-						< fabsDiffTrackMomentumMCPEnergyTop) {
-					fabsDiffTrackMomentumMCPEnergyTop = fabs(pTop - mcpEnergy);
+						< fabs(diffTrackMomentumMCPEnergyTop)) {
+					diffTrackMomentumMCPEnergyTop = pTop - mcpEnergy;
 					indexTop = j;
 				}
 
 				if (fabs(pBot - mcpEnergy)
-						< fabsDiffTrackMomentumMCPEnergyBot) {
-					fabsDiffTrackMomentumMCPEnergyBot = fabs(pBot - mcpEnergy);
+						< fabs(diffTrackMomentumMCPEnergyBot)) {
+					diffTrackMomentumMCPEnergyBot = pBot - mcpEnergy;
 					indexBot = j;
 				}
 			}
 		}
 
-		histos->Fill1DHisto("diff_track_momentum_and_mcp_energy_top_no_cuts_h", fabsDiffTrackMomentumMCPEnergyTop, weight);
-		histos->Fill1DHisto("diff_track_momentum_and_mcp_energy_bot_no_cuts_h", fabsDiffTrackMomentumMCPEnergyBot, weight);
-
-		if(fabsDiffTrackMomentumMCPEnergyTop > 0.1 || fabsDiffTrackMomentumMCPEnergyBot > 0.1) break;
+		histos->Fill1DHisto("diff_track_momentum_and_mcp_energy_top_no_cuts_h", diffTrackMomentumMCPEnergyTop, weight);
+		histos->Fill1DHisto("diff_track_momentum_and_mcp_energy_bot_no_cuts_h", diffTrackMomentumMCPEnergyBot, weight);
 
 		MCParticle* mcParticleTop = mcParts_->at(indexTop);
 		MCParticle* mcParticleBot = mcParts_->at(indexBot);
 
 		double mcpEnergyTop = mcParticleTop->getEnergy();
 		double mcpEnergyBot = mcParticleBot->getEnergy();
+
+		histos->Fill2DHisto("track_momentum_vs_mcp_energy_top_no_cuts_hh", mcpEnergyTop, pTop, weight);
+		histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_no_cuts_hh", mcpEnergyBot, pBot, weight);
+
+		if(fabs(diffTrackMomentumMCPEnergyTop) > 0.05 || fabs(diffTrackMomentumMCPEnergyBot) > 0.05) break;
 
 		// Mom PDG 203: Moller
 		// Mom PDG 622: wab
@@ -731,7 +734,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 			histos->Fill1DHisto("pdg_bot_analyzable_event_h", pdgIDBot, weight);
 			histos->Fill2DHisto("pdgTop_vs_pdgBot_analyzable_event_hh", pdgIDBot, pdgIDTop, weight);
 
-			if(pdgIDTop == 1 && pdgIDBot == 1){
+			if(pdgIDTop == 1 && pdgIDBot == 1 && momIDTop == 1 && momIDBot == 1){
 					histos->Fill1DHisto("invariant_mass_vertex_analyzable_events_both_tracks_from_moller_h", invariant_mass, weight);
 
 					histos->Fill1DHisto("pSum_vertex_analyzable_events_both_tracks_from_moller_h", pSum, weight);
@@ -798,14 +801,16 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		if(pdgIDTop == 1 && pdgIDBot == 1 && momPDGTop == 1 && momPDGBot == 1) flag_moller_truth = true;
 	}
 
-	if(flag_moller_truth && flag_triggered_analyzable_event_and_pass_kinematic_cuts)
-		histos->Fill2DHisto("cut_flag_vs_truth_flag_hh", 1, 1, weight);
-	else if(!flag_moller_truth && flag_triggered_analyzable_event_and_pass_kinematic_cuts)
-		histos->Fill2DHisto("cut_flag_vs_truth_flag_hh", 0, 1, weight);
-	else if(flag_moller_truth && !flag_triggered_analyzable_event_and_pass_kinematic_cuts)
-		histos->Fill2DHisto("cut_flag_vs_truth_flag_hh", 1, 0, weight);
-	else if(!flag_moller_truth && !flag_triggered_analyzable_event_and_pass_kinematic_cuts)
-		histos->Fill2DHisto("cut_flag_vs_truth_flag_hh", 0, 0, weight);
+	if(flag_analyzable_event){
+		if(flag_moller_truth && flag_triggered_analyzable_event_and_pass_kinematic_cuts)
+			histos->Fill2DHisto("cut_flag_vs_truth_flag_hh", 1, 1, weight);
+		else if(!flag_moller_truth && flag_triggered_analyzable_event_and_pass_kinematic_cuts)
+			histos->Fill2DHisto("cut_flag_vs_truth_flag_hh", 0, 1, weight);
+		else if(flag_moller_truth && !flag_triggered_analyzable_event_and_pass_kinematic_cuts)
+			histos->Fill2DHisto("cut_flag_vs_truth_flag_hh", 1, 0, weight);
+		else if(!flag_moller_truth && !flag_triggered_analyzable_event_and_pass_kinematic_cuts)
+			histos->Fill2DHisto("cut_flag_vs_truth_flag_hh", 0, 0, weight);
+	}
 
 
     if(flag_moller_truth && flag_triggered_analyzable_event_and_pass_kinematic_cuts){
