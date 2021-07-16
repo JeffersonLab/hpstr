@@ -594,6 +594,9 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 	int n_mcps_mom_beam = 0;
 	int n_mcps_mom_others = 0;
 
+	// Mom PDG 203: Moller
+	// Mom PDG 622: wab
+	// Mom PDG 204: beam
 	if (mcParts_) {
 		for (int j = 0; j < mcParts_->size(); j++) {
 			MCParticle* mcParticle = mcParts_->at(j);
@@ -713,11 +716,12 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		histos->Fill2DHisto("track_momentum_vs_mcp_energy_top_no_cuts_hh", mcpEnergyTop, pTop, weight);
 		histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_no_cuts_hh", mcpEnergyBot, pBot, weight);
 
-		if(fabs(diffTrackMomentumMCPEnergyTop) > 0.05 || fabs(diffTrackMomentumMCPEnergyBot) > 0.05) break;
+		if(mcpEnergyTop < 2) histos->Fill1DHisto("diff_track_momentum_and_mcp_energy_top_less_than_2_h", diffTrackMomentumMCPEnergyTop, weight);
+		if(mcpEnergyBot < 2) histos->Fill1DHisto("diff_track_momentum_and_mcp_energy_bot_less_than_2_h", diffTrackMomentumMCPEnergyBot, weight);
 
-		// Mom PDG 203: Moller
-		// Mom PDG 622: wab
-		// Mom PDG 204: beam
+		if(fabs(diffTrackMomentumMCPEnergyTop) > 0.03 || fabs(diffTrackMomentumMCPEnergyBot) > 0.03) break;
+
+
 		int momPDGTop = mcParticleTop->getMomPDG();
 		int momPDGBot = mcParticleBot->getMomPDG();
 
@@ -832,7 +836,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 			histos->Fill2DHisto("pdgTop_vs_pdgBot_triggered_event_hh", pdgIDBot, pdgIDTop, weight);
 		}
 
-		if(pdgIDTop == 1 && pdgIDBot == 1 && momPDGTop == 1 && momPDGBot == 1) flag_moller_truth = true;
+		if(pdgIDTop == 1 && pdgIDBot == 1 && momIDTop == 1 && momIDBot == 1) flag_moller_truth = true;
 	}
 
 	if(flag_analyzable_event){
