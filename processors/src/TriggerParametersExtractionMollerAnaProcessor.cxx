@@ -22,8 +22,11 @@
 #define ROTATIONANGLEAROUNDY 0.0305 // rad
 #define DIFFENERGYMIN -0.34 // minimum for difference between measured and calculated energy
 #define DIFFENERGYMAX 0.32 // maximum for difference between measured and calculated energy
-#define DIFFTHETAMIN -0.0030 // minimum for difference between measured and calculated theta before rotation
-#define DIFFTHETAMAX 0.0045 // maximum for difference between measured and calculated theta before rotation
+//#define DIFFTHETAMIN -0.0030 // minimum for difference between measured and calculated theta before rotation
+//#define DIFFTHETAMAX 0.0045 // maximum for difference between measured and calculated theta before rotation
+
+#define DIFFTHETAMIN -0.1 // minimum for difference between measured and calculated theta before rotation
+#define DIFFTHETAMAX 0.02 // maximum for difference between measured and calculated theta before rotation
 
 TriggerParametersExtractionMollerAnaProcessor::TriggerParametersExtractionMollerAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
@@ -448,6 +451,11 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
     		histos->Fill1DHisto("diff_theta_analyzable_events_before_rotation_h", theta_diff, weight);
 
+    		if(energy_diff_top > DIFFENERGYMIN && energy_diff_top < DIFFENERGYMAX && energy_diff_bot > DIFFENERGYMIN && energy_diff_bot < DIFFENERGYMAX){
+        		histos->Fill2DHisto("thetaTop_vs_thetaBot_analyzable_events_before_rotation_with_diff_energy_cut_hh",thate_bot_before_rotation, thate_top_before_rotation, weight);
+        		histos->Fill1DHisto("diff_theta_analyzable_events_before_rotation_with_diff_energy_cut_h", theta_diff, weight);
+    		}
+
         	histos->Fill1DHisto("diff_energy_between_recon_clulster_and_track_energy_analyzable_events_h", clTop.getEnergy() - energy_top, weight);
         	histos->Fill1DHisto("diff_energy_between_recon_clulster_and_track_energy_analyzable_events_h", clBot.getEnergy() - energy_bot, weight);
 
@@ -581,6 +589,28 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		histos->Fill2DHisto("n_tracks_vs_n_vtxs_triggered_hh", n_vtxs, n_tracks, weight);
 	}
 
+	int n_mcps_mom_moller = 0;
+	int n_mcps_mom_wab = 0;
+	int n_mcps_mom_beam = 0;
+	int n_mcps_mom_others = 0;
+
+	if (mcParts_) {
+		for (int j = 0; j < mcParts_->size(); j++) {
+			MCParticle* mcParticle = mcParts_->at(j);
+			int momPDG = mcParticle->getMomPDG();
+
+			if(momPDG == 203) n_mcps_mom_moller++;
+			else if(momPDG == 622) n_mcps_mom_wab++;
+			else if(momPDG == 204) n_mcps_mom_beam++;
+			else n_mcps_mom_others++;
+		}
+	}
+
+	histos->Fill1DHisto("n_mcps_with_mother_moller_h", n_mcps_mom_moller, weight);
+	histos->Fill1DHisto("n_mcps_with_mother_wab_h", n_mcps_mom_wab, weight);
+	histos->Fill1DHisto("n_mcps_with_mother_beam_h", n_mcps_mom_beam, weight);
+	histos->Fill1DHisto("n_mcps_with_mother_others_h", n_mcps_mom_others, weight);
+
 	// To analyze truth information
 	bool flag_moller_truth = false;
 	for (int i = 0; i < n_vtxs; i++) {
@@ -594,7 +624,6 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		}
 
 		double invariant_mass = vtx->getInvMass();
-		histos->Fill1DHisto("invariant_mass_vertex_h", invariant_mass, weight);
 
 		Particle* particleTop = (Particle*) vtx->getParticles()->At(0);
 		Particle* particleBot = (Particle*) vtx->getParticles()->At(1);
@@ -753,6 +782,11 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		    		histos->Fill1DHisto("diff_E_analyzable_events_before_rotation_both_tracks_from_moller_h", energy_diff_bot, weight);
 
 		    		histos->Fill1DHisto("diff_theta_analyzable_events_before_rotation_both_tracks_from_moller_h", theta_diff, weight);
+
+		    		if(energy_diff_top > DIFFENERGYMIN && energy_diff_top < DIFFENERGYMAX && energy_diff_bot > DIFFENERGYMIN && energy_diff_bot < DIFFENERGYMAX){
+		        		histos->Fill2DHisto("thetaTop_vs_thetaBot_analyzable_events_before_rotation_with_diff_energy_cut_both_tracks_from_moller_hh",thate_bot_before_rotation, thate_top_before_rotation, weight);
+		        		histos->Fill1DHisto("diff_theta_analyzable_events_before_rotation_with_diff_energy_cut_both_tracks_from_moller_h", theta_diff, weight);
+		    		}
 
 			}
 
