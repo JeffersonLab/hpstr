@@ -741,37 +741,32 @@
         "ytitle" : "N_{tracks}"
     },
     
-	"n_mcps_with_mother_moller_h" : {
+    
+    
+	"n_moller_h" : {
         "bins"   : 10,
         "minX"   : -0.5,
         "maxX"   : 9.5,
-        "xtitle" : "N_{MCPs} with mother of Moller",
-        "ytitle" : "Counts"
+        "xtitle" : "Number of Mollers",
+        "ytitle" : "Events"
     },
     
-	"n_mcps_with_mother_wab_h" : {
+	"n_wab_h" : {
         "bins"   : 10,
         "minX"   : -0.5,
         "maxX"   : 9.5,
-        "xtitle" : "N_{MCPs} with mother of Wab",
-        "ytitle" : "Counts"
+        "xtitle" : "Number of Wabs",
+        "ytitle" : "Events"
     },
     
-	"n_mcps_with_mother_beam_h" : {
+	"n_beam_h" : {
         "bins"   : 20,
         "minX"   : -0.5,
         "maxX"   : 19.5,
-        "xtitle" : "N_{MCPs} with mother of beam",
-        "ytitle" : "Counts"
+        "xtitle" : "Number of beam electrons",
+        "ytitle" : "Events"
     },
-    
-	"n_mcps_with_mother_others_h" : {
-        "bins"   : 20,
-        "minX"   : -0.5,
-        "maxX"   : 19.5,
-        "xtitle" : "N_{MCPs} with mother of others",
-        "ytitle" : "Counts"
-    },
+   
     
     
 
@@ -793,16 +788,16 @@
     
 	"diff_track_momentum_and_mcp_energy_top_less_than_2_h" : {
         "bins"   : 100,
-        "minX"   : -1,
-        "maxX"   : 1,
+        "minX"   : -0.1,
+        "maxX"   : 0.1,
         "xtitle" : "Diff between Energy of MCP and Momentum of Track for top",
         "ytitle" : "Counts"
     }, 
     
 	"diff_track_momentum_and_mcp_energy_bot_less_than_2_h" : {
         "bins"   : 100,
-        "minX"   : -1,
-        "maxX"   : 1,
+        "minX"   : -0.1,
+        "maxX"   : 0.1,
         "xtitle" : "Diff between Energy of MCP and Momentum of Track for bot",
         "ytitle" : "Counts"
     },
@@ -1291,7 +1286,13 @@
     
     
     
-    
+	"diff_track_time_vertex_analyzable_events_both_tracks_from_moller_h": { 
+		"bins"   : 100,
+        "minX"   : -10,
+        "maxX"   : 10,
+        "xtitle" : "Difference of time between two tracks from vertex [ns]",
+        "ytitle" : "Vertices"
+    },
     
     
 	"invariant_mass_vertex_analyzable_events_both_tracks_from_moller_h": { 

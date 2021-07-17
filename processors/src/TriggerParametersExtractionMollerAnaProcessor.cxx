@@ -589,10 +589,9 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		histos->Fill2DHisto("n_tracks_vs_n_vtxs_triggered_hh", n_vtxs, n_tracks, weight);
 	}
 
-	int n_mcps_mom_moller = 0;
-	int n_mcps_mom_wab = 0;
-	int n_mcps_mom_beam = 0;
-	int n_mcps_mom_others = 0;
+	int n_moller = 0;
+	int n_wab = 0;
+	int n_beam = 0;
 
 	// Mom PDG 203: Moller
 	// Mom PDG 622: wab
@@ -600,19 +599,17 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 	if (mcParts_) {
 		for (int j = 0; j < mcParts_->size(); j++) {
 			MCParticle* mcParticle = mcParts_->at(j);
-			int momPDG = mcParticle->getMomPDG();
+			int pdg = mcParticle->getPDG();
 
-			if(momPDG == 203) n_mcps_mom_moller++;
-			else if(momPDG == 622) n_mcps_mom_wab++;
-			else if(momPDG == 204) n_mcps_mom_beam++;
-			else n_mcps_mom_others++;
+			if(pdg == 203) n_moller++;
+			else if(pdg == 622) n_wab++;
+			else if(pdg == 204) n_beam++;
 		}
 	}
 
-	histos->Fill1DHisto("n_mcps_with_mother_moller_h", n_mcps_mom_moller, weight);
-	histos->Fill1DHisto("n_mcps_with_mother_wab_h", n_mcps_mom_wab, weight);
-	histos->Fill1DHisto("n_mcps_with_mother_beam_h", n_mcps_mom_beam, weight);
-	histos->Fill1DHisto("n_mcps_with_mother_others_h", n_mcps_mom_others, weight);
+	histos->Fill1DHisto("n_moller_h", n_moller, weight);
+	histos->Fill1DHisto("n_wab_h", n_wab, weight);
+	histos->Fill1DHisto("n_beam_h", n_beam, weight);
 
 	// To analyze truth information
 	bool flag_moller_truth = false;
@@ -768,6 +765,9 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 			histos->Fill2DHisto("pdgTop_vs_pdgBot_analyzable_event_hh", pdgIDBot, pdgIDTop, weight);
 
 			if(pdgIDTop == 1 && pdgIDBot == 1 && momIDTop == 1 && momIDBot == 1){
+
+					histos->Fill1DHisto("diff_track_time_vertex_analyzable_events_both_tracks_from_moller_h", trackTop.getTrackTime() - trackBot.getTrackTime(), weight);
+
 					histos->Fill1DHisto("invariant_mass_vertex_analyzable_events_both_tracks_from_moller_h", invariant_mass, weight);
 
 					histos->Fill1DHisto("pSum_vertex_analyzable_events_both_tracks_from_moller_h", pSum, weight);
