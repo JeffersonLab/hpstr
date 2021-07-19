@@ -604,6 +604,11 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 			if(pdg == 203) n_moller++;
 			else if(pdg == 622) n_wab++;
 			else if(pdg == 204) n_beam++;
+
+			if(pdg == 203){
+				histos->Fill1DHisto("n_daughters_moller_h", mcParticle->getNumDaughters(), weight);
+			}
+
 		}
 	}
 
@@ -752,6 +757,14 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		else if(pdgBot == 22) pdgIDBot = 3;
 		else pdgIDBot = 4;
 
+		int idMomTop = mcParticleTop->getMomID();
+		int idMomBot = mcParticleBot->getMomID();
+
+		if(idMomTop == idMomBot)
+			histos->Fill1DHisto("mom_id_match_no_cuts_h", 1, weight);
+		else
+			histos->Fill1DHisto("mom_id_match_no_cuts_h", 0, weight);
+
 		if (flag_analyzable_event) {
 			histos->Fill2DHisto("track_momentum_vs_mcp_energy_top_analyzable_event_hh", mcpEnergyTop, pTop, weight);
 			histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_analyzable_event_hh", mcpEnergyBot, pBot, weight);
@@ -765,32 +778,36 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 			histos->Fill2DHisto("pdgTop_vs_pdgBot_analyzable_event_hh", pdgIDBot, pdgIDTop, weight);
 
 			if(pdgIDTop == 1 && pdgIDBot == 1 && momIDTop == 1 && momIDBot == 1){
+				if(idMomTop == idMomBot)
+					histos->Fill1DHisto("mom_id_match_analyzable_events_both_tracks_from_moller_h", 1, weight);
+				else
+					histos->Fill1DHisto("mom_id_match_analyzable_events_both_tracks_from_moller_h", 0, weight);
 
-					histos->Fill1DHisto("diff_track_time_vertex_analyzable_events_both_tracks_from_moller_h", trackTop.getTrackTime() - trackBot.getTrackTime(), weight);
+				histos->Fill1DHisto("diff_track_time_vertex_analyzable_events_both_tracks_from_moller_h", trackTop.getTrackTime() - trackBot.getTrackTime(), weight);
 
-					histos->Fill1DHisto("invariant_mass_vertex_analyzable_events_both_tracks_from_moller_h", invariant_mass, weight);
+				histos->Fill1DHisto("invariant_mass_vertex_analyzable_events_both_tracks_from_moller_h", invariant_mass, weight);
 
-					histos->Fill1DHisto("pSum_vertex_analyzable_events_both_tracks_from_moller_h", pSum, weight);
+				histos->Fill1DHisto("pSum_vertex_analyzable_events_both_tracks_from_moller_h", pSum, weight);
 
-					histos->Fill2DHisto("invariant_mass_vs_pSum_vertex_analyzable_events_both_tracks_from_moller_hh", pSum, invariant_mass, weight);
+				histos->Fill2DHisto("invariant_mass_vs_pSum_vertex_analyzable_events_both_tracks_from_moller_hh", pSum, invariant_mass, weight);
 
-					histos->Fill2DHisto("px_vs_py_vertex_analyzable_events_both_tracks_from_moller_hh", momTop[0], momTop[1], weight);
-					histos->Fill2DHisto("px_vs_py_vertex_analyzable_events_both_tracks_from_moller_hh", momBot[0], momBot[1], weight);
+				histos->Fill2DHisto("px_vs_py_vertex_analyzable_events_both_tracks_from_moller_hh", momTop[0], momTop[1], weight);
+				histos->Fill2DHisto("px_vs_py_vertex_analyzable_events_both_tracks_from_moller_hh", momBot[0], momBot[1], weight);
 
-		    		histos->Fill2DHisto("energy_vs_theta_analyzable_events_before_rotation_both_tracks_from_moller_hh",thate_top_before_rotation, energy_top, weight);
-		    		histos->Fill2DHisto("energy_vs_theta_analyzable_events_before_rotation_both_tracks_from_moller_hh",thate_bot_before_rotation, energy_bot, weight);
+				histos->Fill2DHisto("energy_vs_theta_analyzable_events_before_rotation_both_tracks_from_moller_hh",thate_top_before_rotation, energy_top, weight);
+				histos->Fill2DHisto("energy_vs_theta_analyzable_events_before_rotation_both_tracks_from_moller_hh",thate_bot_before_rotation, energy_bot, weight);
 
-		    		histos->Fill2DHisto("thetaTop_vs_thetaBot_analyzable_events_before_rotation_both_tracks_from_moller_hh",thate_bot_before_rotation, thate_top_before_rotation, weight);
+				histos->Fill2DHisto("thetaTop_vs_thetaBot_analyzable_events_before_rotation_both_tracks_from_moller_hh",thate_bot_before_rotation, thate_top_before_rotation, weight);
 
-		    		histos->Fill1DHisto("diff_E_analyzable_events_before_rotation_both_tracks_from_moller_h", energy_diff_top, weight);
-		    		histos->Fill1DHisto("diff_E_analyzable_events_before_rotation_both_tracks_from_moller_h", energy_diff_bot, weight);
+				histos->Fill1DHisto("diff_E_analyzable_events_before_rotation_both_tracks_from_moller_h", energy_diff_top, weight);
+				histos->Fill1DHisto("diff_E_analyzable_events_before_rotation_both_tracks_from_moller_h", energy_diff_bot, weight);
 
-		    		histos->Fill1DHisto("diff_theta_analyzable_events_before_rotation_both_tracks_from_moller_h", theta_diff, weight);
+				histos->Fill1DHisto("diff_theta_analyzable_events_before_rotation_both_tracks_from_moller_h", theta_diff, weight);
 
-		    		if(energy_diff_top > DIFFENERGYMIN && energy_diff_top < DIFFENERGYMAX && energy_diff_bot > DIFFENERGYMIN && energy_diff_bot < DIFFENERGYMAX){
-		        		histos->Fill2DHisto("thetaTop_vs_thetaBot_analyzable_events_before_rotation_with_diff_energy_cut_both_tracks_from_moller_hh",thate_bot_before_rotation, thate_top_before_rotation, weight);
-		        		histos->Fill1DHisto("diff_theta_analyzable_events_before_rotation_with_diff_energy_cut_both_tracks_from_moller_h", theta_diff, weight);
-		    		}
+				if(energy_diff_top > DIFFENERGYMIN && energy_diff_top < DIFFENERGYMAX && energy_diff_bot > DIFFENERGYMIN && energy_diff_bot < DIFFENERGYMAX){
+					histos->Fill2DHisto("thetaTop_vs_thetaBot_analyzable_events_before_rotation_with_diff_energy_cut_both_tracks_from_moller_hh",thate_bot_before_rotation, thate_top_before_rotation, weight);
+					histos->Fill1DHisto("diff_theta_analyzable_events_before_rotation_with_diff_energy_cut_both_tracks_from_moller_h", theta_diff, weight);
+				}
 
 			}
 

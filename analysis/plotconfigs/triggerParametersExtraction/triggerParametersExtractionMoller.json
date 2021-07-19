@@ -767,6 +767,13 @@
         "ytitle" : "Events"
     },
    
+   	"n_daughters_moller_h" : {
+        "bins"   : 3,
+        "minX"   : -0.5,
+        "maxX"   : 2.5,
+        "xtitle" : "Number of daughter particles from Moller",
+        "ytitle" : "Counts"
+    },
     
     
 
@@ -1381,7 +1388,24 @@
         "maxX"   : 0.025,
         "xtitle" : "Differnce between measured and calculated #theta before rotation [rad]",
         "ytitle" : "Vertices"
+    },
+    
+	"mom_id_match_no_cuts_h" : {
+		"bins"   : 2,
+        "minX"   : -0.5,
+        "maxX"   : 1.5,
+        "xtitle" : "Status of Mom ID Match",
+        "ytitle" : "Counts"
+    },
+    
+	"mom_id_match_analyzable_events_both_tracks_from_moller_h" : {
+		"bins"   : 2,
+        "minX"   : -0.5,
+        "maxX"   : 1.5,
+        "xtitle" : "Status of Mom ID Match",
+        "ytitle" : "Counts"
     }
+    
     
         
 }

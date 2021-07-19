@@ -36,6 +36,34 @@ class MCParticle : public TObject {
          * @param particle Daughter particle composing this particle
          */
         void addDaughter(MCParticle* particle); 
+
+        /**
+         * Get number of the daughter particles composing this particle.
+         *
+         * @return number of the daughter particles composing this particle.
+         */
+        int getNumDaughters() const {return n_daughters_; };
+
+        /**
+         * Set number of the daughter particles composing this particle.
+         *
+         * @param number of the daughter particles composing this particle.
+         */
+        void setNumDaughters(const int num) { n_daughters_ = num; };
+
+        /**
+         * Add ID of a daughter composing this particle.
+         *
+         * @param ID of a daughter composing this particle.
+         */
+        void addDaughterID(int id){ vect_id_daughters.push_back(id); };
+
+        /**
+         * Get vector of IDs of daughter particles composing this particle.
+         *
+         * @return vector of IDs of daughter particles composing this particle.
+         */
+        std::vector<int> getIDDaugheters() const { return vect_id_daughters; };
        
         /**
          * Get the daughter particles composing this particle.
@@ -44,6 +72,8 @@ class MCParticle : public TObject {
          *         with this particle
          */
         TRefArray* getDaughters() const { return daughters_; }; 
+
+
 
         /**
          * Set the charge of the particle.
@@ -72,6 +102,13 @@ class MCParticle : public TObject {
          * @param momPDG The PDG ID of the mother of this particle
          */
         void setMomPDG(const int momPDG) { momPDG_ = momPDG; }; 
+
+        /**
+         * Set the ID of the mother of this particle.
+         *
+         * @param ID The ID of the mother of this particle
+         */
+        void setMomID(const int id) { momID_ = id; };
 
         /**
          * Set the generator status of the particle.
@@ -144,6 +181,9 @@ class MCParticle : public TObject {
         /** @return The particle ID of the mother. */
         int getMomPDG() const { return momPDG_; }; 
         
+        /** @return The particle ID of the mother. */
+        int getMomID() const { return momID_; };
+
         /** @return The particle generator status. */
         int getGenStatus() const { return gen_; }; 
         
@@ -184,14 +224,20 @@ class MCParticle : public TObject {
         /** The number of daughters associated with this particle */    
         int n_daughters_{0};
 
+        /** The number of daughters associated with this particle */
+        std::vector<int> vect_id_daughters;
+
         /** The charge of this particle */
         int charge_{-9999}; 
 
         /** The PDG ID of this particle */
         int pdg_{-9999}; 
 
-        /** The PDG ID of this particle */
+        /** The PDG ID of mother of this particle */
         int momPDG_{-9999}; 
+
+        /** The ID of mother of this particle */
+        int momID_{-9999};
 
         /** The generator status of the particle */ 
         int gen_{-9999}; 
