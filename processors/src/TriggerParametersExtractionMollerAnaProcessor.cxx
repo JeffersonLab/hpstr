@@ -721,23 +721,23 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		if(mcpEnergyTop < 2) histos->Fill1DHisto("diff_track_momentum_and_mcp_energy_top_less_than_2_h", diffTrackMomentumMCPEnergyTop, weight);
 		if(mcpEnergyBot < 2) histos->Fill1DHisto("diff_track_momentum_and_mcp_energy_bot_less_than_2_h", diffTrackMomentumMCPEnergyBot, weight);
 
-		if(fabs(diffTrackMomentumMCPEnergyTop) > 0.03 || fabs(diffTrackMomentumMCPEnergyBot) > 0.03) break;
+		if(fabs(diffTrackMomentumMCPEnergyTop) > 0.015 || fabs(diffTrackMomentumMCPEnergyBot) > 0.015) break;
 
 
 		int momPDGTop = mcParticleTop->getMomPDG();
 		int momPDGBot = mcParticleBot->getMomPDG();
 
-		int momIDTop = 4;
-		if(momPDGTop == 203) momIDTop = 1;
-		else if(momPDGTop == 622) momIDTop = 2;
-		else if(momPDGTop == 204) momIDTop = 3;
-		else momIDTop = 4;
+		int momPDGIDTop = 4;
+		if(momPDGTop == 203) momPDGIDTop = 1;
+		else if(momPDGTop == 622) momPDGIDTop = 2;
+		else if(momPDGTop == 204) momPDGIDTop = 3;
+		else momPDGIDTop = 4;
 
-		int momIDBot = 4;
-		if(momPDGBot == 203) momIDBot = 1;
-		else if(momPDGBot == 622) momIDBot = 2;
-		else if(momPDGBot == 204) momIDBot = 3;
-		else momIDBot = 4;
+		int momPDGIDBot = 4;
+		if(momPDGBot == 203) momPDGIDBot = 1;
+		else if(momPDGBot == 622) momPDGIDBot = 2;
+		else if(momPDGBot == 204) momPDGIDBot = 3;
+		else momPDGIDBot = 4;
 
 		// PDG 11: electron
 		// PDG -11: positron
@@ -769,15 +769,15 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 			histos->Fill2DHisto("track_momentum_vs_mcp_energy_top_analyzable_event_hh", mcpEnergyTop, pTop, weight);
 			histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_analyzable_event_hh", mcpEnergyBot, pBot, weight);
 
-			histos->Fill1DHisto("motherPDG_top_analyzable_event_h", momIDTop, weight);
-			histos->Fill1DHisto("motherPDG_bot_analyzable_event_h", momIDBot, weight);
-			histos->Fill2DHisto("motherPDGTop_vs_motherPDGBot_analyzable_event_hh", momIDBot, momIDTop, weight);
+			histos->Fill1DHisto("motherPDG_top_analyzable_event_h", momPDGIDTop, weight);
+			histos->Fill1DHisto("motherPDG_bot_analyzable_event_h", momPDGIDBot, weight);
+			histos->Fill2DHisto("motherPDGTop_vs_motherPDGBot_analyzable_event_hh", momPDGIDBot, momPDGIDTop, weight);
 
 			histos->Fill1DHisto("pdg_top_analyzable_event_h", pdgIDTop, weight);
 			histos->Fill1DHisto("pdg_bot_analyzable_event_h", pdgIDBot, weight);
 			histos->Fill2DHisto("pdgTop_vs_pdgBot_analyzable_event_hh", pdgIDBot, pdgIDTop, weight);
 
-			if(pdgIDTop == 1 && pdgIDBot == 1 && momIDTop == 1 && momIDBot == 1){
+			if(pdgIDTop == 1 && pdgIDBot == 1 && momPDGIDTop == 1 && momPDGIDBot == 1){
 				if(idMomTop == idMomBot)
 					histos->Fill1DHisto("mom_id_match_analyzable_events_both_tracks_from_moller_h", 1, weight);
 				else
@@ -804,6 +804,29 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
 				histos->Fill1DHisto("diff_theta_analyzable_events_before_rotation_both_tracks_from_moller_h", theta_diff, weight);
 
+				if(idMomTop == idMomBot){
+					histos->Fill1DHisto("diff_track_time_vertex_analyzable_events_both_tracks_from_moller_with_the_same_id_h", trackTop.getTrackTime() - trackBot.getTrackTime(), weight);
+
+					histos->Fill1DHisto("invariant_mass_vertex_analyzable_events_both_tracks_from_moller_with_the_same_id_h", invariant_mass, weight);
+
+					histos->Fill1DHisto("pSum_vertex_analyzable_events_both_tracks_from_moller_with_the_same_id_h", pSum, weight);
+
+					histos->Fill2DHisto("invariant_mass_vs_pSum_vertex_analyzable_events_both_tracks_from_moller_with_the_same_id_hh", pSum, invariant_mass, weight);
+
+					histos->Fill2DHisto("px_vs_py_vertex_analyzable_events_both_tracks_from_moller_with_the_same_id_hh", momTop[0], momTop[1], weight);
+					histos->Fill2DHisto("px_vs_py_vertex_analyzable_events_both_tracks_from_moller_with_the_same_id_hh", momBot[0], momBot[1], weight);
+
+					histos->Fill2DHisto("energy_vs_theta_analyzable_events_before_rotation_both_tracks_from_moller_with_the_same_id_hh",thate_top_before_rotation, energy_top, weight);
+					histos->Fill2DHisto("energy_vs_theta_analyzable_events_before_rotation_both_tracks_from_moller_with_the_same_id_hh",thate_bot_before_rotation, energy_bot, weight);
+
+					histos->Fill2DHisto("thetaTop_vs_thetaBot_analyzable_events_before_rotation_both_tracks_from_moller_with_the_same_id_hh",thate_bot_before_rotation, thate_top_before_rotation, weight);
+
+					histos->Fill1DHisto("diff_E_analyzable_events_before_rotation_both_tracks_from_moller_with_the_same_id_h", energy_diff_top, weight);
+					histos->Fill1DHisto("diff_E_analyzable_events_before_rotation_both_tracks_from_moller_with_the_same_id_h", energy_diff_bot, weight);
+
+					histos->Fill1DHisto("diff_theta_analyzable_events_before_rotation_both_tracks_from_moller_with_the_same_id_h", theta_diff, weight);
+				}
+
 				if(energy_diff_top > DIFFENERGYMIN && energy_diff_top < DIFFENERGYMAX && energy_diff_bot > DIFFENERGYMIN && energy_diff_bot < DIFFENERGYMAX){
 					histos->Fill2DHisto("thetaTop_vs_thetaBot_analyzable_events_before_rotation_with_diff_energy_cut_both_tracks_from_moller_hh",thate_bot_before_rotation, thate_top_before_rotation, weight);
 					histos->Fill1DHisto("diff_theta_analyzable_events_before_rotation_with_diff_energy_cut_both_tracks_from_moller_h", theta_diff, weight);
@@ -814,12 +837,26 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		}
 
 		if (flag_triggered_analyzable_event) {
+	    	histos->Fill1DHisto("diff_track_time_vertex_triggered_analyzable_event_h", trackTop.getTrackTime() - trackBot.getTrackTime(), weight);
+	    	if(idMomTop == idMomBot)
+	    		histos->Fill1DHisto("mom_id_match_triggered_analyzable_event_h", 1, weight);
+	    	else
+	    		histos->Fill1DHisto("mom_id_match_triggered_analyzable_event_h", 0, weight);
+
+			if(pdgIDTop == 1 && pdgIDBot == 1 && momPDGIDTop == 1 && momPDGIDBot == 1){
+		    	histos->Fill1DHisto("diff_track_time_vertex_triggered_analyzable_event_both_tracks_from_moller_h", trackTop.getTrackTime() - trackBot.getTrackTime(), weight);
+		    	if(idMomTop == idMomBot)
+		    		histos->Fill1DHisto("mom_id_match_triggered_analyzable_event_both_tracks_from_moller_h", 1, weight);
+		    	else
+		    		histos->Fill1DHisto("mom_id_match_triggered_analyzable_event_both_tracks_from_moller_h", 0, weight);
+			}
+
 			histos->Fill2DHisto("track_momentum_vs_mcp_energy_top_triggered_analyzable_event_hh", mcpEnergyTop, pTop, weight);
 			histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_triggered_analyzable_event_hh", mcpEnergyBot, pBot, weight);
 
-			histos->Fill1DHisto("motherPDG_top_triggered_analyzable_event_h", momIDTop, weight);
-			histos->Fill1DHisto("motherPDG_bot_triggered_analyzable_event_h", momIDBot, weight);
-			histos->Fill2DHisto("motherPDGTop_vs_motherPDGBot_triggered_analyzable_event_hh", momIDBot, momIDTop, weight);
+			histos->Fill1DHisto("motherPDG_top_triggered_analyzable_event_h", momPDGIDTop, weight);
+			histos->Fill1DHisto("motherPDG_bot_triggered_analyzable_event_h", momPDGIDBot, weight);
+			histos->Fill2DHisto("motherPDGTop_vs_motherPDGBot_triggered_analyzable_event_hh", momPDGIDBot, momPDGIDTop, weight);
 
 			histos->Fill1DHisto("pdg_top_triggered_analyzable_event_h", pdgIDTop, weight);
 			histos->Fill1DHisto("pdg_bot_triggered_analyzable_event_h", pdgIDBot, weight);
@@ -828,12 +865,26 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		}
 
 	    if(flag_triggered_analyzable_event_and_pass_kinematic_cuts){
+	    	histos->Fill1DHisto("diff_track_time_vertex_triggered_analyzable_event_and_pass_kinematic_cuts_h", trackTop.getTrackTime() - trackBot.getTrackTime(), weight);
+	    	if(idMomTop == idMomBot)
+	    		histos->Fill1DHisto("mom_id_match_triggered_analyzable_event_and_pass_kinematic_cuts_h", 1, weight);
+	    	else
+	    		histos->Fill1DHisto("mom_id_match_triggered_analyzable_event_and_pass_kinematic_cuts_h", 0, weight);
+
+			if(pdgIDTop == 1 && pdgIDBot == 1 && momPDGIDTop == 1 && momPDGIDBot == 1){
+		    	histos->Fill1DHisto("diff_track_time_vertex_triggered_analyzable_event_and_pass_kinematic_cuts_both_tracks_from_moller_h", trackTop.getTrackTime() - trackBot.getTrackTime(), weight);
+		    	if(idMomTop == idMomBot)
+		    		histos->Fill1DHisto("mom_id_match_triggered_analyzable_event_and_pass_kinematic_cuts_both_tracks_from_moller_h", 1, weight);
+		    	else
+		    		histos->Fill1DHisto("mom_id_match_triggered_analyzable_event_and_pass_kinematic_cuts_both_tracks_from_moller_h", 0, weight);
+			}
+
 			histos->Fill2DHisto("track_momentum_vs_mcp_energy_top_triggered_analyzable_event_and_pass_kinematic_cuts_hh", mcpEnergyTop, pTop, weight);
 			histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_triggered_analyzable_event_and_pass_kinematic_cuts_hh", mcpEnergyBot, pBot, weight);
 
-			histos->Fill1DHisto("motherPDG_top_triggered_analyzable_event_and_pass_kinematic_cuts_h", momIDTop, weight);
-			histos->Fill1DHisto("motherPDG_bot_triggered_analyzable_event_and_pass_kinematic_cuts_h", momIDBot, weight);
-			histos->Fill2DHisto("motherPDGTop_vs_motherPDGBot_triggered_analyzable_event_and_pass_kinematic_cuts_hh", momIDBot, momIDTop, weight);
+			histos->Fill1DHisto("motherPDG_top_triggered_analyzable_event_and_pass_kinematic_cuts_h", momPDGIDTop, weight);
+			histos->Fill1DHisto("motherPDG_bot_triggered_analyzable_event_and_pass_kinematic_cuts_h", momPDGIDBot, weight);
+			histos->Fill2DHisto("motherPDGTop_vs_motherPDGBot_triggered_analyzable_event_and_pass_kinematic_cuts_hh", momPDGIDBot, momPDGIDTop, weight);
 
 			histos->Fill1DHisto("pdg_top_triggered_analyzable_event_and_pass_kinematic_cuts_h", pdgIDTop, weight);
 			histos->Fill1DHisto("pdg_bot_triggered_analyzable_event_and_pass_kinematic_cuts_h", pdgIDBot, weight);
@@ -844,16 +895,16 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 			histos->Fill2DHisto("track_momentum_vs_mcp_energy_top_triggered_event_hh", mcpEnergyTop, pTop, weight);
 			histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_triggered_event_hh", mcpEnergyBot, pBot, weight);
 
-			histos->Fill1DHisto("motherPDG_top_triggered_event_h", momIDTop, weight);
-			histos->Fill1DHisto("motherPDG_bot_triggered_event_h", momIDBot, weight);
-			histos->Fill2DHisto("motherPDGTop_vs_motherPDGBot_triggered_event_hh", momIDBot, momIDTop, weight);
+			histos->Fill1DHisto("motherPDG_top_triggered_event_h", momPDGIDTop, weight);
+			histos->Fill1DHisto("motherPDG_bot_triggered_event_h", momPDGIDBot, weight);
+			histos->Fill2DHisto("motherPDGTop_vs_motherPDGBot_triggered_event_hh", momPDGIDBot, momPDGIDTop, weight);
 
 			histos->Fill1DHisto("pdg_top_triggered_event_h", pdgIDTop, weight);
 			histos->Fill1DHisto("pdg_bot_triggered_event_h", pdgIDBot, weight);
 			histos->Fill2DHisto("pdgTop_vs_pdgBot_triggered_event_hh", pdgIDBot, pdgIDTop, weight);
 		}
 
-		if(pdgIDTop == 1 && pdgIDBot == 1 && momIDTop == 1 && momIDBot == 1) flag_moller_truth = true;
+		if(pdgIDTop == 1 && pdgIDBot == 1 && momPDGIDTop == 1 && momPDGIDBot == 1) flag_moller_truth = true;
 	}
 
 	if(flag_analyzable_event){
