@@ -71,6 +71,10 @@ print(hybridsFromFile)
 outFile = r.TFile(options.outFilename,"RECREATE")
 loadOnlineBaselines = False
 
+#global histos
+
+chiocc_hh = r.TH2F("chi2_v_occupancy","%s_chi2_v_occupancy",50,0,500000,30,0,30)
+
 for hybrid in hybridsFromFile:
     #Get 2d histogram for hybrid
     inFile.cd()
@@ -80,7 +84,7 @@ for hybrid in hybridsFromFile:
     #Fit values are stored in Flat Tuple
 
     #Offline baseline Fit Information
-    channel, mean, sigma, norm, chi2, ndf, fitlow, fithigh, RMS = ([] for i in range(9))
+    channel, mean, sigma, norm, chi2, ndf, fitlow, fithigh, RMS, nentries = ([] for i in range(10))
 
     #Offline Channel Flags
     minStatsFailure, noisy, lowdaq, dead, TFRerror = ([] for i in range(5))
@@ -106,12 +110,14 @@ for hybrid in hybridsFromFile:
             lowdaq.append(fitData.lowdaq)
             dead.append(fitData.dead)
             TFRerror.append(fitData.TFitResultError)
+            #nentries.append(fitData.n_entries)
 
     #Get offline baseline RMS value, used to determine if channel is "dead" based on config param
     for cc in range(len(channel)): 
         yproj_h = hybrid_hh.ProjectionY('%s_ch%i_h'%(hybrid,channel[cc]),int(channel[cc]+1),int(channel[cc]+1),"e")
         rms = yproj_h.GetRMS()
         RMS.append(round(rms,3))
+        nentries.append(yproj_h.GetEntries())
 
     #Remove extra phrases in input plots to isolate Hybrid name
     #hybrid = hybrid.replace('raw_hits_','').replace('_SvtHybrids0_hh','')
@@ -235,12 +241,16 @@ for hybrid in hybridsFromFile:
     ld_gr.Write()
 
     #Plot Chi2/Ndf
-    #Chi2Ndf = [i / j for i, j in zip(chi2,ndf)]
-    #chi2_gr_y = np.array(Chi2Ndf, dtype= float)
-    #chi2_gr_x = np.array(channel, dtype=float)
-    #chi2_gr = buildTGraph("BlFitChi2_%s"%(hybrid),"BlFit_Chi2/Ndf_%s;Channel;Status"%(hybrid),len(chi2_gr_x),chi2_gr_x,chi2_gr_y,1)
-    #chi2_gr.Draw()
-    #chi2_gr.Write()
+    Chi2Ndf = [i / j for i, j in zip(chi2,ndf)]
+    chi2_gr_y = np.array(Chi2Ndf, dtype= float)
+    chi2_gr_x = np.array(channel, dtype=float)
+    chi2_gr = buildTGraph("BlFitChi2_%s"%(hybrid),"BlFit_Chi2/Ndf_%s;Channel;Status"%(hybrid),len(chi2_gr_x),chi2_gr_x,chi2_gr_y,1)
+    chi2_gr.Draw()
+    chi2_gr.Write()
+
+    nentries_x = np.array(nentries, dtype=float)
+    for i in range(len(Chi2Ndf)):
+        chiocc_hh.Fill(nentries_x[i],chi2_gr_y[i],1.0)
 
     #####################################################################################################
     #Channel Noise Plots
@@ -316,5 +326,9 @@ for hybrid in hybridsFromFile:
                chi2_1Der_gr.Write()
                chi2_2Der_gr.Write()
                #ratio_gr.Write()
+
+#finalize histos
+chiocc_hh.Draw()
+chiocc_hh.Write()
 outFile.Write()
 #####

@@ -54,13 +54,14 @@ TF1* BlFitHistos::singleGausIterative(TH1D* hist, double sigmaRange, double min 
     std::cout << "fitA sigma " << fitASig << std::endl;
     delete fitA;
 
+    /*
     //if fitAMean is > max, increment xmin up and refit
     int iter = 0;
     if( fitAMean > max ){
         std::cout << "initial fit mean > max. Increment xmin up" << std::endl;
         double binwidth = hist->GetBinWidth(hist->FindFirstBinAbove(0.0,1));
         double newxmin = min;
-        while (fitAMean > max || iter < 10){
+        while ((fitAMean > max || iter < 10) && (newxmin+20*binwidth < max)){
             newxmin = newxmin + 20*binwidth;
             std::cout << "new xmin is " << newxmin << std::endl;
             TF1 *fitA = new TF1("fitA", "gaus", newxmin, max);
@@ -72,6 +73,7 @@ TF1* BlFitHistos::singleGausIterative(TH1D* hist, double sigmaRange, double min 
             iter = iter + 1;
         }
     }
+    */
 
     std::cout << "fitA mean after iter " << fitAMean << std::endl;
     std::cout << "fitA sigma after iter " << fitASig << std::endl;
@@ -246,7 +248,7 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
         }
         
         //Perform fitting procedure over all channels on a sensor
-        for(int cc=390; cc < 400 ; ++cc) 
+        for(int cc=0; cc < 50 ; ++cc) 
         {
             std::cout << hh_name << " " << cc << std::endl;
 
@@ -281,7 +283,7 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
             //xmin is the start of the fit window. iterxmax will initially be iteratively fit and
             //then increased until some maximum allowed value, or until the chi2/Ndf > 100
             double maxbin = projy_h->GetBinContent(projy_h->GetMaximumBin());
-            double frac = 0.20;
+            double frac = 0.10;
             int firstbin = projy_h->FindFirstBinAbove((double)frac*maxbin,1);
             double xmin = projy_h->GetBinLowEdge(firstbin);
             double binwidth = projy_h->GetBinWidth(firstbin);
@@ -460,6 +462,7 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
             //1. If xmax or xmin occur within N*Sigma of the fit, indicative of a partial fit or a
             //lowDaq-threshold channel
 
+            /*
             if (fitmean > xmax){
                 std::cout << "fitmean > xmax. Refit" << std::endl;
                 double newmax = projy_h->GetBinLowEdge(projy_h->GetMaximumBin()) - 2*binwidth;
@@ -479,6 +482,7 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
 
                 delete lowdaqfit;
             }
+            */
 
             //Check if channel is lowdaq
             //If the maximum bin in a distribution occurs outside of the fit by some level of 
@@ -501,7 +505,9 @@ void BlFitHistos::Chi2GausFit(std::map<std::string,TH2F*> histos2d, int nPointsD
             }
             maxavg = maxavg/3;
 
-            //if (maxbinx > fitmean + fitsigma && (maxavg >  
+            if ( (std::abs(maxbinx - fitmean) > fitsigma) || (fitmean > fitmax) ){
+                
+            }
 
             //Fill fit values
             flat_tuple_->setVariableValue("BlFitMean", fitmean);
