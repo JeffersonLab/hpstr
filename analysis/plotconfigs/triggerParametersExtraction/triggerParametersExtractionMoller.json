@@ -1567,7 +1567,101 @@
         "maxX"   : 1.5,
         "xtitle" : "Status of Mom ID Match",
         "ytitle" : "Counts"
-    }
+    },
     
+    
+	"diff_px_track_mcp_after_momentum_match_hh" : {
+        "binsX" : 100,
+        "minX" : -1,
+        "maxX" : 1,
+        "binsY" : 100,
+        "minY" : -1,
+        "maxY" : 1,
+		"xtitle" : "Difference of p_{x} between MCP and track for top [GeV/c]",
+        "ytitle" : "Difference of p_{x} between MCP and track for bot [GeV/c]"
+    },
+	"diff_py_track_mcp_after_momentum_match_hh" : {
+        "binsX" : 100,
+        "minX" : -1,
+        "maxX" : 1,
+        "binsY" : 100,
+        "minY" : -1,
+        "maxY" : 1,
+		"xtitle" : "Difference of p_{y} between MCP and track for top [GeV/c]",
+        "ytitle" : "Difference of p_{y} between MCP and track for bot [GeV/c]"
+    },
+	"diff_pz_track_mcp_after_momentum_match_hh" : {
+        "binsX" : 100,
+        "minX" : -1,
+        "maxX" : 1,
+        "binsY" : 100,
+        "minY" : -1,
+        "maxY" : 1,
+		"xtitle" : "Difference of p_{z} between MCP and track for top [GeV/c]",
+        "ytitle" : "Difference of p_{z} between MCP and track for bot [GeV/c]"
+    },
+    
+    
+	"diff_px_track_mcp_vertex_analyzable_events_both_tracks_from_moller_with_the_same_id_hh" : {
+        "binsX" : 100,
+        "minX" : -1,
+        "maxX" : 1,
+        "binsY" : 100,
+        "minY" : -1,
+        "maxY" : 1,
+		"xtitle" : "Difference of p_{x} between MCP and track for top [GeV/c]",
+        "ytitle" : "Difference of p_{x} between MCP and track for bot [GeV/c]"
+    },
+	"diff_py_track_mcp_vertex_analyzable_events_both_tracks_from_moller_with_the_same_id_hh" : {
+        "binsX" : 100,
+        "minX" : -1,
+        "maxX" : 1,
+        "binsY" : 100,
+        "minY" : -1,
+        "maxY" : 1,
+		"xtitle" : "Difference of p_{y} between MCP and track for top [GeV/c]",
+        "ytitle" : "Difference of p_{y} between MCP and track for bot [GeV/c]"
+    },
+	"diff_pz_track_mcp_vertex_analyzable_events_both_tracks_from_moller_with_the_same_id_hh" : {
+        "binsX" : 100,
+        "minX" : -1,
+        "maxX" : 1,
+        "binsY" : 100,
+        "minY" : -1,
+        "maxY" : 1,
+		"xtitle" : "Difference of p_{z} between MCP and track for top [GeV/c]",
+        "ytitle" : "Difference of p_{z} between MCP and track for bot [GeV/c]"
+    },
+    
+	"diff_px_track_mcp_vertex_triggered_analyzable_event_and_pass_kinematic_cuts_both_tracks_from_moller_with_the_same_id_hh" : {
+        "binsX" : 100,
+        "minX" : -1,
+        "maxX" : 1,
+        "binsY" : 100,
+        "minY" : -1,
+        "maxY" : 1,
+		"xtitle" : "Difference of p_{x} between MCP and track for top [GeV/c]",
+        "ytitle" : "Difference of p_{x} between MCP and track for bot [GeV/c]"
+    },
+	"diff_py_track_mcp_vertex_triggered_analyzable_event_and_pass_kinematic_cuts_both_tracks_from_moller_with_the_same_id_hh" : {
+        "binsX" : 100,
+        "minX" : -1,
+        "maxX" : 1,
+        "binsY" : 100,
+        "minY" : -1,
+        "maxY" : 1,
+		"xtitle" : "Difference of p_{y} between MCP and track for top [GeV/c]",
+        "ytitle" : "Difference of p_{y} between MCP and track for bot [GeV/c]"
+    },
+	"diff_pz_track_mcp_vertex_triggered_analyzable_event_and_pass_kinematic_cuts_both_tracks_from_moller_with_the_same_id_hh" : {
+        "binsX" : 100,
+        "minX" : -1,
+        "maxX" : 1,
+        "binsY" : 100,
+        "minY" : -1,
+        "maxY" : 1,
+		"xtitle" : "Difference of p_{z} between MCP and track for top [GeV/c]",
+        "ytitle" : "Difference of p_{z} between MCP and track for bot [GeV/c]"
+    }
         
 }

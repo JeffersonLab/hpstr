@@ -16,17 +16,18 @@
 #define CLUSTERENERGYTHRESHOLD 0.1 // threshold of cluster energy for analyzable events
 #define CLUSTERENERGYMIN 0.69 // minimum of cluster energy
 #define CLUSTERENERGYMAX 1.52 // maximum of cluster energy
+#define CLUSTERXMIN -14 // minimum of x index
 #define CLUSTERXMAX -10 // maximum of x index
-#define CLUSTERYMIN -2 // minimum of y index
-#define CLUSTERYMAX 2 // maximum of y index
+#define CLUSTERYMIN -1 // minimum of y index
+#define CLUSTERYMAX 1 // maximum of y index
 #define ROTATIONANGLEAROUNDY 0.0305 // rad
 #define DIFFENERGYMIN -0.34 // minimum for difference between measured and calculated energy
 #define DIFFENERGYMAX 0.32 // maximum for difference between measured and calculated energy
-//#define DIFFTHETAMIN -0.0030 // minimum for difference between measured and calculated theta before rotation
-//#define DIFFTHETAMAX 0.0045 // maximum for difference between measured and calculated theta before rotation
+#define DIFFTHETAMIN -0.0030 // minimum for difference between measured and calculated theta before rotation
+#define DIFFTHETAMAX 0.0045 // maximum for difference between measured and calculated theta before rotation
 
-#define DIFFTHETAMIN -0.1 // minimum for difference between measured and calculated theta before rotation
-#define DIFFTHETAMAX 0.02 // maximum for difference between measured and calculated theta before rotation
+//#define DIFFTHETAMIN -0.1 // minimum for difference between measured and calculated theta before rotation
+//#define DIFFTHETAMAX 0.02 // maximum for difference between measured and calculated theta before rotation
 
 TriggerParametersExtractionMollerAnaProcessor::TriggerParametersExtractionMollerAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
@@ -299,8 +300,8 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
 			if (cluster.getEnergy() <= CLUSTERENERGYMAX
 					&& cluster.getEnergy() >= CLUSTERENERGYMIN
-					&& ix <= CLUSTERXMAX && iy >= CLUSTERYMIN
-					&& iy <= CLUSTERYMAX
+					&& ix >= CLUSTERXMIN && ix <= CLUSTERXMAX
+					&& iy >= CLUSTERYMIN && iy <= CLUSTERYMAX
 					&& cluster.getEnergy() <= func_pde_moller->Eval(ix))
 				flag_triggered_analyzable_event = true;
 		}
@@ -573,8 +574,8 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
 		if (energy <= CLUSTERENERGYMAX
 				&& energy >= CLUSTERENERGYMIN
-				&& ix <= CLUSTERXMAX && iy >= CLUSTERYMIN
-				&& iy <= CLUSTERYMAX
+				&& ix >= CLUSTERXMIN && ix <= CLUSTERXMAX
+				&& iy >= CLUSTERYMIN && iy <= CLUSTERYMAX
 				&& energy <= func_pde_moller->Eval(ix))
 			flag_triggered = true;
 	}
@@ -712,6 +713,9 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		MCParticle* mcParticleTop = mcParts_->at(indexTop);
 		MCParticle* mcParticleBot = mcParts_->at(indexBot);
 
+		std::vector<double> momMCPTop = mcParticleTop->getMomentum();
+		std::vector<double> momMCPBot = mcParticleBot->getMomentum();
+
 		double mcpEnergyTop = mcParticleTop->getEnergy();
 		double mcpEnergyBot = mcParticleBot->getEnergy();
 
@@ -722,6 +726,10 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		if(mcpEnergyBot < 2) histos->Fill1DHisto("diff_track_momentum_and_mcp_energy_bot_less_than_2_h", diffTrackMomentumMCPEnergyBot, weight);
 
 		if(fabs(diffTrackMomentumMCPEnergyTop) > 0.015 || fabs(diffTrackMomentumMCPEnergyBot) > 0.015) break;
+
+		histos->Fill2DHisto("diff_px_track_mcp_after_momentum_match_hh", momMCPTop[0] - momTop[0], momMCPBot[0] - momBot[0], weight);
+		histos->Fill2DHisto("diff_py_track_mcp_after_momentum_match_hh", momMCPTop[1] - momTop[1], momMCPBot[1] - momBot[1], weight);
+		histos->Fill2DHisto("diff_pz_track_mcp_after_momentum_match_hh", momMCPTop[2] - momTop[2], momMCPBot[2] - momBot[2], weight);
 
 
 		int momPDGTop = mcParticleTop->getMomPDG();
@@ -825,6 +833,10 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 					histos->Fill1DHisto("diff_E_analyzable_events_before_rotation_both_tracks_from_moller_with_the_same_id_h", energy_diff_bot, weight);
 
 					histos->Fill1DHisto("diff_theta_analyzable_events_before_rotation_both_tracks_from_moller_with_the_same_id_h", theta_diff, weight);
+
+					histos->Fill2DHisto("diff_px_track_mcp_vertex_analyzable_events_both_tracks_from_moller_with_the_same_id_hh", momMCPTop[0] - momTop[0], momMCPBot[0] - momBot[0], weight);
+					histos->Fill2DHisto("diff_py_track_mcp_vertex_analyzable_events_both_tracks_from_moller_with_the_same_id_hh", momMCPTop[1] - momTop[1], momMCPBot[1] - momBot[1], weight);
+					histos->Fill2DHisto("diff_pz_track_mcp_vertex_analyzable_events_both_tracks_from_moller_with_the_same_id_hh", momMCPTop[2] - momTop[2], momMCPBot[2] - momBot[2], weight);
 				}
 
 				if(energy_diff_top > DIFFENERGYMIN && energy_diff_top < DIFFENERGYMAX && energy_diff_bot > DIFFENERGYMIN && energy_diff_bot < DIFFENERGYMAX){
@@ -877,6 +889,12 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		    		histos->Fill1DHisto("mom_id_match_triggered_analyzable_event_and_pass_kinematic_cuts_both_tracks_from_moller_h", 1, weight);
 		    	else
 		    		histos->Fill1DHisto("mom_id_match_triggered_analyzable_event_and_pass_kinematic_cuts_both_tracks_from_moller_h", 0, weight);
+
+		    	if(idMomTop == idMomBot){
+		    		histos->Fill2DHisto("diff_px_track_mcp_vertex_triggered_analyzable_event_and_pass_kinematic_cuts_both_tracks_from_moller_with_the_same_id_hh", momMCPTop[0] - momTop[0], momMCPBot[0] - momBot[0], weight);
+		    		histos->Fill2DHisto("diff_py_track_mcp_vertex_triggered_analyzable_event_and_pass_kinematic_cuts_both_tracks_from_moller_with_the_same_id_hh", momMCPTop[1] - momTop[1], momMCPBot[1] - momBot[1], weight);
+		    		histos->Fill2DHisto("diff_pz_track_mcp_vertex_triggered_analyzable_event_and_pass_kinematic_cuts_both_tracks_from_moller_with_the_same_id_hh", momMCPTop[2] - momTop[2], momMCPBot[2] - momBot[2], weight);
+		    	}
 			}
 
 			histos->Fill2DHisto("track_momentum_vs_mcp_energy_top_triggered_analyzable_event_and_pass_kinematic_cuts_hh", mcpEnergyTop, pTop, weight);
