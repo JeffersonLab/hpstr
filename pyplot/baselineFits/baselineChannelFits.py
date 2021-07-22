@@ -120,8 +120,8 @@ for hybrid in hybridsFromFile:
         nentries.append(yproj_h.GetEntries())
 
     #Remove extra phrases in input plots to isolate Hybrid name
-    #hybrid = hybrid.replace('raw_hits_','').replace('_SvtHybrids0_hh','')
-    hybrid = hybrid.replace('raw_hits_','').replace('baseline0_','').replace('_hh','')
+    hybrid = hybrid.replace('raw_hits_','').replace('_SvtHybrids0_hh','')
+    #hybrid = hybrid.replace('raw_hits_','').replace('baseline0_','').replace('_hh','')
     hwtag = mmap.str_to_hw(hybrid)
     feb = hwtag[0:2]
     hyb = hwtag[2:]
@@ -178,6 +178,7 @@ for hybrid in hybridsFromFile:
     legend.AddEntry(lowdaq_gr,"low-daq threshold","p")
     legend.Draw()
     canvas.Write()
+    #canvas.SaveAs("./%s_baselines.png"%(hybrid))
     canvas.Close()
     
     if loadOnlineBaselines == True:
@@ -262,10 +263,6 @@ for hybrid in hybridsFromFile:
     #Show Channel Fits
     cfdir = outFile.mkdir("%s_channel_fits"%(hybrid))
     for cc in range(len(channel)): 
-        print(hybrid," ", channel[cc])
-        print("norm = ", norm[cc])
-        print("mean = ", mean[cc])
-        print("sigma = ", sigma[cc])
         canvas = r.TCanvas("%s_ch_%i_h"%(hybrid,channel[cc]), "c", 1800,800)
         canvas.cd()
         yproj_h = hybrid_hh.ProjectionY('%s_ch%i_h'%(hybrid,channel[cc]),int(channel[cc]+1),int(channel[cc]+1),"e")
@@ -295,7 +292,6 @@ for hybrid in hybridsFromFile:
         bw=hybrid_hh.GetXaxis().GetBinWidth(1)
         #if options.show_graphs == "show":
         myTree = inFile.gaus_fit
-        print("TREE",myTree)
         for fitData in myTree:
            SvtAna2DHisto_key = str(fitData.halfmodule_hh)
            #if str(fitData.halfmodule_hh).find(hybrid) != -1:
