@@ -119,6 +119,9 @@ void TriggerParametersExtractionMollerAnaProcessor::initialize(TTree* tree) {
     _reg_tuple->addVector("momMCPTop");
     _reg_tuple->addVector("momMCPBot");
 
+    _reg_tuple->addVariable("timeTop");
+    _reg_tuple->addVariable("timeBot");
+
     _reg_tuple->addVector("momVertex");
     _reg_tuple->addVariable("imVertex");
 
@@ -789,6 +792,9 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
         _reg_tuple->addToVector("momMCPBot", momMCPBot[0]);
         _reg_tuple->addToVector("momMCPBot", momMCPBot[1]);
         _reg_tuple->addToVector("momMCPBot", momMCPBot[2]);
+
+        _reg_tuple->setVariableValue("timeTop", trackTop.getTrackTime());
+        _reg_tuple->setVariableValue("timeBot", trackBot.getTrackTime());
 
         _reg_tuple->setVariableValue("imVertex", invariant_mass);
         _reg_tuple->addToVector("momVertex", vtx->getP().Px());
