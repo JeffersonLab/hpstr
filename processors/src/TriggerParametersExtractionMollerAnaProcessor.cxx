@@ -119,6 +119,9 @@ void TriggerParametersExtractionMollerAnaProcessor::initialize(TTree* tree) {
     _reg_tuple->addVector("momMCPTop");
     _reg_tuple->addVector("momMCPBot");
 
+    _reg_tuple->addVector("momVertex");
+    _reg_tuple->addVariable("imVertex");
+
     _reg_tuple->addVariable("analyzable_flag");
     _reg_tuple->addVariable("triggered_analyzable_flag");
     _reg_tuple->addVariable("triggered_analyzable_and_kinematic_cuts_flag");
@@ -758,23 +761,15 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		double mcpEnergyTop = mcParticleTop->getEnergy();
 		double mcpEnergyBot = mcParticleBot->getEnergy();
 
+		int momPDGTop = mcParticleTop->getMomPDG();
+		int momPDGBot = mcParticleBot->getMomPDG();
+
 
 		histos->Fill2DHisto("track_momentum_vs_mcp_energy_top_no_cuts_hh", mcpEnergyTop, pTop, weight);
 		histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_no_cuts_hh", mcpEnergyBot, pBot, weight);
 
 		if(mcpEnergyTop < 2) histos->Fill1DHisto("diff_track_momentum_and_mcp_energy_top_less_than_2_h", diffTrackMomentumMCPEnergyTop, weight);
 		if(mcpEnergyBot < 2) histos->Fill1DHisto("diff_track_momentum_and_mcp_energy_bot_less_than_2_h", diffTrackMomentumMCPEnergyBot, weight);
-
-		if(fabs(diffTrackMomentumMCPEnergyTop) > DIFFTRACKMOMENTUMMCPENERGY || fabs(diffTrackMomentumMCPEnergyBot) > DIFFTRACKMOMENTUMMCPENERGY) break;
-
-		histos->Fill2DHisto("diff_px_track_mcp_after_momentum_match_hh", momMCPTop[0] - momTop[0], momMCPBot[0] - momBot[0], weight);
-		histos->Fill2DHisto("diff_py_track_mcp_after_momentum_match_hh", momMCPTop[1] - momTop[1], momMCPBot[1] - momBot[1], weight);
-		histos->Fill2DHisto("diff_pz_track_mcp_after_momentum_match_hh", momMCPTop[2] - momTop[2], momMCPBot[2] - momBot[2], weight);
-
-
-		int momPDGTop = mcParticleTop->getMomPDG();
-		int momPDGBot = mcParticleBot->getMomPDG();
-
 
         _reg_tuple->setVariableValue("momPDGTop", momPDGTop);
         _reg_tuple->setVariableValue("momPDGBot", momPDGBot);
@@ -795,11 +790,22 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
         _reg_tuple->addToVector("momMCPBot", momMCPBot[1]);
         _reg_tuple->addToVector("momMCPBot", momMCPBot[2]);
 
+        _reg_tuple->setVariableValue("imVertex", invariant_mass);
+        _reg_tuple->addToVector("momVertex", vtx->getP().Px());
+        _reg_tuple->addToVector("momVertex", vtx->getP().Py());
+        _reg_tuple->addToVector("momVertex", vtx->getP().Pz());
+
         _reg_tuple->setVariableValue("analyzable_flag", flag_analyzable_event);
         _reg_tuple->setVariableValue("triggered_analyzable_flag", flag_triggered_analyzable_event);
         _reg_tuple->setVariableValue("triggered_analyzable_and_kinematic_cuts_flag", flag_triggered_analyzable_event_and_pass_kinematic_cuts);
 
         _reg_tuple->fill();
+
+		if(fabs(diffTrackMomentumMCPEnergyTop) > DIFFTRACKMOMENTUMMCPENERGY || fabs(diffTrackMomentumMCPEnergyBot) > DIFFTRACKMOMENTUMMCPENERGY) break;
+
+		histos->Fill2DHisto("diff_px_track_mcp_after_momentum_match_hh", momMCPTop[0] - momTop[0], momMCPBot[0] - momBot[0], weight);
+		histos->Fill2DHisto("diff_py_track_mcp_after_momentum_match_hh", momMCPTop[1] - momTop[1], momMCPBot[1] - momBot[1], weight);
+		histos->Fill2DHisto("diff_pz_track_mcp_after_momentum_match_hh", momMCPTop[2] - momTop[2], momMCPBot[2] - momBot[2], weight);
 
 		/*
 		std::cout <<"MPC top: " << momMCPTop[0] << "  " << momMCPTop[1] << "  " << momMCPTop[2] << "  " << mcpEnergyTop  << std::endl;
