@@ -795,16 +795,16 @@
     
 	"diff_track_momentum_and_mcp_energy_top_less_than_2_h" : {
         "bins"   : 100,
-        "minX"   : -0.1,
-        "maxX"   : 0.1,
+        "minX"   : -1,
+        "maxX"   : 1,
         "xtitle" : "Diff between Energy of MCP and Momentum of Track for top",
         "ytitle" : "Counts"
     }, 
     
 	"diff_track_momentum_and_mcp_energy_bot_less_than_2_h" : {
         "bins"   : 100,
-        "minX"   : -0.1,
-        "maxX"   : 0.1,
+        "minX"   : -1,
+        "maxX"   : 1,
         "xtitle" : "Diff between Energy of MCP and Momentum of Track for bot",
         "ytitle" : "Counts"
     },
@@ -830,9 +830,8 @@
         "maxY"   : 4,
         "xtitle" : "Energy of MCP [GeV]",
         "ytitle" : "Momentum of Track [GeV/c]"
-    },
+    },    
     
-
     
  	"track_momentum_vs_mcp_energy_top_analyzable_event_hh" : {
         "binsX"   : 100,
@@ -881,38 +880,7 @@
         "maxY"   : 4.5,
         "xtitle" : "PDG of Mother Particle for bot",
         "ytitle" : "PDG of Mother Particle for top"
-    },
-    
-	"pdg_top_analyzable_event_h" : {
-        "bins"   : 4,
-        "minX"   : 0.5,
-        "maxX"   : 4.5,
-        "xtitle" : "PDG",
-        "ytitle" : "Counts"
-    }, 
-    
-	"pdg_bot_analyzable_event_h" : {
-        "bins"   : 4,
-        "minX"   : 0.5,
-        "maxX"   : 4.5,
-        "xtitle" : "PDG",
-        "ytitle" : "Counts"
-    },   
-    
-	"pdgTop_vs_pdgBot_analyzable_event_hh" : {
-        "binsX"   : 4,
-        "minX"   : 0.5,
-        "maxX"   : 4.5,
-		"binsY"   : 4,
-        "minY"   : 0.5,
-        "maxY"   : 4.5,
-        "xtitle" : "PDG for bot",
-        "ytitle" : "PDG for top"
-    },
-    
-   
-    
-          
+    },                 
     
     
 	"track_momentum_vs_mcp_energy_top_triggered_analyzable_event_hh" : {
@@ -962,34 +930,7 @@
         "maxY"   : 4.5,
         "xtitle" : "PDG of Mother Particle for bot",
         "ytitle" : "PDG of Mother Particle for top"
-    },
-    
-	"pdg_top_triggered_analyzable_event_h" : {
-        "bins"   : 4,
-        "minX"   : 0.5,
-        "maxX"   : 4.5,
-        "xtitle" : "PDG",
-        "ytitle" : "Counts"
-    }, 
-    
-	"pdg_bot_triggered_analyzable_event_h" : {
-        "bins"   : 4,
-        "minX"   : 0.5,
-        "maxX"   : 4.5,
-        "xtitle" : "PDG",
-        "ytitle" : "Counts"
     },   
-    
-	"pdgTop_vs_pdgBot_triggered_analyzable_event_hh" : {
-        "binsX"   : 4,
-        "minX"   : 0.5,
-        "maxX"   : 4.5,
-		"binsY"   : 4,
-        "minY"   : 0.5,
-        "maxY"   : 4.5,
-        "xtitle" : "PDG for bot",
-        "ytitle" : "PDG for top"
-    },
     
     
 	"track_momentum_vs_mcp_energy_top_triggered_analyzable_event_and_pass_kinematic_cuts_hh" : {
@@ -1041,32 +982,6 @@
         "ytitle" : "PDG of Mother Particle for top"
     },
     
-	"pdg_top_triggered_analyzable_event_and_pass_kinematic_cuts_h" : {
-        "bins"   : 4,
-        "minX"   : 0.5,
-        "maxX"   : 4.5,
-        "xtitle" : "PDG",
-        "ytitle" : "Counts"
-    }, 
-    
-	"pdg_bot_triggered_analyzable_event_and_pass_kinematic_cuts_h" : {
-        "bins"   : 4,
-        "minX"   : 0.5,
-        "maxX"   : 4.5,
-        "xtitle" : "PDG",
-        "ytitle" : "Counts"
-    },   
-    
-	"pdgTop_vs_pdgBot_triggered_analyzable_event_and_pass_kinematic_cuts_hh" : {
-        "binsX"   : 4,
-        "minX"   : 0.5,
-        "maxX"   : 4.5,
-		"binsY"   : 4,
-        "minY"   : 0.5,
-        "maxY"   : 4.5,
-        "xtitle" : "PDG for bot",
-        "ytitle" : "PDG for top"
-    },
     
     
 	"track_momentum_vs_mcp_energy_top_triggered_event_hh" : {
@@ -1116,34 +1031,7 @@
         "maxY"   : 4.5,
         "xtitle" : "PDG of Mother Particle for bot",
         "ytitle" : "PDG of Mother Particle for top"
-    },
-    
-	"pdg_top_triggered_event_h" : {
-        "bins"   : 4,
-        "minX"   : 0.5,
-        "maxX"   : 4.5,
-        "xtitle" : "PDG",
-        "ytitle" : "Counts"
-    }, 
-    
-	"pdg_bot_triggered_event_h" : {
-        "bins"   : 4,
-        "minX"   : 0.5,
-        "maxX"   : 4.5,
-        "xtitle" : "PDG",
-        "ytitle" : "Counts"
-    },   
-    
-	"pdgTop_vs_pdgBot_triggered_event_hh" : {
-        "binsX"   : 4,
-        "minX"   : 0.5,
-        "maxX"   : 4.5,
-		"binsY"   : 4,
-        "minY"   : 0.5,
-        "maxY"   : 4.5,
-        "xtitle" : "PDG for bot",
-        "ytitle" : "PDG for top"
-    },
+    },    
     
 	"cut_flag_vs_truth_flag_hh" : {
         "binsX"   : 2,
@@ -1528,7 +1416,7 @@
         "ytitle" : "Vertices"
     },
     
-	"mom_id_match_triggered_analyzable_event_from_moller_h" : {
+	"mom_id_match_triggered_analyzable_event_both_tracks_from_moller_h" : {
 		"bins"   : 2,
         "minX"   : -0.5,
         "maxX"   : 1.5,

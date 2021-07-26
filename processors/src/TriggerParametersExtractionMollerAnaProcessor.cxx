@@ -14,9 +14,9 @@
 #define PI 3.14159265358979
 #define CHI2NDFTHRESHOLD 20
 #define CLUSTERENERGYTHRESHOLD 0.1 // threshold of cluster energy for analyzable events
-#define CLUSTERENERGYMIN 0.69 // minimum of cluster energy
+#define CLUSTERENERGYMIN 0.72 // minimum of cluster energy
 #define CLUSTERENERGYMAX 1.52 // maximum of cluster energy
-#define CLUSTERXMIN -14 // minimum of x index
+#define CLUSTERXMIN -13 // minimum of x index
 #define CLUSTERXMAX -10 // maximum of x index
 #define CLUSTERYMIN -1 // minimum of y index
 #define CLUSTERYMAX 1 // maximum of y index
@@ -28,6 +28,8 @@
 
 //#define DIFFTHETAMIN -0.1 // minimum for difference between measured and calculated theta before rotation
 //#define DIFFTHETAMAX 0.02 // maximum for difference between measured and calculated theta before rotation
+
+#define DIFFTRACKMOMENTUMMCPENERGY 0.13 // GeV maxium for differece between track's momentum and mcp's energy
 
 TriggerParametersExtractionMollerAnaProcessor::TriggerParametersExtractionMollerAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
@@ -108,6 +110,18 @@ void TriggerParametersExtractionMollerAnaProcessor::initialize(TTree* tree) {
     func_theta1_vs_theta2_before_roation = new TF1("func_theta1_vs_theta2_before_roation", "2*asin([1]/2./[0] * 1/sin(x/2.))", 0, 1);
     func_theta1_vs_theta2_before_roation->SetParameter(0, beamE_);
     func_theta1_vs_theta2_before_roation->SetParameter(1, ELECTRONMASS);
+
+    _reg_tuple = std::make_shared<FlatTupleMaker>(anaName_ + "_tree");
+    _reg_tuple->addVariable("momPDGTop");
+    _reg_tuple->addVariable("momPDGBot");
+    _reg_tuple->addVector("momTop");
+    _reg_tuple->addVector("momBot");
+    _reg_tuple->addVector("momMCPTop");
+    _reg_tuple->addVector("momMCPBot");
+
+    _reg_tuple->addVariable("analyzable_flag");
+    _reg_tuple->addVariable("triggered_analyzable_flag");
+    _reg_tuple->addVariable("triggered_analyzable_and_kinematic_cuts_flag");
 }
 
 bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
@@ -590,6 +604,8 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		histos->Fill2DHisto("n_tracks_vs_n_vtxs_triggered_hh", n_vtxs, n_tracks, weight);
 	}
 
+	// To analyze truth information
+
 	int n_moller = 0;
 	int n_wab = 0;
 	int n_beam = 0;
@@ -617,7 +633,27 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 	histos->Fill1DHisto("n_wab_h", n_wab, weight);
 	histos->Fill1DHisto("n_beam_h", n_beam, weight);
 
-	// To analyze truth information
+	/*
+	if(n_vtxs >=1 ){
+		std::cout << "****************************"<<std::endl;
+		for(int i = 0; i < n_tracks; i++){
+			Track* track = trks_->at(i);
+			std::vector<double> mom = track->getMomentum();
+			std::cout << "track " << i <<": " << mom[0] << "  " << mom[1] << "  " << mom[2] << "  " << track->getP()  << std::endl;
+		}
+
+		if (mcParts_) {
+			for (int i = 0; i < mcParts_->size(); i++) {
+				MCParticle* mcParticle = mcParts_->at(i);
+				int pdg = mcParticle->getPDG();
+
+				std::vector<double> momMCP = mcParticle->getMomentum();
+				std::cout <<"MPC " << i << ": "<< momMCP[0] << "  " << momMCP[1] << "  " << momMCP[2] << "  " << sqrt(pow(momMCP[0], 2) + pow(momMCP[1], 2) + pow(momMCP[2], 2)) << std::endl;
+			}
+		}
+	}
+	 */
+
 	bool flag_moller_truth = false;
 	for (int i = 0; i < n_vtxs; i++) {
 		Vertex* vtx = vtxs_->at(i);
@@ -691,24 +727,27 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		if (mcParts_) {
 			for (int j = 0; j < mcParts_->size(); j++) {
 				MCParticle* mcParticle = mcParts_->at(j);
-				double mcpEnergy = mcParticle->getEnergy();
 
-				if (fabs(pTop - mcpEnergy)
-						< fabs(diffTrackMomentumMCPEnergyTop)) {
-					diffTrackMomentumMCPEnergyTop = pTop - mcpEnergy;
-					indexTop = j;
-				}
+				if(mcParticle->getMomPDG() == 203 && mcParticle->getPDG() == 11){
+					double mcpEnergy = mcParticle->getEnergy();
+					std::vector<double> momMCP = mcParticle->getMomentum();
 
-				if (fabs(pBot - mcpEnergy)
-						< fabs(diffTrackMomentumMCPEnergyBot)) {
-					diffTrackMomentumMCPEnergyBot = pBot - mcpEnergy;
-					indexBot = j;
+					if (momMCP[1] > 0 && fabs(pTop - mcpEnergy) < fabs(diffTrackMomentumMCPEnergyTop)) {
+						diffTrackMomentumMCPEnergyTop = pTop - mcpEnergy;
+						indexTop = j;
+					}
+
+					if (momMCP[1] < 0 && fabs(pBot - mcpEnergy) < fabs(diffTrackMomentumMCPEnergyBot)) {
+						diffTrackMomentumMCPEnergyBot = pBot - mcpEnergy;
+						indexBot = j;
+					}
 				}
 			}
 		}
 
 		histos->Fill1DHisto("diff_track_momentum_and_mcp_energy_top_no_cuts_h", diffTrackMomentumMCPEnergyTop, weight);
 		histos->Fill1DHisto("diff_track_momentum_and_mcp_energy_bot_no_cuts_h", diffTrackMomentumMCPEnergyBot, weight);
+
 
 		MCParticle* mcParticleTop = mcParts_->at(indexTop);
 		MCParticle* mcParticleBot = mcParts_->at(indexBot);
@@ -719,13 +758,14 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		double mcpEnergyTop = mcParticleTop->getEnergy();
 		double mcpEnergyBot = mcParticleBot->getEnergy();
 
+
 		histos->Fill2DHisto("track_momentum_vs_mcp_energy_top_no_cuts_hh", mcpEnergyTop, pTop, weight);
 		histos->Fill2DHisto("track_momentum_vs_mcp_energy_bot_no_cuts_hh", mcpEnergyBot, pBot, weight);
 
 		if(mcpEnergyTop < 2) histos->Fill1DHisto("diff_track_momentum_and_mcp_energy_top_less_than_2_h", diffTrackMomentumMCPEnergyTop, weight);
 		if(mcpEnergyBot < 2) histos->Fill1DHisto("diff_track_momentum_and_mcp_energy_bot_less_than_2_h", diffTrackMomentumMCPEnergyBot, weight);
 
-		if(fabs(diffTrackMomentumMCPEnergyTop) > 0.015 || fabs(diffTrackMomentumMCPEnergyBot) > 0.015) break;
+		if(fabs(diffTrackMomentumMCPEnergyTop) > DIFFTRACKMOMENTUMMCPENERGY || fabs(diffTrackMomentumMCPEnergyBot) > DIFFTRACKMOMENTUMMCPENERGY) break;
 
 		histos->Fill2DHisto("diff_px_track_mcp_after_momentum_match_hh", momMCPTop[0] - momTop[0], momMCPBot[0] - momBot[0], weight);
 		histos->Fill2DHisto("diff_py_track_mcp_after_momentum_match_hh", momMCPTop[1] - momTop[1], momMCPBot[1] - momBot[1], weight);
@@ -734,6 +774,40 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
 		int momPDGTop = mcParticleTop->getMomPDG();
 		int momPDGBot = mcParticleBot->getMomPDG();
+
+
+        _reg_tuple->setVariableValue("momPDGTop", momPDGTop);
+        _reg_tuple->setVariableValue("momPDGBot", momPDGBot);
+
+        _reg_tuple->addToVector("momTop", momTop[0]);
+        _reg_tuple->addToVector("momTop", momTop[1]);
+        _reg_tuple->addToVector("momTop", momTop[2]);
+
+        _reg_tuple->addToVector("momBot", momBot[0]);
+        _reg_tuple->addToVector("momBot", momBot[1]);
+        _reg_tuple->addToVector("momBot", momBot[2]);
+
+        _reg_tuple->addToVector("momMCPTop", momMCPTop[0]);
+        _reg_tuple->addToVector("momMCPTop", momMCPTop[1]);
+        _reg_tuple->addToVector("momMCPTop", momMCPTop[2]);
+
+        _reg_tuple->addToVector("momMCPBot", momMCPBot[0]);
+        _reg_tuple->addToVector("momMCPBot", momMCPBot[1]);
+        _reg_tuple->addToVector("momMCPBot", momMCPBot[2]);
+
+        _reg_tuple->setVariableValue("analyzable_flag", flag_analyzable_event);
+        _reg_tuple->setVariableValue("triggered_analyzable_flag", flag_triggered_analyzable_event);
+        _reg_tuple->setVariableValue("triggered_analyzable_and_kinematic_cuts_flag", flag_triggered_analyzable_event_and_pass_kinematic_cuts);
+
+        _reg_tuple->fill();
+
+		/*
+		std::cout <<"MPC top: " << momMCPTop[0] << "  " << momMCPTop[1] << "  " << momMCPTop[2] << "  " << mcpEnergyTop  << std::endl;
+		std::cout <<"MPC bot: " << momMCPBot[0] << "  " << momMCPBot[1] << "  " << momMCPBot[2] << "  " << mcpEnergyBot << std::endl;
+
+		std::cout <<"Par top: " << momTop[0] << "  " << momTop[1] << "  " << momTop[2] << "  " << pTop << std::endl;
+		std::cout <<"Par bot: " << momBot[0] << "  " << momBot[1] << "  " << momBot[2] << "  " << pBot << std::endl;
+		 */
 
 		int momPDGIDTop = 4;
 		if(momPDGTop == 203) momPDGIDTop = 1;
@@ -746,24 +820,6 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		else if(momPDGBot == 622) momPDGIDBot = 2;
 		else if(momPDGBot == 204) momPDGIDBot = 3;
 		else momPDGIDBot = 4;
-
-		// PDG 11: electron
-		// PDG -11: positron
-		// PDG 22: photon
-		int pdgTop = mcParticleTop->getPDG();
-		int pdgBot = mcParticleBot->getPDG();
-
-		int pdgIDTop = 4;
-		if(pdgTop == 11) pdgIDTop = 1;
-		else if(pdgTop == -11) pdgIDTop = 2;
-		else if(pdgTop == 22) pdgIDTop = 3;
-		else pdgIDTop = 4;
-
-		int pdgIDBot = 4;
-		if(pdgBot == 11) pdgIDBot = 1;
-		else if(pdgBot == -11) pdgIDBot = 2;
-		else if(pdgBot == 22) pdgIDBot = 3;
-		else pdgIDBot = 4;
 
 		int idMomTop = mcParticleTop->getMomID();
 		int idMomBot = mcParticleBot->getMomID();
@@ -781,11 +837,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 			histos->Fill1DHisto("motherPDG_bot_analyzable_event_h", momPDGIDBot, weight);
 			histos->Fill2DHisto("motherPDGTop_vs_motherPDGBot_analyzable_event_hh", momPDGIDBot, momPDGIDTop, weight);
 
-			histos->Fill1DHisto("pdg_top_analyzable_event_h", pdgIDTop, weight);
-			histos->Fill1DHisto("pdg_bot_analyzable_event_h", pdgIDBot, weight);
-			histos->Fill2DHisto("pdgTop_vs_pdgBot_analyzable_event_hh", pdgIDBot, pdgIDTop, weight);
-
-			if(pdgIDTop == 1 && pdgIDBot == 1 && momPDGIDTop == 1 && momPDGIDBot == 1){
+			if(momPDGIDTop == 1 && momPDGIDBot == 1){
 				if(idMomTop == idMomBot)
 					histos->Fill1DHisto("mom_id_match_analyzable_events_both_tracks_from_moller_h", 1, weight);
 				else
@@ -813,6 +865,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 				histos->Fill1DHisto("diff_theta_analyzable_events_before_rotation_both_tracks_from_moller_h", theta_diff, weight);
 
 				if(idMomTop == idMomBot){
+
 					histos->Fill1DHisto("diff_track_time_vertex_analyzable_events_both_tracks_from_moller_with_the_same_id_h", trackTop.getTrackTime() - trackBot.getTrackTime(), weight);
 
 					histos->Fill1DHisto("invariant_mass_vertex_analyzable_events_both_tracks_from_moller_with_the_same_id_h", invariant_mass, weight);
@@ -855,7 +908,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 	    	else
 	    		histos->Fill1DHisto("mom_id_match_triggered_analyzable_event_h", 0, weight);
 
-			if(pdgIDTop == 1 && pdgIDBot == 1 && momPDGIDTop == 1 && momPDGIDBot == 1){
+			if(momPDGIDTop == 1 && momPDGIDBot == 1){
 		    	histos->Fill1DHisto("diff_track_time_vertex_triggered_analyzable_event_both_tracks_from_moller_h", trackTop.getTrackTime() - trackBot.getTrackTime(), weight);
 		    	if(idMomTop == idMomBot)
 		    		histos->Fill1DHisto("mom_id_match_triggered_analyzable_event_both_tracks_from_moller_h", 1, weight);
@@ -870,10 +923,6 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 			histos->Fill1DHisto("motherPDG_bot_triggered_analyzable_event_h", momPDGIDBot, weight);
 			histos->Fill2DHisto("motherPDGTop_vs_motherPDGBot_triggered_analyzable_event_hh", momPDGIDBot, momPDGIDTop, weight);
 
-			histos->Fill1DHisto("pdg_top_triggered_analyzable_event_h", pdgIDTop, weight);
-			histos->Fill1DHisto("pdg_bot_triggered_analyzable_event_h", pdgIDBot, weight);
-			histos->Fill2DHisto("pdgTop_vs_pdgBot_triggered_analyzable_event_hh", pdgIDBot, pdgIDTop, weight);
-
 		}
 
 	    if(flag_triggered_analyzable_event_and_pass_kinematic_cuts){
@@ -883,7 +932,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 	    	else
 	    		histos->Fill1DHisto("mom_id_match_triggered_analyzable_event_and_pass_kinematic_cuts_h", 0, weight);
 
-			if(pdgIDTop == 1 && pdgIDBot == 1 && momPDGIDTop == 1 && momPDGIDBot == 1){
+			if(momPDGIDTop == 1 && momPDGIDBot == 1){
 		    	histos->Fill1DHisto("diff_track_time_vertex_triggered_analyzable_event_and_pass_kinematic_cuts_both_tracks_from_moller_h", trackTop.getTrackTime() - trackBot.getTrackTime(), weight);
 		    	if(idMomTop == idMomBot)
 		    		histos->Fill1DHisto("mom_id_match_triggered_analyzable_event_and_pass_kinematic_cuts_both_tracks_from_moller_h", 1, weight);
@@ -903,10 +952,6 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 			histos->Fill1DHisto("motherPDG_top_triggered_analyzable_event_and_pass_kinematic_cuts_h", momPDGIDTop, weight);
 			histos->Fill1DHisto("motherPDG_bot_triggered_analyzable_event_and_pass_kinematic_cuts_h", momPDGIDBot, weight);
 			histos->Fill2DHisto("motherPDGTop_vs_motherPDGBot_triggered_analyzable_event_and_pass_kinematic_cuts_hh", momPDGIDBot, momPDGIDTop, weight);
-
-			histos->Fill1DHisto("pdg_top_triggered_analyzable_event_and_pass_kinematic_cuts_h", pdgIDTop, weight);
-			histos->Fill1DHisto("pdg_bot_triggered_analyzable_event_and_pass_kinematic_cuts_h", pdgIDBot, weight);
-			histos->Fill2DHisto("pdgTop_vs_pdgBot_triggered_analyzable_event_and_pass_kinematic_cuts_hh", pdgIDBot, pdgIDTop, weight);
 	    }
 
 		if (flag_triggered) {
@@ -916,13 +961,9 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 			histos->Fill1DHisto("motherPDG_top_triggered_event_h", momPDGIDTop, weight);
 			histos->Fill1DHisto("motherPDG_bot_triggered_event_h", momPDGIDBot, weight);
 			histos->Fill2DHisto("motherPDGTop_vs_motherPDGBot_triggered_event_hh", momPDGIDBot, momPDGIDTop, weight);
-
-			histos->Fill1DHisto("pdg_top_triggered_event_h", pdgIDTop, weight);
-			histos->Fill1DHisto("pdg_bot_triggered_event_h", pdgIDBot, weight);
-			histos->Fill2DHisto("pdgTop_vs_pdgBot_triggered_event_hh", pdgIDBot, pdgIDTop, weight);
 		}
 
-		if(pdgIDTop == 1 && pdgIDBot == 1 && momPDGIDTop == 1 && momPDGIDBot == 1) flag_moller_truth = true;
+		if(momPDGIDTop == 1 && momPDGIDBot == 1) flag_moller_truth = true;
 	}
 
 	if(flag_analyzable_event){
@@ -1046,9 +1087,17 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 }
 
 void TriggerParametersExtractionMollerAnaProcessor::finalize() {
+    outF_->cd();
     histos->saveHistos(outF_, anaName_.c_str());
     delete histos;
     histos = nullptr;
+
+    TDirectory* dir{nullptr};
+    dir = outF_->mkdir((anaName_+"_tuple").c_str());
+    dir->cd();
+    _reg_tuple->writeTree();
+
+    outF_->Close();
 
 }
 

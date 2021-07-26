@@ -14,6 +14,8 @@
 #include "Processor.h"
 #include "HistoManager.h"
 #include "TriggerParametersExtractionMollerAnaHistos.h"
+
+#include "FlatTupleMaker.h"
 #include "AnaHelpers.h"
 
 #include "BaseSelector.h"
@@ -119,16 +121,18 @@ class TriggerParametersExtractionMollerAnaProcessor : public Processor {
 
         //NHits dependence energy
         TF1 *func_nhde;
-        double pars_nhde[2] = {1.46096, 0.0116316}; // 5 sigma
+        double pars_nhde[2] = {1.48859, 0.00288950}; // 5 sigma
 
         //Upper limit for position dependent energy
         TF1 *func_pde_moller;
-        double pars_pde_moller[3] = {2.49146, 0.125044, 0.002076}; // 3 sigma
+        double pars_pde_moller[3] = {2.31531, 0.0953637, 0.000841784}; // 3 sigma
 
 
         // Kinematic equations
         TF1* func_E_vs_theta_before_roation;
         TF1* func_theta1_vs_theta2_before_roation;
+
+        std::shared_ptr<FlatTupleMaker> _reg_tuple;
 
 
 };
