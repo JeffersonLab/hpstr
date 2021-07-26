@@ -22,9 +22,9 @@
 #define CLUSTERYMAX 1 // maximum of y index
 #define ROTATIONANGLEAROUNDY 0.0305 // rad
 #define DIFFENERGYMIN -0.34 // minimum for difference between measured and calculated energy
-#define DIFFENERGYMAX 0.32 // maximum for difference between measured and calculated energy
+#define DIFFENERGYMAX 0.33 // maximum for difference between measured and calculated energy
 #define DIFFTHETAMIN -0.0030 // minimum for difference between measured and calculated theta before rotation
-#define DIFFTHETAMAX 0.0045 // maximum for difference between measured and calculated theta before rotation
+#define DIFFTHETAMAX 0.0046 // maximum for difference between measured and calculated theta before rotation
 
 //#define DIFFTHETAMIN -0.1 // minimum for difference between measured and calculated theta before rotation
 //#define DIFFTHETAMAX 0.02 // maximum for difference between measured and calculated theta before rotation
