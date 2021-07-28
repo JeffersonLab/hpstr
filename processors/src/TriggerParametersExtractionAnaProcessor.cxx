@@ -12,13 +12,6 @@
 
 #define ELECTRONMASS 0.000510998950 // GeV
 #define PI 3.14159265358979
-#define CHI2NDFTHRESHOLD 20
-#define CLUSTERENERGYTHRESHOLD 0.1 // threshold of cluster energy for analyzable events
-#define CLUSTERENERGYMIN 0.3 // minimum of cluster energy
-#define CLUSTERENERGYMAX 2.7 // maximum of cluster energy
-#define CLUSTERNHTSMIN 2 // minimum for number of cluster's hits
-#define CLUSTERXMIN 4 // x min of clusters
-
 
 TriggerParametersExtractionAnaProcessor::TriggerParametersExtractionAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
@@ -36,6 +29,7 @@ void TriggerParametersExtractionAnaProcessor::configure(const ParameterSet& para
         trkColl_    = parameters.getString("trkColl");
         gtpClusColl_    = parameters.getString("gtpClusColl");
         mcColl_  = parameters.getString("mcColl",mcColl_);
+        beamE_  = parameters.getDouble("beamE",beamE_);
     }
     catch (std::runtime_error& error)
     {
@@ -44,6 +38,11 @@ void TriggerParametersExtractionAnaProcessor::configure(const ParameterSet& para
 }
 
 void TriggerParametersExtractionAnaProcessor::initialize(TTree* tree) {
+	if(beamE_ == 1.92){
+		CLUSTERENERGYTHRESHOLD = 0.05;
+
+	}
+
     tree_= tree;
     // init histos
     histos = new TriggerParametersExtractionAnaHistos(anaName_.c_str());
