@@ -45,6 +45,7 @@ triggerParametersExtractionAna.parameters["trkColl"] = "GBLTracks"
 triggerParametersExtractionAna.parameters["gtpClusColl"] = "RecoEcalClustersGTP"
 triggerParametersExtractionAna.parameters["analysis"] = analysis
 triggerParametersExtractionAna.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/triggerParametersExtraction/triggerParametersExtraction.json'
+triggerParametersExtractionAna.parameters["beamE"] = base.beamE[str(options.year)]
 
 # Sequence which the processors will run.
 p.sequence = [triggerParametersExtractionAna]

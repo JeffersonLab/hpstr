@@ -92,6 +92,14 @@ class TriggerParametersExtractionAnaProcessor : public Processor {
         //Debug level
         int debug_{0};
 
+        // Cut setup, default as for 3.7 GeV
+        double CHI2NDFTHRESHOLD = 20;
+        double CLUSTERENERGYTHRESHOLD = 0.1; // threshold of cluster energy for analyzable events
+        double CLUSTERENERGYMIN = 0.3; // minimum of cluster energy
+        double CLUSTERENERGYMAX = 2.7; // maximum of cluster energy
+        double CLUSTERNHTSMIN = 2; // minimum for number of cluster's hits
+        double CLUSTERXMIN = 4; // x min of clusters
+
         /*
          * Parameters for all cut functions depend on beam energy.
          * Here, the setup is for 3.7 GeV.
