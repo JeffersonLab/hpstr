@@ -38,11 +38,6 @@ void TriggerParametersExtractionAnaProcessor::configure(const ParameterSet& para
 }
 
 void TriggerParametersExtractionAnaProcessor::initialize(TTree* tree) {
-	if(beamE_ == 1.92){
-		CLUSTERENERGYTHRESHOLD = 0.05;
-
-	}
-
     tree_= tree;
     // init histos
     histos = new TriggerParametersExtractionAnaHistos(anaName_.c_str());
@@ -53,6 +48,54 @@ void TriggerParametersExtractionAnaProcessor::initialize(TTree* tree) {
     tree_->SetBranchAddress(trkColl_.c_str() , &trks_, &btrks_);
     tree_->SetBranchAddress(gtpClusColl_.c_str() , &gtpClusters_, &bgtpClusters_);
     tree_->SetBranchAddress(mcColl_.c_str() , &mcParts_, &bmcParts_);
+
+    // Parameters for beam of 1.92 GeV
+	if(beamE_ == 1.92){
+		CLUSTERENERGYTHRESHOLD = 0.05;
+
+        //Parameters of cut functions for X
+        pos_top_topCutX[0] = 20.699;
+        pos_top_topCutX[1] = 0.905698;
+        pos_top_botCutX[0] = -11.1287;
+        pos_top_botCutX[1] = 0.824678;
+
+        neg_top_topCutX[0] = 21.8429;
+        neg_top_topCutX[1] = 0.856399;
+        neg_top_botCutX[0] = -20.3696;
+        neg_top_botCutX[1] = 0.91452;
+
+        pos_bot_topCutX[0] = 20.5165;
+        pos_bot_topCutX[1] = 0.906471;
+        pos_bot_botCutX[0] = -11.2844;
+        pos_bot_botCutX[1] = 0.824457;
+
+        neg_bot_topCutX[0] = 24.3557;
+        neg_bot_topCutX[1] = 0.862553;
+        neg_bot_botCutX[0] = -22.3814;
+        neg_bot_botCutX[1] = 0.910335;
+
+        //Parameters of cut functions for Y
+
+        pos_top_topCutY[0] = 8.98216;
+        pos_top_topCutY[1] = 0.946183;
+        pos_top_botCutY[0] = -7.98279;
+        pos_top_botCutY[1] = 0.86121;
+
+        neg_top_topCutY[0] = 9.84386;
+        neg_top_topCutY[1] = 0.893539;
+        neg_top_botCutY[0] = -7.78579;
+        neg_top_botCutY[1] = 0.900762;
+
+        pos_bot_topCutY[0] = 6.60377;
+        pos_bot_topCutY[1] = 0.840328;
+        pos_bot_botCutY[0] = -8.22606;
+        pos_bot_botCutY[1] = 0.95283;
+
+        neg_bot_topCutY[0] = 6.73299;
+        neg_bot_topCutY[1] = 0.888867;
+        neg_bot_botCutY[0] = -8.71712;
+        neg_bot_botCutY[1] = 0.909765;
+	}
 
     //Cut functions for X
     func_pos_top_topCutX = new TF1("func_pos_top_topCutX", "pol1", 50, 390);

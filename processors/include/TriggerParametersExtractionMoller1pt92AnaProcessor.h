@@ -88,7 +88,7 @@ class TriggerParametersExtractionMoller1pt92AnaProcessor : public Processor {
 
         /*
          * Parameters for all cut functions depend on beam energy.
-         * Here, the setup is for 3.7 GeV.
+         * Here, the setup is for 1.92 GeV.
          */
 
         //Cut functions for X
@@ -106,18 +106,18 @@ class TriggerParametersExtractionMoller1pt92AnaProcessor : public Processor {
         TF1 *func_bot_botCutY;
 
         //Parameters of cut functions for X
-        double top_topCutX[2] = {21.9999, 0.866766};
-        double top_botCutX[2] = {-20.7497, 0.903365};
+        double top_topCutX[2] = {21.8429, 0.856399};
+        double top_botCutX[2] = {-20.3696, 0.91452};
 
-        double bot_topCutX[2] = {23.4249, 0.867771};
-        double bot_botCutX[2] = {-21.4538, 0.905457};
+        double bot_topCutX[2] = {24.3557, 0.862553};
+        double bot_botCutX[2] = {-22.3814, 0.910335};
 
         //Parameters of cut functions for Y
-        double top_topCutY[2] = {7.71179, 0.902755};
-        double top_botCutY[2] = {-5.92585, 0.905328};
+        double top_topCutY[2] = {9.84386, 0.893539};
+        double top_botCutY[2] = {-7.78579, 0.900762};
 
-        double bot_topCutY[2] = {4.7885, 0.889888};
-        double bot_botCutY[2] = {-6.75031, 0.913876};
+        double bot_topCutY[2] = {6.73299, 0.888867};
+        double bot_botCutY[2] = {-8.71712, 0.909765};
 
         // Kinematic equations
         TF1* func_E_vs_theta_before_roation;

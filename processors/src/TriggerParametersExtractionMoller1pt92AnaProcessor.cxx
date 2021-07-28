@@ -13,7 +13,7 @@
 #define ELECTRONMASS 0.000510998950 // GeV
 #define PI 3.14159265358979
 #define CHI2NDFTHRESHOLD 20
-#define CLUSTERENERGYTHRESHOLD 0.1 // threshold of cluster energy for analyzable events
+#define CLUSTERENERGYTHRESHOLD 0.05 // threshold of cluster energy for analyzable events
 #define CLUSTERENERGYMIN 0.72 // minimum of cluster energy
 #define CLUSTERENERGYMAX 1.52 // maximum of cluster energy
 #define CLUSTERXMIN -13 // minimum of x index
@@ -25,11 +25,6 @@
 #define DIFFENERGYMAX 0.33 // maximum for difference between measured and calculated energy
 #define DIFFTHETAMIN -0.0030 // minimum for difference between measured and calculated theta before rotation
 #define DIFFTHETAMAX 0.0046 // maximum for difference between measured and calculated theta before rotation
-
-//#define DIFFTHETAMIN -0.1 // minimum for difference between measured and calculated theta before rotation
-//#define DIFFTHETAMAX 0.02 // maximum for difference between measured and calculated theta before rotation
-
-#define DIFFTRACKMOMENTUMMCPENERGY 0.13 // GeV maxium for differece between track's momentum and mcp's energy
 
 TriggerParametersExtractionMoller1pt92AnaProcessor::TriggerParametersExtractionMoller1pt92AnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 

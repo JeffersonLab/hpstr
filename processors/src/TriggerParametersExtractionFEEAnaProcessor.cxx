@@ -38,6 +38,13 @@ void TriggerParametersExtractionFEEAnaProcessor::configure(const ParameterSet& p
 }
 
 void TriggerParametersExtractionFEEAnaProcessor::initialize(TTree* tree) {
+    tree_= tree;
+    // init histos
+    histos = new TriggerParametersExtractionFEEAnaHistos(anaName_.c_str());
+    histos->loadHistoConfig(histCfgFilename_);
+    histos->DefineHistos();
+
+    // Parameters for beam of 4.55 GeV
 	if(beamE_ == 4.55){
 		CHI2NDFTHRESHOLD = 20;
 		TRACKPMIN = 3.77; // 4 sigma
@@ -50,13 +57,6 @@ void TriggerParametersExtractionFEEAnaProcessor::initialize(TTree* tree) {
 		CLUSTERNHTSMINNOCUT = 3; // for no cut, minimum for number of cluster's hits
 		CLUSTERNHTSMINANALYZABLE  = 3; // for analyzable events,  minimum for number of cluster's hits
 	}
-
-    tree_= tree;
-    // init histos
-    histos = new TriggerParametersExtractionFEEAnaHistos(anaName_.c_str());
-    histos->loadHistoConfig(histCfgFilename_);
-    histos->DefineHistos();
-
     // init TTree
     tree_->SetBranchAddress(trkColl_.c_str() , &trks_, &btrks_);
     tree_->SetBranchAddress(gtpClusColl_.c_str() , &gtpClusters_, &bgtpClusters_);
