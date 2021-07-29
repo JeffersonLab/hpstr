@@ -116,6 +116,9 @@ void TriggerParametersExtractionMollerAnaProcessor::initialize(TTree* tree) {
     _reg_tuple->addVector("momMCPTop");
     _reg_tuple->addVector("momMCPBot");
 
+    _reg_tuple->addVariable("nClustersAssociatedTracksTop");
+    _reg_tuple->addVariable("nClustersAssociatedTracksBot");
+
     _reg_tuple->addVariable("timeTop");
     _reg_tuple->addVariable("timeBot");
 
@@ -666,6 +669,8 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		// Suppose that two tracks from vertex are from two outgoing electrons of Mollers, respectively.
 		// A MCP from Moller in MCP collection is matched with a track from Moller-vertex in Moller vertex collection,
 		// where sign of py are consistent between MCP and track
+		// If a matched MCP from Moller could be found in MCP collections for a track,
+		// then a MCP with closest energy and the same sign of py is supposed to be matched with the track.
 		if (mcParts_) {
 			for (int j = 0; j < mcParts_->size(); j++) {
 				MCParticle* mcParticle = mcParts_->at(j);
@@ -726,6 +731,9 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 
         _reg_tuple->setVariableValue("timeTop", trackTop.getTrackTime());
         _reg_tuple->setVariableValue("timeBot", trackBot.getTrackTime());
+
+        _reg_tuple->setVariableValue("nClustersAssociatedTracksTop", n_clusters_top_cut);
+        _reg_tuple->setVariableValue("nClustersAssociatedTracksBot", n_clusters_bot_cut);
 
         _reg_tuple->setVariableValue("imVertex", invariant_mass);
         _reg_tuple->addToVector("momVertex", vtx->getP().Px());
