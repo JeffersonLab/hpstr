@@ -12,6 +12,7 @@
 
 #define ELECTRONMASS 0.000510998950 // GeV
 #define PI 3.14159265358979
+#define ROTATIONANGLEAROUNDY 0.0305 // rad
 #define CHI2NDFTHRESHOLD 20
 #define CLUSTERENERGYTHRESHOLD 0.05 // threshold of cluster energy for analyzable events
 #define CLUSTERENERGYMIN 0.72 // minimum of cluster energy
@@ -20,7 +21,6 @@
 #define CLUSTERXMAX -10 // maximum of x index
 #define CLUSTERYMIN -1 // minimum of y index
 #define CLUSTERYMAX 1 // maximum of y index
-#define ROTATIONANGLEAROUNDY 0.0305 // rad
 #define DIFFENERGYMIN -0.34 // minimum for difference between measured and calculated energy
 #define DIFFENERGYMAX 0.33 // maximum for difference between measured and calculated energy
 #define DIFFTHETAMIN -0.0030 // minimum for difference between measured and calculated theta before rotation

@@ -79,7 +79,7 @@ class TriggerParametersExtractionMollerPairTriggerAnaProcessor : public Processo
         std::string vtxColl_{"Vertices"};
 
 
-        double beamE_{1.02};
+        double beamE_{1.92};
         int isData_{0};
         std::string analysis_{"TriggerParametersExtractionMoller"};
 

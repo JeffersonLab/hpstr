@@ -88,14 +88,13 @@ class TriggerParametersExtractionMollerSingleTriggerAnaProcessor : public Proces
 
         // Cut setup, default as for 3.7 GeV
 		double CHI2NDFTHRESHOLD = 20;
-		double CLUSTERENERGYTHRESHOLD= 0.05; // threshold of cluster energy for analyzable events
+		double CLUSTERENERGYTHRESHOLD= 0.1; // threshold of cluster energy for analyzable events
 		double CLUSTERENERGYMIN = 0.72; // minimum of cluster energy
 		double CLUSTERENERGYMAX = 1.52; // maximum of cluster energy
 		double CLUSTERXMIN = -13; // minimum of x index
 		double CLUSTERXMAX = -10; // maximum of x index
 		double CLUSTERYMIN = -1; // minimum of y index
 		double CLUSTERYMAX = 1; // maximum of y index
-		double ROTATIONANGLEAROUNDY = 0.0305;// rad
 		double DIFFENERGYMIN = -0.34; // minimum for difference between measured and calculated energy
 		double DIFFENERGYMAX = 0.33; // maximum for difference between measured and calculated energy
 		double DIFFTHETAMIN = -0.0030; // minimum for difference between measured and calculated theta before rotation
@@ -133,10 +132,6 @@ class TriggerParametersExtractionMollerSingleTriggerAnaProcessor : public Proces
 
         double bot_topCutY[2] = {4.7885, 0.889888};
         double bot_botCutY[2] = {-6.75031, 0.913876};
-
-        //NHits dependence energy
-        TF1 *func_nhde;
-        double pars_nhde[2] = {1.48859, 0.00288950}; // 5 sigma
 
         //Upper limit for position dependent energy
         TF1 *func_pde_moller;

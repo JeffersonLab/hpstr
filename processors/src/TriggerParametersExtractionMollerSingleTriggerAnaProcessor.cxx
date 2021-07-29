@@ -11,6 +11,7 @@
 
 #define ELECTRONMASS 0.000510998950 // GeV
 #define PI 3.14159265358979
+#define ROTATIONANGLEAROUNDY 0.0305 // rad
 
 TriggerParametersExtractionMollerSingleTriggerAnaProcessor::TriggerParametersExtractionMollerSingleTriggerAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
@@ -54,7 +55,17 @@ void TriggerParametersExtractionMollerSingleTriggerAnaProcessor::initialize(TTre
 
     // Parameters for beam of 1.92 GeV
 	if(beamE_ == 1.92){
-		CLUSTERENERGYTHRESHOLD = 0.05;
+		CLUSTERENERGYTHRESHOLD = 0.05; // threshold of cluster energy for analyzable events
+		CLUSTERENERGYMIN = 0.17; // minimum of cluster energy
+		CLUSTERENERGYMAX = 0.82; // maximum of cluster energy
+		CLUSTERXMIN = -13; // minimum of x index
+		CLUSTERXMAX = -10; // maximum of x index
+		CLUSTERYMIN = -1; // minimum of y index
+		CLUSTERYMAX = 1; // maximum of y index
+		DIFFENERGYMIN = -0.34; // minimum for difference between measured and calculated energy
+		DIFFENERGYMAX = 0.33; // maximum for difference between measured and calculated energy
+		DIFFTHETAMIN = -0.0030; // minimum for difference between measured and calculated theta before rotation
+		DIFFTHETAMAX = 0.0046; // maximum for difference between measured and calculated theta before rotation
 
         //Parameters of cut functions for X
         top_topCutX[0] = 21.8429;
@@ -100,10 +111,6 @@ void TriggerParametersExtractionMollerSingleTriggerAnaProcessor::initialize(TTre
     func_bot_topCutY->SetParameters(bot_topCutY);
     func_bot_botCutY = new TF1("func_bot_botCutY", "pol1", -90, -30);
     func_bot_botCutY->SetParameters(bot_botCutY);
-
-    //NHits dependence energy
-    func_nhde = new TF1("func_nhde", "pol1", 0, 20);
-    func_nhde->SetParameters(pars_nhde);
 
     //Upper limit for position dependent energy
     func_pde_moller = new TF1("func_pde_moller", "pol2", -22, 0);
