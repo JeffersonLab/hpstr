@@ -1,39 +1,25 @@
 /**
- *@file TriggerParametersExtractionMoller1pt92AnaProcessor.cxx
+ *@file TriggerParametersExtractionMollerAnaProcessor.cxx
  *@author Tongtong, UNH
  */
-
-#include "TriggerParametersExtractionMoller1pt92AnaProcessor.h"
 
 #include <iostream>
 
 #include "TF1.h"
 #include "math.h"
+#include "../include/TriggerParametersExtractionMollerSingleTriggerAnaProcessor.h"
 
 #define ELECTRONMASS 0.000510998950 // GeV
 #define PI 3.14159265358979
-#define CHI2NDFTHRESHOLD 20
-#define CLUSTERENERGYTHRESHOLD 0.05 // threshold of cluster energy for analyzable events
-#define CLUSTERENERGYMIN 0.72 // minimum of cluster energy
-#define CLUSTERENERGYMAX 1.52 // maximum of cluster energy
-#define CLUSTERXMIN -13 // minimum of x index
-#define CLUSTERXMAX -10 // maximum of x index
-#define CLUSTERYMIN -1 // minimum of y index
-#define CLUSTERYMAX 1 // maximum of y index
-#define ROTATIONANGLEAROUNDY 0.0305 // rad
-#define DIFFENERGYMIN -0.34 // minimum for difference between measured and calculated energy
-#define DIFFENERGYMAX 0.33 // maximum for difference between measured and calculated energy
-#define DIFFTHETAMIN -0.0030 // minimum for difference between measured and calculated theta before rotation
-#define DIFFTHETAMAX 0.0046 // maximum for difference between measured and calculated theta before rotation
 
-TriggerParametersExtractionMoller1pt92AnaProcessor::TriggerParametersExtractionMoller1pt92AnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
+TriggerParametersExtractionMollerSingleTriggerAnaProcessor::TriggerParametersExtractionMollerSingleTriggerAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
 }
 
-TriggerParametersExtractionMoller1pt92AnaProcessor::~TriggerParametersExtractionMoller1pt92AnaProcessor(){}
+TriggerParametersExtractionMollerSingleTriggerAnaProcessor::~TriggerParametersExtractionMollerSingleTriggerAnaProcessor(){}
 
-void TriggerParametersExtractionMoller1pt92AnaProcessor::configure(const ParameterSet& parameters) {
-    std::cout << "Configuring TriggerParametersExtractionMollerAnaProcessor" <<std::endl;
+void TriggerParametersExtractionMollerSingleTriggerAnaProcessor::configure(const ParameterSet& parameters) {
+    std::cout << "Configuring TriggerParametersExtractionMollerSingleTriggerAnaProcessor" <<std::endl;
     try
     {
         debug_           = parameters.getInteger("debug");
@@ -43,6 +29,7 @@ void TriggerParametersExtractionMoller1pt92AnaProcessor::configure(const Paramet
         gtpClusColl_    = parameters.getString("gtpClusColl");
         mcColl_  = parameters.getString("mcColl",mcColl_);
         vtxColl_ = parameters.getString("vtxColl",vtxColl_);
+        beamE_  = parameters.getDouble("beamE",beamE_);
     }
     catch (std::runtime_error& error)
     {
@@ -50,7 +37,7 @@ void TriggerParametersExtractionMoller1pt92AnaProcessor::configure(const Paramet
     }
 }
 
-void TriggerParametersExtractionMoller1pt92AnaProcessor::initialize(TTree* tree) {
+void TriggerParametersExtractionMollerSingleTriggerAnaProcessor::initialize(TTree* tree) {
 	_ah =  std::make_shared<AnaHelpers>();
 
     tree_= tree;
@@ -64,6 +51,33 @@ void TriggerParametersExtractionMoller1pt92AnaProcessor::initialize(TTree* tree)
     tree_->SetBranchAddress(gtpClusColl_.c_str() , &gtpClusters_, &bgtpClusters_);
     tree_->SetBranchAddress(mcColl_.c_str() , &mcParts_, &bmcParts_);
     tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_ , &bvtxs_);
+
+    // Parameters for beam of 1.92 GeV
+	if(beamE_ == 1.92){
+		CLUSTERENERGYTHRESHOLD = 0.05;
+
+        //Parameters of cut functions for X
+        top_topCutX[0] = 21.8429;
+        top_topCutX[1] = 0.856399;
+        top_botCutX[0] = -20.3696;
+        top_botCutX[1] = 0.91452;
+
+        bot_topCutX[0] = 24.3557;
+        bot_topCutX[1] = 0.862553;
+        bot_botCutX[0] = -22.3814;
+        bot_botCutX[1] = 0.910335;
+
+        //Parameters of cut functions for Y
+        top_topCutY[0] = 9.84386;
+        top_topCutY[1] = 0.893539;
+        top_botCutY[0] = -7.78579;
+        top_botCutY[1] = 0.900762;
+
+        bot_topCutY[0] = 6.73299;
+        bot_topCutY[1] = 0.888867;
+        bot_botCutY[0] = -8.71712;
+        bot_botCutY[1] = 0.909765;
+	}
 
     //Cut functions for X
     func_top_topCutX = new TF1("func_top_topCutX", "pol1", -300, 40);
@@ -87,6 +101,14 @@ void TriggerParametersExtractionMoller1pt92AnaProcessor::initialize(TTree* tree)
     func_bot_botCutY = new TF1("func_bot_botCutY", "pol1", -90, -30);
     func_bot_botCutY->SetParameters(bot_botCutY);
 
+    //NHits dependence energy
+    func_nhde = new TF1("func_nhde", "pol1", 0, 20);
+    func_nhde->SetParameters(pars_nhde);
+
+    //Upper limit for position dependent energy
+    func_pde_moller = new TF1("func_pde_moller", "pol2", -22, 0);
+    func_pde_moller->SetParameters(pars_pde_moller);
+
     // Kinematic equations
     // E vs theta
     func_E_vs_theta_before_roation = new TF1("func_E_vs_theta_before_roation", "[0]/(1 + 2*[0]/[1]*sin(x/2.)*sin(x/2.))", 0, 1);
@@ -98,7 +120,6 @@ void TriggerParametersExtractionMoller1pt92AnaProcessor::initialize(TTree* tree)
     func_theta1_vs_theta2_before_roation->SetParameter(0, beamE_);
     func_theta1_vs_theta2_before_roation->SetParameter(1, ELECTRONMASS);
 
-    // save a tree with tuple
     _reg_tuple = std::make_shared<FlatTupleMaker>(anaName_ + "_tree");
     _reg_tuple->addVariable("momIDTop");
     _reg_tuple->addVariable("momIDBot");
@@ -108,6 +129,9 @@ void TriggerParametersExtractionMoller1pt92AnaProcessor::initialize(TTree* tree)
     _reg_tuple->addVector("momBot");
     _reg_tuple->addVector("momMCPTop");
     _reg_tuple->addVector("momMCPBot");
+
+    _reg_tuple->addVariable("nClustersAssociatedTracksTop");
+    _reg_tuple->addVariable("nClustersAssociatedTracksBot");
 
     _reg_tuple->addVariable("timeTop");
     _reg_tuple->addVariable("timeBot");
@@ -120,7 +144,7 @@ void TriggerParametersExtractionMoller1pt92AnaProcessor::initialize(TTree* tree)
     _reg_tuple->addVariable("triggered_analyzable_and_kinematic_cuts_flag");
 }
 
-bool TriggerParametersExtractionMoller1pt92AnaProcessor::process(IEvent* ievent) {
+bool TriggerParametersExtractionMollerSingleTriggerAnaProcessor::process(IEvent* ievent) {
     double weight = 1.;
 
     // To extract analyzable events
@@ -311,7 +335,8 @@ bool TriggerParametersExtractionMoller1pt92AnaProcessor::process(IEvent* ievent)
 			if (cluster.getEnergy() <= CLUSTERENERGYMAX
 					&& cluster.getEnergy() >= CLUSTERENERGYMIN
 					&& ix >= CLUSTERXMIN && ix <= CLUSTERXMAX
-					&& iy >= CLUSTERYMIN && iy <= CLUSTERYMAX)
+					&& iy >= CLUSTERYMIN && iy <= CLUSTERYMAX
+					&& cluster.getEnergy() <= func_pde_moller->Eval(ix))
 				flag_triggered_analyzable_event = true;
 		}
 
@@ -584,7 +609,8 @@ bool TriggerParametersExtractionMoller1pt92AnaProcessor::process(IEvent* ievent)
 		if (energy <= CLUSTERENERGYMAX
 				&& energy >= CLUSTERENERGYMIN
 				&& ix >= CLUSTERXMIN && ix <= CLUSTERXMAX
-				&& iy >= CLUSTERYMIN && iy <= CLUSTERYMAX)
+				&& iy >= CLUSTERYMIN && iy <= CLUSTERYMAX
+				&& energy <= func_pde_moller->Eval(ix))
 			flag_triggered = true;
 	}
 
@@ -657,6 +683,8 @@ bool TriggerParametersExtractionMoller1pt92AnaProcessor::process(IEvent* ievent)
 		// Suppose that two tracks from vertex are from two outgoing electrons of Mollers, respectively.
 		// A MCP from Moller in MCP collection is matched with a track from Moller-vertex in Moller vertex collection,
 		// where sign of py are consistent between MCP and track
+		// If a matched MCP from Moller could be found in MCP collections for a track,
+		// then a MCP with closest energy and the same sign of py is supposed to be matched with the track.
 		if (mcParts_) {
 			for (int j = 0; j < mcParts_->size(); j++) {
 				MCParticle* mcParticle = mcParts_->at(j);
@@ -718,6 +746,9 @@ bool TriggerParametersExtractionMoller1pt92AnaProcessor::process(IEvent* ievent)
         _reg_tuple->setVariableValue("timeTop", trackTop.getTrackTime());
         _reg_tuple->setVariableValue("timeBot", trackBot.getTrackTime());
 
+        _reg_tuple->setVariableValue("nClustersAssociatedTracksTop", n_clusters_top_cut);
+        _reg_tuple->setVariableValue("nClustersAssociatedTracksBot", n_clusters_bot_cut);
+
         _reg_tuple->setVariableValue("imVertex", invariant_mass);
         _reg_tuple->addToVector("momVertex", vtx->getP().Px());
         _reg_tuple->addToVector("momVertex", vtx->getP().Py());
@@ -733,7 +764,7 @@ bool TriggerParametersExtractionMoller1pt92AnaProcessor::process(IEvent* ievent)
     return true;
 }
 
-void TriggerParametersExtractionMoller1pt92AnaProcessor::finalize() {
+void TriggerParametersExtractionMollerSingleTriggerAnaProcessor::finalize() {
     outF_->cd();
     histos->saveHistos(outF_, anaName_.c_str());
     delete histos;
@@ -748,4 +779,4 @@ void TriggerParametersExtractionMoller1pt92AnaProcessor::finalize() {
 
 }
 
-DECLARE_PROCESSOR(TriggerParametersExtractionMoller1pt92AnaProcessor);
+DECLARE_PROCESSOR(TriggerParametersExtractionMollerSingleTriggerAnaProcessor);

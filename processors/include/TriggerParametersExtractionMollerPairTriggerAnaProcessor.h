@@ -41,11 +41,11 @@ struct char_cmp {
 };
 
 
-class TriggerParametersExtractionMollerAnaProcessor : public Processor {
+class TriggerParametersExtractionMollerPairTriggerAnaProcessor : public Processor {
 
     public:
-		TriggerParametersExtractionMollerAnaProcessor(const std::string& name, Process& process);
-        ~TriggerParametersExtractionMollerAnaProcessor();
+	TriggerParametersExtractionMollerPairTriggerAnaProcessor(const std::string& name, Process& process);
+        ~TriggerParametersExtractionMollerPairTriggerAnaProcessor();
         virtual bool process(IEvent* ievent);
 
         virtual void initialize(TTree* tree);
@@ -79,7 +79,7 @@ class TriggerParametersExtractionMollerAnaProcessor : public Processor {
         std::string vtxColl_{"Vertices"};
 
 
-        double beamE_{3.7};
+        double beamE_{1.02};
         int isData_{0};
         std::string analysis_{"TriggerParametersExtractionMoller"};
 
@@ -88,7 +88,7 @@ class TriggerParametersExtractionMollerAnaProcessor : public Processor {
 
         /*
          * Parameters for all cut functions depend on beam energy.
-         * Here, the setup is for 3.7 GeV.
+         * Here, the setup is for 1.92 GeV.
          */
 
         //Cut functions for X
@@ -106,35 +106,25 @@ class TriggerParametersExtractionMollerAnaProcessor : public Processor {
         TF1 *func_bot_botCutY;
 
         //Parameters of cut functions for X
-        double top_topCutX[2] = {21.9999, 0.866766};
-        double top_botCutX[2] = {-20.7497, 0.903365};
+        double top_topCutX[2] = {21.8429, 0.856399};
+        double top_botCutX[2] = {-20.3696, 0.91452};
 
-        double bot_topCutX[2] = {23.4249, 0.867771};
-        double bot_botCutX[2] = {-21.4538, 0.905457};
+        double bot_topCutX[2] = {24.3557, 0.862553};
+        double bot_botCutX[2] = {-22.3814, 0.910335};
 
         //Parameters of cut functions for Y
-        double top_topCutY[2] = {7.71179, 0.902755};
-        double top_botCutY[2] = {-5.92585, 0.905328};
+        double top_topCutY[2] = {9.84386, 0.893539};
+        double top_botCutY[2] = {-7.78579, 0.900762};
 
-        double bot_topCutY[2] = {4.7885, 0.889888};
-        double bot_botCutY[2] = {-6.75031, 0.913876};
-
-        //NHits dependence energy
-        TF1 *func_nhde;
-        double pars_nhde[2] = {1.48859, 0.00288950}; // 5 sigma
-
-        //Upper limit for position dependent energy
-        TF1 *func_pde_moller;
-        double pars_pde_moller[3] = {2.31531, 0.0953637, 0.000841784}; // 3 sigma
-
+        double bot_topCutY[2] = {6.73299, 0.888867};
+        double bot_botCutY[2] = {-8.71712, 0.909765};
 
         // Kinematic equations
         TF1* func_E_vs_theta_before_roation;
         TF1* func_theta1_vs_theta2_before_roation;
 
+        // save a tree with tuple
         std::shared_ptr<FlatTupleMaker> _reg_tuple;
-
-
 };
 
 #endif

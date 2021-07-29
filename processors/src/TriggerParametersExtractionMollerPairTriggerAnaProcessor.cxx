@@ -1,9 +1,9 @@
 /**
- *@file TriggerParametersExtractionMollerAnaProcessor.cxx
+ *@file TriggerParametersExtractionMoller1pt92AnaProcessor.cxx
  *@author Tongtong, UNH
  */
 
-#include "TriggerParametersExtractionMollerAnaProcessor.h"
+#include "../include/TriggerParametersExtractionMollerPairTriggerAnaProcessor.h"
 
 #include <iostream>
 
@@ -13,7 +13,7 @@
 #define ELECTRONMASS 0.000510998950 // GeV
 #define PI 3.14159265358979
 #define CHI2NDFTHRESHOLD 20
-#define CLUSTERENERGYTHRESHOLD 0.1 // threshold of cluster energy for analyzable events
+#define CLUSTERENERGYTHRESHOLD 0.05 // threshold of cluster energy for analyzable events
 #define CLUSTERENERGYMIN 0.72 // minimum of cluster energy
 #define CLUSTERENERGYMAX 1.52 // maximum of cluster energy
 #define CLUSTERXMIN -13 // minimum of x index
@@ -26,14 +26,14 @@
 #define DIFFTHETAMIN -0.0030 // minimum for difference between measured and calculated theta before rotation
 #define DIFFTHETAMAX 0.0046 // maximum for difference between measured and calculated theta before rotation
 
-TriggerParametersExtractionMollerAnaProcessor::TriggerParametersExtractionMollerAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
+TriggerParametersExtractionMollerPairTriggerAnaProcessor::TriggerParametersExtractionMollerPairTriggerAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
 }
 
-TriggerParametersExtractionMollerAnaProcessor::~TriggerParametersExtractionMollerAnaProcessor(){}
+TriggerParametersExtractionMollerPairTriggerAnaProcessor::~TriggerParametersExtractionMollerPairTriggerAnaProcessor(){}
 
-void TriggerParametersExtractionMollerAnaProcessor::configure(const ParameterSet& parameters) {
-    std::cout << "Configuring TriggerParametersExtractionMollerAnaProcessor" <<std::endl;
+void TriggerParametersExtractionMollerPairTriggerAnaProcessor::configure(const ParameterSet& parameters) {
+    std::cout << "Configuring TriggerParametersExtractionMollerPairTriggerAnaProcessor" <<std::endl;
     try
     {
         debug_           = parameters.getInteger("debug");
@@ -43,6 +43,7 @@ void TriggerParametersExtractionMollerAnaProcessor::configure(const ParameterSet
         gtpClusColl_    = parameters.getString("gtpClusColl");
         mcColl_  = parameters.getString("mcColl",mcColl_);
         vtxColl_ = parameters.getString("vtxColl",vtxColl_);
+        beamE_  = parameters.getDouble("beamE",beamE_);
     }
     catch (std::runtime_error& error)
     {
@@ -50,7 +51,7 @@ void TriggerParametersExtractionMollerAnaProcessor::configure(const ParameterSet
     }
 }
 
-void TriggerParametersExtractionMollerAnaProcessor::initialize(TTree* tree) {
+void TriggerParametersExtractionMollerPairTriggerAnaProcessor::initialize(TTree* tree) {
 	_ah =  std::make_shared<AnaHelpers>();
 
     tree_= tree;
@@ -87,14 +88,6 @@ void TriggerParametersExtractionMollerAnaProcessor::initialize(TTree* tree) {
     func_bot_botCutY = new TF1("func_bot_botCutY", "pol1", -90, -30);
     func_bot_botCutY->SetParameters(bot_botCutY);
 
-    //NHits dependence energy
-    func_nhde = new TF1("func_nhde", "pol1", 0, 20);
-    func_nhde->SetParameters(pars_nhde);
-
-    //Upper limit for position dependent energy
-    func_pde_moller = new TF1("func_pde_moller", "pol2", -22, 0);
-    func_pde_moller->SetParameters(pars_pde_moller);
-
     // Kinematic equations
     // E vs theta
     func_E_vs_theta_before_roation = new TF1("func_E_vs_theta_before_roation", "[0]/(1 + 2*[0]/[1]*sin(x/2.)*sin(x/2.))", 0, 1);
@@ -106,6 +99,7 @@ void TriggerParametersExtractionMollerAnaProcessor::initialize(TTree* tree) {
     func_theta1_vs_theta2_before_roation->SetParameter(0, beamE_);
     func_theta1_vs_theta2_before_roation->SetParameter(1, ELECTRONMASS);
 
+    // save a tree with tuple
     _reg_tuple = std::make_shared<FlatTupleMaker>(anaName_ + "_tree");
     _reg_tuple->addVariable("momIDTop");
     _reg_tuple->addVariable("momIDBot");
@@ -116,21 +110,21 @@ void TriggerParametersExtractionMollerAnaProcessor::initialize(TTree* tree) {
     _reg_tuple->addVector("momMCPTop");
     _reg_tuple->addVector("momMCPBot");
 
-    _reg_tuple->addVariable("nClustersAssociatedTracksTop");
-    _reg_tuple->addVariable("nClustersAssociatedTracksBot");
-
     _reg_tuple->addVariable("timeTop");
     _reg_tuple->addVariable("timeBot");
 
     _reg_tuple->addVector("momVertex");
     _reg_tuple->addVariable("imVertex");
 
+    _reg_tuple->addVariable("nClustersAssociatedTracksTop");
+    _reg_tuple->addVariable("nClustersAssociatedTracksBot");
+
     _reg_tuple->addVariable("analyzable_flag");
     _reg_tuple->addVariable("triggered_analyzable_flag");
     _reg_tuple->addVariable("triggered_analyzable_and_kinematic_cuts_flag");
 }
 
-bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
+bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* ievent) {
     double weight = 1.;
 
     // To extract analyzable events
@@ -321,8 +315,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 			if (cluster.getEnergy() <= CLUSTERENERGYMAX
 					&& cluster.getEnergy() >= CLUSTERENERGYMIN
 					&& ix >= CLUSTERXMIN && ix <= CLUSTERXMAX
-					&& iy >= CLUSTERYMIN && iy <= CLUSTERYMAX
-					&& cluster.getEnergy() <= func_pde_moller->Eval(ix))
+					&& iy >= CLUSTERYMIN && iy <= CLUSTERYMAX)
 				flag_triggered_analyzable_event = true;
 		}
 
@@ -595,8 +588,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		if (energy <= CLUSTERENERGYMAX
 				&& energy >= CLUSTERENERGYMIN
 				&& ix >= CLUSTERXMIN && ix <= CLUSTERXMAX
-				&& iy >= CLUSTERYMIN && iy <= CLUSTERYMAX
-				&& energy <= func_pde_moller->Eval(ix))
+				&& iy >= CLUSTERYMIN && iy <= CLUSTERYMAX)
 			flag_triggered = true;
 	}
 
@@ -669,8 +661,6 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
 		// Suppose that two tracks from vertex are from two outgoing electrons of Mollers, respectively.
 		// A MCP from Moller in MCP collection is matched with a track from Moller-vertex in Moller vertex collection,
 		// where sign of py are consistent between MCP and track
-		// If a matched MCP from Moller could be found in MCP collections for a track,
-		// then a MCP with closest energy and the same sign of py is supposed to be matched with the track.
 		if (mcParts_) {
 			for (int j = 0; j < mcParts_->size(); j++) {
 				MCParticle* mcParticle = mcParts_->at(j);
@@ -750,7 +740,7 @@ bool TriggerParametersExtractionMollerAnaProcessor::process(IEvent* ievent) {
     return true;
 }
 
-void TriggerParametersExtractionMollerAnaProcessor::finalize() {
+void TriggerParametersExtractionMollerPairTriggerAnaProcessor::finalize() {
     outF_->cd();
     histos->saveHistos(outF_, anaName_.c_str());
     delete histos;
@@ -765,4 +755,4 @@ void TriggerParametersExtractionMollerAnaProcessor::finalize() {
 
 }
 
-DECLARE_PROCESSOR(TriggerParametersExtractionMollerAnaProcessor);
+DECLARE_PROCESSOR(TriggerParametersExtractionMollerPairTriggerAnaProcessor);
