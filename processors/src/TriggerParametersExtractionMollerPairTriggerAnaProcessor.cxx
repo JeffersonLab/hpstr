@@ -412,11 +412,14 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 		double energy_calcuated_top = func_E_vs_theta_before_roation->Eval(thate_top_before_rotation);
 		double energy_calcuated_bot = func_E_vs_theta_before_roation->Eval(thate_bot_before_rotation);
 
+		double theta_top_calculated_before_rotation = func_theta1_vs_theta2_before_roation->Eval(thate_bot_before_rotation);
 		double theta_bot_calculated_before_rotation = func_theta1_vs_theta2_before_roation->Eval(thate_top_before_rotation);
 
 		double energy_diff_top = energy_top - energy_calcuated_top;
 		double energy_diff_bot = energy_bot - energy_calcuated_bot;
-		double theta_diff = thate_bot_before_rotation - theta_bot_calculated_before_rotation;
+
+		double theta_diff_top = thate_top_before_rotation - theta_top_calculated_before_rotation;
+		double theta_diff_bot = thate_bot_before_rotation - theta_bot_calculated_before_rotation;
 
 		histos->Fill2DHisto("energy_vs_theta_track_pair_from_vertex_before_rotation_hh",thate_top_before_rotation, energy_top, weight);
 		histos->Fill2DHisto("energy_vs_theta_track_pair_from_vertex_before_rotation_hh",thate_bot_before_rotation, energy_bot, weight);
@@ -426,7 +429,8 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 		histos->Fill1DHisto("diff_E_vertex_before_rotation_h", energy_diff_top, weight);
 		histos->Fill1DHisto("diff_E_vertex_before_rotation_h", energy_diff_bot, weight);
 
-		histos->Fill1DHisto("diff_theta_vertex_before_rotation_h", theta_diff, weight);
+		histos->Fill1DHisto("diff_theta_vertex_before_rotation_h", theta_diff_top, weight);
+		histos->Fill1DHisto("diff_theta_vertex_before_rotation_h", theta_diff_bot, weight);
 
         Track trackTop = particleTop->getTrack();
         Track trackBot = particleBot->getTrack();
@@ -463,11 +467,13 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
     		histos->Fill1DHisto("diff_E_analyzable_events_before_rotation_h", energy_diff_top, weight);
     		histos->Fill1DHisto("diff_E_analyzable_events_before_rotation_h", energy_diff_bot, weight);
 
-    		histos->Fill1DHisto("diff_theta_analyzable_events_before_rotation_h", theta_diff, weight);
+    		histos->Fill1DHisto("diff_theta_analyzable_events_before_rotation_h", theta_diff_top, weight);
+    		histos->Fill1DHisto("diff_theta_analyzable_events_before_rotation_h", theta_diff_bot, weight);
 
     		if(energy_diff_top > DIFFENERGYMIN && energy_diff_top < DIFFENERGYMAX && energy_diff_bot > DIFFENERGYMIN && energy_diff_bot < DIFFENERGYMAX){
         		histos->Fill2DHisto("thetaTop_vs_thetaBot_analyzable_events_before_rotation_with_diff_energy_cut_hh",thate_bot_before_rotation, thate_top_before_rotation, weight);
-        		histos->Fill1DHisto("diff_theta_analyzable_events_before_rotation_with_diff_energy_cut_h", theta_diff, weight);
+        		histos->Fill1DHisto("diff_theta_analyzable_events_before_rotation_with_diff_energy_cut_h", theta_diff_top, weight);
+        		histos->Fill1DHisto("diff_theta_analyzable_events_before_rotation_with_diff_energy_cut_h", theta_diff_bot, weight);
     		}
 
         	histos->Fill1DHisto("diff_energy_between_recon_clulster_and_track_energy_analyzable_events_h", clTop.getEnergy() - energy_top, weight);
@@ -475,7 +481,8 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 
         	if( (energy_diff_top < DIFFENERGYMIN || energy_diff_top > DIFFENERGYMAX )
             		|| (energy_diff_bot < DIFFENERGYMIN || energy_diff_bot > DIFFENERGYMAX)
-    				|| (theta_diff < DIFFTHETAMIN || theta_diff > DIFFTHETAMAX))
+    				|| (theta_diff_top < DIFFTHETAMIN || theta_diff_top > DIFFTHETAMAX)
+					|| (theta_diff_bot < DIFFTHETAMIN || theta_diff_bot > DIFFTHETAMAX))
         		histos->Fill1DHisto("invariant_mass_vertex_analyzable_events_out_of_kinematic_cuts_h", invariant_mass, weight);
 
 				histos->Fill1DHisto("pSum_vertex_analyzable_events_out_of_kinematic_cuts_h", pSum, weight);
@@ -501,7 +508,8 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
     		histos->Fill1DHisto("diff_E_triggered_analyzable_events_before_rotation_h", energy_diff_top, weight);
     		histos->Fill1DHisto("diff_E_triggered_analyzable_events_before_rotation_h", energy_diff_bot, weight);
 
-    		histos->Fill1DHisto("diff_theta_triggered_analyzable_events_before_rotation_h", theta_diff, weight);
+    		histos->Fill1DHisto("diff_theta_triggered_analyzable_events_before_rotation_h", theta_diff_top, weight);
+    		histos->Fill1DHisto("diff_theta_triggered_analyzable_events_before_rotation_h", theta_diff_bot, weight);
 
         	histos->Fill1DHisto("diff_energy_between_recon_clulster_and_track_energy_triggered_analyzable_events_h", clTop.getEnergy() - energy_top, weight);
         	histos->Fill1DHisto("diff_energy_between_recon_clulster_and_track_energy_triggered_analyzable_events_h", clBot.getEnergy() - energy_bot, weight);
@@ -509,7 +517,8 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 
         if(flag_triggered_analyzable_event && energy_diff_top > DIFFENERGYMIN && energy_diff_top < DIFFENERGYMAX
         		&& energy_diff_bot > DIFFENERGYMIN && energy_diff_bot < DIFFENERGYMAX
-				&& theta_diff > DIFFTHETAMIN && theta_diff < DIFFTHETAMAX){
+				&& theta_diff_top > DIFFTHETAMIN && theta_diff_top < DIFFTHETAMAX
+				&& theta_diff_bot > DIFFTHETAMIN && theta_diff_bot < DIFFTHETAMAX){
 			histos->Fill1DHisto("invariant_mass_vertex_triggered_analyzable_events_with_kinematic_cuts_h", invariant_mass, weight);
 
 			histos->Fill1DHisto("pSum_vertex_triggered_analyzable_events_with_kinematic_cuts_h", pSum, weight);
