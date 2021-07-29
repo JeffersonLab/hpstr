@@ -15,16 +15,16 @@
 #define ROTATIONANGLEAROUNDY 0.0305 // rad
 #define CHI2NDFTHRESHOLD 20
 #define CLUSTERENERGYTHRESHOLD 0.05 // threshold of cluster energy for analyzable events
-#define CLUSTERENERGYMIN 0.72 // minimum of cluster energy
-#define CLUSTERENERGYMAX 1.52 // maximum of cluster energy
-#define CLUSTERXMIN -13 // minimum of x index
-#define CLUSTERXMAX -10 // maximum of x index
-#define CLUSTERYMIN -1 // minimum of y index
-#define CLUSTERYMAX 1 // maximum of y index
-#define DIFFENERGYMIN -0.34 // minimum for difference between measured and calculated energy
-#define DIFFENERGYMAX 0.33 // maximum for difference between measured and calculated energy
-#define DIFFTHETAMIN -0.0030 // minimum for difference between measured and calculated theta before rotation
-#define DIFFTHETAMAX 0.0046 // maximum for difference between measured and calculated theta before rotation
+#define CLUSTERENERGYMIN 0.17 // minimum of cluster energy
+#define CLUSTERENERGYMAX 0.82 // maximum of cluster energy
+#define CLUSTERXMIN -20 // minimum of x index
+#define CLUSTERXMAX -7 // maximum of x index
+#define CLUSTERYMIN -3 // minimum of y index
+#define CLUSTERYMAX 3 // maximum of y index
+#define DIFFENERGYMIN -0.18 // minimum for difference between measured and calculated energy
+#define DIFFENERGYMAX 0.17 // maximum for difference between measured and calculated energy
+#define DIFFTHETAMIN -0.0046 // minimum for difference between measured and calculated theta before rotation
+#define DIFFTHETAMAX 0.0054 // maximum for difference between measured and calculated theta before rotation
 
 TriggerParametersExtractionMollerPairTriggerAnaProcessor::TriggerParametersExtractionMollerPairTriggerAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
@@ -87,6 +87,10 @@ void TriggerParametersExtractionMollerPairTriggerAnaProcessor::initialize(TTree*
     func_bot_topCutY->SetParameters(bot_topCutY);
     func_bot_botCutY = new TF1("func_bot_botCutY", "pol1", -90, -30);
     func_bot_botCutY->SetParameters(bot_botCutY);
+
+    //Upper limit for position dependent energy
+    func_pde_moller = new TF1("func_pde_moller", "pol2", -22, 0);
+    func_pde_moller->SetParameters(pars_pde_moller);
 
     // Kinematic equations
     // E vs theta
@@ -315,7 +319,8 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 			if (cluster.getEnergy() <= CLUSTERENERGYMAX
 					&& cluster.getEnergy() >= CLUSTERENERGYMIN
 					&& ix >= CLUSTERXMIN && ix <= CLUSTERXMAX
-					&& iy >= CLUSTERYMIN && iy <= CLUSTERYMAX)
+					&& iy >= CLUSTERYMIN && iy <= CLUSTERYMAX
+					&& cluster.getEnergy() <= func_pde_moller->Eval(ix))
 				flag_triggered_analyzable_event = true;
 		}
 
@@ -597,7 +602,8 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 		if (energy <= CLUSTERENERGYMAX
 				&& energy >= CLUSTERENERGYMIN
 				&& ix >= CLUSTERXMIN && ix <= CLUSTERXMAX
-				&& iy >= CLUSTERYMIN && iy <= CLUSTERYMAX)
+				&& iy >= CLUSTERYMIN && iy <= CLUSTERYMAX
+				&& energy <= func_pde_moller->Eval(ix))
 			flag_triggered = true;
 	}
 

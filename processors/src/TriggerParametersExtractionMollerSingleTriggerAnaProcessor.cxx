@@ -58,14 +58,14 @@ void TriggerParametersExtractionMollerSingleTriggerAnaProcessor::initialize(TTre
 		CLUSTERENERGYTHRESHOLD = 0.05; // threshold of cluster energy for analyzable events
 		CLUSTERENERGYMIN = 0.17; // minimum of cluster energy
 		CLUSTERENERGYMAX = 0.82; // maximum of cluster energy
-		CLUSTERXMIN = -13; // minimum of x index
-		CLUSTERXMAX = -10; // maximum of x index
-		CLUSTERYMIN = -1; // minimum of y index
-		CLUSTERYMAX = 1; // maximum of y index
+		CLUSTERXMIN = -20; // minimum of x index
+		CLUSTERXMAX = -7; // maximum of x index
+		CLUSTERYMIN = -5; // minimum of y index
+		CLUSTERYMAX = 5; // maximum of y index
 		DIFFENERGYMIN = -0.18; // minimum for difference between measured and calculated energy
 		DIFFENERGYMAX = 0.17; // maximum for difference between measured and calculated energy
-		DIFFTHETAMIN = -0.0044; // minimum for difference between measured and calculated theta before rotation
-		DIFFTHETAMAX = 0.0052; // maximum for difference between measured and calculated theta before rotation
+		DIFFTHETAMIN = -0.0046; // minimum for difference between measured and calculated theta before rotation
+		DIFFTHETAMAX = 0.0054; // maximum for difference between measured and calculated theta before rotation
 
         //Parameters of cut functions for X
         top_topCutX[0] = 21.8429;
@@ -88,6 +88,11 @@ void TriggerParametersExtractionMollerSingleTriggerAnaProcessor::initialize(TTre
         bot_topCutY[1] = 0.888867;
         bot_botCutY[0] = -8.71712;
         bot_botCutY[1] = 0.909765;
+
+        pars_pde_moller[0] = 1.79097;
+        pars_pde_moller[1] = 0.118131;
+        pars_pde_moller[2] = 0.00254604;
+
 	}
 
     //Cut functions for X
