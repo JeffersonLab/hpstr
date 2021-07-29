@@ -97,8 +97,8 @@ class TriggerParametersExtractionMollerSingleTriggerAnaProcessor : public Proces
 		double CLUSTERYMAX = 1; // maximum of y index
 		double DIFFENERGYMIN = -0.34; // minimum for difference between measured and calculated energy
 		double DIFFENERGYMAX = 0.33; // maximum for difference between measured and calculated energy
-		double DIFFTHETAMIN = -0.0030; // minimum for difference between measured and calculated theta before rotation
-		double DIFFTHETAMAX = 0.0046; // maximum for difference between measured and calculated theta before rotation
+		double DIFFTHETAMIN = -0.0032; // minimum for difference between measured and calculated theta before rotation
+		double DIFFTHETAMAX = 0.0047; // maximum for difference between measured and calculated theta before rotation
 
         /*
          * Parameters for all cut functions depend on beam energy.

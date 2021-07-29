@@ -274,23 +274,24 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 	int n_clusters_top_cut = clulsters_top_cut.size();
 	int n_clusters_bot_cut = clulsters_bot_cut.size();
 
-	int flag = false;
+	int flag_top = false;
+	int flag_bot = false;
 
 	for(int i = 0; i < n_clusters_top_cut; i++){
 		CalCluster cluster = clulsters_top_cut.at(i);
-		if(cluster.getEnergy() >= CLUSTERENERGYTHRESHOLD) flag = true;
+		if(cluster.getEnergy() >= CLUSTERENERGYTHRESHOLD) flag_top = true;
 	}
 
 	for(int i = 0; i < n_clusters_bot_cut; i++){
 		CalCluster cluster = clulsters_bot_cut.at(i);
-		if(cluster.getEnergy() >= CLUSTERENERGYTHRESHOLD) flag = true;
+		if(cluster.getEnergy() >= CLUSTERENERGYTHRESHOLD) flag_bot = true;
 	}
 
 	int flag_analyzable_event = false;
 	int flag_triggered_analyzable_event = false;
 
 	// To determine flags of analyzable events and triggered analyzable events
-	if( ( tracks_top.size() >= 1 && tracks_bot.size() >= 1 ) && (n_clusters_top_cut >=1 || n_clusters_bot_cut >= 1) && flag){
+	if( ( tracks_top.size() >= 1 && tracks_bot.size() >= 1 ) && (n_clusters_top_cut >=1 || n_clusters_bot_cut >= 1) && flag_top == true && flag_bot == true ){
 		flag_analyzable_event = true;
 
 		for(int i = 0; i < n_clusters_top_cut; i++){
