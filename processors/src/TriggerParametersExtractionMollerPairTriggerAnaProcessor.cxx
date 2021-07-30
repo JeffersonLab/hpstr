@@ -288,23 +288,28 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 	}
 
 	int flag_analyzable_event = false;
-	int flag_triggered_analyzable_event = false;
-
-	// To determine flags of analyzable events and triggered analyzable events
-	if( ( tracks_top.size() >= 1 && tracks_bot.size() >= 1 ) && (n_clusters_top_cut >=1 || n_clusters_bot_cut >= 1) && flag_top == true && flag_bot == true ){
+	if( ( tracks_top.size() >= 1 && tracks_bot.size() >= 1 ) && flag_top == true && flag_bot == true )
 		flag_analyzable_event = true;
 
-		for(int i = 0; i < n_clusters_top_cut; i++){
-			CalCluster cluster = clulsters_top_cut.at(i);
+	int flag_single_triggered_analyzable_event_top = false;
+	int flag_single_triggered_analyzable_event_bot = false;
 
-			std::vector<double> positionCluster = cluster.getPosition();
+	std::vector<CalCluster> clulsters_top_pass_single_trigger;
+	std::vector<CalCluster> clulsters_bot_pass_single_trigger;
+	// To determine flags of analyzable events and triggered analyzable events
+	if(flag_analyzable_event){
+
+		for(int i = 0; i < n_clusters_top_cut; i++){
+			CalCluster clusterTop = clulsters_top_cut.at(i);
+
+			std::vector<double> positionCluster = clusterTop.getPosition();
 			histos->Fill2DHisto("xy_clusters_analyzable_events_hh",positionCluster[0], positionCluster[1], weight);
 
-			CalHit* seed = (CalHit*)cluster.getSeed();
+			CalHit* seed = (CalHit*)clusterTop.getSeed();
 			histos->Fill1DHisto("seed_energy_cluster_analyzable_events_h", seed->getEnergy(), weight);
-			histos->Fill1DHisto("energy_cluster_analyzable_events_h", cluster.getEnergy(), weight);
-			histos->Fill1DHisto("n_hits_cluster_analyzable_events_h", cluster.getNHits(), weight);
-			histos->Fill2DHisto("energy_vs_n_hits_cluster_analyzable_events_hh", cluster.getNHits(), cluster.getEnergy(), weight);
+			histos->Fill1DHisto("energy_cluster_analyzable_events_h", clusterTop.getEnergy(), weight);
+			histos->Fill1DHisto("n_hits_cluster_analyzable_events_h", clusterTop.getNHits(), weight);
+			histos->Fill2DHisto("energy_vs_n_hits_cluster_analyzable_events_hh", clusterTop.getNHits(), clusterTop.getEnergy(), weight);
 
 			int ix = seed -> getCrystalIndices()[0];
 			if(ix < 0) ix++;
@@ -313,29 +318,31 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 			histos->Fill1DHisto("n_clusters_xAxis_analyzable_events_h", ix, weight);
 			histos->Fill2DHisto("xy_indices_clusters_analyzable_events_hh",ix, iy, weight);
 			histos->Fill2DHisto("energy_vs_ix_clusters_analyzable_events_hh",
-					ix, cluster.getEnergy(), weight);
+					ix, clusterTop.getEnergy(), weight);
 			histos->Fill2DHisto("energy_vs_iy_clusters_analyzable_events_hh",
-					iy, cluster.getEnergy(), weight);
+					iy, clusterTop.getEnergy(), weight);
 
-			if (cluster.getEnergy() <= CLUSTERENERGYMAX
-					&& cluster.getEnergy() >= CLUSTERENERGYMIN
+			if (clusterTop.getEnergy() <= CLUSTERENERGYMAX
+					&& clusterTop.getEnergy() >= CLUSTERENERGYMIN
 					&& ix >= CLUSTERXMIN && ix <= CLUSTERXMAX
 					&& iy >= CLUSTERYMIN && iy <= CLUSTERYMAX
-					&& cluster.getEnergy() <= func_pde_moller->Eval(ix))
-				flag_triggered_analyzable_event = true;
+					&& clusterTop.getEnergy() <= func_pde_moller->Eval(ix)){
+					flag_single_triggered_analyzable_event_top = true;
+					clulsters_top_pass_single_trigger.push_back(clusterTop);
+			}
 		}
 
 		for(int i = 0; i < n_clusters_bot_cut; i++){
-			CalCluster cluster = clulsters_bot_cut.at(i);
+			CalCluster clusterBot = clulsters_bot_cut.at(i);
 
-			std::vector<double> positionCluster = cluster.getPosition();
+			std::vector<double> positionCluster = clusterBot.getPosition();
 			histos->Fill2DHisto("xy_clusters_analyzable_events_hh",positionCluster[0], positionCluster[1], weight);
 
-			CalHit* seed = (CalHit*)cluster.getSeed();
+			CalHit* seed = (CalHit*)clusterBot.getSeed();
 			histos->Fill1DHisto("seed_energy_cluster_analyzable_events_h", seed->getEnergy(), weight);
-			histos->Fill1DHisto("energy_cluster_analyzable_events_h", cluster.getEnergy(), weight);
-			histos->Fill1DHisto("n_hits_cluster_analyzable_events_h", cluster.getNHits(), weight);
-			histos->Fill2DHisto("energy_vs_n_hits_cluster_analyzable_events_hh", cluster.getNHits(), cluster.getEnergy(), weight);
+			histos->Fill1DHisto("energy_cluster_analyzable_events_h", clusterBot.getEnergy(), weight);
+			histos->Fill1DHisto("n_hits_cluster_analyzable_events_h", clusterBot.getNHits(), weight);
+			histos->Fill2DHisto("energy_vs_n_hits_cluster_analyzable_events_hh", clusterBot.getNHits(), clusterBot.getEnergy(), weight);
 
 			int ix = seed -> getCrystalIndices()[0];
 			if(ix < 0) ix++;
@@ -343,10 +350,17 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 
 			histos->Fill1DHisto("n_clusters_xAxis_analyzable_events_h", ix, weight);
 			histos->Fill2DHisto("xy_indices_clusters_analyzable_events_hh",ix, iy, weight);
-			histos->Fill2DHisto("energy_vs_ix_clusters_analyzable_events_hh", ix, cluster.getEnergy(), weight);
-			histos->Fill2DHisto("energy_vs_iy_clusters_analyzable_events_hh", iy, cluster.getEnergy(), weight);
+			histos->Fill2DHisto("energy_vs_ix_clusters_analyzable_events_hh", ix, clusterBot.getEnergy(), weight);
+			histos->Fill2DHisto("energy_vs_iy_clusters_analyzable_events_hh", iy, clusterBot.getEnergy(), weight);
 
-			if(cluster.getEnergy() < CLUSTERENERGYMAX && cluster.getEnergy() > CLUSTERENERGYMIN) flag_triggered_analyzable_event = true;
+			if (clusterBot.getEnergy() <= CLUSTERENERGYMAX
+					&& clusterBot.getEnergy() >= CLUSTERENERGYMIN
+					&& ix >= CLUSTERXMIN && ix <= CLUSTERXMAX
+					&& iy >= CLUSTERYMIN && iy <= CLUSTERYMAX
+					&& clusterBot.getEnergy() <= func_pde_moller->Eval(ix)){
+					flag_single_triggered_analyzable_event_bot = true;
+					clulsters_bot_pass_single_trigger.push_back(clusterBot);
+			}
 		}
 
 		for(int i = 0; i < n_tracks_top; i++) {
@@ -364,6 +378,41 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 		}
 	}
 
+	if(flag_analyzable_event){
+		for(int i = 0; i < n_clusters_top_cut; i++){
+			CalCluster clusterTop = clulsters_top_cut.at(i);
+			for(int j = 0; j < n_clusters_bot_cut; j++){
+				CalCluster clusterBot = clulsters_bot_cut.at(j);
+
+				histos->Fill1DHisto("energy_sum_cluster_h", clusterTop.getEnergy() + clusterBot.getEnergy(), weight);
+				histos->Fill1DHisto("energy_difference_cluster_h", fabs(clusterTop.getEnergy() - clusterBot.getEnergy()), weight);
+				histos->Fill1DHisto("coplanarity_cluster_h", getValueCoplanarity(clusterTop, clusterBot), weight);
+
+				std::vector<double> variablesForEnergySlopeCut = getVariablesForEnergySlopeCut(clusterTop, clusterBot);
+				histos->Fill2DHisto("energy_vs_r_lowerest_energy_cluster_hh", variablesForEnergySlopeCut[0], variablesForEnergySlopeCut[1], weight);
+			}
+		}
+	}
+
+	int n_clusters_top_pass_single_trigger = clulsters_top_pass_single_trigger.size();
+	int n_clusters_bot_pass_single_trigger = clulsters_bot_pass_single_trigger.size();
+
+	for(int i = 0; i < n_clusters_top_pass_single_trigger; i++){
+		CalCluster clusterTop = clulsters_top_pass_single_trigger.at(i);
+		for(int j = 0; j < n_clusters_bot_pass_single_trigger; j++){
+			CalCluster clusterBot = clulsters_bot_pass_single_trigger.at(j);
+
+			histos->Fill1DHisto("energy_sum_clusters_pass_single_trigger_h", clusterTop.getEnergy() + clusterBot.getEnergy(), weight);
+			histos->Fill1DHisto("energy_difference_clusters_pass_single_trigger_h", fabs(clusterTop.getEnergy() - clusterBot.getEnergy()), weight);
+			histos->Fill1DHisto("coplanarity_clusters_pass_single_trigger_h", getValueCoplanarity(clusterTop, clusterBot), weight);
+
+			std::vector<double> variablesForEnergySlopeCut = getVariablesForEnergySlopeCut(clusterTop, clusterBot);
+			histos->Fill2DHisto("energy_vs_r_lowerest_energy_clusters_pass_single_trigger_hh", variablesForEnergySlopeCut[0], variablesForEnergySlopeCut[1], weight);
+		}
+	}
+
+
+	/*
 	//To determine flag of triggered analyzable events with kinematic cuts
 	bool flag_triggered_analyzable_event_and_pass_kinematic_cuts = false;
 
@@ -752,7 +801,7 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 
         _reg_tuple->fill();
 	}
-
+	 */
     return true;
 }
 
@@ -768,6 +817,69 @@ void TriggerParametersExtractionMollerPairTriggerAnaProcessor::finalize() {
     _reg_tuple->writeTree();
 
     outF_->Close();
+
+}
+
+std::vector<double> TriggerParametersExtractionMollerPairTriggerAnaProcessor::getCrystalPosition(CalCluster cluster){
+	CalHit* seed = (CalHit*)cluster.getSeed();
+	int ix = seed->getCrystalIndices()[0];
+	int iy = seed->getCrystalIndices()[1];
+
+    // Get the position map.
+	std::vector<double> position;
+    if (ix < 1) {
+    	position.push_back(positionMap[5 - iy][22 - ix][0]);
+    	position.push_back(positionMap[5 - iy][22 - ix][2]);
+    	position.push_back(positionMap[5 - iy][22 - ix][1]);
+    } else {
+    	position.push_back(positionMap[5 - iy][23 - ix][0]);
+    	position.push_back(positionMap[5 - iy][23 - ix][2]);
+    	position.push_back(positionMap[5 - iy][23 - ix][1]);
+    }
+
+    // Return the corrected mapped position.
+    return position;
+}
+
+double TriggerParametersExtractionMollerPairTriggerAnaProcessor::getValueCoplanarity(CalCluster clusterTop, CalCluster clusterBot) {
+    // Get the variables used by the calculation.
+	std::vector<double> positionTop = getCrystalPosition(clusterTop);
+	std::vector<double> positionBot = getCrystalPosition(clusterBot);
+
+	int angleTop = (int) std::round(atan(positionTop[0] / positionTop[1]) * 180.0 / PI);
+	int angleBot = (int) std::round(atan(positionBot[0] / positionBot[1]) * 180.0 / PI);
+
+	 // Calculate the coplanarity cut value.
+	return abs(angleTop - angleBot);
+}
+
+std::vector<double> TriggerParametersExtractionMollerPairTriggerAnaProcessor::getVariablesForEnergySlopeCut(CalCluster clusterTop, CalCluster clusterBot){
+	double energyTop = clusterTop.getEnergy();
+	double energyBot = clusterBot.getEnergy();
+
+	std::vector<double> variables;
+
+	if(energyTop < energyBot){
+		// Get the low energy cluster radial distance
+		std::vector<double> positionTop = getCrystalPosition(clusterTop);
+		double slopeParamR = sqrt( pow(positionTop[0],2) + pow( positionTop[1], 2) );
+
+		variables.push_back(slopeParamR);
+		variables.push_back(energyTop);
+
+		return variables;
+	}
+
+	else{
+		// Get the low energy cluster radial distance
+		std::vector<double> positionBot = getCrystalPosition(clusterBot);
+		double slopeParamR = sqrt( pow(positionBot[0],2) + pow( positionBot[1], 2) );
+
+		variables.push_back(slopeParamR);
+		variables.push_back(energyBot);
+
+		return variables;
+	}
 
 }
 

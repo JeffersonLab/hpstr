@@ -46,8 +46,11 @@ triggerParametersExtractionMollerPairTriggerAna.parameters["gtpClusColl"] = "Rec
 triggerParametersExtractionMollerPairTriggerAna.parameters["vtxColl"] = "UnconstrainedMollerVertices"
 triggerParametersExtractionMollerPairTriggerAna.parameters["partColl"]   = 'ParticlesMollerOnVertices'
 triggerParametersExtractionMollerPairTriggerAna.parameters["analysis"] = analysis
-triggerParametersExtractionMollerPairTriggerAna.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/triggerParametersExtraction/triggerParametersExtractionMoller.json'
 triggerParametersExtractionMollerPairTriggerAna.parameters["beamE"] = base.beamE[str(options.year)]
+if (options.year == 20211920) : 
+    triggerParametersExtractionMollerPairTriggerAna.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/triggerParametersExtraction/triggerParametersExtractionMoller20211920.json'
+else:
+    triggerParametersExtractionMollerPairTriggerAna.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/triggerParametersExtraction/triggerParametersExtractionMoller.json'    
 
 # Sequence which the processors will run.
 p.sequence = [triggerParametersExtractionMollerPairTriggerAna]

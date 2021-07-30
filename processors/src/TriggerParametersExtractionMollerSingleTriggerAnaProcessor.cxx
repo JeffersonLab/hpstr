@@ -373,7 +373,12 @@ bool TriggerParametersExtractionMollerSingleTriggerAnaProcessor::process(IEvent*
 			histos->Fill2DHisto("energy_vs_ix_clusters_analyzable_events_hh", ix, cluster.getEnergy(), weight);
 			histos->Fill2DHisto("energy_vs_iy_clusters_analyzable_events_hh", iy, cluster.getEnergy(), weight);
 
-			if(cluster.getEnergy() < CLUSTERENERGYMAX && cluster.getEnergy() > CLUSTERENERGYMIN) flag_triggered_analyzable_event = true;
+			if (cluster.getEnergy() <= CLUSTERENERGYMAX
+					&& cluster.getEnergy() >= CLUSTERENERGYMIN
+					&& ix >= CLUSTERXMIN && ix <= CLUSTERXMAX
+					&& iy >= CLUSTERYMIN && iy <= CLUSTERYMAX
+					&& cluster.getEnergy() <= func_pde_moller->Eval(ix))
+				flag_triggered_analyzable_event = true;
 		}
 
 		for(int i = 0; i < n_tracks_top; i++) {
