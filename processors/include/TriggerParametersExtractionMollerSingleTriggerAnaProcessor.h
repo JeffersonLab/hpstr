@@ -142,7 +142,8 @@ class TriggerParametersExtractionMollerSingleTriggerAnaProcessor : public Proces
         TF1* func_E_vs_theta_before_roation;
         TF1* func_theta1_vs_theta2_before_roation;
 
-        std::shared_ptr<FlatTupleMaker> _reg_tuple;
+        // save a tree for information of tracks from vertices
+        std::shared_ptr<FlatTupleMaker> _reg_tracks_from_vertices;
 
 
 };

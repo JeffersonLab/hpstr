@@ -65,9 +65,19 @@ class TriggerParametersExtractionMollerPairTriggerAnaProcessor : public Processo
         std::vector<double> getCrystalPosition(CalCluster cluster);
 
         /**
+         * Calculates angle of GTP clusters in xy plane
+         */
+        int getAngle(CalCluster cluster);
+
+        /**
          * Calculates the value used by the coplanarity cut.
          */
         double getValueCoplanarity(CalCluster clusterTop, CalCluster clusterBot);
+
+        /**
+         * Calculates distance to center for GTP clusters
+         */
+        double getR(CalCluster cluster);
 
         std::vector<double> getVariablesForEnergySlopeCut(CalCluster clusterTop, CalCluster clusterBot);
 
@@ -144,8 +154,12 @@ class TriggerParametersExtractionMollerPairTriggerAnaProcessor : public Processo
         TF1* func_E_vs_theta_before_roation;
         TF1* func_theta1_vs_theta2_before_roation;
 
-        // save a tree with tuple
-        std::shared_ptr<FlatTupleMaker> _reg_tuple;
+        // save a tree for information of GTP cluster pairs
+        std::shared_ptr<FlatTupleMaker> _reg_gtp_cluster_pairs;
+
+        // save a tree for information of tracks from vertices
+        std::shared_ptr<FlatTupleMaker> _reg_tracks_from_vertices;
+
 
         /**
          * An array of the form <code>position[iy][ix]</code> that contains the hardware

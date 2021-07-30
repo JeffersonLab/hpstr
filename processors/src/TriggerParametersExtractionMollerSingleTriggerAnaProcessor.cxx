@@ -132,28 +132,29 @@ void TriggerParametersExtractionMollerSingleTriggerAnaProcessor::initialize(TTre
     func_theta1_vs_theta2_before_roation->SetParameter(0, beamE_);
     func_theta1_vs_theta2_before_roation->SetParameter(1, ELECTRONMASS);
 
-    _reg_tuple = std::make_shared<FlatTupleMaker>(anaName_ + "_tree");
-    _reg_tuple->addVariable("momIDTop");
-    _reg_tuple->addVariable("momIDBot");
-    _reg_tuple->addVariable("momPDGTop");
-    _reg_tuple->addVariable("momPDGBot");
-    _reg_tuple->addVector("momTop");
-    _reg_tuple->addVector("momBot");
-    _reg_tuple->addVector("momMCPTop");
-    _reg_tuple->addVector("momMCPBot");
+    // save a tree for information of tracks from vertices
+    _reg_tracks_from_vertices = std::make_shared<FlatTupleMaker>(anaName_ + "_tracks_from_vertices");
+    _reg_tracks_from_vertices->addVariable("momIDTop");
+    _reg_tracks_from_vertices->addVariable("momIDBot");
+    _reg_tracks_from_vertices->addVariable("momPDGTop");
+   _reg_tracks_from_vertices->addVariable("momPDGBot");
+   _reg_tracks_from_vertices->addVector("momTop");
+   _reg_tracks_from_vertices->addVector("momBot");
+   _reg_tracks_from_vertices->addVector("momMCPTop");
+   _reg_tracks_from_vertices->addVector("momMCPBot");
 
-    _reg_tuple->addVariable("nClustersAssociatedTracksTop");
-    _reg_tuple->addVariable("nClustersAssociatedTracksBot");
+   _reg_tracks_from_vertices->addVariable("nClustersAssociatedTracksTop");
+   _reg_tracks_from_vertices->addVariable("nClustersAssociatedTracksBot");
 
-    _reg_tuple->addVariable("timeTop");
-    _reg_tuple->addVariable("timeBot");
+   _reg_tracks_from_vertices->addVariable("timeTop");
+   _reg_tracks_from_vertices->addVariable("timeBot");
 
-    _reg_tuple->addVector("momVertex");
-    _reg_tuple->addVariable("imVertex");
+   _reg_tracks_from_vertices->addVector("momVertex");
+   _reg_tracks_from_vertices->addVariable("imVertex");
 
-    _reg_tuple->addVariable("analyzable_flag");
-    _reg_tuple->addVariable("triggered_analyzable_flag");
-    _reg_tuple->addVariable("triggered_analyzable_and_kinematic_cuts_flag");
+   _reg_tracks_from_vertices->addVariable("analyzable_flag");
+   _reg_tracks_from_vertices->addVariable("triggered_analyzable_flag");
+   _reg_tracks_from_vertices->addVariable("triggered_analyzable_and_kinematic_cuts_flag");
 }
 
 bool TriggerParametersExtractionMollerSingleTriggerAnaProcessor::process(IEvent* ievent) {
@@ -746,44 +747,44 @@ bool TriggerParametersExtractionMollerSingleTriggerAnaProcessor::process(IEvent*
 		int momPDGTop = mcParticleTop->getMomPDG();
 		int momPDGBot = mcParticleBot->getMomPDG();
 
-	    _reg_tuple->setVariableValue("momIDTop", momIDTop);
-	    _reg_tuple->setVariableValue("momIDBot", momIDBot);
+	   _reg_tracks_from_vertices->setVariableValue("momIDTop", momIDTop);
+	   _reg_tracks_from_vertices->setVariableValue("momIDBot", momIDBot);
 
-        _reg_tuple->setVariableValue("momPDGTop", momPDGTop);
-        _reg_tuple->setVariableValue("momPDGBot", momPDGBot);
+       _reg_tracks_from_vertices->setVariableValue("momPDGTop", momPDGTop);
+       _reg_tracks_from_vertices->setVariableValue("momPDGBot", momPDGBot);
 
-        _reg_tuple->addToVector("momTop", momTop[0]);
-        _reg_tuple->addToVector("momTop", momTop[1]);
-        _reg_tuple->addToVector("momTop", momTop[2]);
+       _reg_tracks_from_vertices->addToVector("momTop", momTop[0]);
+       _reg_tracks_from_vertices->addToVector("momTop", momTop[1]);
+       _reg_tracks_from_vertices->addToVector("momTop", momTop[2]);
 
-        _reg_tuple->addToVector("momBot", momBot[0]);
-        _reg_tuple->addToVector("momBot", momBot[1]);
-        _reg_tuple->addToVector("momBot", momBot[2]);
+       _reg_tracks_from_vertices->addToVector("momBot", momBot[0]);
+       _reg_tracks_from_vertices->addToVector("momBot", momBot[1]);
+       _reg_tracks_from_vertices->addToVector("momBot", momBot[2]);
 
-        _reg_tuple->addToVector("momMCPTop", momMCPTop[0]);
-        _reg_tuple->addToVector("momMCPTop", momMCPTop[1]);
-        _reg_tuple->addToVector("momMCPTop", momMCPTop[2]);
+       _reg_tracks_from_vertices->addToVector("momMCPTop", momMCPTop[0]);
+       _reg_tracks_from_vertices->addToVector("momMCPTop", momMCPTop[1]);
+       _reg_tracks_from_vertices->addToVector("momMCPTop", momMCPTop[2]);
 
-        _reg_tuple->addToVector("momMCPBot", momMCPBot[0]);
-        _reg_tuple->addToVector("momMCPBot", momMCPBot[1]);
-        _reg_tuple->addToVector("momMCPBot", momMCPBot[2]);
+       _reg_tracks_from_vertices->addToVector("momMCPBot", momMCPBot[0]);
+       _reg_tracks_from_vertices->addToVector("momMCPBot", momMCPBot[1]);
+       _reg_tracks_from_vertices->addToVector("momMCPBot", momMCPBot[2]);
 
-        _reg_tuple->setVariableValue("timeTop", trackTop.getTrackTime());
-        _reg_tuple->setVariableValue("timeBot", trackBot.getTrackTime());
+       _reg_tracks_from_vertices->setVariableValue("timeTop", trackTop.getTrackTime());
+       _reg_tracks_from_vertices->setVariableValue("timeBot", trackBot.getTrackTime());
 
-        _reg_tuple->setVariableValue("nClustersAssociatedTracksTop", n_clusters_top_cut);
-        _reg_tuple->setVariableValue("nClustersAssociatedTracksBot", n_clusters_bot_cut);
+       _reg_tracks_from_vertices->setVariableValue("nClustersAssociatedTracksTop", n_clusters_top_cut);
+       _reg_tracks_from_vertices->setVariableValue("nClustersAssociatedTracksBot", n_clusters_bot_cut);
 
-        _reg_tuple->setVariableValue("imVertex", invariant_mass);
-        _reg_tuple->addToVector("momVertex", vtx->getP().Px());
-        _reg_tuple->addToVector("momVertex", vtx->getP().Py());
-        _reg_tuple->addToVector("momVertex", vtx->getP().Pz());
+       _reg_tracks_from_vertices->setVariableValue("imVertex", invariant_mass);
+       _reg_tracks_from_vertices->addToVector("momVertex", vtx->getP().Px());
+       _reg_tracks_from_vertices->addToVector("momVertex", vtx->getP().Py());
+       _reg_tracks_from_vertices->addToVector("momVertex", vtx->getP().Pz());
 
-        _reg_tuple->setVariableValue("analyzable_flag", flag_analyzable_event);
-        _reg_tuple->setVariableValue("triggered_analyzable_flag", flag_triggered_analyzable_event);
-        _reg_tuple->setVariableValue("triggered_analyzable_and_kinematic_cuts_flag", flag_triggered_analyzable_event_and_pass_kinematic_cuts);
+       _reg_tracks_from_vertices->setVariableValue("analyzable_flag", flag_analyzable_event);
+       _reg_tracks_from_vertices->setVariableValue("triggered_analyzable_flag", flag_triggered_analyzable_event);
+       _reg_tracks_from_vertices->setVariableValue("triggered_analyzable_and_kinematic_cuts_flag", flag_triggered_analyzable_event_and_pass_kinematic_cuts);
 
-        _reg_tuple->fill();
+       _reg_tracks_from_vertices->fill();
 	}
 
     return true;
@@ -796,9 +797,9 @@ void TriggerParametersExtractionMollerSingleTriggerAnaProcessor::finalize() {
     histos = nullptr;
 
     TDirectory* dir{nullptr};
-    dir = outF_->mkdir((anaName_+"_tuple").c_str());
+    dir = outF_->mkdir((anaName_+"_tracks_from_vertices").c_str());
     dir->cd();
-    _reg_tuple->writeTree();
+   _reg_tracks_from_vertices->writeTree();
 
     outF_->Close();
 

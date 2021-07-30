@@ -103,29 +103,46 @@ void TriggerParametersExtractionMollerPairTriggerAnaProcessor::initialize(TTree*
     func_theta1_vs_theta2_before_roation->SetParameter(0, beamE_);
     func_theta1_vs_theta2_before_roation->SetParameter(1, ELECTRONMASS);
 
-    // save a tree with tuple
-    _reg_tuple = std::make_shared<FlatTupleMaker>(anaName_ + "_tree");
-    _reg_tuple->addVariable("momIDTop");
-    _reg_tuple->addVariable("momIDBot");
-    _reg_tuple->addVariable("momPDGTop");
-    _reg_tuple->addVariable("momPDGBot");
-    _reg_tuple->addVector("momTop");
-    _reg_tuple->addVector("momBot");
-    _reg_tuple->addVector("momMCPTop");
-    _reg_tuple->addVector("momMCPBot");
+    // save a tree for information of GTP cluster pairs
+    _reg_gtp_cluster_pairs = std::make_shared<FlatTupleMaker>(anaName_ + "_gtp_cluster_pairs");
+    _reg_gtp_cluster_pairs->addVariable("energyTop");
+    _reg_gtp_cluster_pairs->addVariable("ixTop");
+    _reg_gtp_cluster_pairs->addVariable("iyTop");
+    _reg_gtp_cluster_pairs->addVariable("nHitsTop");
+    _reg_gtp_cluster_pairs->addVariable("angleTop");
+    _reg_gtp_cluster_pairs->addVariable("rTop");
 
-    _reg_tuple->addVariable("timeTop");
-    _reg_tuple->addVariable("timeBot");
+    _reg_gtp_cluster_pairs->addVariable("energyBot");
+    _reg_gtp_cluster_pairs->addVariable("ixBot");
+    _reg_gtp_cluster_pairs->addVariable("iyBot");
+    _reg_gtp_cluster_pairs->addVariable("nHitsBot");
+    _reg_gtp_cluster_pairs->addVariable("angleBot");
+    _reg_gtp_cluster_pairs->addVariable("rBot");
 
-    _reg_tuple->addVector("momVertex");
-    _reg_tuple->addVariable("imVertex");
 
-    _reg_tuple->addVariable("nClustersAssociatedTracksTop");
-    _reg_tuple->addVariable("nClustersAssociatedTracksBot");
+    // save a tree for information of tracks from vertices
+    _reg_tracks_from_vertices = std::make_shared<FlatTupleMaker>(anaName_ + "_tracks_from_vertices");
+    _reg_tracks_from_vertices->addVariable("momIDTop");
+    _reg_tracks_from_vertices->addVariable("momIDBot");
+    _reg_tracks_from_vertices->addVariable("momPDGTop");
+    _reg_tracks_from_vertices->addVariable("momPDGBot");
+    _reg_tracks_from_vertices->addVector("momTop");
+    _reg_tracks_from_vertices->addVector("momBot");
+    _reg_tracks_from_vertices->addVector("momMCPTop");
+    _reg_tracks_from_vertices->addVector("momMCPBot");
 
-    _reg_tuple->addVariable("analyzable_flag");
-    _reg_tuple->addVariable("triggered_analyzable_flag");
-    _reg_tuple->addVariable("triggered_analyzable_and_kinematic_cuts_flag");
+    _reg_tracks_from_vertices->addVariable("timeTop");
+    _reg_tracks_from_vertices->addVariable("timeBot");
+
+    _reg_tracks_from_vertices->addVector("momVertex");
+    _reg_tracks_from_vertices->addVariable("imVertex");
+
+    _reg_tracks_from_vertices->addVariable("nClustersAssociatedTracksTop");
+    _reg_tracks_from_vertices->addVariable("nClustersAssociatedTracksBot");
+
+    _reg_tracks_from_vertices->addVariable("analyzable_flag");
+    _reg_tracks_from_vertices->addVariable("triggered_analyzable_flag");
+    _reg_tracks_from_vertices->addVariable("triggered_analyzable_and_kinematic_cuts_flag");
 }
 
 bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* ievent) {
@@ -381,8 +398,17 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 	if(flag_analyzable_event){
 		for(int i = 0; i < n_clusters_top_cut; i++){
 			CalCluster clusterTop = clulsters_top_cut.at(i);
+			CalHit* seedTop = (CalHit*)clusterTop.getSeed();
+			int ixTop = seedTop -> getCrystalIndices()[0];
+			if(ixTop < 0) ixTop++;
+			int iyTop = seedTop -> getCrystalIndices()[1];
+
 			for(int j = 0; j < n_clusters_bot_cut; j++){
 				CalCluster clusterBot = clulsters_bot_cut.at(j);
+				CalHit* seedBot = (CalHit*)clusterBot.getSeed();
+				int ixBot = seedBot -> getCrystalIndices()[0];
+				if(ixBot < 0) ixBot++;
+				int iyBot = seedBot -> getCrystalIndices()[1];
 
 				histos->Fill1DHisto("energy_sum_cluster_h", clusterTop.getEnergy() + clusterBot.getEnergy(), weight);
 				histos->Fill1DHisto("energy_difference_cluster_h", fabs(clusterTop.getEnergy() - clusterBot.getEnergy()), weight);
@@ -390,6 +416,23 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 
 				std::vector<double> variablesForEnergySlopeCut = getVariablesForEnergySlopeCut(clusterTop, clusterBot);
 				histos->Fill2DHisto("energy_vs_r_lowerest_energy_cluster_hh", variablesForEnergySlopeCut[0], variablesForEnergySlopeCut[1], weight);
+
+			    _reg_gtp_cluster_pairs->setVariableValue("energyTop", clusterTop.getEnergy());
+			    _reg_gtp_cluster_pairs->setVariableValue("ixTop", ixTop);
+			    _reg_gtp_cluster_pairs->setVariableValue("iyTop", iyTop);
+			    _reg_gtp_cluster_pairs->setVariableValue("nHitsTop", clusterTop.getNHits());
+			    _reg_gtp_cluster_pairs->setVariableValue("angleTop", getAngle(clusterTop));
+			    _reg_gtp_cluster_pairs->setVariableValue("rTop", getR(clusterTop));
+
+			    _reg_gtp_cluster_pairs->setVariableValue("energyBot", clusterBot.getEnergy());
+			    _reg_gtp_cluster_pairs->setVariableValue("ixBot", ixBot);
+			    _reg_gtp_cluster_pairs->setVariableValue("iyBot", iyBot);
+			    _reg_gtp_cluster_pairs->setVariableValue("nHitsBot", clusterBot.getNHits());
+			    _reg_gtp_cluster_pairs->setVariableValue("angleBot", getAngle(clusterBot));
+			    _reg_gtp_cluster_pairs->setVariableValue("rBot", getR(clusterBot));
+
+
+			    _reg_gtp_cluster_pairs->fill();
 			}
 		}
 	}
@@ -762,44 +805,44 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 		int momPDGTop = mcParticleTop->getMomPDG();
 		int momPDGBot = mcParticleBot->getMomPDG();
 
-	    _reg_tuple->setVariableValue("momIDTop", momIDTop);
-	    _reg_tuple->setVariableValue("momIDBot", momIDBot);
+	    _reg_tracks_from_vertices->setVariableValue("momIDTop", momIDTop);
+	    _reg_tracks_from_vertices->setVariableValue("momIDBot", momIDBot);
 
-        _reg_tuple->setVariableValue("momPDGTop", momPDGTop);
-        _reg_tuple->setVariableValue("momPDGBot", momPDGBot);
+        _reg_tracks_from_vertices->setVariableValue("momPDGTop", momPDGTop);
+        _reg_tracks_from_vertices->setVariableValue("momPDGBot", momPDGBot);
 
-        _reg_tuple->addToVector("momTop", momTop[0]);
-        _reg_tuple->addToVector("momTop", momTop[1]);
-        _reg_tuple->addToVector("momTop", momTop[2]);
+        _reg_tracks_from_vertices->addToVector("momTop", momTop[0]);
+        _reg_tracks_from_vertices->addToVector("momTop", momTop[1]);
+        _reg_tracks_from_vertices->addToVector("momTop", momTop[2]);
 
-        _reg_tuple->addToVector("momBot", momBot[0]);
-        _reg_tuple->addToVector("momBot", momBot[1]);
-        _reg_tuple->addToVector("momBot", momBot[2]);
+        _reg_tracks_from_vertices->addToVector("momBot", momBot[0]);
+        _reg_tracks_from_vertices->addToVector("momBot", momBot[1]);
+        _reg_tracks_from_vertices->addToVector("momBot", momBot[2]);
 
-        _reg_tuple->addToVector("momMCPTop", momMCPTop[0]);
-        _reg_tuple->addToVector("momMCPTop", momMCPTop[1]);
-        _reg_tuple->addToVector("momMCPTop", momMCPTop[2]);
+        _reg_tracks_from_vertices->addToVector("momMCPTop", momMCPTop[0]);
+        _reg_tracks_from_vertices->addToVector("momMCPTop", momMCPTop[1]);
+        _reg_tracks_from_vertices->addToVector("momMCPTop", momMCPTop[2]);
 
-        _reg_tuple->addToVector("momMCPBot", momMCPBot[0]);
-        _reg_tuple->addToVector("momMCPBot", momMCPBot[1]);
-        _reg_tuple->addToVector("momMCPBot", momMCPBot[2]);
+        _reg_tracks_from_vertices->addToVector("momMCPBot", momMCPBot[0]);
+        _reg_tracks_from_vertices->addToVector("momMCPBot", momMCPBot[1]);
+        _reg_tracks_from_vertices->addToVector("momMCPBot", momMCPBot[2]);
 
-        _reg_tuple->setVariableValue("timeTop", trackTop.getTrackTime());
-        _reg_tuple->setVariableValue("timeBot", trackBot.getTrackTime());
+        _reg_tracks_from_vertices->setVariableValue("timeTop", trackTop.getTrackTime());
+        _reg_tracks_from_vertices->setVariableValue("timeBot", trackBot.getTrackTime());
 
-        _reg_tuple->setVariableValue("nClustersAssociatedTracksTop", n_clusters_top_cut);
-        _reg_tuple->setVariableValue("nClustersAssociatedTracksBot", n_clusters_bot_cut);
+        _reg_tracks_from_vertices->setVariableValue("nClustersAssociatedTracksTop", n_clusters_top_cut);
+        _reg_tracks_from_vertices->setVariableValue("nClustersAssociatedTracksBot", n_clusters_bot_cut);
 
-        _reg_tuple->setVariableValue("imVertex", invariant_mass);
-        _reg_tuple->addToVector("momVertex", vtx->getP().Px());
-        _reg_tuple->addToVector("momVertex", vtx->getP().Py());
-        _reg_tuple->addToVector("momVertex", vtx->getP().Pz());
+        _reg_tracks_from_vertices->setVariableValue("imVertex", invariant_mass);
+        _reg_tracks_from_vertices->addToVector("momVertex", vtx->getP().Px());
+        _reg_tracks_from_vertices->addToVector("momVertex", vtx->getP().Py());
+        _reg_tracks_from_vertices->addToVector("momVertex", vtx->getP().Pz());
 
-        _reg_tuple->setVariableValue("analyzable_flag", flag_analyzable_event);
-        _reg_tuple->setVariableValue("triggered_analyzable_flag", flag_triggered_analyzable_event);
-        _reg_tuple->setVariableValue("triggered_analyzable_and_kinematic_cuts_flag", flag_triggered_analyzable_event_and_pass_kinematic_cuts);
+        _reg_tracks_from_vertices->setVariableValue("analyzable_flag", flag_analyzable_event);
+        _reg_tracks_from_vertices->setVariableValue("triggered_analyzable_flag", flag_triggered_analyzable_event);
+        _reg_tracks_from_vertices->setVariableValue("triggered_analyzable_and_kinematic_cuts_flag", flag_triggered_analyzable_event_and_pass_kinematic_cuts);
 
-        _reg_tuple->fill();
+        _reg_tracks_from_vertices->fill();
 	}
 	 */
     return true;
@@ -811,10 +854,15 @@ void TriggerParametersExtractionMollerPairTriggerAnaProcessor::finalize() {
     delete histos;
     histos = nullptr;
 
-    TDirectory* dir{nullptr};
-    dir = outF_->mkdir((anaName_+"_tuple").c_str());
-    dir->cd();
-    _reg_tuple->writeTree();
+    TDirectory* dir_gtp_cluster_pairs{nullptr};
+    dir_gtp_cluster_pairs = outF_->mkdir((anaName_+"_gtp_cluster_pairs").c_str());
+    dir_gtp_cluster_pairs->cd();
+    _reg_gtp_cluster_pairs->writeTree();
+
+    TDirectory* dir_tracks_from_vertices{nullptr};
+    dir_tracks_from_vertices = outF_->mkdir((anaName_+"_tracks_from_vertices").c_str());
+    dir_tracks_from_vertices->cd();
+    _reg_tracks_from_vertices->writeTree();
 
     outF_->Close();
 
@@ -841,16 +889,23 @@ std::vector<double> TriggerParametersExtractionMollerPairTriggerAnaProcessor::ge
     return position;
 }
 
-double TriggerParametersExtractionMollerPairTriggerAnaProcessor::getValueCoplanarity(CalCluster clusterTop, CalCluster clusterBot) {
+int TriggerParametersExtractionMollerPairTriggerAnaProcessor::getAngle(CalCluster cluster) {
     // Get the variables used by the calculation.
-	std::vector<double> positionTop = getCrystalPosition(clusterTop);
-	std::vector<double> positionBot = getCrystalPosition(clusterBot);
+	std::vector<double> position = getCrystalPosition(cluster);
+	int angle = (int) std::round(atan(position[0] / position[1]) * 180.0 / PI);
 
-	int angleTop = (int) std::round(atan(positionTop[0] / positionTop[1]) * 180.0 / PI);
-	int angleBot = (int) std::round(atan(positionBot[0] / positionBot[1]) * 180.0 / PI);
+	return angle;
+}
 
+double TriggerParametersExtractionMollerPairTriggerAnaProcessor::getValueCoplanarity(CalCluster clusterTop, CalCluster clusterBot) {
 	 // Calculate the coplanarity cut value.
-	return angleTop + angleBot;
+	return getAngle(clusterTop) + getAngle(clusterBot);
+}
+
+double TriggerParametersExtractionMollerPairTriggerAnaProcessor::getR(CalCluster cluster) {
+	std::vector<double> position = getCrystalPosition(cluster);
+	double slopeParamR = sqrt( pow(position[0],2) + pow( position[1], 2) );
+	return slopeParamR;
 }
 
 std::vector<double> TriggerParametersExtractionMollerPairTriggerAnaProcessor::getVariablesForEnergySlopeCut(CalCluster clusterTop, CalCluster clusterBot){
