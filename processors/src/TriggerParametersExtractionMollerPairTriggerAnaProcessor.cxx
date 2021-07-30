@@ -119,6 +119,8 @@ void TriggerParametersExtractionMollerPairTriggerAnaProcessor::initialize(TTree*
     _reg_gtp_cluster_pairs->addVariable("angleBot");
     _reg_gtp_cluster_pairs->addVariable("rBot");
 
+    _reg_gtp_cluster_pairs->addVariable("nVertices");
+
 
     // save a tree for information of tracks from vertices
     _reg_tracks_from_vertices = std::make_shared<FlatTupleMaker>(anaName_ + "_tracks_from_vertices");
@@ -141,8 +143,8 @@ void TriggerParametersExtractionMollerPairTriggerAnaProcessor::initialize(TTree*
     _reg_tracks_from_vertices->addVariable("nClustersAssociatedTracksBot");
 
     _reg_tracks_from_vertices->addVariable("analyzable_flag");
-    _reg_tracks_from_vertices->addVariable("triggered_analyzable_flag");
-    _reg_tracks_from_vertices->addVariable("triggered_analyzable_and_kinematic_cuts_flag");
+    _reg_tracks_from_vertices->addVariable("single_triggered_analyzable_event");
+    _reg_tracks_from_vertices->addVariable("single_triggered_analyzable_and_kinematic_cuts_flag");
 }
 
 bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* ievent) {
@@ -431,6 +433,8 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 			    _reg_gtp_cluster_pairs->setVariableValue("angleBot", getAngle(clusterBot));
 			    _reg_gtp_cluster_pairs->setVariableValue("rBot", getR(clusterBot));
 
+			    _reg_gtp_cluster_pairs->setVariableValue("nVertices", n_vtxs);
+
 
 			    _reg_gtp_cluster_pairs->fill();
 			}
@@ -454,10 +458,12 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 		}
 	}
 
+	bool flag_single_triggered_analyzable_event = false;
 
-	/*
+	if(flag_single_triggered_analyzable_event_top && flag_single_triggered_analyzable_event_bot) flag_single_triggered_analyzable_event = true;
+
 	//To determine flag of triggered analyzable events with kinematic cuts
-	bool flag_triggered_analyzable_event_and_pass_kinematic_cuts = false;
+	bool flag_single_triggered_analyzable_event_and_pass_kinematic_cuts = false;
 
     for(int i = 0; i < n_vtxs; i++){
         Vertex* vtx = vtxs_->at(i);
@@ -588,7 +594,7 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 				histos->Fill2DHisto("invariant_mass_vs_pSum_vertex_analyzable_events_out_of_kinematic_cuts_hh", pSum, invariant_mass, weight);
         }
 
-        if(flag_triggered_analyzable_event){
+        if(flag_single_triggered_analyzable_event){
 			histos->Fill1DHisto("invariant_mass_vertex_triggered_analyzable_events_h", invariant_mass, weight);
 
 			histos->Fill1DHisto("pSum_vertex_triggered_analyzable_events_h", pSum, weight);
@@ -613,7 +619,7 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
         	histos->Fill1DHisto("diff_energy_between_recon_clulster_and_track_energy_triggered_analyzable_events_h", clBot.getEnergy() - energy_bot, weight);
         }
 
-        if(flag_triggered_analyzable_event && energy_diff_top > DIFFENERGYMIN && energy_diff_top < DIFFENERGYMAX
+        if(flag_single_triggered_analyzable_event && energy_diff_top > DIFFENERGYMIN && energy_diff_top < DIFFENERGYMAX
         		&& energy_diff_bot > DIFFENERGYMIN && energy_diff_bot < DIFFENERGYMAX
 				&& theta_diff_top > DIFFTHETAMIN && theta_diff_top < DIFFTHETAMAX
 				&& theta_diff_bot > DIFFTHETAMIN && theta_diff_bot < DIFFTHETAMAX){
@@ -630,12 +636,12 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 			histos->Fill1DHisto("diff_energy_between_recon_clulster_and_track_energy_triggered_analyzable_events_with_kinematic_cuts_h", clTop.getEnergy() - energy_top, weight);
 			histos->Fill1DHisto("diff_energy_between_recon_clulster_and_track_energy_triggered_analyzable_events_with_kinematic_cuts_h", clBot.getEnergy() - energy_bot, weight);
 
-			flag_triggered_analyzable_event_and_pass_kinematic_cuts = true;
+			flag_single_triggered_analyzable_event_and_pass_kinematic_cuts = true;
 
         }
     }
 
-    if(flag_triggered_analyzable_event_and_pass_kinematic_cuts == true){
+    if(flag_single_triggered_analyzable_event_and_pass_kinematic_cuts == true){
 		for(int i = 0; i < n_clusters_top_cut; i++){
 			CalCluster cluster = clulsters_top_cut.at(i);
 
@@ -839,12 +845,11 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
         _reg_tracks_from_vertices->addToVector("momVertex", vtx->getP().Pz());
 
         _reg_tracks_from_vertices->setVariableValue("analyzable_flag", flag_analyzable_event);
-        _reg_tracks_from_vertices->setVariableValue("triggered_analyzable_flag", flag_triggered_analyzable_event);
-        _reg_tracks_from_vertices->setVariableValue("triggered_analyzable_and_kinematic_cuts_flag", flag_triggered_analyzable_event_and_pass_kinematic_cuts);
+        _reg_tracks_from_vertices->setVariableValue("single_triggered_analyzable_event", flag_single_triggered_analyzable_event);
+        _reg_tracks_from_vertices->setVariableValue("single_triggered_analyzable_and_kinematic_cuts_flag", flag_single_triggered_analyzable_event_and_pass_kinematic_cuts);
 
         _reg_tracks_from_vertices->fill();
 	}
-	 */
     return true;
 }
 
