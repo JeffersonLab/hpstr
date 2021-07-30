@@ -850,7 +850,7 @@ double TriggerParametersExtractionMollerPairTriggerAnaProcessor::getValueCoplana
 	int angleBot = (int) std::round(atan(positionBot[0] / positionBot[1]) * 180.0 / PI);
 
 	 // Calculate the coplanarity cut value.
-	return abs(angleTop - angleBot);
+	return angleTop + angleBot;
 }
 
 std::vector<double> TriggerParametersExtractionMollerPairTriggerAnaProcessor::getVariablesForEnergySlopeCut(CalCluster clusterTop, CalCluster clusterBot){

@@ -783,8 +783,8 @@
     },
 	"coplanarity_cluster_h": { 
  		"bins"   : 181,
-        "minX"   : -0.5,
-        "maxX"   : 180.5,
+        "minX"   : -90.5,
+        "maxX"   : 90.5,
         "xtitle" : "Coplanarity [deg]",
         "ytitle" : "Cluster Pairs"
     },    
@@ -815,8 +815,8 @@
     },
 	"coplanarity_clusters_pass_single_trigger_h": { 
  		"bins"   : 181,
-        "minX"   : -0.5,
-        "maxX"   : 180.5,
+        "minX"   : -90.5,
+        "maxX"   : 90.5,
         "xtitle" : "Coplanarity [deg]",
         "ytitle" : "Cluster Pairs"
     },
