@@ -121,6 +121,9 @@ void TriggerParametersExtractionMollerPairTriggerAnaProcessor::initialize(TTree*
 
     _reg_gtp_cluster_pairs->addVariable("nVertices");
 
+    _reg_gtp_cluster_pairs->addVector("momTrackTop");
+    _reg_gtp_cluster_pairs->addVector("momTrackBot");
+
 
     // save a tree for information of tracks from vertices
     _reg_tracks_from_vertices = std::make_shared<FlatTupleMaker>(anaName_ + "_tracks_from_vertices");
@@ -248,6 +251,9 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 	std::vector<CalCluster> clulsters_top_cut;
 	std::vector<CalCluster> clulsters_bot_cut;
 
+	std::vector<Track> tracks_matched_top_cut;
+	std::vector<Track> tracks_matched_bot_cut;
+
 	if( ( tracks_top.size() >= 1 && tracks_bot.size() >= 1 )){
 		for(int i = 0; i < n_clusters_top; i++){
 			CalCluster cluster = clulsters_top.at(i);
@@ -264,6 +270,7 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 						&& positionAtEcal[1] < func_top_topCutY->Eval(positionCluster[1])
 						&& positionAtEcal[1] > func_top_botCutY->Eval(positionCluster[1])) {
 					clulsters_top_cut.push_back(cluster);
+					tracks_matched_top_cut.push_back(track);
 					break;
 				}
 			}
@@ -284,6 +291,7 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 						&& positionAtEcal[1] < func_bot_topCutY->Eval(positionCluster[1])
 						&& positionAtEcal[1] > func_bot_botCutY->Eval(positionCluster[1])) {
 					clulsters_bot_cut.push_back(cluster);
+					tracks_matched_bot_cut.push_back(track);
 					break;
 				}
 			}
@@ -405,12 +413,16 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 			if(ixTop < 0) ixTop++;
 			int iyTop = seedTop -> getCrystalIndices()[1];
 
+			Track trackTop = tracks_matched_top_cut.at(i);
+
 			for(int j = 0; j < n_clusters_bot_cut; j++){
 				CalCluster clusterBot = clulsters_bot_cut.at(j);
 				CalHit* seedBot = (CalHit*)clusterBot.getSeed();
 				int ixBot = seedBot -> getCrystalIndices()[0];
 				if(ixBot < 0) ixBot++;
 				int iyBot = seedBot -> getCrystalIndices()[1];
+
+				Track trackBot = tracks_matched_bot_cut.at(j);
 
 				histos->Fill1DHisto("energy_sum_cluster_h", clusterTop.getEnergy() + clusterBot.getEnergy(), weight);
 				histos->Fill1DHisto("energy_difference_cluster_h", fabs(clusterTop.getEnergy() - clusterBot.getEnergy()), weight);
@@ -434,6 +446,15 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 			    _reg_gtp_cluster_pairs->setVariableValue("rBot", getR(clusterBot));
 
 			    _reg_gtp_cluster_pairs->setVariableValue("nVertices", n_vtxs);
+
+			    _reg_gtp_cluster_pairs->addToVector("momTrackTop", trackTop.getMomentum()[0]);
+			    _reg_gtp_cluster_pairs->addToVector("momTrackTop", trackTop.getMomentum()[1]);
+			    _reg_gtp_cluster_pairs->addToVector("momTrackTop", trackTop.getMomentum()[2]);
+
+			    _reg_gtp_cluster_pairs->addToVector("momTrackBot", trackBot.getMomentum()[0]);
+			    _reg_gtp_cluster_pairs->addToVector("momTrackBot", trackBot.getMomentum()[1]);
+			    _reg_gtp_cluster_pairs->addToVector("momTrackBot", trackBot.getMomentum()[2]);
+
 
 
 			    _reg_gtp_cluster_pairs->fill();
