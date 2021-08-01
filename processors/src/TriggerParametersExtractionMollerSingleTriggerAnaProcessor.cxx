@@ -56,12 +56,12 @@ void TriggerParametersExtractionMollerSingleTriggerAnaProcessor::initialize(TTre
     // Parameters for beam of 1.92 GeV
 	if(beamE_ == 1.92){
 		CLUSTERENERGYTHRESHOLD = 0.05; // threshold of cluster energy for analyzable events
-		CLUSTERENERGYMIN = 0.17; // minimum of cluster energy
-		CLUSTERENERGYMAX = 0.82; // maximum of cluster energy
+		CLUSTERENERGYMIN = 0.20; // minimum of cluster energy
+		CLUSTERENERGYMAX = 0.86; // maximum of cluster energy
 		CLUSTERXMIN = -20; // minimum of x index
 		CLUSTERXMAX = -7; // maximum of x index
-		CLUSTERYMIN = -5; // minimum of y index
-		CLUSTERYMAX = 5; // maximum of y index
+		CLUSTERYMIN = -3; // minimum of y index
+		CLUSTERYMAX = 3; // maximum of y index
 		DIFFENERGYMIN = -0.18; // minimum for difference between measured and calculated energy
 		DIFFENERGYMAX = 0.17; // maximum for difference between measured and calculated energy
 		DIFFTHETAMIN = -0.0046; // minimum for difference between measured and calculated theta before rotation
@@ -89,9 +89,9 @@ void TriggerParametersExtractionMollerSingleTriggerAnaProcessor::initialize(TTre
         bot_botCutY[0] = -8.71712;
         bot_botCutY[1] = 0.909765;
 
-        pars_pde_moller[0] = 1.79097;
-        pars_pde_moller[1] = 0.118131;
-        pars_pde_moller[2] = 0.00254604;
+        pars_pde_moller[0] = 1.7961;
+        pars_pde_moller[1] = 0.119979;
+        pars_pde_moller[2] = 0.00262364;
 
 	}
 
@@ -132,35 +132,36 @@ void TriggerParametersExtractionMollerSingleTriggerAnaProcessor::initialize(TTre
     func_theta1_vs_theta2_before_roation->SetParameter(0, beamE_);
     func_theta1_vs_theta2_before_roation->SetParameter(1, ELECTRONMASS);
 
-    // save a tree for information of tracks from vertices
-    _reg_tracks_from_vertices = std::make_shared<FlatTupleMaker>(anaName_ + "_tracks_from_vertices");
-    _reg_tracks_from_vertices->addVariable("momIDTop");
-    _reg_tracks_from_vertices->addVariable("momIDBot");
-    _reg_tracks_from_vertices->addVariable("momPDGTop");
-   _reg_tracks_from_vertices->addVariable("momPDGBot");
-   _reg_tracks_from_vertices->addVector("momTop");
-   _reg_tracks_from_vertices->addVector("momBot");
-   _reg_tracks_from_vertices->addVector("momMCPTop");
-   _reg_tracks_from_vertices->addVector("momMCPBot");
+	// save a tree for information of tracks from vertices
+	_reg_tracks_from_vertices = std::make_shared<FlatTupleMaker>(anaName_ + "_tracks_from_vertices");
+	_reg_tracks_from_vertices->addVariable("momIDTop");
+	_reg_tracks_from_vertices->addVariable("momIDBot");
+	_reg_tracks_from_vertices->addVariable("momPDGTop");
+	_reg_tracks_from_vertices->addVariable("momPDGBot");
+	_reg_tracks_from_vertices->addVector("momTop");
+	_reg_tracks_from_vertices->addVector("momBot");
+	_reg_tracks_from_vertices->addVector("momMCPTop");
+	_reg_tracks_from_vertices->addVector("momMCPBot");
 
-   _reg_tracks_from_vertices->addVariable("nClustersAssociatedTracksTop");
-   _reg_tracks_from_vertices->addVariable("nClustersAssociatedTracksBot");
+	_reg_tracks_from_vertices->addVariable("nClustersAssociatedTracksTop");
+	_reg_tracks_from_vertices->addVariable("nClustersAssociatedTracksBot");
 
-   _reg_tracks_from_vertices->addVariable("timeTop");
-   _reg_tracks_from_vertices->addVariable("timeBot");
+	_reg_tracks_from_vertices->addVariable("timeTop");
+	_reg_tracks_from_vertices->addVariable("timeBot");
 
-   _reg_tracks_from_vertices->addVector("momVertex");
-   _reg_tracks_from_vertices->addVariable("imVertex");
+	_reg_tracks_from_vertices->addVector("momVertex");
+	_reg_tracks_from_vertices->addVariable("imVertex");
 
-   _reg_tracks_from_vertices->addVariable("analyzable_flag");
-   _reg_tracks_from_vertices->addVariable("triggered_analyzable_flag");
-   _reg_tracks_from_vertices->addVariable("triggered_analyzable_and_kinematic_cuts_flag");
+	_reg_tracks_from_vertices->addVariable("analyzable_flag");
+	_reg_tracks_from_vertices->addVariable("triggered_analyzable_flag");
+	_reg_tracks_from_vertices->addVariable(
+			"triggered_analyzable_and_kinematic_cuts_flag");
 }
 
 bool TriggerParametersExtractionMollerSingleTriggerAnaProcessor::process(IEvent* ievent) {
     double weight = 1.;
 
-    // To extract analyzable events
+    ////////////////////////////////// To extract analyzable events //////////////////////////////////
 	int n_tracks = trks_->size();
 	histos->Fill1DHisto("n_tracks_h", n_tracks, weight);
 
@@ -318,7 +319,7 @@ bool TriggerParametersExtractionMollerSingleTriggerAnaProcessor::process(IEvent*
 	int flag_analyzable_event = false;
 	int flag_triggered_analyzable_event = false;
 
-	// To determine flags of analyzable events and triggered analyzable events
+	////////////////////////////////// To determine flags of analyzable events and triggered analyzable events //////////////////////////////////
 	if( ( tracks_top.size() >= 1 && tracks_bot.size() >= 1 ) && (n_clusters_top_cut >=1 || n_clusters_bot_cut >= 1) && flag){
 		flag_analyzable_event = true;
 
@@ -397,7 +398,7 @@ bool TriggerParametersExtractionMollerSingleTriggerAnaProcessor::process(IEvent*
 		}
 	}
 
-	//To determine flag of triggered analyzable events with kinematic cuts
+	////////////////////////////////// To determine flag of triggered analyzable events with kinematic cuts //////////////////////////////////
 	bool flag_triggered_analyzable_event_and_pass_kinematic_cuts = false;
 
     for(int i = 0; i < n_vtxs; i++){
@@ -650,8 +651,7 @@ bool TriggerParametersExtractionMollerSingleTriggerAnaProcessor::process(IEvent*
 		histos->Fill2DHisto("n_tracks_vs_n_vtxs_triggered_hh", n_vtxs, n_tracks, weight);
 	}
 
-	// To analyze truth information
-
+	////////////////////////////////// To analyze truth information //////////////////////////////////
 	int n_moller = 0;
 	int n_wab = 0;
 	int n_beam = 0;

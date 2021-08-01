@@ -67,7 +67,7 @@ class TriggerParametersExtractionMollerPairTriggerAnaProcessor : public Processo
         /**
          * Calculates angle of GTP clusters in xy plane
          */
-        int getAngle(CalCluster cluster);
+        double getAngle(CalCluster cluster);
 
         /**
          * Calculates the value used by the coplanarity cut.

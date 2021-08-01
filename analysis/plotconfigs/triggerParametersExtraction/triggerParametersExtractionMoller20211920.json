@@ -814,20 +814,10 @@
         "ytitle" : "Cluster Pairs"
     },
 	"coplanarity_clusters_pass_single_trigger_h": { 
- 		"bins"   : 181,
-        "minX"   : -90.5,
-        "maxX"   : 90.5,
+ 		"bins"   : 30,
+        "minX"   : -0.5,
+        "maxX"   : 29.5,
         "xtitle" : "Coplanarity [deg]",
         "ytitle" : "Cluster Pairs"
-    },
-	"energy_vs_r_lowerest_energy_clusters_pass_single_trigger_hh": { 
-		"binsX" : 50,
-        "minX" : 0,
-        "maxX" : 400,
-        "binsY" : 50,
-        "minY" : 0,
-        "maxY" : 1,
-		"xtitle" : "r_{low} [mm]",
-		"ytitle" : "E_{low} [GeV]"
-    }       
+    }     
 }

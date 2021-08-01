@@ -15,9 +15,9 @@
 #define ROTATIONANGLEAROUNDY 0.0305 // rad
 #define CHI2NDFTHRESHOLD 20
 #define CLUSTERENERGYTHRESHOLD 0.05 // threshold of cluster energy for analyzable events
-#define CLUSTERENERGYMIN 0.17 // minimum of cluster energy
-#define CLUSTERENERGYMAX 0.82 // maximum of cluster energy
-#define CLUSTERXMIN -20 // minimum of x index
+#define CLUSTERENERGYMIN 0.20 // minimum of cluster energy
+#define CLUSTERENERGYMAX 0.86 // maximum of cluster energy
+#define CLUSTERXMIN -13 // minimum of x index
 #define CLUSTERXMAX -7 // maximum of x index
 #define CLUSTERYMIN -3 // minimum of y index
 #define CLUSTERYMAX 3 // maximum of y index
@@ -25,6 +25,11 @@
 #define DIFFENERGYMAX 0.17 // maximum for difference between measured and calculated energy
 #define DIFFTHETAMIN -0.0046 // minimum for difference between measured and calculated theta before rotation
 #define DIFFTHETAMAX 0.0054 // maximum for difference between measured and calculated theta before rotation
+
+#define ENERGYSUMMIN 0.36
+#define ENERGYSUMMAX 1.48
+#define ENERGYDIFF 0.58
+#define COPLANARITY 15
 
 TriggerParametersExtractionMollerPairTriggerAnaProcessor::TriggerParametersExtractionMollerPairTriggerAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
@@ -145,15 +150,15 @@ void TriggerParametersExtractionMollerPairTriggerAnaProcessor::initialize(TTree*
     _reg_tracks_from_vertices->addVariable("nClustersAssociatedTracksTop");
     _reg_tracks_from_vertices->addVariable("nClustersAssociatedTracksBot");
 
-    _reg_tracks_from_vertices->addVariable("analyzable_flag");
-    _reg_tracks_from_vertices->addVariable("single_triggered_analyzable_event");
-    _reg_tracks_from_vertices->addVariable("single_triggered_analyzable_and_kinematic_cuts_flag");
+    _reg_tracks_from_vertices->addVariable("single_triggered_analyzable_flag");
+    _reg_tracks_from_vertices->addVariable("triggered_analyzable_event");
+    _reg_tracks_from_vertices->addVariable("triggered_analyzable_and_kinematic_cuts_flag");
 }
 
 bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* ievent) {
     double weight = 1.;
 
-    // To extract analyzable events
+    ////////////////////////////////// To extract analyzable events //////////////////////////////////
 	int n_tracks = trks_->size();
 	histos->Fill1DHisto("n_tracks_h", n_tracks, weight);
 
@@ -405,6 +410,10 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 		}
 	}
 
+	bool flag_single_triggered_analyzable_event = false;
+	if(flag_single_triggered_analyzable_event_top && flag_single_triggered_analyzable_event_bot) flag_single_triggered_analyzable_event = true;
+
+	////////////////////////////////// Save information for cluster pair //////////////////////////////////
 	if(flag_analyzable_event){
 		for(int i = 0; i < n_clusters_top_cut; i++){
 			CalCluster clusterTop = clulsters_top_cut.at(i);
@@ -455,36 +464,39 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 			    _reg_gtp_cluster_pairs->addToVector("momTrackBot", trackBot.getMomentum()[1]);
 			    _reg_gtp_cluster_pairs->addToVector("momTrackBot", trackBot.getMomentum()[2]);
 
-
-
 			    _reg_gtp_cluster_pairs->fill();
 			}
 		}
 	}
 
+	////////////////////////////////// To determine flag of triggered analyzable events //////////////////////////////////
+	bool flag_triggered_analyzable_event = false; // pass both single and pair trigger conditions
+
 	int n_clusters_top_pass_single_trigger = clulsters_top_pass_single_trigger.size();
 	int n_clusters_bot_pass_single_trigger = clulsters_bot_pass_single_trigger.size();
+	if(flag_single_triggered_analyzable_event){
+		for(int i = 0; i < n_clusters_top_pass_single_trigger; i++){
+			CalCluster clusterTop = clulsters_top_pass_single_trigger.at(i);
+			for(int j = 0; j < n_clusters_bot_pass_single_trigger; j++){
+				CalCluster clusterBot = clulsters_bot_pass_single_trigger.at(j);
 
-	for(int i = 0; i < n_clusters_top_pass_single_trigger; i++){
-		CalCluster clusterTop = clulsters_top_pass_single_trigger.at(i);
-		for(int j = 0; j < n_clusters_bot_pass_single_trigger; j++){
-			CalCluster clusterBot = clulsters_bot_pass_single_trigger.at(j);
+				double energy_sum = clusterTop.getEnergy() + clusterBot.getEnergy();
+				double energy_diff =  fabs(clusterTop.getEnergy() - clusterBot.getEnergy());
+				double coplanarity = fabs(getValueCoplanarity(clusterTop, clusterBot));
 
-			histos->Fill1DHisto("energy_sum_clusters_pass_single_trigger_h", clusterTop.getEnergy() + clusterBot.getEnergy(), weight);
-			histos->Fill1DHisto("energy_difference_clusters_pass_single_trigger_h", fabs(clusterTop.getEnergy() - clusterBot.getEnergy()), weight);
-			histos->Fill1DHisto("coplanarity_clusters_pass_single_trigger_h", getValueCoplanarity(clusterTop, clusterBot), weight);
+				histos->Fill1DHisto("energy_sum_clusters_pass_single_trigger_h", energy_sum, weight);
+				histos->Fill1DHisto("energy_difference_clusters_pass_single_trigger_h", energy_diff, weight);
+				histos->Fill1DHisto("coplanarity_clusters_pass_single_trigger_h", coplanarity, weight);
 
-			std::vector<double> variablesForEnergySlopeCut = getVariablesForEnergySlopeCut(clusterTop, clusterBot);
-			histos->Fill2DHisto("energy_vs_r_lowerest_energy_clusters_pass_single_trigger_hh", variablesForEnergySlopeCut[0], variablesForEnergySlopeCut[1], weight);
+				if(energy_sum >= ENERGYSUMMIN && energy_sum <= ENERGYSUMMAX && energy_diff <= ENERGYDIFF && coplanarity <= COPLANARITY)
+					flag_triggered_analyzable_event = true;
+
+			}
 		}
 	}
 
-	bool flag_single_triggered_analyzable_event = false;
-
-	if(flag_single_triggered_analyzable_event_top && flag_single_triggered_analyzable_event_bot) flag_single_triggered_analyzable_event = true;
-
-	//To determine flag of triggered analyzable events with kinematic cuts
-	bool flag_single_triggered_analyzable_event_and_pass_kinematic_cuts = false;
+	////////////////////////////////// To determine flag of triggered analyzable events with kinematic cuts //////////////////////////////////
+	bool flag_triggered_analyzable_event_and_pass_kinematic_cuts = false;
 
     for(int i = 0; i < n_vtxs; i++){
         Vertex* vtx = vtxs_->at(i);
@@ -574,7 +586,7 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
     	histos->Fill1DHisto("diff_energy_between_recon_clulster_and_track_energy_vertex_h", clTop.getEnergy() - energy_top, weight);
     	histos->Fill1DHisto("diff_energy_between_recon_clulster_and_track_energy_vertex_h", clBot.getEnergy() - energy_bot, weight);
 
-        if(flag_analyzable_event){
+        if(flag_single_triggered_analyzable_event){
 			histos->Fill1DHisto("invariant_mass_vertex_analyzable_events_h", invariant_mass, weight);
 
 			histos->Fill1DHisto("pSum_vertex_analyzable_events_h", pSum, weight);
@@ -615,7 +627,7 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 				histos->Fill2DHisto("invariant_mass_vs_pSum_vertex_analyzable_events_out_of_kinematic_cuts_hh", pSum, invariant_mass, weight);
         }
 
-        if(flag_single_triggered_analyzable_event){
+        if(flag_triggered_analyzable_event){
 			histos->Fill1DHisto("invariant_mass_vertex_triggered_analyzable_events_h", invariant_mass, weight);
 
 			histos->Fill1DHisto("pSum_vertex_triggered_analyzable_events_h", pSum, weight);
@@ -640,7 +652,7 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
         	histos->Fill1DHisto("diff_energy_between_recon_clulster_and_track_energy_triggered_analyzable_events_h", clBot.getEnergy() - energy_bot, weight);
         }
 
-        if(flag_single_triggered_analyzable_event && energy_diff_top > DIFFENERGYMIN && energy_diff_top < DIFFENERGYMAX
+        if(flag_triggered_analyzable_event && energy_diff_top > DIFFENERGYMIN && energy_diff_top < DIFFENERGYMAX
         		&& energy_diff_bot > DIFFENERGYMIN && energy_diff_bot < DIFFENERGYMAX
 				&& theta_diff_top > DIFFTHETAMIN && theta_diff_top < DIFFTHETAMAX
 				&& theta_diff_bot > DIFFTHETAMIN && theta_diff_bot < DIFFTHETAMAX){
@@ -657,12 +669,12 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 			histos->Fill1DHisto("diff_energy_between_recon_clulster_and_track_energy_triggered_analyzable_events_with_kinematic_cuts_h", clTop.getEnergy() - energy_top, weight);
 			histos->Fill1DHisto("diff_energy_between_recon_clulster_and_track_energy_triggered_analyzable_events_with_kinematic_cuts_h", clBot.getEnergy() - energy_bot, weight);
 
-			flag_single_triggered_analyzable_event_and_pass_kinematic_cuts = true;
+			flag_triggered_analyzable_event_and_pass_kinematic_cuts = true;
 
         }
     }
 
-    if(flag_single_triggered_analyzable_event_and_pass_kinematic_cuts == true){
+    if(flag_triggered_analyzable_event_and_pass_kinematic_cuts == true){
 		for(int i = 0; i < n_clusters_top_cut; i++){
 			CalCluster cluster = clulsters_top_cut.at(i);
 
@@ -707,24 +719,56 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 		}
     }
 
-    // To determine flag of triggered events
+    ////////////////////////////////// To determine flag of triggered events //////////////////////////////////
     bool flag_triggered = false;
+	std::vector<CalCluster> cls_top;
+	std::vector<CalCluster> cls_bot;
 	for(int i = 0; i < n_cl; i++){
 		CalCluster* cluster = gtpClusters_->at(i);
 		double energy = cluster->getEnergy();
-
 		CalHit* seed = (CalHit*)cluster->getSeed();
-
-		int ix = seed -> getCrystalIndices()[0];
-		if(ix < 0) ix++;
 		int iy = seed -> getCrystalIndices()[1];
+		if(iy > 0) cls_top.push_back(*cluster);
+		else cls_bot.push_back(*cluster);
+	}
 
-		if (energy <= CLUSTERENERGYMAX
-				&& energy >= CLUSTERENERGYMIN
-				&& ix >= CLUSTERXMIN && ix <= CLUSTERXMAX
-				&& iy >= CLUSTERYMIN && iy <= CLUSTERYMAX
-				&& energy <= func_pde_moller->Eval(ix))
-			flag_triggered = true;
+	for(int i = 0; i < cls_top.size(); i++){
+		CalCluster clusterTop = cls_top.at(i);
+		double energyTop = clusterTop.getEnergy();
+		CalHit* seedTop = (CalHit*)clusterTop.getSeed();
+		int ixTop = seedTop -> getCrystalIndices()[0];
+		if(ixTop < 0) ixTop++;
+		int iyTop = seedTop -> getCrystalIndices()[1];
+
+		if ( energyTop <= CLUSTERENERGYMAX
+				&& energyTop >= CLUSTERENERGYMIN
+				&& ixTop >= CLUSTERXMIN && ixTop <= CLUSTERXMAX
+				&& iyTop >= CLUSTERYMIN && iyTop <= CLUSTERYMAX
+				&& energyTop <= func_pde_moller->Eval(ixTop)){
+
+			for(int j = 0; j < cls_bot.size(); j++){
+
+				CalCluster clusterBot = cls_bot.at(j);
+				double energyBot = clusterBot.getEnergy();
+				CalHit* seedBot = (CalHit*)clusterBot.getSeed();
+				int ixBot = seedBot -> getCrystalIndices()[0];
+				if(ixBot < 0) ixBot++;
+				int iyBot = seedBot -> getCrystalIndices()[1];
+				if ( energyBot <= CLUSTERENERGYMAX
+						&& energyBot >= CLUSTERENERGYMIN
+						&& ixBot >= CLUSTERXMIN && ixBot <= CLUSTERXMAX
+						&& iyBot >= CLUSTERYMIN && iyBot <= CLUSTERYMAX
+						&& energyBot <= func_pde_moller->Eval(ixBot)){
+
+					double energy_sum = energyTop + energyBot;
+					double energy_diff =  fabs(energyTop - energyBot);
+					double coplanarity = fabs(getValueCoplanarity(clusterTop, clusterBot));
+
+					if(energy_sum >= ENERGYSUMMIN && energy_sum <= ENERGYSUMMAX && energy_diff <= ENERGYDIFF && coplanarity <= COPLANARITY)
+						flag_triggered = true;
+				}
+			}
+		}
 	}
 
 	if(flag_triggered){
@@ -737,8 +781,7 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 		histos->Fill2DHisto("n_tracks_vs_n_vtxs_triggered_hh", n_vtxs, n_tracks, weight);
 	}
 
-	// To analyze truth information
-
+	////////////////////////////////// To analyze truth information //////////////////////////////////
 	int n_moller = 0;
 	int n_wab = 0;
 	int n_beam = 0;
@@ -865,9 +908,9 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
         _reg_tracks_from_vertices->addToVector("momVertex", vtx->getP().Py());
         _reg_tracks_from_vertices->addToVector("momVertex", vtx->getP().Pz());
 
-        _reg_tracks_from_vertices->setVariableValue("analyzable_flag", flag_analyzable_event);
-        _reg_tracks_from_vertices->setVariableValue("single_triggered_analyzable_event", flag_single_triggered_analyzable_event);
-        _reg_tracks_from_vertices->setVariableValue("single_triggered_analyzable_and_kinematic_cuts_flag", flag_single_triggered_analyzable_event_and_pass_kinematic_cuts);
+        _reg_tracks_from_vertices->setVariableValue("single_triggered_analyzable_flag", flag_single_triggered_analyzable_event);
+        _reg_tracks_from_vertices->setVariableValue("triggered_analyzable_event", flag_triggered_analyzable_event);
+        _reg_tracks_from_vertices->setVariableValue("triggered_analyzable_and_kinematic_cuts_flag", flag_triggered_analyzable_event_and_pass_kinematic_cuts);
 
         _reg_tracks_from_vertices->fill();
 	}
@@ -915,10 +958,10 @@ std::vector<double> TriggerParametersExtractionMollerPairTriggerAnaProcessor::ge
     return position;
 }
 
-int TriggerParametersExtractionMollerPairTriggerAnaProcessor::getAngle(CalCluster cluster) {
+double TriggerParametersExtractionMollerPairTriggerAnaProcessor::getAngle(CalCluster cluster) {
     // Get the variables used by the calculation.
 	std::vector<double> position = getCrystalPosition(cluster);
-	int angle = (int) std::round(atan(position[0] / position[1]) * 180.0 / PI);
+	double angle = std::round(atan(position[0] / position[1]) * 180.0 / PI);
 
 	return angle;
 }
