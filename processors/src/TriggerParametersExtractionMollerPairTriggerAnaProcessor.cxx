@@ -15,8 +15,8 @@
 #define ROTATIONANGLEAROUNDY 0.0305 // rad
 #define CHI2NDFTHRESHOLD 20
 #define CLUSTERENERGYTHRESHOLD 0.05 // threshold of cluster energy for analyzable events
-#define CLUSTERENERGYMIN 0.20 // minimum of cluster energy
-#define CLUSTERENERGYMAX 0.86 // maximum of cluster energy
+#define CLUSTERENERGYMIN 0.20 // minimum of cluster energy; 3sigma
+#define CLUSTERENERGYMAX 0.86 // maximum of cluster energy; 3sigma
 #define CLUSTERXMIN -13 // minimum of x index
 #define CLUSTERXMAX -7 // maximum of x index
 #define CLUSTERYMIN -3 // minimum of y index
@@ -151,7 +151,7 @@ void TriggerParametersExtractionMollerPairTriggerAnaProcessor::initialize(TTree*
     _reg_tracks_from_vertices->addVariable("nClustersAssociatedTracksBot");
 
     _reg_tracks_from_vertices->addVariable("single_triggered_analyzable_flag");
-    _reg_tracks_from_vertices->addVariable("triggered_analyzable_event");
+    _reg_tracks_from_vertices->addVariable("triggered_analyzable_flag");
     _reg_tracks_from_vertices->addVariable("triggered_analyzable_and_kinematic_cuts_flag");
 }
 
@@ -909,7 +909,7 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
         _reg_tracks_from_vertices->addToVector("momVertex", vtx->getP().Pz());
 
         _reg_tracks_from_vertices->setVariableValue("single_triggered_analyzable_flag", flag_single_triggered_analyzable_event);
-        _reg_tracks_from_vertices->setVariableValue("triggered_analyzable_event", flag_triggered_analyzable_event);
+        _reg_tracks_from_vertices->setVariableValue("triggered_analyzable_flag", flag_triggered_analyzable_event);
         _reg_tracks_from_vertices->setVariableValue("triggered_analyzable_and_kinematic_cuts_flag", flag_triggered_analyzable_event_and_pass_kinematic_cuts);
 
         _reg_tracks_from_vertices->fill();

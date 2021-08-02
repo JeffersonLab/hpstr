@@ -89,8 +89,8 @@ class TriggerParametersExtractionMollerSingleTriggerAnaProcessor : public Proces
         // Cut setup, default as for 3.7 GeV
 		double CHI2NDFTHRESHOLD = 20;
 		double CLUSTERENERGYTHRESHOLD= 0.1; // threshold of cluster energy for analyzable events
-		double CLUSTERENERGYMIN = 0.72; // minimum of cluster energy
-		double CLUSTERENERGYMAX = 1.52; // maximum of cluster energy
+		double CLUSTERENERGYMIN = 0.72; // minimum of cluster energy; 3sigma
+		double CLUSTERENERGYMAX = 1.52; // maximum of cluster energy; 5sigma
 		double CLUSTERXMIN = -13; // minimum of x index
 		double CLUSTERXMAX = -10; // maximum of x index
 		double CLUSTERYMIN = -1; // minimum of y index

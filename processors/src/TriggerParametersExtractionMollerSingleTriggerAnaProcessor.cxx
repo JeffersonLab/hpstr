@@ -56,8 +56,8 @@ void TriggerParametersExtractionMollerSingleTriggerAnaProcessor::initialize(TTre
     // Parameters for beam of 1.92 GeV
 	if(beamE_ == 1.92){
 		CLUSTERENERGYTHRESHOLD = 0.05; // threshold of cluster energy for analyzable events
-		CLUSTERENERGYMIN = 0.20; // minimum of cluster energy
-		CLUSTERENERGYMAX = 0.86; // maximum of cluster energy
+		CLUSTERENERGYMIN = 0.20; // minimum of cluster energy; 3sigma
+		CLUSTERENERGYMAX = 0.86; // maximum of cluster energy; 3sigma
 		CLUSTERXMIN = -20; // minimum of x index
 		CLUSTERXMAX = -7; // maximum of x index
 		CLUSTERYMIN = -3; // minimum of y index
@@ -68,27 +68,28 @@ void TriggerParametersExtractionMollerSingleTriggerAnaProcessor::initialize(TTre
 		DIFFTHETAMAX = 0.0054; // maximum for difference between measured and calculated theta before rotation
 
         //Parameters of cut functions for X
-        top_topCutX[0] = 21.8429;
-        top_topCutX[1] = 0.856399;
-        top_botCutX[0] = -20.3696;
-        top_botCutX[1] = 0.91452;
+        top_topCutX[0] = 21.8343;
+        top_topCutX[1] = 0.856248;
+        top_botCutX[0] = -20.3702;
+        top_botCutX[1] = 0.914624;
 
-        bot_topCutX[0] = 24.3557;
-        bot_topCutX[1] = 0.862553;
-        bot_botCutX[0] = -22.3814;
-        bot_botCutX[1] = 0.910335;
+        bot_topCutX[0] = 23.7274;
+        bot_topCutX[1] = 0.859316;
+        bot_botCutX[0] = -21.9968;
+        bot_botCutX[1] = 0.911893;
 
         //Parameters of cut functions for Y
-        top_topCutY[0] = 9.84386;
-        top_topCutY[1] = 0.893539;
-        top_botCutY[0] = -7.78579;
-        top_botCutY[1] = 0.900762;
+        top_topCutY[0] = 9.93097;
+        top_topCutY[1] = 0.892269;
+        top_botCutY[0] = -7.77353;
+        top_botCutY[1] = 0.900972;
 
-        bot_topCutY[0] = 6.73299;
-        bot_topCutY[1] = 0.888867;
-        bot_botCutY[0] = -8.71712;
-        bot_botCutY[1] = 0.909765;
+        bot_topCutY[0] = 6.74298;
+        bot_topCutY[1] = 0.888922;
+        bot_botCutY[0] = -8.77968;
+        bot_botCutY[1] = 0.908499;
 
+        // Parameters of pde function
         pars_pde_moller[0] = 1.7961;
         pars_pde_moller[1] = 0.119979;
         pars_pde_moller[2] = 0.00262364;
@@ -154,8 +155,7 @@ void TriggerParametersExtractionMollerSingleTriggerAnaProcessor::initialize(TTre
 
 	_reg_tracks_from_vertices->addVariable("analyzable_flag");
 	_reg_tracks_from_vertices->addVariable("triggered_analyzable_flag");
-	_reg_tracks_from_vertices->addVariable(
-			"triggered_analyzable_and_kinematic_cuts_flag");
+	_reg_tracks_from_vertices->addVariable("triggered_analyzable_and_kinematic_cuts_flag");
 }
 
 bool TriggerParametersExtractionMollerSingleTriggerAnaProcessor::process(IEvent* ievent) {

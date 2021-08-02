@@ -52,49 +52,53 @@ void TriggerParametersExtractionAnaProcessor::initialize(TTree* tree) {
     // Parameters for beam of 1.92 GeV
 	if(beamE_ == 1.92){
 		CLUSTERENERGYTHRESHOLD = 0.05;
+        CLUSTERENERGYMIN = 0.3; // minimum of cluster energy
+        CLUSTERENERGYMAX = 2.7; // maximum of cluster energy
+        CLUSTERNHTSMIN = 2; // minimum for number of cluster's hits
+        CLUSTERXMIN = 4; // x min of clusters
 
         //Parameters of cut functions for X
-        pos_top_topCutX[0] = 20.699;
-        pos_top_topCutX[1] = 0.905698;
-        pos_top_botCutX[0] = -11.1287;
-        pos_top_botCutX[1] = 0.824678;
+        pos_top_topCutX[0] = 20.6863;
+        pos_top_topCutX[1] = 0.90564;
+        pos_top_botCutX[0] = -11.0944;
+        pos_top_botCutX[1] = 0.824505;
 
-        neg_top_topCutX[0] = 21.8429;
-        neg_top_topCutX[1] = 0.856399;
-        neg_top_botCutX[0] = -20.3696;
-        neg_top_botCutX[1] = 0.91452;
+        neg_top_topCutX[0] = 21.8343;
+        neg_top_topCutX[1] = 0.856248;
+        neg_top_botCutX[0] = -20.3702;
+        neg_top_botCutX[1] = 0.914624;
 
-        pos_bot_topCutX[0] = 20.5165;
-        pos_bot_topCutX[1] = 0.906471;
-        pos_bot_botCutX[0] = -11.2844;
-        pos_bot_botCutX[1] = 0.824457;
+        pos_bot_topCutX[0] = 20.77;
+        pos_bot_topCutX[1] = 0.905562;
+        pos_bot_botCutX[0] = -11.715;
+        pos_bot_botCutX[1] = 0.826122;
 
-        neg_bot_topCutX[0] = 24.3557;
-        neg_bot_topCutX[1] = 0.862553;
-        neg_bot_botCutX[0] = -22.3814;
-        neg_bot_botCutX[1] = 0.910335;
+        neg_bot_topCutX[0] = 23.7274;
+        neg_bot_topCutX[1] = 0.859316;
+        neg_bot_botCutX[0] = -21.9968;
+        neg_bot_botCutX[1] = 0.911893;
 
         //Parameters of cut functions for Y
 
-        pos_top_topCutY[0] = 8.98216;
-        pos_top_topCutY[1] = 0.946183;
-        pos_top_botCutY[0] = -7.98279;
-        pos_top_botCutY[1] = 0.86121;
+        pos_top_topCutY[0] = 9.01733;
+        pos_top_topCutY[1] = 0.946667;
+        pos_top_botCutY[0] = -7.95948;
+        pos_top_botCutY[1] = 0.859626;
 
-        neg_top_topCutY[0] = 9.84386;
-        neg_top_topCutY[1] = 0.893539;
-        neg_top_botCutY[0] = -7.78579;
-        neg_top_botCutY[1] = 0.900762;
+        neg_top_topCutY[0] = 9.93097;
+        neg_top_topCutY[1] = 0.892269;
+        neg_top_botCutY[0] = -7.77353;
+        neg_top_botCutY[1] = 0.900972;
 
-        pos_bot_topCutY[0] = 6.60377;
-        pos_bot_topCutY[1] = 0.840328;
-        pos_bot_botCutY[0] = -8.22606;
-        pos_bot_botCutY[1] = 0.95283;
+        pos_bot_topCutY[0] = 6.50821;
+        pos_bot_topCutY[1] = 0.836669;
+        pos_bot_botCutY[0] = -8.03496;
+        pos_bot_botCutY[1] = 0.956376;
 
-        neg_bot_topCutY[0] = 6.73299;
-        neg_bot_topCutY[1] = 0.888867;
-        neg_bot_botCutY[0] = -8.71712;
-        neg_bot_botCutY[1] = 0.909765;
+        neg_bot_topCutY[0] = 6.74298;
+        neg_bot_topCutY[1] = 0.888922;
+        neg_bot_botCutY[0] = -8.77968;
+        neg_bot_botCutY[1] = 0.908499;
 	}
 
     //Cut functions for X

@@ -133,18 +133,18 @@ class TriggerParametersExtractionMollerPairTriggerAnaProcessor : public Processo
         TF1 *func_bot_botCutY;
 
         //Parameters of cut functions for X
-        double top_topCutX[2] = {21.8429, 0.856399};
-        double top_botCutX[2] = {-20.3696, 0.91452};
+        double top_topCutX[2] = {21.8343, 0.856248};
+        double top_botCutX[2] = {-20.3702, 0.914624};
 
-        double bot_topCutX[2] = {24.3557, 0.862553};
-        double bot_botCutX[2] = {-22.3814, 0.910335};
+        double bot_topCutX[2] = {23.7274, 0.859316};
+        double bot_botCutX[2] = {-21.9968, 0.911893};
 
         //Parameters of cut functions for Y
-        double top_topCutY[2] = {9.84386, 0.893539};
-        double top_botCutY[2] = {-7.78579, 0.900762};
+        double top_topCutY[2] = {9.93097, 0.892269};
+        double top_botCutY[2] = {-7.77353, 0.900972};
 
-        double bot_topCutY[2] = {6.73299, 0.888867};
-        double bot_botCutY[2] = {-8.71712, 0.909765};
+        double bot_topCutY[2] = {6.74298, 0.888922};
+        double bot_botCutY[2] = {-8.77968, 0.908499};
 
         //Upper limit for position dependent energy
         TF1 *func_pde_moller;
