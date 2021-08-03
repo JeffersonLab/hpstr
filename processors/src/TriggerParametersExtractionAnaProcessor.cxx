@@ -52,8 +52,8 @@ void TriggerParametersExtractionAnaProcessor::initialize(TTree* tree) {
     // Parameters for beam of 1.92 GeV
 	if(beamE_ == 1.92){
 		CLUSTERENERGYTHRESHOLD = 0.05;
-        CLUSTERENERGYMIN = 0.3; // minimum of cluster energy
-        CLUSTERENERGYMAX = 2.7; // maximum of cluster energy
+        CLUSTERENERGYMIN = 0.15; // minimum of cluster energy
+        CLUSTERENERGYMAX = 1.5; // maximum of cluster energy
         CLUSTERNHTSMIN = 2; // minimum for number of cluster's hits
         CLUSTERXMIN = 4; // x min of clusters
 
@@ -99,6 +99,13 @@ void TriggerParametersExtractionAnaProcessor::initialize(TTree* tree) {
         neg_bot_topCutY[1] = 0.888922;
         neg_bot_botCutY[0] = -8.77968;
         neg_bot_botCutY[1] = 0.908499;
+
+        //Parameters of cut function for PDE; 99% based on rad sample
+        pars_pde[0] = 0.225874;
+        pars_pde[1] = -0.0180655;
+        pars_pde[2] = 0.00101429;
+        pars_pde[3] = -2.30553e-05;
+
 	}
 
     //Cut functions for X
