@@ -61,15 +61,15 @@ void TriggerParametersExtractionFEEAnaProcessor::initialize(TTree* tree) {
     // Parameters for beam of 4.55 GeV
 	if(beamE_ == 1.92){
 		CHI2NDFTHRESHOLD = 20;
-		TRACKPMIN = 1.6; // 4 sigma
-		TRACKPMAX = 2.2; // 4 sigma
+		TRACKPMIN = 1.48; // 4 sigma
+		TRACKPMAX = 2.33; // 4 sigma
 		CLUSTERENERGYTHRESHOLD = 0.05; // threshold of cluster energy for analyzable events
-		CLUSTERENERGYMINNOCUT = 1.1; // for no cut; minimum of cluster energy; 3 sigma for double gaussians
-		CLUSTERENERGYMAXNOCUT = 2.0; // for no cut; maximum of cluster energy; 5 sigma for double gaussians
-		CLUSTERENERGYMINANALYZABLE = 1.1; // for analyzable events, minimum of cluster energy; 3 sigma for double gaussians
-		CLUSTERENERGYMAXANALYZABLE = 2.0; // for analyzable events, maximum of cluster energy; 5 sigma for double gaussians
-		CLUSTERNHTSMINNOCUT = 3; // for no cut, minimum for number of cluster's hits
-		CLUSTERNHTSMINANALYZABLE  = 3; // for analyzable events,  minimum for number of cluster's hits
+		CLUSTERENERGYMINNOCUT = 1.10; // for no cut; minimum of cluster energy; 3 sigma for double gaussians
+		CLUSTERENERGYMAXNOCUT = 2.10; // for no cut; maximum of cluster energy; 5 sigma for double gaussians
+		CLUSTERENERGYMINANALYZABLE = 1.17; // for analyzable events, minimum of cluster energy; 3 sigma for double gaussians
+		CLUSTERENERGYMAXANALYZABLE = 2.03; // for analyzable events, maximum of cluster energy; 5 sigma for double gaussians
+		CLUSTERNHTSMINNOCUT = 2; // for no cut, minimum for number of cluster's hits
+		CLUSTERNHTSMINANALYZABLE  = 2; // for analyzable events,  minimum for number of cluster's hits
 
         //Parameters of cut functions for X
         top_topCutX[0] = 21.8343;
