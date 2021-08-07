@@ -711,22 +711,39 @@ bool TriggerParametersExtractionMollerSingleTriggerAnaProcessor::process(IEvent*
 		// where sign of py are consistent between MCP and track
 		// If a matched MCP from Moller could be found in MCP collections for a track,
 		// then a MCP with closest energy and the same sign of py is supposed to be matched with the track.
+
+		bool top_matching_flag = false;
+		bool bot_matching_flag = false;
 		if (mcParts_) {
 			for (int j = 0; j < mcParts_->size(); j++) {
 				MCParticle* mcParticle = mcParts_->at(j);
 
-				if(mcParticle->getMomPDG() == 203 && mcParticle->getPDG() == 11){
+				if(mcParticle->getPDG() == 11){
 					double mcpEnergy = mcParticle->getEnergy();
 					std::vector<double> momMCP = mcParticle->getMomentum();
 
-					if (momMCP[1] > 0 && fabs(pTop - mcpEnergy) < fabs(diffTrackMomentumMCPEnergyTop)) {
-						diffTrackMomentumMCPEnergyTop = pTop - mcpEnergy;
-						indexTop = j;
-					}
+					if(mcParticle->getMomPDG() == 203){
+						if (momMCP[1] > 0) {
+							diffTrackMomentumMCPEnergyTop = pTop - mcpEnergy;
+							indexTop = j;
+							top_matching_flag = true;
+						}
 
-					if (momMCP[1] < 0 && fabs(pBot - mcpEnergy) < fabs(diffTrackMomentumMCPEnergyBot)) {
-						diffTrackMomentumMCPEnergyBot = pBot - mcpEnergy;
-						indexBot = j;
+						if (momMCP[1] < 0) {
+							diffTrackMomentumMCPEnergyBot = pBot - mcpEnergy;
+							indexBot = j;
+							bot_matching_flag = true;
+						}
+					}
+					else{
+						if (!top_matching_flag && momMCP[1] > 0 && fabs(pTop - mcpEnergy) < fabs(diffTrackMomentumMCPEnergyTop)) {
+							diffTrackMomentumMCPEnergyTop = pTop - mcpEnergy;
+							indexTop = j;
+						}
+						if (!bot_matching_flag && momMCP[1] < 0 && fabs(pBot - mcpEnergy) < fabs(diffTrackMomentumMCPEnergyBot)) {
+							diffTrackMomentumMCPEnergyBot = pBot - mcpEnergy;
+							indexBot = j;
+						}
 					}
 				}
 			}
