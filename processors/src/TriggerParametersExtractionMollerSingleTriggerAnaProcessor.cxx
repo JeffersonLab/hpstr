@@ -144,6 +144,9 @@ void TriggerParametersExtractionMollerSingleTriggerAnaProcessor::initialize(TTre
 	_reg_tracks_from_vertices->addVector("momMCPTop");
 	_reg_tracks_from_vertices->addVector("momMCPBot");
 
+	_reg_tracks_from_vertices->addVariable("chi2NdfTop");
+	_reg_tracks_from_vertices->addVariable("chi2NdfBot");
+
 	_reg_tracks_from_vertices->addVariable("nClustersAssociatedTracksTop");
 	_reg_tracks_from_vertices->addVariable("nClustersAssociatedTracksBot");
 
@@ -785,6 +788,10 @@ bool TriggerParametersExtractionMollerSingleTriggerAnaProcessor::process(IEvent*
 		_reg_tracks_from_vertices->addToVector("momMCPBot", momMCPBot[0]);
 		_reg_tracks_from_vertices->addToVector("momMCPBot", momMCPBot[1]);
 		_reg_tracks_from_vertices->addToVector("momMCPBot", momMCPBot[2]);
+
+		_reg_tracks_from_vertices->setVariableValue("chi2NdfTop", trackTop.getChi2Ndf());
+		_reg_tracks_from_vertices->setVariableValue("chi2NdfBot", trackBot.getChi2Ndf());
+
 
 		double timeTop = trackTop.getTrackTime();
 		double timeBot = trackBot.getTrackTime();
