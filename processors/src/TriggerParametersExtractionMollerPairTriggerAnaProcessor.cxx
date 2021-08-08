@@ -839,22 +839,41 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
 		// Suppose that two tracks from vertex are from two outgoing electrons of Mollers, respectively.
 		// A MCP from Moller in MCP collection is matched with a track from Moller-vertex in Moller vertex collection,
 		// where sign of py are consistent between MCP and track
+		// If a matched MCP from Moller could be found in MCP collections for a track,
+		// then a MCP with closest energy and the same sign of py is supposed to be matched with the track.
+
+		bool top_matching_flag = false;
+		bool bot_matching_flag = false;
 		if (mcParts_) {
 			for (int j = 0; j < mcParts_->size(); j++) {
 				MCParticle* mcParticle = mcParts_->at(j);
 
-				if(mcParticle->getMomPDG() == 203 && mcParticle->getPDG() == 11){
+				if(mcParticle->getPDG() == 11){
 					double mcpEnergy = mcParticle->getEnergy();
 					std::vector<double> momMCP = mcParticle->getMomentum();
 
-					if (momMCP[1] > 0 && fabs(pTop - mcpEnergy) < fabs(diffTrackMomentumMCPEnergyTop)) {
-						diffTrackMomentumMCPEnergyTop = pTop - mcpEnergy;
-						indexTop = j;
-					}
+					if(mcParticle->getMomPDG() == 203){
+						if (momMCP[1] > 0) {
+							diffTrackMomentumMCPEnergyTop = pTop - mcpEnergy;
+							indexTop = j;
+							top_matching_flag = true;
+						}
 
-					if (momMCP[1] < 0 && fabs(pBot - mcpEnergy) < fabs(diffTrackMomentumMCPEnergyBot)) {
-						diffTrackMomentumMCPEnergyBot = pBot - mcpEnergy;
-						indexBot = j;
+						if (momMCP[1] < 0) {
+							diffTrackMomentumMCPEnergyBot = pBot - mcpEnergy;
+							indexBot = j;
+							bot_matching_flag = true;
+						}
+					}
+					else{
+						if (!top_matching_flag && momMCP[1] > 0 && fabs(pTop - mcpEnergy) < fabs(diffTrackMomentumMCPEnergyTop)) {
+							diffTrackMomentumMCPEnergyTop = pTop - mcpEnergy;
+							indexTop = j;
+						}
+						if (!bot_matching_flag && momMCP[1] < 0 && fabs(pBot - mcpEnergy) < fabs(diffTrackMomentumMCPEnergyBot)) {
+							diffTrackMomentumMCPEnergyBot = pBot - mcpEnergy;
+							indexBot = j;
+						}
 					}
 				}
 			}
@@ -896,6 +915,19 @@ bool TriggerParametersExtractionMollerPairTriggerAnaProcessor::process(IEvent* i
         _reg_tracks_from_vertices->addToVector("momMCPBot", momMCPBot[0]);
         _reg_tracks_from_vertices->addToVector("momMCPBot", momMCPBot[1]);
         _reg_tracks_from_vertices->addToVector("momMCPBot", momMCPBot[2]);
+
+		double timeTop = trackTop.getTrackTime();
+		double timeBot = trackBot.getTrackTime();
+
+		for (int j = 0; j < n_tracks; j++) {
+			Track* track = trks_->at(j);
+			std::vector<double> momTrack = track->getMomentum();
+			double timeTrack = track->getTrackTime();
+			if (momTop[0] == momTrack[0] && momTop[1] == momTrack[1] && momTop[1] == momTrack[1])
+				timeTop = timeTrack;
+			if (momBot[0] == momTrack[0] && momBot[1] == momTrack[1] && momBot[1] == momTrack[1])
+				timeBot = timeTrack;
+		}
 
         _reg_tracks_from_vertices->setVariableValue("timeTop", trackTop.getTrackTime());
         _reg_tracks_from_vertices->setVariableValue("timeBot", trackBot.getTrackTime());

@@ -782,12 +782,25 @@ bool TriggerParametersExtractionMollerSingleTriggerAnaProcessor::process(IEvent*
        _reg_tracks_from_vertices->addToVector("momMCPTop", momMCPTop[1]);
        _reg_tracks_from_vertices->addToVector("momMCPTop", momMCPTop[2]);
 
-       _reg_tracks_from_vertices->addToVector("momMCPBot", momMCPBot[0]);
-       _reg_tracks_from_vertices->addToVector("momMCPBot", momMCPBot[1]);
-       _reg_tracks_from_vertices->addToVector("momMCPBot", momMCPBot[2]);
+		_reg_tracks_from_vertices->addToVector("momMCPBot", momMCPBot[0]);
+		_reg_tracks_from_vertices->addToVector("momMCPBot", momMCPBot[1]);
+		_reg_tracks_from_vertices->addToVector("momMCPBot", momMCPBot[2]);
 
-       _reg_tracks_from_vertices->setVariableValue("timeTop", trackTop.getTrackTime());
-       _reg_tracks_from_vertices->setVariableValue("timeBot", trackBot.getTrackTime());
+		double timeTop = trackTop.getTrackTime();
+		double timeBot = trackBot.getTrackTime();
+
+		for (int j = 0; j < n_tracks; j++) {
+			Track* track = trks_->at(j);
+			std::vector<double> momTrack = track->getMomentum();
+			double timeTrack = track->getTrackTime();
+			if (momTop[0] == momTrack[0] && momTop[1] == momTrack[1] && momTop[1] == momTrack[1])
+				timeTop = timeTrack;
+			if (momBot[0] == momTrack[0] && momBot[1] == momTrack[1] && momBot[1] == momTrack[1])
+				timeBot = timeTrack;
+		}
+
+       _reg_tracks_from_vertices->setVariableValue("timeTop", timeTop);
+       _reg_tracks_from_vertices->setVariableValue("timeBot", timeBot);
 
        _reg_tracks_from_vertices->setVariableValue("nClustersAssociatedTracksTop", n_clusters_top_cut);
        _reg_tracks_from_vertices->setVariableValue("nClustersAssociatedTracksBot", n_clusters_bot_cut);
