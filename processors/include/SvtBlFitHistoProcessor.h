@@ -52,18 +52,13 @@ class SvtBlFitHistoProcessor : public Processor {
 
         //configurable parameters for fitting. All have default settings.
         int rebin_{};
-        int nPointsDer_{};
         int minStats_{};
-        int xmin_{};
         int deadRMS_{};
         //Set simpleGausFit_ to true in config file if fitting online baseline
         std::string simpleGausFit_;
 
-        //Define RMS threshold for noisy channels
-        int noisyRMS_{};
-
         //Maps for sensor histograms and channels
-        std::vector<std::string> histos2dk_{};
+        //std::vector<std::string> histos2dk_{};
 
         //Folder where input histograms file is located
         FlatTupleMaker* flat_tuple_{nullptr};
