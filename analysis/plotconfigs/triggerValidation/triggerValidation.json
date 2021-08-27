@@ -1,0 +1,244 @@
+{ 
+     "ts_h" : {
+        "bins" : 20,
+        "minX" : -0.5,
+        "maxX" : 19.5,
+        "xtitle" : "TS Bit",
+        "ytitle" : "Events"
+    },   
+    
+    "ecalClusterTime_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 200,
+        "xtitle" : "Recon ecal cluster time [ns]",
+        "ytitle" : "Counts"
+    },
+    
+	"hodoHitTime_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 200,
+        "xtitle" : "Recon hodo hit time [ns]",
+        "ytitle" : "Counts"
+    },
+    
+	"timeDiff_ecalCluster_hodoHit_h" : {
+        "bins"   : 100,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Time diff. between Recon ecal cluster and hodo hit time [ns]",
+        "ytitle" : "Counts"
+    },
+    
+   	"timeDiff_ecalCluster_VTPSingleTrig_h" : {
+        "bins"   : 100,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Time diff. between Recon ecal cluster and VTP single trigger [ns]",
+        "ytitle" : "Counts"
+    },
+    
+	"energyDiff_ecalCluster_VTPClusters_h" : {
+        "bins"   : 100,
+        "minX"   : -4,
+        "maxX"   : 4,
+        "xtitle" : "Energy diff. between Recon ecal cluster and VTP clusters [GeV]",
+        "ytitle" : "Counts"
+    },
+    
+ 	"energyDiff_ecalCluster_VTPClusters_vs_energy_ecalCluster_hh" : {
+        "binsX"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "binsY"   : 100,
+        "minY"   : -4,
+        "maxY"   : 4,
+        "xtitle" : "Energy of Ecal cluster [GeV]",
+        "ytitle" : "Energy diff. between Recon ecal cluster and VTP clusters [GeV]"
+    },
+    
+	"energyRatio_ecalCluster_VTPClusters_h" : {
+        "bins"   : 100,
+        "minX"   : 0.5,
+        "maxX"   : 2,
+        "xtitle" : "Energy ratio between Recon ecal cluster and VTP clusters",
+        "ytitle" : "Counts"
+    },
+    
+ 	"energyRatio_ecalCluster_VTPClusters_vs_energy_ecalCluster_hh" : {
+        "binsX"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "binsY"   : 100,
+        "minY"   : 0.5,
+        "maxY"   : 2,
+        "xtitle" : "Energy of Ecal cluster [GeV]",
+        "ytitle" : "Energy ratio between Recon ecal cluster and VTP clusters"
+    },
+    
+	"ecal_energy_x_single2_pass_hh" : {
+        "binsX"   : 23,
+        "minX"   : 0.5,
+        "maxX"   : 23.5,
+        "binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 4,
+        "xtitle" : "X of Ecal cluster",
+        "ytitle" : "Energy of Ecal cluster [GeV]"
+    },
+    
+	"ecal_energy_x_single2_fail_hh" : {
+        "binsX"   : 23,
+        "minX"   : 0.5,
+        "maxX"   : 23.5,
+        "binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 4,
+        "xtitle" : "X of Ecal cluster",
+        "ytitle" : "Energy of Ecal cluster [GeV]"
+    },
+    
+	"ecal_energy_x_single3_pass_hh" : {
+        "binsX"   : 23,
+        "minX"   : 0.5,
+        "maxX"   : 23.5,
+        "binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 4,
+        "xtitle" : "X of Ecal cluster",
+        "ytitle" : "Energy of Ecal cluster [GeV]"
+    },
+    
+	"ecal_energy_x_single3_fail_hh" : {
+        "binsX"   : 23,
+        "minX"   : 0.5,
+        "maxX"   : 23.5,
+        "binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 4,
+        "xtitle" : "X of Ecal cluster",
+        "ytitle" : "Energy of Ecal cluster [GeV]"
+    },
+    
+    
+	"chi2ndf_tracks_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 50,
+        "xtitle" : "Chi2/NDF",
+        "ytitle" : "Counts"
+    },
+    
+   	"p_tracks_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+        "xtitle" : "p [GeV/c]",
+        "ytitle" : "Counts"
+    },
+    
+    	"trackX_vs_ClusterX_pos_top_hh": { 
+		"binsX" : 100,
+        "minX" : 0,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 400,
+		"xtitle" : "X of cluster [mm]",
+        "ytitle" : "X of track extrapolation at Ecal face [mm]"
+    },
+	"trackX_vs_ClusterX_neg_top_hh": { 
+		"binsX" : 100,
+        "minX" : -320,
+        "maxX" : 80,
+        "binsY" : 100,
+        "minY" : -320,
+        "maxY" : 80,
+		"xtitle" : "X of cluster [mm]",
+        "ytitle" : "X of track extrapolation at Ecal face [mm]"
+    },
+	"trackX_vs_ClusterX_pos_bot_hh": { 
+		"binsX" : 100,
+        "minX" : 0,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 400,
+		"xtitle" : "X of cluster [mm]",
+        "ytitle" : "X of track extrapolation at Ecal face [mm]"
+    },
+	"trackX_vs_ClusterX_neg_bot_hh": { 
+		"binsX" : 100,
+        "minX" : -320,
+        "maxX" : 80,
+        "binsY" : 100,
+        "minY" : -320,
+        "maxY" : 80,
+		"xtitle" : "X of cluster [mm]",
+        "ytitle" : "X of track extrapolation at Ecal face [mm]"
+    },
+    
+ 	"trackY_vs_ClusterY_pos_top_hh": { 
+		"binsX" : 100,
+        "minX" : 0,
+        "maxX" : 100,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 100,
+		"xtitle" : "Y of cluster [mm]",
+        "ytitle" : "Y of track extrapolation at Ecal face [mm]"
+    },
+	"trackY_vs_ClusterY_neg_top_hh": { 
+		"binsX" : 100,
+        "minX" : 0,
+        "maxX" : 100,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 100,
+		"xtitle" : "Y of cluster [mm]",
+        "ytitle" : "Y of track extrapolation at Ecal face [mm]"
+    },
+	"trackY_vs_ClusterY_pos_bot_hh": { 
+		"binsX" : 100,
+        "minX" : -100,
+        "maxX" : 0,
+        "binsY" : 100,
+        "minY" : -100,
+        "maxY" : 0,
+		"xtitle" : "Y of cluster [mm]",
+        "ytitle" : "Y of track extrapolation at Ecal face [mm]"
+    },
+	"trackY_vs_ClusterY_neg_bot_hh": { 
+		"binsX" : 100,
+        "minX" : -100,
+        "maxX" : 0,
+        "binsY" : 100,
+        "minY" : -100,
+        "maxY" : 0,
+		"xtitle" : "Y of cluster [mm]",
+        "ytitle" : "Y of track extrapolation at Ecal face [mm]"
+    },
+    
+	"ecal_energy_x_single3_pass_matched_cluster_hh" : {
+        "binsX"   : 23,
+        "minX"   : 0.5,
+        "maxX"   : 23.5,
+        "binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 4,
+        "xtitle" : "X of Ecal cluster",
+        "ytitle" : "Energy of Ecal cluster [GeV]"
+    },
+    
+	"ecal_energy_x_single3_fail_matched_cluster_hh" : {
+        "binsX"   : 23,
+        "minX"   : 0.5,
+        "maxX"   : 23.5,
+        "binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 4,
+        "xtitle" : "X of Ecal cluster",
+        "ytitle" : "Energy of Ecal cluster [GeV]"
+    }
+}
