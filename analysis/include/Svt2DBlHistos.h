@@ -22,7 +22,9 @@ class Svt2DBlHistos : public HistoManager{
         ~Svt2DBlHistos();
 
         void DefineHistos();
+        void DefineHistosByHw();
         void FillHistograms(std::vector<RawSvtHit*> *rawSvtHits_,float weight = 1.);
+        void FillHistogramsByHw(std::vector<RawSvtHit*> *rawSvtHits_,float weight = 1.);
 
 
     private:

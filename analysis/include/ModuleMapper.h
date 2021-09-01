@@ -32,13 +32,13 @@ class ModuleMapper {
   
   //get list of hw names
   void getHws (std::vector<std::string>& hws) {
-    for (strmap_it it = hw_to_string.begin(); it!= hw_to_string.end(); ++it)
+    for (strmap_it it = hw_to_sw.begin(); it!= hw_to_sw.end(); ++it)
       hws.push_back(it->first);
   }
 
   //get list of sw names
   void getSws (std::vector<std::string>& sws) { 
-    for (strmap_it it = hw_to_string.begin(); it!= hw_to_string.end(); ++it)
+    for (strmap_it it = sw_to_hw.begin(); it!= sw_to_hw.end(); ++it)
       sws.push_back(it->first);
   }
 

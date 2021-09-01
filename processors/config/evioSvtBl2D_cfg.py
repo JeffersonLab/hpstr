@@ -33,7 +33,7 @@ evio = HpstrConf.Processor('evio', 'SvtBl2DEvioProcessor')
 #evio
 evio.parameters["debug"]    = 0
 evio.parameters["trigConf"] = "hps_v12_1.cnf"
-evio.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/Svt2DBl.json'
+evio.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/Svt2DBlHw.json'
 
 # Sequence which the processors will run.
 p.sequence = [evio]

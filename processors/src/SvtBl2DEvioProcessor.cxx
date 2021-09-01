@@ -91,7 +91,7 @@ void SvtBl2DEvioProcessor::initialize(std::string inFilename, std::string outFil
     std::cout << "[SvtBl2DEvioProcessor] Load JSON" << std::endl;
     svtCondHistos->loadHistoConfig(histCfgFilename_);
     if (debug_ > 0) std::cout << "[SvtBl2DAnaProcessor] Define 2DHistos" << std::endl;
-    svtCondHistos->Svt2DBlHistos::DefineHistos();
+    svtCondHistos->Svt2DBlHistos::DefineHistosByHw();
     if (debug_ > 0) std::cout << "[SvtBl2DAnaProcessor] Defined 2DHistos" << std::endl;
 
 }
@@ -156,8 +156,9 @@ bool SvtBl2DEvioProcessor::process() {
                 rawHit->setLayer(layer);
                 rawHit->setModule(module);
                 int apv = int(etool->SVT->svt_data[i].head.apv);
-                int strip = l0APVmap[apv]*128;
-                if ( int(etool->SVT->svt_data[i].head.feb_id) > 1 ) strip = APVmap[apv]*128;
+                int strip = apv*128;
+                //int strip = l0APVmap[apv]*128;
+                //if ( int(etool->SVT->svt_data[i].head.feb_id) > 1 ) strip = APVmap[apv]*128;
                 strip += int(etool->SVT->svt_data[i].head.chan);
                 rawHit->setStrip(strip);
                 int adcs[6];
@@ -168,7 +169,7 @@ bool SvtBl2DEvioProcessor::process() {
                 rawHit->setADCs(adcs);
                 rawSvtHits_.push_back(rawHit);
             }
-            svtCondHistos->FillHistograms(&rawSvtHits_,1.);
+            svtCondHistos->FillHistogramsByHw(&rawSvtHits_,1.);
         }
 
         time_of_last_event= etool->GetTrigTime();
