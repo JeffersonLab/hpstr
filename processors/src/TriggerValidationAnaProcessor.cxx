@@ -171,14 +171,17 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 		std::vector<VTPData::hpsSingleTrig> singleTrigs = vtpData_->singletrigs;
 		for(int j = 0; j < singleTrigs.size(); j++){
 			VTPData::hpsSingleTrig singleTrig = singleTrigs.at(j);
-			unsigned int timeSingleTrig = singleTrig.T;
 
-			histos->Fill1DHisto("vtpSingleTrigTime_h", timeSingleTrig * 4, weight);
+			if(singleTrig.inst == 2 || singleTrig.inst == 3){
+				unsigned int timeSingleTrig = singleTrig.T;
 
-			histos->Fill2DHisto("vtpSingleTrigTime_vs_ecalClusterTime_hh", timeEcalCluster, timeSingleTrig * 4, weight);
+				histos->Fill1DHisto("vtpSingleTrigTime_h", timeSingleTrig * 4, weight);
 
-			double timeDiffEcalClusterVTPSingleTrigger = timeEcalCluster - timeSingleTrig * 4;
-			histos->Fill1DHisto("timeDiff_ecalCluster_VTPSingleTrig_h", timeDiffEcalClusterVTPSingleTrigger, weight);
+				histos->Fill2DHisto("vtpSingleTrigTime_vs_ecalClusterTime_hh", timeEcalCluster, timeSingleTrig * 4, weight);
+
+				double timeDiffEcalClusterVTPSingleTrigger = timeEcalCluster - timeSingleTrig * 4;
+				histos->Fill1DHisto("timeDiff_ecalCluster_VTPSingleTrig_h", timeDiffEcalClusterVTPSingleTrigger, weight);
+			}
 		}
 
 		std::vector<VTPData::hpsCluster> vtpClusters =  vtpData_->clusters;
