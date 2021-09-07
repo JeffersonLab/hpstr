@@ -15,6 +15,17 @@
         "ytitle" : "Counts"
     },
     
+	"energy_vs_time_ecalCluster_hh" : {
+        "binsX"   : 100,
+        "minX"   : 0,
+        "maxX"   : 200,
+        "binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 4,
+        "xtitle" : "Recon ecal cluster time [ns]",
+        "ytitle" : "Recon ecal cluster energy [GeV]"
+    },
+    
 	"hodoHitTime_h" : {
         "bins"   : 100,
         "minX"   : 0,
@@ -31,12 +42,58 @@
         "ytitle" : "Counts"
     },
     
+	"vtpSingleTrigTime_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 400,
+        "xtitle" : "VTP Single Trig time [ns]",
+        "ytitle" : "Counts"
+    },
+    
+ 	"vtpSingleTrigTime_vs_ecalClusterTime_hh" : {
+        "binsX"   : 100,
+        "minX"   : 0,
+        "maxX"   : 200,
+        "binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 200,
+        "xtitle" : "Recon ecal cluster time [ns]",
+        "ytitle" : "VTP Single Trig time [ns]"
+    },
+    
    	"timeDiff_ecalCluster_VTPSingleTrig_h" : {
         "bins"   : 100,
         "minX"   : -100,
         "maxX"   : 100,
         "xtitle" : "Time diff. between Recon ecal cluster and VTP single trigger [ns]",
         "ytitle" : "Counts"
+    },
+   
+   	"xDiff_ecalCluster_VTPClusters_h" : {
+        "bins"   : 47,
+        "minX"   : -23.5,
+        "maxX"   : 23.5,
+        "xtitle" : "X diff. between Recon ecal cluster and VTP clusters",
+        "ytitle" : "Counts"
+    }, 
+    
+	"yDiff_ecalCluster_VTPClusters_h" : {
+        "bins"   : 11,
+        "minX"   : -5.5,
+        "maxX"   : 5.5,
+        "xtitle" : "Y diff. between Recon ecal cluster and VTP clusters",
+        "ytitle" : "Counts"
+    }, 
+    
+	"xDiff_yDiff_ecalCluster_VTPClusters_hh" : {
+        "binsX"   : 47,
+        "minX"   : -23.5,
+        "maxX"   : 23.5,
+        "binsY"   : 11,
+        "minY"   : -5.5,
+        "maxY"   : 5.5,
+        "xtitle" : "X diff. between Recon ecal cluster and VTP clusters",
+        "ytitle" : "Y diff. between Recon ecal cluster and VTP clusters"
     },
     
 	"energyDiff_ecalCluster_VTPClusters_h" : {
@@ -119,6 +176,17 @@
         "maxY"   : 4,
         "xtitle" : "X of Ecal cluster",
         "ytitle" : "Energy of Ecal cluster [GeV]"
+    },
+    
+	"ecal_energyDiff_x_single2_fail_hh" : {
+        "binsX"   : 23,
+        "minX"   : 0.5,
+        "maxX"   : 23.5,
+        "binsY"   : 100,
+        "minY"   : -4,
+        "maxY"   : 4,
+        "xtitle" : "X of Ecal cluster",
+        "ytitle" : "Energy diff. between Ecal and VTP clusters [GeV]"
     },
     
     

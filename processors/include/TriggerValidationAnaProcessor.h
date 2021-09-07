@@ -1,6 +1,8 @@
 #ifndef __TRIGGERVALIDATION_ANAPROCESSOR_H__
 #define __TRIGGERVALIDATION_ANAPROCESSOR_H__
 
+//#define __WITHSVT__
+
 //HPSTR
 #include "HpsEvent.h"
 #include "TSData.h"
@@ -142,22 +144,22 @@ private:
     TF1 *func_neg_bot_botCutY;
 
     //Parameters of cut functions for X
-    double pos_top_topCutX[2] = {56.2217, 0.967705};
-    double pos_top_botCutX[2] = {-12.6351, 0.837295};
-    double neg_top_topCutX[2] = {26.4545, 0.821466};
-    double neg_top_botCutX[2] = {-38.124, 0.959698};
-    double pos_bot_topCutX[2] = {42.585, 1.00094};
-    double pos_bot_botCutX[2] = {-36.0758, 0.944868};
-    double neg_bot_topCutX[2] = {43.0477, 0.917774};
-    double neg_bot_botCutX[2] = {-20.3044, 1.0138};
-    double pos_top_topCutY[2] = {14.2595, 0.930762};
-    double pos_top_botCutY[2] = {-11.0683, 0.978763};
-    double neg_top_topCutY[2] = {14.0088, 0.924618};
-    double neg_top_botCutY[2] = {-14.138, 1.05068};
-    double pos_bot_topCutY[2] = {9.80912, 0.978079};
-    double pos_bot_botCutY[2] = {-14.2543, 0.924373};
-    double neg_bot_topCutY[2] = {13.6617, 1.06499};
-    double neg_bot_botCutY[2] = {-20.0764, 0.789965};
+    double pos_top_topCutX[2] = {55.043, 0.954781};
+    double pos_top_botCutX[2] = {-26.8894, 0.905789};
+    double neg_top_topCutX[2] = {20.0414, 0.775631};
+    double neg_top_botCutX[2] = {-41.2197, 0.928236};
+    double pos_bot_topCutX[2] = {43.5722, 0.992549};
+    double pos_bot_botCutX[2] = {-36.4948, 0.952063};
+    double neg_bot_topCutX[2] = {42.37, 0.914492};
+    double neg_bot_botCutX[2] = {-19.5229, 1.01893};
+    double pos_top_topCutY[2] = {12.0834, 0.934938};
+    double pos_top_botCutY[2] = {-7.89792, 0.950394};
+    double neg_top_topCutY[2] = {10.9327, 0.947849};
+    double neg_top_botCutY[2] = {-11.051, 1.02282};
+    double pos_bot_topCutY[2] = {8.33544, 0.964538};
+    double pos_bot_botCutY[2] = {-12.8071, 0.943018};
+    double neg_bot_topCutY[2] = {11.4682, 1.03756};
+    double neg_bot_botCutY[2] = {-16.6485, 0.836709};
 
     // Without track-cluster matching
     int passSingle2Top{0};

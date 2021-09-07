@@ -8,37 +8,40 @@
  */
 #define ENERGYRATIOECALVTPCLUSTERS 1.0 // Ratio of energy between ecal and vtp clusters
 
-#define TIMEECALCLUSTERMIN 8 // ns
-#define TIMEECALCLUSTERMAX 120 // ns
-#define TIMEDIFFECALCLUSTERHODOHITMIN -16 // ns
+#define TIMEECALCLUSTERMIN 40 // ns
+#define TIMEECALCLUSTERMAX 55 // ns
+#define TIMEDIFFECALCLUSTERHODOHITMIN -60 // ns
 #define TIMEDIFFECALCLUSTERHODOHITMAX 4 // ns
 
-#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN -14 // ns
-#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX 10 // ns
+//#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN -16 // ns
+//#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX 10 // ns
+
+#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN -1000 // ns
+#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX 1000 // ns
 
 #define GAINFACTOR 1.25/2 // Gain scaling factor for hits at two-hole tiles.
 #define FADCHITTHRESHOLD 1 // Hodoscope FADC hit cut
 #define HODOHITTHRESHOLD 200 // Hodoscope tilt/cluster hit cut
 
 //parameters for trigger conditions
-#define VTP_HPS_SINGLE_EMIN_SINGLE3 200 // MeV
-#define VTP_HPS_SINGLE_EMAX 3000 // MeV
+#define VTP_HPS_SINGLE_EMIN_SINGLE3 300 // MeV
+#define VTP_HPS_SINGLE_EMAX 2500 // MeV
 #define VTP_HPS_SINGLE_NMIN 2
-#define VTP_HPS_SINGLE_XMIN 5
+#define VTP_HPS_SINGLE_XMIN 3
 
-#define VTP_HPS_SINGLE_PDE_C0_SINGLE3 1900.0
-#define VTP_HPS_SINGLE_PDE_C1_SINGLE3 -171.6
-#define VTP_HPS_SINGLE_PDE_C2_SINGLE3 5.83
-#define VTP_HPS_SINGLE_PDE_C3_SINGLE3 -0.0536
+#define VTP_HPS_SINGLE_PDE_C0_SINGLE3 1322.79
+#define VTP_HPS_SINGLE_PDE_C1_SINGLE3 -99.6022
+#define VTP_HPS_SINGLE_PDE_C2_SINGLE3 2.89822
+#define VTP_HPS_SINGLE_PDE_C3_SINGLE3 -0.0206909
 
 #define VTP_HPS_SINGLE_EMIN_SINGLE2 400 // MeV
-#define VTP_HPS_SINGLE_PDE_C0_SINGLE2 2945.5
-#define VTP_HPS_SINGLE_PDE_C1_SINGLE2 -263.6
-#define VTP_HPS_SINGLE_PDE_C2_SINGLE2 10.63
-#define VTP_HPS_SINGLE_PDE_C3_SINGLE2  -0.1617
+#define VTP_HPS_SINGLE_PDE_C0_SINGLE2 1782.58
+#define VTP_HPS_SINGLE_PDE_C1_SINGLE2 -136.573
+#define VTP_HPS_SINGLE_PDE_C2_SINGLE2 4.44288
+#define VTP_HPS_SINGLE_PDE_C3_SINGLE2  -0.0472998
 
-#define VTP_HPS_FEE_EMIN 2600
-#define VTP_HPS_FEE_EMAX 5200
+#define VTP_HPS_FEE_EMIN 2000
+#define VTP_HPS_FEE_EMAX 4700
 #define VTP_HPS_FEE_NMIN 3
 
 #define CHI2NDFTHRESHOLD 10
@@ -65,8 +68,10 @@ void TriggerValidationAnaProcessor::configure(const ParameterSet& parameters) {
         anaName_         = parameters.getString("anaName");
         histCfgFilename_      = parameters.getString("histCfg",histCfgFilename_);
         ecalClusColl_    = parameters.getString("ecalClusColl");
-        trkColl_    = parameters.getString("trkColl");
         beamE_  = parameters.getDouble("beamE",beamE_);
+		#ifdef __WITHSVT__
+        	trkColl_    = parameters.getString("trkColl");
+		#endif
     }
     catch (std::runtime_error& error)
     {
@@ -88,7 +93,10 @@ void TriggerValidationAnaProcessor::initialize(TTree* tree) {
     tree_->SetBranchAddress(ecalClusColl_.c_str() , &ecalClusters_, &becalClusters_);
     tree_->SetBranchAddress(hodoHitColl_.c_str() , &hodoHits_, &bhodoHits_);
     tree_->SetBranchAddress(hodoClusColl_.c_str() , &hodoClusters_, &bhodoClusters_);
-    tree_->SetBranchAddress(trkColl_.c_str() , &trks_, &btrks_);
+
+	#ifdef __WITHSVT__
+    	tree_->SetBranchAddress(trkColl_.c_str() , &trks_, &btrks_);
+	#endif
 
     //Cut functions for X
     func_pos_top_topCutX = new TF1("func_pos_top_topCutX", "pol1", 50, 390);
@@ -145,7 +153,14 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 		double energyEcalCluster = ecalCluster->getEnergy();
 		double timeEcalCluster = ecalCluster->getTime();
 
+		CalHit* seed = (CalHit*)ecalCluster->getSeed();
+
+		int ix = seed -> getCrystalIndices()[0];
+		int iy = seed -> getCrystalIndices()[1];
+		if(ix < 0) ix++;
+
 		histos->Fill1DHisto("ecalClusterTime_h", timeEcalCluster, weight);
+		histos->Fill2DHisto("energy_vs_time_ecalCluster_hh", timeEcalCluster, energyEcalCluster, weight);
 
 		for(int j = 0; j < hodoHits_->size(); j++){
 			HodoHit* hodoHit = hodoHits_->at(j);
@@ -157,6 +172,11 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 		for(int j = 0; j < singleTrigs.size(); j++){
 			VTPData::hpsSingleTrig singleTrig = singleTrigs.at(j);
 			unsigned int timeSingleTrig = singleTrig.T;
+
+			histos->Fill1DHisto("vtpSingleTrigTime_h", timeSingleTrig * 4, weight);
+
+			histos->Fill2DHisto("vtpSingleTrigTime_vs_ecalClusterTime_hh", timeEcalCluster, timeSingleTrig * 4, weight);
+
 			double timeDiffEcalClusterVTPSingleTrigger = timeEcalCluster - timeSingleTrig * 4;
 			histos->Fill1DHisto("timeDiff_ecalCluster_VTPSingleTrig_h", timeDiffEcalClusterVTPSingleTrigger, weight);
 		}
@@ -167,11 +187,21 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 			double energyDiffEcalClusterVTPCluster = energyEcalCluster - vtpCluster.E / 1000.;
 			double energyRatioEcalClusterVTPCluster = energyEcalCluster * 1000. / vtpCluster.E;
 
-			histos->Fill1DHisto("energyDiff_ecalCluster_VTPClusters_h", energyDiffEcalClusterVTPCluster, weight);
-			histos->Fill2DHisto("energyDiff_ecalCluster_VTPClusters_vs_energy_ecalCluster_hh", energyEcalCluster, energyDiffEcalClusterVTPCluster, weight);
+			int xDiff = ix - vtpCluster.X;
+			int yDiff = iy - vtpCluster.Y;
 
-			histos->Fill1DHisto("energyRatio_ecalCluster_VTPClusters_h", energyRatioEcalClusterVTPCluster, weight);
-			histos->Fill2DHisto("energyRatio_ecalCluster_VTPClusters_vs_energy_ecalCluster_hh", energyEcalCluster, energyRatioEcalClusterVTPCluster, weight);
+			histos->Fill1DHisto("xDiff_ecalCluster_VTPClusters_h", xDiff, weight);
+			histos->Fill1DHisto("yDiff_ecalCluster_VTPClusters_h", yDiff, weight);
+
+			histos->Fill2DHisto("xDiff_yDiff_ecalCluster_VTPClusters_hh", xDiff, yDiff, weight);
+
+			if(xDiff == 0 && yDiff == 0){
+				histos->Fill1DHisto("energyDiff_ecalCluster_VTPClusters_h", energyDiffEcalClusterVTPCluster, weight);
+				histos->Fill2DHisto("energyDiff_ecalCluster_VTPClusters_vs_energy_ecalCluster_hh", energyEcalCluster, energyDiffEcalClusterVTPCluster, weight);
+
+				histos->Fill1DHisto("energyRatio_ecalCluster_VTPClusters_h", energyRatioEcalClusterVTPCluster, weight);
+				histos->Fill2DHisto("energyRatio_ecalCluster_VTPClusters_vs_energy_ecalCluster_hh", energyEcalCluster, energyRatioEcalClusterVTPCluster, weight);
+			}
 		}
 	}
 
@@ -250,6 +280,20 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 						}
 					}
 
+					std::vector<VTPData::hpsCluster> vtpClusters =  vtpData_->clusters;
+					double energyDiffEcalClusterVTPCluster = -9999;
+					for(int j = 0; j < vtpClusters.size(); j++){
+						VTPData::hpsCluster vtpCluster = vtpClusters.at(j);
+
+						int xDiff = ix - vtpCluster.X;
+						int yDiff = iy - vtpCluster.Y;
+
+
+						if(xDiff == 0 && yDiff == 0){
+							energyDiffEcalClusterVTPCluster = energyEcalCluster - vtpCluster.E / 1000.;
+						}
+					}
+
 					if(flagSingle2Top) {
 						passSingle2Top++;
 
@@ -259,6 +303,8 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 						failSingle2Top++;
 
 						histos->Fill2DHisto("ecal_energy_x_single2_fail_hh", ix, energyEcalCluster, weight);
+
+						histos->Fill2DHisto("ecal_energyDiff_x_single2_fail_hh", ix, energyDiffEcalClusterVTPCluster, weight);
 
 						if(flagSingle3Top) failSingle2PassSinge3Top++;
 					}
@@ -288,6 +334,20 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 						}
 					}
 
+					std::vector<VTPData::hpsCluster> vtpClusters =  vtpData_->clusters;
+					double energyDiffEcalClusterVTPCluster = -9999;
+					for(int j = 0; j < vtpClusters.size(); j++){
+						VTPData::hpsCluster vtpCluster = vtpClusters.at(j);
+
+						int xDiff = ix - vtpCluster.X;
+						int yDiff = iy - vtpCluster.Y;
+
+
+						if(xDiff == 0 && yDiff == 0){
+							energyDiffEcalClusterVTPCluster = energyEcalCluster - vtpCluster.E / 1000.;
+						}
+					}
+
 					if(flagSingle2Bot) {
 						passSingle2Bot++;
 
@@ -297,6 +357,8 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 						failSingle2Bot++;
 
 						histos->Fill2DHisto("ecal_energy_x_single2_fail_hh", ix, energyEcalCluster, weight);
+
+						histos->Fill2DHisto("ecal_energyDiff_x_single2_fail_hh", ix, energyDiffEcalClusterVTPCluster, weight);
 
 						if(flagSingle3Bot) failSingle2PassSinge3Bot++;
 					}
@@ -395,6 +457,7 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 		}
 	}
 
+	#ifdef __WITHSVT__
 	////// Track-cluster matching
 
 	// Separate all tracks into four categories
@@ -688,6 +751,8 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
     	}
 
     }
+
+#endif
 
     return true;
 }
