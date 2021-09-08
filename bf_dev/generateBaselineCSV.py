@@ -36,12 +36,29 @@ def getKeysFromFile(inFile,cType="", attr1=[""], attr2=""):
                 histo_keys.append(kname)
     return histo_keys
               
-def buildTGraph(name,title, n_points, x, y,color):
+def buildTGraph(name, title, n_points, x, y, color, markerStyle = 1, markerSize = 1):
     g = r.TGraph(n_points,np.array(x, dtype = float), np.array(y, dtype = float))
     g.SetName("%s"%(name))
     g.SetTitle("%s"%(title))
     g.SetLineColor(color)
+
+    g.SetMarkerStyle(markerStyle)
+    g.SetMarkerSize(markerSize)
     return g
+
+def buildTGraphErrors(name, title, n_points, x, y, ey, color):
+    #filter out errors less than 0
+    #ey = [x for x in ey if x > 0]
+    ex = [0]*len(x)
+    ey = [e if e > 0 else 0 for e in ey]
+
+    g = r.TGraphErrors(n_points, np.array(x, dtype = float), np.array(y, dtype = float), np.array(ex, dtype = float), np.array(ey, dtype = float))
+    
+    g.SetName("%s"%(name))
+    g.SetTitle("%s"%(title))
+    g.SetLineColor(color)
+    return g
+
 
 def savePNG(canvas,directory,name):
         #canvas.Draw()
@@ -208,13 +225,13 @@ def plotOfflineOnlineFitDiff(outFile, hybrid, hybrid_hh, offlineTuple, onlineTup
     if not onlineTuple:
         return
 
-    outFile.cd()
-    if not outFile.GetDirectory("%s"%(rootdir)):
-        #Create subdirectory for hybrid
-        r.gDirectory.mkdir("%s"%(rootdir))
+    #outFile.cd()
+    #if not outFile.GetDirectory("%s"%(rootdir)):
+    #    #Create subdirectory for hybrid
+    #    r.gDirectory.mkdir("%s"%(rootdir))
 
     #Save output to directory
-    outFile.cd("%s"%(rootdir))
+    #outFile.cd("%s"%(rootdir))
 
     #Get fit tuple values for hybrid
     fitTuple = getFitTuple(inFile, entry[1].GetName())
@@ -314,6 +331,140 @@ def plot2DBaselineFits(outFile, hybrid, hybrid_hh, offlineTuple, onlineTuple):
     canvas.Write()
     #savePNG(canvas,".","%s_%s_gausFit"%(run,hybrid))
     canvas.Close()
+
+def plot2DBaselineFitsWithErrors(outFile, hybrid, hybrid_hh, offlineTuple, onlineTuple):
+
+    outFile.cd()
+    
+    #Offline Fit Values for hybrid
+    svt_id = offlineTuple[0]
+    channel = offlineTuple[1]
+    mean = offlineTuple[2]
+    sigma = offlineTuple[3]
+    norm = offlineTuple[4]
+    ndf = offlineTuple[5]
+    fitlow = offlineTuple[6]
+    fithigh = offlineTuple[7]
+    rms = offlineTuple[8]
+    lowdaq = offlineTuple[9]
+
+    #Plot Offline Baseline Fit Mean Values on top of RawSvtHit 2D Histograms
+    canvas = r.TCanvas("%s_mean"%(hybrid), "c", 1800,800)
+    canvas.cd()
+    canvas.SetTicky()
+    canvas.SetTickx()
+    mean_gr_x = np.array(channel, dtype = float)
+    mean_gr_y = np.array(mean, dtype=float)
+    mean_gr = buildTGraphErrors("%s_BlFitMean_%s"%(run,hybrid),"%s_BlFitMean_%s;Channel;ADC"%(run,hybrid),len(mean_gr_x),mean_gr_x,mean_gr_y, sigma, 2)
+    lowdaq_gr_x = np.array(channel, dtype = float)
+    lowdaq_gr_y = np.array([3500.0 * x for x in lowdaq], dtype=float)
+    lowdaq_gr = buildTGraph("lowdaqflag_%s"%(hybrid),"low-daq channels_%s;Channel;ADC"%(hybrid),len(lowdaq_gr_x),lowdaq_gr_x, lowdaq_gr_y,2)
+    lowdaq_gr.SetMarkerStyle(8)
+    lowdaq_gr.SetMarkerSize(1)
+    lowdaq_gr.SetMarkerColor(3)
+
+    hybrid_hh.GetYaxis().SetRangeUser(3000.0,7500.0)
+    if hybrid_hh.GetName().find("L0") != -1 or hybrid_hh.GetName().find("L1") != -1:
+        hybrid_hh.GetXaxis().SetRangeUser(0.0,512.0)
+    hybrid_hh.Draw("colz")
+    mean_gr.Draw("same")
+    lowdaq_gr.Draw("psame")
+
+    #If online baselines were loaded, plot online baselines over offline baseline hh 
+    if onlineTuple:
+        onlineSvtId = onlineTuple[0]
+        onlineMean = onlineTuple[1]
+        onlineSigma = onlineTuple[2]
+        onlineChannel = []
+        for svtid in onlineSvtId:
+            onlineChannel.append(channel[svt_id.index(svtid)])
+        bl_gr_x = np.array(onlineChannel[0], dtype = float)
+        bl_gr_y = np.array(onlineMean[0], dtype = float)
+        bl_gr = buildTGraph("onlineBlFits_%s"%(hybrid),"Online Baseline Fits_%s;Channel;ADC"%(hybrid),len(bl_gr_x),bl_gr_x,bl_gr_y,1)
+        bl_gr.Draw("same")
+
+    legend = r.TLegend(0.1,0.75,0.28,0.9)
+    legend.SetFillStyle(0)
+    legend.AddEntry(mean_gr,"offline baselines using hpstr processor","l")
+    if onlineTuple:
+        legend.AddEntry(bl_gr,"online baseline fits","l")
+    legend.AddEntry(lowdaq_gr,"low-daq threshold","p")
+    legend.Draw()
+    canvas.Write()
+    #savePNG(canvas,".","%s_%s_gausFit"%(run,hybrid))
+    canvas.Close()
+
+def plotLowDaq(hybrid, offlineTuple, outFile):
+    #Offline Fit Values for hybrid
+    channel = offlineTuple[1]
+    lowdaq = offlineTuple[9]
+
+    y = np.array(lowdaq, dtype= float)
+    x = np.array(channel, dtype=float)
+
+    #canvas = r.TCanvas("%s_lowdaq"%(hybrid), "%s_lowdaq"%(hybrid), 1800, 800)
+    #canvas.cd()
+
+    g = buildTGraph("lowdaq_%s"%(hybrid),"Low_Daq_%s;Channel;(1 = lowdaq)"%(hybrid),len(x),x,y,1,1,10)
+    g.SetMinimum(-1)
+    g.SetMaximum(2)
+    g.Draw("AP")
+    g.Write()
+
+    #canvas.Update()
+    #canvas.Write()
+
+def plotFitSigma(hybrid, offlineTuple, outFile):
+
+    #Offline Fit Values for hybrid
+    channel = offlineTuple[1]
+    sigma = offlineTuple[3]
+
+    #TGraph of channel fit sigma
+    sigma_g = buildTGraph("Fit_Sigma_%s"%(hybrid),"Fit_Sigma_%s;sigma;channel"%(hybrid),len(channel),np.array(channel, dtype = float),np.array(sigma, dtype=float),1)
+    sigma_g.SetMinimum(-100)
+    sigma_g.SetMaximum(400)
+    sigma_g.Write()
+
+def plotOfflineChannelFits(hybrid, hh, offlineTuple, outFile):
+
+    outFile.cd()
+    #Create subdirectory for channel fits in hybrid dir
+    r.gDirectory.mkdir("%s/channel_fits"%(hybrid))
+    #Save output to directory
+    outFile.cd("%s/channel_fits"%(hybrid))
+
+    #offline fit values
+    svt_id = offlineTuple[0]
+    channel = offlineTuple[1]
+    mean = offlineTuple[2]
+    sigma = offlineTuple[3]
+    norm = offlineTuple[4]
+    ndf = offlineTuple[5]
+    fitlow = offlineTuple[6]
+    fithigh = offlineTuple[7]
+    rms = offlineTuple[8]
+    lowdaq = offlineTuple[9]
+
+    for cc in range(len(channel)):
+        canvas = r.TCanvas("%s_ch_%i_h"%(hybrid,channel[cc]), "c", 1800,800)
+        canvas.cd()
+        yproj_h = hh.ProjectionY('%s_ch%i_h'%(hybrid,channel[cc]),int(channel[cc]+1),int(channel[cc]+1),"e")
+        if yproj_h.GetEntries() == 0:
+            continue
+        yproj_h.SetTitle("%s_ch_%i_h"%(hybrid,channel[cc]))
+
+        func = r.TF1("m1","gaus",fitlow[cc],fithigh[cc])
+        func.SetParameter(0,norm[cc])
+        func.SetParameter(2,sigma[cc])
+        func.SetParameter(1,mean[cc])
+
+        yproj_h.SetTitle("%s_ch_%i_h"%(hybrid,channel[cc]))
+        yproj_h.Draw()
+        func.Draw("same")
+        canvas.Write()
+        canvas.Close()
+    outFile.cd()
     
 ######################################################################################################
 #********* CODE SUMMARY **********#
@@ -384,9 +535,22 @@ for entry in hybridHwDict:
         loadOnlineBaselines = True
         onlineFitTuple = getOnlineFitTuple(options.onlineBaselines, hwtag)
 
-    plot2DBaselineFits(outFile, hybrid, hh, offlineFitTuple, onlineFitTuple)
+    #plot2DBaselineFits(outFile, hybrid, hh, offlineFitTuple, onlineFitTuple)
+    plot2DBaselineFitsWithErrors(outFile, hybrid, hh, offlineFitTuple, onlineFitTuple)
+
+    #Create subdirs for each hybrid
+    outFile.cd()
+    if not outFile.GetDirectory("%s"%(hybrid)):
+        #Create subdirectory for hybrid
+        r.gDirectory.mkdir("%s"%(hybrid))
+    #Save output to directory
+    outFile.cd("%s"%(hybrid))
 
     plotOfflineOnlineFitDiff(outFile, hybrid, hh, offlineFitTuple, onlineFitTuple, hybrid)
+
+    plotFitSigma(hybrid,offlineFitTuple,outFile)
+    plotLowDaq(hybrid, offlineFitTuple, outFile)
+    plotOfflineChannelFits(hybrid, hh, offlineFitTuple, outFile)
 
     writeBaselineFitsToDatabase(csvOutFile, offlineFitTuple, onlineFitTuple)
 
