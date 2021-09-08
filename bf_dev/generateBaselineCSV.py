@@ -102,7 +102,7 @@ def getOfflineFitTuple(inFile, key):
             ndf.append(fitData.BlFitNdf)
             lowdaq.append(fitData.lowdaq)
             svt_id.append(int(fitData.svt_id))
-            lowstats.append(fitData.minStatsFailure)
+            lowstats.append(fitData.lowStats)
 
     fitTuple = (svt_id, channel, mean, sigma, norm, ndf, fitlow, fithigh, RMS, lowdaq, lowstats)
 
