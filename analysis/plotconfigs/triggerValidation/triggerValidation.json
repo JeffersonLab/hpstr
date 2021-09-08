@@ -222,6 +222,17 @@
         "ytitle" : "Energy of VTP cluster [GeV]"
     },
     
+	"timeGTPCluster_vs_timeEcalCluster_single2_fail_energyDiffLargerthan1pt5_hh" : {
+        "binsX"   : 100,
+        "minX"   : 0,
+        "maxX"   : 200,
+        "binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 200,
+        "xtitle" : "Time of Ecal cluster [ns]",
+        "ytitle" : "Time of VTP cluster [ns]"
+    },   
+    
 	"x_vs_y_single2_fail_energyDiffLessthan0_hh" : {
         "binsX"   : 47,
         "minX"   : -23.5,
@@ -244,6 +255,16 @@
         "ytitle" : "Energy of VTP cluster [GeV]"
     },
     
+	"timeGTPCluster_vs_timeEcalCluster_single2_fail_energyDiffLessthan0_hh" : {
+        "binsX"   : 100,
+        "minX"   : 0,
+        "maxX"   : 200,
+        "binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 200,
+        "xtitle" : "Time of Ecal cluster [ns]",
+        "ytitle" : "Time of VTP cluster [ns]"
+    },
     
 	"chi2ndf_tracks_h" : {
         "bins"   : 100,
