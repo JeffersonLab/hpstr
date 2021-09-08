@@ -154,7 +154,7 @@
         "maxY"   : 4,
         "xtitle" : "X of Ecal cluster",
         "ytitle" : "Energy of Ecal cluster [GeV]"
-    },
+    },   
     
 	"ecal_energy_x_single3_pass_hh" : {
         "binsX"   : 23,
@@ -187,6 +187,61 @@
         "maxY"   : 4,
         "xtitle" : "X of Ecal cluster",
         "ytitle" : "Energy diff. between Ecal and VTP clusters [GeV]"
+    },
+    
+	"vtp_energy_x_single2_fail_hh" : {
+        "binsX"   : 23,
+        "minX"   : 0.5,
+        "maxX"   : 23.5,
+        "binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 4,
+        "xtitle" : "X of VTP cluster",
+        "ytitle" : "Energy of VTP cluster [GeV]"
+    },
+    
+	"x_vs_y_single2_fail_energyDiffLargerthan1pt5_hh" : {
+        "binsX"   : 47,
+        "minX"   : -23.5,
+        "maxX"   : 23.5,
+        "binsY"   : 11,
+        "minY"   : -5.5,
+        "maxY"   : 5,
+        "xtitle" : "X",
+        "ytitle" : "Y"
+    },
+    
+ 	"energyGTPCluster_vs_energyEcalCluster_single2_fail_energyDiffLargerthan1pt5_hh" : {
+        "binsX"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 4,
+        "xtitle" : "Energy of Ecal cluster [GeV]",
+        "ytitle" : "Energy of VTP cluster [GeV]"
+    },
+    
+	"x_vs_y_single2_fail_energyDiffLessthan0_hh" : {
+        "binsX"   : 47,
+        "minX"   : -23.5,
+        "maxX"   : 23.5,
+        "binsY"   : 11,
+        "minY"   : -5.5,
+        "maxY"   : 5,
+        "xtitle" : "X",
+        "ytitle" : "Y"
+    },
+    
+ 	"energyGTPCluster_vs_energyEcalCluster_single2_fail_energyDiffLessthan0_hh" : {
+        "binsX"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 4,
+        "xtitle" : "Energy of Ecal cluster [GeV]",
+        "ytitle" : "Energy of VTP cluster [GeV]"
     },
     
     

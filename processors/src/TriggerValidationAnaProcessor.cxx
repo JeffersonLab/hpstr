@@ -159,8 +159,10 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 		int iy = seed -> getCrystalIndices()[1];
 		if(ix < 0) ix++;
 
-		histos->Fill1DHisto("ecalClusterTime_h", timeEcalCluster, weight);
-		histos->Fill2DHisto("energy_vs_time_ecalCluster_hh", timeEcalCluster, energyEcalCluster, weight);
+		if(ix >= 3){
+			histos->Fill1DHisto("ecalClusterTime_h", timeEcalCluster, weight);
+			histos->Fill2DHisto("energy_vs_time_ecalCluster_hh", timeEcalCluster, energyEcalCluster, weight);
+		}
 
 		for(int j = 0; j < hodoHits_->size(); j++){
 			HodoHit* hodoHit = hodoHits_->at(j);
@@ -285,6 +287,11 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 
 					std::vector<VTPData::hpsCluster> vtpClusters =  vtpData_->clusters;
 					double energyDiffEcalClusterVTPCluster = -9999;
+					double energyVTPCluster = -9999;
+					int ixVTPCluster = -9999;
+					int iyVTPCluster = -9999;
+					double timeVTPCluster = -9999;
+
 					for(int j = 0; j < vtpClusters.size(); j++){
 						VTPData::hpsCluster vtpCluster = vtpClusters.at(j);
 
@@ -294,6 +301,11 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 
 						if(xDiff == 0 && yDiff == 0){
 							energyDiffEcalClusterVTPCluster = energyEcalCluster - vtpCluster.E / 1000.;
+
+							energyVTPCluster = vtpCluster.E / 1000.;
+							ixVTPCluster = vtpCluster.X;
+							iyVTPCluster = vtpCluster.Y;
+							timeVTPCluster = vtpCluster.T * 4;
 						}
 					}
 
@@ -308,6 +320,18 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 						histos->Fill2DHisto("ecal_energy_x_single2_fail_hh", ix, energyEcalCluster, weight);
 
 						histos->Fill2DHisto("ecal_energyDiff_x_single2_fail_hh", ix, energyDiffEcalClusterVTPCluster, weight);
+
+						histos->Fill2DHisto("vtp_energy_x_single2_fail_hh", ixVTPCluster, energyVTPCluster, weight);
+
+						if(energyDiffEcalClusterVTPCluster > 1.5){
+							histos->Fill2DHisto("x_vs_y_single2_fail_energyDiffLargerthan1pt5_hh", ix, iy, weight);
+							histos->Fill2DHisto("energyGTPCluster_vs_energyEcalCluster_single2_fail_energyDiffLargerthan1pt5_hh", energyEcalCluster, energyVTPCluster, weight);
+						}
+
+						if(energyDiffEcalClusterVTPCluster < 0){
+							histos->Fill2DHisto("x_vs_y_single2_fail_energyDiffLessthan0_hh", ix, iy, weight);
+							histos->Fill2DHisto("energyGTPCluster_vs_energyEcalCluster_single2_fail_energyDiffLessthan0_hh", energyEcalCluster, energyVTPCluster, weight);
+						}
 
 						if(flagSingle3Top) failSingle2PassSinge3Top++;
 					}
@@ -339,6 +363,10 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 
 					std::vector<VTPData::hpsCluster> vtpClusters =  vtpData_->clusters;
 					double energyDiffEcalClusterVTPCluster = -9999;
+					double energyVTPCluster = -9999;
+					int ixVTPCluster = -9999;
+					int iyVTPCluster = -9999;
+					double timeVTPCluster = -9999;
 					for(int j = 0; j < vtpClusters.size(); j++){
 						VTPData::hpsCluster vtpCluster = vtpClusters.at(j);
 
@@ -348,6 +376,11 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 
 						if(xDiff == 0 && yDiff == 0){
 							energyDiffEcalClusterVTPCluster = energyEcalCluster - vtpCluster.E / 1000.;
+
+							energyVTPCluster = vtpCluster.E / 1000.;
+							ixVTPCluster = vtpCluster.X;
+							iyVTPCluster = vtpCluster.Y;
+							timeVTPCluster = vtpCluster.T * 4;
 						}
 					}
 
@@ -362,6 +395,18 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 						histos->Fill2DHisto("ecal_energy_x_single2_fail_hh", ix, energyEcalCluster, weight);
 
 						histos->Fill2DHisto("ecal_energyDiff_x_single2_fail_hh", ix, energyDiffEcalClusterVTPCluster, weight);
+
+						histos->Fill2DHisto("vtp_energy_x_single2_fail_hh", ixVTPCluster, energyVTPCluster, weight);
+
+						if(energyDiffEcalClusterVTPCluster > 1.5){
+							histos->Fill2DHisto("x_vs_y_single2_fail_energyDiffLargerthan1pt5_hh", ix, iy, weight);
+							histos->Fill2DHisto("energyGTPCluster_vs_energyEcalCluster_single2_fail_energyDiffLargerthan1pt5_hh", energyEcalCluster, energyVTPCluster, weight);
+						}
+
+						if(energyDiffEcalClusterVTPCluster < 0){
+							histos->Fill2DHisto("x_vs_y_single2_fail_energyDiffLessthan0_hh", ix, iy, weight);
+							histos->Fill2DHisto("energyGTPCluster_vs_energyEcalCluster_single2_fail_energyDiffLessthan0_hh", energyEcalCluster, energyVTPCluster, weight);
+						}
 
 						if(flagSingle3Bot) failSingle2PassSinge3Bot++;
 					}
