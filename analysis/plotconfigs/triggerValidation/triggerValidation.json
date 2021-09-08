@@ -15,6 +15,22 @@
         "ytitle" : "Counts"
     },
     
+	"ecalClusterTime_top_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 200,
+        "xtitle" : "Recon ecal cluster time [ns]",
+        "ytitle" : "Counts"
+    },
+    
+	"ecalClusterTime_bot_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 200,
+        "xtitle" : "Recon ecal cluster time [ns]",
+        "ytitle" : "Counts"
+    },
+    
 	"energy_vs_time_ecalCluster_hh" : {
         "binsX"   : 100,
         "minX"   : 0,
@@ -24,7 +40,7 @@
         "maxY"   : 4,
         "xtitle" : "Recon ecal cluster time [ns]",
         "ytitle" : "Recon ecal cluster energy [GeV]"
-    },
+    },    
     
 	"hodoHitTime_h" : {
         "bins"   : 100,

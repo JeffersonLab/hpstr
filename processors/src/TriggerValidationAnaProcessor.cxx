@@ -8,8 +8,11 @@
  */
 #define ENERGYRATIOECALVTPCLUSTERS 1.0 // Ratio of energy between ecal and vtp clusters
 
-#define TIMEECALCLUSTERMIN 40 // ns
-#define TIMEECALCLUSTERMAX 55 // ns
+#define TIMEECALCLUSTERMINTOP 45 // ns
+#define TIMEECALCLUSTERMAXTOP 55 // ns
+#define TIMEECALCLUSTERMINBOT 39 // ns
+#define TIMEECALCLUSTERMAXBOT 49 // ns
+
 #define TIMEDIFFECALCLUSTERHODOHITMIN -60 // ns
 #define TIMEDIFFECALCLUSTERHODOHITMAX 4 // ns
 
@@ -161,6 +164,9 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 
 		if(ix >= 3){
 			histos->Fill1DHisto("ecalClusterTime_h", timeEcalCluster, weight);
+			if(iy > 0) histos->Fill1DHisto("ecalClusterTime_top_h", timeEcalCluster, weight);
+			else histos->Fill1DHisto("ecalClusterTime_bot_h", timeEcalCluster, weight);
+
 			histos->Fill2DHisto("energy_vs_time_ecalCluster_hh", timeEcalCluster, energyEcalCluster, weight);
 		}
 
@@ -231,7 +237,8 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 	    // With consideration of readout time windows and "edge effects", clusters are extracted with [8, 120] ns for the analysis
 		// FADC250_W_WIDTH 192
 		// FADC250_W_WIDTH 128
-		if(timeEcalCluster >= TIMEECALCLUSTERMIN && timeEcalCluster <= TIMEECALCLUSTERMAX){
+		if( (iy > 0 && timeEcalCluster >= TIMEECALCLUSTERMINTOP && timeEcalCluster <= TIMEECALCLUSTERMAXTOP)
+				|| (iy < 0 && timeEcalCluster >= TIMEECALCLUSTERMINBOT && timeEcalCluster <= TIMEECALCLUSTERMAXBOT)){
 
 			// For each cluster, select hodo hits within a time range around the cluster time
 			std::vector<HodoHit*> hodoHitVect;
