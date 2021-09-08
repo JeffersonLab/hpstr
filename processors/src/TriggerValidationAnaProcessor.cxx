@@ -286,11 +286,8 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 					}
 
 					std::vector<VTPData::hpsCluster> vtpClusters =  vtpData_->clusters;
-					double energyDiffEcalClusterVTPCluster = -9999;
-					double energyVTPCluster = -9999;
-					int ixVTPCluster = -9999;
-					int iyVTPCluster = -9999;
-					double timeVTPCluster = -9999;
+					std::vector<VTPData::hpsCluster> vtpClustersMatched;
+					vtpClustersMatched.clear();
 
 					for(int j = 0; j < vtpClusters.size(); j++){
 						VTPData::hpsCluster vtpCluster = vtpClusters.at(j);
@@ -299,14 +296,33 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 						int yDiff = iy - vtpCluster.Y;
 
 
-						if(xDiff == 0 && yDiff == 0){
-							energyDiffEcalClusterVTPCluster = energyEcalCluster - vtpCluster.E / 1000.;
+						if(xDiff == 0 && yDiff == 0) vtpClustersMatched.push_back(vtpCluster);
+					}
 
-							energyVTPCluster = vtpCluster.E / 1000.;
-							ixVTPCluster = vtpCluster.X;
-							iyVTPCluster = vtpCluster.Y;
-							timeVTPCluster = vtpCluster.T * 4;
+					double timeDiffMatched = 999;
+					int indexMatched = 0;
+					for(int j = 0; j < vtpClustersMatched.size(); j++){
+						VTPData::hpsCluster vtpCluster = vtpClustersMatched.at(j);
+						if(fabs(vtpCluster.T * 4 - timeEcalCluster) <  timeDiffMatched) {
+							timeDiffMatched = fabs(vtpCluster.T * 4 - timeEcalCluster);
+							indexMatched = j;
 						}
+					}
+
+					double energyDiffEcalClusterVTPCluster = -999;
+					double energyVTPCluster = -999;
+					int ixVTPCluster = -999;
+					int iyVTPCluster = -999;
+					double timeVTPCluster = -999;
+
+					if (vtpClustersMatched.size() >= 1) {
+						VTPData::hpsCluster vtpCluster = vtpClustersMatched.at(indexMatched);
+
+						energyDiffEcalClusterVTPCluster = energyEcalCluster - vtpCluster.E / 1000.;
+						energyVTPCluster = vtpCluster.E / 1000.;
+						ixVTPCluster = vtpCluster.X;
+						iyVTPCluster = vtpCluster.Y;
+						timeVTPCluster = vtpCluster.T * 4;
 					}
 
 					if(flagSingle2Top) {
@@ -364,11 +380,9 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 					}
 
 					std::vector<VTPData::hpsCluster> vtpClusters =  vtpData_->clusters;
-					double energyDiffEcalClusterVTPCluster = -9999;
-					double energyVTPCluster = -9999;
-					int ixVTPCluster = -9999;
-					int iyVTPCluster = -9999;
-					double timeVTPCluster = -9999;
+					std::vector<VTPData::hpsCluster> vtpClustersMatched;
+					vtpClustersMatched.clear();
+
 					for(int j = 0; j < vtpClusters.size(); j++){
 						VTPData::hpsCluster vtpCluster = vtpClusters.at(j);
 
@@ -376,14 +390,33 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 						int yDiff = iy - vtpCluster.Y;
 
 
-						if(xDiff == 0 && yDiff == 0){
-							energyDiffEcalClusterVTPCluster = energyEcalCluster - vtpCluster.E / 1000.;
+						if(xDiff == 0 && yDiff == 0) vtpClustersMatched.push_back(vtpCluster);
+					}
 
-							energyVTPCluster = vtpCluster.E / 1000.;
-							ixVTPCluster = vtpCluster.X;
-							iyVTPCluster = vtpCluster.Y;
-							timeVTPCluster = vtpCluster.T * 4;
+					double timeDiffMatched = 9999999;
+					int indexMatched = 0;
+					for(int j = 0; j < vtpClustersMatched.size(); j++){
+						VTPData::hpsCluster vtpCluster = vtpClustersMatched.at(j);
+						if(fabs(vtpCluster.T * 4 - timeEcalCluster) <  timeDiffMatched) {
+							timeDiffMatched = fabs(vtpCluster.T * 4 - timeEcalCluster);
+							indexMatched = j;
 						}
+					}
+
+					double energyDiffEcalClusterVTPCluster = -999;
+					double energyVTPCluster = -999;
+					int ixVTPCluster = -999;
+					int iyVTPCluster = -999;
+					double timeVTPCluster = -999;
+
+					if (vtpClustersMatched.size() >= 1) {
+						VTPData::hpsCluster vtpCluster = vtpClustersMatched.at(indexMatched);
+
+						energyDiffEcalClusterVTPCluster = energyEcalCluster - vtpCluster.E / 1000.;
+						energyVTPCluster = vtpCluster.E / 1000.;
+						ixVTPCluster = vtpCluster.X;
+						iyVTPCluster = vtpCluster.Y;
+						timeVTPCluster = vtpCluster.T * 4;
 					}
 
 					if(flagSingle2Bot) {
