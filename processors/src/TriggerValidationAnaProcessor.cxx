@@ -8,19 +8,19 @@
  */
 #define ENERGYRATIOECALVTPCLUSTERS 1.0 // Ratio of energy between ecal and vtp clusters
 
-#define TIMEECALCLUSTERMINTOP 45 // ns
-#define TIMEECALCLUSTERMAXTOP 55 // ns
-#define TIMEECALCLUSTERMINBOT 39 // ns
-#define TIMEECALCLUSTERMAXBOT 49 // ns
+#define TIMEECALCLUSTERMINTOP 30 // ns
+#define TIMEECALCLUSTERMAXTOP 42 // ns
+#define TIMEECALCLUSTERMINBOT 30 // ns
+#define TIMEECALCLUSTERMAXBOT 42 // ns
 
 #define TIMEDIFFECALCLUSTERHODOHITMIN -60 // ns
 #define TIMEDIFFECALCLUSTERHODOHITMAX 4 // ns
 
-//#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN -16 // ns
-//#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX 10 // ns
+#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN -15 // ns
+#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX 5 // ns
 
-#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN -1000 // ns
-#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX 1000 // ns
+//#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN -1000 // ns
+//#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX 1000 // ns
 
 #define GAINFACTOR 1.25/2 // Gain scaling factor for hits at two-hole tiles.
 #define FADCHITTHRESHOLD 1 // Hodoscope FADC hit cut
@@ -173,6 +173,12 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 		for(int j = 0; j < hodoHits_->size(); j++){
 			HodoHit* hodoHit = hodoHits_->at(j);
 			double timeHodoHit = hodoHit->getTime();
+
+			histos->Fill1DHisto("hodoHitTime_h", timeHodoHit, weight);
+
+			if(hodoHit->getIndices()[1] > 0) histos->Fill1DHisto("hodoHitTime_top_h", timeHodoHit, weight);
+			else histos->Fill1DHisto("hodoHitTime_bot_h", timeHodoHit, weight);
+
 			histos->Fill1DHisto("timeDiff_ecalCluster_hodoHit_h", timeEcalCluster - timeHodoHit, weight);
 		}
 
@@ -184,6 +190,9 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 				unsigned int timeSingleTrig = singleTrig.T;
 
 				histos->Fill1DHisto("vtpSingleTrigTime_h", timeSingleTrig * 4, weight);
+
+				if(singleTrig.topnbot) histos->Fill1DHisto("vtpSingleTrigTime_top_h", timeSingleTrig * 4, weight);
+				else histos->Fill1DHisto("vtpSingleTrigTime_bot_h", timeSingleTrig * 4, weight);
 
 				histos->Fill2DHisto("vtpSingleTrigTime_vs_ecalClusterTime_hh", timeEcalCluster, timeSingleTrig * 4, weight);
 
