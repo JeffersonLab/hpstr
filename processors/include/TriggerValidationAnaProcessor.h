@@ -175,6 +175,9 @@ private:
     int passSingle3Bot{0};
     int failSingle3Bot{0};
 
+    int passSinge2Single3Top{0};
+    int passSinge2Single3Bot{0};
+
     int passFee{0};
     int failFee{0};
 

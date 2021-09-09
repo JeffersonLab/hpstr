@@ -58,6 +58,22 @@
         "ytitle" : "Counts"
     },
     
+	"timeDiff_ecalCluster_hodoHit_top_h" : {
+        "bins"   : 100,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Time diff. between Recon ecal cluster and hodo hit time [ns]",
+        "ytitle" : "Counts"
+    },
+    
+	"timeDiff_ecalCluster_hodoHit_bot_h" : {
+        "bins"   : 100,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Time diff. between Recon ecal cluster and hodo hit time [ns]",
+        "ytitle" : "Counts"
+    },
+    
 	"hodoHitTime_h" : {
         "bins"   : 100,
         "minX"   : 0,
@@ -222,6 +238,30 @@
         "xtitle" : "X of Ecal cluster",
         "ytitle" : "Energy of Ecal cluster [GeV]"
     },
+    
+	"ecal_energy_x_single2Pass_single3Fail_hh" : {
+        "binsX"   : 23,
+        "minX"   : 0.5,
+        "maxX"   : 23.5,
+        "binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 4,
+        "xtitle" : "X of Ecal cluster",
+        "ytitle" : "Energy of Ecal cluster [GeV]"
+    },
+    
+	"ecal_energy_x_single2Fail_single3Pass_hh" : {
+        "binsX"   : 23,
+        "minX"   : 0.5,
+        "maxX"   : 23.5,
+        "binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 4,
+        "xtitle" : "X of Ecal cluster",
+        "ytitle" : "Energy of Ecal cluster [GeV]"
+    },
+    
+    
     
 	"ecal_energy_x_single3_fail_hh" : {
         "binsX"   : 23,

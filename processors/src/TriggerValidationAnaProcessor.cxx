@@ -8,19 +8,33 @@
  */
 #define ENERGYRATIOECALVTPCLUSTERS 1.0 // Ratio of energy between ecal and vtp clusters
 
+/*
+#define TIMEECALCLUSTERMINTOP 42 // ns
+#define TIMEECALCLUSTERMAXTOP 55 // ns
+#define TIMEECALCLUSTERMINBOT 39 // ns
+#define TIMEECALCLUSTERMAXBOT 49 // ns
+
+#define TIMEDIFFECALCLUSTERHODOHITMINTOP -60 // ns
+#define TIMEDIFFECALCLUSTERHODOHITMAXTOP 4 // ns
+#define TIMEDIFFECALCLUSTERHODOHITMINBOT -60 // ns
+#define TIMEDIFFECALCLUSTERHODOHITMAXBOT 4 // ns
+
+#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN -1000 // ns
+#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX 1000 // ns
+*/
+
 #define TIMEECALCLUSTERMINTOP 30 // ns
 #define TIMEECALCLUSTERMAXTOP 42 // ns
 #define TIMEECALCLUSTERMINBOT 30 // ns
 #define TIMEECALCLUSTERMAXBOT 42 // ns
 
-#define TIMEDIFFECALCLUSTERHODOHITMIN -60 // ns
-#define TIMEDIFFECALCLUSTERHODOHITMAX 4 // ns
+#define TIMEDIFFECALCLUSTERHODOHITMINTOP -16 // ns
+#define TIMEDIFFECALCLUSTERHODOHITMAXTOP 0 // ns
+#define TIMEDIFFECALCLUSTERHODOHITMINBOT -20 // ns
+#define TIMEDIFFECALCLUSTERHODOHITMAXBOT -4 // ns
 
 #define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN -15 // ns
 #define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX 5 // ns
-
-//#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN -1000 // ns
-//#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX 1000 // ns
 
 #define GAINFACTOR 1.25/2 // Gain scaling factor for hits at two-hole tiles.
 #define FADCHITTHRESHOLD 1 // Hodoscope FADC hit cut
@@ -180,6 +194,9 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 			else histos->Fill1DHisto("hodoHitTime_bot_h", timeHodoHit, weight);
 
 			histos->Fill1DHisto("timeDiff_ecalCluster_hodoHit_h", timeEcalCluster - timeHodoHit, weight);
+
+			if(iy > 0 && hodoHit->getIndices()[1] > 0) histos->Fill1DHisto("timeDiff_ecalCluster_hodoHit_top_h", timeEcalCluster - timeHodoHit, weight);
+			else if (iy < 0 && hodoHit->getIndices()[1] < 0) histos->Fill1DHisto("timeDiff_ecalCluster_hodoHit_bot_h", timeEcalCluster - timeHodoHit, weight);
 		}
 
 		std::vector<VTPData::hpsSingleTrig> singleTrigs = vtpData_->singletrigs;
@@ -256,7 +273,9 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 				HodoHit* hodoHit = hodoHits_->at(j);
 				double timeHodoHit = hodoHit->getTime();
 				double timeDiffEcalClusterHodoHit = timeEcalCluster - timeHodoHit;
-				if(timeDiffEcalClusterHodoHit >= TIMEDIFFECALCLUSTERHODOHITMIN && timeDiffEcalClusterHodoHit <= TIMEDIFFECALCLUSTERHODOHITMAX)
+				if(iy > 0 && timeDiffEcalClusterHodoHit >= TIMEDIFFECALCLUSTERHODOHITMINTOP && timeDiffEcalClusterHodoHit <= TIMEDIFFECALCLUSTERHODOHITMAXTOP)
+					hodoHitVect.push_back(hodoHit);
+				else if(iy < 0 && timeDiffEcalClusterHodoHit >= TIMEDIFFECALCLUSTERHODOHITMINBOT && timeDiffEcalClusterHodoHit <= TIMEDIFFECALCLUSTERHODOHITMAXBOT)
 					hodoHitVect.push_back(hodoHit);
 			}
 
@@ -274,10 +293,13 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 			feeTriggerTags feeTriTags = buildFeeTriggerTags(ecalCluster);
 
 			// If a simulated single2 trigger can be formed, check if there is a VTP single2 trigger, where time difference between simulated trigger and VTP trigger is within a time range
+			bool flagSingle2Top = false;
+			bool flagSingle2Bot = false;
+
 			if(single2TriTags.singleTriggerSet == single2Bits){
 
 				if(iy > 0){
-					bool flagSingle2Top = false;
+
 					bool flagSingle3Top = false;
 
 					std::vector<VTPData::hpsSingleTrig> singleTrigs = vtpData_->singletrigs;
@@ -290,12 +312,16 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 
 						double timeDiffEcalClusterVTPSingleTrigger = timeEcalCluster - timeSingleTrig * 4;
 
-						if(instSingleTrig == 2 && topnbot && timeDiffEcalClusterVTPSingleTrigger >= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN && timeDiffEcalClusterVTPSingleTrigger <= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX){
+						if(instSingleTrig == 2 && topnbot && timeDiffEcalClusterVTPSingleTrigger >= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN && timeDiffEcalClusterVTPSingleTrigger <= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX
+								&& singleTrig.emin && singleTrig.emax && singleTrig.nmin && singleTrig.xmin && singleTrig.pose){
 							flagSingle2Top = true;
 							//break;
 						}
 
-						if(instSingleTrig == 3 && topnbot && timeDiffEcalClusterVTPSingleTrigger >= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN && timeDiffEcalClusterVTPSingleTrigger <= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX){
+						if(instSingleTrig == 3 && topnbot && timeDiffEcalClusterVTPSingleTrigger >= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN && timeDiffEcalClusterVTPSingleTrigger <= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX
+								&& singleTrig.emin && singleTrig.emax && singleTrig.nmin && singleTrig.xmin && singleTrig.pose
+								&& singleTrig.hodo1c && singleTrig.hodo2c && singleTrig.hodogeo && singleTrig.hodoecal){
+
 							flagSingle3Top = true;
 							//break;
 						}
@@ -371,7 +397,6 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 					}
 				}
 				else{
-					bool flagSingle2Bot = false;
 					bool flagSingle3Bot = false;
 
 					std::vector<VTPData::hpsSingleTrig> singleTrigs = vtpData_->singletrigs;
@@ -384,12 +409,15 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 
 						double timeDiffEcalClusterVTPSingleTrigger = timeEcalCluster - timeSingleTrig * 4;
 
-						if(instSingleTrig == 2 && !topnbot && timeDiffEcalClusterVTPSingleTrigger >= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN && timeDiffEcalClusterVTPSingleTrigger <= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX){
+						if(instSingleTrig == 2 && !topnbot && timeDiffEcalClusterVTPSingleTrigger >= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN && timeDiffEcalClusterVTPSingleTrigger <= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX
+								&& singleTrig.emin && singleTrig.emax && singleTrig.nmin && singleTrig.xmin && singleTrig.pose){
 							flagSingle2Bot = true;
 							//break;
 						}
 
-						if(instSingleTrig == 3 && !topnbot && timeDiffEcalClusterVTPSingleTrigger >= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN && timeDiffEcalClusterVTPSingleTrigger <= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX){
+						if(instSingleTrig == 3 && !topnbot && timeDiffEcalClusterVTPSingleTrigger >= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN && timeDiffEcalClusterVTPSingleTrigger <= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX
+								&& singleTrig.emin && singleTrig.emax && singleTrig.nmin && singleTrig.xmin && singleTrig.pose
+								&& singleTrig.hodo1c && singleTrig.hodo2c && singleTrig.hodogeo && singleTrig.hodoecal){
 							flagSingle3Bot = true;
 							//break;
 						}
@@ -467,10 +495,10 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 			}
 
 			// If a simulated single3 trigger can be formed, check if there is a VTP single3 trigger, where time difference between simulated trigger and VTP trigger is within a time range
+			bool flagSingle3Top = false;
+			bool flagSingle3Bot = false;
 			if(single3TriTags.singleTriggerSet == single3Bits){
-
 				if( iy > 0 ){
-					bool flagSingle3Top = false;
 
 					std::vector<VTPData::hpsSingleTrig> singleTrigs = vtpData_->singletrigs;
 
@@ -482,7 +510,13 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 
 						double timeDiffEcalClusterVTPSingleTrigger = timeEcalCluster - timeSingleTrig * 4;
 
-						if(instSingleTrig == 3 && topnbot && timeDiffEcalClusterVTPSingleTrigger >= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN && timeDiffEcalClusterVTPSingleTrigger <= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX){
+						if(instSingleTrig == 3 && topnbot && timeDiffEcalClusterVTPSingleTrigger >= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN && timeDiffEcalClusterVTPSingleTrigger <= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX
+								&& singleTrig.emin && singleTrig.emax && singleTrig.nmin && singleTrig.xmin && singleTrig.pose
+								&& singleTrig.hodo1c && singleTrig.hodo2c && singleTrig.hodogeo && singleTrig.hodoecal){
+
+							//std::cout << singleTrig.emin << "  " << singleTrig.emax << "  " << singleTrig.nmin << "  " << singleTrig.xmin << "  " << singleTrig.pose
+							//									<< "  " << singleTrig.hodo1c << "  " << singleTrig.hodo2c << "  " << singleTrig.hodogeo << "  " << singleTrig.hodoecal << std::endl;
+
 							flagSingle3Top = true;
 							break;
 						}
@@ -500,8 +534,6 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 					}
 				}
 				else{
-					bool flagSingle3Bot = false;
-
 					std::vector<VTPData::hpsSingleTrig> singleTrigs = vtpData_->singletrigs;
 
 					for(int j = 0; j < singleTrigs.size(); j++){
@@ -512,7 +544,9 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 
 						double timeDiffEcalClusterVTPSingleTrigger = timeEcalCluster - timeSingleTrig * 4;
 
-						if(instSingleTrig == 3 && !topnbot && timeDiffEcalClusterVTPSingleTrigger >= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN && timeDiffEcalClusterVTPSingleTrigger <= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX){
+						if(instSingleTrig == 3 && !topnbot && timeDiffEcalClusterVTPSingleTrigger >= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN && timeDiffEcalClusterVTPSingleTrigger <= TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX
+								&& singleTrig.emin && singleTrig.emax && singleTrig.nmin && singleTrig.xmin && singleTrig.pose
+								&& singleTrig.hodo1c && singleTrig.hodo2c && singleTrig.hodogeo && singleTrig.hodoecal){
 							flagSingle3Bot = true;
 							break;
 						}
@@ -530,6 +564,15 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 					}
 				}
 			}
+
+			if(flagSingle2Top && flagSingle3Top) passSinge2Single3Top++;
+			if(flagSingle2Bot && flagSingle3Bot) passSinge2Single3Bot++;
+
+			if(flagSingle2Top && !flagSingle3Top)  histos->Fill2DHisto("ecal_energy_x_single2Pass_single3Fail_hh", ix, energyEcalCluster, weight);
+			if(flagSingle2Bot && !flagSingle3Bot)  histos->Fill2DHisto("ecal_energy_x_single2Pass_single3Fail_hh", ix, energyEcalCluster, weight);
+
+			if(!flagSingle2Top && flagSingle3Top)  histos->Fill2DHisto("ecal_energy_x_single2Fail_single3Pass_hh", ix, energyEcalCluster, weight);
+			if(!flagSingle2Bot && flagSingle3Bot)  histos->Fill2DHisto("ecal_energy_x_single2Fail_single3Pass_hh", ix, energyEcalCluster, weight);
 
 			// If a simulated FEE trigger can be formed, check if there is a VTP FEE trigger, where time difference between simulated trigger and VTP trigger is within a time range
 			// Since prescales in regions for FEE trigger in hardware, just small part of FEE triggers with satisfactory of EMIN, EMAX and NHIT are stored in VTP bank.
@@ -880,6 +923,7 @@ void TriggerValidationAnaProcessor::finalize() {
 	//std::cout << "	pass: " << passFee << ";  fail: " << failFee << std::endl;
 	//std::cout << "	efficiency: " << (double)passFee/(passFee + failFee)*100 << "%" << std::endl;
 
+	/*
 	std::cout <<"single3 for clusters matched with tracks: " << std::endl;
 	std::cout <<"	top:" << std::endl;
 	std::cout << "		pass: " << passSingle3MatchedClusterTop << ";  fail: " << failSingle3MatchedClusterTop << std::endl;
@@ -887,6 +931,13 @@ void TriggerValidationAnaProcessor::finalize() {
 	std::cout <<"	bot:" << std::endl;
 	std::cout << "		pass: " << passSingle3MatchedClusterBot << ";  fail: " << failSingle3MatchedClusterBot << std::endl;
 	std::cout << "		efficiency: " << (double)passSingle3MatchedClusterBot/(passSingle3MatchedClusterBot + failSingle3MatchedClusterBot)*100 << "%" << std::endl;
+	*/
+
+	std::cout <<"both single2 and single3: " << std::endl;
+	std::cout <<"	top:" << std::endl;
+	std::cout << "		pass: " << passSinge2Single3Top << std::endl;
+	std::cout <<"	bot:" << std::endl;
+	std::cout << "		pass: " << passSinge2Single3Bot << std::endl;
 
     histos->saveHistos(outF_, anaName_.c_str());
     delete histos;
