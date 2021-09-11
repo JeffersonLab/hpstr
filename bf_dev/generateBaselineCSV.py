@@ -8,6 +8,7 @@ import numpy as np
 import ModuleMapper
 import argparse
 import csv
+import math
 
 
 parser=argparse.ArgumentParser(description="Configuration options for baseline fit")
@@ -18,6 +19,7 @@ parser.add_argument("-o", type=str, dest="outFilename", help="output root file",
 
 parser.add_argument("-b", type=str, dest="onlineBaselines", help="online baseline fits root file",default="")
 parser.add_argument("-csv", type=str, dest="csvOut", help="File name for CSV output file",default="offline_baseline_fits.csv")
+parser.add_argument("-thresh", type=str, dest="threshOut", help="File name for thresholds output file",default="thresholds.dat")
 parser.add_argument("-r", type=str, dest="runNumber", help="Run Number",default="")
 options = parser.parse_args()
 
@@ -86,7 +88,7 @@ def getHistosFromFile(inFile, histoType = "TH2D", name = ""):
     return histos
 
 def getOfflineFitTuple(inFile, key):
-    print("Grabbing Ntuples from TTree")
+    print("Grabbing Ntuples for %s from TTree"%(key))
     channel, svt_id, mean, sigma, norm, chi2, ndf, fitlow, fithigh, RMS, lowdaq, lowstats = ([] for i in range(12))
     myTree = inFile.gaus_fit
     for fitData in myTree:
@@ -465,6 +467,58 @@ def plotOfflineChannelFits(hybrid, hh, offlineTuple, outFile):
         canvas.Write()
         canvas.Close()
     outFile.cd()
+
+def generateThresholds(outFile, fitTuple, febnum, hybnum):
+
+    channel = list(fitTuple[1])
+    mean = list(fitTuple[2])
+    sigma = list(fitTuple[3])
+
+    thresholds = [m + 3*s for m, s in zip(mean, sigma)]
+    thresholds = [str(hex(math.floor(n))) for n in thresholds]
+
+    #L0-L1 have 4 APVs, else 5 APVs
+    napvs = 5
+    if int(febnum) < 2:
+        napvs = 4
+
+    #Write baselines to csv file
+    with open(outFile,'a') as f:
+        writer = csv.writer(f, delimiter = ' ', escapechar=' ', quoting=csv.QUOTE_NONE)
+    
+        #Change APV channel mapping for L0 sensors
+        if int(febnum) < 2:
+            for apv in range(napvs):
+                #output format is: Febn Hybn APVn ch0_thresh ch1_thres ch2_thresh ...
+                row = [febnum, hybnum]
+                row.append(apv)
+                print(row)
+                if apv == 0:
+                    row.append(' '.join(thresholds[128:255]))
+                elif apv == 1:
+                    row.append(' '.join(thresholds[0:127]))
+                elif apv == 2:
+                    row.append(' '.join(thresholds[256:383]))
+                elif apv == 3:
+                    row.append(' '.join(thresholds[384:511]))
+                writer.writerow(row)
+        else: 
+            #change APV channel mapping for non-L0 sensors
+            for apv in range(napvs):
+                row = [febnum, hybnum]
+                row.append(apv)
+                print(row)
+                if apv == 0:
+                    row.append(' '.join(thresholds[512:639]))
+                elif apv == 1:
+                    row.append(' '.join(thresholds[383:511]))
+                elif apv == 2:
+                    row.append(' '.join(thresholds[256:383]))
+                elif apv == 3:
+                    row.append(' '.join(thresholds[128:255]))
+                elif apv == 4:
+                    row.append(' '.join(thresholds[0:127]))
+                writer.writerow(row)
     
 ######################################################################################################
 #********* CODE SUMMARY **********#
@@ -490,7 +544,11 @@ outFile = r.TFile(options.outFilename,"RECREATE")
 #Create Offline Baseline Fits output file in format of HPS Collections Database
 csvOutFile = options.csvOut
 if(path.exists(csvOutFile)):
-    csvOutFile = os.path.splitext(csvOutFile)[0] + "_" + time.strftime("%H%M%S") + ".csv"
+    csvOutFile = os.path.splitext(csvOutFile)[0] + "_" + time.strftime("%H%M%S") + ".dat"
+
+threshOutFile = options.threshOut
+if(path.exists(threshOutFile)):
+    threshOutFile = os.path.splitext(threshOutFile)[0] + "_" + time.strftime("%H%M%S") + ".dat"
 
 #***The HPS Collections Database Baselines file format requires channel fit values for 6 time samples...
 #...Offline fits returned by HPSTR only fit time sample 0...
@@ -522,8 +580,8 @@ for entry in hybridHwDict:
     #Feb and Hybrid values
     hh = entry[1]
     hwtag = entry[0] 
-    feb = hwtag[0:2]
-    hyb = hwtag[2:]
+    febn = hwtag[1:2]
+    hybn = hwtag[3:]
     hybrid = mmapper.get_hw_to_string(hwtag)
 
     #Get Offline Baseline Fit values for hybrid
@@ -553,6 +611,7 @@ for entry in hybridHwDict:
     plotOfflineChannelFits(hybrid, hh, offlineFitTuple, outFile)
 
     writeBaselineFitsToDatabase(csvOutFile, offlineFitTuple, onlineFitTuple)
+    generateThresholds(threshOutFile, offlineFitTuple, febn, hybn)
 
 outFile.Write()
 
