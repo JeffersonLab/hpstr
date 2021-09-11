@@ -122,6 +122,36 @@ def getOfflineFitTuple(inFile, key):
     lowstats = fitTuple[10]
     return fitTuple
 
+def getOnlineFitsForSvtIDs(inFile, svt_id_range):
+    mean = []
+    sigma = []
+    channel = []
+    svt_id_out = []
+
+    if(".dat" in inFile):
+        try: 
+            f = open(inFile, 'r')
+        except:
+            print("ERROR! ONLINE BASELINE FILE DOES NOT EXIST!")
+            return ()
+
+        for i in range(6):
+            channel.append([])
+            mean.append([])
+            sigma.append([])
+            svt_id_out.append([])
+            for line in open(inFile, 'r'):
+                svtID = int(line.split()[0])
+                if svtID in svt_id_range:
+                    #channel[i].append(float(svt_id_range.index(svtID)))
+                    #channel[i].append(float(svt_ids.index(datsvtID)))
+                    #channel[i].append(float(offline_channels[offline_svt_ids.index(svtID)]))
+                    svt_id_out[i].append(float(svtID))
+                    mean[i].append(float(line.split()[1+i]))
+                    sigma[i].append(float(line.split()[i+7]))
+        svt_id_out = svt_id_out[0]
+    return (svt_id_out, mean, sigma)
+
 def getOnlineFitTuple(inFile, hwtag):
     mean = []
     sigma = []
@@ -204,7 +234,10 @@ def writeBaselineFitsToDatabase(outFile, offlineTuple, onlineTuple):
                 #For 5 remaining time samples, load online values
                 for i in range(5):
                     try:
-                        row.append(round(onlineMean[i+1][c],3))
+                        #take difference between offline and online sample 0
+                        diff = mean[c] - onlineMean[0]
+                        #apply difference to 5 other online samples to adjust
+                        row.append(round(onlineMean[i+1][c] + diff,3))
                     except:
                         row.append(999999.9)
                 #Append offline fit value
@@ -212,7 +245,10 @@ def writeBaselineFitsToDatabase(outFile, offlineTuple, onlineTuple):
                 #For 5 remaining time samples, load online values
                 for i in range(5):
                     try:
-                        row.append(round(onlineSigma[i+1][c],3))
+                        #take offline/online sample 0 noise ratio
+                        ratio = sigma[n]/onlineSigma[0][c]
+                        #apply ratio factor to 5 other online samples to adjust
+                        row.append(round(onlineSigma[i+1][c]*ratio,3))
                     except:
                         row.append(999999.9)
             writer.writerow(row)
@@ -236,7 +272,8 @@ def plotOfflineOnlineFitDiff(outFile, hybrid, hybrid_hh, offlineTuple, onlineTup
     #outFile.cd("%s"%(rootdir))
 
     #Get fit tuple values for hybrid
-    fitTuple = getFitTuple(inFile, entry[1].GetName())
+    #fitTuple = getFitTuple(inFile, entry[1].GetName())
+    fitTuple = offlineTuple
     svt_id = fitTuple[0]
     channel = fitTuple[1]
     mean = fitTuple[2]
@@ -313,13 +350,13 @@ def plot2DBaselineFits(outFile, hybrid, hybrid_hh, offlineTuple, onlineTuple):
 
     #If online baselines were loaded, plot online baselines over offline baseline hh 
     if onlineTuple:
-        onlineSvtId = onlineTuple[0]
+        onlineSvtId = onlineTuple[0][0]
         onlineMean = onlineTuple[1]
         onlineSigma = onlineTuple[2]
         onlineChannel = []
         for svtid in onlineSvtId:
             onlineChannel.append(channel[svt_id.index(svtid)])
-        bl_gr_x = np.array(onlineChannel[0], dtype = float)
+        bl_gr_x = np.array(onlineChannel, dtype = float)
         bl_gr_y = np.array(onlineMean[0], dtype = float)
         bl_gr = buildTGraph("onlineBlFits_%s"%(hybrid),"Online Baseline Fits_%s;Channel;ADC"%(hybrid),len(bl_gr_x),bl_gr_x,bl_gr_y,1)
         bl_gr.Draw("same")
@@ -375,12 +412,13 @@ def plot2DBaselineFitsWithErrors(outFile, hybrid, hybrid_hh, offlineTuple, onlin
     #If online baselines were loaded, plot online baselines over offline baseline hh 
     if onlineTuple:
         onlineSvtId = onlineTuple[0]
+        print(onlineSvtId)
         onlineMean = onlineTuple[1]
         onlineSigma = onlineTuple[2]
         onlineChannel = []
         for svtid in onlineSvtId:
             onlineChannel.append(channel[svt_id.index(svtid)])
-        bl_gr_x = np.array(onlineChannel[0], dtype = float)
+        bl_gr_x = np.array(onlineChannel, dtype = float)
         bl_gr_y = np.array(onlineMean[0], dtype = float)
         bl_gr = buildTGraph("onlineBlFits_%s"%(hybrid),"Online Baseline Fits_%s;Channel;ADC"%(hybrid),len(bl_gr_x),bl_gr_x,bl_gr_y,1)
         bl_gr.Draw("same")
@@ -586,12 +624,15 @@ for entry in hybridHwDict:
 
     #Get Offline Baseline Fit values for hybrid
     offlineFitTuple = getOfflineFitTuple(inFile, hh.GetName())
+    hyb_svt_ids = offlineFitTuple[0]
+    hyb_channels = offlineFitTuple[1]
 
     #Get Online Baseline Fit Tuple
     onlineFitTuple = ()
     if(options.onlineBaselines) != "":
         loadOnlineBaselines = True
-        onlineFitTuple = getOnlineFitTuple(options.onlineBaselines, hwtag)
+        onlineFitTuple = getOnlineFitsForSvtIDs(options.onlineBaselines, hyb_svt_ids)
+        #onlineFitTuple = getOnlineFitTuple(options.onlineBaselines, hwtag)
 
     #plot2DBaselineFits(outFile, hybrid, hh, offlineFitTuple, onlineFitTuple)
     plot2DBaselineFitsWithErrors(outFile, hybrid, hh, offlineFitTuple, onlineFitTuple)
