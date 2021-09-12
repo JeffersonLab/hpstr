@@ -209,6 +209,9 @@ def writeBaselineFitsToDatabase(outFile, offlineTuple, onlineTuple):
         onlineMean = onlineTuple[1]
         onlineSigma = onlineTuple[2]
 
+    print("Length of offline: ", len(mean)) 
+    print("Length of online: ", len(onlineMean[0])) 
+
     #Write baselines to csv file
     with open(outFile,'a') as f:
         writer = csv.writer(f, delimiter = ' ')
@@ -222,7 +225,7 @@ def writeBaselineFitsToDatabase(outFile, offlineTuple, onlineTuple):
                         for i in range(6):
                             row.append(onlineMean[i][c])
                         for i in range(6):
-                            row.append(onlineMean[i][c])
+                            row.append(onlineSigma[i][c])
                     except:
                         for i in range(6):
                             row.append(999999.9)
@@ -235,10 +238,11 @@ def writeBaselineFitsToDatabase(outFile, offlineTuple, onlineTuple):
                 for i in range(5):
                     try:
                         #take difference between offline and online sample 0
-                        diff = mean[c] - onlineMean[0]
+                        diff = mean[c] - onlineMean[0][c]
                         #apply difference to 5 other online samples to adjust
                         row.append(round(onlineMean[i+1][c] + diff,3))
                     except:
+                        print("Failed to apply online mean value to output file")
                         row.append(999999.9)
                 #Append offline fit value
                 row.append(sigma[c])
@@ -246,10 +250,11 @@ def writeBaselineFitsToDatabase(outFile, offlineTuple, onlineTuple):
                 for i in range(5):
                     try:
                         #take offline/online sample 0 noise ratio
-                        ratio = sigma[n]/onlineSigma[0][c]
+                        ratio = sigma[c]/onlineSigma[0][c]
                         #apply ratio factor to 5 other online samples to adjust
                         row.append(round(onlineSigma[i+1][c]*ratio,3))
                     except:
+                        print("Failed to apply online sigma value to output file")
                         row.append(999999.9)
             writer.writerow(row)
 
@@ -506,13 +511,26 @@ def plotOfflineChannelFits(hybrid, hh, offlineTuple, outFile):
         canvas.Close()
     outFile.cd()
 
-def generateThresholds(outFile, fitTuple, febnum, hybnum):
+def generateThresholds(outFile, plotFile, offlineFitTuple, onlineFitTuple, febnum, hybnum, hybrid):
 
-    channel = list(fitTuple[1])
-    mean = list(fitTuple[2])
-    sigma = list(fitTuple[3])
+    channel = list(offlineFitTuple[1])
+    mean = list(offlineFitTuple[2])
+    sigma = list(offlineFitTuple[3])
+    lowdaq = list(offlineFitTuple[9])
+    lowstats = list(offlineFitTuple[10])
 
-    thresholds = [m + 3*s for m, s in zip(mean, sigma)]
+    onmean = onlineFitTuple[1][0]
+    onsigma = onlineFitTuple[2][0]
+
+    #If offline fit is unsuccessful, use online values for thresholds
+    #if(lowdaq[c] == 1.0 or lowstats[c] == 1.0):
+    #    thresholds = [m + 3*s for m, s in zip(onmean, onsigma)]
+    #    thresholds = [str(hex(math.floor(n))) for n in thresholds]
+    #else:    
+    #    thresholds = [m + 3*s for m, s in zip(mean, sigma)]
+    #    thresholds = [str(hex(math.floor(n))) for n in thresholds]
+
+    thresholds = [m + 3*s if l < 1 and d < 1 else om + 3*os for m, s, om, os, d, l in zip(mean, sigma, onmean, onsigma, lowdaq, lowstats)]
     thresholds = [str(hex(math.floor(n))) for n in thresholds]
 
     #L0-L1 have 4 APVs, else 5 APVs
@@ -530,7 +548,6 @@ def generateThresholds(outFile, fitTuple, febnum, hybnum):
                 #output format is: Febn Hybn APVn ch0_thresh ch1_thres ch2_thresh ...
                 row = [febnum, hybnum]
                 row.append(apv)
-                print(row)
                 if apv == 0:
                     row.append(' '.join(thresholds[128:255]))
                 elif apv == 1:
@@ -557,6 +574,37 @@ def generateThresholds(outFile, fitTuple, febnum, hybnum):
                 elif apv == 4:
                     row.append(' '.join(thresholds[0:127]))
                 writer.writerow(row)
+
+
+    #Plot offline vs online thresholds to check the changes
+    plotFile.cd()
+    canvas = r.TCanvas("%s_thresholds"%(hybrid), "c", 1800,800)
+    canvas.cd()
+    canvas.SetTicky()
+    canvas.SetTickx()
+
+    gx1 = np.array(channel, dtype = float)
+    gy1 = np.array([m + 3*s if l < 1 and d < 1 else om + 3*os for m, s, om, os, d, l in zip(mean, sigma, onmean, onsigma, lowdaq, lowstats)], dtype = float)
+    gr1 = buildTGraph("%s_offline_thresholds"%(hybrid),"Offline_Thresholds_%s;Channel;ADC"%(hybrid),len(gx1),gx1,gy1,1)
+
+    gx2 = np.array(channel, dtype = float)
+    gy2 = np.array([m + 3*s for m, s in zip(onmean, onsigma)], dtype = float)
+    gr2 = buildTGraph("%s_online_thresholds"%(hybrid),"Online_Thresholds_%s;Channel;ADC"%(hybrid),len(gx2),gx2,gy2,1)
+
+    gr1.SetLineWidth(2)
+    gr2.SetLineWidth(2)
+    gr2.SetLineColor(2)
+    gr1.Draw()
+    gr2.Draw("same")
+
+    legend = r.TLegend(0.1,0.75,0.28,0.9)
+    legend.SetFillStyle(0)
+    legend.AddEntry(gr1,"offline thresholds","l")
+    legend.AddEntry(gr2,"online thresholds","l")
+    legend.Draw()
+    canvas.Write()
+    canvas.Close()
+
     
 ######################################################################################################
 #********* CODE SUMMARY **********#
@@ -652,7 +700,7 @@ for entry in hybridHwDict:
     plotOfflineChannelFits(hybrid, hh, offlineFitTuple, outFile)
 
     writeBaselineFitsToDatabase(csvOutFile, offlineFitTuple, onlineFitTuple)
-    generateThresholds(threshOutFile, offlineFitTuple, febn, hybn)
+    generateThresholds(threshOutFile, outFile, offlineFitTuple, onlineFitTuple, febn, hybn, hybrid)
 
 outFile.Write()
 
