@@ -24,6 +24,9 @@ base.parser.add_argument('-simpleGausFit', '--simpleGausFit',type=str, dest="sim
 base.parser.add_argument("-b", "--rebin", type=int, dest="rebin",
                 help="rebin factor.", metavar="rebin", default="1")
 
+base.parser.add_argument("-minStats", '--minStats', type=int, dest="minStats", 
+        help="Offline fitting requires a minimum number of stats to fit channel", metavar="minStats", default="8500")
+
 
 options = base.parser.parse_args()
 

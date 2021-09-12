@@ -70,6 +70,8 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     flat_tuple_->addVariable("lowdaq");
     //if rms < threshold, channel is dead
     flat_tuple_->addVariable("dead");
+    //if channel fit is grossly poor
+    flat_tuple_->addVariable("badfit");
 
   //Fit values
     flat_tuple_->addVariable("BlFitMean");

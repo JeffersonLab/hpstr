@@ -325,6 +325,7 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
                 flat_tuple_->addToVector("iterFitRangeEnd", -9999.9);
                 flat_tuple_->setVariableValue("lowdaq", -9999.9);
                 flat_tuple_->setVariableValue("lowStats",1.0);
+                flat_tuple_->setVariableValue("badfit",0.0);
                 flat_tuple_->fill();
                 continue;
             }
@@ -472,29 +473,38 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
             fitchi2 = fit->GetChisquare();
             fitndf = fit->GetNDF();
 
-            //Check channel to see if it has a low DAQ threshold, where landau shape interferes with baseline
-            bool lowdaq = false;
-            //If maxbin occurs outside of fit mean by NSigma...flag
-            double maxbinx = projy_h->GetBinLowEdge(projy_h->GetMaximumBin());
-            if ((std::abs(maxbinx - fitmean) > fitsigma)){
-                lowdaq = true;
-            }
+            //Check if fit is grossly bad
+            bool badfit = false;
             //If fitmean > fitmax or fitmean < fitmin...flag
             if(fitmean > fitmax || fitmean < fitmin)
-                lowdaq = true;
+                badfit = true;
 
-            //If bins after fitmax averaged to the right are greater than the fitmean...flag
-            double maxavg = 0;
-            int fitmaxbin = projy_h->FindBin(fitmax);
-            for (int i = 1; i < 6; i++){
-                maxavg = maxavg + projy_h->GetBinContent(fitmaxbin + i); 
+            bool lowdaq = false;
+            if(!badfit){
+                //Check channel to see if it has a low DAQ threshold, where landau shape interferes with baseline
+                //If maxbin occurs outside of fit mean by NSigma...flag
+                double maxbinx = projy_h->GetBinLowEdge(projy_h->GetMaximumBin());
+                if ((std::abs(maxbinx - fitmean) > fitsigma)){
+                    lowdaq = true;
+                }
+                //If fitmean > fitmax or fitmean < fitmin...flag
+                if(fitmean > fitmax || fitmean < fitmin)
+                    lowdaq = true;
+
+                //If bins after fitmax averaged to the right are greater than the fitmean...flag
+                double maxavg = 0;
+                int fitmaxbin = projy_h->FindBin(fitmax);
+                for (int i = 1; i < 6; i++){
+                    maxavg = maxavg + projy_h->GetBinContent(fitmaxbin + i); 
+                }
+                maxavg = maxavg/5;
+                if(maxavg > fitnorm)
+                    lowdaq = true;
             }
-            maxavg = maxavg/5;
-            if(maxavg > fitnorm)
-                lowdaq = true;
 
             //Fill fit values
             flat_tuple_->setVariableValue("lowdaq", (double)int(lowdaq));
+            flat_tuple_->setVariableValue("badfit", (double)int(badfit));
             flat_tuple_->setVariableValue("BlFitMean", fitmean);
             flat_tuple_->setVariableValue("BlFitSigma", fitsigma);
             flat_tuple_->setVariableValue("BlFitNorm", fitnorm);
