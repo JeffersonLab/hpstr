@@ -24,7 +24,8 @@ p.add_library("libprocessors")
 header = HpstrConf.Processor('header', 'EventProcessor')
 ecal = HpstrConf.Processor('ecal', 'ECalDataProcessor')
 hodo = HpstrConf.Processor('hodo', 'HodoDataProcessor')
-#track = HpstrConf.Processor('track', 'TrackingProcessor')
+track = HpstrConf.Processor('track', 'TrackingProcessor')
+vtx     = HpstrConf.Processor('vtx', 'VertexProcessor')
 
 ###############################
 #   Processor Configuration   #
@@ -55,17 +56,25 @@ hodo.parameters["clusCollLcio"] = "HodoGenericClusters"
 hodo.parameters["clusCollRoot"] = "RecoHodoClusters"
 
 #Tracking
-#track.parameters["debug"] = 0 
-#track.parameters["trkCollLcio"] = 'KalmanFullTracks'
-#track.parameters["trkCollRoot"] = 'KalmanFullTracks'
-#track.parameters["kinkRelCollLcio"] = ''
-#track.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
-#track.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
-#track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
-#track.parameters["rawhitCollRoot"] = ''
+track.parameters["debug"] = 0 
+track.parameters["trkCollLcio"] = 'KalmanFullTracks'
+track.parameters["trkCollRoot"] = 'KalmanFullTracks'
+track.parameters["kinkRelCollLcio"] = ''
+track.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
+track.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
+track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
+track.parameters["rawhitCollRoot"] = ''
+
+#Vertex
+vtx.parameters["debug"] = 0
+vtx.parameters["vtxCollLcio"]    = 'UnconstrainedV0Vertices_KF'
+vtx.parameters["vtxCollRoot"]    = 'UnconstrainedV0Vertices_KF'
+vtx.parameters["partCollRoot"]   = 'ParticlesOnVertices_KF'
+vtx.parameters["kinkRelCollLcio"] = ''
+vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
 # Sequence which the processors will run.
-p.sequence = [header, ecal, hodo]
+p.sequence = [header, ecal, hodo, track, vtx]
 
 
 p.input_files= lcio_file

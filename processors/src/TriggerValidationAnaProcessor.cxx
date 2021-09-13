@@ -176,10 +176,16 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 		int iy = seed -> getCrystalIndices()[1];
 		if(ix < 0) ix++;
 
+		if((tsData_->prescaled.Single_2_Top || tsData_->prescaled.Single_2_Bot) && seed->getEnergy() > 0.05){
+			if(iy > 0) histos->Fill1DHisto("ecalClusterTime_top_single2_h", timeEcalCluster, weight);
+			else histos->Fill1DHisto("ecalClusterTime_bot_single2_h", timeEcalCluster, weight);
+		}
+
 		if(ix >= 3){
 			histos->Fill1DHisto("ecalClusterTime_h", timeEcalCluster, weight);
 			if(iy > 0) histos->Fill1DHisto("ecalClusterTime_top_h", timeEcalCluster, weight);
 			else histos->Fill1DHisto("ecalClusterTime_bot_h", timeEcalCluster, weight);
+
 
 			histos->Fill2DHisto("energy_vs_time_ecalCluster_hh", timeEcalCluster, energyEcalCluster, weight);
 		}
@@ -187,11 +193,6 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 		for(int j = 0; j < hodoHits_->size(); j++){
 			HodoHit* hodoHit = hodoHits_->at(j);
 			double timeHodoHit = hodoHit->getTime();
-
-			histos->Fill1DHisto("hodoHitTime_h", timeHodoHit, weight);
-
-			if(hodoHit->getIndices()[1] > 0) histos->Fill1DHisto("hodoHitTime_top_h", timeHodoHit, weight);
-			else histos->Fill1DHisto("hodoHitTime_bot_h", timeHodoHit, weight);
 
 			histos->Fill1DHisto("timeDiff_ecalCluster_hodoHit_h", timeEcalCluster - timeHodoHit, weight);
 
@@ -205,11 +206,6 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 
 			if(singleTrig.inst == 2 || singleTrig.inst == 3){
 				unsigned int timeSingleTrig = singleTrig.T;
-
-				histos->Fill1DHisto("vtpSingleTrigTime_h", timeSingleTrig * 4, weight);
-
-				if(singleTrig.topnbot) histos->Fill1DHisto("vtpSingleTrigTime_top_h", timeSingleTrig * 4, weight);
-				else histos->Fill1DHisto("vtpSingleTrigTime_bot_h", timeSingleTrig * 4, weight);
 
 				histos->Fill2DHisto("vtpSingleTrigTime_vs_ecalClusterTime_hh", timeEcalCluster, timeSingleTrig * 4, weight);
 
@@ -246,6 +242,29 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 		HodoHit* hodoHit = hodoHits_->at(j);
 		double timeHodoHit = hodoHit->getTime();
 		histos->Fill1DHisto("hodoHitTime_h", timeHodoHit, weight);
+
+		if(hodoHit->getIndices()[1] > 0) histos->Fill1DHisto("hodoHitTime_top_h", timeHodoHit, weight);
+		else histos->Fill1DHisto("hodoHitTime_bot_h", timeHodoHit, weight);
+
+		if((tsData_->prescaled.Single_2_Top || tsData_->prescaled.Single_2_Bot) && hodoHit->getEnergy() > FADCHITTHRESHOLD){
+			if(hodoHit->getIndices()[1] > 0) histos->Fill1DHisto("hodoHitTime_top_single2_h", timeHodoHit, weight);
+			else histos->Fill1DHisto("hodoHitTime_bot_single2_h", timeHodoHit, weight);
+		}
+
+	}
+
+	std::vector<VTPData::hpsSingleTrig> singleTrigs = vtpData_->singletrigs;
+	for(int j = 0; j < singleTrigs.size(); j++){
+		VTPData::hpsSingleTrig singleTrig = singleTrigs.at(j);
+
+		if(singleTrig.inst == 2 || singleTrig.inst == 3){
+			unsigned int timeSingleTrig = singleTrig.T;
+
+			histos->Fill1DHisto("vtpSingleTrigTime_h", timeSingleTrig * 4, weight);
+
+			if(singleTrig.topnbot) histos->Fill1DHisto("vtpSingleTrigTime_top_h", timeSingleTrig * 4, weight);
+			else histos->Fill1DHisto("vtpSingleTrigTime_bot_h", timeSingleTrig * 4, weight);
+		}
 	}
 
     //////////// Do trigger validation
