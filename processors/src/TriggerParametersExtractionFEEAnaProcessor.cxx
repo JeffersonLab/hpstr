@@ -38,6 +38,13 @@ void TriggerParametersExtractionFEEAnaProcessor::configure(const ParameterSet& p
 }
 
 void TriggerParametersExtractionFEEAnaProcessor::initialize(TTree* tree) {
+    tree_= tree;
+    // init histos
+    histos = new TriggerParametersExtractionFEEAnaHistos(anaName_.c_str());
+    histos->loadHistoConfig(histCfgFilename_);
+    histos->DefineHistos();
+
+    // Parameters for beam of 4.55 GeV
 	if(beamE_ == 4.55){
 		CHI2NDFTHRESHOLD = 20;
 		TRACKPMIN = 3.77; // 4 sigma
@@ -51,12 +58,41 @@ void TriggerParametersExtractionFEEAnaProcessor::initialize(TTree* tree) {
 		CLUSTERNHTSMINANALYZABLE  = 3; // for analyzable events,  minimum for number of cluster's hits
 	}
 
-    tree_= tree;
-    // init histos
-    histos = new TriggerParametersExtractionFEEAnaHistos(anaName_.c_str());
-    histos->loadHistoConfig(histCfgFilename_);
-    histos->DefineHistos();
+    // Parameters for beam of 4.55 GeV
+	if(beamE_ == 1.92){
+		CHI2NDFTHRESHOLD = 20;
+		TRACKPMIN = 1.48; // 4 sigma
+		TRACKPMAX = 2.33; // 4 sigma
+		CLUSTERENERGYTHRESHOLD = 0.05; // threshold of cluster energy for analyzable events
+		CLUSTERENERGYMINNOCUT = 1.10; // for no cut; minimum of cluster energy; 3 sigma for double gaussians
+		CLUSTERENERGYMAXNOCUT = 2.10; // for no cut; maximum of cluster energy; 5 sigma for double gaussians
+		CLUSTERENERGYMINANALYZABLE = 1.17; // for analyzable events, minimum of cluster energy; 3 sigma for double gaussians
+		CLUSTERENERGYMAXANALYZABLE = 2.03; // for analyzable events, maximum of cluster energy; 5 sigma for double gaussians
+		CLUSTERNHTSMINNOCUT = 2; // for no cut, minimum for number of cluster's hits
+		CLUSTERNHTSMINANALYZABLE  = 2; // for analyzable events,  minimum for number of cluster's hits
 
+        //Parameters of cut functions for X
+        top_topCutX[0] = 21.8343;
+        top_topCutX[1] = 0.856248;
+        top_botCutX[0] = -20.3702;
+        top_botCutX[1] = 0.914624;
+
+        bot_topCutX[0] = 23.7274;
+        bot_topCutX[1] = 0.859316;
+        bot_botCutX[0] = -21.9968;
+        bot_botCutX[1] = 0.911893;
+
+        //Parameters of cut functions for Y
+        top_topCutY[0] = 9.93097;
+        top_topCutY[1] = 0.892269;
+        top_botCutY[0] = -7.77353;
+        top_botCutY[1] = 0.900972;
+
+        bot_topCutY[0] = 6.74298;
+        bot_topCutY[1] = 0.888922;
+        bot_botCutY[0] = -8.77968;
+        bot_botCutY[1] = 0.908499;
+	}
     // init TTree
     tree_->SetBranchAddress(trkColl_.c_str() , &trks_, &btrks_);
     tree_->SetBranchAddress(gtpClusColl_.c_str() , &gtpClusters_, &bgtpClusters_);

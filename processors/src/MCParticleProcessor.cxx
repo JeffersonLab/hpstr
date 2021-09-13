@@ -97,7 +97,10 @@ bool MCParticleProcessor::process(IEvent* ievent) {
 
         // Set the PDG of the particle
         std::vector<EVENT::MCParticle*> parentVec = lc_particle->getParents();
-        if(parentVec.size() > 0) particle->setMomPDG(parentVec.at(0)->getPDG());    
+        if(parentVec.size() > 0) {
+        	particle->setMomPDG(parentVec.at(0)->getPDG());
+        	particle->setMomID(parentVec.at(0)->id());
+        }
 
         // Set the generator status of the particle
         particle->setGenStatus(lc_particle->getGeneratorStatus());    
@@ -107,35 +110,35 @@ bool MCParticleProcessor::process(IEvent* ievent) {
 
         // Loop through all of the tracks associated with the particle
         // and add references to the MCParticle object.
-        /*for (auto const &lc_track : lc_particle->getTracks()) { 
+        /*for (auto const &lc_track : lc_particle->getTracks()) {
 
-          TClonesArray* tracks = event->getCollection(Collections::GBL_TRACKS); 
+          TClonesArray* tracks = event->getCollection(Collections::GBL_TRACKS);
 
         // Loop through all of the tracks in the HpsEvent and find the one
         // that matches the track associated with the particle
-        for (int itrack = 0; itrack < tracks->GetEntriesFast(); ++itrack) { 
-        Track* track = static_cast<Track*>(tracks->At(itrack)); 
+        for (int itrack = 0; itrack < tracks->GetEntriesFast(); ++itrack) {
+        Track* track = static_cast<Track*>(tracks->At(itrack));
 
         // Use the track chi^2 to find the match
         // TODO: Verify that the chi^2 is unique enough to find the match
         if (lc_track->getChi2() == track->getChi2()) {
 
-        // Add a reference to the track 
+        // Add a reference to the track
         particle->addTrack(track);
 
         // If the particle is a final state particle, add a
         // reference from the corresponding track to the particle
         if ((collections.first.compare(Collections::FINAL_STATE_PARTICLES) == 0)
-        || (collections.first.compare(Collections::OTHER_ELECTRONS) == 0) ) {                    
+        || (collections.first.compare(Collections::OTHER_ELECTRONS) == 0) ) {
         track->setMCParticle(particle);
-        track->setMomentum(particle->getMomentum()); 
-        track->setCharge(particle->getCharge());  
-        } 
-        break; 
+        track->setMomentum(particle->getMomentum());
+        track->setCharge(particle->getCharge());
+        }
+        break;
         }
         }
 
-        }*/   
+        }*/
 
         // Only add vertex information if the particle is not a final state particle
         //if ((collections.first.compare(Collections::FINAL_STATE_PARTICLES) == 0) || 
@@ -151,25 +154,37 @@ bool MCParticleProcessor::process(IEvent* ievent) {
         // Set the vertex position of the particle
         particle->setEndPoint(lc_particle->getEndpoint()); 
 
+        std::vector<EVENT::MCParticle*> daughters = lc_particle->getDaughters();
+
+        particle->setNumDaughters(daughters.size());
+
+        for(int idaughter = 0; idaughter < daughters.size(); idaughter++){
+            IMPL::MCParticleImpl* dparticle
+                = static_cast<IMPL::MCParticleImpl*>(daughters.at(idaughter));
+
+        	particle->addDaughterID(dparticle->id());
+        }
+
+
         mc_particles_.push_back(particle);
         // If the particle has daughter particles, add the daughters to the
         // MCParticle.
         //
 
         // Loop through all of the daughter particles associated with the particle
-        /*for (auto const &daughter : lc_particle->getParticles()) { 
+        /*for (auto const &daughter : lc_particle->getParticles()) {
 
-        // Loop through all of the final state particles in the event 
-        // and find the one that matches the daughters associated with 
+        // Loop through all of the final state particles in the event
+        // and find the one that matches the daughters associated with
         // the particles.
-        for (int iparticle = 0; 
+        for (int iparticle = 0;
         iparticle < fs_particles->GetEntriesFast(); ++iparticle) {
 
-        MCParticle* dparticle = static_cast<MCParticle*>(fs_particles->At(iparticle));   
+        MCParticle* dparticle = static_cast<MCParticle*>(fs_particles->At(iparticle));
 
         // Try to find the match between a final state particle
         // and ReconstructedParticle daughter.  For now, use the
-        // momentum as the matching criterion. 
+        // momentum as the matching criterion.
         // TODO: Verify that the track momentum is always unique in an event.
         if ((dparticle->getMomentum()[0] == lc_particle->getMomentum()[0])
         && (dparticle->getMomentum()[1] == lc_particle->getMomentum()[1])
@@ -177,13 +192,13 @@ bool MCParticleProcessor::process(IEvent* ievent) {
 
         particle->addDaughter(dparticle);
 
-        if (dparticle->getTracks()->GetEntriesFast() != 0) 
-        particle->addTrack(dparticle->getTracks()->At(0)); 
+        if (dparticle->getTracks()->GetEntriesFast() != 0)
+        particle->addTrack(dparticle->getTracks()->At(0));
 
-        if (dparticle->getClusters()->GetEntriesFast() != 0) 
-        particle->addCluster(dparticle->getClusters()->At(0)); 
+        if (dparticle->getClusters()->GetEntriesFast() != 0)
+        particle->addCluster(dparticle->getClusters()->At(0));
 
-        break; 
+        break;
         }
         }
         }*/

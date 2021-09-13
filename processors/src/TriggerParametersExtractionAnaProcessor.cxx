@@ -12,13 +12,6 @@
 
 #define ELECTRONMASS 0.000510998950 // GeV
 #define PI 3.14159265358979
-#define CHI2NDFTHRESHOLD 20
-#define CLUSTERENERGYTHRESHOLD 0.1 // threshold of cluster energy for analyzable events
-#define CLUSTERENERGYMIN 0.3 // minimum of cluster energy
-#define CLUSTERENERGYMAX 2.7 // maximum of cluster energy
-#define CLUSTERNHTSMIN 2 // minimum for number of cluster's hits
-#define CLUSTERXMIN 4 // x min of clusters
-
 
 TriggerParametersExtractionAnaProcessor::TriggerParametersExtractionAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
@@ -36,6 +29,7 @@ void TriggerParametersExtractionAnaProcessor::configure(const ParameterSet& para
         trkColl_    = parameters.getString("trkColl");
         gtpClusColl_    = parameters.getString("gtpClusColl");
         mcColl_  = parameters.getString("mcColl",mcColl_);
+        beamE_  = parameters.getDouble("beamE",beamE_);
     }
     catch (std::runtime_error& error)
     {
@@ -54,6 +48,65 @@ void TriggerParametersExtractionAnaProcessor::initialize(TTree* tree) {
     tree_->SetBranchAddress(trkColl_.c_str() , &trks_, &btrks_);
     tree_->SetBranchAddress(gtpClusColl_.c_str() , &gtpClusters_, &bgtpClusters_);
     tree_->SetBranchAddress(mcColl_.c_str() , &mcParts_, &bmcParts_);
+
+    // Parameters for beam of 1.92 GeV
+	if(beamE_ == 1.92){
+		CLUSTERENERGYTHRESHOLD = 0.05;
+        CLUSTERENERGYMIN = 0.15; // minimum of cluster energy
+        CLUSTERENERGYMAX = 1.5; // maximum of cluster energy
+        CLUSTERNHTSMIN = 2; // minimum for number of cluster's hits
+        CLUSTERXMIN = 4; // x min of clusters
+
+        //Parameters of cut functions for X
+        pos_top_topCutX[0] = 20.6863;
+        pos_top_topCutX[1] = 0.90564;
+        pos_top_botCutX[0] = -11.0944;
+        pos_top_botCutX[1] = 0.824505;
+
+        neg_top_topCutX[0] = 21.8343;
+        neg_top_topCutX[1] = 0.856248;
+        neg_top_botCutX[0] = -20.3702;
+        neg_top_botCutX[1] = 0.914624;
+
+        pos_bot_topCutX[0] = 20.77;
+        pos_bot_topCutX[1] = 0.905562;
+        pos_bot_botCutX[0] = -11.715;
+        pos_bot_botCutX[1] = 0.826122;
+
+        neg_bot_topCutX[0] = 23.7274;
+        neg_bot_topCutX[1] = 0.859316;
+        neg_bot_botCutX[0] = -21.9968;
+        neg_bot_botCutX[1] = 0.911893;
+
+        //Parameters of cut functions for Y
+
+        pos_top_topCutY[0] = 9.01733;
+        pos_top_topCutY[1] = 0.946667;
+        pos_top_botCutY[0] = -7.95948;
+        pos_top_botCutY[1] = 0.859626;
+
+        neg_top_topCutY[0] = 9.93097;
+        neg_top_topCutY[1] = 0.892269;
+        neg_top_botCutY[0] = -7.77353;
+        neg_top_botCutY[1] = 0.900972;
+
+        pos_bot_topCutY[0] = 6.50821;
+        pos_bot_topCutY[1] = 0.836669;
+        pos_bot_botCutY[0] = -8.03496;
+        pos_bot_botCutY[1] = 0.956376;
+
+        neg_bot_topCutY[0] = 6.74298;
+        neg_bot_topCutY[1] = 0.888922;
+        neg_bot_botCutY[0] = -8.77968;
+        neg_bot_botCutY[1] = 0.908499;
+
+        //Parameters of cut function for PDE; 99% based on rad sample
+        pars_pde[0] = 0.225874;
+        pars_pde[1] = -0.0180655;
+        pars_pde[2] = 0.00101429;
+        pars_pde[3] = -2.30553e-05;
+
+	}
 
     //Cut functions for X
     func_pos_top_topCutX = new TF1("func_pos_top_topCutX", "pol1", 50, 390);

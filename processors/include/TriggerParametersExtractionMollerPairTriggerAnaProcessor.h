@@ -1,5 +1,5 @@
-#ifndef __TRIGGERPARAMETERSEXTRACTION_ANAPROCESSOR_H__
-#define __TRIGGERPARAMETERSEXTRACTION_ANAPROCESSOR_H__
+#ifndef __TRIGGERPARAMETERSEXTRACTIONMOLLER_ANAPROCESSOR_H__
+#define __TRIGGERPARAMETERSEXTRACTIONMOLLER_ANAPROCESSOR_H__
 
 
 //HPSTR
@@ -10,9 +10,13 @@
 #include "CalHit.h"
 #include "MCParticle.h"
 #include "Particle.h"
+#include "Vertex.h"
 #include "Processor.h"
 #include "HistoManager.h"
-#include "TriggerParametersExtractionAnaHistos.h"
+#include "TriggerParametersExtractionMollerAnaHistos.h"
+
+#include "FlatTupleMaker.h"
+#include "AnaHelpers.h"
 
 #include "BaseSelector.h"
 
@@ -23,6 +27,7 @@
 #include "TBranch.h"
 #include "TVector3.h"
 #include "TLorentzVector.h"
+#include "TMath.h"
 
 //C++
 #include <memory>
@@ -36,11 +41,11 @@ struct char_cmp {
 };
 
 
-class TriggerParametersExtractionAnaProcessor : public Processor {
+class TriggerParametersExtractionMollerPairTriggerAnaProcessor : public Processor {
 
     public:
-		TriggerParametersExtractionAnaProcessor(const std::string& name, Process& process);
-        ~TriggerParametersExtractionAnaProcessor();
+	TriggerParametersExtractionMollerPairTriggerAnaProcessor(const std::string& name, Process& process);
+        ~TriggerParametersExtractionMollerPairTriggerAnaProcessor();
         virtual bool process(IEvent* ievent);
 
         virtual void initialize(TTree* tree);
@@ -48,6 +53,7 @@ class TriggerParametersExtractionAnaProcessor : public Processor {
         virtual void finalize();
 
         virtual void configure(const ParameterSet& parameters);
+
 
         /**
          * Gets the mapped position used by the VTP for a specific crystal. Warning:
@@ -59,115 +65,101 @@ class TriggerParametersExtractionAnaProcessor : public Processor {
         std::vector<double> getCrystalPosition(CalCluster cluster);
 
         /**
+         * Calculates angle of GTP clusters in xy plane
+         */
+        double getAngle(CalCluster cluster);
+
+        /**
          * Calculates the value used by the coplanarity cut.
          */
         double getValueCoplanarity(CalCluster clusterTop, CalCluster clusterBot);
 
+        /**
+         * Calculates distance to center for GTP clusters
+         */
+        double getR(CalCluster cluster);
+
         std::vector<double> getVariablesForEnergySlopeCut(CalCluster clusterTop, CalCluster clusterBot);
 
     private:
+        std::shared_ptr<AnaHelpers> _ah;
+
         //Containers to hold histogrammer info
-        TriggerParametersExtractionAnaHistos* histos{nullptr};
+        TriggerParametersExtractionMollerAnaHistos* histos{nullptr};
         std::string  histCfgFilename_;
 
         TTree* tree_{nullptr};
         TBranch* btrks_{nullptr};
         TBranch* bgtpClusters_{nullptr};
         TBranch* bmcParts_{nullptr};
+        TBranch* bvtxs_{nullptr};
 
         std::vector<Track*>  * trks_{};
         std::vector<CalCluster*> * gtpClusters_{};
         std::vector<MCParticle*>  * mcParts_{};
+        std::vector<Vertex*> * vtxs_{};
 
         std::string anaName_{"vtxAna"};
         std::string trkColl_{"GBLTracks"};
         std::string gtpClusColl_{"RecoEcalClustersGTP"};
         std::string mcColl_{"MCParticle"};
+        std::string vtxColl_{"Vertices"};
 
 
-        double beamE_{3.7};
+        double beamE_{1.92};
         int isData_{0};
-        std::string analysis_{"triggerParametersExtraction"};
+        std::string analysis_{"TriggerParametersExtractionMoller"};
 
         //Debug level
         int debug_{0};
 
-        // Cut setup, default as for 3.7 GeV
-        double CHI2NDFTHRESHOLD = 20;
-        double CLUSTERENERGYTHRESHOLD = 0.1; // threshold of cluster energy for analyzable events
-        double CLUSTERENERGYMIN = 0.3; // minimum of cluster energy
-        double CLUSTERENERGYMAX = 2.7; // maximum of cluster energy
-        double CLUSTERNHTSMIN = 2; // minimum for number of cluster's hits
-        double CLUSTERXMIN = 4; // x min of clusters
-
         /*
          * Parameters for all cut functions depend on beam energy.
-         * Here, the setup is for 3.7 GeV.
+         * Here, the setup is for 1.92 GeV.
          */
 
         //Cut functions for X
-        TF1 *func_pos_top_topCutX;
-        TF1 *func_pos_top_botCutX;
+        TF1 *func_top_topCutX;
+        TF1 *func_top_botCutX;
 
-        TF1 *func_neg_top_topCutX;
-        TF1 *func_neg_top_botCutX;
-
-        TF1 *func_pos_bot_topCutX;
-        TF1 *func_pos_bot_botCutX;
-
-        TF1 *func_neg_bot_topCutX;
-        TF1 *func_neg_bot_botCutX;
+        TF1 *func_bot_topCutX;
+        TF1 *func_bot_botCutX;
 
         //Cut functions for Y
-        TF1 *func_pos_top_topCutY;
-        TF1 *func_pos_top_botCutY;
+        TF1 *func_top_topCutY;
+        TF1 *func_top_botCutY;
 
-        TF1 *func_neg_top_topCutY;
-        TF1 *func_neg_top_botCutY;
-
-        TF1 *func_pos_bot_topCutY;
-        TF1 *func_pos_bot_botCutY;
-
-        TF1 *func_neg_bot_topCutY;
-        TF1 *func_neg_bot_botCutY;
-
-        //Cut function for PDE
-        TF1 *func_pde;
-
-        //Cut function for energy slope
-        TF1 *func_energy_slope;
+        TF1 *func_bot_topCutY;
+        TF1 *func_bot_botCutY;
 
         //Parameters of cut functions for X
-        double pos_top_topCutX[2] = {20.5128, 0.896808};
-        double pos_top_botCutX[2] = {-13.4493, 0.845145};
+        double top_topCutX[2] = {21.8343, 0.856248};
+        double top_botCutX[2] = {-20.3702, 0.914624};
 
-        double neg_top_topCutX[2] = {21.9999, 0.866766};
-        double neg_top_botCutX[2] = {-20.7497, 0.903365};
-
-        double pos_bot_topCutX[2] = {20.1246, 0.898751};
-        double pos_bot_botCutX[2] = {-13.0183, 0.842857};
-
-        double neg_bot_topCutX[2] = {23.4249, 0.867771};
-        double neg_bot_botCutX[2] = {-21.4538, 0.905457};
+        double bot_topCutX[2] = {23.7274, 0.859316};
+        double bot_botCutX[2] = {-21.9968, 0.911893};
 
         //Parameters of cut functions for Y
-        double pos_top_topCutY[2] = {7.16273, 0.929672};
-        double pos_top_botCutY[2] = {-5.67945, 0.878445};
+        double top_topCutY[2] = {9.93097, 0.892269};
+        double top_botCutY[2] = {-7.77353, 0.900972};
 
-        double neg_top_topCutY[2] = {7.71179, 0.902755};
-        double neg_top_botCutY[2] = {-5.92585, 0.905328};
+        double bot_topCutY[2] = {6.74298, 0.888922};
+        double bot_botCutY[2] = {-8.77968, 0.908499};
 
-        double pos_bot_topCutY[2] = {4.62628, 0.864853};
-        double pos_bot_botCutY[2] = {-6.37296, 0.938625};
+        //Upper limit for position dependent energy
+        TF1 *func_pde_moller;
+        double pars_pde_moller[3] = {1.79097, 0.118131, 0.00254604}; // 3 sigma
 
-        double neg_bot_topCutY[2] = {4.7885, 0.889888};
-        double neg_bot_botCutY[2] = {-6.75031, 0.913876};
+        // Kinematic equations
+        TF1* func_E_vs_theta_before_roation;
+        TF1* func_theta1_vs_theta2_before_roation;
 
-        //Parameters of cut function for PDE
-        double pars_pde[4] = {0.805655, -0.0701922, 0.00263551, -3.46273e-05}; // 99% based on rad sample
+        // save a tree for information of GTP cluster pairs
+        std::shared_ptr<FlatTupleMaker> _reg_gtp_cluster_pairs;
 
-        //Parameters of cut function for energy slope
-        double pars_energy_slope[2] = {1.15573, -0.00288967}; // 3sigma based on rad sample
+        // save a tree for information of tracks from vertices
+        std::shared_ptr<FlatTupleMaker> _reg_tracks_from_vertices;
+
 
         /**
          * An array of the form <code>position[iy][ix]</code> that contains the hardware

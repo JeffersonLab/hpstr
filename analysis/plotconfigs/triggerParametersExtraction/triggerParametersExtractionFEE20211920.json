@@ -1,0 +1,225 @@
+{
+    "n_tracks_h" : {
+        "bins"   : 10,
+        "minX"   : -0.5,
+        "maxX"   : 9.5,
+        "xtitle" : "N_{tracks}",
+        "ytitle" : "Events"
+    },
+	"charge_tracks_h" : {
+        "bins"   : 3,
+        "minX"   : -1.5,
+        "maxX"   : 1.5,
+        "xtitle" : "Charge",
+        "ytitle" : "Tracks"
+    },
+	"chi2ndf_tracks_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 100,
+        "xtitle" : "track #chi^{2} / ndf",
+        "ytitle" : "Tracks"
+    },
+    "p_pos_tracks_h": {
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "p [GeV]",
+        "ytitle" : "Tracks"
+    },
+	"p_neg_tracks_h": {
+		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "p [GeV]",
+        "ytitle" : "Tracks"
+    },
+	"n_clusters_h" : {
+        "bins"   : 10,
+        "minX"   : -0.5,
+        "maxX"   : 9.5,
+        "xtitle" : "N_{clusters}",
+        "ytitle" : "Events"
+    },
+	"xy_clusters_without_cut_hh" : {
+        "binsX" : 100,
+        "minX" : -400,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -100,
+        "maxY" : 100,
+		"xtitle" : "X [mm]",
+        "ytitle" : "Y [mm]"
+    },
+ 	"seed_energy_cluster_without_cut_h": { 
+ 		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 3,
+        "xtitle" : "Seed energy of cluster [GeV]",
+        "ytitle" : "Clusters"
+    },
+	"energy_cluster_without_cut_h": { 
+ 		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 3,
+        "xtitle" : "Energy of cluster [GeV]",
+        "ytitle" : "Clusters"
+    },
+	"n_hits_cluster_without_cut_h": { 
+ 		"bins"   : 10,
+        "minX"   : 0.5,
+        "maxX"   : 10.5,
+        "xtitle" : "Hit counts of cluster",
+        "ytitle" : "Clusters"
+    },
+	"energy_vs_n_hits_cluster_without_cut_hh": { 
+		"binsX" : 10,
+        "minX" : 0.5,
+        "maxX" : 10.5,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 3,
+		"xtitle" : "Hit counts of cluster",
+        "ytitle" : "Energy of cluster [GeV]"
+    },
+	"trackX_vs_ClusterX_top_hh": { 
+		"binsX" : 100,
+        "minX" : -300,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -300,
+        "maxY" : 400,
+		"xtitle" : "X of cluster [mm]",
+        "ytitle" : "X of track extrapolation at Ecal face [mm]"
+    },
+	"trackX_vs_ClusterX_bot_hh": { 
+		"binsX" : 100,
+        "minX" : -300,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -300,
+        "maxY" : 400,
+		"xtitle" : "X of cluster [mm]",
+        "ytitle" : "X of track extrapolation at Ecal face [mm]"
+    },
+ 	"trackY_vs_ClusterY_top_hh": { 
+		"binsX" : 100,
+        "minX" : 0,
+        "maxX" : 100,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 100,
+		"xtitle" : "Y of cluster [mm]",
+        "ytitle" : "Y of track extrapolation at Ecal face [mm]"
+    },
+	"trackY_vs_ClusterY_bot_hh": { 
+		"binsX" : 100,
+        "minX" : -100,
+        "maxX" : 0,
+        "binsY" : 100,
+        "minY" : -100,
+        "maxY" : 0,
+		"xtitle" : "Y of cluster [mm]",
+		"ytitle" : "Y of track extrapolation at Ecal face [mm]"
+    },
+	"xy_clusters_without_cut_hh" : {
+        "binsX" : 100,
+        "minX" : -400,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -100,
+        "maxY" : 100,
+		"xtitle" : "X [mm]",
+        "ytitle" : "Y [mm]"
+    },
+ 	"seed_energy_cluster_analyzable_h": { 
+ 		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 3,
+        "xtitle" : "Seed energy of cluster [GeV]",
+        "ytitle" : "Clusters"
+    },
+	"energy_cluster_analyzable_h": { 
+ 		"bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 3,
+        "xtitle" : "Energy of cluster [GeV]",
+        "ytitle" : "Clusters"
+    },
+	"n_hits_cluster_analyzable_h": { 
+ 		"bins"   : 10,
+        "minX"   : 0.5,
+        "maxX"   : 10.5,
+        "xtitle" : "Hit counts of cluster",
+        "ytitle" : "Clusters"
+    },
+	"energy_vs_n_hits_cluster_analyzable_hh": { 
+		"binsX" : 10,
+        "minX" : 0.5,
+        "maxX" : 10.5,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 3,
+		"xtitle" : "Hit counts of cluster",
+        "ytitle" : "Energy of cluster [GeV]"
+    },
+	"xy_clusters_analyzable_hh" : {
+        "binsX" : 100,
+        "minX" : -400,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -100,
+        "maxY" : 100,
+		"xtitle" : "X [mm]",
+        "ytitle" : "Y [mm]"
+    },
+	"xy_indices_clusters_without_cut_hh" : {
+        "binsX" : 46,
+        "minX" : -22.5,
+        "maxX" : 23.5,
+        "binsY" : 11,
+        "minY" : -5.5,
+        "maxY" : 5.5,
+		"xtitle" : "X index",
+        "ytitle" : "Y index"
+    },
+ 	"xy_indices_clusters_without_track_association_hh" : {
+        "binsX" : 46,
+        "minX" : -22.5,
+        "maxX" : 23.5,
+        "binsY" : 11,
+        "minY" : -5.5,
+        "maxY" : 5.5,
+		"xtitle" : "X index",
+        "ytitle" : "Y index"
+    },
+	"xy_indices_clusters_analyzable_hh" : {
+        "binsX" : 46,
+        "minX" : -22.5,
+        "maxX" : 23.5,
+        "binsY" : 11,
+        "minY" : -5.5,
+        "maxY" : 5.5,
+		"xtitle" : "X index",
+        "ytitle" : "Y index"
+    },
+	"xy_indices_clusters_with_track_association_hh" : {
+        "binsX" : 46,
+        "minX" : -22.5,
+        "maxX" : 23.5,
+        "binsY" : 11,
+        "minY" : -5.5,
+        "maxY" : 5.5,
+		"xtitle" : "X index",
+        "ytitle" : "Y index"
+    },
+    
+	"n_clusters_triggered_h" : {
+        "bins"   : 10,
+        "minX"   : -0.5,
+        "maxX"   : 9.5,
+        "xtitle" : "N_{clusters}",
+        "ytitle" : "Events"
+    }  
+    
+}

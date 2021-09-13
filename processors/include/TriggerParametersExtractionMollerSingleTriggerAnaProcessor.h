@@ -14,6 +14,8 @@
 #include "Processor.h"
 #include "HistoManager.h"
 #include "TriggerParametersExtractionMollerAnaHistos.h"
+
+#include "FlatTupleMaker.h"
 #include "AnaHelpers.h"
 
 #include "BaseSelector.h"
@@ -39,11 +41,11 @@ struct char_cmp {
 };
 
 
-class TriggerParametersExtractionMollerAnaProcessor : public Processor {
+class TriggerParametersExtractionMollerSingleTriggerAnaProcessor : public Processor {
 
     public:
-		TriggerParametersExtractionMollerAnaProcessor(const std::string& name, Process& process);
-        ~TriggerParametersExtractionMollerAnaProcessor();
+		TriggerParametersExtractionMollerSingleTriggerAnaProcessor(const std::string& name, Process& process);
+        ~TriggerParametersExtractionMollerSingleTriggerAnaProcessor();
         virtual bool process(IEvent* ievent);
 
         virtual void initialize(TTree* tree);
@@ -84,6 +86,20 @@ class TriggerParametersExtractionMollerAnaProcessor : public Processor {
         //Debug level
         int debug_{0};
 
+        // Cut setup, default as for 3.7 GeV
+		double CHI2NDFTHRESHOLD = 20;
+		double CLUSTERENERGYTHRESHOLD= 0.1; // threshold of cluster energy for analyzable events
+		double CLUSTERENERGYMIN = 0.72; // minimum of cluster energy; 3sigma
+		double CLUSTERENERGYMAX = 1.52; // maximum of cluster energy; 5sigma
+		double CLUSTERXMIN = -13; // minimum of x index
+		double CLUSTERXMAX = -10; // maximum of x index
+		double CLUSTERYMIN = -1; // minimum of y index
+		double CLUSTERYMAX = 1; // maximum of y index
+		double DIFFENERGYMIN = -0.34; // minimum for difference between measured and calculated energy
+		double DIFFENERGYMAX = 0.33; // maximum for difference between measured and calculated energy
+		double DIFFTHETAMIN = -0.0032; // minimum for difference between measured and calculated theta before rotation
+		double DIFFTHETAMAX = 0.0047; // maximum for difference between measured and calculated theta before rotation
+
         /*
          * Parameters for all cut functions depend on beam energy.
          * Here, the setup is for 3.7 GeV.
@@ -117,18 +133,17 @@ class TriggerParametersExtractionMollerAnaProcessor : public Processor {
         double bot_topCutY[2] = {4.7885, 0.889888};
         double bot_botCutY[2] = {-6.75031, 0.913876};
 
-        //NHits dependence energy
-        TF1 *func_nhde;
-        double pars_nhde[2] = {1.46096, 0.0116316}; // 5 sigma
-
         //Upper limit for position dependent energy
         TF1 *func_pde_moller;
-        double pars_pde_moller[3] = {2.49146, 0.125044, 0.002076}; // 3 sigma
+        double pars_pde_moller[3] = {2.31531, 0.0953637, 0.000841784}; // 3 sigma
 
 
         // Kinematic equations
         TF1* func_E_vs_theta_before_roation;
         TF1* func_theta1_vs_theta2_before_roation;
+
+        // save a tree for information of tracks from vertices
+        std::shared_ptr<FlatTupleMaker> _reg_tracks_from_vertices;
 
 
 };
