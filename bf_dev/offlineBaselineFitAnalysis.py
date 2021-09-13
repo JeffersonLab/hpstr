@@ -89,7 +89,7 @@ def getHistosFromFile(inFile, histoType = "TH2D", name = ""):
 
 def getOfflineFitTuple(inFile, key):
     print("Grabbing Ntuples for %s from TTree"%(key))
-    channel, svt_id, mean, sigma, norm, chi2, ndf, fitlow, fithigh, RMS, lowdaq, lowstats = ([] for i in range(12))
+    channel, svt_id, mean, sigma, norm, chi2, ndf, fitlow, fithigh, RMS, lowdaq, lowstats, badfit = ([] for i in range(13))
     myTree = inFile.gaus_fit
     for fitData in myTree:
         tupleKey = str(fitData.halfmodule_hh)
@@ -105,8 +105,9 @@ def getOfflineFitTuple(inFile, key):
             lowdaq.append(fitData.lowdaq)
             svt_id.append(int(fitData.svt_id))
             lowstats.append(fitData.lowStats)
+            badfit.append(fitData.badfit)
 
-    fitTuple = (svt_id, channel, mean, sigma, norm, ndf, fitlow, fithigh, RMS, lowdaq, lowstats)
+    fitTuple = (svt_id, channel, mean, sigma, norm, ndf, fitlow, fithigh, RMS, lowdaq, lowstats, badfit)
 
     #Tuple map for reference
     svt_id = fitTuple[0]
@@ -120,6 +121,7 @@ def getOfflineFitTuple(inFile, key):
     rms = fitTuple[8]
     lowdaq = fitTuple[9]
     lowstats = fitTuple[10]
+    badfit = fitTuple[11]
     return fitTuple
 
 def getOnlineFitsForSvtIDs(inFile, svt_id_range):
@@ -198,6 +200,7 @@ def writeBaselineFitsToDatabase(outFile, offlineTuple, onlineTuple):
     sigma = offlineTuple[3]
     lowdaq = offlineTuple[9]
     lowstats = offlineTuple[10]
+    badfit = offlineTuple[11]
 
     #online values
     onlineSvtId = ()
@@ -209,9 +212,6 @@ def writeBaselineFitsToDatabase(outFile, offlineTuple, onlineTuple):
         onlineMean = onlineTuple[1]
         onlineSigma = onlineTuple[2]
 
-    print("Length of offline: ", len(mean)) 
-    print("Length of online: ", len(onlineMean[0])) 
-
     #Write baselines to csv file
     with open(outFile,'a') as f:
         writer = csv.writer(f, delimiter = ' ')
@@ -219,7 +219,8 @@ def writeBaselineFitsToDatabase(outFile, offlineTuple, onlineTuple):
             row = [svt_id[c]]
             #Check if offline fit had any failures
             #If yes, use the loaded Online fit values instead
-            if(lowdaq[c] == 1.0 or lowstats[c] == 1.0):
+            #if(lowdaq[c] == 1.0 or lowstats[c] == 1.0):
+            if(badfit[c] == 1.0 or lowstats[c] == 1.0):
                 if(loadOnlineBaselines):
                     try:
                         for i in range(6):
@@ -289,6 +290,8 @@ def plotOfflineOnlineFitDiff(outFile, hybrid, hybrid_hh, offlineTuple, onlineTup
     fithigh = fitTuple[7]
     rms = fitTuple[8]
     lowdaq = fitTuple[9]
+    lowstats = fitTuple[10]
+    badfit = fitTuple[11]
 
     #online values for sample 0
     onlineSvtId = onlineTuple[0][0]
@@ -309,8 +312,16 @@ def plotOfflineOnlineFitDiff(outFile, hybrid, hybrid_hh, offlineTuple, onlineTup
     lowdaq_gr.SetMarkerSize(1)
     lowdaq_gr.SetMarkerColor(2)
 
+    lowstats_gr_x = np.array(channel, dtype = float)
+    lowstats_gr_y = np.array([-1000.0 + 500.0* x for x in lowstats], dtype=float)
+    lowstats_gr = buildTGraph("lowstatsflag_%s"%(hybrid),"low-stats channels_%s;Channel;ADC"%(hybrid),len(lowstats_gr_x),lowstats_gr_x, lowstats_gr_y,3)
+    lowstats_gr.SetMarkerStyle(47)
+    lowstats_gr.SetMarkerSize(1)
+    lowstats_gr.SetMarkerColor(6)
+
     gr.Draw()
     lowdaq_gr.Draw("psame")
+    lowstats_gr.Draw("psame")
 
     canvas.Write()
     canvas.Close()
@@ -330,6 +341,8 @@ def plot2DBaselineFits(outFile, hybrid, hybrid_hh, offlineTuple, onlineTuple):
     fithigh = offlineTuple[7]
     rms = offlineTuple[8]
     lowdaq = offlineTuple[9]
+    lowstats = offlineTuple[10]
+    badfit = offlineTuple[11]
 
     #Plot Offline Baseline Fit Mean Values on top of RawSvtHit 2D Histograms
     canvas = r.TCanvas("%s_mean"%(hybrid), "c", 1800,800)
@@ -339,19 +352,28 @@ def plot2DBaselineFits(outFile, hybrid, hybrid_hh, offlineTuple, onlineTuple):
     mean_gr_x = np.array(channel, dtype = float)
     mean_gr_y = np.array(mean, dtype=float)
     mean_gr = buildTGraph("%s_BlFitMean_%s"%(run,hybrid),"%s_BlFitMean_%s;Channel;ADC"%(run,hybrid),len(mean_gr_x),mean_gr_x,mean_gr_y,2)
+
     lowdaq_gr_x = np.array(channel, dtype = float)
-    lowdaq_gr_y = np.array([3500.0 * x for x in lowdaq], dtype=float)
+    lowdaq_gr_y = np.array([l * m for l,m in zip(lowdaq,mean)], dtype=float)
     lowdaq_gr = buildTGraph("lowdaqflag_%s"%(hybrid),"low-daq channels_%s;Channel;ADC"%(hybrid),len(lowdaq_gr_x),lowdaq_gr_x, lowdaq_gr_y,2)
-    lowdaq_gr.SetMarkerStyle(8)
-    lowdaq_gr.SetMarkerSize(1)
+    lowdaq_gr.SetMarkerStyle(49)
+    lowdaq_gr.SetMarkerSize(2)
     lowdaq_gr.SetMarkerColor(3)
 
+    badfit_gr_x = np.array(channel, dtype = float)
+    badfit_gr_y = np.array([b * m for b,m in zip(badfit,mean)], dtype=float)
+    badfit_gr = buildTGraph("badfitflag_%s"%(hybrid),"bad-fit channels_%s;Channel;ADC"%(hybrid),len(badfit_gr_x),badfit_gr_x, badfit_gr_y,3)
+    badfit_gr.SetMarkerStyle(39)
+    badfit_gr.SetMarkerSize(2)
+    badfit_gr.SetMarkerColor(1)
     hybrid_hh.GetYaxis().SetRangeUser(3000.0,7500.0)
     if hybrid_hh.GetName().find("L0") != -1 or hybrid_hh.GetName().find("L1") != -1:
         hybrid_hh.GetXaxis().SetRangeUser(0.0,512.0)
     hybrid_hh.Draw("colz")
     mean_gr.Draw("same")
     lowdaq_gr.Draw("psame")
+    lowstats_gr.Draw("psame")
+    badfit_gr.Draw("psame")
 
     #If online baselines were loaded, plot online baselines over offline baseline hh 
     if onlineTuple:
@@ -371,6 +393,8 @@ def plot2DBaselineFits(outFile, hybrid, hybrid_hh, offlineTuple, onlineTuple):
     if onlineTuple:
         legend.AddEntry(bl_gr,"online baseline fits","l")
     legend.AddEntry(lowdaq_gr,"low-daq threshold","p")
+    legend.AddEntry(lowstats_gr,"low-stats channel","p")
+    legend.AddEntry(badfit_gr,"failed fit","p")
     legend.Draw()
     canvas.Write()
     #savePNG(canvas,".","%s_%s_gausFit"%(run,hybrid))
@@ -391,33 +415,53 @@ def plot2DBaselineFitsWithErrors(outFile, hybrid, hybrid_hh, offlineTuple, onlin
     fithigh = offlineTuple[7]
     rms = offlineTuple[8]
     lowdaq = offlineTuple[9]
+    lowstats = offlineTuple[10]
+    badfit = offlineTuple[11]
 
     #Plot Offline Baseline Fit Mean Values on top of RawSvtHit 2D Histograms
     canvas = r.TCanvas("%s_mean"%(hybrid), "c", 1800,800)
     canvas.cd()
     canvas.SetTicky()
     canvas.SetTickx()
-    mean_gr_x = np.array(channel, dtype = float)
+    mean_gr_x = np.array([m if l < 1 else 0 for m,l in zip(channel,lowstats)], dtype = float)
     mean_gr_y = np.array(mean, dtype=float)
     mean_gr = buildTGraphErrors("%s_BlFitMean_%s"%(run,hybrid),"%s_BlFitMean_%s;Channel;ADC"%(run,hybrid),len(mean_gr_x),mean_gr_x,mean_gr_y, sigma, 2)
+    mean_gr.SetLineWidth(1)
+
     lowdaq_gr_x = np.array(channel, dtype = float)
-    lowdaq_gr_y = np.array([3500.0 * x for x in lowdaq], dtype=float)
+    lowdaq_gr_y = np.array([l * m for l,m in zip(lowdaq,mean)], dtype=float)
     lowdaq_gr = buildTGraph("lowdaqflag_%s"%(hybrid),"low-daq channels_%s;Channel;ADC"%(hybrid),len(lowdaq_gr_x),lowdaq_gr_x, lowdaq_gr_y,2)
-    lowdaq_gr.SetMarkerStyle(8)
-    lowdaq_gr.SetMarkerSize(1)
+    lowdaq_gr.SetMarkerStyle(49)
+    lowdaq_gr.SetMarkerSize(2)
     lowdaq_gr.SetMarkerColor(3)
+
+    #lowstats_gr_x = np.array(channel, dtype = float)
+    #lowstats_gr_y = np.array([l * m for l,m in zip(lowstats,mean)], dtype=float)
+    #lowstats_gr = buildTGraph("lowstatsflag_%s"%(hybrid),"low-stats channels_%s;Channel;ADC"%(hybrid),len(lowstats_gr_x),lowstats_gr_x, lowstats_gr_y,3)
+    #lowstats_gr.SetMarkerStyle(47)
+    #lowstats_gr.SetMarkerSize(2)
+    #lowstats_gr.SetMarkerColor(6)
+
+    badfit_gr_x = np.array(channel, dtype = float)
+    badfit_gr_y = np.array([b * m for b,m in zip(badfit,mean)], dtype=float)
+    badfit_gr = buildTGraph("badfitflag_%s"%(hybrid),"bad-fit channels_%s;Channel;ADC"%(hybrid),len(badfit_gr_x),badfit_gr_x, badfit_gr_y,3)
+    badfit_gr.SetMarkerStyle(39)
+    badfit_gr.SetMarkerSize(2)
+    badfit_gr.SetMarkerColor(1)
 
     hybrid_hh.GetYaxis().SetRangeUser(3000.0,7500.0)
     if hybrid_hh.GetName().find("L0") != -1 or hybrid_hh.GetName().find("L1") != -1:
         hybrid_hh.GetXaxis().SetRangeUser(0.0,512.0)
+    hybrid_hh.SetStats(r.kFALSE)
     hybrid_hh.Draw("colz")
     mean_gr.Draw("same")
     lowdaq_gr.Draw("psame")
+    #lowstats_gr.Draw("psame")
+    badfit_gr.Draw("psame")
 
     #If online baselines were loaded, plot online baselines over offline baseline hh 
     if onlineTuple:
         onlineSvtId = onlineTuple[0]
-        print(onlineSvtId)
         onlineMean = onlineTuple[1]
         onlineSigma = onlineTuple[2]
         onlineChannel = []
@@ -426,14 +470,16 @@ def plot2DBaselineFitsWithErrors(outFile, hybrid, hybrid_hh, offlineTuple, onlin
         bl_gr_x = np.array(onlineChannel, dtype = float)
         bl_gr_y = np.array(onlineMean[0], dtype = float)
         bl_gr = buildTGraph("onlineBlFits_%s"%(hybrid),"Online Baseline Fits_%s;Channel;ADC"%(hybrid),len(bl_gr_x),bl_gr_x,bl_gr_y,1)
+        bl_gr.SetLineWidth(1)
         bl_gr.Draw("same")
 
     legend = r.TLegend(0.1,0.75,0.28,0.9)
-    legend.SetFillStyle(0)
     legend.AddEntry(mean_gr,"offline baselines using hpstr processor","l")
     if onlineTuple:
         legend.AddEntry(bl_gr,"online baseline fits","l")
     legend.AddEntry(lowdaq_gr,"low-daq threshold","p")
+    #legend.AddEntry(lowstats_gr,"low-stats channel","p")
+    legend.AddEntry(badfit_gr,"failed fit","p")
     legend.Draw()
     canvas.Write()
     #savePNG(canvas,".","%s_%s_gausFit"%(run,hybrid))
@@ -518,6 +564,7 @@ def generateThresholds(outFile, plotFile, offlineFitTuple, onlineFitTuple, febnu
     sigma = list(offlineFitTuple[3])
     lowdaq = list(offlineFitTuple[9])
     lowstats = list(offlineFitTuple[10])
+    badfit = list(offlineFitTuple[11])
 
     onmean = onlineFitTuple[1][0]
     onsigma = onlineFitTuple[2][0]
@@ -530,7 +577,7 @@ def generateThresholds(outFile, plotFile, offlineFitTuple, onlineFitTuple, febnu
     #    thresholds = [m + 3*s for m, s in zip(mean, sigma)]
     #    thresholds = [str(hex(math.floor(n))) for n in thresholds]
 
-    thresholds = [m + 3*s if l < 1 and d < 1 else om + 3*os for m, s, om, os, d, l in zip(mean, sigma, onmean, onsigma, lowdaq, lowstats)]
+    thresholds = [m + 3*s if b < 1 and l < 1 else om + 3*os for m, s, om, os, b, l in zip(mean, sigma, onmean, onsigma, badfit, lowstats)]
     thresholds = [str(hex(math.floor(n))) for n in thresholds]
 
     #L0-L1 have 4 APVs, else 5 APVs
@@ -549,30 +596,38 @@ def generateThresholds(outFile, plotFile, offlineFitTuple, onlineFitTuple, febnu
                 row = [febnum, hybnum]
                 row.append(apv)
                 if apv == 0:
-                    row.append(' '.join(thresholds[128:255]))
+                    row.append(' '.join(thresholds[128:256]))
+                    print("Feb %i APV %i has %i channel thresholds"%(int(febnum),apv, len(thresholds[128:256])))
                 elif apv == 1:
-                    row.append(' '.join(thresholds[0:127]))
+                    row.append(' '.join(thresholds[0:128]))
+                    print("Feb %i APV %i has %i channel thresholds"%(int(febnum),apv, len(thresholds[0:128])))
                 elif apv == 2:
-                    row.append(' '.join(thresholds[256:383]))
+                    row.append(' '.join(thresholds[256:384]))
+                    print("Feb %i APV %i has %i channel thresholds"%(int(febnum),apv, len(thresholds[256:384])))
                 elif apv == 3:
-                    row.append(' '.join(thresholds[384:511]))
+                    row.append(' '.join(thresholds[384:512]))
+                    print("Feb %i APV %i has %i channel thresholds"%(int(febnum),apv, len(thresholds[384:512])))
                 writer.writerow(row)
         else: 
             #change APV channel mapping for non-L0 sensors
             for apv in range(napvs):
                 row = [febnum, hybnum]
                 row.append(apv)
-                print(row)
                 if apv == 0:
-                    row.append(' '.join(thresholds[512:639]))
+                    row.append(' '.join(thresholds[512:640]))
+                    print("Feb %i APV %i has %i channel thresholds"%(int(febnum),apv, len(thresholds[512:640])))
                 elif apv == 1:
-                    row.append(' '.join(thresholds[383:511]))
+                    row.append(' '.join(thresholds[384:512]))
+                    print("Feb %i APV %i has %i channel thresholds"%(int(febnum),apv, len(thresholds[384:512])))
                 elif apv == 2:
-                    row.append(' '.join(thresholds[256:383]))
+                    row.append(' '.join(thresholds[256:384]))
+                    print("Feb %i APV %i has %i channel thresholds"%(int(febnum),apv, len(thresholds[256:384])))
                 elif apv == 3:
-                    row.append(' '.join(thresholds[128:255]))
+                    row.append(' '.join(thresholds[128:256]))
+                    print("Feb %i APV %i has %i channel thresholds"%(int(febnum),apv, len(thresholds[128:256])))
                 elif apv == 4:
-                    row.append(' '.join(thresholds[0:127]))
+                    row.append(' '.join(thresholds[0:128]))
+                    print("Feb %i APV %i has %i channel thresholds"%(int(febnum),apv, len(thresholds[0:128])))
                 writer.writerow(row)
 
 
@@ -584,7 +639,7 @@ def generateThresholds(outFile, plotFile, offlineFitTuple, onlineFitTuple, febnu
     canvas.SetTickx()
 
     gx1 = np.array(channel, dtype = float)
-    gy1 = np.array([m + 3*s if l < 1 and d < 1 else om + 3*os for m, s, om, os, d, l in zip(mean, sigma, onmean, onsigma, lowdaq, lowstats)], dtype = float)
+    gy1 = np.array([m + 3*s if l < 1 and b < 1 else om + 3*os for m, s, om, os, b, l in zip(mean, sigma, onmean, onsigma, badfit, lowstats)], dtype = float)
     gr1 = buildTGraph("%s_offline_thresholds"%(hybrid),"Offline_Thresholds_%s;Channel;ADC"%(hybrid),len(gx1),gx1,gy1,1)
 
     gx2 = np.array(channel, dtype = float)
@@ -594,13 +649,38 @@ def generateThresholds(outFile, plotFile, offlineFitTuple, onlineFitTuple, febnu
     gr1.SetLineWidth(2)
     gr2.SetLineWidth(2)
     gr2.SetLineColor(2)
+
+    lowdaq_gr_x = np.array(channel, dtype = float)
+    lowdaq_gr_y = np.array([l * m for l,m in zip(lowdaq,mean)], dtype=float)
+    lowdaq_gr = buildTGraph("lowdaqflag_%s"%(hybrid),"low-daq channels_%s;Channel;ADC"%(hybrid),len(lowdaq_gr_x),lowdaq_gr_x, lowdaq_gr_y,2)
+    lowdaq_gr.SetMarkerStyle(49)
+    lowdaq_gr.SetMarkerSize(2)
+    lowdaq_gr.SetMarkerColor(3)
+
+    lowstats_gr_x = np.array(channel, dtype = float)
+    lowstats_gr_y = np.array([l * m for l,m in zip(lowstats,mean)], dtype=float)
+    lowstats_gr = buildTGraph("lowstatsflag_%s"%(hybrid),"low-stats channels_%s;Channel;ADC"%(hybrid),len(lowstats_gr_x),lowstats_gr_x, lowstats_gr_y,3)
+    lowstats_gr.SetMarkerStyle(47)
+    lowstats_gr.SetMarkerSize(2)
+    lowstats_gr.SetMarkerColor(6)
+
+    badfit_gr_x = np.array(channel, dtype = float)
+    badfit_gr_y = np.array([b * m for b,m in zip(badfit,mean)], dtype=float)
+    badfit_gr = buildTGraph("badfitflag_%s"%(hybrid),"bad-fit channels_%s;Channel;ADC"%(hybrid),len(badfit_gr_x),badfit_gr_x, badfit_gr_y,3)
+    badfit_gr.SetMarkerStyle(39)
+    badfit_gr.SetMarkerSize(2)
+    badfit_gr.SetMarkerColor(1)
+
     gr1.Draw()
     gr2.Draw("same")
+    lowstats_gr.Draw("psame")
+    badfit_gr.Draw("psame")
 
     legend = r.TLegend(0.1,0.75,0.28,0.9)
-    legend.SetFillStyle(0)
     legend.AddEntry(gr1,"offline thresholds","l")
     legend.AddEntry(gr2,"online thresholds","l")
+    legend.AddEntry(lowstats_gr,"low-stats channel","p")
+    legend.AddEntry(badfit_gr,"failed fit","p")
     legend.Draw()
     canvas.Write()
     canvas.Close()
