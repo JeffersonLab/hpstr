@@ -33,8 +33,8 @@
 #define TIMEDIFFECALCLUSTERHODOHITMINBOT -20 // ns
 #define TIMEDIFFECALCLUSTERHODOHITMAXBOT -4 // ns
 
-#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN -15 // ns
-#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX 5 // ns
+#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN -9 // ns
+#define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX 4 // ns
 
 #define GAINFACTOR 1.25/2 // Gain scaling factor for hits at two-hole tiles.
 #define FADCHITTHRESHOLD 1 // Hodoscope FADC hit cut
@@ -61,7 +61,7 @@
 #define VTP_HPS_FEE_EMAX 4700
 #define VTP_HPS_FEE_NMIN 3
 
-#define CHI2NDFTHRESHOLD 10
+#define CHI2NDFTHRESHOLD 15
 #define TRACKMOMENTUMMIN 0.85
 
 #include "TriggerValidationAnaProcessor.h"
@@ -112,7 +112,7 @@ void TriggerValidationAnaProcessor::initialize(TTree* tree) {
     tree_->SetBranchAddress(hodoClusColl_.c_str() , &hodoClusters_, &bhodoClusters_);
 
 	#ifdef __WITHSVT__
-    	tree_->SetBranchAddress(trkColl_.c_str() , &trks_, &btrks_);
+	tree_->SetBranchAddress(trkColl_.c_str() , &trks_, &btrks_);
 	#endif
 
     //Cut functions for X
@@ -645,7 +645,7 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 			histos->Fill1DHisto("p_tracks_h", track->getP(), weight);
 
 			// Cuts for tracks
-			if(track->getChi2Ndf() < CHI2NDFTHRESHOLD && track->getP() > TRACKMOMENTUMMIN){
+			if(track->getChi2Ndf() < CHI2NDFTHRESHOLD){ // && track->getP() > TRACKMOMENTUMMIN
 
 				if (charge == 1 && positionAtEcal[1] > 0) tracks_pos_top.push_back(*track);
 				else if (charge == 1 && positionAtEcal[1] < 0) tracks_pos_bot.push_back(*track);
@@ -654,6 +654,49 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 			}
 		}
 	}
+
+	histos->Fill1DHisto("num_pos_tracks_h", tracks_pos_top.size() + tracks_pos_bot.size(), weight);
+	histos->Fill1DHisto("num_neg_tracks_h", tracks_neg_top.size() + tracks_neg_bot.size(), weight);
+
+
+	// Study single2 and single3 with tracks
+	bool tsBitSingle2 = tsData_->prescaled.Single_2_Top || tsData_->prescaled.Single_2_Bot;
+	bool tsBitSingle3 = tsData_->prescaled.Single_3_Top || tsData_->prescaled.Single_3_Bot;
+
+	if(tsBitSingle2) tsSl2T++;
+	if(tsBitSingle3) tsSl3T++;
+	if(tsBitSingle2 && tsBitSingle3) tsSl2TSl3T++;
+	if(tsBitSingle2 && !tsBitSingle3) tsSl2TSl3F++;
+	if(!tsBitSingle2 && tsBitSingle3) tsSl2FSl3T++;
+	if(!tsBitSingle2 && !tsBitSingle3) tsSl2FSl3F++;
+
+	if(tracks_pos_top.size() + tracks_pos_bot.size() > 0 ){
+		if(tsBitSingle2) tsSl2T_P++;
+		if(tsBitSingle3) tsSl3T_P++;
+		if(tsBitSingle2 && tsBitSingle3) tsSl2TSl3T_P++;
+		if(tsBitSingle2 && !tsBitSingle3) tsSl2TSl3F_P++;
+		if(!tsBitSingle2 && tsBitSingle3) tsSl2FSl3T_P++;
+		if(!tsBitSingle2 && !tsBitSingle3) tsSl2FSl3F_P++;
+	}
+
+	if( (tracks_pos_top.size() + tracks_pos_bot.size() > 0) && (tracks_neg_top.size() + tracks_neg_bot.size() > 0) ){
+		if(tsBitSingle2) tsSl2T_PN++;
+		if(tsBitSingle3) tsSl3T_PN++;
+		if(tsBitSingle2 && tsBitSingle3) tsSl2TSl3T_PN++;
+		if(tsBitSingle2 && !tsBitSingle3) tsSl2TSl3F_PN++;
+		if(!tsBitSingle2 && tsBitSingle3) tsSl2FSl3T_PN++;
+		if(!tsBitSingle2 && !tsBitSingle3) tsSl2FSl3F_PN++;
+	}
+
+	if( (tracks_pos_top.size() + tracks_pos_bot.size() == 1) && (tracks_neg_top.size() + tracks_neg_bot.size() == 1) ){
+		if(tsBitSingle2) tsSl2T_1P1N++;
+		if(tsBitSingle3) tsSl3T_1P1N++;
+		if(tsBitSingle2 && tsBitSingle3) tsSl2TSl3T_1P1N++;
+		if(tsBitSingle2 && !tsBitSingle3) tsSl2TSl3F_1P1N++;
+		if(!tsBitSingle2 && tsBitSingle3) tsSl2FSl3T_1P1N++;
+		if(!tsBitSingle2 && !tsBitSingle3) tsSl2FSl3F_1P1N++;
+	}
+
 
 	// Separate all clusters into four categories
 	std::vector<CalCluster> clulsters_pos_top;
@@ -686,6 +729,11 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 	std::vector<CalCluster> clulsters_pos_bot_matched;
 	std::vector<CalCluster> clulsters_neg_bot_matched;
 
+	std::vector<int> trackIndices_pos_top;
+	std::vector<int> trackIndices_pos_bot;
+	std::vector<int> trackIndices_neg_top;
+	std::vector<int> trackIndices_neg_bot;
+
 	// Positive top category
 	for(int i = 0; i < clulsters_pos_top.size(); i++){
 		CalCluster cluster = clulsters_pos_top.at(i);
@@ -702,6 +750,7 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 					&& positionAtEcal[1] < func_pos_top_topCutY->Eval(positionCluster[1])
 					&& positionAtEcal[1] > func_pos_top_botCutY->Eval(positionCluster[1])) {
 				clulsters_pos_top_matched.push_back(cluster);
+				trackIndices_pos_top.push_back(j);
 				break;
 			}
 		}
@@ -723,6 +772,7 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 					&& positionAtEcal[1] < func_pos_bot_topCutY->Eval(positionCluster[1])
 					&& positionAtEcal[1] > func_pos_bot_botCutY->Eval(positionCluster[1])) {
 				clulsters_pos_bot_matched.push_back(cluster);
+				trackIndices_pos_bot.push_back(j);
 				break;
 			}
 		}
@@ -744,6 +794,7 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 					&& positionAtEcal[1] < func_neg_top_topCutY->Eval(positionCluster[1])
 					&& positionAtEcal[1] > func_neg_top_botCutY->Eval(positionCluster[1])) {
 				clulsters_neg_top_matched.push_back(cluster);
+				trackIndices_neg_top.push_back(j);
 				break;
 			}
 		}
@@ -765,10 +816,316 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 					&& positionAtEcal[1] < func_neg_bot_topCutY->Eval(positionCluster[1])
 					&& positionAtEcal[1] > func_neg_bot_botCutY->Eval(positionCluster[1])) {
 				clulsters_neg_bot_matched.push_back(cluster);
+				trackIndices_neg_bot.push_back(j);
 				break;
 			}
 		}
 	}
+
+	// Find matched VTP clusters
+	std::vector<VTPData::hpsCluster> vtpClusters =  vtpData_->clusters;
+	std::vector<VTPData::hpsCluster> vtpClustersMatched_pos_top;
+	std::vector<VTPData::hpsCluster> vtpClustersMatched_pos_bot;
+	std::vector<VTPData::hpsCluster> vtpClustersMatched_neg_top;
+	std::vector<VTPData::hpsCluster> vtpClustersMatched_neg_bot;
+
+	std::vector<int> trackIndices_pos_top_vtpClustersMatched;
+	std::vector<int> trackIndices_pos_bot_vtpClustersMatched;
+	std::vector<int> trackIndices_neg_top_vtpClustersMatched;
+	std::vector<int> trackIndices_neg_bot_vtpClustersMatched;
+
+	for(int i = 0; i < vtpClusters.size(); i++){
+		VTPData::hpsCluster vtpCluster = vtpClusters.at(i);
+
+		int xVTP = vtpCluster.X;
+		int yVTP = vtpCluster.Y;
+
+		if(xVTP > 0 && yVTP > 0 ){
+			for(int j = 0; j < clulsters_pos_top_matched.size(); j++){
+				CalCluster cluster = clulsters_pos_top_matched.at(j);
+				double energy = cluster.getEnergy();
+				CalHit* seed = (CalHit*)cluster.getSeed();
+
+				int ix = seed -> getCrystalIndices()[0];
+				int iy = seed -> getCrystalIndices()[1];
+				if(ix< 0) ix++;
+
+				int xDiff = ix - xVTP;
+				int yDiff = iy - yVTP;
+
+				double timeDiff = cluster.getTime() - vtpCluster.T * 4;
+
+				if(xDiff == 0 && yDiff == 0 && timeDiff > TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN && timeDiff < TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX ){
+					vtpClustersMatched_pos_top.push_back(vtpCluster);
+					trackIndices_pos_top_vtpClustersMatched.push_back(trackIndices_pos_top[j]);
+				}
+			}
+		}
+
+		if(xVTP > 0 && yVTP < 0 ){
+			for(int j = 0; j < clulsters_pos_bot_matched.size(); j++){
+				CalCluster cluster = clulsters_pos_bot_matched.at(j);
+				double energy = cluster.getEnergy();
+				CalHit* seed = (CalHit*)cluster.getSeed();
+
+				int ix = seed -> getCrystalIndices()[0];
+				int iy = seed -> getCrystalIndices()[1];
+				if(ix< 0) ix++;
+
+				int xDiff = ix - xVTP;
+				int yDiff = iy - yVTP;
+
+				double timeDiff = cluster.getTime() - vtpCluster.T * 4;
+
+				if(xDiff == 0 && yDiff == 0 && timeDiff > TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN && timeDiff < TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX ){
+					vtpClustersMatched_pos_bot.push_back(vtpCluster);
+					trackIndices_pos_bot_vtpClustersMatched.push_back(trackIndices_pos_bot[j]);
+				}
+			}
+		}
+
+		if(xVTP <= 0 && yVTP > 0 ){
+			for(int j = 0; j < clulsters_neg_top_matched.size(); j++){
+				CalCluster cluster = clulsters_neg_top_matched.at(j);
+				double energy = cluster.getEnergy();
+				CalHit* seed = (CalHit*)cluster.getSeed();
+
+				int ix = seed -> getCrystalIndices()[0];
+				int iy = seed -> getCrystalIndices()[1];
+				if(ix< 0) ix++;
+
+				int xDiff = ix - xVTP;
+				int yDiff = iy - yVTP;
+
+				double timeDiff = cluster.getTime() - vtpCluster.T * 4;
+
+				if(xDiff == 0 && yDiff == 0 && timeDiff > TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN && timeDiff < TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX ){
+					vtpClustersMatched_neg_top.push_back(vtpCluster);
+					trackIndices_neg_top_vtpClustersMatched.push_back(trackIndices_neg_top[j]);
+				}
+			}
+		}
+
+		if(xVTP <= 0 && yVTP < 0 ){
+			for(int j = 0; j < clulsters_neg_bot_matched.size(); j++){
+				CalCluster cluster = clulsters_neg_bot_matched.at(j);
+				double energy = cluster.getEnergy();
+				CalHit* seed = (CalHit*)cluster.getSeed();
+
+				int ix = seed -> getCrystalIndices()[0];
+				int iy = seed -> getCrystalIndices()[1];
+				if(ix< 0) ix++;
+
+				int xDiff = ix - xVTP;
+				int yDiff = iy - yVTP;
+
+				double timeDiff = cluster.getTime() - vtpCluster.T * 4;
+
+				if(xDiff == 0 && yDiff == 0 && timeDiff > TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN && timeDiff < TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX ){
+					vtpClustersMatched_neg_bot.push_back(vtpCluster);
+					trackIndices_neg_bot_vtpClustersMatched.push_back(trackIndices_neg_bot[j]);
+				}
+			}
+		}
+
+	}
+
+	////// Plot Energy and PDE distributions
+	// Require that events have only one postive and one negative tracks
+
+	// Ecal clusters matched with tracks
+	// VTP clusters matched with Ecal clusters
+	if(tracks_pos_top.size() == 1 && tracks_neg_bot.size() == 1){
+		for(int i = 0; i < clulsters_pos_top_matched.size(); i++){
+			CalCluster cluster = clulsters_pos_top_matched.at(i);
+			double energy = cluster.getEnergy();
+			CalHit* seed = (CalHit*)cluster.getSeed();
+
+			int ix = seed -> getCrystalIndices()[0];
+			int iy = seed -> getCrystalIndices()[1];
+			if(ix< 0) ix++;
+
+			histos->Fill1DHisto("ecalCluster_energy_events_with_1P1N_tracks_h", energy, weight);
+			histos->Fill2DHisto("ecalCluster_energy_x_events_with_1P1N_tracks_hh", ix, energy, weight);
+
+			if(tsBitSingle2) histos->Fill2DHisto("ecalCluster_energy_x_events_with_1P1N_tracks_single2_hh", ix, energy, weight);
+			if(tsBitSingle3) histos->Fill2DHisto("ecalCluster_energy_x_events_with_1P1N_tracks_single3_hh", ix, energy, weight);
+		}
+
+		for(int i = 0; i < clulsters_neg_bot_matched.size(); i++){
+			CalCluster cluster = clulsters_neg_bot_matched.at(i);
+			double energy = cluster.getEnergy();
+			CalHit* seed = (CalHit*)cluster.getSeed();
+
+			int ix = seed -> getCrystalIndices()[0];
+			int iy = seed -> getCrystalIndices()[1];
+			if(ix< 0) ix++;
+
+			histos->Fill1DHisto("ecalCluster_energy_events_with_1P1N_tracks_h", energy, weight);
+			//histos->Fill2DHisto("ecalCluster_energy_x_events_with_1P1N_tracks_hh", ix, energy, weight);
+
+			//if(tsBitSingle2) histos->Fill2DHisto("ecalCluster_energy_x_events_with_1P1N_tracks_single2_hh", ix, energy, weight);
+			//if(tsBitSingle3) histos->Fill2DHisto("ecalCluster_energy_x_events_with_1P1N_tracks_single3_hh", ix, energy, weight);
+		}
+
+		for(int i = 0; i < vtpClustersMatched_pos_top.size(); i++){
+			VTPData::hpsCluster vtpCluster = vtpClustersMatched_pos_top.at(i);
+			double energy = vtpCluster.E / 1000.;
+
+			int ix = vtpCluster.X;
+			int iy = vtpCluster.Y;
+
+			histos->Fill1DHisto("vtpCluster_energy_events_with_1P1N_tracks_h", energy, weight);
+			histos->Fill2DHisto("vtpCluster_energy_x_events_with_1P1N_tracks_hh", ix, energy, weight);
+
+			if(tsBitSingle2 && !tsBitSingle3){
+				histos->Fill2DHisto("vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_hh", ix, energy, weight);
+
+				Track track = tracks_pos_top.at(trackIndices_pos_top_vtpClustersMatched[i]);
+				double p = track.getP();
+				std::vector<double> mom = track.getMomentum();
+
+				if(ix >= 19){
+					histos->Fill1DHisto("p_right_corner_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", p, weight);
+					histos->Fill1DHisto("px_right_corner_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", mom[0], weight);
+					histos->Fill1DHisto("py_right_corner_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", mom[1], weight);
+					histos->Fill1DHisto("pz_right_corner_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", mom[2], weight);
+
+				}
+
+				if(ix == 5){
+					histos->Fill1DHisto("p_ix5_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", p, weight);
+					histos->Fill1DHisto("px_ix5_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", mom[0], weight);
+					histos->Fill1DHisto("py_ix5_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", mom[1], weight);
+					histos->Fill1DHisto("pz_ix5_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", mom[2], weight);
+
+				}
+			}
+
+			if(!tsBitSingle2 && tsBitSingle3)
+				histos->Fill2DHisto("vtpCluster_energy_x_events_with_1P1N_tracks_Sl2FSl3T_hh", ix, energy, weight);
+
+			if(tsBitSingle2) histos->Fill2DHisto("vtpCluster_energy_x_events_with_1P1N_tracks_single2_hh", ix, energy, weight);
+			if(tsBitSingle3) histos->Fill2DHisto("vtpCluster_energy_x_events_with_1P1N_tracks_single3_hh", ix, energy, weight);
+		}
+
+		for(int i = 0; i < vtpClustersMatched_neg_bot.size(); i++){
+			VTPData::hpsCluster vtpCluster = vtpClustersMatched_neg_bot.at(i);
+			double energy = vtpCluster.E / 1000.;
+
+			int ix = vtpCluster.X;
+			int iy = vtpCluster.Y;
+
+			histos->Fill1DHisto("vtpCluster_energy_events_with_1P1N_tracks_h", energy, weight);
+			//histos->Fill2DHisto("vtpCluster_energy_x_events_with_1P1N_tracks_hh", ix, energy, weight);
+
+			//if(tsBitSingle2 && !tsBitSingle3)
+				//histos->Fill2DHisto("vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_hh", ix, energy, weight);
+
+
+			//if(!tsBitSingle2 && tsBitSingle3)
+				//histos->Fill2DHisto("vtpCluster_energy_x_events_with_1P1N_tracks_Sl2FSl3T_hh", ix, energy, weight);
+
+			//if(tsBitSingle2) histos->Fill2DHisto("vtpCluster_energy_x_events_with_1P1N_tracks_single2_hh", ix, energy, weight);
+			//if(tsBitSingle3) histos->Fill2DHisto("vtpCluster_energy_x_events_with_1P1N_tracks_single3_hh", ix, energy, weight);
+		}
+	}
+
+
+	if(tracks_pos_bot.size() == 1 && tracks_neg_top.size() == 1){
+		for(int i = 0; i < clulsters_pos_bot_matched.size(); i++){
+			CalCluster cluster = clulsters_pos_bot_matched.at(i);
+			double energy = cluster.getEnergy();
+			CalHit* seed = (CalHit*)cluster.getSeed();
+
+			int ix = seed -> getCrystalIndices()[0];
+			int iy = seed -> getCrystalIndices()[1];
+			if(ix< 0) ix++;
+
+			histos->Fill1DHisto("ecalCluster_energy_events_with_1P1N_tracks_h", energy, weight);
+			histos->Fill2DHisto("ecalCluster_energy_x_events_with_1P1N_tracks_hh", ix, energy, weight);
+
+			if(tsBitSingle2) histos->Fill2DHisto("ecalCluster_energy_x_events_with_1P1N_tracks_single2_hh", ix, energy, weight);
+			if(tsBitSingle3) histos->Fill2DHisto("ecalCluster_energy_x_events_with_1P1N_tracks_single3_hh", ix, energy, weight);
+		}
+
+		for(int i = 0; i < clulsters_neg_top_matched.size(); i++){
+			CalCluster cluster = clulsters_neg_top_matched.at(i);
+			double energy = cluster.getEnergy();
+			CalHit* seed = (CalHit*)cluster.getSeed();
+
+			int ix = seed -> getCrystalIndices()[0];
+			int iy = seed -> getCrystalIndices()[1];
+			if(ix< 0) ix++;
+
+			histos->Fill1DHisto("ecalCluster_energy_events_with_1P1N_tracks_h", energy, weight);
+			//histos->Fill2DHisto("ecalCluster_energy_x_events_with_1P1N_tracks_hh", ix, energy, weight);
+
+			//if(tsBitSingle2) histos->Fill2DHisto("ecalCluster_energy_x_events_with_1P1N_tracks_single2_hh", ix, energy, weight);
+			//if(tsBitSingle3) histos->Fill2DHisto("ecalCluster_energy_x_events_with_1P1N_tracks_single3_hh", ix, energy, weight);
+		}
+
+		for(int i = 0; i < vtpClustersMatched_pos_bot.size(); i++){
+			VTPData::hpsCluster vtpCluster = vtpClustersMatched_pos_bot.at(i);
+			double energy = vtpCluster.E / 1000.;
+
+			int ix = vtpCluster.X;
+			int iy = vtpCluster.Y;
+
+			histos->Fill1DHisto("vtpCluster_energy_events_with_1P1N_tracks_h", energy, weight);
+			histos->Fill2DHisto("vtpCluster_energy_x_events_with_1P1N_tracks_hh", ix, energy, weight);
+
+			if(tsBitSingle2 && !tsBitSingle3){
+				histos->Fill2DHisto("vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_hh", ix, energy, weight);
+
+				Track track = tracks_pos_bot.at(trackIndices_pos_bot_vtpClustersMatched[i]);
+				double p = track.getP();
+				std::vector<double> mom = track.getMomentum();
+
+				if(ix >= 19){
+					histos->Fill1DHisto("p_right_corner_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", p, weight);
+					histos->Fill1DHisto("px_right_corner_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", mom[0], weight);
+					histos->Fill1DHisto("py_right_corner_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", mom[1], weight);
+					histos->Fill1DHisto("pz_right_corner_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", mom[2], weight);
+				}
+
+				if(ix == 5){
+					histos->Fill1DHisto("p_ix5_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", p, weight);
+					histos->Fill1DHisto("px_ix5_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", mom[0], weight);
+					histos->Fill1DHisto("py_ix5_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", mom[1], weight);
+					histos->Fill1DHisto("pz_ix5_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", mom[2], weight);
+
+				}
+			}
+
+			if(!tsBitSingle2 && tsBitSingle3)
+				histos->Fill2DHisto("vtpCluster_energy_x_events_with_1P1N_tracks_Sl2FSl3T_hh", ix, energy, weight);
+
+			if(tsBitSingle2) histos->Fill2DHisto("vtpCluster_energy_x_events_with_1P1N_tracks_single2_hh", ix, energy, weight);
+			if(tsBitSingle3) histos->Fill2DHisto("vtpCluster_energy_x_events_with_1P1N_tracks_single3_hh", ix, energy, weight);
+		}
+
+		for(int i = 0; i < vtpClustersMatched_neg_top.size(); i++){
+			VTPData::hpsCluster vtpCluster = vtpClustersMatched_neg_top.at(i);
+			double energy = vtpCluster.E / 1000.;
+
+			int ix = vtpCluster.X;
+			int iy = vtpCluster.Y;
+
+			histos->Fill1DHisto("vtpCluster_energy_events_with_1P1N_tracks_h", energy, weight);
+			//histos->Fill2DHisto("vtpCluster_energy_x_events_with_1P1N_tracks_hh", ix, energy, weight);
+
+			//if(tsBitSingle2 && !tsBitSingle3)
+				//histos->Fill2DHisto("vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_hh", ix, energy, weight);
+
+			//if(!tsBitSingle2 && tsBitSingle3)
+				//histos->Fill2DHisto("vtpCluster_energy_x_events_with_1P1N_tracks_Sl2FSl3T_hh", ix, energy, weight);
+
+			//if(tsBitSingle2) histos->Fill2DHisto("vtpCluster_energy_x_events_with_1P1N_tracks_single2_hh", ix, energy, weight);
+			//if(tsBitSingle3) histos->Fill2DHisto("vtpCluster_energy_x_events_with_1P1N_tracks_single3_hh", ix, energy, weight);
+		}
+	}
+
 
 	////// Validate geometry mapping between Ecal and hodo
 	// Use events with single2 trigger
@@ -786,7 +1143,8 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
     	    // With consideration of readout time windows and "edge effects", clusters are extracted with [8, 120] ns for the analysis
     		// FADC250_W_WIDTH 192
     		// FADC250_W_WIDTH 128
-    		if(timeEcalCluster >= TIMEECALCLUSTERMIN && timeEcalCluster <= TIMEECALCLUSTERMAX){
+    		if( (iy > 0 && timeEcalCluster >= TIMEECALCLUSTERMINTOP && timeEcalCluster <= TIMEECALCLUSTERMAXTOP)
+    				|| (iy < 0 && timeEcalCluster >= TIMEECALCLUSTERMINBOT && timeEcalCluster <= TIMEECALCLUSTERMAXBOT) ){
 
     			// For each cluster, select hodo hits within a time range around the cluster time
     			std::vector<HodoHit*> hodoHitVect;
@@ -795,7 +1153,9 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
     				HodoHit* hodoHit = hodoHits_->at(j);
     				double timeHodoHit = hodoHit->getTime();
     				double timeDiffEcalClusterHodoHit = timeEcalCluster - timeHodoHit;
-    				if(timeDiffEcalClusterHodoHit >= TIMEDIFFECALCLUSTERHODOHITMIN && timeDiffEcalClusterHodoHit <= TIMEDIFFECALCLUSTERHODOHITMAX)
+    				if(iy > 0 && timeDiffEcalClusterHodoHit >= TIMEDIFFECALCLUSTERHODOHITMINTOP && timeDiffEcalClusterHodoHit <= TIMEDIFFECALCLUSTERHODOHITMAXTOP)
+    					hodoHitVect.push_back(hodoHit);
+    				else if(iy < 0 && timeDiffEcalClusterHodoHit >= TIMEDIFFECALCLUSTERHODOHITMINBOT && timeDiffEcalClusterHodoHit <= TIMEDIFFECALCLUSTERHODOHITMAXBOT)
     					hodoHitVect.push_back(hodoHit);
     			}
 
@@ -831,12 +1191,12 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 					if(flagSingle3Top){
 						passSingle3MatchedClusterTop++;
 
-						histos->Fill2DHisto("ecal_energy_x_single3_pass_matched_cluster_hh", ix, energyEcalCluster, weight);
+						histos->Fill2DHisto("ecalCluster_energy_x_single3_pass_matched_cluster_hh", ix, energyEcalCluster, weight);
 					}
 					else{
 						failSingle3MatchedClusterTop++;
 
-						histos->Fill2DHisto("ecal_energy_x_single3_fail_matched_cluster_hh", ix, energyEcalCluster, weight);
+						histos->Fill2DHisto("ecalCluster_energy_x_single3_fail_matched_cluster_hh", ix, energyEcalCluster, weight);
 					}
     			}
     		}
@@ -857,7 +1217,8 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
     	    // With consideration of readout time windows and "edge effects", clusters are extracted with [8, 120] ns for the analysis
     		// FADC250_W_WIDTH 192
     		// FADC250_W_WIDTH 128
-    		if(timeEcalCluster >= TIMEECALCLUSTERMIN && timeEcalCluster <= TIMEECALCLUSTERMAX){
+    		if( (iy > 0 && timeEcalCluster >= TIMEECALCLUSTERMINTOP && timeEcalCluster <= TIMEECALCLUSTERMAXTOP)
+    				|| (iy < 0 && timeEcalCluster >= TIMEECALCLUSTERMINBOT && timeEcalCluster <= TIMEECALCLUSTERMAXBOT) ){
 
     			// For each cluster, select hodo hits within a time range around the cluster time
     			std::vector<HodoHit*> hodoHitVect;
@@ -866,7 +1227,9 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
     				HodoHit* hodoHit = hodoHits_->at(j);
     				double timeHodoHit = hodoHit->getTime();
     				double timeDiffEcalClusterHodoHit = timeEcalCluster - timeHodoHit;
-    				if(timeDiffEcalClusterHodoHit >= TIMEDIFFECALCLUSTERHODOHITMIN && timeDiffEcalClusterHodoHit <= TIMEDIFFECALCLUSTERHODOHITMAX)
+    				if(iy > 0 && timeDiffEcalClusterHodoHit >= TIMEDIFFECALCLUSTERHODOHITMINTOP && timeDiffEcalClusterHodoHit <= TIMEDIFFECALCLUSTERHODOHITMAXTOP)
+    					hodoHitVect.push_back(hodoHit);
+    				else if(iy < 0 && timeDiffEcalClusterHodoHit >= TIMEDIFFECALCLUSTERHODOHITMINBOT && timeDiffEcalClusterHodoHit <= TIMEDIFFECALCLUSTERHODOHITMAXBOT)
     					hodoHitVect.push_back(hodoHit);
     			}
 
@@ -902,12 +1265,12 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 					if(flagSingle3Bot){
 						passSingle3MatchedClusterBot++;
 
-						histos->Fill2DHisto("ecal_energy_x_single3_pass_matched_cluster_hh", ix, energyEcalCluster, weight);
+						histos->Fill2DHisto("ecalCluster_energy_x_single3_pass_matched_cluster_hh", ix, energyEcalCluster, weight);
 					}
 					else{
 						failSingle3MatchedClusterBot++;
 
-						histos->Fill2DHisto("ecal_energy_x_single3_fail_matched_cluster_hh", ix, energyEcalCluster, weight);
+						histos->Fill2DHisto("ecalCluster_energy_x_single3_fail_matched_cluster_hh", ix, energyEcalCluster, weight);
 					}
     			}
     		}
@@ -928,7 +1291,7 @@ void TriggerValidationAnaProcessor::finalize() {
 	std::cout << "		efficiency: " << (double)passSingle2Top/(passSingle2Top + failSingle2Top)*100 << "%" << std::endl;
 	std::cout <<"	bot:" << std::endl;
 	std::cout << "		pass: " << passSingle2Bot << ";  fail: " << failSingle2Bot << ";  single2 fail, but single3 pass: " << failSingle2PassSinge3Bot<< std::endl;
-	std::cout << "		efficiency: " << (double)passSingle2Bot/(passSingle2Bot + failSingle2Bot)*100 << "%" << std::endl;
+	std::cout << "		efficiency: " << (double)passSingle2Bot/(passSingle2Bot + failSingle2Bot)*100 << "%" << std::endl << std::endl;
 
 	std::cout <<"single3: " << std::endl;
 	std::cout <<"	top:" << std::endl;
@@ -936,27 +1299,69 @@ void TriggerValidationAnaProcessor::finalize() {
 	std::cout << "		efficiency: " << (double)passSingle3Top/(passSingle3Top + failSingle3Top)*100 << "%" << std::endl;
 	std::cout <<"	bot:" << std::endl;
 	std::cout << "		pass: " << passSingle3Bot << ";  fail: " << failSingle3Bot << std::endl;
-	std::cout << "		efficiency: " << (double)passSingle3Bot/(passSingle3Bot + failSingle3Bot)*100 << "%" << std::endl;
+	std::cout << "		efficiency: " << (double)passSingle3Bot/(passSingle3Bot + failSingle3Bot)*100 << "%" << std::endl << std::endl;
+
+	std::cout <<"both single2 and single3: " << std::endl;
+	std::cout <<"	top:" << std::endl;
+	std::cout << "		pass: " << passSinge2Single3Top << std::endl;
+	std::cout <<"	bot:" << std::endl;
+	std::cout << "		pass: " << passSinge2Single3Bot << std::endl << std::endl;
 
 	//std::cout <<"fee: " << std::endl;
 	//std::cout << "	pass: " << passFee << ";  fail: " << failFee << std::endl;
-	//std::cout << "	efficiency: " << (double)passFee/(passFee + failFee)*100 << "%" << std::endl;
+	//std::cout << "	efficiency: " << (double)passFee/(passFee + failFee)*100 << "%" << std::endl << std::endl;
 
-	/*
+
+	#ifdef __WITHSVT__
 	std::cout <<"single3 for clusters matched with tracks: " << std::endl;
 	std::cout <<"	top:" << std::endl;
 	std::cout << "		pass: " << passSingle3MatchedClusterTop << ";  fail: " << failSingle3MatchedClusterTop << std::endl;
 	std::cout << "		efficiency: " << (double)passSingle3MatchedClusterTop/(passSingle3MatchedClusterTop + failSingle3MatchedClusterTop)*100 << "%" << std::endl;
 	std::cout <<"	bot:" << std::endl;
 	std::cout << "		pass: " << passSingle3MatchedClusterBot << ";  fail: " << failSingle3MatchedClusterBot << std::endl;
-	std::cout << "		efficiency: " << (double)passSingle3MatchedClusterBot/(passSingle3MatchedClusterBot + failSingle3MatchedClusterBot)*100 << "%" << std::endl;
-	*/
+	std::cout << "		efficiency: " << (double)passSingle3MatchedClusterBot/(passSingle3MatchedClusterBot + failSingle3MatchedClusterBot)*100 << "%" << std::endl << std::endl;
 
-	std::cout <<"both single2 and single3: " << std::endl;
-	std::cout <<"	top:" << std::endl;
-	std::cout << "		pass: " << passSinge2Single3Top << std::endl;
-	std::cout <<"	bot:" << std::endl;
-	std::cout << "		pass: " << passSinge2Single3Bot << std::endl;
+	std::cout << "Study TS bits single2 and single3 with tracks: " << std::endl << std::endl;
+
+	std::cout << "	No track requirement: " << std::endl;
+	std::cout << "		Number of events with single2 fired: " << tsSl2T << std::endl;
+	std::cout << "		Number of events with single3 fired: " << tsSl3T << std::endl;
+	std::cout << "		Number of events with both single2 and single3 fired: " << tsSl2TSl3T << std::endl;
+	std::cout << "		Number of events with single2 fired, but single3 not fired: " << tsSl2TSl3F << std::endl;
+	std::cout << "		Number of events with single3 fired, but single2 not fired: " << tsSl2FSl3T << std::endl;
+	//std::cout << "		Number of events with both single2 and single3 not fired: " << tsSl2FSl3F << std::endl;
+	std::cout << std::endl;
+
+	std::cout << "	Require at least one positive track: " << std::endl;
+	std::cout << "		Number of events with single2 fired: " << tsSl2T_P << std::endl;
+	std::cout << "		Number of events with single3 fired: " << tsSl3T_P << std::endl;
+	std::cout << "		Number of events with both single2 and single3 fired: " << tsSl2TSl3T_P << std::endl;
+	std::cout << "		Number of events with single2 fired, but single3 not fired: " << tsSl2TSl3F_P << std::endl;
+	std::cout << "		Number of events with single3 fired, but single2 not fired: " << tsSl2FSl3T_P << std::endl;
+	//std::cout << "		Number of events with both single2 and single3 not fired: " << tsSl2FSl3F_P << std::endl;
+	std::cout << std::endl;
+
+	std::cout << "	Require at least one positive and at least one negative tracks: " << std::endl;
+	std::cout << "		Number of events with single2 fired: " << tsSl2T_PN << std::endl;
+	std::cout << "		Number of events with single3 fired: " << tsSl3T_PN << std::endl;
+	std::cout << "		Number of events with both single2 and single3 fired: " << tsSl2TSl3T_PN << std::endl;
+	std::cout << "		Number of events with single2 fired, but single3 not fired: " << tsSl2TSl3F_PN << std::endl;
+	std::cout << "		Number of events with single3 fired, but single2 not fired: " << tsSl2FSl3T_PN << std::endl;
+	//std::cout << "		Number of events with both single2 and single3 not fired: " << tsSl2FSl3F_PN << std::endl;
+	std::cout << std::endl;
+
+	std::cout << "	Require only one positive and one negative tracks: " << std::endl;
+	std::cout << "		Number of events with single2 fired: " << tsSl2T_1P1N << std::endl;
+	std::cout << "		Number of events with single3 fired: " << tsSl3T_1P1N << std::endl;
+	std::cout << "		Number of events with both single2 and single3 fired: " << tsSl2TSl3T_1P1N << std::endl;
+	std::cout << "		Number of events with single2 fired, but single3 not fired: " << tsSl2TSl3F_1P1N << std::endl;
+	std::cout << "		Number of events with single3 fired, but single2 not fired: " << tsSl2FSl3T_1P1N << std::endl;
+	//std::cout << "		Number of events with both single2 and single3 not fired: " << tsSl2FSl3F_1P1N << std::endl;
+	std::cout << std::endl;
+
+	#endif
+
+
 
     histos->saveHistos(outF_, anaName_.c_str());
     delete histos;

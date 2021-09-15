@@ -1,7 +1,7 @@
 #ifndef __TRIGGERVALIDATION_ANAPROCESSOR_H__
 #define __TRIGGERVALIDATION_ANAPROCESSOR_H__
 
-//#define __WITHSVT__
+#define __WITHSVT__
 
 //HPSTR
 #include "HpsEvent.h"
@@ -144,22 +144,22 @@ private:
     TF1 *func_neg_bot_botCutY;
 
     //Parameters of cut functions for X
-    double pos_top_topCutX[2] = {55.043, 0.954781};
-    double pos_top_botCutX[2] = {-26.8894, 0.905789};
-    double neg_top_topCutX[2] = {20.0414, 0.775631};
-    double neg_top_botCutX[2] = {-41.2197, 0.928236};
-    double pos_bot_topCutX[2] = {43.5722, 0.992549};
-    double pos_bot_botCutX[2] = {-36.4948, 0.952063};
-    double neg_bot_topCutX[2] = {42.37, 0.914492};
-    double neg_bot_botCutX[2] = {-19.5229, 1.01893};
-    double pos_top_topCutY[2] = {12.0834, 0.934938};
-    double pos_top_botCutY[2] = {-7.89792, 0.950394};
-    double neg_top_topCutY[2] = {10.9327, 0.947849};
-    double neg_top_botCutY[2] = {-11.051, 1.02282};
-    double pos_bot_topCutY[2] = {8.33544, 0.964538};
-    double pos_bot_botCutY[2] = {-12.8071, 0.943018};
-    double neg_bot_topCutY[2] = {11.4682, 1.03756};
-    double neg_bot_botCutY[2] = {-16.6485, 0.836709};
+    double pos_top_topCutX[2] = {60.5386, 0.804057};
+    double pos_top_botCutX[2] = {-17.872, 0.81275};
+    double neg_top_topCutX[2] = {17.4556, 0.832049};
+    double neg_top_botCutX[2] = {-61.7584, 0.935637};
+    double pos_bot_topCutX[2] = {37.756, 0.991653};
+    double pos_bot_botCutX[2] = {-22.4246, 0.942275};
+    double neg_bot_topCutX[2] = {30.9072, 0.862994};
+    double neg_bot_botCutX[2] = {-32.0523, 0.926463};
+    double pos_top_topCutY[2] = {11.8889, 0.950876};
+    double pos_top_botCutY[2] = {-11.4137, 0.977692};
+    double neg_top_topCutY[2] = {13.1466, 0.908087};
+    double neg_top_botCutY[2] = {-11.934, 1.02725};
+    double pos_bot_topCutY[2] = {12.1851, 0.99691};
+    double pos_bot_botCutY[2] = {-11.4335, 0.959224};
+    double neg_bot_topCutY[2] = {12.1802, 1.02709};
+    double neg_bot_botCutY[2] = {-10.432, 0.939808};
 
     // Without track-cluster matching
     int passSingle2Top{0};
@@ -186,6 +186,34 @@ private:
     int failSingle3MatchedClusterTop{0};
     int passSingle3MatchedClusterBot{0};
     int failSingle3MatchedClusterBot{0};
+
+    int tsSl2T{0};
+    int tsSl3T{0};
+    int tsSl2TSl3T{0};
+    int tsSl2TSl3F{0};
+    int tsSl2FSl3T{0};
+    int tsSl2FSl3F{0};
+
+    int tsSl2T_P{0};
+    int tsSl3T_P{0};
+    int tsSl2TSl3T_P{0};
+    int tsSl2TSl3F_P{0};
+    int tsSl2FSl3T_P{0};
+    int tsSl2FSl3F_P{0};
+
+    int tsSl2T_PN{0};
+    int tsSl3T_PN{0};
+    int tsSl2TSl3T_PN{0};
+    int tsSl2TSl3F_PN{0};
+    int tsSl2FSl3T_PN{0};
+    int tsSl2FSl3F_PN{0};
+
+    int tsSl2T_1P1N{0};
+    int tsSl3T_1P1N{0};
+    int tsSl2TSl3T_1P1N{0};
+    int tsSl2TSl3F_1P1N{0};
+    int tsSl2FSl3T_1P1N{0};
+    int tsSl2FSl3F_1P1N{0};
 
 };
 
