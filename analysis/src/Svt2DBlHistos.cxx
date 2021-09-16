@@ -148,7 +148,8 @@ void Svt2DBlHistos::FillHistogramsByHw(std::vector<RawSvtHit*> *rawSvtHits_,floa
         
         for (int ss = 0; ss < 6; ss++)
         {
-            histokey = hwTag + "_SvtHybrids_hh";
+            histokey = hwTag + "_SvtHybrids_s"+std::to_string(ss)+"_hh";
+            //histokey = hwTag + "_SvtHybrids_s0_hh";
             Fill2DHisto(histokey, 
                     (float)rawSvtHit->getStrip(),
                     (float)rawSvtHit->getADCs()[ss], 

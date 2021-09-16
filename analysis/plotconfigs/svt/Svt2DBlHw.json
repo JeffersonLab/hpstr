@@ -35,7 +35,7 @@
             "ytitle" : "Events"
 
         },
-    "SvtHybrids_hh" : {
+    "SvtHybrids_s0_hh" : {
             "prefix" : "baseline0",
             "type" : "hh",
             "xtitle" : "Strip Number",
@@ -43,10 +43,74 @@
             "minX" : -0.5,
             "maxX" : 639.5,
             "ytitle" : "ADC Value",
-            "binsY" : 5000,
+            "binsY" : 2500,
+            "minY" : 0,
+            "maxY" : 20000
+
+        },
+    "SvtHybrids_s1_hh" : {
+            "prefix" : "baseline1",
+            "type" : "hh",
+            "xtitle" : "Strip Number",
+            "binsX" : 640,
+            "minX" : -0.5,
+            "maxX" : 639.5,
+            "ytitle" : "ADC Value",
+            "binsY" : 2500,
+            "minY" : 0,
+            "maxY" : 20000
+
+        },
+    "SvtHybrids_s2_hh" : {
+            "prefix" : "baseline2",
+            "type" : "hh",
+            "xtitle" : "Strip Number",
+            "binsX" : 640,
+            "minX" : -0.5,
+            "maxX" : 639.5,
+            "ytitle" : "ADC Value",
+            "binsY" : 2500,
+            "minY" : 0,
+            "maxY" : 20000
+
+        },
+    "SvtHybrids_s3_hh" : {
+            "prefix" : "baseline3",
+            "type" : "hh",
+            "xtitle" : "Strip Number",
+            "binsX" : 640,
+            "minX" : -0.5,
+            "maxX" : 639.5,
+            "ytitle" : "ADC Value",
+            "binsY" : 2500,
+            "minY" : 0,
+            "maxY" : 20000
+
+        },
+    "SvtHybrids_s4_hh" : {
+            "prefix" : "baseline4",
+            "type" : "hh",
+            "xtitle" : "Strip Number",
+            "binsX" : 640,
+            "minX" : -0.5,
+            "maxX" : 639.5,
+            "ytitle" : "ADC Value",
+            "binsY" : 2500,
+            "minY" : 0,
+            "maxY" : 20000
+
+        },
+    "SvtHybrids_s5_hh" : {
+            "prefix" : "baseline5",
+            "type" : "hh",
+            "xtitle" : "Strip Number",
+            "binsX" : 640,
+            "minX" : -0.5,
+            "maxX" : 639.5,
+            "ytitle" : "ADC Value",
+            "binsY" : 2500,
             "minY" : 0,
             "maxY" : 20000
 
         }
-
 }

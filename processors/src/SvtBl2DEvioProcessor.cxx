@@ -20,12 +20,17 @@ void SvtBl2DEvioProcessor::configure(const ParameterSet& parameters) {
     try
     {
         debug_          = parameters.getInteger("debug");
+        chNumCfg_   = parameters.getString("chNumCfg");
         trigFilename_   = parameters.getString("trigConf");
         histCfgFilename_  = parameters.getString("histCfg");
     }
     catch (std::runtime_error& error)
     {
         std::cout << error.what() << std::endl;
+    }
+    if (chNumCfg_ != "fw" && chNumCfg_ != "sw") 
+    {
+        throw std::runtime_error("[ SvtBl2DEvioProcessor ]: chNumCfg must be 'fw' or 'sw'!");
     }
 }
 
@@ -157,8 +162,11 @@ bool SvtBl2DEvioProcessor::process() {
                 rawHit->setModule(module);
                 int apv = int(etool->SVT->svt_data[i].head.apv);
                 int strip = apv*128;
-                //int strip = l0APVmap[apv]*128;
-                //if ( int(etool->SVT->svt_data[i].head.feb_id) > 1 ) strip = APVmap[apv]*128;
+                if (chNumCfg_ == "sw")
+                {
+                    strip = l0APVmap[apv]*128;
+                    if ( int(etool->SVT->svt_data[i].head.feb_id) > 1 ) strip = APVmap[apv]*128;
+                }
                 strip += int(etool->SVT->svt_data[i].head.chan);
                 rawHit->setStrip(strip);
                 int adcs[6];
