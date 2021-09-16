@@ -58,6 +58,7 @@ class SvtBl2DEvioProcessor : public Processor {
         
         //configuration parameters
         std::string histCfgFilename_;
+        std::string chNumCfg_{""};
         std::string trigFilename_{""};
         std::string inFilename_{""};
 
