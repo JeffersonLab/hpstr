@@ -67,6 +67,30 @@
         "ytitle" : "Counts"
     },
     
+	"timeDiff_vtpCluster_hodoHit_h" : {
+        "bins"   : 100,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Time diff. between Recon VTP cluster and hodo hit time [ns]",
+        "ytitle" : "Counts"
+    },
+    
+	"timeDiff_vtpCluster_hodoHit_top_h" : {
+        "bins"   : 100,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Time diff. between Recon VTP cluster and hodo hit time [ns]",
+        "ytitle" : "Counts"
+    },
+    
+	"timeDiff_vtpCluster_hodoHit_bot_h" : {
+        "bins"   : 100,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Time diff. between Recon VTP cluster and hodo hit time [ns]",
+        "ytitle" : "Counts"
+    },
+    
 	"timeDiff_ecalCluster_hodoHit_top_h" : {
         "bins"   : 100,
         "minX"   : -100,
@@ -660,7 +684,33 @@
         "ytitle" : "Counts"
     },
     
+	"hodo_l1Bit_l2Bit_ix5_events_with_1P1N_tracks_Sl2FSl3T_hh" : {
+        "binsX"   : 2,
+        "minX"   : -0.5,
+        "maxX"   : 1.5,
+        "binsY"   : 2,
+        "minY"   : -0.5,
+        "maxY"   : 1.5,
+        "xtitle" : "L1 Bit",
+        "ytitle" : "L2 Bit"
+    },
     
+	"hodo_l1l2MatchingBit_l1andl2Fired_ix5_events_with_1P1N_tracks_Sl2FSl3T_h" : {
+        "bins"   : 2,
+        "minX"   : -0.5,
+        "maxX"   : 1.5,
+        "xtitle" : "Bit for Hodo L1L2 Matching",
+        "ytitle" : "Counts"
+    },
+    
+	"hodoEcalMatchingBit_l1l2Matched_l1andl2Fired_ix5_events_with_1P1N_tracks_Sl2FSl3T_h" : {
+        "bins"   : 2,
+        "minX"   : -0.5,
+        "maxX"   : 1.5,
+        "xtitle" : "Bit for Hodo-Ecal Matching",
+        "ytitle" : "Counts"
+    },
+        
     
 	"vtpCluster_energy_x_events_with_1P1N_tracks_Sl2FSl3T_hh" : {
         "binsX"   : 23,

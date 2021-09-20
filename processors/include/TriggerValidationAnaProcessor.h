@@ -65,6 +65,7 @@ public:
 
     singleTriggerTags buildSingle2TriggerTags(CalCluster* ecalCluster);
     singleTriggerTags buildSingle3TriggerTags(CalCluster* ecalCluster, std::map<int, hodoPattern> hodoPatternMap);
+    singleTriggerTags buildSingle3TriggerTags(VTPData::hpsCluster vtpCluster, std::map<int, hodoPattern> hodoPatternMap);
 
 
     typedef struct{

@@ -33,6 +33,11 @@
 #define TIMEDIFFECALCLUSTERHODOHITMINBOT -20 // ns
 #define TIMEDIFFECALCLUSTERHODOHITMAXBOT -4 // ns
 
+#define TIMEDIFFVTPCLUSTERHODOHITMINTOP -52 // ns
+#define TIMEDIFFVTPCLUSTERHODOHITMAXTOP  8// ns
+#define TIMEDIFFVTPCLUSTERHODOHITMINBOT -56 // ns
+#define TIMEDIFFVTPCLUSTERHODOHITMAXBOT -4 // ns
+
 #define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMIN -9 // ns
 #define TIMEDIFFECALCLUSTERVTPSINGLETRIGGERMAX 4 // ns
 
@@ -265,6 +270,25 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 			if(singleTrig.topnbot) histos->Fill1DHisto("vtpSingleTrigTime_top_h", timeSingleTrig * 4, weight);
 			else histos->Fill1DHisto("vtpSingleTrigTime_bot_h", timeSingleTrig * 4, weight);
 		}
+	}
+
+	std::vector<VTPData::hpsCluster> vtpClusters = vtpData_->clusters;
+	for(int i = 0; i < vtpClusters.size(); i++){
+		VTPData::hpsCluster vtpCluster = vtpClusters.at(i);
+		int timeVTPCluster = vtpCluster.T * 4;
+
+		for(int j = 0; j < hodoHits_->size(); j++){
+			HodoHit* hodoHit = hodoHits_->at(j);
+			double timeHodoHit = hodoHit->getTime();
+
+			if(vtpCluster.X >= 5){
+				histos->Fill1DHisto("timeDiff_vtpCluster_hodoHit_h", timeVTPCluster - timeHodoHit, weight);
+				if(vtpCluster.Y > 0 && hodoHit->getIndices()[1] > 0) histos->Fill1DHisto("timeDiff_vtpCluster_hodoHit_top_h", timeVTPCluster - timeHodoHit, weight);
+				else if (vtpCluster.Y < 0 && hodoHit->getIndices()[1] < 0) histos->Fill1DHisto("timeDiff_vtpCluster_hodoHit_bot_h", timeVTPCluster - timeHodoHit, weight);
+			}
+
+		}
+
 	}
 
     //////////// Do trigger validation
@@ -823,7 +847,6 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 	}
 
 	// Find matched VTP clusters
-	std::vector<VTPData::hpsCluster> vtpClusters =  vtpData_->clusters;
 	std::vector<VTPData::hpsCluster> vtpClustersMatched_pos_top;
 	std::vector<VTPData::hpsCluster> vtpClustersMatched_pos_bot;
 	std::vector<VTPData::hpsCluster> vtpClustersMatched_neg_top;
@@ -999,6 +1022,40 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 					histos->Fill1DHisto("py_ix5_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", mom[1], weight);
 					histos->Fill1DHisto("pz_ix5_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", mom[2], weight);
 
+					// For each cluster, select hodo hits within a time range around the cluster time
+					std::vector<HodoHit*> hodoHitVect;
+					hodoHitVect.clear();
+					for(int j = 0; j < hodoHits_->size(); j++){
+						HodoHit* hodoHit = hodoHits_->at(j);
+						double timeHodoHit = hodoHit->getTime();
+						double timeDiffVTPClusterHodoHit = vtpCluster.T * 4 - timeHodoHit;
+						if(hodoHit->getIndices()[1] > 0 && timeDiffVTPClusterHodoHit >= TIMEDIFFVTPCLUSTERHODOHITMINTOP && timeDiffVTPClusterHodoHit <= TIMEDIFFVTPCLUSTERHODOHITMAXTOP)
+							hodoHitVect.push_back(hodoHit);
+					}
+
+					// Using selected hodo hits, build hodo patterns
+					std::map<int, hodoPattern> hodopatternMap;
+					hodopatternMap = buildHodoPatternMap(hodoHitVect);
+
+					// Build trigger bit for single3
+					singleTriggerTags single3TriTags = buildSingle3TriggerTags(vtpCluster, hodopatternMap);
+
+					std::bitset<9> single3Bits = single3TriTags.singleTriggerSet;
+					histos->Fill2DHisto("hodo_l1Bit_l2Bit_ix5_events_with_1P1N_tracks_Sl2FSl3T_hh", single3Bits[5], single3Bits[6], weight);
+
+					if(single3Bits[5] && single3Bits[6])
+						histos->Fill1DHisto("hodo_l1l2MatchingBit_l1andl2Fired_ix5_events_with_1P1N_tracks_Sl2FSl3T_h", single3Bits[7], weight);
+
+					if(single3Bits[5] && single3Bits[6] && single3Bits[7]){
+						histos->Fill1DHisto("hodoEcalMatchingBit_l1l2Matched_l1andl2Fired_ix5_events_with_1P1N_tracks_Sl2FSl3T_h", single3Bits[8], weight);
+
+						hodoPattern patternL1 = hodopatternMap[topLayer1];
+						hodoPattern patternL2 = hodopatternMap[topLayer2];
+						std::cout << patternL1.patternSet << std::endl;
+						std::cout << patternL2.patternSet << std::endl;
+						std::cout << "*************" << std::endl;
+					}
+
 				}
 			}
 
@@ -1094,6 +1151,40 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 					histos->Fill1DHisto("px_ix5_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", mom[0], weight);
 					histos->Fill1DHisto("py_ix5_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", mom[1], weight);
 					histos->Fill1DHisto("pz_ix5_vtpCluster_energy_x_events_with_1P1N_tracks_Sl2TSl3F_h", mom[2], weight);
+
+					// For each cluster, select hodo hits within a time range around the cluster time
+					std::vector<HodoHit*> hodoHitVect;
+					hodoHitVect.clear();
+					for(int j = 0; j < hodoHits_->size(); j++){
+						HodoHit* hodoHit = hodoHits_->at(j);
+						double timeHodoHit = hodoHit->getTime();
+						double timeDiffVTPClusterHodoHit = vtpCluster.T * 4 - timeHodoHit;
+						if(hodoHit->getIndices()[1] < 0 && timeDiffVTPClusterHodoHit >= TIMEDIFFVTPCLUSTERHODOHITMINBOT && timeDiffVTPClusterHodoHit <= TIMEDIFFVTPCLUSTERHODOHITMAXBOT)
+							hodoHitVect.push_back(hodoHit);
+					}
+
+					// Using selected hodo hits, build hodo patterns
+					std::map<int, hodoPattern> hodopatternMap;
+					hodopatternMap = buildHodoPatternMap(hodoHitVect);
+
+					// Build trigger bit for single3
+					singleTriggerTags single3TriTags = buildSingle3TriggerTags(vtpCluster, hodopatternMap);
+
+					std::bitset<9> single3Bits = single3TriTags.singleTriggerSet;
+					histos->Fill2DHisto("hodo_l1Bit_l2Bit_ix5_events_with_1P1N_tracks_Sl2FSl3T_hh", single3Bits[5], single3Bits[6], weight);
+
+					if(single3Bits[5] && single3Bits[6])
+						histos->Fill1DHisto("hodo_l1l2MatchingBit_l1andl2Fired_ix5_events_with_1P1N_tracks_Sl2FSl3T_h", single3Bits[7], weight);
+
+					if(single3Bits[5] && single3Bits[6] && single3Bits[7]){
+						histos->Fill1DHisto("hodoEcalMatchingBit_l1l2Matched_l1andl2Fired_ix5_events_with_1P1N_tracks_Sl2FSl3T_h", single3Bits[8], weight);
+
+						hodoPattern patternL1 = hodopatternMap[botLayer1];
+						hodoPattern patternL2 = hodopatternMap[botLayer2];
+						std::cout << patternL1.patternSet << std::endl;
+						std::cout << patternL2.patternSet << std::endl;
+						std::cout << "*************" << std::endl;
+					}
 
 				}
 			}
@@ -1514,6 +1605,44 @@ TriggerValidationAnaProcessor::singleTriggerTags TriggerValidationAnaProcessor::
 	singleTrigTags.singleTriggerSet[3] = ix >= VTP_HPS_SINGLE_XMIN;
 
 	singleTrigTags.singleTriggerSet[4] = energyEcalCluster / ENERGYRATIOECALVTPCLUSTERS > calculatePDE(ix, single3);
+
+	hodoPattern patternLayer1, patternLayer2;
+	if(iy > 0) {
+		patternLayer1 = hodoPatternMap[topLayer1];
+		patternLayer2 = hodoPatternMap[topLayer2];
+	}
+	else{
+		patternLayer1 = hodoPatternMap[botLayer1];
+		patternLayer2 = hodoPatternMap[botLayer2];
+	}
+
+	singleTrigTags.singleTriggerSet[5] = patternLayer1.patternSet.to_ulong() != 0;
+
+	singleTrigTags.singleTriggerSet[6] = patternLayer2.patternSet.to_ulong() != 0 ;
+
+	singleTrigTags.singleTriggerSet[7] = geometryHodoL1L2Matching(patternLayer1, patternLayer2);
+
+	singleTrigTags.singleTriggerSet[8] = geometryEcalHodoMatching(ix, patternLayer1, patternLayer2);
+
+	return singleTrigTags;
+}
+
+TriggerValidationAnaProcessor::singleTriggerTags TriggerValidationAnaProcessor::buildSingle3TriggerTags(VTPData::hpsCluster vtpCluster, std::map<int, TriggerValidationAnaProcessor::hodoPattern> hodoPatternMap){
+	singleTriggerTags singleTrigTags;
+	double energy = vtpCluster.E; // MeV
+	int nHitsEcalCluster = vtpCluster.N;
+	int ix = vtpCluster.X;
+	int iy = vtpCluster.Y;
+
+	singleTrigTags.singleTriggerSet[0] = energy >= VTP_HPS_SINGLE_EMIN_SINGLE3;
+
+	singleTrigTags.singleTriggerSet[1] = energy <= VTP_HPS_SINGLE_EMAX;
+
+	singleTrigTags.singleTriggerSet[2] = nHitsEcalCluster >= VTP_HPS_SINGLE_NMIN;
+
+	singleTrigTags.singleTriggerSet[3] = ix >= VTP_HPS_SINGLE_XMIN;
+
+	singleTrigTags.singleTriggerSet[4] = energy / ENERGYRATIOECALVTPCLUSTERS > calculatePDE(ix, single3);
 
 	hodoPattern patternLayer1, patternLayer2;
 	if(iy > 0) {
