@@ -1,0 +1,258 @@
+{
+	"chi2ndf_pos_top_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 30,
+        "xtitle" : "track #chi^{2} / ndf",
+        "ytitle" : "Tracks"
+    },
+    
+	"chi2ndf_neg_top_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 30,
+        "xtitle" : "track #chi^{2} / ndf",
+        "ytitle" : "Tracks"
+    },
+    
+	"chi2ndf_pos_bot_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 30,
+        "xtitle" : "track #chi^{2} / ndf",
+        "ytitle" : "Tracks"
+    },
+    
+	"chi2ndf_neg_bot_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 30,
+        "xtitle" : "track #chi^{2} / ndf",
+        "ytitle" : "Tracks"
+    },
+    
+	"nHits_pos_top_h" : {
+        "bins"   : 16,
+        "minX"   : 0,
+        "maxX"   : 16,
+        "xtitle" : "Number of hits",
+        "ytitle" : "Tracks"
+    },
+    
+	"nHits_neg_top_h" : {
+        "bins"   : 16,
+        "minX"   : 0,
+        "maxX"   : 16,
+        "xtitle" : "Number of hits",
+        "ytitle" : "Tracks"
+    },
+    
+	"nHits_pos_bot_h" : {
+        "bins"   : 16,
+        "minX"   : 0,
+        "maxX"   : 16,
+        "xtitle" : "Number of hits",
+        "ytitle" : "Tracks"
+    },
+    
+	"nHits_neg_bot_h" : {
+        "bins"   : 16,
+        "minX"   : 0,
+        "maxX"   : 16,
+        "xtitle" : "Number of hits",
+        "ytitle" : "Tracks"
+    },
+    
+    
+	"p_pos_top_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+        "xtitle" : "p [GeV]",
+        "ytitle" : "Tracks"
+    },
+    
+	"p_neg_top_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+        "xtitle" : "p [GeV]",
+        "ytitle" : "Tracks"
+    },
+
+	"p_pos_bot_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+        "xtitle" : "p [GeV]",
+        "ytitle" : "Tracks"
+    },
+    
+	"p_neg_bot_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+        "xtitle" : "p [GeV]",
+        "ytitle" : "Tracks"
+    },
+    
+	"num_tracks_pos_top_h" : {
+        "bins"   : 5,
+        "minX"   : 0,
+        "maxX"   : 5,
+        "xtitle" : "Number of tracks",
+        "ytitle" : "Tracks"
+    },
+    
+    "num_tracks_neg_top_h" : {
+        "bins"   : 5,
+        "minX"   : 0,
+        "maxX"   : 5,
+        "xtitle" : "Number of tracks",
+        "ytitle" : "Tracks"
+    },
+    
+	"num_tracks_pos_bot_h" : {
+        "bins"   : 5,
+        "minX"   : 0,
+        "maxX"   : 5,
+        "xtitle" : "Number of tracks",
+        "ytitle" : "Tracks"
+    },
+    
+    "num_tracks_neg_bot_h" : {
+        "bins"   : 5,
+        "minX"   : 0,
+        "maxX"   : 5,
+        "xtitle" : "Number of tracks",
+        "ytitle" : "Tracks"
+    },
+    
+	"time_tracks_neg_top_with_numTrakcs_numHits_cuts_h" : {
+        "bins"   : 100,
+        "minX"   : -20,
+        "maxX"   : 20,
+        "xtitle" : "Time [ns]",
+        "ytitle" : "Tracks"
+    },
+    
+	"time_tracks_neg_bot_with_numTrakcs_numHits_cuts_h" : {
+        "bins"   : 100,
+        "minX"   : -20,
+        "maxX"   : 20,
+        "xtitle" : "Time [ns]",
+        "ytitle" : "Tracks"
+    },
+    
+	"time_tracks_neg_top_vs_bot_with_numTrakcs_numHits_cuts_hh" : {
+        "binsX" : 100,
+        "minX" : -20,
+        "maxX" : 20,
+        "binsY" : 100,
+        "minY" : -20,
+        "maxY" : 20,
+		"xtitle" : "Time for neg. top tracks [ns]",
+        "ytitle" : "Time for neg. bot tracks [ns]"
+    },
+    
+    
+	"time_diff_with_numTrakcs_numHits_cuts_h" : {
+        "bins"   : 100,
+        "minX"   : -20,
+        "maxX"   : 20,
+        "xtitle" : "Time difference [ns]",
+        "ytitle" : "Negative track pairs"
+    },
+    
+	"p_tracks_neg_top_with_numTrakcs_numHits_timeDiff_cuts_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+        "xtitle" : "p [GeV]",
+        "ytitle" : "Tracks"
+    },
+    
+	"p_tracks_neg_bot_with_numTrakcs_numHits_timeDiff_cuts_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+        "xtitle" : "p [GeV]",
+        "ytitle" : "Tracks"
+    },
+    
+	"pDiff_with_numTrakcs_numHits_timeDiff_cuts_h" : {
+        "bins"   : 100,
+        "minX"   : -6,
+        "maxX"   : 6,
+        "xtitle" : "p diff. [GeV]",
+        "ytitle" : "Neg. track pairs"
+    },
+    
+	"pSum_with_numTrakcs_numHits_timeDiff_cuts_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 7,
+        "xtitle" : "pSum [GeV]",
+        "ytitle" : "Neg. track pairs"
+    },
+    
+	"im_with_numTrakcs_numHits_timeDiff_cuts_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.2,
+        "xtitle" : "Invariant mass [GeV/c^{2}]",
+        "ytitle" : "Neg. track pairs"
+    },
+    
+	"im_vs_pSum_with_numTrakcs_numHits_timeDiff_cuts_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 7,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 0.2,
+		"xtitle" : "pSum [GeV]",
+        "ytitle" : "Invariant mass [GeV/c^{2}]"
+    },
+    
+	"pSum_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 7,
+        "xtitle" : "pSum [GeV]",
+        "ytitle" : "Neg. track pairs"
+    },
+    
+	"im_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.2,
+        "xtitle" : "Invariant mass [GeV/c^{2}]",
+        "ytitle" : "Neg. track pairs"
+    },
+    
+	"im_vs_pSum_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 7,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 0.2,
+		"xtitle" : "pSum [GeV]",
+        "ytitle" : "Invariant mass [GeV/c^{2}]"
+    },
+    
+	"im_with_numTrakcs_numHits_timeDiff_p_pDiff_pSum_cuts_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.2,
+        "xtitle" : "Invariant mass [GeV/c^{2}]",
+        "ytitle" : "Neg. track pairs"
+    }
+    
+
+    
+    
+
+ 
+}

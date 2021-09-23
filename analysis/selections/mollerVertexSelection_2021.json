@@ -1,0 +1,67 @@
+{
+	"num_tracks_pos_top_eq"  : {
+        "cut"  : 0,
+        "id"   : 0,
+        "info" : "# of pos. top trks = 0"
+    },
+    
+	"num_tracks_pos_bot_eq"  : {
+        "cut"  : 0,
+        "id"   : 1,
+        "info" : "# of pos. bot trks = 0"
+    },
+    
+	"num_tracks_neg_top_eq"  : {
+        "cut"  : 1,
+        "id"   : 2,
+        "info" : "# of neg. top trks = 1"
+    },
+    
+	"num_tracks_neg_bot_eq"  : {
+        "cut"  : 1,
+        "id"   : 3,
+        "info" : "# of neg. bot trks = 1"
+    },
+    
+	"num_hits_tracks_neg_top_gt"  : {
+        "cut"  : 11,
+        "id"   : 4,
+        "info" : "# of hits for neg. top trks > 11"
+    },
+    
+	"num_hits_tracks_neg_bot_gt"  : {
+        "cut"  : 11,
+        "id"   : 5,
+        "info" : "# of hits for neg. bot trks > 11"
+    },
+    
+	"time_diff_lt" : {
+        "cut" : 3,
+        "id"  : 6,
+        "info" : "|#Delta t|< 3 [ns]"
+    },    
+    
+    "pTop_lt" : {
+        "cut" : 2,
+        "id"  : 7,
+        "info" : "p_{top} < 2 [GeV]"
+    },
+    
+	"pBot_lt" : {
+        "cut" : 2,
+        "id"  : 8,
+        "info" : "p_{bot} < 2 [GeV]"
+    },
+    
+	"pDiff_lt" : {
+        "cut" : 0.6,
+        "id"  : 9,
+        "info" : "| pDiff | < 0.6 [GeV]"
+    },
+    
+ 	"pSum_gt" : {
+        "cut" : 2.8,
+        "id"  : 10,
+        "info" : "pSum > 2.8 [GeV]"
+    }
+}
