@@ -242,6 +242,103 @@
         "ytitle" : "Invariant mass [GeV/c^{2}]"
     },
     
+    
+	"energy_vs_theta_top_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 0.1,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "#theta before rotation [rad]",
+        "ytitle" : "Energy [GeV]"
+    }, 
+	"energy_vs_theta_bot_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 0.1,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 4,
+		"xtitle" : "#theta before rotation [rad]",
+        "ytitle" : "Energy [GeV]"
+    }, 
+    
+	"thetaTop_vs_thetaBot_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 0.1,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 0.1,
+		"xtitle" : "#theta_{bot} before rotation [rad]",
+        "ytitle" : "#theta_{top} before rotation [rad]"
+    },
+    
+	"diffE_top_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_h" : {
+		"bins"   : 100,
+        "minX"   : -1,
+        "maxX"   : 1,
+        "xtitle" : "#DeltaE [GeV]",
+        "ytitle" : "Tracks"
+    },
+	"diffE_bot_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_h" : {
+		"bins"   : 100,
+        "minX"   : -1,
+        "maxX"   : 1,
+        "xtitle" : "#DeltaE [GeV]",
+        "ytitle" : "Tracks"
+    },      
+	"diffTheta_top_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_h" : {
+		"bins"   : 100,
+        "minX"   : -0.025,
+        "maxX"   : 0.025,
+        "xtitle" : "#Delta#theta before rotation [rad]",
+        "ytitle" : "Tracks"
+    },
+	"diffTheta_bot_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_h" : {
+		"bins"   : 100,
+        "minX"   : -0.025,
+        "maxX"   : 0.025,
+        "xtitle" : "#Delta#theta before rotation [rad]",
+        "ytitle" : "Tracks"
+    },
+    
+	"pxSum_vs_pySum_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_hh" : {
+        "binsX" : 100,
+        "minX" : -0.2,
+        "maxX" : 0.2,
+        "binsY" : 100,
+        "minY" : -0.2,
+        "maxY" : 0.2,
+		"xtitle" : "Sum of p_{x} [GeV/c]",
+        "ytitle" : "Sum of p_{y} [GeV/c]"
+    },
+    
+	"diffETop_vs_diffEBot_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_hh" : {
+        "binsX" : 100,
+        "minX" : -2,
+        "maxX" : 2,
+        "binsY" : 100,
+        "minY" : -2,
+        "maxY" : 2,
+		"xtitle" : "#DeltaE for top [GeV]",
+        "ytitle" : "#DeltaE for bot [GeV]"
+    },
+    
+	"diffThetaTop_vs_diffThetaBot_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_hh" : {
+        "binsX" : 100,
+        "minX" : -0.1,
+        "maxX" : 0.1,
+        "binsY" : 100,
+        "minY" : -0.1,
+        "maxY" : 0.1,
+		"xtitle" : "#Delta#theta for top [rad]",
+        "ytitle" : "#Delta#theta for bot [rad]"
+    },
+    
+    
+    
 	"im_with_numTrakcs_numHits_timeDiff_p_pDiff_pSum_cuts_h" : {
         "bins"   : 100,
         "minX"   : 0,

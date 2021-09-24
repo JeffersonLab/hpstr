@@ -86,6 +86,10 @@ class MollerAnaProcessor : public Processor {
 
         std::shared_ptr<AnaHelpers> _ah;
 
+        // Kinematic equations
+        TF1* func_E_vs_theta_before_roation;
+        TF1* func_theta1_vs_theta2_before_roation;
+
 
 };
 

@@ -60,6 +60,17 @@ void MollerAnaProcessor::initialize(TTree* tree) {
     tree_->SetBranchAddress(tsColl_.c_str(), &tsData_ , &btsData_);
     tree_->SetBranchAddress(trkColl_.c_str() , &trks_, &btrks_);
     tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_ , &bvtxs_);
+
+    // Kinematic equations
+    // E vs theta
+    func_E_vs_theta_before_roation = new TF1("func_E_vs_theta_before_roation", "[0]/(1 + 2*[0]/[1]*sin(x/2.)*sin(x/2.))", 0, 1);
+    func_E_vs_theta_before_roation->SetParameter(0, beamE_);
+    func_E_vs_theta_before_roation->SetParameter(1, ELECTRONMASS);
+
+    // theta1 vs theta2
+    func_theta1_vs_theta2_before_roation = new TF1("func_theta1_vs_theta2_before_roation", "2*asin([1]/2./[0] * 1/sin(x/2.))", 0, 1);
+    func_theta1_vs_theta2_before_roation->SetParameter(0, beamE_);
+    func_theta1_vs_theta2_before_roation->SetParameter(1, ELECTRONMASS);
 }
 
 bool MollerAnaProcessor::process(IEvent* ievent) {
@@ -213,6 +224,56 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
 	histos->Fill1DHisto("pSum_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_h", pSum, weight);
 	histos->Fill1DHisto("im_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_h", im, weight);
 	histos->Fill2DHisto("im_vs_pSum_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_hh", pSum, im, weight);
+
+
+	double px_neg_top_before_beam_rotation = vect_neg_top->Px() * cos(ROTATIONANGLEAROUNDY) - vect_neg_top->Pz() * sin(ROTATIONANGLEAROUNDY);
+	double pz_neg_top_before_beam_rotation = vect_neg_top->Px() * sin(ROTATIONANGLEAROUNDY) + vect_neg_top->Pz() * cos(ROTATIONANGLEAROUNDY);
+	double py_neg_top_before_beam_rotation = vect_neg_top->Py();
+
+	double px_neg_bot_before_beam_rotation = vect_neg_bot->Px() * cos(ROTATIONANGLEAROUNDY) - vect_neg_bot->Pz() * sin(ROTATIONANGLEAROUNDY);
+	double pz_neg_bot_before_beam_rotation = vect_neg_bot->Px() * sin(ROTATIONANGLEAROUNDY) + vect_neg_bot->Pz() * cos(ROTATIONANGLEAROUNDY);
+	double py_neg_bot_before_beam_rotation = vect_neg_bot->Py();
+
+	TLorentzVector* vector_neg_top_beam_rotation = new TLorentzVector();
+	vector_neg_top_beam_rotation->SetXYZM(px_neg_top_before_beam_rotation, py_neg_top_before_beam_rotation, pz_neg_top_before_beam_rotation, ELECTRONMASS);
+
+	TLorentzVector* vector_neg_bot_beam_rotation = new TLorentzVector();
+	vector_neg_bot_beam_rotation->SetXYZM(px_neg_bot_before_beam_rotation, py_neg_bot_before_beam_rotation, pz_neg_bot_before_beam_rotation, ELECTRONMASS);
+
+	double energy_top = vector_neg_top_beam_rotation->E();
+	double energy_bot = vector_neg_top_beam_rotation->E();
+
+	double theta_top_before_rotation = vector_neg_top_beam_rotation->Theta();
+	double theta_bot_before_rotation = vector_neg_bot_beam_rotation->Theta();
+
+	double energy_calcuated_top = func_E_vs_theta_before_roation->Eval(theta_top_before_rotation);
+	double energy_calcuated_bot = func_E_vs_theta_before_roation->Eval(theta_bot_before_rotation);
+
+	double theta_top_calculated_before_rotation = func_theta1_vs_theta2_before_roation->Eval(theta_bot_before_rotation);
+	double theta_bot_calculated_before_rotation = func_theta1_vs_theta2_before_roation->Eval(theta_top_before_rotation);
+
+	double energy_diff_top = energy_top - energy_calcuated_top;
+	double energy_diff_bot = energy_bot - energy_calcuated_bot;
+	double theta_diff_top = theta_top_before_rotation - theta_top_calculated_before_rotation;
+	double theta_diff_bot = theta_bot_before_rotation - theta_bot_calculated_before_rotation;
+
+	histos->Fill2DHisto("energy_vs_theta_top_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_hh",theta_top_before_rotation, energy_top, weight);
+	histos->Fill2DHisto("energy_vs_theta_bot_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_hh",theta_bot_before_rotation, energy_bot, weight);
+
+	histos->Fill2DHisto("thetaTop_vs_thetaBot_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_hh",theta_bot_before_rotation, theta_top_before_rotation, weight);
+
+	histos->Fill1DHisto("diffE_top_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_h", energy_diff_top, weight);
+	histos->Fill1DHisto("diffE_bot_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_h", energy_diff_bot, weight);
+
+	histos->Fill1DHisto("diffTheta_top_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_h", theta_diff_top, weight);
+	histos->Fill1DHisto("diffTheta_bot_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_h", theta_diff_bot, weight);
+
+	histos->Fill2DHisto("pxSum_vs_pySum_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_hh", vector_neg_top_beam_rotation->Px() + vector_neg_bot_beam_rotation->Px(), vector_neg_top_beam_rotation->Py() + vector_neg_bot_beam_rotation->Py(), weight);
+
+	histos->Fill2DHisto("diffETop_vs_diffEBot_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_hh", energy_diff_top, energy_diff_bot, weight);
+
+	histos->Fill2DHisto("diffThetaTop_vs_diffThetaBot_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_hh", theta_diff_top, theta_diff_bot, weight);
+
 
     if (!vtxSelector->passCutGt("pSum_gt", pSum, weight)){
         vtxSelector->clearSelector();
