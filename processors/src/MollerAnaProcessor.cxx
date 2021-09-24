@@ -13,7 +13,7 @@
 #define ELECTRONMASS 0.000510998950 // GeV
 #define PI 3.14159265358979
 #define ROTATIONANGLEAROUNDY 0.0305 // rad
-#define MOMSCALE 0.85
+#define MOMSCALE 1.761/2.09
 
 MollerAnaProcessor::MollerAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
