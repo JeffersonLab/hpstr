@@ -741,6 +741,8 @@ for histo in histos:
             break
 hybridHwDict = sorted(hybridHwDict.items())
 
+nFailedFits = 0
+
 #Loop over histograms in dictionary
 for entry in hybridHwDict:
     #Feb and Hybrid values
@@ -752,6 +754,10 @@ for entry in hybridHwDict:
 
     #Get Offline Baseline Fit values for hybrid
     offlineFitTuple = getOfflineFitTuple(inFile, hh.GetName())
+    for i in offlineFitTuple[11]:
+        if i > 0.0:
+            nFailedFits = nFailedFits + 1
+    print("N Failed Fits: ",nFailedFits)
     hyb_svt_ids = offlineFitTuple[0]
     hyb_channels = offlineFitTuple[1]
 
@@ -784,3 +790,4 @@ for entry in hybridHwDict:
 
 outFile.Write()
 
+print("N Failed Fits: ",nFailedFits)
