@@ -36,32 +36,38 @@
     },
     
 	"time_diff_lt" : {
-        "cut" : 3,
+        "cut" : 4,
         "id"  : 6,
-        "info" : "|#Delta t|< 3 [ns]"
+        "info" : "|#Delta t|< 4 [ns]"
     },    
     
     "pTop_lt" : {
-        "cut" : 2,
+        "cut" : 2.78,
         "id"  : 7,
-        "info" : "p_{top} < 2 [GeV]"
+        "info" : "p_{top} < 75%E_{beam} [GeV]"
     },
     
 	"pBot_lt" : {
         "cut" : 2,
         "id"  : 8,
-        "info" : "p_{bot} < 2 [GeV]"
+        "info" : "p_{bot} < 75%E_{beam} [GeV]"
     },
     
 	"pDiff_lt" : {
-        "cut" : 0.6,
+        "cut" : 0.8,
         "id"  : 9,
-        "info" : "| pDiff | < 0.6 [GeV]"
+        "info" : "| pDiff | < 0.8 [GeV]"
     },
     
  	"pSum_gt" : {
-        "cut" : 2.8,
+        "cut" : 3.4,
         "id"  : 10,
-        "info" : "pSum > 2.8 [GeV]"
+        "info" : "pSum > 3.4 [GeV]"
+    },
+    
+	"pSum_lt" : {
+        "cut" : 4,
+        "id"  : 11,
+        "info" : "pSum < 4 [GeV]"
     }
 }
