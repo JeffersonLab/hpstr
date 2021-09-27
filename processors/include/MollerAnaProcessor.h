@@ -65,16 +65,16 @@ class MollerAnaProcessor : public Processor {
         TTree* tree_{nullptr};
         TBranch* btsData_{nullptr};
         TBranch* btrks_{nullptr};
-        TBranch* bvtxs_{nullptr};
+        //TBranch* bvtxs_{nullptr};
 
         TSData* tsData_{};
         std::vector<Track*>  * trks_{};
-        std::vector<Vertex*> * vtxs_{};
+        //std::vector<Vertex*> * vtxs_{};
 
         std::string anaName_{"mollerAna"};
         std::string tsColl_{"TSBank"};
         std::string trkColl_{"KalmanFullTracks"};
-        std::string vtxColl_{"UnconstrainedMollerVertices"};
+        //std::string vtxColl_{"UnconstrainedMollerVertices"};
 
 
         double beamE_{3.7};

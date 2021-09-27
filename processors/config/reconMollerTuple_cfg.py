@@ -24,7 +24,7 @@ p.add_library("libprocessors")
 header = HpstrConf.Processor('header', 'EventProcessor')
 track = HpstrConf.Processor('track', 'TrackingProcessor')
 ecal = HpstrConf.Processor('ecal', 'ECalDataProcessor')
-vtx = HpstrConf.Processor('vtx', 'VertexProcessor')
+#vtx = HpstrConf.Processor('vtx', 'VertexProcessor')
 
 ###############################
 #   Processor Configuration   #
@@ -58,17 +58,18 @@ ecal.parameters["clusCollLcio"] = "EcalClustersCorr"
 ecal.parameters["clusCollRoot"] = "RecoEcalClusters"
 
 #Vertex
-vtx.parameters["debug"] = 0
-vtx.parameters["vtxCollLcio"]    = 'UnconstrainedMollerVertices'
-vtx.parameters["vtxCollRoot"]    = 'UnconstrainedMollerVertices'
-vtx.parameters["partCollRoot"]   = 'ParticlesMollerOnVertices'
-vtx.parameters["kinkRelCollLcio"] = ''
-vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
+#vtx.parameters["debug"] = 0
+#vtx.parameters["vtxCollLcio"]    = 'UnconstrainedMollerVertices'
+#vtx.parameters["vtxCollRoot"]    = 'UnconstrainedMollerVertices'
+#vtx.parameters["partCollRoot"]   = 'ParticlesMollerOnVertices'
+#vtx.parameters["kinkRelCollLcio"] = ''
+#vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
 # Sequence which the processors will run.
 if options.isData == -1: print("Please specficy if this is Data or not via option -t")
 
-p.sequence = [header, track, ecal, vtx]
+p.sequence = [header, track, ecal]
+#p.sequence = [header, track, ecal, vtx]
 
 p.input_files= lcio_file
 p.output_files = root_file

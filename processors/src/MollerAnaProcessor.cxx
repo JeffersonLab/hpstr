@@ -29,7 +29,7 @@ void MollerAnaProcessor::configure(const ParameterSet& parameters) {
         anaName_         = parameters.getString("anaName");
 
         trkColl_    = parameters.getString("trkColl");
-        vtxColl_ = parameters.getString("vtxColl",vtxColl_);
+        //vtxColl_ = parameters.getString("vtxColl",vtxColl_);
 
         selectionCfg_   = parameters.getString("vtxSelectionjson",selectionCfg_);
         histCfgFilename_      = parameters.getString("histCfg",histCfgFilename_);
@@ -59,7 +59,7 @@ void MollerAnaProcessor::initialize(TTree* tree) {
     tree_= tree;
     tree_->SetBranchAddress(tsColl_.c_str(), &tsData_ , &btsData_);
     tree_->SetBranchAddress(trkColl_.c_str() , &trks_, &btrks_);
-    tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_ , &bvtxs_);
+    //tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_ , &bvtxs_);
 
     // Kinematic equations
     // E vs theta
