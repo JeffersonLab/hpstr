@@ -47,6 +47,7 @@ mollerAna.parameters["trkColl"] = "KalmanFullTracks"
 #mollerAna.parameters["partColl"]   = 'ParticlesMollerOnVertices'
 mollerAna.parameters["analysis"] = analysis
 mollerAna.parameters["beamE"] = base.beamE[str(options.year)]
+mollerAna.parameters["isData"] = options.isData
 
 mollerAna.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/mollerVertexSelection_2021.json'
 mollerAna.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mollerAnalysis/mollerAnalysis.json'    

@@ -78,7 +78,7 @@ class MollerAnaProcessor : public Processor {
 
 
         double beamE_{3.7};
-        int isData_{0};
+        int isData_{1};
         std::string analysis_{"MollerAnalysis"};
 
         //Debug level
@@ -89,6 +89,9 @@ class MollerAnaProcessor : public Processor {
         // Kinematic equations
         TF1* func_E_vs_theta_before_roation;
         TF1* func_theta1_vs_theta2_before_roation;
+
+        // save a tree for information of tracks from vertices
+        std::shared_ptr<FlatTupleMaker> _reg_tracks_from_vertices;
 
 
 };

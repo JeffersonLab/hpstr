@@ -38,7 +38,7 @@
 	"time_diff_lt" : {
         "cut" : 4,
         "id"  : 6,
-        "info" : "|#Delta t|< 4 [ns]"
+        "info" : "|#Deltat| < 4 [ns]"
     },    
     
     "pTop_lt" : {

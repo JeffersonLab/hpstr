@@ -35,6 +35,7 @@ void MollerAnaProcessor::configure(const ParameterSet& parameters) {
         histCfgFilename_      = parameters.getString("histCfg",histCfgFilename_);
 
         beamE_  = parameters.getDouble("beamE",beamE_);
+        isData_  = parameters.getInteger("isData",isData_);
     }
     catch (std::runtime_error& error)
     {
@@ -71,6 +72,19 @@ void MollerAnaProcessor::initialize(TTree* tree) {
     func_theta1_vs_theta2_before_roation = new TF1("func_theta1_vs_theta2_before_roation", "2*asin([1]/2./[0] * 1/sin(x/2.))", 0, 1);
     func_theta1_vs_theta2_before_roation->SetParameter(0, beamE_);
     func_theta1_vs_theta2_before_roation->SetParameter(1, ELECTRONMASS);
+
+
+	// save a tree for information of tracks from vertices
+	_reg_tracks_from_vertices = std::make_shared<FlatTupleMaker>(anaName_ + "_tracks_from_vertices");
+	_reg_tracks_from_vertices->addVector("momTop");
+	_reg_tracks_from_vertices->addVector("momBot");
+
+
+	_reg_tracks_from_vertices->addVariable("chi2NdfTop");
+	_reg_tracks_from_vertices->addVariable("chi2NdfBot");
+
+	_reg_tracks_from_vertices->addVariable("timeTop");
+	_reg_tracks_from_vertices->addVariable("timeBot");
 }
 
 bool MollerAnaProcessor::process(IEvent* ievent) {
@@ -178,10 +192,12 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
     double time_diff = time_neg_top - time_neg_bot;
 	histos->Fill1DHisto("time_diff_with_numTrakcs_numHits_cuts_h", time_diff, weight);
 
-    if (!vtxSelector->passCutLt("time_diff_lt", fabs(time_diff),weight)){
-        vtxSelector->clearSelector();
-    	return true;
-    }
+	if(isData_){
+		if (!vtxSelector->passCutLt("time_diff_lt", fabs(time_diff),weight)){
+			vtxSelector->clearSelector();
+			return true;
+		}
+	}
 
     std::vector<double> mom_neg_top = track_neg_top.getMomentum();
     std::vector<double> mom_neg_bot = track_neg_bot.getMomentum();
@@ -224,6 +240,23 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
 	histos->Fill1DHisto("pSum_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_h", pSum, weight);
 	histos->Fill1DHisto("im_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_h", im, weight);
 	histos->Fill2DHisto("im_vs_pSum_with_numTrakcs_numHits_timeDiff_p_pDiff_cuts_hh", pSum, im, weight);
+
+
+	_reg_tracks_from_vertices->addToVector("momTop", mom_neg_top[0]);
+	_reg_tracks_from_vertices->addToVector("momTop", mom_neg_top[1]);
+	_reg_tracks_from_vertices->addToVector("momTop", mom_neg_top[2]);
+
+	_reg_tracks_from_vertices->addToVector("momBot", mom_neg_bot[0]);
+	_reg_tracks_from_vertices->addToVector("momBot", mom_neg_bot[1]);
+	_reg_tracks_from_vertices->addToVector("momBot", mom_neg_bot[2]);
+
+	_reg_tracks_from_vertices->setVariableValue("chi2NdfTop", track_neg_top.getChi2Ndf());
+	_reg_tracks_from_vertices->setVariableValue("chi2NdfBot", track_neg_bot.getChi2Ndf());
+
+    _reg_tracks_from_vertices->setVariableValue("timeTop", time_neg_top);
+    _reg_tracks_from_vertices->setVariableValue("timeBot", time_neg_bot);
+
+    _reg_tracks_from_vertices->fill();
 
     if (!vtxSelector->passCutGt("pSum_gt", pSum, weight)){
         vtxSelector->clearSelector();
@@ -286,6 +319,7 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
 
 	histos->Fill2DHisto("diffThetaTop_vs_diffThetaBot_with_numTrakcs_numHits_timeDiff_p_pDiff_pSum_cuts_hh", theta_diff_top, theta_diff_bot, weight);
 
+
     vtxSelector->clearSelector();
     return true;
 }
@@ -296,6 +330,8 @@ void MollerAnaProcessor::finalize() {
     delete histos;
     histos = nullptr;
     vtxSelector->getCutFlowHisto()->Write();
+
+    _reg_tracks_from_vertices->writeTree();
 
     outF_->Close();
 
