@@ -786,7 +786,8 @@ for entry in hybridHwDict:
     plotOfflineChannelFits(hybrid, hh, offlineFitTuple, outFile)
 
     writeBaselineFitsToDatabase(csvOutFile, offlineFitTuple, onlineFitTuple)
-    generateThresholds(threshOutFile, outFile, offlineFitTuple, onlineFitTuple, febn, hybn, hybrid)
+    if onlineFitTuple:
+        generateThresholds(threshOutFile, outFile, offlineFitTuple, onlineFitTuple, febn, hybn, hybrid)
 
 outFile.Write()
 
