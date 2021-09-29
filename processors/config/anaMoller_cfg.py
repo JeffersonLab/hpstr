@@ -43,13 +43,13 @@ mollerAna.parameters["debug"] = 0
 mollerAna.parameters["anaName"] = "mollerAna"
 mollerAna.parameters["TSColl"] = "TSBank"
 mollerAna.parameters["trkColl"] = "KalmanFullTracks"
-#mollerAna.parameters["vtxColl"] = "UnconstrainedMollerVertices"
-#mollerAna.parameters["partColl"]   = 'ParticlesMollerOnVertices'
+mollerAna.parameters["vtxColl"] = "UnconstrainedMollerVertices"
+mollerAna.parameters["partColl"]   = 'ParticlesMollerOnVertices'
 mollerAna.parameters["analysis"] = analysis
 mollerAna.parameters["beamE"] = base.beamE[str(options.year)]
 mollerAna.parameters["isData"] = options.isData
 
-mollerAna.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/mollerVertexSelection_2021.json'
+mollerAna.parameters["trackSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/mollerTrackSelection_2021.json'
 mollerAna.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mollerAnalysis/mollerAnalysis.json'    
 
 # Sequence which the processors will run.

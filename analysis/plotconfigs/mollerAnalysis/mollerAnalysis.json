@@ -33,32 +33,32 @@
     
 	"nHits_pos_top_h" : {
         "bins"   : 16,
-        "minX"   : 0,
-        "maxX"   : 16,
+        "minX"   : -0.5,
+        "maxX"   : 15.5,
         "xtitle" : "Number of hits",
         "ytitle" : "Tracks"
     },
     
 	"nHits_neg_top_h" : {
         "bins"   : 16,
-        "minX"   : 0,
-        "maxX"   : 16,
+        "minX"   : -0.5,
+        "maxX"   : 15.5,
         "xtitle" : "Number of hits",
         "ytitle" : "Tracks"
     },
     
 	"nHits_pos_bot_h" : {
         "bins"   : 16,
-        "minX"   : 0,
-        "maxX"   : 16,
+        "minX"   : -0.5,
+        "maxX"   : 15.5,
         "xtitle" : "Number of hits",
         "ytitle" : "Tracks"
     },
     
 	"nHits_neg_bot_h" : {
         "bins"   : 16,
-        "minX"   : 0,
-        "maxX"   : 16,
+        "minX"   : -0.5,
+        "maxX"   : 15.5,
         "xtitle" : "Number of hits",
         "ytitle" : "Tracks"
     },
@@ -97,33 +97,33 @@
     },
     
 	"num_tracks_pos_top_h" : {
-        "bins"   : 5,
-        "minX"   : 0,
-        "maxX"   : 5,
+        "bins"   : 6,
+        "minX"   : -0.5,
+        "maxX"   : 5.5,
         "xtitle" : "Number of tracks",
         "ytitle" : "Tracks"
     },
     
     "num_tracks_neg_top_h" : {
-        "bins"   : 5,
-        "minX"   : 0,
-        "maxX"   : 5,
+        "bins"   : 6,
+        "minX"   : -0.5,
+        "maxX"   : 5.5,
         "xtitle" : "Number of tracks",
         "ytitle" : "Tracks"
     },
     
 	"num_tracks_pos_bot_h" : {
-        "bins"   : 5,
-        "minX"   : 0,
-        "maxX"   : 5,
+        "bins"   : 6,
+        "minX"   : -0.5,
+        "maxX"   : 5.5,
         "xtitle" : "Number of tracks",
         "ytitle" : "Tracks"
     },
     
     "num_tracks_neg_bot_h" : {
-        "bins"   : 5,
-        "minX"   : 0,
-        "maxX"   : 5,
+        "bins"   : 6,
+        "minX"   : -0.5,
+        "maxX"   : 5.5,
         "xtitle" : "Number of tracks",
         "ytitle" : "Tracks"
     },

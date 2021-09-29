@@ -55,26 +55,26 @@ class MollerAnaProcessor : public Processor {
         virtual void configure(const ParameterSet& parameters);
 
     private:
-        std::shared_ptr<BaseSelector> vtxSelector;
-        std::string selectionCfg_;
+        std::shared_ptr<BaseSelector> trackSelector;
+        std::string trackSelectionCfg_;
 
         //Containers to hold histogrammer info
-        MollerAnaHistos* histos{nullptr};
+        MollerAnaHistos* trackHistos{nullptr};
         std::string  histCfgFilename_;
 
         TTree* tree_{nullptr};
         TBranch* btsData_{nullptr};
         TBranch* btrks_{nullptr};
-        //TBranch* bvtxs_{nullptr};
+        TBranch* bvtxs_{nullptr};
 
         TSData* tsData_{};
         std::vector<Track*>  * trks_{};
-        //std::vector<Vertex*> * vtxs_{};
+        std::vector<Vertex*> * vtxs_{};
 
         std::string anaName_{"mollerAna"};
         std::string tsColl_{"TSBank"};
         std::string trkColl_{"KalmanFullTracks"};
-        //std::string vtxColl_{"UnconstrainedMollerVertices"};
+        std::string vtxColl_{"UnconstrainedMollerVertices"};
 
 
         double beamE_{3.7};
