@@ -255,6 +255,33 @@
         "ytitle" : "Energy ratio between Recon ecal cluster and VTP clusters"
     },
     
+	"num_VTPClusters_indexMatchedWithEcalCluster_h" : {
+        "bins"   : 6,
+        "minX"   : -0.5,
+        "maxX"   : 5.5,
+        "xtitle" : "Number of VTP clusters matched with Ecal cluster in index",
+        "ytitle" : "Counts"
+    },
+    
+	"timeDiff_withOneMatchedVTPClusters_h" : {
+        "bins"   : 100,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Time diff. between Ecal and VTP clusters [ns]",
+        "ytitle" : "Counts"
+    },
+    
+	"timeDiff_short_vs_long_withTwoMatchedVTPClusters_hh" : {
+        "binsX"   : 100,
+        "minX"   : 0,
+        "maxX"   : 200,
+        "binsY"   : 100,
+        "minY"   : 0,
+        "maxY"   : 200,
+        "xtitle" : "Time diff. for short [ns]",
+        "ytitle" : "Time diff. for long [ns]"
+    },
+    
 	"ecal_energy_x_single2_pass_hh" : {
         "binsX"   : 23,
         "minX"   : 0.5,
@@ -323,6 +350,17 @@
         "ytitle" : "Energy of Ecal cluster [GeV]"
     },
     
+	"nHits_ecal_vs_vtp_single3_fail_hh" : {
+        "binsX"   : 5,
+        "minX"   : -0.5,
+        "maxX"   : 4.5,
+        "binsY"   : 5,
+        "minY"   : -0.5,
+        "maxY"   : 4.5,
+        "xtitle" : "nHits for Ecal cluster",
+        "ytitle" : "nHits for matched VTP cluster"
+    },
+    
 	"ecal_energyDiff_x_single2_fail_hh" : {
         "binsX"   : 23,
         "minX"   : 0.5,
@@ -343,6 +381,17 @@
         "maxY"   : 4,
         "xtitle" : "X of VTP cluster",
         "ytitle" : "Energy of VTP cluster [GeV]"
+    },
+    
+	"nHits_ecal_vs_vtp_single2_fail_hh" : {
+        "binsX"   : 5,
+        "minX"   : -0.5,
+        "maxX"   : 4.5,
+        "binsY"   : 5,
+        "minY"   : -0.5,
+        "maxY"   : 4.5,
+        "xtitle" : "nHits for Ecal cluster",
+        "ytitle" : "nHits for matched VTP cluster"
     },
     
 	"x_vs_y_single2_fail_energyDiffLargerthan1pt5_hh" : {

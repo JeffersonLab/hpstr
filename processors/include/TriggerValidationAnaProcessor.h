@@ -65,6 +65,8 @@ public:
 
     singleTriggerTags buildSingle2TriggerTags(CalCluster* ecalCluster);
     singleTriggerTags buildSingle3TriggerTags(CalCluster* ecalCluster, std::map<int, hodoPattern> hodoPatternMap);
+    singleTriggerTags buildSingle2TriggerTags(CalCluster* ecalCluster, double vtpClusterEnergy);
+    singleTriggerTags buildSingle3TriggerTags(CalCluster* ecalCluster, double vtpClusterEnergy, std::map<int, hodoPattern> hodoPatternMap);
     singleTriggerTags buildSingle3TriggerTags(VTPData::hpsCluster vtpCluster, std::map<int, hodoPattern> hodoPatternMap);
 
 
@@ -163,18 +165,25 @@ private:
     double neg_bot_botCutY[2] = {-10.432, 0.939808};
 
     // Without track-cluster matching
+    int foundMatchedVTPCluster{0};
+	int faildedMatchedVTPCluster{0};
+
     int passSingle2Top{0};
     int failSingle2Top{0};
     int failSingle2PassSinge3Top{0};
+    int failSingle2TopWithMatchedVTP{0};
 
     int passSingle2Bot{0};
     int failSingle2Bot{0};
     int failSingle2PassSinge3Bot{0};
+    int failSingle2BotWithMatchedVTP{0};
 
     int passSingle3Top{0};
     int failSingle3Top{0};
+    int failSingle3TopWithMatchedVTP{0};
     int passSingle3Bot{0};
     int failSingle3Bot{0};
+    int failSingle3BotWithMatchedVTP{0};
 
     int passSinge2Single3Top{0};
     int passSinge2Single3Bot{0};
@@ -215,6 +224,9 @@ private:
     int tsSl2TSl3F_1P1N{0};
     int tsSl2FSl3T_1P1N{0};
     int tsSl2FSl3F_1P1N{0};
+
+
+
 
 };
 
