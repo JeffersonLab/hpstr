@@ -1,0 +1,112 @@
+{ 
+	"ts_h" : {
+        "bins" : 20,
+        "minX" : -0.5,
+        "maxX" : 19.5,
+        "xtitle" : "TS Bit",
+        "ytitle" : "Events"
+    }, 
+
+    "numEcalClusters_h" : {
+        "bins"   : 20,
+        "minX"   : -0.5,
+        "maxX"   : 19,
+        "xtitle" : "Recon ecal cluster time [ns]",
+        "ytitle" : "Counts"
+    },
+
+    "ecalClusterEnergy_h" : {
+        "bins"   : 200,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "Recon ecal cluster energy [GeV]",
+        "ytitle" : "Counts"
+    },
+    
+	"ecalClusterNHits_h" : {
+        "bins"   : 10,
+        "minX"   : 0.5,
+        "maxX"   : 10.5,
+        "xtitle" : "NHits of recon ecal cluster",
+        "ytitle" : "Counts"
+    },
+    
+	"ecalClusTime_h" : {
+        "bins"   : 1000,
+        "minX"   : 0,
+        "maxX"   : 200,
+        "xtitle" : "Recon ecal cluster time [ns]",
+        "ytitle" : "Counts"
+    },
+    
+	"x_y_ecalCluster_hh" : {
+        "binsX"   : 47,
+        "minX"   : -23.5,
+        "maxX"   : 23.5,
+        "binsY"   : 11,
+        "minY"   : -5.5,
+        "maxY"   : 5.5,
+        "xtitle" : "X of recon ecal cluster",
+        "ytitle" : "Y of recon ecal cluster"
+    },
+    
+	"numVTPClusters_h" : {
+        "bins"   : 20,
+        "minX"   : -0.5,
+        "maxX"   : 19,
+        "xtitle" : "Recon ecal cluster time [ns]",
+        "ytitle" : "Counts"
+    },
+
+    "vtpClusterEnergy_h" : {
+        "bins"   : 200,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "xtitle" : "VTP cluster energy [GeV]",
+        "ytitle" : "Counts"
+    },
+    
+	"vtpClusterNHits_h" : {
+        "bins"   : 10,
+        "minX"   : 0.5,
+        "maxX"   : 10.5,
+        "xtitle" : "NHits of VTP cluster",
+        "ytitle" : "Counts"
+    },
+    
+	"vtpClusterTime_h" : {
+        "bins"   : 1000,
+        "minX"   : 0,
+        "maxX"   : 200,
+        "xtitle" : "VTP cluster time [ns]",
+        "ytitle" : "Counts"
+    },
+    
+	"x_y_vtpCluster_hh" : {
+        "binsX"   : 47,
+        "minX"   : -23.5,
+        "maxX"   : 23.5,
+        "binsY"   : 11,
+        "minY"   : -5.5,
+        "maxY"   : 5.5,
+        "xtitle" : "X of VTP cluster",
+        "ytitle" : "Y of VTP cluster"
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}

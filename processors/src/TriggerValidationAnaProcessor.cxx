@@ -93,6 +93,7 @@ void TriggerValidationAnaProcessor::configure(const ParameterSet& parameters) {
         debug_           = parameters.getInteger("debug");
         anaName_         = parameters.getString("anaName");
         histCfgFilename_      = parameters.getString("histCfg",histCfgFilename_);
+        baseHistCfgFilename_      = parameters.getString("basehistCfg",histCfgFilename_);
         ecalClusColl_    = parameters.getString("ecalClusColl");
         beamE_  = parameters.getDouble("beamE",beamE_);
 		#ifdef __WITHSVT__
@@ -112,6 +113,10 @@ void TriggerValidationAnaProcessor::initialize(TTree* tree) {
     histos = new TriggerValidationAnaHistos(anaName_.c_str());
     histos->loadHistoConfig(histCfgFilename_);
     histos->DefineHistos();
+
+    baseHistos = new TriggerValidationAnaHistos(anaName_.c_str());
+    baseHistos->loadHistoConfig(baseHistCfgFilename_);
+    baseHistos->DefineHistos();
 
     // init TTree
     tree_->SetBranchAddress(vtpColl_.c_str() , &vtpData_, &bvtpData_);
@@ -171,7 +176,9 @@ void TriggerValidationAnaProcessor::initialize(TTree* tree) {
 bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
     double weight = 1.;
 
-    histos->FillTSData(tsData_);
+    baseHistos->FillTSData(tsData_);
+    baseHistos->FillEcalClusters(ecalClusters_);
+    baseHistos->FillVTPData(vtpData_);
 
     //Tracks
 	// Separate all tracks into four categories
@@ -1078,9 +1085,6 @@ bool TriggerValidationAnaProcessor::process(IEvent* ievent) {
 
 						hodoPattern patternL1 = hodopatternMap[topLayer1];
 						hodoPattern patternL2 = hodopatternMap[topLayer2];
-						std::cout << patternL1.patternSet << std::endl;
-						std::cout << patternL2.patternSet << std::endl;
-						std::cout << "*************" << std::endl;
 					}
 
 				}
@@ -1497,10 +1501,18 @@ void TriggerValidationAnaProcessor::finalize() {
 	#endif
 
 
+    outF_->cd();
 
     histos->saveHistos(outF_, anaName_.c_str());
     delete histos;
     histos = nullptr;
+
+    std::string dirName = anaName_+"_base";
+    baseHistos->saveHistos(outF_,dirName.c_str());
+    delete baseHistos;
+    baseHistos = nullptr;
+
+    outF_->Close();
 
 }
 

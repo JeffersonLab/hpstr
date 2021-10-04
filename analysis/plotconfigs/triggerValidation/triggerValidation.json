@@ -1,12 +1,4 @@
-{ 
-     "ts_h" : {
-        "bins" : 20,
-        "minX" : -0.5,
-        "maxX" : 19.5,
-        "xtitle" : "TS Bit",
-        "ytitle" : "Events"
-    },   
-    
+{       
     "ecalClusterTime_h" : {
         "bins"   : 100,
         "minX"   : 0,

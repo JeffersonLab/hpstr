@@ -5,6 +5,7 @@
 #include "HistoManager.h"
 #include "VTPData.h"
 #include "CalCluster.h"
+#include "CalHit.h"
 #include "TSData.h"
 #include "AnaHelpers.h"
 
@@ -23,7 +24,8 @@ class TriggerValidationAnaHistos : public HistoManager {
         virtual void Define1DHistos();
 
         void FillTSData(TSData* tsData, float weight = 1.);
-
+        void FillEcalClusters(std::vector<CalCluster*> *ecalClusters, float weight = 1.);
+        void FillVTPData(VTPData *vtpData, float weight = 1.);
 
 };
 

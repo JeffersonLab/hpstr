@@ -41,6 +41,7 @@ triggerValidationAna.parameters["hodoHitColl"] = "RecoHodoHits"
 triggerValidationAna.parameters["hodoClusColl"] = "RecoHodoClusters"
 triggerValidationAna.parameters["trkColl"] = "KalmanFullTracks"
 triggerValidationAna.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/triggerValidation/triggerValidation.json'
+triggerValidationAna.parameters["basehistCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/triggerValidation/base.json'
 triggerValidationAna.parameters["beamE"] = base.beamE[str(options.year)]
 
 # Sequence which the processors will run.

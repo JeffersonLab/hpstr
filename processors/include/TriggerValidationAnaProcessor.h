@@ -85,7 +85,9 @@ public:
 private:
     //Containers to hold histogrammer info
     TriggerValidationAnaHistos* histos{nullptr};
+    TriggerValidationAnaHistos* baseHistos{nullptr};
     std::string  histCfgFilename_;
+    std::string  baseHistCfgFilename_;
 
     //TODO Change this to be held from HPSEvent
     TTree* tree_{nullptr};

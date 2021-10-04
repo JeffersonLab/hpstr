@@ -32,3 +32,41 @@ void TriggerValidationAnaHistos::FillTSData(TSData* tsData, float weight ){
 	if(tsData->prescaled.FEE_Top == true) Fill1DHisto("ts_h", 18, weight);
 	if(tsData->prescaled.FEE_Bot == true) Fill1DHisto("ts_h", 19, weight);
 }
+
+
+void TriggerValidationAnaHistos::FillEcalClusters(std::vector<CalCluster*> *ecalClusters, float weight ) {
+    int nClusters = ecalClusters->size();
+    Fill1DHisto("numEcalClusters_h", (float)nClusters, weight);
+    for (int i=0; i < nClusters; i++)
+    {
+        CalCluster *cluster = ecalClusters->at(i);
+        Fill1DHisto("ecalClusterEnergy_h", cluster->getEnergy(), weight);
+        Fill1DHisto("ecalClusterNHits_h", cluster->getNHits(), weight);
+        Fill1DHisto("ecalClusTime_h", cluster->getTime(), weight);
+
+		CalHit* seed = (CalHit*)cluster->getSeed();
+
+		int ix = seed -> getCrystalIndices()[0];
+		int iy = seed -> getCrystalIndices()[1];
+
+        Fill2DHisto("x_y_ecalCluster_hh", ix, iy, weight);
+    }
+}
+
+void TriggerValidationAnaHistos::FillVTPData(VTPData *vtpData, float weight) {
+	std::vector<VTPData::hpsCluster> vtpClusters =  vtpData->clusters;
+    int nClusters = vtpClusters.size();
+    Fill1DHisto("numVTPClusters_h", (float)nClusters, weight);
+	for(int j = 0; j < nClusters; j++){
+		VTPData::hpsCluster vtpCluster = vtpClusters.at(j);
+
+        Fill1DHisto("vtpClusterEnergy_h", vtpCluster.E / 1000., weight);
+        Fill1DHisto("vtpClusterNHits_h", vtpCluster.N, weight);
+        Fill1DHisto("vtpClusterTime_h", vtpCluster.T * 4, weight);
+
+		int ix = vtpCluster.X;
+		int iy = vtpCluster.Y;
+		if(ix <= 0) ix--;
+		Fill2DHisto("x_y_vtpCluster_hh", ix, iy, weight);
+	}
+}
