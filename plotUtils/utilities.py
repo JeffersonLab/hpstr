@@ -35,7 +35,7 @@ parser.add_option("-d","--debug",dest="debug",action="store_true",help="Debug fl
 #Get a plot from a directory+file name
 def getPlot(loc,fin,plot):
     print("Getting {}".format(plot))
-    f = TFile.Open(loc+fin)
+    f = r.TFile.Open(loc+fin)
     histo = f.Get(plot)
     print( histo )
     histo.SetDirectory(0)
@@ -46,7 +46,7 @@ def getPlot(loc,fin,plot):
 #Get a plot from a file
 def getPlot(fullpath,plot):
     print("Getting {} from {}".format(plot,fullpath))
-    f = TFile.Open(fullpath)
+    f = r.TFile.Open(fullpath)
     histo = f.Get(plot)
     print(histo)
     histo.SetDirectory(0)
@@ -59,7 +59,7 @@ def MakeHistoListFromFiles(listOfFiles,path,histoName):
 
     histolist = []
     for infile in listOfFiles:
-        f = TFile.Open(infile)
+        f = r.TFile.Open(infile)
         print( f )
         h = f.Get(path+histoName)
         print(path+histoName)
@@ -73,7 +73,7 @@ def MakeHistoListFromSameFile(infile,path,histoNames):
     histolist = []
     for h_name in histoNames:
         print( h_name )
-        f = TFile.Open(infile)
+        f = r.TFile.Open(infile)
         print( f )
 
         h = f.Get(path+"/"+h_name)
@@ -676,8 +676,7 @@ def Make1Dplots(name,outdir,histos,colors,markers,legends,oFext,xtitle="",ytitle
 
 
 
-def Make2DRatio(name,outdir,histo1,histo2,xtitle="",ytitle="",ztitle="",runNumber="",legends=[]):
-    oFext=".pdf"
+def Make2DRatio(name,outdir,histo1,histo2,xtitle="",ytitle="",ztitle="",runNumber="",legends=[],oFext=".png"):
     if not os.path.exists(outdir):
         os.mkdir(outdir)
 

@@ -24,7 +24,6 @@ class ModuleMapper {
 
   std::vector<std::string> getHybridStrings();
   //get list of string modules
-
   void getStrings (std::vector<std::string>& strings) {
     for (strmap_it it = string_to_hw.begin(); it!= string_to_hw.end(); ++it)
       strings.push_back(it->first);
@@ -42,11 +41,11 @@ class ModuleMapper {
       sws.push_back(it->first);
   }
 
+  //Build global svt id map for all FebHybrid combinations
   std::map<std::string, std::map<int,int>> buildChannelSvtIDMap();
 
+  //Return global svt id for channel by providing local channel number and F<n>H<m> of channel
   int getSvtIDFromHWChannel(int channel, std::string hwTag, std::map<std::string,std::map<int,int>> svtid_map);  
-  
-  
   
   //TODO Bidirectional maps could be used
 

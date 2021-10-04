@@ -53,6 +53,20 @@
         "xtitle" : "Mass of PDGID=622 Particle [MeV]",
         "ytitle" : "Sim Particles / 1 MeV"
     },
+    "mc622Energy_h" : {
+        "bins" : 45,
+        "minX" : 0,
+        "maxX" : 4.5,
+        "xtitle" : "Energy of PDGID=622 Particle [GeV]",
+        "ytitle" : "Sim Particles / 100 MeV"
+    },
+    "mc622P_h" : {
+        "bins" : 45,
+        "minX" : 0,
+        "maxX" : 4.5,
+        "xtitle" : "Momentum of PDGID=622 Particle [GeV]",
+        "ytitle" : "Sim Particles / 100 MeV"
+    },
     "mc622Z_h" : {
         "bins" : 200,
         "minX" : -47.51,
@@ -74,6 +88,20 @@
         "xtitle" : "Z Position of PDGID=624 Particle [mm]",
         "ytitle" : "Sim Particles / 1 mm"
     },
+    "mc624Energy_h" : {
+        "bins" : 45,
+        "minX" : 0,
+        "maxX" : 4.5,
+        "xtitle" : "Energy of PDGID=624 Particle [GeV]",
+        "ytitle" : "Sim Particles / 100 MeV"
+    },
+    "mc624P_h" : {
+        "bins" : 45,
+        "minX" : 0,
+        "maxX" : 4.5,
+        "xtitle" : "Momentum of PDGID=624 Particle [GeV]",
+        "ytitle" : "Sim Particles / 100 MeV"
+    },
     "mc625Mass_h" : {
         "bins" : 450,
         "minX" : 0,
@@ -87,6 +115,20 @@
         "maxX" : 152.49,
         "xtitle" : "Z Position of PDGID=625 Particle [mm]",
         "ytitle" : "Sim Particles / 1 mm"
+    },
+    "mc625Energy_h" : {
+        "bins" : 45,
+        "minX" : 0,
+        "maxX" : 4.5,
+        "xtitle" : "Energy of PDGID=625 Particle [GeV]",
+        "ytitle" : "Sim Particles / 100 MeV"
+    },
+    "mc625P_h" : {
+        "bins" : 45,
+        "minX" : 0,
+        "maxX" : 4.5,
+        "xtitle" : "Momentum of PDGID=625 Particle [GeV]",
+        "ytitle" : "Sim Particles / 100 MeV"
     },
     "truthRadElecE_h" : {
         "bins" : 200,
