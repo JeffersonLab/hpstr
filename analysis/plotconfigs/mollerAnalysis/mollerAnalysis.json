@@ -241,7 +241,31 @@
 		"xtitle" : "pSum [GeV]",
         "ytitle" : "Invariant mass [GeV/c^{2}]"
     },
+                
     
+	"p_tracks_neg_top_with_numTrakcs_numHits_timeDiff_p_pDiff_pSum_cuts_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+        "xtitle" : "p [GeV]",
+        "ytitle" : "Tracks"
+    },
+    
+	"p_tracks_neg_bot_with_numTrakcs_numHits_timeDiff_p_pDiff_pSum_cuts_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 6,
+        "xtitle" : "p [GeV]",
+        "ytitle" : "Tracks"
+    },    
+    
+	"pSum_with_numTrakcs_numHits_timeDiff_p_pDiff_pSum_cuts_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 7,
+        "xtitle" : "pSum [GeV]",
+        "ytitle" : "Neg. track pairs"
+    },
     
 	"im_with_numTrakcs_numHits_timeDiff_p_pDiff_pSum_cuts_h" : {
         "bins"   : 100,
@@ -251,7 +275,18 @@
         "ytitle" : "Neg. track pairs"
     },
     
+	"im_vs_pSum_with_numTrakcs_numHits_timeDiff_p_pDiff_pSum_cuts_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 7,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 0.2,
+		"xtitle" : "pSum [GeV]",
+        "ytitle" : "Invariant mass [GeV/c^{2}]"
+    },
     
+          
     
 	"energy_vs_theta_top_with_numTrakcs_numHits_timeDiff_p_pDiff_pSum_cuts_hh" : {
         "binsX" : 100,

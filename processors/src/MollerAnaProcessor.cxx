@@ -268,7 +268,14 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
     	return true;
     }
 
+	trackHistos->Fill1DHisto("p_tracks_neg_top_with_numTrakcs_numHits_timeDiff_p_pDiff_pSum_cuts_h", p_neg_top, weight);
+	trackHistos->Fill1DHisto("p_tracks_neg_bot_with_numTrakcs_numHits_timeDiff_p_pDiff_pSum_cuts_h", p_neg_bot, weight);
+
+	trackHistos->Fill1DHisto("pSum_with_numTrakcs_numHits_timeDiff_p_pDiff_pSum_cuts_h", pSum, weight);
 	trackHistos->Fill1DHisto("im_with_numTrakcs_numHits_timeDiff_p_pDiff_pSum_cuts_h", im, weight);
+	trackHistos->Fill2DHisto("im_vs_pSum_with_numTrakcs_numHits_timeDiff_p_pDiff_pSum_cuts_hh", pSum, im, weight);
+
+
 
 
 	double px_neg_top_before_beam_rotation = vect_neg_top->Px() * cos(ROTATIONANGLEAROUNDY) - vect_neg_top->Pz() * sin(ROTATIONANGLEAROUNDY);
