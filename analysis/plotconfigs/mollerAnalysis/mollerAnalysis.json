@@ -189,7 +189,7 @@
     },
     
 	"pSum_with_numTrakcs_numHits_timeDiff_cuts_h" : {
-        "bins"   : 100,
+        "bins"   : 500,
         "minX"   : 0,
         "maxX"   : 7,
         "xtitle" : "pSum [GeV]",
@@ -197,7 +197,7 @@
     },
     
 	"im_with_numTrakcs_numHits_timeDiff_cuts_h" : {
-        "bins"   : 100,
+        "bins"   : 500,
         "minX"   : 0,
         "maxX"   : 0.2,
         "xtitle" : "Invariant mass [GeV/c^{2}]",
@@ -260,7 +260,7 @@
     },    
     
 	"pSum_with_numTrakcs_numHits_timeDiff_p_pDiff_pSum_cuts_h" : {
-        "bins"   : 100,
+        "bins"   : 500,
         "minX"   : 0,
         "maxX"   : 7,
         "xtitle" : "pSum [GeV]",
@@ -268,7 +268,7 @@
     },
     
 	"im_with_numTrakcs_numHits_timeDiff_p_pDiff_pSum_cuts_h" : {
-        "bins"   : 100,
+        "bins"   : 500,
         "minX"   : 0,
         "maxX"   : 0.2,
         "xtitle" : "Invariant mass [GeV/c^{2}]",
