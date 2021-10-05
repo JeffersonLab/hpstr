@@ -50,23 +50,15 @@ void SvtBl2DAnaProcessor::initialize(TTree* tree) {
         i_file >> triggers_;
         i_file.close();
     }
-
-    //std::vector<std::string> allowedTriggers = new std::vector<std::string>();
-    //for (auto trigger : triggers_.items()){
-    //    if (
-    //}
-
 }
 
 bool SvtBl2DAnaProcessor::process(IEvent* ievent) {
 
     TSData* tsdata = (TSData*) triggerBank_;
-//    for (auto trigger : triggers_.items()){
-//        std::string trigger_str = trigger.key();
-//        if (tsdata.
-//    }
     
     //Build binary map of triggers based on TSData.h
+    //make this just trigger map
+    //add random -> tsdata->ext.Pulsar
     prescaledtriggerMap_["Single_0_Top"] = tsdata->prescaled.Single_0_Top;  
     prescaledtriggerMap_["Single_1_Top"] = tsdata->prescaled.Single_1_Top; 
     prescaledtriggerMap_["Single_2_Top"] = tsdata->prescaled.Single_2_Top; 
@@ -88,8 +80,8 @@ bool SvtBl2DAnaProcessor::process(IEvent* ievent) {
     prescaledtriggerMap_["FEE_Top     "] = tsdata->prescaled.FEE_Top     ;
     prescaledtriggerMap_["FEE_Bot     "] = tsdata->prescaled.FEE_Bot     ;   
 
-    //std::map<std::string, bool> prescaledtriggerMap;
-    //std::map<std::string, bool> exttriggerMap;
+    //dont need ext trigger map to require specific triggers
+    //unless we want to require randoms
     exttriggerMap_["Single_0_Top"] = tsdata->ext.Single_0_Top; 
     exttriggerMap_["Single_1_Top"] = tsdata->ext.Single_1_Top; 
     exttriggerMap_["Single_2_Top"] = tsdata->ext.Single_2_Top; 
