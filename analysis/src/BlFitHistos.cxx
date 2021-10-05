@@ -310,7 +310,6 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
             //and skip the fit procedure on this channel
             if (firstbin == -1 || projy_h->GetEntries() < minStats_ ) 
             {
-                std::cout << "FAILED TO FIT CHANNEL" << std::endl;
                 flat_tuple_->setVariableValue("BlFitMean", -9999.9);
                 flat_tuple_->setVariableValue("BlFitSigma", -9999.9);
                 flat_tuple_->setVariableValue("BlFitNorm", -9999.9);
