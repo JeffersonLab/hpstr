@@ -285,6 +285,7 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
             //Get YProjection (1D Channel Histo) from 2D Histogram 
             TH1D* projy_h = halfmodule_hh->ProjectionY(Form("%s_proY_ch%i",hh_name.c_str(),cc),
                     cc+1,cc+1,"e");
+            projy_h->Smooth(1);
             projy_h->SetTitle(Form("%s_proY_ch%i",hh_name.c_str(),cc));
 
             //Check number of entries and RMS of channel
