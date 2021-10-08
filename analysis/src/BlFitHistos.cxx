@@ -16,10 +16,17 @@ void BlFitHistos::getHistosFromFile(TFile* inFile, std::string layer){
     for (auto hist: _h_configs.items()) {
         std::string h_name = hist.key();
         std::cout << "h_name: " << h_name << std::endl;
-        if (h_name.find(layer) == std::string::npos)
+
+        //Check for substring "L<layer>" in input histograms
+        std::size_t found = (h_name).find_first_of("_");
+        std::string h_layer = h_name.substr(0,found);
+        if (h_layer.find(layer) == std::string::npos)
             continue;
-        std::size_t found = (hist.key()).find_last_of("_");
-        std::string extension = hist.key().substr(found+1);
+        std::cout << "found layer " << layer << " in " << h_name << std::endl;
+
+        found = (h_name).find_last_of("_");
+        std::string sample = h_name.substr(found+1);
+        std::cout << "time sample is " << sample << std::endl;
 
         TIter next(inFile->GetListOfKeys());
         TKey *key;
@@ -27,9 +34,11 @@ void BlFitHistos::getHistosFromFile(TFile* inFile, std::string layer){
         std::string histoname;
         while ((key = (TKey*)next())) {
             std::string name(key->GetName());
+            std::cout << "Checking if histokey " << name << " matches " << h_name << std::endl;
             if (name.find(h_name) != std::string::npos){
                 TH2F *hh = (TH2F*) inFile-> Get(key->GetName());
                 histos2d[key->GetName()] = hh;
+                std::cout << "Adding histo " << key->GetName() << " to list of histos to fit" << std::endl;
             }
         }
     }
@@ -310,7 +319,6 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
             //and skip the fit procedure on this channel
             if (firstbin == -1 || projy_h->GetEntries() < minStats_ ) 
             {
-                std::cout << "FAILED TO FIT CHANNEL" << std::endl;
                 flat_tuple_->setVariableValue("BlFitMean", -9999.9);
                 flat_tuple_->setVariableValue("BlFitSigma", -9999.9);
                 flat_tuple_->setVariableValue("BlFitNorm", -9999.9);
