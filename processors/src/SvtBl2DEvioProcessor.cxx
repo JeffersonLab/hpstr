@@ -22,11 +22,16 @@ void SvtBl2DEvioProcessor::configure(const ParameterSet& parameters) {
         debug_          = parameters.getInteger("debug");
         chNumCfg_   = parameters.getString("chNumCfg");
         trigFilename_   = parameters.getString("trigConf");
+        histNames_  = parameters.getString("histNames");
         histCfgFilename_  = parameters.getString("histCfg");
     }
     catch (std::runtime_error& error)
     {
         std::cout << error.what() << std::endl;
+    }
+    if (histNames_ != "fw" && histNames_ != "sw") 
+    {
+        throw std::runtime_error("[ SvtBl2DEvioProcessor ]: chNumCfg must be 'fw' or 'sw'!");
     }
     if (chNumCfg_ != "fw" && chNumCfg_ != "sw") 
     {
@@ -96,7 +101,8 @@ void SvtBl2DEvioProcessor::initialize(std::string inFilename, std::string outFil
     std::cout << "[SvtBl2DEvioProcessor] Load JSON" << std::endl;
     svtCondHistos->loadHistoConfig(histCfgFilename_);
     if (debug_ > 0) std::cout << "[SvtBl2DAnaProcessor] Define 2DHistos" << std::endl;
-    svtCondHistos->Svt2DBlHistos::DefineHistosByHw();
+    if (histNames_ == "fw") svtCondHistos->Svt2DBlHistos::DefineHistosByHw();
+    else svtCondHistos->Svt2DBlHistos::DefineHistos();
     if (debug_ > 0) std::cout << "[SvtBl2DAnaProcessor] Defined 2DHistos" << std::endl;
 
 }
@@ -122,6 +128,7 @@ bool SvtBl2DEvioProcessor::process() {
     while(etool->Next() == S_SUCCESS){
         if( (etool->this_tag & 128) != 128) continue;
         if(debug_) cout<<"EVIO Event " << evt_count << endl;
+        if(debug_) cout << "Event Number:  " << etool->Head->GetEventNumber() << "  seq: " << evt_count << endl;
         for(int i = 0; i < rawSvtHits_.size(); i++)
         {
             delete rawSvtHits_[i];
@@ -130,7 +137,6 @@ bool SvtBl2DEvioProcessor::process() {
         //      etool->VtpTop->ParseBank();
         //      etool->VtpBot->ParseBank();
         evt_count++;
-        //      cout << "Event:  " << etool->head->GetEventNumber() << "  seq: " << evt_count << endl;
 
         if(debug_>0) {
             etool->PrintBank(10);
@@ -177,7 +183,8 @@ bool SvtBl2DEvioProcessor::process() {
                 rawHit->setADCs(adcs);
                 rawSvtHits_.push_back(rawHit);
             }
-            svtCondHistos->FillHistogramsByHw(&rawSvtHits_,1.);
+            if (histNames_ == "fw") svtCondHistos->FillHistogramsByHw(&rawSvtHits_,1.);
+            else svtCondHistos->FillHistograms(&rawSvtHits_,1.);
         }
 
         time_of_last_event= etool->GetTrigTime();

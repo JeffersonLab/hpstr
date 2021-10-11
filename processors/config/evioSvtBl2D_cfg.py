@@ -5,6 +5,9 @@ import baseConfig
 
 baseConfig.parser.add_argument("-c", "--chNumCfg", type=str, dest="chNumCfg", action='store',
                   help="Configuration for channel numbering.", metavar="chNumCfg", default="fw")
+baseConfig.parser.add_argument("-N", "--histNames", type=str, dest="histNames", action='store',
+                  help="Configuration for histogram naming convention.", 
+                  metavar="histNames", default="fw")
 
 options = baseConfig.parser.parse_args()
 
@@ -37,6 +40,7 @@ evio = HpstrConf.Processor('evio', 'SvtBl2DEvioProcessor')
 evio.parameters["debug"]    = 0
 evio.parameters["trigConf"] = "hps_v12_1.cnf"
 evio.parameters["chNumCfg"] = options.chNumCfg
+evio.parameters["histNames"] = options.histNames
 evio.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/Svt2DBlHw.json'
 
 # Sequence which the processors will run.

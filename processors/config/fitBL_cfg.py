@@ -25,7 +25,7 @@ base.parser.add_argument("-b", "--rebin", type=int, dest="rebin",
                 help="rebin factor.", metavar="rebin", default="1")
 
 base.parser.add_argument("-minStats", '--minStats', type=int, dest="minStats", 
-        help="Offline fitting requires a minimum number of stats to fit channel", metavar="minStats", default="8500")
+        help="Offline fitting requires a minimum number of stats to fit channel", metavar="minStats", default=3000)
 
 
 options = base.parser.parse_args()
@@ -64,6 +64,7 @@ fitBL.parameters["rebin"] = options.rebin
 fitBL.parameters["minStats"] = options.minStats
 fitBL.parameters["deadRMS"] = options.deadRMS
 fitBL.parameters["simpleGausFit"] = options.simpleGausFit
+fitBL.parameters["debug"] = 1
 
 # Sequence which the processors will run.
 p.sequence = [fitBL]

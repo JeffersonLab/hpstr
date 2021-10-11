@@ -44,9 +44,9 @@ for feb in range(10):
             if(ch_hits_h.GetEntries() > 0): 
                 #if False:
                 if feb == 5 and hyb == 1:
-                    outFile.write( ' '+ format(math.floor(fit_r.Parameter(1)+1.0*fit_r.Parameter(2)) ,'x') + ' ' )
+                    outFile.write( ' '+ format(math.floor(fit_r.Parameter(1)+1.5*fit_r.Parameter(2)) ,'x') + ' ' )
                 else:
-                    outFile.write( ' '+ format(math.floor(fit_r.Parameter(1)+3.0*fit_r.Parameter(2)) ,'x') + ' ' )
+                    outFile.write( ' '+ format(math.floor(fit_r.Parameter(1)+2.5*fit_r.Parameter(2)) ,'x') + ' ' )
                 bls[feb][hyb].append(float(fit_r.Parameter(1)))
                 encs[feb][hyb].append(float(fit_r.Parameter(2)))
             else: 

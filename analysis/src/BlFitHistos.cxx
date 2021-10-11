@@ -22,11 +22,13 @@ void BlFitHistos::getHistosFromFile(TFile* inFile, std::string layer){
         std::string h_layer = h_name.substr(0,found);
         if (h_layer.find(layer) == std::string::npos)
             continue;
-        std::cout << "found layer " << layer << " in " << h_name << std::endl;
+        if(debug_)
+            std::cout << "found layer " << layer << " in " << h_name << std::endl;
 
         found = (h_name).find_last_of("_");
         std::string sample = h_name.substr(found+1);
-        std::cout << "time sample is " << sample << std::endl;
+        if(debug_)
+            std::cout << "time sample is " << sample << std::endl;
 
         TIter next(inFile->GetListOfKeys());
         TKey *key;
@@ -34,11 +36,13 @@ void BlFitHistos::getHistosFromFile(TFile* inFile, std::string layer){
         std::string histoname;
         while ((key = (TKey*)next())) {
             std::string name(key->GetName());
-            std::cout << "Checking if histokey " << name << " matches " << h_name << std::endl;
+            //if(debug_)
+                //std::cout << "Checking if histokey " << name << " matches " << h_name << std::endl;
             if (name.find(h_name) != std::string::npos){
                 TH2F *hh = (TH2F*) inFile-> Get(key->GetName());
                 histos2d[key->GetName()] = hh;
-                std::cout << "Adding histo " << key->GetName() << " to list of histos to fit" << std::endl;
+                if(debug_)
+                    std::cout << "Adding histo " << key->GetName() << " to list of histos to fit" << std::endl;
             }
         }
     }
@@ -241,6 +245,11 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
     mmapper_->getStrings(halfmodule_strings);
 
     //Loop over rawsvthit 2D histograms, one for each selected halfmodule
+    if(debug_){
+        std::cout << "LOOPING OVER HISTOGRAMS BELOW" << std::endl;
+        for(std::map<std::string, TH2F*>::iterator it = histos2d.begin(); it != histos2d.end(); ++it)
+            std::cout << it->second->GetName() << std::endl;
+    }
     for(std::map<std::string, TH2F*>::iterator it = histos2d.begin(); it != histos2d.end(); ++it)
     {
         TH2F* halfmodule_hh = it->second; 
@@ -273,8 +282,9 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
         //Perform fitting procedure over all channels on a sensor
         for(int cc=0; cc < 640 ; ++cc) 
         {
-            if(debug_)
-                std::cout << hh_name << " " << cc << std::endl;
+            if(debug_){
+                std::cout << "Looping over: " << hh_name << " " << cc << std::endl;
+            }
 
             //get the global svt_id for channel
             int svt_id = mmapper_->getSvtIDFromHWChannel(cc, hwTag, svtIDMap);
