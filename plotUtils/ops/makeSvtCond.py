@@ -47,10 +47,10 @@ for feb in range(10):
                     bls[feb][hyb][ss].append(0.0)
                     encs[feb][hyb][ss].append(0.0)
                 pass # ch
-            bl_g = r.TGraph(len(chs), np.array(chs), np.array(bls[feb][hyb]))
+            bl_g = r.TGraph(len(chs), np.array(chs), np.array(bls[feb][hyb][ss]))
             bl_g.SetName(f'blF{feb}H{hyb}_s{ss}_g')
             bl_g.Write()
-            enc_g = r.TGraph(len(chs), np.array(chs), np.array(encs[feb][hyb]))
+            enc_g = r.TGraph(len(chs), np.array(chs), np.array(encs[feb][hyb][ss]))
             enc_g.SetName(f'encF{feb}H{hyb}_s{ss}_g')
             enc_g.Write()
             pass # ss

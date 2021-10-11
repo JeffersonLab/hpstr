@@ -99,10 +99,15 @@ class BlFitHistos : public HistoManager{
          */
         void backwardsIterChi2Fit(TH1D* hist, double xmin, double xmax);
 
+	// carry over from old evio branch	
+	void GausFitHistos2D(std::map<std::string, TH2F*> histos2d,int rebin_, int minStats_,int deadRMS_, FlatTupleMaker* flat_tuple_);
+        TF1* singleGausIterative(TH1D* hist, double sigmaRange, double min, double max);
+        TF1* backwardsIterativeChi2Fit(TH1D* hist, double min, double max);
+
     private:
 
         TH1F* fitHistos{nullptr}; //!< description
-
+        
     protected:
         std::map<std::string, TH2F*> histos2d; //!< description
         std::map<std::string, TH1F*> histos1d; //!< description

@@ -46,7 +46,8 @@ void BlFitHistos::getHistosFromFile(TFile* inFile, std::string layer){
             if (name.find(h_name) != std::string::npos){
                 TH2F *hh = (TH2F*) inFile-> Get(key->GetName());
                 histos2d[key->GetName()] = hh;
-                std::cout << "Adding histo " << key->GetName() << " to list of histos to fit" << std::endl;
+                if(debug_)
+                    std::cout << "Adding histo " << key->GetName() << " to list of histos to fit" << std::endl;
             }
         }
     }
@@ -206,6 +207,11 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
     mmapper_->ReadThresholdsFile(thresholdsFileIn_);
 
     //Loop over rawsvthit 2D histograms, one for each selected halfmodule
+    if(debug_){
+        std::cout << "LOOPING OVER HISTOGRAMS BELOW" << std::endl;
+        for(std::map<std::string, TH2F*>::iterator it = histos2d.begin(); it != histos2d.end(); ++it)
+            std::cout << it->second->GetName() << std::endl;
+    }
     for(std::map<std::string, TH2F*>::iterator it = histos2d.begin(); it != histos2d.end(); ++it)
     {
         gDirectory->cd("/");
@@ -239,6 +245,7 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
             }
             if (cc%100 == 0)
                 std::cout << "CHANNEL " << cc << std::endl;
+            }
 
             //get the global svt_id for channel
             int svt_id = mmapper_->getSvtIDFromHWChannel(cc, hwTag, svtIDMap);

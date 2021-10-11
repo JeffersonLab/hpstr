@@ -83,6 +83,8 @@ class SvtBlFitHistoProcessor : public Processor {
 
         int  year_=2019; //!< description
 
+        bool debug_{false};
+
         //Select which layer to fit baselines. Default is all.
         std::string layer_{""}; //!< description
 

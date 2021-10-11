@@ -62,6 +62,7 @@ fitBL.parameters["minStats"] = options.minStats
 fitBL.parameters["deadRMS"] = options.deadRMS
 fitBL.parameters["thresholdsFileIn"] = options.thresholdsFileIn
 fitBL.parameters["debug"] = options.debug
+fitBL.parameters["simpleGausFit"] = options.simpleGausFit
 
 # Sequence which the processors will run.
 p.sequence = [fitBL]
