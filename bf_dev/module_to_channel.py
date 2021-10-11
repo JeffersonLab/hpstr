@@ -2,6 +2,7 @@ import argparse
 import sys
 
 def string_to_hw_dict():
+
     string_to_hw = {}
     string_to_hw["L0T_axial"     ] = "F0H0"
     string_to_hw["L0T_stereo"    ] = "F0H1"
@@ -15,10 +16,10 @@ def string_to_hw_dict():
     string_to_hw["L2T_stereo"    ] = "F2H1"
     string_to_hw["L3T_stereo"    ] = "F2H2"
     string_to_hw["L3T_axial"     ] = "F2H3"
-    string_to_hw["L2B_stereo"    ] = "F3H2" #(real val F3H0)
-    string_to_hw["L2B_axial"     ] = "F3H3" #swapped with 3B_axial (Real Val F3H1)
-    string_to_hw["L3B_stereo"    ] = "F3H0" #(real val F3H0)
-    string_to_hw["L3B_axial"     ] = "F3H1" #(real val F3H3)
+    string_to_hw["L2B_stereo"    ] = "F3H2" 
+    string_to_hw["L2B_axial"     ] = "F3H3" 
+    string_to_hw["L3B_stereo"    ] = "F3H0" 
+    string_to_hw["L3B_axial"     ] = "F3H1" 
 
     string_to_hw["L2B_stereo"    ] = "F3H0" 
     string_to_hw["L2B_axial"     ] = "F3H1" 
