@@ -18,7 +18,7 @@ parser.add_argument("-i", type=str, dest="inFilename", help="Input SvtBlFitHisto
 parser.add_argument("-o", type=str, dest="outFilename", help="output root file",default="baselineFitTool.root")
 
 parser.add_argument("-b", type=str, dest="onlineBaselines", help="online baseline fits root file",default="")
-parser.add_argument("-csv", type=str, dest="csvOut", help="File name for CSV output file",default="offline_baseline_fits.csv")
+parser.add_argument("-dbo", type=str, dest="dbOut", help="File name for database baseline output file",default="offline_baseline_fits.dat")
 parser.add_argument("-thresh", type=str, dest="threshOut", help="File name for thresholds output file",default="thresholds.dat")
 parser.add_argument("-r", type=str, dest="runNumber", help="Run Number",default="")
 options = parser.parse_args()
@@ -89,7 +89,7 @@ def getHistosFromFile(inFile, histoType = "TH2D", name = ""):
 
 def getOfflineFitTuple(inFile, key):
     print("Grabbing Ntuples for %s from TTree"%(key))
-    channel, svt_id, mean, sigma, norm, chi2, ndf, fitlow, fithigh, RMS, lowdaq, lowstats, badfit = ([] for i in range(13))
+    channel, svt_id, mean, sigma, norm, chi2, ndf, fitlow, fithigh, RMS, lowdaq, lowstats, badfit, hm_string = ([] for i in range(14))
     myTree = inFile.gaus_fit
     for fitData in myTree:
         tupleKey = str(fitData.halfmodule_hh)
@@ -106,8 +106,9 @@ def getOfflineFitTuple(inFile, key):
             svt_id.append(int(fitData.svt_id))
             lowstats.append(fitData.lowStats)
             badfit.append(fitData.badfit)
+            hm_string.append(fitData.halfmodule_hh)
 
-    fitTuple = (svt_id, channel, mean, sigma, norm, ndf, fitlow, fithigh, RMS, lowdaq, lowstats, badfit)
+    fitTuple = (svt_id, channel, mean, sigma, norm, ndf, fitlow, fithigh, RMS, lowdaq, lowstats, badfit, hm_string)
 
     #Tuple map for reference
     svt_id = fitTuple[0]
@@ -122,6 +123,7 @@ def getOfflineFitTuple(inFile, key):
     lowdaq = fitTuple[9]
     lowstats = fitTuple[10]
     badfit = fitTuple[11]
+    hm_string = fitTuple[12]
     return fitTuple
 
 def getOnlineFitsForSvtIDs(inFile, svt_id_range):
@@ -191,6 +193,76 @@ def getOnlineFitTuple(inFile, hwtag):
                     mean[i].append(float(line.split()[1+i]))
                     sigma[i].append(float(line.split()[i+7]))
     return (channel, mean, sigma)
+
+
+def getDatabaseFormatBaselines(offlineTuple, onlineTuple):
+    svt_id = offlineTuple[0]
+    channel = offlineTuple[1]
+    mean = offlineTuple[2]
+    sigma = offlineTuple[3]
+    lowdaq = offlineTuple[9]
+    lowstats = offlineTuple[10]
+    badfit = offlineTuple[11]
+    hm_string = offlineTuple[12]
+
+    #online values
+    onlineSvtId = ()
+    onlineMean = ()
+    onlineSigma = ()
+
+    if onlineTuple:
+        onlineSvtId = onlineTuple[0]
+        onlineMean = onlineTuple[1]
+        onlineSigma = onlineTuple[2]
+
+    baselines = []
+    #Write baselines to database formatted array
+    for c in range(len(channel)):
+        #database format is row: svt_id mean0 mean1 mean2 mean3 mean4 mean5 sigma0 sigma1...sigma5
+        baselines.append([])
+        row = [svt_id[c]]
+
+        #Check if offline fit had any failures
+        #If yes, use the loaded Online fit values instead
+        if(badfit[c] == 1.0 or lowstats[c] == 1.0):
+            if(loadOnlineBaselines):
+                try:
+                    for i in range(6):
+                        row.append(onlineMean[i][c])
+                    for i in range(6):
+                        row.append(onlineSigma[i][c])
+                except:
+                    for i in range(6):
+                        row.append(999999.9)
+                    for i in range(6):
+                        row.append(999999.9)
+        else:
+            #Append offline fit value
+            row.append(mean[c])
+            #For 5 remaining time samples, load online values
+            for i in range(5):
+                try:
+                    #take difference between offline and online sample 0
+                    diff = mean[c] - onlineMean[0][c]
+                    #apply difference to 5 other online samples to adjust
+                    row.append(round(onlineMean[i+1][c] + diff,3))
+                except:
+                    print("Failed to apply online mean value to output file")
+                    row.append(999999.9)
+            #Append offline fit value
+            row.append(sigma[c])
+            #For 5 remaining time samples, load online values
+            for i in range(5):
+                try:
+                    #take offline/online sample 0 noise ratio
+                    ratio = sigma[c]/onlineSigma[0][c]
+                    #apply ratio factor to 5 other online samples to adjust
+                    row.append(round(onlineSigma[i+1][c]*ratio,3))
+                except:
+                    print("Failed to apply online sigma value to output file")
+                    row.append(999999.9)
+        baselines[c] = row
+    return baselines
 
 def writeBaselineFitsToDatabase(outFile, offlineTuple, onlineTuple):
     #offline values
@@ -557,7 +629,7 @@ def plotOfflineChannelFits(hybrid, hh, offlineTuple, outFile):
         canvas.Close()
     outFile.cd()
 
-def generateThresholds(outFile, plotFile, offlineFitTuple, onlineFitTuple, febnum, hybnum, hybrid):
+def generateThresholds(outFile, outRootFile, offlineFitTuple, onlineFitTuple, febnum, hybnum, hybrid):
 
     channel = list(offlineFitTuple[1])
     mean = list(offlineFitTuple[2])
@@ -632,7 +704,7 @@ def generateThresholds(outFile, plotFile, offlineFitTuple, onlineFitTuple, febnu
 
 
     #Plot offline vs online thresholds to check the changes
-    plotFile.cd()
+    outRootFile.cd()
     canvas = r.TCanvas("%s_thresholds"%(hybrid), "c", 1800,800)
     canvas.cd()
     canvas.SetTicky()
@@ -685,6 +757,23 @@ def generateThresholds(outFile, plotFile, offlineFitTuple, onlineFitTuple, febnu
     canvas.Write()
     canvas.Close()
 
+def graphFitSample0(outFile, baselines, hybrid):
+
+    #Build TGraphErrors of Sample0 baselines
+    mean_s0 = []
+    sigma_s0 = []
+    channels = []
+    for c, channel in enumerate(baselines):
+        mean_s0.append(channel[1])
+        sigma_s0.append(channel[7])
+        channels.append(c)
+    blgr = r.TGraphErrors(len(channels), np.array(channels, dtype = float), np.array(mean_s0, dtype = float), np.array([0]*len(channels), dtype = float), np.array(sigma_s0, dtype = float))
+    blgr.SetName("%s_baseline_0"%(hybrid))
+    blgr.SetTitle("%s_baseline_0"%(hybrid))
+    blgr.SetLineWidth(2)
+    blgr.Draw()
+    blgr.Write()
+
     
 ######################################################################################################
 #********* CODE SUMMARY **********#
@@ -705,12 +794,12 @@ inFile = r.TFile(options.inFilename, "READ")
 run = options.runNumber
 
 #Create output root file
-outFile = r.TFile(options.outFilename,"RECREATE")
+outRootFile = r.TFile(options.outFilename,"RECREATE")
 
 #Create Offline Baseline Fits output file in format of HPS Collections Database
-csvOutFile = options.csvOut
-if(path.exists(csvOutFile)):
-    csvOutFile = os.path.splitext(csvOutFile)[0] + "_" + time.strftime("%H%M%S") + ".dat"
+dbOutFile = options.dbOut
+if(path.exists(dbOutFile)):
+    dbOutFile = os.path.splitext(dbOutFile)[0] + "_" + time.strftime("%H%M%S") + ".dat"
 
 threshOutFile = options.threshOut
 if(path.exists(threshOutFile)):
@@ -766,29 +855,36 @@ for entry in hybridHwDict:
     if(options.onlineBaselines) != "":
         loadOnlineBaselines = True
         onlineFitTuple = getOnlineFitsForSvtIDs(options.onlineBaselines, hyb_svt_ids)
-        #onlineFitTuple = getOnlineFitTuple(options.onlineBaselines, hwtag)
 
-    #plot2DBaselineFits(outFile, hybrid, hh, offlineFitTuple, onlineFitTuple)
-    plot2DBaselineFitsWithErrors(outFile, hybrid, hh, offlineFitTuple, onlineFitTuple)
+    #writeBaselineFitsToDatabase(dbOutFile, offlineFitTuple, onlineFitTuple)
+    mixed_baselines = getDatabaseFormatBaselines(offlineFitTuple, onlineFitTuple)
+    with open(dbOutFile,'a') as f:
+        writer = csv.writer(f, delimiter = ' ')
+        for channel in mixed_baselines:
+            writer.writerow(channel)
+
+    #plot2DBaselineFits(outRootFile, hybrid, hh, offlineFitTuple, onlineFitTuple)
+    plot2DBaselineFitsWithErrors(outRootFile, hybrid, hh, offlineFitTuple, onlineFitTuple)
 
     #Create subdirs for each hybrid
-    outFile.cd()
-    if not outFile.GetDirectory("%s"%(hybrid)):
+    outRootFile.cd()
+    if not outRootFile.GetDirectory("%s"%(hybrid)):
         #Create subdirectory for hybrid
         r.gDirectory.mkdir("%s"%(hybrid))
     #Save output to directory
-    outFile.cd("%s"%(hybrid))
+    outRootFile.cd("%s"%(hybrid))
 
-    plotOfflineOnlineFitDiff(outFile, hybrid, hh, offlineFitTuple, onlineFitTuple, hybrid)
+    graphFitSample0(outRootFile, mixed_baselines, hybrid)
+    plotOfflineOnlineFitDiff(outRootFile, hybrid, hh, offlineFitTuple, onlineFitTuple, hybrid)
 
-    plotFitSigma(hybrid,offlineFitTuple,outFile)
-    plotLowDaq(hybrid, offlineFitTuple, outFile)
-    plotOfflineChannelFits(hybrid, hh, offlineFitTuple, outFile)
+    plotFitSigma(hybrid,offlineFitTuple,outRootFile)
+    plotLowDaq(hybrid, offlineFitTuple, outRootFile)
+    plotOfflineChannelFits(hybrid, hh, offlineFitTuple, outRootFile)
 
-    writeBaselineFitsToDatabase(csvOutFile, offlineFitTuple, onlineFitTuple)
+
     if onlineFitTuple:
-        generateThresholds(threshOutFile, outFile, offlineFitTuple, onlineFitTuple, febn, hybn, hybrid)
+        generateThresholds(threshOutFile, outRootFile, offlineFitTuple, onlineFitTuple, febn, hybn, hybrid)
 
-outFile.Write()
+outRootFile.Write()
 
 print("N Failed Fits: ",nFailedFits)

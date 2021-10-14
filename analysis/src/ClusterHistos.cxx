@@ -153,17 +153,31 @@ void ClusterHistos::Define2DHistos() {
     }
 }
 
+bool ClusterHistos::LoadOfflineBaselines(const std::string& baselineFits) {
 
-bool ClusterHistos::LoadBaselineHistos(const std::string& baselineRun) {
+    TFile *inFile = new TFile((baselineFits).c_str());
 
-    baselineRun_ = baselineRun;
+    if (!inFile) 
+        return false;
 
+    TIter next(inFile->GetListOfKeys());
+    TKey *key;
+    while ((key = (TKey*)next())) {
+        std::cout << "Key class name: " << key->GetClassName() << std::endl;
+    }
 
-    TFile *baselinesFile = new TFile((baselineFits_+"/hpssvt_"+baselineRun+"_baselineFits.root").c_str());
+    return false;
+}
+
+bool ClusterHistos::LoadBaselineHistos(const std::string& baselinesIn) {
+
+    //TFile *baselinesFile = new TFile((baselineFits_+"/hpssvt_"+baselineRun+"_baselineFits.root").c_str());
+    TFile *baselinesFile = new TFile((baselinesIn).c_str());
 
     if (!baselinesFile) 
         return false;
 
+    //////////////////////
     TDirectory* dir = baselinesFile->GetDirectory("baseline");
 
     TList* keyList = dir->GetListOfKeys();
@@ -238,9 +252,11 @@ void ClusterHistos::FillHistograms(TrackerHit* hit,float weight) {
         double baseline = -999;
         double strip    = -999;
 
+        /*
         //2D cluster corrected charge
         if (baselineGraphs[mmapper_->getHwFromString(key)])
             baselineGraphs[mmapper_->getHwFromString(key)]->GetPoint(rawhit->getStrip(),strip,baseline);
+            */
 
         float sample0 = baseline - rawhit->getADCs()[0];
         float sample1 = baseline - rawhit->getADCs()[1]; 
