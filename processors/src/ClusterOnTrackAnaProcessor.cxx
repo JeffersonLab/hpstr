@@ -8,21 +8,13 @@ ClusterOnTrackAnaProcessor::~ClusterOnTrackAnaProcessor(){}
 
 void ClusterOnTrackAnaProcessor::configure(const ParameterSet& parameters) {
 
-    std::cout << "LOOK AT ME " << std::endl;
-
-    try {
-        std::cout << "Configuring ClusterOnTrackAnaProcessor" << std::endl;
-        debug_        = parameters.getInteger("debug");
-        anaName_      = parameters.getString("anaName");
-        trkColl_      = parameters.getString("trkColl");
-        baselineFits_ = parameters.getString("BaselineFits");
-        baselineRun_  = parameters.getString("BaselineRun");
-        if(debug_ > 0) std::cout << "Configured: " << baselineFits_ << " " << baselineRun_ << std::endl;
-       }
-    catch (std::runtime_error& error)
-    {
-        std::cout << error.what() << std::endl;
-    }
+    std::cout << "Configuring ClusterOnTrackAnaProcessor" << std::endl;
+    debug_        = parameters.getInteger("debug");
+    anaName_      = parameters.getString("anaName");
+    trkColl_      = parameters.getString("trkColl");
+    baselineFits_ = parameters.getString("BaselineFits");
+    baselineRun_  = parameters.getString("BaselineRun");
+    if(debug_ > 0) std::cout << "Configured: " << baselineFits_ << " " << baselineRun_ << std::endl;
 
 }
 
@@ -32,11 +24,13 @@ void ClusterOnTrackAnaProcessor::initialize(TTree* tree) {
 
     if(debug_ > 0) std::cout << "Loading: " << baselineFits_ << " " << baselineRun_ << std::endl;
     if (!baselineFits_.empty() && !baselineRun_.empty()) {
-        //clusterHistos->setBaselineFitsDir(baselineFits_);
-        //if (!clusterHistos->LoadBaselineHistos(baselineRun_))
-            //std::cout<<"WARNING: baselines not loaded in Cluster on Track histos."<<std::endl;}
-        if (!clusterHistos->LoadOfflineBaselines(baselineFits_))
-            std::cout<<"WARNING: baselines not loaded in Cluster on Track histos."<<std::endl;}
+        /*
+        clusterHistos->setBaselineFitsDir(baselineFits_);
+        if (!clusterHistos->LoadBaselineHistos(baselineRun_))
+            std::cout<<"WARNING: baselines not loaded in Cluster on Track histos."<<std::endl;
+            */
+        clusterHistos->LoadOfflineBaselines(baselineFits_);
+    }
     if(debug_ > 0) std::cout << "Loaded: " << baselineFits_ << " " << baselineRun_ << std::endl;
 
     clusterHistos->Define1DHistos();
@@ -45,6 +39,7 @@ void ClusterOnTrackAnaProcessor::initialize(TTree* tree) {
 
     //TODO Change this.
     tree_->SetBranchAddress(trkColl_.c_str(),&tracks_,&btracks_);
+    if(debug_ > 0) std::cout << "Branch changed to " << trkColl_ << std::endl;
 
 }
 

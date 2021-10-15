@@ -155,7 +155,7 @@ void ClusterHistos::Define2DHistos() {
 
 bool ClusterHistos::LoadOfflineBaselines(const std::string& baselineFits) {
 
-    TFile *inFile = new TFile((baselineFits).c_str());
+    TFile *inFile = new TFile((baselineFits).c_str(), "READ");
 
     if (!inFile) 
         return false;
@@ -163,10 +163,23 @@ bool ClusterHistos::LoadOfflineBaselines(const std::string& baselineFits) {
     TIter next(inFile->GetListOfKeys());
     TKey *key;
     while ((key = (TKey*)next())) {
-        std::cout << "Key class name: " << key->GetClassName() << std::endl;
+        std::string classname = key->GetClassName();
+        if (classname.find("TDirectoryFile") != -1){
+            TDirectoryFile* tdir = (TDirectoryFile*) inFile->Get(key->GetName());
+            TGraphErrors* gr = (TGraphErrors*) tdir->Get(((std::string)(key->GetName())+"_baseline_0").c_str());
+            std::string grname = gr->GetName();
+            std::cout << "Loading baselines from graph " << grname << std::endl;
+            grname = grname.substr(0,grname.find("_baseline_0"));
+            baselineGraphs[grname] = gr;
+            std::cout << grname << std::endl;
+        }
     }
 
-    return false;
+    inFile->Close();
+    delete inFile;
+    inFile = nullptr;
+
+    return true;
 }
 
 bool ClusterHistos::LoadBaselineHistos(const std::string& baselinesIn) {

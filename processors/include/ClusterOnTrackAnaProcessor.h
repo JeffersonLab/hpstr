@@ -57,7 +57,7 @@ class ClusterOnTrackAnaProcessor : public Processor {
         std::string baselineRun_{""};
 
         //Debug Level
-        int debug_{1};
+        int debug_{0};
 
 };
 

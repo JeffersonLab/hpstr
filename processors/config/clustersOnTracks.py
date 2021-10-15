@@ -1,19 +1,17 @@
 import HpstrConf
 import sys,os
-import baseConfig as base
+#import baseConfig as base
 
-base.parser.add_argument('-b', '--baselineFits', type=str, dest="baselineFits",default="/home/alic/HPS/projects/baselines/jlab/clusters_on_track/",
-        help="Provide full path to charge_cluster_baselines.root")
-base.parser.add_argument('-r', '--run', type=str, dest="run",default="0000",
-        help="run number")
-
-options = base.parser.parse_args()
+#base.parser.add_argument('-b', '--baselines', type=str, dest="baselines",default="",
+#        help="input offline baseline analysis root file")
 
 # Use the input file to set the output file name
-#infilename = sys.argv[1].strip()
-infilename = options.inFilename
-outfilename = options.outFilename
+infilename = sys.argv[1].strip()
+outfilename = sys.argv[2].strip()
 
+#options = base.parser.parse_args()
+#infilename = options.inFilename
+#outfilename = options.outFilename
 
 print('Input file:  %s' % infilename)
 print('Output file: %s' % outfilename)
@@ -24,9 +22,7 @@ p.run_mode   = 1
 #p.max_events   = 1000
 
 # Library containing processors
-#p.add_library("libprocessors")
-# Library containing processors
-p.libraries.append("libprocessors.so")
+p.add_library("libprocessors")
 
 #Processors
 clusters = HpstrConf.Processor('clusters','ClusterOnTrackAnaProcessor')
@@ -35,8 +31,10 @@ clusters = HpstrConf.Processor('clusters','ClusterOnTrackAnaProcessor')
 clusters.parameters["debug"] = 1
 clusters.parameters["anaName"] = 'anaClusOnTrk'
 clusters.parameters["trkColl"] = 'KalmanFullTracks'
-clusters.parameters["BaselineFits"] = options.baselineFits
-clusters.parameters["BaselineRun"]  = options.run
+#clusters.parameters["BaselineFits"] = "/home/alic/HPS/projects/baselines/jlab/clusters_on_track/"
+clusters.parameters["BaselineFits"] = "/home/alic/HPS/projects/baselines/jlab/clusters_on_track/hps_14552_offline_analysis.root"
+#clusters.parameters["BaselineFits"] = options.baselines
+clusters.parameters["BaselineRun"]  = "010705"
 
 p.sequence = [clusters]
 
