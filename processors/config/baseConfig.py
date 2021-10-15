@@ -29,7 +29,9 @@ parser.add_argument('--infile','-i', type=str, dest="inFilename", metavar='infil
 beamE = {}
 beamE["2016"] = 2.3
 beamE["2019"] = 4.55
+beamE["2021"] = 3.74
 
 bfield = {}
 bfield["2016"] = 0.52
 bfield["2019"] = 1.034
+bfield["2021"] = 0.85
