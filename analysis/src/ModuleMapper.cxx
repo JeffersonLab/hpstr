@@ -3,7 +3,7 @@
 #include "TString.h"
 ModuleMapper::ModuleMapper(const int year) {
 
-    if (year_ == 2019) {
+    if (year_ == 2019 || year_ == 2021) {
 
         //TODO Insert the correct mapping!!
         //Cameron mapping = > This should be the correct mapping
