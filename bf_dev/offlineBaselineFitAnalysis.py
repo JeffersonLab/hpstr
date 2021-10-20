@@ -398,6 +398,32 @@ def plotOfflineOnlineFitDiff(outFile, hybrid, hybrid_hh, offlineTuple, onlineTup
     canvas.Write()
     canvas.Close()
 
+def debugBadFits(hybrid, offlineTuple):
+    
+    #Offline Fit Values for hybrid
+    svt_id = offlineTuple[0]
+    channel = offlineTuple[1]
+    mean = offlineTuple[2]
+    sigma = offlineTuple[3]
+    norm = offlineTuple[4]
+    ndf = offlineTuple[5]
+    fitlow = offlineTuple[6]
+    fithigh = offlineTuple[7]
+    rms = offlineTuple[8]
+    lowdaq = offlineTuple[9]
+    lowstats = offlineTuple[10]
+    badfit = offlineTuple[11]
+
+    print("Checking Bad Fits for ",hybrid)
+    for i, c in  enumerate(channel):
+        if badfit[i] == 1:
+            print("Bad Fit Channel ", c)
+            print("Mean: ",mean[i])
+            print("Sigma: ",sigma[i])
+            print("norm: ",norm[i])
+            print("minx: ",fitlow[i])
+            print("maxx: ",fithigh[i])
+
 def plot2DBaselineFits(outFile, hybrid, hybrid_hh, offlineTuple, onlineTuple):
 
     outFile.cd()
@@ -884,6 +910,8 @@ for entry in hybridHwDict:
 
     if onlineFitTuple:
         generateThresholds(threshOutFile, outRootFile, offlineFitTuple, onlineFitTuple, febn, hybn, hybrid)
+
+    debugBadFits(hybrid, offlineFitTuple)
 
 outRootFile.Write()
 
