@@ -153,17 +153,44 @@ void ClusterHistos::Define2DHistos() {
     }
 }
 
+bool ClusterHistos::LoadOfflineBaselines(const std::string& baselineFits) {
 
-bool ClusterHistos::LoadBaselineHistos(const std::string& baselineRun) {
+    TFile *inFile = new TFile((baselineFits).c_str(), "READ");
 
-    baselineRun_ = baselineRun;
+    if (!inFile) 
+        return false;
 
+    TIter next(inFile->GetListOfKeys());
+    TKey *key;
+    while ((key = (TKey*)next())) {
+        std::string classname = key->GetClassName();
+        if (classname.find("TDirectoryFile") != -1){
+            TDirectoryFile* tdir = (TDirectoryFile*) inFile->Get(key->GetName());
+            TGraphErrors* gr = (TGraphErrors*) tdir->Get(((std::string)(key->GetName())+"_baseline_0").c_str());
+            std::string grname = gr->GetName();
+            std::cout << "Loading baselines from graph " << grname << std::endl;
+            grname = grname.substr(0,grname.find("_baseline_0"));
+            baselineGraphs[grname] = gr;
+            std::cout << grname << std::endl;
+        }
+    }
 
-    TFile *baselinesFile = new TFile((baselineFits_+"/hpssvt_"+baselineRun+"_baselineFits.root").c_str());
+    inFile->Close();
+    delete inFile;
+    inFile = nullptr;
+
+    return true;
+}
+
+bool ClusterHistos::LoadBaselineHistos(const std::string& baselinesIn) {
+
+    //TFile *baselinesFile = new TFile((baselineFits_+"/hpssvt_"+baselineRun+"_baselineFits.root").c_str());
+    TFile *baselinesFile = new TFile((baselinesIn).c_str());
 
     if (!baselinesFile) 
         return false;
 
+    //////////////////////
     TDirectory* dir = baselinesFile->GetDirectory("baseline");
 
     TList* keyList = dir->GetListOfKeys();
@@ -238,9 +265,11 @@ void ClusterHistos::FillHistograms(TrackerHit* hit,float weight) {
         double baseline = -999;
         double strip    = -999;
 
+        /*
         //2D cluster corrected charge
         if (baselineGraphs[mmapper_->getHwFromString(key)])
             baselineGraphs[mmapper_->getHwFromString(key)]->GetPoint(rawhit->getStrip(),strip,baseline);
+            */
 
         float sample0 = baseline - rawhit->getADCs()[0];
         float sample1 = baseline - rawhit->getADCs()[1]; 

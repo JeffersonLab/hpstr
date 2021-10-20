@@ -1,9 +1,17 @@
 import HpstrConf
 import sys,os
+#import baseConfig as base
+
+#base.parser.add_argument('-b', '--baselines', type=str, dest="baselines",default="",
+#        help="input offline baseline analysis root file")
 
 # Use the input file to set the output file name
 infilename = sys.argv[1].strip()
 outfilename = sys.argv[2].strip()
+
+#options = base.parser.parse_args()
+#infilename = options.inFilename
+#outfilename = options.outFilename
 
 print('Input file:  %s' % infilename)
 print('Output file: %s' % outfilename)
@@ -20,10 +28,12 @@ p.add_library("libprocessors")
 clusters = HpstrConf.Processor('clusters','ClusterOnTrackAnaProcessor')
 
 #Processor Configurations
-clusters.parameters["debug"] = 0
+clusters.parameters["debug"] = 1
 clusters.parameters["anaName"] = 'anaClusOnTrk'
-clusters.parameters["trkColl"] = 'GBLTracks'
-clusters.parameters["BaselineFits"] = "/nfs/hps3/svtTests/jlabSystem/baselines/fits/"
+clusters.parameters["trkColl"] = 'KalmanFullTracks'
+#clusters.parameters["BaselineFits"] = "/home/alic/HPS/projects/baselines/jlab/clusters_on_track/"
+clusters.parameters["BaselineFits"] = "/home/alic/HPS/projects/baselines/jlab/clusters_on_track/hps_14552_offline_analysis.root"
+#clusters.parameters["BaselineFits"] = options.baselines
 clusters.parameters["BaselineRun"]  = "010705"
 
 p.sequence = [clusters]
