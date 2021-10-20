@@ -176,7 +176,7 @@ class ModuleMapper(dict):
         ModuleMapper.string_to_hw["L6B_axial_pos" ] = "F9H3";
 
 
-        //sw to string
+        #sw to string
 
 
         ModuleMapper.sw_to_string["ly1_m0" ] = "L0T_axial"     ;
