@@ -3,21 +3,7 @@
 #include "TString.h"
 ModuleMapper::ModuleMapper(const int year) {
 
-    if (year_ == 2019) {
-
-        //TODO Insert the correct mapping!!
-        //Cameron mapping = > This should be the correct mapping
-        //https://docs.google.com/spreadsheets/d/1sVtYEppxKlwJvpniemKf6EtFqK8qN0ZnDRExR_eqqZw/edit#gid=1695271832
-        //hw_to_sw["F3H0"] = "ly7_m1";
-        //hw_to_sw["F3H1"] = "ly8_m1";
-        //hw_to_sw["F3H2"] = "ly5_m1";
-        //hw_to_sw["F3H3"] = "ly6_m1";
-
-        //This is Omar's mapping, which is what is in the DB
-        //WARNING: Might be wrong.
-
-        std::cout<<"WARNING: ModuleMapper: using a mapping that might be wrong"<<std::endl;
-
+    if (year_ == 2019 || year_ == 2021) {
 
         hw_to_sw["F0H0"] = "ly1_m0" ;
         hw_to_sw["F0H1"] = "ly2_m0" ;
@@ -31,10 +17,10 @@ ModuleMapper::ModuleMapper(const int year) {
         hw_to_sw["F2H1"] = "ly6_m0" ;
         hw_to_sw["F2H2"] = "ly8_m0" ;
         hw_to_sw["F2H3"] = "ly7_m0" ;
-        hw_to_sw["F3H0"] = "ly5_m1" ;
-        hw_to_sw["F3H1"] = "ly6_m1" ;
-        hw_to_sw["F3H2"] = "ly7_m1" ;
-        hw_to_sw["F3H3"] = "ly8_m1" ;
+        hw_to_sw["F3H0"] = "ly7_m1";
+        hw_to_sw["F3H1"] = "ly8_m1";
+        hw_to_sw["F3H2"] = "ly5_m1";
+        hw_to_sw["F3H3"] = "ly6_m1";
         hw_to_sw["F4H0"] = "ly9_m0" ;
         hw_to_sw["F4H1"] = "ly9_m2" ;
         hw_to_sw["F4H2"] = "ly10_m0";
@@ -72,10 +58,10 @@ ModuleMapper::ModuleMapper(const int year) {
         sw_to_hw["ly6_m0" ] = "F2H1" ;
         sw_to_hw["ly8_m0" ] = "F2H2" ;
         sw_to_hw["ly7_m0" ] = "F2H3" ;
-        sw_to_hw["ly5_m1" ] = "F3H0" ;
-        sw_to_hw["ly6_m1" ] = "F3H1" ;
-        sw_to_hw["ly7_m1" ] = "F3H2" ;
-        sw_to_hw["ly8_m1" ] = "F3H3" ;
+        sw_to_hw["ly5_m1" ] = "F3H2" ;
+        sw_to_hw["ly6_m1" ] = "F3H3" ;
+        sw_to_hw["ly7_m1" ] = "F3H0" ;
+        sw_to_hw["ly8_m1" ] = "F3H1" ;
         sw_to_hw["ly9_m0" ] = "F4H0" ;
         sw_to_hw["ly9_m2" ] = "F4H1" ;
         sw_to_hw["ly10_m0"] = "F4H2" ;
@@ -102,7 +88,6 @@ ModuleMapper::ModuleMapper(const int year) {
         sw_to_hw["ly14_m3"] = "F9H3" ;
 
         // HW to string and viceversa
-
 
         hw_to_string["F0H0"] = "L0T_axial"     ;
         hw_to_string["F0H1"] = "L0T_stereo"    ;
