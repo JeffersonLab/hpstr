@@ -25,7 +25,7 @@ base.parser.add_argument("-b", "--rebin", type=int, dest="rebin",
                 help="rebin factor.", metavar="rebin", default="1")
 
 base.parser.add_argument("-minStats", '--minStats', type=int, dest="minStats", 
-        help="Offline fitting requires a minimum number of stats to fit channel", metavar="minStats", default="8500")
+        help="Offline fitting requires a minimum number of stats to fit channel", metavar="minStats", default="3000")
 
 
 options = base.parser.parse_args()
@@ -58,7 +58,8 @@ fitBL = HpstrConf.Processor('fitBL', 'SvtBlFitHistoProcessor')
 #   Processor Configuration   #
 ###############################
 fitBL.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/SvtBlFits.json'
-fitBL.parameters["rawhitsHistCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/baselinefits/rawSvtHits.json'
+#fitBL.parameters["rawhitsHistCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/baselinefits/rawSvtHits.json'
+fitBL.parameters["rawhitsHistCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/baselinefits/rawSvtHits_old.json'
 fitBL.parameters["layer"] = options.layer
 fitBL.parameters["rebin"] = options.rebin
 fitBL.parameters["minStats"] = options.minStats

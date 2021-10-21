@@ -89,7 +89,7 @@ def getHistosFromFile(inFile, histoType = "TH2D", name = ""):
 
 def getOfflineFitTuple(inFile, key):
     print("Grabbing Ntuples for %s from TTree"%(key))
-    channel, svt_id, mean, sigma, norm, chi2, ndf, fitlow, fithigh, RMS, lowdaq, lowstats, badfit, hm_string = ([] for i in range(14))
+    channel, svt_id, mean, sigma, norm, chi2, ndf, fitlow, fithigh, RMS, lowdaq, lowstats, badfit, hm_string, iterFitRangeEnd, iterFitMean, iterFitChi2NDF_derRange, iterFitChi2NDF_2der = ([] for i in range(18))
     myTree = inFile.gaus_fit
     for fitData in myTree:
         tupleKey = str(fitData.halfmodule_hh)
@@ -107,8 +107,12 @@ def getOfflineFitTuple(inFile, key):
             lowstats.append(fitData.lowStats)
             badfit.append(fitData.badfit)
             hm_string.append(fitData.halfmodule_hh)
+            iterFitRangeEnd.append(fitData.iterFitRangeEnd)
+            iterFitMean.append(fitData.iterMean)
+            iterFitChi2NDF_derRange.append(fitData.iterChi2NDF_derRange)
+            iterFitChi2NDF_2der.append(fitData.iterChi2NDF_2der)
 
-    fitTuple = (svt_id, channel, mean, sigma, norm, ndf, fitlow, fithigh, RMS, lowdaq, lowstats, badfit, hm_string)
+    fitTuple = (svt_id, channel, mean, sigma, norm, ndf, fitlow, fithigh, RMS, lowdaq, lowstats, badfit, hm_string, iterFitRangeEnd, iterFitMean, iterFitChi2NDF_derRange, iterFitChi2NDF_2der)
 
     #Tuple map for reference
     svt_id = fitTuple[0]
@@ -124,6 +128,10 @@ def getOfflineFitTuple(inFile, key):
     lowstats = fitTuple[10]
     badfit = fitTuple[11]
     hm_string = fitTuple[12]
+    iterFitRangeEnd = fitTuple[13]
+    iterFitMean = fitTuple[14]
+    iterFitChi2NDF_derRange = fitTuple[15]
+    iterFitChi2NDF_2der = fitTuple[16]
     return fitTuple
 
 def getOnlineFitsForSvtIDs(inFile, svt_id_range):
@@ -800,6 +808,30 @@ def graphFitSample0(outFile, baselines, hybrid):
     blgr.Draw()
     blgr.Write()
 
+
+def plotFitParams(hybrid, fitTuple, outFile):
+    #Create subdirectory for hybrid
+    r.gDirectory.mkdir("%s_iter_fits"%(hybrid))
+    #Save output to directory
+    outFile.cd("%s_iter_fits"%(hybrid))
+
+    channels = fitTuple[1]
+    iterFitRangeEnd = fitTuple[13]
+    iterFitMean = fitTuple[14]
+    iterFitChi2NDF_derRange = fitTuple[15]
+    iterFitChi2NDF_2der = fitTuple[16]
+
+    for cc in list(channels):
+        cc = int(cc)
+        mean_gr = buildTGraph("iterMean_%s_ch_%i"%(hybrid,cc),"iterMean_vs_Position_%s_ch_%i;FitRangeEnd;mean"%(hybrid,cc),len(iterFitRangeEnd[cc]),np.array(iterFitRangeEnd[cc], dtype = float) ,np.array(iterFitMean[cc], dtype = float),1)
+
+        chi2_2Der_gr = buildTGraph("iterFit_chi2/NDF_2Der_%s_ch_%i"%(hybrid,cc),"iterChi2_2Der_%s_ch_%i;FitRangeEnd;chi2_2ndDeriv"%(hybrid,cc),len(iterFitChi2NDF_derRange[cc]),np.array(iterFitChi2NDF_derRange[cc], dtype = float) ,np.array(iterFitChi2NDF_2der[cc], dtype = float),1)
+
+        mean_gr.Draw()
+        chi2_2Der_gr.Draw()
+        mean_gr.Write()
+        chi2_2Der_gr.Write()
+
     
 ######################################################################################################
 #********* CODE SUMMARY **********#
@@ -911,7 +943,8 @@ for entry in hybridHwDict:
     if onlineFitTuple:
         generateThresholds(threshOutFile, outRootFile, offlineFitTuple, onlineFitTuple, febn, hybn, hybrid)
 
-    debugBadFits(hybrid, offlineFitTuple)
+    #debugBadFits(hybrid, offlineFitTuple)
+    #plotFitParams(hybrid, offlineFitTuple, outRootFile)
 
 outRootFile.Write()
 

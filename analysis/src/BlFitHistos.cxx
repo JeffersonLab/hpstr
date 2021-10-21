@@ -48,6 +48,7 @@ void BlFitHistos::getHistosFromFile(TFile* inFile, std::string layer){
 double fitmin;
 double fitmax;
 
+/*
 TF1* BlFitHistos::singleGausIterative(TH1D* hist, double sigmaRange, double min = -1., double max = -1.) {
     //perform single Gaus fit across full range of histo
     if (min < 0.0 )
@@ -57,10 +58,12 @@ TF1* BlFitHistos::singleGausIterative(TH1D* hist, double sigmaRange, double min 
         max = hist->GetBinLowEdge(hist->FindLastBinAbove(0.0,1));
 
     //Initial fit to establish rough mean and sigma
+    std::cout << "initial min: " << min << " | initial max: " << max << std::endl;
     TF1 *fitA = new TF1("fitA", "gaus", min, max);
     hist->Fit("fitA","ORQN","");
     double fitAMean = fitA->GetParameter(1);
     double fitASig = fitA->GetParameter(2);
+    std::cout << "initial mean: " << fitAMean << " | initial sigma: " << fitASig << std::endl;
     delete fitA;
 
     //perform second fit with range determined by first fit
@@ -112,7 +115,174 @@ TF1* BlFitHistos::singleGausIterative(TH1D* hist, double sigmaRange, double min 
 
     return fit;
 }
+*/
 
+TF1* BlFitHistos::singleGausIterative(TH1D* hist, double sigmaRange, double min = -1., double max = -1.) {
+
+    /*
+    bool debug = false;
+    std::size_t found = ((std::string)hist->GetName()).find("L1B_stereo_proY_ch255");
+    if (found!=std::string::npos){
+        debug = true; 
+        std::cout << "FOUND" << std::endl;
+    }
+    */
+    bool debug = false;
+
+    //perform single Gaus fit across full range of histo
+    if (min < 0.0 )
+        min = hist->GetBinLowEdge(hist->FindFirstBinAbove(0.0,1));
+
+    if (max < 0.0 )
+        max = hist->GetBinLowEdge(hist->FindLastBinAbove(0.0,1));
+
+    //Initial fit to establish rough mean and sigma
+    if (debug)
+        std::cout << "initial min: " << min << " | initial max: " << max << std::endl;
+    TF1 *fitA = new TF1("fitA", "gaus", min, max);
+    hist->Fit("fitA","ORQN","");
+    double fitAMean = fitA->GetParameter(1);
+    double fitASig = fitA->GetParameter(2);
+    if (debug)
+        std::cout << "meanA " << fitAMean << " | sigmaA: " << fitASig << std::endl;
+    delete fitA;
+
+    //perform second fit with range determined by first fit
+    if((fitAMean + (fitASig*sigmaRange)) <= max && (fitAMean + (fitASig*sigmaRange)) > min )
+        max = fitAMean + (fitASig*sigmaRange);
+
+    //if((fitAMean - (fitASig*sigmaRange) < max) && (fitAMean - (fitASig*sigmaRange) > hist->GetBinLowEdge(hist->FindFirstBinAbove(0.0,1))))
+    
+    //if (fitAMean - (fitASig*sigmaRange) > min)
+    //    min = fitAMean - (fitASig*sigmaRange);
+    if (debug)
+        std::cout << "minA: " << min << " | maxA: " << max << std::endl;
+
+    //Fit second time using updated min and max
+    TF1 *fitB = new TF1("fitB", "gaus", min, max);
+    hist->Fit("fitB","ORQN","");
+    double fitMean = fitB->GetParameter(1);
+    double fitSig = fitB->GetParameter(2);
+    if (debug)
+        std::cout << "meanB " << fitMean << " | sigmaB: " << fitSig << std::endl;
+
+    double newFitSig = 99999;
+    double newFitMean = 99999;
+    int i = 0;
+
+    //if((fitMean + (fitSig*sigmaRange)) <= max)
+    if((fitMean + (fitSig*sigmaRange)) <= max && (fitMean + (fitSig*sigmaRange)) > min)
+        max = fitMean + (fitSig*sigmaRange);
+    //if((fitMean - (fitSig*sigmaRange) < max) && (fitMean - (fitSig*sigmaRange) > hist->GetBinLowEdge(hist->FindFirstBinAbove(0.0,1))))
+
+    //if (fitMean - (fitSig*sigmaRange) > min)
+      //  min = fitMean - (fitSig*sigmaRange);
+
+    if (debug)
+        std::cout << "minB: " << min << " | maxB: " << max << std::endl;
+
+    //if fitMean < min, obviously failed fit. Iterate xmax backwards until this isnt true?
+    double step = 2*hist->GetXaxis()->GetBinWidth(1);
+    double iter = 0;
+    while((fitMean < min || fitMean > max ) && max > min + 10*step){
+        if (debug)
+            std::cout << "fitMean < min" << std::endl;
+        max = max - step;
+        if (debug)
+            std::cout << "new max = " << max << std::endl;
+        TF1 *fit = new TF1("fit", "gaus", min, max);
+        hist->Fit("fit","ORQN","");
+        fitMean = fit->GetParameter(1);
+        fitSig = fit->GetParameter(2);
+        if (debug)
+            std::cout << "new fitMean = " << fitMean << std::endl;
+        iter = iter + 1;
+        delete fit;
+    }
+
+    TF1 *fit = new TF1("fit", "gaus", min, max);
+    hist->Fit("fit","ORQN","");
+
+    while (std::abs(fitSig - newFitSig) > 0.0005 or std::abs(fitMean - newFitMean) > 0.0005) {
+        double itermax = max;
+        double itermin = min;
+
+        if( i > 0){
+            fitMean = newFitMean;
+            fitSig = newFitSig;
+        }
+        //if((fitMean + (fitSig*sigmaRange)) <= max)
+        if((fitMean + (fitSig*sigmaRange)) <= itermax && (fitMean + (fitSig*sigmaRange)) > itermin)
+            itermax = fitMean + (fitSig*sigmaRange);
+        //if((fitMean - (fitSig*sigmaRange) < max) && (fitMean - (fitSig*sigmaRange) > hist->GetBinLowEdge(hist->FindFirstBinAbove(0.0,1))))
+
+        //if (fitMean - (fitSig*sigmaRange) > itermin && (fitMean - (fitSig*sigmaRange)) < itermax)
+          //  itermin = fitMean - (fitSig*sigmaRange);
+        fit->SetRange(itermin,itermax);
+
+        hist->Fit("fit","ORQN","");
+        newFitMean = fit->GetParameter(1);
+        newFitSig = fit->GetParameter(2);
+
+        if(fitMean < itermin || fitMean > itermax)
+            break;
+
+        max = itermax;
+        min = itermin;
+
+        if (debug)
+            std::cout << "iter " << i << " min: " << min << " | max: " << max << std::endl;
+        if (debug)
+            std::cout << "iter " << i << " mean: " << fitMean << " | Sigma: " << fitSig << std::endl;
+        if(i > 50)
+            break;
+        i = i + 1;
+
+    }
+
+    fitmin = min;
+    fitmax = max;
+
+    if (debug)
+        std::cout << "final " << " min: " << min << " | max: " << max << std::endl;
+    if (debug)
+        std::cout << "final " << " mean: " << fitMean << " | Sigma: " << fitSig << std::endl;
+
+    return fit;
+}
+
+TF1* BlFitHistos::backwardsIterativeChi2Fit(TH1D* hist, double min, double max) {
+    
+    //Initial fit using fit window
+    TF1 *fitA = new TF1("fit", "gaus", min, max);
+    hist->Fit("fitA","ORQN","");
+    double fitmeanA = fitA->GetParameter(1);
+    double fitSigA = fitA->GetParameter(2);
+    double fitchi2A = fitA->GetChisquare()/fitA->GetNDF();
+    delete fitA;
+    double itermax = max;
+    double step = 2*hist->GetXaxis()->GetBinWidth(1);
+    double iterchi2 = -999999;
+    double fitSig = fitSigA;
+
+    while (itermax > (min + 1.5*fitSig) && ((iterchi2 - fitchi2A)/fitchi2A) < -0.10){
+        itermax = max - step;
+        TF1 *fit = new TF1("fit", "gaus", min, itermax);
+        hist->Fit("fit","ORQN","");
+        iterchi2 = fit->GetChisquare()/fit->GetNDF();
+        if (((iterchi2 - fitchi2A)/fitchi2A) < -0.10)
+            fitmax = itermax;
+        delete fit;
+    }
+
+    TF1 *fit = new TF1("fit", "gaus", min, fitmax);
+    hist->Fit("fit","ORQN","");
+
+    return fit;
+
+}
+
+/*
 TF1* BlFitHistos::backwardsIterativeChi2Fit(TH1D* hist, double min, double max){
 
     //Initial fit using fit window
@@ -138,7 +308,7 @@ TF1* BlFitHistos::backwardsIterativeChi2Fit(TH1D* hist, double min, double max){
         std::vector<double> xmaxvals;
         //Iterate fit max backwards and save chi2/ndf for each value
         //Restrict value of fitmax to be greater than initial fit mean + 0.5sigma, to prevent iterating backwards too far
-        while (max > (fitBMean + 0.5*fitBSig) ){
+        while (max > (fitBMean + 0.1*fitBSig) ){
             fit->SetRange(min,max);
             hist->Fit("fit","ORQN","");
             fitBMean = fit->GetParameter(1);
@@ -204,7 +374,9 @@ TF1* BlFitHistos::backwardsIterativeChi2Fit(TH1D* hist, double min, double max){
             //iterate fitmin backwards
             min = min - 10*hist->GetBinWidth(hist->FindFirstBinAbove(0.0,1));
         }
+        */
 
+        /*
         //Refit with fitmin that corresponds to smallest chi2/ndf
         if(chi2_ndf_min.size() > 0){
             int bestindex = std::min_element(chi2_ndf_min.begin(), chi2_ndf_min.end()) - chi2_ndf_min.begin();
@@ -232,6 +404,7 @@ TF1* BlFitHistos::backwardsIterativeChi2Fit(TH1D* hist, double min, double max){
 
     return fit;
 }
+*/
 
 
 void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebin_, int minStats_, int deadRMS_, FlatTupleMaker* flat_tuple_) {
@@ -247,6 +420,15 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
         halfmodule_hh->RebinY(rebin_);
         halfmodule_hh->Write();
         std::string hh_name = it->first;
+
+        std::cout << hh_name << std::endl;
+        /*
+        std::size_t found = hh_name.find("L1B_stereo");
+        if (found!=std::string::npos){
+            std::cout << "SKIPPING " << hh_name << std::endl;
+            continue;
+        }
+        */
 
         //get the hardware tag for this F<n>H<M>. Required for svtid mapping
         std::string hwTag;
@@ -273,8 +455,10 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
         //Perform fitting procedure over all channels on a sensor
         for(int cc=0; cc < 640 ; ++cc) 
         {
-            if(debug_)
+            if(debug_){
                 std::cout << hh_name << " " << cc << std::endl;
+            }
+            //std::cout << "CHANNEL " << cc << std::endl;
 
             //get the global svt_id for channel
             int svt_id = mmapper_->getSvtIDFromHWChannel(cc, hwTag, svtIDMap);
@@ -463,7 +647,9 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
             const double* parameters;
             parameters = fit->GetParameters();
             double fitmean = parameters[1];
+            std::cout << "Channel " << cc << " fit mean: " << fitmean <<std::endl;
             double fitsigma = parameters[2];
+            std::cout << "Channel " << cc << " fit sigma: " << fitsigma <<std::endl;
             double fitnorm = parameters[0];
             double fitchi2 = fit->GetChisquare();
             double fitndf = fit->GetNDF();
@@ -474,6 +660,7 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
             //After getting the base fit, iteratite fitmax backwards and check for improvements in chi2/ndf of the fit
             //If chi2/ndf improves, retain fitmax, and then iterate xmin backwards similarly
             //Walking the fit window backwards this way helps fit converge in cases where shape is complicatd by low daq threshold
+            /*
             fit = backwardsIterativeChi2Fit(projy_h, fitmin, fitmax);
             parameters = fit->GetParameters();
             fitmean = parameters[1];
@@ -481,6 +668,7 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
             fitnorm = parameters[0];
             fitchi2 = fit->GetChisquare();
             fitndf = fit->GetNDF();
+            */
 
             //Check if fit is grossly bad
             bool badfit = false;
@@ -513,7 +701,6 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
 
             //Fill fit values
             flat_tuple_->setVariableValue("lowdaq", (double)int(lowdaq));
-            flat_tuple_->setVariableValue("badfit", (double)int(badfit));
             flat_tuple_->setVariableValue("BlFitMean", fitmean);
             flat_tuple_->setVariableValue("BlFitSigma", fitsigma);
             flat_tuple_->setVariableValue("BlFitNorm", fitnorm);
