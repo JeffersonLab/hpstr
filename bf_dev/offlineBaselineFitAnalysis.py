@@ -943,7 +943,7 @@ for entry in hybridHwDict:
     if onlineFitTuple:
         generateThresholds(threshOutFile, outRootFile, offlineFitTuple, onlineFitTuple, febn, hybn, hybrid)
 
-    #debugBadFits(hybrid, offlineFitTuple)
+    debugBadFits(hybrid, offlineFitTuple)
     #plotFitParams(hybrid, offlineFitTuple, outRootFile)
 
 outRootFile.Write()
