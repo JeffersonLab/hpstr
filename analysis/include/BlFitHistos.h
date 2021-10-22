@@ -20,6 +20,7 @@
 #include "ModuleMapper.h"
 #include "TFitResult.h"
 #include "TF1.h"
+#include <fstream>
 
 class BlFitHistos : public HistoManager{
     
@@ -45,6 +46,8 @@ class BlFitHistos : public HistoManager{
         void GausFitHistos2D(std::map<std::string, TH2F*> histos2d,int rebin_, int minStats_,int deadRMS_, FlatTupleMaker* flat_tuple_);
         TF1* singleGausIterative(TH1D* hist, double sigmaRange, double min, double max);
         void backwardsIterativeChi2Fit(TH1D* hist, double min, double max);
+        std::pair<std::string,int> findChannelAPV(std::string feb, std::string hybrid, int channel);
+        std::map<std::string, std::vector<int>> ReadThresholdsFile(std::string filename);
         
     private:
         
@@ -54,6 +57,7 @@ class BlFitHistos : public HistoManager{
         std::map<std::string, TH2F*> histos2d;
         std::map<std::string, TH1F*> histos1d;
         std::map<std::string,std::map<int,int>> svtIDMap;
+        std::map<std::string,std::map<std::string,std::vector<int>>> threshMap_;
         bool simpleGausFit_;
         ModuleMapper * mmapper_;
 };

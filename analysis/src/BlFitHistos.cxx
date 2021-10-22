@@ -1,4 +1,5 @@
 #include "BlFitHistos.h"
+#include <sstream>
 
 BlFitHistos::BlFitHistos() {
     //ModuleMapper used to translate between hw and sw names
@@ -47,6 +48,53 @@ void BlFitHistos::getHistosFromFile(TFile* inFile, std::string layer){
 //Globally used fit window
 double fitmin;
 double fitmax;
+
+
+std::pair<std::string,int> BlFitHistos::findChannelAPV(std::string feb, std::string hybrid, int channel) {
+    //use this method, give the map (maybe make init in header), give Feb, Hyb, and Channel number
+    //Use this map to find the apv for the given channel, and the index G of that channel on the apv
+    //Somewhere else, write method to read in thresh.dat file and store it.
+    //
+    //Will access the threshold value by Feb+Hyb+Apv, and the index G of that row.
+
+    std::cout << "Looking for Feb " << feb << " Hybrid " << hybrid << "channel " << channel << std::endl;
+    //int APV;
+    //int APVindex;
+    std::pair<std::string, int> apv_chindex;
+    std::map<std::string, std::map<std::string,std::vector<int>>>::iterator it;
+    for (it = threshMap_.begin(); it != threshMap_.end(); it++){
+        std::string FH = it->first;
+        std::string ifeb = (FH.substr(0,1));
+        std::string ihyb = (FH.substr(1,1));
+        if(ifeb != feb && ihyb != hybrid)
+            continue;
+        std::cout << "Found Feb: " << ifeb << " Hybrid: " << ihyb << std::endl;
+        std::map<std::string, std::vector<int>> apv_map = it->second;
+        std::map<std::string, std::vector<int>>::iterator itb;
+        bool foundapv = false;
+        for (itb = apv_map.begin(); itb != apv_map.end(); itb++){
+            std::string apv = itb->first;
+            std::vector<int> channels = itb->second;
+            std::cout << "apv " << apv << std::endl;
+            for(int i = 0; i < channels.size(); i++){
+                if(channels[i] == channel){
+                    apv_chindex.first = apv;
+                    apv_chindex.second = i;
+                    std::cout << "For channel " << channel << ": APV " << apv << " index " << i << std::endl;
+                    foundapv = true;
+                    break;
+                }
+            }
+            if(foundapv)
+                break;
+        }
+        if(foundapv)
+            break;
+    }
+
+    return apv_chindex;
+}
+
 
 /*
 TF1* BlFitHistos::singleGausIterative(TH1D* hist, double sigmaRange, double min = -1., double max = -1.) {
@@ -496,11 +544,46 @@ TF1* BlFitHistos::backwardsIterativeChi2Fit(TH1D* hist, double min, double max){
 */
 
 
+std::map<std::string, std::vector<int>> BlFitHistos::ReadThresholdsFile(std::string filename){
+
+
+    std::map<std::string, std::vector<int>> readThresholdsMap;
+
+    std::ifstream threshfile(filename);
+    std::string row;
+    while (getline (threshfile,row)) {
+        std::vector<int> thresholds;
+        //int feb = std::stoi(row.substr(0,1)); 
+        //int hyb = std::stoi(row.substr(2,1)); 
+        //int apv = std::stoi(row.substr(4,1)); 
+        std::string feb = row.substr(0,1);
+        std::string hyb = row.substr(2,1);
+        std::string apv = row.substr(4,1);
+        std::string data_string = row.substr(5);
+        std::stringstream lineStream(data_string);
+
+        unsigned int value;
+        while(lineStream >> std::hex >> value)
+        {
+            thresholds.push_back(value);
+        }
+
+        readThresholdsMap[feb+hyb+apv] = thresholds;
+    }
+
+    threshfile.close();
+    return readThresholdsMap;
+}
+
 void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebin_, int minStats_, int deadRMS_, FlatTupleMaker* flat_tuple_) {
      
     //Get half module string names 
     std::vector<std::string> halfmodule_strings;
     mmapper_->getStrings(halfmodule_strings);
+    //Build FebHybAPV thresholds map in modulemapper
+    mmapper_->buildApvChannelMap();
+    std::string thresholdsFileIn = "/home/alic/HPS/projects/baselines/jlab/offline_fits/2021/hps_14191/hps_14191_thresholds.dat";
+    mmapper_->ReadThresholdsFile(thresholdsFileIn);
 
     //Loop over rawsvthit 2D histograms, one for each selected halfmodule
     for(std::map<std::string, TH2F*>::iterator it = histos2d.begin(); it != histos2d.end(); ++it)
@@ -530,7 +613,13 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
                 break;
             }
         }
-        //For online baselines we must use simple gaussian fit, as online and offline distributions differ dramatically
+
+        //Feb and Hybrid numbers
+        std::string feb = (hwTag.substr(1,1));
+        std::string hyb = (hwTag.substr(3,1));
+
+        //For online baselines we must use simple gaussian fit, as online and 
+        //offline distributions differ dramatically
         //and the algorithm developed for offline fits does not work for online
         if(simpleGausFit_ == true){
             std::cout << "WARNING! PERFORMING ***ONLINE*** BASELINE FITS USING SIMPLE GAUSSIAN FIT!" << std::endl;
@@ -554,8 +643,15 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
             int svt_id = mmapper_->getSvtIDFromHWChannel(cc, hwTag, svtIDMap);
             if(debug_)
                 std::cout << "Global SVT ID: " << svt_id << std::endl;
-            if(svt_id == 99999) //Feb 0-1 have max_channel = 512. svt_id = 99999 means max_channel reached. Skip cc > 512 
+
+            //Feb 0-1 have max_channel = 512.
+            //svt_id = 99999 means max_channel reached. Skip cc > 512 
+            if(svt_id == 99999)  
                 continue;
+
+            //load apv channel readout threshold value from run_thresholds.dat file
+            int threshold = mmapper_->getThresholdValue(feb, hyb, cc); 
+            std::cout << "THRESHOLD F" <<feb << "H" <<hyb << "channel " << cc << ": " << threshold << std::endl;
 
             //Set Channel and Hybrid information and paramaters in the flat tuple
             flat_tuple_->setVariableValue("halfmodule_hh", hh_name);
@@ -563,7 +659,6 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
             flat_tuple_->setVariableValue("svt_id", svt_id);
             flat_tuple_->setVariableValue("minStats", (double)minStats_);
             flat_tuple_->setVariableValue("rebin", (double)rebin_);
-
 
             //Get YProjection (1D Channel Histo) from 2D Histogram 
             TH1D* projy_h = halfmodule_hh->ProjectionY(Form("%s_proY_ch%i",hh_name.c_str(),cc),
@@ -580,6 +675,27 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
             if(chRMS < deadRMS_ || projy_h->GetEntries() == 0)
                 flat_tuple_->setVariableValue("dead",1.0);
 
+            //START NEW CODE*************
+            
+            //Fit window max set by threshold value loaded from file
+            double xthresh = threshold;
+            //Minum value of x set to first bin with fraction of maximum value
+            double maxbin = projy_h->GetBinContent(projy_h->GetMaximumBin());
+            double frac = 0.15;
+            int xminbin = projy_h->FindFirstBinAbove((double)frac*maxbin,1);
+            double xmin = projy_h->GetBinLowEdge(firstbin);
+            double binwidth = projy_h->GetBinWidth(firstbin);
+
+
+
+
+
+
+
+
+            ///////////////////////////////////////////////////////////////////////////
+            /*
+
             //xmin is the start of the fit window. iterxmax will initially be iteratively fit and
             //then increased until some maximum allowed value, or until the chi2/Ndf > 100
             double maxbin = projy_h->GetBinContent(projy_h->GetMaximumBin());
@@ -588,6 +704,8 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
             int firstbin = projy_h->FindFirstBinAbove((double)frac*maxbin,1);
             double xmin = projy_h->GetBinLowEdge(firstbin);
             double binwidth = projy_h->GetBinWidth(firstbin);
+
+            */
 
             //If channel does not have the minimum statistics required, set all variables to -9999.9
             //and skip the fit procedure on this channel

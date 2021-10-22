@@ -562,4 +562,160 @@ std::vector<std::string> ModuleMapper::getHybridStrings() {
     return hybrids;
 }
 
+void ModuleMapper::buildApvChannelMap() {
+
+    //Database file format is <FebN> <HybN> 
+    //For FebN < 2 
+        //<apv 0: 128->255> <apv 1: 0->127> <apv 2: 256->383> <apv 3: 384->512>
+    //For FebN >= 2
+        //<apv 0: 512->639> <apv 1: 384->511> <apv 2: 256->383> <apv 3: 128->255> <pv 4: 0->127>
+
+    //std::pair<int std::make_pair
+
+    //For each row, grab first three value, Feb, Hybrid, and APV
+    //Read the row, and store values into vector at appropriate index.
+    std::map<std::string,std::map<std::string,std::vector<int>>> map; 
+    for(int feb = 0; feb < 10; feb++){
+        int napvs = 5;
+        if(feb < 2)
+            napvs = 4;
+        for(int hybrid = 0; hybrid < 5; hybrid++){
+            std::string FH_code = std::to_string(feb) + std::to_string(hybrid);
+            std::map<std::string, std::vector<int>> apv_channels;
+            for(int apv = 0; apv < napvs+1; apv++){
+                //std::pair<int,std::vector<int>> apv_channels;
+                std::vector<int> channels;
+                int a;
+                int b;
+                if(feb < 2){
+                    if(apv == 0){
+                        a=128;
+                        b=255;
+                    }
+                    if(apv == 1){
+                        a=0;
+                        b=127;
+                    }
+                    if(apv == 2){
+                        a=256;
+                        b=383;
+                    }
+                    if(apv == 3){
+                        a=384;
+                        b=512;
+                    }
+                }
+                else {
+                    if(apv == 0){
+                        a=512;
+                        b=639;
+                    }
+                    if(apv == 1){
+                        a=384;
+                        b=511;
+                    }
+                    if(apv == 2){
+                        a=256;
+                        b=383;
+                    }
+                    if(apv == 3){
+                        a=128;
+                        b=255;
+                    }
+                    if(apv == 4){
+                        a=0;
+                        b=127;
+                    }
+                }
+
+                for (int i = a; i < b+1; i++){
+                   channels.push_back(i); 
+                }
+                //apv_channels.first = apv;
+                //apv_channels.second = channels;
+                apv_channels[std::to_string(apv)] = channels;
+            }
+            map[FH_code] = apv_channels;
+        }
+    }
+
+    apvChannelMap_ = map;;
+}
+
+void ModuleMapper::ReadThresholdsFile(std::string filename){
+
+    std::map<std::string, std::vector<int>> readThresholds;
+
+    std::ifstream threshfile(filename);
+    std::string row;
+    while (getline (threshfile,row)) {
+        std::vector<int> thresholds;
+        std::string feb = row.substr(0,1);
+        std::string hyb = row.substr(2,1);
+        std::string apv = row.substr(4,1);
+        std::string data_string = row.substr(5);
+        std::stringstream lineStream(data_string);
+
+        unsigned int value;
+        while(lineStream >> std::hex >> value)
+        {
+            thresholds.push_back(value);
+        }
+
+        readThresholds[feb+hyb+apv] = thresholds;
+    }
+
+    threshfile.close();
+    thresholdsIn_ = readThresholds;
+}
+
+std::pair<std::string,int> ModuleMapper::findApvChannel(std::string feb, std::string hybrid, int channel) {
+
+    //std::cout << "Looking for Feb " << feb << " Hybrid " << hybrid << "channel " << channel << std::endl;
+    std::pair<std::string, int> apv_chindex;
+    std::map<std::string, std::map<std::string,std::vector<int>>>::iterator it;
+    for (it = apvChannelMap_.begin(); it != apvChannelMap_.end(); it++){
+        std::string FH = it->first;
+        std::string ifeb = (FH.substr(0,1));
+        std::string ihyb = (FH.substr(1,1));
+        if(ifeb != feb && ihyb != hybrid)
+            continue;
+        //std::cout << "Found Feb: " << ifeb << " Hybrid: " << ihyb << std::endl;
+        std::map<std::string, std::vector<int>> apv_map = it->second;
+        std::map<std::string, std::vector<int>>::iterator itb;
+        bool foundapv = false;
+        for (itb = apv_map.begin(); itb != apv_map.end(); itb++){
+            std::string apv = itb->first;
+            std::vector<int> channels = itb->second;
+            //std::cout << "apv " << apv << std::endl;
+            for(int i = 0; i < channels.size(); i++){
+                if(channels[i] == channel){
+                    apv_chindex.first = apv;
+                    apv_chindex.second = i;
+                    //std::cout << "For channel " << channel << ": APV " << apv << " index " << i << std::endl;
+                    foundapv = true;
+                    break;
+                }
+            }
+            if(foundapv)
+                break;
+        }
+        if(foundapv)
+            break;
+    }
+
+    return apv_chindex;
+}
+
+int ModuleMapper::getThresholdValue(std::string feb, std::string hybrid, int channel){
+    std::pair<std::string,int> apv_channel = findApvChannel(feb, hybrid, channel);
+    std::string apv = apv_channel.first;
+    int apvchannel = apv_channel.second;
+    int threshold = thresholdsIn_[feb+hybrid+apv].at(apvchannel);
+    return threshold;
+}
+
+
+
+
 
