@@ -13,7 +13,6 @@
 #define ELECTRONMASS 0.000510998950 // GeV
 #define PI 3.14159265358979
 #define ROTATIONANGLEAROUNDY 0.0305 // rad
-#define MOMSCALE 1.761/2.09
 
 MollerAnaProcessor::MollerAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
@@ -45,6 +44,12 @@ void MollerAnaProcessor::configure(const ParameterSet& parameters) {
 }
 
 void MollerAnaProcessor::initialize(TTree* tree) {
+	if(beamE_ == 1.92)
+		MOMSCALE = 1.961/2.856;
+
+	std::cout << "MOMSCALE:" << MOMSCALE << std::endl;
+
+
 	_ah =  std::make_shared<AnaHelpers>();
 
 	trackSelector  = std::make_shared<BaseSelector>(anaName_+"_"+"vtxSelection",trackSelectionCfg_);

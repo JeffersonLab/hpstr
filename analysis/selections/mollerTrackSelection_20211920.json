@@ -42,13 +42,13 @@
     },    
     
     "pTop_lt" : {
-        "cut" : 2.78,
+        "cut" : 1.44,
         "id"  : 7,
         "info" : "p_{top} < 75%E_{beam} [GeV]"
     },
     
 	"pBot_lt" : {
-        "cut" : 2.78,
+        "cut" : 1.44,
         "id"  : 8,
         "info" : "p_{bot} < 75%E_{beam} [GeV]"
     },
@@ -60,14 +60,14 @@
     },
     
  	"pSum_gt" : {
-        "cut" : 3.4,
+        "cut" : 1.6,
         "id"  : 10,
-        "info" : "pSum > 3.4 [GeV]"
+        "info" : "pSum > 1.6 [GeV]"
     },
     
 	"pSum_lt" : {
-        "cut" : 4,
+        "cut" : 2.2,
         "id"  : 11,
-        "info" : "pSum < 4 [GeV]"
+        "info" : "pSum < 2.2 [GeV]"
     }
 }

@@ -93,6 +93,9 @@ class MollerAnaProcessor : public Processor {
         // save a tree for information of tracks from vertices
         std::shared_ptr<FlatTupleMaker> _reg_tracks_from_vertices;
 
+        //Scale for momentum correction
+        double MOMSCALE = 1.761/2.09;
+
 
 };
 

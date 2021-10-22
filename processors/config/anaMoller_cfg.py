@@ -49,7 +49,11 @@ mollerAna.parameters["analysis"] = analysis
 mollerAna.parameters["beamE"] = base.beamE[str(options.year)]
 mollerAna.parameters["isData"] = options.isData
 
-mollerAna.parameters["trackSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/mollerTrackSelection_2021.json'
+if options.year == 2021:
+    mollerAna.parameters["trackSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/mollerTrackSelection_2021.json'
+elif options.year == 20211920:
+    mollerAna.parameters["trackSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/mollerTrackSelection_20211920.json'
+    
 mollerAna.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mollerAnalysis/mollerAnalysis.json'    
 
 # Sequence which the processors will run.
