@@ -582,7 +582,7 @@ void ModuleMapper::buildApvChannelMap() {
         for(int hybrid = 0; hybrid < 5; hybrid++){
             std::string FH_code = std::to_string(feb) + std::to_string(hybrid);
             std::map<std::string, std::vector<int>> apv_channels;
-            for(int apv = 0; apv < napvs+1; apv++){
+            for(int apv = 0; apv < napvs; apv++){
                 //std::pair<int,std::vector<int>> apv_channels;
                 std::vector<int> channels;
                 int a;
@@ -602,7 +602,7 @@ void ModuleMapper::buildApvChannelMap() {
                     }
                     if(apv == 3){
                         a=384;
-                        b=512;
+                        b=511;
                     }
                 }
                 else {
@@ -671,16 +671,19 @@ void ModuleMapper::ReadThresholdsFile(std::string filename){
 
 std::pair<std::string,int> ModuleMapper::findApvChannel(std::string feb, std::string hybrid, int channel) {
 
-    //std::cout << "Looking for Feb " << feb << " Hybrid " << hybrid << "channel " << channel << std::endl;
+    std::cout << "Looking for Feb " << feb << " Hybrid " << hybrid << "channel " << channel << std::endl;
     std::pair<std::string, int> apv_chindex;
     std::map<std::string, std::map<std::string,std::vector<int>>>::iterator it;
     for (it = apvChannelMap_.begin(); it != apvChannelMap_.end(); it++){
         std::string FH = it->first;
+        std::cout << "FH " << FH << std::endl;
         std::string ifeb = (FH.substr(0,1));
         std::string ihyb = (FH.substr(1,1));
-        if(ifeb != feb && ihyb != hybrid)
+        if(ifeb == feb && ihyb == hybrid)
+            bool found = true;
+        else
             continue;
-        //std::cout << "Found Feb: " << ifeb << " Hybrid: " << ihyb << std::endl;
+        std::cout << "Found Feb: " << ifeb << " Hybrid: " << ihyb << std::endl;
         std::map<std::string, std::vector<int>> apv_map = it->second;
         std::map<std::string, std::vector<int>>::iterator itb;
         bool foundapv = false;
@@ -688,11 +691,12 @@ std::pair<std::string,int> ModuleMapper::findApvChannel(std::string feb, std::st
             std::string apv = itb->first;
             std::vector<int> channels = itb->second;
             //std::cout << "apv " << apv << std::endl;
+            std::cout << "channels size : " << channels.size() << std::endl;
             for(int i = 0; i < channels.size(); i++){
                 if(channels[i] == channel){
                     apv_chindex.first = apv;
                     apv_chindex.second = i;
-                    //std::cout << "For channel " << channel << ": APV " << apv << " index " << i << std::endl;
+                    std::cout << "For channel " << channel << ": APV " << apv << " index " << i << std::endl;
                     foundapv = true;
                     break;
                 }

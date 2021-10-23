@@ -544,6 +544,84 @@ TF1* BlFitHistos::backwardsIterativeChi2Fit(TH1D* hist, double min, double max){
 */
 
 
+void BlFitHistos::iterativeGausFit(TH1D* hist, double min, double max, double sigmaRange, int threshold) {
+
+    bool debug = true;
+    //perform single Gaus fit across full range of histo
+    if (min < 0.0 )
+        min = hist->GetBinLowEdge(hist->FindFirstBinAbove(0.0,1));
+
+    if (max < 0.0 )
+        max = hist->GetBinLowEdge(hist->FindLastBinAbove(0.0,1));
+
+    //Initial fit to establish rough mean and sigma
+    if (debug)
+        std::cout << "initial min: " << min << " | initial max: " << max << std::endl;
+
+    TF1 *fitA = new TF1("fitA", "gaus", min, max);
+    hist->Fit("fitA","ORQN","");
+    double fitAMean = fitA->GetParameter(1);
+    double fitASig = fitA->GetParameter(2);
+
+    delete fitA;
+
+    if(fitAMean + fitASig*sigmaRange < threshold)
+        max = fitAMean + fitASig*sigmaRange;
+    min = fitAMean - fitASig*sigmaRange;
+
+    if (debug){
+        std::cout << "meanA " << fitAMean << " | sigmaA: " << fitASig << std::endl;
+        std::cout << "minA: " << min << " | maxA: " << max << std::endl;
+    }
+
+    //Fit second time using updated min and max
+    TF1 *fitB = new TF1("fitB", "gaus", min, max);
+    hist->Fit("fitB","ORQN","");
+    double fitMean = fitB->GetParameter(1);
+    double fitSig = fitB->GetParameter(2);
+    if (debug)
+        std::cout << "meanB " << fitMean << " | sigmaB: " << fitSig << std::endl;
+
+    if(fitAMean + fitASig*sigmaRange < threshold)
+        max = fitMean + fitSig*sigmaRange;
+    min = fitMean - fitSig*sigmaRange;
+
+    if (debug)
+        std::cout << "minB: " << min << " | maxB: " << max << std::endl;
+
+    TF1 *fit = new TF1("fit", "gaus", min, max);
+    hist->Fit("fit","ORQN","");
+
+    double newFitSig = 99999;
+    double newFitMean = 99999;
+    int i = 0;
+    while (std::abs(fitSig - newFitSig) > 0.0005 || std::abs(fitMean - newFitMean) > 0.0005) {
+        double itermax = max;
+        double itermin = min;
+
+        if(i > 0){
+            fitMean = newFitMean;
+            fitSig = newFitSig;
+        }
+
+        if(fitAMean + fitASig*sigmaRange < threshold)
+            max = fitMean + fitSig*sigmaRange;
+        min = fitMean - fitSig*sigmaRange;
+        fit->SetRange(min,max);
+        hist->Fit("fit","ORQN","");
+
+        newFitMean = fit->GetParameter(1);
+        newFitSig = fit->GetParameter(2);
+
+        if(i > 20)
+            break;
+        i = i + 1;
+    }
+
+    fitmin = min;
+    fitmax = max;
+}
+
 std::map<std::string, std::vector<int>> BlFitHistos::ReadThresholdsFile(std::string filename){
 
 
@@ -577,12 +655,13 @@ std::map<std::string, std::vector<int>> BlFitHistos::ReadThresholdsFile(std::str
 
 void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebin_, int minStats_, int deadRMS_, FlatTupleMaker* flat_tuple_) {
      
+    bool debug = true;
     //Get half module string names 
     std::vector<std::string> halfmodule_strings;
     mmapper_->getStrings(halfmodule_strings);
     //Build FebHybAPV thresholds map in modulemapper
     mmapper_->buildApvChannelMap();
-    std::string thresholdsFileIn = "/home/alic/HPS/projects/baselines/jlab/offline_fits/2021/hps_14191/hps_14191_thresholds.dat";
+    std::string thresholdsFileIn = "/home/alic/HPS/projects/baselines/jlab/offline_fits/2021/hps_14191/debug/svt_014165_thresholds_3pt0sigma.dat";
     mmapper_->ReadThresholdsFile(thresholdsFileIn);
 
     //Loop over rawsvthit 2D histograms, one for each selected halfmodule
@@ -633,15 +712,16 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
         //Perform fitting procedure over all channels on a sensor
         for(int cc=0; cc < 640 ; ++cc) 
         {
-            if(debug_){
+            if(debug){
                 std::cout << hh_name << " " << cc << std::endl;
             }
+            //std::cout << hh_name << " " << cc << std::endl;
             if (cc%100 == 0)
                 std::cout << "CHANNEL " << cc << std::endl;
 
             //get the global svt_id for channel
             int svt_id = mmapper_->getSvtIDFromHWChannel(cc, hwTag, svtIDMap);
-            if(debug_)
+            if(debug)
                 std::cout << "Global SVT ID: " << svt_id << std::endl;
 
             //Feb 0-1 have max_channel = 512.
@@ -651,7 +731,8 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
 
             //load apv channel readout threshold value from run_thresholds.dat file
             int threshold = mmapper_->getThresholdValue(feb, hyb, cc); 
-            std::cout << "THRESHOLD F" <<feb << "H" <<hyb << "channel " << cc << ": " << threshold << std::endl;
+            if(debug)
+                std::cout << "THRESHOLD F" <<feb << "H" <<hyb << "channel " << cc << ": " << threshold << std::endl;
 
             //Set Channel and Hybrid information and paramaters in the flat tuple
             flat_tuple_->setVariableValue("halfmodule_hh", hh_name);
@@ -678,38 +759,20 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
             //START NEW CODE*************
             
             //Fit window max set by threshold value loaded from file
-            double xthresh = threshold;
+            double maxx = threshold;
             //Minum value of x set to first bin with fraction of maximum value
             double maxbin = projy_h->GetBinContent(projy_h->GetMaximumBin());
             double frac = 0.15;
-            int xminbin = projy_h->FindFirstBinAbove((double)frac*maxbin,1);
-            double xmin = projy_h->GetBinLowEdge(firstbin);
-            double binwidth = projy_h->GetBinWidth(firstbin);
+            int minbin = projy_h->FindFirstBinAbove((double)frac*maxbin,1);
+            double minx = projy_h->GetBinLowEdge(minbin);
+            double binwidth = projy_h->GetBinWidth(minbin);
+            double minxVal = projy_h->GetBinContent(minbin);
+            double maxxVal = projy_h->GetBinContent(maxbin);
 
-
-
-
-
-
-
-
-            ///////////////////////////////////////////////////////////////////////////
-            /*
-
-            //xmin is the start of the fit window. iterxmax will initially be iteratively fit and
-            //then increased until some maximum allowed value, or until the chi2/Ndf > 100
-            double maxbin = projy_h->GetBinContent(projy_h->GetMaximumBin());
-            //firstbin is first bin that contains some fraction of bin with most entries
-            double frac = 0.10;
-            int firstbin = projy_h->FindFirstBinAbove((double)frac*maxbin,1);
-            double xmin = projy_h->GetBinLowEdge(firstbin);
-            double binwidth = projy_h->GetBinWidth(firstbin);
-
-            */
 
             //If channel does not have the minimum statistics required, set all variables to -9999.9
             //and skip the fit procedure on this channel
-            if (firstbin == -1 || projy_h->GetEntries() < minStats_ ) 
+            if (minbin == -1 || projy_h->GetEntries() < minStats_ ) 
             {
                 flat_tuple_->setVariableValue("BlFitMean", -9999.9);
                 flat_tuple_->setVariableValue("BlFitSigma", -9999.9);
@@ -732,24 +795,9 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
             }
             flat_tuple_->setVariableValue("lowStats",0.0);
 
-            //Define all iterative and final fit parameters
-            std::vector<double> amp,mean,sigma,chi2,const_err,sigma_err,
-                fit_range_end,chi2_NDF,chi2_2D,chi2_1D,der2chi2,der2chi2R;
-            std::vector<int> NDF;
-
-            //Baseline signals are composed of a gaussian baseline, followed by a landau pile-up
-            //It is found that at the boundary of these two distributions, the
-            //second derivative of the Chi2/Ndf of the iterative fit is maximized. 
-            //Therefore, in order to determine the correct fit window, i.e. xmin and xmax, that
-            //will fit a gaussian over just the baseline, the fit works as follows:
-            //Iterate xmax across the ADC distribution. At each new value of iterxmax, perform
-            //a fit on the histogram. Add Chi2/Ndf for the iterxmax of each fit to a vector.
-            //Locate the iterxmax value that corresponds to the maximum Chi2/Ndf 2nd derivative. This
-            //is where the fit window should end (xmax) 
-            
             //If baseline fitting an online baseline, must set simpleGauseFit_ to true!
             if(simpleGausFit_ == true){
-                TF1* simpleFit = singleGausIterative(projy_h, 1.5,xmin);
+                TF1* simpleFit = singleGausIterative(projy_h, 1.5,minx);
                 const double* parameters;
                 parameters = simpleFit->GetParameters();
                 flat_tuple_->setVariableValue("BlFitMean", parameters[1]);
@@ -765,6 +813,174 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
                 delete projy_h;
                 continue;
             }
+
+            //Perform iterative fit, starting at xmax and moving backwards towards xmin
+            
+            //Define all iterative and final fit parameters
+            std::vector<double> amp,mean,sigma,chi2,const_err,sigma_err,
+                fit_range_end,chi2_NDF,chi2_2D,chi2_1D,der2chi2,der2chi2R;
+            std::vector<int> NDF;
+
+            int iter = 0;
+            int itermaxbin = projy_h->FindBin(maxx);
+            itermaxbin = itermaxbin - 5;
+            double itermaxX = projy_h->GetBinLowEdge(itermaxbin);
+            double itermaxVal = projy_h->GetBinContent(itermaxbin);
+
+            int iterminbin = itermaxbin - 10;
+            double iterminX = projy_h->GetBinLowEdge(iterminbin);
+            double iterminVal = projy_h->GetBinContent(iterminbin);
+
+            if(debug){
+                std::cout << "xmax: " << itermaxX << " value: " << itermaxVal << std::endl;
+                std::cout << "xmin: " << minx << " value: " << minxVal << std::endl;
+            }
+
+            double tallestVal = 0;
+            double tallestX = 0;
+            bool peakfound = false;
+
+            double maxPeak = 0.0;
+            double peakminbin = iterminbin;
+            double peakmaxbin = itermaxbin;
+            int j = 0;
+            while(iterminbin > minbin) {
+
+                double peakval = 0;
+                iterminbin--;
+                iterminVal = projy_h->GetBinContent(iterminbin);
+                iterminX = projy_h->GetBinLowEdge(iterminbin);
+                itermaxVal = projy_h->GetBinContent(itermaxbin);
+                itermaxX = projy_h->GetBinLowEdge(itermaxbin);
+
+                if(debug){
+                    std::cout << "iterminX: " << iterminX << " has value: " << iterminVal << std::endl; 
+                    std::cout << "itermaX: " << itermaxX << " has value: " << itermaxVal << std::endl; 
+                }
+
+                if(iterminVal > itermaxVal){
+                    j = 0;
+                }
+                else if(iterminVal <= itermaxVal){
+                    iterminbin--; 
+                    j++;
+                }
+
+                if(debug)
+                    std::cout << "j = " << j << std::endl;
+
+                if(j > 3){
+                    iterminbin = iterminbin + j;
+                    peakminbin = iterminbin;
+                    peakmaxbin = itermaxbin;
+                    //delete h;
+                    int peakbin = projy_h->GetMaximumBin();
+
+                    projy_h->GetXaxis()->SetRange(peakminbin, peakmaxbin);
+                    peakval = projy_h->GetBinContent(peakbin);
+                    projy_h->GetXaxis()->SetRange(0,projy_h->FindLastBinAbove(0));
+                    peakfound = true;
+                    j = 0;
+                    if(debug){
+                        std::cout << "local peak found at " << projy_h->GetBinLowEdge(peakbin) << std::endl; 
+                        std::cout << "peak value = " << peakval << std::endl;
+                    }
+                }
+
+                if(peakfound){
+                    peakfound = false;
+                    int k = 0;
+                    //check if peak value is found again to the left
+                    while(iterminbin > minbin){
+                        iterminbin--;
+                        iterminVal = projy_h->GetBinContent(iterminbin);
+                        if(debug){
+                            std::cout << "iterminx = " << projy_h->GetBinLowEdge(iterminbin) << std::endl;
+                            std::cout << "iterminVal = " << iterminVal << std::endl;
+                        }
+                        if(iterminVal >= peakval){
+                            k++;    
+                        }
+                        else{
+                            k=0;
+                        }
+                        if(k > 3){
+                            itermaxbin = iterminbin + k;
+                            iterminbin = itermaxbin - 3;
+                            k = 0;
+                            if(debug){
+                                std::cout << "New large peak found beyond " << projy_h->GetBinLowEdge(iterminbin) << std::endl;
+                                std::cout << "Set iterxmax to : " << projy_h->GetBinLowEdge(itermaxbin) << std::endl;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            fitmax = projy_h->GetBinLowEdge(itermaxbin); 
+            fitmin = projy_h->GetBinLowEdge(iterminbin); 
+
+            iterativeGausFit(projy_h, fitmin, fitmax, 1, threshold);
+
+            TF1 *fit = new TF1("fit", "gaus", fitmin, fitmax);
+            projy_h->Fit("fit","ORQN","");
+            double fitmean = fit->GetParameter(1);
+            double fitsigma = fit->GetParameter(2);
+            double fitnorm = fit->GetParameter(0);
+            //double fitmean = parameters[1];
+            //double fitsigma = parameters[2];
+            //double fitnorm = parameters[0];
+            double fitchi2 = fit->GetChisquare();
+            double fitndf = fit->GetNDF();
+
+            std::cout << "Fit Mean: " << fitmean << std::endl;
+            std::cout << "Fit sigma: " << fitsigma << std::endl;
+            std::cout << "Fit norm: " << fitnorm << std::endl;
+            std::cout << "Fit min: " << fitmin << std::endl;
+            std::cout << "Fit max: " << fitmax << std::endl;
+            delete fit;
+
+            /*
+            while(iterxmax < projy_h->GetBinLowEdge(projy_h->FindLastBinAbove(0.10*maxbin)) && currentChi2 < 50.0 || iter < 20)
+            {
+                TFitResultPtr cc_fit = projy_h->Fit("gaus", "QRES", "", xmin, iterxmax);
+                if(cc_fit->Ndf() == 0)
+                {
+                    iterxmax = iterxmax + binwidth;
+                    continue;
+                }
+
+                //Return iterative fit parameters and add to flat tuple
+                flat_tuple_->addToVector("iterMean", cc_fit->GetParams()[1]);
+                chi2.push_back(cc_fit->Chi2());
+                NDF.push_back(cc_fit->Ndf());
+                chi2_NDF.push_back(chi2.at(iter)/NDF.at(iter));
+                flat_tuple_->addToVector("iterChi2NDF", chi2_NDF.at(iter));
+                fit_range_end.push_back(iterxmax);
+                flat_tuple_->addToVector("iterFitRangeEnd", iterxmax);
+
+                //Increase fit range window and iterate the fit
+                iterxmax = iterxmax + binwidth;
+                iter++;
+                currentChi2 = cc_fit->Chi2()/cc_fit->Ndf();
+            }
+
+
+
+
+
+            ///////////////////////////////////////////////////////////////////////////
+
+            //xmin is the start of the fit window. iterxmax will initially be iteratively fit and
+            //then increased until some maximum allowed value, or until the chi2/Ndf > 100
+            double maxbin = projy_h->GetBinContent(projy_h->GetMaximumBin());
+            //firstbin is first bin that contains some fraction of bin with most entries
+            double frac = 0.10;
+            int firstbin = projy_h->FindFirstBinAbove((double)frac*maxbin,1);
+            double xmin = projy_h->GetBinLowEdge(firstbin);
+            double binwidth = projy_h->GetBinWidth(firstbin);
+
 
             //If fitting an online baseline (which has gaussian and landau)
             //iteratively fit distribution with gaussian until Chi2 blows up larger than 100
@@ -884,6 +1100,8 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
             //std::cout << "FINAL FINAL MEAN " << fitmean << std::endl;
             //std::cout << "FINAL FINAL Min " << fitmin << std::endl;
             //std::cout << "FINAL FINAL Max " << fitmax << std::endl;
+            
+            
             //Check if fit is grossly bad
             bool badfit = false;
             //If fitmean > fitmax or fitmean < fitmin...flag
@@ -914,7 +1132,20 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
                 if(maxavg > fitnorm)
                     lowdaq = true;
             }
+            */
 
+            flat_tuple_->setVariableValue("lowdaq", 0.0);
+            flat_tuple_->setVariableValue("badfit", 0.0);
+            flat_tuple_->setVariableValue("BlFitMean", fitmean);
+            flat_tuple_->setVariableValue("BlFitSigma", fitsigma);
+            flat_tuple_->setVariableValue("BlFitNorm", fitnorm);
+            flat_tuple_->setVariableValue("BlFitChi2", fitchi2);
+            flat_tuple_->setVariableValue("BlFitNdf", fitndf);
+            flat_tuple_->setVariableValue("BlFitRangeLower", fitmin);
+            flat_tuple_->setVariableValue("BlFitRangeUpper", fitmax);
+            flat_tuple_->addToVector("iterChi2NDF_derRange",0.0);
+
+            /*
             //Fill fit values
             flat_tuple_->setVariableValue("lowdaq", (double)int(lowdaq));
             flat_tuple_->setVariableValue("badfit", (double)int(badfit));
@@ -929,6 +1160,7 @@ void BlFitHistos::GausFitHistos2D(std::map<std::string,TH2F*> histos2d, int rebi
             {
                 flat_tuple_->addToVector("iterChi2NDF_derRange",chi2_2D_range.at(i));
             }
+            */
 
             flat_tuple_->fill();
 

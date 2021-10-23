@@ -48,6 +48,7 @@ class BlFitHistos : public HistoManager{
         void backwardsIterativeChi2Fit(TH1D* hist, double min, double max);
         std::pair<std::string,int> findChannelAPV(std::string feb, std::string hybrid, int channel);
         std::map<std::string, std::vector<int>> ReadThresholdsFile(std::string filename);
+        void iterativeGausFit(TH1D* hist, double min, double max, double sigmaRange, int threshold);
         
     private:
         
