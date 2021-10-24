@@ -13,20 +13,22 @@ def timeSample_callback(options, opt, value, parser):
 base.parser.add_argument('-l', '--layer', type=str, dest="layer",default="", 
         help="To run on all layers, leave default. To select specific layer: L<n><T/B>")
 
+base.parser.add_argument('-thresh', '--thresh', type=str, dest="thresholdsFileIn", 
+        help="Load online thresholds file used to set apv channel threshold. Required for fitting!")
+
 #Choose the RMS value that indicates a "dead" channel. This is a channel with low RMS compared to other channels, and varies based on Run
 base.parser.add_argument("-deadRMS", '--deadRMS', type=int, dest="deadRMS", 
-        help="Define dead channel by setting low RMS threshold", metavar="deadRMS", default="150")
+        help="Define dead channel by setting low RMS threshold", metavar="deadRMS", default=150)
 
 #Set simpleGausFit to True if fitting a baseline file that does not have any background
 base.parser.add_argument('-simpleGausFit', '--simpleGausFit',type=str, dest="simpleGausFit",default="false", 
         help="To fit baselines with simple gaussian fit, set to True")
 
 base.parser.add_argument("-b", "--rebin", type=int, dest="rebin",
-                help="rebin factor.", metavar="rebin", default="1")
+                help="rebin factor.", metavar="rebin", default=1)
 
 base.parser.add_argument("-minStats", '--minStats', type=int, dest="minStats", 
-        help="Offline fitting requires a minimum number of stats to fit channel", metavar="minStats", default="3000")
-
+        help="Offline fitting requires a minimum number of stats to fit channel", metavar="minStats", default=3000)
 
 options = base.parser.parse_args()
 
@@ -58,13 +60,15 @@ fitBL = HpstrConf.Processor('fitBL', 'SvtBlFitHistoProcessor')
 #   Processor Configuration   #
 ###############################
 fitBL.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/SvtBlFits.json'
-#fitBL.parameters["rawhitsHistCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/baselinefits/rawSvtHits.json'
-fitBL.parameters["rawhitsHistCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/baselinefits/rawSvtHits_old.json'
+fitBL.parameters["rawhitsHistCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/baselinefits/rawSvtHits.json'
+#fitBL.parameters["rawhitsHistCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/baselinefits/rawSvtHits_old.json'
 fitBL.parameters["layer"] = options.layer
 fitBL.parameters["rebin"] = options.rebin
 fitBL.parameters["minStats"] = options.minStats
 fitBL.parameters["deadRMS"] = options.deadRMS
 fitBL.parameters["simpleGausFit"] = options.simpleGausFit
+fitBL.parameters["thresholdsFileIn"] = options.thresholdsFileIn
+fitBL.parameters["debug"] = options.debug
 
 # Sequence which the processors will run.
 p.sequence = [fitBL]

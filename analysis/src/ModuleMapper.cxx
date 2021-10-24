@@ -645,8 +645,13 @@ void ModuleMapper::buildApvChannelMap() {
 void ModuleMapper::ReadThresholdsFile(std::string filename){
 
     std::map<std::string, std::vector<int>> readThresholds;
+    std::ifstream threshfile;
+    threshfile.open(filename);
+    if(!threshfile){
+        std::cout << "ERROR! THRESHOLD FILE " << filename << " DOES NOT EXIST!" << std::endl;
+        std::cout << "FITTING WILL FAIL. PLEASE SPECIFY THE DATABASE THRESHOLD FILE ASSOCIATED WITH RUN" << std::endl;
+    }
 
-    std::ifstream threshfile(filename);
     std::string row;
     while (getline (threshfile,row)) {
         std::vector<int> thresholds;
@@ -671,19 +676,18 @@ void ModuleMapper::ReadThresholdsFile(std::string filename){
 
 std::pair<std::string,int> ModuleMapper::findApvChannel(std::string feb, std::string hybrid, int channel) {
 
-    std::cout << "Looking for Feb " << feb << " Hybrid " << hybrid << "channel " << channel << std::endl;
+    //std::cout << "Looking for Feb " << feb << " Hybrid " << hybrid << "channel " << channel << std::endl;
     std::pair<std::string, int> apv_chindex;
     std::map<std::string, std::map<std::string,std::vector<int>>>::iterator it;
     for (it = apvChannelMap_.begin(); it != apvChannelMap_.end(); it++){
         std::string FH = it->first;
-        std::cout << "FH " << FH << std::endl;
         std::string ifeb = (FH.substr(0,1));
         std::string ihyb = (FH.substr(1,1));
         if(ifeb == feb && ihyb == hybrid)
             bool found = true;
         else
             continue;
-        std::cout << "Found Feb: " << ifeb << " Hybrid: " << ihyb << std::endl;
+        //std::cout << "Found Feb: " << ifeb << " Hybrid: " << ihyb << std::endl;
         std::map<std::string, std::vector<int>> apv_map = it->second;
         std::map<std::string, std::vector<int>>::iterator itb;
         bool foundapv = false;
@@ -691,12 +695,12 @@ std::pair<std::string,int> ModuleMapper::findApvChannel(std::string feb, std::st
             std::string apv = itb->first;
             std::vector<int> channels = itb->second;
             //std::cout << "apv " << apv << std::endl;
-            std::cout << "channels size : " << channels.size() << std::endl;
+            //std::cout << "channels size : " << channels.size() << std::endl;
             for(int i = 0; i < channels.size(); i++){
                 if(channels[i] == channel){
                     apv_chindex.first = apv;
                     apv_chindex.second = i;
-                    std::cout << "For channel " << channel << ": APV " << apv << " index " << i << std::endl;
+                    //std::cout << "For channel " << channel << ": APV " << apv << " index " << i << std::endl;
                     foundapv = true;
                     break;
                 }

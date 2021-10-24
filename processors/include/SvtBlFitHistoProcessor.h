@@ -41,6 +41,7 @@ class SvtBlFitHistoProcessor : public Processor {
 
         //Select which layer to fit baselines. Default is all.
         std::string layer_{""};
+
         //json file for histo config
         std::string histCfgFilename_;
 
@@ -50,17 +51,17 @@ class SvtBlFitHistoProcessor : public Processor {
         //Histogram handlers
         BlFitHistos* fitHistos_{nullptr};
 
+        //Load apv channel thresholds in
+        std::string thresholdsFileIn_;
+
         //configurable parameters for fitting. All have default settings.
         int rebin_{};
         int minStats_{};
         int deadRMS_{};
-        //Set simpleGausFit_ to true in config file if fitting online baseline
+        int debug_{0};
+
         std::string simpleGausFit_;
 
-        //Maps for sensor histograms and channels
-        //std::vector<std::string> histos2dk_{};
-
-        //Folder where input histograms file is located
         FlatTupleMaker* flat_tuple_{nullptr};
 
 

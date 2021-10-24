@@ -17,11 +17,13 @@ void SvtBlFitHistoProcessor::configure(const ParameterSet& parameters) {
     {
         histCfgFilename_ = parameters.getString("histCfg");
         rawhitsHistCfgFilename_ = parameters.getString("rawhitsHistCfg");
+        thresholdsFileIn_ = parameters.getString("thresholdsFileIn");
         layer_ = parameters.getString("layer");
         rebin_ = parameters.getInteger("rebin");
         minStats_ = parameters.getInteger("minStats");
         deadRMS_ = parameters.getInteger("deadRMS");
         simpleGausFit_ = parameters.getString("simpleGausFit");
+        debug_ = parameters.getInteger("debug");
     }
     catch (std::runtime_error& error)
     {
@@ -42,6 +44,7 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
 
     //Initialize fit histos
     fitHistos_ = new BlFitHistos();
+    fitHistos_->setDebug(debug_);
     //To fit channels with a simple gaussian, set configurable param to true
     fitHistos_->setSimpleGausFit(simpleGausFit_);
     std::cout << "[BlFitHistos] Loading 2D Histos" << std::endl;
@@ -66,12 +69,14 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     flat_tuple_->addVariable("lowStats");
     //channel rms. Use to flag dead channels
     flat_tuple_->addVariable("rms");
-    //if fit mean + N*sigma > xmax, flag as lowdaq
-    flat_tuple_->addVariable("lowdaq");
     //if rms < threshold, channel is dead
     flat_tuple_->addVariable("dead");
     //if channel fit is grossly poor
     flat_tuple_->addVariable("badfit");
+    //if fit mean + N*sigma > xmax, flag as lowdaq
+    flat_tuple_->addVariable("lowdaq");
+    //if fit mean + N*sigma > xmax, flag as lowdaq
+    flat_tuple_->addVariable("suplowDaq");
 
   //Fit values
     flat_tuple_->addVariable("BlFitMean");
@@ -81,14 +86,6 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     flat_tuple_->addVariable("BlFitRangeUpper");
     flat_tuple_->addVariable("BlFitChi2");
     flat_tuple_->addVariable("BlFitNdf");
-
- //Intermediate fit values...perhaps not interested in keeping anymore
-    flat_tuple_->addVector("iterChi2NDF");
-    flat_tuple_->addVector("iterFitRangeEnd");
-    flat_tuple_->addVector("iterMean");
-    flat_tuple_->addVector("iterChi2NDF_2der");
-    flat_tuple_->addVector("iterChi2NDF_1der");
-    flat_tuple_->addVector("iterChi2NDF_derRange");
 }
 
 
@@ -97,7 +94,7 @@ bool SvtBlFitHistoProcessor::process() {
     std::map<std::string, TH2F*>::iterator it;
     for(it = histos2d.begin(); it != histos2d.end(); it++)
         std::cout << "2d Histo Loaded: " << it->first << std::endl;
-    fitHistos_->GausFitHistos2D(histos2d,rebin_,minStats_, deadRMS_,flat_tuple_);
+    fitHistos_->fit2DHistoChannelBaselines(histos2d,rebin_,minStats_, deadRMS_, thresholdsFileIn_, flat_tuple_);
     return true;
 }
 
