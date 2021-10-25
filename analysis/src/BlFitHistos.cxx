@@ -266,7 +266,7 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
 
             int iter = 0;
             int itermaxbin = projy_h->FindBin(maxx);
-            itermaxbin = itermaxbin - 5;
+            itermaxbin = itermaxbin - 1;
             double itermaxX = projy_h->GetBinLowEdge(itermaxbin);
             double itermaxVal = projy_h->GetBinContent(itermaxbin);
 
