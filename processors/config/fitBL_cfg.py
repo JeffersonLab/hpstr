@@ -28,7 +28,7 @@ base.parser.add_argument("-b", "--rebin", type=int, dest="rebin",
                 help="rebin factor.", metavar="rebin", default=1)
 
 base.parser.add_argument("-minStats", '--minStats', type=int, dest="minStats", 
-        help="Offline fitting requires a minimum number of stats to fit channel", metavar="minStats", default=3000)
+        help="Offline fitting requires a minimum number of stats to fit channel", metavar="minStats", default=1200)
 
 options = base.parser.parse_args()
 
