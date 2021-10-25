@@ -52,8 +52,10 @@ void BlFitHistos::getHistosFromFile(TFile* inFile, std::string layer){
     }
 }
 
-void BlFitHistos::iterativeGausFit(TH1D* hist, double min, double max, double sigmaRange, double threshold) {
+void BlFitHistos::iterativeGausFit(TH1D* hist, double min, double max, double sigmaRange, double hardminimum, double hardmaximum) {
 
+    double minthresh = hardminimum;
+    double threshold = hardmaximum;
     //perform single Gaus fit across full range of histo
     if (min < 0.0 )
         min = hist->GetBinLowEdge(hist->FindFirstBinAbove(0.0,1));
@@ -74,7 +76,8 @@ void BlFitHistos::iterativeGausFit(TH1D* hist, double min, double max, double si
 
     if(fitAMean + fitASig*sigmaRange < threshold)
         max = fitAMean + fitASig*sigmaRange;
-    min = fitAMean - fitASig*sigmaRange;
+    if(fitAMean - fitASig*sigmaRange > minthresh)
+        min = fitAMean - fitASig*sigmaRange;
 
     if (debug_){
         std::cout << "meanA " << fitAMean << " | sigmaA: " << fitASig << std::endl;
@@ -91,7 +94,8 @@ void BlFitHistos::iterativeGausFit(TH1D* hist, double min, double max, double si
 
     if(fitMean + fitSig*sigmaRange < threshold)
         max = fitMean + fitSig*sigmaRange;
-    min = fitMean - fitSig*sigmaRange;
+    if(fitMean - fitSig*sigmaRange > minthresh)
+        min = fitMean - fitSig*sigmaRange;
 
     if (debug_)
         std::cout << "minB: " << min << " | maxB: " << max << std::endl;
@@ -113,7 +117,8 @@ void BlFitHistos::iterativeGausFit(TH1D* hist, double min, double max, double si
 
         if(fitMean + fitSig*sigmaRange < threshold)
             max = fitMean + fitSig*sigmaRange;
-        min = fitMean - fitSig*sigmaRange;
+        if(fitMean - fitSig*sigmaRange > minthresh)
+            min = fitMean - fitSig*sigmaRange;
         fit->SetRange(min,max);
         hist->Fit("fit","ORQN","");
 
@@ -370,7 +375,7 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
             fitmax = projy_h->GetBinLowEdge(itermaxbin); 
             fitmin = projy_h->GetBinLowEdge(iterminbin); 
 
-            iterativeGausFit(projy_h, fitmin, fitmax, 1, threshold);
+            iterativeGausFit(projy_h, fitmin, fitmax, 1, minx, threshold);
 
             TF1 *fit = new TF1("fit", "gaus", fitmin, fitmax);
             projy_h->Fit("fit","ORQN","");
