@@ -532,8 +532,9 @@ def plot2DBaselineFitsWithErrors(outFile, hybrid, hybrid_hh, offlineTuple, onlin
     #mean_gr_x = np.array([c for c in channel if l < 1 for l in lowstats], dtype = float)
     mean_gr_x = np.array([c for c,l in zip(channel,lowstats) if l < 1], dtype = float)
     mean_gr_y = np.array([m for m,l in zip(mean,lowstats) if l < 1], dtype = float)
-    mean_gr = buildTGraphErrors("%s_BlFitMean_%s"%(run,hybrid),"%s_BlFitMean_%s;Channel;ADC"%(run,hybrid),len(mean_gr_x),mean_gr_x,mean_gr_y, sigma, 2)
-    mean_gr.SetLineWidth(1)
+    if(mean_gr_x.any()):
+        mean_gr = buildTGraphErrors("%s_BlFitMean_%s"%(run,hybrid),"%s_BlFitMean_%s;Channel;ADC"%(run,hybrid),len(mean_gr_x),mean_gr_x,mean_gr_y, sigma, 2)
+        mean_gr.SetLineWidth(1)
 
     lowdaq_gr_x = np.array([c for c,l in zip(channel,lowdaq) if l > 0], dtype = float)
     lowdaq_gr_y = np.array([m for m,l in zip(mean,lowdaq) if l > 0], dtype = float)
@@ -571,7 +572,8 @@ def plot2DBaselineFitsWithErrors(outFile, hybrid, hybrid_hh, offlineTuple, onlin
         hybrid_hh.GetXaxis().SetRangeUser(0.0,512.0)
     hybrid_hh.SetStats(r.kFALSE)
     hybrid_hh.Draw("colz")
-    mean_gr.Draw("same")
+    if(mean_gr_x.any()):
+        mean_gr.Draw("same")
     if(lowdaq_gr_x.any()):
         lowdaq_gr.Draw("psame")
     if(superlowDaq_gr_x.any()):
@@ -595,7 +597,8 @@ def plot2DBaselineFitsWithErrors(outFile, hybrid, hybrid_hh, offlineTuple, onlin
         bl_gr.Draw("same")
 
     legend = r.TLegend(0.1,0.75,0.28,0.9)
-    legend.AddEntry(mean_gr,"offline baselines using hpstr processor","l")
+    if(mean_gr_x.any()):
+        legend.AddEntry(mean_gr,"offline baselines using hpstr processor","l")
     if onlineTuple:
         legend.AddEntry(bl_gr,"online baseline fits","l")
     if(lowdaq_gr_x.any()):

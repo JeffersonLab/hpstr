@@ -414,6 +414,8 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
                 //refit with xmax at threshold value and xmin NSigma lower
                 fitmax = maxx;
                 fitmin = fitmin - 1.5*fitsigma;
+                if(debug_)
+                    std::cout << "suplowdaq max and min: " << fitmax << " " << fitmin << std::endl;
                 if(fitmin < minx)
                     fitmin = minx;
                 TF1 *fitL = new TF1("fitL", "gaus", fitmin, fitmax);
@@ -476,9 +478,5 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
                         
         }
     }
-}
-
-void recoverSuperLowDaqFit(){
-    
 }
 
