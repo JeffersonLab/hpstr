@@ -52,7 +52,7 @@ void BlFitHistos::getHistosFromFile(TFile* inFile, std::string layer){
     }
 }
 
-void BlFitHistos::iterativeGausFit(TH1D* hist, double min, double max, double sigmaRange, int threshold) {
+void BlFitHistos::iterativeGausFit(TH1D* hist, double min, double max, double sigmaRange, double threshold) {
 
     //perform single Gaus fit across full range of histo
     if (min < 0.0 )
@@ -89,7 +89,7 @@ void BlFitHistos::iterativeGausFit(TH1D* hist, double min, double max, double si
     if (debug_)
         std::cout << "meanB " << fitMean << " | sigmaB: " << fitSig << std::endl;
 
-    if(fitAMean + fitASig*sigmaRange < threshold)
+    if(fitMean + fitSig*sigmaRange < threshold)
         max = fitMean + fitSig*sigmaRange;
     min = fitMean - fitSig*sigmaRange;
 
@@ -111,7 +111,7 @@ void BlFitHistos::iterativeGausFit(TH1D* hist, double min, double max, double si
             fitSig = newFitSig;
         }
 
-        if(fitAMean + fitASig*sigmaRange < threshold)
+        if(fitMean + fitSig*sigmaRange < threshold)
             max = fitMean + fitSig*sigmaRange;
         min = fitMean - fitSig*sigmaRange;
         fit->SetRange(min,max);
@@ -169,6 +169,7 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
         {
             if(debug_){
                 std::cout << hh_name << " " << cc << std::endl;
+                std::cout << "CHANNEL " << cc << std::endl;
             }
             //std::cout << hh_name << " " << cc << std::endl;
             if (cc%100 == 0)
@@ -185,7 +186,7 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
                 continue;
 
             //load apv channel readout threshold value from run_thresholds.dat file
-            int threshold = mmapper_->getThresholdValue(feb, hyb, cc); 
+            double threshold = (double) mmapper_->getThresholdValue(feb, hyb, cc); 
             if(debug_)
                 std::cout << "THRESHOLD F" <<feb << "H" <<hyb << "channel " << cc << ": " << threshold << std::endl;
 
@@ -288,6 +289,7 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
             int j = 0;
             while(iterminbin > minbin) {
 
+                peakfound = false;
                 double peakval = 0;
                 iterminbin--;
                 iterminVal = projy_h->GetBinContent(iterminbin);
@@ -349,12 +351,18 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
                             itermaxbin = iterminbin + k;
                             iterminbin = itermaxbin - 3;
                             k = 0;
+                            peakfound = true;
                             if(debug_){
                                 std::cout << "New large peak found beyond " << projy_h->GetBinLowEdge(iterminbin) << std::endl;
                                 std::cout << "Set iterxmax to : " << projy_h->GetBinLowEdge(itermaxbin) << std::endl;
                             }
                             break;
                         }
+                    }
+                    if(!peakfound)
+                    {
+                        iterminbin = peakminbin; 
+                        break;
                     }
                 }
             }

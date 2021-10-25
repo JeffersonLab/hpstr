@@ -44,7 +44,7 @@ class BlFitHistos : public HistoManager{
 
         void getHistosFromFile(TFile* inFile, std::string layer = "");
         void fit2DHistoChannelBaselines(std::map<std::string, TH2F*> histos2d,int rebin_, int minStats_,int deadRMS_, std::string thresholdsFileIn_, FlatTupleMaker* flat_tuple_);
-        void iterativeGausFit(TH1D* hist, double min, double max, double sigmaRange, int threshold);
+        void iterativeGausFit(TH1D* hist, double min, double max, double sigmaRange, double threshold);
         void setDebug(bool value){debug_ = value;};
         
     private:
