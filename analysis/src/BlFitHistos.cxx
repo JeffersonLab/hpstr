@@ -275,7 +275,7 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
             double itermaxX = projy_h->GetBinLowEdge(itermaxbin);
             double itermaxVal = projy_h->GetBinContent(itermaxbin);
 
-            int iterminbin = itermaxbin - 10;
+            int iterminbin = itermaxbin - 20;
             double iterminX = projy_h->GetBinLowEdge(iterminbin);
             double iterminVal = projy_h->GetBinContent(iterminbin);
 
@@ -318,7 +318,7 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
                 if(debug_)
                     std::cout << "j = " << j << std::endl;
 
-                if(j > 3){
+                if(j > 10){
                     iterminbin = iterminbin + j;
                     peakminbin = iterminbin;
                     peakmaxbin = itermaxbin;
@@ -352,7 +352,7 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
                         else{
                             k=0;
                         }
-                        if(k > 3){
+                        if(k > 10){
                             itermaxbin = iterminbin + k;
                             iterminbin = itermaxbin - 3;
                             k = 0;
@@ -398,11 +398,37 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
             //Mark channel as super_low_Daq
             bool badfit = false;
             bool suplowDaq = false;
-            if(fitmean >= fitmax){
-                suplowDaq = true;
-            }
-            if(fitmean <= fitmin){
+            if(fitmean <= fitmin || fitmin > fitmax){
                 badfit = true;
+                if(debug_)
+                    std::cout << "bad fit!" << std::endl;
+            }
+
+            if(!badfit && fitmean >= fitmax){
+                suplowDaq = true;
+                if(debug_)
+                    std::cout << "Super low Daq threshold" << std::endl;
+            }
+
+            if(suplowDaq){
+                //refit with xmax at threshold value and xmin NSigma lower
+                fitmax = maxx;
+                fitmin = fitmin - 1.5*fitsigma;
+                if(fitmin < minx)
+                    fitmin = minx;
+                TF1 *fitL = new TF1("fitL", "gaus", fitmin, fitmax);
+                projy_h->Fit("fitL","ORQN","");
+                fitmean = fit->GetParameter(1);
+                fitsigma = fit->GetParameter(2);
+                fitnorm = fit->GetParameter(0);
+                fitchi2 = fit->GetChisquare();
+                fitndf = fit->GetNDF();
+
+                if(fitmean <= fitmin || fitmin > fitmax){
+                    badfit = true;
+                    if(debug_)
+                        std::cout << "bad fit!" << std::endl;
+                }
             }
 
             bool lowdaq = false;
@@ -428,6 +454,10 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
                     lowdaq = true;
             }
 
+            if(debug_)
+                if(lowdaq)
+                    std::cout << "Low daq threshold" << std::endl;
+
             flat_tuple_->setVariableValue("lowdaq", lowdaq);
             flat_tuple_->setVariableValue("suplowDaq", suplowDaq);
             flat_tuple_->setVariableValue("badfit", badfit);
@@ -446,5 +476,9 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
                         
         }
     }
+}
+
+void recoverSuperLowDaqFit(){
+    
 }
 
