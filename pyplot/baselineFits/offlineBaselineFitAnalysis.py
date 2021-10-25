@@ -228,7 +228,7 @@ def getDatabaseFormatBaselines(offlineTuple, onlineTuple):
 
         #Check if offline fit had any failures
         #If yes, use the loaded Online fit values instead
-        if(badfit[c] == 1.0 or lowstats[c] == 1.0 or superlowDaq[c] == 1.0):
+        if(badfit[c] == 1.0 or lowstats[c] == 1.0):
             if(loadOnlineBaselines):
                 try:
                     for i in range(6):
