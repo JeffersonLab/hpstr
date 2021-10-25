@@ -420,11 +420,11 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
                     fitmin = minx;
                 TF1 *fitL = new TF1("fitL", "gaus", fitmin, fitmax);
                 projy_h->Fit("fitL","ORQN","");
-                fitmean = fit->GetParameter(1);
-                fitsigma = fit->GetParameter(2);
-                fitnorm = fit->GetParameter(0);
-                fitchi2 = fit->GetChisquare();
-                fitndf = fit->GetNDF();
+                fitmean = fitL->GetParameter(1);
+                fitsigma = fitL->GetParameter(2);
+                fitnorm = fitL->GetParameter(0);
+                fitchi2 = fitL->GetChisquare();
+                fitndf = fitL->GetNDF();
 
                 if(fitmean <= fitmin || fitmin > fitmax){
                     badfit = true;
