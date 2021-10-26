@@ -79,6 +79,7 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     flat_tuple_->addVariable("suplowDaq");
     //Threshold value setting on apv channel during run
     flat_tuple_->addVariable("threshold");
+    flat_tuple_->addVariable("minthreshold");
 
   //Fit values
     flat_tuple_->addVariable("BlFitMean");

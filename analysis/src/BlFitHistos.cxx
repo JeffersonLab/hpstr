@@ -224,6 +224,7 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
             double frac = 0.25;
             int minbin = projy_h->FindFirstBinAbove((double)frac*maxbin,1);
             double minx = projy_h->GetBinLowEdge(minbin);
+            flat_tuple_->setVariableValue("minthreshold",minx);
             double binwidth = projy_h->GetBinWidth(minbin);
             double minxVal = projy_h->GetBinContent(minbin);
 
