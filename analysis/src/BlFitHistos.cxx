@@ -219,14 +219,15 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
 
             //Fit window max set by threshold value loaded from file
             double maxx = threshold;
+            flat_tuple_->setVariableValue("threshold",maxx);
             //Minum value of x set to first bin with fraction of maximum value
             double maxbin = projy_h->GetBinContent(projy_h->GetMaximumBin());
-            double frac = 0.15;
+            //double frac = 0.15;
+            double frac = 0.25;
             int minbin = projy_h->FindFirstBinAbove((double)frac*maxbin,1);
             double minx = projy_h->GetBinLowEdge(minbin);
             double binwidth = projy_h->GetBinWidth(minbin);
             double minxVal = projy_h->GetBinContent(minbin);
-            double maxxVal = projy_h->GetBinContent(maxbin);
 
             //If channel does not have the minimum statistics required, set all variables to -9999.9
             //and skip the fit procedure on this channel
@@ -269,6 +270,9 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
             }
             */
 
+            
+
+            /*
             int iter = 0;
             int itermaxbin = projy_h->FindBin(maxx);
             itermaxbin = itermaxbin - 1;
@@ -374,7 +378,10 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
 
             fitmax = projy_h->GetBinLowEdge(itermaxbin); 
             fitmin = projy_h->GetBinLowEdge(iterminbin); 
+            */
 
+            fitmin = minx;
+            fitmax = maxx;
             iterativeGausFit(projy_h, fitmin, fitmax, 1, minx, threshold);
 
             TF1 *fit = new TF1("fit", "gaus", fitmin, fitmax);
@@ -410,6 +417,7 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
                     std::cout << "Super low Daq threshold" << std::endl;
             }
 
+            /*
             if(suplowDaq){
                 //refit with xmax at threshold value and xmin NSigma lower
                 fitmax = maxx;
@@ -432,6 +440,7 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
                         std::cout << "bad fit!" << std::endl;
                 }
             }
+            */
 
             bool lowdaq = false;
             if(!badfit && !suplowDaq){
