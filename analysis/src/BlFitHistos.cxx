@@ -218,8 +218,6 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
                 flat_tuple_->setVariableValue("dead",1.0);
 
             //Fit window max set by threshold value loaded from file
-            double maxx = threshold;
-            flat_tuple_->setVariableValue("threshold",maxx);
             //Minum value of x set to first bin with fraction of maximum value
             double maxbin = projy_h->GetBinContent(projy_h->GetMaximumBin());
             //double frac = 0.15;
@@ -228,6 +226,9 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
             double minx = projy_h->GetBinLowEdge(minbin);
             double binwidth = projy_h->GetBinWidth(minbin);
             double minxVal = projy_h->GetBinContent(minbin);
+
+            double maxx = threshold - binwidth*1;
+            flat_tuple_->setVariableValue("threshold",maxx);
 
             //If channel does not have the minimum statistics required, set all variables to -9999.9
             //and skip the fit procedure on this channel
