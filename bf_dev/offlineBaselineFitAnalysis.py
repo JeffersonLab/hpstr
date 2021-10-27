@@ -20,6 +20,7 @@ parser.add_argument("-o", type=str, dest="outFilename", help="output root file",
 parser.add_argument("-b", type=str, dest="onlineBaselines", help="online baseline fits root file",default="")
 parser.add_argument("-dbo", type=str, dest="dbOut", help="File name for database baseline output file",default="offline_baseline_fits.dat")
 parser.add_argument("-thresh", type=str, dest="threshOut", help="File name for thresholds output file",default="thresholds.dat")
+parser.add_argument("-threshIN", type=str, dest="threshIN", help="Input thresholds for online run closest but less than current run")
 parser.add_argument("-r", type=str, dest="runNumber", help="Run Number",default="")
 options = parser.parse_args()
 
@@ -254,7 +255,7 @@ def getDatabaseFormatBaselines(offlineTuple, onlineTuple):
                     #apply difference to 5 other online samples to adjust
                     row.append(round(onlineMean[i+1][c] + diff,3))
                 except:
-                    print("Failed to apply online mean value to output file")
+                    #print("Failed to apply online mean value to output file")
                     row.append(999999.9)
             #Append offline fit value
             row.append(sigma[c])
@@ -266,7 +267,7 @@ def getDatabaseFormatBaselines(offlineTuple, onlineTuple):
                     #apply ratio factor to 5 other online samples to adjust
                     row.append(round(onlineSigma[i+1][c]*ratio,3))
                 except:
-                    print("Failed to apply online sigma value to output file")
+                    #print("Failed to apply online sigma value to output file")
                     row.append(999999.9)
         baselines[c] = row
     return baselines
@@ -704,6 +705,24 @@ def plotOfflineChannelFits(hybrid, hh, offlineTuple, outFile):
         canvas.Close()
     outFile.cd()
 
+def F5H1Thresholds(thresholdsFileIn, thresholdsFileOut):
+    thresholds = []
+    feb = 5
+    hybrid = 1
+    with open(thresholdsFileIn) as ti:
+        lines = ti.readLines()
+        for line in lines:
+            f = line.split()[0]
+            h = line.split()[1]
+            if f==feb and h==hybrid:
+                thresholds = line.split()
+                break
+            else:
+                continue
+    with open(thresholdsFileOut,'a') as f:
+        writer = csv.writer(f, delimiter = ' ', escapechar=' ', quoting=csv.QUOTE_NONE)
+        writer.writerow(thresholds)
+
 def generateThresholds(outFile, outRootFile, offlineFitTuple, onlineFitTuple, febnum, hybnum, hybrid):
 
     channel = list(offlineFitTuple[1])
@@ -717,16 +736,10 @@ def generateThresholds(outFile, outRootFile, offlineFitTuple, onlineFitTuple, fe
     onmean = onlineFitTuple[1][0]
     onsigma = onlineFitTuple[2][0]
 
-    #If offline fit is unsuccessful, use online values for thresholds
-    #if(lowdaq[c] == 1.0 or lowstats[c] == 1.0):
-    #    thresholds = [m + 3*s for m, s in zip(onmean, onsigma)]
-    #    thresholds = [str(hex(math.floor(n))) for n in thresholds]
-    #else:    
-    #    thresholds = [m + 3*s for m, s in zip(mean, sigma)]
-    #    thresholds = [str(hex(math.floor(n))) for n in thresholds]
-
-    #thresholds = [m + 3*s if b < 1 and l < 1 else om + 3*os for m, s, om, os, b, l in zip(mean, sigma, onmean, onsigma, badfit, lowstats)]
-    doublethresholds = [m + 3*s if (b < 1 and sl < 1 and l < 1) else om + 3*os for m, s, om, os, b, l, sl in zip(mean, sigma, onmean, onsigma, badfit, lowstats, superlowDaq)]
+    if(febnum == 5 and hybnum == 1):
+        return
+    else:
+        doublethresholds = [m + 2.5*s if (b < 1 and sl < 1 and l < 1) else om + 2.5*os for m, s, om, os, b, l, sl in zip(mean, sigma, onmean, onsigma, badfit, lowstats, superlowDaq)]
     thresholds = [str(hex(math.floor(n))) for n in doublethresholds]
 
     #L0-L1 have 4 APVs, else 5 APVs
@@ -877,7 +890,7 @@ outRootFile = r.TFile(options.outFilename,"RECREATE")
 dbOutFile = options.dbOut
 if(path.exists(dbOutFile)):
     dbOutFile = os.path.splitext(dbOutFile)[0] + "_" + time.strftime("%H%M%S") + ".dat"
-
+thresholdsFileIn = options.threshIN
 threshOutFile = options.threshOut
 if(path.exists(threshOutFile)):
     threshOutFile = os.path.splitext(threshOutFile)[0] + "_" + time.strftime("%H%M%S") + ".dat"
@@ -960,9 +973,11 @@ for entry in hybridHwDict:
 
 
     if onlineFitTuple:
-        generateThresholds(threshOutFile, outRootFile, offlineFitTuple, onlineFitTuple, febn, hybn, hybrid)
+        if(febn == 5 and hybn == 1):
+            F5H1Thresholds(thresholdsFileIn, threshOutFile)
+        else:
+            generateThresholds(threshOutFile, outRootFile, offlineFitTuple, onlineFitTuple, febn, hybn, hybrid)
 
-    debugBadFits(hybrid, offlineFitTuple)
     #plotFitParams(hybrid, offlineFitTuple, outRootFile)
 
 outRootFile.Write()

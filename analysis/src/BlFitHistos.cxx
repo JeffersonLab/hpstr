@@ -52,6 +52,66 @@ void BlFitHistos::getHistosFromFile(TFile* inFile, std::string layer){
     }
 }
 
+void BlFitHistos::backwardsIterChi2Fit(TH1D* hist, double xmin, double xmax){
+
+    
+    TF1 *fit = new TF1("fit", "gaus", xmin, xmax);
+    hist->Fit("fit","ORQN","");
+    double fitMean = fit->GetParameter(1);
+    double fitSig = fit->GetParameter(2);
+    double fitnorm = fit->GetParameter(0);
+    double fitchi2 = fit->GetChisquare();
+    double fitndf = fit->GetNDF();
+
+    double iterChi2 = fitchi2/fitndf;
+    double newChi2 = 0;
+    double stepx = hist->GetBinWidth(0);
+    double iterxmax = xmax;
+    int i = 0;
+
+    if(debug_){
+        std::cout << "Initial xmin and xmax " << xmin << " | " << xmax << std::endl;
+        std::cout << "Initial mean and sigma " << fitMean << " | " << fitSig << std::endl;
+        std::cout << "Initial Chi2: " << iterChi2 << std::endl;
+    }
+    while((iterxmax > xmin + 10*stepx) && (newChi2 < iterChi2*0.98)){
+
+        xmax = iterxmax;
+        iterxmax = iterxmax - stepx;
+        if(debug_)
+            std::cout << "Iterating xmax to: " << iterxmax << std::endl;
+
+        if(i > 0){
+            iterChi2 = newChi2;
+        }
+
+        fit->SetRange(xmin,iterxmax);
+        hist->Fit("fit","ORQN","");
+        fitMean = fit->GetParameter(1);
+        fitSig = fit->GetParameter(2);
+        fitnorm = fit->GetParameter(0);
+        fitchi2 = fit->GetChisquare();
+        fitndf = fit->GetNDF();
+        
+        if(fitMean > iterxmax){
+            break;
+        }
+
+        if(fitndf > 0){
+            newChi2 = fitchi2/fitndf;
+            if(debug_){
+                std::cout << "iter" << i << " newChi2 = " << newChi2 << std::endl;
+            }
+        }
+        else{
+            continue;
+        }
+        i++;
+    }
+
+    fitmax = xmax;
+}
+
 void BlFitHistos::iterativeGausFit(TH1D* hist, double min, double max, double sigmaRange, double hardminimum, double hardmaximum) {
 
     double minthresh = hardminimum;
@@ -221,7 +281,7 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
             //Minum value of x set to first bin with fraction of maximum value
             double maxbin = projy_h->GetBinContent(projy_h->GetMaximumBin());
             //double frac = 0.15;
-            double frac = 0.25;
+            double frac = 0.2;
             int minbin = projy_h->FindFirstBinAbove((double)frac*maxbin,1);
             double minx = projy_h->GetBinLowEdge(minbin);
             flat_tuple_->setVariableValue("minthreshold",minx);
@@ -385,6 +445,7 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
             fitmin = minx;
             fitmax = maxx;
             iterativeGausFit(projy_h, fitmin, fitmax, 1, minx, threshold);
+            backwardsIterChi2Fit(projy_h, fitmin, fitmax);
 
             TF1 *fit = new TF1("fit", "gaus", fitmin, fitmax);
             projy_h->Fit("fit","ORQN","");
@@ -490,4 +551,5 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
         }
     }
 }
+
 
