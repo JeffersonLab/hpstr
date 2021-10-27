@@ -707,21 +707,24 @@ def plotOfflineChannelFits(hybrid, hh, offlineTuple, outFile):
 
 def F5H1Thresholds(thresholdsFileIn, thresholdsFileOut):
     thresholds = []
+    for i in range(5):
+        thresholds.append([])
     feb = 5
     hybrid = 1
     with open(thresholdsFileIn) as ti:
-        lines = ti.readLines()
+        lines = ti.readlines()
         for line in lines:
-            f = line.split()[0]
-            h = line.split()[1]
+            f = int(line.split()[0])
+            h = int(line.split()[1])
             if f==feb and h==hybrid:
-                thresholds = line.split()
-                break
+                a = int(line.split()[2])
+                thresholds[a] = line.split()
             else:
                 continue
     with open(thresholdsFileOut,'a') as f:
         writer = csv.writer(f, delimiter = ' ', escapechar=' ', quoting=csv.QUOTE_NONE)
-        writer.writerow(thresholds)
+        for row in thresholds:
+            writer.writerow(row)
 
 def generateThresholds(outFile, outRootFile, offlineFitTuple, onlineFitTuple, febnum, hybnum, hybrid):
 
@@ -736,7 +739,7 @@ def generateThresholds(outFile, outRootFile, offlineFitTuple, onlineFitTuple, fe
     onmean = onlineFitTuple[1][0]
     onsigma = onlineFitTuple[2][0]
 
-    if(febnum == 5 and hybnum == 1):
+    if(int(febnum) == 5 and int(hybnum) == 1):
         return
     else:
         doublethresholds = [m + 2.5*s if (b < 1 and sl < 1 and l < 1) else om + 2.5*os for m, s, om, os, b, l, sl in zip(mean, sigma, onmean, onsigma, badfit, lowstats, superlowDaq)]
@@ -971,14 +974,11 @@ for entry in hybridHwDict:
     plotLowDaq(hybrid, offlineFitTuple, outRootFile)
     plotOfflineChannelFits(hybrid, hh, offlineFitTuple, outRootFile)
 
-
     if onlineFitTuple:
-        if(febn == 5 and hybn == 1):
+        if(int(febn) == 5 and int(hybn) == 1):
             F5H1Thresholds(thresholdsFileIn, threshOutFile)
         else:
             generateThresholds(threshOutFile, outRootFile, offlineFitTuple, onlineFitTuple, febn, hybn, hybrid)
-
-    #plotFitParams(hybrid, offlineFitTuple, outRootFile)
 
 outRootFile.Write()
 
