@@ -89,7 +89,7 @@ def getHistosFromFile(inFile, histoType = "TH2D", name = ""):
 
 def getOfflineFitTuple(inFile, key):
     print("Grabbing Ntuples for %s from TTree"%(key))
-    channel, svt_id, mean, sigma, norm, chi2, ndf, fitlow, fithigh, RMS, lowdaq, lowstats, badfit, hm_string, superlowDaq, thresholds = ([] for i in range(16))
+    channel, svt_id, mean, sigma, norm, chi2, ndf, fitlow, fithigh, RMS, lowdaq, lowstats, badfit, hm_string, superlowDaq, threshold, minthreshold = ([] for i in range(17))
     myTree = inFile.gaus_fit
     for fitData in myTree:
         tupleKey = str(fitData.halfmodule_hh)
@@ -108,9 +108,10 @@ def getOfflineFitTuple(inFile, key):
             badfit.append(fitData.badfit)
             hm_string.append(fitData.halfmodule_hh)
             superlowDaq.append(fitData.suplowDaq)
-            thresholds.append(fitData.threshold)
+            threshold.append(fitData.threshold)
+            minthreshold.append(fitData.minthreshold)
 
-    fitTuple = (svt_id, channel, mean, sigma, norm, ndf, fitlow, fithigh, RMS, lowdaq, lowstats, badfit, hm_string, superlowDaq, thresholds)
+    fitTuple = (svt_id, channel, mean, sigma, norm, ndf, fitlow, fithigh, RMS, lowdaq, lowstats, badfit, hm_string, superlowDaq, threshold, minthreshold)
 
     #Tuple map for reference
     svt_id = fitTuple[0]
@@ -665,7 +666,8 @@ def plotOfflineChannelFits(hybrid, hh, offlineTuple, outFile):
     fithigh = offlineTuple[7]
     rms = offlineTuple[8]
     lowdaq = offlineTuple[9]
-    thresholds = offlineTuple[14]
+    threshold = offlineTuple[14]
+    minthreshold = offlineTuple[15]
 
     for cc in range(len(channel)):
         canvas = r.TCanvas("%s_ch_%i_h"%(hybrid,channel[cc]), "c", 1800,800)
@@ -683,11 +685,21 @@ def plotOfflineChannelFits(hybrid, hh, offlineTuple, outFile):
         projy_h.SetTitle("%s_ch_%i_h"%(hybrid,channel[cc]))
         projy_h.Draw()
 
-        tbin = projy_h.FindBin(thresholds[cc])
-        tbinVal = projy_h.GetBinContent(tbin)
-        line = r.TLine(thresholds[cc],0,thresholds[cc],tbinVal)
         func.Draw("same")
-        line.Draw("same")
+
+        tbin = projy_h.FindBin(threshold[cc])
+        tbinVal = projy_h.GetBinContent(tbin)
+        maxline = r.TLine(threshold[cc],0,threshold[cc],tbinVal)
+        maxline.SetLineWidth(2)
+        maxline.Draw("same")
+
+        
+        tbin = projy_h.FindBin(minthreshold[cc])
+        tbinVal = projy_h.GetBinContent(tbin)
+        minline = r.TLine(minthreshold[cc],0,minthreshold[cc],tbinVal)
+        maxline.SetLineWidth(2)
+        maxline.Draw("same")
+
         canvas.Write()
         canvas.Close()
     outFile.cd()
