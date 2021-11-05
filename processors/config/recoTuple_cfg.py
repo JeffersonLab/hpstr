@@ -25,6 +25,7 @@ header = HpstrConf.Processor('header', 'EventProcessor')
 track = HpstrConf.Processor('track', 'TrackingProcessor')
 svthits = HpstrConf.Processor('svthits', 'Tracker3DHitProcessor')
 rawsvt = HpstrConf.Processor('rawsvt', 'SvtRawDataProcessor')
+hodo = HpstrConf.Processor('hodo', 'HodoDataProcessor')
 ecal = HpstrConf.Processor('ecal', 'ECalDataProcessor')
 fsp = HpstrConf.Processor('fsp', 'FinalStateParticleProcessor')
 vtx = HpstrConf.Processor('vtx', 'VertexProcessor')
@@ -59,15 +60,21 @@ svthits.parameters["mcPartRelLcio"]  = 'RotatedHelicalTrackMCRelations'
 
 #Tracking
 track.parameters["debug"] = 0 
-track.parameters["trkCollLcio"] = 'GBLTracks'
-track.parameters["trkCollRoot"] = 'GBLTracks'
-track.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
-track.parameters["trkRelCollLcio"] = 'TrackDataRelations'
-track.parameters["trkhitCollRoot"] = 'RotatedHelicalOnTrackHits'
+track.parameters["trkCollLcio"] = 'KalmanFullTracks'
+track.parameters["trkCollRoot"] = 'KalmanFullTracks'
+track.parameters["kinkRelCollLcio"] = ''
+track.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
+track.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
-track.parameters["rawhitCollRoot"] = '' #'SVTRawHitsOnTrack'
-#track.parameters["bfield"]         = bfield[str(options.year)]
+track.parameters["rawhitCollRoot"] = ''
 
+
+#HodoData
+hodo.parameters["debug"] = 0 
+hodo.parameters["hitCollLcio"] = 'HodoCalHits'
+hodo.parameters["hitCollRoot"] = 'RecoHodoHits'
+hodo.parameters["clusCollLcio"] = "HodoGenericClusters"
+hodo.parameters["clusCollRoot"] = "RecoHodoClusters"
 
 #ECalData
 ecal.parameters["debug"] = 0 
@@ -85,19 +92,19 @@ fsp.parameters["trkRelCollLcio"] = 'TrackDataRelations'
 
 #Vertex
 vtx.parameters["debug"] = 0
-vtx.parameters["vtxCollLcio"]    = 'UnconstrainedV0Vertices'
-vtx.parameters["vtxCollRoot"]    = 'UnconstrainedV0Vertices'
-vtx.parameters["partCollRoot"]   = 'ParticlesOnVertices'
-vtx.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
-vtx.parameters["trkRelCollLcio"] = 'TrackDataRelations'
+vtx.parameters["vtxCollLcio"]    = 'UnconstrainedV0Vertices_KF'
+vtx.parameters["vtxCollRoot"]    = 'UnconstrainedV0Vertices_KF'
+vtx.parameters["partCollRoot"]   = 'ParticlesOnVertices_KF'
+vtx.parameters["kinkRelCollLcio"] = ''
+vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
 #Constrained Vertex
 c_vtx.parameters["debug"] = 0
-c_vtx.parameters["vtxCollLcio"]     = 'TargetConstrainedV0Vertices'
-c_vtx.parameters["vtxCollRoot"]     = 'TargetConstrainedV0Vertices'
-c_vtx.parameters["partCollRoot"]    = 'ParticlesOnConstrainedVertices'
-c_vtx.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
-c_vtx.parameters["trkRelCollLcio"]  = 'TrackDataRelations'
+c_vtx.parameters["vtxCollLcio"]     = 'TargetConstrainedV0Vertices_KF'
+c_vtx.parameters["vtxCollRoot"]     = 'TargetConstrainedV0Vertices_KF'
+c_vtx.parameters["partCollRoot"]    = 'ParticlesOnConstrainedVertices_KF'
+c_vtx.parameters["kinkRelCollLcio"] = ''
+c_vtx.parameters["trkRelCollLcio"]  = 'KFTrackDataRelations'
 
 
 #MCParticle
@@ -108,11 +115,11 @@ mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 # Sequence which the processors will run.
 if options.isData == -1: print("Please specficy if this is Data or not via option -t")
 if options.isData == 1: 
-    p.sequence = [header, track, rawsvt, svthits, ecal, fsp, vtx, c_vtx]
+    p.sequence = [header, track, rawsvt, svthits, hodo, ecal, fsp, vtx, c_vtx]
     #p.sequence = [header, track, ecal, fsp, vtx, c_vtx]
 else: 
     #p.sequence = [header, track, ecal, fsp, vtx, c_vtx, mcpart]
-    p.sequence = [header, track, rawsvt, svthits, ecal, fsp, vtx, c_vtx, mcpart]
+    p.sequence = [header, track, rawsvt, svthits, hodo, ecal, fsp, vtx, c_vtx, mcpart]
 
 p.input_files= lcio_file
 p.output_files = root_file

@@ -48,7 +48,7 @@ ecal.parameters["hitCollRoot"] = 'RecoEcalHits'
 ecal.parameters["clusCollLcio"] = "EcalClustersCorr"
 ecal.parameters["clusCollRoot"] = "RecoEcalClusters"
 
-#ECalData
+#HodoData
 hodo.parameters["debug"] = 0 
 hodo.parameters["hitCollLcio"] = 'HodoCalHits'
 hodo.parameters["hitCollRoot"] = 'RecoHodoHits'
