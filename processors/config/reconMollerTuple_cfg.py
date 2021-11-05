@@ -59,9 +59,9 @@ ecal.parameters["clusCollRoot"] = "RecoEcalClusters"
 
 #Vertex
 vtx.parameters["debug"] = 0
-vtx.parameters["vtxCollLcio"]    = 'UnconstrainedMollerVertices'
-vtx.parameters["vtxCollRoot"]    = 'UnconstrainedMollerVertices'
-vtx.parameters["partCollRoot"]   = 'ParticlesMollerOnVertices'
+vtx.parameters["vtxCollLcio"]    = 'UnconstrainedMollerVertices_KF'
+vtx.parameters["vtxCollRoot"]    = 'UnconstrainedMollerVertices_KF'
+vtx.parameters["partCollRoot"]   = 'ParticlesMollerOnVertices_KF'
 vtx.parameters["kinkRelCollLcio"] = ''
 vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
