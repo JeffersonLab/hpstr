@@ -698,8 +698,8 @@ def plotOfflineChannelFits(hybrid, hh, offlineTuple, outFile):
         tbin = projy_h.FindBin(minthreshold[cc])
         tbinVal = projy_h.GetBinContent(tbin)
         minline = r.TLine(minthreshold[cc],0,minthreshold[cc],tbinVal)
-        maxline.SetLineWidth(2)
-        maxline.Draw("same")
+        minline.SetLineWidth(2)
+        minline.Draw("same")
 
         canvas.Write()
         canvas.Close()

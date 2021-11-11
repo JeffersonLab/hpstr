@@ -60,8 +60,8 @@ fitBL = HpstrConf.Processor('fitBL', 'SvtBlFitHistoProcessor')
 #   Processor Configuration   #
 ###############################
 fitBL.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/SvtBlFits.json'
-fitBL.parameters["rawhitsHistCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/baselinefits/rawSvtHits.json'
-#fitBL.parameters["rawhitsHistCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/baselinefits/rawSvtHits_old.json'
+#fitBL.parameters["rawhitsHistCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/baselinefits/rawSvtHits.json'
+fitBL.parameters["rawhitsHistCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/baselinefits/rawSvtHits_old.json'
 fitBL.parameters["layer"] = options.layer
 fitBL.parameters["rebin"] = options.rebin
 fitBL.parameters["minStats"] = options.minStats
