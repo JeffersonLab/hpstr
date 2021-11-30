@@ -7,6 +7,7 @@ class ModuleMapper(dict):
     hw_to_sw ={}
     sw_to_hw ={}
     sw_to_string = {}
+    global_channel_map = {}
     def __init__(self):
 
         ModuleMapper.hw_to_sw["F0H0"] = "ly1_m0" ;
@@ -262,6 +263,25 @@ class ModuleMapper(dict):
         ModuleMapper.string_to_sw["L6B_axial_ele" ] = "ly14_m1";
         ModuleMapper.string_to_sw["L6B_axial_pos" ] = "ly14_m3";
 
+        #For 2019 and 2021 only
+        #Build svt global id map
+        channel_index = 0
+        for feb in range(10):
+            str_feb = "F" + str(feb)
+            max_channel = 640
+            if feb < 2:
+                max_channel = 512
+            for hybrid in range(4):
+                local_to_svtid_map = {}
+                str_hybrid = "H" + str(hybrid)
+                #print(str_feb + str_hybrid)
+                for channel in range(max_channel):
+                    svtid = channel_index + channel
+                    local_to_svtid_map[channel] = svtid
+                ModuleMapper.global_channel_map[str_feb + str_hybrid] = local_to_svtid_map
+                channel_index = channel_index + max_channel
+        [print(key,':', value) for key,value in ModuleMapper.global_channel_map.items()]
+
 
     def get_hw_to_string(self,string):
         return ModuleMapper.hw_to_string[string]
@@ -271,3 +291,14 @@ class ModuleMapper(dict):
 
     def get_string_to_hw(self,string):
         return ModuleMapper.string_to_hw[string]
+
+    def getSvtIDFromHWChannel(self,channel, hwTag):
+        channelMap = ModuleMapper.global_channel_map[hwTag]
+        try:
+            svtid = channelMap[channel]
+            return svtid
+        except:
+            print("Channel %s on %s does not exist. Failed to return global svtid")
+            return null
+
+
