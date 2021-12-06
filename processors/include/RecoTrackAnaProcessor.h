@@ -36,22 +36,21 @@ class RecoTrackAnaProcessor : public Processor {
     private:
 
         //Containers to hold histogrammer info
-        RecoHitAnaHistos* histos{nullptr};
+        RecoTrackAnaHistos* histos{nullptr};
         std::string  histCfgFilename_;
 
         //TODO Change this to be held from HPSEvent
         TTree* tree_;
-        TBranch* btrkrHits_{nullptr};
+        TBranch* bvtxs_{nullptr};
         TBranch* btracks_{nullptr};
-        TBranch* becalHits_{nullptr};
-        TBranch* becalClusters_{nullptr};
 
-        std::vector<TrackerHit*> * trkrHits_{};
+        std::vector<Vertex*> * vtxs_{};
         std::vector<Track*>      * tracks_{};
 
-        std::string anaName_{"recoHitAna"};
+        std::string anaName_{"recoTrackAna"};
+        std::string vtxColl_{"UnconstrainedV0Vertices_KF"};
         std::string trkColl_{"KalmanFullTracks"};
-        std::string trkrHitColl_{"RotatedHelicalTrackHits"};
+
 
         //Debug Level
         int debug_{0};

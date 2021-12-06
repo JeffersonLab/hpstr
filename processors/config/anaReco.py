@@ -30,6 +30,8 @@ recoecalana = HpstrConf.Processor('recoecalana', 'RecoEcalAnaProcessor')
 
 recohodoana = HpstrConf.Processor('recohodoana', 'RecoHodoAnaProcessor')
 
+recotrackana = HpstrConf.Processor('recotrackana', 'RecoTrackAnaProcessor')
+
 ###############################
 #   Processor Configuration   #
 ###############################
@@ -49,9 +51,17 @@ recohodoana.parameters["hodoClusColl"] = "RecoHodoClusters"
 recohodoana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/recoHodo.json'
 recohodoana.parameters["analysis"] = options.analysis
 
+#RecoHodoAna
+recotrackana.parameters["debug"] = 0
+recotrackana.parameters["anaName"] = "recoTrackAna"
+recotrackana.parameters["trkColl"] = "KalmanFullTracks"
+recotrackana.parameters["vtxColl"] = "UnconstrainedV0Vertices_KF"
+recotrackana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/recoTrack.json'
+recotrackana.parameters["analysis"] = options.analysis
+
 
 # Sequence which the processors will run.
-p.sequence = [recoecalana, recohodoana]
+p.sequence = [recoecalana, recohodoana, recotrackana]
 
 p.input_files = infile
 p.output_files = [outfile]

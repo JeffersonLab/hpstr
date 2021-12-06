@@ -10,15 +10,15 @@
     "hodoHitEnergy_h" : {
         "bins" : 200,
         "minX" : 0,
-        "maxX" : 1000,
+        "maxX" : 6000,
         "xtitle" : "Reco Hodo Hit Energy",
         "ytitle" : "Hodo Hits"
     },
     
 	 "hodoHitTime_h" : {
         "bins" : 200,
-        "minX" : -100,
-        "maxX" : 1000,
+        "minX" : 0,
+        "maxX" : 200,
         "xtitle" : "Reco Hodo Hit Time [ns]",
         "ytitle" : "Hodo Hits"
     },
@@ -52,9 +52,9 @@
     },     
     
 	"hodoClusterTime_h" : {
-        "bins" : 100,
+        "bins" : 200,
         "minX" : 0,
-        "maxX" : 100,
+        "maxX" : 200,
         "xtitle" : "Reco Hodo Cluster Time [ns]",
         "ytitle" : "Hodo Clusters / 1 ns"
     },      
