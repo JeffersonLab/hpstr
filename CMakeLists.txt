@@ -51,7 +51,7 @@ message(STATUS "Python include dir found at: ${PYTHON_INCLUDE_DIRS}")
 get_filename_component(PYTHON_LIBRARY_DIR ${PYTHON_LIBRARIES} DIRECTORY)
 
 # find ROOT installation
-find_package(ROOT REQUIRED COMPONENTS Core RIO PyROOT Geom Eve Gui)
+find_package(ROOT REQUIRED COMPONENTS Core RIO Geom Eve Gui)
 message(STATUS "ROOT found at: ${ROOT_DIR}")
 
 # option to print extra module information during CMake config
