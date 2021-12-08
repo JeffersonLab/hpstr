@@ -4,6 +4,7 @@
  * @author Cameron Bravo, SLAC National Accelerator Laboratory
  */
 #include "SvtRawDataProcessor.h" 
+#include "utilities.h"
 
 SvtRawDataProcessor::SvtRawDataProcessor(const std::string& name, Process& process)
     : Processor(name, process) { 
@@ -75,7 +76,7 @@ bool SvtRawDataProcessor::process(IEvent* ievent) {
 
     for (int ihit = 0; ihit < raw_svt_hits->getNumberOfElements(); ++ihit) {
 
-        // Get a 3D hit from the list of hits
+        // Get a raw hit from the list of hits
         EVENT::TrackerRawData* rawTracker_hit 
             = static_cast<EVENT::TrackerRawData*>(raw_svt_hits->getElementAt(ihit));
         //Decode the cellid
@@ -115,7 +116,6 @@ bool SvtRawDataProcessor::process(IEvent* ievent) {
             // Get the list SVTFittedRawTrackerHit GenericObject associated with the SVTRawTrackerHit
             IMPL::LCGenericObjectImpl* hit_fit_param
                 = static_cast<IMPL::LCGenericObjectImpl*>(rawTracker_hit_fits_list.at(0));
-
             double fit_params[5] = { 
                 (double)hit_fit_param->getDoubleVal(0), 
                 (double)hit_fit_param->getDoubleVal(1), 
@@ -123,8 +123,20 @@ bool SvtRawDataProcessor::process(IEvent* ievent) {
                 (double)hit_fit_param->getDoubleVal(3), 
                 (double)hit_fit_param->getDoubleVal(4)
             };
+            rawHit->setFit(fit_params, 0);
+            if(rawTracker_hit_fits_list.size()>1)
+            {
+                hit_fit_param = static_cast<IMPL::LCGenericObjectImpl*>(rawTracker_hit_fits_list.at(1));
+                fit_params[0] = (double)hit_fit_param->getDoubleVal(0); 
+                fit_params[1] = (double)hit_fit_param->getDoubleVal(1); 
+                fit_params[2] = (double)hit_fit_param->getDoubleVal(2); 
+                fit_params[3] = (double)hit_fit_param->getDoubleVal(3); 
+                fit_params[4] = (double)hit_fit_param->getDoubleVal(4);
 
-            rawHit->setFit(fit_params);
+                rawHit->setFit(fit_params, 1);
+            }
+
+            rawHit->setFitN(rawTracker_hit_fits_list.size());
         }
         rawhits_.push_back(rawHit);
     }

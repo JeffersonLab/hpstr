@@ -260,7 +260,7 @@ void ClusterHistos::FillHistograms(TrackerHit* hit,float weight) {
         //std::cout<<"----"<<std::endl;
 
         //2D cluster charge
-        chargeMap     [m_name+"_"+key+"_charge"]  += rawhit->getAmp();
+        chargeMap     [m_name+"_"+key+"_charge"]  += rawhit->getAmp(0);
 
         double baseline = -999;
         double strip    = -999;
@@ -274,10 +274,10 @@ void ClusterHistos::FillHistograms(TrackerHit* hit,float weight) {
         float sample0 = baseline - rawhit->getADCs()[0];
         float sample1 = baseline - rawhit->getADCs()[1]; 
 
-        chargeCorrectedMap[m_name+"_"+key+"_charge"]  += (rawhit->getAmp() + sample0);
+        chargeCorrectedMap[m_name+"_"+key+"_charge"]  += (rawhit->getAmp(0) + sample0);
 
-        histos2d[m_name+"_"+key+"_sample0_vs_Amp"]->Fill(rawhit->getAmp(),sample0,weight);
-        histos2d[m_name+"_"+key+"_sample1_vs_Amp"]->Fill(rawhit->getAmp(),sample1,weight);
+        histos2d[m_name+"_"+key+"_sample0_vs_Amp"]->Fill(rawhit->getAmp(0),sample0,weight);
+        histos2d[m_name+"_"+key+"_sample1_vs_Amp"]->Fill(rawhit->getAmp(0),sample1,weight);
 
         histos2d[m_name+"_"+key+"_sample0_vs_stripPos"]->Fill(rawhit->getStrip(),-sample0,weight);
         histos2d[m_name+"_"+key+"_sample1_vs_stripPos"]->Fill(rawhit->getStrip(),-sample1,weight);
@@ -287,7 +287,7 @@ void ClusterHistos::FillHistograms(TrackerHit* hit,float weight) {
         cluSizeMap    [m_name+"_"+key+"_cluSize"] ++;
 
         //2D Weighted position numerator
-        cluPositionMap[m_name+"_"+key+"_charge"]  += rawhit->getAmp()*rawhit->getStrip();
+        cluPositionMap[m_name+"_"+key+"_charge"]  += rawhit->getAmp(0)*rawhit->getStrip();
         //std::cout<<"rawhit->getStrip()::"<<rawhit->getStrip()<<std::endl;
     }
 
