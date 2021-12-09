@@ -4,7 +4,6 @@ from copy import deepcopy
 import os.path
 from os import path
 import numpy as np
-#import ModuleMapper as mmap
 import ModuleMapper
 import argparse
 import csv
@@ -167,20 +166,6 @@ def getOnlineFitTuple(inFile, hwtag):
     mean = []
     sigma = []
     channel = []
-
-    #if(inFile.find(".root") != -1):
-    #    onlineFile = r.TFile(options.onlineBaselines, "READ")
-    #    plotName = "baseline/baseline_"+hwtag + "_ge"
-    #    print('retrieving online baseline fits from:',plotName)
-    #    plot = onlineFile.Get(plotName)
-    #    print("successfully loaded online baseline")
-    #    x = (plot.GetX())
-    #    channel = list(x)
-    #    y =(plot.GetY())
-    #    mean = list(y)
-    #    sigma = []
-    #    for c in channel:
-    #        sigma.append(plot.GetErrorY(int(c)))
 
     if(".dat" in inFile):
         try: 
@@ -555,13 +540,6 @@ def plot2DBaselineFitsWithErrors(outFile, hybrid, hybrid_hh, offlineTuple, onlin
         superlowDaq_gr.SetMarkerStyle(47)
         superlowDaq_gr.SetMarkerSize(1)
         superlowDaq_gr.SetMarkerColor(6)
-
-    #lowstats_gr_x = np.array(channel, dtype = float)
-    #lowstats_gr_y = np.array([l * m for l,m in zip(lowstats,mean)], dtype=float)
-    #lowstats_gr = buildTGraph("lowstatsflag_%s"%(hybrid),"low-stats channels_%s;Channel;ADC"%(hybrid),len(lowstats_gr_x),lowstats_gr_x, lowstats_gr_y,3)
-    #lowstats_gr.SetMarkerStyle(47)
-    #lowstats_gr.SetMarkerSize(2)
-    #lowstats_gr.SetMarkerColor(6)
 
     badfit_gr_x = np.array([c for c,l in zip(channel,badfit) if l > 0], dtype = float)
     badfit_gr_y = np.array([m for m,l in zip(mean,badfit) if l > 0], dtype = float)
