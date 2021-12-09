@@ -18,7 +18,7 @@ done
 
 export FIRST_ID=0
 export JOB_ID=$(($SLURM_ARRAY_TASK_ID+$FIRST_ID))
-source /sdf/home/a/alspellm/.bashrc
+source ~/.bashrc
 export JOBDIR=$(readlink -f $jobdir)
 runpath=$(readlink -f $rundir)
 export RUNDIR=${runpath}/${run}/evio/${JOB_ID}

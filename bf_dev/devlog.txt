@@ -1,9 +1,0 @@
-Offline baseline fitting of sensor channel ADCs to address potential change in pedestal values between online baseline runs
-_____________
-08/10/21
-
-BRANCH: halfmodule_baseline_fitting
-
-Finish cleaning up code. Stick with current fitting algorithm, seems to work well enough...
-
-Rewrite python script that produces database output...

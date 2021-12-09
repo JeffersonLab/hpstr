@@ -19,7 +19,7 @@ done
 
 export FIRST_ID=${first_id}
 export JOB_ID=$(($SLURM_ARRAY_TASK_ID+$FIRST_ID))
-source /sdf/home/a/alspellm/.bashrc
+source ./setup.sh
 export JOBDIR=$(readlink -f $jobdir)
 runpath=$(readlink -f $rundir)
 export RUNDIR=${runpath}/${run}/ntuples/${JOB_ID}

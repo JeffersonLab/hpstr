@@ -1,1 +1,0 @@
-python3 /home/alic/src/hpstr/bf_dev/offlineBaselineFitAnalysis.py -i /home/alic/HPS/projects/baselines/jlab/fits/hps_14143_00050-00069_baseline_all.root -o hps_14143_fit_analysis.root -csv hps_14143_offline_baselines.dat -thresh hps_14143_thresholds.dat -b /home/alic/HPS/projects/baselines/jlab/fits/hps_10031_offline_baselines_010620.dat 
