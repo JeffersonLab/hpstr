@@ -23,16 +23,16 @@
 #include <fstream>
 
 class BlFitHistos : public HistoManager{
-    
+
     public:
         BlFitHistos();
         ~BlFitHistos();
-    
+
         std::map<std::string,TH1F*> get1dHistos() {
-                return histos1d;
+            return histos1d;
         }
         std::map<std::string,TH2F*> get2dHistos() {
-                return histos2d;
+            return histos2d;
         }
 
         void setSimpleGausFit(std::string simpleGausFit){
@@ -47,9 +47,9 @@ class BlFitHistos : public HistoManager{
         void iterativeGausFit(TH1D* hist, double min, double max, double sigmaRange, double hardminimum, double hardmaximum);
         void setDebug(bool value){debug_ = value;};
         void backwardsIterChi2Fit(TH1D* hist, double xmin, double xmax);
-        
+
     private:
-        
+
         TH1F* fitHistos{nullptr};
 
     protected:
