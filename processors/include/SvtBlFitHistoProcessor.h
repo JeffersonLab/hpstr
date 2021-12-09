@@ -11,7 +11,6 @@
 #include "IEvent.h"
 #include "BlFitHistos.h"
 #include "HistoManager.h"
-#include "BlFitFunction.h"
 #include "FlatTupleMaker.h"
 
 class SvtBlFitHistoProcessor : public Processor {
