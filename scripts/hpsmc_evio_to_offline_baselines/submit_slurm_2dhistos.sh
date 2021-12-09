@@ -6,36 +6,27 @@
 #SBATCH --partition=shared
 #SBATCH --job-name=2dhistos
 
-while getopts r:d:s:n: flag
+while getopts r:d:s:n:c: flag
 do
     case "${flag}" in
         r) run=${OPTARG};;
         d) jobdir=${OPTARG};;
         s) rundir=${OPTARG};;
         n) first_id=${OPTARG};;
+        c) cfg_env=${OPTARG};;
     esac
 
 done
 
 export FIRST_ID=${first_id}
 export JOB_ID=$(($SLURM_ARRAY_TASK_ID+$FIRST_ID))
-source ./setup.sh
+source ${cfg_env}/setup.sh
 export JOBDIR=$(readlink -f $jobdir)
 runpath=$(readlink -f $rundir)
 export RUNDIR=${runpath}/${run}/ntuples/${JOB_ID}
 mkdir -p $RUNDIR
 mkdir $RUNDIR/../logs
 cd $RUNDIR
-
-#for file in ${JOBDIR}/${run}/ntuples/
-#do 
-#    if [[ "$file" == *"$JOB_ID"* ]]
-#    then
-#        export filename=$(basename -s .root $file)
-#    else
-#        echo "NO NTUPLE FILE WITH ID ${JOB_ID} FOUND. EXITING"
-#        exit 1
-#    fi
 
 filename=$(basename -s .root ${JOBDIR}/${run}/ntuples/hps*${JOB_ID}.root)
 echo "ntuple input file name is $filename"

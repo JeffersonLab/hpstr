@@ -35,13 +35,6 @@ class BlFitHistos : public HistoManager{
             return histos2d;
         }
 
-        void setSimpleGausFit(std::string simpleGausFit){
-            if(simpleGausFit.find("rue") != std::string::npos)
-                simpleGausFit_ = true ;
-            else
-                simpleGausFit_ = false;
-        }
-
         void getHistosFromFile(TFile* inFile, std::string layer = "");
         void fit2DHistoChannelBaselines(std::map<std::string, TH2F*> histos2d,int rebin_, int minStats_,int deadRMS_, std::string thresholdsFileIn_, FlatTupleMaker* flat_tuple_);
         void iterativeGausFit(TH1D* hist, double min, double max, double sigmaRange, double hardminimum, double hardmaximum);
@@ -57,7 +50,6 @@ class BlFitHistos : public HistoManager{
         std::map<std::string, TH1F*> histos1d;
         std::map<std::string,std::map<int,int>> svtIDMap;
         std::map<std::string,std::map<std::string,std::vector<int>>> threshMap_;
-        bool simpleGausFit_;
         ModuleMapper * mmapper_;
         bool debug_{false};
 };

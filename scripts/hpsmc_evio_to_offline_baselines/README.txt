@@ -6,6 +6,8 @@ This directory houses all of the scripts necessary to convert multiple evio data
 
 
 0. Edit 'setup.sh' and update path to HPSTR and HPSMC based on your installation
+0a. Get a local copy of the DAQ thresholds file used for the run you're fitting here
+    The fit window is defined by the apv channel threshold settings at the time the data is taken
 
 1. Store all input evio file paths into a txt file.
 
@@ -22,8 +24,9 @@ This directory houses all of the scripts necessary to convert multiple evio data
 
 4. Run 'source run_job.sh'
     a. Provide flags defined at top: {run_number, jobdirectory, scratch run_directory, first_id = first number of evio file}
-    b. output of these jobs will be a collection of baseline_fit root files Layers 1 - 7
-    c. Need to hadd and run analysis script on those files
+    b. --thresh specifies the full path to the apv channel thresholds file used at the time of this run
+    c. output of these jobs will be a collection of baseline_fit root files Layers 1 - 7
+    d. Need to hadd and run analysis script on those files
 
 5. 'hadd hps_<run>_offline_baselines.root hps_<run>_offline_baselines_L<n>.root'
 

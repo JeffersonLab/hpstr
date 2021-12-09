@@ -20,10 +20,6 @@ base.parser.add_argument('-thresh', '--thresh', type=str, dest="thresholdsFileIn
 base.parser.add_argument("-deadRMS", '--deadRMS', type=int, dest="deadRMS", 
         help="Define dead channel by setting low RMS threshold", metavar="deadRMS", default=150)
 
-#Set simpleGausFit to True if fitting a baseline file that does not have any background
-base.parser.add_argument('-simpleGausFit', '--simpleGausFit',type=str, dest="simpleGausFit",default="false", 
-        help="To fit baselines with simple gaussian fit, set to True")
-
 base.parser.add_argument("-b", "--rebin", type=int, dest="rebin",
                 help="rebin factor.", metavar="rebin", default=1)
 
@@ -60,13 +56,12 @@ fitBL = HpstrConf.Processor('fitBL', 'SvtBlFitHistoProcessor')
 #   Processor Configuration   #
 ###############################
 fitBL.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/SvtBlFits.json'
-#fitBL.parameters["rawhitsHistCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/baselinefits/rawSvtHits.json'
-fitBL.parameters["rawhitsHistCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/baselinefits/rawSvtHits_old.json'
+fitBL.parameters["rawhitsHistCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/baselinefits/rawSvtHits.json'
+#fitBL.parameters["rawhitsHistCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/baselinefits/rawSvtHits_old.json'
 fitBL.parameters["layer"] = options.layer
 fitBL.parameters["rebin"] = options.rebin
 fitBL.parameters["minStats"] = options.minStats
 fitBL.parameters["deadRMS"] = options.deadRMS
-fitBL.parameters["simpleGausFit"] = options.simpleGausFit
 fitBL.parameters["thresholdsFileIn"] = options.thresholdsFileIn
 fitBL.parameters["debug"] = options.debug
 

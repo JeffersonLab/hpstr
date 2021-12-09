@@ -6,20 +6,21 @@
 #SBATCH --partition=shared
 #SBATCH --job-name=rootuple
 
-while getopts r:d:s:n: flag
+while getopts r:d:s:n:c: flag
 do
     case "${flag}" in
         r) run=${OPTARG};;
         d) jobdir=${OPTARG};;
         s) rundir=${OPTARG};;
         n) first_id=${OPTARG};;
+        c) cfg_env=${OPTARG};;
     esac
 
 done
 
 export FIRST_ID=${first_id}
 export JOB_ID=$(($SLURM_ARRAY_TASK_ID+$FIRST_ID))
-source ./setup.sh
+source ${cfg_env}/setup.sh
 export JOBDIR=$(readlink -f $jobdir)
 runpath=$(readlink -f $rundir)
 export RUNDIR=${runpath}/${run}/ntuples/${JOB_ID}
