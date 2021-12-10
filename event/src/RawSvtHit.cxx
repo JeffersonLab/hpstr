@@ -20,12 +20,16 @@ void RawSvtHit::Clear() {
     TObject::Clear(); 
 }
 
-void RawSvtHit::setFit(double fit[5]) {
-    fit_[0] = fit[0]; 
-    fit_[1] = fit[1]; 
-    fit_[2] = fit[2]; 
-    fit_[3] = fit[3]; 
-    fit_[4] = fit[4]; 
+void RawSvtHit::setFitN(int fitN) {
+    fitN_ = fitN;
+}
+
+void RawSvtHit::setFit(double fit[5], int fitI) {
+    fit_[fitI][0] = fit[0]; 
+    fit_[fitI][1] = fit[1]; 
+    fit_[fitI][2] = fit[2]; 
+    fit_[fitI][3] = fit[3]; 
+    fit_[fitI][4] = fit[4]; 
 }
 
 void RawSvtHit::setADCs(int adcs[6]) {
@@ -65,8 +69,8 @@ void RawSvtHit::setStrip(int strip) {
     strip_ = strip; 
 }
 
-double * RawSvtHit::getFit() {
-    return fit_;
+double * RawSvtHit::getFit(int fitI) {
+    return fit_[fitI];
 }
 
 int * RawSvtHit::getADCs() {

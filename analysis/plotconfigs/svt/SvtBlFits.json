@@ -1,0 +1,53 @@
+{   
+    "SvtHybridsMean" : {
+            "prefix" : "mean",
+            "type" : "h",
+            "xtitle" : "Strip Number",
+            "bins" : 640,
+            "minX" : -0.5,
+            "maxX" : 639.5,
+            "ytitle" : "ADC Value"
+
+        },
+    "SvtHybridsWidth" : {
+            "prefix" : "width",
+            "type" : "h",
+            "xtitle" : "Strip Number",
+            "bins" : 640,
+            "minX" : -0.5,
+            "maxX" : 639.5,
+            "ytitle" : "ADC Value"
+
+        },
+    "SvtHybridsNorm" : {
+            "prefix" : "norm",
+            "type" : "h",
+            "xtitle" : "Strip Number",
+            "bins" : 640,
+            "minX" : -0.5,
+            "maxX" : 639.5,
+            "ytitle" : "ADC Value"
+
+        },
+    "SvtHybridsFRL" : {
+            "prefix" : "FitRangeLower",
+            "type" : "h",
+            "xtitle" : "Strip Number",
+            "bins" : 640,
+            "minX" : -0.5,
+            "maxX" : 639.5,
+            "ytitle" : "ADC Value"
+
+        },
+    "SvtHybridsFRU" : {
+            "prefix" : "FitRangeUpper",
+            "type" : "h",
+            "xtitle" : "Strip Number",
+            "bins" : 640,
+            "minX" : -0.5,
+            "maxX" : 639.5,
+            "ytitle" : "ADC Value"
+
+        }
+
+}

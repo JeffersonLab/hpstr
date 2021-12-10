@@ -33,6 +33,7 @@ class ClusterHistos : public HistoManager{
   
   void setBaselineFitsDir(const std::string& baselineFits) {baselineFits_ = baselineFits;};
   bool LoadBaselineHistos(const std::string& baselineRun);
+  bool LoadOfflineBaselines(const std::string& baselineFits);
   
   //void setBaselineFits(const std::string& baselineFits){baselineFits_ = baselineFits;};
   //std::string getBaselineFits const () {return baselineFits_;};

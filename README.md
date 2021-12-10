@@ -165,6 +165,28 @@ hpstr recoTuple_cfg.py -i <inLcioFile> -o <outROOTFile> -t <1=isData|0=isMC> -y 
 where the ```-t ``` flag is used to distinguish between data and MC and ```-y``` to distinguish between 2016 and 2019. 
 There are alternative configurations that produce different ntuples and the main are listed here:
 
+### SvtBl2D Histograms production
+The configuration to produce rawSVThit 2D histogram root files from ntuples is ```anaSvtBl2D_cfg.py```. Typical usage is:
+```bash
+hpstr anaSvtBl2D_cfg.py -i <inNtupleROOTFile> -o <outROOTFile>
+Note that the output histo configurations are constructed in "/analysis/plotconfigs/svt/Svt2DBl.json"
+```
+### SvtBlFits production
+The configuration to produce baseline fits from an svtBl2D file is ```fitBL_cfg.py```. 
+To fit baselines, need to locate apv channel thresholds file used on DAQ at time of the run...for example if analyzing run 14683, need to locate
+the thresholds file 'svt_014679_thresholds2pt5sig_1pt5sigF5H1.dat', which is available on clonfarm1...
+Typical usage is:
+
+```bash
+hpstr fitBL_cfg.py -i <inSvtBl2DROOTFile> -o <outROOTFile> -l L<0..6> -thresh <svt_<run>_thresholds.dat
+```
+
+To generate baseline database file and/or thresholds file from offline baselines, run analysis script:
+Typical usage is:
+
+```python3 $HPSTR_BASE/scripts/hpsmc_evio_to_offline_baselines/offlineBaselineFitAnalysis.py -i <inputFile>.root -o <outputFile>.root -b <input_online_baselines>.dat -threshIN svt_<run>_thresholds.dat -dbo <offline_baselines_db_format>.dat -thresh <offline_thresholds_db_format>.dat
+```
+
 #### Kalman / GBL vertex performance comparison ntuples
 
 ```bash
