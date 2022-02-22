@@ -1,0 +1,98 @@
+{ 
+    "n_fsps_h" : {
+        "bins"   : 10,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "N_{fsps}",
+        "ytitle" : "Events"
+    },    
+    
+    "charge_h": { 
+		"bins"   : 3,
+        "minX"   : -1.5,
+        "maxX"   : 1.5,
+        "xtitle" : "charge",
+        "ytitle" : "Particles"    
+    },
+    
+	"ecalClusterEnergy_ele_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 6,
+        "xtitle" : "Reco Ecal Cluster Energy [GeV]",
+        "ytitle" : "Clusters / 0.03 GeV"
+    }, 
+    
+    
+	"xyEcalClusters_ele_hh" : {
+        "binsX"   : 100,
+        "minX"   : -300,
+        "maxX"   : 400,
+        "binsY"   : 100,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Recon ECal Cluster X" ,
+        "ytitle" : "Recon ECal Cluster Y"
+    },
+    
+	"p_ele_h" : {
+        "bins"   : 650,
+        "minX"   : 0,
+        "maxX"   : 6.5,
+        "xtitle" : "p [GeV]",
+        "ytitle" : "Tracks / 0.01 GeV"
+    },
+    
+    
+	"ecalClusterEnergy_pos_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 6,
+        "xtitle" : "Reco Ecal Cluster Energy [GeV]",
+        "ytitle" : "Clusters / 0.03 GeV"
+    }, 
+    
+    
+	"xyEcalClusters_pos_hh" : {
+        "binsX"   : 100,
+        "minX"   : -300,
+        "maxX"   : 400,
+        "binsY"   : 100,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Recon ECal Cluster X" ,
+        "ytitle" : "Recon ECal Cluster Y"
+    },
+    
+	"p_pos_h" : {
+        "bins"   : 650,
+        "minX"   : 0,
+        "maxX"   : 6.5,
+        "xtitle" : "p [GeV]",
+        "ytitle" : "Tracks / 0.01 GeV"
+    },
+    
+    
+	"ecalClusterEnergy_photon_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 6,
+        "xtitle" : "Reco Ecal Cluster Energy [GeV]",
+        "ytitle" : "Clusters / 0.03 GeV"
+    }, 
+    
+    
+	"xyEcalClusters_photon_hh" : {
+        "binsX"   : 100,
+        "minX"   : -300,
+        "maxX"   : 400,
+        "binsY"   : 100,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Recon ECal Cluster X" ,
+        "ytitle" : "Recon ECal Cluster Y"
+    }
+    
+
+
+}

@@ -23,7 +23,7 @@ p.add_library("libprocessors")
 ###############################
 header = HpstrConf.Processor('header', 'EventProcessor')
 track = HpstrConf.Processor('track', 'TrackingProcessor')
-svthits = HpstrConf.Processor('svthits', 'Tracker3DHitProcessor')
+#svthits = HpstrConf.Processor('svthits', 'Tracker3DHitProcessor')
 rawsvt = HpstrConf.Processor('rawsvt', 'SvtRawDataProcessor')
 hodo = HpstrConf.Processor('hodo', 'HodoDataProcessor')
 ecal = HpstrConf.Processor('ecal', 'ECalDataProcessor')
@@ -52,11 +52,10 @@ rawsvt.parameters["hitfitCollLcio"] = 'SVTFittedRawTrackerHits'
 rawsvt.parameters["hitCollRoot"]    = 'SVTRawTrackerHits'
 
 #Tracker3DHits
-svthits.parameters["debug"] = 0
-svthits.parameters["hitCollLcio"]    = 'RotatedHelicalTrackHits'
-svthits.parameters["hitCollRoot"]    = 'RotatedHelicalTrackHits'
-svthits.parameters["mcPartRelLcio"]  = 'RotatedHelicalTrackMCRelations'
-
+#svthits.parameters["debug"] = 0
+#svthits.parameters["hitCollLcio"]    = 'RotatedHelicalTrackHits'
+#svthits.parameters["hitCollRoot"]    = 'RotatedHelicalTrackHits'
+#svthits.parameters["mcPartRelLcio"]  = 'RotatedHelicalTrackMCRelations'
 
 #Tracking
 track.parameters["debug"] = 0 
@@ -83,12 +82,12 @@ ecal.parameters["hitCollRoot"] = 'RecoEcalHits'
 ecal.parameters["clusCollLcio"] = "EcalClustersCorr"
 ecal.parameters["clusCollRoot"] = "RecoEcalClusters"
 
-#FinalStateParticles
+#FinalStateParticles_KF
 fsp.parameters["debug"] = 0
-fsp.parameters["fspCollLcio"]    = 'FinalStateParticles'
-fsp.parameters["fspCollRoot"]    = 'FinalStateParticles'
-fsp.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
-fsp.parameters["trkRelCollLcio"] = 'TrackDataRelations'
+fsp.parameters["fspCollLcio"]    = 'FinalStateParticles_KF'
+fsp.parameters["fspCollRoot"]    = 'FinalStateParticles_KF'
+fsp.parameters["kinkRelCollLcio"] = ''
+fsp.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
 #Vertex
 vtx.parameters["debug"] = 0
@@ -115,11 +114,11 @@ mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 # Sequence which the processors will run.
 if options.isData == -1: print("Please specficy if this is Data or not via option -t")
 if options.isData == 1: 
-    p.sequence = [header, track, rawsvt, svthits, hodo, ecal, fsp, vtx, c_vtx]
+    p.sequence = [header, track, rawsvt, hodo, ecal, fsp, vtx, c_vtx]
     #p.sequence = [header, track, ecal, fsp, vtx, c_vtx]
 else: 
     #p.sequence = [header, track, ecal, fsp, vtx, c_vtx, mcpart]
-    p.sequence = [header, track, rawsvt, svthits, hodo, ecal, fsp, vtx, c_vtx, mcpart]
+    p.sequence = [header, track, rawsvt, hodo, ecal, fsp, vtx, c_vtx, mcpart]
 
 p.input_files= lcio_file
 p.output_files = root_file

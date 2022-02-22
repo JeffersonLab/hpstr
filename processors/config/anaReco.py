@@ -26,15 +26,28 @@ p.add_library("libprocessors")
 #          Processors         #
 ###############################
 
+ts = HpstrConf.Processor('tsAna', 'TSAnaProcessor')
+
 recoecalana = HpstrConf.Processor('recoecalana', 'RecoEcalAnaProcessor')
 
 recohodoana = HpstrConf.Processor('recohodoana', 'RecoHodoAnaProcessor')
 
 recotrackana = HpstrConf.Processor('recotrackana', 'RecoTrackAnaProcessor')
 
+recoparticleana = HpstrConf.Processor('recoparticleana', 'RecoParticleAnaProcessor')
+
 ###############################
 #   Processor Configuration   #
 ###############################
+
+#TSAna
+ts.parameters["debug"] = 0
+ts.parameters["anaName"] = "tsAna"
+ts.parameters["TSColl"] = "TSBank"
+ts.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/ts/ts.json'
+ts.parameters["beamE"] = base.beamE[str(options.year)]
+
+
 #RecoEcalAna
 recoecalana.parameters["debug"] = 0
 recoecalana.parameters["anaName"] = "recoEcalAna"
@@ -59,11 +72,21 @@ recotrackana.parameters["vtxColl"] = "UnconstrainedV0Vertices_KF"
 recotrackana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/recoTrack.json'
 recotrackana.parameters["analysis"] = options.analysis
 
+#RecoParticleAna
+recoparticleana.parameters["debug"] = 0
+recoparticleana.parameters["anaName"] = "recoParticleAna"
+recoparticleana.parameters["fspCollRoot"] = "FinalStateParticles_KF"
+recoparticleana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/recoParticle.json'
+recoparticleana.parameters["analysis"] = options.analysis
+
 
 # Sequence which the processors will run.
-p.sequence = [recoecalana, recohodoana, recotrackana]
+p.sequence = [ts, recoecalana, recohodoana, recotrackana, recoparticleana]
 
 p.input_files = infile
 p.output_files = [outfile]
+
+if (options.nevents > -1):
+    p.max_events = options.nevents
 
 p.printProcess()

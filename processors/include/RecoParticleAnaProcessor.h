@@ -1,10 +1,10 @@
-#ifndef __RECOTRACK_ANAPROCESSOR_H__
-#define __RECOTRACK_ANAPROCESSOR_H__
+#ifndef __RECOPARTICLE_ANAPROCESSOR_H__
+#define __RECOPARTICLE_ANAPROCESSOR_H__
 
 //HPSTR
 #include "HpsEvent.h"
 #include "Collections.h"
-#include "RecoTrackAnaHistos.h"
+#include "RecoParticleAnaHistos.h"
 
 
 //ROOT
@@ -17,13 +17,13 @@
 class TTree;
 
 
-class RecoTrackAnaProcessor : public Processor {
+class RecoParticleAnaProcessor : public Processor {
 
     public:
 
-		RecoTrackAnaProcessor(const std::string& name, Process& process);
+		RecoParticleAnaProcessor(const std::string& name, Process& process);
 
-        ~RecoTrackAnaProcessor();
+        ~RecoParticleAnaProcessor();
 
         virtual bool process(IEvent* ievent);
 
@@ -36,20 +36,16 @@ class RecoTrackAnaProcessor : public Processor {
     private:
 
         //Containers to hold histogrammer info
-        RecoTrackAnaHistos* histos{nullptr};
+        RecoParticleAnaHistos* histos{nullptr};
         std::string  histCfgFilename_;
 
         //TODO Change this to be held from HPSEvent
         TTree* tree_;
-        TBranch* bvtxs_{nullptr};
-        TBranch* btracks_{nullptr};
+        TBranch* bfsps_{nullptr};
+        std::vector<Particle*> * fsps_{};
 
-        std::vector<Vertex*> * vtxs_{};
-        std::vector<Track*>      * tracks_{};
-
-        std::string anaName_{"recoTrackAna"};
-        std::string vtxColl_{"UnconstrainedV0Vertices_KF"};
-        std::string trkColl_{"KalmanFullTracks"};
+        std::string anaName_{"recoParticleAna"};
+        std::string fspCollRoot_{"FinalStateParticles_KF"};
 
 
         //Debug Level
