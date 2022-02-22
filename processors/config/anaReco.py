@@ -32,7 +32,7 @@ recoecalana = HpstrConf.Processor('recoecalana', 'RecoEcalAnaProcessor')
 
 recohodoana = HpstrConf.Processor('recohodoana', 'RecoHodoAnaProcessor')
 
-recotrackana = HpstrConf.Processor('recotrackana', 'RecoTrackAnaProcessor')
+recotrackvertexana = HpstrConf.Processor('recotrackvertexana', 'RecoTrackVertexAnaProcessor')
 
 recoparticleana = HpstrConf.Processor('recoparticleana', 'RecoParticleAnaProcessor')
 
@@ -65,12 +65,12 @@ recohodoana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconf
 recohodoana.parameters["analysis"] = options.analysis
 
 #RecoHodoAna
-recotrackana.parameters["debug"] = 0
-recotrackana.parameters["anaName"] = "recoTrackAna"
-recotrackana.parameters["trkColl"] = "KalmanFullTracks"
-recotrackana.parameters["vtxColl"] = "UnconstrainedV0Vertices_KF"
-recotrackana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/recoTrack.json'
-recotrackana.parameters["analysis"] = options.analysis
+recotrackvertexana.parameters["debug"] = 0
+recotrackvertexana.parameters["anaName"] = "recoTrackAna"
+recotrackvertexana.parameters["trkColl"] = "KalmanFullTracks"
+recotrackvertexana.parameters["vtxColl"] = "UnconstrainedV0Vertices_KF"
+recotrackvertexana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/recoTrackVertex.json'
+recotrackvertexana.parameters["analysis"] = options.analysis
 
 #RecoParticleAna
 recoparticleana.parameters["debug"] = 0
@@ -81,7 +81,7 @@ recoparticleana.parameters["analysis"] = options.analysis
 
 
 # Sequence which the processors will run.
-p.sequence = [ts, recoecalana, recohodoana, recotrackana, recoparticleana]
+p.sequence = [ts, recoecalana, recohodoana, recotrackvertexana, recoparticleana]
 
 p.input_files = infile
 p.output_files = [outfile]

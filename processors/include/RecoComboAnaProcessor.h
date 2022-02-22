@@ -2,11 +2,11 @@
 #define __RECOCOMBO_ANAPROCESSOR_H__
 
 //HPSTR
+#include "../../analysis/include/RecoTrackVertexAnaHistos.h"
 #include "HpsEvent.h"
 #include "Collections.h"
 #include "RecoEcalAnaHistos.h"
 #include "RecoHodoAnaHistos.h"
-#include "RecoTrackAnaHistos.h"
 #include "RecoParticleAnaHistos.h"
 
 //ROOT
@@ -44,7 +44,7 @@ class RecoComboAnaProcessor : public Processor {
         RecoHodoAnaHistos* histosHodo{nullptr};
         std::string  histCfgFilenameHodo_;
 
-        RecoTrackAnaHistos* histosTrack{nullptr};
+        RecoTrackVertexAnaHistos* histosTrack{nullptr};
         std::string  histCfgFilenameTrack_;
 
         RecoParticleAnaHistos* histosParticle{nullptr};

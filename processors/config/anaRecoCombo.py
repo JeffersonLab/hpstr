@@ -58,7 +58,7 @@ recocomboana.parameters["fspCollRoot"] = "FinalStateParticles_KF"
 
 recocomboana.parameters["histCfgEcal"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/recoEcal.json'
 recocomboana.parameters["histCfgHodo"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/recoHodo.json'
-recocomboana.parameters["histCfgTrack"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/recoTrack.json'
+recocomboana.parameters["histCfgTrack"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/recoTrackVertex.json'
 recocomboana.parameters["histCfgParticle"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/recoParticle.json'
 recocomboana.parameters["analysis"] = options.analysis
 
