@@ -59,7 +59,7 @@ void RecoComboAnaProcessor::initialize(TTree* tree) {
     tree_->SetBranchAddress(hodoClusColl_.c_str() , &hodoClusters_, &bhodoClusters_);
 
     // init histos for track and vertex
-    histosTrack = new RecoTrackAnaHistos("recoTrackAna");
+    histosTrack = new RecoTrackVertexAnaHistos("recoTrackAna");
     histosTrack->loadHistoConfig(histCfgFilenameTrack_);
     histosTrack->doTrackComparisonPlots(false);
     histosTrack->DefineHistos();

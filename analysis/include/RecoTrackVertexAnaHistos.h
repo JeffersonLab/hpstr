@@ -1,5 +1,5 @@
-#ifndef RECOTRACKANAHISTOS_H
-#define RECOTRACKANAHISTOS_H
+#ifndef RECOTRACKVERTEXANAHISTOS_H
+#define RECOTRACKVERTEXANAHISTOS_H
 
 #include "HistoManager.h"
 #include "Track.h"
@@ -9,11 +9,11 @@
 #include <string>
 #include <vector>
 
-class RecoTrackAnaHistos : public HistoManager {
+class RecoTrackVertexAnaHistos : public HistoManager {
 
     public:
 
-	RecoTrackAnaHistos(const std::string& inputName) :
+	RecoTrackVertexAnaHistos(const std::string& inputName) :
             HistoManager(inputName)
     {
         m_name = inputName;
@@ -56,4 +56,4 @@ class RecoTrackAnaHistos : public HistoManager {
 
 };
 
-#endif //RECOTRACKANAHISTOS_H
+#endif //RECOTRACKVERTEXANAHISTOS_H

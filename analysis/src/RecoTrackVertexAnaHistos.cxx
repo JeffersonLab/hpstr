@@ -1,11 +1,11 @@
-#include "RecoTrackAnaHistos.h"
 #include "TLorentzVector.h"
 #include "TVector3.h"
 #include <iostream>
+#include "../include/RecoTrackVertexAnaHistos.h"
 
-void RecoTrackAnaHistos::BuildAxes(){}
+void RecoTrackVertexAnaHistos::BuildAxes(){}
 
-void RecoTrackAnaHistos::DefineTrkHitHistos(){
+void RecoTrackVertexAnaHistos::DefineTrkHitHistos(){
 
     std::vector<std::string> trkTypes;
     trkTypes.push_back("topEle");
@@ -59,7 +59,7 @@ void RecoTrackAnaHistos::DefineTrkHitHistos(){
     }//loop on trkTypes
 }
 
-void RecoTrackAnaHistos::Define2DHistos() {
+void RecoTrackVertexAnaHistos::Define2DHistos() {
 
     //TODO improve naming
     std::string h_name = "";
@@ -89,7 +89,7 @@ void RecoTrackAnaHistos::Define2DHistos() {
 }//define 2dhistos
 
 
-void RecoTrackAnaHistos::Fill1DVertex(Vertex* vtx,
+void RecoTrackVertexAnaHistos::Fill1DVertex(Vertex* vtx,
         Particle* ele,
         Particle* pos,
         Track* ele_trk,
@@ -176,7 +176,7 @@ void RecoTrackAnaHistos::Fill1DVertex(Vertex* vtx,
 }
 
 
-void RecoTrackAnaHistos::Fill2DTrack(Track* track, float weight, const std::string& trkname) {
+void RecoTrackVertexAnaHistos::Fill2DTrack(Track* track, float weight, const std::string& trkname) {
 
 
     if (track) {
@@ -196,7 +196,7 @@ void RecoTrackAnaHistos::Fill2DTrack(Track* track, float weight, const std::stri
     }
 }
 
-void RecoTrackAnaHistos::Fill1DTrack(Track* track, float weight, const std::string& trkname) {
+void RecoTrackVertexAnaHistos::Fill1DTrack(Track* track, float weight, const std::string& trkname) {
 
     double charge = (double) track->getCharge();
 
@@ -252,7 +252,7 @@ void RecoTrackAnaHistos::Fill1DTrack(Track* track, float weight, const std::stri
     Fill1DHisto(trkname+"type_h",track->getType(),weight);
 }
 
-void RecoTrackAnaHistos::Fill1DVertex(Vertex* vtx, float weight) {
+void RecoTrackVertexAnaHistos::Fill1DVertex(Vertex* vtx, float weight) {
 
     Fill1DHisto("vtx_chi2_h"   ,vtx->getChi2(),weight);
     Fill2DHisto("vtx_XY_hh",vtx->getX(),vtx->getY(),weight);
@@ -285,7 +285,7 @@ void RecoTrackAnaHistos::Fill1DVertex(Vertex* vtx, float weight) {
     Fill1DHisto("vtx_p_h" ,vtx->getP().Mag());
 }
 
-void RecoTrackAnaHistos::Fill1DHistograms(Track *track, Vertex* vtx, float weight ) {
+void RecoTrackVertexAnaHistos::Fill1DHistograms(Track *track, Vertex* vtx, float weight ) {
 
     if (track) {
         Fill1DTrack(track);
@@ -299,7 +299,7 @@ void RecoTrackAnaHistos::Fill1DHistograms(Track *track, Vertex* vtx, float weigh
 }
 
 
-void RecoTrackAnaHistos::Fill1DTrackTruth(Track *track, Track* truth_track, float weight, const std::string& trkname) {
+void RecoTrackVertexAnaHistos::Fill1DTrackTruth(Track *track, Track* truth_track, float weight, const std::string& trkname) {
 
     if (!track || !truth_track)
         return;
@@ -355,7 +355,7 @@ void RecoTrackAnaHistos::Fill1DTrackTruth(Track *track, Track* truth_track, floa
 
 
 
-void RecoTrackAnaHistos::Fill2DHistograms(Vertex* vtx, float weight) {
+void RecoTrackVertexAnaHistos::Fill2DHistograms(Vertex* vtx, float weight) {
 
     if (vtx) {
 
@@ -384,7 +384,7 @@ void RecoTrackAnaHistos::Fill2DHistograms(Vertex* vtx, float weight) {
     }
 }
 
-void RecoTrackAnaHistos::FillTrackComparisonHistograms(Track* track_x, Track* track_y, float weight) {
+void RecoTrackVertexAnaHistos::FillTrackComparisonHistograms(Track* track_x, Track* track_y, float weight) {
 
     if (doTrkCompPlots) {
         /*
@@ -406,7 +406,7 @@ void RecoTrackAnaHistos::FillTrackComparisonHistograms(Track* track_x, Track* tr
 //Residual Plots ============ They should probably go somewhere else ====================
 
 
-void RecoTrackAnaHistos::FillResidualHistograms(Track* track, int ly, double res, double sigma) {
+void RecoTrackVertexAnaHistos::FillResidualHistograms(Track* track, int ly, double res, double sigma) {
 
     double trk_mom = track->getP();
     std::string lyr = std::to_string(ly);

@@ -1,15 +1,15 @@
 /**
  * @author Tongtong Cao, UNH
  */
-#include "RecoTrackAnaProcessor.h"
 #include <iostream>
+#include "../include/RecoTrackVertexAnaProcessor.h"
 
-RecoTrackAnaProcessor::RecoTrackAnaProcessor(const std::string& name, Process& process) : Processor(name,process){}
+RecoTrackVertexAnaProcessor::RecoTrackVertexAnaProcessor(const std::string& name, Process& process) : Processor(name,process){}
 //TODO CHECK THIS DESTRUCTOR
-RecoTrackAnaProcessor::~RecoTrackAnaProcessor(){}
+RecoTrackVertexAnaProcessor::~RecoTrackVertexAnaProcessor(){}
 
 
-void RecoTrackAnaProcessor::configure(const ParameterSet& parameters) {
+void RecoTrackVertexAnaProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring RecoTrackAnaProcessor" << std::endl;
     try
     {
@@ -17,6 +17,7 @@ void RecoTrackAnaProcessor::configure(const ParameterSet& parameters) {
         anaName_         = parameters.getString("anaName");
         trkColl_    = parameters.getString("trkColl");
         //trackHitColl_     = parameters.getString("trackHitColl");
+        vtxColl_    = parameters.getString("vtxColl");
         histCfgFilename_ = parameters.getString("histCfg");
     }
     catch (std::runtime_error& error)
@@ -26,10 +27,10 @@ void RecoTrackAnaProcessor::configure(const ParameterSet& parameters) {
 
 }
 
-void RecoTrackAnaProcessor::initialize(TTree* tree) {
+void RecoTrackVertexAnaProcessor::initialize(TTree* tree) {
     tree_= tree;
     // init histos
-    histos = new RecoTrackAnaHistos(anaName_.c_str());
+    histos = new RecoTrackVertexAnaHistos(anaName_.c_str());
     histos->loadHistoConfig(histCfgFilename_);
     histos->doTrackComparisonPlots(false);
     histos->DefineHistos();
@@ -40,7 +41,7 @@ void RecoTrackAnaProcessor::initialize(TTree* tree) {
 
 }
 
-bool RecoTrackAnaProcessor::process(IEvent* ievent) {
+bool RecoTrackVertexAnaProcessor::process(IEvent* ievent) {
 
     double weight = 1.;
 
@@ -82,11 +83,11 @@ bool RecoTrackAnaProcessor::process(IEvent* ievent) {
     return true;
 }
 
-void RecoTrackAnaProcessor::finalize() {
+void RecoTrackVertexAnaProcessor::finalize() {
 
     histos->saveHistos(outF_, anaName_.c_str());
     delete histos;
     histos = nullptr;
 }
 
-DECLARE_PROCESSOR(RecoTrackAnaProcessor);
+DECLARE_PROCESSOR(RecoTrackVertexAnaProcessor);

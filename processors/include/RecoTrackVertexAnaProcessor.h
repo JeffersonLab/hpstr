@@ -1,13 +1,10 @@
-#ifndef __RECOTRACK_ANAPROCESSOR_H__
-#define __RECOTRACK_ANAPROCESSOR_H__
+#ifndef __RECOTRACKVERTEX_ANAPROCESSOR_H__
+#define __RECOTRACKVERTEX_ANAPROCESSOR_H__
 
 //HPSTR
+#include "../../analysis/include/RecoTrackVertexAnaHistos.h"
 #include "HpsEvent.h"
 #include "Collections.h"
-#include "RecoTrackAnaHistos.h"
-
-
-//ROOT
 #include "Processor.h"
 #include "TClonesArray.h"
 #include "TBranch.h"
@@ -17,13 +14,13 @@
 class TTree;
 
 
-class RecoTrackAnaProcessor : public Processor {
+class RecoTrackVertexAnaProcessor : public Processor {
 
     public:
 
-		RecoTrackAnaProcessor(const std::string& name, Process& process);
+		RecoTrackVertexAnaProcessor(const std::string& name, Process& process);
 
-        ~RecoTrackAnaProcessor();
+        ~RecoTrackVertexAnaProcessor();
 
         virtual bool process(IEvent* ievent);
 
@@ -36,7 +33,7 @@ class RecoTrackAnaProcessor : public Processor {
     private:
 
         //Containers to hold histogrammer info
-        RecoTrackAnaHistos* histos{nullptr};
+        RecoTrackVertexAnaHistos* histos{nullptr};
         std::string  histCfgFilename_;
 
         //TODO Change this to be held from HPSEvent
