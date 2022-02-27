@@ -26,19 +26,25 @@ p.add_library("libprocessors")
 #          Processors         #
 ###############################
 
-anabeamrotationtargetoffsetting = HpstrConf.Processor('anabeamrotationtargetoffsetting', 'BeamRotationTargetOffsettingAnaProcessor')
+anabeamrotationtargetoffsetting = HpstrConf.Processor('beamrotationtargetoffsettingana', 'BeamRotationTargetOffsettingAnaProcessor')
 
 ###############################
 #   Processor Configuration   #
 ###############################
 #BeamRotationTargetOffsettingAnaProcessor
+anabeamrotationtargetoffsetting.parameters["anaName"] = "beamRotationTargetOffsettingAna"
 anabeamrotationtargetoffsetting.parameters["debug"] = 0
 anabeamrotationtargetoffsetting.parameters["TSColl"] = "TSBank"
+anabeamrotationtargetoffsetting.parameters["trkColl"] = "KalmanFullTracks"
 anabeamrotationtargetoffsetting.parameters["vtxColl"] = "UnconstrainedV0Vertices_KF"
 anabeamrotationtargetoffsetting.parameters["fspCollRoot"] = "FinalStateParticles_KF"
-
-
+anabeamrotationtargetoffsetting.parameters["ecalClusColl"] = "RecoEcalClusters"
 anabeamrotationtargetoffsetting.parameters["analysis"] = options.analysis
+
+anabeamrotationtargetoffsetting.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/beamRotationTargetOffsetting/beamRotationTargetOffsetting.json'
+
+anabeamrotationtargetoffsetting.parameters["histCfgParticle"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/recoParticle.json'
+anabeamrotationtargetoffsetting.parameters["histCfgVertex"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/recoTrackVertex.json'
 
 # Sequence which the processors will run.
 p.sequence = [anabeamrotationtargetoffsetting]

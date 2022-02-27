@@ -12,10 +12,17 @@
 #include "TTree.h"
 #include "TFile.h"
 
+#include "TSData.h"
 #include "Vertex.h"
 #include "Particle.h"
+#include "CalCluster.h"
+#include "CalHit.h"
 
 #include "RecoParticleAnaHistos.h"
+#include "RecoTrackVertexAnaHistos.h"
+
+#include "FlatTupleMaker.h"
+#include "AnaHelpers.h"
 
 class TTree;
 
@@ -37,25 +44,44 @@ class BeamRotationTargetOffsettingAnaProcessor : public Processor {
         virtual void configure(const ParameterSet& parameters);
 
     private:
+        std::shared_ptr<AnaHelpers> _ah;
 
         //Containers to hold histogrammer info
+        RecoParticleAnaHistos* histos{nullptr};
+        std::string  histCfgFilename_;
+
         RecoParticleAnaHistos* histosParticle{nullptr};
         std::string  histCfgFilenameParticle_;
 
+        RecoTrackVertexAnaHistos* histosVertex{nullptr};
+        std::string  histCfgFilenameVertex_;
+
         //TODO Change this to be held from HPSEvent
         TTree* tree_;
+        TBranch* btsData_{nullptr};
+        TBranch* becalClusters_{nullptr};
+        TBranch* btrks_{nullptr};
         TBranch* bvtxs_{nullptr};
         TBranch* bfsps_{nullptr};
 
+        TSData* tsData_{};
+        std::vector<CalCluster*> * ecalClusters_{};
+        std::vector<Track*>      * trks_{};
         std::vector<Vertex*> * vtxs_{};
         std::vector<Particle*> * fsps_{};
 
         std::string anaName_{"beamRotationTargetOffsettingAnaProcessor"};
+        std::string tsColl_{"TSBank"};
+        std::string ecalClusColl_{"RecoEcalClusters"};
+        std::string trkColl_{"KalmanFullTracks"};
         std::string vtxColl_{"UnconstrainedV0Vertices_KF"};
         std::string fspCollRoot_{"FinalStateParticles_KF"};
 
         //Debug Level
         int debug_{0};
+
+        // save a tree for information of tracks from vertices
+        std::shared_ptr<FlatTupleMaker> treeTuple;
 
 };
 
