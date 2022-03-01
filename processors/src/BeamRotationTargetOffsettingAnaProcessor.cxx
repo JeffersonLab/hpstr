@@ -79,6 +79,10 @@ void BeamRotationTargetOffsettingAnaProcessor::initialize(TTree* tree) {
     treeTuple->addVariable("ele1N2DHits");
     treeTuple->addVariable("ele2N2DHits");
 
+    treeTuple->addVariable("posTime");
+    treeTuple->addVariable("ele1Time");
+    treeTuple->addVariable("ele2Time");
+
     treeTuple->addVariable("energySum");
     treeTuple->addVariable("pxSum");
     treeTuple->addVariable("pySum");
@@ -274,6 +278,10 @@ bool BeamRotationTargetOffsettingAnaProcessor::process(IEvent* ievent) {
 								treeTuple->setVariableValue("posN2DHits", trk_pos_match.getTrackerHitCount());
 								treeTuple->setVariableValue("ele1N2DHits", trk_ele1_match.getTrackerHitCount());
 								treeTuple->setVariableValue("ele2N2DHits", trk_ele2_match.getTrackerHitCount());
+
+								treeTuple->setVariableValue("posTime", trk_pos_match.getTrackTime());
+								treeTuple->setVariableValue("ele1Time", trk_ele1_match.getTrackTime());
+								treeTuple->setVariableValue("ele2Time", trk_ele2_match.getTrackTime());
 
 
 								treeTuple->setVariableValue("energySum", energy_sum);
