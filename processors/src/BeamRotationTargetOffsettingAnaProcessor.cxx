@@ -10,6 +10,7 @@
 #define GOODNESSCUT 10
 #define TRACKCHI2NDFCUT 6
 #define NHITSCUT 10
+#define TIMEDIFFCUT 4 // ns
 #define TRACKMOMMAXCUT 4.55*0.75 // GeV
 
 BeamRotationTargetOffsettingAnaProcessor::BeamRotationTargetOffsettingAnaProcessor(const std::string& name, Process& process) : Processor(name,process){}
@@ -262,26 +263,18 @@ bool BeamRotationTargetOffsettingAnaProcessor::process(IEvent* ievent) {
 									&& lzVect_ele2->P() < TRACKMOMMAXCUT) {
 
 
-								histos->Fill1DHisto("energySum_h", energy_sum,
-										weight);
-
-								histos->Fill1DHisto("pxSum_h", lzVect_sum->Px(),
-										weight);
-								histos->Fill1DHisto("pySum_h", lzVect_sum->Py(),
-										weight);
-								histos->Fill1DHisto("pzSum_h", lzVect_sum->Pz(),
-										weight);
-
-								histos->Fill1DHisto("invariantMass_h",
-										lzVect_sum->M(), weight);
 
 								treeTuple->setVariableValue("posN2DHits", trk_pos_match.getTrackerHitCount());
 								treeTuple->setVariableValue("ele1N2DHits", trk_ele1_match.getTrackerHitCount());
 								treeTuple->setVariableValue("ele2N2DHits", trk_ele2_match.getTrackerHitCount());
 
-								treeTuple->setVariableValue("posTime", trk_pos_match.getTrackTime());
-								treeTuple->setVariableValue("ele1Time", trk_ele1_match.getTrackTime());
-								treeTuple->setVariableValue("ele2Time", trk_ele2_match.getTrackTime());
+								double posTime = trk_pos_match.getTrackTime();
+								double ele1Time = trk_ele1_match.getTrackTime();
+								double ele2Time = trk_ele2_match.getTrackTime();
+
+								treeTuple->setVariableValue("posTime", posTime);
+								treeTuple->setVariableValue("ele1Time", ele1Time);
+								treeTuple->setVariableValue("ele2Time", ele2Time);
 
 
 								treeTuple->setVariableValue("energySum", energy_sum);
@@ -289,6 +282,27 @@ bool BeamRotationTargetOffsettingAnaProcessor::process(IEvent* ievent) {
 								treeTuple->setVariableValue("pySum", lzVect_sum->Py());
 								treeTuple->setVariableValue("pzSum", lzVect_sum->Pz());
 								treeTuple->setVariableValue("invariantMass", lzVect_sum->M());
+
+
+							    if(trk_pos_match.getTrackerHitCount() >= NHITSCUT
+							    		&& trk_ele1_match.getTrackerHitCount() >= NHITSCUT
+										&& trk_ele2_match.getTrackerHitCount() >= NHITSCUT
+							    		&& fabs(posTime - ele1Time) < TIMEDIFFCUT
+										&& fabs(posTime - ele2Time) < TIMEDIFFCUT
+										&& fabs(ele1Time - ele2Time) < TIMEDIFFCUT){
+									histos->Fill1DHisto("energySum_h", energy_sum,
+											weight);
+
+									histos->Fill1DHisto("pxSum_h", lzVect_sum->Px(),
+											weight);
+									histos->Fill1DHisto("pySum_h", lzVect_sum->Py(),
+											weight);
+									histos->Fill1DHisto("pzSum_h", lzVect_sum->Pz(),
+											weight);
+
+									histos->Fill1DHisto("invariantMass_h",
+											lzVect_sum->M(), weight);
+							    }
 
 							    double chi2Vertex = -999;
 							    double pxVertex = -999;
