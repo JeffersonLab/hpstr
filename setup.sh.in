@@ -15,7 +15,7 @@ export LD_LIBRARY_PATH=@CMAKE_INSTALL_PREFIX@/lib:@LCIO_DIR@/lib:$LD_LIBRARY_PAT
 # Setup ROOT if necessary.
 if [ ! -v ROOTSYS ]; then
     if [ -f @ROOT_DIR@/../bin/thisroot.sh ]; then
-        .. @ROOT_DIR@/../bin/thisroot.sh
+        . @ROOT_DIR@/../bin/thisroot.sh
     else
         echo "ERROR: Could not locate thisroot.sh script to setup ROOT (source before running this script)"
         exit 1
