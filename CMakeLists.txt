@@ -1,5 +1,5 @@
 # minimum cmake version
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.18)
 
 project(hpstr)
 
@@ -12,6 +12,11 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
+# enable in source build since default is not writable from a non-root account
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/install" CACHE PATH "..." FORCE)
+endif()
 
 # add dir with extra CMake modules 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules/)
@@ -39,16 +44,11 @@ if (LCIO_DIR)
 endif()
 find_package(LCIO REQUIRED)
 
-# find Python installation
-if (PYTHON3)
-  find_package(PythonLibs 3 REQUIRED)
-else()
-  find_package(PythonLibs 2.7 REQUIRED)
-endif()
-
-message(STATUS "Python lib found at: ${PYTHON_LIBRARIES}")
-message(STATUS "Python include dir found at: ${PYTHON_INCLUDE_DIRS}")
-get_filename_component(PYTHON_LIBRARY_DIR ${PYTHON_LIBRARIES} DIRECTORY)
+# find Python 3
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+message(STATUS "Python executable found at: ${Python3_EXECUTABLE}")
+message(STATUS "Python lib found at: ${Python3_LIBRARIES}")
+message(STATUS "Python include dir found at: ${Python3_INCLUDE_DIRS}")
 
 # find ROOT installation
 find_package(ROOT REQUIRED COMPONENTS Core RIO Geom Eve Gui)
@@ -121,3 +121,4 @@ install(FILES processors/config/baseConfig.py DESTINATION lib/python)
 
 # info message about install prefix
 message(STATUS "hpstr will be installed to: ${CMAKE_INSTALL_PREFIX}")
+
