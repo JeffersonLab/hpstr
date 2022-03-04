@@ -48,3 +48,7 @@ tramp
 .cproject
 .project
 .settings/
+
+# Ignore build and install dirs
+build/
+install/
