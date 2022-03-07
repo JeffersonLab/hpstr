@@ -23,6 +23,7 @@
 
 #include "FlatTupleMaker.h"
 #include "AnaHelpers.h"
+#include "BaseSelector.h"
 
 class TTree;
 
@@ -45,6 +46,9 @@ class BeamRotationTargetOffsettingAnaProcessor : public Processor {
 
     private:
         std::shared_ptr<AnaHelpers> _ah;
+
+        std::shared_ptr<BaseSelector> vtxSelector;
+        std::string selectionCfg_;
 
         //Containers to hold histogrammer info
         RecoParticleAnaHistos* histos{nullptr};
@@ -79,9 +83,15 @@ class BeamRotationTargetOffsettingAnaProcessor : public Processor {
 
         //Debug Level
         int debug_{0};
+        double timeOffset_{-999};
+        double beamE_{4.55};
+        int isData_{1};
 
-        // save a tree for information of tracks from vertices
-        std::shared_ptr<FlatTupleMaker> treeTuple;
+        // save variables for events with three final-state particles
+        std::shared_ptr<FlatTupleMaker> treeThreeFSPs;
+
+        // save variables for vertices
+        std::shared_ptr<FlatTupleMaker> treeVertex;
 
 };
 

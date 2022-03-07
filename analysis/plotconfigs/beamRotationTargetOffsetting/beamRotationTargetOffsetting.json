@@ -61,7 +61,31 @@
         "maxX" : 0.5,
         "xtitle" : "Invairant mass [GeV/c^{2}]",
         "ytitle" : "Events"
-    } 
+    },    
+    
+	"eleposCluTimeDiff_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Time diff. between clusters of ele. and pos. [ns]",
+        "ytitle" : "Vertices"
+    }, 
+    
+	"eleTrkCluTimeDiff_h" : {
+        "bins" : 100,
+        "minX" : -90,
+        "maxX" : 10,
+        "xtitle" : "Time diff. between track and cluster of ele. [ns]",
+        "ytitle" : "Vertices"
+    }, 
+    
+	"posTrkCluTimeDiff_h" : {
+        "bins" : 100,
+        "minX" : -90,
+        "maxX" : 10,
+        "xtitle" : "Time diff. between track and cluster of pos. [ns]",
+        "ytitle" : "Vertices"
+    }
 
 
 }

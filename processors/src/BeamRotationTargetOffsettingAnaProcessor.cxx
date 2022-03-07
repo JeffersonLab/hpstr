@@ -37,6 +37,12 @@ void BeamRotationTargetOffsettingAnaProcessor::configure(const ParameterSet& par
 
         ecalClusColl_    = parameters.getString("ecalClusColl");
 
+        selectionCfg_   = parameters.getString("vtxSelectionjson",selectionCfg_);
+
+        timeOffset_ = parameters.getDouble("CalTimeOffset",timeOffset_);
+        beamE_  = parameters.getDouble("beamE",beamE_);
+        isData_  = parameters.getInteger("isData",isData_);
+
     }
     catch (std::runtime_error& error)
     {
@@ -73,58 +79,61 @@ void BeamRotationTargetOffsettingAnaProcessor::initialize(TTree* tree) {
     histosVertex->doTrackComparisonPlots(false);
     histosVertex->DefineHistos();
 
-    //Save tuple variables in a tree
-    treeTuple = std::make_shared<FlatTupleMaker>("tuple");
+    //Save tuple variables for events with three final-state particles
+    treeThreeFSPs = std::make_shared<FlatTupleMaker>("tuple");
 
-    treeTuple->addVariable("posN2DHits");
-    treeTuple->addVariable("ele1N2DHits");
-    treeTuple->addVariable("ele2N2DHits");
+    treeThreeFSPs->addVariable("posN2DHits");
+    treeThreeFSPs->addVariable("ele1N2DHits");
+    treeThreeFSPs->addVariable("ele2N2DHits");
 
-    treeTuple->addVariable("posTime");
-    treeTuple->addVariable("ele1Time");
-    treeTuple->addVariable("ele2Time");
+    treeThreeFSPs->addVariable("posTime");
+    treeThreeFSPs->addVariable("ele1Time");
+    treeThreeFSPs->addVariable("ele2Time");
 
-    treeTuple->addVariable("energySum");
-    treeTuple->addVariable("pxSum");
-    treeTuple->addVariable("pySum");
-    treeTuple->addVariable("pzSum");
-    treeTuple->addVariable("invariantMass");
+    treeThreeFSPs->addVariable("energySum");
+    treeThreeFSPs->addVariable("pxSum");
+    treeThreeFSPs->addVariable("pySum");
+    treeThreeFSPs->addVariable("pzSum");
+    treeThreeFSPs->addVariable("invariantMass");
 
-    treeTuple->addVariable("chi2Vertex");
-    treeTuple->addVariable("pxVertex");
-    treeTuple->addVariable("pyVertex");
-    treeTuple->addVariable("pzVertex");
-    treeTuple->addVariable("imVertex");
-    treeTuple->addVariable("xVertex");
-    treeTuple->addVariable("yVertex");
-    treeTuple->addVariable("zVertex");
-    treeTuple->addVariable("chi2ndfEleVertex");
-    treeTuple->addVariable("pxEleVertex");
-    treeTuple->addVariable("pyEleVertex");
-    treeTuple->addVariable("pzEleVertex");
-    treeTuple->addVariable("chi2ndfPosVertex");
-    treeTuple->addVariable("pxPosVertex");
-    treeTuple->addVariable("pyPosVertex");
-    treeTuple->addVariable("pzPosVertex");
+    treeThreeFSPs->addVariable("chi2Vertex");
+    treeThreeFSPs->addVariable("pxVertex");
+    treeThreeFSPs->addVariable("pyVertex");
+    treeThreeFSPs->addVariable("pzVertex");
+    treeThreeFSPs->addVariable("imVertex");
+    treeThreeFSPs->addVariable("xVertex");
+    treeThreeFSPs->addVariable("yVertex");
+    treeThreeFSPs->addVariable("zVertex");
+    treeThreeFSPs->addVariable("chi2ndfEleVertex");
+    treeThreeFSPs->addVariable("pxEleVertex");
+    treeThreeFSPs->addVariable("pyEleVertex");
+    treeThreeFSPs->addVariable("pzEleVertex");
+    treeThreeFSPs->addVariable("chi2ndfPosVertex");
+    treeThreeFSPs->addVariable("pxPosVertex");
+    treeThreeFSPs->addVariable("pyPosVertex");
+    treeThreeFSPs->addVariable("pzPosVertex");
+
+    //Save tuple variables for vertices
+    treeVertex = std::make_shared<FlatTupleMaker>("tuple");
+
+    treeVertex->addVariable("xVertex");
+    treeVertex->addVariable("yVertex");
+    treeVertex->addVariable("zVertex");
+
+    // Vertex selector
+    vtxSelector  = std::make_shared<BaseSelector>(anaName_+"_"+"vtxSelection",selectionCfg_);
+    vtxSelector->setDebug(debug_);
+    vtxSelector->LoadSelection();
 
 }
 
 bool BeamRotationTargetOffsettingAnaProcessor::process(IEvent* ievent) {
 	double weight = 1.;
 
-	int n_vtxs = vtxs_->size();
-	histosVertex->Fill1DHisto("n_vertices_h",n_vtxs);
-
-	for (int iVertex = 0; iVertex < n_vtxs; iVertex ++){
-		Vertex* vertex = vtxs_->at(iVertex);
-		histosVertex->Fill1DVertex(vertex);
-		histosVertex->Fill2DHistograms(vertex);
-	}
-
-	int n_ecalClusts = ecalClusters_->size();
-
+	/****** Beam momentum rotation study by events with three final-state particles ******/
 	// Single3 is fired
 	// Have and only have 3 Ecal clusters
+	int n_ecalClusts = ecalClusters_->size();
     if((tsData_->prescaled.Single_3_Top == true || tsData_->prescaled.Single_3_Bot == true) && n_ecalClusts == 3){
     	CalCluster* ecalClus1 = ecalClusters_->at(0);
     	CalCluster* ecalClus2 = ecalClusters_->at(1);
@@ -263,30 +272,40 @@ bool BeamRotationTargetOffsettingAnaProcessor::process(IEvent* ievent) {
 									&& lzVect_ele2->P() < TRACKMOMMAXCUT) {
 
 
+								int num2DHits_pos = trk_pos_match.getTrackerHitCount();
+								int num2DHits_ele1 = trk_ele1_match.getTrackerHitCount();
+								int num2DHits_ele2 = trk_ele2_match.getTrackerHitCount();
 
-								treeTuple->setVariableValue("posN2DHits", trk_pos_match.getTrackerHitCount());
-								treeTuple->setVariableValue("ele1N2DHits", trk_ele1_match.getTrackerHitCount());
-								treeTuple->setVariableValue("ele2N2DHits", trk_ele2_match.getTrackerHitCount());
+								if (!trk_ele1_match.isKalmanTrack()){
+									num2DHits_pos *= 2;
+									num2DHits_ele1 *= 2;
+									num2DHits_ele2 *= 2;
+
+								}
+
+								treeThreeFSPs->setVariableValue("posN2DHits", num2DHits_pos);
+								treeThreeFSPs->setVariableValue("ele1N2DHits", num2DHits_ele1);
+								treeThreeFSPs->setVariableValue("ele2N2DHits", num2DHits_ele2);
 
 								double posTime = trk_pos_match.getTrackTime();
 								double ele1Time = trk_ele1_match.getTrackTime();
 								double ele2Time = trk_ele2_match.getTrackTime();
 
-								treeTuple->setVariableValue("posTime", posTime);
-								treeTuple->setVariableValue("ele1Time", ele1Time);
-								treeTuple->setVariableValue("ele2Time", ele2Time);
+								treeThreeFSPs->setVariableValue("posTime", posTime);
+								treeThreeFSPs->setVariableValue("ele1Time", ele1Time);
+								treeThreeFSPs->setVariableValue("ele2Time", ele2Time);
 
 
-								treeTuple->setVariableValue("energySum", energy_sum);
-								treeTuple->setVariableValue("pxSum", lzVect_sum->Px());
-								treeTuple->setVariableValue("pySum", lzVect_sum->Py());
-								treeTuple->setVariableValue("pzSum", lzVect_sum->Pz());
-								treeTuple->setVariableValue("invariantMass", lzVect_sum->M());
+								treeThreeFSPs->setVariableValue("energySum", energy_sum);
+								treeThreeFSPs->setVariableValue("pxSum", lzVect_sum->Px());
+								treeThreeFSPs->setVariableValue("pySum", lzVect_sum->Py());
+								treeThreeFSPs->setVariableValue("pzSum", lzVect_sum->Pz());
+								treeThreeFSPs->setVariableValue("invariantMass", lzVect_sum->M());
 
 
-							    if(trk_pos_match.getTrackerHitCount() >= NHITSCUT
-							    		&& trk_ele1_match.getTrackerHitCount() >= NHITSCUT
-										&& trk_ele2_match.getTrackerHitCount() >= NHITSCUT
+							    if(num2DHits_pos >= NHITSCUT
+							    		&& num2DHits_ele1 >= NHITSCUT
+										&& num2DHits_ele2 >= NHITSCUT
 							    		&& fabs(posTime - ele1Time) < TIMEDIFFCUT
 										&& fabs(posTime - ele2Time) < TIMEDIFFCUT
 										&& fabs(ele1Time - ele2Time) < TIMEDIFFCUT){
@@ -356,27 +375,27 @@ bool BeamRotationTargetOffsettingAnaProcessor::process(IEvent* ievent) {
 
 								}
 
-								treeTuple->setVariableValue("chi2Vertex", chi2Vertex);
-								treeTuple->setVariableValue("pxVertex", pxVertex);
-								treeTuple->setVariableValue("pyVertex", pyVertex);
-								treeTuple->setVariableValue("pzVertex", pzVertex);
-								treeTuple->setVariableValue("imVertex", imVertex);
+								treeThreeFSPs->setVariableValue("chi2Vertex", chi2Vertex);
+								treeThreeFSPs->setVariableValue("pxVertex", pxVertex);
+								treeThreeFSPs->setVariableValue("pyVertex", pyVertex);
+								treeThreeFSPs->setVariableValue("pzVertex", pzVertex);
+								treeThreeFSPs->setVariableValue("imVertex", imVertex);
 
-								treeTuple->setVariableValue("xVertex", xVertex);
-								treeTuple->setVariableValue("yVertex", yVertex);
-								treeTuple->setVariableValue("zVertex", zVertex);
+								treeThreeFSPs->setVariableValue("xVertex", xVertex);
+								treeThreeFSPs->setVariableValue("yVertex", yVertex);
+								treeThreeFSPs->setVariableValue("zVertex", zVertex);
 
-								treeTuple->setVariableValue("chi2ndfEleVertex", chi2ndfEleVertex);
-								treeTuple->setVariableValue("pxEleVertex", pxEleVertex);
-								treeTuple->setVariableValue("pyEleVertex", pyEleVertex);
-								treeTuple->setVariableValue("pzEleVertex", pzEleVertex);
-								treeTuple->setVariableValue("chi2ndfPosVertex", chi2ndfPosVertex);
-								treeTuple->setVariableValue("pxPosVertex", pxPosVertex);
-								treeTuple->setVariableValue("pyPosVertex", pyPosVertex);
-								treeTuple->setVariableValue("pzPosVertex", pzPosVertex);
+								treeThreeFSPs->setVariableValue("chi2ndfEleVertex", chi2ndfEleVertex);
+								treeThreeFSPs->setVariableValue("pxEleVertex", pxEleVertex);
+								treeThreeFSPs->setVariableValue("pyEleVertex", pyEleVertex);
+								treeThreeFSPs->setVariableValue("pzEleVertex", pzEleVertex);
+								treeThreeFSPs->setVariableValue("chi2ndfPosVertex", chi2ndfPosVertex);
+								treeThreeFSPs->setVariableValue("pxPosVertex", pxPosVertex);
+								treeThreeFSPs->setVariableValue("pyPosVertex", pyPosVertex);
+								treeThreeFSPs->setVariableValue("pzPosVertex", pzPosVertex);
 
 
-								treeTuple->fill();
+								treeThreeFSPs->fill();
 							}
 						}
 					}
@@ -385,6 +404,224 @@ bool BeamRotationTargetOffsettingAnaProcessor::process(IEvent* ievent) {
 			}
     	}
     }
+
+	/****** Target offsetting study ******/
+    if(tsData_->prescaled.Single_3_Top == true || tsData_->prescaled.Single_3_Bot == true) {
+
+        int n_vtxs = vtxs_->size();
+        histosVertex->Fill1DHisto("n_vertices_h",n_vtxs);
+
+        std::vector<Vertex*> selected_vtxs;
+        selected_vtxs.clear();
+
+		// Loop over vertices in event and make selections
+		for ( int i_vtx = 0; i_vtx <  n_vtxs; i_vtx++ ) {
+			vtxSelector->getCutFlowHisto()->Fill(0.,weight);
+
+			Vertex* vtx = vtxs_->at(i_vtx);
+			Particle* ele = nullptr;
+			Track* ele_trk = nullptr;
+			Particle* pos = nullptr;
+			Track* pos_trk = nullptr;
+
+			bool foundParts = _ah->GetParticlesFromVtx(vtx,ele,pos);
+			if (!foundParts) {
+				if(debug_) std::cout<<"VertexAnaProcessor::WARNING::Found vtx without ele/pos. Skip."<<std::endl;
+				continue;
+			}
+
+			if (!trkColl_.empty()) {
+				bool foundTracks = _ah->MatchToGBLTracks((ele->getTrack()).getID(),(pos->getTrack()).getID(),
+						ele_trk, pos_trk, *trks_);
+
+				if (!foundTracks) {
+					if(debug_) std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
+					continue;
+				}
+			}
+			else {
+				ele_trk = (Track*)ele->getTrack().Clone();
+				pos_trk = (Track*)pos->getTrack().Clone();
+			}
+
+			double ele_E = ele->getEnergy();
+			double pos_E = pos->getEnergy();
+
+			CalCluster eleClus = ele->getCluster();
+			CalCluster posClus = pos->getCluster();
+
+
+			//Compute analysis variables here.
+			TLorentzVector p_ele;
+			p_ele.SetPxPyPzE(ele_trk->getMomentum()[0],ele_trk->getMomentum()[1],ele_trk->getMomentum()[2],ele->getEnergy());
+			TLorentzVector p_pos;
+			p_pos.SetPxPyPzE(pos_trk->getMomentum()[0],pos_trk->getMomentum()[1],pos_trk->getMomentum()[2],ele->getEnergy());
+
+			//Tracks in opposite volumes - useless
+			//if (!vtxSelector->passCutLt("eleposTanLambaProd_lt",ele_trk->getTanLambda() * pos_trk->getTanLambda(),weight))
+			//  continue;
+
+			//Ele Track-cluster match
+			if (!vtxSelector->passCutLt("eleTrkCluMatch_lt",ele->getGoodnessOfPID(),weight))
+				continue;
+
+			//Pos Track-cluster match
+			if (!vtxSelector->passCutLt("posTrkCluMatch_lt",pos->getGoodnessOfPID(),weight))
+				continue;
+
+			//Require Positron Cluster exists
+			if (!vtxSelector->passCutGt("posClusE_gt",posClus.getEnergy(),weight))
+				continue;
+
+			//Require Positron Cluster does NOT exists
+			if (!vtxSelector->passCutLt("posClusE_lt",posClus.getEnergy(),weight))
+				continue;
+
+			double corr_eleClusterTime = ele->getCluster().getTime() - timeOffset_;
+			double corr_posClusterTime = pos->getCluster().getTime() - timeOffset_;
+
+			double botClusTime = 0.0;
+			if(ele->getCluster().getPosition().at(1) < 0.0) botClusTime = ele->getCluster().getTime();
+			else botClusTime = pos->getCluster().getTime();
+
+			//Bottom Cluster Time
+			if (!vtxSelector->passCutLt("botCluTime_lt", botClusTime, weight))
+				continue;
+
+			if (!vtxSelector->passCutGt("botCluTime_gt", botClusTime, weight))
+				continue;
+
+			//Ele Pos Cluster Time Difference
+			if (!vtxSelector->passCutLt("eleposCluTimeDiff_lt",fabs(corr_eleClusterTime - corr_posClusterTime),weight))
+				continue;
+
+			//Ele Track-Cluster Time Difference
+			if (!vtxSelector->passCutLt("eleTrkCluTimeDiff_lt",fabs(ele_trk->getTrackTime() - corr_eleClusterTime),weight))
+				continue;
+
+			//Pos Track-Cluster Time Difference
+			if (!vtxSelector->passCutLt("posTrkCluTimeDiff_lt",fabs(pos_trk->getTrackTime() - corr_posClusterTime),weight))
+				continue;
+
+			TVector3 ele_mom;
+			ele_mom.SetX(ele_trk->getMomentum()[0]);
+			ele_mom.SetY(ele_trk->getMomentum()[1]);
+			ele_mom.SetZ(ele_trk->getMomentum()[2]);
+
+
+			TVector3 pos_mom;
+			pos_mom.SetX(pos_trk->getMomentum()[0]);
+			pos_mom.SetY(pos_trk->getMomentum()[1]);
+			pos_mom.SetZ(pos_trk->getMomentum()[2]);
+
+
+			//Beam Electron cut
+			if (!vtxSelector->passCutLt("eleMom_lt",ele_mom.Mag(),weight))
+				continue;
+
+			//Ele Track Quality - Chi2
+			if (!vtxSelector->passCutLt("eleTrkChi2_lt",ele_trk->getChi2(),weight))
+				continue;
+
+			//Pos Track Quality - Chi2
+			if (!vtxSelector->passCutLt("posTrkChi2_lt",pos_trk->getChi2(),weight))
+				continue;
+
+			//Ele Track Quality - Chi2Ndf
+			if (!vtxSelector->passCutLt("eleTrkChi2Ndf_lt",ele_trk->getChi2Ndf(),weight))
+				continue;
+
+			//Pos Track Quality - Chi2Ndf
+			if (!vtxSelector->passCutLt("posTrkChi2Ndf_lt",pos_trk->getChi2Ndf(),weight))
+				continue;
+
+			//Ele min momentum cut
+			if (!vtxSelector->passCutGt("eleMom_gt",ele_mom.Mag(),weight))
+				continue;
+
+			//Pos min momentum cut
+			if (!vtxSelector->passCutGt("posMom_gt",pos_mom.Mag(),weight))
+				continue;
+
+			//Ele nHits
+			int ele2dHits = ele_trk->getTrackerHitCount();
+			if (!ele_trk->isKalmanTrack())
+				ele2dHits*=2;
+
+			if (!vtxSelector->passCutGt("eleN2Dhits_gt",ele2dHits,weight))  {
+				continue;
+			}
+
+			//Pos nHits
+			int pos2dHits = pos_trk->getTrackerHitCount();
+			if (!pos_trk->isKalmanTrack())
+				pos2dHits*=2;
+
+			if (!vtxSelector->passCutGt("posN2Dhits_gt",pos2dHits,weight))  {
+				continue;
+			}
+
+			//Less than 4 shared hits for ele/pos track
+			if (!vtxSelector->passCutLt("eleNshared_lt",ele_trk->getNShared(),weight)) {
+				continue;
+			}
+
+			if (!vtxSelector->passCutLt("posNshared_lt",pos_trk->getNShared(),weight)) {
+				continue;
+			}
+
+
+			//Vertex Quality
+			if (!vtxSelector->passCutLt("chi2unc_lt",vtx->getChi2(),weight))
+				continue;
+
+			//Max vtx momentum
+			if (!vtxSelector->passCutLt("maxVtxMom_lt",(ele_mom+pos_mom).Mag(),weight))
+				continue;
+
+			//Min vtx momentum
+
+			if (!vtxSelector->passCutGt("minVtxMom_gt",(ele_mom+pos_mom).Mag(),weight))
+				continue;
+
+			histosVertex->Fill1DVertex(vtx,
+					ele,
+					pos,
+					ele_trk,
+					pos_trk,
+					weight);
+
+			histosVertex->Fill1DHisto("vtx_Psum_h", p_ele.P()+p_pos.P(), weight);
+			histosVertex->Fill1DHisto("vtx_Esum_h", ele_E + pos_E, weight);
+			histosVertex->Fill1DHisto("ele_pos_clusTimeDiff_h", fabs(corr_eleClusterTime - corr_posClusterTime), weight);
+			histosVertex->Fill2DHisto("ele_vtxZ_iso_hh", TMath::Min(ele_trk->getIsolation(0), ele_trk->getIsolation(1)), vtx->getZ(), weight);
+			histosVertex->Fill2DHisto("pos_vtxZ_iso_hh", TMath::Min(pos_trk->getIsolation(0), pos_trk->getIsolation(1)), vtx->getZ(), weight);
+			histosVertex->Fill2DHistograms(vtx,weight);
+			histosVertex->Fill2DTrack(ele_trk,weight,"ele_");
+			histosVertex->Fill2DTrack(pos_trk,weight,"pos_");
+
+
+			histos->Fill1DHisto("eleposCluTimeDiff_h", ele->getCluster().getTime() - pos->getCluster().getTime() , weight);
+
+			histos->Fill1DHisto("eleTrkCluTimeDiff_h", ele_trk->getTrackTime() - ele->getCluster().getTime() , weight);
+
+			histos->Fill1DHisto("posTrkCluTimeDiff_h", pos_trk->getTrackTime() - pos->getCluster().getTime() , weight);
+
+			selected_vtxs.push_back(vtx);
+
+			vtxSelector->clearSelector();
+		}
+
+		if(selected_vtxs.size() == 1){
+			treeVertex->setVariableValue("xVertex", selected_vtxs[0]->getX());
+			treeVertex->setVariableValue("yVertex", selected_vtxs[0]->getY());
+			treeVertex->setVariableValue("zVertex", selected_vtxs[0]->getZ());
+
+			treeVertex->fill();
+		}
+
+    } // requires that single3 trigger is fired
+
 
     return true;
 }
@@ -398,6 +635,8 @@ void BeamRotationTargetOffsettingAnaProcessor::finalize() {
 
 
     histosVertex->saveHistos(outF_, histosVertex->getName());
+    outF_->cd(histosVertex->getName().c_str());
+    vtxSelector->getCutFlowHisto()->Write();
     delete histosVertex;
     histosVertex = nullptr;
 
@@ -406,9 +645,13 @@ void BeamRotationTargetOffsettingAnaProcessor::finalize() {
     histosParticle = nullptr;
 
     TDirectory* dir{nullptr};
-    dir = outF_->mkdir("treeTuple");
+    dir = outF_->mkdir("treeThreeFSPs");
     dir->cd();
-    treeTuple->writeTree();
+    treeThreeFSPs->writeTree();
+
+    dir = outF_->mkdir("treeVertex");
+    dir->cd();
+    treeVertex->writeTree();
 
     outF_->Close();
 

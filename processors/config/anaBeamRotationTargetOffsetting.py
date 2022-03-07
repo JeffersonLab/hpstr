@@ -42,9 +42,27 @@ anabeamrotationtargetoffsetting.parameters["ecalClusColl"] = "RecoEcalClusters"
 anabeamrotationtargetoffsetting.parameters["analysis"] = options.analysis
 
 anabeamrotationtargetoffsetting.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/beamRotationTargetOffsetting/beamRotationTargetOffsetting.json'
-
 anabeamrotationtargetoffsetting.parameters["histCfgParticle"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/recoParticle.json'
-anabeamrotationtargetoffsetting.parameters["histCfgVertex"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/recoTrackVertex.json'
+anabeamrotationtargetoffsetting.parameters["histCfgVertex"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/tracking/vtxAnalysis_2019.json'
+
+anabeamrotationtargetoffsetting.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/2019/vertexSelection.json'
+
+anabeamrotationtargetoffsetting.parameters["beamE"] = base.beamE[str(options.year)]
+anabeamrotationtargetoffsetting.parameters["isData"] = options.isData
+
+CalTimeOffset=-999
+if (options.isData==1):
+    CalTimeOffset=39.
+    print("Running on data file: Setting CalTimeOffset %d"  % CalTimeOffset)
+    
+elif (options.isData==0):
+    CalTimeOffset=39.
+    print("Running on MC file: Setting CalTimeOffset %d"  % CalTimeOffset)
+else:
+    print("Specify which type of ntuple you are running on: -t 1 [for Data] / -t 0 [for MC]")
+
+
+anabeamrotationtargetoffsetting.parameters["CalTimeOffset"]=CalTimeOffset
 
 # Sequence which the processors will run.
 p.sequence = [anabeamrotationtargetoffsetting]
