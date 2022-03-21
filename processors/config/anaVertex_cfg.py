@@ -35,10 +35,31 @@ vtxAna = HpstrConf.Processor('vertexAna', 'VtxAnaProcessor')
 vtxAna.parameters["debug"] = 0
 vtxAna.parameters["anaName"] = "vtxAna"
 vtxAna.parameters["TSColl"] = "TSBank"
-vtxAna.parameters["vtxColl"] = "UnconstrainedV0Vertices"
-vtxAna.parameters["tcvtxColl"] = "TargetConstrainedV0Vertices"
+vtxAna.parameters["trkColl"] = "KalmanFullTracks"
+vtxAna.parameters["vtxColl"] = "UnconstrainedV0Vertices_KF"
+vtxAna.parameters["tcvtxColl"] = "TargetConstrainedV0Vertices_KF"
 vtxAna.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/vertex/vertex.json'
 vtxAna.parameters["beamE"] = base.beamE[str(options.year)]
+
+vtxAna.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/2019/vertexSelection_noChi2Cut.json'
+
+vtxAna.parameters["beamE"] = base.beamE[str(options.year)]
+vtxAna.parameters["isData"] = options.isData
+
+CalTimeOffset=-999
+if (options.isData==1):
+    CalTimeOffset=39.
+    print("Running on data file: Setting CalTimeOffset %d"  % CalTimeOffset)
+    
+elif (options.isData==0):
+    CalTimeOffset=39.
+    print("Running on MC file: Setting CalTimeOffset %d"  % CalTimeOffset)
+else:
+    print("Specify which type of ntuple you are running on: -t 1 [for Data] / -t 0 [for MC]")
+
+
+vtxAna.parameters["CalTimeOffset"]=CalTimeOffset
+
 
 # Sequence which the processors will run.
 p.sequence = [vtxAna]
