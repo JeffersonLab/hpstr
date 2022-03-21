@@ -129,9 +129,8 @@ bool VtxAnaProcessor::process(IEvent* ievent) {
 		//if (!vtxSelector->passCutLt("eleposTanLambaProd_lt",ele_trk->getTanLambda() * pos_trk->getTanLambda(),weight))
 		//  continue;
 
-		//TS
-		//Ele Track-cluster match
-		if (!vtxSelector->passCutLt("single3_eq",
+		//TS: single3 fired
+		if (!vtxSelector->passCutEq("single3_eq",
 				tsData_->prescaled.Single_3_Top
 						|| tsData_->prescaled.Single_3_Bot, weight))
 			continue;
@@ -261,8 +260,8 @@ bool VtxAnaProcessor::process(IEvent* ievent) {
 
 void VtxAnaProcessor::finalize() {
 	outF_->cd();
-
 	histos->saveHistos(outF_, anaName_.c_str());
+	vtxSelector->getCutFlowHisto()->Write();
 	delete histos;
 	histos = nullptr;
 

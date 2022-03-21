@@ -1,6 +1,6 @@
 {
 	"single3_eq" : {
-        "cut"   : 10,
+        "cut"   : 1,
         "id"    : 0,
         "info"  : "single3 fired"
     },
