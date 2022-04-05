@@ -47,6 +47,7 @@ vtxana.parameters["mcHistoCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfig
 vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis_2019.json"
 vtxana.parameters["beamE"] = base.beamE[str(options.year)]
 vtxana.parameters["isData"] = options.isData
+vtxana.parameters["isRadPDG"] = 622
 CalTimeOffset=-999
 
 if (options.isData==1):
