@@ -34,7 +34,15 @@ void MCParticle::setMomentum(const double* momentum) {
     pz_ = momentum[2];
 }
 
+void MCParticle::setEndpointMomentum(const double* momentum_ep) {
+    px_ep = momentum_ep[0];
+    py_ep = momentum_ep[1];
+    pz_ep = momentum_ep[2];
+}
+
 std::vector<double> MCParticle::getMomentum() const { return { px_, py_, pz_ }; }
+
+std::vector<double> MCParticle::getEndpointMomentum() const { return { px_ep, py_ep, pz_ep }; }
 
 void MCParticle::setVertexPosition(const double* vtx_pos) {
     vtx_x_ = vtx_pos[0];

@@ -84,6 +84,7 @@ class VertexAnaProcessor : public Processor {
         std::string trkColl_{"GBLTracks"};
         std::string ecalColl_{"RecoEcalClusters"};
         std::string mcColl_{"MCParticle"};
+        int isRadPDG_{622};
         TTree* tree_{nullptr};
 
         std::shared_ptr<TrackHistos> _vtx_histos;
