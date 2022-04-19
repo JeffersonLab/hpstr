@@ -126,7 +126,7 @@ NOTE:: On SLAC machines ```cmake3``` is needed to call cmake version 3+, you mig
 If you do not want hpstr to use the default python3 executable which it finds in your environment, then supply the full path to the alternate Python installation.
 
 ```
--DPython3_Exectuable=/path/to/some/python3 
+-DPython3_Executable=/path/to/some/python3 
 ```
 
 To compile with debug information, just add -DCMAKE_BUILD_TYPE=Debug to the cmake3 command. 
