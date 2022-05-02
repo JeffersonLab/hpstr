@@ -1,8 +1,8 @@
 {
     "eleMom_lt" : {
-        "cut" : 2.8,
+        "cut" : 3.1,
         "id"  : 0,
-        "info" : "p e^{-} < 2.8 GeV"
+        "info" : "p e^{-} < 3.1 GeV"
     },
     "eleTrkChi2Ndf_lt" : {
         "cut"  : 10,
@@ -40,8 +40,8 @@
         "info"  : "#chi^{2}_{unc} < 10"
     },
     "maxVtxMom_lt" : {
-        "cut" : 4.0,
+        "cut" : 3.8,
         "id"  : 8,
-        "info" : "p_{vtx} < 4.0 [GeV]"
+        "info" : "p_{vtx} < 3.8 [GeV]"
     }
 }
