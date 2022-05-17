@@ -21,7 +21,7 @@ p.libraries.append("libprocessors.so")
 #          Processors         #
 ###############################
 
-cnvStd = HpstrConf.Processor('cnvStd', 'StdHepToLcioProcessor')
+cnvStd = HpstrConf.Processor('cnvStd', 'StdhepMCParticleProcessor')
 
 ###############################
 #   Processor Configuration   #

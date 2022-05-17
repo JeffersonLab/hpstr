@@ -1,11 +1,11 @@
 /**
- * @file StdHepToLcioProcessor.h
+ * @file StdhepMCParticleProcessor.h
  * @brief Processor used to translate StdHep MCParticles to ROOT 
  *      MCParticle objects.
  */
 
-#ifndef __STDHEP_LCIO_CONVERTER_H__
-#define __STDHEP_LCIO_CONVERTER_H__
+#ifndef __STDHEP_ROOT_CONVERTER_H__
+#define __STDHEP_ROOT_CONVERTER_H__
 
 //-----------------//
 //   C++  StdLib   //
@@ -40,7 +40,7 @@
 #include "Processor.h"
 #include "MCParticle.h"
 
-class StdHepToLcioProcessor : public Processor { 
+class StdhepMCParticleProcessor : public Processor { 
 
     public: 
 
@@ -51,10 +51,10 @@ class StdHepToLcioProcessor : public Processor {
          * @param process the Process class associated with the Processor,
          *      provided by the processing framework.
          */
-        StdHepToLcioProcessor(const std::string& name, Process& process); 
+        StdhepMCParticleProcessor(const std::string& name, Process& process); 
 
         /** Destructor */
-        ~StdHepToLcioProcessor(); 
+        ~StdhepMCParticleProcessor(); 
 
         /**
          * Process the event and put new data products into it.
@@ -101,4 +101,4 @@ class StdHepToLcioProcessor : public Processor {
 
 }; // Tracking Processor
 
-#endif // __STDHEP_LCIO_CONVERTER_H__
+#endif // __STDHEP_ROOT_CONVERTER_H__

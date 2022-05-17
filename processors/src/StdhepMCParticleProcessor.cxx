@@ -1,22 +1,22 @@
 /**
- * @file StdHepToLcioProcessor.cxx
+ * @file StdhepMCParticleProcessor.cxx
  * @brief Processor used to translate StdHep MCParticles to ROOT
  *      MCParticle objects
  */
 
-#include "StdHepToLcioProcessor.h" 
+#include "StdhepMCParticleProcessor.h" 
 #include "utilities.h"
 
-StdHepToLcioProcessor::StdHepToLcioProcessor(const std::string& name, Process& process)
+StdhepMCParticleProcessor::StdhepMCParticleProcessor(const std::string& name, Process& process)
     : Processor(name, process) { 
     }
 
-StdHepToLcioProcessor::~StdHepToLcioProcessor() { 
+StdhepMCParticleProcessor::~StdhepMCParticleProcessor() { 
 }
 
-void StdHepToLcioProcessor::configure(const ParameterSet& parameters) {
+void StdhepMCParticleProcessor::configure(const ParameterSet& parameters) {
 
-    std::cout << "Configuring StdHepToLcioProcessor" << std::endl;
+    std::cout << "Configuring StdhepMCParticleProcessor" << std::endl;
     try{
         mcPartCollStdhep_ = parameters.getString("mcPartCollStdhep", mcPartCollStdhep_);
         mcPartCollRoot_ = parameters.getString("mcPartCollRoot", mcPartCollRoot_);
@@ -28,9 +28,9 @@ void StdHepToLcioProcessor::configure(const ParameterSet& parameters) {
     }
 }
 
-void StdHepToLcioProcessor::initialize(std::string inFilename, std::string outFilename) {
+void StdhepMCParticleProcessor::initialize(std::string inFilename, std::string outFilename) {
     // Init Files
-    std::cout << "[StdHepToLcioProcessor] initialize" << std::endl;
+    std::cout << "[StdhepMCParticleProcessor] initialize" << std::endl;
     inFilename_ = inFilename;
     outF_ = new TFile(outFilename.c_str(),"RECREATE");
 
@@ -41,8 +41,8 @@ void StdHepToLcioProcessor::initialize(std::string inFilename, std::string outFi
     tree_->Branch(mcPartCollRoot_.c_str(),&mc_particles_);
 }
 
-bool StdHepToLcioProcessor::process() {
-    std::cout << "[StdHepToLcioProcessor] Starting process()" << std::endl;
+bool StdhepMCParticleProcessor::process() {
+    std::cout << "[StdhepMCParticleProcessor] Starting process()" << std::endl;
        
     std::cout << "opening file : " << inFilename_ << std::endl;
     UTIL::LCStdHepRdr rdr(inFilename_.c_str());
@@ -143,10 +143,10 @@ bool StdHepToLcioProcessor::process() {
     return true;
 }
 
-void StdHepToLcioProcessor::finalize() { 
+void StdhepMCParticleProcessor::finalize() { 
     outF_->cd();
     outF_->Write();
     outF_->Close();
 }
 
-DECLARE_PROCESSOR(StdHepToLcioProcessor); 
+DECLARE_PROCESSOR(StdhepMCParticleProcessor); 
