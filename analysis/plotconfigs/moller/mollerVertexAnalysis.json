@@ -1,0 +1,65 @@
+{ 
+	"chi2NdfTop_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 100,
+        "xtitle" : "Chi2/NDF for top track",
+        "ytitle" : "Tracks"
+    },
+	"chi2NdfBot_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 100,
+        "xtitle" : "Chi2/NDF for bot track",
+        "ytitle" : "Tracks"
+    },
+    "n2DhitsTop_h" : {
+        "bins"  : 15,
+        "minX"  : 0,
+        "maxX"  : 15,
+        "xtitle" : "N_{2Dhits} for top track",
+        "ytitle" : "Tracks"
+    },
+    "n2DhitsBot_h" : {
+        "bins"  : 15,
+        "minX"  : 0,
+        "maxX"  : 15,
+        "xtitle" : "N_{2Dhits} for bot track",
+        "ytitle" : "Tracks"
+    },    
+    "pTop_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 2.5,
+        "xtitle" : "p_{top} [GeV]",
+        "ytitle" : "Tracks"
+    },
+	"pBot_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 2.5,
+        "xtitle" : "p_{bot} [GeV]",
+        "ytitle" : "Tracks"
+    },
+	"chi2unc_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 100,
+        "xtitle" : "chi2/NDF for vertex",
+        "ytitle" : "Vertices"
+    },
+    "pSum_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 3,
+        "xtitle" : "pSum [GeV] for vertex",
+        "ytitle" : "Vertices"
+    },
+    "pDiff_h" : {
+        "bins" : 100,
+        "minX" : -3,
+        "maxX" : 3,
+        "xtitle" : "pSum [GeV] for vertex",
+        "ytitle" : "Vertices"
+   }
+}

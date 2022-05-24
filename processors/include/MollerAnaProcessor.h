@@ -58,9 +58,15 @@ class MollerAnaProcessor : public Processor {
         std::shared_ptr<BaseSelector> trackSelector;
         std::string trackSelectionCfg_;
 
+        std::shared_ptr<BaseSelector> vtxSelector;
+        std::string vertexSelectionCfg_;
+
         //Containers to hold histogrammer info
         MollerAnaHistos* trackHistos{nullptr};
-        std::string  histCfgFilename_;
+        std::string  histTrackCfgFilename_;
+
+        MollerAnaHistos* vertexHistos{nullptr};
+        std::string  histVertexCfgFilename_;
 
         TTree* tree_{nullptr};
         TBranch* btsData_{nullptr};
@@ -92,10 +98,6 @@ class MollerAnaProcessor : public Processor {
 
         // save a tree for information of tracks from vertices
         std::shared_ptr<FlatTupleMaker> _reg_tracks_from_vertices;
-
-        //Scale for momentum correction
-        double MOMSCALE = 1.761/2.09;
-
 
 };
 

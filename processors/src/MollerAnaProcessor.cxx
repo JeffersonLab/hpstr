@@ -28,10 +28,13 @@ void MollerAnaProcessor::configure(const ParameterSet& parameters) {
         anaName_         = parameters.getString("anaName");
 
         trkColl_    = parameters.getString("trkColl");
-        //vtxColl_ = parameters.getString("vtxColl",vtxColl_);
+        vtxColl_ = parameters.getString("vtxColl",vtxColl_);
 
         trackSelectionCfg_   = parameters.getString("trackSelectionjson",trackSelectionCfg_);
-        histCfgFilename_      = parameters.getString("histCfg",histCfgFilename_);
+        histTrackCfgFilename_      = parameters.getString("histTrackCfg",histTrackCfgFilename_);
+
+        vertexSelectionCfg_   = parameters.getString("vertexSelectionjson",vertexSelectionCfg_);
+        histVertexCfgFilename_      = parameters.getString("histVertexCfg",histVertexCfgFilename_);
 
         beamE_  = parameters.getDouble("beamE",beamE_);
         isData_  = parameters.getInteger("isData",isData_);
@@ -44,28 +47,30 @@ void MollerAnaProcessor::configure(const ParameterSet& parameters) {
 }
 
 void MollerAnaProcessor::initialize(TTree* tree) {
-	if(beamE_ == 1.92)
-		MOMSCALE = 1.961/2.856;
-
-	std::cout << "MOMSCALE:" << MOMSCALE << std::endl;
-
-
 	_ah =  std::make_shared<AnaHelpers>();
 
-	trackSelector  = std::make_shared<BaseSelector>(anaName_+"_"+"vtxSelection",trackSelectionCfg_);
+	trackSelector  = std::make_shared<BaseSelector>(anaName_+"_"+"trkSelection",trackSelectionCfg_);
 	trackSelector->setDebug(debug_);
 	trackSelector->LoadSelection();
 
+	vtxSelector  = std::make_shared<BaseSelector>(anaName_+"_"+"vtxSelection",vertexSelectionCfg_);
+	vtxSelector->setDebug(debug_);
+	vtxSelector->LoadSelection();
+
     // init histos
 	trackHistos = new MollerAnaHistos(anaName_.c_str());
-	trackHistos->loadHistoConfig(histCfgFilename_);
+	trackHistos->loadHistoConfig(histTrackCfgFilename_);
 	trackHistos->DefineHistos();
+
+	vertexHistos = new MollerAnaHistos(anaName_.c_str());
+	vertexHistos->loadHistoConfig(histVertexCfgFilename_);
+	vertexHistos->DefineHistos();
 
     // init TTree
     tree_= tree;
     tree_->SetBranchAddress(tsColl_.c_str(), &tsData_ , &btsData_);
     tree_->SetBranchAddress(trkColl_.c_str() , &trks_, &btrks_);
-    //tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_ , &bvtxs_);
+    tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_ , &bvtxs_);
 
     // Kinematic equations
     // E vs theta
@@ -95,6 +100,7 @@ void MollerAnaProcessor::initialize(TTree* tree) {
 bool MollerAnaProcessor::process(IEvent* ievent) {
     double weight = 1.;
 
+    //////////// Track analysis ////////////
 
 	std::vector<Track> tracks_pos_top;
 	std::vector<Track> tracks_pos_bot;
@@ -154,7 +160,7 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
 		    TLorentzVector* vect_neg_top = new TLorentzVector();
 		    vect_neg_top->SetXYZM(mom_neg_top[0], mom_neg_top[1], mom_neg_top[2], ELECTRONMASS);
 		    TLorentzVector* vect_neg_bot = new TLorentzVector();
-		    vect_neg_bot->SetXYZM(mom_neg_bot[0] * MOMSCALE, mom_neg_bot[1] * MOMSCALE, mom_neg_bot[2] * MOMSCALE, ELECTRONMASS);
+		    vect_neg_bot->SetXYZM(mom_neg_bot[0], mom_neg_bot[1], mom_neg_bot[2], ELECTRONMASS);
 
 
 		    double p_neg_top = vect_neg_top->P();
@@ -219,7 +225,7 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
     TLorentzVector* vect_neg_top = new TLorentzVector();
     vect_neg_top->SetXYZM(mom_neg_top[0], mom_neg_top[1], mom_neg_top[2], ELECTRONMASS);
     TLorentzVector* vect_neg_bot = new TLorentzVector();
-    vect_neg_bot->SetXYZM(mom_neg_bot[0] * MOMSCALE, mom_neg_bot[1] * MOMSCALE, mom_neg_bot[2] * MOMSCALE, ELECTRONMASS);
+    vect_neg_bot->SetXYZM(mom_neg_bot[0], mom_neg_bot[1], mom_neg_bot[2], ELECTRONMASS);
 
 
     double p_neg_top = vect_neg_top->P();
@@ -311,8 +317,6 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
 	trackHistos->Fill2DHisto("im_vs_pSum_with_numTracks_numHits_timeDiff_p_pDiff_pSum_cuts_hh", pSum, im, weight);
 
 
-
-
 	double px_neg_top_before_beam_rotation = vect_neg_top->Px() * cos(ROTATIONANGLEAROUNDY) - vect_neg_top->Pz() * sin(ROTATIONANGLEAROUNDY);
 	double pz_neg_top_before_beam_rotation = vect_neg_top->Px() * sin(ROTATIONANGLEAROUNDY) + vect_neg_top->Pz() * cos(ROTATIONANGLEAROUNDY);
 	double py_neg_top_before_beam_rotation = vect_neg_top->Py();
@@ -328,7 +332,7 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
 	vector_neg_bot_beam_rotation->SetXYZM(px_neg_bot_before_beam_rotation, py_neg_bot_before_beam_rotation, pz_neg_bot_before_beam_rotation, ELECTRONMASS);
 
 	double energy_top = vector_neg_top_beam_rotation->E();
-	double energy_bot = vector_neg_top_beam_rotation->E();
+	double energy_bot = vector_neg_bot_beam_rotation->E();
 
 	double theta_top_before_rotation = vector_neg_top_beam_rotation->Theta();
 	double theta_bot_before_rotation = vector_neg_bot_beam_rotation->Theta();
@@ -363,13 +367,62 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
 
 
 	trackSelector->clearSelector();
+
+
+    //////////// Vertex analysis ////////////
+	int n_vtxs = vtxs_->size();
+	//std::cout << n_vtxs << std::endl;
+
+	// Loop over vertices in event and make selections
+	for (int i_vtx = 0; i_vtx < n_vtxs; i_vtx++) {
+		vtxSelector->getCutFlowHisto()->Fill(0., weight);
+
+		Vertex* vtx = vtxs_->at(i_vtx);
+		Particle* top_part = nullptr;
+		Track* top_trk = nullptr;
+		Particle* bot_part = nullptr;
+		Track* bot_trk = nullptr;
+
+		bool foundParts = _ah->GetParticlesFromVtx(vtx, top_part, bot_part);
+		if (!foundParts) {
+			if (debug_)
+				std::cout
+						<< "VertexAnaProcessor::WARNING::Found vtx without ele/pos. Skip."
+						<< std::endl;
+			continue;
+		}
+
+		if (!trkColl_.empty()) {
+			bool foundTracks = _ah->MatchToGBLTracks((top_part->getTrack()).getID(),
+					(bot_part->getTrack()).getID(), top_trk, bot_trk, *trks_);
+
+			if (!foundTracks) {
+				if (debug_)
+					std::cout
+							<< "VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"
+							<< std::endl;
+				continue;
+			}
+		} else {
+			top_trk = (Track*) top_part->getTrack().Clone();
+			bot_trk = (Track*) bot_part->getTrack().Clone();
+		}
+
+		double top_E = top_part->getEnergy();
+		double bot_E = bot_part->getEnergy();
+
+		CalCluster top_clus = top_part->getCluster();
+		CalCluster bot_clus = bot_part->getCluster();
+
+		std::cout << top_clus.getPosition()[1] << "  " << bot_clus.getPosition()[1] << std::endl;
+	}
+
+
     return true;
 }
 
 void MollerAnaProcessor::finalize() {
-
     outF_->cd();
-
 
     std::string dirNameTrack = anaName_+"_"+"track";
     trackHistos->saveHistos(outF_,dirNameTrack);
@@ -377,9 +430,7 @@ void MollerAnaProcessor::finalize() {
     trackSelector->getCutFlowHisto()->Write();
     _reg_tracks_from_vertices->writeTree();
 
-
     outF_->Close();
-
 }
 
 DECLARE_PROCESSOR(MollerAnaProcessor);
