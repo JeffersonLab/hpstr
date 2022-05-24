@@ -1,0 +1,79 @@
+{ 
+    "numHodoHits_h" : {
+        "bins" : 50,
+        "minX" : -0.5,
+        "maxX" : 49.5,
+        "xtitle" : "Number of Reco Hodo Hits",
+        "ytitle" : "Events"
+    },
+    
+    "hodoHitEnergy_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 6000,
+        "xtitle" : "Reco Hodo Hit Energy",
+        "ytitle" : "Hodo Hits"
+    },
+    
+	 "hodoHitTime_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 200,
+        "xtitle" : "Reco Hodo Hit Time [ns]",
+        "ytitle" : "Hodo Hits"
+    },
+    
+	"xyIndicesHodoHits_hh" : {
+        "binsX"   : 6,
+        "minX"   : -0.5,
+        "maxX"   : 5.5,
+        "binsY"   : 5,
+        "minY"   : -2.5,
+        "maxY"   : 2.5,
+        "xtitle" : "Recon Hodo Hit X Index" ,
+        "ytitle" : "Recon Hodo Hit Y Index"
+    },
+    
+    
+    
+	"numHodoClusters_h" : {
+        "bins" : 10,
+        "minX" : -0.5,
+        "maxX" : 9.5,
+        "xtitle" : "Number of Reco Hodo Clusters",
+        "ytitle" : "Events"
+    },
+    "hodoClusterEnergy_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 6,
+        "xtitle" : "Reco Hodo Cluster Energy [GeV]",
+        "ytitle" : "Clusters / 0.03 GeV"
+    },     
+    
+	"hodoClusterTime_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 200,
+        "xtitle" : "Reco Hodo Cluster Time [ns]",
+        "ytitle" : "Hodo Clusters / 1 ns"
+    },      
+    
+	"xyIndicesHodoClusters_hh" : {
+        "binsX"   : 100,
+        "minX"   : -300,
+        "maxX"   : 400,
+        "binsY"   : 100,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Recon Hodo Cluster Index X" ,
+        "ytitle" : "Recon Hodo Cluster Index Y"
+    }
+    
+
+
+
+
+
+
+}

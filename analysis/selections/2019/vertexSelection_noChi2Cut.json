@@ -1,0 +1,64 @@
+{
+	"single3_eq" : {
+        "cut"   : 1,
+        "id"    : 0,
+        "info"  : "single3 fired"
+    },
+    "eleTrkCluMatch_lt" : {
+        "cut"   : 10,
+        "id"    : 1,
+        "info"  : "e^{-} #Delta_{d}(trk,clu)<10#sigma"
+    },
+    "posTrkCluMatch_lt" : {
+        "cut"   : 10,
+        "id"    : 2,
+        "info"  : "e^{+} #Delta_{d}(trk,clu)<10#sigma"
+    },
+    
+	"eleposCluTimeDiff_lt" : {
+        "cut"  : 2,
+        "id"   : 3,
+        "info" : "#Delta_{t}(clu_{e^{-}},clu_{e^{+}})<2ns"
+    },
+    "eleTrkCluTimeDiff_lt" : {
+        "cut"   : 4,
+        "id"    : 4,
+        "info"  : "e^{-} #Delta_{t}(trk,clu)<4ns"
+    },
+    "posTrkCluTimeDiff_lt" : {
+        "cut"   : 4,
+        "id"    : 5,
+        "info"  : "e^{+} #Delta_{t}(trk,clu)<4ns"
+    },
+
+    "eleMom_lt" : {
+        "cut" : 3.4,
+        "id"  : 6,
+        "info" : "p e^{-} < 3.4 GeV"
+    },
+    "eleMom_gt" : {
+        "cut" : 1.1,
+        "id"  : 7,
+        "info" : "p_e^{-} > 1.1 [GeV]"
+    },
+    "posMom_gt" : {
+        "cut" : 1.1,
+        "id"  : 8,
+        "info" : "p_e^{+} > 1.1 [GeV]"
+    },
+    "eleN2Dhits_gt" :  {
+        "cut"  : 10,
+        "id"   : 9,
+        "info" : "e^{-} Track n2d Hits>=10"
+    },
+    "posN2Dhits_gt" :  {
+        "cut"  : 10,
+        "id"   : 10,
+        "info" : "p^{+} Track n2d Hits >=10"
+    },
+    "maxVtxMom_lt" : {
+        "cut" : 5.0,
+        "id"  : 11,
+        "info" : "p_{vtx} < 5.0 [GeV]"
+    }
+}

@@ -10,245 +10,266 @@
 #include <iostream>
 #include <stdio.h>
 
-VtxAnaProcessor::VtxAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
+VtxAnaProcessor::VtxAnaProcessor(const std::string& name, Process& process) :
+		Processor(name, process) {
 
 }
 
 //TODO Check this destructor
 
-VtxAnaProcessor::~VtxAnaProcessor(){}
+VtxAnaProcessor::~VtxAnaProcessor() {
+}
 
 void VtxAnaProcessor::configure(const ParameterSet& parameters) {
-    std::cout << "Configuring VertexAnaProcessor" <<std::endl;
-    try
-    {
-        debug_           = parameters.getInteger("debug");
-        anaName_         = parameters.getString("anaName");
-        histCfgFilename_      = parameters.getString("histCfg",histCfgFilename_);
-        vtxColl_ = parameters.getString("vtxColl",vtxColl_);
-        tcvtxColl_ = parameters.getString("tcvtxColl",tcvtxColl_);
-        beamE_  = parameters.getDouble("beamE",beamE_);
-    }
-    catch (std::runtime_error& error)
-    {
-        std::cout << error.what() << std::endl;
-    }
+	std::cout << "Configuring VertexAnaProcessor" << std::endl;
+	try {
+		debug_ = parameters.getInteger("debug");
+		anaName_ = parameters.getString("anaName");
+		histCfgFilename_ = parameters.getString("histCfg", histCfgFilename_);
+		vtxColl_ = parameters.getString("vtxColl", vtxColl_);
+		tcvtxColl_ = parameters.getString("tcvtxColl", tcvtxColl_);
+		beamE_ = parameters.getDouble("beamE", beamE_);
+	} catch (std::runtime_error& error) {
+		std::cout << error.what() << std::endl;
+	}
 
-	_ah =  std::make_shared<AnaHelpers>();
+    selectionCfg_   = parameters.getString("vtxSelectionjson",selectionCfg_);
+
+	_ah = std::make_shared<AnaHelpers>();
+
+    timeOffset_ = parameters.getDouble("CalTimeOffset",timeOffset_);
+    beamE_  = parameters.getDouble("beamE",beamE_);
+    isData_  = parameters.getInteger("isData",isData_);
 }
 
 void VtxAnaProcessor::initialize(TTree* tree) {
-    tree_= tree;
-    // init histos
-    histos = new VtxAnaHistos(anaName_.c_str());
-    histos->loadHistoConfig(histCfgFilename_);
-    histos->DefineHistos();
+	tree_ = tree;
+	// init histos
+	histos = new VtxAnaHistos(anaName_.c_str());
+	histos->loadHistoConfig(histCfgFilename_);
+	histos->DefineHistos();
 
-    // init TTree
-    tree_->SetBranchAddress(tsColl_.c_str(), &tsData_ , &btsData_);
-    tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_ , &bvtxs_);
-    tree_->SetBranchAddress(tcvtxColl_.c_str(), &tcvtxs_ , &btcvtxs_);
+    // Vertex selector
+    vtxSelector  = std::make_shared<BaseSelector>(anaName_+"_"+"vtxSelection",selectionCfg_);
+    vtxSelector->setDebug(debug_);
+    vtxSelector->LoadSelection();
+
+	// init TTree
+	tree_->SetBranchAddress(tsColl_.c_str(), &tsData_, &btsData_);
+    tree_->SetBranchAddress(trkColl_.c_str(),&trks_, &btrks_);
+	tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_, &bvtxs_);
+	tree_->SetBranchAddress(tcvtxColl_.c_str(), &tcvtxs_, &btcvtxs_);
+
+    //Save tuple variables for vertices
+    treeVertex = std::make_shared<FlatTupleMaker>("tuple");
+
+    treeVertex->addVariable("chi2NdfEle");
+    treeVertex->addVariable("chi2NdfPos");
+    treeVertex->addVariable("chi2UCVertex");
 }
 
 bool VtxAnaProcessor::process(IEvent* ievent) {
-    histos->FillTSData(tsData_);
+	histos->FillTSData(tsData_);
+	histos->FillUnconstrainedV0s(vtxs_);
 
-    if(tsData_->prescaled.Single_3_Top == true && tsData_->prescaled.Single_3_Bot == true){
-    	std::cout << "Warning: Single3 trigger for both top and bot are registered." << std::endl;
-    	std::cout << "Number of vertices: " << vtxs_->size() << std::endl;
-    }
+	double weight = 1.;
 
-    if(tsData_->prescaled.Single_3_Top == true || tsData_->prescaled.Single_3_Bot == true){
-    	histos->FillUnconstrainedV0s(vtxs_);
-        for(int i = 0; i <vtxs_->size(); i++) {
-        	vect_all_uc_v0s.push_back(*(vtxs_->at(i)));
+	int n_vtxs = vtxs_->size();
 
-    		Particle* ele = nullptr;
-    		Particle* pos = nullptr;
-    		bool foundParts = _ah->GetParticlesFromVtx(vtxs_->at(i), ele, pos);
+	// Loop over vertices in event and make selections
+	for (int i_vtx = 0; i_vtx < n_vtxs; i_vtx++) {
+		vtxSelector->getCutFlowHisto()->Fill(0., weight);
 
-    		if (!foundParts) {
-    			std::cout
-    					<< "VertexAnaProcessor::WARNING::Found vtx without ele/pos. Skip."
-    					<< std::endl;
-    		}
+		Vertex* vtx = vtxs_->at(i_vtx);
+		Particle* ele = nullptr;
+		Track* ele_trk = nullptr;
+		Particle* pos = nullptr;
+		Track* pos_trk = nullptr;
 
-    		Track trackEle = ele->getTrack();
-    		Track trackPos = pos->getTrack();
+		bool foundParts = _ah->GetParticlesFromVtx(vtx, ele, pos);
+		if (!foundParts) {
+			if (debug_)
+				std::cout
+						<< "VertexAnaProcessor::WARNING::Found vtx without ele/pos. Skip."
+						<< std::endl;
+			continue;
+		}
 
-    		vect_all_track_ele.push_back(trackEle);
-    		vect_all_track_pos.push_back(trackPos);
+		if (!trkColl_.empty()) {
+			bool foundTracks = _ah->MatchToGBLTracks((ele->getTrack()).getID(),
+					(pos->getTrack()).getID(), ele_trk, pos_trk, *trks_);
 
-        }
-    }
+			if (!foundTracks) {
+				if (debug_)
+					std::cout
+							<< "VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"
+							<< std::endl;
+				continue;
+			}
+		} else {
+			ele_trk = (Track*) ele->getTrack().Clone();
+			pos_trk = (Track*) pos->getTrack().Clone();
+		}
 
+		double ele_E = ele->getEnergy();
+		double pos_E = pos->getEnergy();
 
+		CalCluster eleClus = ele->getCluster();
+		CalCluster posClus = pos->getCluster();
 
-    return true;
+		//Compute analysis variables here.
+		TLorentzVector p_ele;
+		p_ele.SetPxPyPzE(ele_trk->getMomentum()[0], ele_trk->getMomentum()[1],
+				ele_trk->getMomentum()[2], ele->getEnergy());
+		TLorentzVector p_pos;
+		p_pos.SetPxPyPzE(pos_trk->getMomentum()[0], pos_trk->getMomentum()[1],
+				pos_trk->getMomentum()[2], ele->getEnergy());
+
+		//Tracks in opposite volumes - useless
+		//if (!vtxSelector->passCutLt("eleposTanLambaProd_lt",ele_trk->getTanLambda() * pos_trk->getTanLambda(),weight))
+		//  continue;
+
+		//TS: single3 fired
+		if (!vtxSelector->passCutEq("single3_eq",
+				tsData_->prescaled.Single_3_Top
+						|| tsData_->prescaled.Single_3_Bot, weight))
+			continue;
+
+		//Ele Track-cluster match
+		if (!vtxSelector->passCutLt("eleTrkCluMatch_lt",
+				ele->getGoodnessOfPID(), weight))
+			continue;
+
+		//Pos Track-cluster match
+		if (!vtxSelector->passCutLt("posTrkCluMatch_lt",
+				pos->getGoodnessOfPID(), weight))
+			continue;
+
+		//Require Positron Cluster exists
+		if (!vtxSelector->passCutGt("posClusE_gt", posClus.getEnergy(), weight))
+			continue;
+
+		//Require Positron Cluster does NOT exists
+		if (!vtxSelector->passCutLt("posClusE_lt", posClus.getEnergy(), weight))
+			continue;
+
+		double corr_eleClusterTime = ele->getCluster().getTime() - timeOffset_;
+		double corr_posClusterTime = pos->getCluster().getTime() - timeOffset_;
+
+		double botClusTime = 0.0;
+		if (ele->getCluster().getPosition().at(1) < 0.0)
+			botClusTime = ele->getCluster().getTime();
+		else
+			botClusTime = pos->getCluster().getTime();
+
+		//Bottom Cluster Time
+		if (!vtxSelector->passCutLt("botCluTime_lt", botClusTime, weight))
+			continue;
+
+		if (!vtxSelector->passCutGt("botCluTime_gt", botClusTime, weight))
+			continue;
+
+		//Ele Pos Cluster Time Difference
+		if (!vtxSelector->passCutLt("eleposCluTimeDiff_lt",
+				fabs(corr_eleClusterTime - corr_posClusterTime), weight))
+			continue;
+
+		//Ele Track-Cluster Time Difference
+		if (!vtxSelector->passCutLt("eleTrkCluTimeDiff_lt",
+				fabs(ele_trk->getTrackTime() - corr_eleClusterTime), weight))
+			continue;
+
+		//Pos Track-Cluster Time Difference
+		if (!vtxSelector->passCutLt("posTrkCluTimeDiff_lt",
+				fabs(pos_trk->getTrackTime() - corr_posClusterTime), weight))
+			continue;
+
+		TVector3 ele_mom;
+		ele_mom.SetX(ele_trk->getMomentum()[0]);
+		ele_mom.SetY(ele_trk->getMomentum()[1]);
+		ele_mom.SetZ(ele_trk->getMomentum()[2]);
+
+		TVector3 pos_mom;
+		pos_mom.SetX(pos_trk->getMomentum()[0]);
+		pos_mom.SetY(pos_trk->getMomentum()[1]);
+		pos_mom.SetZ(pos_trk->getMomentum()[2]);
+
+		//Beam Electron cut
+		if (!vtxSelector->passCutLt("eleMom_lt", ele_mom.Mag(), weight))
+			continue;
+
+		//Ele min momentum cut
+		if (!vtxSelector->passCutGt("eleMom_gt", ele_mom.Mag(), weight))
+			continue;
+
+		//Pos min momentum cut
+		if (!vtxSelector->passCutGt("posMom_gt", pos_mom.Mag(), weight))
+			continue;
+
+		//Ele nHits
+		int ele2dHits = ele_trk->getTrackerHitCount();
+		if (!ele_trk->isKalmanTrack())
+			ele2dHits *= 2;
+
+		if (!vtxSelector->passCutGt("eleN2Dhits_gt", ele2dHits, weight)) {
+			continue;
+		}
+
+		//Pos nHits
+		int pos2dHits = pos_trk->getTrackerHitCount();
+		if (!pos_trk->isKalmanTrack())
+			pos2dHits *= 2;
+
+		if (!vtxSelector->passCutGt("posN2Dhits_gt", pos2dHits, weight)) {
+			continue;
+		}
+
+		//Less than 4 shared hits for ele/pos track
+		if (!vtxSelector->passCutLt("eleNshared_lt", ele_trk->getNShared(),
+				weight)) {
+			continue;
+		}
+
+		if (!vtxSelector->passCutLt("posNshared_lt", pos_trk->getNShared(),
+				weight)) {
+			continue;
+		}
+
+		//Max vtx momentum
+		if (!vtxSelector->passCutLt("maxVtxMom_lt", (ele_mom + pos_mom).Mag(),
+				weight))
+			continue;
+
+		//Min vtx momentum
+
+		if (!vtxSelector->passCutGt("minVtxMom_gt", (ele_mom + pos_mom).Mag(),
+				weight))
+			continue;
+
+		vtxSelector->clearSelector();
+
+		treeVertex->setVariableValue("chi2NdfEle", ele_trk->getChi2Ndf());
+		treeVertex->setVariableValue("chi2NdfPos", pos_trk->getChi2Ndf());
+		treeVertex->setVariableValue("chi2UCVertex", vtx->getChi2());
+
+		treeVertex->fill();
+	}
+
+	return true;
 }
 
 void VtxAnaProcessor::finalize() {
-
-
-    histos->saveHistos(outF_, anaName_.c_str());
-    delete histos;
+	outF_->cd();
+	histos->saveHistos(outF_, anaName_.c_str());
+	vtxSelector->getCutFlowHisto()->Write();
+	delete histos;
 	histos = nullptr;
 
+	TDirectory* dir = outF_->mkdir("treeVertex");
+    dir->cd();
+    treeVertex->writeTree();
 
-
-	int numAllUCVOs = vect_all_uc_v0s.size();
-	TMatrixD vectX(numAllUCVOs, 1);
-	TMatrixD vectY(numAllUCVOs, 1);
-	TMatrixD vectZ(numAllUCVOs, 1);
-
-	TMatrixD vectLogChi2PerNDFV0(numAllUCVOs, 1);
-	TMatrixD vectLogChi2PerNDFTrackEle(numAllUCVOs, 1);
-	TMatrixD vectLogChi2PerNDFTrackPos(numAllUCVOs, 1);
-
-	for (int i = 0; i < numAllUCVOs; i++) {
-		Vertex vtx = vect_all_uc_v0s[i];
-
-		double x = vtx.getX();
-		double y = vtx.getY();
-		double z = vtx.getZ();
-
-		vectX(i, 0) = x;
-		vectY(i, 0) = y;
-		vectZ(i, 0) = z;
-
-		double chi2 = vtx.getChi2();
-		double ndf = 1.; // NDF = 2n - 3 for unconstrained vertices; for vertices constructed by two tracks, n = 2
-
-
-		Track trackEle = vect_all_track_ele[i];
-		Track trackPos = vect_all_track_pos[i];
-
-		double chi2Ele = trackEle.getChi2();
-		double ndfEle = trackEle.getNdf();
-
-		double chi2Pos = trackPos.getChi2();
-		double ndfPos = trackPos.getNdf();
-
-		vectLogChi2PerNDFV0(i, 0) = (float) TMath::Log(chi2 / ndf);
-		vectLogChi2PerNDFTrackEle(i, 0) = (float) TMath::Log(chi2Ele / ndfEle);
-		vectLogChi2PerNDFTrackPos(i, 0) = (float) TMath::Log(chi2Pos / ndfPos);
-
-		if(std::isnan(vectLogChi2PerNDFV0(i, 0)) || std::isnan(vectLogChi2PerNDFTrackEle(i, 0)) || isnan(vectLogChi2PerNDFTrackPos(i, 0))){
-			//std::cout << vectLogChi2PerNDFV0(i, 0) << " " << vectLogChi2PerNDFTrackEle(i, 0) << " " << vectLogChi2PerNDFTrackPos(i, 0) <<std::endl;
-			std::cout<< chi2 << "  " << chi2Ele << "  " << chi2Pos << std::endl;
-		}
-	}
-
-	//Mean and covariance for vertex
-	std::cout << "Mean and covaiance for unconstrained vertex:" << std::endl;
-
-	double meanX, meanY, meanZ;
-	meanX = vectX.Sum() / numAllUCVOs;
-	meanY = vectY.Sum() / numAllUCVOs;
-	meanZ = vectZ.Sum() / numAllUCVOs;
-
-	TMatrixD meanVect(3, 1);
-	meanVect(0, 0) = meanX;
-	meanVect(1, 0) = meanY;
-	meanVect(2, 0) = meanZ;
-	meanVect.Print();
-
-	//vectX.Print();
-	TMatrixD vectXT(1, numAllUCVOs);
-	vectXT.Transpose(vectX);
-
-	TMatrixD vectYT(1, numAllUCVOs);
-	vectYT.Transpose(vectY);
-
-	TMatrixD vectZT(1, numAllUCVOs);
-	vectZT.Transpose(vectZ);
-
-	TMatrixD varX = 1. / numAllUCVOs * (vectXT - meanX)
-			* (vectX - meanX);
-	TMatrixD varY = 1. / numAllUCVOs * (vectYT - meanY)
-			* (vectY - meanY);
-	TMatrixD varZ = 1. / numAllUCVOs* (vectZT - meanZ)
-			* (vectZ - meanZ);
-	TMatrixD covXY = 1. / numAllUCVOs * (vectXT - meanX)
-			* (vectY - meanY);
-	TMatrixD covYZ = 1. / numAllUCVOs * (vectYT - meanY)
-			* (vectZ - meanZ);
-	TMatrixD covZX = 1. / numAllUCVOs * (vectZT - meanZ)
-			* (vectX - meanX);
-
-	TMatrixD covVect(3, 3);
-
-	covVect(0, 0) = varX(0, 0);
-	covVect(1, 1) = varY(0, 0);
-	covVect(2, 2) = varZ(0, 0);
-	covVect(0, 1) = covXY(0, 0);
-	covVect(1, 2) = covYZ(0, 0);
-	covVect(0, 2) = covZX(0, 0);
-	covVect(1, 0) = covVect(0, 1);
-	covVect(2, 1) = covVect(1, 2);
-	covVect(2, 0) = covVect(0, 2);
-
-	covVect.Print();
-
-	//Mean and covariance for log(Chi2/NDF)
-	std::cout << "Mean and covaiance for log(Chi2/NDF):" << std::endl;
-
-	double meanChi2PerNDFV0, meanChi2PerNDFEle, meanChi2PerNDFPos;
-	meanChi2PerNDFV0 = vectLogChi2PerNDFV0.Sum() / numAllUCVOs;
-	meanChi2PerNDFEle = vectLogChi2PerNDFTrackEle.Sum() / numAllUCVOs;
-	meanChi2PerNDFPos = vectLogChi2PerNDFTrackPos.Sum() / numAllUCVOs;
-
-
-	TMatrixD meanChi2PerNDF(3, 1);
-	meanChi2PerNDF(0, 0) = meanChi2PerNDFV0;
-	meanChi2PerNDF(1, 0) = meanChi2PerNDFEle;
-	meanChi2PerNDF(2, 0) = meanChi2PerNDFPos;
-
-	meanChi2PerNDF.Print();
-
-	//Transpose
-	TMatrixD vectLogChi2PerNDFV0T(1, numAllUCVOs);
-	vectLogChi2PerNDFV0T.Transpose(vectLogChi2PerNDFV0);
-	TMatrixD vectLogChi2PerNDFTrackEleT(1, numAllUCVOs);
-	vectLogChi2PerNDFTrackEleT.Transpose(vectLogChi2PerNDFTrackEle);
-	TMatrixD vectLogChi2PerNDFTrackPosT(1, numAllUCVOs);
-	vectLogChi2PerNDFTrackPosT.Transpose(vectLogChi2PerNDFTrackPos);
-
-
-	TMatrixD varLogChi2PerNDFTrackV0 = 1. / numAllUCVOs * (vectLogChi2PerNDFV0T - meanChi2PerNDFV0)
-			* (vectLogChi2PerNDFV0 - meanChi2PerNDFV0);
-	TMatrixD varLogChi2PerNDFTrackEle = 1. / numAllUCVOs * (vectLogChi2PerNDFTrackEleT - meanChi2PerNDFEle)
-			* (vectLogChi2PerNDFTrackEle - meanChi2PerNDFEle);
-	TMatrixD varLogChi2PerNDFTrackPos = 1. / numAllUCVOs * (vectLogChi2PerNDFTrackPosT - meanChi2PerNDFPos)
-			* (vectLogChi2PerNDFTrackPos - meanChi2PerNDFPos);
-
-	TMatrixD covLogChi2PerNDFTrackV0Ele = 1. / numAllUCVOs * (vectLogChi2PerNDFV0T - meanChi2PerNDFV0)
-			* (vectLogChi2PerNDFTrackEle - meanChi2PerNDFEle);
-	TMatrixD covLogChi2PerNDFTrackElePos = 1. / numAllUCVOs * (vectLogChi2PerNDFTrackEleT - meanChi2PerNDFEle)
-			* (vectLogChi2PerNDFTrackPos - meanChi2PerNDFPos);
-	TMatrixD covLogChi2PerNDFTrackPosV0 = 1. / numAllUCVOs * (vectLogChi2PerNDFTrackPosT - meanChi2PerNDFPos)
-			* (vectLogChi2PerNDFV0 - meanChi2PerNDFV0);
-
-	//(vectLogChi2PerNDFV0T - meanChi2PerNDFV0).Print();
-	//(vectLogChi2PerNDFV0 - meanChi2PerNDFV0).Print();
-
-	std::cout<<"meanChi2PerNDFV0:" << meanChi2PerNDFV0 <<std::endl;
-
-
-	TMatrixD covLogChi2PerNDF(3, 3);
-
-	covLogChi2PerNDF(0, 0) = varLogChi2PerNDFTrackV0(0, 0);
-	covLogChi2PerNDF(1, 1) = varLogChi2PerNDFTrackEle(0, 0);
-	covLogChi2PerNDF(2, 2) = varLogChi2PerNDFTrackPos(0, 0);
-	covLogChi2PerNDF(0, 1) = covLogChi2PerNDFTrackV0Ele(0, 0);
-	covLogChi2PerNDF(1, 2) = covLogChi2PerNDFTrackElePos(0, 0);
-	covLogChi2PerNDF(0, 2) = covLogChi2PerNDFTrackPosV0(0, 0);
-	covLogChi2PerNDF(1, 0) = covLogChi2PerNDF(0, 1);
-	covLogChi2PerNDF(2, 1) = covLogChi2PerNDF(1, 2);
-	covLogChi2PerNDF(2, 0) = covLogChi2PerNDF(0, 2);
-
-	covLogChi2PerNDF.Print();
-
+    outF_->Close();
 
 }
 

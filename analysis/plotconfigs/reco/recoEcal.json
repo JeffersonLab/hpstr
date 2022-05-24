@@ -1,0 +1,110 @@
+{
+    "numEcalHits_h" : {
+        "bins" : 50,
+        "minX" : -0.5,
+        "maxX" : 49.5,
+        "xtitle" : "Number of Reco ECal Hits",
+        "ytitle" : "Events"
+    },
+    "ecalHitEnergy_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 6,
+        "xtitle" : "Reco ECal Hit Energy [GeV]",
+        "ytitle" : "Ecal Hits / 0.03 GeV"
+    },
+    
+	"xyIndicesEcalHits_hh" : {
+        "binsX"   : 47,
+        "minX"   : -23.5,
+        "maxX"   : 23.5,
+        "binsY"   : 11,
+        "minY"   : -5.5,
+        "maxY"   : 5.5,
+        "xtitle" : "Recon ECal Hit X Index" ,
+        "ytitle" : "Recon Ecal Hit Y Index"
+    },  
+    
+    
+    "numEcalClusters_h" : {
+        "bins" : 10,
+        "minX" : -0.5,
+        "maxX" : 9.5,
+        "xtitle" : "Number of Reco Ecal Clusters",
+        "ytitle" : "Events"
+    },
+    "ecalClusterEnergy_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 6,
+        "xtitle" : "Reco Ecal Cluster Energy [GeV]",
+        "ytitle" : "Clusters / 0.03 GeV"
+    }, 
+    
+	"ecalClusterNHits_h" : {
+        "bins" : 20,
+        "minX" : -0.5,
+        "maxX" : 19.5,
+        "xtitle" : "Reco Ecal Cluster Nhits",
+        "ytitle" : "ECal Clusters"
+    },
+    
+	"ecalClusterTime_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 100,
+        "xtitle" : "Reco Ecal Cluster Time [ns]",
+        "ytitle" : "ECal Clusters / 1 ns"
+    }, 
+    
+    
+ 	"ecalClusterX_h" : {
+        "bins" : 200,
+        "minX" : -300,
+        "maxX" : 400,
+        "xtitle" : "Reco Ecal Cluster X [mm]",
+        "ytitle" : "ECal Clusters / 3.5 mm"
+    },  
+    
+	"ecalClusterY_h" : {
+        "bins" : 200,
+        "minX" : -100,
+        "maxX" : 100,
+        "xtitle" : "Reco Ecal Cluster Y [mm]",
+        "ytitle" : "ECal Clusters / 1 mm"
+    },  
+     
+    
+    
+	"xyEcalClusters_hh" : {
+        "binsX"   : 100,
+        "minX"   : -300,
+        "maxX"   : 400,
+        "binsY"   : 100,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Recon ECal Cluster X" ,
+        "ytitle" : "Recon ECal Cluster Y"
+    },
+    
+  	"ecalSeeEnergy_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 6,
+        "xtitle" : "Reco Ecal Seed Energy [GeV]",
+        "ytitle" : "ECal Seeds / 0.03 GeV"
+    },
+    
+	"xyIndicesEcalSeeds_hh" : {
+        "binsX"   : 47,
+        "minX"   : -23.5,
+        "maxX"   : 23.5,
+        "binsY"   : 11,
+        "minY"   : -5.5,
+        "maxY"   : 5.5,
+        "xtitle" : "Recon ECal seed X Index" ,
+        "ytitle" : "Recon ECal seed Y Index"
+    }  
+    
+    
+}

@@ -42,12 +42,16 @@ vtxana.parameters["hitColl"] = "SiClustersOnTrack"
 vtxana.parameters["vtxColl"] = "UnconstrainedV0Vertices_KF"
 vtxana.parameters["mcColl"]  = "MCParticle"
 vtxana.parameters["analysis"]  = "vertex"
-vtxana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/vertexSelection_2019.json'
 vtxana.parameters["mcHistoCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
 vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis_2019.json"
 vtxana.parameters["beamE"] = base.beamE[str(options.year)]
 vtxana.parameters["isData"] = options.isData
 CalTimeOffset=-999
+
+if (options.year == 2019):
+    vtxana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/vertexSelection_2019.json'
+elif (options.year == 2021):
+    vtxana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/2021/vertexSelection.json'    
 
 if (options.isData==1):
     CalTimeOffset=56.
@@ -65,13 +69,19 @@ vtxana.parameters["CalTimeOffset"]=CalTimeOffset
 #Region definitions
 
 RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/"
-vtxana.parameters["regionDefinitions"] = [RegionPath+'Tight_2019.json', RegionPath+'Tight_pTop_2019.json', RegionPath+'Tight_pBot_2019.json']
+if (options.year == 2019):
+    vtxana.parameters["regionDefinitions"] = [RegionPath+'Tight_2019.json', RegionPath+'Tight_pTop_2019.json', RegionPath+'Tight_pBot_2019.json']
+elif (options.year == 2021):
+    vtxana.parameters["regionDefinitions"] = [RegionPath+'/2021/tight.json', RegionPath+'/2021/tightTop.json', RegionPath+'/2021/tightBot.json']    
 
 # Sequence which the processors will run.
 p.sequence = [vtxana]
 
 p.input_files = infile
 p.output_files = [outfile]
+
+if (options.nevents > -1):
+    p.max_events = options.nevents
 
 p.printProcess()
 

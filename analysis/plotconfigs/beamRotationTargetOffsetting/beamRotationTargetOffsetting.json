@@ -1,0 +1,91 @@
+{ 
+	"goodness_pos_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 30,
+        "xtitle" : "Goodness of track-cluter match for positron",
+        "ytitle" : "Events"
+    },
+	
+	"goodness_ele1_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 30,
+        "xtitle" : "Goodness of track-cluter match for electron 1",
+        "ytitle" : "Events"
+    },
+    
+	"goodness_ele2_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 30,
+        "xtitle" : "Goodness of track-cluter match for electron 2",
+        "ytitle" : "Events"
+    },
+
+    "energySum_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 7,
+        "xtitle" : "Energy Sum [GeV]",
+        "ytitle" : "Events"
+    },
+    
+	"pxSum_h" : {
+        "bins" : 100,
+        "minX" : -0.5,
+        "maxX" : 0.5,
+        "xtitle" : "p_{x} Sum [GeV]",
+        "ytitle" : "Events"
+    },
+    
+	"pySum_h" : {
+        "bins" : 100,
+        "minX" : -0.5,
+        "maxX" : 0.5,
+        "xtitle" : "p_{y} Sum [GeV]",
+        "ytitle" : "Events"
+    },
+    
+	"pzSum_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 7,
+        "xtitle" : "p_{z} Sum [GeV]",
+        "ytitle" : "Events"
+    },    
+
+	"invariantMass_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 0.5,
+        "xtitle" : "Invairant mass [GeV/c^{2}]",
+        "ytitle" : "Events"
+    },    
+    
+	"eleposCluTimeDiff_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Time diff. between clusters of ele. and pos. [ns]",
+        "ytitle" : "Vertices"
+    }, 
+    
+	"eleTrkCluTimeDiff_h" : {
+        "bins" : 100,
+        "minX" : -90,
+        "maxX" : 10,
+        "xtitle" : "Time diff. between track and cluster of ele. [ns]",
+        "ytitle" : "Vertices"
+    }, 
+    
+	"posTrkCluTimeDiff_h" : {
+        "bins" : 100,
+        "minX" : -90,
+        "maxX" : 10,
+        "xtitle" : "Time diff. between track and cluster of pos. [ns]",
+        "ytitle" : "Vertices"
+    }
+
+
+}

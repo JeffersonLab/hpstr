@@ -1,0 +1,28 @@
+{
+    "chi2unc_lt" : {
+        "cut"  : 10.0,
+        "id"   : 0,
+        "info" : "#chi^{2}_{unc}<10"
+    },
+    "L1Requirement_eq"  : {
+        "cut"  : 1,
+        "id"   : 1,
+        "info" : "L1L1"
+    },
+    "pSum_gt"  : {
+        "cut"  : 2,
+        "id"   : 2,
+        "info" : "P_{e^{-}} + P_{e^{+}}>2 GeV"
+    },
+    "volPos_bot"  : {
+        "cut"  : 0.0,
+        "id"   : 3,
+        "info" : "e^{+} in Bot"
+    },
+    "nVtxs_eq" : {
+        "cut"  : 1,
+        "id"   : 4,
+        "info" : "N_{vtx}=1"
+    }
+
+}
