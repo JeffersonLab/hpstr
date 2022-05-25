@@ -68,7 +68,7 @@
 	"pDiff_lt" : {
         "cut" : 0.8,
         "id"  : 11,
-        "info" : "| pDiff | < 0.8 [GeV]"
+        "info" : "| pDiff | < 1 [GeV]"
     },
     
  	"pSum_gt" : {

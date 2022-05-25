@@ -2,7 +2,7 @@
 	"pSum_no_cuts_h" : {
         "bins"   : 100,
         "minX"   : 0,
-        "maxX"   : 7,
+        "maxX"   : 2.5,
         "xtitle" : "pSum [GeV]",
         "ytitle" : "Neg. track pairs"
     },
@@ -10,7 +10,7 @@
 	"im_no_cuts_h" : {
         "bins"   : 100,
         "minX"   : 0,
-        "maxX"   : 0.2,
+        "maxX"   : 0.1,
         "xtitle" : "Invariant mass [GeV/c^{2}]",
         "ytitle" : "Neg. track pairs"
     },
@@ -21,7 +21,7 @@
         "maxX" : 2.5,
         "binsY" : 100,
         "minY" : 0,
-        "maxY" : 0.2,
+        "maxY" : 0.1,
 		"xtitle" : "pSum [GeV]",
         "ytitle" : "Invariant mass [GeV/c^{2}]"
     },
@@ -30,7 +30,7 @@
 	"pSum_with_numTracks_cuts_h" : {
         "bins"   : 100,
         "minX"   : 0,
-        "maxX"   : 7,
+        "maxX"   : 2.5,
         "xtitle" : "pSum [GeV]",
         "ytitle" : "Neg. track pairs"
     },
@@ -38,7 +38,7 @@
 	"im_with_numTracks_cuts_h" : {
         "bins"   : 100,
         "minX"   : 0,
-        "maxX"   : 0.2,
+        "maxX"   : 0.1,
         "xtitle" : "Invariant mass [GeV/c^{2}]",
         "ytitle" : "Neg. track pairs"
     },
@@ -49,7 +49,7 @@
         "maxX" : 2.5,
         "binsY" : 100,
         "minY" : 0,
-        "maxY" : 0.2,
+        "maxY" : 0.1,
 		"xtitle" : "pSum [GeV]",
         "ytitle" : "Invariant mass [GeV/c^{2}]"
     },
@@ -247,7 +247,7 @@
 	"pSum_with_numTracks_numHits_timeDiff_cuts_h" : {
         "bins"   : 100,
         "minX"   : 0,
-        "maxX"   : 7,
+        "maxX"   : 2.5,
         "xtitle" : "pSum [GeV]",
         "ytitle" : "Neg. track pairs"
     },
@@ -255,7 +255,7 @@
 	"im_with_numTracks_numHits_timeDiff_cuts_h" : {
         "bins"   : 100,
         "minX"   : 0,
-        "maxX"   : 0.2,
+        "maxX"   : 0.1,
         "xtitle" : "Invariant mass [GeV/c^{2}]",
         "ytitle" : "Neg. track pairs"
     },
@@ -266,7 +266,7 @@
         "maxX" : 2.5,
         "binsY" : 100,
         "minY" : 0,
-        "maxY" : 0.2,
+        "maxY" : 0.1,
 		"xtitle" : "pSum [GeV]",
         "ytitle" : "Invariant mass [GeV/c^{2}]"
     },
@@ -274,7 +274,7 @@
 	"pSum_with_numTracks_numHits_timeDiff_p_pDiff_cuts_h" : {
         "bins"   : 100,
         "minX"   : 0,
-        "maxX"   : 7,
+        "maxX"   : 2.5,
         "xtitle" : "pSum [GeV]",
         "ytitle" : "Neg. track pairs"
     },
@@ -282,7 +282,7 @@
 	"im_with_numTracks_numHits_timeDiff_p_pDiff_cuts_h" : {
         "bins"   : 100,
         "minX"   : 0,
-        "maxX"   : 0.2,
+        "maxX"   : 0.1,
         "xtitle" : "Invariant mass [GeV/c^{2}]",
         "ytitle" : "Neg. track pairs"
     },
@@ -293,7 +293,7 @@
         "maxX" : 2.5,
         "binsY" : 100,
         "minY" : 0,
-        "maxY" : 0.2,
+        "maxY" : 0.1,
 		"xtitle" : "pSum [GeV]",
         "ytitle" : "Invariant mass [GeV/c^{2}]"
     },
@@ -345,7 +345,7 @@
 	"pSum_with_all_cuts_h" : {
         "bins"   : 100,
         "minX"   : 0,
-        "maxX"   : 7,
+        "maxX"   : 2.5,
         "xtitle" : "pSum [GeV]",
         "ytitle" : "Neg. track pairs"
     },
@@ -353,7 +353,7 @@
 	"im_with_all_cuts_h" : {
         "bins"   : 100,
         "minX"   : 0,
-        "maxX"   : 0.2,
+        "maxX"   : 0.1,
         "xtitle" : "Invariant mass [GeV/c^{2}]",
         "ytitle" : "Neg. track pairs"
     },
@@ -364,12 +364,10 @@
         "maxX" : 2.5,
         "binsY" : 100,
         "minY" : 0,
-        "maxY" : 0.2,
+        "maxY" : 0.1,
 		"xtitle" : "pSum [GeV]",
         "ytitle" : "Invariant mass [GeV/c^{2}]"
-    },
-    
-          
+    },              
     
 	"energy_vs_theta_top_with_all_cuts_hh" : {
         "binsX" : 100,
