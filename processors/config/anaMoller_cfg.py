@@ -54,9 +54,8 @@ if options.year == 2021:
 elif options.year == 20211920:
     mollerAna.parameters["trackSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/2021/moller/mollerTrackSelection_20211920.json'
     mollerAna.parameters["vertexSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/2021/moller/mollerVertexSelection_20211920.json'
-    
-mollerAna.parameters["histTrackCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/moller/mollerTrackAnalysis.json'
-mollerAna.parameters["histVertexCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/moller/mollerVertexAnalysis.json'     
+    mollerAna.parameters["histTrackCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/moller/mollerTrackAnalysis_20211920.json'
+    mollerAna.parameters["histVertexCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/moller/mollerVertexAnalysis_20211920.json'     
 
 # Sequence which the processors will run.
 p.sequence = [mollerAna]

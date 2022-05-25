@@ -97,7 +97,7 @@ class MollerAnaProcessor : public Processor {
         TF1* func_theta1_vs_theta2_before_roation;
 
         // save a tree for information of tracks from vertices
-        std::shared_ptr<FlatTupleMaker> _reg_tracks_from_vertices;
+        //std::shared_ptr<FlatTupleMaker> _reg_tracks_from_vertices;
 
 };
 

@@ -49,20 +49,20 @@ void MollerAnaProcessor::configure(const ParameterSet& parameters) {
 void MollerAnaProcessor::initialize(TTree* tree) {
 	_ah =  std::make_shared<AnaHelpers>();
 
-	trackSelector  = std::make_shared<BaseSelector>(anaName_+"_"+"trkSelection",trackSelectionCfg_);
+	trackSelector  = std::make_shared<BaseSelector>(anaName_+"_"+"track",trackSelectionCfg_);
 	trackSelector->setDebug(debug_);
 	trackSelector->LoadSelection();
 
-	vtxSelector  = std::make_shared<BaseSelector>(anaName_+"_"+"vtxSelection",vertexSelectionCfg_);
+	vtxSelector  = std::make_shared<BaseSelector>(anaName_+"_"+"vertex",vertexSelectionCfg_);
 	vtxSelector->setDebug(debug_);
 	vtxSelector->LoadSelection();
 
     // init histos
-	trackHistos = new MollerAnaHistos(anaName_.c_str());
+	trackHistos = new MollerAnaHistos((anaName_+"_"+"track").c_str());
 	trackHistos->loadHistoConfig(histTrackCfgFilename_);
 	trackHistos->DefineHistos();
 
-	vertexHistos = new MollerAnaHistos(anaName_.c_str());
+	vertexHistos = new MollerAnaHistos((anaName_+"_"+"vertex").c_str());
 	vertexHistos->loadHistoConfig(histVertexCfgFilename_);
 	vertexHistos->DefineHistos();
 
@@ -84,6 +84,7 @@ void MollerAnaProcessor::initialize(TTree* tree) {
     func_theta1_vs_theta2_before_roation->SetParameter(1, ELECTRONMASS);
 
 
+    /*
 	// save a tree for information of tracks from vertices
 	_reg_tracks_from_vertices = std::make_shared<FlatTupleMaker>(anaName_ + "_tracks_from_vertices");
 	_reg_tracks_from_vertices->addVector("momTop");
@@ -95,6 +96,7 @@ void MollerAnaProcessor::initialize(TTree* tree) {
 
 	_reg_tracks_from_vertices->addVariable("timeTop");
 	_reg_tracks_from_vertices->addVariable("timeBot");
+	*/
 }
 
 bool MollerAnaProcessor::process(IEvent* ievent) {
@@ -205,9 +207,19 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
     	return true;
     }
 
-
     Track track_neg_top = tracks_neg_top[0];
     Track track_neg_bot = tracks_neg_bot[0];
+
+    if (!trackSelector->passCutLt("chi2ndf_tracks_neg_top_lt", track_neg_top.getChi2Ndf(),weight)){
+    	trackSelector->clearSelector();
+    	return true;
+    }
+
+    if (!trackSelector->passCutLt("chi2ndf_tracks_neg_bot_lt", track_neg_bot.getChi2Ndf(),weight)){
+    	trackSelector->clearSelector();
+    	return true;
+    }
+
 
     if (!trackSelector->passCutGt("num_hits_tracks_neg_top_gt", track_neg_top.getTrackerHitCount(),weight)){
     	trackSelector->clearSelector();
@@ -232,6 +244,9 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
     double p_neg_bot = vect_neg_bot->P();
     double pSum = p_neg_top + p_neg_bot;
     double pDiff = p_neg_top - p_neg_bot;
+    double pxSum = vect_neg_top->Px() + vect_neg_bot->Px();
+    double pySum = vect_neg_top->Py() + vect_neg_bot->Py();
+    double pzSum = vect_neg_top->Pz() + vect_neg_bot->Pz();
     double im = (*vect_neg_top + *vect_neg_bot).M();
 
 	trackHistos->Fill1DHisto("pSum_with_numTracks_cuts_h", pSum, weight);
@@ -241,6 +256,7 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
 
     double time_neg_top = track_neg_top.getTrackTime();
     double time_neg_bot = track_neg_bot.getTrackTime();
+
 	trackHistos->Fill1DHisto("time_tracks_neg_top_with_numTracks_numHits_cuts_h", time_neg_top, weight);
 	trackHistos->Fill1DHisto("time_tracks_neg_bot_with_numTracks_numHits_cuts_h", time_neg_bot, weight);
 	trackHistos->Fill2DHisto("time_tracks_neg_top_vs_bot_with_numTracks_numHits_cuts_hh", time_neg_top, time_neg_bot, weight);
@@ -248,11 +264,9 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
     double time_diff = time_neg_top - time_neg_bot;
 	trackHistos->Fill1DHisto("time_diff_with_numTracks_numHits_cuts_h", time_diff, weight);
 
-	if(isData_){
-		if (!trackSelector->passCutLt("time_diff_lt", fabs(time_diff),weight)){
-			trackSelector->clearSelector();
-			return true;
-		}
+	if (!trackSelector->passCutLt("time_diff_lt", fabs(time_diff),weight)){
+		trackSelector->clearSelector();
+		return true;
 	}
 
 	trackHistos->Fill1DHisto("p_tracks_neg_top_with_numTracks_numHits_timeDiff_cuts_h", p_neg_top, weight);
@@ -282,7 +296,7 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
 	trackHistos->Fill1DHisto("im_with_numTracks_numHits_timeDiff_p_pDiff_cuts_h", im, weight);
 	trackHistos->Fill2DHisto("im_vs_pSum_with_numTracks_numHits_timeDiff_p_pDiff_cuts_hh", pSum, im, weight);
 
-
+/*
 	_reg_tracks_from_vertices->addToVector("momTop", mom_neg_top[0]);
 	_reg_tracks_from_vertices->addToVector("momTop", mom_neg_top[1]);
 	_reg_tracks_from_vertices->addToVector("momTop", mom_neg_top[2]);
@@ -298,7 +312,7 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
     _reg_tracks_from_vertices->setVariableValue("timeBot", time_neg_bot);
 
     _reg_tracks_from_vertices->fill();
-
+*/
     if (!trackSelector->passCutGt("pSum_gt", pSum, weight)){
     	trackSelector->clearSelector();
     	return true;
@@ -309,12 +323,16 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
     	return true;
     }
 
-	trackHistos->Fill1DHisto("p_tracks_neg_top_with_numTracks_numHits_timeDiff_p_pDiff_pSum_cuts_h", p_neg_top, weight);
-	trackHistos->Fill1DHisto("p_tracks_neg_bot_with_numTracks_numHits_timeDiff_p_pDiff_pSum_cuts_h", p_neg_bot, weight);
+	trackHistos->Fill1DHisto("p_tracks_neg_top_with_all_cuts_h", p_neg_top, weight);
+	trackHistos->Fill1DHisto("p_tracks_neg_bot_with_all_cuts_h", p_neg_bot, weight);
 
-	trackHistos->Fill1DHisto("pSum_with_numTracks_numHits_timeDiff_p_pDiff_pSum_cuts_h", pSum, weight);
-	trackHistos->Fill1DHisto("im_with_numTracks_numHits_timeDiff_p_pDiff_pSum_cuts_h", im, weight);
-	trackHistos->Fill2DHisto("im_vs_pSum_with_numTracks_numHits_timeDiff_p_pDiff_pSum_cuts_hh", pSum, im, weight);
+	trackHistos->Fill1DHisto("pxSum_with_all_cuts_h", pxSum, weight);
+	trackHistos->Fill1DHisto("pySum_with_all_cuts_h", pySum, weight);
+	trackHistos->Fill1DHisto("pzSum_with_all_cuts_h", pzSum, weight);
+
+	trackHistos->Fill1DHisto("pSum_with_all_cuts_h", pSum, weight);
+	trackHistos->Fill1DHisto("im_with_all_cuts_h", im, weight);
+	trackHistos->Fill2DHisto("im_vs_pSum_with_all_cuts_hh", pSum, im, weight);
 
 
 	double px_neg_top_before_beam_rotation = vect_neg_top->Px() * cos(ROTATIONANGLEAROUNDY) - vect_neg_top->Pz() * sin(ROTATIONANGLEAROUNDY);
@@ -348,22 +366,22 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
 	double theta_diff_top = theta_top_before_rotation - theta_top_calculated_before_rotation;
 	double theta_diff_bot = theta_bot_before_rotation - theta_bot_calculated_before_rotation;
 
-	trackHistos->Fill2DHisto("energy_vs_theta_top_with_numTracks_numHits_timeDiff_p_pDiff_pSum_cuts_hh",theta_top_before_rotation, energy_top, weight);
-	trackHistos->Fill2DHisto("energy_vs_theta_bot_with_numTracks_numHits_timeDiff_p_pDiff_pSum_cuts_hh",theta_bot_before_rotation, energy_bot, weight);
+	trackHistos->Fill2DHisto("energy_vs_theta_top_with_all_cuts_hh",theta_top_before_rotation, energy_top, weight);
+	trackHistos->Fill2DHisto("energy_vs_theta_bot_with_all_cuts_hh",theta_bot_before_rotation, energy_bot, weight);
 
-	trackHistos->Fill2DHisto("thetaTop_vs_thetaBot_with_numTracks_numHits_timeDiff_p_pDiff_pSum_cuts_hh",theta_bot_before_rotation, theta_top_before_rotation, weight);
+	trackHistos->Fill2DHisto("thetaTop_vs_thetaBot_with_all_cuts_hh",theta_bot_before_rotation, theta_top_before_rotation, weight);
 
-	trackHistos->Fill1DHisto("diffE_top_with_numTracks_numHits_timeDiff_p_pDiff_pSum_cuts_h", energy_diff_top, weight);
-	trackHistos->Fill1DHisto("diffE_bot_with_numTracks_numHits_timeDiff_p_pDiff_pSum_cuts_h", energy_diff_bot, weight);
+	trackHistos->Fill1DHisto("diffE_top_with_all_cuts_h", energy_diff_top, weight);
+	trackHistos->Fill1DHisto("diffE_bot_with_all_cuts_h", energy_diff_bot, weight);
 
-	trackHistos->Fill1DHisto("diffTheta_top_with_numTracks_numHits_timeDiff_p_pDiff_pSum_cuts_h", theta_diff_top, weight);
-	trackHistos->Fill1DHisto("diffTheta_bot_with_numTracks_numHits_timeDiff_p_pDiff_pSum_cuts_h", theta_diff_bot, weight);
+	trackHistos->Fill1DHisto("diffTheta_top_with_all_cuts_h", theta_diff_top, weight);
+	trackHistos->Fill1DHisto("diffTheta_bot_with_all_cuts_h", theta_diff_bot, weight);
 
-	trackHistos->Fill2DHisto("pxSum_vs_pySum_with_numTracks_numHits_timeDiff_p_pDiff_pSum_cuts_hh", vector_neg_top_beam_rotation->Px() + vector_neg_bot_beam_rotation->Px(), vector_neg_top_beam_rotation->Py() + vector_neg_bot_beam_rotation->Py(), weight);
+	trackHistos->Fill2DHisto("pxSum_vs_pySum_with_all_cuts_hh", vector_neg_top_beam_rotation->Px() + vector_neg_bot_beam_rotation->Px(), vector_neg_top_beam_rotation->Py() + vector_neg_bot_beam_rotation->Py(), weight);
 
-	trackHistos->Fill2DHisto("diffETop_vs_diffEBot_with_numTracks_numHits_timeDiff_p_pDiff_pSum_cuts_hh", energy_diff_top, energy_diff_bot, weight);
+	trackHistos->Fill2DHisto("diffETop_vs_diffEBot_with_all_cuts_hh", energy_diff_top, energy_diff_bot, weight);
 
-	trackHistos->Fill2DHisto("diffThetaTop_vs_diffThetaBot_with_numTracks_numHits_timeDiff_p_pDiff_pSum_cuts_hh", theta_diff_top, theta_diff_bot, weight);
+	trackHistos->Fill2DHisto("diffThetaTop_vs_diffThetaBot_with_all_cuts_hh", theta_diff_top, theta_diff_bot, weight);
 
 
 	trackSelector->clearSelector();
@@ -428,7 +446,7 @@ void MollerAnaProcessor::finalize() {
     trackHistos->saveHistos(outF_,dirNameTrack);
     outF_->cd(dirNameTrack.c_str());
     trackSelector->getCutFlowHisto()->Write();
-    _reg_tracks_from_vertices->writeTree();
+    //_reg_tracks_from_vertices->writeTree();
 
     outF_->Close();
 }
