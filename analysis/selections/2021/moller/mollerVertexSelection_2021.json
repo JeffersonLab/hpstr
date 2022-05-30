@@ -20,12 +20,12 @@
         "info" : "p^{+} Track n2d Hits >=10"
     },      
     "pTop_lt" : {
-        "cut" : 1.44,
+        "cut" : 2.8,
         "id"  : 4,
         "info" : "p_{top} < 75%E_{beam} [GeV]"
     },
 	"pBot_lt" : {
-        "cut" : 1.44,
+        "cut" : 2.8,
         "id"  : 5,
         "info" : "p_{bot} < 75%E_{beam} [GeV]"
     },
@@ -40,14 +40,14 @@
         "info" : "| pDiff | < 0.8 [GeV]"
     },    
  	"pSum_gt" : {
-        "cut" : 1.6,
+        "cut" : 3.4,
         "id"  : 8,
-        "info" : "pSum > 1.6 [GeV]"
+        "info" : "pSum > 3.4 [GeV]"
     },    
 	"pSum_lt" : {
-        "cut" : 2.2,
+        "cut" : 4,
         "id"  : 9,
-        "info" : "pSum < 2.2 [GeV]"
+        "info" : "pSum < 4 [GeV]"
     },
 	"time_diff_lt" : {
         "cut" : 4,
