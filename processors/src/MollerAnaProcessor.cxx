@@ -152,6 +152,11 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
 	int num_tracks_neg_top = tracks_neg_top.size();
 	int num_tracks_neg_bot = tracks_neg_bot.size();
 
+	trackHistos->Fill1DHisto("num_tracks_pos_top_h", num_tracks_pos_top, weight);
+	trackHistos->Fill1DHisto("num_tracks_pos_bot_h", num_tracks_pos_bot, weight);
+	trackHistos->Fill1DHisto("num_tracks_neg_top_h", num_tracks_neg_top, weight);
+	trackHistos->Fill1DHisto("num_tracks_neg_bot_h", num_tracks_neg_bot, weight);
+
 	for(int i = 0; i< num_tracks_neg_top; i++){
 		Track track_neg_top = tracks_neg_top[i];
 	    std::vector<double> mom_neg_top = track_neg_top.getMomentum();
@@ -177,12 +182,6 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
 			trackHistos->Fill2DHisto("im_vs_pSum_no_cuts_hh", pSum, im, weight);
 		}
 	}
-
-
-	trackHistos->Fill1DHisto("num_tracks_pos_top_h", num_tracks_pos_top, weight);
-	trackHistos->Fill1DHisto("num_tracks_pos_bot_h", num_tracks_pos_bot, weight);
-	trackHistos->Fill1DHisto("num_tracks_neg_top_h", num_tracks_neg_top, weight);
-	trackHistos->Fill1DHisto("num_tracks_neg_bot_h", num_tracks_neg_bot, weight);
 
 	trackSelector->getCutFlowHisto()->Fill(0.,weight);
 
@@ -257,25 +256,25 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
     double time_neg_top = track_neg_top.getTrackTime();
     double time_neg_bot = track_neg_bot.getTrackTime();
 
-	trackHistos->Fill1DHisto("time_tracks_neg_top_with_numTracks_numHits_cuts_h", time_neg_top, weight);
-	trackHistos->Fill1DHisto("time_tracks_neg_bot_with_numTracks_numHits_cuts_h", time_neg_bot, weight);
-	trackHistos->Fill2DHisto("time_tracks_neg_top_vs_bot_with_numTracks_numHits_cuts_hh", time_neg_top, time_neg_bot, weight);
+	trackHistos->Fill1DHisto("time_tracks_neg_top_with_numTracks_chi2ndf_numHits_cuts_h", time_neg_top, weight);
+	trackHistos->Fill1DHisto("time_tracks_neg_bot_with_numTracks_chi2ndf_numHits_cuts_h", time_neg_bot, weight);
+	trackHistos->Fill2DHisto("time_tracks_neg_top_vs_bot_with_numTracks_chi2ndf_numHits_cuts_hh", time_neg_top, time_neg_bot, weight);
 
     double time_diff = time_neg_top - time_neg_bot;
-	trackHistos->Fill1DHisto("time_diff_with_numTracks_numHits_cuts_h", time_diff, weight);
+	trackHistos->Fill1DHisto("time_diff_with_numTracks_chi2ndf_numHits_cuts_h", time_diff, weight);
 
 	if (!trackSelector->passCutLt("time_diff_lt", fabs(time_diff),weight)){
 		trackSelector->clearSelector();
 		return true;
 	}
 
-	trackHistos->Fill1DHisto("p_tracks_neg_top_with_numTracks_numHits_timeDiff_cuts_h", p_neg_top, weight);
-	trackHistos->Fill1DHisto("p_tracks_neg_bot_with_numTracks_numHits_timeDiff_cuts_h", p_neg_bot, weight);
-	trackHistos->Fill1DHisto("pDiff_with_numTracks_numHits_timeDiff_cuts_h", pDiff, weight);
+	trackHistos->Fill1DHisto("p_tracks_neg_top_with_numTracks_chi2ndf_numHits_timeDiff_cuts_h", p_neg_top, weight);
+	trackHistos->Fill1DHisto("p_tracks_neg_bot_with_numTracks_chi2ndf_numHits_timeDiff_cuts_h", p_neg_bot, weight);
+	trackHistos->Fill1DHisto("pDiff_with_numTracks_chi2ndf_numHits_timeDiff_cuts_h", pDiff, weight);
 
-	trackHistos->Fill1DHisto("pSum_with_numTracks_numHits_timeDiff_cuts_h", pSum, weight);
-	trackHistos->Fill1DHisto("im_with_numTracks_numHits_timeDiff_cuts_h", im, weight);
-	trackHistos->Fill2DHisto("im_vs_pSum_with_numTracks_numHits_timeDiff_cuts_hh", pSum, im, weight);
+	trackHistos->Fill1DHisto("pSum_with_numTracks_chi2ndf_numHits_timeDiff_cuts_h", pSum, weight);
+	trackHistos->Fill1DHisto("im_with_numTracks_chi2ndf_numHits_timeDiff_cuts_h", im, weight);
+	trackHistos->Fill2DHisto("im_vs_pSum_with_numTracks_chi2ndf_numHits_timeDiff_cuts_hh", pSum, im, weight);
 
     if (!trackSelector->passCutLt("pTop_lt", p_neg_top, weight)){
     	trackSelector->clearSelector();
@@ -292,9 +291,9 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
     	return true;
     }
 
-	trackHistos->Fill1DHisto("pSum_with_numTracks_numHits_timeDiff_p_pDiff_cuts_h", pSum, weight);
-	trackHistos->Fill1DHisto("im_with_numTracks_numHits_timeDiff_p_pDiff_cuts_h", im, weight);
-	trackHistos->Fill2DHisto("im_vs_pSum_with_numTracks_numHits_timeDiff_p_pDiff_cuts_hh", pSum, im, weight);
+	trackHistos->Fill1DHisto("pSum_with_numTracks_chi2ndf_numHits_timeDiff_p_pDiff_cuts_h", pSum, weight);
+	trackHistos->Fill1DHisto("im_with_numTracks_chi2ndf_numHits_timeDiff_p_pDiff_cuts_h", im, weight);
+	trackHistos->Fill2DHisto("im_vs_pSum_with_numTracks_chi2ndf_numHits_timeDiff_p_pDiff_cuts_hh", pSum, im, weight);
 
 /*
 	_reg_tracks_from_vertices->addToVector("momTop", mom_neg_top[0]);

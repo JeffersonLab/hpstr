@@ -1,60 +1,4 @@
 {
-	"pSum_no_cuts_h" : {
-        "bins"   : 100,
-        "minX"   : 0,
-        "maxX"   : 2.5,
-        "xtitle" : "pSum [GeV]",
-        "ytitle" : "Neg. track pairs"
-    },
-    
-	"im_no_cuts_h" : {
-        "bins"   : 100,
-        "minX"   : 0,
-        "maxX"   : 0.1,
-        "xtitle" : "Invariant mass [GeV/c^{2}]",
-        "ytitle" : "Neg. track pairs"
-    },
-    
-	"im_vs_pSum_no_cuts_hh" : {
-        "binsX" : 100,
-        "minX" : 0,
-        "maxX" : 2.5,
-        "binsY" : 100,
-        "minY" : 0,
-        "maxY" : 0.1,
-		"xtitle" : "pSum [GeV]",
-        "ytitle" : "Invariant mass [GeV/c^{2}]"
-    },
-          
-    
-	"pSum_with_numTracks_cuts_h" : {
-        "bins"   : 100,
-        "minX"   : 0,
-        "maxX"   : 2.5,
-        "xtitle" : "pSum [GeV]",
-        "ytitle" : "Neg. track pairs"
-    },
-    
-	"im_with_numTracks_cuts_h" : {
-        "bins"   : 100,
-        "minX"   : 0,
-        "maxX"   : 0.1,
-        "xtitle" : "Invariant mass [GeV/c^{2}]",
-        "ytitle" : "Neg. track pairs"
-    },
-    
- 	"im_vs_pSum_with_numTracks_cuts_hh" : {
-        "binsX" : 100,
-        "minX" : 0,
-        "maxX" : 2.5,
-        "binsY" : 100,
-        "minY" : 0,
-        "maxY" : 0.1,
-		"xtitle" : "pSum [GeV]",
-        "ytitle" : "Invariant mass [GeV/c^{2}]"
-    },
-	
-	
 	"chi2ndf_pos_top_h" : {
         "bins" : 100,
         "minX" : 0,
@@ -184,7 +128,62 @@
         "ytitle" : "Tracks"
     },
     
-	"time_tracks_neg_top_with_numTracks_numHits_cuts_h" : {
+	"pSum_no_cuts_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 2.5,
+        "xtitle" : "pSum [GeV]",
+        "ytitle" : "Neg. track pairs"
+    },
+    
+	"im_no_cuts_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.1,
+        "xtitle" : "Invariant mass [GeV/c^{2}]",
+        "ytitle" : "Neg. track pairs"
+    },
+    
+	"im_vs_pSum_no_cuts_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 2.5,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 0.1,
+		"xtitle" : "pSum [GeV]",
+        "ytitle" : "Invariant mass [GeV/c^{2}]"
+    },
+          
+    
+	"pSum_with_numTracks_cuts_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 2.5,
+        "xtitle" : "pSum [GeV]",
+        "ytitle" : "Neg. track pairs"
+    },
+    
+	"im_with_numTracks_cuts_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 0.1,
+        "xtitle" : "Invariant mass [GeV/c^{2}]",
+        "ytitle" : "Neg. track pairs"
+    },
+    
+ 	"im_vs_pSum_with_numTracks_cuts_hh" : {
+        "binsX" : 100,
+        "minX" : 0,
+        "maxX" : 2.5,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 0.1,
+		"xtitle" : "pSum [GeV]",
+        "ytitle" : "Invariant mass [GeV/c^{2}]"
+    },	
+    
+	"time_tracks_neg_top_with_numTracks_chi2ndf_numHits_cuts_h" : {
         "bins"   : 100,
         "minX"   : -100,
         "maxX"   : 100,
@@ -192,7 +191,7 @@
         "ytitle" : "Tracks"
     },
     
-	"time_tracks_neg_bot_with_numTracks_numHits_cuts_h" : {
+	"time_tracks_neg_bot_with_numTracks_chi2ndf_numHits_cuts_h" : {
         "bins"   : 100,
         "minX"   : -100,
         "maxX"   : 100,
@@ -200,7 +199,7 @@
         "ytitle" : "Tracks"
     },
     
-	"time_tracks_neg_top_vs_bot_with_numTracks_numHits_cuts_hh" : {
+	"time_tracks_neg_top_vs_bot_with_numTracks_chi2ndf_numHits_cuts_hh" : {
         "binsX" : 100,
         "minX" : -100,
         "maxX" : 100,
@@ -212,7 +211,7 @@
     },
     
     
-	"time_diff_with_numTracks_numHits_cuts_h" : {
+	"time_diff_with_numTracks_chi2ndf_numHits_cuts_h" : {
         "bins"   : 100,
         "minX"   : -20,
         "maxX"   : 20,
@@ -220,7 +219,7 @@
         "ytitle" : "Negative track pairs"
     },
     
-	"p_tracks_neg_top_with_numTracks_numHits_timeDiff_cuts_h" : {
+	"p_tracks_neg_top_with_numTracks_chi2ndf_numHits_timeDiff_cuts_h" : {
         "bins"   : 100,
         "minX"   : 0,
         "maxX"   : 6,
@@ -228,7 +227,7 @@
         "ytitle" : "Tracks"
     },
     
-	"p_tracks_neg_bot_with_numTracks_numHits_timeDiff_cuts_h" : {
+	"p_tracks_neg_bot_with_numTracks_chi2ndf_numHits_timeDiff_cuts_h" : {
         "bins"   : 100,
         "minX"   : 0,
         "maxX"   : 6,
@@ -236,7 +235,7 @@
         "ytitle" : "Tracks"
     },
     
-	"pDiff_with_numTracks_numHits_timeDiff_cuts_h" : {
+	"pDiff_with_numTracks_chi2ndf_numHits_timeDiff_cuts_h" : {
         "bins"   : 100,
         "minX"   : -6,
         "maxX"   : 6,
@@ -244,7 +243,7 @@
         "ytitle" : "Neg. track pairs"
     },
     
-	"pSum_with_numTracks_numHits_timeDiff_cuts_h" : {
+	"pSum_with_numTracks_chi2ndf_numHits_timeDiff_cuts_h" : {
         "bins"   : 100,
         "minX"   : 0,
         "maxX"   : 2.5,
@@ -252,7 +251,7 @@
         "ytitle" : "Neg. track pairs"
     },
     
-	"im_with_numTracks_numHits_timeDiff_cuts_h" : {
+	"im_with_numTracks_chi2ndf_numHits_timeDiff_cuts_h" : {
         "bins"   : 100,
         "minX"   : 0,
         "maxX"   : 0.1,
@@ -260,7 +259,7 @@
         "ytitle" : "Neg. track pairs"
     },
     
-	"im_vs_pSum_with_numTracks_numHits_timeDiff_cuts_hh" : {
+	"im_vs_pSum_with_numTracks_chi2ndf_numHits_timeDiff_cuts_hh" : {
         "binsX" : 100,
         "minX" : 0,
         "maxX" : 2.5,
@@ -271,7 +270,7 @@
         "ytitle" : "Invariant mass [GeV/c^{2}]"
     },
     
-	"pSum_with_numTracks_numHits_timeDiff_p_pDiff_cuts_h" : {
+	"pSum_with_numTracks_chi2ndf_numHits_timeDiff_p_pDiff_cuts_h" : {
         "bins"   : 100,
         "minX"   : 0,
         "maxX"   : 2.5,
@@ -279,7 +278,7 @@
         "ytitle" : "Neg. track pairs"
     },
     
-	"im_with_numTracks_numHits_timeDiff_p_pDiff_cuts_h" : {
+	"im_with_numTracks_chi2ndf_numHits_timeDiff_p_pDiff_cuts_h" : {
         "bins"   : 100,
         "minX"   : 0,
         "maxX"   : 0.1,
@@ -287,7 +286,7 @@
         "ytitle" : "Neg. track pairs"
     },
     
-	"im_vs_pSum_with_numTracks_numHits_timeDiff_p_pDiff_cuts_hh" : {
+	"im_vs_pSum_with_numTracks_chi2ndf_numHits_timeDiff_p_pDiff_cuts_hh" : {
         "binsX" : 100,
         "minX" : 0,
         "maxX" : 2.5,
