@@ -74,14 +74,14 @@ void MollerAnaProcessor::initialize(TTree* tree) {
 
     // Kinematic equations
     // E vs theta
-    func_E_vs_theta_before_roation = new TF1("func_E_vs_theta_before_roation", "[0]/(1 + 2*[0]/[1]*sin(x/2.)*sin(x/2.))", 0, 1);
-    func_E_vs_theta_before_roation->SetParameter(0, beamE_);
-    func_E_vs_theta_before_roation->SetParameter(1, ELECTRONMASS);
+    func_E_vs_theta_after_roation = new TF1("func_E_vs_theta_after_roation", "[0]/(1 + 2*[0]/[1]*sin(x/2.)*sin(x/2.))", 0, 1);
+    func_E_vs_theta_after_roation->SetParameter(0, beamE_);
+    func_E_vs_theta_after_roation->SetParameter(1, ELECTRONMASS);
 
     // theta1 vs theta2
-    func_theta1_vs_theta2_before_roation = new TF1("func_theta1_vs_theta2_before_roation", "2*asin([1]/2./[0] * 1/sin(x/2.))", 0, 1);
-    func_theta1_vs_theta2_before_roation->SetParameter(0, beamE_);
-    func_theta1_vs_theta2_before_roation->SetParameter(1, ELECTRONMASS);
+    func_theta1_vs_theta2_after_roation = new TF1("func_theta1_vs_theta2_after_roation", "2*asin([1]/2./[0] * 1/sin(x/2.))", 0, 1);
+    func_theta1_vs_theta2_after_roation->SetParameter(0, beamE_);
+    func_theta1_vs_theta2_after_roation->SetParameter(1, ELECTRONMASS);
 
 
     /*
@@ -334,41 +334,41 @@ bool MollerAnaProcessor::process(IEvent* ievent) {
 	trackHistos->Fill2DHisto("im_vs_pSum_with_all_cuts_hh", pSum, im, weight);
 
 
-	double px_neg_top_before_beam_rotation = vect_neg_top->Px() * cos(ROTATIONANGLEAROUNDY) - vect_neg_top->Pz() * sin(ROTATIONANGLEAROUNDY);
-	double pz_neg_top_before_beam_rotation = vect_neg_top->Px() * sin(ROTATIONANGLEAROUNDY) + vect_neg_top->Pz() * cos(ROTATIONANGLEAROUNDY);
-	double py_neg_top_before_beam_rotation = vect_neg_top->Py();
+	double px_neg_top_after_beam_rotation = vect_neg_top->Px() * cos(ROTATIONANGLEAROUNDY) - vect_neg_top->Pz() * sin(ROTATIONANGLEAROUNDY);
+	double pz_neg_top_after_beam_rotation = vect_neg_top->Px() * sin(ROTATIONANGLEAROUNDY) + vect_neg_top->Pz() * cos(ROTATIONANGLEAROUNDY);
+	double py_neg_top_after_beam_rotation = vect_neg_top->Py();
 
-	double px_neg_bot_before_beam_rotation = vect_neg_bot->Px() * cos(ROTATIONANGLEAROUNDY) - vect_neg_bot->Pz() * sin(ROTATIONANGLEAROUNDY);
-	double pz_neg_bot_before_beam_rotation = vect_neg_bot->Px() * sin(ROTATIONANGLEAROUNDY) + vect_neg_bot->Pz() * cos(ROTATIONANGLEAROUNDY);
-	double py_neg_bot_before_beam_rotation = vect_neg_bot->Py();
+	double px_neg_bot_after_beam_rotation = vect_neg_bot->Px() * cos(ROTATIONANGLEAROUNDY) - vect_neg_bot->Pz() * sin(ROTATIONANGLEAROUNDY);
+	double pz_neg_bot_after_beam_rotation = vect_neg_bot->Px() * sin(ROTATIONANGLEAROUNDY) + vect_neg_bot->Pz() * cos(ROTATIONANGLEAROUNDY);
+	double py_neg_bot_after_beam_rotation = vect_neg_bot->Py();
 
 	TLorentzVector* vector_neg_top_beam_rotation = new TLorentzVector();
-	vector_neg_top_beam_rotation->SetXYZM(px_neg_top_before_beam_rotation, py_neg_top_before_beam_rotation, pz_neg_top_before_beam_rotation, ELECTRONMASS);
+	vector_neg_top_beam_rotation->SetXYZM(px_neg_top_after_beam_rotation, py_neg_top_after_beam_rotation, pz_neg_top_after_beam_rotation, ELECTRONMASS);
 
 	TLorentzVector* vector_neg_bot_beam_rotation = new TLorentzVector();
-	vector_neg_bot_beam_rotation->SetXYZM(px_neg_bot_before_beam_rotation, py_neg_bot_before_beam_rotation, pz_neg_bot_before_beam_rotation, ELECTRONMASS);
+	vector_neg_bot_beam_rotation->SetXYZM(px_neg_bot_after_beam_rotation, py_neg_bot_after_beam_rotation, pz_neg_bot_after_beam_rotation, ELECTRONMASS);
 
 	double energy_top = vector_neg_top_beam_rotation->E();
 	double energy_bot = vector_neg_bot_beam_rotation->E();
 
-	double theta_top_before_rotation = vector_neg_top_beam_rotation->Theta();
-	double theta_bot_before_rotation = vector_neg_bot_beam_rotation->Theta();
+	double theta_top_after_rotation = vector_neg_top_beam_rotation->Theta();
+	double theta_bot_after_rotation = vector_neg_bot_beam_rotation->Theta();
 
-	double energy_calcuated_top = func_E_vs_theta_before_roation->Eval(theta_top_before_rotation);
-	double energy_calcuated_bot = func_E_vs_theta_before_roation->Eval(theta_bot_before_rotation);
+	double energy_calcuated_top = func_E_vs_theta_after_roation->Eval(theta_top_after_rotation);
+	double energy_calcuated_bot = func_E_vs_theta_after_roation->Eval(theta_bot_after_rotation);
 
-	double theta_top_calculated_before_rotation = func_theta1_vs_theta2_before_roation->Eval(theta_bot_before_rotation);
-	double theta_bot_calculated_before_rotation = func_theta1_vs_theta2_before_roation->Eval(theta_top_before_rotation);
+	double theta_top_calculated_after_rotation = func_theta1_vs_theta2_after_roation->Eval(theta_bot_after_rotation);
+	double theta_bot_calculated_after_rotation = func_theta1_vs_theta2_after_roation->Eval(theta_top_after_rotation);
 
 	double energy_diff_top = energy_top - energy_calcuated_top;
 	double energy_diff_bot = energy_bot - energy_calcuated_bot;
-	double theta_diff_top = theta_top_before_rotation - theta_top_calculated_before_rotation;
-	double theta_diff_bot = theta_bot_before_rotation - theta_bot_calculated_before_rotation;
+	double theta_diff_top = theta_top_after_rotation - theta_top_calculated_after_rotation;
+	double theta_diff_bot = theta_bot_after_rotation - theta_bot_calculated_after_rotation;
 
-	trackHistos->Fill2DHisto("energy_vs_theta_top_with_all_cuts_hh",theta_top_before_rotation, energy_top, weight);
-	trackHistos->Fill2DHisto("energy_vs_theta_bot_with_all_cuts_hh",theta_bot_before_rotation, energy_bot, weight);
+	trackHistos->Fill2DHisto("energy_vs_theta_top_with_all_cuts_hh",theta_top_after_rotation, energy_top, weight);
+	trackHistos->Fill2DHisto("energy_vs_theta_bot_with_all_cuts_hh",theta_bot_after_rotation, energy_bot, weight);
 
-	trackHistos->Fill2DHisto("thetaTop_vs_thetaBot_with_all_cuts_hh",theta_bot_before_rotation, theta_top_before_rotation, weight);
+	trackHistos->Fill2DHisto("thetaTop_vs_thetaBot_with_all_cuts_hh",theta_bot_after_rotation, theta_top_after_rotation, weight);
 
 	trackHistos->Fill1DHisto("diffE_top_with_all_cuts_h", energy_diff_top, weight);
 	trackHistos->Fill1DHisto("diffE_bot_with_all_cuts_h", energy_diff_bot, weight);

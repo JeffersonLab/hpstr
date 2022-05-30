@@ -375,7 +375,7 @@
         "binsY" : 100,
         "minY" : 0,
         "maxY" : 4,
-		"xtitle" : "#theta before rotation [rad]",
+		"xtitle" : "#theta after rotation [rad]",
         "ytitle" : "Energy [GeV]"
     }, 
 	"energy_vs_theta_bot_with_all_cuts_hh" : {
@@ -385,7 +385,7 @@
         "binsY" : 100,
         "minY" : 0,
         "maxY" : 4,
-		"xtitle" : "#theta before rotation [rad]",
+		"xtitle" : "#theta after rotation [rad]",
         "ytitle" : "Energy [GeV]"
     }, 
     
@@ -396,8 +396,8 @@
         "binsY" : 100,
         "minY" : 0,
         "maxY" : 0.1,
-		"xtitle" : "#theta_{bot} before rotation [rad]",
-        "ytitle" : "#theta_{top} before rotation [rad]"
+		"xtitle" : "#theta_{bot} after rotation [rad]",
+        "ytitle" : "#theta_{top} after rotation [rad]"
     },
     
 	"diffE_top_with_all_cuts_h" : {
@@ -418,14 +418,14 @@
 		"bins"   : 100,
         "minX"   : -0.025,
         "maxX"   : 0.025,
-        "xtitle" : "#Delta#theta before rotation [rad]",
+        "xtitle" : "#Delta#theta after rotation [rad]",
         "ytitle" : "Tracks"
     },
 	"diffTheta_bot_with_all_cuts_h" : {
 		"bins"   : 100,
         "minX"   : -0.025,
         "maxX"   : 0.025,
-        "xtitle" : "#Delta#theta before rotation [rad]",
+        "xtitle" : "#Delta#theta after rotation [rad]",
         "ytitle" : "Tracks"
     },
     

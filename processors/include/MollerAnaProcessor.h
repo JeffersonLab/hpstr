@@ -93,8 +93,8 @@ class MollerAnaProcessor : public Processor {
         std::shared_ptr<AnaHelpers> _ah;
 
         // Kinematic equations
-        TF1* func_E_vs_theta_before_roation;
-        TF1* func_theta1_vs_theta2_before_roation;
+        TF1* func_E_vs_theta_after_roation;
+        TF1* func_theta1_vs_theta2_after_roation;
 
         // save a tree for information of tracks from vertices
         //std::shared_ptr<FlatTupleMaker> _reg_tracks_from_vertices;
