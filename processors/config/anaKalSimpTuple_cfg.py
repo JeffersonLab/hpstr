@@ -11,7 +11,8 @@ options = base.parser.parse_args()
 infile = options.inFilename
 outfile = options.outFilename
 
-outfile = outfile.split(".root")[0]+"_"+options.tracking+".root"
+#outfile = outfile.split(".root")[0]+"_"+options.tracking+".root"
+outfile = outfile.split(".root")[0]+".root"
 
 print('Input file: %s' % infile)
 print('Output file: %s' % outfile)

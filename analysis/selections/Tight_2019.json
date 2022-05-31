@@ -10,9 +10,9 @@
         "info" : "L1L1"
     },
     "pSum_gt"  : {
-        "cut"  : 2.5,
+        "cut"  : 0.5,
         "id"   : 2,
-        "info" : "P_{e^{-}} + P_{e^{+}}>2.5 GeV"
+        "info" : "P_{e^{-}} + P_{e^{+}}>0.5 GeV"
     },
     "nVtxs_eq" : {
         "cut"  : 1,
