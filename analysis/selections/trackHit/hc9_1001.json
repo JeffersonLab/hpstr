@@ -1,0 +1,12 @@
+{
+    "hitCode_lt"  : {
+        "cut"  : 9.0,
+        "id"   : 0,
+        "info" : "< hit code 1001"
+    },
+    "hitCode_gt"  : {
+        "cut"  : 9.0,
+        "id"   : 1,
+        "info" : "> hit code 1001"
+    }
+}

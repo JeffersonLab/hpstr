@@ -315,10 +315,20 @@ RawSvtHit* utils::buildRawHit(EVENT::TrackerRawData* rawTracker_hit,
             (double)hit_fit_param->getDoubleVal(3), 
             (double)hit_fit_param->getDoubleVal(4)
         };
+        rawHit->setFit(fit_params, 0);
+        if(rawTracker_hit_fits_list.size()>1)
+        {
+            hit_fit_param = static_cast<IMPL::LCGenericObjectImpl*>(rawTracker_hit_fits_list.at(1));
+            fit_params[0] = (double)hit_fit_param->getDoubleVal(0); 
+            fit_params[1] = (double)hit_fit_param->getDoubleVal(1); 
+            fit_params[2] = (double)hit_fit_param->getDoubleVal(2); 
+            fit_params[3] = (double)hit_fit_param->getDoubleVal(3); 
+            fit_params[4] = (double)hit_fit_param->getDoubleVal(4);
 
-        rawHit->setFit(fit_params);
-
-    }//raw svt hits
+            rawHit->setFit(fit_params, 1);
+        }
+        rawHit->setFitN(rawTracker_hit_fits_list.size());
+    }//raw svt hit fits
 
     return rawHit;
 
@@ -360,8 +370,8 @@ TrackerHit* utils::buildTrackerHit(IMPL::TrackerHitImpl* lc_tracker_hit, bool ro
 
 //type 0 rotatedHelicalHit  type 1 SiClusterHit
 bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit, 
-                              IMPL::TrackerHitImpl* lc_tracker_hit,
-                              EVENT::LCCollection* raw_svt_fits, std::vector<RawSvtHit*>* rawHits,int type) {
+        IMPL::TrackerHitImpl* lc_tracker_hit,
+        EVENT::LCCollection* raw_svt_fits, std::vector<RawSvtHit*>* rawHits,int type) {
 
     if (!tracker_hit || !lc_tracker_hit)
         return false;
@@ -379,7 +389,7 @@ bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit,
 
         //TODO useless to build all of it?
         RawSvtHit* rawHit = buildRawHit(static_cast<EVENT::TrackerRawData*>(lc_rawHits.at(irh)),raw_svt_fits); 
-        rawcharge += rawHit->getAmp();
+        rawcharge += rawHit->getAmp(0);
         int currentHitVolume = rawHit->getModule() % 2 ? 1 : 0;
         int currentHitLayer  = (rawHit->getLayer() - 1 ) / 2;
         if (type == 1) 

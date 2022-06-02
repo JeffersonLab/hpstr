@@ -31,12 +31,11 @@ void HpsEventFile::close() {
 
 bool HpsEventFile::nextEvent() {
   
-  ++entry_;
-  if (entry_>maxEntries_)
+  if (entry_ > maxEntries_ - 1)
     return false;
 
   //TODO Really don't like having the tree associated to the event object. Should be associated to the EventFile.
-  intree_->GetEntry(entry_);
+  intree_->GetEntry(entry_++);
   
   return true;
 } 

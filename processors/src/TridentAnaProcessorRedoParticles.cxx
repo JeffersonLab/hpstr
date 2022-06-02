@@ -545,8 +545,9 @@ bool TridentAnaProcessorRedoParticles::process(IEvent* ievent) {
     
     /*   Ok...now do the WAB analysis  */ 
     
-    std::vector<WABCand> selected_wab;
-    
+    //    std::vector<WABCand> selected_wab;
+    if(debug_)  std::cout<<"Number of electrons = "<<goodElectrons.size()<<"; number of photons = "<<goodPhotons.size()<<std::endl;
+
     for(auto ele: goodElectrons){      
       Track* ele_trk=ele.second;
       CalCluster* ele_clu=ele.first;
@@ -597,7 +598,7 @@ bool TridentAnaProcessorRedoParticles::process(IEvent* ievent) {
 	  _reg_WAB_histos[region]->Fill1DTrack(ele.second,weight,"ele_");
 	  _reg_WAB_histos[region]->FillWABHistos(ele,gamma,weight);
 	  _reg_WAB_histos[region]->FillTrackClusterHistos(ele,photPair,timeOffset_,weight);	  
-	  //	  std::cout<<"Filled WAB Histos"<<std::endl;
+          std::cout<<"Filled WAB Histos"<<std::endl;
 	}
       }      
     }

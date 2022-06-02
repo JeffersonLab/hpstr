@@ -24,9 +24,13 @@ void ClusterOnTrackAnaProcessor::initialize(TTree* tree) {
 
     if(debug_ > 0) std::cout << "Loading: " << baselineFits_ << " " << baselineRun_ << std::endl;
     if (!baselineFits_.empty() && !baselineRun_.empty()) {
+        /*
         clusterHistos->setBaselineFitsDir(baselineFits_);
         if (!clusterHistos->LoadBaselineHistos(baselineRun_))
-            std::cout<<"WARNING: baselines not loaded in Cluster on Track histos."<<std::endl;}
+            std::cout<<"WARNING: baselines not loaded in Cluster on Track histos."<<std::endl;
+            */
+        clusterHistos->LoadOfflineBaselines(baselineFits_);
+    }
     if(debug_ > 0) std::cout << "Loaded: " << baselineFits_ << " " << baselineRun_ << std::endl;
 
     clusterHistos->Define1DHistos();
@@ -35,6 +39,7 @@ void ClusterOnTrackAnaProcessor::initialize(TTree* tree) {
 
     //TODO Change this.
     tree_->SetBranchAddress(trkColl_.c_str(),&tracks_,&btracks_);
+    if(debug_ > 0) std::cout << "Branch changed to " << trkColl_ << std::endl;
 
 }
 

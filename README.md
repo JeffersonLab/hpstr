@@ -14,8 +14,10 @@ Hpstr can be installed on the following operating systems with some adjustments 
 
 ### Prerequisites
 
-Hpstr depends on LCIO (2.12.01) https://github.com/iLCSoft/LCIO and ROOT (6.19.02) https://root.cern.ch/ 
+Hpstr depends on [LCIO](https://github.com/JeffersonLab/hps-lcio) and [ROOT](https://root.cern.ch/)
 So a full working installation of those packages is necessary before trying to checkout and install hpstr. 
+
+Python 3 is also required (Python 2 is no longer supported).
 
 ### Example: Installation on Ubuntu 20.4 from scratch
 
@@ -47,7 +49,8 @@ sudo apt-get install libxpm-dev
 sudo apt-get install libxft-dev
 sudo apt-get install libxext-dev
 ```
-7. Help CMake finding python  (this is for Python3, use python-dev for 2.7)
+
+7. Help CMake finding python 
 ```bash
 sudo apt-get install python3-dev
 ```
@@ -63,22 +66,22 @@ cd sw
 9. Install LCIO 
 
 ```bash
-mkdir LCIO
-cd LCIO
-mkdir src build install
 cd src
-git clone https://github.com/iLCSoft/LCIO.git
-git checkout -b v02-12-01 tags/v02-12-01
-cd ../../build
-cmake -DCMAKE_INSTALL_PREFIX=../install/ ../src/LCIO/
+git clone https://github.com/JeffersonLab/hps-lcio.git
+cd hps-lcio
+mkdir build
+mkdir install
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=../install/ ..
 make install
 ```
-I suggest to make a script file to export this in the path which include (again I'll assume we are working in ~/sw, otherwise modify accordingly):
+
+It is suggested to make a script file to export this in the path which include (again I'll assume we are working in ~/sw, otherwise modify accordingly):
 
 ```bash
-export LCIO_DIR=~/sw/LCIO/install
-export LCIO_INCLUDE_DIRS=~/sw/LCIO/install/include
-export IO_LCIO_LIBRARY=~/sw/LCIO/install/lib/liblcio.so
+export LCIO_DIR=$HOME/sw/hps-lcio/install
+export LCIO_INCLUDE_DIRS=$LCIO_DIR/include
+export IO_LCIO_LIBRARY=$LCIO_DIR/lib/liblcio.so
 export LD_LIBRARY_PATH=$LCIO_DIR/lib:$LD_LIBRARY_PATH
 
 export PATH=$LCIO_DIR/bin:$PATH
@@ -120,9 +123,13 @@ make -j4 install
 
 NOTE:: On SLAC machines ```cmake3``` is needed to call cmake version 3+, you might just need to call ```cmake``` to call the right version on your machine. 
 
-To compile with debug information, just add -DCMAKE_BUILD_TYPE=Debug to the cmake3 command. 
+If you do not want hpstr to use the default python3 executable which it finds in your environment, then supply the full path to the alternate Python installation.
 
-To compile with Python3, just add -DPYTHON3=true to the cmake3 command.
+```
+-DPython3_Executable=/path/to/some/python3 
+```
+
+To compile with debug information, just add -DCMAKE_BUILD_TYPE=Debug to the cmake3 command. 
 
 After compilation it is necessary to source the setup script in the ```intall/bin``` directory by
 
@@ -165,6 +172,28 @@ hpstr recoTuple_cfg.py -i <inLcioFile> -o <outROOTFile> -t <1=isData|0=isMC> -y 
 
 where the ```-t ``` flag is used to distinguish between data and MC and ```-y``` to distinguish between 2016 and 2019. 
 There are alternative configurations that produce different ntuples and the main are listed here:
+
+### SvtBl2D Histograms production
+The configuration to produce rawSVThit 2D histogram root files from ntuples is ```anaSvtBl2D_cfg.py```. Typical usage is:
+```bash
+hpstr anaSvtBl2D_cfg.py -i <inNtupleROOTFile> -o <outROOTFile>
+Note that the output histo configurations are constructed in "/analysis/plotconfigs/svt/Svt2DBl.json"
+```
+### SvtBlFits production
+The configuration to produce baseline fits from an svtBl2D file is ```fitBL_cfg.py```. 
+To fit baselines, need to locate apv channel thresholds file used on DAQ at time of the run...for example if analyzing run 14683, need to locate
+the thresholds file 'svt_014679_thresholds2pt5sig_1pt5sigF5H1.dat', which is available on clonfarm1...
+Typical usage is:
+
+```bash
+hpstr fitBL_cfg.py -i <inSvtBl2DROOTFile> -o <outROOTFile> -l L<0..6> -thresh <svt_<run>_thresholds.dat
+```
+
+To generate baseline database file and/or thresholds file from offline baselines, run analysis script:
+Typical usage is:
+
+```python3 $HPSTR_BASE/scripts/hpsmc_evio_to_offline_baselines/offlineBaselineFitAnalysis.py -i <inputFile>.root -o <outputFile>.root -b <input_online_baselines>.dat -threshIN svt_<run>_thresholds.dat -dbo <offline_baselines_db_format>.dat -thresh <offline_thresholds_db_format>.dat
+```
 
 #### Kalman / GBL vertex performance comparison ntuples
 
@@ -227,7 +256,7 @@ The script ```run_jobPool.py``` provides a way to process multiple files with hp
 Here is an example on how to run it
 
 ```bash
-python run_jobPool.py -t hpstr -c <configFile.py>  -i <inDir> -z <isData> -o <outDir> -r <root|slcio>
+python3 run_jobPool.py -t hpstr -c <configFile.py>  -i <inDir> -z <isData> -o <outDir> -r <root|slcio>
 ```
 
 where ```-c``` is used to specify the configurationFile for hpstr, ```-i``` and ```-o``` are for specifying the input and output directory respectively, ```-z``` is to choose between data (=1) and MC simulation (=0) input type, and finally ```-r``` is needed to tell hpstr to run on root or slcio files. The script runs one hpstr process for each file on the input folder matching the required extension and places the results in the output directory. It is also possible to run with extra command flags that will be attached to the hpstr command. For example to pass ```-w GBL``` to the hpstr command, specify ```-e "-wGBL"``` to the submission script. 

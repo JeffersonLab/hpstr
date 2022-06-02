@@ -87,7 +87,7 @@ bool FinalStateParticleProcessor::process(IEvent* ievent) {
         EVENT::ReconstructedParticle* lc_fsp{nullptr};
         lc_fsp = static_cast<EVENT::ReconstructedParticle*>(lc_fsps->getElementAt(ifsp));
         if (debug_ > 0) std::cout << "FinalStateParticleProcessor: Build Particle" << std::endl;
-	Particle * fsp = utils::buildParticle(lc_fsp, gbl_kink_data, track_data);
+        Particle * fsp = utils::buildParticle(lc_fsp, gbl_kink_data, track_data);
         if (debug_ > 0) std::cout << "FinalStateParticleProcessor: Add Particle" << std::endl;
         fsps_.push_back(fsp);
     }

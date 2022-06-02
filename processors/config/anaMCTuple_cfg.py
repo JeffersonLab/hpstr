@@ -3,14 +3,27 @@ import sys
 import os
 import baseConfig as base
 
+#options = base.parser.parse_args()
+
+
+base.parser.add_argument("-w", "--tracking", type=str, dest="tracking",
+                  help="Which tracking to use to make plots", metavar="tracking", default="KF")
 options = base.parser.parse_args()
+
+
+print(options)
 
 # Use the input file to set the output file name
 infile = options.inFilename
 outfile = options.outFilename
 
+analysis = options.analysis
+
+
+
 print('Input file: %s' % infile)
 print('Output file: %s' % outfile)
+print('Analysis : %s' % analysis)
 
 p = HpstrConf.Process()
 
@@ -30,18 +43,13 @@ mcana = HpstrConf.Processor('mcana', 'MCAnaProcessor')
 #   Processor Configuration   #
 ###############################
 #RecoHitAna
-mcana.parameters["debug"] = 1
+mcana.parameters["debug"] = 0
 mcana.parameters["anaName"] = "mcAna"
 mcana.parameters["partColl"] = "MCParticle"
 mcana.parameters["trkrHitColl"] = "TrackerHits"
 mcana.parameters["ecalHitColl"] = "EcalHits"
-mcana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/findableMC.json'
-
-# Define regions
-RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/mc"
-print(RegionPath+'/mcFindablePair.json')
-mcana.parameters["regionDefinitions"] = [RegionPath+'/mcNoCuts.json',RegionPath+'/mcFindablePair.json']
-#mcana.parameters["regionDefinitions"] = ['./mcFindablePair.json']
+mcana.parameters["analysis"] = analysis
+mcana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
 
 # Sequence which the processors will run.
 p.sequence = [mcana]

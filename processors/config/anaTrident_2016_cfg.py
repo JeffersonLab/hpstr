@@ -3,7 +3,7 @@ import sys
 import os
 import baseConfig
 
-(options,args) = baseConfig.parser.parse_args()
+options = baseConfig.parser.parse_args()
 
 
 # Use the input file to set the output file name
@@ -79,11 +79,11 @@ vtxana.parameters["regionDefinitions"] = [RegionPath+'/tridentAllLayerCombos-Bot
                                           RegionPath+'/tridentL2L2-BothClusters-RadCut.json'
 ]
 
-vtxana.parameters["regionWABDefinitions"]=[RegionPath+'/wabL1ElectronCluster.json']
+vtxana.parameters["regionWABDefinitions"]=[RegionPath+'/wabAllLayerCombos.json',RegionPath+'/wabL1ElectronCluster.json']
 # Sequence which the processors will run.
 p.sequence = [vtxana]
 
-p.input_files=[infile]
+p.input_files=infile
 p.output_files = [outfile]
 
 p.printProcess()
