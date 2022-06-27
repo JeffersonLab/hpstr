@@ -83,6 +83,16 @@ class CalCluster : public TObject {
         double getTime() const { return time_; };
 
         /** 
+         * Set the ID of the calorimeter cluster. 
+         *
+         * @param id The cluster LCIO ID
+         */
+        void setID(const int id) { id_ = id; }; 
+
+        /** @return The time of the cluster. */
+        int getID() const { return id_; };
+
+        /** 
          * Set the cluster seed i.e. the hit with the highest energy.
          *
          * @param seed The cluster seed. 
@@ -101,6 +111,9 @@ class CalCluster : public TObject {
 
         /** A reference to the seed hit of this cluster. */ 
         TRef seed_hit_; 
+
+        /** The LCIO ID of the Cluster for matching purposes */ 
+        int id_{0}; 
 
         /** The number of hits composing this cluster. */
         int n_hits_{0};  

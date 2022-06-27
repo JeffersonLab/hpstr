@@ -108,6 +108,9 @@ CalCluster* utils::buildCalCluster(EVENT::Cluster* lc_cluster)
     // Set the cluster energy
     cluster->setEnergy(lc_cluster->getEnergy());
 
+    // Set the cluster ID
+    cluster->setID(lc_cluster->id());
+
     // Get the ecal hits used to create the cluster
     EVENT::CalorimeterHitVec lc_hits = lc_cluster->getCalorimeterHits();
 
