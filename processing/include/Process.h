@@ -68,6 +68,15 @@ class Process {
         }
 
         /**
+         * Set the number of events to skip.  Processing will stop 
+         * when either there are no more input events or when this number of events have been processed.
+         * @param skip_events Number of events to skip.
+         */
+        void setSkipEvents(int skip_events=-1) {
+            skip_events_ = skip_events;
+        }
+
+        /**
          * Set the maximum number of events to process.  Processing will stop 
          * when either there are no more input events or when this number of events have been processed.
          * @param event_limit Maximum number of events to process.  -1 indicates no limit.
@@ -81,6 +90,13 @@ class Process {
          */
         int getRunMode() {
             return run_mode_;
+        }
+
+        /**
+         * Get the number of events to skip.
+         */
+        int getSkipEvents() {
+            return skip_events_;
         }
 
         /** Run the LCIO to ROOT process. */
@@ -102,6 +118,9 @@ class Process {
 
         /** Run mode of the process. */
         int run_mode_{-1};
+
+        /** Number of events to skip. */
+        int skip_events_{-1};
 
         /** Limit on events to process. */
         int event_limit_{-1};

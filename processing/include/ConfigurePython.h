@@ -61,6 +61,9 @@ class ConfigurePython {
          * */
         int run_mode_{-1};
 
+        /** The number of events to skip. */
+        int skip_events_{-1};
+
         /** The maximum number of events to process, if provided in python file. */
         int event_limit_{-1};
 

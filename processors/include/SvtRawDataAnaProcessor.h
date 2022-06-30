@@ -3,13 +3,15 @@
 
 //HPSTR
 #include "HpsEvent.h"
-#include "Collections.h"
-#include "Track.h"
-#include "TrackerHit.h"
-#include "RecoHitAnaHistos.h"
-
+#include "RawSvtHit.h"
+#include "RawSvtHitHistos.h"
+#include "AnaHelpers.h"
+#include "Event.h"
+#include "BaseSelector.h"
+#include "RawSvtHitHistos.h"
 
 //ROOT
+
 #include "Processor.h"
 #include "TClonesArray.h"
 #include "TBranch.h"
@@ -41,6 +43,8 @@ class SvtRawDataAnaProcessor : public Processor {
         RawSvtHitHistos* histos{nullptr};
         std::string  histCfgFilename_;
 
+        ModuleMapper * mmapper_;
+
         //TODO Change this to be held from HPSEvent
         TTree* tree_;
         TBranch* bsvtHits_{nullptr};
@@ -49,11 +53,16 @@ class SvtRawDataAnaProcessor : public Processor {
 
         std::string anaName_{"rawSvtHitAna"};
         std::string svtHitColl_{"RotatedHelicalTrackHits"};
+        std::vector<std::string> regionSelections_;
+        std::map<std::string, std::shared_ptr<BaseSelector>> reg_selectors_;
+        std::map<std::string,std::shared_ptr<RawSvtHitHistos>> reg_histos_;
+        typedef std::map<std::string,std::shared_ptr<RawSvtHitHistos>>::iterator reg_it;
+        std::vector<std::string> regions_;
+        //I WILL FIX THIS QUICKLY JUST INPUT WHAT YOU HAVE IN THE PYTHON FILE
 
         //Debug Level
         int debug_{0};
 
 };
-
 
 #endif

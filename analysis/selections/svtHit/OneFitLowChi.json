@@ -1,0 +1,17 @@
+{
+    "getN_et"  : {
+        "cut"  : 1.0,
+        "id"   : 0,
+        "info" : "Has 1 Pulse"
+    },
+    "chi_lt" : {
+        "cut"  : 0.1,
+        "id"   : 2,
+        "info" : "#chi^{2} < 0.1"
+    },
+    "doing_time" : {
+        "cut"  : 0.0,
+        "id"   : 1,
+        "info" : "Don't We Fit Time"
+    } 
+}

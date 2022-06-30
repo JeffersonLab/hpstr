@@ -129,6 +129,7 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
 
     event_limit_ = intMember(p_process, "max_events");
     run_mode_    = intMember(p_process, "run_mode");
+    skip_events_    = intMember(p_process, "skip_events");
 
     PyObject* p_sequence = PyObject_GetAttrString(p_process, "sequence");
     if (!PyList_Check(p_sequence)) {
@@ -322,6 +323,7 @@ Process* ConfigurePython::makeProcess() {
 
     p->setEventLimit(event_limit_);
     p->setRunMode(run_mode_);
+    p->setSkipEvents(skip_events_);
 
     return p; 
 }

@@ -1,0 +1,22 @@
+{
+    "getN_et"  : {
+        "cut"  : 2.0,
+        "id"   : 0,
+        "info" : "Two Pulses"
+    },
+    "getId_gt" : {
+        "cut"  : 0.5,
+        "id"   : 1,
+        "info" : "Second Pulse"
+    },
+    "chi_gt" : {
+        "cut"  : 0.9,
+        "id"   : 2,
+        "info" : "Chi Greater Thani .9"
+    },
+    "doing_time" : {
+        "cut"  : 0.0,
+        "id"   : 3,
+        "info" : "We Don;t Fit Time"
+    }
+}

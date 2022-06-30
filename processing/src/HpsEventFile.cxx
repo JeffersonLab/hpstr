@@ -39,3 +39,11 @@ bool HpsEventFile::nextEvent() {
   
   return true;
 } 
+
+bool HpsEventFile::getEvent(int evN) {
+  
+  intree_->GetEntry(evN);
+  entry_ = evN;
+  
+  return true;
+} 

@@ -1,0 +1,17 @@
+{
+    "getN_et"  : {
+        "cut"  : 2.0,
+        "id"   : 0,
+        "info" : "Require 2 Pulses"
+    },
+    "getId_lt" : {
+        "cut"  : 0.5,
+        "id"   : 1,
+        "info" : "Only First Pulse"
+    },
+    "doing_time" : {
+        "cut"  : 0.0,
+        "id"   : 2,
+        "info" : "We Don't Fit Time"
+    }
+}

@@ -15,6 +15,7 @@ class HpsEventFile : public IEventFile {
   virtual ~HpsEventFile();
   HpsEventFile(const std::string ifilename, const std::string& ofilename);
   virtual bool nextEvent();
+  virtual bool getEvent(int evN);
   void setupEvent(IEvent* ievent);
   void resetOutputFileDir() { ofile_->cd();}
   TFile* getOutputFile() { return ofile_;}
