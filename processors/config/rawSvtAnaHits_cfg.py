@@ -56,6 +56,9 @@ rawAnaSvt.parameters["regionDefinitions"] = [RegionPath+'OneFit.json',
                                             RegionPath+'CTFitHighChi.json'
                                             ]
                                                             
+rawAnaSvt.parameters["timeref"]=0.0
+rawAnaSvt.parameters["ampref"]=0.0
+
 #os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/basicRecoHit.json'
 #os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/Svt2DBl.json'
 

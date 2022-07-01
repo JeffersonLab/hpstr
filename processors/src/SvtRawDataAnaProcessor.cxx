@@ -22,6 +22,8 @@ void SvtRawDataAnaProcessor::configure(const ParameterSet& parameters) {
         svtHitColl_     = parameters.getString("trkrHitColl");
         histCfgFilename_ = parameters.getString("histCfg");
         regionSelections_ = parameters.getVString("regionDefinitions");
+        TimeRef_ = parameters.getDouble("timeref");
+        AmpRef_ = parameters.getDouble("ampref");
     }
     catch (std::runtime_error& error)
     {
@@ -48,7 +50,7 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
         reg_selectors_[regname]->setDebug(debug_);
         reg_selectors_[regname]->LoadSelection();
 
-        reg_histos_[regname] = std::make_shared<RawSvtHitHistos>(regname);
+        reg_histos_[regname] = std::make_shared<RawSvtHitHistos>(regname,mmapper_);
         reg_histos_[regname]->loadHistoConfig(histCfgFilename_);
         //reg_histos_[regname]->doTrackComparisonPlots(false);
         reg_histos_[regname]->DefineHistos();
@@ -59,11 +61,12 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
 
 bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
     //std::cout<<"hello5"<<std::endl;
-    Float_t TimeRef=0.0;
-    Float_t AmpRef=0.0;
+    Float_t TimeRef=TimeRef_;
+    Float_t AmpRef=AmpRef_;
+    double weight = 1.;
     for (unsigned int i_reg = 0; i_reg < regionSelections_.size(); i_reg++) 
     {
-        for(unsigned int i = 0; i < nhits; i++){
+        for(unsigned int i = 0; i < svtHits_->size(); i++){
             RawSvtHit * thisHit = svtHits_->at(i);
             int getNum = thisHit->getFitN();
             for(unsigned int J=0; J<getNum; J++){
@@ -73,16 +76,16 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("chi_lt",thisHit->getChiSq(J),weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutGt("chi_gt",thisHit->getChiSq(J),weight))){continue;}
                 if(reg_selectors_[regions_[i_reg]]->passCutEq("doing_ct",1.0,weight)){
-                    if(!(((thisHit->getT0(J))-TimeRef)**2<(thisHit->getT0((J+1)%2)-TimeRef)**2)){continue;}          
+                    if(!(std::abs((thisHit->getT0(J))-TimeRef)<std::abs(thisHit->getT0((J+1)%2)-TimeRef))){continue;}          
                 }
                 if(reg_selectors_[regions_[i_reg]]->passCutEq("doing_ft",1.0,weight)){
-                    if((((thisHit->getT0(J))-TimeRef)**2<(thisHit->getT0((J+1)%2)-TimeRef)**2)){continue;}          
+                    if((std::abs((thisHit->getT0(J))-TimeRef)<std::abs(thisHit->getT0((J+1)%2)-TimeRef))){continue;}          
                 }
                  if(reg_selectors_[regions_[i_reg]]->passCutEq("doing_sa",1.0,weight)){
-                    if(!(((thisHit->getAmp(J))-AmpRef)**2<(thisHit->getAmp((J+1)%2)-AmpRef)**2)){continue;}          
+                    if(!(std::abs((thisHit->getAmp(J))-AmpRef)<std::abs(thisHit->getAmp((J+1)%2)-AmpRef))){continue;}          
                 }
                 if(reg_selectors_[regions_[i_reg]]->passCutEq("doing_la",1.0,weight)){
-                    if((((thisHit->getAmp(J))-AmpRef)**2<(thisHit->getAmp((J+1)%2)-AmpRef)**2)){continue;}          
+                    if((std::abs((thisHit->getAmp(J))-AmpRef)<std::abs(thisHit->getAmp((J+1)%2)-AmpRef))){continue;}          
                 }
                 Float_t TimeDiff=-42069.0;
                 Float_t AmpDiff=-42069.0;
@@ -92,7 +95,40 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 }
                 reg_histos_[regions_[i_reg]]->FillHistograms(thisHit,weight,J,i,TimeDiff,AmpDiff);
             }
-            //std::string regname = AnaHelpers::getFileName(regionSelections_[i_reg],false);
+        }
+    }
+    return true;
+}
+void SvtRawDataAnaProcessor::finalize() {
+
+    outF_->cd();
+    for(reg_it it = reg_histos_.begin(); it!=reg_histos_.end(); ++it){
+        std::string dirName = it->first;
+        (it->second)->saveHistos(outF_,dirName);
+        outF_->cd(dirName.c_str());
+        //reg_selectors_[it->first]->getCutFlowHisto()->Scale(.5);
+        //reg_selectors_[it->first]->getCutFlowHisto()->Write();
+    }
+    return;
+}
+    //std::cout<<"gotToHEREANDFUCKINGEXPLODED"<<std::endl;
+    //histos->saveHistosSVT(outF_, anaName_.c_str());
+    //delete histos;
+    //histos = nullptr;
+    //
+    //trkHistos_->saveHistos(outF_,trkCollName_);
+    //delete trkHistos_;
+    //trkHistos_ = nullptr;
+    //if (trkSelector_)
+    //    trkSelector_->getCutFlowHisto()->Write();
+
+    //if (truthHistos_) {
+    //    truthHistos_->saveHistos(outF_,trkCollName_+"_truth");
+    //    delete truthHistos_;
+    //    truthHistos_ = nullptr;
+    //}
+
+        //std::string regname = AnaHelpers::getFileName(regionSelections_[i_reg],false);
         //std::cout << "Setting up region:: " << regname << std::endl;
         //reg_selectors_[regname] = std::make_shared<BaseSelector>(regname, regionSelections_[i_reg]);
         //reg_selectors_[regname]->setDebug(debug_);
@@ -105,36 +141,5 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
 
         //regions_.push_back(regname);
             //reg_histos->FillHistograms(svtHits_,1.);
-    }
-    return true;
-   
-}
-void SvtRawDataAnaProcessor::finalize() {
-
-    //outF_->cd();
-    //for(reg_it it = reg_histos_.begin(); it!=reg_histos_.end(); ++it){
-    //    std::string dirName = it->first;
-    //    (it->second)->saveHistos(outF_,dirName);
-    //    outF_->cd(dirName.c_str());
-    //    reg_selectors_[it->first]->getCutFlowHisto()->Scale(.5);
-    //    reg_selectors_[it->first]->getCutFlowHisto()->Write();
-    //}
-    //std::cout<<"gotToHEREANDFUCKINGEXPLODED"<<std::endl;
-    //histos->saveHistosSVT(outF_, anaName_.c_str());
-    //delete histos;
-    //histos = nullptr;
-    //
-    trkHistos_->saveHistos(outF_,trkCollName_);
-    delete trkHistos_;
-    trkHistos_ = nullptr;
-    if (trkSelector_)
-        trkSelector_->getCutFlowHisto()->Write();
-
-    if (truthHistos_) {
-        truthHistos_->saveHistos(outF_,trkCollName_+"_truth");
-        delete truthHistos_;
-        truthHistos_ = nullptr;
-    }
-}
 
 DECLARE_PROCESSOR(SvtRawDataAnaProcessor);

@@ -42,7 +42,8 @@ class SvtRawDataAnaProcessor : public Processor {
         //Containers to hold histogrammer info
         RawSvtHitHistos* histos{nullptr};
         std::string  histCfgFilename_;
-
+        Float_t TimeRef_;
+        Float_t AmpRef_;
         ModuleMapper * mmapper_;
 
         //TODO Change this to be held from HPSEvent
