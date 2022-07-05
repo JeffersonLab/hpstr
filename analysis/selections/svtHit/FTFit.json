@@ -5,7 +5,7 @@
         "info" : "How Many Pulses"
     },
     "doing_ft" : {
-        "cut"  : 1.0,
+        "cut"  : 3.0,
         "id"   : 1,
         "info" : "Do We Fit Farther Time"
     }   

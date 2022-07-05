@@ -61,7 +61,7 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
 
 bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
     //std::cout<<"hello5"<<std::endl;
-    Float_t TimeRef=0.0;
+    Float_t TimeRef=-30.0;
     Float_t AmpRef=0.0;
     double weight = 1.;
     for (unsigned int i_reg = 0; i_reg < regionSelections_.size(); i_reg++) 
@@ -77,12 +77,13 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("chi_lt",thisHit->getChiSq(J),weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutGt("chi_gt",thisHit->getChiSq(J),weight))){continue;}
                 if(reg_selectors_[regions_[i_reg]]->passCutEq("doing_ct",1.0,weight)){
-                    if(!(std::abs((thisHit->getT0(J))-TimeRef)<std::abs(thisHit->getT0((J+1)%2)-TimeRef))){continue;}          
+                    if(!(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)<(thisHit->getT0((J+1)%2)-TimeRef)*(thisHit->getT0((J+1)%2)-TimeRef))){continue;}
+                    //if(!(std::abs((thisHit->getT0(J))-TimeRef)<std::abs(thisHit->getT0((J+1)%2)-TimeRef))){continue;}          
                 }
                 //std::cout<<"hellO2"<<std::endl;
-                //if(reg_selectors_[regions_[i_reg]]->passCutEq("doing_ft",1.0,weight)){
-                //    if((std::abs((thisHit->getT0(J))-TimeRef)<std::abs(thisHit->getT0((J+1)%2)-TimeRef))){std::cout<<"hellO2"<<std::endl;continue;}          
-                //}
+                //if(reg_selectors_[regions_[i_reg]]->passCutEq("doing_ft",3.0,weight)){
+                //    if(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)<(thisHit->getT0((J+1)%2)-TimeRef)*(thisHit->getT0((J+1)%2)-TimeRef)){continue;}//std::cout<<"hellO2"<<std::endl;std::cout<<thisHit->getT0(J)<<std::endl;std::cout<<thisHit->getT0((J+1)%2)<<std::endl;continue;}          
+                //}else{std::cout<<"hell03"<<std::endl;continue;}
                 //std::cout<<"hellO3"<<std::endl;
                 // if(reg_selectors_[regions_[i_reg]]->passCutEq("doing_sa",1.0,weight)){
                 //    if(!(std::abs((thisHit->getAmp(J))-AmpRef)<std::abs(thisHit->getAmp((J+1)%2)-AmpRef))){continue;}          
