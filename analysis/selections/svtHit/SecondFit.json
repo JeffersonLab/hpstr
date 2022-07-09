@@ -5,13 +5,8 @@
         "info" : "Do 2 Pulses"
     },
     "getId_gt" : {
-        "cut"  : 0.5,
+        "cut"  : 1.0,
         "id"   : 1,
         "info" : "Get Second Pulse"
-    },
-    "doing_time" : {
-        "cut"  : 0.0,
-        "id"   : 2,
-        "info" : "We Dont Fit Time"
     }
 }

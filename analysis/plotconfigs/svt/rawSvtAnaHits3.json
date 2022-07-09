@@ -37,6 +37,19 @@
             "ytitle" : "# of Hits"
 
         },
+    "SvtHybrids_ADCcount_hh" : {
+            "prefix" : "adcC",
+            "type" : "hh",
+            "xtitle" : "T0",
+            "binsX" : 100,
+            "minX" : -200,
+            "maxX" : 200,
+            "ytitle" : "Count (Normalized)",
+            "binsY" : 100,
+            "minY" : 0,
+            "maxY" : 6
+
+        },
     "SvtHybrids_T0Err_hh" : {
             "prefix" : "toerr",
             "type" : "hh",

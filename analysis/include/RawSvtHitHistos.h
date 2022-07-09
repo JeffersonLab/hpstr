@@ -32,6 +32,7 @@ class RawSvtHitHistos : public HistoManager{
 
         int Event_number=0;
         int debug_ = 1;
+        int adcs_[6];
 
         TH1F* svtCondHisto{nullptr};  
         //std::map<std::string,std::shared_ptr<BaseSelector>> reg_selectors_;

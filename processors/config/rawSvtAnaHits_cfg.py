@@ -53,7 +53,9 @@ rawAnaSvt.parameters["regionDefinitions"] = [RegionPath+'OneFit.json',
                                             RegionPath+'SecondFitLowChi.json', 
                                             RegionPath+'SecondFitHighChi.json',
                                             RegionPath+'CTFitLowChi.json',
-                                            RegionPath+'CTFitHighChi.json'
+                                            RegionPath+'CTFitHighChi.json',
+                                            RegionPath+'FirstFitCut.json',
+                                            RegionPath+'SecondFitCut.json'
                                             ]
                                                             
 rawAnaSvt.parameters["timeref"]=0.0

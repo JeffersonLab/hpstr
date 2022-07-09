@@ -4,8 +4,8 @@
         "id"   : 0,
         "info" : "How Many Pulses"
     },
-    "doing_la" : {
-        "cut"  : 1.0,
+    "doing_ca" : {
+        "cut"  : 0.0,
         "id"   : 1,
         "info" : "Do We Fit Larger Amp"
     }   

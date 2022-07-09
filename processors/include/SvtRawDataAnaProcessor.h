@@ -45,7 +45,7 @@ class SvtRawDataAnaProcessor : public Processor {
         Float_t TimeRef_;
         Float_t AmpRef_;
         ModuleMapper * mmapper_;
-
+        int * adcs_;
         //TODO Change this to be held from HPSEvent
         TTree* tree_;
         TBranch* bsvtHits_{nullptr};

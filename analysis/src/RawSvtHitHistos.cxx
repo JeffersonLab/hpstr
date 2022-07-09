@@ -59,6 +59,21 @@ void RawSvtHitHistos::FillHistograms(RawSvtHit* rawSvtHit,float weight,int i,uns
     //std::cout<<"hello6"<<std::endl;
     histokey = swTag + "_SvtHybrids_Am_h"; 
     Fill1DHisto(histokey, rawSvtHit->getAmp(i),weight);
+    
+    histokey = swTag + "_SvtHybrids_ADCcount_hh";
+    int * adcs=rawSvtHit->getADCs();
+    int maxx = 0;
+    for(unsigned int K=0; K<6; K++){
+        if(maxx<adcs[K]){maxx=adcs[K];}
+        //Fill2DHisto(histokey,24.0*K-(rawSvtHit->getT0(i)),((Float_t)(adcs[K]))/(rawSvtHit->getAmp(i)),weight);
+    }
+    for(unsigned int K=1; K<6; K++){
+        Fill2DHisto(histokey,24.0*K-(rawSvtHit->getT0(i)),((Float_t)(adcs[K])-Float_t(adcs[0]))/(rawSvtHit->getAmp(i)),weight);
+        //((Float_t)maxx),weight);
+    }
+    //adcs_=rawSvtHit->getADCs(i);
+    //Fill1DHisto(histokey, -(rawSvthit->getT0(i)),weight);
+
     //std::cout<<"hello7"<<std::endl;
     histokey = swTag + "_SvtHybrids_T0Err_hh";
     Fill2DHisto(histokey, rawSvtHit->getT0(i), rawSvtHit->getT0err(i),weight);
@@ -71,6 +86,7 @@ void RawSvtHitHistos::FillHistograms(RawSvtHit* rawSvtHit,float weight,int i,uns
     histokey = swTag + "_SvtHybrids_AmT0Err_hh";
     //std::cout<<"hello10"<<std::endl;
     Fill2DHisto(histokey, rawSvtHit->getT0err(i), rawSvtHit->getAmpErr(i),weight);
+        
     if(TimeDiff==-42069){return;}
     else{
         histokey = swTag + "_SvtHybrids_TD_h";

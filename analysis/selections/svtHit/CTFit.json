@@ -5,7 +5,7 @@
         "info" : "How Many Pulses"
     },
     "doing_ct" : {
-        "cut"  : 1.0,
+        "cut"  : 0.0,
         "id"   : 1,
         "info" : "Do We Fit Close Time"
     }   

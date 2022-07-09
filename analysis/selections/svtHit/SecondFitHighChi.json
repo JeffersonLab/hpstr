@@ -5,7 +5,7 @@
         "info" : "Two Pulses"
     },
     "getId_gt" : {
-        "cut"  : 0.5,
+        "cut"  : 1.0,
         "id"   : 1,
         "info" : "Second Pulse"
     },

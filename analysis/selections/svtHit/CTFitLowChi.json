@@ -6,12 +6,12 @@
     },
     "chi_lt" : {
         "cut"  : 0.1,
-        "id"   : 2,
+        "id"   : 1,
         "info" : "#chi^{2} < 0.1"
     },
     "doing_ct" : {
-        "cut"  : 1.0,
-        "id"   : 1,
+        "cut"  : 0.0,
+        "id"   : 2,
         "info" : "Do We Fit Close Time"
     }   
 }

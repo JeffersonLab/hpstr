@@ -62,24 +62,51 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
 bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
     //std::cout<<"hello5"<<std::endl;
     Float_t TimeRef=-30.0;
-    Float_t AmpRef=0.0;
-    double weight = 1.;
-    for (unsigned int i_reg = 0; i_reg < regionSelections_.size(); i_reg++) 
-    {
-        for(unsigned int i = 0; i < svtHits_->size(); i++){
-            RawSvtHit * thisHit = svtHits_->at(i);
-            int getNum = thisHit->getFitN();
+    Float_t AmpRef=1000.0;
+    double weight = 1.;int count1=0;int count2=0;
+    for(unsigned int i = 0; i < svtHits_->size(); i++){ 
+        RawSvtHit * thisHit = svtHits_->at(i);
+        int getNum = thisHit->getFitN();
+        for (unsigned int i_reg = 0; i_reg < regionSelections_.size(); i_reg++){
+            //std::cout<<"\n"<<std::endl;
             for(unsigned int J=0; J<getNum; J++){
+                //std::cout<<"\ngetNum:"<<getNum<<std::endl;
+                //std::cout<<"region No:"<<regions_[i_reg]<<std::endl;
+                //std::cout<<"Which Hit:"<<J<<std::endl;
                 if(!(reg_selectors_[regions_[i_reg]]->passCutEq("getN_et",getNum,weight))){continue;}
-                if(!(reg_selectors_[regions_[i_reg]]->passCutLt("getId_lt",J,weight))){continue;} 
-                if(!(reg_selectors_[regions_[i_reg]]->passCutGt("getId_gt",J,weight))){continue;}
+                if(!(reg_selectors_[regions_[i_reg]]->passCutEq("getId_lt",J,weight))){continue;} 
+                if(!(reg_selectors_[regions_[i_reg]]->passCutEq("getId_gt",J,weight))){continue;}
+                //std::cout<<"getNum:"<<getNum<<std::endl;
+                //std::cout<<"region No:"<<regions_[i_reg]<<std::endl;
+                //std::cout<<"Which Hit:"<<J<<"\n"<<std::endl;
+ 
+                
+                //if((getNum==2)and(i_reg==0)){
+                //    if(J==0){count1+=1;std::cout<<"hello"<<std::endl;}else{count2+=1;}
+                //} 
+                //if(getNum==2){std::cout<<J<<std::endl;}
+                
                 //std::cout<<"hellO"<<std::endl;           
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("chi_lt",thisHit->getChiSq(J),weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutGt("chi_gt",thisHit->getChiSq(J),weight))){continue;}
-                if(reg_selectors_[regions_[i_reg]]->passCutEq("doing_ct",1.0,weight)){
-                    if(!(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)<(thisHit->getT0((J+1)%2)-TimeRef)*(thisHit->getT0((J+1)%2)-TimeRef))){continue;}
-                    //if(!(std::abs((thisHit->getT0(J))-TimeRef)<std::abs(thisHit->getT0((J+1)%2)-TimeRef))){continue;}          
-                }
+                if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ct",(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)<(thisHit->getT0((J+1)%2)-TimeRef)*(thisHit->getT0((J+1)%2)-TimeRef)),weight))){continue;}
+                if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ca",(((thisHit->getAmp(J))-AmpRef)*((thisHit->getAmp(J))-AmpRef)<(thisHit->getAmp((J+1)%2)-AmpRef)*(thisHit->getAmp((J+1)%2)-AmpRef)),weight))){continue;}
+
+                //if(!(std::abs((thisHit->getT0(J))-TimeRef)<std::abs(thisHit->getT0((J+1)%2)-TimeRef))){continue;}          
+                //if(!(reg_selectors_[regions_[i_reg]]->passCutEq("doing_ca",1.0,weight))){continue;}else{
+                //if(!(std::abs((thisHit->getT0(J))-TimeRef)<std::abs(thisHit->getT0((J+1)%2)-TimeRef))){continue;}          
+                if(!(reg_selectors_[regions_[i_reg]]->passCutLt("amp_lt",thisHit->getAmp(0),weight))){continue;}
+                if(!(reg_selectors_[regions_[i_reg]]->passCutGt("amp_gt",thisHit->getAmp(0),weight))){continue;}
+                //std::cout<<"getNum:"<<getNum<<std::endl;
+                //std::cout<<"region No:"<<regions_[i_reg]<<std::endl;
+                //std::cout<<"Which Hit:"<<J<<"\n"<<std::endl;
+ 
+                //if((thisHit->getAmp(J)>900)and(getNum==2)){
+                //    adcs_=thisHit->getADCs();
+                //    for(unsigned int K=0; K<6; K++){
+                //        std::cout<<adcs_[K]<<std::endl;
+                //    }
+                //}
                 //std::cout<<"hellO2"<<std::endl;
                 //if(reg_selectors_[regions_[i_reg]]->passCutEq("doing_ft",3.0,weight)){
                 //    if(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)<(thisHit->getT0((J+1)%2)-TimeRef)*(thisHit->getT0((J+1)%2)-TimeRef)){continue;}//std::cout<<"hellO2"<<std::endl;std::cout<<thisHit->getT0(J)<<std::endl;std::cout<<thisHit->getT0((J+1)%2)<<std::endl;continue;}          
@@ -104,6 +131,8 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
             }
         }
     }
+    //std::cout<<count1<<std::endl;
+    //std::cout<<count2<<std::endl;
     return true;
 }
 void SvtRawDataAnaProcessor::finalize() {

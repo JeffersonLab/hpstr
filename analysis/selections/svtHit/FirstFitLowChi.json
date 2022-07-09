@@ -5,7 +5,7 @@
         "info" : "Has 2 pulses"
     },
     "getId_lt" : {
-        "cut"  : 0.5,
+        "cut"  : 0.0,
         "id"   : 1,
         "info" : "First Pulse"
     },
