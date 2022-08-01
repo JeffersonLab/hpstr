@@ -97,6 +97,8 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 //if(!(std::abs((thisHit->getT0(J))-TimeRef)<std::abs(thisHit->getT0((J+1)%2)-TimeRef))){continue;}          
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("amp_lt",thisHit->getAmp(0),weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutGt("amp_gt",thisHit->getAmp(0),weight))){continue;}
+                if(!(reg_selectors_[regions_[i_reg]]->passCutLt("amp2_lt",thisHit->getAmp(0),weight))){continue;}
+                if(!(reg_selectors_[regions_[i_reg]]->passCutEq("channel", (thisHit->getStrip())%8,weight))){continue;} 
                 //std::cout<<"getNum:"<<getNum<<std::endl;
                 //std::cout<<"region No:"<<regions_[i_reg]<<std::endl;
                 //std::cout<<"Which Hit:"<<J<<"\n"<<std::endl;
