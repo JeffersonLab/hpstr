@@ -82,8 +82,8 @@ void EcalTimingAnaProcessor::initialize(TTree* tree) {
     }
 
     // init cut functions
-    ecalClusterTimeCutTop = new TF1("funcTop", "40.72 + 0.002095 * x - 0.000000387 * x * x", 0, 5000);
-    ecalClusterTimeCutBot = new TF1("funcTop", "30.31 + 0.003204 * x - 0.0000007116 * x * x", 0, 5000);
+    ecalClusterTimeCutTop = new TF1("funcTop", "39.03 + 0.001498 * x - 0.000000174 * x * x", 0, 5000);
+    ecalClusterTimeCutBot = new TF1("funcTop", "31.66 + 0.002803 * x - 0.00000055 * x * x", 0, 5000);
 }
 
 bool EcalTimingAnaProcessor::process(IEvent* ievent) {

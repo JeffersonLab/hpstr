@@ -37,8 +37,8 @@ ecalTimingAna.parameters["anaName"] = "ecalTimingAna"
 ecalTimingAna.parameters["VTPColl"] = "VTPBank"
 ecalTimingAna.parameters["TSColl"] = "TSBank"
 ecalTimingAna.parameters["ecalClusColl"] = "RecoEcalClusters"
-ecalTimingAna.parameters["trkColl"] = "GBLTracks"
-ecalTimingAna.parameters["vtxColl"] = "TargetConstrainedV0Vertices"
+ecalTimingAna.parameters["trkColl"] = "KalmanFullTracks"
+ecalTimingAna.parameters["vtxColl"] = "TargetConstrainedV0Vertices_KF"
 ecalTimingAna.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/ecalTiming/ecalTiming.json'
 ecalTimingAna.parameters["beamE"] = base.beamE[str(options.year)]
 
