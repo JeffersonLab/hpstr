@@ -8,8 +8,8 @@
 #include <fstream>
 
 Apv25RoXtalkAnaProcessor::Apv25RoXtalkAnaProcessor(const std::string& name, Process& process) : Processor(name,process){}
-//TODO CHECK THIS DESTRUCTOR
-Apv25RoXtalkAnaProcessor::~Apv25RoXtalkAnaProcessor(){}
+
+Apv25RoXtalkAnaProcessor::~Apv25RoXtalkAnaProcessor(){} //!< \todo CHECK THIS DESTRUCTOR
 
 
 void Apv25RoXtalkAnaProcessor::configure(const ParameterSet& parameters) {

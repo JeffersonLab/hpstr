@@ -15,24 +15,59 @@
 
 class TTree;
 
-
+/**
+ * @brief Insert description here.
+ * more details
+ */
 class ClusterOnTrackAnaProcessor : public Processor {
 
     public:
-
+        /**
+         * @brief Constructor
+         * 
+         * @param name 
+         * @param process 
+         */
         ClusterOnTrackAnaProcessor(const std::string& name, Process& process);
 
         ~ClusterOnTrackAnaProcessor();
 
+        /**
+         * @brief description
+         * 
+         * @param ievent 
+         * @return true 
+         * @return false 
+         */
         virtual bool process(IEvent* ievent);
 
+        /**
+         * @brief description
+         * 
+         * @param tree 
+         */
         virtual void initialize(TTree* tree);
 
+        /**
+         * @brief description
+         * 
+         */
         virtual void finalize();
 
+        /**
+         * @brief Configure using given parameters.
+         * 
+         * @param parameters The parameters used for configuration.
+         */
         virtual void configure(const ParameterSet& parameters);
 
-        void setBaselineFits(const std::string& baselineFits,const std::string& baselineRun){
+        /**
+         * @brief Set baseline fits
+         * 
+         * @param baselineFits 
+         * @param baselineRun 
+         */
+        void setBaselineFits(const std::string& baselineFits, const std::string& baselineRun){
             baselineFits_ = baselineFits;
             baselineRun_  = baselineRun;
         };
@@ -40,24 +75,22 @@ class ClusterOnTrackAnaProcessor : public Processor {
 
     private:
 
-        ClusterHistos* clusterHistos{nullptr};
-
-        //TODO Change this to be held from HPSEvent
+        ClusterHistos* clusterHistos{nullptr}; //!< description
+        
+        /** \todo Change this to be held from HPSEvent */
         TTree* tree_;
 
-        //Containers for adding to the TTree
-        std::vector<Track*> *tracks_{};
-        TBranch*      btracks_{nullptr};
-        std::vector<TrackerHit*> hits_{};
-        TBranch*      bhits_{nullptr};
+        std::vector<Track*> *tracks_{}; //!< Containers for adding to the TTree
+        TBranch*      btracks_{nullptr}; //!< description
+        std::vector<TrackerHit*> hits_{}; //!< description
+        TBranch*      bhits_{nullptr}; //!< description
 
-        std::string anaName_{"hitsOnTrack_2D"};
-        std::string trkColl_{"GBLTracks"};
-        std::string baselineFits_{""};
-        std::string baselineRun_{""};
+        std::string anaName_{"hitsOnTrack_2D"}; //!< description
+        std::string trkColl_{"GBLTracks"}; //!< description
+        std::string baselineFits_{""}; //!< description
+        std::string baselineRun_{""}; //!< description
 
-        //Debug Level
-        int debug_{0};
+        int debug_{0}; //!< Debug Level
 
 };
 
