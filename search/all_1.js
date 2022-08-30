@@ -45,6 +45,6 @@ var searchData=
   ['apvana_68',['apvana',['../namespaceconfig_1_1anaApv25xTalk__cfg.html#a25c10fd131144994e5bd4f3f1875b1b5',1,'config::anaApv25xTalk_cfg']]],
   ['apvchannelmap_5f_69',['apvChannelMap_',['../classModuleMapper.html#ae08d444bc1d7668a9079ebf30f3f3e62',1,'ModuleMapper']]],
   ['args_70',['args',['../namespaceconfig_1_1vtxhProcess.html#a8187411843a6284ffb964ef3fb9fcab3',1,'config::vtxhProcess']]],
-  ['asymptotic_5flimit_5f_71',['asymptotic_limit_',['../classBhMassResSystematicsProcessor.html#aecfe482d49262352e9a22b2bfadf8df7',1,'BhMassResSystematicsProcessor::asymptotic_limit_()'],['../classBhToysHistoProcessor.html#aecfe482d49262352e9a22b2bfadf8df7',1,'BhToysHistoProcessor::asymptotic_limit_()'],['../classBumpHunter.html#aecfe482d49262352e9a22b2bfadf8df7',1,'BumpHunter::asymptotic_limit_()']]],
+  ['asymptotic_5flimit_5f_71',['asymptotic_limit_',['../classBumpHunter.html#aecfe482d49262352e9a22b2bfadf8df7',1,'BumpHunter::asymptotic_limit_()'],['../classBhMassResSystematicsProcessor.html#aecfe482d49262352e9a22b2bfadf8df7',1,'BhMassResSystematicsProcessor::asymptotic_limit_()'],['../classBhToysHistoProcessor.html#aecfe482d49262352e9a22b2bfadf8df7',1,'BhToysHistoProcessor::asymptotic_limit_()']]],
   ['axes_72',['Axes',['../classHistoManager.html#a1e601159702368cdcfc37ca35ea08d0b',1,'HistoManager']]]
 ];

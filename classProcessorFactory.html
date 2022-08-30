@@ -85,15 +85,19 @@ Classes</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a9a60e85f97753b2356bd9f7c17ec1266"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classProcessorFactory.html#a9a60e85f97753b2356bd9f7c17ec1266">registerProcessor</a> (const std::string &amp;classname, <a class="el" href="Processor_8h.html#aee0ccc717039088e01e2ff4ffdfb5f87">ProcessorMaker</a> *maker)</td></tr>
+<tr class="memdesc:a9a60e85f97753b2356bd9f7c17ec1266"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register the event processor.  <a href="classProcessorFactory.html#a9a60e85f97753b2356bd9f7c17ec1266">More...</a><br /></td></tr>
 <tr class="separator:a9a60e85f97753b2356bd9f7c17ec1266"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae8221d81ffe82fc25f4a487acc3a5d6e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classProcessor.html">Processor</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classProcessorFactory.html#ae8221d81ffe82fc25f4a487acc3a5d6e">createProcessor</a> (const std::string &amp;classname, const std::string &amp;module_instance_name, <a class="el" href="classProcess.html">Process</a> &amp;process)</td></tr>
+<tr class="memdesc:ae8221d81ffe82fc25f4a487acc3a5d6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make an event processor.  <a href="classProcessorFactory.html#ae8221d81ffe82fc25f4a487acc3a5d6e">More...</a><br /></td></tr>
 <tr class="separator:ae8221d81ffe82fc25f4a487acc3a5d6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ce00476d9aff8f090a45637507ced71"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classProcessorFactory.html#a1ce00476d9aff8f090a45637507ced71">loadLibrary</a> (const std::string &amp;libname)</td></tr>
+<tr class="memdesc:a1ce00476d9aff8f090a45637507ced71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load a library.  <a href="classProcessorFactory.html#a1ce00476d9aff8f090a45637507ced71">More...</a><br /></td></tr>
 <tr class="separator:a1ce00476d9aff8f090a45637507ced71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a1fae130e930e3d3b2804f0e2186aa32b"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classProcessorFactory.html">ProcessorFactory</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classProcessorFactory.html#a1fae130e930e3d3b2804f0e2186aa32b">instance</a> ()</td></tr>
+<tr class="memdesc:a1fae130e930e3d3b2804f0e2186aa32b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the factory instance.  <a href="classProcessorFactory.html#a1fae130e930e3d3b2804f0e2186aa32b">More...</a><br /></td></tr>
 <tr class="separator:a1fae130e930e3d3b2804f0e2186aa32b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
@@ -110,7 +114,7 @@ Private Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="ProcessorFactory_8h_source.html#l00023">23</a> of file <a class="el" href="ProcessorFactory_8h_source.html">ProcessorFactory.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessorFactory_8h_source.html#l00022">22</a> of file <a class="el" href="ProcessorFactory_8h_source.html">ProcessorFactory.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a77d4bd6d0c6baf6de30bdf123464c2e9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a77d4bd6d0c6baf6de30bdf123464c2e9">&#9670;&nbsp;</a></span>ProcessorFactory()</h2>
@@ -136,7 +140,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Constructor </p>
 
-<p class="definition">Definition at line <a class="el" href="ProcessorFactory_8h_source.html#l00070">70</a> of file <a class="el" href="ProcessorFactory_8h_source.html">ProcessorFactory.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessorFactory_8h_source.html#l00071">71</a> of file <a class="el" href="ProcessorFactory_8h_source.html">ProcessorFactory.h</a>.</p>
 
 </div>
 </div>
@@ -172,11 +176,18 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Get the classes associated with the processor. </p><dl class="section return"><dt>Returns</dt><dd>a vector of strings corresponding to processor classes. Make an event processor. </dd></dl>
+
+<p>Make an event processor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">classname</td><td>Class name of event processor. </td></tr>
-    <tr><td class="paramname">module_instance_name</td><td>TODO. </td></tr>
+    <tr><td class="paramname">module_instance_name</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000008">Todo:</a></b></dt><dd>add description. </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
     <tr><td class="paramname">process</td><td>The process type to create. </td></tr>
   </table>
   </dd>
@@ -208,10 +219,12 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Get the factory instance. </p><dl class="section return"><dt>Returns</dt><dd>The factory. </dd></dl>
+
+<p>Get the factory instance. </p>
+<dl class="section return"><dt>Returns</dt><dd>The factory. </dd></dl>
 <p>Factory for creating the <a class="el" href="classProcessor.html" title="Base class for all event processing components.">Processor</a> object.</p>
 
-<p class="definition">Definition at line <a class="el" href="ProcessorFactory_8h_source.html#l00031">31</a> of file <a class="el" href="ProcessorFactory_8h_source.html">ProcessorFactory.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessorFactory_8h_source.html#l00030">30</a> of file <a class="el" href="ProcessorFactory_8h_source.html">ProcessorFactory.h</a>.</p>
 
 </div>
 </div>
@@ -230,7 +243,9 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Load a library. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Load a library. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">libname</td><td>The library to load. </td></tr>
   </table>
@@ -266,10 +281,11 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Register the event processor. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Register the event processor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">classname</td><td>The name of the class associated with processor. </td></tr>
-    <tr><td class="paramname">classtype</td><td>The type of class associated with processor. </td></tr>
     <tr><td class="paramname">maker</td><td>TODO. </td></tr>
   </table>
   </dd>
@@ -326,7 +342,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>A map of names to processor containers. </p>
 
-<p class="definition">Definition at line <a class="el" href="ProcessorFactory_8h_source.html#l00082">82</a> of file <a class="el" href="ProcessorFactory_8h_source.html">ProcessorFactory.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessorFactory_8h_source.html#l00083">83</a> of file <a class="el" href="ProcessorFactory_8h_source.html">ProcessorFactory.h</a>.</p>
 
 </div>
 </div>

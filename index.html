@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.17"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>hpstr: Main Page</title>
+<title>hpstr: Heavy Photon Search Toolkit for Reconstruction</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -61,11 +61,68 @@ $(function() {
 </iframe>
 </div>
 
-<div class="header">
+<div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">hpstr Documentation</div>  </div>
+<div class="title">Heavy Photon Search Toolkit for Reconstruction </div>  </div>
 </div><!--header-->
 <div class="contents">
+<div class="textblock"><p>The Heavy Photon Search Toolkit for Reconstruction (hpstr) provides an interface to physics data from the HPS experiment saved in the LCIO format and converts it into an ROOT based format. It also provides tools which can be used to analyze the ROOT format of the data.</p>
+<p>The code base can be found at <a href="https://github.com/JeffersonLab/hpstr">https://github.com/JeffersonLab/hpstr</a>.</p>
+<dl class="section user"><dt></dt><dd>Any questions can be directed to <a href="#" onclick="location.href='mai'+'lto:'+'bra'+'vo'+'@sl'+'ac'+'.st'+'an'+'for'+'d.'+'edu'; return false;">Cameron Bravo</a>.</dd></dl>
+<h1><a class="anchor" id="install"></a>
+Installation</h1>
+<p>Hpstr can be installed on the following operating systems with some adjustments depending on the tool set available for compilation.</p><ul>
+<li>MacOSX</li>
+<li>Ubuntu 20.4</li>
+<li>Centos7</li>
+</ul>
+<h2><a class="anchor" id="prerec"></a>
+Prerequisites</h2>
+<ul>
+<li><a href="https://github.com/JeffersonLab/hps-lcio">LCIO</a></li>
+<li><a href="https://root.cern.ch/">ROOT</a></li>
+<li>Python 3 (Python 2 is no longer supported)</li>
+</ul>
+<h2><a class="anchor" id="steps"></a>
+Installation Steps</h2>
+<p>After installing the prerequisites, the steps for installing hpstr are as follows:</p><ul>
+<li>Checkout hpstr <div class="fragment"><div class="line">mkdir hpstr</div>
+<div class="line">cd hpstr</div>
+<div class="line">mkdir src build install</div>
+<div class="line">cd src</div>
+<div class="line">git clone git@github.com:JeffersonLab/hpstr.git</div>
+<div class="line">cd ..</div>
+</div><!-- fragment --></li>
+<li><p class="startli">Compilation </p><div class="fragment"><div class="line">cd build</div>
+<div class="line">cmake3 -DCMAKE_INSTALL_PREFIX=../install/ -DLCIO_DIR=$LCIO_DIR  ../src/hpstr/</div>
+<div class="line">make -j4 install</div>
+</div><!-- fragment --><p class="startli">NOTE: On SLAC machines <code>cmake3</code> is needed to call cmake version 3+, you might just need to call <code>cmake</code> to call the right version on your machine.</p><ul>
+<li>If you do not want hpstr to use the default python3 executable which it finds in your environment, then supply the full path to the alternate Python installation. ```bash -DPython3_Executable=/path/to/some/python3 ```</li>
+<li>To compile with debug information, just add -DCMAKE_BUILD_TYPE=Debug to the cmake3 command.</li>
+</ul>
+</li>
+<li>Setup <div class="fragment"><div class="line">source install/bin/setup.sh </div>
+</div><!-- fragment --></li>
+</ul>
+<dl class="section user"><dt></dt><dd>For more information on how to install hpstr, please refer to the <a href="https://github.com/JeffersonLab/hpstr/blob/master/README.md">hpstr README</a>.</dd></dl>
+<h1><a class="anchor" id="use"></a>
+Usage</h1>
+<p>The basic command string to run hpstr is </p><div class="fragment"><div class="line">Usage: hpstr [application arguments] {configuration_script.py} [arguments to configuration script]</div>
+<div class="line">Options:</div>
+<div class="line">-h, --help            show this help message and exit</div>
+<div class="line">-i inFilename, --inFile=inFilename</div>
+<div class="line">                   Input filename.</div>
+<div class="line">-d outDir, --outDir=outDir</div>
+<div class="line">                     Specify the output directory.</div>
+<div class="line">-o outFilename, --outFile=outFilename</div>
+<div class="line">                     Output filename.</div>
+<div class="line">-t, --isData          Type of lcio ntuple: 1=data, 0=MC</div>
+<div class="line">-y, --year            Select year of the data</div>
+<div class="line">-n, --nevents         Number of events to process</div>
+</div><!-- fragment --><p>where <code>&lt;config.py&gt;</code> is a config file (which are stored in <code>hpstr/processors/config/</code>), followed by various command line options. Different configuration files, might have specific command line options Please check each configuration file to check which options are available on top of the common ones.</p>
+<p>Hpstr can both run on LCIO files to produce ROOT ntuples, producing the hpstr event with all the objects needed for analysis, and on ROOT ntuples to produce histograms. This can be setup by using the appropriate configuration file.</p>
+<dl class="section user"><dt></dt><dd>For more information on how to run hpstr, please refer to the <a href="https://github.com/JeffersonLab/hpstr/blob/master/README.md">hpstr README</a>. </dd></dl>
+</div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -76,19 +76,25 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:aef1a39a8d1c23f7cb88e1c34797d33f9"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFunctionMath.html#aef1a39a8d1c23f7cb88e1c34797d33f9">ChebyshevFunction</a> (double x, double *p, int order)</td></tr>
+<tr class="memdesc:aef1a39a8d1c23f7cb88e1c34797d33f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines a Chebyshev polynomial function.  <a href="classFunctionMath.html#aef1a39a8d1c23f7cb88e1c34797d33f9">More...</a><br /></td></tr>
 <tr class="separator:aef1a39a8d1c23f7cb88e1c34797d33f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afeed2b9f570f469c66effe515f5e5302"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFunctionMath.html#afeed2b9f570f469c66effe515f5e5302">LegendreFunction</a> (double x, double *p, int order)</td></tr>
+<tr class="memdesc:afeed2b9f570f469c66effe515f5e5302"><td class="mdescLeft">&#160;</td><td class="mdescRight">Define a Legendre polynomial function.  <a href="classFunctionMath.html#afeed2b9f570f469c66effe515f5e5302">More...</a><br /></td></tr>
 <tr class="separator:afeed2b9f570f469c66effe515f5e5302"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1efcb2fd3b549de775a2e3df1570f93"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFunctionMath.html#af1efcb2fd3b549de775a2e3df1570f93">Gaussian</a> (double x, double amplitude, double mean, double stddev)</td></tr>
+<tr class="memdesc:af1efcb2fd3b549de775a2e3df1570f93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines a Gaussian function for signal-fitting.  <a href="classFunctionMath.html#af1efcb2fd3b549de775a2e3df1570f93">More...</a><br /></td></tr>
 <tr class="separator:af1efcb2fd3b549de775a2e3df1570f93"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af05d441e52f2d3419c8b31a2c0c19433"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFunctionMath.html#af05d441e52f2d3419c8b31a2c0c19433">CrystalBall</a> (double x, double amplitude, double mean, double stddev, double alpha, double n)</td></tr>
+<tr class="memdesc:af05d441e52f2d3419c8b31a2c0c19433"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines a crystal ball function for signal-fitting.  <a href="classFunctionMath.html#af05d441e52f2d3419c8b31a2c0c19433">More...</a><br /></td></tr>
 <tr class="separator:af05d441e52f2d3419c8b31a2c0c19433"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-methods"></a>
 Static Private Member Functions</h2></td></tr>
 <tr class="memitem:a1ff8b437f07a135164eb835964bdc381"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFunctionMath.html#a1ff8b437f07a135164eb835964bdc381">calcA</a> (double n, double absAlpha)</td></tr>
+<tr class="memdesc:a1ff8b437f07a135164eb835964bdc381"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates a portion of the crystal ball function.  <a href="classFunctionMath.html#a1ff8b437f07a135164eb835964bdc381">More...</a><br /></td></tr>
 <tr class="separator:a1ff8b437f07a135164eb835964bdc381"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c6521920c53b52a3283180b1613bb66"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFunctionMath.html#a4c6521920c53b52a3283180b1613bb66">calcB</a> (double n, double absAlpha)</td></tr>
+<tr class="memdesc:a4c6521920c53b52a3283180b1613bb66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates a portion of the crystal ball function.  <a href="classFunctionMath.html#a4c6521920c53b52a3283180b1613bb66">More...</a><br /></td></tr>
 <tr class="separator:a4c6521920c53b52a3283180b1613bb66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -128,7 +134,16 @@ Static Private Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Calculates a portion of the crystal ball function. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">n</td><td></td></tr>
+    <tr><td class="paramname">absAlpha</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>double </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="FunctionMath_8cxx_source.html#l00051">51</a> of file <a class="el" href="FunctionMath_8cxx_source.html">FunctionMath.cxx</a>.</p>
 
@@ -167,7 +182,16 @@ Static Private Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Calculates a portion of the crystal ball function. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">n</td><td></td></tr>
+    <tr><td class="paramname">absAlpha</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>double </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="FunctionMath_8cxx_source.html#l00055">55</a> of file <a class="el" href="FunctionMath_8cxx_source.html">FunctionMath.cxx</a>.</p>
 
@@ -212,7 +236,17 @@ Static Private Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Defines a Chebyshev polynomial function. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x</td><td></td></tr>
+    <tr><td class="paramname">p</td><td></td></tr>
+    <tr><td class="paramname">order</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>double </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="FunctionMath_8cxx_source.html#l00004">4</a> of file <a class="el" href="FunctionMath_8cxx_source.html">FunctionMath.cxx</a>.</p>
 
@@ -275,7 +309,20 @@ Static Private Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Defines a crystal ball function for signal-fitting. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x</td><td></td></tr>
+    <tr><td class="paramname">amplitude</td><td></td></tr>
+    <tr><td class="paramname">mean</td><td></td></tr>
+    <tr><td class="paramname">stddev</td><td></td></tr>
+    <tr><td class="paramname">alpha</td><td></td></tr>
+    <tr><td class="paramname">n</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>double </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="FunctionMath_8cxx_source.html#l00034">34</a> of file <a class="el" href="FunctionMath_8cxx_source.html">FunctionMath.cxx</a>.</p>
 
@@ -326,7 +373,18 @@ Static Private Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Defines a Gaussian function for signal-fitting. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x</td><td></td></tr>
+    <tr><td class="paramname">amplitude</td><td></td></tr>
+    <tr><td class="paramname">mean</td><td></td></tr>
+    <tr><td class="paramname">stddev</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>double </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="FunctionMath_8cxx_source.html#l00030">30</a> of file <a class="el" href="FunctionMath_8cxx_source.html">FunctionMath.cxx</a>.</p>
 
@@ -371,7 +429,17 @@ Static Private Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Define a Legendre polynomial function. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x</td><td></td></tr>
+    <tr><td class="paramname">p</td><td></td></tr>
+    <tr><td class="paramname">order</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>double </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="FunctionMath_8cxx_source.html#l00017">17</a> of file <a class="el" href="FunctionMath_8cxx_source.html">FunctionMath.cxx</a>.</p>
 

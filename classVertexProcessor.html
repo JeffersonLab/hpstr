@@ -71,6 +71,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Insert description here. more details.  
+ <a href="classVertexProcessor.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for VertexProcessor:</div>
@@ -85,52 +88,70 @@ Inheritance diagram for VertexProcessor:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:af9b2eb31ef1deaf820ace54bfc0203b4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexProcessor.html#af9b2eb31ef1deaf820ace54bfc0203b4">VertexProcessor</a> (const std::string &amp;name, <a class="el" href="classProcess.html">Process</a> &amp;<a class="el" href="classVertexProcessor.html#a0ce1dcd521fc7f9b80998c309256f888">process</a>)</td></tr>
+<tr class="memdesc:af9b2eb31ef1deaf820ace54bfc0203b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <a href="classVertexProcessor.html#af9b2eb31ef1deaf820ace54bfc0203b4">More...</a><br /></td></tr>
 <tr class="separator:af9b2eb31ef1deaf820ace54bfc0203b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac136882651bfbf8e748194b97fc48aab"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexProcessor.html#ac136882651bfbf8e748194b97fc48aab">~VertexProcessor</a> ()</td></tr>
 <tr class="separator:ac136882651bfbf8e748194b97fc48aab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a28936b5e7dad5cac4572c2e47464519e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexProcessor.html#a28936b5e7dad5cac4572c2e47464519e">configure</a> (const <a class="el" href="classParameterSet.html">ParameterSet</a> &amp;parameters)</td></tr>
+<tr class="memdesc:a28936b5e7dad5cac4572c2e47464519e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback for the <a class="el" href="classProcessor.html" title="Base class for all event processing components.">Processor</a> to configure itself from the given set of parameters.  <a href="classVertexProcessor.html#a28936b5e7dad5cac4572c2e47464519e">More...</a><br /></td></tr>
 <tr class="separator:a28936b5e7dad5cac4572c2e47464519e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c88c2e0a2a6510211fbc4155ba12fd4"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexProcessor.html#a4c88c2e0a2a6510211fbc4155ba12fd4">initialize</a> (TTree *tree)</td></tr>
+<tr class="memdesc:a4c88c2e0a2a6510211fbc4155ba12fd4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback for the <a class="el" href="classProcessor.html" title="Base class for all event processing components.">Processor</a> to take any necessary action when the processing of events starts.  <a href="classVertexProcessor.html#a4c88c2e0a2a6510211fbc4155ba12fd4">More...</a><br /></td></tr>
 <tr class="separator:a4c88c2e0a2a6510211fbc4155ba12fd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ce1dcd521fc7f9b80998c309256f888"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexProcessor.html#a0ce1dcd521fc7f9b80998c309256f888">process</a> (<a class="el" href="classIEvent.html">IEvent</a> *ievent)</td></tr>
+<tr class="memdesc:a0ce1dcd521fc7f9b80998c309256f888"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classProcess.html">Process</a> the event and put new data products into it.  <a href="classVertexProcessor.html#a0ce1dcd521fc7f9b80998c309256f888">More...</a><br /></td></tr>
 <tr class="separator:a0ce1dcd521fc7f9b80998c309256f888"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32d626626eee0bc4ade146973f6abb1c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexProcessor.html#a32d626626eee0bc4ade146973f6abb1c">finalize</a> ()</td></tr>
+<tr class="memdesc:a32d626626eee0bc4ade146973f6abb1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback for the <a class="el" href="classProcessor.html" title="Base class for all event processing components.">Processor</a> to take any necessary action when the processing of events finishes.  <a href="classVertexProcessor.html#a32d626626eee0bc4ade146973f6abb1c">More...</a><br /></td></tr>
 <tr class="separator:a32d626626eee0bc4ade146973f6abb1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classProcessor"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classProcessor')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classProcessor.html">Processor</a></td></tr>
 <tr class="memitem:a6ec73bdbbc15f1e9e66aae6185283093 inherit pub_methods_classProcessor"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classProcessor.html#a6ec73bdbbc15f1e9e66aae6185283093">Processor</a> (const std::string &amp;name, <a class="el" href="classProcess.html">Process</a> &amp;<a class="el" href="classProcessor.html#a7017ddc30577ae1cdf3941090fe9f4b4">process</a>)</td></tr>
+<tr class="memdesc:a6ec73bdbbc15f1e9e66aae6185283093 inherit pub_methods_classProcessor"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <a href="classProcessor.html#a6ec73bdbbc15f1e9e66aae6185283093">More...</a><br /></td></tr>
 <tr class="separator:a6ec73bdbbc15f1e9e66aae6185283093 inherit pub_methods_classProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a65c3b548576fc37d498468a637436ca2 inherit pub_methods_classProcessor"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classProcessor.html#a65c3b548576fc37d498468a637436ca2">~Processor</a> ()</td></tr>
 <tr class="separator:a65c3b548576fc37d498468a637436ca2 inherit pub_methods_classProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4f33390f18af07f4bb2d04645bb7f96 inherit pub_methods_classProcessor"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classProcessor.html#af4f33390f18af07f4bb2d04645bb7f96">initialize</a> (std::string inFilename, std::string outFilename)</td></tr>
+<tr class="memdesc:af4f33390f18af07f4bb2d04645bb7f96 inherit pub_methods_classProcessor"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback for the <a class="el" href="classProcessor.html" title="Base class for all event processing components.">Processor</a> to take any necessary action when the processing of events starts, such as initializing files.  <a href="classProcessor.html#af4f33390f18af07f4bb2d04645bb7f96">More...</a><br /></td></tr>
 <tr class="separator:af4f33390f18af07f4bb2d04645bb7f96 inherit pub_methods_classProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afc1d6045849356ad995040859cf9e427 inherit pub_methods_classProcessor"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classProcessor.html#afc1d6045849356ad995040859cf9e427">setFile</a> (TFile *outFile)</td></tr>
+<tr class="memdesc:afc1d6045849356ad995040859cf9e427 inherit pub_methods_classProcessor"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set output TFile for AnaProcessors.  <a href="classProcessor.html#afc1d6045849356ad995040859cf9e427">More...</a><br /></td></tr>
 <tr class="separator:afc1d6045849356ad995040859cf9e427 inherit pub_methods_classProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7017ddc30577ae1cdf3941090fe9f4b4 inherit pub_methods_classProcessor"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classProcessor.html#a7017ddc30577ae1cdf3941090fe9f4b4">process</a> ()</td></tr>
+<tr class="memdesc:a7017ddc30577ae1cdf3941090fe9f4b4 inherit pub_methods_classProcessor"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classProcess.html">Process</a> the histograms and generate analysis output.  <a href="classProcessor.html#a7017ddc30577ae1cdf3941090fe9f4b4">More...</a><br /></td></tr>
 <tr class="separator:a7017ddc30577ae1cdf3941090fe9f4b4 inherit pub_methods_classProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:a79a8a5b691d72c6554de22ba951f2bad"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classVertex.html">Vertex</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexProcessor.html#a79a8a5b691d72c6554de22ba951f2bad">vtxs_</a> {}</td></tr>
+<tr class="memdesc:a79a8a5b691d72c6554de22ba951f2bad"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="classVertexProcessor.html#a79a8a5b691d72c6554de22ba951f2bad">More...</a><br /></td></tr>
 <tr class="separator:a79a8a5b691d72c6554de22ba951f2bad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a903e32f172e95f40f9f66f785e2d2f62"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classParticle.html">Particle</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexProcessor.html#a903e32f172e95f40f9f66f785e2d2f62">parts_</a> {}</td></tr>
+<tr class="memdesc:a903e32f172e95f40f9f66f785e2d2f62"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="classVertexProcessor.html#a903e32f172e95f40f9f66f785e2d2f62">More...</a><br /></td></tr>
 <tr class="separator:a903e32f172e95f40f9f66f785e2d2f62"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8a93bc04312358ef16fe289054c5e6c"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexProcessor.html#ad8a93bc04312358ef16fe289054c5e6c">vtxCollLcio_</a> {&quot;UnconstrainedV0Vertices&quot;}</td></tr>
+<tr class="memdesc:ad8a93bc04312358ef16fe289054c5e6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="classVertexProcessor.html#ad8a93bc04312358ef16fe289054c5e6c">More...</a><br /></td></tr>
 <tr class="separator:ad8a93bc04312358ef16fe289054c5e6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a96fc3cb8b5c9fd280d5d9b7fac4d6e60"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexProcessor.html#a96fc3cb8b5c9fd280d5d9b7fac4d6e60">vtxCollRoot_</a> {&quot;UnconstrainedV0Vertices&quot;}</td></tr>
+<tr class="memdesc:a96fc3cb8b5c9fd280d5d9b7fac4d6e60"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="classVertexProcessor.html#a96fc3cb8b5c9fd280d5d9b7fac4d6e60">More...</a><br /></td></tr>
 <tr class="separator:a96fc3cb8b5c9fd280d5d9b7fac4d6e60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f9801a7d7d67fa21d6be707ea3b68af"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexProcessor.html#a0f9801a7d7d67fa21d6be707ea3b68af">partCollRoot_</a> {&quot;ParticlesOnVertices&quot;}</td></tr>
+<tr class="memdesc:a0f9801a7d7d67fa21d6be707ea3b68af"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="classVertexProcessor.html#a0f9801a7d7d67fa21d6be707ea3b68af">More...</a><br /></td></tr>
 <tr class="separator:a0f9801a7d7d67fa21d6be707ea3b68af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac4a29262912f7368cc48f6810afd1c34"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexProcessor.html#ac4a29262912f7368cc48f6810afd1c34">kinkRelCollLcio_</a> {&quot;GBLKinkDataRelations&quot;}</td></tr>
+<tr class="memdesc:ac4a29262912f7368cc48f6810afd1c34"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="classVertexProcessor.html#ac4a29262912f7368cc48f6810afd1c34">More...</a><br /></td></tr>
 <tr class="separator:ac4a29262912f7368cc48f6810afd1c34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0fb49bb9938aa822ece804ac031128b1"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexProcessor.html#a0fb49bb9938aa822ece804ac031128b1">trkRelCollLcio_</a> {&quot;TrackDataRelations&quot;}</td></tr>
+<tr class="memdesc:a0fb49bb9938aa822ece804ac031128b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="classVertexProcessor.html#a0fb49bb9938aa822ece804ac031128b1">More...</a><br /></td></tr>
 <tr class="separator:a0fb49bb9938aa822ece804ac031128b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a174d7e034f9a94c6d3d7300d72ba4d1d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexProcessor.html#a174d7e034f9a94c6d3d7300d72ba4d1d">debug_</a> {0}</td></tr>
+<tr class="memdesc:a174d7e034f9a94c6d3d7300d72ba4d1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Debug Level.  <a href="classVertexProcessor.html#a174d7e034f9a94c6d3d7300d72ba4d1d">More...</a><br /></td></tr>
 <tr class="separator:a174d7e034f9a94c6d3d7300d72ba4d1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_static_methods_classProcessor"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_classProcessor')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="classProcessor.html">Processor</a></td></tr>
 <tr class="memitem:a51c1298ba3ab80bb3fdbd058feb5a162 inherit pub_static_methods_classProcessor"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classProcessor.html#a51c1298ba3ab80bb3fdbd058feb5a162">declare</a> (const std::string &amp;classname, <a class="el" href="Processor_8h.html#aee0ccc717039088e01e2ff4ffdfb5f87">ProcessorMaker</a> *)</td></tr>
+<tr class="memdesc:a51c1298ba3ab80bb3fdbd058feb5a162 inherit pub_static_methods_classProcessor"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function which is part of the <a class="el" href="classProcessorFactory.html">ProcessorFactory</a> machinery.  <a href="classProcessor.html#a51c1298ba3ab80bb3fdbd058feb5a162">More...</a><br /></td></tr>
 <tr class="separator:a51c1298ba3ab80bb3fdbd058feb5a162 inherit pub_static_methods_classProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classProcessor"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classProcessor')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classProcessor.html">Processor</a></td></tr>
 <tr class="memitem:aff7d9b2691dcc128b3c67ed04cbbbe25 inherit pro_attribs_classProcessor"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classProcess.html">Process</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classProcessor.html#aff7d9b2691dcc128b3c67ed04cbbbe25">process_</a></td></tr>
@@ -141,7 +162,8 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a4d739cc5d335052eb9f5b2ca559b81d1 inherit pro_attribs_classProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
+<div class="textblock"><p>Insert description here. more details. </p>
+
 <p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00034">34</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af9b2eb31ef1deaf820ace54bfc0203b4"></a>
@@ -169,7 +191,8 @@ Additional Inherited Members</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Class constructor.</p>
+
+<p>Class constructor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">name</td><td>Name for this instance of the class. </td></tr>
@@ -226,9 +249,11 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Callback for the <a class="el" href="classProcessor.html" title="Base class for all event processing components.">Processor</a> to configure itself from the given set of parameters. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Callback for the <a class="el" href="classProcessor.html" title="Base class for all event processing components.">Processor</a> to configure itself from the given set of parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">parameters</td><td><a class="el" href="classParameterSet.html">ParameterSet</a> for configuration. </td></tr>
+    <tr><td class="paramname">parameters</td><td><a class="el" href="classParameterSet.html" title="description">ParameterSet</a> for configuration. </td></tr>
   </table>
   </dd>
 </dl>
@@ -261,6 +286,7 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Callback for the <a class="el" href="classProcessor.html" title="Base class for all event processing components.">Processor</a> to take any necessary action when the processing of events finishes. </p>
 
 <p>Implements <a class="el" href="classProcessor.html#a5882b5eaf11f8b1561d5bb4ecdc217c3">Processor</a>.</p>
@@ -292,7 +318,14 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Callback for the <a class="el" href="classProcessor.html" title="Base class for all event processing components.">Processor</a> to take any necessary action when the processing of events starts. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tree</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p>Implements <a class="el" href="classProcessor.html#ac35b4d4ae3c704c4f9764e8cbbb3a790">Processor</a>.</p>
 
@@ -323,9 +356,11 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p><a class="el" href="classProcess.html">Process</a> the event and put new data products into it. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p><a class="el" href="classProcess.html">Process</a> the event and put new data products into it. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">event</td><td>The <a class="el" href="classEvent.html">Event</a> to process. </td></tr>
+    <tr><td class="paramname">ievent</td><td>The <a class="el" href="classEvent.html">Event</a> to process. </td></tr>
   </table>
   </dd>
 </dl>
@@ -357,7 +392,9 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00086">86</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p>Debug Level. </p>
+
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00088">88</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -381,7 +418,9 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00082">82</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p>description </p>
+
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00085">85</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -405,7 +444,9 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00081">81</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p>description </p>
+
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00084">84</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -429,7 +470,9 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00078">78</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p>description </p>
+
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00081">81</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -453,7 +496,9 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00083">83</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p>description </p>
+
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00086">86</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -477,7 +522,9 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00079">79</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p>description </p>
+
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00082">82</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -501,7 +548,9 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00080">80</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p>description </p>
+
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00083">83</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -524,9 +573,11 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>description </p>
 <p>Containers to hold all <a class="el" href="classTrackerHit.html">TrackerHit</a> objects. </p>
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00077">77</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00080">80</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>

@@ -78,21 +78,25 @@ Inheritance diagram for EventFile:</div>
  <div class="center">
   <img src="classEventFile.png" usemap="#EventFile_map" alt=""/>
   <map id="EventFile_map" name="EventFile_map">
-<area href="classIEventFile.html" alt="IEventFile" shape="rect" coords="0,0,68,24"/>
+<area href="classIEventFile.html" title="description" alt="IEventFile" shape="rect" coords="0,0,68,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a9d36606b629aa558ee612ebb5132d1bb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEventFile.html#a9d36606b629aa558ee612ebb5132d1bb">EventFile</a> (const std::string ifilename, const std::string &amp;ofilename)</td></tr>
+<tr class="memdesc:a9d36606b629aa558ee612ebb5132d1bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="classEventFile.html#a9d36606b629aa558ee612ebb5132d1bb">More...</a><br /></td></tr>
 <tr class="separator:a9d36606b629aa558ee612ebb5132d1bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a281fa88e37b7d4da9c89200a5e037870"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEventFile.html#a281fa88e37b7d4da9c89200a5e037870">~EventFile</a> ()</td></tr>
 <tr class="separator:a281fa88e37b7d4da9c89200a5e037870"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab680f236e47b8c51fd9b0f5f7d3990cd"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEventFile.html#ab680f236e47b8c51fd9b0f5f7d3990cd">nextEvent</a> ()</td></tr>
+<tr class="memdesc:ab680f236e47b8c51fd9b0f5f7d3990cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load the next event in the file.  <a href="classEventFile.html#ab680f236e47b8c51fd9b0f5f7d3990cd">More...</a><br /></td></tr>
 <tr class="separator:ab680f236e47b8c51fd9b0f5f7d3990cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad0df82e6e0f2ff23b247ac0c2d51c85c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEventFile.html#ad0df82e6e0f2ff23b247ac0c2d51c85c">FillEvent</a> ()</td></tr>
+<tr class="memdesc:ad0df82e6e0f2ff23b247ac0c2d51c85c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persists the event.  <a href="classEventFile.html#ad0df82e6e0f2ff23b247ac0c2d51c85c">More...</a><br /></td></tr>
 <tr class="separator:ad0df82e6e0f2ff23b247ac0c2d51c85c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae62f37bd7d7e19608f31cefdce261077"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEventFile.html#ae62f37bd7d7e19608f31cefdce261077">setupEvent</a> (<a class="el" href="classIEvent.html">IEvent</a> *ievent)</td></tr>
+<tr class="memdesc:ae62f37bd7d7e19608f31cefdce261077"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setup the event object that will be used by this file.  <a href="classEventFile.html#ae62f37bd7d7e19608f31cefdce261077">More...</a><br /></td></tr>
 <tr class="separator:ae62f37bd7d7e19608f31cefdce261077"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ae591df94fc66ccb85cbb6565368bca"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEventFile.html#a5ae591df94fc66ccb85cbb6565368bca">close</a> ()</td></tr>
 <tr class="separator:a5ae591df94fc66ccb85cbb6565368bca"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -113,6 +117,7 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a32927763ee9a52f04eb76281f1eade34"><td class="memItemLeft" align="right" valign="top">IO::LCReader *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEventFile.html#a32927763ee9a52f04eb76281f1eade34">lc_reader_</a> {IOIMPL::LCFactory::getInstance()-&gt;createLCReader()}</td></tr>
 <tr class="separator:a32927763ee9a52f04eb76281f1eade34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11fcde99b3d9cdd76893160a7cd0a7a1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEventFile.html#a11fcde99b3d9cdd76893160a7cd0a7a1">entry_</a> {0}</td></tr>
+<tr class="memdesc:a11fcde99b3d9cdd76893160a7cd0a7a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="classEventFile.html#a11fcde99b3d9cdd76893160a7cd0a7a1">More...</a><br /></td></tr>
 <tr class="separator:a11fcde99b3d9cdd76893160a7cd0a7a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -144,7 +149,15 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Constructor </p>
+
+<p>Constructor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ifilename</td><td></td></tr>
+    <tr><td class="paramname">ofilename</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="EventFile_8cxx_source.html#l00009">9</a> of file <a class="el" href="EventFile_8cxx_source.html">EventFile.cxx</a>.</p>
 
@@ -172,7 +185,8 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Destructor </p>
+<p>Destructor</p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">Todo:</a></b></dt><dd>CHECK THIS </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="EventFile_8cxx_source.html#l00019">19</a> of file <a class="el" href="EventFile_8cxx_source.html">EventFile.cxx</a>.</p>
 
@@ -231,7 +245,8 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Persists the event </p>
+
+<p>Persists the event. </p>
 
 <p class="definition">Definition at line <a class="el" href="EventFile_8cxx_source.html#l00022">22</a> of file <a class="el" href="EventFile_8cxx_source.html">EventFile.cxx</a>.</p>
 
@@ -259,7 +274,8 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Load the next event in the file.</p>
+
+<p>Load the next event in the file. </p>
 <dl class="section return"><dt>Returns</dt><dd>true if an event was loaded successfully, false otherwise </dd></dl>
 
 <p>Implements <a class="el" href="classIEventFile.html#a2a37997857ff612d6b3d792b32c7cfe4">IEventFile</a>.</p>
@@ -321,7 +337,8 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Setup the event object that will be used by this file.</p>
+
+<p>Setup the event object that will be used by this file. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">event</td><td>The <a class="el" href="classEvent.html">Event</a> container. </td></tr>
@@ -356,7 +373,9 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="EventFile_8h_source.html#l00087">87</a> of file <a class="el" href="EventFile_8h_source.html">EventFile.h</a>.</p>
+<p>description </p>
+
+<p class="definition">Definition at line <a class="el" href="EventFile_8h_source.html#l00093">93</a> of file <a class="el" href="EventFile_8h_source.html">EventFile.h</a>.</p>
 
 </div>
 </div>
@@ -381,7 +400,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Additional output files, i.e. for histogramming Object used to build the HPS event model. </p>
 
-<p class="definition">Definition at line <a class="el" href="EventFile_8h_source.html#l00079">79</a> of file <a class="el" href="EventFile_8h_source.html">EventFile.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EventFile_8h_source.html#l00085">85</a> of file <a class="el" href="EventFile_8h_source.html">EventFile.h</a>.</p>
 
 </div>
 </div>
@@ -406,7 +425,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Object used to load all of current LCIO event information. </p>
 
-<p class="definition">Definition at line <a class="el" href="EventFile_8h_source.html#l00082">82</a> of file <a class="el" href="EventFile_8h_source.html">EventFile.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EventFile_8h_source.html#l00088">88</a> of file <a class="el" href="EventFile_8h_source.html">EventFile.h</a>.</p>
 
 </div>
 </div>
@@ -431,7 +450,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>LCIO reader </p>
 
-<p class="definition">Definition at line <a class="el" href="EventFile_8h_source.html#l00085">85</a> of file <a class="el" href="EventFile_8h_source.html">EventFile.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EventFile_8h_source.html#l00091">91</a> of file <a class="el" href="EventFile_8h_source.html">EventFile.h</a>.</p>
 
 </div>
 </div>
@@ -456,7 +475,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The ROOT file to which event data will be written to. </p>
 
-<p class="definition">Definition at line <a class="el" href="EventFile_8h_source.html#l00073">73</a> of file <a class="el" href="EventFile_8h_source.html">EventFile.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="EventFile_8h_source.html#l00079">79</a> of file <a class="el" href="EventFile_8h_source.html">EventFile.h</a>.</p>
 
 </div>
 </div>

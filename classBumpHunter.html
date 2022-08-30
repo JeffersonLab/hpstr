@@ -72,43 +72,62 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>description  
+ <a href="classBumpHunter.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ac69da25e77c53cd89082a3d2c1a9a3ac"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#ac69da25e77c53cd89082a3d2c1a9a3ac">BumpHunter</a> (<a class="el" href="classFitFunction.html#a4be0c1a828439ca1afb1489b055636e6">FitFunction::BkgModel</a> model, int poly_order, int toy_poly_order, int res_factor, double res_scale=1.00, bool asymptotic_limit=true)</td></tr>
+<tr class="memdesc:ac69da25e77c53cd89082a3d2c1a9a3ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor.  <a href="classBumpHunter.html#ac69da25e77c53cd89082a3d2c1a9a3ac">More...</a><br /></td></tr>
 <tr class="separator:ac69da25e77c53cd89082a3d2c1a9a3ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a70c926bc5e1c24e91380e4c4f66a7648"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#a70c926bc5e1c24e91380e4c4f66a7648">~BumpHunter</a> ()</td></tr>
 <tr class="separator:a70c926bc5e1c24e91380e4c4f66a7648"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af3c76196a1177ca2e83af12c93a17ce4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classHpsFitResult.html">HpsFitResult</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#af3c76196a1177ca2e83af12c93a17ce4">performSearch</a> (TH1 *histogram, double mass_hypothesis, bool skip_bkg_fit, bool skip_ul)</td></tr>
+<tr class="memdesc:af3c76196a1177ca2e83af12c93a17ce4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a search for a resonance at the given mass hypothesis.  <a href="classBumpHunter.html#af3c76196a1177ca2e83af12c93a17ce4">More...</a><br /></td></tr>
 <tr class="separator:af3c76196a1177ca2e83af12c93a17ce4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6049d3e75de41a68f8c1716f3be37139"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#a6049d3e75de41a68f8c1716f3be37139">initialize</a> (TH1 *histogram, double &amp;mass_hypothesis)</td></tr>
+<tr class="memdesc:a6049d3e75de41a68f8c1716f3be37139"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given the mass of interest, setup the window parameters and initialize the fit parameters.  <a href="classBumpHunter.html#a6049d3e75de41a68f8c1716f3be37139">More...</a><br /></td></tr>
 <tr class="separator:a6049d3e75de41a68f8c1716f3be37139"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d28caaba9e4221b4fa810f329ffa73c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#a3d28caaba9e4221b4fa810f329ffa73c">calculatePValue</a> (<a class="el" href="classHpsFitResult.html">HpsFitResult</a> *result)</td></tr>
+<tr class="memdesc:a3d28caaba9e4221b4fa810f329ffa73c"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="classBumpHunter.html#a3d28caaba9e4221b4fa810f329ffa73c">More...</a><br /></td></tr>
 <tr class="separator:a3d28caaba9e4221b4fa810f329ffa73c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad9a0e81edaef4ec4b2b953bbfb0758b1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#ad9a0e81edaef4ec4b2b953bbfb0758b1">fitBkgOnly</a> ()</td></tr>
+<tr class="memdesc:ad9a0e81edaef4ec4b2b953bbfb0758b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fit using a background only model.  <a href="classBumpHunter.html#ad9a0e81edaef4ec4b2b953bbfb0758b1">More...</a><br /></td></tr>
 <tr class="separator:ad9a0e81edaef4ec4b2b953bbfb0758b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad9ecd75afa199886f0a8bfed07bd4466"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#ad9ecd75afa199886f0a8bfed07bd4466">setBounds</a> (double low_bound, double high_bound)</td></tr>
+<tr class="memdesc:ad9ecd75afa199886f0a8bfed07bd4466"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the histogram bounds.  <a href="classBumpHunter.html#ad9ecd75afa199886f0a8bfed07bd4466">More...</a><br /></td></tr>
 <tr class="separator:ad9ecd75afa199886f0a8bfed07bd4466"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe2519844153ff6504e84252d22b8957"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#abe2519844153ff6504e84252d22b8957">enableDebug</a> (bool <a class="el" href="classBumpHunter.html#a398527b3e9e358c345c5047b16871957">debug</a>=true)</td></tr>
+<tr class="memdesc:abe2519844153ff6504e84252d22b8957"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable/disable debug.  <a href="classBumpHunter.html#abe2519844153ff6504e84252d22b8957">More...</a><br /></td></tr>
 <tr class="separator:abe2519844153ff6504e84252d22b8957"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e701589a9b3b46ca3c51f14d7453a1e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#a6e701589a9b3b46ca3c51f14d7453a1e">runBatchMode</a> (bool batch=true)</td></tr>
+<tr class="memdesc:a6e701589a9b3b46ca3c51f14d7453a1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable batch running.  <a href="classBumpHunter.html#a6e701589a9b3b46ca3c51f14d7453a1e">More...</a><br /></td></tr>
 <tr class="separator:a6e701589a9b3b46ca3c51f14d7453a1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acfc2583d61a3bf3305bd8ff119b0b0c1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#acfc2583d61a3bf3305bd8ff119b0b0c1">writeResults</a> (bool write_results=true)</td></tr>
+<tr class="memdesc:acfc2583d61a3bf3305bd8ff119b0b0c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write the fit results to a text file.  <a href="classBumpHunter.html#acfc2583d61a3bf3305bd8ff119b0b0c1">More...</a><br /></td></tr>
 <tr class="separator:acfc2583d61a3bf3305bd8ff119b0b0c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae5196e96a1d111b73a37c60050f9bef6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#ae5196e96a1d111b73a37c60050f9bef6">getUpperLimit</a> (TH1 *histogram, <a class="el" href="classHpsFitResult.html">HpsFitResult</a> *result)</td></tr>
+<tr class="memdesc:ae5196e96a1d111b73a37c60050f9bef6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the signal upper limit.  <a href="classBumpHunter.html#ae5196e96a1d111b73a37c60050f9bef6">More...</a><br /></td></tr>
 <tr class="separator:ae5196e96a1d111b73a37c60050f9bef6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4cfe5da84bfe10b4135cb4ee6b1be2b5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#a4cfe5da84bfe10b4135cb4ee6b1be2b5">getUpperLimitAsymptotic</a> (TH1 *histogram, <a class="el" href="classHpsFitResult.html">HpsFitResult</a> *result)</td></tr>
+<tr class="memdesc:a4cfe5da84bfe10b4135cb4ee6b1be2b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="classBumpHunter.html#a4cfe5da84bfe10b4135cb4ee6b1be2b5">More...</a><br /></td></tr>
 <tr class="separator:a4cfe5da84bfe10b4135cb4ee6b1be2b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a590f0aee7376661dd59c4ffa55299636"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#a590f0aee7376661dd59c4ffa55299636">getUpperLimitAsymCLs</a> (TH1 *histogram, <a class="el" href="classHpsFitResult.html">HpsFitResult</a> *result)</td></tr>
+<tr class="memdesc:a590f0aee7376661dd59c4ffa55299636"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="classBumpHunter.html#a590f0aee7376661dd59c4ffa55299636">More...</a><br /></td></tr>
 <tr class="separator:a590f0aee7376661dd59c4ffa55299636"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a47101d046517bdb11968ac8c6435a741"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#a47101d046517bdb11968ac8c6435a741">getUpperLimitPower</a> (TH1 *histogram, <a class="el" href="classHpsFitResult.html">HpsFitResult</a> *result)</td></tr>
+<tr class="memdesc:a47101d046517bdb11968ac8c6435a741"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="classBumpHunter.html#a47101d046517bdb11968ac8c6435a741">More...</a><br /></td></tr>
 <tr class="separator:a47101d046517bdb11968ac8c6435a741"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a737442797b8df3d3fe4d87ef35a14fe0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#a737442797b8df3d3fe4d87ef35a14fe0">setResolutionScale</a> (double res_scale)</td></tr>
+<tr class="memdesc:a737442797b8df3d3fe4d87ef35a14fe0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the resolution after instantiation.  <a href="classBumpHunter.html#a737442797b8df3d3fe4d87ef35a14fe0">More...</a><br /></td></tr>
 <tr class="separator:a737442797b8df3d3fe4d87ef35a14fe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0cbb4810d3475d44f52579f3172903b6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#a0cbb4810d3475d44f52579f3172903b6">setWindowSizeUsesResScale</a> (bool window_use_res_scale)</td></tr>
+<tr class="memdesc:a0cbb4810d3475d44f52579f3172903b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets whether the window size is scaled according to the resolution scaling factor.  <a href="classBumpHunter.html#a0cbb4810d3475d44f52579f3172903b6">More...</a><br /></td></tr>
 <tr class="separator:a0cbb4810d3475d44f52579f3172903b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aded2f9f6064603451dd5ee2087a4744b"><td class="memItemLeft" align="right" valign="top">std::vector&lt; TH1 * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#aded2f9f6064603451dd5ee2087a4744b">generateToys</a> (TH1 *histogram, double n_toys, int seed, int toy_sig_samples, int bkg_mult=1, TH1 *signal_hist=nullptr)</td></tr>
+<tr class="memdesc:aded2f9f6064603451dd5ee2087a4744b"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="classBumpHunter.html#aded2f9f6064603451dd5ee2087a4744b">More...</a><br /></td></tr>
 <tr class="separator:aded2f9f6064603451dd5ee2087a4744b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6bd2e287952b5ae1739695702f163a2c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#a6bd2e287952b5ae1739695702f163a2c">getMassResolution</a> (double mass)</td></tr>
 <tr class="separator:a6bd2e287952b5ae1739695702f163a2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -116,12 +135,16 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:a4494a692575eafdfedbca610c1e29efd"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#a4494a692575eafdfedbca610c1e29efd">getMassResolution</a> (double mass, double res_scale)</td></tr>
+<tr class="memdesc:a4494a692575eafdfedbca610c1e29efd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get Mass Resolution.  <a href="classBumpHunter.html#a4494a692575eafdfedbca610c1e29efd">More...</a><br /></td></tr>
 <tr class="separator:a4494a692575eafdfedbca610c1e29efd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33613c572796670d8d23b2d14832ba01"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#a33613c572796670d8d23b2d14832ba01">correctMass</a> (double mass)</td></tr>
+<tr class="memdesc:a33613c572796670d8d23b2d14832ba01"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="classBumpHunter.html#a33613c572796670d8d23b2d14832ba01">More...</a><br /></td></tr>
 <tr class="separator:a33613c572796670d8d23b2d14832ba01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a31c941fca8bf7da62047b75da7aa6173"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#a31c941fca8bf7da62047b75da7aa6173">printDebug</a> (std::string message)</td></tr>
+<tr class="memdesc:a31c941fca8bf7da62047b75da7aa6173"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print debug statement.  <a href="classBumpHunter.html#a31c941fca8bf7da62047b75da7aa6173">More...</a><br /></td></tr>
 <tr class="separator:a31c941fca8bf7da62047b75da7aa6173"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0057982066f25c66c20335bc159b6bf0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBumpHunter.html#a0057982066f25c66c20335bc159b6bf0">getChi2Prob</a> (double min_nll_null, double min_nll, double &amp;q0, double &amp;p_value)</td></tr>
+<tr class="memdesc:a0057982066f25c66c20335bc159b6bf0"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="classBumpHunter.html#a0057982066f25c66c20335bc159b6bf0">More...</a><br /></td></tr>
 <tr class="separator:a0057982066f25c66c20335bc159b6bf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
@@ -174,8 +197,10 @@ Private Attributes</h2></td></tr>
 <tr class="separator:acd40c1b855c9349b42b71fa452f71bae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00044">44</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<div class="textblock"><p>description </p>
+<p>more details </p>
+
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00049">49</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ac69da25e77c53cd89082a3d2c1a9a3ac"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac69da25e77c53cd89082a3d2c1a9a3ac">&#9670;&nbsp;</a></span>BumpHunter()</h2>
@@ -226,7 +251,19 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Default Constructor </p>
+
+<p>Default Constructor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">model</td><td></td></tr>
+    <tr><td class="paramname">poly_order</td><td></td></tr>
+    <tr><td class="paramname">toy_poly_order</td><td></td></tr>
+    <tr><td class="paramname">res_factor</td><td></td></tr>
+    <tr><td class="paramname">res_scale</td><td></td></tr>
+    <tr><td class="paramname">asymptotic_limit</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="BumpHunter_8cxx_source.html#l00014">14</a> of file <a class="el" href="BumpHunter_8cxx_source.html">BumpHunter.cxx</a>.</p>
 
@@ -269,6 +306,14 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>description </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">result</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="BumpHunter_8cxx_source.html#l00271">271</a> of file <a class="el" href="BumpHunter_8cxx_source.html">BumpHunter.cxx</a>.</p>
 
 </div>
@@ -297,6 +342,15 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>description </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mass</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>double </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="BumpHunter_8cxx_source.html#l00640">640</a> of file <a class="el" href="BumpHunter_8cxx_source.html">BumpHunter.cxx</a>.</p>
 
 </div>
@@ -324,9 +378,16 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Enable/disable debug </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00085">85</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p>Enable/disable debug. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">debug</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00117">117</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -344,6 +405,7 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
 <p>Fit using a background only model. </p>
 
 </div>
@@ -398,6 +460,20 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>description </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">histogram</td><td></td></tr>
+    <tr><td class="paramname">n_toys</td><td></td></tr>
+    <tr><td class="paramname">seed</td><td></td></tr>
+    <tr><td class="paramname">toy_sig_samples</td><td></td></tr>
+    <tr><td class="paramname">bkg_mult</td><td></td></tr>
+    <tr><td class="paramname">signal_hist</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>std::vector&lt;TH1*&gt; </dd></dl>
+
 <p class="definition">Definition at line <a class="el" href="BumpHunter_8cxx_source.html#l00589">589</a> of file <a class="el" href="BumpHunter_8cxx_source.html">BumpHunter.cxx</a>.</p>
 
 </div>
@@ -448,6 +524,17 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>description </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">min_nll_null</td><td></td></tr>
+    <tr><td class="paramname">min_nll</td><td></td></tr>
+    <tr><td class="paramname">q0</td><td></td></tr>
+    <tr><td class="paramname">p_value</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="BumpHunter_8cxx_source.html#l00619">619</a> of file <a class="el" href="BumpHunter_8cxx_source.html">BumpHunter.cxx</a>.</p>
 
 </div>
@@ -484,7 +571,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The mass resolution at the given mass. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00115">115</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00202">202</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -522,7 +609,17 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00129">129</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p>Get Mass Resolution. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mass</td><td></td></tr>
+    <tr><td class="paramname">res_scale</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>double </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00223">223</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -551,7 +648,15 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
 <p>Get the signal upper limit. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">histogram</td><td></td></tr>
+    <tr><td class="paramname">result</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="BumpHunter_8cxx_source.html#l00320">320</a> of file <a class="el" href="BumpHunter_8cxx_source.html">BumpHunter.cxx</a>.</p>
 
@@ -583,6 +688,15 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>description </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">histogram</td><td></td></tr>
+    <tr><td class="paramname">result</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="BumpHunter_8cxx_source.html#l00357">357</a> of file <a class="el" href="BumpHunter_8cxx_source.html">BumpHunter.cxx</a>.</p>
 
 </div>
@@ -612,6 +726,15 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>description </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">histogram</td><td></td></tr>
+    <tr><td class="paramname">result</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="BumpHunter_8cxx_source.html#l00328">328</a> of file <a class="el" href="BumpHunter_8cxx_source.html">BumpHunter.cxx</a>.</p>
 
@@ -643,6 +766,15 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>description </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">histogram</td><td></td></tr>
+    <tr><td class="paramname">result</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="BumpHunter_8cxx_source.html#l00489">489</a> of file <a class="el" href="BumpHunter_8cxx_source.html">BumpHunter.cxx</a>.</p>
 
 </div>
@@ -672,7 +804,9 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Given the mass of interest, setup the window parameters and initialize the fit parameters. This includes setting the size of the window and the window edges as well as estimating the initial value of some fit parameters.</p>
+
+<p>Given the mass of interest, setup the window parameters and initialize the fit parameters. </p>
+<p>This includes setting the size of the window and the window edges as well as estimating the initial value of some fit parameters.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">histogram</td><td>Histogram containing the mass spectrum that will be used to search for a resonance. </td></tr>
@@ -722,7 +856,8 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Perform a search for a resonance at the given mass hypothesis.</p>
+
+<p>Perform a search for a resonance at the given mass hypothesis. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">histogram</td><td>Histogram containing the mass spectrum that will be used to search for a resonance. </td></tr>
@@ -758,7 +893,8 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Print debug statement.</p>
+
+<p>Print debug statement. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">message</td><td>Debug statement to print. </td></tr>
@@ -793,9 +929,16 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Enable batch running. </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00088">88</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p>Enable batch running. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">batch</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00124">124</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -824,7 +967,15 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
 <p>Set the histogram bounds. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">low_bound</td><td></td></tr>
+    <tr><td class="paramname">high_bound</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 
 <p class="definition">Definition at line <a class="el" href="BumpHunter_8cxx_source.html#l00634">634</a> of file <a class="el" href="BumpHunter_8cxx_source.html">BumpHunter.cxx</a>.</p>
 
@@ -853,9 +1004,16 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Set the resolution after instantiation. </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00100">100</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p>Set the resolution after instantiation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">res_scale</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00170">170</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -882,9 +1040,16 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Sets whether the window size is scaled according to the resolution scaling factor. </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00103">103</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p>Sets whether the window size is scaled according to the resolution scaling factor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">window_use_res_scale</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00177">177</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -911,9 +1076,16 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Write the fit results to a text file </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00091">91</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p>Write the fit results to a text file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">write_results</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00131">131</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -939,7 +1111,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Flag denoting if application should run in batch mode. If set to true, plots aren't generated and fit results aren't logged. </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00209">209</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00311">311</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -964,7 +1136,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Write the results to a file. </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00215">215</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00317">317</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -989,7 +1161,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Flag to specify whether the power constrained or asymptotic upper limit should be employed. </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00178">178</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00280">280</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -1014,7 +1186,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The bin width </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00193">193</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00295">295</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -1039,7 +1211,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The total number of bins </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00190">190</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00292">292</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -1064,7 +1236,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The background fit function model to use. </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00172">172</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00274">274</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -1089,7 +1261,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Background only fit result. </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00151">151</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00253">253</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -1114,7 +1286,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The mass after the mass scale correction. </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00160">160</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00262">262</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -1139,7 +1311,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Debug flag </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00212">212</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00314">314</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -1164,7 +1336,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The total number of events within the fit window. </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00169">169</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00271">271</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -1189,7 +1361,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The lower bound of the histogram. </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00163">163</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00265">265</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -1212,8 +1384,9 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>mass hypothesis </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00221">221</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00326">326</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -1236,8 +1409,9 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>mass resolution </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00223">223</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00329">329</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -1262,7 +1436,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Output file stream </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00154">154</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00256">256</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -1287,7 +1461,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Polynomial order used to model the background. </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00196">196</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00298">298</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -1312,7 +1486,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Resolution multiplicative factor used in determining the fit window size. </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00184">184</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00286">286</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -1337,7 +1511,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The scaling factor for the mass resolution. Was 1.56 for Sebouh's, should 1.00 for Rafo's. </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00203">203</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00305">305</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -1362,7 +1536,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Polynomial order used to model the toy fit. </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00199">199</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00301">301</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -1387,7 +1561,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The upper bound of the histogram. </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00166">166</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00268">268</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -1410,8 +1584,9 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>end of mass window </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00219">219</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00323">323</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -1436,7 +1611,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Size of the background window that will be used to fit. </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00187">187</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00289">289</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -1459,8 +1634,9 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>start of mass window </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00217">217</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00320">320</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
@@ -1483,8 +1659,9 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>desription </p>
 
-<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00225">225</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="BumpHunter_8h_source.html#l00332">332</a> of file <a class="el" href="BumpHunter_8h_source.html">BumpHunter.h</a>.</p>
 
 </div>
 </div>
