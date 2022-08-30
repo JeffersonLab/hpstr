@@ -4,6 +4,9 @@ updated: 6 May 2020
 
 The Heavy Photon Search Toolkit for Reconstruction (hpstr) provides an interface to physics data from the HPS experiment saved in the LCIO format and converts it into an ROOT based format. It also provides tools which can be used to analyze the ROOT format of the data.
 
+## Doxygen
+You can find the code documentation here: [HPSTR Doxygen](https://jeffersonlab.github.io/hpstr/).
+
 ## Installation
 
 Hpstr can be installed on the following operating systems with some adjustments depending on the tool set available for compilation. 
