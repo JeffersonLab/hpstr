@@ -8,8 +8,6 @@
 #include "EventHeader.h"
 #include "Vertex.h"
 #include "Track.h"
-#include "TrackerHit.h"
-#include "MCParticle.h"
 #include "Particle.h"
 #include "Processor.h"
 #include "BaseSelector.h"
@@ -48,22 +46,14 @@ private:
 
     std::string selectionCfg_;
     TBranch* bvtxs_{nullptr};
-    TBranch* bhits_{nullptr};
     TBranch* btrks_{nullptr};
-    TBranch* bmcParts_{nullptr};
-    TBranch* bevth_{nullptr};
 
     std::vector<Vertex*> * vtxs_{};
     std::vector<Track*>  * trks_{};
-    std::vector<TrackerHit*>  * hits_{};
-    std::vector<MCParticle*>  * mcParts_{};
-    EventHeader* evth_{nullptr};
 
     std::string anaName_{"mcTupleForClassification"};
-    std::string vtxColl_{"Vertices"};
-    std::string hitColl_{"RotatedHelicalTrackHits"};
-    std::string trkColl_{"GBLTracks"};
-    std::string mcColl_{"MCParticle"};
+    std::string vtxColl_{"TargetConstrainedV0Vertices_KF"};
+    std::string trkColl_{"KalmanFullTracks"};
     TTree* tree_{nullptr};
 
 //std::shared_ptr<TrackHistos> _vtx_histos;
@@ -80,10 +70,29 @@ private:
     double ele_mom_mag_{-1000.};
     double ele_mom_theta_{-1000.};
     double ele_mom_phi_{-1000.};
+    double ele_d0_{-1000.};
+    double ele_phi0_{-1000.};
+    double ele_omega_{-1000.};
+    double ele_tanLambd_{-1000.};
+    double ele_chi2_{-1000.};
+
 
     double pos_mom_mag_{-1000.};
     double pos_mom_theta_{-1000.};
     double pos_mom_phi_{-1000.};
+    double pos_d0_{-1000.};
+    double pos_phi0_{-1000.};
+    double pos_omega_{-1000.};
+    double pos_tanLambd_{-1000.};
+    double pos_chi2_{-1000.};
+
+	double vtx_mom_mag_{-1000};
+	double vtx_mom_theta_{-1000};
+	double vtx_mom_phi_{-1000};
+	double vtx_x_{-1000};
+	double vtx_y_{-1000};
+	double vtx_z_{-1000};
+	double vtx_chi2_{-1000};
 
     double invariant_mass_{-1000.};
 

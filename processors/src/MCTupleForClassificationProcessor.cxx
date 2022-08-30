@@ -23,8 +23,6 @@ void MCTupleForClassificationProcessor::configure(const ParameterSet& parameters
         anaName_ = parameters.getString("anaName",anaName_);
         vtxColl_ = parameters.getString("vtxColl",vtxColl_);
         trkColl_ = parameters.getString("trkColl",trkColl_);
-        hitColl_ = parameters.getString("hitColl",hitColl_);
-        mcColl_  = parameters.getString("mcColl",mcColl_);
         selectionCfg_   = parameters.getString("vtxSelectionjson",selectionCfg_);
         //histoCfg_ = parameters.getString("histoCfg",histoCfg_);
         beamE_  = parameters.getDouble("beamE",beamE_);
@@ -53,9 +51,6 @@ void MCTupleForClassificationProcessor::initialize(TTree* tree) {
 
     //init Reading Tree
     tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_ , &bvtxs_);
-    tree_->SetBranchAddress(hitColl_.c_str(), &hits_   , &bhits_);
-    tree_->SetBranchAddress("EventHeader",&evth_ , &bevth_);
-    if(!isData_ && !mcColl_.empty()) tree_->SetBranchAddress(mcColl_.c_str() , &mcParts_, &bmcParts_);
     //If track collection name is empty take the tracks from the particles. TODO:: change this
     if (!trkColl_.empty())
         tree_->SetBranchAddress(trkColl_.c_str(),&trks_, &btrks_);
@@ -66,10 +61,28 @@ void MCTupleForClassificationProcessor::initialize(TTree* tree) {
     treeOutput_->Branch("ele_mom_mag_", &ele_mom_mag_, "ele_mom_mag_/D");
     treeOutput_->Branch("ele_mom_theta_", &ele_mom_theta_, "ele_mom_theta_/D");
     treeOutput_->Branch("ele_mom_phi_", &ele_mom_phi_, "ele_mom_phi_/D");
+    treeOutput_->Branch("ele_d0_", &ele_d0_, "ele_d0_/D");
+    treeOutput_->Branch("ele_phi0_", &ele_phi0_, "ele_phi0_/D");
+    treeOutput_->Branch("ele_omega_", &ele_omega_, "ele_omega_/D");
+    treeOutput_->Branch("ele_tanLambd_", &ele_tanLambd_, "ele_tanLambd_/D");
+    treeOutput_->Branch("ele_chi2_", &ele_chi2_, "ele_chi2_/D");
 
     treeOutput_->Branch("pos_mom_mag_", &pos_mom_mag_, "pos_mom_mag_/D");
     treeOutput_->Branch("pos_mom_theta_", &pos_mom_theta_, "pos_mom_theta_/D");
     treeOutput_->Branch("pos_mom_phi_", &pos_mom_phi_, "pos_mom_phi_/D");
+    treeOutput_->Branch("pos_d0_", &pos_d0_, "pos_d0_/D");
+    treeOutput_->Branch("pos_phi0_", &pos_phi0_, "pos_phi0_/D");
+    treeOutput_->Branch("pos_omega_", &pos_omega_, "pos_omega_/D");
+    treeOutput_->Branch("pos_tanLambd_", &pos_tanLambd_, "pos_tanLambd_/D");
+    treeOutput_->Branch("pos_chi2_", &pos_chi2_, "pos_chi2_/D");
+
+    treeOutput_->Branch("vtx_mom_mag_", &vtx_mom_mag_, "vtx_mom_mag_/D");
+    treeOutput_->Branch("vtx_mom_theta_", &vtx_mom_theta_, "vtx_mom_theta_/D");
+    treeOutput_->Branch("vtx_mom_phi_", &vtx_mom_phi_, "vtx_mom_phi_/D");
+    treeOutput_->Branch("vtx_x_", &vtx_x_, "vtx_x_/D");
+    treeOutput_->Branch("vtx_y_", &vtx_y_, "vtx_y_/D");
+    treeOutput_->Branch("vtx_z_", &vtx_z_, "vtx_z_/D");
+    treeOutput_->Branch("vtx_chi2_", &vtx_chi2_, "vtx_chi2_/D");
 
     treeOutput_->Branch("invariant_mass_", &invariant_mass_, "invariant_mass_/D");
 
@@ -197,10 +210,28 @@ bool MCTupleForClassificationProcessor::process(IEvent* ievent) {
 		ele_mom_mag_ = ele_mom.Mag();
 		ele_mom_theta_ = ele_mom.Theta();
 		ele_mom_phi_ = ele_mom.Phi();
+		ele_d0_ = ele_trk->getD0();
+		ele_phi0_ = ele_trk->getPhi();
+		ele_omega_ = ele_trk->getOmega();
+		ele_tanLambd_ = ele_trk->getTanLambda();
+		ele_chi2_ = ele_trk->getChi2();
 
 		pos_mom_mag_ = pos_mom.Mag();
 		pos_mom_theta_ = pos_mom.Theta();
 		pos_mom_phi_ = pos_mom.Phi();
+		pos_d0_ = pos_trk->getD0();
+		pos_phi0_ = pos_trk->getPhi();
+		pos_omega_ = pos_trk->getOmega();
+		pos_tanLambd_ = pos_trk->getTanLambda();
+		pos_chi2_ = pos_trk->getChi2();
+
+		vtx_mom_mag_ = vtx->getP().Mag();
+		vtx_mom_theta_ = vtx->getP().Theta();
+		vtx_mom_phi_ = vtx->getP().Phi();
+		vtx_x_ = vtx->getX();
+		vtx_y_ = vtx->getY();
+		vtx_z_ = vtx->getZ();
+		vtx_chi2_ = vtx->getChi2();
 
 		invariant_mass_ = vtx->getInvMass();
 

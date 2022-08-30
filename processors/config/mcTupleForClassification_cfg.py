@@ -32,11 +32,9 @@ mcTupleForClassification = HpstrConf.Processor('mcTupleForClassification', 'MCTu
 ###############################
 #Vertex Analysis
 mcTupleForClassification.parameters["debug"] = 1
-mcTupleForClassification.parameters["anaName"] = "mcTuple"
-mcTupleForClassification.parameters["trkColl"] = "GBLTracks"
-mcTupleForClassification.parameters["hitColl"] = "RotatedHelicalOnTrackHits"
-mcTupleForClassification.parameters["vtxColl"] = "UnconstrainedV0Vertices"
-mcTupleForClassification.parameters["mcColl"]  = "MCParticle"
+mcTupleForClassification.parameters["anaName"] = "mcTupleForClassification"
+mcTupleForClassification.parameters["trkColl"] = "KalmanFullTracks"
+mcTupleForClassification.parameters["vtxColl"] = "TargetConstrainedV0Vertices_KF"
 mcTupleForClassification.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/MCTupleForClassification2019.json'
 #mcTupleForClassification.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis2019.json"
 mcTupleForClassification.parameters["beamE"] = base.beamE[str(options.year)]
