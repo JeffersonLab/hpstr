@@ -1,7 +1,3 @@
-/**
- *
- */
-
 #ifndef __TRACKING_PROCESSOR_H__
 #define __TRACKING_PROCESSOR_H__
 
@@ -41,16 +37,18 @@
 #include "TrackHistos.h"
 
 
-
 // Forward declarations
 class TTree; 
 
+/**
+ * @brief Insert description here.
+ * more details
+ */
 class TrackingProcessor : public Processor { 
 
-    public: 
-
+    public:
         /**
-         * Class constructor. 
+         * @brief Class constructor. 
          *
          * @param name Name for this instance of the class.
          * @param process The Process class associated with Processor, provided
@@ -62,26 +60,30 @@ class TrackingProcessor : public Processor {
         ~TrackingProcessor(); 
 
         /**
-         * Process the event and put new data products into it.
-         * @param event The Event to process.
+         * @brief Process the event and put new data products into it.
+         * 
+         * @param ievent The Event to process.
          */
         virtual bool process(IEvent* ievent);
 
         /**
-         * Configure the Processor
+         * @brief Configure the Processor
+         * 
          * @param parameters The configuration parameters
          */
         virtual void configure(const ParameterSet& parameters);
 
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events starts.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events starts.
+         * 
+         * @param tree
          */
         virtual void initialize(TTree* tree);
 
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events finishes.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events finishes.
          */
         virtual void finalize();
 
@@ -89,41 +91,34 @@ class TrackingProcessor : public Processor {
 
         /** Container to hold all TrackerHit objects, and collection names. */
         std::vector<TrackerHit*> hits_{}; 
-        std::string trkhitCollRoot_{"RotatedHelicalOnTrackHits"};
+        std::string trkhitCollRoot_{"RotatedHelicalOnTrackHits"}; //!< description
 
-        /** Container to hold all Track objects, and collection names. */
+        /** Container to hold all Track objects. */
         std::vector<Track*> tracks_{};
-        std::string trkCollLcio_{"GBLTracks"};
-        std::string kinkRelCollLcio_{"GBLKinkDataRelations"};
-        std::string trkRelCollLcio_{"TrackDataRelations"};
-        std::string trkCollRoot_{"GBLTracks"};
+        std::string trkCollLcio_{"GBLTracks"}; //!< collection name
+        std::string kinkRelCollLcio_{"GBLKinkDataRelations"}; //!< collection name
+        std::string trkRelCollLcio_{"TrackDataRelations"}; //!< collection name
+        std::string trkCollRoot_{"GBLTracks"}; //!< collection name
 
-        /** Container to hold all raw hits objecs, and collection names. */
+        /** Container to hold all raw hits objecs. */
         std::vector<RawSvtHit*> rawhits_{};
-        std::string hitFitsCollLcio_{"SVTFittedRawTrackerHits"};
-        std::string rawhitCollRoot_{"SVTRawHitsOnTrack"};
+        std::string hitFitsCollLcio_{"SVTFittedRawTrackerHits"}; //!< collection name
+        std::string rawhitCollRoot_{"SVTRawHitsOnTrack"}; //!< collection name
         
         /** Container to hold truth tracks */
         std::vector<Track*> truthTracks_{};
-        std::string truthTracksCollRoot_{""};
-        std::string truthTracksCollLcio_{""};
+        std::string truthTracksCollRoot_{""}; //!< description
+        std::string truthTracksCollLcio_{""}; //!< description
         
-        //Debug Level
-        int debug_{false};
+        int debug_{false}; //!< Debug Level
         
-        //do Residuals
-        int doResiduals_{0};
-        std::string trackResDataLcio_{""};
-        TrackHistos* trkResHistos_{nullptr};
-        std::string resCfgFilename_{""};
-        std::string resoutname_{""};
-        
-        
-        //Bfield
-        double bfield_{-1.};
+        int doResiduals_{0}; //!< do Residuals
+        std::string trackResDataLcio_{""}; //!< description
+        TrackHistos* trkResHistos_{nullptr}; //!< description
+        std::string resCfgFilename_{""}; //!< description
+        std::string resoutname_{""}; //!< description
 
-
-
+        double bfield_{-1.}; //!< magnetic field
 
 }; // Tracking Processor
 

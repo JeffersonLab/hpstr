@@ -8,20 +8,46 @@
 #include "TTree.h"
 
 
-
+/**
+ * @brief Insert description here.
+ * more details
+ */
 class HPSEventProcessor : public Processor {
 
- public:
+    public:
+        /**
+         * @brief Constructor
+         * 
+         * @param name 
+         * @param process 
+         */
+        HPSEventProcessor(const std::string& name, Process& process);
+        ~HPSEventProcessor();
 
-  HPSEventProcessor(const std::string& name, Process& process);
-  ~HPSEventProcessor();
+        /**
+         * @brief description
+         * 
+         * @param ievent 
+         * @return true 
+         * @return false 
+         */
+        virtual bool process(IEvent* ievent);
 
-  virtual bool process(IEvent* ievent);
-  virtual void initialize(TTree* tree);
-  virtual void finalize();
+        /**
+         * @brief description
+         * 
+         * @param tree 
+         */
+        virtual void initialize(TTree* tree);
 
- private:
-  TClonesArray* header_{nullptr};
+        /**
+         * @brief description
+         * 
+         */
+        virtual void finalize();
+
+    private:
+        TClonesArray* header_{nullptr}; //!< description
   
 };
 

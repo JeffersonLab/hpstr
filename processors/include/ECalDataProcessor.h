@@ -39,12 +39,16 @@ typedef long long long64;
 // Forward declarations
 class TTree;
 
+/**
+ * @brief Insert description here.
+ * more details
+ */
 class ECalDataProcessor : public Processor { 
 
     public: 
 
         /**
-         * Class constructor. 
+         * @brief Class constructor. 
          *
          * @param name Name for this instance of the class.
          * @param process The Process class associated with Processor, provided
@@ -56,33 +60,37 @@ class ECalDataProcessor : public Processor {
         ~ECalDataProcessor(); 
 
         /**
-         * Callback for the Processor to configure itself from the given set of parameters.
+         * @brief Callback for the Processor to configure itself from the given set of parameters.
+         * 
          * @param parameters ParameterSet for configuration.
          */
         virtual void configure(const ParameterSet& parameters);
 
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events starts.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events starts.
+         * 
+         * @param tree
          */
         virtual void initialize(TTree* tree);
 
         /**
-         * Process the event and put new data products into it.
+         * @brief Process the event and put new data products into it.
+         * 
          * @param event The Event to process.
          */
         virtual bool process(IEvent* event);
 
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events finishes.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events finishes.
          */
         virtual void finalize();
 
     private: 
 
         /**
-         * Method to unpack field value from a calorimeter hit ID.
+         * @brief Method to unpack field value from a calorimeter hit ID.
          * 
          * @param field The field ID to unpack
          * @param hit The CalorimeterHit whose ID will be used to unpack the 
@@ -92,19 +100,18 @@ class ECalDataProcessor : public Processor {
 
         /** TClonesArray collection containing all ECal hits. */ 
         std::vector<CalHit*> cal_hits_; 
-        std::string hitCollLcio_{"EcalCalHits"};
-        std::string hitCollRoot_{"RecoEcalHits"};
+        std::string hitCollLcio_{"EcalCalHits"}; //!< description
+        std::string hitCollRoot_{"RecoEcalHits"}; //!< description
 
         /** TClonesArray collection containing all ECal clusters. */
         std::vector<CalCluster*> clusters_; 
-        std::string clusCollLcio_{"EcalClustersCorr"};
-        std::string clusCollRoot_{"RecoEcalClusters"};
+        std::string clusCollLcio_{"EcalClustersCorr"}; //!< description
+        std::string clusCollRoot_{"RecoEcalClusters"}; //!< description
 
         /** Encoding string describing cell ID. */
         const std::string encoder_string_{"system:6,layer:2,ix:-8,iy:-6"};
 
-        //Debug Level
-        int debug_{0};
+        int debug_{0}; //!< Debug Level
 
 }; // ECalDataProcessor
 
