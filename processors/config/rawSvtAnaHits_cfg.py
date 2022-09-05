@@ -15,7 +15,7 @@ p = HpstrConf.Process()
 
 p.run_mode = 1
 p.skip_events = 0
-#p.max_events = 1000
+p.max_events = 100000000000
 
 # Library containing processors
 p.add_library("libprocessors")
@@ -44,45 +44,7 @@ rawAnaSvt.parameters["regionDefinitions"] = [RegionPath+'OneFit.json',
                                             RegionPath+'SecondFit.json',
                                             RegionPath+'BothFit.json',
                                             RegionPath+'CTFit.json',
-                                            RegionPath+'FTFit.json',
-                                            RegionPath+'LAmp.json',
-                                            RegionPath+'OneFitHighChi.json',
-                                            RegionPath+'OneFitLowChi.json',
-                                            RegionPath+'FirstFitLowChi.json',
-                                            RegionPath+'FirstFitHighChi.json',
-                                            RegionPath+'SecondFitLowChi.json', 
-                                            RegionPath+'SecondFitHighChi.json',
-                                            RegionPath+'CTFitLowChi.json',
-                                            RegionPath+'CTFitHighChi.json',
-                                            RegionPath+'FirstFitCut.json',
-                                            RegionPath+'SecondFitCut.json',
-                                            RegionPath+'FirstFitCut2.json',
-                                            RegionPath+'SecondFitCut2.json',
-                                            RegionPath+'FirstFitChannel0.json',
-                                            RegionPath+'FirstFitChannel1.json',
-                                            RegionPath+'FirstFitChannel2.json',
-                                            RegionPath+'FirstFitChannel3.json',
-                                            RegionPath+'FirstFitChannel4.json',
-                                            RegionPath+'FirstFitChannel5.json',
-                                            RegionPath+'FirstFitChannel6.json',
-                                            RegionPath+'FirstFitChannel7.json',
-                                            RegionPath+'SecondFitChannel0.json',
-                                            RegionPath+'SecondFitChannel1.json',
-                                            RegionPath+'SecondFitChannel2.json',
-                                            RegionPath+'SecondFitChannel3.json',
-                                            RegionPath+'SecondFitChannel4.json',
-                                            RegionPath+'SecondFitChannel5.json',
-                                            RegionPath+'SecondFitChannel6.json',
-                                            RegionPath+'SecondFitChannel7.json',
-                                            RegionPath+'OneFitChannel0.json',
-                                            RegionPath+'OneFitChannel1.json',
-                                            RegionPath+'OneFitChannel2.json',
-                                            RegionPath+'OneFitChannel3.json',
-                                            RegionPath+'OneFitChannel4.json',
-                                            RegionPath+'OneFitChannel5.json',
-                                            RegionPath+'OneFitChannel6.json',
-                                            RegionPath+'OneFitChannel7.json'
-
+                                            RegionPath+'TimeResolution.json'
                                             ]
                                                             
 rawAnaSvt.parameters["timeref"]=0.0

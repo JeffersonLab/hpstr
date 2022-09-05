@@ -61,7 +61,7 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
 
 bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
     //std::cout<<"hello5"<<std::endl;
-    Float_t TimeRef=-30.0;
+    Float_t TimeRef=-13.0;
     Float_t AmpRef=1000.0;
     double weight = 1.;int count1=0;int count2=0;
     for(unsigned int i = 0; i < svtHits_->size(); i++){ 
@@ -89,8 +89,14 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 //std::cout<<"hellO"<<std::endl;           
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("chi_lt",thisHit->getChiSq(J),weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutGt("chi_gt",thisHit->getChiSq(J),weight))){continue;}
-                if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ct",(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)<(thisHit->getT0((J+1)%2)-TimeRef)*(thisHit->getT0((J+1)%2)-TimeRef)),weight))){continue;}
-                if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ca",(((thisHit->getAmp(J))-AmpRef)*((thisHit->getAmp(J))-AmpRef)<(thisHit->getAmp((J+1)%2)-AmpRef)*(thisHit->getAmp((J+1)%2)-AmpRef)),weight))){continue;}
+                if(i_reg<regionSelections_.size()-1){
+                    if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ct",(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)>((thisHit->getT0((J+1)%getNum)-TimeRef)*(thisHit->getT0((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
+                }else{
+                    if(getNum==2){
+                        if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ct",(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)>((thisHit->getT0((J+1)%getNum)-TimeRef)*(thisHit->getT0((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
+                    }
+                }
+                if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ca",(((thisHit->getAmp(J))-AmpRef)*((thisHit->getAmp(J))-AmpRef)<((thisHit->getAmp((J+1)%getNum)-AmpRef)*(thisHit->getAmp((J+1)%getNum)-AmpRef)+.00001)),weight))){continue;}
 
                 //if(!(std::abs((thisHit->getT0(J))-TimeRef)<std::abs(thisHit->getT0((J+1)%2)-TimeRef))){continue;}          
                 //if(!(reg_selectors_[regions_[i_reg]]->passCutEq("doing_ca",1.0,weight))){continue;}else{
@@ -98,7 +104,14 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("amp_lt",thisHit->getAmp(0),weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutGt("amp_gt",thisHit->getAmp(0),weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("amp2_lt",thisHit->getAmp(0),weight))){continue;}
-                if(!(reg_selectors_[regions_[i_reg]]->passCutEq("channel", (thisHit->getStrip())%8,weight))){continue;} 
+                if(!(reg_selectors_[regions_[i_reg]]->passCutEq("channel", (thisHit->getStrip()),weight))){continue;} 
+                int * adcs=thisHit->getADCs();
+                int maxx = 0;
+                for(unsigned int K=0; K<6; K++){
+                    if(maxx<adcs[K]){maxx=adcs[K];}
+                }
+                if(!(reg_selectors_[regions_[i_reg]]->passCutEq("first_max",adcs[0]-maxx,weight))){continue;}
+                //if(!(reg_selectors_[regions_[i_reg]]->passCutEq("second_max",adcs[0]-maxx,weight))){continue;}
                 //std::cout<<"getNum:"<<getNum<<std::endl;
                 //std::cout<<"region No:"<<regions_[i_reg]<<std::endl;
                 //std::cout<<"Which Hit:"<<J<<"\n"<<std::endl;
@@ -147,7 +160,8 @@ void SvtRawDataAnaProcessor::finalize() {
         //reg_selectors_[it->first]->getCutFlowHisto()->Scale(.5);
         //reg_selectors_[it->first]->getCutFlowHisto()->Write();
     }
-    return;
+    outF_->Close();
+
 }
     //std::cout<<"gotToHEREANDFUCKINGEXPLODED"<<std::endl;
     //histos->saveHistosSVT(outF_, anaName_.c_str());

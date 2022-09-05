@@ -55,11 +55,17 @@ void RawSvtHitHistos::FillHistograms(RawSvtHit* rawSvtHit,float weight,int i,uns
     //std::cout<<rawSvtHit->getAmp(i)<<std::endl;
     //std::cout<<rawSvtHit->getT0err(i)<<std::endl;
     //std::cout<<rawSvtHit->getAmpErr(i)<<std::endl;
-    Fill1DHisto(histokey, rawSvtHit->getT0(i),weight); 
+    if(i==0){
+        Fill1DHisto(histokey, rawSvtHit->getT0(i),weight);
+    }else{
+        Fill1DHisto(histokey, rawSvtHit->getT0(i)-27.0,weight);
+    }
     //std::cout<<"hello6"<<std::endl;
     histokey = swTag + "_SvtHybrids_Am_h"; 
     Fill1DHisto(histokey, rawSvtHit->getAmp(i),weight);
-    
+    histokey = swTag + "_SvtHybrids_Chi_Sqr_h";
+    Fill1DHisto(histokey, rawSvtHit->getChiSq(i),weight);
+
     histokey = swTag + "_SvtHybrids_ADCcount_hh";
     int * adcs=rawSvtHit->getADCs();
     int maxx = 0;
@@ -69,6 +75,13 @@ void RawSvtHitHistos::FillHistograms(RawSvtHit* rawSvtHit,float weight,int i,uns
     }
     for(unsigned int K=1; K<6; K++){
         Fill2DHisto(histokey,24.0*K-(rawSvtHit->getT0(i)),((Float_t)(adcs[K])-Float_t(adcs[0]))/(rawSvtHit->getAmp(i)),weight);
+        //((Float_t)maxx),weight);
+    }
+    histokey = swTag + "_SvtHybrids_ADCcountdeshift_hh";
+    for(unsigned int K=1; K<6; K++){
+        if(std::abs(rawSvtHit->getT0(i)+60)<25){
+            Fill2DHisto(histokey,24.0*K-(rawSvtHit->getT0(i))-60,((Float_t)(adcs[K])-Float_t(adcs[0]))/(rawSvtHit->getAmp(i)),weight);
+        }else{Fill2DHisto(histokey,24.0*K-(rawSvtHit->getT0(i)),((Float_t)(adcs[K])-Float_t(adcs[0]))/(rawSvtHit->getAmp(i)),weight);}
         //((Float_t)maxx),weight);
     }
     //adcs_=rawSvtHit->getADCs(i);
@@ -86,7 +99,7 @@ void RawSvtHitHistos::FillHistograms(RawSvtHit* rawSvtHit,float weight,int i,uns
     histokey = swTag + "_SvtHybrids_AmT0Err_hh";
     //std::cout<<"hello10"<<std::endl;
     Fill2DHisto(histokey, rawSvtHit->getT0err(i), rawSvtHit->getAmpErr(i),weight);
-        
+
     if(TimeDiff==-42069){return;}
     else{
         histokey = swTag + "_SvtHybrids_TD_h";
