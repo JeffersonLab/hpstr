@@ -1,7 +1,3 @@
-/**
- *
- */
-
 #ifndef __MCTRACKERHIT_PROCESSOR_H__
 #define __MCTRACKERHIT_PROCESSOR_H__
 
@@ -34,12 +30,16 @@
 #include "MCTrackerHit.h"
 #include "Event.h"
 
+/**
+ * @brief Insert description here.
+ * more details
+ */
 class MCTrackerHitProcessor : public Processor { 
 
     public: 
 
         /**
-         * Class constructor. 
+         * @brief Class constructor. 
          *
          * @param name Name for this instance of the class.
          * @param process The Process class associated with Processor, provided
@@ -51,26 +51,30 @@ class MCTrackerHitProcessor : public Processor {
         ~MCTrackerHitProcessor(); 
 
         /**
-         * Callback for the Processor to configure itself from the given set of parameters.
+         * @brief Callback for the Processor to configure itself from the given set of parameters.
+         * 
          * @param parameters ParameterSet for configuration.
          */
         virtual void configure(const ParameterSet& parameters);
 
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events starts.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events starts.
+         * 
+         * @param tree
          */
         virtual void initialize(TTree* tree);
 
         /**
-         * Process the event and put new data products into it.
+         * @brief Process the event and put new data products into it.
+         * 
          * @param event The Event to process.
          */
         virtual bool process(IEvent* ievent);
 
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events finishes.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events finishes.
          */
         virtual void finalize();
 
@@ -78,11 +82,10 @@ class MCTrackerHitProcessor : public Processor {
 
         /** Containers to hold all TrackerHit objects, and collection names. */
         std::vector<MCTrackerHit*> trackerhits_; 
-        std::string   hitCollLcio_{"TrackerHits"};
-        std::string   hitCollRoot_{"TrackerHits"};
+        std::string   hitCollLcio_{"TrackerHits"}; //!< description
+        std::string   hitCollRoot_{"TrackerHits"}; //!< description
 
-        //Debug Level
-        int debug_{0};
+        int debug_{0}; //!< Debug Level
 
 }; // MCTrackerHitProcessor
 

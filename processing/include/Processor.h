@@ -34,9 +34,9 @@ typedef Processor* ProcessorMaker(const std::string& name, Process& process);
 class Processor {
 
     public:
-
         /**
-         * Class constructor.
+         * @brief Class constructor.
+         * 
          * @param name Name for this instance of the class.
          * @param process The Process class associated with Processor, provided by the framework.
          *
@@ -54,68 +54,75 @@ class Processor {
         virtual ~Processor() {;}
 
         /**
-         * Callback for the Processor to configure itself from the given set of parameters.
+         * @brief Callback for the Processor to configure itself from the given set of parameters.
+         * 
          * @param parameters ParameterSet for configuration.
          */
         virtual void configure(const ParameterSet& parameters) {
         }
 
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events starts, such as
-         * creating histograms.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events starts, such as
+         *        creating histograms.
+         * 
+         * @param tree
          */
         virtual void initialize(TTree* tree) = 0;
 
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events starts, such as
-         * initializing files.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events starts, such as
+         *        initializing files.
+         * 
+         * @param inFilename
+         * @param outFilename
          */
         virtual void initialize(std::string inFilename, std::string outFilename) {};
 
         /**
-         * Set output TFile for AnaProcessors
+         * @brief Set output TFile for AnaProcessors
+         * 
          * @param pointer to output TFile
          */
         virtual void setFile(TFile* outFile) {outF_ = outFile;};
 
         /**
-         * Process the histograms and generate analysis output.
+         * @brief Process the histograms and generate analysis output.
+         * 
          * @return status of the processing.
          */
         virtual bool process() {return true;};
 
         /**
-         * Process the event and put new data products into it.
+         * @brief Process the event and put new data products into it.
+         * 
          * @param event The Event to process.
          * @return status of the processing, false will move to next event and skip other processes.
          */
         virtual bool process(IEvent* ievent) = 0;
 
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events finishes, such as
-         * calculating job-summary quantities.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events finishes, such as
+         *        calculating job-summary quantities.
          */
-        virtual void finalize()  = 0; 
+        virtual void finalize() = 0; 
 
         /**
-         * Internal function which is part of the ProcessorFactory machinery.
+         * @brief Internal function which is part of the ProcessorFactory machinery.
+         * 
          * @param classname The class name of the processor.
          * @param classtype The class type of the processor (1 for Producer, 2 for Analyzer).
          */
         static void declare(const std::string& classname, ProcessorMaker*);
 
     protected:
-
         /** Handle to the Process. */
         Process& process_;
 
         /** output file pointer */
         TFile* outF_{nullptr};
-
-    protected:
 
         /** The name of the Processor. */
         std::string name_;

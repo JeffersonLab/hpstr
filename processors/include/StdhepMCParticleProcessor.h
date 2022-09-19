@@ -1,7 +1,7 @@
 /**
  * @file StdhepMCParticleProcessor.h
  * @brief Processor used to translate StdHep MCParticles to ROOT 
- *      MCParticle objects.
+ *        MCParticle objects.
  */
 
 #ifndef __STDHEP_ROOT_CONVERTER_H__
@@ -40,16 +40,20 @@
 #include "Processor.h"
 #include "MCParticle.h"
 
+/**
+ * @brief Processor used to translate StdHep MCParticles to ROOT MCParticle objects.
+ * more details
+ */
 class StdhepMCParticleProcessor : public Processor { 
 
     public: 
 
         /** 
-         * Class constructor.
+         * @brief Class constructor.
          *
          * @param name Name for this instance of the class.
-         * @param process the Process class associated with the Processor,
-         *      provided by the processing framework.
+         * @param process The Process class associated with the Processor,
+         *                provided by the processing framework.
          */
         StdhepMCParticleProcessor(const std::string& name, Process& process); 
 
@@ -57,47 +61,52 @@ class StdhepMCParticleProcessor : public Processor {
         ~StdhepMCParticleProcessor(); 
 
         /**
-         * Process the event and put new data products into it.
+         * @brief Process the event and put new data products into it.
+         * 
          * @param event The Event to process.
          */
         virtual bool process();
         virtual bool process(IEvent* event) {};
 
         /**
-         * Configure the Processor
+         * @brief Configure the Processor
+         * 
          * @param parameters The configuration parameters
          */
         virtual void configure(const ParameterSet& parameters);
 
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events starts.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events starts.
+         * 
+         * @param inFilename 
+         * @param outFilename 
          */
         virtual void initialize(std::string inFilename, std::string outFilename);
+
+        /**
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events starts.
+         * 
+         * @param tree 
+         */
         virtual void initialize(TTree* tree) {};
 
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events finishes.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events finishes.
          */
         virtual void finalize();
 
 
     private: 
-        //stdhep input file
-        std::string inFilename_;
-        //name temporary lcio collection
-        std::string mcPartCollStdhep_{"MCParticle"};
-        //max stdhep event number to convert
-        int maxEvent_{-1};
-        //root tuple outfile
-        TFile* outF_{nullptr};
-        //name root collection
-        std::string mcPartCollRoot_{"MCParticle"};
-        //list of converted MCParticles
-        std::vector<MCParticle*> mc_particles_{};
-        //TTree holds converted MCParticles for each event
-        TTree* tree_{nullptr};
+        std::string inFilename_; //!< stdhep input file
+        std::string mcPartCollStdhep_{"MCParticle"}; //!< name temporary lcio collection
+        int maxEvent_{-1}; //!< max stdhep event number to convert
+        TFile* outF_{nullptr}; //!< root tuple outfile
+        std::string mcPartCollRoot_{"MCParticle"}; //!< name root collection
+        std::vector<MCParticle*> mc_particles_{}; //!< list of converted MCParticles
+        TTree* tree_{nullptr}; //!< TTree holds converted MCParticles for each event
 
 }; // Tracking Processor
 

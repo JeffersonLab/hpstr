@@ -56,6 +56,13 @@ bool StdhepMCParticleProcessor::process() {
     try {
      
         while( maxEvent_ < 0  || count < maxEvent_ ){
+
+           if (mc_particles_.size() > 0){
+                for (std::vector<MCParticle*>::iterator it = mc_particles_.begin(); it != mc_particles_.end(); ++it){
+                    delete *it;
+                }
+                mc_particles_.clear();
+            }
              
             std::auto_ptr<IMPL::LCEventImpl> evt( new IMPL::LCEventImpl() ) ;
             evt->setRunNumber(0) ;

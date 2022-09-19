@@ -41,26 +41,44 @@
 #include "ChebyshevFitFunction.h"
 #include "LegendreFitFunction.h"
 
+/**
+ * @brief description
+ * 
+ * more details
+ */
 class BumpHunter {
     public:
-        /** Default Constructor */
-        BumpHunter(FitFunction::BkgModel model, int poly_order, int toy_poly_order, int res_factor, double res_scale = 1.00, bool asymptotic_limit = true);
+        /**
+         * @brief Default Constructor
+         * 
+         * @param model 
+         * @param poly_order 
+         * @param toy_poly_order 
+         * @param res_factor 
+         * @param res_scale 
+         * @param asymptotic_limit 
+         */
+        BumpHunter(FitFunction::BkgModel model, int poly_order, int toy_poly_order,
+                   int res_factor, double res_scale = 1.00, bool asymptotic_limit = true);
         
         /** Destructor */
         ~BumpHunter();
         
         /** 
-         * Perform a search for a resonance at the given mass hypothesis.
+         * @brief Perform a search for a resonance at the given mass hypothesis.
          *
          * @param histogram Histogram containing the mass spectrum that will be
          *                  used to search for a resonance.
          * @param mass_hypothesis The mass of interest.
          */
-        HpsFitResult* performSearch(TH1* histogram, double mass_hypothesis, bool skip_bkg_fit, bool skip_ul);
+        HpsFitResult* performSearch(TH1* histogram, double mass_hypothesis, bool skip_bkg_fit,
+                                    bool skip_ul);
         
         /** 
-         * Given the mass of interest, setup the window parameters and 
-         * initialize the fit parameters.  This includes setting the size of the
+         * @brief Given the mass of interest, setup the window parameters and 
+         *        initialize the fit parameters.
+         * 
+         * This includes setting the size of the
          * window and the window edges as well as estimating the initial value
          * of some fit parameters.
          *
@@ -71,39 +89,108 @@ class BumpHunter {
         void initialize(TH1* histogram, double &mass_hypothesis);
         
         /**
-         *
+         * @brief description
+         * 
+         * @param result
          */
         void calculatePValue(HpsFitResult* result);
-        
-        /** Fit using a background only model. */
+
+        /**
+         * @brief Fit using a background only model.
+         * 
+         */
         void fitBkgOnly();
-        
-        /** Set the histogram bounds. */
+
+        /**
+         * @brief Set the histogram bounds.
+         * 
+         * @param low_bound 
+         * @param high_bound 
+         */
         void setBounds(double low_bound, double high_bound);
-        
-        /** Enable/disable debug */
+
+        /**
+         * @brief Enable/disable debug
+         * 
+         * @param debug 
+         */
         void enableDebug(bool debug = true) { this->debug = debug; };
-        
-        /** Enable batch running. */
+
+        /**
+         * @brief Enable batch running.
+         * 
+         * @param batch 
+         */
         void runBatchMode(bool batch = true) { _batch = batch; };
-        
-        /** Write the fit results to a text file */
+
+        /**
+         * @brief Write the fit results to a text file.
+         * 
+         * @param write_results 
+         */
         void writeResults(bool write_results = true) { _write_results = write_results; };
-        
-        /** Get the signal upper limit. */
+
+        /**
+         * @brief Get the signal upper limit.
+         * 
+         * @param histogram 
+         * @param result 
+         */
         void getUpperLimit(TH1* histogram, HpsFitResult* result);
+
+        /**
+         * @brief description
+         * 
+         * @param histogram 
+         * @param result 
+         */
         void getUpperLimitAsymptotic(TH1* histogram, HpsFitResult* result);
+
+        /**
+         * @brief description
+         * 
+         * @param histogram 
+         * @param result 
+         */
         void getUpperLimitAsymCLs(TH1* histogram, HpsFitResult* result);
+
+        /**
+         * @brief description
+         * 
+         * @param histogram 
+         * @param result 
+         */
         void getUpperLimitPower(TH1* histogram, HpsFitResult* result);
-        
-        /** Set the resolution after instantiation. */
+
+        /**
+         * @brief Set the resolution after instantiation.
+         * 
+         * @param res_scale 
+         */
         void setResolutionScale(double res_scale) { res_scale_ = res_scale; }
 
-        /** Sets whether the window size is scaled according to the resolution scaling factor. */
-        void setWindowSizeUsesResScale(bool window_use_res_scale) { window_use_res_scale_ = window_use_res_scale; }
+        /**
+         * @brief Sets whether the window size is scaled according to the resolution scaling factor.
+         * 
+         * @param window_use_res_scale 
+         */
+        void setWindowSizeUsesResScale(bool window_use_res_scale) {
+            window_use_res_scale_ = window_use_res_scale;
+        }
         
-        /** */
-        std::vector<TH1*> generateToys(TH1* histogram, double n_toys, int seed, int toy_sig_samples, int bkg_mult = 1, TH1* signal_hist = nullptr);
+        /**
+         * @brief description
+         * 
+         * @param histogram 
+         * @param n_toys 
+         * @param seed 
+         * @param toy_sig_samples 
+         * @param bkg_mult 
+         * @param signal_hist 
+         * @return std::vector<TH1*> 
+         */
+        std::vector<TH1*> generateToys(TH1* histogram, double n_toys, int seed, int toy_sig_samples,
+                                       int bkg_mult = 1, TH1* signal_hist = nullptr);
 
         /**
          * Get the HPS mass resolution at the given mass.  The functional form
@@ -126,24 +213,39 @@ class BumpHunter {
         };
         
     private:
+        /**
+         * @brief Get Mass Resolution
+         * 
+         * @param mass 
+         * @param res_scale 
+         * @return double 
+         */
         inline double getMassResolution(double mass, double res_scale) {
             return res_scale * (0.000379509 + (0.0416842 * mass) - (0.271364 * mass * mass) + (3.49537 * mass * mass * mass) - (11.1153 * mass * mass * mass * mass));
         }
         
         /**
-         *
+         * @brief description
+         * 
+         * @param mass 
+         * @return double 
          */
         double correctMass(double mass);
         
         /** 
-         * Print debug statement.
+         * @brief Print debug statement.
          *
          * @param message Debug statement to print.
          */
         void printDebug(std::string message);
          
         /**
-         *
+         * @brief description
+         * 
+         * @param min_nll_null 
+         * @param min_nll 
+         * @param q0 
+         * @param p_value 
          */
         void getChi2Prob(double min_nll_null, double min_nll, double &q0, double &p_value);
 
@@ -214,14 +316,19 @@ class BumpHunter {
         /** Write the results to a file. */
         bool _write_results{false};
         
+        /** start of mass window */
         double window_start_{0};
         
+        /** end of mass window */
         double window_end_{0};
         
+        /** mass hypothesis */
         double mass_hypothesis_{0};
         
+        /** mass resolution */
         double mass_resolution_{0};
 
+        /** desription */
         bool window_use_res_scale_{true};
 };
 

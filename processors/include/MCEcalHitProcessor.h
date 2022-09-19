@@ -35,12 +35,16 @@
 #include "MCEcalHit.h"
 #include "Event.h"
 
+/**
+ * @brief Processor used to add simulated ecal hits to the event
+ * more details
+ */
 class MCEcalHitProcessor : public Processor { 
 
     public: 
 
         /**
-         * Class constructor. 
+         * @brief Class constructor. 
          *
          * @param name Name for this instance of the class.
          * @param process The Process class associated with Processor, provided
@@ -52,26 +56,30 @@ class MCEcalHitProcessor : public Processor {
         ~MCEcalHitProcessor(); 
 
         /**
-         * Callback for the Processor to configure itself from the given set of parameters.
+         * @brief Callback for the Processor to configure itself from the given set of parameters.
+         * 
          * @param parameters ParameterSet for configuration.
          */
         virtual void configure(const ParameterSet& parameters);
 
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events starts.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events starts.
+         * 
+         * @param tree
          */
         virtual void initialize(TTree* tree);
 
         /**
-         * Process the event and put new data products into it.
+         * @brief Process the event and put new data products into it.
+         * 
          * @param event The Event to process.
          */
         virtual bool process(IEvent* ievent);
 
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events finishes.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events finishes.
          */
         virtual void finalize();
 
@@ -79,11 +87,10 @@ class MCEcalHitProcessor : public Processor {
 
         /** Container to hold all MCEcalHit objects. */
         std::vector<MCEcalHit*> ecalhits_; 
-        std::string   hitCollLcio_{"EcalHits"};
-        std::string   hitCollRoot_{"EcalHits"};
+        std::string   hitCollLcio_{"EcalHits"}; //!< description
+        std::string   hitCollRoot_{"EcalHits"}; //!< description
 
-        //Debug Level
-        int debug_{0};
+        int debug_{0}; //!< Debug Level
 
 }; // MCEcalHitProcessor
 

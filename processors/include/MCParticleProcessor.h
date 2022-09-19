@@ -40,12 +40,16 @@
 #include "Track.h"
 #include "Event.h"
 
+/**
+ * @brief Processor used to translate LCIO MCParticles to DST MCParticle objects.
+ * more details
+ */
 class MCParticleProcessor : public Processor { 
 
     public: 
         
         /**
-         * Class constructor. 
+         * @brief Class constructor. 
          *
          * @param name Name for this instance of the class.
          * @param process The Process class associated with Processor, provided
@@ -57,26 +61,30 @@ class MCParticleProcessor : public Processor {
         ~MCParticleProcessor();
 
         /**
-         * Callback for the Processor to configure itself from the given set of parameters.
+         * @brief Callback for the Processor to configure itself from the given set of parameters.
+         * 
          * @param parameters ParameterSet for configuration.
          */
         virtual void configure(const ParameterSet& parameters);
          
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events starts.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events starts.
+         * 
+         * @param tree
          */
         virtual void initialize(TTree* tree);
 
         /**
-         * Process the event and put new data products into it.
+         * @brief Process the event and put new data products into it.
+         * 
          * @param event The Event to process.
          */
         virtual bool process(IEvent* ievent);
 
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events finishes.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events finishes.
          */
         virtual void finalize();
 
@@ -84,12 +92,10 @@ class MCParticleProcessor : public Processor {
 
         /** Map to hold all particle collections. */
         std::vector<MCParticle*> mc_particles_{}; 
-        std::string mcPartCollLcio_{"MCParticle"};
-        std::string mcPartCollRoot_{"MCParticle"};
+        std::string mcPartCollLcio_{"MCParticle"}; //!< description
+        std::string mcPartCollRoot_{"MCParticle"}; //!< description
 
-
-        //Debug
-        int debug_{0};
+        int debug_{0}; //!< Debug level
 
 
 }; // MCParticleProcessor
