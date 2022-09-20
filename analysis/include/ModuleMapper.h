@@ -10,167 +10,71 @@
 
 class ModuleMapper {
 
-    public:
-        ModuleMapper(const int year = 2019);
-        
-        /** \todo, clean up? */
-        ~ModuleMapper();
-        
-        /**
-         * @brief Get the Hw From String
-         * 
-         * @param key 
-         * @return std::string 
-         */
-        std::string getHwFromString(const std::string& key)  {return string_to_hw[key];};
+ public:
+  ModuleMapper(const int year = 2019);
+  
+  //TODO, clean up?
+  ~ModuleMapper();
+  
+  std::string getHwFromString(const std::string& key)  {return string_to_hw[key];};
+  std::string getSwFromString(const std::string& key)  {return string_to_sw[key];}; 
+  std::string getHwFromSw    (const std::string& key)  {return sw_to_hw[key];};
+  std::string getSwFromHw    (const std::string& key)  {return hw_to_sw[key];};
+  std::string getStringFromHw(const std::string& key)  {return hw_to_string[key];};
+  std::string getStringFromSw(const std::string& key)  {return sw_to_string[key];};
+  
 
-        /**
-         * @brief Get the Sw From String
-         * 
-         * @param key 
-         * @return std::string 
-         */
-        std::string getSwFromString(const std::string& key)  {return string_to_sw[key];};
+  std::vector<std::string> getHybridStrings();
+  //get list of string modules
+  void getStrings (std::vector<std::string>& strings) {
+    for (strmap_it it = string_to_hw.begin(); it!= string_to_hw.end(); ++it)
+      strings.push_back(it->first);
+  }
+  
+  //get list of hw names
+  void getHws (std::vector<std::string>& hws) {
+    for (strmap_it it = hw_to_string.begin(); it!= hw_to_string.end(); ++it)
+      hws.push_back(it->first);
+  }
 
-        /**
-         * @brief Get the Hw From Sw
-         * 
-         * @param key 
-         * @return std::string 
-         */
-        std::string getHwFromSw    (const std::string& key)  {return sw_to_hw[key];};
+  //get list of sw names
+  void getSws (std::vector<std::string>& sws) { 
+    for (strmap_it it = hw_to_string.begin(); it!= hw_to_string.end(); ++it)
+      sws.push_back(it->first);
+  }
 
-        /**
-         * @brief Get the Sw From Hw
-         * 
-         * @param key 
-         * @return std::string 
-         */
-        std::string getSwFromHw    (const std::string& key)  {return hw_to_sw[key];};
+  //Build global svt id map for all FebHybrid combinations
+  std::map<std::string, std::map<int,int>> buildChannelSvtIDMap();
 
-        /**
-         * @brief Get the String From Hw
-         * 
-         * @param key 
-         * @return std::string 
-         */
-        std::string getStringFromHw(const std::string& key)  {return hw_to_string[key];};
+  //Return global svt id for channel by providing local channel number and F<n>H<m> of channel
+  int getSvtIDFromHWChannel(int channel, std::string hwTag, std::map<std::string,std::map<int,int>> svtid_map);  
 
-        /**
-         * @brief Get the String From Sw
-         * 
-         * @param key 
-         * @return std::string 
-         */
-        std::string getStringFromSw(const std::string& key)  {return sw_to_string[key];};
-        
+  //Used to generate apv channel map and read in thresholds from database
+  //formatted file
+  void buildApvChannelMap();
+  void ReadThresholdsFile(std::string filename);
+  std::pair<std::string,int> findApvChannel(std::string feb, std::string hybrid, int channel);
+  int getThresholdValue(std::string feb, std::string hybrid, int channel);
+  
+  //TODO Bidirectional maps could be used
 
-        /**
-         * @brief Get the Hybrid Strings
-         * 
-         * @return std::vector<std::string> 
-         */
-        std::vector<std::string> getHybridStrings();
+ private:
 
-        /**
-         * @brief Get list of string modules.
-         * 
-         * @param strings 
-         */
-        void getStrings (std::vector<std::string>& strings) {
-            for (strmap_it it = string_to_hw.begin(); it!= string_to_hw.end(); ++it)
-            strings.push_back(it->first);
-        }
-        
-        /**
-         * @brief Get list of hw names
-         * 
-         * @param hws 
-         */
-        void getHws (std::vector<std::string>& hws) {
-            for (strmap_it it = hw_to_string.begin(); it!= hw_to_string.end(); ++it)
-            hws.push_back(it->first);
-        }
+  int year_{2019};
+  
+  std::map<std::string, std::string> hw_to_sw;
+  std::map<std::string, std::string> sw_to_hw;
+  
+  std::map<std::string,std::string>  hw_to_string;
+  std::map<std::string,std::string>  string_to_hw;
+  
+  std::map<std::string,std::string>  sw_to_string;
+  std::map<std::string,std::string>  string_to_sw;
+  
+  typedef std::map<std::string,std::string>::iterator strmap_it;
 
-        /**
-         * @brief Get list of sw names
-         * 
-         * @param sws 
-         */
-        void getSws (std::vector<std::string>& sws) { 
-            for (strmap_it it = hw_to_string.begin(); it!= hw_to_string.end(); ++it)
-            sws.push_back(it->first);
-        }
-
-        /**
-         * @brief Build global svt id map for all FebHybrid combinations
-         * 
-         * @return std::map<std::string, std::map<int,int>> 
-         */
-        std::map<std::string, std::map<int,int>> buildChannelSvtIDMap();
-
-        /**
-         * @brief Return global svt id for channel by providing local channel number and F<n>H<m> of channel
-         * 
-         * @param channel 
-         * @param hwTag 
-         * @param svtid_map 
-         * @return int 
-         */
-        int getSvtIDFromHWChannel(int channel, std::string hwTag, std::map<std::string,std::map<int,int>> svtid_map);  
-
-        /**
-         * @brief Used to generate apv channel map and read in thresholds from database
-         * 
-         */
-        void buildApvChannelMap();
-
-        /**
-         * @brief description
-         * 
-         * @param filename 
-         */
-        void ReadThresholdsFile(std::string filename);
-
-        /**
-         * @brief description
-         * 
-         * @param feb 
-         * @param hybrid 
-         * @param channel 
-         * @return std::pair<std::string,int> 
-         */
-        std::pair<std::string,int> findApvChannel(std::string feb, std::string hybrid, int channel);
-
-        /**
-         * @brief Get the Threshold Value
-         * 
-         * @param feb 
-         * @param hybrid 
-         * @param channel 
-         * @return int 
-         */
-        int getThresholdValue(std::string feb, std::string hybrid, int channel);
-        
-        //!< \todo Bidirectional maps could be used
-
-    private:
-
-        int year_{2019}; //!< description
-        
-        std::map<std::string, std::string> hw_to_sw; //!< description
-        std::map<std::string, std::string> sw_to_hw; //!< description
-        
-        std::map<std::string,std::string>  hw_to_string; //!< description
-        std::map<std::string,std::string>  string_to_hw; //!< description
-        
-        std::map<std::string,std::string>  sw_to_string; //!< description
-        std::map<std::string,std::string>  string_to_sw; //!< description
-        
-        typedef std::map<std::string,std::string>::iterator strmap_it; //!< description
-
-        std::map<std::string,std::map<std::string,std::vector<int>>> apvChannelMap_; //!< description
-        std::map<std::string, std::vector<int>> thresholdsIn_; //!< description
+  std::map<std::string,std::map<std::string,std::vector<int>>> apvChannelMap_;
+  std::map<std::string, std::vector<int>> thresholdsIn_;
 };
 
 #endif //_MODULE_MAPPER_H_
