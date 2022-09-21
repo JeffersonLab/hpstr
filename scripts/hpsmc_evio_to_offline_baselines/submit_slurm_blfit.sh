@@ -5,28 +5,39 @@
 #SBATCH --array=1-7
 #SBATCH --partition=shared
 #SBATCH --job-name=blfits
+#SBATCH --output=/dev/null
 
-while getopts r:d:s:c:t: flag
+OPTIND=1
+#You must specify all flag options to run.
+while getopts r:t:o:e:s:y: flag
 do
     case "${flag}" in
-        r) run=${OPTARG};;
-        d) jobdir=${OPTARG};;
-        s) rundir=${OPTARG};;
-        c) cfg_env=${OPTARG};;
-        t) thresholds=${OPTARG};;
+        r) export runnumber=${OPTARG};;
+        t) export thresholds_file=${OPTARG};;
+        o) export output_dir=${OPTARG};;
+        e) export cfg_env=${OPTARG};;
+        s) export scratch_dir=${OPTARG};;
+        y) export year=${OPTARG};;
     esac
 
 done
 
+source $cfg_env
+
+export cfg_env=$(readlink -f $cfg_env)
+export scratch_dir=$(readlink -f $scratch_dir)
+export output_dir=$(readlink -f $output_dir)
+export thresholds_file=$(readlink -f $thresholds_file)
+
 export FIRST_ID=-1
 export JOB_ID=$(($SLURM_ARRAY_TASK_ID+$FIRST_ID))
-source ${cfg_env}/setup.sh
-export JOBDIR=$(readlink -f $jobdir)
-runpath=$(readlink -f $rundir)
-export RUNDIR=${runpath}/${run}/fits/${JOB_ID}
+export SCRATCHDIR=${scratch_dir}/blfits/${JOB_ID}
+mkdir -p $SCRATCHDIR
+mkdir $SCRATCHDIR/../logs
+cd $SCRATCHDIR
 
-mkdir -p $RUNDIR
-cd $RUNDIR
+echo "Fitting baselines for layer ${JOB_ID}"
+hpstr ${HPSTR_BASE}/processors/config/fitBL_cfg.py -i ${SCRATCHDIR}/../../2dhistos/hadd_hps_${runnumber}*bl2dhistos.root -o ${SCRATCHDIR}/hps_${runnumber}_offline_baselines_L${JOB_ID}.root -l L${JOB_ID} --thresh ${thresholds_file} -y $year
 
-hpstr ${HPSTR_BASE}/processors/config/fitBL_cfg.py -i ${JOBDIR}/${run}/2dhistos/hps_${run}_bl2dhistos.root -o $JOBDIR/${run}/fits/hps_${run}_offline_baselines_L${JOB_ID}.root -l L${JOB_ID} --thresh ${thresholds}
-
+echo "Copying files to output"
+cp ${SCRATCHDIR}/hps_${runnumber}_offline_baselines_L${JOB_ID}.root $output_dir

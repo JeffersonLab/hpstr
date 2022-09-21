@@ -1,35 +1,45 @@
 #!/usr/bin/scl enable devtoolset-8 -- /bin/bash
 #SBATCH --ntasks=1
-#SBATCH --time=4:00:00
-#SBATCH --mem=6000M
-#SBATCH --array=1-20
-#SBATCH --partition=shared
-#SBATCH --job-name=rootuple
+#SBATCH --time=1:00:00
+#SBATCH --mem=3000M
+#SBATCH --array=1-10
+#SBATCH --partition=hps
+#SBATCH --job-name=tuple
+#SBATCH --output=/dev/null
 
-while getopts r:d:s:n:c: flag
+OPTIND=1
+
+while getopts r:o:e:s:y: flag
 do
     case "${flag}" in
-        r) run=${OPTARG};;
-        d) jobdir=${OPTARG};;
-        s) rundir=${OPTARG};;
-        n) first_id=${OPTARG};;
-        c) cfg_env=${OPTARG};;
+        r) runnumber=${OPTARG};;
+        o) output_dir=${OPTARG};;
+        e) cfg_env=${OPTARG};;
+        s) scratch_dir=${OPTARG};;
+        y) year=${OPTARG};; 
+
     esac
 
 done
 
-export FIRST_ID=${first_id}
-export JOB_ID=$(($SLURM_ARRAY_TASK_ID+$FIRST_ID))
-source ${cfg_env}/setup.sh
-export JOBDIR=$(readlink -f $jobdir)
-runpath=$(readlink -f $rundir)
-export RUNDIR=${runpath}/${run}/ntuples/${JOB_ID}
-mkdir -p $RUNDIR
-mkdir $RUNDIR/../logs
-cd $RUNDIR
+cfg_env=$(readlink -f $cfg_env)
+output_dir=$(readlink -f $output_dir)
+scratch_dir=$(readlink -f $scratch_dir)
 
-filename=$(basename -s .slcio ${JOBDIR}/${run}/lcio/hps*${JOB_ID}.slcio)
-echo "FILENAME IS $filename"
+source ${cfg_env}
 
-hpstr $HPSTR_BASE/processors/config/rawSvtHits_cfg.py -i ${JOBDIR}/${run}/lcio/*${JOB_ID}.slcio -o ${JOBDIR}/${run}/ntuples/${filename}.root -t 1 -y 2019 
+export JOB_ID=$(($SLURM_ARRAY_TASK_ID))
+export SCRATCHDIR=${scratch_dir}/ntuples/${JOB_ID}
+mkdir -p $SCRATCHDIR
+mkdir $SCRATCHDIR/../logs
+cd $SCRATCHDIR
+
+#filename=$(basename -s .slcio ${SCRATCHDIR}/lcio/${JOB_ID})/data_events.slcio
+inputfile=${SCRATCHDIR}/../../lcio/${JOB_ID}/data_events.slcio
+
+echo 'Running HPSTR'
+hpstr $HPSTR_BASE/processors/config/rawSvtHits_cfg.py -i ${inputfile} -o ${SCRATCHDIR}/hps_${runnumber}_evio_${JOB_ID}.root -t 1 -y $year
+
+echo 'Copying files to output'
+cp ${SCRATCHDIR}/hps_${runnumber}_evio_${JOB_ID}.root ${output_dir}/
 
