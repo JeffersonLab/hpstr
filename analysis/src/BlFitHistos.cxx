@@ -208,6 +208,7 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
     //Loop over rawsvthit 2D histograms, one for each selected halfmodule
     for(std::map<std::string, TH2F*>::iterator it = histos2d.begin(); it != histos2d.end(); ++it)
     {
+        gDirectory->cd("/");
         TH2F* halfmodule_hh = it->second; 
         halfmodule_hh->RebinY(rebin_);
         halfmodule_hh->Write();
@@ -228,7 +229,6 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
         //Feb and Hybrid numbers
         std::string feb = (hwTag.substr(1,1));
         std::string hyb = (hwTag.substr(3,1));
-
         gDirectory->mkdir(("F"+feb+"H"+hyb).c_str())->cd();
         //Perform fitting procedure over all channels on a sensor
         for(int cc=0; cc < 640 ; ++cc) 

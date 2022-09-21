@@ -105,8 +105,6 @@ bool SvtBl2DAnaProcessor::process(IEvent* ievent) {
     
     bool triggerFound = false;
     for (auto trigger : triggers_.items()){
-        std::cout << "check for trigger " << trigger.key() << std::endl;
-        std::cout << "trigger value " << prescaledtriggerMap_[trigger.key()] << std::endl;
         if ( (prescaledtriggerMap_[trigger.key()] > 0) || (exttriggerMap_[trigger.key()]) > 0 ){
             triggerFound = true;
         }
@@ -115,10 +113,6 @@ bool SvtBl2DAnaProcessor::process(IEvent* ievent) {
     if (!triggerFound)
         return true;
     
-    //std::cout << "Trigger type = " << tsdata->header.type << std::endl;
-    //if (tsdata->header.type == 250){
-    //    std::cout << "Contains singles 3 top and bottom? " << tsdata->prescaled.Single_3_Top << std::endl;
-    //}
     svtCondHistos->FillHistograms(rawSvtHits_,1.);
 
     return true;
