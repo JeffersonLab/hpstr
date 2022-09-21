@@ -36,6 +36,7 @@ rawAnaSvt.parameters["debug"] = 1
 rawAnaSvt.parameters["anaName"] = 'rawSvtHitAna'
 rawAnaSvt.parameters["trkrHitColl"] = 'SVTRawTrackerHits'
 rawAnaSvt.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/rawSvtAnaHits3.json'
+rawAnaSvt.parameters["sample"] = 1
 
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/svtHit/"
 
@@ -44,6 +45,7 @@ rawAnaSvt.parameters["regionDefinitions"] = [RegionPath+'OneFit.json',
                                             RegionPath+'SecondFit.json',
                                             RegionPath+'BothFit.json',
                                             RegionPath+'CTFit.json',
+                                            RegionPath+'FTFit.json',
                                             RegionPath+'TimeResolution.json'
                                             ]
                                                             

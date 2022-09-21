@@ -24,6 +24,7 @@ void SvtRawDataAnaProcessor::configure(const ParameterSet& parameters) {
         regionSelections_ = parameters.getVString("regionDefinitions");
         TimeRef_ = parameters.getDouble("timeref");
         AmpRef_ = parameters.getDouble("ampref");
+        doSample_ = parameters.getInteger("sample");
     }
     catch (std::runtime_error& error)
     {
@@ -32,7 +33,83 @@ void SvtRawDataAnaProcessor::configure(const ParameterSet& parameters) {
 
 }
 
+float SvtRawDataAnaProcessor::str_to_float(std::string token){
+    std::string top1=token.substr(0,token.find("."));
+    const char *top=top1.c_str();
+    std::string bot1=token.substr(token.find(".")+1);
+    const char *bottom=bot1.c_str();
+    float base = 0.0;
+    for(int J=0;J<std::strlen(top);J++){
+        base+=((float)((int)top[J]-48))*pow(10.0,(float)(std::strlen(top)-J-1));
+    }
+    for(int J=0;J<std::strlen(bottom);J++){
+        base+=((float)((int)bottom[J]-48))*pow(10.0,-1*((float)J+1.0));
+    } 
+    return base;
+}
+
+
+TF1* SvtRawDataAnaProcessor::fourPoleFitFunction(){
+        TF1* func = new TF1("pulsefit","(TMath::Max(x-[0],0.0)/(x-[0]))*([3])*(([1]^2)/(([1]-[2])^(3))) * ( exp(-(x-[0])/[1]) - ( exp(-(x-[0])/[2]) * ( ((((([1]-[2])/([1]*[2]))*(x-[0]))^(0))) +  ((((([1]-[2])/([1]*[2]))*(x-[0]))^(1))) + ((((([1]-[2])/([1]*[2]))*(x-[0]))^(2))/2) ) ) ) + [4]",0.0,150.0,"");
+            return func;
+}
+
 void SvtRawDataAnaProcessor::initialize(TTree* tree) {
+    if(doSample_){
+        //Fill in the Background Arrays
+        std::ifstream myfile("/sdf/group/hps/users/rodwyer1/hps_14552_offline_baselines.dat");
+        std::ifstream myfile2("/sdf/group/hps/users/rodwyer1/hpssvt_014393_database_svt_pulse_shapes_final.dat");
+        std::string s;
+        std::string s2;
+        std::vector<float [12]> baselines;
+        for(int i=0; i<24576; i++){ 
+            std::getline(myfile,s);
+            std::getline(myfile2,s2);
+            int feb=0;
+            int hyb=0;
+            int ch=0;
+            if(i>=4096){
+                feb=((i-4096)/2560);
+                hyb=(i-4096-feb*2560)/640;
+                ch=i-4096-feb*2560-hyb*640;
+            }else{
+                feb=i/2048;
+                hyb=(i-feb*2048)/512;
+                ch=i-feb*2048-hyb*512;
+            }
+            for(int I=0;I<5;I++){
+                std::string token=s2.substr(0,s2.find(","));
+                s2=s2.substr(s2.find(",")+1);
+                if(I>=2){
+                    if(feb<=1){
+                        times1_[feb][hyb][ch][I-2]=str_to_float(token);
+                    }else{
+                        times2_[feb][hyb][ch][I-2]=str_to_float(token);
+                    }   
+                }
+            } 
+            for(int I=0;I<13;I++){
+                if(I>0){
+                    if(feb<=1){
+                            std::string token=s.substr(0,s.find(" "));
+                            baseErr1_[feb][hyb][ch][I-1]=str_to_float(token);
+                            s=s.substr(s.find(" ")+1);
+                    }else{
+                            std::string token=s.substr(0,s.find(" ")); 
+                            baseErr2_[feb][hyb][ch][I-1]=str_to_float(token);
+                            s=s.substr(s.find(" ")+1);
+                        //std::cout<<s<<std::endl;
+                    }
+                }else{
+                    s=s.substr(s.find(" ")+1);
+                }
+            }
+        }
+        myfile.close();
+        myfile2.close(); 
+    }
+    
+    
     tree_= tree;
     // init histos
     //histos = new RawSvtHitHistos(anaName_.c_str(), mmapper_);
@@ -61,7 +138,7 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
 
 bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
     //std::cout<<"hello5"<<std::endl;
-    Float_t TimeRef=-13.0;
+    Float_t TimeRef=-0.0;
     Float_t AmpRef=1000.0;
     double weight = 1.;int count1=0;int count2=0;
     for(unsigned int i = 0; i < svtHits_->size(); i++){ 
@@ -72,6 +149,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
             for(unsigned int J=0; J<getNum; J++){
                 //std::cout<<"\ngetNum:"<<getNum<<std::endl;
                 //std::cout<<"region No:"<<regions_[i_reg]<<std::endl;
+                
                 //std::cout<<"Which Hit:"<<J<<std::endl;
                 if(!(reg_selectors_[regions_[i_reg]]->passCutEq("getN_et",getNum,weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutEq("getId_lt",J,weight))){continue;} 
@@ -89,6 +167,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 //std::cout<<"hellO"<<std::endl;           
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("chi_lt",thisHit->getChiSq(J),weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutGt("chi_gt",thisHit->getChiSq(J),weight))){continue;}
+                if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ft",(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)<((thisHit->getT0((J+1)%getNum)-TimeRef)*(thisHit->getT0((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
                 if(i_reg<regionSelections_.size()-1){
                     if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ct",(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)>((thisHit->getT0((J+1)%getNum)-TimeRef)*(thisHit->getT0((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
                 }else{
@@ -97,12 +176,21 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                     }
                 }
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ca",(((thisHit->getAmp(J))-AmpRef)*((thisHit->getAmp(J))-AmpRef)<((thisHit->getAmp((J+1)%getNum)-AmpRef)*(thisHit->getAmp((J+1)%getNum)-AmpRef)+.00001)),weight))){continue;}
+                
+                if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_fterr",(((thisHit->getT0err(J))-TimeRef)*((thisHit->getT0err(J))-TimeRef)<((thisHit->getT0err((J+1)%getNum)-TimeRef)*(thisHit->getT0err((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
+                if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_cterr",(((thisHit->getT0err(J))-0.0)*((thisHit->getT0err(J))-0.0)>((thisHit->getT0err((J+1)%getNum)-0.0)*(thisHit->getT0err((J+1)%getNum)-0.0)+.00001)),weight))){continue;}
 
                 //if(!(std::abs((thisHit->getT0(J))-TimeRef)<std::abs(thisHit->getT0((J+1)%2)-TimeRef))){continue;}          
                 //if(!(reg_selectors_[regions_[i_reg]]->passCutEq("doing_ca",1.0,weight))){continue;}else{
                 //if(!(std::abs((thisHit->getT0(J))-TimeRef)<std::abs(thisHit->getT0((J+1)%2)-TimeRef))){continue;}          
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("amp_lt",thisHit->getAmp(0),weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutGt("amp_gt",thisHit->getAmp(0),weight))){continue;}
+                
+                if(!(reg_selectors_[regions_[i_reg]]->passCutLt("time_lt",thisHit->getT0(0),weight))){continue;}
+                if(!(reg_selectors_[regions_[i_reg]]->passCutGt("time_gt",thisHit->getT0(0),weight))){continue;}
+                
+
+
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("amp2_lt",thisHit->getAmp(0),weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutEq("channel", (thisHit->getStrip()),weight))){continue;} 
                 int * adcs=thisHit->getADCs();
@@ -141,15 +229,72 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                     TimeDiff=(thisHit->getT0(J))-(thisHit->getT0((J+1)%2));
                     AmpDiff=(thisHit->getT0(J))-(thisHit->getT0((J+1)%2)); 
                 }
-                //std::cout<<"I GOT HERE"<<std::endl;
+                if((doSample_==1) and (readout<40)){
+                    std::cout<<"I ACTUALLY DID THIS"<<std::endl;
+                    sample(thisHit,regions_[i_reg],(float)readout);
+                    readout++; 
+                }
+                
                 reg_histos_[regions_[i_reg]]->FillHistograms(thisHit,weight,J,i,TimeDiff,AmpDiff);
             }
         }
     }
     //std::cout<<count1<<std::endl;
-    //std::cout<<count2<<std::endl;
+   //std::cout<<count2<<std::endl;
     return true;
 }
+
+void SvtRawDataAnaProcessor::sample(RawSvtHit* thisHit,std::string word,float read){
+    auto mod = std::to_string(thisHit->getModule());
+    auto lay = std::to_string(thisHit->getLayer());
+    //swTag= mmapper_->getStringFromSw("ly"+lay+"_m"+mod);
+    std::string helper = mmapper_->getHwFromSw("ly"+lay+"_m"+mod); 
+    char char_array[helper.length()+1];
+    std::strcpy(char_array,helper.c_str());
+    int feb = (int)char_array[1]-48;
+    int hyb = (int)char_array[3]-48;
+    int BigCount = 0;
+    if(feb<=1){
+        BigCount+=feb*2048+hyb*512+(int)(thisHit->getStrip());
+    }else{
+        BigCount+=4096;
+        BigCount+=(feb-2)*2560+hyb*640+(int)(thisHit->getStrip());
+    }
+    //std::cout<<"I GOT HERE"<<std::endl;
+    int * adcs2=thisHit->getADCs(); 
+    //std::cout<<regions_[i_reg]<<" "<<readout<<std::endl;
+   
+    TF1* fitfunc = fourPoleFitFunction();
+
+    fitfunc->FixParameter(0,thisHit->getT0(0));
+    fitfunc->FixParameter(3,thisHit->getAmp(0));
+    if(feb<=1){
+        fitfunc->FixParameter(1,times1_[feb][hyb][(int)thisHit->getStrip()][1]);
+        fitfunc->FixParameter(2,times1_[feb][hyb][(int)thisHit->getStrip()][2]);
+        fitfunc->FixParameter(4,baseErr1_[feb][hyb][(int)thisHit->getStrip()][0]);
+    }else{
+        fitfunc->FixParameter(1,times2_[feb-2][hyb][(int)thisHit->getStrip()][1]);
+        fitfunc->FixParameter(2,times2_[feb-2][hyb][(int)thisHit->getStrip()][2]);
+        fitfunc->FixParameter(4,baseErr2_[feb-2][hyb][(int)thisHit->getStrip()][0]); 
+    }   
+    std::cout<<word<<std::endl;
+    if(word=="OneFit"){ 
+        auto gr = new TGraph();
+        for(int i=0;i<6;i++){
+            std::cout<<adcs2[i]<<std::endl; 
+            gr->SetPoint(i,float(i)*24.0,adcs2[i]);
+        }
+        gr->Draw();
+        //fitfunc->Draw();
+        //legend->Draw("same");
+        std::string helper=word+std::to_string(read)+".png";
+        const char *thing = helper.data(); 
+        gPad->SaveAs(thing);
+
+        std::cout<<adcs2[0]<<" "<<adcs2[1]<<" "<<adcs2[2]<<" "<<adcs2[3]<<" "<<adcs2[4]<<" "<<adcs2[5]<<" "<<thisHit->getAmp(0)<<" "<<thisHit->getT0(0)<<" "<<BigCount<<" "<<thisHit->getChiSq(0)<<std::endl;
+    }
+}
+
 void SvtRawDataAnaProcessor::finalize() {
 
     outF_->cd();

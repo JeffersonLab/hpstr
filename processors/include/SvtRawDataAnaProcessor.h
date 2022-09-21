@@ -17,6 +17,10 @@
 #include "TBranch.h"
 #include "TTree.h"
 #include "TFile.h"
+#include "TF1.h"
+#include "TGraph.h"
+#include "TROOT.h"
+#include "TPad.h"
 
 class TTree;
 
@@ -32,6 +36,12 @@ class SvtRawDataAnaProcessor : public Processor {
         virtual bool process(IEvent* ievent);
 
         virtual void initialize(TTree* tree);
+        
+        virtual void sample(RawSvtHit* thisHit, std::string word, float f);
+
+        virtual TF1* fourPoleFitFunction();
+
+        virtual float str_to_float(std::string word);
 
         virtual void finalize();
 
@@ -46,6 +56,15 @@ class SvtRawDataAnaProcessor : public Processor {
         Float_t AmpRef_;
         ModuleMapper * mmapper_;
         int * adcs_;
+        int doSample_;
+        int readout=0;
+       
+        float times1_[2][4][512][3];
+        float times2_[8][4][640][3];
+        float baseErr1_[2][4][512][12];
+        float baseErr2_[8][4][640][12];
+
+
         //TODO Change this to be held from HPSEvent
         TTree* tree_;
         TBranch* bsvtHits_{nullptr};

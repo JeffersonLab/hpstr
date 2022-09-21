@@ -31,6 +31,7 @@ class RawSvtHitHistos : public HistoManager{
     private:
 
         int Event_number=0;
+
         int debug_ = 1;
         int adcs_[6];
 
@@ -39,6 +40,10 @@ class RawSvtHitHistos : public HistoManager{
         //ModuleMapperi
         ModuleMapper* mmapper_;
         //std::shared_ptr<BaseSelector> reg_selector;
+        //float times1_[2][4][512][3];
+        //float times2_[8][4][640][3];
+        float baseErr1_[2][4][512][12];
+        float baseErr2_[8][4][640][12];
         std::vector<std::string> regions_;
         std::vector<std::string> hybridNames;
         std::vector<std::string> hybridNames2;
