@@ -61,7 +61,7 @@
         "ytitle" : "Sim Particles / 100 MeV"
     },
     "mc622P_h" : {
-        "bins" : 4500,
+        "bins" : 45,
         "minX" : 0,
         "maxX" : 4.5,
         "xtitle" : "Momentum of PDGID=622 Particle [GeV]",
@@ -96,7 +96,7 @@
         "ytitle" : "Sim Particles / 100 MeV"
     },
     "mc624P_h" : {
-        "bins" : 4500,
+        "bins" : 45,
         "minX" : 0,
         "maxX" : 4.5,
         "xtitle" : "Momentum of PDGID=624 Particle [GeV]",
@@ -124,7 +124,7 @@
         "ytitle" : "Sim Particles / 100 MeV"
     },
     "mc625P_h" : {
-        "bins" : 4500,
+        "bins" : 45,
         "minX" : 0,
         "maxX" : 4.5,
         "xtitle" : "Momentum of PDGID=625 Particle [GeV]",

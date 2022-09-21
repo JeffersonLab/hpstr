@@ -15,14 +15,14 @@
         "info" : "e^{+} Track #chi^{2}/ndf < 10"
     },
     "eleMom_gt" : {
-        "cut" : 0.5,
+        "cut" : 1.1,
         "id"  : 3,
-        "info" : "p_e^{-} > 0.5 [GeV]"
+        "info" : "p_e^{-} > 1.1 [GeV]"
     },
     "posMom_gt" : {
-        "cut" : 0.5,
+        "cut" : 1.1,
         "id"  : 4,
-        "info" : "p_e^{+} > 0.5 [GeV]"
+        "info" : "p_e^{+} > 1.1 [GeV]"
     },
     "eleN2Dhits_gt" :  {
         "cut"  : 10,

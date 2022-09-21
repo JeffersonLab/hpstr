@@ -1,8 +1,8 @@
 {
     "chi2unc_lt" : {
-        "cut"  : 10,
+        "cut"  : 6,
         "id"   : 0,
-        "info" : "#chi^{2}_{unc}<10"
+        "info" : "#chi^{2}_{unc}<6"
     },
     "L1Requirement_eq" : {
         "cut"  : 1,
@@ -10,9 +10,9 @@
         "info" : "L1L1"
     },
     "pSum_gt"  : {
-        "cut"  : 0.5,
+        "cut"  : 4.0,
         "id"   : 2,
-        "info" : "P_{e^{-}} +  P_{e^{+}} > 0.5 GeV"
+        "info" : "P_{e^{-}} +  P_{e^{+}} > 4.0 GeV"
     },
     "isRadEle_eq" : {
         "cut"  : 1,

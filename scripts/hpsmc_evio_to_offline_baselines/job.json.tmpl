@@ -1,0 +1,19 @@
+{
+    "year": 2019,
+    "is_data": 1,
+    "run_number": 10031,
+    "detector": "HPS_PhysicsRun2019-v2-FEE-Pass0",
+    "steering_files": {
+        "recon": "/org/hps/steering/production/Evio2LcioCnv.lcsim"
+    },
+    "input_files": {
+        "{{input_files['hps'][0]}}" : "data_events.evio"
+    },
+    "output_files": {
+        "data_events.slcio" : "hps_10031_{{input_files['hps'][0].split(".")[1]}}_{{input_files['hps'][0].split(".")[2]}}.slcio"
+    },
+    "config_files": {
+        "recon": "kalSimpTuple_cfg.py"
+    },
+    "output_dir": "/sdf/group/hps/users/alspellm/run/dev_offlinebaselines/output"
+}
