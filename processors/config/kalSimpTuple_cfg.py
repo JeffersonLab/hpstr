@@ -10,6 +10,8 @@ base.parser.add_argument("-s", "--truthHits", type=int, dest="truthHits",
         help="Get svt truth hits: 1=yes", metavar="truthHits", default=1)
 base.parser.add_argument("-r", "--rawHits", type=int, dest="rawHits",
         help="Keep raw svt hits: 1=yes", metavar="rawHits", default=-1)
+base.parser.add_argument("-c", "--constrVtx", type=int, dest="constrVtx",
+        help="Add constrained vertices 1=yes", metavar="constrVtx", default=0)
 
 options = base.parser.parse_args()
 
@@ -133,6 +135,13 @@ vtx.parameters["partCollRoot"]   = 'ParticlesOnVertices_KF'
 vtx.parameters["kinkRelCollLcio"] = ''
 vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
+cvtx.parameters["debug"] = 0
+cvtx.parameters["vtxCollLcio"]     = 'TargetConstrainedV0Vertices_KF'
+cvtx.parameters["vtxCollRoot"]     = 'TargetConstrainedV0Vertices_KF'
+cvtx.parameters["partCollRoot"]    = 'ParticlesOnVertices_KF'
+cvtx.parameters["kinkRelCollLcio"] = ''
+cvtx.parameters["trkRelCollLcio"]  = 'KFTrackDataRelations'
+
 vtxgbl.parameters["debug"] = 0
 vtxgbl.parameters["vtxCollLcio"]     = 'UnconstrainedV0Vertices'
 vtxgbl.parameters["vtxCollRoot"]     = 'UnconstrainedV0Vertices'
@@ -157,17 +166,24 @@ if(options.tracking == "KF"):
     #Get KF svt truth hits
     if(options.truthHits > 0):
         sequence.append(svthits)
+    if(options.constrVtx > 0):
+        sequence.append(cvtx)
 elif(options.tracking == "GBL"):
     sequence = [header, vtxgbl, ecal, trackgbl]                          
     #Get GBL svt truth hits
     if(options.truthHits > 0):
         sequence.append(svthitsgbl)
+    if(options.constrVtx > 0):
+        sequence.append(cvtxgbl)
 elif(options.tracking == "BOTH"):
     sequence = [header, vtxgbl, ecal, trackgbl, vtx, ecal, track]                          
     #Get KF and GBL svt truth hits
     if(options.truthHits > 0):
         sequence.append(svthits)
         sequence.append(svthitsgbl)
+    if(options.constrVtx > 0):
+        sequence.append(cvtx)
+        sequence.append(cvtxgbl)
 else:
     print("ERROR::Need to specify which tracks KF, GBL, or BOTH")
 
