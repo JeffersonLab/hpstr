@@ -19,8 +19,11 @@
 #include "TFile.h"
 #include "TF1.h"
 #include "TGraph.h"
+#include "TAxis.h"
 #include "TROOT.h"
 #include "TPad.h"
+#include "TCanvas.h"
+#include "TLegend.h"
 
 class TTree;
 
@@ -37,12 +40,14 @@ class SvtRawDataAnaProcessor : public Processor {
 
         virtual void initialize(TTree* tree);
         
-        virtual void sample(RawSvtHit* thisHit, std::string word, float f);
+        virtual void sample(RawSvtHit* thisHit, std::string word);
 
-        virtual TF1* fourPoleFitFunction();
+        virtual TF1* fourPoleFitFunction(std::string word, int caser);
 
         virtual float str_to_float(std::string word);
 
+        //virtual int maximum(int arr[]);
+        
         virtual void finalize();
 
         virtual void configure(const ParameterSet& parameters);
@@ -57,13 +62,13 @@ class SvtRawDataAnaProcessor : public Processor {
         ModuleMapper * mmapper_;
         int * adcs_;
         int doSample_;
-        int readout=0;
+        int readout[3]={0,0,0};
        
         float times1_[2][4][512][3];
         float times2_[8][4][640][3];
         float baseErr1_[2][4][512][12];
         float baseErr2_[8][4][640][12];
-
+        std::vector<std::string> MatchList_;
 
         //TODO Change this to be held from HPSEvent
         TTree* tree_;
