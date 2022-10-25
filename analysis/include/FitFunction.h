@@ -4,14 +4,27 @@
 #include "FunctionMath.h"
 #include <iostream>
 
+/**
+ * @brief description
+ * 
+ * more details
+ */
 class FitFunction {
     public:
+        /**
+         * @brief description
+         * 
+         */
         enum SignalFitModel {
             NONE         = 0,
             GAUSSIAN     = 1,
             CRYSTAL_BALL = 2
         };
 
+        /**
+         * @brief description
+         * 
+         */
         enum ModelOrder {
             FIRST   = 0,
             THIRD   = 1,
@@ -19,6 +32,10 @@ class FitFunction {
             SEVENTH = 3
         };
 
+        /**
+         * @brief description
+         * 
+         */
         enum BkgModel {
             CHEBYSHEV     = 0,
             EXP_CHEBYSHEV = 1,
@@ -26,10 +43,20 @@ class FitFunction {
             EXP_LEGENDRE  = 3
         };
 
-        /** Constructor */
-        FitFunction(double m_mass_hypothesis, double m_window_size, double m_bin_size, ModelOrder m_model_order,
-                SignalFitModel m_sig_model = FitFunction::SignalFitModel::NONE,
-                bool m_exp_background = true) {
+        /**
+         * @brief Constructor
+         * 
+         * @param m_mass_hypothesis 
+         * @param m_window_size 
+         * @param m_bin_size 
+         * @param m_model_order 
+         * @param m_sig_model 
+         * @param m_exp_background 
+         */
+        FitFunction(double m_mass_hypothesis, double m_window_size,
+                    double m_bin_size, ModelOrder m_model_order,
+                    SignalFitModel m_sig_model = FitFunction::SignalFitModel::NONE,
+                    bool m_exp_background = true) {
             window_size = m_window_size;
             bin_size = m_bin_size;
             mass_hypothesis = m_mass_hypothesis;
@@ -54,8 +81,13 @@ class FitFunction {
             }
         }
 
-        /** Calculates the value of the function at the specified x
-         * and with the specified parameters.
+        /**
+         * @brief Calculates the value of the function at the specified x
+         *        and with the specified parameters.
+         * 
+         * @param x 
+         * @param par 
+         * @return double 
          */
         double operator() (double *x, double *par) {
             if(exp_background) {
@@ -88,14 +120,22 @@ class FitFunction {
         bool exp_background = true;
 
         /**
-         * Calculates the value of the background function at the
-         * specified x and with the specified parameters.
+         * @brief Calculates the value of the background function at the
+         *        specified x and with the specified parameters.
+         * 
+         * @param x 
+         * @param par 
+         * @return double 
          */
         virtual double calculateBackground(double *x, double *par) = 0;
 
         /**
-         * Calculates the value of the signal function at the
-         * specified x and with the specified parameters.
+         * @brief Calculates the value of the signal function at the
+         *        specified x and with the specified parameters.
+         * 
+         * @param x 
+         * @param par 
+         * @return double 
          */
         double calculateSignal(double *x, double *par) {
             if(sig_model == FitFunction::SignalFitModel::GAUSSIAN) 
@@ -113,8 +153,10 @@ class FitFunction {
         }
 
         /**
-         * Gets a value of x corrected for window size and the mass
-         * hypothesis.
+         * @brief Gets a value of x corrected for window size and the mass hypothesis.
+         * 
+         * @param x 
+         * @return double 
          */
         double getCorrectedX(double x) {
             return 2.0*(x - mass_hypothesis) / (window_size);

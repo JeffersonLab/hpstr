@@ -47,7 +47,8 @@ mcehits.parameters["hitCollLcio"] = 'EcalHits'
 mcehits.parameters["hitCollRoot"] = 'EcalHits'
 
 # Sequence which the processors will run.
-p.sequence = [mcpart, mcthits, mcehits]
+#p.sequence = [mcpart, mcthits, mcehits]
+p.sequence = [mcpart]
 
 p.input_files = lcio_file
 p.output_files = [root_file]

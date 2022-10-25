@@ -3,15 +3,42 @@
 
 #include "IEvent.h"
 
+/**
+ * @brief description
+ * 
+ */
 class IEventFile {
 
- public:
-  
-  virtual ~IEventFile(){};
-  virtual bool nextEvent()=0;
-  virtual void setupEvent(IEvent* ievent)=0;
-  virtual void close()=0;
-  virtual void resetOutputFileDir() = 0;
+    public:
+        /** Destructor */
+        virtual ~IEventFile() {};
+        
+        /**
+         * @brief description
+         * 
+         * @return true 
+         * @return false 
+         */
+        virtual bool nextEvent() = 0;
+
+        /**
+         * @brief description
+         * 
+         * @param ievent 
+         */
+        virtual void setupEvent(IEvent* ievent) = 0;
+
+        /**
+         * @brief description
+         * 
+         */
+        virtual void close() = 0;
+
+        /**
+         * @brief description
+         * 
+         */
+        virtual void resetOutputFileDir() = 0;
   
 };
 

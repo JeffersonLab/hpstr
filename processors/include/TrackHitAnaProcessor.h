@@ -1,7 +1,3 @@
-/**
- *
- */
-
 #ifndef __TRACKHIT_ANAPROCESSOR_H__
 #define __TRACKHIT_ANAPROCESSOR_H__
 
@@ -32,12 +28,15 @@
 // Forward declarations
 class TTree; 
 
+/**
+ * @brief Insert description here.
+ * more details
+ */
 class TrackHitAnaProcessor : public Processor { 
 
     public: 
-
         /**
-         * Class constructor. 
+         * @brief Class constructor. 
          *
          * @param name Name for this instance of the class.
          * @param process The Process class associated with Processor, provided
@@ -49,60 +48,59 @@ class TrackHitAnaProcessor : public Processor {
         ~TrackHitAnaProcessor(); 
 
         /**
-         * Configure the Ana Processor
+         * @brief Configure the Ana Processor
+         * 
          * @param parameters The configuration parameters
          */
         virtual void configure(const ParameterSet& parameters);
 
         /**
-         * Process the event and put new data products into it.
+         * @brief Process the event and put new data products into it.
+         * 
          * @param event The Event to process.
          */
         virtual bool process(IEvent* ievent);
 
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events starts.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events starts.
+         * 
+         * @param tree
          */
         virtual void initialize(TTree* tree);
 
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events finishes.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events finishes.
          */
         virtual void finalize();
 
-    private: 
-
+    private:
         /** Container to hold all Track objects. */
-        std::vector<Track*> * tracks_{};
-        TBranch*           btracks_{nullptr};
+        std::vector<Track*>* tracks_{};
+        TBranch* btracks_{nullptr}; //!< description
 
-        // Track Collection name
-        std::string trkCollName_;
+        std::string trkCollName_; //!< Track Collection name
 
         // Track Selector configuration
         std::string selectionCfg_;
-        std::shared_ptr<BaseSelector> trkSelector_;
-        std::vector<std::string> regionSelections_;
+        std::shared_ptr<BaseSelector> trkSelector_; //!< description
+        std::vector<std::string> regionSelections_; //!< description
 
-        std::map<std::string, std::shared_ptr<BaseSelector> > reg_selectors_;
+        std::map<std::string, std::shared_ptr<BaseSelector>> reg_selectors_; //!< description
 
-        std::map<std::string, std::shared_ptr<TrackHistos> > reg_histos_;
-        typedef std::map<std::string,std::shared_ptr<TrackHistos> >::iterator reg_it;
+        std::map<std::string, std::shared_ptr<TrackHistos>> reg_histos_; //!< description
+        typedef std::map<std::string, std::shared_ptr<TrackHistos>>::iterator reg_it; //!< description
 
-        std::vector<std::string> regions_;
+        std::vector<std::string> regions_; //!< description
 
         // Containers to hold histogrammer info
-        std::string histCfgFilename_;
-        std::string truthHistCfgFilename_;
-        TrackHistos* trkHistos_{nullptr};
-        TrackHistos* truthHistos_{nullptr};
-        bool doTruth_{false};
-        int debug_{0};
-        
-
-
+        std::string histCfgFilename_; //!< description
+        std::string truthHistCfgFilename_; //!< description
+        TrackHistos* trkHistos_{nullptr}; //!< description
+        TrackHistos* truthHistos_{nullptr}; //!< description
+        bool doTruth_{false}; //!< description
+        int debug_{0}; //!< debug level
 
 }; // TrackHitAnaProcessor
 

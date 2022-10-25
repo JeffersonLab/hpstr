@@ -1,7 +1,3 @@
-/**
- *
- */
-
 #ifndef __REFITTEDTRACKS_PROCESSOR_H__
 #define __REFITTEDTRACKS_PROCESSOR_H__
 
@@ -44,12 +40,16 @@
 // Forward declarations
 class TTree; 
 
+/**
+ * @brief Insert description here.
+ * more details
+ */
 class RefittedTracksProcessor : public Processor { 
 
     public: 
 
         /**
-         * Class constructor. 
+         * @brief Class constructor. 
          *
          * @param name Name for this instance of the class.
          * @param process The Process class associated with Processor, provided
@@ -61,52 +61,59 @@ class RefittedTracksProcessor : public Processor {
         ~RefittedTracksProcessor(); 
 
         /**
-         * Process the event and put new data products into it.
+         * @brief Process the event and put new data products into it.
+         * 
          * @param event The Event to process.
          */
         virtual bool process(IEvent* ievent);
 
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events starts.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events starts.
+         * 
+         * @param tree
          */
         virtual void initialize(TTree* tree);
 
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events finishes.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events finishes.
          */
         virtual void finalize();
 
+        /**
+         * @brief description
+         * 
+         * @param parameters 
+         */
         virtual void configure(const ParameterSet& parameters);
 
     private: 
 
         /** Container to hold all Track objects. */
-	std::vector<Track*> tracks_{};
+	    std::vector<Track*> tracks_{};
 
         /** Container to hold all Track objects. */
-	std::vector<Track*> refit_tracks_{};
+	    std::vector<Track*> refit_tracks_{};
         
         /** Container to hold the hits on track */
-	std::vector<TrackerHit*> hits_{};
+	    std::vector<TrackerHit*> hits_{};
 
-	/** Container to hold the raw hits */
-	std::vector<RawSvtHit*> raw_hits_{};
+        /** Container to hold the raw hits */
+        std::vector<RawSvtHit*> raw_hits_{};
+        
+        /** Container to hold vertex objects */
+        std::vector<Vertex*> vertices_{};
+        /** Container to hold refit vertex objects */
+        std::vector<Vertex*> vertices_refit_{};
 	
-	/** Container to hold vertex objects */
-	std::vector<Vertex*> vertices_{};
-	std::vector<Vertex*> vertices_refit_{};
-	
+        bool _debug{false}; //!< description
 
-	bool _debug{false};
-
-	TrackHistos* _OriginalTrkHistos;
-	TrackHistos* _RefitTrkHistos;
-	TrackHistos* _RefitTrkHistos_chi2cut;
-	TrackHistos* _RefitTrkHistos_z0cut;
-    std::string histoCfg_;
-
+        TrackHistos* _OriginalTrkHistos; //!< description
+        TrackHistos* _RefitTrkHistos; //!< description
+        TrackHistos* _RefitTrkHistos_chi2cut; //!< description
+        TrackHistos* _RefitTrkHistos_z0cut; //!< description
+        std::string histoCfg_; //!< description
 
 }; // Refitted Tracks Processor
 

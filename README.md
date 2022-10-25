@@ -4,6 +4,9 @@ updated: 6 May 2020
 
 The Heavy Photon Search Toolkit for Reconstruction (hpstr) provides an interface to physics data from the HPS experiment saved in the LCIO format and converts it into an ROOT based format. It also provides tools which can be used to analyze the ROOT format of the data.
 
+## Doxygen
+You can find the code documentation here: [HPSTR Doxygen](https://jeffersonlab.github.io/hpstr/).
+
 ## Installation
 
 Hpstr can be installed on the following operating systems with some adjustments depending on the tool set available for compilation. 
@@ -126,7 +129,7 @@ NOTE:: On SLAC machines ```cmake3``` is needed to call cmake version 3+, you mig
 If you do not want hpstr to use the default python3 executable which it finds in your environment, then supply the full path to the alternate Python installation.
 
 ```
--DPython3_Exectuable=/path/to/some/python3 
+-DPython3_Executable=/path/to/some/python3 
 ```
 
 To compile with debug information, just add -DCMAKE_BUILD_TYPE=Debug to the cmake3 command. 

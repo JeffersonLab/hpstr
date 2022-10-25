@@ -86,6 +86,9 @@ bool MCParticleProcessor::process(IEvent* ievent) {
         // Set the momentum of the HpsMCParticle
         particle->setMomentum(lc_particle->getMomentum()); 
 
+        // Set the momentum of HpsMCParticle at Endpoint
+        particle->setEndpointMomentum(lc_particle->getMomentumAtEndpoint());
+
         // Set the mass of the HpsMCParticle
         particle->setMass(lc_particle->getMass());
 

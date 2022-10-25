@@ -1,69 +1,97 @@
 #ifndef __VTX_HISTOPROCESSOR_H__
 #define __VTX_HISTOPROCESSOR_H__
 
-//HPSTR
+// HPSTR
 #include "Processor.h"
 #include "HistogramHelpers.h"
 
-//ROOT
+// ROOT
 #include "TFile.h"
 #include "TH1F.h"
 #include "TH2F.h"
 #include "TAxis.h"
 
-//CPLUSPLUS
+// CPLUSPLUS
 #include <map>
 #include <vector>
 #include <memory>
 
-
+/**
+ * @brief Insert description here.
+ * more details
+ */
 class VtxHistoProcessor : public Processor {
 
-public:
+    public:
+        /**
+         * @brief Constructor
+         * 
+         * @param name 
+         * @param process 
+         */
+        VtxHistoProcessor(const std::string& name, Process& process);
 
-VtxHistoProcessor(const std::string& name, Process& process);
+        ~VtxHistoProcessor();
 
-~VtxHistoProcessor();
+        /**
+         * @brief description
+         * 
+         * @param parameters 
+         */
+        virtual void configure(const ParameterSet& parameters);
 
-virtual void configure(const ParameterSet& parameters);
+        /**
+         * @brief description
+         * 
+         * @param inFilename 
+         * @param outFilename 
+         */
+        virtual void initialize(std::string inFilename, std::string outFilename);
 
-virtual void initialize(std::string inFilename, std::string outFilename);
+        /**
+         * @brief description
+         * 
+         * @return true 
+         * @return false 
+         */
+        virtual bool process();
 
-virtual bool process();
+        /**
+         * @brief description
+         * 
+         * @param tree 
+         */
+        virtual void initialize(TTree* tree) {};
 
-virtual void initialize(TTree* tree) {};
+        /**
+         * @brief description
+         * 
+         * @param event 
+         * @return true 
+         * @return false 
+         */
+        virtual bool process(IEvent* event) { return true;};
 
-virtual bool process(IEvent* event) { return true;};
+        /**
+         * @brief description
+         * 
+         */
+        virtual void finalize();
 
-virtual void finalize();
+    private:
 
-private:
+        TFile* inF_{nullptr}; //!< description
 
-TFile* inF_{nullptr};
-        
-//Debug Level
-int debug_{0};
+        int debug_{0}; //!< Debug Level
+        int rebin_{1}; //!< Rebin factor
 
-//Rebin factor
-int rebin_{1};
+        std::vector<std::string> selections_{}; //!< Selection folder
+        std::vector<std::string> projections_; //!< 2D histos to project
+        std::map<std::string,TH2F*> _histos2d; //!< Map storing the 2D histograms
+        typedef std::map<std::string,TH2F*>::iterator it2d_;
 
-//Selection folder
-
- std::vector<std::string> selections_{};
-
-//2D histos to project
-
-std::vector<std::string> projections_;
-
-//Map storing the 2D histograms
-
-std::map<std::string,TH2F*> _histos2d;
-typedef std::map<std::string,TH2F*>::iterator it2d_;
-
-//Map storing the 1D biases and resolutions
-
-std::map<std::string,TH1F* > _histos1d;
-typedef std::map<std::string,TH1F*>::iterator it1d_;
+        std::map<std::string,TH1F* > _histos1d; //!< Map storing the 1D biases and resolutions
+        typedef std::map<std::string,TH1F*>::iterator it1d_;
 
 };
 

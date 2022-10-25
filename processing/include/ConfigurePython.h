@@ -32,9 +32,8 @@ class ConfigurePython {
 
 
     public:
-
         /**
-         * Class constructor.
+         * @brief Class constructor.
          *
          * This method contains all the parsing and execution of the python script.
          *
@@ -54,11 +53,12 @@ class ConfigurePython {
 
     private: 
 
-        /** The run mode of the process:
+        /** 
+         * The run mode of the process:
          *  0: LCIO to ROOT
          *  1: ROOT to Histo
          *  2: Histo Analysis
-         * */
+         */
         int run_mode_{-1};
 
         /** The number of events to skip. */
