@@ -322,13 +322,3 @@ void RawSvtHitHistos::FillHistograms(RawSvtHit* rawSvtHit,float weight,int i,uns
 //                }
                 //std::cout<<svtHybMulti[i][j]<<std::endl;
                 //Fill1DHisto(swTag+ "_SvtHybridsHitN_h", static_cast< float >(svtHybMulti[i][j]),weight);
-//                dir->cd("..");
-//            }
-//        }
-//    }
-    //dir->Write();
-    //if (dir) {delete dir; dir=0;}
-
-//    Clear();
-
-//}

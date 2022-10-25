@@ -9,6 +9,7 @@
 #include "Event.h"
 #include "BaseSelector.h"
 #include "RawSvtHitHistos.h"
+#include "EventHeader.h"
 
 //ROOT
 
@@ -18,7 +19,7 @@
 #include "TTree.h"
 #include "TFile.h"
 #include "TF1.h"
-#include "TGraph.h"
+#include "TGraphErrors.h"
 #include "TAxis.h"
 #include "TROOT.h"
 #include "TPad.h"
@@ -40,11 +41,13 @@ class SvtRawDataAnaProcessor : public Processor {
 
         virtual void initialize(TTree* tree);
         
-        virtual void sample(RawSvtHit* thisHit, std::string word);
+        virtual void sample(RawSvtHit* thisHit, std::string word, IEvent* ievent, long t,int i);
 
         virtual TF1* fourPoleFitFunction(std::string word, int caser);
 
         virtual float str_to_float(std::string word);
+
+        float reverseEngineerTime(float ti, long t);
 
         //virtual int maximum(int arr[]);
         
@@ -73,8 +76,10 @@ class SvtRawDataAnaProcessor : public Processor {
         //TODO Change this to be held from HPSEvent
         TTree* tree_;
         TBranch* bsvtHits_{nullptr};
+        TBranch* bevH_;
 
         std::vector<RawSvtHit*> * svtHits_{};
+        EventHeader * evH_;
 
         std::string anaName_{"rawSvtHitAna"};
         std::string svtHitColl_{"RotatedHelicalTrackHits"};
