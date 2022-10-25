@@ -52,7 +52,6 @@ void Process::runOnRoot() {
                 module->initialize(event.getTree());
                 module->setFile(file->getOutputFile());
             }
-            file->getEvent(skip_events_);
             while (file->nextEvent() && (event_limit_ < 0 || (n_events_processed < event_limit_))) {
                 if (n_events_processed%1000 == 0)
                     std::cout<<"Event:"<<n_events_processed<<std::endl;

@@ -26,6 +26,8 @@ void SvtRawDataAnaProcessor::configure(const ParameterSet& parameters) {
         AmpRef_ = parameters.getDouble("ampref");
         doSample_ = parameters.getInteger("sample");
         MatchList_ = parameters.getVString("MatchList");
+        baselineFile_ = parameters.getString("baselineFile");
+        timeProfiles_ = parameters.getString("timeProfiles");
     }
     catch (std::runtime_error& error)
     {
@@ -177,8 +179,8 @@ TF1* SvtRawDataAnaProcessor::fourPoleFitFunction(std::string word, int caser){
 void SvtRawDataAnaProcessor::initialize(TTree* tree) {
     if(doSample_){
         //Fill in the Background Arrays
-        std::ifstream myfile("/sdf/group/hps/users/rodwyer1/hps_14552_offline_baselines.dat");
-        std::ifstream myfile2("/sdf/group/hps/users/rodwyer1/hpssvt_014393_database_svt_pulse_shapes_final.dat");
+        std::ifstream myfile(baselineFile_.data());
+        std::ifstream myfile2(timeProfiles_.data());
         std::string s;
         std::string s2;
         std::vector<float [12]> baselines;

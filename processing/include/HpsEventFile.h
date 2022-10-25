@@ -13,32 +13,7 @@
  */
 class HpsEventFile : public IEventFile {
 
-<<<<<<< HEAD
- public:
 
-  virtual ~HpsEventFile();
-  HpsEventFile(const std::string ifilename, const std::string& ofilename);
-  virtual bool nextEvent();
-  virtual bool getEvent(int evN);
-  void setupEvent(IEvent* ievent);
-  void resetOutputFileDir() { ofile_->cd();}
-  TFile* getOutputFile() { return ofile_;}
-  void close();
-
-
- private:
-
-  HpsEvent* event_{nullptr};
-  int entry_{0};
-  int maxEntries_{0};
-  TFile* ofile_{nullptr};
-  TFile* rootfile_{nullptr};
-  TTree* intree_{nullptr};
-  
-  
-  //TTreeReader* ttree_reader;
-  
-=======
     public:
         /**
          * @brief Constructor
@@ -87,6 +62,7 @@ class HpsEventFile : public IEventFile {
 
 
     private:
+        
         HpsEvent* event_{nullptr}; //!< description
         int entry_{0}; //!< description
         int maxEntries_{0}; //!< description
@@ -95,7 +71,6 @@ class HpsEventFile : public IEventFile {
         TTree* intree_{nullptr}; //!< description
 
         //TTreeReader* ttree_reader;
->>>>>>> 30ff1b41b3b87982b2760e50d42d036b6af48ce1
 };
 
 

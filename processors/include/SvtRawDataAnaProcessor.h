@@ -88,6 +88,9 @@ class SvtRawDataAnaProcessor : public Processor {
         std::map<std::string,std::shared_ptr<RawSvtHitHistos>> reg_histos_;
         typedef std::map<std::string,std::shared_ptr<RawSvtHitHistos>>::iterator reg_it;
         std::vector<std::string> regions_;
+        std::string baselineFile_;
+        std::string timeProfiles_;
+        
         //I WILL FIX THIS QUICKLY JUST INPUT WHAT YOU HAVE IN THE PYTHON FILE
 
         //Debug Level

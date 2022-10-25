@@ -40,6 +40,9 @@ rawAnaSvt.parameters["sample"] = 1
 
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/svtHit/"
 
+rawAnaSvt.parameters["baselineFile"]="/sdf/group/hps/users/rodwyer1/hps_14552_offline_baselines.dat"
+rawAnaSvt.parameters["timeProfiles"]="/sdf/group/hps/users/rodwyer1/hpssvt_014393_database_svt_pulse_shapes_final.dat"
+
 rawAnaSvt.parameters["regionDefinitions"] = [RegionPath+'OneFit.json',
                                             RegionPath+'FirstFit.json',
                                             RegionPath+'SecondFit.json',
