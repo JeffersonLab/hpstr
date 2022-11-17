@@ -10,7 +10,7 @@
 #include "Processor.h"
 #include "TFile.h"
 #include "TH1.h"
-#include "TRandom.h"
+#include "TRandom3.h"
 
 class TTree;
 
