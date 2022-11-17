@@ -47,6 +47,13 @@
         "xtitle" : "N_{2Dhits}",
         "ytitle" : "Tracks"
     },
+    "ele_hit_lay_h" : {
+        "bins"  : 19,
+        "minX"  : -0.5,
+        "maxX"  : 18.5,
+        "xtitle" : "Layer",
+        "ytitle" : "Hits on a Track"
+    },
     "ele_invpT_h" : {
         "bins" : 100,
         "minX" : -2.5,
@@ -155,9 +162,9 @@
         "ytitle" : "Tracks"
     },
     "ele_p_h" : {
-        "bins" : 120,
+        "bins" : 100,
         "minX" : 0,
-        "maxX" : 6,
+        "maxX" : 5,
         "xtitle" : "p_{e^{-}} [GeV]",
         "ytitle" : "Tracks"
     },
@@ -285,6 +292,13 @@
         "maxX"  : 15,
         "xtitle" : "N_{2Dhits}",
         "ytitle" : "Tracks"
+    },
+    "pos_hit_lay_h" : {
+        "bins"  : 19,
+        "minX"  : -0.5,
+        "maxX"  : 18.5,
+        "xtitle" : "Layer",
+        "ytitle" : "Hits on a Track"
     },
     "pos_invpT_h" : {
         "bins" : 100,
@@ -792,9 +806,9 @@
         "ytitle" : "e^{+} E/p"
     },
     "Psum_h" : {
-        "bins" :  300,
+        "bins" :  200,
         "minX" :  0,
-        "maxX" :  7.5,
+        "maxX" :  5.5,
         "xtitle" : "p_{e^{-}} + p_{e^{+}} [GeV]",
         "ytitle" : "events"
     },

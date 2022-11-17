@@ -1,8 +1,8 @@
 {
     "eleMom_lt" : {
-        "cut" : 6.8,
+        "cut" : 2.8,
         "id"  : 0,
-        "info" : "p e^{-} < 6.8 GeV"
+        "info" : "p e^{-} < 2.8 GeV"
     },
     "eleTrkChi2Ndf_lt" : {
         "cut"  : 30,
@@ -15,14 +15,14 @@
         "info" : "e^{+} Track #chi^{2}/ndf < 30"
     },
     "eleMom_gt" : {
-        "cut" : 0.1,
+        "cut" : 0.2,
         "id"  : 3,
-        "info" : "p_e^{-} > 0.1 [GeV]"
+        "info" : "p_e^{-} > 0.2 [GeV]"
     },
     "posMom_gt" : {
-        "cut" : 0.1,
+        "cut" : 0.2,
         "id"  : 4,
-        "info" : "p_e^{+} > 0.1 [GeV]"
+        "info" : "p_e^{+} > 0.2 [GeV]"
     },
     "eleN2Dhits_gt" :  {
         "cut"  : 10,
@@ -40,8 +40,8 @@
         "info"  : "#chi^{2}_{unc} < 20"
     },
     "maxVtxMom_lt" : {
-        "cut" : 8.0,
+        "cut" : 5.6,
         "id"  : 8,
-        "info" : "p_{vtx} < 8.0 [GeV]"
+        "info" : "p_{vtx} < 5.6 [GeV]"
     }
 }

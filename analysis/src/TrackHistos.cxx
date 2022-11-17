@@ -117,8 +117,8 @@ void TrackHistos::Fill1DVertex(Vertex* vtx,
     p_pos.SetPxPyPzE(pos_trk->getMomentum()[0],pos_trk->getMomentum()[1],pos_trk->getMomentum()[2],pos->getEnergy());
 
     //Fill ele and pos information
-    Fill1DHisto("ele_p_h",p_ele.P(),weight);
-    Fill1DHisto("pos_p_h",p_pos.P(),weight);
+    //Fill1DHisto("ele_p_h",p_ele.P(),weight);
+    //Fill1DHisto("pos_p_h",p_pos.P(),weight);
     Fill1DHisto("ele_clusE_h",eleClus.getEnergy(),weight);
     Fill1DHisto("pos_clusE_h",posClus.getEnergy(),weight);
     Fill1DHisto("ele_EoP_h",eleClus.getEnergy()/p_ele.P(),weight);
@@ -218,6 +218,11 @@ void TrackHistos::Fill1DTrack(Track* track, float weight, const std::string& trk
     Fill1DHisto(trkname+"chi2ndf_h"  ,track->getChi2Ndf()     ,weight);
     Fill1DHisto(trkname+"nShared_h"  ,track->getNShared()     ,weight);
     Fill1DHisto(trkname+"nHits_2d_h" ,n_hits_2d               ,weight);
+    for (int ihit=0; ihit<track->getSvtHits()->GetEntries();++ihit) 
+    {
+        TrackerHit* hit2d = (TrackerHit*) track->getSvtHits()->At(ihit);
+        Fill1DHisto(trkname+"hit_lay_h",hit2d->getLayer()  ,weight);
+    }
 
     //All Tracks
     Fill1DHisto(trkname+"sharingHits_h",0,weight);
