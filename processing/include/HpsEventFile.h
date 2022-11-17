@@ -7,32 +7,68 @@
 #include "TFile.h"
 #include "TTree.h"
 
-
+/**
+ * @brief description
+ * 
+ */
 class HpsEventFile : public IEventFile {
 
- public:
+    public:
+        /**
+         * @brief Constructor
+         * 
+         * @param ifilename 
+         * @param ofilename 
+         */
+        HpsEventFile(const std::string ifilename, const std::string& ofilename);
 
-  virtual ~HpsEventFile();
-  HpsEventFile(const std::string ifilename, const std::string& ofilename);
-  virtual bool nextEvent();
-  void setupEvent(IEvent* ievent);
-  void resetOutputFileDir() { ofile_->cd();}
-  TFile* getOutputFile() { return ofile_;}
-  void close();
+        /** Destructor */
+        virtual ~HpsEventFile();
+
+        /**
+         * @brief description
+         * 
+         * @return true 
+         * @return false 
+         */
+        virtual bool nextEvent();
+
+        /**
+         * @brief description
+         * 
+         * @param ievent 
+         */
+        void setupEvent(IEvent* ievent);
+
+        /**
+         * @brief description
+         * 
+         */
+        void resetOutputFileDir() { ofile_->cd();}
+
+        /**
+         * @brief Get the output file.
+         * 
+         * @return TFile* 
+         */
+        TFile* getOutputFile() { return ofile_;}
+
+        /**
+         * @brief description
+         * 
+         */
+        void close();
 
 
- private:
+    private:
+        HpsEvent* event_{nullptr}; //!< description
+        int entry_{0}; //!< description
+        int maxEntries_{0}; //!< description
+        TFile* ofile_{nullptr}; //!< description
+        TFile* rootfile_{nullptr}; //!< description
+        TTree* intree_{nullptr}; //!< description
 
-  HpsEvent* event_{nullptr};
-  int entry_{0};
-  int maxEntries_{0};
-  TFile* ofile_{nullptr};
-  TFile* rootfile_{nullptr};
-  TTree* intree_{nullptr};
-  
-  
-  //TTreeReader* ttree_reader;
-  
+        //TTreeReader* ttree_reader;
 };
 
 

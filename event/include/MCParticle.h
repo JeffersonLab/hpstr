@@ -117,6 +117,14 @@ class MCParticle : public TObject {
         void setMomentum(const double* momentum);
 
         /**
+         * Set the endpoint momentum of the particle in GeV.
+         *
+         * @param momentum_ep An array containing the three momentum components 
+         *                 of the particle.
+         */
+        void setEndpointMomentum(const double* momentum_ep);
+
+        /**
          * Set the vertex position of the particle.
          *
          * @param vtx_pos An array containing the three vertex position
@@ -161,6 +169,9 @@ class MCParticle : public TObject {
         
         /** @return The momentum of the particle. */
         std::vector<double> getMomentum() const;  
+
+        /** @return The endpoint momentum of the particle. */
+        std::vector<double> getEndpointMomentum() const;  
        
         /** @return The vertex position of the particle. */
         std::vector<double> getVertexPosition() const;
@@ -207,6 +218,15 @@ class MCParticle : public TObject {
 
         /** The z component of the momentum of this particle in GeV */
         double pz_{-9999};
+
+        /** The x component of the momentum_ep of this particle in GeV */
+        double px_ep{-9999}; 
+
+        /** The y component of the momentum_ep of this particle in GeV */
+        double py_ep{-9999}; 
+
+        /** The z component of the momentum_ep of this particle in GeV */
+        double pz_ep{-9999};
         
         /** The x component of the vertex of this particle in mm*/
         double vtx_x_{-9999};

@@ -1,7 +1,3 @@
-/**
- *
- */
-
 #ifndef __SVT_DATA_PROCESSOR_H__
 #define __SVT_DATA_PROCESSOR_H__
 
@@ -35,12 +31,16 @@
 // Forward declarations
 class TTree; 
 
+/**
+ * @brief Insert description here.
+ * more details
+ */
 class SvtDataProcessor : public Processor { 
 
     public: 
 
         /**
-         * Class constructor. 
+         * @brief Class constructor. 
          *
          * @param name Name for this instance of the class.
          * @param process The Process class associated with Processor, provided
@@ -52,20 +52,23 @@ class SvtDataProcessor : public Processor {
         ~SvtDataProcessor(); 
 
         /**
-         * Process the event and put new data products into it.
+         * @brief Process the event and put new data products into it.
+         * 
          * @param event The Event to process.
          */
         virtual bool process(IEvent* ievent);
 
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events starts.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events starts.
+         * 
+         * @param tree
          */
         virtual void initialize(TTree* tree);
 
         /**
-         * Callback for the Processor to take any necessary
-         * action when the processing of events finishes.
+         * @brief Callback for the Processor to take any necessary
+         *        action when the processing of events finishes.
          */
         virtual void finalize();
 

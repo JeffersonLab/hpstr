@@ -28,6 +28,7 @@ void VertexAnaProcessor::configure(const ParameterSet& parameters) {
         hitColl_ = parameters.getString("hitColl",hitColl_);
         ecalColl_ = parameters.getString("ecalColl",ecalColl_);
         mcColl_  = parameters.getString("mcColl",mcColl_);
+        isRadPDG_ = parameters.getInteger("isRadPDG",isRadPDG_);
 
         selectionCfg_   = parameters.getString("vtxSelectionjson",selectionCfg_);
         histoCfg_ = parameters.getString("histoCfg",histoCfg_);
@@ -682,7 +683,8 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                         }
 
                         if(mcParts_->at(i)->getID() != maxID) continue;
-                        if(momPDG == 625) isRadEle = 1;
+                        //Default isRadPDG = 622
+                        if(momPDG == isRadPDG_) isRadEle = 1;
                         if(momPDG == 623) isRecEle = 1;
                     }
                 }

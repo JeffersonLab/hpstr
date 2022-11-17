@@ -3,11 +3,22 @@
 
 #include "FitFunction.h"
 
+/**
+ * @brief description
+ * 
+ */
 class ChebyshevFitFunction: public FitFunction {
     using FitFunction::FitFunction;
 
     protected:
-    double calculateBackground(double *x, double *par);
+        /**
+         * @brief calculate background
+         * 
+         * @param x 
+         * @param par 
+         * @return double 
+         */
+        double calculateBackground(double *x, double *par);
 };
 
 #endif

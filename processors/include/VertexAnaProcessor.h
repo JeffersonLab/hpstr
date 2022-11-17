@@ -1,8 +1,7 @@
 #ifndef __VERTEX_ANAPROCESSOR_H__
 #define __VERTEX_ANAPROCESSOR_H__
 
-
-//HPSTR
+// HPSTR
 #include "HpsEvent.h"
 #include "Collections.h"
 #include "EventHeader.h"
@@ -17,12 +16,10 @@
 #include "TrackHistos.h"
 #include "MCAnaHistos.h"
 
-
 #include "FlatTupleMaker.h"
 #include "AnaHelpers.h"
 
-
-//ROOT
+// ROOT
 #include "TFile.h"
 #include "TTree.h"
 #include "TRefArray.h"
@@ -30,7 +27,7 @@
 #include "TVector3.h"
 #include "TLorentzVector.h"
 
-//C++ 
+// C++ 
 #include <memory>
 
 struct char_cmp {
@@ -40,78 +37,108 @@ struct char_cmp {
     }
 };
 
-
+/**
+ * @brief Insert description here.
+ * more details
+ */
 class VertexAnaProcessor : public Processor {
 
     public:
+        /**
+         * @brief Constructor
+         * 
+         * @param name 
+         * @param process 
+         */
         VertexAnaProcessor(const std::string& name, Process& process);
+
         ~VertexAnaProcessor();
+
+        /**
+         * @brief description
+         * 
+         * @param ievent 
+         * @return true 
+         * @return false 
+         */
         virtual bool process(IEvent* ievent);
 
+        /**
+         * @brief description
+         * 
+         * @param tree 
+         */
         virtual void initialize(TTree* tree);
 
+        /**
+         * @brief description
+         * 
+         */
         virtual void finalize();
 
+        /**
+         * @brief description
+         * 
+         * @param parameters 
+         */
         virtual void configure(const ParameterSet& parameters);
 
     private:
+        std::shared_ptr<BaseSelector> vtxSelector; //!< description
+        std::vector<std::string> regionSelections_; //!< description
 
-        std::shared_ptr<BaseSelector> vtxSelector;
-        std::vector<std::string> regionSelections_;
+        std::string selectionCfg_; //!< description
+        std::map<const char*, int, char_cmp> brMap_; //!< description
+        TBranch* bts_{nullptr}; //!< description
+        TBranch* bvtxs_{nullptr}; //!< description
+        TBranch* bhits_{nullptr}; //!< description
+        TBranch* btrks_{nullptr}; //!< description
+        TBranch* bmcParts_{nullptr}; //!< description
+        TBranch* bevth_{nullptr}; //!< description
+        TBranch* becal_{nullptr}; //!< description
 
-        std::string selectionCfg_;
-        std::map<const char *, int, char_cmp> brMap_;
-        TBranch* bts_{nullptr};
-        TBranch* bvtxs_{nullptr};
-        TBranch* bhits_{nullptr};
-        TBranch* btrks_{nullptr};
-        TBranch* bmcParts_{nullptr};
-        TBranch* bevth_{nullptr};
-        TBranch* becal_{nullptr};
+        EventHeader* evth_{nullptr}; //!< description
+        TSData* ts_{nullptr}; //!< description
+        std::vector<CalCluster*>* ecal_{}; //!< description
+        std::vector<Vertex*>* vtxs_{}; //!< description
+        std::vector<Track*>* trks_{}; //!< description
+        std::vector<TrackerHit*>* hits_{}; //!< description
+        std::vector<MCParticle*>* mcParts_{}; //!< description
 
-        EventHeader * evth_{nullptr};
-        TSData      * ts_{nullptr};
-        std::vector<CalCluster*> * ecal_{};
-        std::vector<Vertex*> * vtxs_{};
-        std::vector<Track*>  * trks_{};
-        std::vector<TrackerHit*>  * hits_{};
-        std::vector<MCParticle*>  * mcParts_{};
+        std::string anaName_{"vtxAna"}; //!< description
+        std::string tsColl_{"TSBank"}; //!< description
+        std::string vtxColl_{"Vertices"}; //!< description
+        std::string hitColl_{"RotatedHelicalTrackHits"}; //!< description
+        std::string trkColl_{"GBLTracks"}; //!< description
+        std::string ecalColl_{"RecoEcalClusters"}; //!< description
+        std::string mcColl_{"MCParticle"}; //!< description
+        int isRadPDG_{622}; //!< description
+        TTree* tree_{nullptr}; //!< description
 
-        std::string anaName_{"vtxAna"};
-        std::string tsColl_{"TSBank"};
-        std::string vtxColl_{"Vertices"};
-        std::string hitColl_{"RotatedHelicalTrackHits"};
-        std::string trkColl_{"GBLTracks"};
-        std::string ecalColl_{"RecoEcalClusters"};
-        std::string mcColl_{"MCParticle"};
-        TTree* tree_{nullptr};
+        std::shared_ptr<TrackHistos> _vtx_histos; //!< description
+        std::shared_ptr<MCAnaHistos> _mc_vtx_histos; //!< description
 
-        std::shared_ptr<TrackHistos> _vtx_histos;
-        std::shared_ptr<MCAnaHistos> _mc_vtx_histos;
+        /** \todo Duplicate.. We can make a single class.. ? */
+        std::map<std::string, std::shared_ptr<BaseSelector>> _reg_vtx_selectors; //!< description
+        std::map<std::string, std::shared_ptr<TrackHistos>> _reg_vtx_histos; //!< description
+        std::map<std::string, std::shared_ptr<MCAnaHistos>> _reg_mc_vtx_histos; //!< description
+        std::map<std::string, std::shared_ptr<FlatTupleMaker>> _reg_tuples; //!< description
 
-        //Duplicate.. We can make a single class.. ?
-        std::map<std::string, std::shared_ptr<BaseSelector> > _reg_vtx_selectors;
-        std::map<std::string, std::shared_ptr<TrackHistos> > _reg_vtx_histos;
-        std::map<std::string, std::shared_ptr<MCAnaHistos> > _reg_mc_vtx_histos;
-        std::map<std::string, std::shared_ptr<FlatTupleMaker> > _reg_tuples;
+        std::vector<std::string> _regions; //!< description
 
-        std::vector<std::string> _regions;
+        typedef std::map<std::string, std::shared_ptr<TrackHistos>>::iterator reg_it; //!< description
+        typedef std::map<std::string, std::shared_ptr<MCAnaHistos>>::iterator reg_mc_it; //!< description
 
-        typedef std::map<std::string,std::shared_ptr<TrackHistos> >::iterator reg_it;
-        typedef std::map<std::string,std::shared_ptr<MCAnaHistos> >::iterator reg_mc_it;
+        std::string histoCfg_{""}; //!< description
+        std::string mcHistoCfg_{""}; //!< description
+        double timeOffset_{-999}; //!< description
+        double beamE_{2.3}; //!< In GeV. Default is 2016 value;
+        int isData_{0}; //!< description
+        std::string analysis_{"vertex"}; //!< description
 
-        std::string histoCfg_{""};
-        std::string mcHistoCfg_{""};
-        double timeOffset_{-999};
-        //In GeV. Default is 2016 value;
-        double beamE_{2.3};
-        int isData_{0};
-        std::string analysis_{"vertex"};
+        std::shared_ptr<AnaHelpers> _ah; //!< description
 
-        std::shared_ptr<AnaHelpers> _ah;
-
-        //Debug level
-        int debug_{0};
+        int debug_{0}; //!< Debug level
 };
 
 #endif
