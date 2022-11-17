@@ -32,6 +32,7 @@ svthits = HpstrConf.Processor('svthits', 'Tracker3DHitProcessor')
 rawsvt  = HpstrConf.Processor('rawsvt', 'SvtRawDataProcessor')
 ecal    = HpstrConf.Processor('ecal', 'ECalDataProcessor')
 vtx     = HpstrConf.Processor('vtx', 'VertexProcessor')
+cvtx   = HpstrConf.Processor('cvtx', 'VertexProcessor')
 vtxgbl   = HpstrConf.Processor('vtxgbl', 'VertexProcessor')
 cvtxgbl   = HpstrConf.Processor('cvtxgbl', 'VertexProcessor')
 mcpart  = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
@@ -73,7 +74,7 @@ track.parameters["rawhitCollRoot"] = ''
 
 #Only for detail studies
 #LT uncomment
-track.parameters["rawhitCollRoot"] = ''#'SCTRawHitsOnTrack_KF'
+track.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack_KF'
 
 #LT uncommented
 #if (not options.isData):
@@ -95,7 +96,7 @@ trackgbl.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 
 #Only for detail studies
 #LT uncomment
-trackgbl.parameters["rawhitCollRoot"] = ''#'SVTRawHitsOnTrack'
+trackgbl.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack'
 
 #LT uncommented
 #if (not options.isData):
@@ -120,19 +121,25 @@ vtx.parameters["partCollRoot"]   = 'ParticlesOnVertices_KF'
 vtx.parameters["kinkRelCollLcio"] = ''
 vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
+cvtx.parameters["debug"] = 0
+cvtx.parameters["vtxCollLcio"]     = 'TargetConstrainedV0Vertices_KF'
+cvtx.parameters["vtxCollRoot"]     = 'TargetConstrainedV0Vertices_KF'
+cvtx.parameters["partCollRoot"]    = 'ParticlesOnCVertices_KF'
+cvtx.parameters["kinkRelCollLcio"] = ''
+cvtx.parameters["trkRelCollLcio"]  = 'KFTrackDataRelations'
+
 
 vtxgbl.parameters["debug"] = 0
 vtxgbl.parameters["vtxCollLcio"]     = 'UnconstrainedV0Vertices'
 vtxgbl.parameters["vtxCollRoot"]     = 'UnconstrainedV0Vertices'
-vtxgbl.parameters["partCollRoot"]    = 'ParticlesOnVertices'
+vtxgbl.parameters["partCollRoot"]    = 'ParticlesOnUVertices'
 vtxgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
 vtxgbl.parameters["trkRelCollLcio"]  = 'TrackDataRelations'
-
 
 cvtxgbl.parameters["debug"] = 0
 cvtxgbl.parameters["vtxCollLcio"]     = 'TargetConstrainedV0Vertices'
 cvtxgbl.parameters["vtxCollRoot"]     = 'TargetConstrainedV0Vertices'
-cvtxgbl.parameters["partCollRoot"]    = 'ParticlesOnVertices'
+cvtxgbl.parameters["partCollRoot"]    = 'ParticlesOnCVertices'
 cvtxgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
 cvtxgbl.parameters["trkRelCollLcio"]  = 'TrackDataRelations'
 
@@ -146,8 +153,8 @@ mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 if (not options.isData):
     p.sequence = [header, vtx, vtxgbl, cvtxgbl, ecal, track, trackgbl, mcpart]
 else:
-    p.sequence = [header, vtx, ecal, track]
     #p.sequence = [header, vtx, vtxgbl, cvtxgbl, ecal, track, trackgbl]
+    p.sequence = [header, vtx, cvtx, ecal, track, rawsvt]
 
 if (options.nevents > -1 ):
     p.max_events = options.nevents

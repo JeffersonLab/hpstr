@@ -193,7 +193,7 @@ bool BhMassResSystematicsProcessor::process() {
     flat_tuple_->setVariableValue("nominal_ul_p_value",             nominal_result->getUpperLimitPValue());
 
     // Make a random number generator.
-    TRandom *rng = new TRandom();
+    TRandom3 *rng = new TRandom3();
     
     // Iterate for a number of loops equal to the desired number of
     // resolution scale samples.
