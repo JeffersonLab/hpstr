@@ -2,17 +2,17 @@
     "chi2unc_lt" : {
         "cut"  : 20.0,
         "id"   : 0,
-        "info" : "#chi^{2}_{vtx}<20"
-    },
-    "L1Requirement_eq"  : {
-        "cut"  : 1,
-        "id"   : 1,
-        "info" : "L1L1"
+        "info" : "#chi^{2}_{unc}<20"
     },
     "pSum_gt"  : {
-        "cut"  : 2.0,
+        "cut"  : 0.5,
+        "id"   : 1,
+        "info" : "P_{e^{-}} + P_{e^{+}}>0.5 GeV"
+    },
+    "volPos_top"  : {
+        "cut"  : 0.0,
         "id"   : 2,
-        "info" : "P_{e^{-}} + P_{e^{+}}>2.0 GeV"
+        "info" : "e^{+} in Top"
     },
     "nVtxs_eq" : {
         "cut"  : 1,
