@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['signalfitmodel_3052',['SignalFitModel',['../classFitFunction.html#a65336e70d753bb21bb743a20613f4fd7',1,'FitFunction']]],
-  ['strategy_3053',['STRATEGY',['../namespaceTRACKINFO.html#acec5c5ebb9b44e944def1ed14528d34c',1,'TRACKINFO']]]
+  ['signalfitmodel_3085',['SignalFitModel',['../classFitFunction.html#a65336e70d753bb21bb743a20613f4fd7',1,'FitFunction']]],
+  ['strategy_3086',['STRATEGY',['../namespaceTRACKINFO.html#acec5c5ebb9b44e944def1ed14528d34c',1,'TRACKINFO']]]
 ];
