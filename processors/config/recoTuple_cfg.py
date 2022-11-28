@@ -70,7 +70,7 @@ track.parameters["kinkRelCollLcio"] = ''
 track.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 track.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
-track.parameters["rawhitCollRoot"] = '' #'SVTRawHitsOnTrack_KF'
+track.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack_KF'
 
 track.parameters["bfield"] = bfield[str(options.year)]
 
@@ -81,7 +81,7 @@ trackgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
 trackgbl.parameters["trkRelCollLcio"] = 'TrackDataRelations'
 trackgbl.parameters["trkhitCollRoot"] = 'RotatedHelicalOnTrackHits'
 trackgbl.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
-trackgbl.parameters["rawhitCollRoot"] = '' #'SVTRawHitsOnTrack'
+trackgbl.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack'
 trackgbl.parameters["bfield"] = bfield[str(options.year)]
 
 #if (not options.isData):
