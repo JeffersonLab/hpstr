@@ -29,9 +29,9 @@ PhysRun2016-Pass2/v4_5_0
 
 ### HOW ANALYSIS FILES ARE PRODUCED ###
 1.) Tupilize Re-reconstructed files
-    1a) Command: hpstr hpstr/processors/config/kalSimpTuple_cfg.py -w KF -i <input.slcio> -o <tuple.root> -y 2016 -t 0
+    1a) Command: hpstr ./hpstr_config/kalSimpTuple_cfg.py -w KF -i <input.slcio> -o <tuple.root> -y 2016 -t 0
 2.) Run vertex analysis in Signal Region (SR) and Control Region (CR)  
-    2a) Command: hpstr hpstr/processors/config/anaKalSimpTuple_cfg.py -w KF -i <tuple.root> -o <ana.root> -y 2-16 -t 0 -R <CR or SR>
+    2a) Command: hpstr ./hpstr_config/anaKalSimpTuple_cfg.py -w KF -i <tuple.root> -o <ana.root> -y 2-16 -t 0 -R <CR or SR>
     2b) Histo config: 'histoCfg' = hpstr/analysis/plotconfigs/tracking/vtxAnalysis_2016_simp_reach.json
     2c) mc histo config: 'mcHistoCfg' = hpstr/analysis/plotconfigs/mc/basicMC.json
     2d) Pre-selection: 'vtxSelectionjson' = hpstr/analysis/selections/vertexSelection_2016_simp_reach.json
