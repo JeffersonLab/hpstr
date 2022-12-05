@@ -7,25 +7,44 @@ import utilities as utils
 import copy
 from optparse import OptionParser
 
+### Origin of MC used in reach estimate ###
+'''
+All MC samples listed below are re-reconstructed using PhysicsRun2016FullReconMC_KF_TrackClusterMatcher.lcsim, Run 7800, and detector 'HPS-PhysicsRun2016-Pass2' using hps-java-v5.1
+
+1) Tritrig+Beam Original Recon: /mss/hallb/hps/production/PhysicsRun2016/pass4/npt224npt08n4pt3_npt33/recon/tritrig-beam_2500kBunches/ 2pt3/PhysRun2016-
+Pass2/v4_5_0 (https://confluence.slac.stanford.edu/display/hpsg/pass4+for+2016+MC)
+
+2) WAB+Beam Original Recon: /mss/hallb/hps/production/PhysicsRun2016/pass4/npt224npt08n4pt3_npt33/recon/wab-beam_2500kBunches/2pt3/PhysRun2016-
+Pass2/v4_5_0/ (https://confluence.slac.stanford.edu/display/hpsg/pass4+for+2016+MC)
+
+3) Rad+Beam Original Recon: /mss/hallb/hps/production/PhysicsRun2016/pass4/npt224npt08n4pt3_npt33/recon/RAD_egs5-truth-beam_2500kBunches/2pt3/
+PhysRun2016-Pass2/v4_5_0
+
+4) SIMPs: /sdf/group/hps/users/bravo/run/simpPrep/output/recon/2pt3/
+    4a) mA' = (3/1.8)*mVD
+    4b) mpi_D = mVD/1.8
+    4c) Target pos = -4.3 mm
+'''
+
 #Calculated in 'makeRadFrac.py'
 def radFrac(mass):
-    radF = ( -1.92497e-01 + 1.47144e-02*mass + -2.91966e-04*pow(mass,2) + 2.65603e-06*pow(mass,3) + -1.12471e-8*pow(mass,4) + 1.74765e-11*pow(mass,5) + 2.235718e-15*pow(mass,6)) #alic 2016 simps 
+    radF = -1.04206e-01 + 9.92547e-03*mass + -1.99437e-04*pow(mass,2) + 1.83534e-06*pow(mass,3) + -7.93138e-9*pow(mass,4) + 1.30456e-11*pow(mass,5) #alic 2016 simps kf 11/15/22
     return radF
 
 #Calculated in 'makeTotRadAcc.py'
 def totRadAcc(mass):
-    acc = ( -7.93151e-01 + 1.04324e-01*mass + -5.55225e-03*pow(mass,2) + 1.55480e-04*pow(mass,3) + -2.53281e-06*pow(mass,4) + 2.54558e-08*pow(mass,5) + -1.60877e-10*pow(mass,6) + 6.24627e-13*pow(mass,7) + -1.36375e-15*pow(mass,8) + 1.28312e-18*pow(mass,9) ) #alic 2016 simps 
+    acc = ( -7.35934e-01 + 9.75402e-02*mass + -5.22599e-03*pow(mass,2) + 1.47226e-04*pow(mass,3) + -2.41435e-06*pow(mass,4) + 2.45015e-08*pow(mass,5) + -1.56938e-10*pow(mass,6) + 6.19494e-13*pow(mass,7) + -1.37780e-15*pow(mass,8) + 1.32155e-18*pow(mass,9) ) #alic 2016 simps kf 11/15/22 
     return acc
 
 #Calculated by running 'vtxhProcess.py' in hpstr, then using 'makeVtxResolution.py'
 def vtxRes(mass):
     mass = mass/1000.0 #cnv MeV to GeV 
-    res = ( 5.99358 - 8.22402e01*mass + 4.91751e02*pow(mass,2) + -9.98972e02*pow(mass,3)) # 2016 simps
+    res = 8.09149 + -1.54072e02*mass + 1.25624e03*pow(mass,2) + -3.43499e03*pow(mass,3) # 2016 simps kf 11/15/22
     return res
 
 #Calculated in 'makeMassRes.py'
 def massRes(mass):
-    res = 9.73217e-01 + 3.63659e-02*mass + -7.32046e-05*mass*mass #2016 simps alic
+    res = 1.06314 + 3.45955e-02*mass + -6.62113e-05*pow(mass,2) # 2016 simps kf 11/15/22
     return res
 
 #Rate for A' -> 2 Dark Pions (Invisible decay)
@@ -134,7 +153,7 @@ parser.add_option("-z", "--zcutFile", type="string", dest="zcutFile",
 zCutVals = []
 dNdms = []
 #MC Generated Dark Vector Masses
-invMasses = [40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160, 165, 170, 175, 180, 185, 190, 195, 200]
+invMasses = [25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160, 165, 170, 175, 180, 185, 190, 195, 200]
 # SIMP MC is generated using fixed mass ratio of Dark Vector to A'
 ap_invMasses = [round(x*(3./1.8),1) for x in invMasses]
 
@@ -145,7 +164,6 @@ for line in zcutFile:
     lineList = line.split()
     zcuts[float(lineList[0])] = float(lineList[1])
     pass
-print(zcuts)
 
 outFile = r.TFile(options.outputFile,"RECREATE")
 
@@ -222,7 +240,7 @@ for m_Ap in ap_invMasses:
     print('Dark Pion Mass : Pion Decay Constant = ',f_pi)
 
     #First grab the pretrigger vtx z distribution
-    vdSimFilename = "/sdf/group/hps/users/alspellm/projects/THESIS/simp_reach_estimates/simps_2016/mc/simps/slic/simp_masses/%i/hadd_mass_%i_simp_mcAna.root"%(m_vdI, m_vdI)
+    vdSimFilename = "/sdf/group/hps/users/alspellm/projects/THESIS/mc/simps/slic_ana/hadd_mass_%i_simp_mcAna.root"%(m_vdI)
     vdSimFile = r.TFile(vdSimFilename)
     vdSimZ_hcp = copy.deepcopy(vdSimFile.Get("mcAna/mcAna_mc625Z_h") )
     vdSimFile.Close()
@@ -237,8 +255,8 @@ for m_Ap in ap_invMasses:
     #Next count the differential background rate in 1 MeV bin
     dNdm = 0.0
     #tritrig
-    ttFile = r.TFile("/sdf/group/hps/users/alspellm/projects/THESIS/simp_reach_estimates/simps_2016/mc/tritrig_beam/ana/hadd_tritrigv2-beamv6_2500kBunches_HPS-PhysicsRun2016-Pass2_v4_5_0_pairs1_ana.root")
-    ttTree = ttFile.Get("vtxana_Tight_simpCR/vtxana_Tight_simpCR_tree")
+    ttFile = r.TFile("/sdf/group/hps/users/alspellm/projects/THESIS/simp_reach_estimates/simps_2016_kf/mc/tritrig_beam/ana/final_hadd_tritrigv2-beamv6_2500kBunches_HPS-PhysicsRun2016-Pass2_v4_5_0_pairs1_976_KF_CR.root")
+    ttTree = ttFile.Get("vtxana_kf_vertexSelection_Tight_CR/vtxana_kf_vertexSelection_Tight_CR_tree")
     ttTree.SetName("tritrig_Tight_tree")
     print("Counting background rate")
     Mbin = 30.0
@@ -250,8 +268,8 @@ for m_Ap in ap_invMasses:
     ttFile.Close()
 
     #WAB
-    wabFile = r.TFile("/sdf/group/hps/users/alspellm/projects/THESIS/simp_reach_estimates/simps_2016/mc/wab_beam/ana/hadd_wabv3-beamv6_2500kBunches_HPS-PhysicsRun2016-Pass2_v4_5_0_pairs1_ana.root")
-    wabTree = wabFile.Get("vtxana_Tight_simpCR/vtxana_Tight_simpCR_tree")
+    wabFile = r.TFile("/sdf/group/hps/users/alspellm/projects/THESIS/simp_reach_estimates/simps_2016_kf/mc/wab_beam/ana/final_hadd_wabv3-beamv6_2500kBunches_HPS-PhysicsRun2016-Pass2_v4_5_0_pairs1_KF_ana_CR.root")
+    wabTree = wabFile.Get("vtxana_kf_vertexSelection_Tight_CR/vtxana_kf_vertexSelection_Tight_CR_tree")
     wabTree.SetName("wab_Tight_tree")
     for ev in wabTree:
         if 1000.0*ev.unc_vtx_mass > m_Ap + (Mbin/2): continue
@@ -266,14 +284,14 @@ for m_Ap in ap_invMasses:
     #Next get flat tuple from anaVtx and fill eff_vtx numerator
     lowMass = m_vdF - 2.8*massRes(m_vdF)/2.0
     highMass = m_vdF + 2.8*massRes(m_vdF)/2.0
-    #zCut = 17.7702 + 138.166*m_vdFGeV - 5363.29*m_vdFGeV*m_vdFGeV + 44532.4*pow(m_vdFGeV,3) - 120578*pow(m_vdFGeV,4)
-    zCut = zcuts[m_vdF] 
+    zCut = 69.2555 + -0.916318*m_vdF + 0.00504772*m_vdF*m_vdF + -1.04964e-05*pow(m_vdF,3) #simp kf 11/15/22
+    #zCut = zcuts[m_vdF] 
     zCutVals.append(zCut)
     vdSelZ_h = r.TH1F("vdSelZ%i_h"%m_vdI, ";true z_{vtx} [mm];MC Events", 200, -50.3, 149.7)
     vdSelNoZ_h = r.TH1F("vdSelNoZ%i_h"%m_vdI, ";true z_{vtx} [mm];MC Events", 200, -50.3, 149.7)
-    vdFilename = "/sdf/group/hps/users/alspellm/projects/THESIS/simp_reach_estimates/simps_2016/mc/simps/recon/simp_masses/%i/hadd_mass_%i_simp_ana.root"%(m_vdI,m_vdI)
+    vdFilename = "/sdf/group/hps/users/alspellm/projects/THESIS/simp_reach_estimates/simps_2016_kf/mc/simps/reco_ana/hadd_mass_%i_simp_recon_KF_ana_SR.root"%(m_vdI)
     vdFile = r.TFile(vdFilename)
-    vdTree = vdFile.Get("vtxana_Tight_simpSIG/vtxana_Tight_simpSIG_tree")
+    vdTree = vdFile.Get("vtxana_kf_vertexSelection_Tight_SR/vtxana_kf_vertexSelection_Tight_SR_tree")
     print("Counting Signal")
     for ev in vdTree:
         if 1000.0*ev.unc_vtx_mass > highMass: continue
@@ -358,7 +376,6 @@ for m_Ap in ap_invMasses:
             effVtxs.append(effVtx)
 
             #Calculate the total A' production rate, indpendent of detector acceptance/efficiency
-            #tot_apProd = (3.*137/2.)*3.14159*(mass*eps2*radFrac(mass)*dNdm)/totRadAcc(mass)  #I THINK THIS IS WRONG! DONT USE VD MASS
             tot_apProd = (3.*137/2.)*3.14159*(m_Ap*eps2*radFrac(m_Ap)*dNdm)/totalRadiativeAcceptance[m_Ap]
             apProduced.append(tot_apProd)
 
@@ -410,30 +427,6 @@ for m_Ap in ap_invMasses:
         prevRate_up = Nsig_up
 
         pass
-
-    #debug
-    '''
-    effVtxEps_g = r.TGraph(len(epsilons),np.array(epsilons),np.array(effVtxs))
-    effVtxEps_g.SetName("effVtx_eps_%i"%(m_vdI))
-    effVtxEps_g.Draw()
-    effVtxEps_g.Write()
-
-    gamctauEps_g = r.TGraph(len(epsilons),np.array(epsilons),np.array(gctaus))
-    gamctauEps_g.SetName("gctau_eps_%i"%(m_vdI))
-    gamctauEps_g.Draw()
-    gamctauEps_g.Write()
-
-    totApEps_g = r.TGraph(len(epsilons),np.array(epsilons),np.array(apProduced))
-    totApEps_g.SetName("produced As_%i"%(m_Ap))
-    totApEps_g.Draw()
-    totApEps_g.Write()
-
-    NSigEps_g = r.TGraph(len(epsilons),np.array(epsilons),np.array(NSigs))
-    NSigEps_g.SetName("Nsig_%i"%(m_Ap))
-    NSigEps_g.Draw()
-    NSigEps_g.Write()
-    '''
-    pass
 
 #Contour Plots
 upExContourMass.reverse()
