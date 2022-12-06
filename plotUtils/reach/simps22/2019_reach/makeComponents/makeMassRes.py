@@ -35,6 +35,7 @@ massRezErrsScaled = []
 
 for mass in invMasses:
     print(mass)
+    #SIMP MC | use radMatchTight in Signal Region to measure Mass Resolution
     apFilename = "/sdf/group/hps/users/alspellm/projects/simps_2019/mc/simps/gen/recon/tuple_ana/hadd_mass_%i_simp_recon_ana.root"%(mass)
     apFile = r.TFile(apFilename)
     apRecoMass_h = copy.deepcopy(apFile.Get("vtxana_kf_radMatchTight_2019_simpSR/vtxana_kf_radMatchTight_2019_simpSR_vtx_InvM_h") )

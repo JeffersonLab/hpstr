@@ -37,13 +37,14 @@ mcScale['wab'] = 0.1985e12*Lumi/(10000*9944) #pb2019
 outFile = r.TFile("zcuts.root","RECREATE")
 
 #Get unbinnded MC after selection
-ttFile = r.TFile("/sdf/group/hps/users/alspellm/projects/simps_2019/mc/tritrig_beam/hadd_tritrig_beam_ana_SR.root")
-ttTree = ttFile.Get("vtxana_kf_Tight_2019_simpSR/vtxana_kf_Tight_2019_simpSR_tree")
+#Tritrig+Beam MC
+ttFile = r.TFile("/sdf/group/hps/users/alspellm/projects/simps_2019/mc/tritrig_beam/hadd_tritrig_beam_ana_SR.root")#Use Signal Region analysis
+ttTree = ttFile.Get("vtxana_kf_Tight_2019_simpSR/vtxana_kf_Tight_2019_simpSR_tree") #Tight Signal Region tree
 ttTree.SetName("tritrig_Tight_tree")
 
-#wabFile = r.TFile("/sdf/group/hps/users/alspellm/projects/simps_2016/reach_estimate/mc/wab_beam/SR_ana/hadd_wabv3-beamv6_2500kBunches_HPS-PhysicsRun2016-Pass2_v4_5_0_pairs1_SR_ana.root")
-wabFile = r.TFile("/sdf/group/hps/users/alspellm/projects/simps_2019/mc/wab_beam/hadd_wab_beam_ana_SR.root")
-wabTree = wabFile.Get("vtxana_kf_Tight_2019_simpSR/vtxana_kf_Tight_2019_simpSR_tree")
+#Wab+Beam MC
+wabFile = r.TFile("/sdf/group/hps/users/alspellm/projects/simps_2019/mc/wab_beam/hadd_wab_beam_ana_SR.root")#Use Signal Region analysis
+wabTree = wabFile.Get("vtxana_kf_Tight_2019_simpSR/vtxana_kf_Tight_2019_simpSR_tree") #Tight Signal Region tree
 wabTree.SetName("wab_Tight_tree")
 
 rand = r.TRandom3()

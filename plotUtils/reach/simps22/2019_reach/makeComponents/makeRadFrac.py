@@ -21,18 +21,23 @@ parser.add_option("-o", "--outputFile", type="string", dest="outputFile",
 outfile = r.TFile("%s"%(options.outputFile),"RECREATE")
 
 invMassHistos = {}
-inFile = r.TFile("/sdf/group/hps/users/alspellm/projects/simps_2019/mc/rad_beam/hadd_rad_beam_recon_ana.root")
-invMassHistos['rad'] = copy.deepcopy(inFile.Get("vtxana_kf_radMatchTight_2019_simpCR/vtxana_kf_radMatchTight_2019_simpCR_mcMass622_h"))
+#Rad+Beam MC 
+inFile = r.TFile("/sdf/group/hps/users/alspellm/projects/simps_2019/mc/rad_beam/hadd_rad_beam_recon_ana.root") #Use Control Region analysis
+invMassHistos['rad'] = copy.deepcopy(inFile.Get("vtxana_kf_radMatchTight_2019_simpCR/vtxana_kf_radMatchTight_2019_simpCR_mcMass622_h"))# Use Control Region radMatchTight mcMass622_h
 inFile.Close()
-inFile = r.TFile("/sdf/group/hps/users/alspellm/projects/simps_2019/mc/tritrig_beam/hadd_tritrig_beam_ana_CR.root")
-invMassHistos['tritrig'] = copy.deepcopy(inFile.Get("vtxana_kf_Tight_2019_simpCR/vtxana_kf_Tight_2019_simpCR_vtx_InvM_h"))
+
+#Tritrig+Beam MC
+inFile = r.TFile("/sdf/group/hps/users/alspellm/projects/simps_2019/mc/tritrig_beam/hadd_tritrig_beam_ana_CR.root") #Use Control Region analysis
+invMassHistos['tritrig'] = copy.deepcopy(inFile.Get("vtxana_kf_Tight_2019_simpCR/vtxana_kf_Tight_2019_simpCR_vtx_InvM_h")) #Control Region Tight vtx_InvM_h
+
+#Wab+Beam MC
 inFile.Close()
-inFile = r.TFile("/sdf/group/hps/users/alspellm/projects/simps_2019/mc/wab_beam/hadd_wab_beam_ana_CR.root")
-invMassHistos['wab'] = copy.deepcopy(inFile.Get("vtxana_kf_Tight_2019_simpCR/vtxana_kf_Tight_2019_simpCR_vtx_InvM_h"))
+inFile = r.TFile("/sdf/group/hps/users/alspellm/projects/simps_2019/mc/wab_beam/hadd_wab_beam_ana_CR.root") #Use Control Region analysis
+invMassHistos['wab'] = copy.deepcopy(inFile.Get("vtxana_kf_Tight_2019_simpCR/vtxana_kf_Tight_2019_simpCR_vtx_InvM_h")) #Control Region Tight vtx_invM_h
 inFile.Close()
 
 outfile.cd()
-#Convert x axis scaling from GeV to MeV
+#Convert x axis scaling from GeV to MeV (if necessary)
 for histo in invMassHistos.keys():
     name = invMassHistos[histo].GetName()
     invMassHistos[histo].SetName("need_to_rescale_%s"%(name))
