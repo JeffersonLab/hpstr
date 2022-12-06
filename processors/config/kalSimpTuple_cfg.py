@@ -119,17 +119,11 @@ trackgbl.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack'
 trackgbl.parameters["bfield"] = bfield[str(options.year)]
 
 #ECalData
-ecal_gbl.parameters["debug"] = 0
-ecal_gbl.parameters["hitCollLcio"] = 'EcalCalHits'
-ecal_gbl.parameters["hitCollRoot"] = 'RecoEcalHits'
-ecal_gbl.parameters["clusCollLcio"] = "EcalClustersCorr"
-ecal_gbl.parameters["clusCollRoot"] = "RecoEcalClusters"
-
-ecal_kf.parameters["debug"] = 0
-ecal_kf.parameters["hitCollLcio"] = 'EcalCalHits'
-ecal_kf.parameters["hitCollRoot"] = 'RecoEcalHits'
-ecal_kf.parameters["clusCollRoot"] = "RecoEcalClusters"
-ecal_kf.parameters["clusCollLcio"] = "EcalClustersCorr"
+ecal.parameters["debug"] = 0
+ecal.parameters["hitCollLcio"] = 'EcalCalHits'
+ecal.parameters["hitCollRoot"] = 'RecoEcalHits'
+ecal.parameters["clusCollLcio"] = "EcalClustersCorr"
+ecal.parameters["clusCollRoot"] = "RecoEcalClusters"
 
 #Vertex
 vtx.parameters["debug"] = 0
@@ -149,7 +143,7 @@ vtxgbl.parameters["trkRelCollLcio"]  = 'TrackDataRelations'
 cvtxgbl.parameters["debug"] = 0
 cvtxgbl.parameters["vtxCollLcio"]     = 'TargetConstrainedV0Vertices'
 cvtxgbl.parameters["vtxCollRoot"]     = 'TargetConstrainedV0Vertices'
-cvtxgbl.parameters["partCollRoot"]    = 'ParticlesOnVertices'
+cvtxgbl.parameters["partCollRoot"]    = 'ParticlesOnUVertices'
 cvtxgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
 cvtxgbl.parameters["trkRelCollLcio"]  = 'TrackDataRelations'
 
@@ -159,17 +153,17 @@ mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
 if(options.tracking == "KF"):
-    sequence = [header, vtx, ecal_kf, track]                          
+    sequence = [header, vtx, ecal, track]                          
     #Get KF svt truth hits
     if(options.truthHits > 0):
         sequence.append(svthits)
 elif(options.tracking == "GBL"):
-    sequence = [header, vtxgbl, ecal_gbl, trackgbl]                          
+    sequence = [header, vtxgbl, ecal, trackgbl]                          
     #Get GBL svt truth hits
     if(options.truthHits > 0):
         sequence.append(svthitsgbl)
 elif(options.tracking == "BOTH"):
-    sequence = [header, vtxgbl, ecal_gbl, trackgbl, vtx, ecal_kf, track]                          
+    sequence = [header, vtxgbl, trackgbl, vtx, ecal, track]                          
     #Get KF and GBL svt truth hits
     if(options.truthHits > 0):
         sequence.append(svthits)
