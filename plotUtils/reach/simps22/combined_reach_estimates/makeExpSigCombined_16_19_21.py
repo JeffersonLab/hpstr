@@ -7,17 +7,17 @@ import math
 
 parser = OptionParser()
 
-infile2016 = r.TFile("./expSigRate_3_2016.root","READ")
+infile2016 = r.TFile("../2016_reach/reach_results/expSigRate2016_kf_fpi_4Pi.root","READ")
 nsig2016_hh = copy.deepcopy(infile2016.Get("Nsig_low_Lumi_10.7_hh"))
 nsig2016_hh.SetName("hps_2016_SigRate_hh")
 infile2016.Close()
 
-infile2019 = r.TFile("./expSigRate_3_2019.root","READ")
+infile2019 = r.TFile("../2019_reach/reach_results/expSigRate2019_fPi_4pi.root","READ")
 nsig2019_hh = copy.deepcopy(infile2019.Get("Nsig_low_Lumi_110.0_hh"))
 nsig2019_hh.SetName("hps_2019_SigRate_hh")
 infile2019.Close()
 
-infile2021 = r.TFile("./expSigRate_3_2021.root","READ")
+infile2021 = r.TFile("../2021_reach/reach_results/expSigRate2021_fPi_4pi.root","READ")
 nsig2021_hh = copy.deepcopy(infile2021.Get("Nsig_low_Lumi_168.1_hh"))
 nsig2021_hh.SetName("hps_2021_SigRate_hh")
 infile2021.Close()
@@ -65,7 +65,7 @@ downExContourMass = []
 downExContourLogEps2 = []
 downExContourEps2 = []
 
-outfile = r.TFile("reach_2016_2019_2021_fPi_3.root",'RECREATE')
+outfile = r.TFile("reach_2016_2019_2021_fPi_4pi.root",'RECREATE')
 outfile.cd()
 
 for i in range(Nsig_hh.GetXaxis().GetNbins()):
@@ -120,7 +120,7 @@ exContourMass.append(exContourMass[0])
 print(len(exContourMass))
 print(len(exContourLogEps2))
 if len(exContourEps) > 0:
-    contOutFile = open("simps_reach_estimate_16_19_21.txt","w")
+    contOutFile = open("simps_reach_estimate_16_19_21_fpi_4pi.txt","w")
     for i in range(len(exContourMass)):
         contOutFile.write("%f\t%E\n"%(exContourMass[i], exContourEps[i]))
         pass
