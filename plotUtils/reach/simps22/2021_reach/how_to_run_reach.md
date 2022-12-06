@@ -32,11 +32,11 @@ Reach Lumi: 168.1 pb-1
     1a) Command: hpstr ./hpstr_config/kalSimpTuple_cfg.py -w KF -i <input.slcio> -o <tuple.root> -y 2021 -t 0
 2.) Run vertex analysis in Signal Region (SR) and Control Region (CR)  
     2a) Command: hpstr ./hpstr_config/anaKalSimpTuple_cfg.py -w KF -i <tuple.root> -o <ana.root> -y 2-16 -t 0 -R <CR or SR>
-    2b) Histo config: 'histoCfg' = hpstr/analysis/plotconfigs/tracking/vtxAnalysis_2021_simp_reach.json
+    2b) Histo config: 'histoCfg' = hpstr/analysis/plotconfigs/tracking/simps/vtxAnalysis_2021_simp_reach.json
     2c) mc histo config: 'mcHistoCfg' = hpstr/analysis/plotconfigs/mc/basicMC.json
-    2d) Pre-selection: 'vtxSelectionjson' = hpstr/analysis/selections/vertexSelection_2021_simp_reach.json
-    2e) Tight Selection Control Regions: recoana_kf.parameters["regionDefinitions"] = ['hpstr/analysis/selections/Tight_2021_simp_reach_CR.json','hpstr/analysis/selections/radMatchTight_2021_simp_reach_CR.json']
-    2f) Tight Selection Signal Regions: recoana_kf.parameters["regionDefinitions"] = ['hpstr/analysis/selections/Tight_2021_simp_reach_SR.json','hpstr/analysis/selections/radMatchTight_2021_simp_reach_SR.json']
+    2d) Pre-selection: 'vtxSelectionjson' = hpstr/analysis/selections/simps/vertexSelection_2021_simp_reach.json
+    2e) Tight Selection Control Regions: recoana_kf.parameters["regionDefinitions"] = ['hpstr/analysis/selections/simps/Tight_2021_simp_reach_CR.json','hpstr/analysis/selections/simps/radMatchTight_2021_simp_reach_CR.json']
+    2f) Tight Selection Signal Regions: recoana_kf.parameters["regionDefinitions"] = ['hpstr/analysis/selections/simps/Tight_2021_simp_reach_SR.json','hpstr/analysis/selections/simps/radMatchTight_2021_simp_reach_SR.json']
 
 ### HOW TO RUN REACH ESTIMATE ###
 1.) Run makeComponents/makeRadFrac.py to get a polynomial expression for the Radiative Fraction
