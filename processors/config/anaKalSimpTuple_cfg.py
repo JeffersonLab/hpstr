@@ -124,9 +124,6 @@ if (options.tracking == "KF"):
 elif (options.tracking == "GBL"):
     print("Run GBL analysis")
     p.sequence = [recoana_gbl]#,mcana]
-elif (options.tracking == "BOTH"):
-    print("Run GBL and KF analysis")
-    p.sequence = [recoana_gbl, recoana_kf]#,mcana]
 else :
     print ("ERROR::Need to specify which tracks KF or GBL")
     exit(1)
