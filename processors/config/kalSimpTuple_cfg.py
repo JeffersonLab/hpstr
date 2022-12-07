@@ -71,6 +71,7 @@ svthits.parameters["hitCollRoot"]    = 'SiClusters'
 svthits.parameters["mcPartRelLcio"]    = 'SVTTrueHitRelations'
 
 #Tracker3DHits
+svthitsgbl.parameters["debug"] = 0
 svthitsgbl.parameters["hitCollLcio"]    = 'RotatedHelicalTrackHits' 
 svthitsgbl.parameters["hitCollRoot"]    = 'RotatedHelicalTrackHits' 
 svthitsgbl.parameters["mcPartRelLcio"]    = 'RotatedHelicalTrackMCRelations'
