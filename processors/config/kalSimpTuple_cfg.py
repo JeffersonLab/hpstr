@@ -4,6 +4,13 @@ import sys
 import baseConfig as base
 from baseConfig import bfield
 
+base.parser.add_argument("-w", "--tracking", type=str, dest="tracking",
+    help="Which tracking to use to make plots", metavar="tracking", default="KF")
+base.parser.add_argument("-s", "--truthHits", type=int, dest="truthHits",
+        help="Get svt truth hits: 1=yes", metavar="truthHits", default=1)
+base.parser.add_argument("-r", "--rawHits", type=int, dest="rawHits",
+        help="Keep raw svt hits: 1=yes", metavar="rawHits", default=1)
+
 options = base.parser.parse_args()
 
 # Use the input file to set the output file name
@@ -28,11 +35,12 @@ header  = HpstrConf.Processor('header', 'EventProcessor')
 track   = HpstrConf.Processor('track', 'TrackingProcessor')
 trackgbl = HpstrConf.Processor('trackgbl', 'TrackingProcessor')
 trackrefitgbl = HpstrConf.Processor('trackrefitgbl', 'TrackingProcessor')
-svthits = HpstrConf.Processor('svthits', 'Tracker3DHitProcessor')
+svthits = HpstrConf.Processor('svthitskf', 'Tracker2DHitProcessor')  
+svthitsgbl = HpstrConf.Processor('svthitsgbl', 'Tracker3DHitProcessor') 
 rawsvt  = HpstrConf.Processor('rawsvt', 'SvtRawDataProcessor')
 ecal    = HpstrConf.Processor('ecal', 'ECalDataProcessor')
 vtx     = HpstrConf.Processor('vtx', 'VertexProcessor')
-cvtx   = HpstrConf.Processor('cvtx', 'VertexProcessor')
+cvtx     = HpstrConf.Processor('cvtx', 'VertexProcessor')
 vtxgbl   = HpstrConf.Processor('vtxgbl', 'VertexProcessor')
 cvtxgbl   = HpstrConf.Processor('cvtxgbl', 'VertexProcessor')
 mcpart  = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
@@ -56,11 +64,17 @@ rawsvt.parameters["hitCollLcio"]    = 'SVTRawTrackerHits'
 rawsvt.parameters["hitfitCollLcio"] = 'SVTFittedRawTrackerHits'
 rawsvt.parameters["hitCollRoot"]    = 'SVTRawTrackerHits'
 
-#Tracker3DHits
+#Tracker2DHits
 svthits.parameters["debug"] = 0
-svthits.parameters["hitCollLcio"]    = 'RotatedHelicalTrackHits'
-svthits.parameters["hitCollRoot"]    = 'RotatedHelicalTrackHits'
+svthits.parameters["hitCollLcio"]    = 'StripClusterer_SiTrackerHitStrip1D' 
+svthits.parameters["hitCollRoot"]    = 'SiClusters' 
+svthits.parameters["mcPartRelLcio"]    = 'SVTTrueHitRelations'
 
+#Tracker3DHits
+svthitsgbl.parameters["debug"] = 0
+svthitsgbl.parameters["hitCollLcio"]    = 'RotatedHelicalTrackHits' 
+svthitsgbl.parameters["hitCollRoot"]    = 'RotatedHelicalTrackHits' 
+svthitsgbl.parameters["mcPartRelLcio"]    = 'RotatedHelicalTrackMCRelations'
 
 #Tracking
 track.parameters["debug"] = 0
@@ -70,7 +84,6 @@ track.parameters["kinkRelCollLcio"] = ''
 track.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 track.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
-track.parameters["rawhitCollRoot"] = ''
 
 #Only for detail studies
 #LT uncomment
@@ -109,7 +122,7 @@ trackgbl.parameters["bfield"] = bfield[str(options.year)]
 #ECalData
 ecal.parameters["debug"] = 0
 ecal.parameters["hitCollLcio"] = 'EcalCalHits'
-ecal.parameters["hitCollRoot"] = ''#'RecoEcalHits'
+ecal.parameters["hitCollRoot"] = 'RecoEcalHits'
 ecal.parameters["clusCollLcio"] = "EcalClustersCorr"
 ecal.parameters["clusCollRoot"] = "RecoEcalClusters"
 
@@ -117,17 +130,16 @@ ecal.parameters["clusCollRoot"] = "RecoEcalClusters"
 vtx.parameters["debug"] = 0
 vtx.parameters["vtxCollLcio"]    = 'UnconstrainedV0Vertices_KF'
 vtx.parameters["vtxCollRoot"]    = 'UnconstrainedV0Vertices_KF'
-vtx.parameters["partCollRoot"]   = 'ParticlesOnVertices_KF'
+vtx.parameters["partCollRoot"]   = 'ParticlesOnUVertices_KF'
 vtx.parameters["kinkRelCollLcio"] = ''
 vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
 cvtx.parameters["debug"] = 0
-cvtx.parameters["vtxCollLcio"]     = 'TargetConstrainedV0Vertices_KF'
-cvtx.parameters["vtxCollRoot"]     = 'TargetConstrainedV0Vertices_KF'
-cvtx.parameters["partCollRoot"]    = 'ParticlesOnCVertices_KF'
+cvtx.parameters["vtxCollLcio"]    = 'TargetConstrainedV0Vertices_KF'
+cvtx.parameters["vtxCollRoot"]    = 'TargetConstrainedV0Vertices_KF'
+cvtx.parameters["partCollRoot"]   = 'ParticlesOnCVertices_KF'
 cvtx.parameters["kinkRelCollLcio"] = ''
-cvtx.parameters["trkRelCollLcio"]  = 'KFTrackDataRelations'
-
+cvtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
 vtxgbl.parameters["debug"] = 0
 vtxgbl.parameters["vtxCollLcio"]     = 'UnconstrainedV0Vertices'
@@ -143,26 +155,43 @@ cvtxgbl.parameters["partCollRoot"]    = 'ParticlesOnCVertices'
 cvtxgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
 cvtxgbl.parameters["trkRelCollLcio"]  = 'TrackDataRelations'
 
-
 #MCParticle
 mcpart.parameters["debug"] = 0
 mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
-# Sequence which the processors will run.
-if (not options.isData):
-    p.sequence = [header, vtx, vtxgbl, cvtxgbl, ecal, track, trackgbl, mcpart]
+if(options.tracking == "KF"):
+    sequence = [header, vtx, ecal, track]                          
+    #Get KF svt truth hits
+    if(options.truthHits > 0):
+        sequence.append(svthits)
+elif(options.tracking == "GBL"):
+    sequence = [header, vtxgbl, ecal, trackgbl]                          
+    #Get GBL svt truth hits
+    if(options.truthHits > 0):
+        sequence.append(svthitsgbl)
+elif(options.tracking == "BOTH"):
+    sequence = [header, vtxgbl, trackgbl, vtx, ecal, track]                          
+    #Get KF and GBL svt truth hits
+    if(options.truthHits > 0):
+        sequence.append(svthits)
+        sequence.append(svthitsgbl)
 else:
-    #p.sequence = [header, vtx, vtxgbl, cvtxgbl, ecal, track, trackgbl]
-    p.sequence = [header, vtx, cvtx, ecal, track, rawsvt]
+    print("ERROR::Need to specify which tracks KF, GBL, or BOTH")
+
+#Keep svt raw hits
+if(options.rawHits > 0):
+    sequence.append(rawsvt)
+#If MC, get MCParticles
+if(not options.isData):
+    sequence.append(mcpart)
+
+p.sequence = sequence
 
 if (options.nevents > -1 ):
     p.max_events = options.nevents
 
-
 p.input_files = lcio_file
 p.output_files = [root_file]
-
-
 
 p.printProcess()
