@@ -135,21 +135,21 @@ ecal_kf.parameters["clusCollLcio"] = "EcalClustersCorr"
 vtx.parameters["debug"] = 0
 vtx.parameters["vtxCollLcio"]    = 'UnconstrainedV0Vertices_KF'
 vtx.parameters["vtxCollRoot"]    = 'UnconstrainedV0Vertices_KF'
-vtx.parameters["partCollRoot"]   = 'ParticlesOnVertices_KF'
+vtx.parameters["partCollRoot"]   = 'ParticlesOnUVertices_KF'
 vtx.parameters["kinkRelCollLcio"] = ''
 vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
 vtxgbl.parameters["debug"] = 0
 vtxgbl.parameters["vtxCollLcio"]     = 'UnconstrainedV0Vertices'
 vtxgbl.parameters["vtxCollRoot"]     = 'UnconstrainedV0Vertices'
-vtxgbl.parameters["partCollRoot"]    = 'ParticlesOnVertices'
+vtxgbl.parameters["partCollRoot"]    = 'ParticlesOnUVertices'
 vtxgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
 vtxgbl.parameters["trkRelCollLcio"]  = 'TrackDataRelations'
 
 cvtxgbl.parameters["debug"] = 0
 cvtxgbl.parameters["vtxCollLcio"]     = 'TargetConstrainedV0Vertices'
 cvtxgbl.parameters["vtxCollRoot"]     = 'TargetConstrainedV0Vertices'
-cvtxgbl.parameters["partCollRoot"]    = 'ParticlesOnVertices'
+cvtxgbl.parameters["partCollRoot"]    = 'ParticlesOnCVertices'
 cvtxgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
 cvtxgbl.parameters["trkRelCollLcio"]  = 'TrackDataRelations'
 

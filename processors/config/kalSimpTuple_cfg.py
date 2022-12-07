@@ -38,9 +38,9 @@ trackrefitgbl = HpstrConf.Processor('trackrefitgbl', 'TrackingProcessor')
 svthits = HpstrConf.Processor('svthitskf', 'Tracker2DHitProcessor')  
 svthitsgbl = HpstrConf.Processor('svthitsgbl', 'Tracker3DHitProcessor') 
 rawsvt  = HpstrConf.Processor('rawsvt', 'SvtRawDataProcessor')
-ecal_gbl    = HpstrConf.Processor('ecalgbl', 'ECalDataProcessor')
-ecal_kf    = HpstrConf.Processor('ecalkf', 'ECalDataProcessor')
+ecal    = HpstrConf.Processor('ecal', 'ECalDataProcessor')
 vtx     = HpstrConf.Processor('vtx', 'VertexProcessor')
+cvtx     = HpstrConf.Processor('cvtx', 'VertexProcessor')
 vtxgbl   = HpstrConf.Processor('vtxgbl', 'VertexProcessor')
 cvtxgbl   = HpstrConf.Processor('cvtxgbl', 'VertexProcessor')
 mcpart  = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
@@ -132,6 +132,13 @@ vtx.parameters["vtxCollRoot"]    = 'UnconstrainedV0Vertices_KF'
 vtx.parameters["partCollRoot"]   = 'ParticlesOnUVertices_KF'
 vtx.parameters["kinkRelCollLcio"] = ''
 vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
+
+cvtx.parameters["debug"] = 0
+cvtx.parameters["vtxCollLcio"]    = 'TargetConstrainedV0Vertices_KF'
+cvtx.parameters["vtxCollRoot"]    = 'TargetConstrainedV0Vertices_KF'
+cvtx.parameters["partCollRoot"]   = 'ParticlesOnCVertices_KF'
+cvtx.parameters["kinkRelCollLcio"] = ''
+cvtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
 vtxgbl.parameters["debug"] = 0
 vtxgbl.parameters["vtxCollLcio"]     = 'UnconstrainedV0Vertices'
