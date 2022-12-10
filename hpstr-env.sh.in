@@ -13,13 +13,17 @@ export PATH=@CMAKE_INSTALL_PREFIX@/bin:$PATH
 export LD_LIBRARY_PATH=@CMAKE_INSTALL_PREFIX@/lib:@LCIO_DIR@/lib:$LD_LIBRARY_PATH
 
 # Setup ROOT if necessary.
-if [ ! -v ROOTSYS ]; then
+if [ ! -n ROOTSYS ]; then
     if [ -f @ROOT_DIR@/../bin/thisroot.sh ]; then
         . @ROOT_DIR@/../bin/thisroot.sh
     else
         echo "ERROR: Could not locate thisroot.sh script to setup ROOT (source before running this script)"
         exit 1
     fi
+fi
+
+if [ -n DYLD_LIBRARY_PATH ]; then
+    export DYLD_LIBRARY_PATH=@CMAKE_INSTALL_PREFIX@/lib:@LCIO_DIR@/lib:$DYLD_LIBRARY_PATH
 fi
 
 # Uncomment to debug env setup.
