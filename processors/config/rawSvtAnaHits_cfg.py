@@ -15,7 +15,7 @@ p = HpstrConf.Process()
 
 p.run_mode = 1
 p.skip_events = 0
-p.max_events = 100000000000
+p.max_events = 200000
 
 # Library containing processors
 p.add_library("libprocessors")
@@ -32,11 +32,11 @@ rawAnaSvt = HpstrConf.Processor('svtana','SvtRawDataAnaProcessor')
 
 #SvtRawAnaData
 
-rawAnaSvt.parameters["debug"] = 1
+rawAnaSvt.parameters["debug"] = 0
 rawAnaSvt.parameters["anaName"] = 'rawSvtHitAna'
-rawAnaSvt.parameters["trkrHitColl"] = 'SVTRawTrackerHits'
+rawAnaSvt.parameters["trkrHitColl"] = 'SVTRawHitsOnTrack_KF'#'SVTRawTrackerHits'
 rawAnaSvt.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/rawSvtAnaHits3.json'
-rawAnaSvt.parameters["sample"] = 1
+rawAnaSvt.parameters["sample"] = 0 
 
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/svtHit/"
 
@@ -49,9 +49,13 @@ rawAnaSvt.parameters["regionDefinitions"] = [RegionPath+'OneFit.json',
                                             RegionPath+'BothFit.json',
                                             RegionPath+'CTFit.json',
                                             RegionPath+'FTFit.json',
+                                            RegionPath+'LowTimeDiff.json',
+                                            RegionPath+'Region1.json',
+                                            RegionPath+'Region2.json',
                                             RegionPath+'TimeResolution.json'
                                             ]
-                                                            
+
+rawAnaSvt.parameters["MatchList"] = ['OneFit','CTFit','SecondFitTimeCT']                                                           
 rawAnaSvt.parameters["timeref"]=0.0
 rawAnaSvt.parameters["ampref"]=0.0
 

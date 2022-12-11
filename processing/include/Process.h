@@ -71,7 +71,6 @@ class Process {
         }
 
         /**
-<<<<<<< HEAD
          * Set the number of events to skip.  Processing will stop 
          * when either there are no more input events or when this number of events have been processed.
          * @param skip_events Number of events to skip.
@@ -84,7 +83,6 @@ class Process {
          * Set the maximum number of events to process.  Processing will stop 
          * when either there are no more input events or when this number of events have been processed.
          * @param event_limit Maximum number of events to process.  -1 indicates no limit.
-=======
          * @brief Set the maximum number of events to process.
          * 
          * Processing will stop when either there are no more input events
@@ -92,7 +90,6 @@ class Process {
          * 
          * @param event_limit Maximum number of events to process. 
          *                    -1 indicates no limit.
->>>>>>> 30ff1b41b3b87982b2760e50d42d036b6af48ce1
          */
         void setEventLimit(int event_limit = -1) {
             event_limit_ = event_limit;

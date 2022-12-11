@@ -124,6 +124,18 @@
             "maxY" : 4000
 
         },
+    "SvtHybrids_PT1PT2_hh" : {
+            "prefix" : "Pulese time 1 vs Pulse time 2",
+            "type" : "hh",
+            "xtitle" : "Pulse Time 1",
+            "binsX" : 100,
+            "minX" : -160,
+            "maxX" : 160,
+            "ytitle" : "Pulse Time 2",
+            "binsY" : 200,
+            "minY" : -550,
+            "maxY" : 160
+        },
     "SvtHybrids_T0TD_hh" : {
             "prefix" : "Time Diff vs T0",
             "type" : "hh",

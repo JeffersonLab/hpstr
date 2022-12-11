@@ -138,7 +138,7 @@ bool SvtRawDataProcessor::process(IEvent* ievent) {
 
             rawHit->setFitN(rawTracker_hit_fits_list.size());
         }
-       rawhits_.push_back(rawHit);
+        rawhits_.push_back(rawHit);
     }
 
     //Clean up

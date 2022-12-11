@@ -96,7 +96,7 @@ float rETime(float ti,long T){
     //THIS ONE
     if (subtractTriggerTime) {
         //std::cout<<T<<std::endl;
-        std::cout<<"OffsetPhase Time is "<<((T-4*OffsetPhase)%24)/8<<std::endl;
+        //std::cout<<"OffsetPhase Time is "<<((T-4*OffsetPhase)%24)/8<<std::endl;
         float tt = (float)(((T-4*OffsetPhase)%24)-trigTimeOffset);
         //std::cout<<tt<<std::endl;
         if (!syncGood) tt = tt - 8;
@@ -112,41 +112,6 @@ float rETime(float ti,long T){
         
         ti=ti-tt;
     }
-    
-    //if (subtractRFTime && jitter != -666) {
-    //    ti = ti+jitter-trigTimeScale;
-    //}
-    
-    //if (correctChanT0) {
-    //    ti = ti+sensor.getShapeFitParameters(strip)[HpsSiSensor.T0_INDEX];
-    //}
-    
-    //if (correctT0Shift) {
-    //    ti+=sensor.getT0Shift();
-    //}
-    
-    //DONE
-    //if (subtractTOF) {
-    //    double tof = hit.getDetectorElement().getGeometry().getPosition().magnitude() / (Const.SPEED_OF_LIGHT * Const.nanosecond);
-    //    ti+=tof;
-    //}
-    
-    //if (useTimestamps) {
-    //    double t0Svt = ReadoutTimestamp.getTimestamp(ReadoutTimestamp.SYSTEM_TRACKER, event);
-    //    double t0Trig = ReadoutTimestamp.getTimestamp(ReadoutTimestamp.SYSTEM_TRIGGERBITS, event);
-        // double corMod = (t0Svt - t0Trig) + 200.0;///where does 200.0 come from?  for 2016 MC, looks like should be 240
-    //    double corMod = (t0Svt - t0Trig) + tsCorrectionScale;
-    //    ti-=corMod;
-    //}
-    //if (useTruthTime) {
-    //    double t0Svt = ReadoutTimestamp.getTimestamp(ReadoutTimestamp.SYSTEM_TRACKER, event);
-    //    double absoluteHitTime ti + t0Svt;
-    //    double relativeHitTime = ((absoluteHitTime + 250.0) % 500.0) - 250.0;
-
-    //    fit.setT0(relativeHitTime);
-    //}
-    
-    //std::cout<<"Final Time: "<<ti<<std::endl;
     return ti;
 }
 
@@ -217,7 +182,9 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
                 if(I>0){
                     if(i<=4096){
                         std::string token=s.substr(0,s.find(" "));
-                        std::cout<<i<<" "<<feb<<" "<<hyb<<" "<<ch<<std::endl;
+                        if(debug_){
+                            std::cout<<i<<" "<<feb<<" "<<hyb<<" "<<ch<<std::endl;
+                        }
                         baseErr1_[feb][hyb][ch][I-1]=str_to_float(token);
                         //std::cout<<str_to_float(token)<<std::endl;
                         s=s.substr(s.find(" ")+1);
@@ -291,22 +258,22 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 //std::cout<<"region No:"<<regions_[i_reg]<<std::endl;
 
                 //std::cout<<"Which Hit:"<<J<<std::endl;
+                
+                Float_t TimeDiff=-42069.0;
+                Float_t AmpDiff=-42069.0;
+                if(getNum==2){
+                    TimeDiff=(thisHit->getT0(J))-(thisHit->getT0((J+1)%2));
+                    AmpDiff=(thisHit->getT0(J))-(thisHit->getT0((J+1)%2)); 
+                    if(!(reg_selectors_[regions_[i_reg]]->passCutLt("TimeDiff_lt",TimeDiff*TimeDiff,weight))){continue;}
+                }
+
                 if(!(reg_selectors_[regions_[i_reg]]->passCutEq("getN_et",getNum,weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutEq("getId_lt",J,weight))){continue;} 
-                if(!(reg_selectors_[regions_[i_reg]]->passCutEq("getId_gt",J,weight))){continue;}
-                //std::cout<<"getNum:"<<getNum<<std::endl;
-                //std::cout<<"region No:"<<regions_[i_reg]<<std::endl;
-                //std::cout<<"Which Hit:"<<J<<"\n"<<std::endl;
-
-
-                //if((getNum==2)and(i_reg==0)){
-                //    if(J==0){count1+=1;std::cout<<"hello"<<std::endl;}else{count2+=1;}
-                //} 
-                //if(getNum==2){std::cout<<J<<std::endl;}
-
-                //std::cout<<"hellO"<<std::endl;           
+                if(!(reg_selectors_[regions_[i_reg]]->passCutEq("getId_gt",J,weight))){continue;}   
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("chi_lt",thisHit->getChiSq(J),weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutGt("chi_gt",thisHit->getChiSq(J),weight))){continue;}
+                                
+                
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ft",(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)<((thisHit->getT0((J+1)%getNum)-TimeRef)*(thisHit->getT0((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
                 if(i_reg<regionSelections_.size()-1){
                     if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ct",(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)>((thisHit->getT0((J+1)%getNum)-TimeRef)*(thisHit->getT0((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
@@ -329,7 +296,9 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("time_lt",thisHit->getT0(0),weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutGt("time_gt",thisHit->getT0(0),weight))){continue;}
 
-                
+                if(!(reg_selectors_[regions_[i_reg]]->passCutLt("Otime_lt",thisHit->getT0((J+1)%getNum),weight))){continue;}
+                if(!(reg_selectors_[regions_[i_reg]]->passCutGt("Otime_gt",thisHit->getT0((J+1)%getNum),weight))){continue;}
+
 
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("amp2_lt",thisHit->getAmp(0),weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutEq("channel", (thisHit->getStrip()),weight))){continue;} 
@@ -340,12 +309,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 }
                 if(!(reg_selectors_[regions_[i_reg]]->passCutEq("first_max",adcs[0]-maxx,weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutEq("time_phase",((int)(thisHit->getT0(J)))%4,weight))){continue;}
-                Float_t TimeDiff=-42069.0;
-                Float_t AmpDiff=-42069.0;
-                if(getNum==2){
-                    TimeDiff=(thisHit->getT0(J))-(thisHit->getT0((J+1)%2));
-                    AmpDiff=(thisHit->getT0(J))-(thisHit->getT0((J+1)%2)); 
-                }
+                
                 bool helper = false; 
                 //std::cout<<"hello"<<std::endl;
                 if(doSample_==1){
@@ -363,6 +327,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                     int N = evH_->getEventNumber();
                     //std::cout<<T<<std::endl;
                     //if((regions_[i_reg]=="OneFit")and(feb>=2)){continue;}
+                    if((regions_[i_reg]=="CTFit")and((thisHit->getT0(J)<26.0)or(thisHit->getT0(J)>30.0))){continue;}
                     sample(thisHit,regions_[i_reg],ievent,T,N); 
                 
                 }
@@ -557,10 +522,10 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 
                 
                 //if(helper2=="OneFit8.png"){
-                    std::cout<<BigCount<<std::endl;
-                    std::cout<<feb<<" "<<hyb<<" "<<(int)thisHit->getStrip()<<std::endl;
-                    std::cout<<adcs2[0]<<" "<<adcs2[1]<<" "<<adcs2[2]<<" "<<adcs2[3]<<" "<<adcs2[4]<<" "<<adcs2[5]<<std::endl;
-                    std::cout<<adcs2[0]-baseErr1_[feb][hyb][(int)thisHit->getStrip()][0]<<" "<<adcs2[1]-baseErr1_[feb][hyb][(int)thisHit->getStrip()][1]<<" "<<adcs2[2]-baseErr1_[feb][hyb][(int)thisHit->getStrip()][2]<<" "<<adcs2[3]-baseErr1_[feb][hyb][(int)thisHit->getStrip()][3]<<" "<<adcs2[4]-baseErr1_[feb][hyb][(int)thisHit->getStrip()][4]<<" "<<adcs2[5]-baseErr1_[feb][hyb][(int)thisHit->getStrip()][5]<<std::endl;
+                    //std::cout<<BigCount<<std::endl;
+                    //std::cout<<feb<<" "<<hyb<<" "<<(int)thisHit->getStrip()<<std::endl;
+                    //std::cout<<adcs2[0]<<" "<<adcs2[1]<<" "<<adcs2[2]<<" "<<adcs2[3]<<" "<<adcs2[4]<<" "<<adcs2[5]<<std::endl;
+                    //std::cout<<adcs2[0]-baseErr1_[feb][hyb][(int)thisHit->getStrip()][0]<<" "<<adcs2[1]-baseErr1_[feb][hyb][(int)thisHit->getStrip()][1]<<" "<<adcs2[2]-baseErr1_[feb][hyb][(int)thisHit->getStrip()][2]<<" "<<adcs2[3]-baseErr1_[feb][hyb][(int)thisHit->getStrip()][3]<<" "<<adcs2[4]-baseErr1_[feb][hyb][(int)thisHit->getStrip()][4]<<" "<<adcs2[5]-baseErr1_[feb][hyb][(int)thisHit->getStrip()][5]<<std::endl;
                 //}
                 
                 
@@ -592,4 +557,4 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
 
     }
 
-    DECLARE_PROCESSOR(SvtRawDataAnaProcessor);
+DECLARE_PROCESSOR(SvtRawDataAnaProcessor);

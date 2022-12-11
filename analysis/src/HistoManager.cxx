@@ -95,8 +95,10 @@ void HistoManager::DefineHistos(){
 void HistoManager::DefineHistos(std::vector<std::string> histoCopyNames, std::string makeCopyJsonTag){
     if (debug_ > 0) std::cout << "[HistoManager] DefineHistos" << std::endl;
     std::string h_name = "";
-    for (auto hist : _h_configs.items()){
-        std::cout<<hist.key()<<std::endl;
+    if (debug_ > 0){    
+        for (auto hist : _h_configs.items()){
+            std::cout<<hist.key()<<std::endl;
+        }
     }
     //std::cout<<_h_configs.items()<<std::endl;
     for (auto hist : _h_configs.items()) {
@@ -345,7 +347,7 @@ void HistoManager::loadHistoConfig(const std::string histoConfigFile) {
 
     std::ifstream i_file(histoConfigFile);
     i_file >> _h_configs;
-    if (true) {
+    if (debug_) {
         for (auto& el : _h_configs.items()) 
             std::cout << el.key() << " : " << el.value() << "\n";
     }
@@ -357,16 +359,13 @@ void HistoManager::loadHistoConfig(const std::string histoConfigFile) {
 
 
 void HistoManager::saveHistos(TFile* outF,std::string folder) {
-    std::cout<<"hello34"<<std::endl;
     if (outF) outF->cd();
     TDirectory* dir{nullptr};
-    std::cout<<"hello0"<<std::endl;
     std::cout<<folder.c_str()<<std::endl;
     if (!folder.empty()) {
         dir = outF->mkdir(folder.c_str());
         dir->cd();
     }
-    std::cout<<"hello1"<<std::endl;
     for (it3d it = histos3d.begin(); it!=histos3d.end(); ++it) {
         if (!it->second){
             std::cout<<it->first<<" Null ptr in saving.."<<std::endl;
@@ -374,7 +373,6 @@ void HistoManager::saveHistos(TFile* outF,std::string folder) {
         }
         it->second->Write();
     }
-    std::cout<<"hello2"<<std::endl;
     for (it2d it = histos2d.begin(); it!=histos2d.end(); ++it) {
         if (!(it->second)) {
             std::cout<<it->first<<" Null ptr in saving.."<<std::endl;
