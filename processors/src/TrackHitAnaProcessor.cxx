@@ -111,8 +111,8 @@ bool TrackHitAnaProcessor::process(IEvent* ievent) {
         std::vector<int> hit_layers;
         int hitCode = 0;
         int n12hits = 0;
-        for (int ihit = 0; ihit<track->getSvtHits()->GetEntries(); ++ihit) {
-            TrackerHit* hit = (TrackerHit*) track->getSvtHits()->At(ihit);
+        for (int ihit = 0; ihit<track->getSvtHits().GetEntries(); ++ihit) {
+            TrackerHit* hit = (TrackerHit*) track->getSvtHits().At(ihit);
             int layer = hit->getLayer();
             hit_layers.push_back(layer);
             if (isKF)

@@ -27,7 +27,7 @@ anaTrks = HpstrConf.Processor('anaTrks', 'TrackingAnaProcessor')
 ###############################
 anaTrks.parameters["debug"] = 0 
 anaTrks.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/tracking/basicTracking.json'
-anaTrks.parameters["trkCollName"] = 'GBLTracks'
+anaTrks.parameters["trkCollName"] = 'KalmanFullTracks'
 
 # Sequence which the processors will run.
 p.sequence = [anaTrks]
