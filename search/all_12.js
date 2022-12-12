@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['raw_5fhits_5f_1021',['raw_hits_',['../classRefittedTracksProcessor.html#a8014c68879698d5d99cb2e059a1778fa',1,'RefittedTracksProcessor::raw_hits_()'],['../classTrackerHit.html#a6a92e2968803658c06a1a1d51305e1c6',1,'TrackerHit::raw_hits_()']]],
+  ['raw_5fhits_5f_1021',['raw_hits_',['../classRefittedTracksProcessor.html#a8014c68879698d5d99cb2e059a1778fa',1,'RefittedTracksProcessor::raw_hits_()'],['../classTrackerHit.html#a0dd263e8fc2ae97af04f476e1b26eab1',1,'TrackerHit::raw_hits_()']]],
   ['raw_5fsvt_5fhit_5ffits_1022',['RAW_SVT_HIT_FITS',['../namespaceCollections.html#a4223ced1aa16409b7f9f1630335c74b8',1,'Collections']]],
   ['raw_5fsvt_5fhit_5ffitsp_1023',['RAW_SVT_HIT_FITSP',['../namespaceCollections.html#a01959a712122d03a5acec540c5af3840',1,'Collections']]],
   ['raw_5fsvt_5fhits_1024',['RAW_SVT_HITS',['../namespaceCollections.html#aef46f7695e7aed9d2f5ba84be5d2bff0',1,'Collections']]],
