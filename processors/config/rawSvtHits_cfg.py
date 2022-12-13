@@ -15,7 +15,7 @@ p = HpstrConf.Process()
 
 p.run_mode = 0
 p.skip_events = options.skip_events
-if(option.nevents>-1):
+if(options.nevents>-1):
     p.max_events = options.skip_events+options.nevents
 #p.max_events = 1000
 
