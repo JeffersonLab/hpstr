@@ -113,6 +113,7 @@ class VertexAnaProcessor : public Processor {
         std::string ecalColl_{"RecoEcalClusters"}; //!< description
         std::string mcColl_{"MCParticle"}; //!< description
         int isRadPDG_{622}; //!< description
+        int makeFlatTuple_{0}; //!< make true in config to save flat tuple
         TTree* tree_{nullptr}; //!< description
 
         std::shared_ptr<TrackHistos> _vtx_histos; //!< description

@@ -9,6 +9,11 @@ base.parser.add_argument("-V", "--splitVolume", type=int, dest="splitVolume",
                   help="Require positron in Top and Bottom", metavar="splitVolume", default=0)
 base.parser.add_argument("-R", "--region", type=str, dest="region",
                   help="Signal Region (SR) or Control Region (CR)", metavar="region", default="CR")
+base.parser.add_argument("-f", "--makeFlatTuple", type=int, dest="makeFlatTuple",
+                  help="Make True to make vertex ana flat tuple", metavar="makeFlatTuple", default=0)
+base.parser.add_argument("-r", "--isRadPDG", type=int, dest="isRadPDG",
+                  help="Set radiative trident PDG ID", metavar="isRadPDG", default=622)
+
 options = base.parser.parse_args()
 
 # Use the input file to set the output file name
@@ -54,6 +59,8 @@ recoana_kf.parameters["beamE"] = base.beamE[str(options.year)]
 recoana_kf.parameters["isData"] = options.isData
 recoana_kf.parameters["analysis"] = options.analysis
 recoana_kf.parameters["debug"] = 0
+recoana_kf.parameters["isRadPDG"] = options.isRadPDG
+recoana_kf.parameters["makeFlatTuple"] = options.makeFlatTuple
 CalTimeOffset=-999
 
 if (options.isData==1):
@@ -94,8 +101,10 @@ recoana_gbl.parameters["beamE"] = base.beamE[str(options.year)]
 recoana_gbl.parameters["isData"] = options.isData
 recoana_gbl.parameters["analysis"] = options.analysis
 recoana_gbl.parameters["debug"] = 0
-recoana_gbl.parameters["CalTimeOffset"]=CalTimeOffset
+recoana_gbl.parameters["isRadPDG"] = options.isRadPDG
+recoana_gbl.parameters["makeFlatTuple"] = options.makeFlatTuple
 
+recoana_gbl.parameters["CalTimeOffset"]=CalTimeOffset
 if options.region == "CR":
     recoana_gbl.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_CR.json',
                                                   RegionPath+'radMatchTight_2016_simp_reach_CR.json']
