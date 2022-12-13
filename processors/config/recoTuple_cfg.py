@@ -14,6 +14,9 @@ p = HpstrConf.Process()
 
 
 p.run_mode = 0
+p.skip_events = options.skip_events
+if(option.nevents>-1):
+    p.max_events = options.skip_events+options.nevents
 
 # Library containing processors
 p.add_library("libprocessors")
@@ -117,7 +120,7 @@ else:
 p.input_files= lcio_file
 p.output_files = root_file
 
-if (options.nevents > -1):
-    p.max_events = options.nevents
+if (options.skip_events+options.nevents > -1):
+    p.max_events = options.skip_events+options.nevents
 
 p.printProcess()

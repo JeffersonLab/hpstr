@@ -21,6 +21,10 @@ print('Output file: %s' % outfile)
 p = HpstrConf.Process()
 
 p.run_mode = 1
+p.skip_events = options.skip_events
+if(option.nevents>-1):
+    p.max_events = options.skip_events+options.nevents
+
 #p.max_events = 1000
 
 # Library containing processors
@@ -89,9 +93,6 @@ elif (options.tracking == "GBL"):
 else :
     print ("ERROR::Need to specify which tracks KF or GBL")
     exit(1)
-
-if (options.nevents > 0):
-    p.max_events = options.nevents
 
 p.input_files=infile
 p.output_files = [outfile]

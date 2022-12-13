@@ -105,8 +105,8 @@ bool SvtBl2DAnaProcessor::process(IEvent* ievent) {
     
     bool triggerFound = false;
     for (auto trigger : triggers_.items()){
-        //std::cout << "check for trigger " << trigger.key() << std::endl;
-        //std::cout << "trigger value " << prescaledtriggerMap_[trigger.key()] << std::endl;
+        std::cout << "check for trigger " << trigger.key() << std::endl;
+        std::cout << "trigger value " << prescaledtriggerMap_[trigger.key()] << std::endl;
         if ( (prescaledtriggerMap_[trigger.key()] > 0) || (exttriggerMap_[trigger.key()]) > 0 ){
             triggerFound = true;
         }

@@ -15,7 +15,9 @@ print('Root file: %s' % root_file)
 p = HpstrConf.Process()
 
 p.run_mode = 0
-p.max_events = options.nevents
+p.skip_events = options.skip_events
+if(option.nevents>-1):
+    p.max_events = options.skip_events+options.nevents
 
 # Library containing processors
 p.add_library("libprocessors")

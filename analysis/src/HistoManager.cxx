@@ -112,9 +112,11 @@ void HistoManager::DefineHistos(std::vector<std::string> histoCopyNames, std::st
             }
             if(debug_){
                 std::cout << "DefineHisto: " << h_name << std::endl;
+            }
                 std::size_t found = (hist.key()).find_last_of("_");
                 std::string extension = hist.key().substr(found+1);
                 std::string xtitty = hist.value().at("xtitle");
+            if(debug_){
                 std::cout << extension << xtitty << std::endl;
             }
             if (extension == "h") {

@@ -13,6 +13,9 @@ root_file = options.outFilename
 p = HpstrConf.Process()
 
 p.run_mode = 2
+p.skip_events = options.skip_events
+if(option.nevents>-1):
+    p.max_events = options.skip_events+options.nevents
 
 # Library containing processors
 p.libraries.append("libprocessors.so")
@@ -29,7 +32,7 @@ cnvStd = HpstrConf.Processor('cnvStd', 'StdhepMCParticleProcessor')
 #MCParticles
 cnvStd.parameters["mcPartCollStdhep"] = 'MCParticle'
 cnvStd.parameters["mcPartCollRoot"] = 'MCParticle'
-cnvStd.parameters["maxEvent"] = options.nevents
+cnvStd.parameters["maxEvent"] = options.skip_events+options.nevents
 
 # Sequence which the processors will run.
 p.sequence = [cnvStd]

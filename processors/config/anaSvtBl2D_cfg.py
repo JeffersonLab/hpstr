@@ -13,6 +13,9 @@ print('Root file: %s' % root_file)
 
 p = HpstrConf.Process()
 p.run_mode = 1
+p.skip_events = options.skip_events
+if(option.nevents>-1):
+    p.max_events = options.skip_events+options.nevents
 
 #Set files to process
 p.input_files=[lcio_file]
@@ -36,9 +39,6 @@ svtblana.parameters["rawSvtHitsColl"] = "SVTRawTrackerHits"
 svtblana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/Svt2DBl.json'
 svtblana.parameters["triggerBankColl"] = "TSBank"
 svtblana.parameters["triggerBankCfg"] = os.environ['HPSTR_BASE']+'/analysis/selections/triggerSelection.json'
-
-if (options.nevents > -1):
-    p.max_events = options.nevents
 
 # Sequence which the processors will run.
 p.sequence = [svtblana]

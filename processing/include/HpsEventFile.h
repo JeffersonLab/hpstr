@@ -13,7 +13,6 @@
  */
 class HpsEventFile : public IEventFile {
 
-
     public:
         /**
          * @brief Constructor
@@ -61,8 +60,7 @@ class HpsEventFile : public IEventFile {
         void close();
 
 
-    private:
-        
+    private:        
         HpsEvent* event_{nullptr}; //!< description
         int entry_{0}; //!< description
         int maxEntries_{0}; //!< description
