@@ -17,7 +17,8 @@ p.run_mode = 1
 p.skip_events = options.skip_events
 if(options.nevents>-1):
     p.max_events = options.skip_events+options.nevents
-p.max_events = 200000
+else:
+    p.max_events = -1
 
 # Library containing processors
 p.add_library("libprocessors")
@@ -42,8 +43,8 @@ rawAnaSvt.parameters["sample"] = 0
 
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/svtHit/"
 
-rawAnaSvt.parameters["baselineFile"]="/sdf/group/hps/users/rodwyer1/hps_14552_offline_baselines.dat"
-rawAnaSvt.parameters["timeProfiles"]="/sdf/group/hps/users/rodwyer1/hpssvt_014393_database_svt_pulse_shapes_final.dat"
+rawAnaSvt.parameters["baselineFile"]=os.environ['HPSTR_BASE']+"/processors/dat/hps_14552_offline_baselines.dat"
+rawAnaSvt.parameters["timeProfiles"]=os.environ['HPSTR_BASE']+ "/processors/dat/hpssvt_014393_database_svt_pulse_shapes_final.dat"
 
 rawAnaSvt.parameters["regionDefinitions"] = [RegionPath+'OneFit.json',
                                             RegionPath+'FirstFit.json',

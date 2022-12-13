@@ -108,6 +108,8 @@ else :
 p.skip_events = options.skip_events
 if(options.nevents>-1):
     p.max_events = options.skip_events+options.nevents
+else:
+    p.max_events = -1
 
 p.input_files=infile
 p.output_files = [outfile]
