@@ -110,12 +110,13 @@ void HistoManager::DefineHistos(std::vector<std::string> histoCopyNames, std::st
                 h_name = m_name+"_"+ histoCopyNames.at(i) + "_" + hist.key() ;
                 singleCopy = false;
             }
-
-            std::cout << "DefineHisto: " << h_name << std::endl;
-            std::size_t found = (hist.key()).find_last_of("_");
-            std::string extension = hist.key().substr(found+1);
-            std::string xtitty = hist.value().at("xtitle");
-            std::cout << extension << xtitty << std::endl;
+            if(debug_){
+                std::cout << "DefineHisto: " << h_name << std::endl;
+                std::size_t found = (hist.key()).find_last_of("_");
+                std::string extension = hist.key().substr(found+1);
+                std::string xtitty = hist.value().at("xtitle");
+                std::cout << extension << xtitty << std::endl;
+            }
             if (extension == "h") {
                 histos1d[h_name] = plot1D(h_name,hist.value().at("xtitle"),
                         hist.value().at("bins"),

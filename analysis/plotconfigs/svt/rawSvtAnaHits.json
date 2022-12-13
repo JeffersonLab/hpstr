@@ -7,51 +7,6 @@
             "ytitle" : "Events"
 
         },
-
-    "SvtHybridsHitN_h" : {
-            "xtitle" : "# of Strips",
-            "bins" : 10000,
-            "minX" : 0,
-            "maxX" : 200,
-            "ytitle" : "Events"
-
-        },
-    "SvtHitMulti_h" : {
-            "prefix" : "hitN",
-            "type" : "h",
-            "xtitle" : "# of Strips",
-            "bins" : 4000,
-            "minX" : 0,
-            "maxX" : 4000,
-            "ytitle" : "Events"
-
-        },
-    "SvtHybrids0_hh" : {
-            "prefix" : "baseline0",
-            "type" : "hh",
-            "xtitle" : "Strip Number",
-            "binsX" : 640,
-            "minX" : -0.5,
-            "maxX" : 639.5,
-            "ytitle" : "ADC Value",
-            "binsY" : 5000,
-            "minY" : 0,
-            "maxY" : 20000
-
-        },
-    "SvtHybrids3_hh" : {
-            "prefix" : "baseline3",
-            "type" : "hh",
-            "xtitle" : "Strip Number",
-            "binsX" : 640,
-            "minX" : -0.5,
-            "maxX" : 639.5,
-            "ytitle" : "ADC Value",
-            "binsY" : 5000,
-            "minY" : 0,
-            "maxY" : 20000
-
-        },
     "SvtHybrids_getFitN_h" : {
             "prefix" : "FitN",
             "type" : "h",
@@ -62,172 +17,198 @@
             "ytitle" : "# of Hits"
 
         },
-    "SvtHybrids_getT0_h" : {
+    "SvtHybrids_T0_h" : {
             "prefix" : "to",
             "type" : "h",
             "xtitle" : "T0 Fit Parameter",
-            "bins" : 640,
-            "minX" : 0,
-            "maxX" : 10,
+            "bins" : 200,
+            "minX" : -120,
+            "maxX" : 100,
             "ytitle" : "# of Hits"
 
         },
-    "SvtHybrids_getT0err_h" : {
-            "prefix" : "toerr",
-            "type" : "h",
-            "xtitle" : "T0 Fit Parameter Error",
-            "bins" : 640,
-            "minX" : 0,
-            "maxX" : 10,
-            "ytitle" : "# of Hits"
-
-        },
-    "SvtHybrids_getAmp_h" : {
+    "SvtHybrids_Am_h" : {
             "prefix" : "amp",
             "type" : "h",
             "xtitle" : "Amplitude",
-            "bins" : 640,
+            "bins" : 200,
             "minX" : 0,
+            "maxX" : 4000,
+            "ytitle" : "# of Hits"
+
+        },
+    "SvtHybrids_Chi_Sqr_h" : {
+            "prefix" : "chi_sqr",
+            "type" : "h",
+            "xtitle" : "chi_sqr",
+            "bins" : 200,
+            "minX" : 0,
+            "maxX" : 1,
+            "ytitle" : "Chi_Sqr of Fits"
+
+        },
+    "SvtHybrids_ADCcount_hh" : {
+            "prefix" : "adcC",
+            "type" : "hh",
+            "xtitle" : "T0",
+            "binsX" : 100,
+            "minX" : -200,
             "maxX" : 200,
-            "ytitle" : "# of Hits"
-
-        },
-    "SvtHybrids_getAmpErr_h" : {
-            "prefix" : "amperr",
-            "type" : "h",
-            "xtitle" : "Amplitude Error",
-            "bins" : 640,
-            "minX" : 0,
-            "maxX" : 200,
-            "ytitle" : "# of Hits"
-
-        },
-    "SvtHybrids_getChiSq_h" : {
-            "prefix" : "chisq",
-            "type" : "h",
-            "xtitle" : "Chi Squared",
-            "bins" : 640,
-            "minX" : 0,
-            "maxX" : 10,
-            "ytitle" : "# of Hits"
-
-        },
-    "SvtHybrids_getT01_h" : {
-            "prefix" : "to",
-            "type" : "h",
-            "xtitle" : "T0 Fit Parameter",
-            "bins" : 640,
-            "minX" : 0,
-            "maxX" : 10,
-            "ytitle" : "# of Hits"
-
-        },
-    "SvtHybrids_getT0err1_h" : {
-            "prefix" : "toerr",
-            "type" : "h",
-            "xtitle" : "T0 Fit Parameter Error",
-            "bins" : 640,
-            "minX" : 0,
-            "maxX" : 10,
-            "ytitle" : "# of Hits"
-
-        },
-    "SvtHybrids_getAmp1_h" : {
-            "prefix" : "amp",
-            "type" : "h",
-            "xtitle" : "Amplitude",
-            "bins" : 640,
-            "minX" : 0,
-            "maxX" : 200,
-            "ytitle" : "# of Hits"
-
-        },
-    "SvtHybrids_getAmpErr1_h" : {
-            "prefix" : "amperr",
-            "type" : "h",
-            "xtitle" : "Amplitude Error",
-            "bins" : 640,
-            "minX" : 0,
-            "maxX" : 200,
-            "ytitle" : "# of Hits"
-
-        },
-    "SvtHybrids_getChiSq1_h" : {
-            "prefix" : "chisq",
-            "type" : "h",
-            "xtitle" : "Chi Squared",
-            "bins" : 640,
-            "minX" : 0,
-            "maxX" : 10,
-            "ytitle" : "# of Hits"
-
-        },
-    "SvtHybrids_getT02_hh" : {
-            "prefix" : "to",
-            "type" : "h",
-            "xtitle" : "T0 Fit Parameter",
-            "binsX" : 60,
-            "minX" : 0,
-            "maxX" : 10,
-            "ytitle" : "T0 PileUp",
-            "binsY" : 60,
-            "minY" : 0,
+            "ytitle" : "Count (Normalized)",
+            "binsY" : 100,
+            "minY" : -2,
             "maxY" : 10
-
         },
-    "SvtHybrids_getT0err2_hh" : {
+    "SvtHybrids_ADCcountdeshift_hh" : {
+            "prefix" : "adcC",
+            "type" : "hh",
+            "xtitle" : "T0",
+            "binsX" : 8,
+            "minX" : 0,
+            "maxX" : 7,
+            "ytitle" : "Count (Normalized)",
+            "binsY" : 100,
+            "minY" : -3000,
+            "maxY" : 9000
+
+        },    
+    "SvtHybrids_T0Err_hh" : {
             "prefix" : "toerr",
-            "type" : "h",
-            "xtitle" : "T0 Fit Parameter Error",
-            "binsX" : 60,
-            "minX" : 0,
-            "maxX" : 2,
-            "ytitle" : "T0 PileUp Error",
-            "binsY" : 60,
+            "type" : "hh",
+            "xtitle" : "T0",
+            "binsX" : 100,
+            "minX" : -120,
+            "maxX" : 100,
+            "ytitle" : "T0 Error",
+            "binsY" : 100,
             "minY" : 0,
-            "maxY" : 2
- 
-        },
-    "SvtHybrids_getAmp2_hh" : {
-            "prefix" : "amp",
-            "type" : "h",
-            "xtitle" : "Amplitude",
-            "binsX" : 90,
-            "minX" : 500,
-            "maxX" : 2000,
-            "ytitle" : "Amplitude PileUp",
-            "binsY" : 90,
-            "minY" : 500,
-            "maxY" : 2000
+            "maxY" : 200
 
         },
-    "SvtHybrids_getAmpErr2_hh" : {
-            "prefix" : "amperr",
-            "type" : "h",
-            "xtitle" : "Amplitude Error",
-            "binsX" : 90,
-            "minX" : 500,
-            "maxX" : 2000,
-            "ytitle" : "Amplitude Error PileUp",
-            "binsY" : 90,
-            "minY" : 500,
-            "maxY" : 2000
- 
-        },
-    "SvtHybrids_getChiSq2_hh" : {
-            "prefix" : "chisq",
-            "type" : "h",
-            "xtitle" : "Chi Squared",
-            "binsX" : 640,
+    "SvtHybrids_AmErr_hh" : {
+            "prefix" : "Amperr",
+            "type" : "hh",
+            "xtitle" : "Amplitude",
+            "binsX" : 100,
             "minX" : 0,
-            "maxX" : 2,
-            "ytitle" : "Chi Squared PileUp",
-            "binsY" : 640,
+            "maxX" : 4000,
+            "ytitle" : "Amplitude Error",
+            "binsY" : 100,
             "minY" : 0,
-            "maxY" : 2
+            "maxY" : 4000
+
+        },
+    "SvtHybrids_AmT0_hh" : {
+            "prefix" : "Amp vs To",
+            "type" : "hh",
+            "xtitle" : "T0",
+            "binsX" : 100,
+            "minX" : -120,
+            "maxX" : 100,
+            "ytitle" : "Amplitude",
+            "binsY" : 100,
+            "minY" : 0,
+            "maxY" : 4000
+
+        },
+    "SvtHybrids_AmT0Err_hh" : {
+            "prefix" : "ErrCompare",
+            "type" : "hh",
+            "xtitle" : "T0 Error",
+            "binsX" : 100,
+            "minX" : 0,
+            "maxX" : 200,
+            "ytitle" : "Amplitude Error",
+            "binsY" : 100,
+            "minY" : 0,
+            "maxY" : 4000
+
+        },
+    "SvtHybrids_PT1PT2_hh" : {
+            "prefix" : "Pulese time 1 vs Pulse time 2",
+            "type" : "hh",
+            "xtitle" : "Pulse Time 1",
+            "binsX" : 100,
+            "minX" : -160,
+            "maxX" : 160,
+            "ytitle" : "Pulse Time 2",
+            "binsY" : 200,
+            "minY" : -550,
+            "maxY" : 160
+        },
+    "SvtHybrids_T0TD_hh" : {
+            "prefix" : "Time Diff vs T0",
+            "type" : "hh",
+            "xtitle" : "Pulse Time",
+            "binsX" : 100,
+            "minX" : -120,
+            "maxX" : 100,
+            "ytitle" : "Time Difference",
+            "binsY" : 100,
+            "minY" : -160,
+            "maxY" : 160
+
+        },
+    "SvtHybrids_AmErrTD_hh" : {
+            "prefix" : "Time Diff vs Amp Err",
+            "type" : "hh",
+            "xtitle" : "Amp Err",
+            "binsX" : 100,
+            "minX" : 0,
+            "maxX" : 4000,
+            "ytitle" : "Time Difference",
+            "binsY" : 100,
+            "minY" : -160,
+            "maxY" : 160
+
+        },
+    "SvtHybrids_AmpTD_hh" : {
+            "prefix" : "Time Diff vs Pulse Amp",
+            "type" : "hh",
+            "xtitle" : "Pulse Amp",
+            "binsX" : 100,
+            "minX" : 0,
+            "maxX" : 4000,
+            "ytitle" : "Time Difference",
+            "binsY" : 100,
+            "minY" : -160,
+            "maxY" : 160
+
+        },
+    "SvtHybrids_Amp12_hh" : {
+            "prefix" : "Time Diff vs Amp Err",
+            "type" : "hh",
+            "xtitle" : "Amp Pulse 1",
+            "binsX" : 100,
+            "minX" : 0,
+            "maxX" : 4000,
+            "ytitle" : "Amp Pulse 2",
+            "binsY" : 100,
+            "minY" : 0,
+            "maxY" : 4000
+
+        },
+    "SvtHybrids_ADTD_hh" : {
+            "prefix" : "Time Diff vs Amp Diff",
+            "type" : "hh",
+            "xtitle" : "Amp Diff",
+            "binsX" : 100,
+            "minX" : -3000,
+            "maxX" : 3000,
+            "ytitle" : "Time Diff",
+            "binsY" : 100,
+            "minY" : -160,
+            "maxY" : 160
+
+        },
+    "SvtHybrids_TD_h" : {
+            "prefix" : "Time Diff",
+            "type" : "h",
+            "xtitle" : "Time Diff",
+            "bins" : 200,
+            "minX" : -160,
+            "maxX" : 160,
+            "ytitle" : "# of Hits"
 
         }
-
-
-
 }

@@ -35,7 +35,7 @@ rawAnaSvt = HpstrConf.Processor('svtana','SvtRawDataAnaProcessor')
 rawAnaSvt.parameters["debug"] = 0
 rawAnaSvt.parameters["anaName"] = 'rawSvtHitAna'
 rawAnaSvt.parameters["trkrHitColl"] = 'SVTRawHitsOnTrack_KF'#'SVTRawTrackerHits'
-rawAnaSvt.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/rawSvtAnaHits3.json'
+rawAnaSvt.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/rawSvtAnaHits.json'
 rawAnaSvt.parameters["sample"] = 0 
 
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/svtHit/"
