@@ -14,10 +14,7 @@ p = HpstrConf.Process()
 
 p.run_mode = 2
 p.skip_events = options.skip_events
-if(options.nevents>-1):
-    p.max_events = options.skip_events+options.nevents
-else:
-    p.max_events = -1
+p.max_events = options.nevents
 
 # Library containing processors
 p.libraries.append("libprocessors.so")

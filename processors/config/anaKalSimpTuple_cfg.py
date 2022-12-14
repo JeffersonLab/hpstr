@@ -106,10 +106,7 @@ else :
     exit(1)
 
 p.skip_events = options.skip_events
-if(options.nevents>-1):
-    p.max_events = options.skip_events+options.nevents
-else:
-    p.max_events = -1
+p.max_events = options.nevents
 
 p.input_files=infile
 p.output_files = [outfile]

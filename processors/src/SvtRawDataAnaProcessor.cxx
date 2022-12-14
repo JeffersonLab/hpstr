@@ -261,13 +261,16 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 
                 Float_t TimeDiff=-42069.0;
                 Float_t AmpDiff=-42069.0;
+                
+                if(!(reg_selectors_[regions_[i_reg]]->passCutEq("getN_et",getNum,weight))){continue;}
+
                 if(getNum==2){
                     TimeDiff=(thisHit->getT0(J))-(thisHit->getT0((J+1)%2));
                     AmpDiff=(thisHit->getT0(J))-(thisHit->getT0((J+1)%2)); 
                     if(!(reg_selectors_[regions_[i_reg]]->passCutLt("TimeDiff_lt",TimeDiff*TimeDiff,weight))){continue;}
                 }
-
-                if(!(reg_selectors_[regions_[i_reg]]->passCutEq("getN_et",getNum,weight))){continue;}
+                //std::cout<<"Did I atleast make it here?"<<std::endl;
+                
                 if(!(reg_selectors_[regions_[i_reg]]->passCutEq("getId_lt",J,weight))){continue;} 
                 if(!(reg_selectors_[regions_[i_reg]]->passCutEq("getId_gt",J,weight))){continue;}   
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("chi_lt",thisHit->getChiSq(J),weight))){continue;}
@@ -275,6 +278,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                                 
                 
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ft",(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)<((thisHit->getT0((J+1)%getNum)-TimeRef)*(thisHit->getT0((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
+                //std::cout<<"I Made it here"<<std::endl;
                 if(i_reg<regionSelections_.size()-1){
                     if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ct",(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)>((thisHit->getT0((J+1)%getNum)-TimeRef)*(thisHit->getT0((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
                 }else{
@@ -282,6 +286,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                         if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ct",(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)>((thisHit->getT0((J+1)%getNum)-TimeRef)*(thisHit->getT0((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
                     }
                 }
+                //std::cout<<"I Made it here 2"<<std::endl;
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ca",(((thisHit->getAmp(J))-AmpRef)*((thisHit->getAmp(J))-AmpRef)<((thisHit->getAmp((J+1)%getNum)-AmpRef)*(thisHit->getAmp((J+1)%getNum)-AmpRef)+.00001)),weight))){continue;}
 
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_fterr",(((thisHit->getT0err(J))-TimeRef)*((thisHit->getT0err(J))-TimeRef)<((thisHit->getT0err((J+1)%getNum)-TimeRef)*(thisHit->getT0err((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
@@ -296,8 +301,14 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("time_lt",thisHit->getT0(0),weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutGt("time_gt",thisHit->getT0(0),weight))){continue;}
 
-                if(!(reg_selectors_[regions_[i_reg]]->passCutLt("Otime_lt",thisHit->getT0((J+1)%getNum),weight))){continue;}
-                if(!(reg_selectors_[regions_[i_reg]]->passCutGt("Otime_gt",thisHit->getT0((J+1)%getNum),weight))){continue;}
+                //std::cout<<(float)(thisHit->getT0((J+1)%getNum))<<std::endl;
+                //std::cout<<!(reg_selectors_[regions_[i_reg]]->passCutLt("Otime_lt",(float)(thisHit->getT0((J+1)%getNum)),weight))<<std::endl;
+                //std::cout<<!(reg_selectors_[regions_[i_reg]]->passCutGt("Otime_gt",(float)(thisHit->getT0((J+1)%getNum)),weight))<<std::endl;
+                if(!(reg_selectors_[regions_[i_reg]]->passCutLt("Otime_lt",(float)(thisHit->getT0((J+1)%getNum)),weight))){continue;}
+                if(!(reg_selectors_[regions_[i_reg]]->passCutGt("Otime_gt",(float)(thisHit->getT0((J+1)%getNum)),weight))){continue;}
+
+                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("Stime_lt",(float)(thisHit->getT0((J)%getNum)),weight))){continue;}
+                if(!(reg_selectors_[regions_[i_reg]]->passCutGt("Stime_gt",(float)(thisHit->getT0((J)%getNum)),weight))){continue;}
 
 
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("amp2_lt",thisHit->getAmp(0),weight))){continue;}

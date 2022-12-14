@@ -15,10 +15,7 @@ p = HpstrConf.Process()
 
 p.run_mode = 1
 p.skip_events = options.skip_events
-if(options.nevents>-1):
-    p.max_events = options.skip_events+options.nevents
-else:
-    p.max_events = -1
+p.max_events = options.nevents
 
 # Library containing processors
 p.add_library("libprocessors")
@@ -37,7 +34,7 @@ rawAnaSvt = HpstrConf.Processor('svtana','SvtRawDataAnaProcessor')
 
 rawAnaSvt.parameters["debug"] = 0
 rawAnaSvt.parameters["anaName"] = 'rawSvtHitAna'
-rawAnaSvt.parameters["trkrHitColl"] = 'SVTRawHitsOnTrack_KF'#'SVTRawTrackerHits'
+rawAnaSvt.parameters["trkrHitColl"] = 'SVTRawTrackerHits' #'SVTRawHitsOnTrack_KF'#'SVTRawTrackerHits'
 rawAnaSvt.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/rawSvtAnaHits.json'
 rawAnaSvt.parameters["sample"] = 0 
 
@@ -55,6 +52,9 @@ rawAnaSvt.parameters["regionDefinitions"] = [RegionPath+'OneFit.json',
                                             RegionPath+'LowTimeDiff.json',
                                             RegionPath+'Region1.json',
                                             RegionPath+'Region2.json',
+                                            RegionPath+'Region3.json',
+                                            RegionPath+'Region4.json',
+                                            RegionPath+'Region5.json',
                                             RegionPath+'TimeResolution.json'
                                            ]
 

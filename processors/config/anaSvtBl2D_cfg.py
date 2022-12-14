@@ -14,10 +14,7 @@ print('Root file: %s' % root_file)
 p = HpstrConf.Process()
 p.run_mode = 1
 p.skip_events = options.skip_events
-if(options.nevents>-1):
-    p.max_events = options.skip_events+options.nevents
-else:
-    p.max_events = -1
+p.max_events = options.nevents
 
 #Set files to process
 p.input_files=[lcio_file]
