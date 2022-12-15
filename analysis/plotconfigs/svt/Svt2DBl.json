@@ -11,7 +11,7 @@
     "SvtHybridsHitN_h" : {
             "xtitle" : "# of Strips",
             "bins" : 2000,
-            "minX" : -.5,
+            "minX" : -0.5,
             "maxX" : 1999.5,
             "ytitle" : "Events"
 

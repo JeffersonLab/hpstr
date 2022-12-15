@@ -73,7 +73,6 @@ class SvtRawDataAnaProcessor : public Processor {
         float baseErr2_[8][4][640][12];
         std::vector<std::string> MatchList_;
 
-        //TODO Change this to be held from HPSEvent
         TTree* tree_;
         TBranch* bsvtHits_{nullptr};
         TBranch* bevH_;
@@ -90,8 +89,6 @@ class SvtRawDataAnaProcessor : public Processor {
         std::vector<std::string> regions_;
         std::string baselineFile_;
         std::string timeProfiles_;
-        
-        //I WILL FIX THIS QUICKLY JUST INPUT WHAT YOU HAVE IN THE PYTHON FILE
 
         //Debug Level
         int debug_{0};
