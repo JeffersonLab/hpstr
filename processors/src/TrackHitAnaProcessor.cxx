@@ -93,6 +93,7 @@ bool TrackHitAnaProcessor::process(IEvent* ievent) {
         bool isKF = track->isKalmanTrack();
         int trkType = (int)isTop*2 + (int)isPos;
         int n2dhits_onTrack = !track->isKalmanTrack() ? track->getTrackerHitCount() * 2 : track->getTrackerHitCount();
+        //if (n2dhits_onTrack != track->getSvtHits()->GetEntries()) continue;
         
         //Track Selection
         if (trkSelector_ && !trkSelector_->passCutGt("n_hits_gt",n2dhits_onTrack,weight))
@@ -109,12 +110,18 @@ bool TrackHitAnaProcessor::process(IEvent* ievent) {
 
         std::vector<int> hit_layers;
         int hitCode = 0;
-        for (int ihit = 0; ihit<track->getSvtHits()->GetEntries(); ++ihit) {
-            TrackerHit* hit = (TrackerHit*) track->getSvtHits()->At(ihit);
+        int n12hits = 0;
+        for (int ihit = 0; ihit<track->getSvtHits().GetEntries(); ++ihit) {
+            TrackerHit* hit = (TrackerHit*) track->getSvtHits().At(ihit);
             int layer = hit->getLayer();
+            hit_layers.push_back(layer);
             if (isKF)
             {
-                if (layer < 4) hitCode = hitCode | (0x1 << layer);
+                if (layer < 4) 
+                {
+                    hitCode = hitCode | (0x1 << layer);
+                    n12hits++;
+                }
             }
             else
             {
@@ -125,6 +132,7 @@ bool TrackHitAnaProcessor::process(IEvent* ievent) {
                 }
             }
         }
+
         trkHistos_->Fill1DHisto("hitCode_h", hitCode);
         trkHistos_->Fill2DHisto("hitCode_trkType_hh", hitCode, trkType);
         trkHistos_->Fill1DTrack(track, weight, "");

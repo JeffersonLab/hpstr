@@ -200,7 +200,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
             rawSvthitsOn3d.clear();
 
             if (debug_)
-                std::cout<<tracker_hit->getRawHits()->GetEntries()<<std::endl;
+                std::cout<<tracker_hit->getRawHits().GetEntries()<<std::endl;
             // Add a reference to the hit
             track->addHit(tracker_hit);
             hits_.push_back(tracker_hit);

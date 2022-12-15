@@ -609,19 +609,19 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 if (!isData_) _reg_mc_vtx_histos[region]->FillMCParticles(mcParts_, analysis_);
 
                 //Build map of hits and the associated MC part ids for later
-                TRefArray* ele_trk_hits = ele_trk_gbl->getSvtHits();
+                TRefArray ele_trk_hits = ele_trk_gbl->getSvtHits();
                 std::map<int, std::vector<int> > trueHitIDs;
                 for(int i = 0; i < hits_->size(); i++)
                 {
                     TrackerHit* hit = hits_->at(i);
                     trueHitIDs[hit->getID()] = hit->getMCPartIDs();
                 }
-                //std::cout << "There are " << ele_trk_hits->GetEntries() << " hits on this track" << std::endl;
+                //std::cout << "There are " << ele_trk_hits.GetEntries() << " hits on this track" << std::endl;
                 //Count the number of hits per part on the track
                 std::map<int, int> nHits4part;
-                for(int i = 0; i < ele_trk_hits->GetEntries(); i++)
+                for(int i = 0; i < ele_trk_hits.GetEntries(); i++)
                 {
-                    TrackerHit* eleHit = (TrackerHit*)ele_trk_hits->At(i);
+                    TrackerHit* eleHit = (TrackerHit*)ele_trk_hits.At(i);
                     for(int idI = 0; idI < trueHitIDs[eleHit->getID()].size(); idI++ )
                     {
                         int partID = trueHitIDs[eleHit->getID()].at(idI);

@@ -61,7 +61,7 @@ class Track : public TObject {
         /** 
          * @return A reference to the hits associated with this track. 
          */
-        TRefArray* getSvtHits() const { return tracker_hits_; };
+        TRefArray getSvtHits() const { return tracker_hits_; };
         
         /**
          * Set the track parameters.
@@ -339,7 +339,7 @@ class Track : public TObject {
     private:
 
         /** Reference to the 3D hits associated with this track. */
-        TRefArray* tracker_hits_{new TRefArray{}}; 
+        TRefArray tracker_hits_{}; 
 
         /** Reference to the reconstructed particle associated with this track. */
         TRef particle_;

@@ -5,18 +5,18 @@
         "info" : "N Hits >= 10"
     },
     "chi2ndf_lt"  : {
-        "cut"  : 20.0,
+        "cut"  : 10.0,
         "id"   : 1,
-        "info" : "#chi^{2}/ndf <= 20.0"
+        "info" : "#chi^{2}/ndf <= 10.0"
     },
     "p_gt"  : {
-        "cut"  : 1.1,
+        "cut"  : 0.4,
         "id"   : 2,
-        "info" : "p > 1.1"
+        "info" : "p > 0.4"
     },
     "p_lt"  : {
-        "cut"  : 3.7,
+        "cut"  : 6.0,
         "id"   : 3,
-        "info" : "p < 3.7"
+        "info" : "p < 6.0"
     }
 }

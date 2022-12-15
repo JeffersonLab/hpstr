@@ -452,13 +452,13 @@ bool utils::isUsedByTrack(TrackerHit* tracker_hit,
 
 bool utils::getParticlesFromVertex(Vertex* vtx, Particle* ele, Particle* pos) {
 
-    for (int ipart = 0; ipart < vtx->getParticles()->GetEntries(); ++ipart) {
-        int pdg_id = ((Particle*)vtx->getParticles()->At(ipart))->getPDG();
+    for (int ipart = 0; ipart < vtx->getParticles().GetEntries(); ++ipart) {
+        int pdg_id = ((Particle*)vtx->getParticles().At(ipart))->getPDG();
         if (pdg_id == 11) {
-            ele = (Particle*)vtx->getParticles()->At(ipart);
+            ele = (Particle*)vtx->getParticles().At(ipart);
         }
         else if (pdg_id == -11) {
-            pos = (Particle*)vtx->getParticles()->At(ipart);
+            pos = (Particle*)vtx->getParticles().At(ipart);
         }
 
         else {
