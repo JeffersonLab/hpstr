@@ -31,8 +31,11 @@ cnvStd = HpstrConf.Processor('cnvStd', 'StdhepMCParticleProcessor')
 #MCParticles
 cnvStd.parameters["mcPartCollStdhep"] = 'MCParticle'
 cnvStd.parameters["mcPartCollRoot"] = 'MCParticle'
-cnvStd.parameters["maxEvent"] = options.skip_events+options.nevents
-
+cnvStd.parameters["skipEvent"] = options.skip_events
+if options.nevents>-1:
+    cnvStd.parameters["maxEvent"] = options.skip_events+options.nevents
+else:
+    cnvStd.parameters["maxEvent"] = -1
 # Sequence which the processors will run.
 p.sequence = [cnvStd]
 
