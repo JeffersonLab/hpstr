@@ -122,7 +122,7 @@ class RawSvtHit : public TObject {
         int strip_{-999}; 
         /** The fit parameters of the hit. */
         int fitN_{0}; 
-        double fit_[2][5]{-999.9,-999.9,-999.9,-999.9,-999.9,-999.9,-999.9,-999.9,-999.9,-999.9}; 
+        double fit_[2][5]{{-999.9,-999.9,-999.9,-999.9,-999.9},{-999.9,-999.9,-999.9,-999.9,-999.9}}; 
 
 }; // RawSvtHit
 

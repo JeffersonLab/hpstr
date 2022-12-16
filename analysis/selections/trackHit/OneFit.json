@@ -1,0 +1,32 @@
+{
+    "time_lt"  : {
+        "cut"  : 10000.0,
+        "id"   : 0,
+        "info" : "< time"
+    },
+    "amp_lt"  : {
+        "cut"  : 10000.0,
+        "id"   : 1,
+        "info" : "< ampl"
+    },
+    "time_gt"  : {
+        "cut"  : -100.0,
+        "id"   : 0,
+        "info" : "> time"
+    },
+    "amp_gt"  : {
+        "cut"  : -100.0,
+        "id"   : 1,
+        "info" : "> ampl"
+    },
+    "getN_et"  : {
+        "cut"  : 2.0,
+        "id"   : 0,
+        "info" : "How Many Pulses"
+    },
+    "getId_et" : {
+        "cut"  : 0.0,
+        "id"   : 0,
+        "info" : "Which Pulse"
+    }
+}
