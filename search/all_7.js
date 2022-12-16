@@ -64,7 +64,7 @@ var searchData=
   ['getgoodnessofpid_493',['getGoodnessOfPID',['../classParticle.html#ace6fc5d266a6826a3c79ce799ed1469e',1,'Particle']]],
   ['gethistosfromfile_494',['getHistosFromFile',['../classBlFitHistos.html#a52d940937dee537e69c27ebbc7f12d5d',1,'BlFitHistos::getHistosFromFile()'],['../namespaceofflineBaselineFitAnalysis.html#a69def0993d6db215956898b4324b2f25',1,'offlineBaselineFitAnalysis.getHistosFromFile()']]],
   ['gethistosfromfile_495',['GetHistosFromFile',['../classHistoManager.html#a1d6a53e655bd418c172f199a9509b9f4',1,'HistoManager']]],
-  ['gethits_496',['getHits',['../classHodoCluster.html#a4e01277f86e67a328ba5864732089ff6',1,'HodoCluster::getHits()'],['../classCalCluster.html#a4e01277f86e67a328ba5864732089ff6',1,'CalCluster::getHits()']]],
+  ['gethits_496',['getHits',['../classHodoCluster.html#a4e01277f86e67a328ba5864732089ff6',1,'HodoCluster::getHits()'],['../classCalCluster.html#aa41550d2d788f1c643c53cda8303aa7d',1,'CalCluster::getHits()']]],
   ['gethole_497',['getHole',['../classHodoHit.html#a291aef64bc781c98b80ca3c0949d885d',1,'HodoHit']]],
   ['gethwfromstring_498',['getHwFromString',['../classModuleMapper.html#a79c07460964e9054304aecf6ae358026',1,'ModuleMapper']]],
   ['gethwfromsw_499',['getHwFromSw',['../classModuleMapper.html#a0b79f39d83dccd5e495c59bdc4cd5645',1,'ModuleMapper']]],
