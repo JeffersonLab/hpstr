@@ -115,36 +115,38 @@ $(function() {
 <div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1bhResSystematics__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">   43</a></span>&#160;p = <a class="code" href="classHpstrConf_1_1Process.html">HpstrConf.Process</a>()</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
 <div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1bhResSystematics__cfg.html#ae0f8262ae155d0cba15cec05d034c9e7">   45</a></span>&#160;p.run_mode = 2</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment"># Library containing processors</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;p.add_library(<span class="stringliteral">&quot;libprocessors&quot;</span>)</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
-<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1bhResSystematics__cfg.html#a638afc294d72dc4d3d31d263205cd23f">   54</a></span>&#160;bhressys = <a class="code" href="classHpstrConf_1_1Processor.html">HpstrConf.Processor</a>(<span class="stringliteral">&#39;bhtoys&#39;</span>, <span class="stringliteral">&#39;BhMassResSystematicsProcessor&#39;</span>)</div>
+<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1bhResSystematics__cfg.html#a929d203f1b0e6375eacf16ef281732bf">   46</a></span>&#160;p.skip_events = options.skip_events</div>
+<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1bhResSystematics__cfg.html#a7e223ec063df28c77178547bd0813464">   47</a></span>&#160;p.max_events = options.nevents</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment"># Library containing processors</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;p.add_library(<span class="stringliteral">&quot;libprocessors&quot;</span>)</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;debug&quot;</span>] = 1</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;seed&quot;</span>] = 0</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;massSpectrum&quot;</span>] = options.mass_spec</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;mass_hypo&quot;</span>] = mass_hypo</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;poly_order&quot;</span>] = poly_order</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;win_factor&quot;</span>] = win_factor</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;bkg_model&quot;</span>] = options.bkg_model</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;num_iters&quot;</span>] = options.num_iters</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;res_sigma&quot;</span>] = options.res_sigma</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;function_file&quot;</span>] = options.function_file</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;function_name&quot;</span>] = options.function_name</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;num_toys&quot;</span>] = options.num_toys</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;toy_num_iters&quot;</span>] = options.toy_num_iters</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment"># Sequence which the processors will run.</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1bhResSystematics__cfg.html#a3f9c3bf7e2cafc2c46df6d132ea658cc">   75</a></span>&#160;p.sequence = [bhressys]</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
-<div class="line"><a name="l00077"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1bhResSystematics__cfg.html#a27256609f574b662639e0a8cd48b8d3a">   77</a></span>&#160;p.input_files=[histo_file]</div>
-<div class="line"><a name="l00078"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1bhResSystematics__cfg.html#a7882aa8b39a47102a13c2630137590d8">   78</a></span>&#160;p.output_files = [out_file]</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;p.printProcess()</div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1bhResSystematics__cfg.html#a638afc294d72dc4d3d31d263205cd23f">   56</a></span>&#160;bhressys = <a class="code" href="classHpstrConf_1_1Processor.html">HpstrConf.Processor</a>(<span class="stringliteral">&#39;bhtoys&#39;</span>, <span class="stringliteral">&#39;BhMassResSystematicsProcessor&#39;</span>)</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;debug&quot;</span>] = 1</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;seed&quot;</span>] = 0</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;massSpectrum&quot;</span>] = options.mass_spec</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;mass_hypo&quot;</span>] = mass_hypo</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;poly_order&quot;</span>] = poly_order</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;win_factor&quot;</span>] = win_factor</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;bkg_model&quot;</span>] = options.bkg_model</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;num_iters&quot;</span>] = options.num_iters</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;res_sigma&quot;</span>] = options.res_sigma</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;function_file&quot;</span>] = options.function_file</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;function_name&quot;</span>] = options.function_name</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;num_toys&quot;</span>] = options.num_toys</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;bhressys.parameters[<span class="stringliteral">&quot;toy_num_iters&quot;</span>] = options.toy_num_iters</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment"># Sequence which the processors will run.</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1bhResSystematics__cfg.html#a3f9c3bf7e2cafc2c46df6d132ea658cc">   77</a></span>&#160;p.sequence = [bhressys]</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
+<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1bhResSystematics__cfg.html#a27256609f574b662639e0a8cd48b8d3a">   79</a></span>&#160;p.input_files=[histo_file]</div>
+<div class="line"><a name="l00080"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1bhResSystematics__cfg.html#a7882aa8b39a47102a13c2630137590d8">   80</a></span>&#160;p.output_files = [out_file]</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;p.printProcess()</div>
 <div class="ttc" id="aclassHpstrConf_1_1Process_html"><div class="ttname"><a href="classHpstrConf_1_1Process.html">HpstrConf.Process</a></div><div class="ttdoc">Process python class.</div><div class="ttdef"><b>Definition:</b> <a href="HpstrConf_8py_source.html#l00020">HpstrConf.py:20</a></div></div>
 <div class="ttc" id="aclassHpstrConf_1_1Processor_html"><div class="ttname"><a href="classHpstrConf_1_1Processor.html">HpstrConf.Processor</a></div><div class="ttdoc">Processor python class.</div><div class="ttdef"><b>Definition:</b> <a href="HpstrConf_8py_source.html#l00004">HpstrConf.py:4</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

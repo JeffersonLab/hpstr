@@ -87,48 +87,52 @@ $(function() {
 <div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaTrackHits__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">   15</a></span>&#160;p = <a class="code" href="classHpstrConf_1_1Process.html">HpstrConf.Process</a>()</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
 <div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaTrackHits__cfg.html#ae0f8262ae155d0cba15cec05d034c9e7">   17</a></span>&#160;p.run_mode = 1</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment">#p.max_events = 1000</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment"># Library containing processors</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;p.add_library(<span class="stringliteral">&quot;libprocessors&quot;</span>)</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaTrackHits__cfg.html#a929d203f1b0e6375eacf16ef281732bf">   18</a></span>&#160;p.skip_events = options.skip_events</div>
+<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaTrackHits__cfg.html#a7e223ec063df28c77178547bd0813464">   19</a></span>&#160;p.max_events = options.nevents</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">#p.max_events = 1000</span></div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaTrackHits__cfg.html#a3ec8750c2366812be758fef2bf4f47f5">   26</a></span>&#160;anaTrks = <a class="code" href="classHpstrConf_1_1Processor.html">HpstrConf.Processor</a>(<span class="stringliteral">&#39;anaTrks&#39;</span>, <span class="stringliteral">&#39;TrackHitAnaProcessor&#39;</span>)</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"># Library containing processors</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;p.add_library(<span class="stringliteral">&quot;libprocessors&quot;</span>)</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;anaTrks.parameters[<span class="stringliteral">&quot;debug&quot;</span>] = 0</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;anaTrks.parameters[<span class="stringliteral">&quot;trkCollName&quot;</span>] = <span class="stringliteral">&#39;KalmanFullTracks&#39;</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">#anaTrks.parameters[&quot;trkCollName&quot;] = &#39;GBLTracks&#39;</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;anaTrks.parameters[<span class="stringliteral">&quot;histCfg&quot;</span>] = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&#39;/analysis/plotconfigs/tracking/trackHit.json&#39;</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;anaTrks.parameters[<span class="stringliteral">&quot;selectionjson&quot;</span>] = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&#39;/analysis/selections/trackHit/trackHitAna.json&#39;</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaTrackHits__cfg.html#a67b272a58f3b9db7863bcebb7152345a">   37</a></span>&#160;RegionPath = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&quot;/analysis/selections/trackHit/&quot;</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;anaTrks.parameters[<span class="stringliteral">&quot;regionDefinitions&quot;</span>] = [RegionPath+<span class="stringliteral">&#39;hc15_1111.json&#39;</span>, </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc14_1110.json&#39;</span>,</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc13_1101.json&#39;</span>,</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc12_1100.json&#39;</span>,</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc11_1011.json&#39;</span>,</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc10_1010.json&#39;</span>,</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc9_1001.json&#39;</span>,</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc8_1000.json&#39;</span>,</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc7_0111.json&#39;</span>,</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc6_0110.json&#39;</span>,</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc5_0101.json&#39;</span>,</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc4_0100.json&#39;</span>,</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc3_0011.json&#39;</span>,</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc2_0010.json&#39;</span>,</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc1_0001.json&#39;</span>,</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc0_0000.json&#39;</span>,</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;noHCreq.json&#39;</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                                          ]</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment"># Sequence which the processors will run.</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaTrackHits__cfg.html#a3f9c3bf7e2cafc2c46df6d132ea658cc">   58</a></span>&#160;p.sequence = [anaTrks]</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaTrackHits__cfg.html#a27256609f574b662639e0a8cd48b8d3a">   60</a></span>&#160;p.input_files = inFilename</div>
-<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaTrackHits__cfg.html#a7882aa8b39a47102a13c2630137590d8">   61</a></span>&#160;p.output_files = [outFilename]</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;p.printProcess()</div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaTrackHits__cfg.html#a3ec8750c2366812be758fef2bf4f47f5">   30</a></span>&#160;anaTrks = <a class="code" href="classHpstrConf_1_1Processor.html">HpstrConf.Processor</a>(<span class="stringliteral">&#39;anaTrks&#39;</span>, <span class="stringliteral">&#39;TrackHitAnaProcessor&#39;</span>)</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;anaTrks.parameters[<span class="stringliteral">&quot;debug&quot;</span>] = 0</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;anaTrks.parameters[<span class="stringliteral">&quot;trkCollName&quot;</span>] = <span class="stringliteral">&#39;KalmanFullTracks&#39;</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment">#anaTrks.parameters[&quot;trkCollName&quot;] = &#39;GBLTracks&#39;</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;anaTrks.parameters[<span class="stringliteral">&quot;histCfg&quot;</span>] = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&#39;/analysis/plotconfigs/tracking/trackHit.json&#39;</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;anaTrks.parameters[<span class="stringliteral">&quot;selectionjson&quot;</span>] = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&#39;/analysis/selections/trackHit/trackHitAna.json&#39;</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
+<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaTrackHits__cfg.html#a67b272a58f3b9db7863bcebb7152345a">   41</a></span>&#160;RegionPath = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&quot;/analysis/selections/trackHit/&quot;</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;anaTrks.parameters[<span class="stringliteral">&quot;regionDefinitions&quot;</span>] = [RegionPath+<span class="stringliteral">&#39;hc15_1111.json&#39;</span>, </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc14_1110.json&#39;</span>,</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc13_1101.json&#39;</span>,</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc12_1100.json&#39;</span>,</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc11_1011.json&#39;</span>,</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc10_1010.json&#39;</span>,</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc9_1001.json&#39;</span>,</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc8_1000.json&#39;</span>,</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc7_0111.json&#39;</span>,</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc6_0110.json&#39;</span>,</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc5_0101.json&#39;</span>,</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc4_0100.json&#39;</span>,</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc3_0011.json&#39;</span>,</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc2_0010.json&#39;</span>,</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc1_0001.json&#39;</span>,</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc0_0000.json&#39;</span>,</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;noHCreq.json&#39;</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                                          ]</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment"># Sequence which the processors will run.</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaTrackHits__cfg.html#a3f9c3bf7e2cafc2c46df6d132ea658cc">   62</a></span>&#160;p.sequence = [anaTrks]</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
+<div class="line"><a name="l00064"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaTrackHits__cfg.html#a27256609f574b662639e0a8cd48b8d3a">   64</a></span>&#160;p.input_files = inFilename</div>
+<div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaTrackHits__cfg.html#a7882aa8b39a47102a13c2630137590d8">   65</a></span>&#160;p.output_files = [outFilename]</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;p.printProcess()</div>
 <div class="ttc" id="aclassHpstrConf_1_1Process_html"><div class="ttname"><a href="classHpstrConf_1_1Process.html">HpstrConf.Process</a></div><div class="ttdoc">Process python class.</div><div class="ttdef"><b>Definition:</b> <a href="HpstrConf_8py_source.html#l00020">HpstrConf.py:20</a></div></div>
 <div class="ttc" id="aclassHpstrConf_1_1Processor_html"><div class="ttname"><a href="classHpstrConf_1_1Processor.html">HpstrConf.Processor</a></div><div class="ttdoc">Processor python class.</div><div class="ttdef"><b>Definition:</b> <a href="HpstrConf_8py_source.html#l00004">HpstrConf.py:4</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

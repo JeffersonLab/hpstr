@@ -94,6 +94,8 @@ Public Member Functions</h2></td></tr>
 Private Attributes</h2></td></tr>
 <tr class="memitem:aca58eba1fcf83fa561682842e7f553f2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConfigurePython.html#aca58eba1fcf83fa561682842e7f553f2">run_mode_</a> {-1}</td></tr>
 <tr class="separator:aca58eba1fcf83fa561682842e7f553f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51199db42e91fd3f149f74beff5a7133"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConfigurePython.html#a51199db42e91fd3f149f74beff5a7133">skip_events_</a> {-1}</td></tr>
+<tr class="separator:a51199db42e91fd3f149f74beff5a7133"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3597e0f2da8fc8771b46783f869ba1de"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConfigurePython.html#a3597e0f2da8fc8771b46783f869ba1de">event_limit_</a> {-1}</td></tr>
 <tr class="separator:a3597e0f2da8fc8771b46783f869ba1de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aebce26f4615013fa2b28521a76f1c743"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConfigurePython.html#aebce26f4615013fa2b28521a76f1c743">input_files_</a></td></tr>
@@ -172,7 +174,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Class destructor. </p>
 
-<p class="definition">Definition at line <a class="el" href="ConfigurePython_8cxx_source.html#l00295">295</a> of file <a class="el" href="ConfigurePython_8cxx_source.html">ConfigurePython.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ConfigurePython_8cxx_source.html#l00296">296</a> of file <a class="el" href="ConfigurePython_8cxx_source.html">ConfigurePython.cxx</a>.</p>
 
 </div>
 </div>
@@ -193,7 +195,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Create a process object based on the python file information. </p>
 
-<p class="definition">Definition at line <a class="el" href="ConfigurePython_8cxx_source.html#l00299">299</a> of file <a class="el" href="ConfigurePython_8cxx_source.html">ConfigurePython.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ConfigurePython_8cxx_source.html#l00300">300</a> of file <a class="el" href="ConfigurePython_8cxx_source.html">ConfigurePython.cxx</a>.</p>
 
 </div>
 </div>
@@ -219,7 +221,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The maximum number of events to process, if provided in python file. </p>
 
-<p class="definition">Definition at line <a class="el" href="ConfigurePython_8h_source.html#l00065">65</a> of file <a class="el" href="ConfigurePython_8h_source.html">ConfigurePython.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ConfigurePython_8h_source.html#l00068">68</a> of file <a class="el" href="ConfigurePython_8h_source.html">ConfigurePython.h</a>.</p>
 
 </div>
 </div>
@@ -244,7 +246,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>List of input files to process in the job, if provided in python file. </p>
 
-<p class="definition">Definition at line <a class="el" href="ConfigurePython_8h_source.html#l00068">68</a> of file <a class="el" href="ConfigurePython_8h_source.html">ConfigurePython.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ConfigurePython_8h_source.html#l00071">71</a> of file <a class="el" href="ConfigurePython_8h_source.html">ConfigurePython.h</a>.</p>
 
 </div>
 </div>
@@ -269,7 +271,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>List of rules for shared libraries to load, if provided in python file. </p>
 
-<p class="definition">Definition at line <a class="el" href="ConfigurePython_8h_source.html#l00071">71</a> of file <a class="el" href="ConfigurePython_8h_source.html">ConfigurePython.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ConfigurePython_8h_source.html#l00074">74</a> of file <a class="el" href="ConfigurePython_8h_source.html">ConfigurePython.h</a>.</p>
 
 </div>
 </div>
@@ -294,7 +296,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>List of rules for output ROOT file names, if provided in python file. </p>
 
-<p class="definition">Definition at line <a class="el" href="ConfigurePython_8h_source.html#l00074">74</a> of file <a class="el" href="ConfigurePython_8h_source.html">ConfigurePython.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ConfigurePython_8h_source.html#l00077">77</a> of file <a class="el" href="ConfigurePython_8h_source.html">ConfigurePython.h</a>.</p>
 
 </div>
 </div>
@@ -344,7 +346,32 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The sequence of <a class="el" href="classEventProcessor.html" title="Processor used to write event info. more details.">EventProcessor</a> objects to be executed in order. </p>
 
-<p class="definition">Definition at line <a class="el" href="ConfigurePython_8h_source.html#l00087">87</a> of file <a class="el" href="ConfigurePython_8h_source.html">ConfigurePython.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ConfigurePython_8h_source.html#l00090">90</a> of file <a class="el" href="ConfigurePython_8h_source.html">ConfigurePython.h</a>.</p>
+
+</div>
+</div>
+<a id="a51199db42e91fd3f149f74beff5a7133"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a51199db42e91fd3f149f74beff5a7133">&#9670;&nbsp;</a></span>skip_events_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int skip_events_ {-1}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>The number of events to skip. </p>
+
+<p class="definition">Definition at line <a class="el" href="ConfigurePython_8h_source.html#l00065">65</a> of file <a class="el" href="ConfigurePython_8h_source.html">ConfigurePython.h</a>.</p>
 
 </div>
 </div>

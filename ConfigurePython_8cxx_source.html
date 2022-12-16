@@ -195,214 +195,217 @@ $(function() {
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160; </div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <a class="code" href="classConfigurePython.html#a3597e0f2da8fc8771b46783f869ba1de">event_limit_</a> = <a class="code" href="ConfigurePython_8cxx.html#aab5fe0a8c286f0897d4c24a24fe9318a">intMember</a>(p_process, <span class="stringliteral">&quot;max_events&quot;</span>);</div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <a class="code" href="classConfigurePython.html#aca58eba1fcf83fa561682842e7f553f2">run_mode_</a>    = <a class="code" href="ConfigurePython_8cxx.html#aab5fe0a8c286f0897d4c24a24fe9318a">intMember</a>(p_process, <span class="stringliteral">&quot;run_mode&quot;</span>);</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    PyObject* p_sequence = PyObject_GetAttrString(p_process, <span class="stringliteral">&quot;sequence&quot;</span>);</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keywordflow">if</span> (!PyList_Check(p_sequence)) {</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;[ ConfigurePython ]: Sequence is not a python list as expected.&quot;</span>); </div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    }</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    </div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    <span class="keywordflow">for</span> (Py_ssize_t i = 0; i &lt; PyList_Size(p_sequence); i++) {</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        PyObject* processor = PyList_GetItem(p_sequence, i);</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        <a class="code" href="structConfigurePython_1_1ProcessorInfo.html">ProcessorInfo</a> pi;</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#ac041c6bb287aa9b6af4eeeeca39c76ae">classname_</a> = <a class="code" href="ConfigurePython_8cxx.html#aad3d6a59fbaba861f1d0a673d57f295b">stringMember</a>(processor, <span class="stringliteral">&quot;class_name&quot;</span>);</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a84a139f1e589eba9ed0566218d1a52e3">instancename_</a> = <a class="code" href="ConfigurePython_8cxx.html#aad3d6a59fbaba861f1d0a673d57f295b">stringMember</a>(processor, <span class="stringliteral">&quot;instance_name&quot;</span>);</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;        std::cout &lt;&lt; pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#ac041c6bb287aa9b6af4eeeeca39c76ae">classname_</a> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;        </div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        PyObject* params = PyObject_GetAttrString(processor, <span class="stringliteral">&quot;parameters&quot;</span>);</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        <span class="keywordflow">if</span> (params != 0 &amp;&amp; PyDict_Check(params)) {</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;            PyObject *key(0), *value(0);</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;            Py_ssize_t pos = 0;</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160; </div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;            <span class="keywordflow">while</span> (PyDict_Next(params, &amp;pos, &amp;key, &amp;value)) {</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;<span class="preprocessor">#if PY_MAJOR_VERSION &gt;= 3</span></div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;              PyObject* pyStr = PyUnicode_AsEncodedString(key, <span class="stringliteral">&quot;utf-8&quot;</span>,<span class="stringliteral">&quot;Error ~&quot;</span>);</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;              std::string skey = PyBytes_AS_STRING(pyStr);</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;               <span class="keywordflow">if</span> (PyLong_Check(value)) {</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;                   pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, <span class="keywordtype">int</span>(PyLong_AsLong(value)));</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                   <span class="comment">//printf(&quot;Int Key: %s\n&quot;,skey.c_str());</span></div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;               } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (PyFloat_Check(value)) {</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                   pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, PyFloat_AsDouble(value));</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;                   <span class="comment">//printf(&quot;Double Key: %s\n&quot;,skey.c_str());</span></div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;               } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (PyUnicode_Check(value)) {</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;                   PyObject* pyStr = PyUnicode_AsEncodedString(value, <span class="stringliteral">&quot;utf-8&quot;</span>,<span class="stringliteral">&quot;Error ~&quot;</span>);</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;                   pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, PyBytes_AS_STRING(pyStr));</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;                   Py_XDECREF(pyStr);</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;                   <span class="comment">//printf(&quot;String Key: %s\n&quot;,skey.c_str());</span></div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;               } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (PyList_Check(value)) { <span class="comment">// assume everything is same value as first value</span></div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;                   <span class="keywordflow">if</span> (PyList_Size(value) &gt; 0) {</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;                       PyObject* vec0 = PyList_GetItem(value, 0);</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;                       <span class="keywordflow">if</span> (PyLong_Check(vec0)) {</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;                           std::vector&lt;int&gt; vals;</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;                           <span class="keywordflow">for</span> (Py_ssize_t j = 0; j &lt; PyList_Size(value); j++)</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                               vals.push_back(PyLong_AsLong(PyList_GetItem(value, j)));</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;                           pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, vals);</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;                           <span class="comment">//printf(&quot;VInt Key: %s\n&quot;,skey.c_str());</span></div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;                       } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (PyFloat_Check(vec0)) {</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;                           std::vector&lt;double&gt; vals;</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;                           <span class="keywordflow">for</span> (Py_ssize_t j = 0; j &lt; PyList_Size(value); j++)</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;                               vals.push_back(PyFloat_AsDouble(PyList_GetItem(value, j)));</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;                           pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, vals);</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;                           <span class="comment">//printf(&quot;VDouble Key: %s\n&quot;,skey.c_str());</span></div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;                       } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (PyUnicode_Check(vec0)) {</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;                           std::vector&lt;std::string&gt; vals;</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;                           <span class="keywordflow">for</span> (Py_ssize_t j = 0; j &lt; PyList_Size(value); j++){</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;                               PyObject* pyStr = PyUnicode_AsEncodedString(PyList_GetItem(value, j), <span class="stringliteral">&quot;utf-8&quot;</span>,<span class="stringliteral">&quot;Error ~&quot;</span>);</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;                               vals.push_back( PyBytes_AS_STRING(pyStr));</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;                                Py_XDECREF(pyStr);</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;                           }</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;                           pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, vals);</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;                           <span class="comment">//printf(&quot;VString Key: %s\n&quot;,skey.c_str());</span></div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;                       }</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                   }</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;               }</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160; </div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;                std::string skey = PyString_AsString(key);</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;                <span class="keywordflow">if</span> (PyInt_Check(value)) {</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;                    pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, <span class="keywordtype">int</span>(PyInt_AsLong(value)));</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;                    <span class="comment">//printf(&quot;Int Key: %s\n&quot;,skey.c_str());</span></div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (PyFloat_Check(value)) {</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;                    pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, PyFloat_AsDouble(value));</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                    <span class="comment">//printf(&quot;Double Key: %s\n&quot;,skey.c_str());</span></div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;                } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (PyString_Check(value)) {</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;                    pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, PyString_AsString(value));</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;                    <span class="comment">//printf(&quot;String Key: %s\n&quot;,skey.c_str());</span></div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;                } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (PyList_Check(value)) { <span class="comment">// assume everything is same value as first value</span></div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;                    <span class="keywordflow">if</span> (PyList_Size(value) &gt; 0) {</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;                        PyObject* vec0 = PyList_GetItem(value, 0);</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;                        <span class="keywordflow">if</span> (PyInt_Check(vec0)) {</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;                            std::vector&lt;int&gt; vals;</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;                            <span class="keywordflow">for</span> (Py_ssize_t j = 0; j &lt; PyList_Size(value); j++)</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;                                vals.push_back(PyInt_AsLong(PyList_GetItem(value, j)));</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;                            pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, vals);</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;                            <span class="comment">//printf(&quot;VInt Key: %s\n&quot;,skey.c_str());</span></div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;                        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (PyFloat_Check(vec0)) {</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;                            std::vector&lt;double&gt; vals;</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;                            <span class="keywordflow">for</span> (Py_ssize_t j = 0; j &lt; PyList_Size(value); j++)</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;                                vals.push_back(PyFloat_AsDouble(PyList_GetItem(value, j)));</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;                            pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, vals);</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;                            <span class="comment">//printf(&quot;VDouble Key: %s\n&quot;,skey.c_str());</span></div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;                        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (PyString_Check(vec0)) {</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;                            std::vector&lt;std::string&gt; vals;</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;                            <span class="keywordflow">for</span> (Py_ssize_t j = 0; j &lt; PyList_Size(value); j++)</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;                                vals.push_back(PyString_AsString(PyList_GetItem(value, j)));</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;                            pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, vals);</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;                            <span class="comment">//printf(&quot;VString Key: %s\n&quot;,skey.c_str());</span></div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;                        }</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;                    }</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                }</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;            }</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;        }</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160; </div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;        <a class="code" href="classConfigurePython.html#a64cb76497e9c116b6b602aa8012d7c5c">sequence_</a>.push_back(pi);</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    }</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    Py_DECREF(p_sequence);</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160; </div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    py_list = PyObject_GetAttrString(p_process, <span class="stringliteral">&quot;input_files&quot;</span>);</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    <span class="keywordflow">if</span> (!PyList_Check(py_list)) {</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;[ ConfigurePython ]: Input files is not a python list as expected.&quot;</span>); </div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;        <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    }</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    <span class="keywordflow">for</span> (Py_ssize_t i = 0; i &lt; PyList_Size(py_list); i++) {</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        PyObject* elem = PyList_GetItem(py_list, i);</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;<span class="preprocessor">#if PY_MAJOR_VERSION &gt;= 3</span></div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;        PyObject* pyStr = PyUnicode_AsEncodedString(elem, <span class="stringliteral">&quot;utf-8&quot;</span>,<span class="stringliteral">&quot;Error ~&quot;</span>);</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        <a class="code" href="classConfigurePython.html#aebce26f4615013fa2b28521a76f1c743">input_files_</a>.push_back(PyBytes_AS_STRING(pyStr));</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        Py_XDECREF(pyStr);</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        <a class="code" href="classConfigurePython.html#aebce26f4615013fa2b28521a76f1c743">input_files_</a>.push_back(PyString_AsString(elem));</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    }</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160; </div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    Py_DECREF(py_list);</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160; </div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    py_list = PyObject_GetAttrString(p_process, <span class="stringliteral">&quot;output_files&quot;</span>);</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    <span class="keywordflow">if</span> (!PyList_Check(py_list)) {</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;[ ConfigurePython ]: Output files is not a python list as expected.&quot;</span>); </div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    }</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    <span class="keywordflow">for</span> (Py_ssize_t i = 0; i &lt; PyList_Size(py_list); i++) {</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;        PyObject* elem = PyList_GetItem(py_list, i);</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;<span class="preprocessor">#if PY_MAJOR_VERSION &gt;= 3</span></div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;        PyObject* pyStr = PyUnicode_AsEncodedString(elem, <span class="stringliteral">&quot;utf-8&quot;</span>,<span class="stringliteral">&quot;Error ~&quot;</span>);</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        <a class="code" href="classConfigurePython.html#a2369133e71750fd9c1f490df29f29e8d">output_files_</a>.push_back(PyBytes_AS_STRING(pyStr));</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;        Py_XDECREF(pyStr);</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;        <a class="code" href="classConfigurePython.html#a2369133e71750fd9c1f490df29f29e8d">output_files_</a>.push_back(PyString_AsString(elem));</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    }</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    Py_DECREF(py_list);</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160; </div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    py_list = PyObject_GetAttrString(p_process, <span class="stringliteral">&quot;libraries&quot;</span>);</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    <span class="keywordflow">if</span> (!PyList_Check(py_list)) {</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;[ ConfigurePython ]: libraries is not a python list as expected.&quot;</span>); </div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;        <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    }</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    <span class="keywordflow">for</span> (Py_ssize_t i = 0; i &lt; PyList_Size(py_list); i++) {</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;        PyObject* elem = PyList_GetItem(py_list, i);</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;<span class="preprocessor">#if PY_MAJOR_VERSION &gt;= 3</span></div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;        PyObject* pyStr = PyUnicode_AsEncodedString(elem, <span class="stringliteral">&quot;utf-8&quot;</span>,<span class="stringliteral">&quot;Error ~&quot;</span>);</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;        <a class="code" href="classConfigurePython.html#a5ce2c5b95468d628de70bacad40917b8">libraries_</a>.push_back(PyBytes_AS_STRING(pyStr));</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;        Py_XDECREF(pyStr);</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;      <a class="code" href="classConfigurePython.html#a5ce2c5b95468d628de70bacad40917b8">libraries_</a>.push_back(PyString_AsString(elem));</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    }</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    Py_DECREF(py_list);</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160; </div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    } <span class="keywordflow">catch</span> (std::exception&amp; e) { </div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;        std::cout &lt;&lt; e.what() &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    }</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160; </div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;}</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160; </div>
-<div class="line"><a name="l00295"></a><span class="lineno"><a class="line" href="classConfigurePython.html#abb01473de6f30672a00d6ea506a87ea9">  295</a></span>&#160;<a class="code" href="classConfigurePython.html#abb01473de6f30672a00d6ea506a87ea9">ConfigurePython::~ConfigurePython</a>() {</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    Py_Finalize();</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;}</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160; </div>
-<div class="line"><a name="l00299"></a><span class="lineno"><a class="line" href="classConfigurePython.html#ad850bbb6b6062da47d14d115fc42a85e">  299</a></span>&#160;<a class="code" href="classProcess.html">Process</a>* <a class="code" href="classConfigurePython.html#ad850bbb6b6062da47d14d115fc42a85e">ConfigurePython::makeProcess</a>() { </div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    <a class="code" href="classProcess.html">Process</a>* <a class="code" href="namespaceconfig_1_1anaApv25xTalk__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">p</a> = <span class="keyword">new</span> <a class="code" href="classProcess.html">Process</a>();</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160; </div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> lib : <a class="code" href="classConfigurePython.html#a5ce2c5b95468d628de70bacad40917b8">libraries_</a>) {</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;      <a class="code" href="classProcessorFactory.html#a1fae130e930e3d3b2804f0e2186aa32b">ProcessorFactory::instance</a>().<a class="code" href="classProcessorFactory.html#a1ce00476d9aff8f090a45637507ced71">loadLibrary</a>(lib);</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    }</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160; </div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> proc : <a class="code" href="classConfigurePython.html#a64cb76497e9c116b6b602aa8012d7c5c">sequence_</a>) {</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;        <a class="code" href="classProcessor.html">Processor</a>* ep = <a class="code" href="classProcessorFactory.html#a1fae130e930e3d3b2804f0e2186aa32b">ProcessorFactory::instance</a>().<a class="code" href="classProcessorFactory.html#ae8221d81ffe82fc25f4a487acc3a5d6e">createProcessor</a>(proc.classname_, proc.instancename_, *<a class="code" href="namespaceconfig_1_1anaApv25xTalk__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">p</a>);</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;        <span class="keywordflow">if</span> (ep == 0) {</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;            <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;[ ConfigurePython ]: Unable to create instance of &quot;</span> + proc.instancename_); </div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;        }</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;        ep-&gt;<a class="code" href="classProcessor.html#a5aababad5df4ebb1cee987b8b93d6481">configure</a>(proc.params_);</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;        <a class="code" href="namespaceconfig_1_1anaApv25xTalk__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">p</a>-&gt;addToSequence(ep);    </div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;    }</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;        </div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> file : <a class="code" href="classConfigurePython.html#aebce26f4615013fa2b28521a76f1c743">input_files_</a>) {</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;        <a class="code" href="namespaceconfig_1_1anaApv25xTalk__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">p</a>-&gt;addFileToProcess(file);</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    }</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160; </div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> file : <a class="code" href="classConfigurePython.html#a2369133e71750fd9c1f490df29f29e8d">output_files_</a>) { </div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;        <a class="code" href="namespaceconfig_1_1anaApv25xTalk__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">p</a>-&gt;addOutputFileName(file); </div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    }</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160; </div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    <a class="code" href="namespaceconfig_1_1anaApv25xTalk__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">p</a>-&gt;setEventLimit(<a class="code" href="classConfigurePython.html#a3597e0f2da8fc8771b46783f869ba1de">event_limit_</a>);</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    <a class="code" href="namespaceconfig_1_1anaApv25xTalk__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">p</a>-&gt;setRunMode(<a class="code" href="classConfigurePython.html#aca58eba1fcf83fa561682842e7f553f2">run_mode_</a>);</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160; </div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="namespaceconfig_1_1anaApv25xTalk__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">p</a>; </div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;}</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <a class="code" href="classConfigurePython.html#a51199db42e91fd3f149f74beff5a7133">skip_events_</a>    = <a class="code" href="ConfigurePython_8cxx.html#aab5fe0a8c286f0897d4c24a24fe9318a">intMember</a>(p_process, <span class="stringliteral">&quot;skip_events&quot;</span>);</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160; </div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    PyObject* p_sequence = PyObject_GetAttrString(p_process, <span class="stringliteral">&quot;sequence&quot;</span>);</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keywordflow">if</span> (!PyList_Check(p_sequence)) {</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;[ ConfigurePython ]: Sequence is not a python list as expected.&quot;</span>); </div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    }</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    </div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    <span class="keywordflow">for</span> (Py_ssize_t i = 0; i &lt; PyList_Size(p_sequence); i++) {</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        PyObject* processor = PyList_GetItem(p_sequence, i);</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        <a class="code" href="structConfigurePython_1_1ProcessorInfo.html">ProcessorInfo</a> pi;</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#ac041c6bb287aa9b6af4eeeeca39c76ae">classname_</a> = <a class="code" href="ConfigurePython_8cxx.html#aad3d6a59fbaba861f1d0a673d57f295b">stringMember</a>(processor, <span class="stringliteral">&quot;class_name&quot;</span>);</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;        pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a84a139f1e589eba9ed0566218d1a52e3">instancename_</a> = <a class="code" href="ConfigurePython_8cxx.html#aad3d6a59fbaba861f1d0a673d57f295b">stringMember</a>(processor, <span class="stringliteral">&quot;instance_name&quot;</span>);</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;        std::cout &lt;&lt; pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#ac041c6bb287aa9b6af4eeeeca39c76ae">classname_</a> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        </div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        PyObject* params = PyObject_GetAttrString(processor, <span class="stringliteral">&quot;parameters&quot;</span>);</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        <span class="keywordflow">if</span> (params != 0 &amp;&amp; PyDict_Check(params)) {</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;            PyObject *key(0), *value(0);</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;            Py_ssize_t pos = 0;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;            <span class="keywordflow">while</span> (PyDict_Next(params, &amp;pos, &amp;key, &amp;value)) {</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="preprocessor">#if PY_MAJOR_VERSION &gt;= 3</span></div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;              PyObject* pyStr = PyUnicode_AsEncodedString(key, <span class="stringliteral">&quot;utf-8&quot;</span>,<span class="stringliteral">&quot;Error ~&quot;</span>);</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;              std::string skey = PyBytes_AS_STRING(pyStr);</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160; </div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;               <span class="keywordflow">if</span> (PyLong_Check(value)) {</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                   pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, <span class="keywordtype">int</span>(PyLong_AsLong(value)));</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;                   <span class="comment">//printf(&quot;Int Key: %s\n&quot;,skey.c_str());</span></div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;               } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (PyFloat_Check(value)) {</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;                   pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, PyFloat_AsDouble(value));</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;                   <span class="comment">//printf(&quot;Double Key: %s\n&quot;,skey.c_str());</span></div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;               } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (PyUnicode_Check(value)) {</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;                   PyObject* pyStr = PyUnicode_AsEncodedString(value, <span class="stringliteral">&quot;utf-8&quot;</span>,<span class="stringliteral">&quot;Error ~&quot;</span>);</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;                   pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, PyBytes_AS_STRING(pyStr));</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;                   Py_XDECREF(pyStr);</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;                   <span class="comment">//printf(&quot;String Key: %s\n&quot;,skey.c_str());</span></div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;               } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (PyList_Check(value)) { <span class="comment">// assume everything is same value as first value</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;                   <span class="keywordflow">if</span> (PyList_Size(value) &gt; 0) {</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;                       PyObject* vec0 = PyList_GetItem(value, 0);</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;                       <span class="keywordflow">if</span> (PyLong_Check(vec0)) {</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;                           std::vector&lt;int&gt; vals;</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                           <span class="keywordflow">for</span> (Py_ssize_t j = 0; j &lt; PyList_Size(value); j++)</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;                               vals.push_back(PyLong_AsLong(PyList_GetItem(value, j)));</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;                           pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, vals);</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;                           <span class="comment">//printf(&quot;VInt Key: %s\n&quot;,skey.c_str());</span></div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;                       } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (PyFloat_Check(vec0)) {</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;                           std::vector&lt;double&gt; vals;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;                           <span class="keywordflow">for</span> (Py_ssize_t j = 0; j &lt; PyList_Size(value); j++)</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;                               vals.push_back(PyFloat_AsDouble(PyList_GetItem(value, j)));</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;                           pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, vals);</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;                           <span class="comment">//printf(&quot;VDouble Key: %s\n&quot;,skey.c_str());</span></div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;                       } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (PyUnicode_Check(vec0)) {</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;                           std::vector&lt;std::string&gt; vals;</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;                           <span class="keywordflow">for</span> (Py_ssize_t j = 0; j &lt; PyList_Size(value); j++){</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;                               PyObject* pyStr = PyUnicode_AsEncodedString(PyList_GetItem(value, j), <span class="stringliteral">&quot;utf-8&quot;</span>,<span class="stringliteral">&quot;Error ~&quot;</span>);</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;                               vals.push_back( PyBytes_AS_STRING(pyStr));</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;                                Py_XDECREF(pyStr);</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;                           }</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;                           pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, vals);</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;                           <span class="comment">//printf(&quot;VString Key: %s\n&quot;,skey.c_str());</span></div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                       }</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;                   }</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;               }</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;                std::string skey = PyString_AsString(key);</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;                <span class="keywordflow">if</span> (PyInt_Check(value)) {</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;                    pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, <span class="keywordtype">int</span>(PyInt_AsLong(value)));</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                    <span class="comment">//printf(&quot;Int Key: %s\n&quot;,skey.c_str());</span></div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;                } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (PyFloat_Check(value)) {</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                    pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, PyFloat_AsDouble(value));</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;                    <span class="comment">//printf(&quot;Double Key: %s\n&quot;,skey.c_str());</span></div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;                } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (PyString_Check(value)) {</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;                    pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, PyString_AsString(value));</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;                    <span class="comment">//printf(&quot;String Key: %s\n&quot;,skey.c_str());</span></div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;                } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (PyList_Check(value)) { <span class="comment">// assume everything is same value as first value</span></div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;                    <span class="keywordflow">if</span> (PyList_Size(value) &gt; 0) {</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;                        PyObject* vec0 = PyList_GetItem(value, 0);</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;                        <span class="keywordflow">if</span> (PyInt_Check(vec0)) {</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;                            std::vector&lt;int&gt; vals;</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;                            <span class="keywordflow">for</span> (Py_ssize_t j = 0; j &lt; PyList_Size(value); j++)</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;                                vals.push_back(PyInt_AsLong(PyList_GetItem(value, j)));</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;                            pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, vals);</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;                            <span class="comment">//printf(&quot;VInt Key: %s\n&quot;,skey.c_str());</span></div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;                        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (PyFloat_Check(vec0)) {</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;                            std::vector&lt;double&gt; vals;</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;                            <span class="keywordflow">for</span> (Py_ssize_t j = 0; j &lt; PyList_Size(value); j++)</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;                                vals.push_back(PyFloat_AsDouble(PyList_GetItem(value, j)));</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;                            pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, vals);</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;                            <span class="comment">//printf(&quot;VDouble Key: %s\n&quot;,skey.c_str());</span></div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;                        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (PyString_Check(vec0)) {</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;                            std::vector&lt;std::string&gt; vals;</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;                            <span class="keywordflow">for</span> (Py_ssize_t j = 0; j &lt; PyList_Size(value); j++)</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;                                vals.push_back(PyString_AsString(PyList_GetItem(value, j)));</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;                            pi.<a class="code" href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">params_</a>.<a class="code" href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">insert</a>(skey, vals);</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;                            <span class="comment">//printf(&quot;VString Key: %s\n&quot;,skey.c_str());</span></div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;                        }</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                    }</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;                }</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;            }</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        }</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160; </div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;        <a class="code" href="classConfigurePython.html#a64cb76497e9c116b6b602aa8012d7c5c">sequence_</a>.push_back(pi);</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    }</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    Py_DECREF(p_sequence);</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160; </div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    py_list = PyObject_GetAttrString(p_process, <span class="stringliteral">&quot;input_files&quot;</span>);</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    <span class="keywordflow">if</span> (!PyList_Check(py_list)) {</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;[ ConfigurePython ]: Input files is not a python list as expected.&quot;</span>); </div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;        <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    }</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    <span class="keywordflow">for</span> (Py_ssize_t i = 0; i &lt; PyList_Size(py_list); i++) {</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;        PyObject* elem = PyList_GetItem(py_list, i);</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;<span class="preprocessor">#if PY_MAJOR_VERSION &gt;= 3</span></div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        PyObject* pyStr = PyUnicode_AsEncodedString(elem, <span class="stringliteral">&quot;utf-8&quot;</span>,<span class="stringliteral">&quot;Error ~&quot;</span>);</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        <a class="code" href="classConfigurePython.html#aebce26f4615013fa2b28521a76f1c743">input_files_</a>.push_back(PyBytes_AS_STRING(pyStr));</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        Py_XDECREF(pyStr);</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        <a class="code" href="classConfigurePython.html#aebce26f4615013fa2b28521a76f1c743">input_files_</a>.push_back(PyString_AsString(elem));</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    }</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160; </div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    Py_DECREF(py_list);</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160; </div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    py_list = PyObject_GetAttrString(p_process, <span class="stringliteral">&quot;output_files&quot;</span>);</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    <span class="keywordflow">if</span> (!PyList_Check(py_list)) {</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;[ ConfigurePython ]: Output files is not a python list as expected.&quot;</span>); </div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    }</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    <span class="keywordflow">for</span> (Py_ssize_t i = 0; i &lt; PyList_Size(py_list); i++) {</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;        PyObject* elem = PyList_GetItem(py_list, i);</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;<span class="preprocessor">#if PY_MAJOR_VERSION &gt;= 3</span></div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        PyObject* pyStr = PyUnicode_AsEncodedString(elem, <span class="stringliteral">&quot;utf-8&quot;</span>,<span class="stringliteral">&quot;Error ~&quot;</span>);</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;        <a class="code" href="classConfigurePython.html#a2369133e71750fd9c1f490df29f29e8d">output_files_</a>.push_back(PyBytes_AS_STRING(pyStr));</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;        Py_XDECREF(pyStr);</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;        <a class="code" href="classConfigurePython.html#a2369133e71750fd9c1f490df29f29e8d">output_files_</a>.push_back(PyString_AsString(elem));</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    }</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    Py_DECREF(py_list);</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160; </div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    py_list = PyObject_GetAttrString(p_process, <span class="stringliteral">&quot;libraries&quot;</span>);</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    <span class="keywordflow">if</span> (!PyList_Check(py_list)) {</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;[ ConfigurePython ]: libraries is not a python list as expected.&quot;</span>); </div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;        <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    }</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    <span class="keywordflow">for</span> (Py_ssize_t i = 0; i &lt; PyList_Size(py_list); i++) {</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;        PyObject* elem = PyList_GetItem(py_list, i);</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;<span class="preprocessor">#if PY_MAJOR_VERSION &gt;= 3</span></div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;        PyObject* pyStr = PyUnicode_AsEncodedString(elem, <span class="stringliteral">&quot;utf-8&quot;</span>,<span class="stringliteral">&quot;Error ~&quot;</span>);</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;        <a class="code" href="classConfigurePython.html#a5ce2c5b95468d628de70bacad40917b8">libraries_</a>.push_back(PyBytes_AS_STRING(pyStr));</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;        Py_XDECREF(pyStr);</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;      <a class="code" href="classConfigurePython.html#a5ce2c5b95468d628de70bacad40917b8">libraries_</a>.push_back(PyString_AsString(elem));</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    }</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    Py_DECREF(py_list);</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160; </div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    } <span class="keywordflow">catch</span> (std::exception&amp; e) { </div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;        std::cout &lt;&lt; e.what() &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    }</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160; </div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;}</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160; </div>
+<div class="line"><a name="l00296"></a><span class="lineno"><a class="line" href="classConfigurePython.html#abb01473de6f30672a00d6ea506a87ea9">  296</a></span>&#160;<a class="code" href="classConfigurePython.html#abb01473de6f30672a00d6ea506a87ea9">ConfigurePython::~ConfigurePython</a>() {</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    Py_Finalize();</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;}</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160; </div>
+<div class="line"><a name="l00300"></a><span class="lineno"><a class="line" href="classConfigurePython.html#ad850bbb6b6062da47d14d115fc42a85e">  300</a></span>&#160;<a class="code" href="classProcess.html">Process</a>* <a class="code" href="classConfigurePython.html#ad850bbb6b6062da47d14d115fc42a85e">ConfigurePython::makeProcess</a>() { </div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    <a class="code" href="classProcess.html">Process</a>* <a class="code" href="namespaceconfig_1_1anaApv25xTalk__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">p</a> = <span class="keyword">new</span> <a class="code" href="classProcess.html">Process</a>();</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160; </div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> lib : <a class="code" href="classConfigurePython.html#a5ce2c5b95468d628de70bacad40917b8">libraries_</a>) {</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;      <a class="code" href="classProcessorFactory.html#a1fae130e930e3d3b2804f0e2186aa32b">ProcessorFactory::instance</a>().<a class="code" href="classProcessorFactory.html#a1ce00476d9aff8f090a45637507ced71">loadLibrary</a>(lib);</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    }</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160; </div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> proc : <a class="code" href="classConfigurePython.html#a64cb76497e9c116b6b602aa8012d7c5c">sequence_</a>) {</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;        <a class="code" href="classProcessor.html">Processor</a>* ep = <a class="code" href="classProcessorFactory.html#a1fae130e930e3d3b2804f0e2186aa32b">ProcessorFactory::instance</a>().<a class="code" href="classProcessorFactory.html#ae8221d81ffe82fc25f4a487acc3a5d6e">createProcessor</a>(proc.classname_, proc.instancename_, *<a class="code" href="namespaceconfig_1_1anaApv25xTalk__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">p</a>);</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;        <span class="keywordflow">if</span> (ep == 0) {</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;            <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;[ ConfigurePython ]: Unable to create instance of &quot;</span> + proc.instancename_); </div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;        }</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;        ep-&gt;<a class="code" href="classProcessor.html#a5aababad5df4ebb1cee987b8b93d6481">configure</a>(proc.params_);</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;        <a class="code" href="namespaceconfig_1_1anaApv25xTalk__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">p</a>-&gt;addToSequence(ep);    </div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    }</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;        </div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> file : <a class="code" href="classConfigurePython.html#aebce26f4615013fa2b28521a76f1c743">input_files_</a>) {</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;        <a class="code" href="namespaceconfig_1_1anaApv25xTalk__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">p</a>-&gt;addFileToProcess(file);</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    }</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160; </div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> file : <a class="code" href="classConfigurePython.html#a2369133e71750fd9c1f490df29f29e8d">output_files_</a>) { </div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;        <a class="code" href="namespaceconfig_1_1anaApv25xTalk__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">p</a>-&gt;addOutputFileName(file); </div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    }</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160; </div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    <a class="code" href="namespaceconfig_1_1anaApv25xTalk__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">p</a>-&gt;setEventLimit(<a class="code" href="classConfigurePython.html#a3597e0f2da8fc8771b46783f869ba1de">event_limit_</a>);</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    <a class="code" href="namespaceconfig_1_1anaApv25xTalk__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">p</a>-&gt;setRunMode(<a class="code" href="classConfigurePython.html#aca58eba1fcf83fa561682842e7f553f2">run_mode_</a>);</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    <a class="code" href="namespaceconfig_1_1anaApv25xTalk__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">p</a>-&gt;setSkipEvents(<a class="code" href="classConfigurePython.html#a51199db42e91fd3f149f74beff5a7133">skip_events_</a>);</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160; </div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="namespaceconfig_1_1anaApv25xTalk__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">p</a>; </div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;}</div>
 <div class="ttc" id="aConfigurePython_8cxx_html_aab5fe0a8c286f0897d4c24a24fe9318a"><div class="ttname"><a href="ConfigurePython_8cxx.html#aab5fe0a8c286f0897d4c24a24fe9318a">intMember</a></div><div class="ttdeci">static long intMember(PyObject *owner, const std::string &amp;name)</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8cxx_source.html#l00028">ConfigurePython.cxx:28</a></div></div>
 <div class="ttc" id="aConfigurePython_8cxx_html_aad3d6a59fbaba861f1d0a673d57f295b"><div class="ttname"><a href="ConfigurePython_8cxx.html#aad3d6a59fbaba861f1d0a673d57f295b">stringMember</a></div><div class="ttdeci">static std::string stringMember(PyObject *owner, const std::string &amp;name)</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8cxx_source.html#l00010">ConfigurePython.cxx:10</a></div></div>
 <div class="ttc" id="aConfigurePython_8h_html"><div class="ttname"><a href="ConfigurePython_8h.html">ConfigurePython.h</a></div><div class="ttdoc">Utility class that reads/executes a python script and creates a Process object based on the input.</div></div>
 <div class="ttc" id="aclassConfigurePython_html_a12b040c04f72503a44ebc21f2b721b09"><div class="ttname"><a href="classConfigurePython.html#a12b040c04f72503a44ebc21f2b721b09">ConfigurePython::ConfigurePython</a></div><div class="ttdeci">ConfigurePython(const std::string &amp;pythonScript, char *args[], int nargs)</div><div class="ttdoc">Class constructor.</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8cxx_source.html#l00040">ConfigurePython.cxx:40</a></div></div>
-<div class="ttc" id="aclassConfigurePython_html_a2369133e71750fd9c1f490df29f29e8d"><div class="ttname"><a href="classConfigurePython.html#a2369133e71750fd9c1f490df29f29e8d">ConfigurePython::output_files_</a></div><div class="ttdeci">std::vector&lt; std::string &gt; output_files_</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8h_source.html#l00074">ConfigurePython.h:74</a></div></div>
-<div class="ttc" id="aclassConfigurePython_html_a3597e0f2da8fc8771b46783f869ba1de"><div class="ttname"><a href="classConfigurePython.html#a3597e0f2da8fc8771b46783f869ba1de">ConfigurePython::event_limit_</a></div><div class="ttdeci">int event_limit_</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8h_source.html#l00065">ConfigurePython.h:65</a></div></div>
-<div class="ttc" id="aclassConfigurePython_html_a5ce2c5b95468d628de70bacad40917b8"><div class="ttname"><a href="classConfigurePython.html#a5ce2c5b95468d628de70bacad40917b8">ConfigurePython::libraries_</a></div><div class="ttdeci">std::vector&lt; std::string &gt; libraries_</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8h_source.html#l00071">ConfigurePython.h:71</a></div></div>
-<div class="ttc" id="aclassConfigurePython_html_a64cb76497e9c116b6b602aa8012d7c5c"><div class="ttname"><a href="classConfigurePython.html#a64cb76497e9c116b6b602aa8012d7c5c">ConfigurePython::sequence_</a></div><div class="ttdeci">std::vector&lt; ProcessorInfo &gt; sequence_</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8h_source.html#l00087">ConfigurePython.h:87</a></div></div>
-<div class="ttc" id="aclassConfigurePython_html_abb01473de6f30672a00d6ea506a87ea9"><div class="ttname"><a href="classConfigurePython.html#abb01473de6f30672a00d6ea506a87ea9">ConfigurePython::~ConfigurePython</a></div><div class="ttdeci">~ConfigurePython()</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8cxx_source.html#l00295">ConfigurePython.cxx:295</a></div></div>
+<div class="ttc" id="aclassConfigurePython_html_a2369133e71750fd9c1f490df29f29e8d"><div class="ttname"><a href="classConfigurePython.html#a2369133e71750fd9c1f490df29f29e8d">ConfigurePython::output_files_</a></div><div class="ttdeci">std::vector&lt; std::string &gt; output_files_</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8h_source.html#l00077">ConfigurePython.h:77</a></div></div>
+<div class="ttc" id="aclassConfigurePython_html_a3597e0f2da8fc8771b46783f869ba1de"><div class="ttname"><a href="classConfigurePython.html#a3597e0f2da8fc8771b46783f869ba1de">ConfigurePython::event_limit_</a></div><div class="ttdeci">int event_limit_</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8h_source.html#l00068">ConfigurePython.h:68</a></div></div>
+<div class="ttc" id="aclassConfigurePython_html_a51199db42e91fd3f149f74beff5a7133"><div class="ttname"><a href="classConfigurePython.html#a51199db42e91fd3f149f74beff5a7133">ConfigurePython::skip_events_</a></div><div class="ttdeci">int skip_events_</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8h_source.html#l00065">ConfigurePython.h:65</a></div></div>
+<div class="ttc" id="aclassConfigurePython_html_a5ce2c5b95468d628de70bacad40917b8"><div class="ttname"><a href="classConfigurePython.html#a5ce2c5b95468d628de70bacad40917b8">ConfigurePython::libraries_</a></div><div class="ttdeci">std::vector&lt; std::string &gt; libraries_</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8h_source.html#l00074">ConfigurePython.h:74</a></div></div>
+<div class="ttc" id="aclassConfigurePython_html_a64cb76497e9c116b6b602aa8012d7c5c"><div class="ttname"><a href="classConfigurePython.html#a64cb76497e9c116b6b602aa8012d7c5c">ConfigurePython::sequence_</a></div><div class="ttdeci">std::vector&lt; ProcessorInfo &gt; sequence_</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8h_source.html#l00090">ConfigurePython.h:90</a></div></div>
+<div class="ttc" id="aclassConfigurePython_html_abb01473de6f30672a00d6ea506a87ea9"><div class="ttname"><a href="classConfigurePython.html#abb01473de6f30672a00d6ea506a87ea9">ConfigurePython::~ConfigurePython</a></div><div class="ttdeci">~ConfigurePython()</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8cxx_source.html#l00296">ConfigurePython.cxx:296</a></div></div>
 <div class="ttc" id="aclassConfigurePython_html_aca58eba1fcf83fa561682842e7f553f2"><div class="ttname"><a href="classConfigurePython.html#aca58eba1fcf83fa561682842e7f553f2">ConfigurePython::run_mode_</a></div><div class="ttdeci">int run_mode_</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8h_source.html#l00062">ConfigurePython.h:62</a></div></div>
-<div class="ttc" id="aclassConfigurePython_html_ad850bbb6b6062da47d14d115fc42a85e"><div class="ttname"><a href="classConfigurePython.html#ad850bbb6b6062da47d14d115fc42a85e">ConfigurePython::makeProcess</a></div><div class="ttdeci">Process * makeProcess()</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8cxx_source.html#l00299">ConfigurePython.cxx:299</a></div></div>
-<div class="ttc" id="aclassConfigurePython_html_aebce26f4615013fa2b28521a76f1c743"><div class="ttname"><a href="classConfigurePython.html#aebce26f4615013fa2b28521a76f1c743">ConfigurePython::input_files_</a></div><div class="ttdeci">std::vector&lt; std::string &gt; input_files_</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8h_source.html#l00068">ConfigurePython.h:68</a></div></div>
+<div class="ttc" id="aclassConfigurePython_html_ad850bbb6b6062da47d14d115fc42a85e"><div class="ttname"><a href="classConfigurePython.html#ad850bbb6b6062da47d14d115fc42a85e">ConfigurePython::makeProcess</a></div><div class="ttdeci">Process * makeProcess()</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8cxx_source.html#l00300">ConfigurePython.cxx:300</a></div></div>
+<div class="ttc" id="aclassConfigurePython_html_aebce26f4615013fa2b28521a76f1c743"><div class="ttname"><a href="classConfigurePython.html#aebce26f4615013fa2b28521a76f1c743">ConfigurePython::input_files_</a></div><div class="ttdeci">std::vector&lt; std::string &gt; input_files_</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8h_source.html#l00071">ConfigurePython.h:71</a></div></div>
 <div class="ttc" id="aclassParameterSet_html_a82830c118bc0fcca336bb6595addecd2"><div class="ttname"><a href="classParameterSet.html#a82830c118bc0fcca336bb6595addecd2">ParameterSet::insert</a></div><div class="ttdeci">void insert(const std::string &amp;name, int value)</div><div class="ttdoc">Add an integer to the ParameterSet.</div><div class="ttdef"><b>Definition:</b> <a href="ParameterSet_8cxx_source.html#l00004">ParameterSet.cxx:4</a></div></div>
 <div class="ttc" id="aclassProcess_html"><div class="ttname"><a href="classProcess.html">Process</a></div><div class="ttdef"><b>Definition:</b> <a href="Process_8h_source.html#l00029">Process.h:29</a></div></div>
 <div class="ttc" id="aclassProcessorFactory_html_a1ce00476d9aff8f090a45637507ced71"><div class="ttname"><a href="classProcessorFactory.html#a1ce00476d9aff8f090a45637507ced71">ProcessorFactory::loadLibrary</a></div><div class="ttdeci">void loadLibrary(const std::string &amp;libname)</div><div class="ttdoc">Load a library.</div><div class="ttdef"><b>Definition:</b> <a href="ProcessorFactory_8cxx_source.html#l00041">ProcessorFactory.cxx:41</a></div></div>
@@ -411,12 +414,12 @@ $(function() {
 <div class="ttc" id="aclassProcessor_html"><div class="ttname"><a href="classProcessor.html">Processor</a></div><div class="ttdoc">Base class for all event processing components.</div><div class="ttdef"><b>Definition:</b> <a href="Processor_8h_source.html#l00034">Processor.h:34</a></div></div>
 <div class="ttc" id="aclassProcessor_html_a5aababad5df4ebb1cee987b8b93d6481"><div class="ttname"><a href="classProcessor.html#a5aababad5df4ebb1cee987b8b93d6481">Processor::configure</a></div><div class="ttdeci">virtual void configure(const ParameterSet &amp;parameters)</div><div class="ttdoc">Callback for the Processor to configure itself from the given set of parameters.</div><div class="ttdef"><b>Definition:</b> <a href="Processor_8h_source.html#l00061">Processor.h:61</a></div></div>
 <div class="ttc" id="anamespaceconfig_1_1anaApv25xTalk__cfg_html_ac483f6ce851c9ecd9fb835ff7551737c"><div class="ttname"><a href="namespaceconfig_1_1anaApv25xTalk__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">config.anaApv25xTalk_cfg.p</a></div><div class="ttdeci">p</div><div class="ttdef"><b>Definition:</b> <a href="anaApv25xTalk__cfg_8py_source.html#l00015">anaApv25xTalk_cfg.py:15</a></div></div>
-<div class="ttc" id="anamespaceconfig_1_1baseConfig_html_a87f35ac6fa80d957c59e394549aa7e15"><div class="ttname"><a href="namespaceconfig_1_1baseConfig.html#a87f35ac6fa80d957c59e394549aa7e15">config.baseConfig.nargs</a></div><div class="ttdeci">nargs</div><div class="ttdef"><b>Definition:</b> <a href="baseConfig_8py_source.html#l00021">baseConfig.py:21</a></div></div>
+<div class="ttc" id="anamespaceconfig_1_1baseConfig_html_a87f35ac6fa80d957c59e394549aa7e15"><div class="ttname"><a href="namespaceconfig_1_1baseConfig.html#a87f35ac6fa80d957c59e394549aa7e15">config.baseConfig.nargs</a></div><div class="ttdeci">nargs</div><div class="ttdef"><b>Definition:</b> <a href="baseConfig_8py_source.html#l00023">baseConfig.py:23</a></div></div>
 <div class="ttc" id="anamespaceconfig_1_1vtxhProcess_html_a8187411843a6284ffb964ef3fb9fcab3"><div class="ttname"><a href="namespaceconfig_1_1vtxhProcess.html#a8187411843a6284ffb964ef3fb9fcab3">config.vtxhProcess.args</a></div><div class="ttdeci">args</div><div class="ttdef"><b>Definition:</b> <a href="vtxhProcess_8py_source.html#l00007">vtxhProcess.py:7</a></div></div>
-<div class="ttc" id="astructConfigurePython_1_1ProcessorInfo_html"><div class="ttname"><a href="structConfigurePython_1_1ProcessorInfo.html">ConfigurePython::ProcessorInfo</a></div><div class="ttdoc">Represents the configuration of an EventProcessor in the job.</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8h_source.html#l00080">ConfigurePython.h:80</a></div></div>
-<div class="ttc" id="astructConfigurePython_1_1ProcessorInfo_html_a042a3f8ced675fc983ddea8e4b9d4f9d"><div class="ttname"><a href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">ConfigurePython::ProcessorInfo::params_</a></div><div class="ttdeci">ParameterSet params_</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8h_source.html#l00083">ConfigurePython.h:83</a></div></div>
-<div class="ttc" id="astructConfigurePython_1_1ProcessorInfo_html_a84a139f1e589eba9ed0566218d1a52e3"><div class="ttname"><a href="structConfigurePython_1_1ProcessorInfo.html#a84a139f1e589eba9ed0566218d1a52e3">ConfigurePython::ProcessorInfo::instancename_</a></div><div class="ttdeci">std::string instancename_</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8h_source.html#l00082">ConfigurePython.h:82</a></div></div>
-<div class="ttc" id="astructConfigurePython_1_1ProcessorInfo_html_ac041c6bb287aa9b6af4eeeeca39c76ae"><div class="ttname"><a href="structConfigurePython_1_1ProcessorInfo.html#ac041c6bb287aa9b6af4eeeeca39c76ae">ConfigurePython::ProcessorInfo::classname_</a></div><div class="ttdeci">std::string classname_</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8h_source.html#l00081">ConfigurePython.h:81</a></div></div>
+<div class="ttc" id="astructConfigurePython_1_1ProcessorInfo_html"><div class="ttname"><a href="structConfigurePython_1_1ProcessorInfo.html">ConfigurePython::ProcessorInfo</a></div><div class="ttdoc">Represents the configuration of an EventProcessor in the job.</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8h_source.html#l00083">ConfigurePython.h:83</a></div></div>
+<div class="ttc" id="astructConfigurePython_1_1ProcessorInfo_html_a042a3f8ced675fc983ddea8e4b9d4f9d"><div class="ttname"><a href="structConfigurePython_1_1ProcessorInfo.html#a042a3f8ced675fc983ddea8e4b9d4f9d">ConfigurePython::ProcessorInfo::params_</a></div><div class="ttdeci">ParameterSet params_</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8h_source.html#l00086">ConfigurePython.h:86</a></div></div>
+<div class="ttc" id="astructConfigurePython_1_1ProcessorInfo_html_a84a139f1e589eba9ed0566218d1a52e3"><div class="ttname"><a href="structConfigurePython_1_1ProcessorInfo.html#a84a139f1e589eba9ed0566218d1a52e3">ConfigurePython::ProcessorInfo::instancename_</a></div><div class="ttdeci">std::string instancename_</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8h_source.html#l00085">ConfigurePython.h:85</a></div></div>
+<div class="ttc" id="astructConfigurePython_1_1ProcessorInfo_html_ac041c6bb287aa9b6af4eeeeca39c76ae"><div class="ttname"><a href="structConfigurePython_1_1ProcessorInfo.html#ac041c6bb287aa9b6af4eeeeca39c76ae">ConfigurePython::ProcessorInfo::classname_</a></div><div class="ttdeci">std::string classname_</div><div class="ttdef"><b>Definition:</b> <a href="ConfigurePython_8h_source.html#l00084">ConfigurePython.h:84</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

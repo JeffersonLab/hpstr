@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['legendrefitfunction_1575',['LegendreFitFunction',['../classLegendreFitFunction.html',1,'']]]
+  ['legendrefitfunction_1618',['LegendreFitFunction',['../classLegendreFitFunction.html',1,'']]]
 ];

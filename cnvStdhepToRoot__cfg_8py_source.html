@@ -85,27 +85,32 @@ $(function() {
 <div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1cnvStdhepToRoot__cfg.html#ac483f6ce851c9ecd9fb835ff7551737c">   13</a></span>&#160;p = <a class="code" href="classHpstrConf_1_1Process.html">HpstrConf.Process</a>()</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
 <div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1cnvStdhepToRoot__cfg.html#ae0f8262ae155d0cba15cec05d034c9e7">   15</a></span>&#160;p.run_mode = 2</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment"># Library containing processors</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;p.libraries.append(<span class="stringliteral">&quot;libprocessors.so&quot;</span>)</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1cnvStdhepToRoot__cfg.html#a62714d5d2b771fae76629f60c86957e3">   24</a></span>&#160;cnvStd = <a class="code" href="classHpstrConf_1_1Processor.html">HpstrConf.Processor</a>(<span class="stringliteral">&#39;cnvStd&#39;</span>, <span class="stringliteral">&#39;StdhepMCParticleProcessor&#39;</span>)</div>
+<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1cnvStdhepToRoot__cfg.html#a929d203f1b0e6375eacf16ef281732bf">   16</a></span>&#160;p.skip_events = options.skip_events</div>
+<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1cnvStdhepToRoot__cfg.html#a7e223ec063df28c77178547bd0813464">   17</a></span>&#160;p.max_events = options.nevents</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment"># Library containing processors</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;p.libraries.append(<span class="stringliteral">&quot;libprocessors.so&quot;</span>)</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;cnvStd.parameters[<span class="stringliteral">&quot;mcPartCollStdhep&quot;</span>] = <span class="stringliteral">&#39;MCParticle&#39;</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;cnvStd.parameters[<span class="stringliteral">&quot;mcPartCollRoot&quot;</span>] = <span class="stringliteral">&#39;MCParticle&#39;</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;cnvStd.parameters[<span class="stringliteral">&quot;maxEvent&quot;</span>] = options.nevents</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment"># Sequence which the processors will run.</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1cnvStdhepToRoot__cfg.html#a3f9c3bf7e2cafc2c46df6d132ea658cc">   35</a></span>&#160;p.sequence = [cnvStd]</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1cnvStdhepToRoot__cfg.html#a27256609f574b662639e0a8cd48b8d3a">   37</a></span>&#160;p.input_files=[stdhep_file]</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment">#p.input_files=[]</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1cnvStdhepToRoot__cfg.html#a7882aa8b39a47102a13c2630137590d8">   39</a></span>&#160;p.output_files = [root_file]</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;p.printProcess()</div>
+<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1cnvStdhepToRoot__cfg.html#a62714d5d2b771fae76629f60c86957e3">   26</a></span>&#160;cnvStd = <a class="code" href="classHpstrConf_1_1Processor.html">HpstrConf.Processor</a>(<span class="stringliteral">&#39;cnvStd&#39;</span>, <span class="stringliteral">&#39;StdhepMCParticleProcessor&#39;</span>)</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;cnvStd.parameters[<span class="stringliteral">&quot;mcPartCollStdhep&quot;</span>] = <span class="stringliteral">&#39;MCParticle&#39;</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;cnvStd.parameters[<span class="stringliteral">&quot;mcPartCollRoot&quot;</span>] = <span class="stringliteral">&#39;MCParticle&#39;</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;cnvStd.parameters[<span class="stringliteral">&quot;skipEvent&quot;</span>] = options.skip_events</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keywordflow">if</span> options.nevents&gt;-1:</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    cnvStd.parameters[<span class="stringliteral">&quot;maxEvent&quot;</span>] = options.skip_events+options.nevents</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keywordflow">else</span>:</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    cnvStd.parameters[<span class="stringliteral">&quot;maxEvent&quot;</span>] = -1</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment"># Sequence which the processors will run.</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1cnvStdhepToRoot__cfg.html#a3f9c3bf7e2cafc2c46df6d132ea658cc">   40</a></span>&#160;p.sequence = [cnvStd]</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1cnvStdhepToRoot__cfg.html#a27256609f574b662639e0a8cd48b8d3a">   42</a></span>&#160;p.input_files=[stdhep_file]</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">#p.input_files=[]</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1cnvStdhepToRoot__cfg.html#a7882aa8b39a47102a13c2630137590d8">   44</a></span>&#160;p.output_files = [root_file]</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;p.printProcess()</div>
 <div class="ttc" id="aclassHpstrConf_1_1Process_html"><div class="ttname"><a href="classHpstrConf_1_1Process.html">HpstrConf.Process</a></div><div class="ttdoc">Process python class.</div><div class="ttdef"><b>Definition:</b> <a href="HpstrConf_8py_source.html#l00020">HpstrConf.py:20</a></div></div>
 <div class="ttc" id="aclassHpstrConf_1_1Processor_html"><div class="ttname"><a href="classHpstrConf_1_1Processor.html">HpstrConf.Processor</a></div><div class="ttdoc">Processor python class.</div><div class="ttdef"><b>Definition:</b> <a href="HpstrConf_8py_source.html#l00004">HpstrConf.py:4</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
