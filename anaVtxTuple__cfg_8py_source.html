@@ -136,17 +136,18 @@ $(function() {
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">#Region definitions</span></div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
 <div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaVtxTuple__cfg.html#a67b272a58f3b9db7863bcebb7152345a">   71</a></span>&#160;RegionPath=os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&quot;/analysis/selections/&quot;</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;vtxana.parameters[<span class="stringliteral">&quot;regionDefinitions&quot;</span>] = [RegionPath+<span class="stringliteral">&#39;Tight_2019.json&#39;</span>, RegionPath+<span class="stringliteral">&#39;Tight_pTop_2019.json&#39;</span>, RegionPath+<span class="stringliteral">&#39;Tight_pBot_2019.json&#39;</span>]</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment"># Sequence which the processors will run.</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaVtxTuple__cfg.html#a3f9c3bf7e2cafc2c46df6d132ea658cc">   75</a></span>&#160;p.sequence = [vtxana]</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
-<div class="line"><a name="l00077"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaVtxTuple__cfg.html#a27256609f574b662639e0a8cd48b8d3a">   77</a></span>&#160;p.input_files = infile</div>
-<div class="line"><a name="l00078"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaVtxTuple__cfg.html#a7882aa8b39a47102a13c2630137590d8">   78</a></span>&#160;p.output_files = [outfile]</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;p.printProcess()</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="keywordflow">if</span> (options.year == 2019): vtxana.parameters[<span class="stringliteral">&quot;regionDefinitions&quot;</span>] = [RegionPath+<span class="stringliteral">&#39;Tight_2019.json&#39;</span>, RegionPath+<span class="stringliteral">&#39;Tight_pTop_2019.json&#39;</span>, RegionPath+<span class="stringliteral">&#39;Tight_pBot_2019.json&#39;</span>]</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="keywordflow">if</span> (options.year == 2021): vtxana.parameters[<span class="stringliteral">&quot;regionDefinitions&quot;</span>] = [RegionPath+<span class="stringliteral">&#39;Tight_2021.json&#39;</span>, RegionPath+<span class="stringliteral">&#39;Tight_pTop_2021.json&#39;</span>, RegionPath+<span class="stringliteral">&#39;Tight_pBot_2021.json&#39;</span>]</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment"># Sequence which the processors will run.</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaVtxTuple__cfg.html#a3f9c3bf7e2cafc2c46df6d132ea658cc">   76</a></span>&#160;p.sequence = [vtxana]</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
+<div class="line"><a name="l00078"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaVtxTuple__cfg.html#a27256609f574b662639e0a8cd48b8d3a">   78</a></span>&#160;p.input_files = infile</div>
+<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaVtxTuple__cfg.html#a7882aa8b39a47102a13c2630137590d8">   79</a></span>&#160;p.output_files = [outfile]</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;p.printProcess()</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
 <div class="ttc" id="aclassHpstrConf_1_1Process_html"><div class="ttname"><a href="classHpstrConf_1_1Process.html">HpstrConf.Process</a></div><div class="ttdoc">Process python class.</div><div class="ttdef"><b>Definition:</b> <a href="HpstrConf_8py_source.html#l00020">HpstrConf.py:20</a></div></div>
 <div class="ttc" id="aclassHpstrConf_1_1Processor_html"><div class="ttname"><a href="classHpstrConf_1_1Processor.html">HpstrConf.Processor</a></div><div class="ttdoc">Processor python class.</div><div class="ttdef"><b>Definition:</b> <a href="HpstrConf_8py_source.html#l00004">HpstrConf.py:4</a></div></div>
 <div class="ttc" id="anamespaceconfig_1_1anaKalSimpTuple__cfg_html_a4b99ff73a8a869319570237b5c57ab03"><div class="ttname"><a href="namespaceconfig_1_1anaKalSimpTuple__cfg.html#a4b99ff73a8a869319570237b5c57ab03">config.anaKalSimpTuple_cfg.str</a></div><div class="ttdeci">str</div><div class="ttdef"><b>Definition:</b> <a href="anaKalSimpTuple__cfg_8py_source.html#l00006">anaKalSimpTuple_cfg.py:6</a></div></div>
