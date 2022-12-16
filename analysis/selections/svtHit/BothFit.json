@@ -1,0 +1,12 @@
+{
+    "getN_et"  : {
+        "cut"  : 2.0,
+        "id"   : 0,
+        "info" : "Has 2 Pulses"
+    },
+    "doing_time" : {
+        "cut"  : 0.0,
+        "id"   : 1,
+        "info" : "Don't Fit Time"
+    }
+}

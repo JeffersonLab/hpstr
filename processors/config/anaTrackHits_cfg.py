@@ -15,6 +15,10 @@ print('Output file: %s' % outFilename)
 p = HpstrConf.Process()
 
 p.run_mode = 1
+p.skip_events = options.skip_events
+p.max_events = options.nevents
+
+
 #p.max_events = 1000
 
 # Library containing processors
