@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import math
 import root_numpy as rnp
 import numpy as np
 import ROOT as r
@@ -105,9 +106,9 @@ def getRadFrac(tritrig_InvM_h, wab_InvM_h, rad_mcMass622_h, mV_MeV):
     return radFrac
 
 def getTotalRadiativeAcceptance(rad_mcMass622_h, rad_slic_mc622Mass_h, mV_MeV):
-    mAp_MeV = mV_MeV*(3/1.8)
-    rad_slic = ( rad_slic_mc622Mass_h.GetBinContent(rad_mcMass622_h.FindBin(mAp_MeV))  + rad_slic_mc622Mass_h.GetBinContent(rad_mcMass622_h.FindBin(mAp_MeV)-1) + rad_slic_mc622Mass_h.GetBinContent(rad_mcMass622_h.FindBin(mAp_MeV)+1) )/3
-    rad = ( rad_mcMass622_h.GetBinContent(rad_mcMass622_h.FindBin(mAp_MeV)) + rad_mcMass622_h.GetBinContent(rad_mcMass622_h.FindBin(mAp_MeV)-1) + rad_mcMass622_h.GetBinContent(rad_mcMass622_h.FindBin(mAp_MeV)+1) )/3
+    mAp_GeV = (mV_MeV/1000)*(3/1.8)
+    rad_slic = ( rad_slic_mc622Mass_h.GetBinContent(rad_mcMass622_h.FindBin(mAp_GeV))  + rad_slic_mc622Mass_h.GetBinContent(rad_mcMass622_h.FindBin(mAp_GeV)-1) + rad_slic_mc622Mass_h.GetBinContent(rad_mcMass622_h.FindBin(mAp_GeV)+1) )/3
+    rad = ( rad_mcMass622_h.GetBinContent(rad_mcMass622_h.FindBin(mAp_GeV)) + rad_mcMass622_h.GetBinContent(rad_mcMass622_h.FindBin(mAp_GeV)-1) + rad_mcMass622_h.GetBinContent(rad_mcMass622_h.FindBin(mAp_GeV)+1) )/3
     radAcc = rad/rad_slic
 
     return radAcc
@@ -117,6 +118,7 @@ def getTotalRadiativeAcceptance(rad_mcMass622_h, rad_slic_mc622Mass_h, mV_MeV):
 
 #input files
 mV_MeV = 55
+mV_GeV = 55./1000.
 mAp_MeV = mV_MeV*(3/1.8)
 sigfile = "/sdf/group/hps/users/alspellm/projects/THESIS/ZBi/signal/hadd_mass_%s_simp_recon_KF_ana.root"%(mV_MeV)
 ttfile = "/sdf/group/hps/users/alspellm/projects/THESIS/ZBi/tritrig_beam/full_hadd_tritrigv2-beamv6_2500kBunches_HPS-PhysicsRun2016-Pass2_v4_5_0_pairs1_KF_ana_nvtx1.root"
@@ -133,11 +135,12 @@ mcScale['rad'] = 66.36e6*Lumi/(10000*9959)
 mcScale['rad_slic'] = 66.36e6*Lumi/(10000*9959)
 
 #Select cut variables from flat tuple 
-variables = ['unc_vtx_mass', 'unc_vtx_z','true_vtx_z', 'unc_vtx_chi2', 'unc_vtx_psum', 'unc_vtx_ele_track_p', 'unc_vtx_pos_track_p']
+variables = ['unc_vtx_mass','true_vtx_mass', 'unc_vtx_z','true_vtx_z', 'unc_vtx_chi2', 'unc_vtx_psum', 'unc_vtx_ele_track_p', 'unc_vtx_pos_track_p']
 
 #Define 1d histograms for each var
 signal_histos = {}
-signal_histos['unc_vtx_mass'] = r.TH1F('signal_unc_vtx_mass','signal_unc_vtx_mass', 4000, 0, 4)
+signal_histos['unc_vtx_mass'] = r.TH1F('signal_unc_vtx_mass','signal_unc_vtx_mass', 200, 0, 0.2)
+signal_histos['true_vtx_mass'] = r.TH1F('signal_true_vtx_mass','signal_true_vtx_mass', 200, 0, 0.2)
 signal_histos['unc_vtx_z'] = r.TH1F('signal_unc_vtx_z','signal_unc_vtx_z', 1400, -20, 120)
 signal_histos['true_vtx_z'] = r.TH1F('signal_true_vtx_z','signal_true_vtx_z', 1400, -20, 120)
 signal_histos['unc_vtx_chi2'] = r.TH1F('signal_unc_vtx_chi2','signal_unc_vtx_chi2', 400, 0, 200)
@@ -146,7 +149,8 @@ signal_histos['unc_vtx_ele_track_p'] = r.TH1F('signal_unc_vtx_ele_track_p','sign
 signal_histos['unc_vtx_pos_track_p'] = r.TH1F('signal_unc_vtx_pos_track_p','signal_unc_vtx_pos_track_p', 500, 0, 5)
 
 tritrig_histos = {}
-tritrig_histos['unc_vtx_mass'] = r.TH1F('tritrig_unc_vtx_mass','tritrig_unc_vtx_mass', 4000, 0, 4)
+tritrig_histos['unc_vtx_mass'] = r.TH1F('tritrig_unc_vtx_mass','tritrig_unc_vtx_mass', 200, 0, 0.2)
+tritrig_histos['true_vtx_mass'] = r.TH1F('tritrig_true_vtx_mass','tritrig_true_vtx_mass', 200, 0, 0.2)
 tritrig_histos['unc_vtx_z'] = r.TH1F('tritrig_unc_vtx_z','tritrig_unc_vtx_z', 1400, -20, 120)
 tritrig_histos['true_vtx_z'] = r.TH1F('tritrig_true_vtx_z','tritrig_true_vtx_z', 1400, -20, 120)
 tritrig_histos['unc_vtx_chi2'] = r.TH1F('tritrig_unc_vtx_chi2','tritrig_unc_vtx_chi2', 400, 0, 200)
@@ -154,21 +158,73 @@ tritrig_histos['unc_vtx_psum'] = r.TH1F('tritrig_unc_vtx_psum','tritrig_unc_vtx_
 tritrig_histos['unc_vtx_ele_track_p'] = r.TH1F('tritrig_unc_vtx_ele_track_p','tritrig_unc_vtx_ele_track_p', 500, 0, 5)
 tritrig_histos['unc_vtx_pos_track_p'] = r.TH1F('tritrig_unc_vtx_pos_track_p','tritrig_unc_vtx_pos_track_p', 500, 0, 5)
 
+wab_histos = {}
+wab_histos['unc_vtx_mass'] = r.TH1F('wab_unc_vtx_mass','wab_unc_vtx_mass', 200, 0, 0.2)
+wab_histos['true_vtx_mass'] = r.TH1F('wab_true_vtx_mass','wab_true_vtx_mass', 200, 0, 0.2)
+wab_histos['unc_vtx_z'] = r.TH1F('wab_unc_vtx_z','wab_unc_vtx_z', 1400, -20, 120)
+wab_histos['true_vtx_z'] = r.TH1F('wab_true_vtx_z','wab_true_vtx_z', 1400, -20, 120)
+wab_histos['unc_vtx_chi2'] = r.TH1F('wab_unc_vtx_chi2','wab_unc_vtx_chi2', 400, 0, 200)
+wab_histos['unc_vtx_psum'] = r.TH1F('wab_unc_vtx_psum','wab_unc_vtx_psum', 500, 0, 5)
+wab_histos['unc_vtx_ele_track_p'] = r.TH1F('wab_unc_vtx_ele_track_p','wab_unc_vtx_ele_track_p', 500, 0, 5)
+wab_histos['unc_vtx_pos_track_p'] = r.TH1F('wab_unc_vtx_pos_track_p','wab_unc_vtx_pos_track_p', 500, 0, 5)
+
+rad_histos = {}
+rad_histos['unc_vtx_mass'] = r.TH1F('rad_unc_vtx_mass','rad_unc_vtx_mass', 200, 0, 0.2)
+rad_histos['true_vtx_mass'] = r.TH1F('rad_true_vtx_mass','rad_true_vtx_mass', 200, 0, 0.2)
+#rad_histos['unc_vtx_z'] = r.TH1F('rad_unc_vtx_z','rad_unc_vtx_z', 1400, -20, 120)
+#rad_histos['true_vtx_z'] = r.TH1F('rad_true_vtx_z','rad_true_vtx_z', 1400, -20, 120)
+#rad_histos['unc_vtx_chi2'] = r.TH1F('rad_unc_vtx_chi2','rad_unc_vtx_chi2', 400, 0, 200)
+#rad_histos['unc_vtx_psum'] = r.TH1F('rad_unc_vtx_psum','rad_unc_vtx_psum', 500, 0, 5)
+#rad_histos['unc_vtx_ele_track_p'] = r.TH1F('rad_unc_vtx_ele_track_p','rad_unc_vtx_ele_track_p', 500, 0, 5)
+#rad_histos['unc_vtx_pos_track_p'] = r.TH1F('rad_unc_vtx_pos_track_p','rad_unc_vtx_pos_track_p', 500, 0, 5)
+
+#Get the pretrigger vtx distribution ONLY NEED TO DO THIS ONCE!
+vdSimFilename = "/sdf/group/hps/users/alspellm/projects/THESIS/mc/2016/simps/slic_ana/hadd_mass_%s_simp_mcAna.root"%(mV_MeV)
+vdSimFile = r.TFile(vdSimFilename)
+vdSimZ_hcp = copy.deepcopy(vdSimFile.Get("mcAna/mcAna_mc625Z_h") )
+vdSimFile.Close()
+vdSimZ_hcp.SetName("vdSimZ_hcp")
+vdSimZ_h = r.TH1F("vdSimZ_h", ";true z_{vtx} [mm];MC Events", 200, -50.3, 149.7)
+for i in range(201):
+    vdSimZ_h.SetBinContent(i, vdSimZ_hcp.GetBinContent(i))
+    pass
 
 #Read flat tuple variables and convert to array
 tt_tree = 'vtxana_kf_Tight_2016_simp_reach_dev/vtxana_kf_Tight_2016_simp_reach_dev_tree'
 sig_tree = 'vtxana_kf_Tight_2016_simp_reach_dev/vtxana_kf_Tight_2016_simp_reach_dev_tree'
 wab_tree = 'vtxana_kf_Tight_2016_simp_reach_dev/vtxana_kf_Tight_2016_simp_reach_dev_tree'
-sig_arr = rnp.root2array(sigfile,sig_tree, branches= variables, start=0, stop = 50, step = 1)
-tt_array = rnp.root2array(ttfile,tt_tree, branches= variables, start=0, stop = 50, step = 1)
-wab_array = rnp.root2array(wabfile,wab_tree, branches= variables, start=0, stop = 50, step = 1)
+rad_tree = 'vtxana_kf_Tight_2016_simp_reach_dev/vtxana_kf_Tight_2016_simp_reach_dev_tree'
+
+#signal_array = rnp.root2array(sigfile,sig_tree, branches= variables, start=0, stop = 10000, step = 1)
+#tritrig_array = rnp.root2array(ttfile,tt_tree, branches= variables, start=0, stop = 10000, step = 1)
+#wab_array = rnp.root2array(wabfile,wab_tree, branches= variables, start=0, stop = 10000, step = 1)
+#rad_array = rnp.root2array(radfile,rad_tree, branches= variables, start=0, stop = 10000, step = 1)
+
+signal_array = rnp.root2array(sigfile,sig_tree, branches= variables)
+tritrig_array = rnp.root2array(ttfile,tt_tree, branches= variables)
+wab_array = rnp.root2array(wabfile,wab_tree, branches= variables)
+rad_array = rnp.root2array(radfile,rad_tree, branches= variables)
 
 #Fill 1d signal histograms for each variable 
-print("Filling 1D signal histograms for variables: ", variables) 
-for event in sig_arr:
-    print(event)
+for event in signal_array:
     for i,var in enumerate(variables):
-        signal_histos['%s'%(var)].Fill(event[i])
+        if var in signal_histos:
+            signal_histos['%s'%(var)].Fill(event[i])
+
+for event in tritrig_array:
+    for i,var in enumerate(variables):
+        if var in tritrig_histos:
+            tritrig_histos['%s'%(var)].Fill(event[i])
+
+for event in wab_array:
+    for i,var in enumerate(variables):
+        if var in wab_histos:
+            wab_histos['%s'%(var)].Fill(event[i])
+
+for event in rad_array:
+    for i,var in enumerate(variables):
+        if var in rad_histos:
+            rad_histos['%s'%(var)].Fill(event[i])
 
 #Define map to hold cut values for each variable
 iter_cut_map = {key: None for key in variables}
@@ -191,53 +247,37 @@ for var,hist in signal_histos.items():
 #calculate the radFrac for the specified A' mass value (m_VD = (1.8/3)*m_A')
 print("Making Radiative Fraction")
 invMassHistos = {}
-vtx_selection = "vtxana_kf_Tight_2016_simp_reach_dev"
-inFile = r.TFile(ttfile,"READ")
-invMassHistos['tritrig'] = copy.deepcopy(inFile.Get("%s/%s_vtx_InvM_h"%(vtx_selection,vtx_selection)))
-inFile.Close()
+invMassHistos['tritrig'] = copy.deepcopy(tritrig_histos['unc_vtx_mass'])
+invMassHistos['wab'] = copy.deepcopy(wab_histos['unc_vtx_mass'])
+invMassHistos['rad'] = copy.deepcopy(rad_histos['true_vtx_mass'])
 
-inFile = r.TFile(wabfile,"READ")
-invMassHistos['wab'] = copy.deepcopy(inFile.Get("%s/%s_vtx_InvM_h"%(vtx_selection,vtx_selection)))
-inFile.Close()
-
-radmatch_selection = 'vtxana_kf_radMatchTight_2016_simp_reach_dev'
-inFile = r.TFile(radfile,"READ")
-invMassHistos['rad'] = copy.deepcopy(inFile.Get("%s/%s_mcMass622_h"%(radmatch_selection,radmatch_selection)))
-inFile.Close()
-
-slic_selection = 'mcAna'
-inFile = r.TFile(rad_slic_file,"READ")
-invMassHistos['rad_slic'] = copy.deepcopy(inFile.Get("%s/%s_mc622Mass_h"%(slic_selection,slic_selection)))
-print(invMassHistos['rad_slic'].GetEntries())
-inFile.Close()
 
 #Scale invMassHistos
 invMassHistos['tritrig'].Scale(mcScale['tritrig'])
 invMassHistos['wab'].Scale(mcScale['wab'])
 invMassHistos['rad'].Scale(mcScale['rad'])
-invMassHistos['rad_slic'].Scale(mcScale['rad_slic'])
 
 radFrac = getRadFrac(invMassHistos['tritrig'], invMassHistos['wab'], invMassHistos['rad'], mV_MeV)
 print("radFrac: ", radFrac)
 
 #Get TotalRadiativeAcceptance
-#Rad+Beam histogram x-axis here needed to be converted from GeV to MeV 
-name = invMassHistos['rad'].GetName()
-invMassHistos['rad'].SetName("needs_rescaling")
-rad_mev_h = r.TH1F("rescale_rad","rescale_rad",200,0.,200.)
-nbins = invMassHistos['rad'].GetXaxis().GetNbins()
+slic_selection = 'mcAna'
+inFile = r.TFile(rad_slic_file,"READ")
+invMassHistos['rad_slic'] = copy.deepcopy(inFile.Get("%s/%s_mc622Mass_h"%(slic_selection,slic_selection)))
+inFile.Close()
+
+name = invMassHistos['rad_slic'].GetName()
+invMassHistos['rad_slic'].SetName("needs_rescaling")
+rad_gev_h = r.TH1F("rescale_rad_slic","rescale_rad_slic",200,0.,0.2)
+nbins = invMassHistos['rad_slic'].GetXaxis().GetNbins()
 for b in range(nbins):
-    val = invMassHistos['rad'].GetBinContent(b+1)
-    rad_mev_h.SetBinContent(b+1,val)
-rad_mev_h.SetName(name)
-invMassHistos['rad'] = rad_mev_h
-
-
-#Make N bins the same 
-invMassHistos['rad_slic'].GetXaxis().SetRange(1,200)
-invMassHistos['rad'].GetXaxis().SetRange(1,200)
-invMassHistos['rad_slic'].SetBins(200,0.0,200.0)
-invMassHistos['rad'].SetBins(200,0.0,200.0)
+    val = invMassHistos['rad_slic'].GetBinContent(b+1)
+    mass_mev = invMassHistos['rad_slic'].GetBinCenter(b+1)
+    mass_gev = mass_mev/1000.
+    rad_gev_h.SetBinContent(rad_gev_h.FindBin(mass_gev),val)
+rad_gev_h.SetName(name)
+invMassHistos['rad_slic'] = rad_gev_h
+invMassHistos['rad_slic'].Scale(mcScale['rad_slic'])
 
 radAcc = getTotalRadiativeAcceptance(invMassHistos['rad'], invMassHistos['rad_slic'], mV_MeV)
 print("Tot Rad Acceptance is ", radAcc)
@@ -248,7 +288,7 @@ massRes_MeV = 3.0 #Found using 2016 simp mass res plot for mV = 55
 #Count background rate
 dNdm = 0.0
 Mbin = 30.0
-for ev in tt_array:
+for ev in tritrig_array:
     if 1000.0*ev[variables.index('unc_vtx_mass')] > mAp_MeV + (Mbin/2): continue
     if 1000.0*ev[variables.index('unc_vtx_mass')] < mAp_MeV - (Mbin/2): continue
     dNdm += mcScale['tritrig']
@@ -260,23 +300,13 @@ for ev in wab_array:
     pass
 print("Background rate: ", dNdm)
 
-#Get the pretrigger vtx distribution ONLY NEED TO DO THIS ONCE!
-vdSimFilename = "/sdf/group/hps/users/alspellm/projects/THESIS/mc/2016/simps/slic_ana/hadd_mass_%s_simp_mcAna.root"%(mV_MeV)
-vdSimFile = r.TFile(vdSimFilename)
-vdSimZ_hcp = copy.deepcopy(vdSimFile.Get("mcAna/mcAna_mc625Z_h") )
-vdSimFile.Close()
-vdSimZ_hcp.SetName("vdSimZ_hcp")
-vdSimZ_h = r.TH1F("vdSimZ_h", ";true z_{vtx} [mm];MC Events", 200, -50.3, 149.7)
-for i in range(201):
-    vdSimZ_h.SetBinContent(i, vdSimZ_hcp.GetBinContent(i))
-    pass
 
-zCut = 999.
+zCut = 0.0
 lowMass = float(mV_MeV) - 2.8*massRes_MeV/2.0
 highMass = float(mV_MeV) + 2.8*massRes_MeV/2.0
 vdSelZ_h = r.TH1F("vdSelZ_h", ";true z_{vtx} [mm];MC Events", 200, -50.3, 149.7)
 vdSelNoZ_h = r.TH1F("vdSelNoZ_h", ";true z_{vtx} [mm];MC Events", 200, -50.3, 149.7)
-for ev in sig_arr:
+for ev in signal_array:
     if 1000.0*ev[variables.index('unc_vtx_mass')] > highMass: continue
     if 1000.0*ev[variables.index('unc_vtx_mass')] > highMass: continue
     if ev[variables.index('unc_vtx_z')] < zCut: continue 
@@ -286,6 +316,47 @@ for ev in sig_arr:
 vdEffVtxZ_e = r.TEfficiency(vdSelZ_h, vdSimZ_h)
 vdEffVtxZ_e.SetName("vdEffVtxZ_e")
 effCalc_h = vdEffVtxZ_e
+
+#SIMP Params in MeV units
+m_pi = mAp_MeV/3.0                          #Dark Pion Mass (Always ratio of A' mass)
+alpha_D = 0.01                              #Dark coupling constant
+m_l = 0.511                                 #lepton mass (ele/pos)
+f_pi = m_pi/(4*math.pi)
+
+#Calculate n_on (aka expected signal count)
+logEps2 = -7.5
+eps2 = pow(10, logEps2)
+eps = float(np.sqrt(eps2))
+Nsig = 0.0
+
+for vector_meson in ["rho","phi"]:
+    rho = False
+    phi = False
+    if "rho" in vector_meson:
+        rho = True
+    if "phi" in vector_meson:
+        phi = True
+
+    ctau = getCtau(mAp_MeV, m_pi, float(mV_MeV),eps,alpha_D,f_pi,m_l,rho)
+    E_V = 1.35
+    gcTau = ctau * gamma(mV_GeV, E_V)
+
+    effVtx = 0.0
+    for zbin in range(1,201):
+        zz = vdSelZ_h.GetBinLowEdge(zbin)
+        if zz < -4.3: continue
+        effVtx += (r.TMath.Exp((-4.3-zz)/gcTau)/gcTau)*(effCalc_h.GetEfficiency(zbin) - effCalc_h.GetEfficiencyErrorLow(zbin))*vdSelZ_h.GetBinWidth(zbin)
+
+    #Calculate the total A' production rate, indpendent of detector acceptance/efficiency
+    tot_apProd = (3.*137/2.)*3.14159*(mAp_MeV*eps2*radFrac*dNdm)/radAcc
+
+    #branching ratios
+    br_Vpi_val = br_Vpi(mAp_MeV,m_pi,float(mV_MeV),alpha_D,f_pi,rho,phi)
+    br_V_to_ee = 1.0    #Set this to 1, Dark Vector can only decay to e+e-
+
+    #expected A' signal given V_D decays
+    Nsig = Nsig + tot_apProd*effVtx*br_V_to_ee*br_Vpi_val
+    print("Expected signal is: ", Nsig)
 
 
 best_zbi = 0
@@ -299,5 +370,16 @@ outfile = r.TFile("testout.root","RECREATE")
 outfile.cd()
 #for histo in signal_histos.values():
 #    histo.Write()
-#outfile.Close()
+for histo in tritrig_histos.values():
+    histo.Write()
+for histo in wab_histos.values():
+    histo.Write()
+for histo in rad_histos.values():
+    histo.Write()
+for histo in signal_histos.values():
+    histo.Write()
+vdEffVtxZ_e.Write()
+vdSelZ_h.Write()
+vdSelNoZ_h.Write()
+outfile.Close()
 #
