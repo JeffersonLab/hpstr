@@ -104,12 +104,12 @@ class BlFitHistos : public HistoManager{
         TH1F* fitHistos{nullptr}; //!< description
 
     protected:
-        std::map<std::string, TH2F*> histos2d //!< description;
-        std::map<std::string, TH1F*> histos1d //!< description;
-        std::map<std::string,std::map<int,int>> svtIDMap //!< description;
-        std::map<std::string,std::map<std::string,std::vector<int>>> threshMap_ //!< description;
-        ModuleMapper * mmapper_ //!< description;
-        bool debug_{false} //!< description;
+        std::map<std::string, TH2F*> histos2d; //!< description
+        std::map<std::string, TH1F*> histos1d; //!< description
+        std::map<std::string,std::map<int,int>> svtIDMap; //!< description
+        std::map<std::string,std::map<std::string,std::vector<int>>> threshMap_; //!< description
+        ModuleMapper * mmapper_; //!< description
+        bool debug_{false}; //!< description
 };
 
 #endif

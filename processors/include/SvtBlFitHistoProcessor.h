@@ -79,12 +79,12 @@ class SvtBlFitHistoProcessor : public Processor {
     private:
 
         TFile* inF_{nullptr}; //!< description
-        TFile* outF_chi2{nullptr} //!< description;
+        TFile* outF_chi2{nullptr}; //!< description
 
-        int  year_=2019 //!< description;
+        int  year_=2019; //!< description
 
         //Select which layer to fit baselines. Default is all.
-        std::string layer_{""} //!< description;
+        std::string layer_{""}; //!< description
 
         //json file for histo config
         std::string histCfgFilename_; //!< description

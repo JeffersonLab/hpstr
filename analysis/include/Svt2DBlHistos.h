@@ -49,10 +49,10 @@ class Svt2DBlHistos : public HistoManager{
     private:
 
         int Event_number=0; //!< description
-        int debug_ = 1 //!< description;
+        int debug_ = 1; //!< description
 
-        TH1F* svtCondHisto{nullptr} //!< description;  
+        TH1F* svtCondHisto{nullptr}; //!< description 
         //ModuleMapper
-        ModuleMapper* mmapper_ //!< description;
+        ModuleMapper* mmapper_; //!< description
 };
 #endif
