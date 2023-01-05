@@ -3,6 +3,8 @@ import sys
 import os
 import baseConfig as base
 
+base.parser.add_argument("-f", "--makeFlatTuple", type=int, dest="makeFlatTuple", help="Make True to make vertex ana flat tuple", metavar="makeFlatTuple", default=0)
+
 options = base.parser.parse_args()
 
 
@@ -48,6 +50,8 @@ vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/
 vtxana.parameters["beamE"] = base.beamE[str(options.year)]
 vtxana.parameters["isData"] = options.isData
 vtxana.parameters["isRadPDG"] = 622
+vtxana.parameters["makeFlatTuple"] = options.makeFlatTuple
+
 CalTimeOffset=-999
 
 if (options.isData==1):
