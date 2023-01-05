@@ -24,6 +24,8 @@ p = HpstrConf.Process()
 
 #p.max_events = 1000
 p.run_mode = 0
+p.skip_events = options.skip_events
+p.max_events = options.nevents
 
 # Library containing processors
 p.add_library("libprocessors")
@@ -187,9 +189,6 @@ if(not options.isData):
     sequence.append(mcpart)
 
 p.sequence = sequence
-
-if (options.nevents > -1 ):
-    p.max_events = options.nevents
 
 p.input_files = lcio_file
 p.output_files = [root_file]

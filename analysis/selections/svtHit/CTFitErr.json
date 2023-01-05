@@ -1,0 +1,12 @@
+{
+    "getN_et"  : {
+        "cut"  : 2.0,
+        "id"   : 0,
+        "info" : "How Many Pulses"
+    },
+    "doing_cterr" : {
+        "cut"  : 0.0,
+        "id"   : 1,
+        "info" : "Do We Fit Close Time"
+    }   
+}
