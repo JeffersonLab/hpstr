@@ -39,6 +39,8 @@ layer = options.layer
 p = HpstrConf.Process()
 
 p.run_mode = 2
+p.skip_events = options.skip_events
+p.max_events = options.nevents
 
 # Library containing processors
 p.libraries.append("libprocessors.so")

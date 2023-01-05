@@ -1,0 +1,12 @@
+{
+    "getN_et"  : {
+        "cut"  : 2.0,
+        "id"   : 0,
+        "info" : "Do 2 Pulses"
+    },
+    "getId_gt" : {
+        "cut"  : 1.0,
+        "id"   : 1,
+        "info" : "Get Second Pulse"
+    }
+}

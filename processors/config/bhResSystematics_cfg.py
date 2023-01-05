@@ -43,6 +43,8 @@ print('Output File: %s' % out_file)
 p = HpstrConf.Process()
 
 p.run_mode = 2
+p.skip_events = options.skip_events
+p.max_events = options.nevents
 
 # Library containing processors
 p.add_library("libprocessors")

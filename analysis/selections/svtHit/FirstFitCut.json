@@ -1,0 +1,22 @@
+{
+    "getN_et"  : {
+        "cut"  : 2.0,
+        "id"   : 0,
+        "info" : "Require 2 Pulses"
+    },
+    "getId_lt" : {
+        "cut"  : 0.0,
+        "id"   : 1,
+        "info" : "Only First Pulse"
+    },
+     "amp_lt" : {
+        "cut"  : 1100,
+        "id"   : 2,
+        "info" : "UpperBound of Cut Region"
+    },
+     "amp_gt" : {
+        "cut"  : 900,
+        "id"   : 3,
+        "info" : "LowerBound of Cut Region"
+    }
+}

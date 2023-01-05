@@ -236,7 +236,7 @@ bool ClusterHistos::LoadBaselineHistos(const std::string& baselinesIn) {
 
 void ClusterHistos::FillHistograms(TrackerHit* hit,float weight) {
 
-    TRefArray* rawhits_ = hit->getRawHits();
+    TRefArray rawhits_ = hit->getRawHits();
     //int  iv      = -1;   // 0 top, 1 bottom
     //int  it      = -1;   // 0 axial, 1 stereo
     //int  ily     = -1;   // 0-6
@@ -247,9 +247,9 @@ void ClusterHistos::FillHistograms(TrackerHit* hit,float weight) {
 
     std::string swTag = "";
 
-    for (unsigned int irh = 0; irh < rawhits_->GetEntries(); ++irh) {
+    for (unsigned int irh = 0; irh < rawhits_.GetEntries(); ++irh) {
 
-        RawSvtHit * rawhit  = static_cast<RawSvtHit*>(rawhits_->At(irh));
+        RawSvtHit * rawhit  = static_cast<RawSvtHit*>(rawhits_.At(irh));
         //rawhit layers go from 1 to 14. Example: RawHit->Layer1 is layer0 axial on top and layer0 stereo in bottom.
 
         swTag = "ly"+std::to_string(rawhit->getLayer())+"_m"+std::to_string(rawhit->getModule());

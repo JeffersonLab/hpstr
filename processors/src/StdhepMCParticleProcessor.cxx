@@ -21,6 +21,7 @@ void StdhepMCParticleProcessor::configure(const ParameterSet& parameters) {
         mcPartCollStdhep_ = parameters.getString("mcPartCollStdhep", mcPartCollStdhep_);
         mcPartCollRoot_ = parameters.getString("mcPartCollRoot", mcPartCollRoot_);
         maxEvent_ = parameters.getInteger("maxEvent",maxEvent_);
+        skipEvent_ = parameters.getInteger("skipEvent",skipEvent_);   
     }
     catch (std::runtime_error& error)
     {
@@ -51,7 +52,7 @@ bool StdhepMCParticleProcessor::process() {
 
     description << " file generated with LCIO stdhepjob from "  << inFilename_;
 
-    int count = 0;
+    int count = skipEvent_;
 
     try {
      

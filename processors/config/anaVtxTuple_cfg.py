@@ -16,6 +16,9 @@ print('Output file: %s' % outfile)
 p = HpstrConf.Process()
 
 p.run_mode = 1
+p.skip_events = options.skip_events
+p.max_events = options.nevents
+
 #p.max_events = 1000
 
 # Library containing processors
@@ -66,7 +69,8 @@ vtxana.parameters["CalTimeOffset"]=CalTimeOffset
 #Region definitions
 
 RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/"
-vtxana.parameters["regionDefinitions"] = [RegionPath+'Tight_2019.json', RegionPath+'Tight_pTop_2019.json', RegionPath+'Tight_pBot_2019.json']
+if (options.year == 2019): vtxana.parameters["regionDefinitions"] = [RegionPath+'Tight_2019.json', RegionPath+'Tight_pTop_2019.json', RegionPath+'Tight_pBot_2019.json']
+if (options.year == 2021): vtxana.parameters["regionDefinitions"] = [RegionPath+'Tight_2021.json', RegionPath+'Tight_pTop_2021.json', RegionPath+'Tight_pBot_2021.json']
 
 # Sequence which the processors will run.
 p.sequence = [vtxana]

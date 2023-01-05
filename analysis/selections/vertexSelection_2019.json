@@ -1,28 +1,28 @@
 {
     "eleMom_lt" : {
-        "cut" : 3.8,
+        "cut" : 6.8,
         "id"  : 0,
-        "info" : "p e^{-} < 3.8 GeV"
+        "info" : "p e^{-} < 6.8 GeV"
     },
     "eleTrkChi2Ndf_lt" : {
-        "cut"  : 10,
+        "cut"  : 30,
         "id"   : 1,
-        "info" : "e^{-} Track #chi^{2}/ndf < 10"
+        "info" : "e^{-} Track #chi^{2}/ndf < 30"
     },
     "posTrkChi2Ndf_lt" : {
-        "cut"  : 10,
+        "cut"  : 30,
         "id"   : 2,
-        "info" : "e^{+} Track #chi^{2}/ndf < 10"
+        "info" : "e^{+} Track #chi^{2}/ndf < 30"
     },
     "eleMom_gt" : {
-        "cut" : 1.1,
+        "cut" : 0.1,
         "id"  : 3,
-        "info" : "p_e^{-} > 1.1 [GeV]"
+        "info" : "p_e^{-} > 0.1 [GeV]"
     },
     "posMom_gt" : {
-        "cut" : 1.1,
+        "cut" : 0.1,
         "id"  : 4,
-        "info" : "p_e^{+} > 1.1 [GeV]"
+        "info" : "p_e^{+} > 0.1 [GeV]"
     },
     "eleN2Dhits_gt" :  {
         "cut"  : 10,
@@ -35,13 +35,13 @@
         "info" : "p^{+} Track n2d Hits >=10"
     },
     "chi2unc_lt" : {
-        "cut"   : 10,
+        "cut"   : 20,
         "id"    : 7,
-        "info"  : "#chi^{2}_{unc} < 10"
+        "info"  : "#chi^{2}_{unc} < 20"
     },
     "maxVtxMom_lt" : {
-        "cut" : 4.6,
+        "cut" : 8.0,
         "id"  : 8,
-        "info" : "p_{vtx} < 4.6 [GeV]"
+        "info" : "p_{vtx} < 8.0 [GeV]"
     }
 }

@@ -1,0 +1,22 @@
+{
+    "getN_et"  : {
+        "cut"  : 2.0,
+        "id"   : 0,
+        "info" : "Require 2 Pulses"
+    },
+    "getId_lt" : {
+        "cut"  : 0.0,
+        "id"   : 1,
+        "info" : "Only First Pulse"
+    },
+    "chi_gt" : {
+        "cut"  : 0.9,
+        "id"   : 2,
+        "info" : "#chi^{2} > 0.9"
+    },
+    "channel" : {
+        "cut"  : 0.0,
+        "id"   : 3,
+        "info" : "Only Strip 0"
+    }
+}

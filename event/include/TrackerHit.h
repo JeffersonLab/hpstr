@@ -33,7 +33,7 @@ class TrackerHit : public TObject {
         void Clear(Option_t *option="");
 
         /** Get the references to the raw hits associated with this tracker hit */
-        TRefArray* getRawHits() const {return raw_hits_;};
+        TRefArray getRawHits() const {return raw_hits_;};
 
         /**
          * Set the hit position.
@@ -114,7 +114,7 @@ class TrackerHit : public TObject {
         /** Add raw hit to the raw hit reference array */
         void addRawHit(TObject* rawhit) {
             ++n_rawhits_;
-            raw_hits_->Add(rawhit);
+            raw_hits_.Add(rawhit);
         }
 
         //TODO: I use this to get the shared hits. Not sure if useful. 
@@ -157,7 +157,7 @@ class TrackerHit : public TObject {
         double charge_{-999};
 
         /** The raw hits */
-        TRefArray* raw_hits_{new TRefArray{}};
+        TRefArray raw_hits_{TRefArray{}};
 
         /** Layer (Axial + Stereo). 1-6 in 2015/2016 geometry, 0-7 in 2019 geometry */
         int layer_{-999};
@@ -175,7 +175,7 @@ class TrackerHit : public TObject {
         int id_{-999};
 
         /** Tracks that share this hit */
-        TRefArray* tracks_{new TRefArray{}};
+        TRefArray tracks_{TRefArray{}};
 
         /** LCIO ids of MC Particles associated to the hit */
         std::vector<int> mcPartIDs_;

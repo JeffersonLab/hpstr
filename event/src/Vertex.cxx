@@ -22,14 +22,14 @@ void Vertex::Clear(Option_t *option) {
     pos_.Clear();
     p1_.Clear();
     p2_.Clear();
-    parts_->Delete();
+    //parts_->Delete();
     TObject::Clear();
 }
 
 void Vertex::addParticle(TObject* part)
 { 
     n_parts_++;
-    parts_->Add(part);
+    parts_.Add(part);
 }
 
 void Vertex::setCovariance( const std::vector<float>& vec){ 
