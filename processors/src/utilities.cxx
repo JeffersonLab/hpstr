@@ -86,11 +86,19 @@ Particle* utils::buildParticle(EVENT::ReconstructedParticle* lc_particle,
 
     // Set the Track for the HpsParticle
     if (lc_particle->getTracks().size()>0)
-      part->setTrack(utils::buildTrack(lc_particle->getTracks()[0], gbl_kink_data, track_data));
+    {
+        Track * trkPtr = utils::buildTrack(lc_particle->getTracks()[0], gbl_kink_data, track_data);
+        part->setTrack(trkPtr);
+        delete trkPtr;
+    }
 
     // Set the Track for the HpsParticle
     if (lc_particle->getClusters().size() > 0)
-        part->setCluster(utils::buildCalCluster(lc_particle->getClusters()[0]));
+    {
+        CalCluster * clusBuf = utils::buildCalCluster(lc_particle->getClusters()[0]);
+        part->setCluster(clusBuf);
+        delete clusBuf;
+    }
 
     return part;
 }

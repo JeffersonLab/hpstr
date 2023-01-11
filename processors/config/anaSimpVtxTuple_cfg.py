@@ -3,6 +3,8 @@ import sys
 import os
 import baseConfig as base
 
+base.parser.add_argument("-f", "--makeFlatTuple", type=int, dest="makeFlatTuple", help="Make True to make vertex ana flat tuple", metavar="makeFlatTuple", default=0)
+
 options = base.parser.parse_args()
 
 
@@ -16,6 +18,9 @@ print('Output file: %s' % outfile)
 p = HpstrConf.Process()
 
 p.run_mode = 1
+p.skip_events = options.skip_events
+p.max_events = options.nevents
+
 #p.max_events = 1000
 
 # Library containing processors
@@ -42,6 +47,8 @@ vtxana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/sele
 vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
 vtxana.parameters["beamE"] = base.beamE[str(options.year)]
 vtxana.parameters["isData"] = options.isData
+vtxana.parameters["makeFlatTuple"] = options.makeFlatTuple
+
 CalTimeOffset=-999
 
 if (options.isData==1):

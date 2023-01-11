@@ -1,0 +1,22 @@
+{
+    "getN_et"  : {
+        "cut"  : 2.0,
+        "id"   : 0,
+        "info" : "Require 2 Pulses"
+    },
+    "doing_ct" : {
+        "cut"  : 0.0,
+        "id"   : 1,
+        "info" : "Do We Fit Close Time"
+    },
+    "time_lt" : {
+        "cut"  : 30.0,
+        "id"   : 2,
+        "info" : "UpperBound of Cut Region"
+    },
+     "time_gt" : {
+        "cut"  : 26.0,
+        "id"   : 3,
+        "info" : "LowerBound of Cut Region"
+    }
+}

@@ -2,9 +2,11 @@
  * @file EventFile.cxx
  * @brief Class for managing IO files.
  * @author Omar Moreno, SLAC National Accelerator Laboratory
+ * @author Cameron Bravo, SLAC National Accelerator Laboratory
  */
 
 #include "EventFile.h"
+#include "TProcessID.h"
 
 EventFile::EventFile(const std::string ifilename, const std::string& ofilename) { 
 
@@ -23,6 +25,7 @@ void EventFile::FillEvent() {
     if (entry_ > 0) {
         event_->getTree()->Fill();
     }
+    TProcessID::SetObjectCount(objNumRoot_);
 }
 
 bool EventFile::nextEvent() { 
@@ -33,6 +36,9 @@ bool EventFile::nextEvent() {
     event_->setLCEvent(lc_event_); 
     event_->setEntry(entry_); 
     ++entry_; 
+
+     objNumRoot_ = TProcessID::GetObjectCount();
+
     return true; 
 }
 

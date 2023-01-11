@@ -1,0 +1,23 @@
+{
+    "getN_et"  : {
+        "cut"  : 2.0,
+        "id"   : 0,
+        "info" : "Require 2 Pulses"
+    },
+    "getId_gt" : {
+        "cut"  : 1.0,
+        "id"   : 1,
+        "info" : "Only Second Pulse"
+    },
+     "amp2_lt" : {
+        "cut"  : 900,
+        "id"   : 2,
+        "info" : "UpperBound of Cut Region"
+    },
+
+    "doing_time" : {
+        "cut"  : 0.0,
+        "id"   : 4,
+        "info" : "We Don't Fit Time"
+    }
+}

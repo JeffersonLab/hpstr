@@ -3,6 +3,8 @@ import sys
 import os
 import baseConfig as base
 
+base.parser.add_argument("-f", "--makeFlatTuple", type=int, dest="makeFlatTuple", help="Make True to make vertex ana flat tuple", metavar="makeFlatTuple", default=0)
+
 options = base.parser.parse_args()
 
 
@@ -16,6 +18,9 @@ print('Output file: %s' % outfile)
 p = HpstrConf.Process()
 
 p.run_mode = 1
+p.skip_events = options.skip_events
+p.max_events = options.nevents
+
 #p.max_events = 1000
 
 # Library containing processors
@@ -48,6 +53,8 @@ vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/
 vtxana.parameters["beamE"] = base.beamE[str(options.year)]
 vtxana.parameters["isData"] = options.isData
 vtxana.parameters["isRadPDG"] = 622
+vtxana.parameters["makeFlatTuple"] = options.makeFlatTuple
+
 CalTimeOffset=-999
 
 if (options.isData==1):
@@ -66,7 +73,8 @@ vtxana.parameters["CalTimeOffset"]=CalTimeOffset
 #Region definitions
 
 RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/"
-vtxana.parameters["regionDefinitions"] = [RegionPath+'Tight_2019.json', RegionPath+'Tight_pTop_2019.json', RegionPath+'Tight_pBot_2019.json']
+if (options.year == 2019): vtxana.parameters["regionDefinitions"] = [RegionPath+'Tight_2019.json', RegionPath+'Tight_pTop_2019.json', RegionPath+'Tight_pBot_2019.json']
+if (options.year == 2021): vtxana.parameters["regionDefinitions"] = [RegionPath+'Tight_2021.json', RegionPath+'Tight_pTop_2021.json', RegionPath+'Tight_pBot_2021.json']
 
 # Sequence which the processors will run.
 p.sequence = [vtxana]
