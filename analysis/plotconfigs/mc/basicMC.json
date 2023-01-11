@@ -47,9 +47,9 @@
         "ytitle" : "Events"
     },
     "mc622Mass_h" : {
-        "bins" : 450,
+        "bins" : 200,
         "minX" : 0,
-        "maxX" : 450.0,
+        "maxX" : 200.0,
         "xtitle" : "Mass of PDGID=622 Particle [MeV]",
         "ytitle" : "Sim Particles / 1 MeV"
     },

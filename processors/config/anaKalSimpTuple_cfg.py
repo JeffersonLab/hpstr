@@ -10,7 +10,7 @@ base.parser.add_argument("-V", "--splitVolume", type=int, dest="splitVolume",
 base.parser.add_argument("-R", "--region", type=str, dest="region",
                   help="Signal Region (SR) or Control Region (CR)", metavar="region", default="CR")
 base.parser.add_argument("-f", "--makeFlatTuple", type=int, dest="makeFlatTuple",
-                  help="Make True to make vertex ana flat tuple", metavar="makeFlatTuple", default=0)
+                  help="Make True to make vertex ana flat tuple", metavar="makeFlatTuple", default=1)
 base.parser.add_argument("-r", "--isRadPDG", type=int, dest="isRadPDG",
                   help="Set radiative trident PDG ID", metavar="isRadPDG", default=622)
 
@@ -77,12 +77,15 @@ recoana_kf.parameters["CalTimeOffset"]=CalTimeOffset
 #Region definitions
 RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/simps/"
 
-if options.region == "CR":
-    recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_CR.json',
-                                                  RegionPath+'radMatchTight_2016_simp_reach_CR.json']
-elif options.region == "SR":
-    recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_SR.json',
-                                                  RegionPath+'radMatchTight_2016_simp_reach_SR.json']
+recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_dev.json',
+                                              RegionPath+'radMatchTight_2016_simp_reach_dev.json']
+
+#if options.region == "CR":
+#    recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_CR.json',
+#                                                  RegionPath+'radMatchTight_2016_simp_reach_CR.json']
+#elif options.region == "SR":
+#    recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_SR.json',
+#                                                  RegionPath+'radMatchTight_2016_simp_reach_SR.json']
 
 #RecoHitAna
 recoana_gbl.parameters = recoana_kf.parameters.copy()

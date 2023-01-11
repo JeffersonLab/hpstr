@@ -365,6 +365,7 @@ best_cut = None
 #for var,cut in iter_cut_map.items():
 #    zbi = 
 
+print(iter_cut_map)
 
 outfile = r.TFile("testout.root","RECREATE")
 outfile.cd()
