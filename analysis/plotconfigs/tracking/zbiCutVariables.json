@@ -1,0 +1,58 @@
+{
+    "unc_vtx_mass_h" : {
+        "bins" : 200,
+        "minX" : 0.0,
+        "maxX" : 0.2,
+        "xtitle" : "unc vtx mass [GeV]",
+        "ytitle" : "Events"
+    },
+    "true_vtx_mass_h" : {
+        "bins" : 200,
+        "minX" : 0.0,
+        "maxX" : 0.2,
+        "xtitle" : "true vtx mass [GeV]",
+        "ytitle" : "Events"
+    },
+    "unc_vtx_z_h" : {
+        "bins" : 150,
+        "minX" : -50.0,
+        "maxX" : 100.0,
+        "xtitle" : "unc vtx z [mm]",
+        "ytitle" : "Events"
+    },
+    "true_vtx_z_h" : {
+        "bins" : 150,
+        "minX" : -50.0,
+        "maxX" : 100.0,
+        "xtitle" : "true vtx z [mm]",
+        "ytitle" : "Events"
+    },
+    "unc_vtx_chi2_h" : {
+        "bins" : 400,
+        "minX" : 0.0,
+        "maxX" : 200.0,
+        "xtitle" : "unc vtx chi2",
+        "ytitle" : "Events"
+    },
+    "unc_vtx_psum_h" : {
+        "bins" : 500,
+        "minX" : 0.0,
+        "maxX" : 5.0,
+        "xtitle" : "unc vtx psum [GeV]",
+        "ytitle" : "Events"
+    },
+    "unc_vtx_ele_track_p_h" : {
+        "bins" : 500,
+        "minX" : 0.0,
+        "maxX" : 5.0,
+        "xtitle" : "unc vtx ele track p [GeV]",
+        "ytitle" : "Events"
+    },
+    "unc_vtx_pos_track_p_h" : {
+        "bins" : 500,
+        "minX" : 0.0,
+        "maxX" : 5.0,
+        "xtitle" : "unc vtx pos track p [GeV]",
+        "ytitle" : "Events"
+    }
+}
