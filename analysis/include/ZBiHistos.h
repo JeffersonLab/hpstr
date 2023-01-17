@@ -67,6 +67,10 @@ class ZBiHistos : public HistoManager{
          * @param value 
          */
         void setDebug(bool value){debug_ = value;};
+
+        //void iterativeSignalCuts(ZBiHistos *zbiHistos, IterativeCutSelector *cutSelector);
+        double cutFractionOfIntegral(std::string histoname, bool isCutGreaterThan, double cutFraction, double initialIntegral);
+        double getIntegral(std::string histoname);
 };
 
 #endif

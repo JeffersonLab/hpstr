@@ -1,0 +1,57 @@
+{
+    "eleTrkTime_lt" : {
+        "cut" : 10,
+        "id" : 1,
+        "info" : "e^{-} trkTime<10ns"
+    },
+    "posTrkTime_lt" : {
+        "cut" : 10,
+        "id" : 2,
+        "info" : "e^{+} trkTime<10ns"
+    },
+    "eleposCluTimeDiff_lt" : {
+        "cut"  : 1.45,
+        "id"   : 3,
+        "info" : "#Delta_{t}(clu_{e^{-}},clu_{e^{+}})<1.45ns"
+    },
+    "eleTrkCluTimeDiff_lt" : {
+        "cut"   : 10,
+        "id"    : 4,
+        "info"  : "e^{-} #Delta_{t}(trk,clu)<10ns"
+    },
+    "posTrkCluTimeDiff_lt" : {
+        "cut"   : 10,
+        "id"    : 5,
+        "info"  : "e^{+} #Delta_{t}(trk,clu)<10ns"
+    },
+    "eleTrkChi2Ndf_lt" : {
+        "cut"  : 15,
+        "id"   : 6,
+        "info" : "e^{-} Track #chi^{2}/Ndf<15"
+    },
+    "posTrkChi2Ndf_lt" : {
+        "cut"  : 15,
+        "id"   : 7,
+        "info" : "e^{+} Track #chi^{2}/Ndf<15"
+    },
+    "eleMom_lt" : {
+        "cut" : 1.75,
+        "id"  : 8,
+        "info" : "p e^{-}<1.75GeV"
+    },
+    "eleMom_gt" : {
+        "cut" : 0.4,
+        "id"  : 9,
+        "info" : "p_e^{-}>0.4 [GeV]"
+    },
+    "posMom_gt" : {
+        "cut" : 0.4,
+        "id"  : 10,
+        "info" : "p_e^{+}>0.4 [GeV]"
+    },
+    "psum_gt" : {
+        "cut" : 0.4,
+        "id"  : 10,
+        "info" : "p_e^{+}>0.4 [GeV]"
+    },
+}

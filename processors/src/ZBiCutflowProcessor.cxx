@@ -75,9 +75,9 @@ void ZBiCutflowProcessor::readFlatTuple(TTree* tree, std::map<std::string, doubl
 
 void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFilename){
     std::cout << "INITIALIZE" << std::endl;
-
     outFile_ = new TFile(outFileName_.c_str(),"RECREATE");
 
+    //signal 
     signalHistos_ = new ZBiHistos("signal");
     std::cout << "loading signal histo config" << std::endl;
     signalHistos_->loadHistoConfig(signalHistCfgFilename_);
@@ -85,17 +85,22 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     signalHistos_->DefineHistos();
     signalHistos_->printHistos1d();
 
-    
-    //init list of cuts with strings (will be configured later)
-    cutlist_strings_ = {"unc_vtx_psum_gt", "unc_vtx_ele_track_p_gt", "unc_vtx_pos_track_p_gt", "unc_vtx_psum_lt", "unc_vtx_ele_track_p_lt", "unc_vtx_pos_track_p_lt", "unc_vtx_chi2_lt"};
-    //Convert list of cut strings to map that holds cut values
-    for(std::vector<std::string>::iterator it=cutlist_strings_.begin(); it != cutlist_strings_.end(); ++it){
-        cuts_[*it] = -999.9;
-    }
 
     //init list of variables to use
     cut_vars_ = {"unc_vtx_psum", "unc_vtx_ele_track_p", "unc_vtx_chi2"};
 
+    //init cut selector
+    //cutSelector_ = new IterativeCutSelector("iterativeCuts",cutSelectionCfg_);
+    cutSelector_ = new IterativeCutSelector("iterativeCuts","/sdf/group/hps/users/alspellm/src/test/hpstr/analysis/selections/simps/iterativeCuts.json");
+    cutSelector_->LoadSelection();
+    
+    //init list of cuts with strings (will be configured later)
+    cutlist_strings_ = {"unc_vtx_psum_gt", "unc_vtx_ele_track_p_gt", "unc_vtx_pos_track_p_gt", "unc_vtx_psum_lt", "unc_vtx_ele_track_p_lt", "unc_vtx_pos_track_p_lt", "unc_vtx_chi2_lt"};
+    /*
+    //Convert list of cut strings to map that holds cut values
+    for(std::vector<std::string>::iterator it=cutlist_strings_.begin(); it != cutlist_strings_.end(); ++it){
+        cuts_[*it] = -999.9;
+    }*/
 
     //Read signal tuple
     TFile* signalFile = new TFile(signalFilename_.c_str(),"READ");
@@ -103,12 +108,7 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     readFlatTuple(signalTree_, signal_tuple_);
     std::cout << "POST READ MAP SIZE: " << signal_tuple_.size() << std::endl;
 
-}
-
-bool ZBiCutflowProcessor::process(){
-    std::cout << "PROCESS" << std::endl;
-
-    //Fill signal variable histograms
+    //Fill signal variable histograms with initial values
     for(int e=0; e < 500; e++){
         signalTree_->GetEntry(e);
         for(std::vector<std::string>::iterator it=cut_vars_.begin(); it !=cut_vars_.end(); it++){
@@ -121,16 +121,43 @@ bool ZBiCutflowProcessor::process(){
                 abort();
             }
         }
-
-        /*
-        for(std::map<std::string, double*>::iterator it=signal_tuple_.begin(); it != signal_tuple_.end(); it++){
-            std::string varname = (std::string)it->first;
-            std::cout << "varname: " << varname << " " << *it->second << std::endl;
-        }
-        */
-        
     }
 
+    //Get intial integral values for each signal cut variable histogram
+    for(std::vector<std::string>::iterator it=cut_vars_.begin(); it !=cut_vars_.end(); it++){
+        std::string cutvar = (std::string)*it;
+        initialIntegrals_[cutvar] = signalHistos_->getIntegral("signal_"+cutvar+"_h");
+    }
+
+}
+
+//bool hasCut(const std::string& cutname){
+//    if (cuts.find(cutname) != cuts.end()
+//}
+//Make my own BaseSelector class...
+
+bool ZBiCutflowProcessor::process(){
+    std::cout << "PROCESS" << std::endl;
+
+    //Get the map of loaded cuts
+    cuts_ = cutSelector_->getCuts();
+    //Loop over all cuts, find cutvar value that cuts specified fraction of signal 
+    //from initial signal histograms 
+    double cutFraction = 0.01;
+    for(cut_iter_ it=cuts_.begin(); it!=cuts_.end(); it++){
+        std::string cutname = it->first;
+        std::string cutvar = cutSelector_->getCutVar(cutname);
+        
+        //only bother with cuts that correspond to the cut variables specified
+        if(std::find(cut_vars_.begin(), cut_vars_.end(), cutvar) == cut_vars_.end())
+            continue;
+        //if (cut_vars_.find(cutvar) == cut_vars_.end())
+        //    continue;
+
+        bool isCutGT = cutSelector_->isCutGreaterThan(cutname);
+        double cutvalue = signalHistos_->cutFractionOfIntegral("signal_"+cutvar+"_h", isCutGT, cutFraction, initialIntegrals_[cutvar]);
+
+    }
 }
 
 void ZBiCutflowProcessor::finalize() {
