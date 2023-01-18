@@ -50,6 +50,8 @@ class ZBiCutflowProcessor : public Processor {
         double vdMassMeV_;
         double ApMassMeV_;
 
+        std::map<std::string,double> mcScale_;
+
         std::vector<std::string> cutlist_strings_{};
         std::vector<std::string> cut_vars_{};
 
@@ -62,6 +64,7 @@ class ZBiCutflowProcessor : public Processor {
 
         //cut selector
         IterativeCutSelector *cutSelector_{nullptr};
+        ZBiHistos* cutHistos_{nullptr};
 
         //signal
         std::string signalHistCfgFilename_{""};

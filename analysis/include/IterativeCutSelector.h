@@ -26,6 +26,7 @@ class IterativeCutSelector : public BaseSelector {
         virtual ~IterativeCutSelector();
         std::string getCutVar(std::string cutname);
         bool isCutGreaterThan(std::string cutname);
+        void setCutValue(std::string cutname, double value);
 
     private:
 };

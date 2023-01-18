@@ -146,6 +146,7 @@ class BaseSelector {
     protected:
         typedef std::map<std::string, std::pair<double, int>>::iterator cut_it; //!< description
         std::map<std::string,std::pair<double, int>> cuts; //!< description
+        bool debug_{false}; //!< description
 
     private:
         json _h_selections; //!< description
@@ -155,7 +156,6 @@ class BaseSelector {
         std::map<std::string,std::string> labels; //!< description
         std::string m_name{""}; //!< description
         std::string m_cfgFile{""}; //!< description
-        bool debug_{false}; //!< description
         bool passSelection{false}; //!< description
 
         int ncuts_{0}; //!< description

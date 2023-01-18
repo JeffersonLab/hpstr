@@ -14,6 +14,7 @@
 #include "TCanvas.h"
 #include <vector>
 #include "TFitResult.h"
+#include "TFitResultPtr.h"
 #include "TF1.h"
 #include <fstream>
 
@@ -61,6 +62,7 @@ class ZBiHistos : public HistoManager{
                 std::cout << "1d Histo initialized: " << it->first << std::endl;
 
         }
+
         /**
          * @brief Set debug
          * 
@@ -71,6 +73,8 @@ class ZBiHistos : public HistoManager{
         //void iterativeSignalCuts(ZBiHistos *zbiHistos, IterativeCutSelector *cutSelector);
         double cutFractionOfIntegral(std::string histoname, bool isCutGreaterThan, double cutFraction, double initialIntegral);
         double getIntegral(std::string histoname);
+
+        double fitZTail(std::string zVtxHistoname, double max_tail_events);
 };
 
 #endif

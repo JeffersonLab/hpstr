@@ -38,12 +38,16 @@ std::string IterativeCutSelector::getCutVar(std::string cutname){
         std::cout<<"Substring does not exist in the string\n";
     }
 
-    /*
-    if(isCutGT){
-        cutvar = cutname.erase(std::remove(cutname.begin(), cutname.end(), "_gt"), cutname.end()); 
-    }
-    else
-        cutvar = cutname.erase(std::remove(cutname.begin(), cutname.end(), "_lt"), cutname.end()); 
-        */
     return cutvar;
+}
+
+void IterativeCutSelector::setCutValue(std::string cutname, double value){
+    std::pair<double,int> pair = cuts[cutname];
+    double ogval = pair.first;
+    int id = pair.second;
+    pair.first = value;
+    pair.second = id;
+    cuts[cutname] = pair;
+    if(debug_)
+        std::cout << "[IterativeCutSelector] Updating cut " << cutname << " value from " << ogval << " to: " << cuts[cutname].first << std::endl; 
 }

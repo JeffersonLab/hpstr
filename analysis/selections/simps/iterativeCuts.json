@@ -1,57 +1,67 @@
 {
-    "eleTrkTime_lt" : {
+    "unc_vtx_ele_track_t" : {
         "cut" : 10,
         "id" : 1,
-        "info" : "e^{-} trkTime<10ns"
+        "info" : "e^{-} trkTime"
     },
-    "posTrkTime_lt" : {
+    "unc_vtx_ele_track_t" : {
         "cut" : 10,
         "id" : 2,
-        "info" : "e^{+} trkTime<10ns"
+        "info" : "e^{+} trkTime"
     },
-    "eleposCluTimeDiff_lt" : {
+    "unc_vtx_ele_pos_clus_dt_lt" : {
         "cut"  : 1.45,
         "id"   : 3,
-        "info" : "#Delta_{t}(clu_{e^{-}},clu_{e^{+}})<1.45ns"
+        "info" : "#Delta_{t}(clu_{e^{-}},clu_{e^{+}})"
     },
-    "eleTrkCluTimeDiff_lt" : {
+    "unc_vtx_ele_track_clust_dt_lt" : {
         "cut"   : 10,
         "id"    : 4,
         "info"  : "e^{-} #Delta_{t}(trk,clu)<10ns"
     },
-    "posTrkCluTimeDiff_lt" : {
+    "unc_vtx_pos_track_clust_dt_lt" : {
         "cut"   : 10,
         "id"    : 5,
         "info"  : "e^{+} #Delta_{t}(trk,clu)<10ns"
     },
-    "eleTrkChi2Ndf_lt" : {
+    "unc_vtx_ele_track_chi2ndf_lt" : {
         "cut"  : 15,
         "id"   : 6,
         "info" : "e^{-} Track #chi^{2}/Ndf<15"
     },
-    "posTrkChi2Ndf_lt" : {
+    "unc_vtx_pos_track_chi2ndf_lt" : {
         "cut"  : 15,
         "id"   : 7,
         "info" : "e^{+} Track #chi^{2}/Ndf<15"
     },
-    "eleMom_lt" : {
+    "unc_vtx_ele_track_p_lt" : {
         "cut" : 1.75,
         "id"  : 8,
         "info" : "p e^{-}<1.75GeV"
     },
-    "eleMom_gt" : {
+    "unc_vtx_ele_track_p_gt" : {
+        "cut" : 1.75,
+        "id"  : 8,
+        "info" : "p e^{-}<1.75GeV"
+    },
+    "unc_vtx_pos_track_p_lt" : {
         "cut" : 0.4,
         "id"  : 9,
         "info" : "p_e^{-}>0.4 [GeV]"
     },
-    "posMom_gt" : {
+    "unc_vtx_pos_track_p_gt" : {
+        "cut" : 0.4,
+        "id"  : 9,
+        "info" : "p_e^{-}>0.4 [GeV]"
+    },
+    "unc_vtx_psum_gt" : {
         "cut" : 0.4,
         "id"  : 10,
         "info" : "p_e^{+}>0.4 [GeV]"
     },
-    "psum_gt" : {
+    "unc_vtx_psum_lt" : {
         "cut" : 0.4,
         "id"  : 10,
         "info" : "p_e^{+}>0.4 [GeV]"
-    },
+    }
 }
