@@ -37,8 +37,8 @@ def br_Vpi(m_Ap,m_pi,m_V,alpha_D,f_pi,rho,phi):
 #Branching ratio for A' -> 2 Dark Vectors 
 def br_2V(m_Ap,m_pi,m_V,alpha_D,f_pi,rho,phi):
     if(2*m_V >= m_Ap): return 0.
-    rate = rate_Vpi(m_Ap,m_pi,m_V1,alpha_D,f_pi,rho,phi) + rate_2pi(m_Ap,m_pi,m_V1,alpha_D) + rate_2V(m_Ap,m_V1,alpha_D)
-    return rate_2V(m_Ap,m_V1,alpha_D)/rate
+    rate = rate_Vpi(m_Ap,m_pi,m_V,alpha_D,f_pi,rho,phi) + rate_2pi(m_Ap,m_pi,m_V,alpha_D) + rate_2V(m_Ap,m_V,alpha_D)
+    return rate_2V(m_Ap,m_V,alpha_D)/rate
 
 # There are 3 categories of Dark Vectors, 2 being Neutral Vectors Rho and Phi, the 3rd category comprised of "charged" Vectors
 # HPS is only sensitive to the decay of the 2 Neutral Vectors Rho and Phi to SM particles.

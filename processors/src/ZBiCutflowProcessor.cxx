@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include "TEfficiency.h"
 
 ZBiCutflowProcessor::ZBiCutflowProcessor(const std::string& name, Process& process) : Processor(name,process) {
     std::cout << "CONSTRUCTOR" << std::endl;
@@ -86,6 +87,8 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     mcScale_["rad"] = 66.36e6*Lumi/(10000*9959);
     mcScale_["rad_slic"] = 66.36e6*Lumi/(10000*9959);
 
+
+
     outFile_ = new TFile(outFileName_.c_str(),"RECREATE");
 
     //init cut selector
@@ -103,6 +106,14 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     signalHistos_->DefineHistos();
     if(debug_)
         signalHistos_->printHistos1d();
+
+    //Get the pretrigger vtx distribution ONLY NEED TO DO THIS ONCE!
+    TFile* vdSimFile = new TFile(vdSimFilename_.c_str(), "READ");
+    signalHistos_->GetHistosFromFile(vdSimFile,"mcAna_mc625Z_h","mcAna");
+    delete vdSimFile;
+    signalHistos_->get1dHistos()["signal_vdSimZ_h"] = signalHistos_->plot1D("signal_vdSimZ_h","true z_{vtx} [mm]", 200, -50.3, 149.7);
+    for(int i=0; i < 201; i++)
+        signalHistos_->get1dHisto("signal_vdSimZ_h")->SetBinContent(i,signalHistos_->get1dHisto("mcAna_mc625Z_h")->GetBinContent(i));
 
     //cut_histos
     cutHistos_ = new ZBiHistos("");
@@ -240,7 +251,8 @@ bool ZBiCutflowProcessor::process(){
     std::map<std::string, double> zcuts;
     for(cut_iter_ it=cuts_.begin(); it!=cuts_.end(); it++){
         std::string cutname = it->first;
-        double zcut = cutHistos_->fitZTail("tritrig_zVtx_"+cutname+"_h",100.0); 
+        double zcut = cutHistos_->fitZTail("tritrig_zVtx_"+cutname+"_h",100.0); //<- TO DO: make
+        //100.0 configurable
         zcuts[cutname] = zcut;
     }
     
@@ -276,6 +288,49 @@ bool ZBiCutflowProcessor::process(){
     }
 
     //Make vdZ Selection for each cut...these selections are used to calculated NSig for each cut
+    for(int e=0; e < 500; e++){
+        signalTree_->GetEntry(e);
+        for(cut_iter_ it=cuts_.begin(); it!=cuts_.end(); it++){
+            std::string cutname = it->first;
+            std::string cutvar = cutSelector_->getCutVar(cutname);
+            bool isCutGT = cutSelector_->isCutGreaterThan(cutname);
+            if(isCutGT){
+                if(!cutSelector_->passCutGt(cutname,*signal_tuple_[cutvar],1.0))
+                    continue;
+            }
+            else{
+                if(!cutSelector_->passCutLt(cutname,*signal_tuple_[cutvar],1.0))
+                    continue;
+            }
+            if(*signal_tuple_["unc_vtx_z"] < zcuts[cutname]) continue;
+            cutHistos_->get1dHisto("signal_vdSelZ_"+cutname)->Fill(*signal_tuple_["true_vtx_z"]);
+        }
+    }
+
+    //Cacluate the expected signal for each cut using the vdSelZ histograms
+    for(cut_iter_ it=cuts_.begin(); it!=cuts_.end(); it++){
+        std::string cutname = it->first;
+        TH1F* vdSelZ_h = cutHistos_->get1dHisto("signal_vdSelZ"+cutname);
+        TH1F* vdSimZ_h = signalHistos_->get1dHisto("signal_vdSimZ_h");
+
+        //make efficiencies to get F(z)
+        TEfficiency* effCalc_h = new TEfficiency(*vdSelZ_h, *vdSimZ_h);
+        //TEfficiency* effCalc_h = new TEfficiency(vdSelZ_h&,signalHistos_->get1dHisto("signal_vdSimZ_h")&);
+        double logEps2 = -7.5;
+        double eps2 = std::pow(10, logEps2);
+        double eps = std::sqrt(eps2);
+
+        std::string mesons[2] = {"rho","phi"};
+        for(int i =0; i < sizeof(mesons); i++){
+            bool rho = false;
+            bool phi = false;
+            if(mesons[i] == "rho") rho = true;
+            else phi = true;
+        }
+
+
+    }
+    
 }
 
 void ZBiCutflowProcessor::finalize() {

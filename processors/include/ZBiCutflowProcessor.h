@@ -5,6 +5,7 @@
 #include "Processor.h"
 #include "ZBiHistos.h"
 #include "IterativeCutSelector.h"
+#include "SimpEquations.h"
 
 // ROOT 
 #include "TFile.h"
@@ -78,6 +79,9 @@ class ZBiCutflowProcessor : public Processor {
         ZBiHistos* tritrigHistos_{nullptr};
         std::map<std::string,double*> tritrig_tuple_;
         TTree* tritrigTree_{nullptr};
+
+        //simp equations
+        SimpEquations* simpEqs_{nullptr};
         
         
 
