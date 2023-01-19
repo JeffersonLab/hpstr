@@ -319,16 +319,41 @@ bool ZBiCutflowProcessor::process(){
         double logEps2 = -7.5;
         double eps2 = std::pow(10, logEps2);
         double eps = std::sqrt(eps2);
+        double Nsig = 0.0;
 
+        //perform NSig calculation for each of the two possible mesons and combine rates
         std::string mesons[2] = {"rho","phi"};
         for(int i =0; i < sizeof(mesons); i++){
             bool rho = false;
             bool phi = false;
             if(mesons[i] == "rho") rho = true;
             else phi = true;
+            
+            double ctau = simpEqs_->getCtau(mAp_MeV,m_pi,mV_MeV,eps,alpha_D,f_pi,m_l,rho);
+            double E_V = 1.35; //GeV
+            double gcTau = ctau * simpEqs_->gamma(mV_MeV/1000.0,E_V);
+
+            double effVtx = 0.0;
+            for(int zbin =0; zbin < 201; zbin++){
+                double zz = vdSelZ_h->GetBinLowEdge(zbin);
+                if(zz < -4.3) continue;
+                effVtx += (TMath::Exp((-4.3-zz)/gcTau)/gcTau)*(effCalc_h->GetEfficiency(zbin) - effCalc_h->GetEfficiencyErrorLow(zbin))*vdSelZ_h->GetBinWidth(zbin);
+            }
+            double tot_apProd = (3.*137/2.)*3.14159*(mAp_MeV*eps2*radFrac*dNdm)/radAcc;
+            double br_Vpi_val = simpEqs_->br_Vpi(mAp_MeV,m_pi,mV_MeV,alpha_D,f_pi,rho,phi);
+            double br_V_to_ee = 1.0;
+
+            Nsig = Nsig + tot_apProd*effVtx*br_V_to_ee*br_Vpi_val;
+
         }
+       //CLEAR POINTERS
+       double n_on = Nsig + scaled_backgrounds[cutname];
+       double tau = 1./mcScale_["tritrig"];
+       double n_off = n_offs[cutname];
 
-
+       //calculate ZBi value
+       double ZBi = calculateZBi(n_on, n_off, tau);
+       ZBi_matrix_[cutname].push_back(cutSelector_->getCut(cutname),ZBi);
     }
     
 }
@@ -342,6 +367,12 @@ void ZBiCutflowProcessor::finalize() {
     //outFile_->cd();
     //signalHistos_->saveHistos(outFile_);
 
+}
+
+double ZBiCutflowProcessor::calculateZBi(double n_on, double n_off, double tau){
+    double P_Bi = TMath::BetaIncomplete(1./(1.+tau),n_on,n_off+1);
+    double Z_Bi = std::pow(2,0.5)*TMath::ErfInverse(1-2*P_Bi);
+    return Z_Bi;
 }
 
 DECLARE_PROCESSOR(ZBiCutflowProcessor);

@@ -40,6 +40,8 @@ class ZBiCutflowProcessor : public Processor {
 
         void readFlatTuple(TTree* tree, std::map<std::string, double*> &tuple_map);
 
+        double calculateZBi(double n_on, double n_off, double tau);
+
 
     private:
 
@@ -62,6 +64,7 @@ class ZBiCutflowProcessor : public Processor {
         typedef std::map<std::string, std::pair<double,int>>::iterator cut_iter_;
         std::map<std::string, std::pair<double,int>> cuts_;
         std::map<std::string,double> initialIntegrals_;
+        std::map<std::string,std::vector<std::pair<double,double>>> ZBi_matrix_;
 
         //cut selector
         IterativeCutSelector *cutSelector_{nullptr};
@@ -82,9 +85,6 @@ class ZBiCutflowProcessor : public Processor {
 
         //simp equations
         SimpEquations* simpEqs_{nullptr};
-        
-        
-
 };
 
 
