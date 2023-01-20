@@ -21,12 +21,22 @@ using json = nlohmann::json;
 class IterativeCutSelector : public BaseSelector { 
     public: 
         IterativeCutSelector();
+        
         IterativeCutSelector(const std::string& inputName);
+        
         IterativeCutSelector(const std::string& inputName, const std::string& cfgFile);
+        
         virtual ~IterativeCutSelector();
+
         std::string getCutVar(std::string cutname);
+        
         bool isCutGreaterThan(std::string cutname);
+        
         void setCutValue(std::string cutname, double value);
+
+        void eraseCut(std::string cutname){cuts.erase(cutname);}
+
+        bool passCutGTorLT(std::string cutname, double val);
 
     private:
 };

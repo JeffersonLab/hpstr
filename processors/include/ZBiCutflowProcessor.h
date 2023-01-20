@@ -14,6 +14,7 @@
 #include "TBranch.h"
 #include "TVector3.h"
 #include "TLorentzVector.h"
+#include "TH1F.h"
 
 // C++ 
 #include <memory>
@@ -42,6 +43,8 @@ class ZBiCutflowProcessor : public Processor {
 
         double calculateZBi(double n_on, double n_off, double tau);
 
+        bool doesCutVariableExist(std::string cutvariable);
+
 
     private:
 
@@ -63,6 +66,7 @@ class ZBiCutflowProcessor : public Processor {
         //cuts
         typedef std::map<std::string, std::pair<double,int>>::iterator cut_iter_;
         std::map<std::string, std::pair<double,int>> cuts_;
+        std::vector<std::string> cutVariables_;
         std::map<std::string,double> initialIntegrals_;
         std::map<std::string,std::vector<std::pair<double,double>>> ZBi_matrix_;
 
@@ -76,6 +80,8 @@ class ZBiCutflowProcessor : public Processor {
         ZBiHistos* signalHistos_{nullptr};
         std::map<std::string,double*> signal_tuple_;
         TTree* signalTree_{nullptr};
+        //signal pretrigger vtx distribution
+        TH1F* vdSimZ_h_{nullptr};
 
         //background
         std::string tritrigFilename_{""};

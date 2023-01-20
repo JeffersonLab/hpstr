@@ -51,3 +51,24 @@ void IterativeCutSelector::setCutValue(std::string cutname, double value){
     if(debug_)
         std::cout << "[IterativeCutSelector] Updating cut " << cutname << " value from " << ogval << " to: " << cuts[cutname].first << std::endl; 
 }
+
+bool IterativeCutSelector::passCutGTorLT(std::string cutname, double val){
+
+    if(isCutGreaterThan(cutname)){
+        if (hasCut(cutname)) {
+            if (val < cuts[cutname].first) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    else{
+        if (hasCut(cutname)) {
+            if (val > cuts[cutname].first) {
+                return false;
+            }
+        }
+        return true; 
+    }
+}
