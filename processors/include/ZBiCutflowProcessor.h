@@ -15,6 +15,7 @@
 #include "TVector3.h"
 #include "TLorentzVector.h"
 #include "TH1F.h"
+#include "TEfficiency.h"
 
 // C++ 
 #include <memory>
@@ -39,7 +40,7 @@ class ZBiCutflowProcessor : public Processor {
 
         virtual void initialize(std::string inFilename, std::string outFilename);
 
-        void readFlatTuple(TTree* tree, std::map<std::string, double*> &tuple_map);
+        void initializeFlatTuple(TTree* tree, std::map<std::string, double*> &tuple_map);
 
         double calculateZBi(double n_on, double n_off, double tau);
 
@@ -65,7 +66,7 @@ class ZBiCutflowProcessor : public Processor {
 
         //cuts
         typedef std::map<std::string, std::pair<double,int>>::iterator cut_iter_;
-        std::map<std::string, std::pair<double,int>> cuts_;
+        std::map<std::string, std::pair<double,int>>* cuts_;
         std::vector<std::string> cutVariables_;
         std::map<std::string,double> initialIntegrals_;
         std::map<std::string,std::vector<std::pair<double,double>>> ZBi_matrix_;

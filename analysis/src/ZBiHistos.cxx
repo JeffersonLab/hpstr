@@ -11,6 +11,16 @@ ZBiHistos::ZBiHistos(const std::string& inputName){
     m_name = inputName;
 }
 
+void ZBiHistos::addHistoClone1d(TH1F* parentHisto, std::string clone_histoname){
+    std::string histoname = m_name + clone_histoname;
+    TH1F* clone = (TH1F*)parentHisto->Clone(histoname.c_str());    
+    histos1d[histoname] = clone;
+}
+
+void ZBiHistos::addHisto1d(std::string histoname, std::string xtitle, int nbinsX, float xmin, float xmax){
+    histos1d[m_name+"_"+histoname] = plot1D(m_name+"_"+histoname, xtitle, nbinsX, xmin, xmax);
+}
+
 double ZBiHistos::getIntegral(std::string histoname){
     int xmax; 
     int xmin;
@@ -58,11 +68,13 @@ double ZBiHistos::cutFractionOfIntegral(std::string histoname, bool isCutGreater
 double ZBiHistos::fitZTail(std::string zVtxHistoname, double max_tail_events){
     TF1* fitFunc = new TF1("fitfunc","[0]*exp( (((x-[1])/[2])<[3])*(-0.5*(x-[1])^2/[2]^2) + (((x-[1])/[2])>=[3])*(0.5*[3]^2-[3]*(x-[1])/[2]))", -100.0, 100.0);
     
-    TFitResultPtr gausResult = (TFitResultPtr)histos1d[zVtxHistoname]->Fit("gaus","QS"); 
-    //gausParams = gausResult->GetParams();
+    std::string histoname = m_name+"_"+zVtxHistoname;
+    if(histos1d[histoname]->GetEntries() < 1)
+        return -4.3;
+    TFitResultPtr gausResult = (TFitResultPtr)histos1d[histoname]->Fit("gaus","QS"); 
     double gaus1 = gausResult->GetParams()[1];
     double gaus2 = gausResult->GetParams()[2];
-    gausResult = histos1d[zVtxHistoname]->Fit("gaus","QS","",gaus1-3.0*gaus2, gaus1+10.0*gaus2);
+    gausResult = histos1d[histoname]->Fit("gaus","QS","",gaus1-3.0*gaus2, gaus1+10.0*gaus2);
     gaus1 = gausResult->GetParams()[1];
     gaus2 = gausResult->GetParams()[2];
     double tailZ = gaus1 + 3.0*gaus2;
@@ -71,7 +83,7 @@ double ZBiHistos::fitZTail(std::string zVtxHistoname, double max_tail_events){
     double bestFitInit[4] = {999.9,999.9,999.9,999.9};
 
     fitFunc->SetParameters(gausResult->GetParams()[0], gaus1, gaus2, 3.0);
-    TFitResultPtr fitResult = (TFitResultPtr)histos1d[zVtxHistoname]->Fit(fitFunc, "LSIM", "", gaus1-2.0*gaus2, gaus1+10.0*gaus2);
+    TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "LSIM", "", gaus1-2.0*gaus2, gaus1+10.0*gaus2);
     
     double zcut = -6.0;
     double testIntegral = fitFunc->Integral(zcut, 90.0);

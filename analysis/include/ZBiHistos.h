@@ -56,10 +56,14 @@ class ZBiHistos : public HistoManager{
             return histos1d;
         }
 
+        void addHistoClone1d(TH1F* parentHisto, std::string clone_histoname);
+
+        void addHisto1d(std::string histoname, std::string xtitle, int nbinsX, float xmin, float xmax);
+
         void printHistos1d(){
             std::cout << "Printing 1d histos" << std::endl;
             for(it1d it = histos1d.begin(); it != histos1d.end(); it++)
-                std::cout << "1d Histo initialized: " << it->first << std::endl;
+                std::cout << it->first << std::endl;
 
         }
 

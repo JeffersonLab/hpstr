@@ -7,7 +7,7 @@ SimpEquations::SimpEquations(){
 
 double SimpEquations::rate_2pi(double m_Ap, double m_pi, double m_V, double alpha_D){
     double coeff = (2.0*alpha_D/3.0) * m_Ap;
-    double pow1 = std::pow((1.0-std::pow(4.0*(m_pi),2)/std::pow(m_Ap,2)),3./2.);
+    double pow1 = std::pow((1-(4*m_pi*m_pi/(m_Ap*m_Ap))),3/2.);
     double pow2 = std::pow(((m_V*m_V)/((m_Ap*m_Ap)-(m_V*m_V))),2);
     return coeff*pow1*pow2;
 }
@@ -15,7 +15,7 @@ double SimpEquations::rate_2pi(double m_Ap, double m_pi, double m_V, double alph
 double SimpEquations::rate_Vpi(double m_Ap, double m_pi, double m_V, double alpha_D, double f_pi, bool rho, bool phi){
     double x = m_pi/m_Ap;
     double y = m_V/m_Ap;
-    double coeff = alpha_D*Tv(rho, phi)/(192.*std::pow(pi,4));
+    double coeff = alpha_D*Tv(rho, phi)/(192.*std::pow(M_PI,4));
     return coeff * std::pow((m_Ap/m_pi),2) * std::pow(m_V/m_pi,2) * std::pow((m_pi/f_pi),4) * m_Ap*std::pow(Beta(x,y),3./2.);
 }
 
@@ -53,8 +53,8 @@ double SimpEquations::f(double r){
 }
 
 double SimpEquations::rate_2l(double m_Ap,double m_pi,double m_V,double eps,double alpha_D,double f_pi,double m_l,bool rho){
-    double alpha = 1/137.0;
-    double coeff = 16*pi*alpha_D*alpha*std::pow(eps,2)*std::pow(f_pi,2)/(3*std::pow(m_V,2));
+    double alpha = 1./137.0;
+    double coeff = 16*M_PI*alpha_D*alpha*std::pow(eps,2)*std::pow(f_pi,2)/(3*std::pow(m_V,2));
     double term1 = std::pow((std::pow(m_V,2)/(std::pow(m_Ap,2) - std::pow(m_V,2))),2);
     double term2 = std::pow((1-(4*std::pow(m_l,2)/std::pow(m_V,2))),0.5);
     double term3 = 1+(2*std::pow(m_l,2)/std::pow(m_V,2));

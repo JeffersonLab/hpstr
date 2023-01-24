@@ -34,9 +34,12 @@ class IterativeCutSelector : public BaseSelector {
         
         void setCutValue(std::string cutname, double value);
 
-        void eraseCut(std::string cutname){cuts.erase(cutname);}
+        void eraseCut(std::string cutname);
 
         bool passCutGTorLT(std::string cutname, double val);
+
+        std::map<std::string, std::pair<double,int>>* getPointerToCuts(){ return &cuts; }
+
 
     private:
 };

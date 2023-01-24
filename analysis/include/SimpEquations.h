@@ -4,7 +4,6 @@ class SimpEquations {
 
     public:
             
-        double pi = 3.14159;
 
         SimpEquations();
 
