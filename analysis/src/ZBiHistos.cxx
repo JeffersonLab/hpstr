@@ -114,7 +114,6 @@ void ZBiHistos::writeHistos1d(TFile* outF, std::string folder) {
             std::cout<<it->first<<" Null ptr in saving.."<<std::endl;
             continue;
         }
-        std::cout << "Writing histogram" << std::endl;
         it->second->Write();
     }
 }

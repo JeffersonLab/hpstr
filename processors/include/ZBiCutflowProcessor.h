@@ -46,6 +46,8 @@ class ZBiCutflowProcessor : public Processor {
 
         bool doesCutVariableExist(std::string cutvariable);
 
+        void printZBiMatrix();
+
 
     private:
 
@@ -69,7 +71,7 @@ class ZBiCutflowProcessor : public Processor {
         std::map<std::string, std::pair<double,int>>* cuts_;
         std::vector<std::string> cutVariables_;
         std::map<std::string,double> initialIntegrals_;
-        std::map<std::string,std::vector<std::pair<double,double>>> ZBi_matrix_;
+        std::map<std::string,std::vector<std::pair<double,double>>> global_ZBi_map_;
 
         //cut selector
         IterativeCutSelector *cutSelector_{nullptr};
