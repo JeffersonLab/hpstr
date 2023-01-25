@@ -21,6 +21,12 @@ void ZBiHistos::addHisto1d(std::string histoname, std::string xtitle, int nbinsX
     histos1d[m_name+"_"+histoname] = plot1D(m_name+"_"+histoname, xtitle, nbinsX, xmin, xmax);
 }
 
+void ZBiHistos::resetHistograms1d(){
+    for(it1d it=histos1d.begin(); it != histos1d.end(); it ++){
+        it->second->Reset();
+    }
+}
+
 double ZBiHistos::getIntegral(std::string histoname){
     int xmax; 
     int xmin;
@@ -43,6 +49,8 @@ double ZBiHistos::cutFractionOfIntegral(std::string histoname, bool isCutGreater
     TH1F* histo = histos1d[histoname];
     int xmax = histo->FindLastBinAbove(0.0);
     int xmin = histo->FindFirstBinAbove(0.0);
+    //std::cout << "xmax: " << xmax << std::endl;
+    //std::cout << "xmin: " 
     
     double cutvalue;
     if(isCutGreaterThan){
@@ -93,3 +101,21 @@ double ZBiHistos::fitZTail(std::string zVtxHistoname, double max_tail_events){
     }
     return zcut;
 }
+void ZBiHistos::writeHistos1d(TFile* outF, std::string folder) {
+    if (outF) outF->cd();
+    TDirectory* dir{nullptr};
+    std::cout<<folder.c_str()<<std::endl;
+    if (!folder.empty()) {
+        dir = outF->mkdir(folder.c_str());
+        dir->cd();
+    }
+    for (it1d it = histos1d.begin(); it!=histos1d.end(); ++it) {
+        if (!it->second){
+            std::cout<<it->first<<" Null ptr in saving.."<<std::endl;
+            continue;
+        }
+        std::cout << "Writing histogram" << std::endl;
+        it->second->Write();
+    }
+}
+

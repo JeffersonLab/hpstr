@@ -60,31 +60,39 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     
     //Only allow cut variable to persist if it exists in the data
     std::cout << "Checking that all cut variables exist in the input data" << std::endl;
-    for(std::vector<std::string>::iterator it=cutVariables_.begin(); it !=cutVariables_.end(); it++){
-        std::string cutvar = (std::string)*it;
-        doesCutVariableExist(cutvar);
-    }
+    //for(std::vector<std::string>::iterator it=cutVariables_.begin(); it !=cutVariables_.end(); it++){
+    //    std::string cutvar = (std::string)*it;
+    //    doesCutVariableExist(cutvar);
+    //}
 
     //Only allow cut to persist if the variable it cuts on is in the list of cutvariables
     std::cout << "Only use cuts that correspond to the configured list of variables to cut on" << std::endl;
-    for(cut_iter_ it=cuts_->begin(); it!=cuts_->end(); it++){
+    std::cout << "!!!!!!!!!!!!!!!!!!!!!! INITIAL CUTS: " << std::endl;
+    cutSelector_->printCuts();
+    for(cut_iter_ it=cuts_->begin(); it!=cuts_->end();){
         std::string cutname = it->first;
         std::string cutvariable = cutSelector_->getCutVar(cutname);
-        std::cout << "Checking that variable exists for cut variable " << cutvariable << std::endl;
+        std::cout << "Checking that variable " << cutvariable << " exists for cut " << cutname << std::endl;
         bool found = false;
         //if(cutVariables_.find(cutvariable) != cutVariables_.end()) found = true;
         for(std::vector<std::string>::iterator iit=cutVariables_.begin(); iit !=cutVariables_.end(); iit++){
             if((std::string)*iit == cutvariable){
                 std::cout << "Found " << *iit << " in list of cut variables" << std::endl;
                 found = true;
+                break;
             }
         }
         if(!found){
             std::cout << "[ZBiCutflowProcessor] WARNING::Cut variable corresponding to " << cutname << " does not exist!" << std::endl;
             std::cout << "Removing " << cutname << " from list of cuts." << std::endl;
-            cutSelector_->eraseCut(cutname);
+            //cutSelector_->eraseCut(cutname);
+            it = cuts_->erase(it);
         }
+        else
+            ++it;
     }
+    std::cout << "$$$$$$$$$$$$$$$$$$$$$$ INITIAL CUTS: " << std::endl;
+    cutSelector_->printCuts();
 
     //mc scaling... TODO: make configurable 
     double Lumi =10.7; //pb-1
@@ -144,6 +152,7 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
 
     //Fill signal variable histograms with initial values for each variable
     std::cout << "Filling initial signal histograms for each variable corresponding to cut selection" << std::endl;
+    
     for(int e=0;  e < signalTree_->GetEntries(); e++){
         signalTree_->GetEntry(e);
         //Loop over each signal variable, if cut exists for variable, fill histogram for that variable
@@ -158,7 +167,6 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
             }
         }
     }
-    signalHistos_->printHistos1d();
 
     //Get intial integral values for each signal cut variable histogram
     std::cout << "Getting intial signal histogram integrals to be used as reference for signal cutting" << std::endl;
@@ -189,182 +197,236 @@ bool ZBiCutflowProcessor::process(){
 
     //Loop over all cuts, find cutvar value that cuts specified fraction of signal 
     //from initial signal histograms 
+    //std::pair<std::string,double> iter_cut = NULL; 
+    std::string iter_cut;
+    std::string iter_cut_variable;
     double cutFraction = 0.01;
-    for(cut_iter_ it=cuts_->begin(); it!=cuts_->end(); it++){
-        std::string cutname = it->first;
-        std::string cutvar = cutSelector_->getCutVar(cutname);
-        if(debug_){
-            std::cout << "Cutname: " << cutname << " | Cutvar: " << cutvar << std::endl;
-        }
+    for(int iteration = 1; iteration < 4; iteration ++){
+        std::cout << "############### ITERATION " << iteration << " #####################" << std::endl;
 
-        if(debug_)
-            std::cout << "Determining variable value that cuts signal by specified fraction of initial" << std::endl;
-        bool isCutGT = cutSelector_->isCutGreaterThan(cutname);
-        double cutvalue = signalHistos_->cutFractionOfIntegral("signal_"+cutvar+"_h", isCutGT, cutFraction, initialIntegrals_[cutvar]);
-        cutSelector_->setCutValue(cutname, cutvalue);
-        if(debug_) std::cout << "Cut " << cutname << " updated to value " << cutSelector_->getCut(cutname) << std::endl;
-    }
+        //Reset histograms
+        signalHistos_->resetHistograms1d();
+        cutHistos_->resetHistograms1d();
 
-    //Loop over each cut indpendently, build background zvtx disribution. Fit zvtx with Gaus+Tail to determine zcut
-    //read tritrig events. For each defined cut, check if event passes. If pass, fill z vtx distribution
-    for(int e=0;  e < tritrigTree_->GetEntries(); e++){
-        tritrigTree_->GetEntry(e);
-        for(cut_iter_ it=cuts_->begin(); it!=cuts_->end(); it++){
-            //Only consider vertices within defined mass window centered on Vd mass
-            if(*tritrig_tuple_["unc_vtx_mass"]*1000.0 > highMass) continue;
-            if(*tritrig_tuple_["unc_vtx_mass"]*1000.0 < lowMass) continue;
-            std::string cutname = it->first;
-            std::string cutvar = cutSelector_->getCutVar(cutname);
-            if(!cutSelector_->passCutGTorLT(cutname, *tritrig_tuple_[cutvar]))
-                continue;
-            cutHistos_->Fill1DHisto("tritrig_zVtx_"+cutname+"_h",*tritrig_tuple_["unc_vtx_z"],1.0);
-        }
-    }
-    
-    //For each tritrig cut zvtx distribution, fit ZTail to determine zcut value
-    if(debug_) std::cout << "Making tritrig zvtx distributions for each cut" << std::endl;
-    std::map<std::string, double> zcuts;
-    for(cut_iter_ it=cuts_->begin(); it!=cuts_->end(); it++){
-        std::string cutname = it->first;
-        std::cout << cutname << std::endl;
-        double zcut = cutHistos_->fitZTail("tritrig_zVtx_"+cutname+"_h",100.0); //<- TO DO: make
-        //100.0 configurable
-        zcuts[cutname] = zcut;
-        if(debug_) std::cout << "Zcut for cut " << cutname << ": " << zcut << "[mm]" << std::endl;
-    }
-    
-    //Count background rate for each cut after applying the corresponding zcut
-    std::map<std::string,double> scaled_backgrounds;
-    std::map<std::string,double> n_offs;
-    for(cut_iter_ it=cuts_->begin(); it!=cuts_->end(); it++){
-        std::string cutname = it->first;
-        scaled_backgrounds[cutname] = 0.0;
-        n_offs[cutname] = 0.0;
-    }
-    for(int e=0;  e < tritrigTree_->GetEntries(); e++){
-        tritrigTree_->GetEntry(e);
-        for(cut_iter_ it=cuts_->begin(); it!=cuts_->end(); it++){
-            //Only consider vertices within defined mass window centered on Vd mass
-            if(*tritrig_tuple_["unc_vtx_mass"]*1000.0 > highMass) continue;
-            if(*tritrig_tuple_["unc_vtx_mass"]*1000.0 < lowMass) continue;
-            std::string cutname = it->first;
-            std::string cutvar = cutSelector_->getCutVar(cutname);
-            if(!cutSelector_->passCutGTorLT(cutname, *tritrig_tuple_[cutvar]))
-                continue;
-            if(*tritrig_tuple_["unc_vtx_z"] < zcuts[cutname]) continue;
-            scaled_backgrounds[cutname] += mcScale_["tritrig"];
-            n_offs[cutname] += 1.0;
-        }
-    }
-
-    //Make signal selected vtxZ distribution for each cut...these selections are used to calculated NSig for each cut
-    for(int e=0;  e < signalTree_->GetEntries(); e++){
-        signalTree_->GetEntry(e);
-        for(cut_iter_ it=cuts_->begin(); it!=cuts_->end(); it++){
-            std::string cutname = it->first;
-            std::string cutvar = cutSelector_->getCutVar(cutname);
-            if(!cutSelector_->passCutGTorLT(cutname, *signal_tuple_[cutvar]))
-                continue;
-            if(*signal_tuple_["unc_vtx_z"] < zcuts[cutname]) continue;
-            cutHistos_->Fill1DHisto("signal_vdSelZ_"+cutname+"_h",*signal_tuple_["true_vtx_z"],1.0);
-        }
-    }
-
-    std::cout << "Calculating the expected signal, and therefore ZBi, for each cut" << std::endl;
-    for(cut_iter_ it=cuts_->begin(); it!=cuts_->end(); it++){
-        std::string cutname = it->first;
-        if(debug_) std::cout << "Calculating Nsig for cut " << cutname << std::endl;
-        //Get the selected vd vtxz distribution
-        //In order to make TEfficiency with vdSimZ_h and vdSelZ_h, vdSelZ_h must be cloned from vdSimZ_h
-        TH1F* vdSelZ_h = (TH1F*)cutHistos_->get1dHisto("cutHistos_signal_vdSelZ_"+cutname+"_h");
-        TH1F* vdSelZ_h_clone = (TH1F*)vdSimZ_h_->Clone(("clone_cutHistos_signal_vdSelZ_"+cutname+"_h").c_str());
-        for(int i=0; i<201; i++){
-            vdSelZ_h_clone->SetBinContent(i,vdSelZ_h->GetBinContent(i));
-        }
-        //make efficiencies to get F(z)
-        TEfficiency* effCalc_h = new TEfficiency(*vdSelZ_h_clone, *vdSimZ_h_);
-
-        //perform NSig calculation for each of the two possible mesons and combine rates
-        double logEps2 = -7.5;
-        double eps2 = std::pow(10, logEps2);
-        double eps = std::sqrt(eps2);
-        double Nsig = 0.0;
-        std::string mesons[2] = {"rho","phi"};
-        for(int i =0; i < 2; i++){
-            bool rho = false;
-            bool phi = false;
-            if(mesons[i] == "rho") rho = true;
-            else phi = true;
-            
-            double ctau = simpEqs_->getCtau(mAp_MeV,m_pi,mV_MeV,eps,alpha_D,f_pi,m_l,rho);
-            double E_V = 1.35; //GeV
-            double gcTau = ctau * simpEqs_->gamma(mV_MeV/1000.0,E_V);
-
-            double effVtx = 0.0;
-            for(int zbin =0; zbin < 201; zbin++){
-                double zz = vdSelZ_h_clone->GetBinLowEdge(zbin);
-                if(zz < -4.3) continue;
-                effVtx += (TMath::Exp((-4.3-zz)/gcTau)/gcTau)*(effCalc_h->GetEfficiency(zbin) - effCalc_h->GetEfficiencyErrorLow(zbin))*vdSelZ_h_clone->GetBinWidth(zbin);
+        //Fill signal variable histograms with initial values for each variable
+        std::cout << "Filling initial signal histograms for each variable corresponding to cut selection" << std::endl;
+        
+        for(int e=0;  e < signalTree_->GetEntries(); e++){
+            signalTree_->GetEntry(e);
+            //If event fails best cut from previous iteration, skip event
+            if(iteration > 1){
+                if(!cutSelector_->passCutGTorLT(iter_cut, *signal_tuple_[iter_cut_variable]))
+                    continue;
             }
 
-            double tot_apProd = (3.*137/2.)*3.14159*(mAp_MeV*eps2*radFrac*dNdm)/radAcc;
-            double br_Vpi_val = simpEqs_->br_Vpi(mAp_MeV,m_pi,mV_MeV,alpha_D,f_pi,rho,phi);
-            double br_V_to_ee = 1.0;
-
-            Nsig = Nsig + tot_apProd*effVtx*br_V_to_ee*br_Vpi_val;
+            //Loop over each signal variable, if cut exists for variable, fill histogram for that variable
+            for(std::vector<std::string>::iterator it=cutVariables_.begin(); it !=cutVariables_.end(); it++){
+                std::string cutvar = (std::string)*it;
+                if(signalHistos_->get1dHistos().count("signal_"+cutvar+"_h")){
+                    signalHistos_->Fill1DHisto(cutvar+"_h",*signal_tuple_[cutvar]);
+                }
+                else{
+                    std::cout << "No Histogram named " << cutvar+"_h" << " exists for variable " << cutvar << std::endl; 
+                    abort();
+                }
+            }
         }
 
-       double n_on = Nsig + scaled_backgrounds[cutname];
-       double tau = 1./mcScale_["tritrig"];
-       double n_off = n_offs[cutname];
+        for(cut_iter_ it=cuts_->begin(); it!=cuts_->end(); it++){
+            std::string cutname = it->first;
+            std::string cutvar = cutSelector_->getCutVar(cutname);
+            if(debug_){
+                std::cout << "Cutname: " << cutname << " | Cutvar: " << cutvar << std::endl;
+            }
 
-       //calculate ZBi value
-       double ZBi = calculateZBi(n_on, n_off, tau);
-       if(debug_){
-           std::cout << "Values for cut " << cutname << std::endl;
-           std::cout << "Nsig: " << Nsig << std::endl;
-           std::cout << "Scaled tritrig: " << scaled_backgrounds[cutname];
-           std::cout << "n_on: " << n_on << std::endl;
-           std::cout << "n_off: " << n_off << std::endl;
-           std::cout << "tau: " << tau << std::endl;
-           std::cout << "ZBi: " << ZBi << std::endl;
-       }
-       std::pair<double, double> value_pair;
-       value_pair.first = (double)cutSelector_->getCut(cutname);
-       value_pair.second = ZBi;
-       ZBi_matrix_[cutname].push_back(value_pair);
-       //ZBi_matrix_[cutname].push_back(((double)cutSelector_->getCut(cutname),ZBi));
-
-       //CLEAR POINTERS
-       delete effCalc_h;
-    }
-
-    //Find the cut that results in the largest ZBi value
-    double best_ZBi = -9999.9;
-    std::string best_cutname;
-    double best_cutvalue;
-    for(std::map<std::string,std::vector<std::pair<double, double>>>::iterator it=ZBi_matrix_.begin(); it != ZBi_matrix_.end(); it++){
-        std::string cutname = it->first; 
-        double cutvalue = it->second.at(0).first;
-        double zbi = it->second.at(0).second;
-        if(zbi > best_ZBi){
-            best_ZBi = zbi;
-            best_cutname = cutname;
-            best_cutvalue = cutvalue;
+            if(debug_)
+                std::cout << "Determining variable value that cuts signal by specified fraction of initial" << std::endl;
+            bool isCutGT = cutSelector_->isCutGreaterThan(cutname);
+            double cutvalue = signalHistos_->cutFractionOfIntegral("signal_"+cutvar+"_h", isCutGT, iteration*cutFraction, initialIntegrals_[cutvar]);
+            cutSelector_->setCutValue(cutname, cutvalue);
+            if(debug_) std::cout << "Cut " << cutname << " updated to value " << cutSelector_->getCut(cutname) << std::endl;
         }
+
+        //Loop over each cut indpendently, build background zvtx disribution. Fit zvtx with Gaus+Tail to determine zcut
+        //read tritrig events. For each defined cut, check if event passes. If pass, fill z vtx distribution
+        for(int e=0;  e < tritrigTree_->GetEntries(); e++){
+            tritrigTree_->GetEntry(e);
+            if(*tritrig_tuple_["unc_vtx_mass"]*1000.0 > highMass) continue;
+            if(*tritrig_tuple_["unc_vtx_mass"]*1000.0 < lowMass) continue;
+            //Apply iterative cut
+            if(iteration > 1){
+                if(!cutSelector_->passCutGTorLT(iter_cut, *tritrig_tuple_[iter_cut_variable]))
+                    continue;
+            }
+
+            for(cut_iter_ it=cuts_->begin(); it!=cuts_->end(); it++){
+                //Only consider vertices within defined mass window centered on Vd mass
+                if(*tritrig_tuple_["unc_vtx_mass"]*1000.0 > highMass) continue;
+                if(*tritrig_tuple_["unc_vtx_mass"]*1000.0 < lowMass) continue;
+                std::string cutname = it->first;
+                std::string cutvar = cutSelector_->getCutVar(cutname);
+                if(!cutSelector_->passCutGTorLT(cutname, *tritrig_tuple_[cutvar]))
+                    continue;
+                cutHistos_->Fill1DHisto("tritrig_zVtx_"+cutname+"_h",*tritrig_tuple_["unc_vtx_z"],1.0);
+            }
+        }
+        
+        //For each tritrig cut zvtx distribution, fit ZTail to determine zcut value
+        if(debug_) std::cout << "Making tritrig zvtx distributions for each cut" << std::endl;
+        std::map<std::string, double> zcuts;
+        for(cut_iter_ it=cuts_->begin(); it!=cuts_->end(); it++){
+            std::string cutname = it->first;
+            std::cout << cutname << std::endl;
+            double zcut = cutHistos_->fitZTail("tritrig_zVtx_"+cutname+"_h",100.0); //<- TO DO: make
+            //100.0 configurable
+            zcuts[cutname] = zcut;
+            if(debug_) std::cout << "Zcut for cut " << cutname << ": " << zcut << "[mm]" << std::endl;
+        }
+        
+        //Count background rate for each cut after applying the corresponding zcut
+        std::map<std::string,double> scaled_backgrounds;
+        std::map<std::string,double> n_offs;
+        for(cut_iter_ it=cuts_->begin(); it!=cuts_->end(); it++){
+            std::string cutname = it->first;
+            scaled_backgrounds[cutname] = 0.0;
+            n_offs[cutname] = 0.0;
+        }
+        for(int e=0;  e < tritrigTree_->GetEntries(); e++){
+            tritrigTree_->GetEntry(e);
+            if(*tritrig_tuple_["unc_vtx_mass"]*1000.0 > highMass) continue;
+            if(*tritrig_tuple_["unc_vtx_mass"]*1000.0 < lowMass) continue;
+            //Apply iterative cut
+            if(iteration > 1){
+                if(!cutSelector_->passCutGTorLT(iter_cut, *tritrig_tuple_[iter_cut_variable]))
+                    continue;
+            }
+
+            for(cut_iter_ it=cuts_->begin(); it!=cuts_->end(); it++){
+                //Only consider vertices within defined mass window centered on Vd mass
+                std::string cutname = it->first;
+                std::string cutvar = cutSelector_->getCutVar(cutname);
+                if(!cutSelector_->passCutGTorLT(cutname, *tritrig_tuple_[cutvar]))
+                    continue;
+                if(*tritrig_tuple_["unc_vtx_z"] < zcuts[cutname]) continue;
+                scaled_backgrounds[cutname] += mcScale_["tritrig"];
+                n_offs[cutname] += 1.0;
+            }
+        }
+
+        //Make signal selected vtxZ distribution for each cut...these selections are used to calculated NSig for each cut
+        for(int e=0;  e < signalTree_->GetEntries(); e++){
+            signalTree_->GetEntry(e);
+            //Apply iterative cut
+            if(iteration > 1){
+                if(!cutSelector_->passCutGTorLT(iter_cut, *signal_tuple_[iter_cut_variable]))
+                    continue;
+            }
+            for(cut_iter_ it=cuts_->begin(); it!=cuts_->end(); it++){
+                std::string cutname = it->first;
+                std::string cutvar = cutSelector_->getCutVar(cutname);
+                if(!cutSelector_->passCutGTorLT(cutname, *signal_tuple_[cutvar]))
+                    continue;
+                if(*signal_tuple_["unc_vtx_z"] < zcuts[cutname]) continue;
+                cutHistos_->Fill1DHisto("signal_vdSelZ_"+cutname+"_h",*signal_tuple_["true_vtx_z"],1.0);
+            }
+        }
+
+        std::cout << "Calculating the expected signal, and therefore ZBi, for each cut" << std::endl;
+        for(cut_iter_ it=cuts_->begin(); it!=cuts_->end(); it++){
+            std::string cutname = it->first;
+            if(debug_) std::cout << "Calculating Nsig for cut " << cutname << std::endl;
+            //Get the selected vd vtxz distribution
+            //In order to make TEfficiency with vdSimZ_h and vdSelZ_h, vdSelZ_h must be cloned from vdSimZ_h
+            TH1F* vdSelZ_h = (TH1F*)cutHistos_->get1dHisto("cutHistos_signal_vdSelZ_"+cutname+"_h");
+            TH1F* vdSelZ_h_clone = (TH1F*)vdSimZ_h_->Clone(("clone_cutHistos_signal_vdSelZ_"+cutname+"_h").c_str());
+            for(int i=0; i<201; i++){
+                vdSelZ_h_clone->SetBinContent(i,vdSelZ_h->GetBinContent(i));
+            }
+            //make efficiencies to get F(z)
+            TEfficiency* effCalc_h = new TEfficiency(*vdSelZ_h_clone, *vdSimZ_h_);
+
+            //perform NSig calculation for each of the two possible mesons and combine rates
+            double logEps2 = -7.5;
+            double eps2 = std::pow(10, logEps2);
+            double eps = std::sqrt(eps2);
+            double Nsig = 0.0;
+            std::string mesons[2] = {"rho","phi"};
+            for(int i =0; i < 2; i++){
+                bool rho = false;
+                bool phi = false;
+                if(mesons[i] == "rho") rho = true;
+                else phi = true;
+                
+                double ctau = simpEqs_->getCtau(mAp_MeV,m_pi,mV_MeV,eps,alpha_D,f_pi,m_l,rho);
+                double E_V = 1.35; //GeV
+                double gcTau = ctau * simpEqs_->gamma(mV_MeV/1000.0,E_V);
+
+                double effVtx = 0.0;
+                for(int zbin =0; zbin < 201; zbin++){
+                    double zz = vdSelZ_h_clone->GetBinLowEdge(zbin);
+                    if(zz < -4.3) continue;
+                    effVtx += (TMath::Exp((-4.3-zz)/gcTau)/gcTau)*(effCalc_h->GetEfficiency(zbin) - effCalc_h->GetEfficiencyErrorLow(zbin))*vdSelZ_h_clone->GetBinWidth(zbin);
+                }
+
+                double tot_apProd = (3.*137/2.)*3.14159*(mAp_MeV*eps2*radFrac*dNdm)/radAcc;
+                double br_Vpi_val = simpEqs_->br_Vpi(mAp_MeV,m_pi,mV_MeV,alpha_D,f_pi,rho,phi);
+                double br_V_to_ee = 1.0;
+
+                Nsig = Nsig + tot_apProd*effVtx*br_V_to_ee*br_Vpi_val;
+            }
+
+           double n_on = Nsig + scaled_backgrounds[cutname];
+           double tau = 1./mcScale_["tritrig"];
+           double n_off = n_offs[cutname];
+
+           //calculate ZBi value
+           double ZBi = calculateZBi(n_on, n_off, tau);
+           if(debug_){
+               std::cout << "Values for cut " << cutname << std::endl;
+               std::cout << "Nsig: " << Nsig << std::endl;
+               std::cout << "Scaled tritrig: " << scaled_backgrounds[cutname];
+               std::cout << "n_on: " << n_on << std::endl;
+               std::cout << "n_off: " << n_off << std::endl;
+               std::cout << "tau: " << tau << std::endl;
+               std::cout << "ZBi: " << ZBi << std::endl;
+           }
+           std::pair<double, double> value_pair;
+           value_pair.first = (double)cutSelector_->getCut(cutname);
+           value_pair.second = ZBi;
+           ZBi_matrix_[cutname].push_back(value_pair);
+           //ZBi_matrix_[cutname].push_back(((double)cutSelector_->getCut(cutname),ZBi));
+
+           //CLEAR POINTERS
+           delete effCalc_h;
+        }
+
+        //Find the cut that results in the largest ZBi value
+        double best_ZBi = -9999.9;
+        std::string best_cutname;
+        double best_cutvalue;
+        for(std::map<std::string,std::vector<std::pair<double, double>>>::iterator it=ZBi_matrix_.begin(); it != ZBi_matrix_.end(); it++){
+            std::string cutname = it->first; 
+            double cutvalue = it->second.at(0).first;
+            double zbi = it->second.at(0).second;
+            if(zbi > best_ZBi){
+                best_ZBi = zbi;
+                best_cutname = cutname;
+                best_cutvalue = cutvalue;
+            }
+        }
+        if(debug_) std::cout << "Best cut " << best_cutname << " has value: " << best_cutvalue << " with ZBi: " << best_ZBi << std::endl;
+        iter_cut = best_cutname;
+        iter_cut_variable = cutSelector_->getCutVar(iter_cut);
+
+        signalHistos_->writeHistos1d(outFile_,"iter_"+std::to_string(iteration));
     }
-    if(debug_) std::cout << "Best cut " << best_cutname << " has value: " << best_cutvalue << " with ZBi: " << best_ZBi << std::endl;
 }
 
 void ZBiCutflowProcessor::finalize() {
     std::cout << "Finalize" << std::endl;
-    outFile_->cd();
-    signalHistos_->saveHistos(outFile_,"signal");
-    outFile_->Close();
-
     //outFile_->cd();
-    //signalHistos_->saveHistos(outFile_);
-
+    //signalHistos_->saveHistos(outFile_,"signal");
+    //outFile_->Close();
 }
 
 double ZBiCutflowProcessor::calculateZBi(double n_on, double n_off, double tau){

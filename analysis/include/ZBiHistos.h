@@ -55,6 +55,10 @@ class ZBiHistos : public HistoManager{
         std::map<std::string, TH1F*> get1dHistos() {
             return histos1d;
         }
+    
+        void writeHistos1d(TFile* outF, std::string folder);
+
+        void resetHistograms1d();
 
         void addHistoClone1d(TH1F* parentHisto, std::string clone_histoname);
 

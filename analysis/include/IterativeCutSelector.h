@@ -38,6 +38,8 @@ class IterativeCutSelector : public BaseSelector {
 
         bool passCutGTorLT(std::string cutname, double val);
 
+        void printCuts();
+
         std::map<std::string, std::pair<double,int>>* getPointerToCuts(){ return &cuts; }
 
 
