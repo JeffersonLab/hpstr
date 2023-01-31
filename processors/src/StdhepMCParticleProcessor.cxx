@@ -38,7 +38,7 @@ void StdhepMCParticleProcessor::initialize(std::string inFilename, std::string o
     std::cout << "Convert " << inFilename_ << " to ROOT " << outF_->GetName() << std::endl;
 
     //TTree to store stdhep as root
-    tree_ = new TTree("stdhep_to_root","conversion"); 
+    tree_ = new TTree("HPS_Event","conversion"); 
     tree_->Branch(mcPartCollRoot_.c_str(),&mc_particles_);
 }
 
