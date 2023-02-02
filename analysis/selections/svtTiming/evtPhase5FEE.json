@@ -1,0 +1,17 @@
+{
+    "modTime_eq" : {
+        "cut"   : 5,
+        "id"    : 0,
+        "info"  : "Phase 0"
+    },
+    "trkP_gt": {
+        "cut"   : 2.9,
+        "id"    : 1,
+        "info"  : "track P >2.9 GeV (FEE)"
+    },
+    "trkP_lt": {
+        "cut"   : 4.1,
+        "id"    : 2,
+        "info"  : "track P <4.1 GeV (FEE)"
+    }
+}

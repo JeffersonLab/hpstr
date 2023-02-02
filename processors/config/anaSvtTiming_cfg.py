@@ -1,0 +1,62 @@
+import HpstrConf
+import sys
+import os
+import baseConfig as base
+
+
+options = base.parser.parse_args()
+
+
+# Use the input file to set the output file name
+infile = options.inFilename
+outfile = options.outFilename
+
+print('Input file: %s' % infile)
+print('Output file: %s' % outfile)
+
+p = HpstrConf.Process()
+
+p.run_mode = 1
+#p.max_events = 1000
+
+# Library containing processors
+p.add_library("libprocessors")
+
+###############################
+#          Processors         #
+###############################
+
+recoana = HpstrConf.Processor('recoana', 'SvtTimingProcessor')
+
+###############################
+#   Processor Configuration   #
+###############################
+#SvtTiming
+recoana.parameters["debug"] = 0
+recoana.parameters["anaName"] = "svtHitTimingAna"
+recoana.parameters["trkColl"] = "KalmanFullTracks"
+#recoana.parameters["trkrHitColl"] = "RotatedHelicalTrackHits"
+recoana.parameters["rawHitColl"] = "SVTRawHitsOnTrack_KF"
+recoana.parameters["trkrHitColl"] = "SiClustersOnTrack"
+recoana.parameters["ecalHitColl"] = "RecoEcalHits"
+recoana.parameters["ecalClusColl"] = "RecoEcalClusters"
+recoana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/layersRecoHit.json'
+recoana.parameters["mcHistoCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
+recoana.parameters["analysis"] = options.analysis
+recoana.parameters["selectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/empty.json'
+
+RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/"
+recoana.parameters["regionDefinitions"] = [RegionPath+'evtPhase0.json',
+                                           RegionPath+'evtPhase1.json',
+                                           RegionPath+'evtPhase2.json',
+                                           RegionPath+'evtPhase3.json',
+                                           RegionPath+'evtPhase4.json',
+                                           RegionPath+'evtPhase5.json']
+
+# Sequence which the processors will run.
+p.sequence = [recoana]
+
+p.input_files = infile
+p.output_files = [outfile]
+
+p.printProcess()

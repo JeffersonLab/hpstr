@@ -1,0 +1,12 @@
+{
+    "nHits_gt" : {
+        "cut" : 9,
+        "id"  : 0,
+        "info" : "Number of hits on track > 9 "
+    },
+    "trkP_gt" : {
+        "cut" : 1.0,
+        "id"  : 1,
+        "info" : "Track Momentum >1.0 GeV "
+    }
+}

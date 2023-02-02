@@ -1,0 +1,535 @@
+{
+    "numTrkrHits_h" : {
+        "bins"   : 30,
+        "minX"   : -0.5, 
+        "maxX"   : 29.5,
+        "xtitle" : "Number of Reco Tracker Hits",
+        "ytitle" : "Events"
+    },  
+     "trkRawHit_Time_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Raw Hit On Track Time [ns]",
+        "ytitle" : "Raw Hits "
+    },   
+    "trkSiCluster_Time_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Tracker Hit On Track Time [ns]",
+        "ytitle" : "Tracker Hits "
+    },   
+    "trkSiCluster_M3L0_Minus_LX_Time_h" : {
+        "bins" : 160,
+        "minX" : -30,
+        "maxX" : 10,
+        "xtitle" : "Tracker Hit On Track Time [ns]",
+        "ytitle" : "Tracker Hits "
+    },   
+    
+    "trkSiCluster_M3L0_Versus_LX_Time_hh" : {
+        "binsX" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "binsY" : 100,
+        "minY" : -50,
+        "maxY" : 50,
+        "xtitle" : "M3L0 Track Hit Time [ns]",
+        "ytitle" : "LX Track Time [ns] "
+    },   
+
+    
+    "trkRawHit_2Fits_Time_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Raw Hit On Track Time [ns]",
+        "ytitle" : "Raw Hits "
+    },   
+    "trkSiCluster_2Fits_Time_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Tracker Hit On Track Time [ns]",
+        "ytitle" : "Tracker Hits "
+    },   
+    "trkSiCluster_M3L0_Minus_LX_2Fits_Time_h" : {
+        "bins" : 160,
+        "minX" : -30,
+        "maxX" : 10,
+        "xtitle" : "Tracker Hit On Track Time [ns]",
+        "ytitle" : "Tracker Hits "
+    },   
+    
+    "trkSiCluster_M3L0_Versus_LX_2Fits_Time_hh" : {
+        "binsX" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "binsY" : 100,
+        "minY" : -50,
+        "maxY" : 50,
+        "xtitle" : "M3L0 Track Hit Time [ns]",
+        "ytitle" : "LX Track Time [ns] "
+    },   
+
+    "trkSiCluster_M3L0_Minus_LX_Time_Versus_Chi2_hh" : {
+        "binsX" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 250,
+        "xtitle" : "M3L0 - LX Track Hit Time [ns]",
+        "ytitle" : "Track Chi2 "
+    },   
+    "electron_trkRawHit_Time_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Raw Hit On Track Time [ns]",
+        "ytitle" : "Raw Hits "
+    },   
+
+    "electron_trkSiCluster_Time_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Tracker Hit On Track Time [ns]",
+        "ytitle" : "Tracker Hits "
+    },   
+    "electron_trkSiCluster_M3L0_Minus_LX_Time_h" : {
+        "bins" : 160,
+        "minX" : -30,
+        "maxX" : 10,
+        "xtitle" : "Tracker Hit On Track Time [ns]",
+        "ytitle" : "Tracker Hits "
+    },   
+    
+    "electron_trkSiCluster_M3L0_Versus_LX_Time_hh" : {
+        "binsX" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "binsY" : 100,
+        "minY" : -50,
+        "maxY" : 50,
+        "xtitle" : "M3L0 Track Hit Time [ns]",
+        "ytitle" : "LX Track Time [ns] "
+    },   
+    "electron_trkRawHit_2Fits_Time_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Raw Hit On Track Time [ns]",
+        "ytitle" : "Raw Hits "
+    },   
+
+    "electron_trkSiCluster_2Fits_Time_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Tracker Hit On Track Time [ns]",
+        "ytitle" : "Tracker Hits "
+    },   
+    "electron_trkSiCluster_M3L0_Minus_LX_2Fits_Time_h" : {
+        "bins" : 160,
+        "minX" : -30,
+        "maxX" : 10,
+        "xtitle" : "Tracker Hit On Track Time [ns]",
+        "ytitle" : "Tracker Hits "
+    },   
+    
+    "electron_trkSiCluster_M3L0_Versus_LX_2Fits_Time_hh" : {
+        "binsX" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "binsY" : 100,
+        "minY" : -50,
+        "maxY" : 50,
+        "xtitle" : "M3L0 Track Hit Time [ns]",
+        "ytitle" : "LX Track Time [ns] "
+    },   
+
+    "electron_trkSiCluster_M3L0_Minus_LX_Time_Versus_Chi2_hh" : {
+        "binsX" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 250,
+        "xtitle" : "M3L0 - LX Track Hit Time [ns]",
+        "ytitle" : "Track Chi2 "
+    },   
+
+    "positron_trkRawHit_Time_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Raw Hit On Track Time [ns]",
+        "ytitle" : "Raw Hits "
+    },   
+
+    "positron_trkSiCluster_Time_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Tracker Hit On Track Time [ns]",
+        "ytitle" : "Tracker Hits "
+    },   
+    "positron_trkSiCluster_M3L0_Minus_LX_Time_h" : {
+        "bins" : 160,
+        "minX" : -30,
+        "maxX" : 10,
+        "xtitle" : "Tracker Hit On Track Time [ns]",
+        "ytitle" : "Tracker Hits "
+    },   
+    
+    "positron_trkSiCluster_M3L0_Versus_LX_Time_hh" : {
+        "binsX" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "binsY" : 100,
+        "minY" : -50,
+        "maxY" : 50,
+        "xtitle" : "M3L0 Track Hit Time [ns]",
+        "ytitle" : "LX Track Time [ns] "
+    },   
+    "positron_trkRawHit_2Fits_Time_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Raw Hit On Track Time [ns]",
+        "ytitle" : "Raw Hits "
+    },   
+
+    "positron_trkSiCluster_2Fits_Time_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Tracker Hit On Track Time [ns]",
+        "ytitle" : "Tracker Hits "
+    },   
+    "positron_trkSiCluster_M3L0_Minus_LX_2Fits_Time_h" : {
+        "bins" : 160,
+        "minX" : -30,
+        "maxX" : 10,
+        "xtitle" : "Tracker Hit On Track Time [ns]",
+        "ytitle" : "Tracker Hits "
+    },   
+    
+    "positron_trkSiCluster_M3L0_Versus_LX_2Fits_Time_hh" : {
+        "binsX" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "binsY" : 100,
+        "minY" : -50,
+        "maxY" : 50,
+        "xtitle" : "M3L0 Track Hit Time [ns]",
+        "ytitle" : "LX Track Time [ns] "
+    },   
+
+    "positron_trkSiCluster_M3L0_Minus_LX_Time_Versus_Chi2_hh" : {
+        "binsX" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 250,
+        "xtitle" : "M3L0 - LX Track Hit Time [ns]",
+        "ytitle" : "Track Chi2 "
+    },   
+
+    "numTracks_h" : {
+        "bins" : 10,
+        "minX" : -0.5,
+        "maxX" : 9.5,
+        "xtitle" : "Number of KF Tracks",
+        "ytitle" : "Events"
+    },
+    "trkChiSq_h" : {
+        "bins" : 100,
+        "minX" : 0.0,
+        "maxX" : 100.0,
+        "xtitle" : "Track ChiSq",
+        "ytitle" : "Tracks"
+    },
+    "trkP_h" : {
+        "bins" : 100,
+        "minX" : 0.0,
+        "maxX" : 5.0,
+        "xtitle" : "Track Momentum (GeV)",
+        "ytitle" : "Tracks"
+    },
+    
+    "trkNHits_h" : {
+        "bins" : 20,
+        "minX" : -0.5,
+        "maxX" : 19.5,
+        "xtitle" : "Number of Hits on Track",
+        "ytitle" : "Tracks"
+    },
+   
+    "trkTime_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Track Time",
+        "ytitle" : "Tracks"
+    },
+    "trkTime_Top_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Track Time",
+        "ytitle" : "Tracks"
+    },
+    "trkTime_Bot_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Track Time",
+        "ytitle" : "Tracks"
+    },
+    "electron_trkChiSq_h" : {
+        "bins" : 100,
+        "minX" : 0.0,
+        "maxX" : 100.0,
+        "xtitle" : "Track ChiSq",
+        "ytitle" : "Tracks"
+    },
+    "electron_trkP_h" : {
+        "bins" : 100,
+        "minX" : 0.0,
+        "maxX" : 5.0,
+        "xtitle" : "Track Momentum (GeV)",
+        "ytitle" : "Tracks"
+    },
+    
+    "electron_trkNHits_h" : {
+        "bins" : 20,
+        "minX" : -0.5,
+        "maxX" : 19.5,
+        "xtitle" : "Number of Hits on Track",
+        "ytitle" : "Tracks"
+    },
+   
+    "electron_trkTime_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Track Time",
+        "ytitle" : "Tracks"
+    },
+    "electron_trkTime_Bot_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Track Time",
+        "ytitle" : "Tracks"
+    },
+    "electron_trkTime_Top_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Track Time",
+        "ytitle" : "Tracks"
+    },
+    "positron_trkChiSq_h" : {
+        "bins" : 100,
+        "minX" : 0.0,
+        "maxX" : 100.0,
+        "xtitle" : "Track ChiSq",
+        "ytitle" : "Tracks"
+    },
+    "positron_trkP_h" : {
+        "bins" : 100,
+        "minX" : 0.0,
+        "maxX" : 5.0,
+        "xtitle" : "Track Momentum (GeV)",
+        "ytitle" : "Tracks"
+    },
+    
+    "positron_trkNHits_h" : {
+        "bins" : 20,
+        "minX" : -0.5,
+        "maxX" : 19.5,
+        "xtitle" : "Number of Hits on Track",
+        "ytitle" : "Tracks"
+    },
+   
+    "positron_trkTime_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Track Time",
+        "ytitle" : "Tracks"
+    },
+    "positron_trkTime_Top_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Track Time",
+        "ytitle" : "Tracks"
+    },
+   "positron_trkTime_Bot_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Track Time",
+        "ytitle" : "Tracks"
+    },
+    "CalibratedTrackTime_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Calibrated Track Time",
+        "ytitle" : "Tracks"
+    },
+    "electron_CalibratedTrackTime_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Calibrated Track Time",
+        "ytitle" : "Tracks"
+    },
+    "positron_CalibratedTrackTime_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Calibrated Track Time",
+        "ytitle" : "Tracks"
+    },
+    "CalTrackTime_Minus_M3L0_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Calibrated Track Time",
+        "ytitle" : "Tracks"
+    },
+    "electron_CalTrackTime_Minus_M3L0_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Calibrated Track Time",
+        "ytitle" : "Tracks"
+    },
+    "positron_CalTrackTime_Minus_M3L0_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Calibrated Track Time",
+        "ytitle" : "Tracks"
+    },
+    "CalibratedTrackTime_Top_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Calibrated Track Time",
+        "ytitle" : "Tracks"
+    },
+    "electron_CalibratedTrackTime_Top_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Calibrated Track Time",
+        "ytitle" : "Tracks"
+    },
+    "positron_CalibratedTrackTime_Top_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Calibrated Track Time",
+        "ytitle" : "Tracks"
+    },
+    "CalibratedTrackTime_Bot_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Calibrated Track Time",
+        "ytitle" : "Tracks"
+    },
+    "electron_CalibratedTrackTime_Bot_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Calibrated Track Time",
+        "ytitle" : "Tracks"
+    },
+    "positron_CalibratedTrackTime_Bot_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Calibrated Track Time",
+        "ytitle" : "Tracks"
+    },
+    "CalTrackTime_Minus_M3L0_Top_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Calibrated Track Time",
+        "ytitle" : "Tracks"
+    },
+    "electron_CalTrackTime_Minus_M3L0_Top_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Calibrated Track Time",
+        "ytitle" : "Tracks"
+    },
+    "positron_CalTrackTime_Minus_M3L0_Top_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Calibrated Track Time",
+        "ytitle" : "Tracks"
+    },
+    "CalTrackTime_Minus_M3L0_Bot_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Calibrated Track Time",
+        "ytitle" : "Tracks"
+    },
+    "electron_CalTrackTime_Minus_M3L0_Bot_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Calibrated Track Time",
+        "ytitle" : "Tracks"
+    },
+    "positron_CalTrackTime_Minus_M3L0_Bot_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Calibrated Track Time",
+        "ytitle" : "Tracks"
+    },
+    "numEcalHits_h" : {
+        "bins" : 20,
+        "minX" : -0.5,
+        "maxX" : 19.5,
+        "xtitle" : "Number of Reco ECal Hits",
+        "ytitle" : "Events"
+    },
+    "ecalHitEnergy_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 2000,
+        "xtitle" : "Reco Ecal Hit Energy [MeV]",
+        "ytitle" : "Ecal Hits / 10 MeV"
+    },
+    "numEcalClusters_h" : {
+        "bins" : 10,
+        "minX" : -0.5,
+        "maxX" : 9.5,
+        "xtitle" : "Number of Reco Ecal Clusters",
+        "ytitle" : "Events"
+    },
+    "ecalClusterEnergy_h" : {
+        "bins" : 150,
+        "minX" : 0,
+        "maxX" : 3000,
+        "xtitle" : "Reco Ecal Cluster Energy [MeV]",
+        "ytitle" : "Clusters / 20 MeV"
+    }
+}

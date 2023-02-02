@@ -1,0 +1,137 @@
+{
+    "numTrkrHits_h" : {
+        "bins"   : 30,
+        "minX"   : -0.5, 
+        "maxX"   : 29.5,
+        "xtitle" : "Number of Reco Tracker Hits",
+        "ytitle" : "Events"
+    },
+    "trkrHit_Edep_h" : {
+        "bins" : 150,
+        "minX" : 0,
+        "maxX" : 25,
+        "xtitle" : "Tracker Hit Energy [arb. units]",
+        "ytitle" : "Tracker Hits / 2 arb. unit"
+    },
+    "trkrHit_Time_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Tracker Hit Time [ns]",
+        "ytitle" : "Tracker Hits "
+    },   
+   "svtHit_Edep_h" : {
+        "bins" : 150,
+        "minX" : 0,
+        "maxX" : 25,
+        "xtitle" : "Tracker Hit Energy [arb. units]",
+        "ytitle" : "Tracker Hits / 2 arb. unit"
+    },     
+   "svtHit_Time_h" : {
+        "bins" : 100,
+        "minX" : -25,
+        "maxX" : 25,
+        "xtitle" : "Tracker Hit Time [ns]",
+        "ytitle" : "Tracker Hits "
+    },   
+    "trkrHit_L5AxEle_Minus_LX_TimeWide_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Tracker Hit Time [ns]",
+        "ytitle" : "Tracker Hits "
+    },   
+    "trkSiCluster_Time_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Tracker Hit On Track Time [ns]",
+        "ytitle" : "Tracker Hits "
+    },   
+    "trkSiCluster_L5AxEle_Minus_LX_Time_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Tracker Hit On Track Time [ns]",
+        "ytitle" : "Tracker Hits "
+    },   
+    
+  "trkRawHit_Time_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Raw Hit On Track Time [ns]",
+        "ytitle" : "Raw Hits "
+    },   
+    "svtHit_TimeWide_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Tracker Hit Time [ns]",
+        "ytitle" : "Tracker Hits "
+    },   
+    "numTracks_h" : {
+        "bins" : 10,
+        "minX" : -0.5,
+        "maxX" : 9.5,
+        "xtitle" : "Number of KF Tracks",
+        "ytitle" : "Events"
+    },
+    "trkChiSq_h" : {
+        "bins" : 100,
+        "minX" : 0.0,
+        "maxX" : 100.0,
+        "xtitle" : "Track ChiSq",
+        "ytitle" : "Tracks"
+    },
+    
+    "trkNHits_h" : {
+        "bins" : 20,
+        "minX" : -0.5,
+        "maxX" : 19.5,
+        "xtitle" : "Number of Hits on Track",
+        "ytitle" : "Tracks"
+    },
+    "trkChiSq_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 100,
+        "xtitle" : "Track ChiSq",
+        "ytitle" : "Tracks"
+    },
+    "trkTime_h" : {
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "Track Time",
+        "ytitle" : "Tracks"
+    },
+    "numEcalHits_h" : {
+        "bins" : 20,
+        "minX" : -0.5,
+        "maxX" : 19.5,
+        "xtitle" : "Number of Reco ECal Hits",
+        "ytitle" : "Events"
+    },
+    "ecalHitEnergy_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 2000,
+        "xtitle" : "Reco Ecal Hit Energy [MeV]",
+        "ytitle" : "Ecal Hits / 10 MeV"
+    },
+    "numEcalClusters_h" : {
+        "bins" : 10,
+        "minX" : -0.5,
+        "maxX" : 9.5,
+        "xtitle" : "Number of Reco Ecal Clusters",
+        "ytitle" : "Events"
+    },
+    "ecalClusterEnergy_h" : {
+        "bins" : 150,
+        "minX" : 0,
+        "maxX" : 3000,
+        "xtitle" : "Reco Ecal Cluster Energy [MeV]",
+        "ytitle" : "Clusters / 20 MeV"
+    }
+}
