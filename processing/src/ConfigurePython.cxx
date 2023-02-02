@@ -307,6 +307,7 @@ Process* ConfigurePython::makeProcess() {
     for (auto proc : sequence_) {
         Processor* ep = ProcessorFactory::instance().createProcessor(proc.classname_, proc.instancename_, *p);
         if (ep == 0) {
+          std::cout<<"classname = "<<proc.classname_<<";  instancename = "<< proc.instancename_<<std::endl;
             throw std::runtime_error("[ ConfigurePython ]: Unable to create instance of " + proc.instancename_); 
         }
         ep->configure(proc.params_);

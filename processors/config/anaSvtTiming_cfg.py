@@ -40,18 +40,25 @@ recoana.parameters["rawHitColl"] = "SVTRawHitsOnTrack_KF"
 recoana.parameters["trkrHitColl"] = "SiClustersOnTrack"
 recoana.parameters["ecalHitColl"] = "RecoEcalHits"
 recoana.parameters["ecalClusColl"] = "RecoEcalClusters"
-recoana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/layersRecoHit.json'
+recoana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/svtTiming.json'
 recoana.parameters["mcHistoCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
+recoana.parameters["timingCalibFile"]="/sdf/group/hps/users/mgraham/TimingCorrections/physrun2021/run14507_calib.txt"
 recoana.parameters["analysis"] = options.analysis
-recoana.parameters["selectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/empty.json'
+recoana.parameters["selectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/svttiming_10hit.json'
 
-RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/"
+RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/svtTiming/"
 recoana.parameters["regionDefinitions"] = [RegionPath+'evtPhase0.json',
                                            RegionPath+'evtPhase1.json',
                                            RegionPath+'evtPhase2.json',
                                            RegionPath+'evtPhase3.json',
                                            RegionPath+'evtPhase4.json',
                                            RegionPath+'evtPhase5.json']
+#                                           RegionPath+'evtPhase0FEE.json',
+#                                           RegionPath+'evtPhase1FEE.json',
+#                                           RegionPath+'evtPhase2FEE.json',
+#                                           RegionPath+'evtPhase3FEE.json',
+#                                           RegionPath+'evtPhase4FEE.json',
+#                                           RegionPath+'evtPhase5FEE.json']
 
 # Sequence which the processors will run.
 p.sequence = [recoana]

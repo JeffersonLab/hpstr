@@ -1,10 +1,11 @@
 /**
  * @file SvtTimingProcessor.cxx
- * @brief AnaProcessor used fill histograms to compare simulations
- * @author Cameron Bravo, SLAC National Accelerator Laboratory
+ * @brief AnaProcessor used fill histograms for SVT Timing Calibrations
+ * @author Cameron Bravo, Matt Graham, SLAC National Accelerator Laboratory
  */     
 #include "SvtTimingProcessor.h"
 #include <iostream>
+#include <fstream>
 
 //TODO CHECK THIS DESTRUCTOR
 SvtTimingProcessor::~SvtTimingProcessor(){}
@@ -14,7 +15,7 @@ SvtTimingProcessor::SvtTimingProcessor(const std::string& name, Process& process
 }
 
 void SvtTimingProcessor::configure(const ParameterSet& parameters) {
-    std::cout << "Configuring SvtTimingProcessor" << std::endl;
+  std::cout << "Configuring SvtTimingProcessor" << std::endl;
     try
     {
         debug_           = parameters.getInteger("debug");
@@ -27,6 +28,7 @@ void SvtTimingProcessor::configure(const ParameterSet& parameters) {
         histCfgFilename_ = parameters.getString("histCfg");
         selectionCfg_         = parameters.getString("selectionjson",selectionCfg_); 
         regionSelections_ = parameters.getVString("regionDefinitions",regionSelections_);
+        timingCalibFile_ = parameters.getString("timingCalibFile");
     }
     catch (std::runtime_error& error)
     {
@@ -44,7 +46,7 @@ void SvtTimingProcessor::initialize(TTree* tree) {
     if (!selectionCfg_.empty()) {
         evtSelector_ = std::make_shared<BaseSelector>(name_+"_evtSelector",selectionCfg_);
         evtSelector_->setDebug(debug_);
-        evtSelector_->LoadSelection();
+        evtSelector_->LoadSelection();        
     }
 
      for (unsigned int i_reg = 0; i_reg < regionSelections_.size(); i_reg++) {
@@ -67,26 +69,73 @@ void SvtTimingProcessor::initialize(TTree* tree) {
     tree_->SetBranchAddress("EventHeader"       , &evth_    , &bevth_    );                       
     //tree_->SetBranchAddress(ecalHitColl_.c_str()  , &ecalHits_    , &becalHits_    );
     //tree_->SetBranchAddress(ecalClusColl_.c_str() , &ecalClusters_, &becalClusters_);
+    
+    std::ifstream calibFile(timingCalibFile_);
+    std::string sensorName;
+    double calibMean;
+    if(calibFile.is_open()){
+      while(calibFile.good()){
+        calibFile>>sensorName>>calibMean;
+        std::cout<<"name = "<<sensorName<<"  time shift = "<<calibMean<<std::endl;
+        timingCalibConstants_.insert( std::pair<std::string, double>(sensorName, calibMean));
+        
+      }
 
+    } else {
+      std::cout<<"Timing Calibration File Not Found"<<std::endl;
+    }
+    
 }
 
 bool SvtTimingProcessor::process(IEvent* ievent) {
   double weight=1.0;
   float modTime=(evth_->getEventTime()%24)/4.;
+  int phase=int(modTime);
   //  std::cout<<"event phase = "<<modTime<<std::endl;
 
-  histos->FillRawHits(rawHits_);
-  histos->FillTrackerHits(trkrHits_);
-  histos->FillTracks(tracks_);
+  //  histos->FillRawHits(rawHits_);
+  //  histos->FillTrackerHits(trkrHits_);    
+  int nTracks = tracks_->size();
+  for (int i=0;i<nTracks; i++){
+     Track* trk=tracks_->at(i);
+     int nHitsOnTrack=trk->getTrackerHitCount();
+     float trkP=(float)trk->getP();
+     if(!evtSelector_->passCutGt("nHits_gt",nHitsOnTrack,weight))
+        continue;
+     if(!evtSelector_->passCutGt("trkP_gt",trkP,weight))
+        continue;
+     histos->FillHitsOnTrack(trk,&timingCalibConstants_, phase,weight);
+  }
+
 
   for (auto region : _regions ) {
-    //    std::cout<<"pass cut?  "<<_reg_phase_selectors[region]->passCutEq("modTime_eq",modTime,weight)<<std::endl;
     if (_reg_phase_selectors[region] && !_reg_phase_selectors[region]->passCutEq("modTime_eq",modTime,weight))
       continue;
-
-    _reg_phase_histos[region]->FillRawHits(rawHits_);
-    _reg_phase_histos[region]->FillTrackerHits(trkrHits_);
-    _reg_phase_histos[region]->FillTracks(tracks_);
+   
+    //    _reg_phase_histos[region]->FillRawHits(rawHits_);
+    //    _reg_phase_histos[region]->FillTrackerHits(trkrHits_);
+     
+    for (int i=0;i<nTracks; i++){
+      Track* trk=tracks_->at(i);
+      int nHitsOnTrack=trk->getTrackerHitCount();
+      float trkP=(float)trk->getP();
+      if(!evtSelector_->passCutGt("nHits_gt",nHitsOnTrack,weight))
+        continue;
+      if(!evtSelector_->passCutGt("trkP_gt",trkP,weight))
+        continue;
+      /*
+      std::cout<<"region = "<<region<<";  trkP = "<<trkP<<std::endl;
+      std::cout<<"pass cut gt?  "<<_reg_phase_selectors[region]->passCutGt("trkP_gt",trkP,weight)<<std::endl;
+      std::cout<<"pass cut lt?  "<<_reg_phase_selectors[region]->passCutLt("trkP_lt",trkP,weight)<<std::endl;
+      */
+      if (_reg_phase_selectors[region] && !_reg_phase_selectors[region]->passCutGt("trkP_gt",trkP,weight))
+        continue;
+      if (_reg_phase_selectors[region] && !_reg_phase_selectors[region]->passCutLt("trkP_lt",trkP,weight))
+        continue;
+      //std::cout<<"region = "<<region<<" Passed all cuts"<<std::endl;
+      //      _reg_phase_histos[region]->FillHitsOnTrack(trk,weight);
+      _reg_phase_histos[region]->FillHitsOnTrack(trk, &timingCalibConstants_, phase, weight);
+    }
 
   }
 
@@ -108,5 +157,4 @@ void SvtTimingProcessor::finalize() {
     }
 
 }
-
 DECLARE_PROCESSOR(SvtTimingProcessor);

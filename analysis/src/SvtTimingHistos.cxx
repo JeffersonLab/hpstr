@@ -62,7 +62,7 @@ void SvtTimingHistos::FillTrackerHits(std::vector<TrackerHit*> *trkrHits, float 
     for (int i=0; i < nHits; i++) 
     {
         TrackerHit *hit = trkrHits->at(i);
-        RawSvtHit *rhit = (RawSvtHit*)hit->getRawHits()->At(0);
+        RawSvtHit *rhit = (RawSvtHit*)hit->getRawHits().At(0);
         auto mod = std::to_string(rhit->getModule());
         auto lay = std::to_string(rhit->getLayer());
         std::string swName="ly"+lay+"_m"+mod;
@@ -82,7 +82,7 @@ void SvtTimingHistos::FillTrackerHits(std::vector<TrackerHit*> *trkrHits, float 
     for (int i=0; i < nHits; i++) 
     {      
       TrackerHit *hit = trkrHits->at(i);
-      RawSvtHit *rhit = (RawSvtHit*)hit->getRawHits()->At(0);
+      RawSvtHit *rhit = (RawSvtHit*)hit->getRawHits().At(0);
       auto mod = std::to_string(rhit->getModule());
       auto lay = std::to_string(rhit->getLayer());
       std::string sensorName= mmapper_->getStringFromSw("ly"+lay+"_m"+mod);
@@ -95,50 +95,152 @@ void SvtTimingHistos::FillTrackerHits(std::vector<TrackerHit*> *trkrHits, float 
 void SvtTimingHistos::FillTracks(std::vector<Track*> *tracks, float weight ) {
     int nTracks = tracks->size();
     Fill1DHisto("numTracks_h", (float)nTracks, weight);
-    int fitNumber=0;
-    std::string refModString="ly11_m0"; //"L5T_axial_ele"
-
+  
     for (int i=0;i<nTracks; i++){
       Track* trk=tracks->at(i);
       int nHitsOnTrack=trk->getTrackerHitCount();
+      float trkP=(float)trk->getP();    
       Fill1DHisto("trkChiSq_h",(float)trk->getChi2(),weight);
       Fill1DHisto("trkTime_h",(float)trk->getTrackTime(),weight);
+      Fill1DHisto("trkP_h",trkP,weight);
       Fill1DHisto("trkNHits_h",(float)trk->getTrackerHitCount(),weight);   
-      auto trkHits=trk->getSvtHits();
-      float refTime=-666.;
-      bool hasRefHit=false;
-      for (int i=0; i < nHitsOnTrack; i++) 
-        {
-          TrackerHit *hit =(TrackerHit*) trkHits->At(i);
-          RawSvtHit *rhit = (RawSvtHit*)hit->getRawHits()->At(0);
-          auto mod = std::to_string(rhit->getModule());
-          auto lay = std::to_string(rhit->getLayer());
-          std::string swName="ly"+lay+"_m"+mod;
-          if (swName==refModString){
-            hasRefHit=true;
-            refTime=hit->getTime();
-          }
-          
-          std::string sensorName= mmapper_->getStringFromSw("ly"+lay+"_m"+mod);
-          Fill1DHisto(sensorName+"_trkSiCluster_Time_h", hit->getTime(), weight);
-          Fill1DHisto(sensorName+"_trkRawHit_Time_h", rhit->getT0(fitNumber), weight);
-          
-        }
-      
-      // if track doesn't have a hit in reference layer, just return
-      if(!hasRefHit)
-        continue; 
-      for (int i=0; i < nHitsOnTrack; i++) 
-        {      
-          TrackerHit *hit =(TrackerHit*) trkHits->At(i);
-          RawSvtHit *rhit = (RawSvtHit*)hit->getRawHits()->At(0);
-          auto mod = std::to_string(rhit->getModule());
-          auto lay = std::to_string(rhit->getLayer());
-          std::string sensorName= mmapper_->getStringFromSw("ly"+lay+"_m"+mod);
-          //        std::cout<<sensorName<<std::endl;
-          Fill1DHisto(sensorName+"_trkSiCluster_L5AxEle_Minus_LX_Time_h", refTime-hit->getTime(), weight);
-        }      
     }
+}
+
+void SvtTimingHistos::FillHitsOnTrack(Track* trk, std::map<std::string,double> *timingCalib, int phase, float weight){
+  
+  int fitNumber=0;
+  int secondFit=1;
+  //  std::string refModStringT="ly11_m0"; //"L5T_axial_ele"
+  //  std::string refModStringB="ly11_m1"; //"L5B_stereo_ele"
+  std::string refModStringT="ly8_m0"; //"L3T_stereo"
+  std::string refModStringB="ly8_m1"; //"L3B_axial"
+
+  bool useCalibration=true; 
+  if(timingCalib->size()<1){
+    //    std::cout<<"Calibration Map is not there...no calib"<<std::endl;
+    useCalibration=false;
+  }
+  int nHitsOnTrack=trk->getTrackerHitCount();
+  int trkCh=trk->getCharge();
+  std::string chStr="electron";
+  if(trkCh>0){
+    chStr="positron";
+    //refModStringT="ly11_m2";
+    //    refModStringB="ly11_m3";
+  }
+  float trkP=(float)trk->getP();
+  float refTime=-666.;
+  bool hasRefHit=false;
+  auto trkHits=trk->getSvtHits();
+  Fill1DHisto("trkChiSq_h",(float)trk->getChi2(),weight);
+  Fill1DHisto("trkTime_h",(float)trk->getTrackTime(),weight);
+  if(trk->isTopTrack()){
+    Fill1DHisto("trkTime_Top_h",(float)trk->getTrackTime(),weight);
+  } else {
+      Fill1DHisto("trkTime_Bot_h",(float)trk->getTrackTime(),weight);
+  }
+
+  Fill1DHisto("trkP_h",trkP,weight);
+  Fill1DHisto("trkNHits_h",(float)trk->getTrackerHitCount(),weight);   
+
+  Fill1DHisto(chStr+"_trkChiSq_h",(float)trk->getChi2(),weight);
+  Fill1DHisto(chStr+"_trkTime_h",(float)trk->getTrackTime(),weight);
+  if(trk->isTopTrack()){
+    Fill1DHisto(chStr+"_trkTime_Top_h",(float)trk->getTrackTime(),weight);
+  } else {
+      Fill1DHisto(chStr+"_trkTime_Bot_h",(float)trk->getTrackTime(),weight);
+  }
+  Fill1DHisto(chStr+"_trkP_h",trkP,weight);  
+  Fill1DHisto(chStr+"_trkNHits_h",(float)trk->getTrackerHitCount(),weight);   
+  double trkTimeCorr=0; 
+  for (int i=0; i < nHitsOnTrack; i++) 
+    {
+      double calibForLayer=0.0; 
+      TrackerHit *hit =(TrackerHit*) trkHits.At(i);
+      RawSvtHit *rhit = (RawSvtHit*)hit->getRawHits().At(0);
+      auto mod = std::to_string(rhit->getModule());
+      auto lay = std::to_string(rhit->getLayer());
+      std::string swName="ly"+lay+"_m"+mod;
+      std::string sensorName= mmapper_->getStringFromSw("ly"+lay+"_m"+mod);
+      std::string phSt=std::to_string(phase);
+      std::string calibName=sensorName+"_phase"+phSt;
+      if(useCalibration){
+        calibForLayer=timingCalib->at(calibName);
+        //        std::cout<<calibName<<" constant = "<<calibForLayer<<std::endl;
+      } 
+      if (swName==refModStringT || swName==refModStringB){
+        hasRefHit=true;
+        refTime=hit->getTime();
+      }
+      
+      trkTimeCorr+=hit->getTime()+calibForLayer;
+
+      Fill1DHisto(sensorName+"_trkSiCluster_Time_h", hit->getTime()+calibForLayer, weight);
+      Fill1DHisto(sensorName+"_trkRawHit_Time_h", rhit->getT0(fitNumber)+calibForLayer, weight);     
+      Fill1DHisto(sensorName+"_"+chStr+"_trkSiCluster_Time_h", hit->getTime()+calibForLayer, weight);
+      Fill1DHisto(sensorName+"_"+chStr+"_trkRawHit_Time_h", rhit->getT0(fitNumber)+calibForLayer, weight);
+
+      if(rhit->getFitN()==2){
+	Fill1DHisto(sensorName+"_trkSiCluster_2Fits_Time_h", hit->getTime()+calibForLayer, weight);
+	Fill1DHisto(sensorName+"_trkRawHit_2Fits_Time_h", rhit->getT0(fitNumber)+calibForLayer, weight);     
+	Fill1DHisto(sensorName+"_"+chStr+"_trkSiCluster_2Fits_Time_h", hit->getTime()+calibForLayer, weight);
+	Fill1DHisto(sensorName+"_"+chStr+"_trkRawHit_2Fits_Time_h", rhit->getT0(fitNumber)+calibForLayer, weight);
+      }
+      
+    }
+  trkTimeCorr=trkTimeCorr/nHitsOnTrack;
+  Fill1DHisto("CalibratedTrackTime_h", trkTimeCorr, weight);
+  Fill1DHisto(chStr+"_CalibratedTrackTime_h", trkTimeCorr, weight);
+  if(trk->isTopTrack()){
+    Fill1DHisto("CalibratedTrackTime_Top_h", trkTimeCorr, weight);
+    Fill1DHisto(chStr+"_CalibratedTrackTime_Top_h", trkTimeCorr, weight);
+  }else {
+    Fill1DHisto("CalibratedTrackTime_Bot_h", trkTimeCorr, weight);
+    Fill1DHisto(chStr+"_CalibratedTrackTime_Bot_h", trkTimeCorr, weight);
+  }
+  // if track doesn't have a hit in reference layer, just return
+  if(!hasRefHit)
+    return; 
+  Fill1DHisto("CalTrackTime_Minus_M3L0_h", trkTimeCorr-refTime, weight);
+  Fill1DHisto(chStr+"_CalTrackTime_Minus_M3L0_h", trkTimeCorr-refTime, weight);
+
+  if(trk->isTopTrack()){
+    Fill1DHisto("CalTrackTime_Minus_M3L0_Top_h", trkTimeCorr-refTime, weight);
+    Fill1DHisto(chStr+"_CalTrackTime_Minus_M3L0_Top_h", trkTimeCorr-refTime, weight);
+  }else {
+    Fill1DHisto("CalTrackTime_Minus_M3L0_Bot_h", trkTimeCorr-refTime, weight);
+    Fill1DHisto(chStr+"_CalTrackTime_Minus_M3L0_Bot_h", trkTimeCorr-refTime, weight);
+  }
+  for (int i=0; i < nHitsOnTrack; i++) 
+    {      
+      double calibForLayer=0.0; 
+      TrackerHit *hit =(TrackerHit*) trkHits.At(i);
+      RawSvtHit *rhit = (RawSvtHit*)hit->getRawHits().At(0);
+      auto mod = std::to_string(rhit->getModule());
+      auto lay = std::to_string(rhit->getLayer());
+      std::string sensorName= mmapper_->getStringFromSw("ly"+lay+"_m"+mod);
+      std::string phSt=std::to_string(phase);
+      std::string calibName=sensorName+"_phase"+phSt;
+      if(useCalibration){
+        calibForLayer=timingCalib->at(calibName);
+        //std::cout<<calibName<<" constant = "<<calibForLayer<<std::endl;
+      } else {
+        //std::cout<<calibName<<" not found in map????"<<std::endl;
+      }
+      Fill1DHisto(sensorName+"_trkSiCluster_M3L0_Minus_LX_Time_h", refTime-hit->getTime()-calibForLayer, weight);
+      Fill2DHisto(sensorName+"_trkSiCluster_M3L0_Minus_LX_Time_Versus_Chi2_hh", refTime-hit->getTime()-calibForLayer,  (float)trk->getChi2(), weight);
+      Fill2DHisto(sensorName+"_trkSiCluster_M3L0_Versus_LX_Time_hh", refTime,hit->getTime()+calibForLayer, weight);
+      Fill1DHisto(sensorName+"_"+chStr+"_trkSiCluster_M3L0_Minus_LX_Time_h", refTime-hit->getTime()-calibForLayer, weight);
+      Fill2DHisto(sensorName+"_"+chStr+"_trkSiCluster_M3L0_Minus_LX_Time_Versus_Chi2_hh", refTime-hit->getTime()-calibForLayer,  (float)trk->getChi2(), weight);
+      Fill2DHisto(sensorName+"_"+chStr+"_trkSiCluster_M3L0_Versus_LX_Time_hh", refTime,hit->getTime()+calibForLayer, weight);
+      if(rhit->getFitN()==2){
+	Fill1DHisto(sensorName+"_trkSiCluster_M3L0_Minus_LX_2Fits_Time_h", refTime-hit->getTime()-calibForLayer, weight);
+	Fill2DHisto(sensorName+"_trkSiCluster_M3L0_Versus_LX_2Fits_Time_hh", refTime,hit->getTime()+calibForLayer, weight);
+	Fill1DHisto(sensorName+"_"+chStr+"_trkSiCluster_M3L0_Minus_LX_2Fits_Time_h", refTime-hit->getTime()-calibForLayer, weight);
+	Fill2DHisto(sensorName+"_"+chStr+"_trkSiCluster_M3L0_Versus_LX_2Fits_Time_hh", refTime,hit->getTime()+calibForLayer, weight);
+      }
+    }      
 }
 
 void SvtTimingHistos::FillEcalHits(std::vector<CalHit*> *ecalHits, float weight ) {

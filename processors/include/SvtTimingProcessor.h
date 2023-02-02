@@ -1,5 +1,5 @@
-#ifndef __SVTTIMING_ANAPROCESSOR_H__
-#define __SVTTIMING_ANAPROCESSOR_H__
+#ifndef __SVTTIMING_PROCESSOR_H__
+#define __SVTTIMING_PROCESSOR_H__
 
 //HPSTR
 #include "HpsEvent.h"
@@ -64,6 +64,7 @@ class SvtTimingProcessor : public Processor {
         std::string trkrHitColl_{"RotatedHelicalTrackHits"};
         std::string ecalHitColl_{"EcalCalHits"};
         std::string ecalClusColl_{"EcalClustersCorr"};
+        std::string timingCalibFile_{"timingCalibFile"};
         std::shared_ptr<BaseSelector> evtSelector_;
         std::string selectionCfg_;
         
@@ -73,8 +74,12 @@ class SvtTimingProcessor : public Processor {
         std::vector<std::string> _regions;
 
         typedef std::map<std::string,std::shared_ptr<SvtTimingHistos> >::iterator reg_it;
+
+        std::map<std::string,double> timingCalibConstants_;
         //Debug Level
         int debug_{0};
+
+
 
 };
 
