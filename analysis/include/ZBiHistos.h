@@ -55,6 +55,8 @@ class ZBiHistos : public HistoManager{
         std::map<std::string, TH1F*> get1dHistos() {
             return histos1d;
         }
+
+        void change1dHistoTitle(std::string histoname, std::string title);
     
         void writeHistos1d(TFile* outF, std::string folder);
 
@@ -83,6 +85,8 @@ class ZBiHistos : public HistoManager{
         double getIntegral(std::string histoname);
 
         double fitZTail(std::string zVtxHistoname, double max_tail_events);
+
+        double shosFitZTail(std::string zVtxHistoname, double max_tail_events);
 };
 
 #endif

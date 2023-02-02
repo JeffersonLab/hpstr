@@ -68,14 +68,19 @@ class ZBiCutflowProcessor : public Processor {
 
         //cuts
         typedef std::map<std::string, std::pair<double,int>>::iterator cut_iter_;
-        std::map<std::string, std::pair<double,int>>* cuts_;
+        std::map<std::string, std::pair<double,int>>* testCuts_;
+        std::map<std::string, std::pair<double,int>>* persistentCuts_;
         std::vector<std::string> cutVariables_;
         std::map<std::string,double> initialIntegrals_;
         std::map<std::string,std::vector<std::pair<double,double>>> global_ZBi_map_;
 
         //cut selector
-        IterativeCutSelector *cutSelector_{nullptr};
+        IterativeCutSelector *testCutsSelector_{nullptr};
+        IterativeCutSelector *persistentCutsSelector_{nullptr};
         ZBiHistos* cutHistos_{nullptr};
+
+        //histos
+        ZBiHistos* debugHistos_{nullptr};
 
         //signal
         std::string signalHistCfgFilename_{""};

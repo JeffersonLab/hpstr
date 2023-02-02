@@ -75,7 +75,7 @@ bool IterativeCutSelector::passCutGTorLT(std::string cutname, double val){
 
 void IterativeCutSelector::printCuts(){
     for(cut_it it=cuts.begin(); it != cuts.end(); it++)
-        std::cout << it->first << std::endl;
+        std::cout << it->first << ": " << it->second.first << std::endl;
 }
 
 void IterativeCutSelector::eraseCut(std::string cutname){
