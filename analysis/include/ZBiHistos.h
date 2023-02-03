@@ -3,6 +3,7 @@
 
 #include "TFile.h"
 #include "HistoManager.h"
+#include "TGraph.h"
 #include "TKey.h"
 #include "TH1.h"
 #include "TH1F.h"
@@ -66,11 +67,22 @@ class ZBiHistos : public HistoManager{
 
         void addHisto1d(std::string histoname, std::string xtitle, int nbinsX, float xmin, float xmax);
 
+        void addHisto2d(std::string histoname, std::string xtitle, int nbinsX, float xmin, float xmax, std::string ytitle, int nbinsY, float ymin, float ymax);
+
+        void defineCutlistHistos(std::map<std::string,std::pair<double,int>> cutmap);
+
+        void impactParameterCut(std::string cutname);
+
         void printHistos1d(){
             std::cout << "Printing 1d histos" << std::endl;
             for(it1d it = histos1d.begin(); it != histos1d.end(); it++)
                 std::cout << it->first << std::endl;
+        }
 
+        void printHistos2d(){
+            std::cout << "Printing 2d histos" << std::endl;
+            for(it2d it = histos2d.begin(); it != histos2d.end(); it++)
+                std::cout << it->first << std::endl;
         }
 
         /**

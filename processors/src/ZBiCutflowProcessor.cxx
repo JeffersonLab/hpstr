@@ -145,8 +145,18 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     signalHistos_->debugMode(debug_);
     signalHistos_->loadHistoConfig(signalHistCfgFilename_);
     signalHistos_->DefineHistos();
-    //if(debug_)
-    //    signalHistos_->printHistos1d();
+
+    //Initialize Signal tuple histograms for each variable
+    //zcutsignalHistos_ = new ZBiHistos("zcut_signal");
+    //zcutsignalHistos_->debugMode(debug_);
+    //zcutsignalHistos_->loadHistoConfig(signalHistCfgFilename_);
+    //zcutsignalHistos_->DefineHistos();
+
+    ////Initialize  tritrig histograms for each variable
+    tritrigHistos_ = new ZBiHistos("tritrig");
+    tritrigHistos_->debugMode(debug_);
+    tritrigHistos_->loadHistoConfig(signalHistCfgFilename_);
+    tritrigHistos_->DefineHistos();
 
     //Initialize input signal tuple
     if(debug_) std::cout << "Initializing input tuple from signal file" << std::endl;
@@ -178,6 +188,7 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     std::cout << "Initializing z vertex distributions for selected signal and tritrig" << std::endl;
     cutHistos_ = new ZBiHistos("cutHistos");
     cutHistos_->debugMode(debug_);
+    cutHistos_->defineCutlistHistos(*testCuts_);
     for(cut_iter_ it=testCuts_->begin(); it!=testCuts_->end(); it++){
         std::string cutname = it->first;
         cutHistos_->addHisto1d("signal_vdSelZ_"+cutname+"_h","true z_{vtx} [mm]",200, -50.3, 149.7);
@@ -237,9 +248,6 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
             std::string var = it->first;
             if(signalHistos_->get1dHistos().count("signal_"+var+"_h")){
                 signalHistos_->Fill1DHisto(var+"_h",*signal_tuple_[var]);
-            }
-            else{
-                std::cout << "No Histogram named " << var+"_h" << " exists for variable " << var << std::endl; 
             }
         }
         //for(std::map<std::string,TH1F*>::iterator it=signalHistos_->get1dHistos().begin(); it != signalHistos_->get1dHistos().end(); it++){
@@ -362,9 +370,6 @@ bool ZBiCutflowProcessor::process(){
                 if(signalHistos_->get1dHistos().count("signal_"+var+"_h")){
                     signalHistos_->Fill1DHisto(var+"_h",*signal_tuple_[var]);
                 }
-                //else{
-                //    std::cout << "No Histogram named " << var+"_h" << " exists for variable " << var << std::endl; 
-                //}
             }
 
             /*
@@ -376,6 +381,7 @@ bool ZBiCutflowProcessor::process(){
             */
         }
         
+        /*
         if(debug_){
             std::cout << "Checking that variable histogram max/min correspond to persistent cuts" << std::endl;
             for(std::vector<std::string>::iterator it=cutVariables_.begin(); it !=cutVariables_.end(); it++){
@@ -386,6 +392,7 @@ bool ZBiCutflowProcessor::process(){
                 std::cout << min << " < " << cutvar << " < " << max << std::endl;
             }
         }
+        */
 
 
         //Using test cuts, find the variable value for each cut that cuts fraction of signal
@@ -399,6 +406,46 @@ bool ZBiCutflowProcessor::process(){
             double cutvalue = signalHistos_->cutFractionOfIntegral("signal_"+cutvar+"_h", isCutGT, iteration*cutFraction, initialIntegrals_[cutvar]);
             testCutsSelector_->setCutValue(cutname, cutvalue);
             if(debug_) std::cout << "[Test Cuts]: " << cutname << " updated to value " << testCutsSelector_->getCut(cutname) << std::endl;
+        }
+
+        //Apply impact parameter cut
+        for(int e=0; e < signalTree_->GetEntries(); e++){
+            signalTree_->GetEntry(e);
+
+            //Cut events outside the chosen mass window
+            if(*signal_tuple_["unc_vtx_mass"]*1000.0 > highMass) continue;
+            if(*signal_tuple_["unc_vtx_mass"]*1000.0 < lowMass) continue;
+
+            //Apply persistent cuts to every event. If event fails any persistent cut, skip event
+            bool failCuts = false;
+            for(cut_iter_ it=persistentCuts_->begin(); it!=persistentCuts_->end(); it++){
+                std::string cutname = it->first;
+                std::string cutvar = persistentCutsSelector_->getCutVar(cutname);
+                if(!persistentCutsSelector_->passCutGTorLT(cutname, *signal_tuple_[cutvar])){ 
+                    failCuts = true;
+                    break;
+                }
+            }
+            //Skip if fail persistent cuts
+            if(failCuts) continue;
+
+            //Fill the impact parameter histogram for each Test Cut 
+            for(cut_iter_ it=testCuts_->begin(); it!=testCuts_->end(); it++){
+                std::string cutname = it->first;
+                std::string cutvar = testCutsSelector_->getCutVar(cutname);
+                double cutvalue = testCutsSelector_->getCut(cutname);
+                if(!testCutsSelector_->passCutGTorLT(cutname, *signal_tuple_[cutvar]))
+                    continue;
+                //If event passes the Test Cut, fill impact parameter histo
+                cutHistos_->Fill2DHisto(cutname+"_z0_v_recon_z_hh",*signal_tuple_["unc_vtx_z"],*signal_tuple_["unc_vtx_ele_track_z0"]);
+                cutHistos_->Fill2DHisto(cutname+"_z0_v_recon_z_hh",*signal_tuple_["unc_vtx_z"],*signal_tuple_["unc_vtx_pos_track_z0"]);
+            }
+        }
+
+        //Calculate the Impact Parameter Cut equation for each Test Cut
+        for(cut_iter_ it=testCuts_->begin(); it!=testCuts_->end(); it++){
+            std::string cutname = it->first;
+            cutHistos_->impactParameterCut(cutname);
         }
 
         //Loop over each cut and build the background zvtx disribution. 
@@ -425,12 +472,22 @@ bool ZBiCutflowProcessor::process(){
             //Skip if fail
             if(failCuts) continue;
 
+            //Fill tritrig variable histos before Test Cut and Zcut are applied
+            for(std::map<std::string,double*>::iterator it=tritrig_tuple_.begin(); it != tritrig_tuple_.end(); it++){
+                std::string var = it->first;
+                if(tritrigHistos_->get1dHistos().count("tritrig_"+var+"_h")){
+                    tritrigHistos_->Fill1DHisto(var+"_h",*tritrig_tuple_[var]);
+                }
+            }
+
             for(cut_iter_ it=testCuts_->begin(); it!=testCuts_->end(); it++){
                 std::string cutname = it->first;
                 std::string cutvar = testCutsSelector_->getCutVar(cutname);
                 double cutvalue = testCutsSelector_->getCut(cutname);
                 if(!testCutsSelector_->passCutGTorLT(cutname, *tritrig_tuple_[cutvar]))
                     continue;
+
+
                 //If event passes, fill zVtx distribution
                 cutHistos_->Fill1DHisto("tritrig_zVtx_"+cutname+"_h",*tritrig_tuple_["unc_vtx_z"],1.0);
             }
@@ -671,6 +728,7 @@ bool ZBiCutflowProcessor::process(){
 
         //Write iteration histos
         signalHistos_->writeHistos1d(outFile_,"signal_iter_"+std::to_string(iteration));
+        //tritrigHistos_->writeHistos1d(outFile_,"tritrig_iter_"+std::to_string(iteration));
         cutHistos_->writeHistos1d(outFile_, "testCuts_iter_"+std::to_string(iteration));
 
 

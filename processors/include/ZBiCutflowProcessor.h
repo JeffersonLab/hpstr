@@ -86,6 +86,7 @@ class ZBiCutflowProcessor : public Processor {
         std::string signalHistCfgFilename_{""};
         std::string signalFilename_{""};
         ZBiHistos* signalHistos_{nullptr};
+        ZBiHistos* zcutsignalHistos_{nullptr};
         std::map<std::string,double*> signal_tuple_;
         TTree* signalTree_{nullptr};
         //signal pretrigger vtx distribution
