@@ -48,6 +48,10 @@ class ZBiCutflowProcessor : public Processor {
 
         void printZBiMatrix();
 
+        bool failImpactParameterCut(std::map<std::string, double*> tuple);
+
+        void calculateImpactParameterCut();
+
 
     private:
 
@@ -78,6 +82,10 @@ class ZBiCutflowProcessor : public Processor {
         IterativeCutSelector *testCutsSelector_{nullptr};
         IterativeCutSelector *persistentCutsSelector_{nullptr};
         ZBiHistos* cutHistos_{nullptr};
+
+        //impact parameter cut parameters for each Test Cut
+        //std::map<std::string,std::vector<double>> impact_param_cuts_;
+        std::vector<double> impact_param_cut_;
 
         //histos
         ZBiHistos* debugHistos_{nullptr};

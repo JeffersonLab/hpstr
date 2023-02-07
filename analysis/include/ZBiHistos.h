@@ -59,7 +59,7 @@ class ZBiHistos : public HistoManager{
 
         void change1dHistoTitle(std::string histoname, std::string title);
     
-        void writeHistos1d(TFile* outF, std::string folder);
+        void writeHistos(TFile* outF, std::string folder);
 
         void resetHistograms1d();
 
@@ -71,7 +71,9 @@ class ZBiHistos : public HistoManager{
 
         void defineCutlistHistos(std::map<std::string,std::pair<double,int>> cutmap);
 
-        void impactParameterCut(std::string cutname);
+        void defineAnalysisHistos();
+
+        std::vector<double> impactParameterCut();
 
         void printHistos1d(){
             std::cout << "Printing 1d histos" << std::endl;
@@ -98,7 +100,7 @@ class ZBiHistos : public HistoManager{
 
         double fitZTail(std::string zVtxHistoname, double max_tail_events);
 
-        double shosFitZTail(std::string zVtxHistoname, double max_tail_events);
+        double shosFitZTail(std::string cutname, double max_tail_events);
 };
 
 #endif

@@ -87,19 +87,40 @@ double ZBiHistos::cutFractionOfIntegral(std::string histoname, bool isCutGreater
 void ZBiHistos::defineCutlistHistos(std::map<std::string,std::pair<double,int>> cutmap){
     for(std::map<std::string,std::pair<double,int>>::iterator it=cutmap.begin(); it != cutmap.end(); it++){
         std::string cutname = it->first;
-        addHisto2d(cutname+"_z0_v_recon_z_hh","recon_z [mm]", 1500, -50.0, 100.0, "z0 [mm]", 600,-30.0,30.0);
-        addHisto1d(cutname+"_impact_parameter_up_h","recon_z [mm]", 1500, -50.0, 100.0);
-        addHisto1d(cutname+"_impact_parameter_down_h","recon_z [mm]", 1500, -50.0, 100.0);
+
+
+        //vdSelZ
+        addHisto1d("signal_vdSelZ_"+cutname+"_h","true z_{vtx} [mm]",200, -50.3, 149.7);
+        //tritrig zVtx
+        addHisto1d("tritrig_zVtx_"+cutname+"_h","unc z_{vtx} [mm]",150, -50.0, 100.0);
+        
+        /*
+        //Impact parameter cuts
+        addHisto2d(cutname+"_z0_v_recon_z_signal_hh","recon_z [mm]", 450, -20.0, 70.0, "z0 [mm]", 1000,-10.0,10.0);
+        addHisto2d(cutname+"_z0_v_recon_z_tritrig_hh","recon_z [mm]", 450, -20.0, 70.0, "z0 [mm]", 1000,-10.0,10.0);
+        addHisto2d(cutname+"_z0_v_recon_z_tritrig_impactparam_cut_hh","recon_z [mm]", 450, -20.0, 70.0, "z0 [mm]", 1000,-10.0,10.0);
+        addHisto1d(cutname+"_impact_parameter_up_h","recon_z [mm]", 450, -20.0, 70.0);
+        addHisto1d(cutname+"_impact_parameter_down_h","recon_z [mm]", 450, -20.0, 70.0);
+        */
     }
 }
 
-void ZBiHistos::impactParameterCut(std::string cutname){
+void ZBiHistos::defineAnalysisHistos(){
+
+        addHisto2d("z0_v_recon_z_hh","recon_z [mm]", 450, -20.0, 70.0, "z0 [mm]", 1000,-10.0,10.0);
+        addHisto2d("z0_v_recon_z_post_impactparam_cut_hh","recon_z [mm]", 450, -20.0, 70.0, "z0 [mm]", 1000,-10.0,10.0);
+        addHisto1d("impact_parameter_up_h","recon_z [mm]", 450, -20.0, 70.0);
+        addHisto1d("impact_parameter_down_h","recon_z [mm]", 450, -20.0, 70.0);
+
+}
+
+std::vector<double> ZBiHistos::impactParameterCut(){
 
     //Loop over 2d histo of z0 vs recon_z, taking projection at each recon_z
     //Find the value of z0 in each projection that cuts 15% of signal
-    TH2F* hh = (TH2F*)histos2d[m_name+"_"+cutname+"_z0_v_recon_z_hh"];
-    TH1F* up_h = (TH1F*)histos1d[m_name+"_"+cutname+"_impact_parameter_up_h"];
-    TH1F* down_h = (TH1F*)histos1d[m_name+"_"+cutname+"_impact_parameter_down_h"];
+    TH2F* hh = (TH2F*)histos2d[m_name+"_z0_v_recon_z_hh"];
+    TH1F* up_h = (TH1F*)histos1d[m_name+"_impact_parameter_up_h"];
+    TH1F* down_h = (TH1F*)histos1d[m_name+"_impact_parameter_down_h"];
 
     for(int i=0; i < hh->GetNbinsX(); i++){
 
@@ -125,12 +146,12 @@ void ZBiHistos::impactParameterCut(std::string cutname){
         //impact param for z0 < 0
         end_bin = projy->FindFirstBinAbove(0.0); 
         start_bin = projy->FindBin(0.0);
-        refIntegral = projy->Integral(start_bin,end_bin);
+        refIntegral = projy->Integral(end_bin, start_bin);
         cutz0_bin = start_bin; 
         testIntegral = refIntegral;
         while(testIntegral > 0.90*refIntegral && cutz0_bin > end_bin+1){
             cutz0_bin = cutz0_bin - 1;           
-            testIntegral = projy->Integral(cutz0_bin, end_bin);
+            testIntegral = projy->Integral(end_bin, cutz0_bin);
         }
         
         double cutz0_down = projy->GetXaxis()->GetBinUpEdge(cutz0_bin);
@@ -139,25 +160,27 @@ void ZBiHistos::impactParameterCut(std::string cutname){
         }
     }
 
-    TF1* fitFunc = new TF1("linear_fit","[0] + [1]*x",0.0,10.0);
-    TFitResultPtr fitResult = (TFitResultPtr)up_h->Fit("linear_fit","QS");
+    TF1* fitFunc = new TF1("linear_fit","[0] + [1]*x",6.0,70.0);
+    TFitResultPtr fitResult = (TFitResultPtr)up_h->Fit("linear_fit","QS","",6.0,70.0);
     fitFunc->Draw();
     double a_p = fitResult->GetParams()[0];
     double b_p = fitResult->GetParams()[1];
 
-    fitResult = (TFitResultPtr)down_h->Fit("linear_fit","QS");
+    fitResult = (TFitResultPtr)down_h->Fit("linear_fit","QS","",6.0,70.0);
     fitFunc->Draw();
     double a_d = fitResult->GetParams()[0];
     double b_d = fitResult->GetParams()[1];
 
+    std::vector<double> params {a_p,b_p,a_d,b_d};
     delete fitFunc;
+    return params;
 }
 
 
-double ZBiHistos::shosFitZTail(std::string zVtxHistoname, double max_tail_events){
+double ZBiHistos::shosFitZTail(std::string cutname, double max_tail_events){
     TF1* fitFunc = new TF1("fitfunc", "[0]* exp( (x<=([1]+[3]))*(-0.5*((x-[1])^2)/([2]^2)) + (x>=[1]+[3])*(-0.5*([3]^2/[2]^2)-(x-[1]-[3])/[4])  )", -100.0, 100.0);
 
-    std::string histoname = m_name+"_"+zVtxHistoname;
+    std::string histoname = m_name+"_tritrig_zVtx_"+cutname+"_h";
     if(histos1d[histoname]->GetEntries() < 1)
         return -4.3;
 
@@ -222,7 +245,7 @@ double ZBiHistos::fitZTail(std::string zVtxHistoname, double max_tail_events){
     fitFunc->Draw();
     return zcut;
 }
-void ZBiHistos::writeHistos1d(TFile* outF, std::string folder) {
+void ZBiHistos::writeHistos(TFile* outF, std::string folder) {
     if (outF) outF->cd();
     TDirectory* dir{nullptr};
     std::cout<<folder.c_str()<<std::endl;
