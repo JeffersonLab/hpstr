@@ -78,7 +78,7 @@ void Track::setMomentum(double px, double py, double pz) {
 
 void Track::addHit(TObject* hit) {
     ++n_hits_; 
-    tracker_hits_->Add(hit); 
+    tracker_hits_.Add(hit); 
 }
 
 void Track::Print (Option_t *option) const {

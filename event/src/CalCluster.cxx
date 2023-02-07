@@ -35,5 +35,5 @@ void CalCluster::setPosition(const float* position) {
 
 void CalCluster::addHit(TObject* hit) { 
     ++n_hits_;
-    hits_->Add(hit);
+    hits_.Add(hit);
 }

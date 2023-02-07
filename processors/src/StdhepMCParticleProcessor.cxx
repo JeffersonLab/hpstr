@@ -21,6 +21,7 @@ void StdhepMCParticleProcessor::configure(const ParameterSet& parameters) {
         mcPartCollStdhep_ = parameters.getString("mcPartCollStdhep", mcPartCollStdhep_);
         mcPartCollRoot_ = parameters.getString("mcPartCollRoot", mcPartCollRoot_);
         maxEvent_ = parameters.getInteger("maxEvent",maxEvent_);
+        skipEvent_ = parameters.getInteger("skipEvent",skipEvent_);   
     }
     catch (std::runtime_error& error)
     {
@@ -37,7 +38,7 @@ void StdhepMCParticleProcessor::initialize(std::string inFilename, std::string o
     std::cout << "Convert " << inFilename_ << " to ROOT " << outF_->GetName() << std::endl;
 
     //TTree to store stdhep as root
-    tree_ = new TTree("stdhep_to_root","conversion"); 
+    tree_ = new TTree("HPS_Event","conversion"); 
     tree_->Branch(mcPartCollRoot_.c_str(),&mc_particles_);
 }
 
@@ -51,7 +52,7 @@ bool StdhepMCParticleProcessor::process() {
 
     description << " file generated with LCIO stdhepjob from "  << inFilename_;
 
-    int count = 0;
+    int count = skipEvent_;
 
     try {
      

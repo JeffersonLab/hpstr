@@ -103,6 +103,7 @@ class StdhepMCParticleProcessor : public Processor {
         std::string inFilename_; //!< stdhep input file
         std::string mcPartCollStdhep_{"MCParticle"}; //!< name temporary lcio collection
         int maxEvent_{-1}; //!< max stdhep event number to convert
+        int skipEvent_{0};//!< skipped event numbers to convet
         TFile* outF_{nullptr}; //!< root tuple outfile
         std::string mcPartCollRoot_{"MCParticle"}; //!< name root collection
         std::vector<MCParticle*> mc_particles_{}; //!< list of converted MCParticles

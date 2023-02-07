@@ -95,6 +95,12 @@ void HistoManager::DefineHistos(){
 void HistoManager::DefineHistos(std::vector<std::string> histoCopyNames, std::string makeCopyJsonTag){
     if (debug_ > 0) std::cout << "[HistoManager] DefineHistos" << std::endl;
     std::string h_name = "";
+    if (debug_ > 0){    
+        for (auto hist : _h_configs.items()){
+            std::cout<<hist.key()<<std::endl;
+        }
+    }
+    //std::cout<<_h_configs.items()<<std::endl;
     for (auto hist : _h_configs.items()) {
         bool singleCopy = true;
         std::cout << "hist copy list size " << histoCopyNames.size() << std::endl;
@@ -104,11 +110,12 @@ void HistoManager::DefineHistos(std::vector<std::string> histoCopyNames, std::st
                 h_name = m_name+"_"+ histoCopyNames.at(i) + "_" + hist.key() ;
                 singleCopy = false;
             }
-
-            std::cout << "DefineHisto: " << h_name << std::endl;
             std::size_t found = (hist.key()).find_last_of("_");
             std::string extension = hist.key().substr(found+1);
-
+            if(debug_){
+                std::cout << "DefineHisto: " << h_name << std::endl;  
+                std::cout << extension << hist.value().at("xtitle") << std::endl;
+            }
             if (extension == "h") {
                 histos1d[h_name] = plot1D(h_name,hist.value().at("xtitle"),
                         hist.value().at("bins"),
@@ -243,6 +250,7 @@ TH3F*  HistoManager::plot3D(std::string name,
             nbinsY,axisY,
             nbinsZ,axisZ);
 
+
     h->GetXaxis()->SetTitle(xtitle.c_str());
     h->GetYaxis()->SetTitle(ytitle.c_str());
     h->GetZaxis()->SetTitle(ztitle.c_str());
@@ -351,15 +359,13 @@ void HistoManager::loadHistoConfig(const std::string histoConfigFile) {
 
 
 void HistoManager::saveHistos(TFile* outF,std::string folder) {
-
     if (outF) outF->cd();
     TDirectory* dir{nullptr};
-
+    std::cout<<folder.c_str()<<std::endl;
     if (!folder.empty()) {
         dir = outF->mkdir(folder.c_str());
         dir->cd();
     }
-
     for (it3d it = histos3d.begin(); it!=histos3d.end(); ++it) {
         if (!it->second){
             std::cout<<it->first<<" Null ptr in saving.."<<std::endl;
@@ -367,7 +373,6 @@ void HistoManager::saveHistos(TFile* outF,std::string folder) {
         }
         it->second->Write();
     }
-
     for (it2d it = histos2d.begin(); it!=histos2d.end(); ++it) {
         if (!(it->second)) {
             std::cout<<it->first<<" Null ptr in saving.."<<std::endl;

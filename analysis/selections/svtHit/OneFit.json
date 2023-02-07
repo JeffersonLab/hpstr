@@ -1,0 +1,12 @@
+{
+    "getN_et"  : {
+        "cut"  : 1.0,
+        "id"   : 0,
+        "info" : "Only one pulse in fit"
+    },
+    "doing_time" : {
+        "cut"  : 0.0,
+        "id"   : 1,
+        "info" : "Don't fit time"
+    }
+}

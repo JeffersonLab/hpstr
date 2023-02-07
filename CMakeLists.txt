@@ -105,7 +105,7 @@ endforeach()
     #endif()
 
 # configure and install setup script
-configure_file(setup.sh.in ${CMAKE_INSTALL_PREFIX}/bin/setup.sh)
+configure_file(hpstr-env.sh.in ${CMAKE_INSTALL_PREFIX}/bin/hpstr-env.sh)
 
 # install JSON analysis config files
 #install(DIRECTORY analysis 

@@ -218,11 +218,15 @@ void TrackHistos::Fill1DTrack(Track* track, float weight, const std::string& trk
     Fill1DHisto(trkname+"chi2ndf_h"  ,track->getChi2Ndf()     ,weight);
     Fill1DHisto(trkname+"nShared_h"  ,track->getNShared()     ,weight);
     Fill1DHisto(trkname+"nHits_2d_h" ,n_hits_2d               ,weight);
-    for (int ihit=0; ihit<track->getSvtHits()->GetEntries();++ihit) 
+    for (int ihit=0; ihit<track->getSvtHits().GetEntries();++ihit) 
     {
-        TrackerHit* hit2d = (TrackerHit*) track->getSvtHits()->At(ihit);
+        TrackerHit* hit2d = (TrackerHit*) track->getSvtHits().At(ihit);
         Fill1DHisto(trkname+"hit_lay_h",hit2d->getLayer()  ,weight);
     }
+    //Fill 2D histos
+    Fill2DHisto(trkname+"TanLambda_vs_Phi_hh"      ,track->getPhi()  , track->getTanLambda()       ,weight);
+    Fill2DHisto(trkname+"p_vs_Phi_hh"      ,track->getPhi()  , track->getP()       ,weight);
+    Fill2DHisto(trkname+"p_vs_TanLambda_hh"      ,track->getTanLambda()  , track->getP()       ,weight);
 
     //All Tracks
     Fill1DHisto(trkname+"sharingHits_h",0,weight);
@@ -418,8 +422,8 @@ void TrackHistos::FillResidualHistograms(Track* track, int ly, double res, doubl
 
     TrackerHit* hit = nullptr;
     //Get the hits on track 
-    for (int ihit = 0; ihit<track->getSvtHits()->GetEntries();++ihit) {
-        TrackerHit* tmphit = (TrackerHit*) track->getSvtHits()->At(ihit);
+    for (int ihit = 0; ihit<track->getSvtHits().GetEntries();++ihit) {
+        TrackerHit* tmphit = (TrackerHit*) track->getSvtHits().At(ihit);
         if (tmphit->getLayer() == ly) {
             hit = tmphit;
             break;

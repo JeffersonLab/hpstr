@@ -17,6 +17,8 @@ p = HpstrConf.Process()
 
 #p.max_events = 1000
 p.run_mode = 0
+p.skip_events = options.skip_events
+p.max_events = options.nevents
 
 # Library containing processors
 p.add_library("libprocessors")
@@ -131,14 +133,12 @@ mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
 # Sequence which the processors will run.
+if options.isData == -1: print("Please specficy if this is Data or not via option -t")
 if (not options.isData):
     p.sequence = [header, vtx, cvtx, vtxgbl, cvtxgbl, ecal, track, trackgbl, mcpart]
 else:
     p.sequence = [header, vtx, cvtx, vtxgbl, cvtxgbl, ecal, track, trackgbl]
     #p.sequence = [header, vtx, ecal, track]
-
-if (options.nevents > -1 ):
-    p.max_events = options.nevents
 
 p.input_files = lcio_file
 p.output_files = [root_file]

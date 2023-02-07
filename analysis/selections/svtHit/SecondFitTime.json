@@ -1,0 +1,22 @@
+{
+    "getN_et"  : {
+        "cut"  : 2.0,
+        "id"   : 0,
+        "info" : "Require 2 Pulses"
+    },
+    "getId_gt" : {
+        "cut"  : 1.0,
+        "id"   : 1,
+        "info" : "Only Second Pulse"
+    },
+     "time_lt" : {
+        "cut"  : -40.0,
+        "id"   : 2,
+        "info" : "UpperBound of Cut Region"
+    },
+     "time_gt" : {
+        "cut"  : -80.0,
+        "id"   : 3,
+        "info" : "LowerBound of Cut Region"
+    }
+}

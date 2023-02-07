@@ -92,6 +92,9 @@ class EventFile : public IEventFile {
 
         int entry_{0}; //!< description
 
+        /** Number used to reset object count in TProcessID */
+        int objNumRoot_{0};
+
 }; // EventFile
 
 #endif // __EVENT_FILE_H__
