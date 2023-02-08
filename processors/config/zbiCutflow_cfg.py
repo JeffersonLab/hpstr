@@ -30,7 +30,8 @@ zbi.parameters['vdMassMeV'] = 55.0
 zbi.parameters['signalHistCfgFilename'] = '/sdf/group/hps/users/alspellm/src/test/hpstr/analysis/plotconfigs/tracking/zbiCutVariables.json'
 zbi.parameters['outFileName'] = options.outFilename
 zbi.parameters['cuts_cfgFile'] = '/sdf/group/hps/users/alspellm/src/test/hpstr/analysis/selections/simps/iterativeCuts.json'
-zbi.parameters['cutVariables'] = ["unc_vtx_psum", "unc_vtx_ele_track_p", "unc_vtx_pos_track_p", "unc_vtx_chi2", "unc_vtx_ele_track_t", "unc_vtx_pos_track_t", "unc_vtx_ele_track_clust_dt","unc_vtx_pos_track_clust_dt"]
+zbi.parameters['ztail_events'] = 0.5
+zbi.parameters['cutVariables'] = ["unc_vtx_psum", "unc_vtx_ele_track_p", "unc_vtx_pos_track_p", "unc_vtx_chi2", "unc_vtx_ele_track_t", "unc_vtx_pos_track_t", "unc_vtx_ele_track_clust_dt","unc_vtx_pos_track_clust_dt", "unc_vtx_x","unc_vtx_y","unc_vtx_x","unc_vtx_y", "unc_vtx_ele_clust_E","unc_vtx_pos_clust_E"]
 #zbi.parameters['ApMassMeV'] = 
 
 # Sequence which the processors will run.

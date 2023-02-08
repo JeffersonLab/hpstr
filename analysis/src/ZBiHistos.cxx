@@ -122,6 +122,7 @@ std::vector<double> ZBiHistos::impactParameterCut(){
     TH1F* up_h = (TH1F*)histos1d[m_name+"_impact_parameter_up_h"];
     TH1F* down_h = (TH1F*)histos1d[m_name+"_impact_parameter_down_h"];
 
+    std::cout << "Nbins in impactParameterCut: " << std::to_string(hh->GetEntries()) << std::endl;
     for(int i=0; i < hh->GetNbinsX(); i++){
 
         TH1F* projy = (TH1F*)hh->ProjectionY(("projy_bin_"+std::to_string(i+1)).c_str(),i+1,i+1);

@@ -52,6 +52,8 @@ class ZBiCutflowProcessor : public Processor {
 
         void calculateImpactParameterCut();
 
+        bool failPersistentCuts(std::map<std::string,double*> tuple);
+
 
     private:
 
@@ -106,8 +108,14 @@ class ZBiCutflowProcessor : public Processor {
         std::map<std::string,double*> tritrig_tuple_;
         TTree* tritrigTree_{nullptr};
 
+        double ztail_events_ = 5.0;
+
         //simp equations
         SimpEquations* simpEqs_{nullptr};
+
+        //mass window
+        double highMass_;
+        double lowMass_;
 };
 
 

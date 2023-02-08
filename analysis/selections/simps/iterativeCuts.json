@@ -63,5 +63,40 @@
         "cut" : 0.4,
         "id"  : 10,
         "info" : "p_e^{+}>0.4 [GeV]"
+    },
+    "unc_vtx_x_lt" : {
+        "cut" : 2.0,
+        "id"  : 11,
+        "info" : "vtx x < 1.0 mm"
+    },
+    "unc_vtx_x_gt" : {
+        "cut" : -2.0,
+        "id"  : 12,
+        "info" : "vtx x > 1.0 mm"
+    },
+    "unc_vtx_y_lt" : {
+        "cut" : 1.0,
+        "id"  : 13,
+        "info" : "vtx x < 1.0 mm"
+    },
+    "unc_vtx_y_gt" : {
+        "cut" : -1.0,
+        "id"  : 14,
+        "info" : "vtx x > 1.0 mm"
+    },
+    "unc_vtx_ele_track_omega_gt" : {
+        "cut" : 0.1,
+        "id"  : 15,
+        "info" : "e^{-} Omega > 0.1"
+    },
+    "unc_vtx_ele_clust_E_lt" : {
+        "cut" : 2.0,
+        "id"  : 16,
+        "info" : "e^{-} Cluster Energy < 2.0"
+    },
+    "unc_vtx_pos_clust_E_lt" : {
+        "cut" : 2.0,
+        "id"  : 17,
+        "info" : "e^{+} Cluster Energy < 2.0"
     }
 }
