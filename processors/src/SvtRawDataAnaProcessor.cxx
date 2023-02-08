@@ -19,7 +19,7 @@ void SvtRawDataAnaProcessor::configure(const ParameterSet& parameters) {
     {
         debug_           = parameters.getInteger("debug");
         anaName_         = parameters.getString("anaName");
-        svtHitColl_     = parameters.getString("trkrHitColl");
+        svtHitColl_     = parameters.getString("trkrHitColl");           
         histCfgFilename_ = parameters.getString("histCfg");
         regionSelections_ = parameters.getVString("regionDefinitions");
         TimeRef_ = parameters.getDouble("timeref");
@@ -28,6 +28,7 @@ void SvtRawDataAnaProcessor::configure(const ParameterSet& parameters) {
         MatchList_ = parameters.getVString("MatchList");
         baselineFile_ = parameters.getString("baselineFile");
         timeProfiles_ = parameters.getString("timeProfiles");
+        tphase_ = parameters.getInteger("tphase");
     }
     catch (std::runtime_error& error)
     {
@@ -216,7 +217,12 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
     //std::cout<<svtHitColl_.c_str()<<std::endl;
     ///std::cout<<svtHits_->size()<<std::endl;
     tree_->SetBranchAddress(svtHitColl_.c_str()  , &svtHits_    , &bsvtHits_    );
+    tree_->SetBranchAddress("VTPBank", &vtpBank_ , &bvtpBank_ );
+    tree_->SetBranchAddress("TSBank", &tsBank_ , &btsBank_ );
+    tree_->SetBranchAddress("RecoEcalClusters",&recoClu_,&brecoClu_ );
+    tree_->SetBranchAddress("KalmanFullTracks",&Trk_,&bTrk_);
     tree_->SetBranchAddress("EventHeader",&evH_,&bevH_);
+    
     for (unsigned int i_reg = 0; i_reg < regionSelections_.size(); i_reg++) 
     {
         std::string regname = AnaHelpers::getFileName(regionSelections_[i_reg],false);
@@ -248,16 +254,45 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
     Float_t TimeRef=-0.0;
     Float_t AmpRef=1000.0;
     double weight = 1.;int count1=0;int count2=0;
+    long eventTime = evH_->getEventTime();
+    
+    //I AM DOING CLUSTER MATCHING HERE :)
+    //std::cout<<"Here is the eventTime"<<eventTime<<std::endl;
+    //std::cout<<"Here is the TSBank Trigger Time"<<tsBank_->T<<std::endl;
+    bool doClMatch = true;
+    if((doClMatch)and(not((tsBank_->prescaled.Single_3_Top==1)or(tsBank_->prescaled.Single_3_Bot==1)))){return true;}
+    //std::cout<<"Trigger Time: "<<vtpBank_->singletrigs.at(0).T<<std::endl;
+    for(int i = 0; i<vtpBank_->clusters.size(); i++){
+        //std::cout<<"Cluster Time: "<<vtpBank_->clusters.at(i).T<<std::endl;
+        if(vtpBank_->clusters.at(i).T==vtpBank_->singletrigs.at(0).T){
+            //std::cout<<" T: " <<vtpBank_->clusters.at(i).T<<std::endl; 
+            std::cout<<" X: " <<vtpBank_->clusters.at(i).X<<std::endl; 
+            std::cout<<" Y: " <<vtpBank_->clusters.at(i).Y<<std::endl;
+            /*std::cout<<" Trk Size: "<<Trk_.size()<<std::endl;
+            for(int j = 0; j<Trk_.size(); j++){
+                std::cout<<"Trk ID: "<<Trk_.at(j).getParticle()->GetUniqueID()<<std::endl;
+            }*/ 
+            std::cout<<" Cluster Size :"<<recoClu_.size()<<std::endl;
+            for(int k = 0; k<recoClu_.size(); k++){
+                std::cout<<"Cluster x: "<<recoClu_.at(k).getPosition().at(0)<<std::endl;
+                std::cout<<"Cluster y: "<<recoClu_.at(k).getPosition().at(1)<<std::endl;
+                std::cout<<"Unique Id: "<<recoClu_.at(k).GetUniqueID()<<std::endl;
+            }
+        }
+    }
+    int trigPhase =  (int)((eventTime%24)/4);
+    if((trigPhase!=tphase_)&&(tphase_!=6)){return true;}
     for(unsigned int i = 0; i < svtHits_->size(); i++){ 
         RawSvtHit * thisHit = svtHits_->at(i); 
         int getNum = thisHit->getFitN();
-        for (unsigned int i_reg = 0; i_reg < regionSelections_.size(); i_reg++){
+        for(unsigned int i_reg = 0; i_reg < regionSelections_.size(); i_reg++){
             //std::cout<<"\n"<<std::endl;
             for(unsigned int J=0; J<getNum; J++){
                 //std::cout<<"\ngetNum:"<<getNum<<std::endl;
                 //std::cout<<"region No:"<<regions_[i_reg]<<std::endl;
 
                 //std::cout<<"Which Hit:"<<J<<std::endl;
+                
                 
                 Float_t TimeDiff=-42069.0;
                 Float_t AmpDiff=-42069.0;
@@ -319,7 +354,8 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                     if(maxx<adcs[K]){maxx=adcs[K];}
                 }
                 if(!(reg_selectors_[regions_[i_reg]]->passCutEq("first_max",adcs[0]-maxx,weight))){continue;}
-                if(!(reg_selectors_[regions_[i_reg]]->passCutEq("time_phase",((int)(thisHit->getT0(J)))%4,weight))){continue;}
+                
+                //if(!(reg_selectors_[regions_[i_reg]]->passCutEq("time_phase",trigPhase,weight))){continue;}
                 
                 bool helper = false; 
                 //std::cout<<"hello"<<std::endl;
@@ -333,13 +369,12 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                     }
                 }
                 if((doSample_==1)and(helper)){
-                    //std::cout<<"I ACTUALLY DID THIS"<<std::endl;
-                    long T = evH_->getEventTime();
+                    //std::cout<<"I ACTUALLY DID THIS"<<std::endl; 
                     int N = evH_->getEventNumber();
                     //std::cout<<T<<std::endl;
                     //if((regions_[i_reg]=="OneFit")and(feb>=2)){continue;}
                     if((regions_[i_reg]=="CTFit")and((thisHit->getT0(J)<26.0)or(thisHit->getT0(J)>30.0))){continue;}
-                    sample(thisHit,regions_[i_reg],ievent,T,N); 
+                    sample(thisHit,regions_[i_reg],ievent,eventTime,N); 
                 
                 }
 

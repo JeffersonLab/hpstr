@@ -2,11 +2,17 @@ import HpstrConf
 import sys,os
 import baseConfig as base
 
+base.parser.add_argument("-A", "--onTrk", type=int, dest="onTrk",
+                  help="Are we using hits on track or not", metavar="onTrk",default=0)
+base.parser.add_argument("-p", "--tphase", type=int, dest="tphase",
+                  help="The Phase of the Event Time", metavar="tphase",default=6)
+
 options = base.parser.parse_args()
 
 # Use the input file to set the output file name
 root1_file = options.inFilename[0]
 root2_file = options.outFilename
+onTrk = options.onTrk
 
 print('Root file Input: %s' % root1_file)
 print('Root file Output: %s' % root2_file)
@@ -34,9 +40,13 @@ rawAnaSvt = HpstrConf.Processor('svtana','SvtRawDataAnaProcessor')
 
 rawAnaSvt.parameters["debug"] = 0
 rawAnaSvt.parameters["anaName"] = 'rawSvtHitAna'
-rawAnaSvt.parameters["trkrHitColl"] = 'SVTRawTrackerHits' #'SVTRawHitsOnTrack_KF'#'SVTRawTrackerHits'
+if onTrk==0:
+    rawAnaSvt.parameters["trkrHitColl"] = 'SVTRawTrackerHits'
+else:
+    rawAnaSvt.parameters["trkrHitColl"] = 'SVTRawHitsOnTrack_KF'#'SVTRawTrackerHits'
 rawAnaSvt.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/rawSvtAnaHits.json'
 rawAnaSvt.parameters["sample"] = 0 
+rawAnaSvt.parameters["tphase"] = options.tphase
 
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/svtHit/"
 
@@ -55,6 +65,7 @@ rawAnaSvt.parameters["regionDefinitions"] = [RegionPath+'OneFit.json',
                                             RegionPath+'Region3.json',
                                             RegionPath+'Region4.json',
                                             RegionPath+'Region5.json',
+                                            RegionPath+'Region6.json',
                                             RegionPath+'TimeResolution.json'
                                            ]
 
