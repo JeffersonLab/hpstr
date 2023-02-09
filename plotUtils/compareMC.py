@@ -11,12 +11,11 @@ inFileList = [
     "hps-sim/muonHpsSim_anaMC.root"]
 
 
-
 colors = [r.kBlack, r.kRed, r.kBlue, r.kGreen+2, r.kOrange-2]
 
 inputFiles = []
-legends     = ["slic","hps-sim"]
-outdir     = "./"
+legends = ["slic", "hps-sim"]
+outdir = "./"
 
 if not os.path.exists(outdir):
     os.makedirs(outdir)
@@ -33,15 +32,16 @@ for key in inputFiles[0].GetListOfKeys():
     histos = []
     print key.GetName()
     c = r.TCanvas()
-    for i_f in range(0,len(inputFiles)):
+    for i_f in range(0, len(inputFiles)):
         histos.append(inputFiles[i_f].Get(key.GetName()))
         histos[i_f].SetMarkerColor(colors[i_f])
         histos[i_f].SetLineColor(colors[i_f])
         pass
-    canvs.append(utils.MakePlot(key.GetName(),outdir,histos,legends,".png",LogY=True,RatioType="Sequential"))
+    canvs.append(utils.MakePlot(key.GetName(), outdir, histos, legends, ".png", LogY=True, RatioType="Sequential"))
     pass
 
-outF = r.TFile("slicSingleMu_compMC.root","RECREATE")
+outF = r.TFile("slicSingleMu_compMC.root", "RECREATE")
 outF.cd()
-for canv in canvs: canv.Write()
+for canv in canvs:
+    canv.Write()
 outF.Close()
