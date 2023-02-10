@@ -77,7 +77,7 @@ $(function() {
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
 <div class="line"><a name="l00006"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaKalVtxTuple__cfg.html#affb1327b18bf08a379d19eef89cf1ed1">    6</a></span>&#160;base.parser.add_argument(<span class="stringliteral">&quot;-f&quot;</span>, <span class="stringliteral">&quot;--makeFlatTuple&quot;</span>, type=int, dest=<span class="stringliteral">&quot;makeFlatTuple&quot;</span>, help=<span class="stringliteral">&quot;Make True to make vertex ana flat tuple&quot;</span>, metavar=<span class="stringliteral">&quot;makeFlatTuple&quot;</span>, default=0)</div>
 <div class="line"><a name="l00007"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaKalVtxTuple__cfg.html#a4b99ff73a8a869319570237b5c57ab03">    7</a></span>&#160;base.parser.add_argument(<span class="stringliteral">&quot;-w&quot;</span>, <span class="stringliteral">&quot;--tracking&quot;</span>, type=str, dest=<span class="stringliteral">&quot;tracking&quot;</span>,</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;                  help=<span class="stringliteral">&quot;Which tracking to use to make plots&quot;</span>, metavar=<span class="stringliteral">&quot;tracking&quot;</span>, default=<span class="stringliteral">&quot;KF&quot;</span>)</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;                         help=<span class="stringliteral">&quot;Which tracking to use to make plots&quot;</span>, metavar=<span class="stringliteral">&quot;tracking&quot;</span>, default=<span class="stringliteral">&quot;KF&quot;</span>)</div>
 <div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaKalVtxTuple__cfg.html#a02eacfd40be9042ceb0f07547365203d">    9</a></span>&#160;options = base.parser.parse_args()</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
@@ -110,7 +110,7 @@ $(function() {
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;recoana_kf.parameters[<span class="stringliteral">&quot;anaName&quot;</span>] = <span class="stringliteral">&quot;vtxana_kf&quot;</span></div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;recoana_kf.parameters[<span class="stringliteral">&quot;trkColl&quot;</span>] = <span class="stringliteral">&quot;KalmanFullTracks&quot;</span></div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;recoana_kf.parameters[<span class="stringliteral">&quot;vtxColl&quot;</span>] = <span class="stringliteral">&quot;UnconstrainedV0Vertices_KF&quot;</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;recoana_kf.parameters[<span class="stringliteral">&quot;mcColl&quot;</span>]  = <span class="stringliteral">&quot;&quot;</span><span class="comment">#&quot;MCParticle&quot;</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;recoana_kf.parameters[<span class="stringliteral">&quot;mcColl&quot;</span>] = <span class="stringliteral">&quot;&quot;</span>  <span class="comment"># &quot;MCParticle&quot;</span></div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;recoana_kf.parameters[<span class="stringliteral">&quot;hitColl&quot;</span>] = <span class="stringliteral">&quot;SiClustersOnTrack&quot;</span></div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;recoana_kf.parameters[<span class="stringliteral">&quot;vtxSelectionjson&quot;</span>] = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&#39;/analysis/selections/customCuts.json&#39;</span></div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;recoana_kf.parameters[<span class="stringliteral">&quot;histoCfg&quot;</span>] = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&quot;/analysis/plotconfigs/tracking/vtxAnalysis_2019.json&quot;</span></div>
@@ -118,24 +118,24 @@ $(function() {
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;recoana_kf.parameters[<span class="stringliteral">&quot;isData&quot;</span>] = options.isData</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;recoana_kf.parameters[<span class="stringliteral">&quot;debug&quot;</span>] = 0</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;recoana_kf.parameters[<span class="stringliteral">&quot;makeFlatTuple&quot;</span>] = options.makeFlatTuple</div>
-<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaKalVtxTuple__cfg.html#a4196b6253c33d0434a6b764061bde4c1">   54</a></span>&#160;CalTimeOffset=-999.</div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaKalVtxTuple__cfg.html#a4196b6253c33d0434a6b764061bde4c1">   54</a></span>&#160;CalTimeOffset = -999.</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="keywordflow">if</span> (options.isData==1):</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    CalTimeOffset=56.</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    print(<span class="stringliteral">&quot;Running on data file: Setting CalTimeOffset %d&quot;</span>  % CalTimeOffset)</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keywordflow">elif</span> (options.isData==0):</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    CalTimeOffset=43.</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    print(<span class="stringliteral">&quot;Running on MC file: Setting CalTimeOffset %d&quot;</span>  % CalTimeOffset)</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="keywordflow">if</span> (options.isData == 1):</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    CalTimeOffset = 56.</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    print(<span class="stringliteral">&quot;Running on data file: Setting CalTimeOffset %d&quot;</span> % CalTimeOffset)</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keywordflow">elif</span> (options.isData == 0):</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    CalTimeOffset = 43.</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    print(<span class="stringliteral">&quot;Running on MC file: Setting CalTimeOffset %d&quot;</span> % CalTimeOffset)</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="keywordflow">else</span>:</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    print(<span class="stringliteral">&quot;Specify which type of ntuple you are running on: -t 1 [for Data] / -t 0 [for MC]&quot;</span>)</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;recoana_kf.parameters[<span class="stringliteral">&quot;CalTimeOffset&quot;</span>]=CalTimeOffset</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;recoana_kf.parameters[<span class="stringliteral">&quot;CalTimeOffset&quot;</span>] = CalTimeOffset</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">#Region definitions</span></div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
-<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaKalVtxTuple__cfg.html#a67b272a58f3b9db7863bcebb7152345a">   70</a></span>&#160;RegionPath=os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&quot;/analysis/selections/&quot;</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;recoana_kf.parameters[<span class="stringliteral">&quot;regionDefinitions&quot;</span>] = [RegionPath+<span class="stringliteral">&#39;L1CutPos.json&#39;</span>,RegionPath+<span class="stringliteral">&#39;tightUncVChi2.json&#39;</span>]</div>
+<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaKalVtxTuple__cfg.html#a67b272a58f3b9db7863bcebb7152345a">   70</a></span>&#160;RegionPath = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&quot;/analysis/selections/&quot;</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;recoana_kf.parameters[<span class="stringliteral">&quot;regionDefinitions&quot;</span>] = [RegionPath+<span class="stringliteral">&#39;L1CutPos.json&#39;</span>, RegionPath+<span class="stringliteral">&#39;tightUncVChi2.json&#39;</span>]</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment">#RecoHitAna</span></div>
 <div class="line"><a name="l00074"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaKalVtxTuple__cfg.html#ad827090038061f4a04a789ab61df8c1d">   74</a></span>&#160;recoana_gbl.parameters = recoana_kf.parameters.copy()</div>
@@ -145,7 +145,7 @@ $(function() {
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;recoana_gbl.parameters[<span class="stringliteral">&quot;trkColl&quot;</span>] = <span class="stringliteral">&quot;GBLTracks&quot;</span></div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;recoana_gbl.parameters[<span class="stringliteral">&quot;makeFlatTuple&quot;</span>] = options.makeFlatTuple</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">#    </span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">#</span></div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">#    RegionPath+&#39;ESumCR.json&#39;,</span></div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment">#    RegionPath+&#39;TightNoSharedL0.json&#39;,</span></div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment">#    RegionPath+&#39;TightNoShared.json&#39;,</span></div>
@@ -158,16 +158,14 @@ $(function() {
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="keywordflow">elif</span> (options.tracking == <span class="stringliteral">&quot;GBL&quot;</span>):</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    print(<span class="stringliteral">&quot;Run GBL analysis&quot;</span>)</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    p.sequence = [recoana_gbl]</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="keywordflow">else</span> :</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordflow">print</span> (<span class="stringliteral">&quot;ERROR::Need to specify which tracks KF or GBL&quot;</span>)</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="keywordflow">else</span>:</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    print(<span class="stringliteral">&quot;ERROR::Need to specify which tracks KF or GBL&quot;</span>)</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    exit(1)</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
-<div class="line"><a name="l00098"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaKalVtxTuple__cfg.html#a27256609f574b662639e0a8cd48b8d3a">   98</a></span>&#160;p.input_files=infile</div>
+<div class="line"><a name="l00098"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaKalVtxTuple__cfg.html#a27256609f574b662639e0a8cd48b8d3a">   98</a></span>&#160;p.input_files = infile</div>
 <div class="line"><a name="l00099"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaKalVtxTuple__cfg.html#a7882aa8b39a47102a13c2630137590d8">   99</a></span>&#160;p.output_files = [outfile]</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;p.printProcess()</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
 <div class="ttc" id="aclassHpstrConf_1_1Process_html"><div class="ttname"><a href="classHpstrConf_1_1Process.html">HpstrConf.Process</a></div><div class="ttdoc">Process python class.</div><div class="ttdef"><b>Definition:</b> <a href="HpstrConf_8py_source.html#l00020">HpstrConf.py:20</a></div></div>
 <div class="ttc" id="aclassHpstrConf_1_1Processor_html"><div class="ttname"><a href="classHpstrConf_1_1Processor.html">HpstrConf.Processor</a></div><div class="ttdoc">Processor python class.</div><div class="ttdef"><b>Definition:</b> <a href="HpstrConf_8py_source.html#l00004">HpstrConf.py:4</a></div></div>
 <div class="ttc" id="anamespaceconfig_1_1anaKalVtxTuple__cfg_html_a4b99ff73a8a869319570237b5c57ab03"><div class="ttname"><a href="namespaceconfig_1_1anaKalVtxTuple__cfg.html#a4b99ff73a8a869319570237b5c57ab03">config.anaKalVtxTuple_cfg.str</a></div><div class="ttdeci">str</div><div class="ttdef"><b>Definition:</b> <a href="anaKalVtxTuple__cfg_8py_source.html#l00007">anaKalVtxTuple_cfg.py:7</a></div></div>

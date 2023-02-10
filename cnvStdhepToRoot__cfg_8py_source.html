@@ -99,14 +99,14 @@ $(function() {
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;cnvStd.parameters[<span class="stringliteral">&quot;mcPartCollStdhep&quot;</span>] = <span class="stringliteral">&#39;MCParticle&#39;</span></div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;cnvStd.parameters[<span class="stringliteral">&quot;mcPartCollRoot&quot;</span>] = <span class="stringliteral">&#39;MCParticle&#39;</span></div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;cnvStd.parameters[<span class="stringliteral">&quot;skipEvent&quot;</span>] = options.skip_events</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keywordflow">if</span> options.nevents&gt;-1:</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keywordflow">if</span> options.nevents &gt; -1:</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    cnvStd.parameters[<span class="stringliteral">&quot;maxEvent&quot;</span>] = options.skip_events+options.nevents</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keywordflow">else</span>:</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    cnvStd.parameters[<span class="stringliteral">&quot;maxEvent&quot;</span>] = -1</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment"># Sequence which the processors will run.</span></div>
 <div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1cnvStdhepToRoot__cfg.html#a3f9c3bf7e2cafc2c46df6d132ea658cc">   40</a></span>&#160;p.sequence = [cnvStd]</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1cnvStdhepToRoot__cfg.html#a27256609f574b662639e0a8cd48b8d3a">   42</a></span>&#160;p.input_files=[stdhep_file]</div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1cnvStdhepToRoot__cfg.html#a27256609f574b662639e0a8cd48b8d3a">   42</a></span>&#160;p.input_files = [stdhep_file]</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">#p.input_files=[]</span></div>
 <div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1cnvStdhepToRoot__cfg.html#a7882aa8b39a47102a13c2630137590d8">   44</a></span>&#160;p.output_files = [root_file]</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>

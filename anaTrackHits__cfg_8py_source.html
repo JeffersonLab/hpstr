@@ -78,7 +78,7 @@ $(function() {
 <div class="line"><a name="l00006"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaTrackHits__cfg.html#a02eacfd40be9042ceb0f07547365203d">    6</a></span>&#160;options = base.parser.parse_args()</div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"># Use the input file to set the output file name</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaTrackHits__cfg.html#a284eaa73fc00d296c01f7af1d7b36ad6">    9</a></span>&#160;inFilename  = options.inFilename</div>
+<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaTrackHits__cfg.html#a284eaa73fc00d296c01f7af1d7b36ad6">    9</a></span>&#160;inFilename = options.inFilename</div>
 <div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaTrackHits__cfg.html#a920b99d304bd717f4197afc33496f978">   10</a></span>&#160;outFilename = options.outFilename</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;print(<span class="stringliteral">&#39;Input file:  %s&#39;</span> % inFilename)</div>
@@ -107,7 +107,7 @@ $(function() {
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;anaTrks.parameters[<span class="stringliteral">&quot;selectionjson&quot;</span>] = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&#39;/analysis/selections/trackHit/trackHitAna.json&#39;</span></div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
 <div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaTrackHits__cfg.html#a67b272a58f3b9db7863bcebb7152345a">   41</a></span>&#160;RegionPath = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&quot;/analysis/selections/trackHit/&quot;</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;anaTrks.parameters[<span class="stringliteral">&quot;regionDefinitions&quot;</span>] = [RegionPath+<span class="stringliteral">&#39;hc15_1111.json&#39;</span>, </div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;anaTrks.parameters[<span class="stringliteral">&quot;regionDefinitions&quot;</span>] = [RegionPath+<span class="stringliteral">&#39;hc15_1111.json&#39;</span>,</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc14_1110.json&#39;</span>,</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc13_1101.json&#39;</span>,</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc12_1100.json&#39;</span>,</div>
@@ -124,7 +124,7 @@ $(function() {
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc1_0001.json&#39;</span>,</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;hc0_0000.json&#39;</span>,</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                                           RegionPath+<span class="stringliteral">&#39;noHCreq.json&#39;</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                                          ]</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                                           ]</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment"># Sequence which the processors will run.</span></div>
 <div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaTrackHits__cfg.html#a3f9c3bf7e2cafc2c46df6d132ea658cc">   62</a></span>&#160;p.sequence = [anaTrks]</div>

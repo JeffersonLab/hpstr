@@ -102,22 +102,22 @@ $(function() {
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;header.parameters[<span class="stringliteral">&quot;debug&quot;</span>] = 0</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;header.parameters[<span class="stringliteral">&quot;headCollRoot&quot;</span>] = <span class="stringliteral">&quot;EventHeader&quot;</span></div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;header.parameters[<span class="stringliteral">&quot;trigCollLcio&quot;</span>] = <span class="stringliteral">&quot;TriggerBank&quot;</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;header.parameters[<span class="stringliteral">&quot;rfCollLcio&quot;</span>]   = <span class="stringliteral">&quot;RFHits&quot;</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;header.parameters[<span class="stringliteral">&quot;vtpCollLcio&quot;</span>]  = <span class="stringliteral">&quot;VTPBank&quot;</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;header.parameters[<span class="stringliteral">&quot;vtpCollRoot&quot;</span>]  = <span class="stringliteral">&quot;VTPBank&quot;</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;header.parameters[<span class="stringliteral">&quot;tsCollLcio&quot;</span>]   = <span class="stringliteral">&quot;TSBank&quot;</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;header.parameters[<span class="stringliteral">&quot;tsCollRoot&quot;</span>]   = <span class="stringliteral">&quot;TSBank&quot;</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;header.parameters[<span class="stringliteral">&quot;rfCollLcio&quot;</span>] = <span class="stringliteral">&quot;RFHits&quot;</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;header.parameters[<span class="stringliteral">&quot;vtpCollLcio&quot;</span>] = <span class="stringliteral">&quot;VTPBank&quot;</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;header.parameters[<span class="stringliteral">&quot;vtpCollRoot&quot;</span>] = <span class="stringliteral">&quot;VTPBank&quot;</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;header.parameters[<span class="stringliteral">&quot;tsCollLcio&quot;</span>] = <span class="stringliteral">&quot;TSBank&quot;</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;header.parameters[<span class="stringliteral">&quot;tsCollRoot&quot;</span>] = <span class="stringliteral">&quot;TSBank&quot;</span></div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">#SvtRawData</span></div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;rawsvt.parameters[<span class="stringliteral">&quot;debug&quot;</span>] = 0</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;rawsvt.parameters[<span class="stringliteral">&quot;hitCollLcio&quot;</span>]    = <span class="stringliteral">&#39;SVTRawTrackerHits&#39;</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;rawsvt.parameters[<span class="stringliteral">&quot;hitCollLcio&quot;</span>] = <span class="stringliteral">&#39;SVTRawTrackerHits&#39;</span></div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;rawsvt.parameters[<span class="stringliteral">&quot;hitfitCollLcio&quot;</span>] = <span class="stringliteral">&#39;SVTFittedRawTrackerHits&#39;</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;rawsvt.parameters[<span class="stringliteral">&quot;hitCollRoot&quot;</span>]    = <span class="stringliteral">&#39;SVTRawTrackerHits&#39;</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;rawsvt.parameters[<span class="stringliteral">&quot;hitCollRoot&quot;</span>] = <span class="stringliteral">&#39;SVTRawTrackerHits&#39;</span></div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment"># Sequence which the processors will run.</span></div>
 <div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1rawSvtHits__cfg.html#a3f9c3bf7e2cafc2c46df6d132ea658cc">   51</a></span>&#160;p.sequence = [header, rawsvt]</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1rawSvtHits__cfg.html#a27256609f574b662639e0a8cd48b8d3a">   53</a></span>&#160;p.input_files=[lcio_file]</div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1rawSvtHits__cfg.html#a27256609f574b662639e0a8cd48b8d3a">   53</a></span>&#160;p.input_files = [lcio_file]</div>
 <div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1rawSvtHits__cfg.html#a7882aa8b39a47102a13c2630137590d8">   54</a></span>&#160;p.output_files = [root_file]</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;p.printProcess()</div>
