@@ -7,20 +7,20 @@ parser.add_argument('--debug', '-D', action="count", dest="debug", help="Increas
 #parser.add_option("-i", "--inFile", type="string", dest="inFilename",
 #                  help="Input filename.", metavar="inFilename", default="")
 parser.add_argument('--outDir', '-d', type=str, dest="outDir", action='store',
-                  help="Specify the output directory.", metavar="outDir", default=".")
+                    help="Specify the output directory.", metavar="outDir", default=".")
 parser.add_argument("-o", "--outFile", type=str, dest="outFilename", action='store',
-                  help="Output filename.", metavar="outFilename", default="out.root")
+                    help="Output filename.", metavar="outFilename", default="out.root")
 parser.add_argument("-t", "--isData", type=int, dest="isData",
-                  help="Type of lcio ntuple: 1=data, 0=MC", metavar="isData", default=-1)
+                    help="Type of lcio ntuple: 1=data, 0=MC", metavar="isData", default=-1)
 parser.add_argument("-y", "--year", type=int, dest="year",
-                  help="Select year of the data", metavar="year", default=2019)
+                    help="Select year of the data", metavar="year", default=2019)
 parser.add_argument("-n", "--nevents", type=int, dest="nevents",
-                  help="Number of events to process", metavar="nevents",default=-1)
+                    help="Number of events to process", metavar="nevents", default=-1)
 parser.add_argument("-sk", "--skip", type=int, dest="skip_events",
-                  help="What event would you like to run on first", metavar="skip_events",default=0)
+                    help="What event would you like to run on first", metavar="skip_events", default=0)
 parser.add_argument("-a", "--analysis", type=str, dest="analysis",
-                    help="Which analysis is being run ", metavar="analysis",default="vertex")
-parser.add_argument('--infile','-i', type=str, dest="inFilename", metavar='infiles', nargs="+",
+                    help="Which analysis is being run ", metavar="analysis", default="vertex")
+parser.add_argument('--infile', '-i', type=str, dest="inFilename", metavar='infiles', nargs="+",
                     help="Input files, specify on or more.")
 
 

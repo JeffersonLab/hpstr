@@ -17,7 +17,7 @@ p.skip_events = options.skip_events
 p.max_events = options.nevents
 
 #Set files to process
-p.input_files=[lcio_file]
+p.input_files = [lcio_file]
 p.output_files = [root_file]
 
 # Library containing processors

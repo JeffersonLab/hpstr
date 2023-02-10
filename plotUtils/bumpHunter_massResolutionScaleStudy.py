@@ -12,21 +12,21 @@ from optparse import OptionParser
 # Parse the command line options.
 parser = OptionParser()
 parser.add_option("-i", "--inputDir", type="string", dest="inputDir",
-    help="The directory containing the input ROOT files.", metavar="inputDir", default="toys/toys.root")
+                  help="The directory containing the input ROOT files.", metavar="inputDir", default="toys/toys.root")
 parser.add_option("-o", "--outputFile", type="string", dest="outputFile",
-    help="Specify the output filename.", metavar="outputFile", default="testOut.root")
+                  help="Specify the output filename.", metavar="outputFile", default="testOut.root")
 parser.add_option("-p", "--prefix", type="string", dest="prefix",
-    help="Sets a prefix to prepend to all file names.", metavar="prefix", default="")
+                  help="Sets a prefix to prepend to all file names.", metavar="prefix", default="")
 parser.add_option("-d", "--plotdir", type="string", dest="plot_dir",
-    help="Sets the plot output directory.", metavar="plot_dir", default=".")
+                  help="Sets the plot output directory.", metavar="plot_dir", default=".")
 parser.add_option("-f", "--truthFraction", type="string", dest="truthFracFile",
-    help="Sets the file containing the signal truth-matching fractions.", metavar="truthFracFile", default="dat/truthMatchFrac.dat")
+                  help="Sets the file containing the signal truth-matching fractions.", metavar="truthFracFile", default="dat/truthMatchFrac.dat")
 (options, args) = parser.parse_args()
 
 # Map the corrections for signal removal. This takes as an input
 # file where each line is of the form "Mass(MeV),Fraction". There
 # should be no spaces and should be one mass per line. No empty lines.
-truthMatchFrac = { }
+truthMatchFrac = {}
 print("Defining signal truth-matching fraction:")
 tmfFile = open(options.truthFracFile, "r")
 for line in tmfFile:
@@ -53,13 +53,17 @@ for filename in filenames:
     # Break the filename apart into its parameters.
     params = re.split('[mwprs.]', filename)[2:7]
     windowSize = int(params[1])
-    sigInj     = int(params[4])
+    sigInj = int(params[4])
 
     # Track the window size range.
-    if(smallestWindow > windowSize): smallestWindow = windowSize
-    if(smallestSigInj > sigInj): smallestSigInj = windowSize
-    if(largestWindow < windowSize): largestWindow  = windowSize
-    if(largestSigInj < sigInj): largestSigInj  = sigInj
+    if (smallestWindow > windowSize):
+        smallestWindow = windowSize
+    if (smallestSigInj > sigInj):
+        smallestSigInj = windowSize
+    if (largestWindow < windowSize):
+        largestWindow = windowSize
+    if (largestSigInj < sigInj):
+        largestSigInj = sigInj
     pass
 
 print('Window Minimum: %i;   Window Maximum: %i' % (smallestWindow, largestWindow))
@@ -68,21 +72,21 @@ print('Signal Minimum: %i;   Signal Maximum: %i' % (smallestSigInj, largestSigIn
 # The signal error and the pull are stored in TProfile objects. These
 # must be instantiated before any other processing is done. Do this
 # here.
-chi2Data = { }
-pullSigG = { }
-pullSigErrG = { }
+chi2Data = {}
+pullSigG = {}
+pullSigErrG = {}
 
-sigError = { }
-sigPull = { }
+sigError = {}
+sigPull = {}
 filenames = os.listdir(options.inputDir)
 for filename in filenames:
     # Break the filename apart into its parameters.
     params = re.split('[mwprs.]', filename)[2:7]
-    mass       = int(params[0])
+    mass = int(params[0])
     windowSize = int(params[1])
-    order      = int(params[2])
-    resScale   = int(params[3])
-    sigInj     = int(params[4])
+    order = int(params[2])
+    resScale = int(params[3])
+    sigInj = int(params[4])
 
     # Generate the unique key set name.
     keyName = 'm%ip%ir%is%i' % (mass, order, resScale, sigInj)
@@ -96,8 +100,8 @@ for filename in filenames:
         winBin = winMax - winMin
 
         # Create a TProfile for this key set.
-        sigError[keyName] = r.TProfile('%s_toyErr'  % (keyName), '%s Toy Signal Yield Error;Window Size (Mass Resolution);Signal Yield Error' % (keyName), int(winBin), float(winMin), float(winMax))
-        sigPull[keyName]  = r.TProfile('%s_toyPull' % (keyName), '%s Toy Pull;Window Size (Mass Resolution);Signal Pull'                      % (keyName), int(winBin), float(winMin), float(winMax))
+        sigError[keyName] = r.TProfile('%s_toyErr' % (keyName), '%s Toy Signal Yield Error;Window Size (Mass Resolution);Signal Yield Error' % (keyName), int(winBin), float(winMin), float(winMax))
+        sigPull[keyName] = r.TProfile('%s_toyPull' % (keyName), '%s Toy Pull;Window Size (Mass Resolution);Signal Pull' % (keyName), int(winBin), float(winMin), float(winMax))
         sigError[keyName].SetErrorOption('s')
         sigPull[keyName].SetErrorOption('s')
     pass
@@ -113,7 +117,8 @@ for filename in filenames:
     print('    %f%%' % (100.0 * processedFiles / totalFiles))
 
     # Exclude non-ROOT files.
-    if not filename.endswith(".root"): continue
+    if not filename.endswith(".root"):
+        continue
 
     # Get the current input file.
     inFile = r.TFile(options.inputDir + filename)
@@ -134,14 +139,14 @@ for filename in filenames:
         keyName = 'm%ip%ir%is%i' % (mass, order, resScale, sigInj)
 
         # Collect the χ² data.
-        if(sigInj == 0):
+        if (sigInj == 0):
             # Get the χ² probability.
             bkg_chi2 = float(model.bkg_chi2_prob)
 
             # Map it to the current window size for this key set. If the
             # key set is not defined yet, instantiate it.
             if keyName not in chi2Data:
-                chi2Data[keyName] = { }
+                chi2Data[keyName] = {}
             chi2Data[keyName][windowSize] = bkg_chi2
 
         # Collect the signal yield and pull data.
@@ -149,7 +154,8 @@ for filename in filenames:
         nFailed = 0
         for toy in range(len(model.toy_sig_yield)):
             nTotal += 1
-            if model.toy_minuit_status[toy] > 0.0: continue
+            if model.toy_minuit_status[toy] > 0.0:
+                continue
             if model.toy_sig_yield_err[toy] == 0:
                 nFailed += 1
                 print('            Yield: %f;   RFrac: %f;   Signal: %i;   Error: %f' % (model.toy_sig_yield[toy], float(truthMatchFrac[mass]), model.toy_sig_samples, model.toy_sig_yield_err[toy]))
@@ -167,9 +173,9 @@ for filename in filenames:
         # Store the pull as a function of signal injection.
         pullSigGKey = 'm%ip%iw%i' % (mass, order, windowSize)
         if pullSigGKey not in pullSigG:
-            pullSigG[pullSigGKey] = { }
+            pullSigG[pullSigGKey] = {}
         if pullSigGKey not in pullSigErrG:
-            pullSigErrG[pullSigGKey] = { }
+            pullSigErrG[pullSigGKey] = {}
         pullSigG[pullSigGKey][sigInj] = pullAvg
         pullSigErrG[pullSigGKey][sigInj] = pullErr
         pass
@@ -177,7 +183,7 @@ for filename in filenames:
 
 
 # Create the output file and output the plots.
-outFile = r.TFile(options.outputFile,'RECREATE')
+outFile = r.TFile(options.outputFile, 'RECREATE')
 outFile.cd()
 
 # Set the plot style.
@@ -189,30 +195,31 @@ for key in sigError.keys():
     sigPull[key].Write()
 
 # Save the pull as a function of signal strength plots.
-fitSlope = { }
-fitSlopeErr = { }
-fitOffset = { }
-fitOffsetErr = { }
+fitSlope = {}
+fitSlopeErr = {}
+fitOffset = {}
+fitOffsetErr = {}
 for key in pullSigG:
     print('\n\n%s' % key)
 
     # Get the x-axis values. These are just the signal injection
     # strength keys sorted in ascending order.
-    sigInjs = pullSigG[key].keys()
-    sigInjs.sort()
+    sigInjs = sorted(pullSigG[key].keys())
 
     # Get the signal injection order.
-    logSigInj = [ ]
+    logSigInj = []
     for sigInj in sigInjs:
-        if(sigInj == 0): logSigInj.append(0)
-        else: logSigInj.append(math.log(sigInj, 10))
+        if (sigInj == 0):
+            logSigInj.append(0)
+        else:
+            logSigInj.append(math.log(sigInj, 10))
         pass
 
     # Get the y-axis values. These are the pulls corresponding to the
     # signal injection strength values.
-    pulls = [ ]
-    xErrs = [ ]
-    yErrs = [ ]
+    pulls = []
+    xErrs = []
+    yErrs = []
     for sigInj in sigInjs:
         pulls.append(pullSigG[key][sigInj])
         xErrs.append(0)
@@ -249,18 +256,18 @@ for key in pullSigG:
     # Store the values.
     valKey = 'm%io%i' % (mass, order)
     if valKey not in fitSlope:
-        fitSlope[valKey] = { }
-        fitSlopeErr[valKey] = { }
-        fitOffset[valKey] = { }
-        fitOffsetErr[valKey] = { }
+        fitSlope[valKey] = {}
+        fitSlopeErr[valKey] = {}
+        fitOffset[valKey] = {}
+        fitOffsetErr[valKey] = {}
     fitSlope[valKey][windowSize] = slope
     fitSlopeErr[valKey][windowSize] = slopeErr
     fitOffset[valKey][windowSize] = offset
     fitOffsetErr[valKey][windowSize] = offsetErr
 
     # Set the plot style.
-    plots = [ pullSigGraph, pullLogSigGraph ]
-    plotNames = [ "pullSig", "logPullSig" ]
+    plots = [pullSigGraph, pullLogSigGraph]
+    plotNames = ["pullSig", "logPullSig"]
     for i in range(len(plots)):
         plots[i].SetLineWidth(3)
         plots[i].SetMarkerSize(3)
@@ -271,7 +278,7 @@ for key in pullSigG:
         canvas = r.TCanvas('%s_canvas' % (key), '%s_canvas' % (key), 2500, 1000)
         plots[i].Draw("ap")
         utils.InsertText("", [], 0.85, 0.15)
-        canvas.SaveAs('%s/%sm%io%iw%i_%s.png'%(plotDirectory, prefix, mass, order, windowSize, plotNames[i]))
+        canvas.SaveAs('%s/%sm%io%iw%i_%s.png' % (plotDirectory, prefix, mass, order, windowSize, plotNames[i]))
 
         # Save the graph.
         plots[i].Write()
@@ -281,17 +288,17 @@ for key in pullSigG:
 for key in fitSlope:
     # Get the x-axis values. These are just the window size keys
     # sorted in ascending order.
-    windowSizes = [ ]
+    windowSizes = []
     for windowSize in fitSlope[key].keys():
         windowSizes.append(float(windowSize))
     windowSizes.sort()
 
     # Get the y-axis values. These are the fit parameters.
-    slopes = [ ]
-    slopeXErrs = [ ]
-    slopeYErrs = [ ]
-    offsets = [ ]
-    offsetYErrs = [ ]
+    slopes = []
+    slopeXErrs = []
+    slopeYErrs = []
+    offsets = []
+    offsetYErrs = []
     for windowSize in windowSizes:
         slopeXErrs.append(0.0)
         slopes.append(float(fitSlope[key][windowSize]))
@@ -301,7 +308,7 @@ for key in fitSlope:
         pass
 
     # DEBUG PRINT
-    print (key)
+    print(key)
     for i in range(len(windowSizes) - 1):
         print('(%i, %f, %f)' % (windowSizes[i], slopes[i], offsets[i]))
 
@@ -329,7 +336,7 @@ for key in fitSlope:
     canvas = r.TCanvas('%s_canvas' % (key), '%s_canvas' % (key), 2500, 1000)
     slopeGraph.Draw("ap")
     utils.InsertText("", [], 0.15, 0.15)
-    canvas.SaveAs('%s/%s%s_slopeVSwindowSize.png'%(plotDirectory, prefix, key))
+    canvas.SaveAs('%s/%s%s_slopeVSwindowSize.png' % (plotDirectory, prefix, key))
 
     # Save the graphs.
     outFile.cd()
@@ -340,9 +347,8 @@ for key in fitSlope:
 for key in chi2Data.keys():
     # Create two lists - one containing the window sizes and one
     # containing the χ² probabilities.
-    windowSizes = chi2Data[key].keys()
-    windowSizes.sort()
-    chi2s = [ ]
+    windowSizes = sorted(chi2Data[key].keys())
+    chi2s = []
     for windowSize in windowSizes:
         chi2s.append(chi2Data[key][windowSize])
 

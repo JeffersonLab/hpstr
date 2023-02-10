@@ -5,19 +5,19 @@ import utilities as utils
 import copy
 from optparse import OptionParser
 
-Lumi = 10.7 #1/pb
+Lumi = 10.7  # 1/pb
 
 utils.SetStyle()
 
 parser = OptionParser()
 
 parser.add_option("-i", "--inputFile", type="string", dest="inputFile",
-    help="Name of file to run on.", metavar="inputFile", default="toys/toys.root")
+                  help="Name of file to run on.", metavar="inputFile", default="toys/toys.root")
 parser.add_option("-o", "--outputFile", type="string", dest="outputFile",
-    help="Specify the output filename.", metavar="outputFile", default="radFrac.root")
+                  help="Specify the output filename.", metavar="outputFile", default="radFrac.root")
 
 (options, args) = parser.parse_args()
-outfile = r.TFile("%s"%(options.outputFile),"RECREATE")
+outfile = r.TFile("%s" % (options.outputFile), "RECREATE")
 
 invMassHistos = {}
 #Control Region Rad+Beam MC
@@ -37,18 +37,18 @@ outfile.cd()
 #Convert x axis scaling from GeV to MeV (may or may not be necessary)
 for histo in invMassHistos.keys():
     name = invMassHistos[histo].GetName()
-    invMassHistos[histo].SetName("need_to_rescale_%s"%(name))
-    rescaled_h = r.TH1F("rescaled_%s"%(name),"rescaled_%s"%(name),200,0.,200.)
+    invMassHistos[histo].SetName("need_to_rescale_%s" % (name))
+    rescaled_h = r.TH1F("rescaled_%s" % (name), "rescaled_%s" % (name), 200, 0., 200.)
     nbins = invMassHistos[histo].GetXaxis().GetNbins()
     for b in range(nbins):
         val = invMassHistos[histo].GetBinContent(b+1)
-        rescaled_h.SetBinContent(b+1,val)
+        rescaled_h.SetBinContent(b+1, val)
     rescaled_h.SetName(name)
     invMassHistos[histo] = rescaled_h
 
 #Scale the histograms
 rebin = 1
-units = 1 #1 MeV
+units = 1  # 1 MeV
 invMassHistos['rad'].Rebin(rebin)
 invMassHistos['tritrig'].Rebin(rebin)
 invMassHistos['wab'].Rebin(rebin)
@@ -63,12 +63,12 @@ invMassHistos['wab'].Write()
 invMassHistos['tritrig'].Write()
 outfile.cd()
 
-canv = utils.MakeRadFrac("radFrac", ".", [invMassHistos['rad'],invMassHistos['wab'],invMassHistos['tritrig']], ['rad', 'wab', 'tritrig+wab'],'.png', RatioMin=0.00, RatioMax=0.3, LogY=True)
+canv = utils.MakeRadFrac("radFrac", ".", [invMassHistos['rad'], invMassHistos['wab'], invMassHistos['tritrig']], ['rad', 'wab', 'tritrig+wab'], '.png', RatioMin=0.00, RatioMax=0.3, LogY=True)
 
 #2016 KF results 11/15
 '''
-EXT PARAMETER                APPROXIMATE        STEP         FIRST   
-  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+EXT PARAMETER                APPROXIMATE        STEP         FIRST
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE
    1  p0          -1.04206e-01   1.01064e-03   4.42889e-04  -1.12429e-06
    2  p1           9.92547e-03   2.40791e-05  -2.67020e-05   1.42600e-04
    3  p2          -1.99437e-04   2.40882e-07   5.98873e-07   4.16987e-02
