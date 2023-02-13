@@ -31,6 +31,38 @@ void ZBiHistos::resetHistograms1d(){
     }
 }
 
+/*
+bool ZBiHistos::setTestZtailNevents() {
+
+    TF1* fitFunc = new TF1("fitfunc", "[0]* exp( (x<=([1]+[3]))*(-0.5*((x-[1])^2)/([2]^2)) + (x>=[1]+[3])*(-0.5*([3]^2/[2]^2)-(x-[1]-[3])/[4])  )", -100.0, 100.0);
+    std::string histoname = m_name+"_zVtx_h";
+    //if(histos1d[histoname]->GetEntries() < 1)
+
+    TFitResultPtr gausResult = (TFitResultPtr)histos1d[histoname]->Fit("gaus","QS"); 
+    double gaus1 = gausResult->GetParams()[1];
+    double gaus2 = gausResult->GetParams()[2];
+    std::cout << "Gaus param 1: " << gaus1 << std::endl;
+    std::cout << "Gaus param 2: " << gaus2 << std::endl;
+    gausResult = histos1d[histoname]->Fit("gaus","QS","",gaus1-3.0*gaus2, gaus1+10.0*gaus2);
+    gaus1 = gausResult->GetParams()[1];
+    gaus2 = gausResult->GetParams()[2];
+    double tailZ = gaus1 + 3.0*gaus2;
+    fitFunc->SetParameters(gausResult->GetParams()[0], gaus1, gaus2, gaus1+5.0*gaus2, 100.0);
+    TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "LSIM", "", gaus1-3.0*gaus2, 150.0);
+    double b = fitResult->GetParams()[3];
+    double l = fitResult->GetParams()[4];
+
+    double zcut = -6.0;
+    double testIntegral = fitFunc->Integral(zcut, 90.0);
+    while(testIntegral > max_tail_events){
+        zcut = zcut+0.1;
+        testIntegral = fitFunc->Integral(zcut, 90.0);
+    }
+    fitFunc->Draw();
+    return zcut;
+}
+*/
+
 double ZBiHistos::getIntegral(std::string histoname){
     int xmax; 
     int xmin;
@@ -55,9 +87,12 @@ void ZBiHistos::change1dHistoTitle(std::string histoname, std::string title){
 double ZBiHistos::cutFractionOfIntegral(std::string histoname, bool isCutGreaterThan, double cutFraction, double initialIntegral){
 
     TH1F* histo = histos1d[histoname];
-    int xmax = histo->FindLastBinAbove(0.0);
-    int xmin = histo->FindFirstBinAbove(0.0);
-    //std::cout << "xmin: " 
+    histo->ClearUnderflowAndOverflow();
+    int xmax = histo->FindLastBinAbove(0.1);
+    int xmin = histo->FindFirstBinAbove(0.1);
+    if(debug_){
+        std::cout << "[ZBiHistos] Initial integral for " << histoname << ": " << initialIntegral << std::endl;
+    }
     
     double cutvalue;
     if(isCutGreaterThan){
@@ -93,25 +128,19 @@ void ZBiHistos::defineCutlistHistos(std::map<std::string,std::pair<double,int>> 
         addHisto1d("signal_vdSelZ_"+cutname+"_h","true z_{vtx} [mm]",200, -50.3, 149.7);
         //tritrig zVtx
         addHisto1d("tritrig_zVtx_"+cutname+"_h","unc z_{vtx} [mm]",150, -50.0, 100.0);
-        
-        /*
-        //Impact parameter cuts
-        addHisto2d(cutname+"_z0_v_recon_z_signal_hh","recon_z [mm]", 450, -20.0, 70.0, "z0 [mm]", 1000,-10.0,10.0);
-        addHisto2d(cutname+"_z0_v_recon_z_tritrig_hh","recon_z [mm]", 450, -20.0, 70.0, "z0 [mm]", 1000,-10.0,10.0);
-        addHisto2d(cutname+"_z0_v_recon_z_tritrig_impactparam_cut_hh","recon_z [mm]", 450, -20.0, 70.0, "z0 [mm]", 1000,-10.0,10.0);
-        addHisto1d(cutname+"_impact_parameter_up_h","recon_z [mm]", 450, -20.0, 70.0);
-        addHisto1d(cutname+"_impact_parameter_down_h","recon_z [mm]", 450, -20.0, 70.0);
-        */
     }
 }
 
 void ZBiHistos::defineAnalysisHistos(){
 
         addHisto2d("z0_v_recon_z_hh","recon_z [mm]", 450, -20.0, 70.0, "z0 [mm]", 1000,-10.0,10.0);
-        addHisto2d("z0_v_recon_z_post_impactparam_cut_hh","recon_z [mm]", 450, -20.0, 70.0, "z0 [mm]", 1000,-10.0,10.0);
+        addHisto2d("z0_v_recon_z_post_cut_hh","recon_z [mm]", 450, -20.0, 70.0, "z0 [mm]", 1000,-10.0,10.0);
+        addHisto2d("z0_v_recon_z_alpha_hh","recon_z [mm]", 450, -20.0, 70.0, "z0 [mm]", 1000,-10.0,10.0);
+        addHisto2d("z0_v_recon_z_alpha_post_cut_hh","recon_z [mm]", 450, -20.0, 70.0, "z0 [mm]", 1000,-10.0,10.0);
         addHisto1d("impact_parameter_up_h","recon_z [mm]", 450, -20.0, 70.0);
         addHisto1d("impact_parameter_down_h","recon_z [mm]", 450, -20.0, 70.0);
-
+        //zalpha 
+        addHisto1d("z_alpha_h","z_alpha", 450, -20.0, 70.0);
 }
 
 std::vector<double> ZBiHistos::impactParameterCut(){
@@ -161,18 +190,28 @@ std::vector<double> ZBiHistos::impactParameterCut(){
         }
     }
 
-    TF1* fitFunc = new TF1("linear_fit","[0] + [1]*x",6.0,70.0);
-    TFitResultPtr fitResult = (TFitResultPtr)up_h->Fit("linear_fit","QS","",6.0,70.0);
+    TF1* fitFunc = new TF1("linear_fit","[0] + [1]*x",5.0,70.0);
+    TFitResultPtr fitResult = (TFitResultPtr)up_h->Fit("linear_fit","QS","",5.0,70.0);
     fitFunc->Draw();
     double a_p = fitResult->GetParams()[0];
     double b_p = fitResult->GetParams()[1];
 
-    fitResult = (TFitResultPtr)down_h->Fit("linear_fit","QS","",6.0,70.0);
+    fitResult = (TFitResultPtr)down_h->Fit("linear_fit","QS","",5.0,70.0);
     fitFunc->Draw();
     double a_d = fitResult->GetParams()[0];
     double b_d = fitResult->GetParams()[1];
 
-    std::vector<double> params {a_p,b_p,a_d,b_d};
+    //Find the location in z0 where two lines meet
+    double diff = 999.9;
+    double x = 10.0;
+    while( std::abs((a_p+b_p*x) - (a_d+b_d*x)) < diff ){
+        diff = std::abs((a_p+b_p*x) - (a_d+b_d*x));    
+        x = x - 0.01;
+    }
+    double beta = .5*((a_p+b_p*x) + (a_d+b_d*x));
+    double alpha = x;
+    std::vector<double> params {a_p,b_p,a_d,b_d, beta, alpha};
+
     delete fitFunc;
     return params;
 }
@@ -196,10 +235,6 @@ double ZBiHistos::shosFitZTail(std::string cutname, double max_tail_events){
     //double b = gausResult->GetParams()[3];
     //double l = gausResult->GetParams()[4];
     double tailZ = gaus1 + 3.0*gaus2;
-    double bestChi2 = -99.9;
-    double bestParams[4] = {999.9,999.9,999.9,999.9};
-    double bestFitInit[4] = {999.9,999.9,999.9,999.9};
-
     //fitFunc->SetParameters(gausResult->GetParams()[0], gaus1, gaus2, gausResult->GetParams()[3],gausResult->GetParams()[4]);
     fitFunc->SetParameters(gausResult->GetParams()[0], gaus1, gaus2, gaus1+5.0*gaus2, 100.0);
     //TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "LSIM", "", gaus1-2.0*gaus2, gaus1+10.0*gaus2);
@@ -230,9 +265,6 @@ double ZBiHistos::fitZTail(std::string zVtxHistoname, double max_tail_events){
     gaus1 = gausResult->GetParams()[1];
     gaus2 = gausResult->GetParams()[2];
     double tailZ = gaus1 + 3.0*gaus2;
-    double bestChi2 = -99.9;
-    double bestParams[4] = {999.9,999.9,999.9,999.9};
-    double bestFitInit[4] = {999.9,999.9,999.9,999.9};
 
     fitFunc->SetParameters(gausResult->GetParams()[0], gaus1, gaus2, 3.0);
     TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "LSIM", "", gaus1-2.0*gaus2, gaus1+10.0*gaus2);

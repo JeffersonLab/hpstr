@@ -124,5 +124,12 @@
         "maxX" : 5.0,
         "xtitle" : "e^{+} Cluster Energy [GeV]",
         "ytitle" : "Events"
+    },
+    "unc_vtx_pos_clust_E_h" : {
+        "bins" : 500,
+        "minX" : 0.0,
+        "maxX" : 5.0,
+        "xtitle" : "e^{+} Cluster Energy [GeV]",
+        "ytitle" : "Events"
     }
 }

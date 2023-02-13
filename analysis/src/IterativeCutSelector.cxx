@@ -54,6 +54,11 @@ void IterativeCutSelector::setCutValue(std::string cutname, double value){
 
 bool IterativeCutSelector::passCutGTorLT(std::string cutname, double val){
 
+    //Handle Specially named cuts
+    //if(cutname == "ztail_nevents_lt")
+    //    return true;
+
+    //Handle standard cuts
     if(isCutGreaterThan(cutname)){
         if (hasCut(cutname)) {
             if (val < cuts[cutname].first) {
