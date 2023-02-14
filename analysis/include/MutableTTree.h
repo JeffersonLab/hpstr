@@ -27,13 +27,18 @@ class MutableTTree {
 
         double getValue(std::string branch_name);
 
-        void addBranch(std::string branch_name);
+        //void addBranch(std::string branch_name);
 
         void printTree(){tree_->Print();}
 
         void printEvent();
 
         void setBranchValue(std::string branch_name, double value){*tuple_[branch_name] = value;}
+
+        void addNewBranch(std::string branch);
+
+        void fillNewBranch(std::string branch, double value);
+
 
         ~MutableTTree();
 
@@ -48,6 +53,8 @@ class MutableTTree {
 
     private:
         void initializeFlatTuple(TTree* tree, std::map<std::string, double*> &tuple_map);
+        void copyTTree();
+        std::map<std::string,TBranch*> new_branches;
 };
 
 #endif // __MUTABLE_TTREE_H
