@@ -435,7 +435,7 @@ def MakePlot(name, outdir, histos, legends, oFext, xtitle="", ytitle="", ymin=0,
             if noErrors:
                 #histos[ih].GetXaxis().SetTextSize(0.045)
                 #histos[ih].GetYaxis().SetTextSize(0.045)
-                histos[ih].Draw("e")
+                histos[ih].Draw()
 
             else:
                 histos[ih].Draw("e")
