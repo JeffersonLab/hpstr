@@ -2,7 +2,7 @@
 #define __ MUTABLE_TTREE_H
 
 #include <iostream>
-#include <fastream>
+#include <fstream>
 #include <string>
 #include <cstdlib>
 
@@ -13,25 +13,37 @@
 
 class MutableTTree {
 
-    MutableTTree(TFile* infile);
+    public:
 
-    MutableTTree(TFile* infile, std::string tree_name);
+        MutableTTree(TFile* infile);
 
-    int GetEntries(){return ttree_->GetEntries()};
+        MutableTTree(TFile* infile, std::string tree_name);
 
-    void GetEntry(int entry){ttree_->GetEntry(entry)};
+        int GetEntries(){return tree_->GetEntries();}
 
-    double getValue(std::string branch_name);
+        void GetEntry(int entry){tree_->GetEntry(entry);}
 
-    void addBranch(std::string branch_name);
+        void Fill(){tree_->Fill();}
 
-    ~MutableTTree();
+        double getValue(std::string branch_name);
 
+        void addBranch(std::string branch_name);
 
+        void printTree(){tree_->Print();}
+
+        void printEvent();
+
+        void setBranchValue(std::string branch_name, double value){*tuple_[branch_name] = value;}
+
+        ~MutableTTree();
 
     protected:
         TTree* tree_{nullptr};
-        std::map<std::string,*double> tuple_;
+        TTree* newtree_{nullptr};
+        std::map<std::string,double*> tuple_;
+        std::map<std::string,double*> readTuple_;
+        std::map<std::string,double> writeTuple_;
+
 
 
     private:

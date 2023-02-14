@@ -6,6 +6,7 @@
 #include "ZBiHistos.h"
 #include "IterativeCutSelector.h"
 #include "SimpEquations.h"
+#include "MutableTTree.h"
 
 // ROOT 
 #include "TFile.h"
@@ -122,6 +123,10 @@ class ZBiCutflowProcessor : public Processor {
         //mass window
         double highMass_;
         double lowMass_;
+
+
+        //TESTING
+        MutableTTree* signalMTT_{nullptr};
 };
 
 

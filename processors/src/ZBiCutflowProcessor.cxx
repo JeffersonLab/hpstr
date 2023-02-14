@@ -134,8 +134,10 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     if(debug_) std::cout << "Initializing input tuple from signal file" << std::endl;
     TFile* signalFile = new TFile(signalFilename_.c_str(),"READ");
     //TODO make this selection configurable
-    signalTree_ = (TTree*)signalFile->Get("vtxana_kf_Tight_2016_simp_reach_dev/vtxana_kf_Tight_2016_simp_reach_dev_tree");
-    initializeFlatTuple(signalTree_, signal_tuple_);
+    //signalTree_ = (TTree*)signalFile->Get("vtxana_kf_Tight_2016_simp_reach_dev/vtxana_kf_Tight_2016_simp_reach_dev_tree");
+    //initializeFlatTuple(signalTree_, signal_tuple_);
+
+    signalMTT_ = new MutableTTree(signalFile, "vtxana_kf_Tight_2016_simp_reach_dev/vtxana_kf_Tight_2016_simp_reach_dev_tree");
 
     //Initialize input tritrig tuple
     if(debug_) std::cout << "Initializing input tuple from tritrig file" << std::endl;
@@ -199,6 +201,39 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     lowMass_ = mV_MeV - 2.0*massRes_MeV/2.0;
     highMass_ = mV_MeV + 2.0*massRes_MeV/2.0;
 
+
+    //############### TEST THIS SHIT
+    std::cout << "TEST TREE" << std::endl;
+    //std::cout << "PRINT OLD TREE" << std::endl;
+    //signalTree_->Print();
+    for(int e=0; e < 5; e++){
+        signalMTT_->GetEntry(e);
+        std::cout << "Printing Event " << e << std::endl;
+        signalMTT_->printEvent();
+    }
+    //Doo calculation of new variable
+    std::string branch_name = "test_var";
+    double test_var;
+    signalMTT_->addBranch(branch_name);
+
+    std::cout << "RETURNED NEW TREE" << std::endl;
+    std::cout << "After adding branch " << std::endl;
+    for(int e=0; e < 5; e++){
+        signalMTT_->GetEntry(e);
+        double vtxz = signalMTT_->getValue("unc_vtx_z");
+        test_var = 1000*vtxz;        
+        signalMTT_->setBranchValue(branch_name,test_var);
+        signalMTT_->Fill();
+        std::cout << "Printing Event " << e << std::endl;
+        signalMTT_->printEvent();
+    }
+
+
+
+
+    //##################### END TEST
+    std::cout << "END TEST " << std::endl;
+
     //Fill impact parameter distribution and calculate impact param cut
     for(int e=0;  e < signalTree_->GetEntries(); e++){
         signalTree_->GetEntry(e);
@@ -213,8 +248,8 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     impact_param_cut_ = signalHistos_->impactParameterCut();
 
     //Add z_alpha cut variable branch to tree and tuple map
-    double* val = new double;
-    signal_tuple["z_alpha"] = val;
+    //double* val = new double;
+    //signal_tuple["z_alpha"] = val;
 
     //Fill the transformed impact parameter (Zalpha) distribution
     for(int e=0;  e < signalTree_->GetEntries(); e++){
