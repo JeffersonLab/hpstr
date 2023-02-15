@@ -3,6 +3,7 @@
 MutableTTree::MutableTTree(TFile* infile, std::string tree_name){
    tree_ = (TTree*)infile->Get(tree_name.c_str()); 
    initializeFlatTuple(tree_, tuple_);
+   newtree_ = new TTree();
    copyTTree();
 }
 
@@ -16,32 +17,79 @@ double MutableTTree::getValue(std::string branch_name){
 }
 
 void MutableTTree::copyTTree(){
-
     //Make new TTree. Copy branches from original. Add new branch. Fill new TTree with old TTree
-    newtree_ = new TTree();
     int nBr = tree_->GetListOfBranches()->GetEntries();
     for(int iBr = 0; iBr < nBr; iBr++){
         TBranch *br = dynamic_cast<TBranch*>(tree_->GetListOfBranches()->At(iBr));
         std::string varname = (std::string)br->GetFullName();
         newtree_->Branch(varname.c_str(),tuple_[varname],(varname+"/D").c_str());  
     }
+}
+
+void MutableTTree::defineMassWindow(double lowMass, double highMass){
+    lowMass_ = lowMass;
+    highMass_ = highMass;
+}
+
+void MutableTTree::Fill(){
 
     for(int e=0; e < tree_->GetEntries(); e++){
         tree_->GetEntry(e);
+        
+        //Mass Window (if set)
+        if(lowMass_ != -999.9 && highMass_ != -999.9){
+            if(getvalue("unc_vtx_mass")*1000.0 > highMass_) continue; 
+            if(getvalue("unc_vtx_mass")*1000.0 < lowMass_) continue; 
+        }
+
+        for(std::map<std::string,double*>::iterator it = new_variables_.begin(); it != new_variables_.end(); it++){
+            *new_variables_[it->first] = functions_[it->first]();
+        }
         newtree_->Fill();
     }
-
+    
     delete tree_;
     tree_ = newtree_;
+}
 
+//Add comment
+void MutableTTree::addVariableZalpha(std::vector<double> impact_parameter_cut_){
+
+    double* zalpha = new double{999.9};
+    tuple_["unc_vtx_zalpha"] = zalpha;
+    newtree_->Branch("unc_vtx_zalpha",tuple_["unc_vtx_zalpha"],"unc_vtx_zalpha/D");  
+    new_variables_["unc_vtx_zalpha"] = zalpha;
+
+    //Define lambda function to calculate zalpha
+    std::function<double()> myfunc = [&, impact_parameter_cut_]()->double{
+        double a_p = impact_parameter_cut_[0];
+        double b_p = impact_parameter_cut_[1];
+        double a_d = impact_parameter_cut_[2];
+        double b_d = impact_parameter_cut_[3];
+        double beta = impact_parameter_cut_[4];
+        double z_alpha = impact_parameter_cut_[5];
+
+        if(*tuple_["unc_vtx_ele_track_z0"] > 0)
+            return *tuple_["unc_vtx_z"] - ( ((*tuple_["unc_vtx_ele_track_z0"]-a_p)/b_p) - z_alpha );
+        else
+            return *tuple_["unc_vtx_z"] - ( ((*tuple_["unc_vtx_ele_track_z0"]-a_d)/b_d) - z_alpha );
+    };
+
+    //double (*myfunc_ptr)();
+    //*myfunc_ptr = myfunc;
+    functions_["unc_vtx_zalpha"] = myfunc;
+
+
+    //my_functions_["zalpha"] = Function of lambda(param) 
+    //auto lambda = []() { return  MATH(*tuple_["unc_vtx_z"]) };
 }
 
 void MutableTTree::addNewBranch(std::string branch){
     double* value = new double{999.9};
     tuple_[branch] = value;
     tree_->Branch(branch.c_str(),tuple_[branch],(branch+"/D").c_str());  
-    TBranch* br = (TBranch*)tree_->GetBranch(branch.c_str());
-    new_branches[branch] = br;
+    //TBranch* br = (TBranch*)tree_->GetBranch(branch.c_str());
+    //new_branches[branch] = br;
 }
 
 void MutableTTree::fillNewBranch(std::string branch, double value){
@@ -49,41 +97,11 @@ void MutableTTree::fillNewBranch(std::string branch, double value){
     new_branches[branch]->Fill();
 }
 
-/*
-void MutableTTree::addBranch(std::string branch_name){
-    if(tuple_.find(branch_name) != tuple_.end()){
-        std::cout << "Branch Already Exists in TTree" << std::endl;
-        return;
-    }
-
-    //Make new TTree. Copy branches from original. Add new branch. Fill new TTree with old TTree
-    newtree_ = new TTree();
-    double* value = new double{999.9};
-    tuple_[branch_name] = value;
-    newtree_->Branch(branch_name.c_str(),tuple_[branch_name],(branch_name+"/D").c_str());  
-
-    std::cout << "Copying Branches from original TTree" << std::endl;
-    int nBr = tree_->GetListOfBranches()->GetEntries();
-    for(int iBr = 0; iBr < nBr; iBr++){
-        TBranch *br = dynamic_cast<TBranch*>(tree_->GetListOfBranches()->At(iBr));
-        std::string varname = (std::string)br->GetFullName();
-        newtree_->Branch(varname.c_str(),tuple_[varname],(varname+"/D").c_str());  
-    }
-
-    for(int e=0; e < 5; e++){
-        tree_->GetEntry(e);
-        newtree_->Fill();
-    }
-
-    delete tree_;
-    tree_ = newtree_;
-}
-*/
-
 void MutableTTree::printEvent(){
     for(std::map<std::string,double*>::iterator it = tuple_.begin(); it != tuple_.end(); it ++){
         std::cout << it->first << ": " << *it->second << std::endl;
     }
+    std::cout << "End print" << std::endl;
 }
 
 void MutableTTree::initializeFlatTuple(TTree* tree, std::map<std::string, double*> &tuple_map){

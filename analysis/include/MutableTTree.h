@@ -23,7 +23,11 @@ class MutableTTree {
 
         void GetEntry(int entry){tree_->GetEntry(entry);}
 
-        void Fill(){tree_->Fill();}
+        //void Fill(){tree_->Fill();}
+
+        void Fill();
+
+        void addVariableZalpha(std::vector<double> impact_parameter_cut);
 
         double getValue(std::string branch_name);
 
@@ -55,6 +59,10 @@ class MutableTTree {
         void initializeFlatTuple(TTree* tree, std::map<std::string, double*> &tuple_map);
         void copyTTree();
         std::map<std::string,TBranch*> new_branches;
+        std::map<std::string, double*> new_variables_;
+        std::map<std::string,std::function<double()>> functions_;
+        double lowMass_{-999.9};
+        double highMass_{-999.9};
 };
 
 #endif // __MUTABLE_TTREE_H
