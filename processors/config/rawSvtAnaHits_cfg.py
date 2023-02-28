@@ -41,9 +41,11 @@ rawAnaSvt = HpstrConf.Processor('svtana','SvtRawDataAnaProcessor')
 rawAnaSvt.parameters["debug"] = 0
 rawAnaSvt.parameters["anaName"] = 'rawSvtHitAna'
 if onTrk==0:
-    rawAnaSvt.parameters["trkrHitColl"] = 'SVTRawTrackerHits'
+    rawAnaSvt.parameters["trkrHitColl"] = 'fspOnTrackRawHits'
 else:
-    rawAnaSvt.parameters["trkrHitColl"] = 'SVTRawHitsOnTrack_KF'#'SVTRawTrackerHits'
+    rawAnaSvt.parameters["trkrHitColl"] = 'fspOnTrackRawHits'
+#'SVTRawHitsOnTrack_KF'
+#'SVTRawTrackerHits'
 rawAnaSvt.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/svt/rawSvtAnaHits.json'
 rawAnaSvt.parameters["sample"] = 0 
 rawAnaSvt.parameters["tphase"] = options.tphase
@@ -60,12 +62,12 @@ rawAnaSvt.parameters["regionDefinitions"] = [RegionPath+'OneFit.json',
                                             RegionPath+'CTFit.json',
                                             RegionPath+'FTFit.json',
                                             RegionPath+'LowTimeDiff.json',
-                                            RegionPath+'Region1.json',
-                                            RegionPath+'Region2.json',
-                                            RegionPath+'Region3.json',
-                                            RegionPath+'Region4.json',
-                                            RegionPath+'Region5.json',
-                                            RegionPath+'Region6.json',
+                                            RegionPath+'R1.json',
+                                            RegionPath+'R2.json',
+                                            RegionPath+'R3.json',
+                                            RegionPath+'R4.json',
+                                            #RegionPath+'Region5.json',
+                                            #RegionPath+'Region6.json',
                                             RegionPath+'TimeResolution.json'
                                            ]
 

@@ -4,6 +4,7 @@
  * @author Cameron Bravo, SLAC National Accelerator Laboratory
  */     
 #include "SvtRawDataAnaProcessor.h"
+
 #include <iostream>
 
 SvtRawDataAnaProcessor::SvtRawDataAnaProcessor(const std::string& name, Process& process) : Processor(name,process){
@@ -217,10 +218,11 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
     //std::cout<<svtHitColl_.c_str()<<std::endl;
     ///std::cout<<svtHits_->size()<<std::endl;
     tree_->SetBranchAddress(svtHitColl_.c_str()  , &svtHits_    , &bsvtHits_    );
-    tree_->SetBranchAddress("VTPBank", &vtpBank_ , &bvtpBank_ );
-    tree_->SetBranchAddress("TSBank", &tsBank_ , &btsBank_ );
-    tree_->SetBranchAddress("RecoEcalClusters",&recoClu_,&brecoClu_ );
-    tree_->SetBranchAddress("KalmanFullTracks",&Trk_,&bTrk_);
+    //tree_->SetBranchAddress("VTPBank", &vtpBank_ , &bvtpBank_ );
+    //tree_->SetBranchAddress("TSBank", &tsBank_ , &btsBank_ );
+    //tree_->SetBranchAddress("RecoEcalClusters",&recoClu_,&brecoClu_ );
+    //tree_->SetBranchAddress("KalmanFullTracks",&Trk_,&bTrk_);
+    tree_->SetBranchAddress("FinalStateParticles_KF",&Part_,&bPart_);
     tree_->SetBranchAddress("EventHeader",&evH_,&bevH_);
     
     for (unsigned int i_reg = 0; i_reg < regionSelections_.size(); i_reg++) 
@@ -257,34 +259,56 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
     long eventTime = evH_->getEventTime();
     
     //I AM DOING CLUSTER MATCHING HERE :)
-    //std::cout<<"Here is the eventTime"<<eventTime<<std::endl;
+    std::cout<<"Here is the eventTime"<<eventTime<<std::endl;
     //std::cout<<"Here is the TSBank Trigger Time"<<tsBank_->T<<std::endl;
     bool doClMatch = true;
-    if((doClMatch)and(not((tsBank_->prescaled.Single_3_Top==1)or(tsBank_->prescaled.Single_3_Bot==1)))){return true;}
+    
+    
+    //if((doClMatch)and(not((tsBank_->prescaled.Single_3_Top==1)or(tsBank_->prescaled.Single_3_Bot==1)))){return true;}
+    
+    
+    //ONLY POSITRONS, MAY USE FEE's 
+    //ONCE I DETERMINE A CLUSTER WHICH IS IN LINE WITH TRIG, I CAN USE ANY CLUSTERS CLOSE IN TIME.
+    
     //std::cout<<"Trigger Time: "<<vtpBank_->singletrigs.at(0).T<<std::endl;
-    for(int i = 0; i<vtpBank_->clusters.size(); i++){
-        //std::cout<<"Cluster Time: "<<vtpBank_->clusters.at(i).T<<std::endl;
-        if(vtpBank_->clusters.at(i).T==vtpBank_->singletrigs.at(0).T){
-            //std::cout<<" T: " <<vtpBank_->clusters.at(i).T<<std::endl; 
-            std::cout<<" X: " <<vtpBank_->clusters.at(i).X<<std::endl; 
-            std::cout<<" Y: " <<vtpBank_->clusters.at(i).Y<<std::endl;
-            /*std::cout<<" Trk Size: "<<Trk_.size()<<std::endl;
-            for(int j = 0; j<Trk_.size(); j++){
-                std::cout<<"Trk ID: "<<Trk_.at(j).getParticle()->GetUniqueID()<<std::endl;
-            }*/ 
-            std::cout<<" Cluster Size :"<<recoClu_.size()<<std::endl;
-            for(int k = 0; k<recoClu_.size(); k++){
-                std::cout<<"Cluster x: "<<recoClu_.at(k).getPosition().at(0)<<std::endl;
-                std::cout<<"Cluster y: "<<recoClu_.at(k).getPosition().at(1)<<std::endl;
-                std::cout<<"Unique Id: "<<recoClu_.at(k).GetUniqueID()<<std::endl;
-            }
-        }
-    }
+    
+    
+    std::cout<<"I got here 9B"<<std::endl;
+
     int trigPhase =  (int)((eventTime%24)/4);
     if((trigPhase!=tphase_)&&(tphase_!=6)){return true;}
+    std::cout<<"I got here 9C"<<std::endl;
     for(unsigned int i = 0; i < svtHits_->size(); i++){ 
         RawSvtHit * thisHit = svtHits_->at(i); 
-        int getNum = thisHit->getFitN();
+        int getNum = thisHit->getFitN();//std::cout<<"I got here 10"<<std::endl;
+        if(doClMatch){
+            bool Continue = true;
+            for(int i = 0; i<Part_->size();i++){
+                std::cout<<"Do I break here 3"<<std::endl;
+                if(Part_->at(i)->getPDG()==22){continue;}
+                std::cout<<"Do I break here 4"<<std::endl;
+                if(Part_->at(i)->getCluster().getEnergy()<0){continue;}
+                std::cout<<"Do I break here 5"<<std::endl;
+                if(not((Part_->at(i)->getCluster().getTime()<=40)and(Part_->at(i)->getCluster().getTime()>=36))){continue;}
+                //std::cout<<"For each Tracker Hit I now print out Raw Hit Info: "<<std::endl;
+                for(int j = 0; j<Part_->at(i)->getTrack().getSvtHits().GetEntries();j++){
+                    std::cout<<"Do I break here 6"<<std::endl;
+                    TrackerHit * tHit = (TrackerHit*)(Part_->at(i)->getTrack().getSvtHits().At(j));
+                    //std::cout<<tHit->getTime()<<std::endl;
+                    for(int k = 0;k<tHit->getRawHits().GetEntries();k++){
+                        RawSvtHit * rHit = (RawSvtHit*)(tHit->getRawHits().At(k));
+                        if(rHit->getT0(0)==thisHit->getT0(0)){Continue=false;}
+                        //std::cout<<"Raw Hit T0: "<<rHit->getT0(0)<<std::endl;
+                    }
+                    std::cout<<"Do I break here 7"<<std::endl;
+                    //std::cout<<" T0: "<<Part_->at(i)->getTrack().getSvtHits().At(j)->getRawHits().At(0).getT0()<<std::endl; 
+                }
+                std::cout<<"Do I break here 8"<<std::endl;
+            }
+            if(Continue){
+                return true;
+            }
+        }       
         for(unsigned int i_reg = 0; i_reg < regionSelections_.size(); i_reg++){
             //std::cout<<"\n"<<std::endl;
             for(unsigned int J=0; J<getNum; J++){
@@ -292,7 +316,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 //std::cout<<"region No:"<<regions_[i_reg]<<std::endl;
 
                 //std::cout<<"Which Hit:"<<J<<std::endl;
-                
+                std::cout<<"I got here 10"<<std::endl;
                 
                 Float_t TimeDiff=-42069.0;
                 Float_t AmpDiff=-42069.0;
@@ -384,6 +408,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
         }
         //std::cout<<count1<<std::endl;
         //std::cout<<count2<<std::endl;
+        std::cout<<"I got here 10"<<std::endl;
         return true;
     }
 

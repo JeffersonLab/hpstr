@@ -38,6 +38,7 @@ cvtx   = HpstrConf.Processor('cvtx', 'VertexProcessor')
 vtxgbl   = HpstrConf.Processor('vtxgbl', 'VertexProcessor')
 cvtxgbl   = HpstrConf.Processor('cvtxgbl', 'VertexProcessor')
 mcpart  = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
+fsp = HpstrConf.Processor("fps",'FinalStateParticleProcessor')
 
 ###############################
 #   Processor Configuration   #
@@ -132,12 +133,21 @@ mcpart.parameters["debug"] = 0
 mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
+#FinalStateParticleProcessor
+fsp.parameters["debug"] = 0 
+fsp.parameters["fspCollLcio"] = "FinalStateParticles_KF" 
+fsp.parameters["fspCollRoot"] = "FinalStateParticles_KF"
+fsp.parameters["kinkRelCollLcio"] = ""
+fsp.parameters["trkRelCollLcio"] = "KFTrackDataRelations"
+
+
+
 # Sequence which the processors will run.
 if options.isData == -1: print("Please specficy if this is Data or not via option -t")
 if (not options.isData):
     p.sequence = [header, vtx, cvtx, vtxgbl, cvtxgbl, ecal, track, trackgbl, mcpart]
 else:
-    p.sequence = [header, vtx, cvtx, vtxgbl, cvtxgbl, ecal, track, trackgbl]
+    p.sequence = [header, vtx, cvtx, vtxgbl, cvtxgbl, ecal, track, trackgbl, fsp]
     #p.sequence = [header, vtx, ecal, track]
 
 p.input_files = lcio_file

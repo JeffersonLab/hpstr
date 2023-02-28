@@ -46,6 +46,7 @@ cvtx     = HpstrConf.Processor('cvtx', 'VertexProcessor')
 vtxgbl   = HpstrConf.Processor('vtxgbl', 'VertexProcessor')
 cvtxgbl   = HpstrConf.Processor('cvtxgbl', 'VertexProcessor')
 mcpart  = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
+fsp = HpstrConf.Processor("fps",'FinalStateParticleProcessor')
 
 ###############################
 #   Processor Configuration   #
@@ -162,18 +163,26 @@ mcpart.parameters["debug"] = 0
 mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
+#FinalStateParticleProcessor
+fsp.parameters["debug"] = 0 
+fsp.parameters["fspCollLcio"] = "FinalStateParticles_KF" 
+fsp.parameters["fspCollRoot"] = "FinalStateParticles_KF"
+fsp.parameters["kinkRelCollLcio"] = ""
+fsp.parameters["trkRelCollLcio"] = "KFTrackDataRelations"
+
+
 if(options.tracking == "KF"):
-    sequence = [header, vtx, ecal, track]                          
+    sequence = []#header, vtx, ecal, track]                          
     #Get KF svt truth hits
     if(options.truthHits > 0):
         sequence.append(svthits)
 elif(options.tracking == "GBL"):
-    sequence = [header, vtxgbl, ecal, trackgbl]                          
+    sequence = []#header, vtxgbl, ecal, trackgbl]                          
     #Get GBL svt truth hits
     if(options.truthHits > 0):
         sequence.append(svthitsgbl)
 elif(options.tracking == "BOTH"):
-    sequence = [header, vtxgbl, trackgbl, vtx, ecal, track]                          
+    sequence = []#header, vtxgbl, trackgbl, vtx, ecal, track]                          
     #Get KF and GBL svt truth hits
     if(options.truthHits > 0):
         sequence.append(svthits)
@@ -187,6 +196,7 @@ if(options.rawHits > 0):
 #If MC, get MCParticles
 if(not options.isData):
     sequence.append(mcpart)
+sequence.append(fsp)
 
 p.sequence = sequence
 

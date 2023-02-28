@@ -14,6 +14,7 @@
 #include "TSData.h"
 #include "CalCluster.h"
 #include "Track.h"
+#include "TrackerHit.h"
 
 //#include <IMPL/TrackerHitImpl.h>"
 //ROOT
@@ -83,6 +84,7 @@ class SvtRawDataAnaProcessor : public Processor {
         TBranch* bvtpBank_{nullptr};
         TBranch* btsBank_{nullptr};
         TBranch* brecoClu_{nullptr};
+        TBranch* bPart_{nullptr};
         TBranch* bTrk_{nullptr};
 
         TBranch* bevH_;
@@ -90,8 +92,10 @@ class SvtRawDataAnaProcessor : public Processor {
         std::vector<RawSvtHit*> * svtHits_{};
         VTPData * vtpBank_;
         TSData * tsBank_;
-        std::vector<CalCluster> recoClu_{};
-        std::vector<Track> Trk_{};
+        std::vector<CalCluster*>* recoClu_{};
+        std::vector<Track*>* Trk_{};
+        std::vector<Particle*>* Part_{};
+        //std::vector<Track> Trk_{};
         EventHeader * evH_;
 
         std::string anaName_{"rawSvtHitAna"};

@@ -111,7 +111,7 @@
             "maxY" : 7000
 
         },
-    "SvtHybrids_AmT0Err_hh" : {
+    "SvtHybrids_AmErrT0Err_hh" : {
             "prefix" : "ErrCompare",
             "type" : "hh",
             "xtitle" : "T0 Error",
@@ -123,6 +123,30 @@
             "minY" : 0,
             "maxY" : 7000
 
+        },
+    "SvtHybrids_AmT0Err_hh" : {
+            "prefix" : "T0",
+            "type" : "hh",
+            "xtitle" : "T0 Error vs Amplitude",
+            "binsX" : 100,
+            "minX" : 0,
+            "maxX" : 200,
+            "ytitle" : "Amplitude",
+            "binsY" : 100,
+            "minY" : 0,
+            "maxY" : 7000
+        },
+    "SvtHybrids_AmErrT0_hh" : {
+            "prefix" : "T0 vs Amplitude Error",
+            "type" : "hh",
+            "xtitle" : "T0",
+            "binsX" : 100,
+            "minX" : 0,
+            "maxX" : 200,
+            "ytitle" : "Amplitude Error",
+            "binsY" : 100,
+            "minY" : 0,
+            "maxY" : 7000
         },
     "SvtHybrids_PT1PT2_hh" : {
             "prefix" : "Pulese time 1 vs Pulse time 2",
