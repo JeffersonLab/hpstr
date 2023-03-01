@@ -23,6 +23,7 @@ parser.add_argument("-a", "--analysis", type=str, dest="analysis",
 parser.add_argument('--infile', '-i', type=str, dest="inFilename", metavar='infiles', nargs="+",
                     help="Input files, specify on or more.")
 
+
 #options = parser.parse_args()
 #if options.analysis != "simps" and options.analysis != "vertex":
 #    print("WARNING analysis not set to simps or vertex -- truth info will be weird")
