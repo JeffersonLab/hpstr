@@ -41,35 +41,35 @@ bhana.parameters["anaName"] = "bhana"
 bhana.parameters["trkColl"] = "GBLTracks"
 bhana.parameters["hitColl"] = "RotatedHelicalTrackHits"
 bhana.parameters["vtxColl"] = "TargetConstrainedV0Vertices"
-bhana.parameters["mcColl"]  = "MCParticle"
+bhana.parameters["mcColl"] = "MCParticle"
 bhana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/bhSelection.json'
 bhana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
 bhana.parameters["beamE"] = 2.3
 bhana.parameters["isData"] = options.isData
 bhana.parameters["makeFlatTuple"] = options.makeFlatTuple
-CalTimeOffset=-999
+CalTimeOffset = -999
 
-if (options.isData==1):
-    CalTimeOffset=56.
-    print("Running on data file: Setting CalTimeOffset %d"  % CalTimeOffset)
-    
-elif (options.isData==0):
-    CalTimeOffset=43.
-    print("Running on MC file: Setting CalTimeOffset %d"  % CalTimeOffset)
+if (options.isData == 1):
+    CalTimeOffset = 56.
+    print("Running on data file: Setting CalTimeOffset %d" % CalTimeOffset)
+
+elif (options.isData == 0):
+    CalTimeOffset = 43.
+    print("Running on MC file: Setting CalTimeOffset %d" % CalTimeOffset)
 else:
     print("Specify which type of ntuple you are running on: -t 1 [for Data] / -t 0 [for MC]")
 
 
-bhana.parameters["CalTimeOffset"]=CalTimeOffset
+bhana.parameters["CalTimeOffset"] = CalTimeOffset
 
 #Region definitions
 
-RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/"
+RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/"
 bhana.parameters["regionDefinitions"] = [RegionPath+'bhTight.json',
                                          RegionPath+'bhRadFracRad.json',
                                          RegionPath+'bhRadFracRadRafo.json',
                                          RegionPath+'bhRadFracRecoil.json'
-                                        ]
+                                         ]
 
 # Sequence which the processors will run.
 p.sequence = [bhana]
@@ -78,5 +78,3 @@ p.input_files = infile
 p.output_files = [outfile]
 
 p.printProcess()
-
-

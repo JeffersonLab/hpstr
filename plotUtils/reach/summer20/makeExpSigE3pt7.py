@@ -7,18 +7,22 @@ import ROOT as r
 import utilities as utils
 from optparse import OptionParser
 
+
 def radFrac(mass):
     mass = mass/1000.0
-    radF = ( -2.32204e-1 + 7.58935*mass - 7.81378e1*pow(mass,2) + 3.80505e2*pow(mass,3) - 8.93101e2*pow(mass,4) + 8.07483e2*pow(mass,5) )
+    radF = (-2.32204e-1 + 7.58935*mass - 7.81378e1*pow(mass, 2) + 3.80505e2*pow(mass, 3) - 8.93101e2*pow(mass, 4) + 8.07483e2*pow(mass, 5))
     return radF
 
+
 def vtxRes(mass):
-    res = ( 1.67213 - 9.81333*mass + 20.0887*pow(mass,2) )
+    res = (1.67213 - 9.81333*mass + 20.0887*pow(mass, 2))
     return res
+
 
 def massRes(mass):
     res = 3.21662e+00 - 7.07072e-03*mass + 1.04779e-04*mass*mass
     return res
+
 
 def calcLifetime(mass, eps2):
     return 8.0*(3.7/10.0)*(1e-8/eps2)*pow(100.0/mass, 2)
@@ -30,19 +34,18 @@ def calcLifetime(mass, eps2):
     #gcTau = gammact
 
 
-
 utils.SetStyle()
 
 parser = OptionParser()
 
 parser.add_option("-i", "--inputFile", type="string", dest="inputFile",
-        help="Name of file to run on.", metavar="inputFile", default="toys/toys.root")
+                  help="Name of file to run on.", metavar="inputFile", default="toys/toys.root")
 parser.add_option("-o", "--outputFile", type="string", dest="outputFile",
-        help="Specify the output filename.", metavar="outputFile", default="expSigRate.root")
+                  help="Specify the output filename.", metavar="outputFile", default="expSigRate.root")
 parser.add_option("-z", "--zcutFile", type="string", dest="zcutFile",
-        help="Name of file containing zcut values.", metavar="zcutFile", default="/data/src/hpstr/run/reach/zcut/zcuts.dat")
+                  help="Name of file containing zcut values.", metavar="zcutFile", default="/data/src/hpstr/run/reach/zcut/zcuts.dat")
 parser.add_option("-n", "--nWeeks", type="float", dest="nWeeks",
-        help="The number of weeks worth of lumi.", metavar="nWeeks", default=10.0)
+                  help="The number of weeks worth of lumi.", metavar="nWeeks", default=10.0)
 
 (options, args) = parser.parse_args()
 
@@ -64,13 +67,13 @@ dNdms = []
 invMasses = [60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210]
 
 zcuts = {}
-zcutFile = open(options.zcutFile,"r")
+zcutFile = open(options.zcutFile, "r")
 for line in zcutFile:
     lineList = line.split()
     zcuts[float(lineList[0])] = float(lineList[1])
     pass
 
-outFile = r.TFile(options.outputFile,"RECREATE")
+outFile = r.TFile(options.outputFile, "RECREATE")
 
 nMasses = len(invMasses)
 lowM = float(invMasses[0] - 5.0)
@@ -89,16 +92,17 @@ downExContourEps2 = []
 for mass in invMasses:
     massF = float(mass)
     massFGeV = massF/1000.0
-    print "Running mass = %i MeV"%mass
+    print "Running mass = %i MeV" % mass
     #First grab the pretrigger vtx z distribution
-    apSimFilename = "/nfs/slac/g/hps_data2/users/bravo/mc/det19/3pt7/anaMCAp%ie3pt7.root"%(mass)
+    apSimFilename = "/nfs/slac/g/hps_data2/users/bravo/mc/det19/3pt7/anaMCAp%ie3pt7.root" % (mass)
     apSimFile = r.TFile(apSimFilename)
-    apSimZ_hcp = copy.deepcopy( apSimFile.Get("mcAna/mcAna_mc622Z_h") )
+    apSimZ_hcp = copy.deepcopy(apSimFile.Get("mcAna/mcAna_mc622Z_h"))
     apSimFile.Close()
-    apSimZ_hcp.SetName("apSimZ%i_hcp"%mass)
-    apSimZ_h = r.TH1F("apSimZ%i_h"%mass, ";true z_{vtx} [mm];MC Events", 200, -50.0, 150.0)
+    apSimZ_hcp.SetName("apSimZ%i_hcp" % mass)
+    apSimZ_h = r.TH1F("apSimZ%i_h" % mass, ";true z_{vtx} [mm];MC Events", 200, -50.0, 150.0)
     for i in range(201):
-        if i >= 195: continue
+        if i >= 195:
+            continue
         apSimZ_h.SetBinContent(i, apSimZ_hcp.GetBinContent(i))
         pass
     outFile.cd()
@@ -111,8 +115,10 @@ for mass in invMasses:
     print "Counting background rate"
     Mbin = 10.0
     for ev in ttTree:
-        if 1000.0*ev.unc_vtx_mass > massF + (Mbin/2): continue
-        if 1000.0*ev.unc_vtx_mass < massF - (Mbin/2): continue
+        if 1000.0*ev.unc_vtx_mass > massF + (Mbin/2):
+            continue
+        if 1000.0*ev.unc_vtx_mass < massF - (Mbin/2):
+            continue
         dNdm += mcScale['tritrig']
         pass
     ttFile.Close()
@@ -121,14 +127,16 @@ for mass in invMasses:
     wabTree = wabFile.Get("vtxana_Tight_e3pt7/vtxana_Tight_e3pt7_tree")
     wabTree.SetName("wab_Tight_e3pt7_tree")
     for ev in wabTree:
-        if 1000.0*ev.unc_vtx_mass > massF + (Mbin/2): continue
-        if 1000.0*ev.unc_vtx_mass < massF - (Mbin/2): continue
+        if 1000.0*ev.unc_vtx_mass > massF + (Mbin/2):
+            continue
+        if 1000.0*ev.unc_vtx_mass < massF - (Mbin/2):
+            continue
         dNdm += mcScale['wab']
         pass
     dNdm = dNdm/Mbin
     dNdms.append(dNdm)
     wabFile.Close()
-    print "Background Rate: %f"%dNdm
+    print "Background Rate: %f" % dNdm
 
     #Next get flat tuple from anaVtx and fill eff_vtx numerator
     lowMass = massF - 2.8*massRes(massF)/2.0
@@ -138,38 +146,43 @@ for mass in invMasses:
     zCutVals.append(zCut)
     zCutMasRes.append(7.4*vtxRes(massFGeV))
     zCutExpTail.append(0.5*math.log(Lumi))
-    apSelZ_h = r.TH1F("apSelZ%i_h"%mass, ";true z_{vtx} [mm];MC Events", 200, -50.0, 150.0)
-    apSelNoZ_h = r.TH1F("apSelNoZ%i_h"%mass, ";true z_{vtx} [mm];MC Events", 200, -50.0, 150.0)
-    apFilename = "/nfs/slac/g/hps_data2/users/bravo/mc/det19/3pt7/anaVtxAp%iE3pt7.root"%(mass)
+    apSelZ_h = r.TH1F("apSelZ%i_h" % mass, ";true z_{vtx} [mm];MC Events", 200, -50.0, 150.0)
+    apSelNoZ_h = r.TH1F("apSelNoZ%i_h" % mass, ";true z_{vtx} [mm];MC Events", 200, -50.0, 150.0)
+    apFilename = "/nfs/slac/g/hps_data2/users/bravo/mc/det19/3pt7/anaVtxAp%iE3pt7.root" % (mass)
     apFile = r.TFile(apFilename)
     apTree = apFile.Get("vtxana_Tight_e3pt7/vtxana_Tight_e3pt7_tree")
     print "Counting Signal"
     for ev in apTree:
-        if 1000.0*ev.unc_vtx_mass > highMass: continue
-        if 1000.0*ev.unc_vtx_mass < lowMass: continue
-        if ev.true_vtx_z > 138.0: continue
+        if 1000.0*ev.unc_vtx_mass > highMass:
+            continue
+        if 1000.0*ev.unc_vtx_mass < lowMass:
+            continue
+        if ev.true_vtx_z > 138.0:
+            continue
         apSelNoZ_h.Fill(ev.true_vtx_z)
-        if ev.unc_vtx_z < zCut: continue
+        if ev.unc_vtx_z < zCut:
+            continue
         apSelZ_h.Fill(ev.true_vtx_z)
         pass
     apFile.Close()
 
     #Make the efficiencies
     apEffVtxZ_gae = r.TGraphAsymmErrors(apSelZ_h, apSimZ_h, "shortest")
-    apEffVtxZ_gae.SetName("apEffVtxZ%i_gae"%mass)
+    apEffVtxZ_gae.SetName("apEffVtxZ%i_gae" % mass)
     apEffVtxZ_e = r.TEfficiency(apSelZ_h, apSimZ_h)
-    apEffVtxZ_e.SetName("apEffVtxZ%i_e"%mass)
+    apEffVtxZ_e.SetName("apEffVtxZ%i_e" % mass)
 
     apEffVtxNoZ_gae = r.TGraphAsymmErrors(apSelNoZ_h, apSimZ_h, "shortest")
-    apEffVtxNoZ_gae.SetName("apEffVtxNoZ%i_gae"%mass)
+    apEffVtxNoZ_gae.SetName("apEffVtxNoZ%i_gae" % mass)
     apEffVtxNoZ_e = r.TEfficiency(apSelNoZ_h, apSimZ_h)
-    apEffVtxNoZ_e.SetName("apEffVtxNoZ%i_e"%mass)
+    apEffVtxNoZ_e.SetName("apEffVtxNoZ%i_e" % mass)
 
-    Seff = (apEffVtxNoZ_e.GetEfficiency(51) + apEffVtxNoZ_e.GetEfficiency(52) + apEffVtxNoZ_e.GetEfficiency(53) + apEffVtxNoZ_e.GetEfficiencyErrorUp(51) + apEffVtxNoZ_e.GetEfficiencyErrorUp(52) + apEffVtxNoZ_e.GetEfficiencyErrorUp(53) )/3.0
+    Seff = (apEffVtxNoZ_e.GetEfficiency(51) + apEffVtxNoZ_e.GetEfficiency(52) + apEffVtxNoZ_e.GetEfficiency(53) + apEffVtxNoZ_e.GetEfficiencyErrorUp(51) + apEffVtxNoZ_e.GetEfficiencyErrorUp(52) + apEffVtxNoZ_e.GetEfficiencyErrorUp(53))/3.0
     apEffVtxZ_gae.SetMaximum(Seff*2.0)
     apEffVtxNoZ_gae.SetMaximum(Seff*2.0)
-    if Seff > 0: Seff = 1.0/Seff
-    print "Seff: %f"%Seff
+    if Seff > 0:
+        Seff = 1.0/Seff
+    print "Seff: %f" % Seff
     outFile.cd()
     apSelNoZ_h.Write()
     apSelZ_h.Write()
@@ -185,13 +198,14 @@ for mass in invMasses:
         eps2 = pow(10, logEps2)
         gcTau = calcLifetime(massF, eps2)
         effVtx = 0.0
-        for zbin in range(1,201):
+        for zbin in range(1, 201):
             zz = apSelZ_h.GetBinCenter(zbin)
             zzLow = apSelZ_h.GetBinLowEdge(zbin)
             zzHigh = zzLow + apSelZ_h.GetBinWidth(zbin)
-            if zz < 2.0: continue
+            if zz < 2.0:
+                continue
             #if zzHigh < zCut: continue
-            #if zzHigh > zCut and zzLow < zCut: effVtx += (r.TMath.Exp((-4.3-zz)/gcTau)/gcTau)*effCalc_h.GetBinContent(zbin)*(zzHigh - zCut) 
+            #if zzHigh > zCut and zzLow < zCut: effVtx += (r.TMath.Exp((-4.3-zz)/gcTau)/gcTau)*effCalc_h.GetBinContent(zbin)*(zzHigh - zCut)
             effVtx += (r.TMath.Exp((0.0-zz)/gcTau)/gcTau)*Seff*effCalc_h.GetEfficiency(zbin)*apSelZ_h.GetBinWidth(zbin)
             pass
         apProd = 205.5*3.1416*eps2*massF*radFrac(massF)*dNdm
@@ -220,9 +234,9 @@ upExContourLogEps2.reverse()
 exContourMass = upExContourMass + downExContourMass
 exContourEps2 = upExContourEps2 + downExContourEps2
 exContourLogEps2 = upExContourLogEps2 + downExContourLogEps2
-contOutFile = open("excContourE3pt7Nw%f.txt"%nWeeks,"w")
+contOutFile = open("excContourE3pt7Nw%f.txt" % nWeeks, "w")
 for i in range(len(exContourMass)):
-    contOutFile.write("%f\t%E\n"%(exContourMass[i], exContourEps2[i]))
+    contOutFile.write("%f\t%E\n" % (exContourMass[i], exContourEps2[i]))
     pass
 contOutFile.close()
 print("Contours done")
@@ -231,7 +245,7 @@ if len(exContourEps2) > 0:
     excContour_g = r.TGraph(len(exContourMass), np.array(exContourMass), np.array(exContourEps2))
     excContour_g.SetName("excContour_g")
     excContour_g.Write()
-    
+
     excContourLog_g = r.TGraph(len(exContourMass), np.array(exContourMass), np.array(exContourLogEps2))
     excContourLog_g.SetName("excContourLog_g")
     excContourLog_g.Write()

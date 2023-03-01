@@ -7,44 +7,47 @@ void MCAnaHistos::Define2DHistos() {
         if (hist.key() == "pos_pxpy_hh")
         {
             for (int pxz = hist.value().at("lowPxz");
-                    pxz < hist.value().at("highPxz");
-                    pxz += (int) hist.value().at("stepPxz"))
+                 pxz < hist.value().at("highPxz");
+                 pxz += (int) hist.value().at("stepPxz"))
             {
-                h_name = m_name+"_pos_pxpy_" + std::to_string(pxz) + "_hh";
+                h_name = m_name + "_pos_pxpy_" + std::to_string(pxz) + "_hh";
                 histos2d[h_name] = plot2D(h_name, hist.value().at("xtitle"),
-                        hist.value().at("binsX"), hist.value().at("minX"),
-                        hist.value().at("maxX"),  hist.value().at("ytitle"),
-                        hist.value().at("binsY"), hist.value().at("minY"),
-                        hist.value().at("maxY"));
+                                          hist.value().at("binsX"), hist.value().at("minX"),
+                                          hist.value().at("maxX"),  hist.value().at("ytitle"),
+                                          hist.value().at("binsY"), hist.value().at("minY"),
+                                          hist.value().at("maxY"));
             }
         }
         if (hist.key() == "ele_pxpy_hh")
         {
             for (int pxz = hist.value().at("lowPxz");
-                    pxz < hist.value().at("highPxz");
-                    pxz += (int) hist.value().at("stepPxz"))
+                 pxz < hist.value().at("highPxz");
+                 pxz += (int) hist.value().at("stepPxz"))
             {
-                h_name = m_name+"_ele_pxpy_" + std::to_string(pxz) + "_hh";
+                h_name = m_name + "_ele_pxpy_" + std::to_string(pxz) + "_hh";
                 histos2d[h_name] = plot2D(h_name, hist.value().at("xtitle"),
-                        hist.value().at("binsX"), hist.value().at("minX"),
-                        hist.value().at("maxX"),  hist.value().at("ytitle"),
-                        hist.value().at("binsY"), hist.value().at("minY"),
-                        hist.value().at("maxY"));
+                                          hist.value().at("binsX"), hist.value().at("minX"),
+                                          hist.value().at("maxX"),  hist.value().at("ytitle"),
+                                          hist.value().at("binsY"), hist.value().at("minY"),
+                                          hist.value().at("maxY"));
             }
         }
     }
 }
 
-void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, std::string analysis, float weight ) {
+void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, std::string analysis, float weight) {
     int nParts = mcParts->size();
     Fill1DHisto("numMCparts_h", (float)nParts, weight);
     int nMuons = 0;
+    int nElec = 0;
+    int nPos = 0;
+    int nGamma = 0;
     double minMuonE = -99.9;
 
     TLorentzVector ele;
     TLorentzVector pos;
 
-    for (int i=0; i < nParts; i++)
+    for (int i = 0; i < nParts; i++)
     {
         MCParticle *part = mcParts->at(i);
         int pdg = part->getPDG();
@@ -60,7 +63,7 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, std::string
         part4P.RotateY(-0.0305);
         double momentum = part4P.P();
 
-        if(pdg == 622)
+        if (pdg == 622)
         {
             Fill1DHisto("mc622Mass_h", massMeV, weight);
             Fill1DHisto("mc622Z_h", zPos, weight);
@@ -68,27 +71,27 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, std::string
             Fill1DHisto("mc622P_h", momentum, weight);
         }
 
-        if(pdg == 625)
+        if (pdg == 625)
         {
             Fill1DHisto("mc625Mass_h", massMeV, weight);
             Fill1DHisto("mc625Z_h", zPos, weight);
             Fill1DHisto("mc625Energy_h", energy, weight);
             Fill1DHisto("mc625P_h", momentum, weight);
-      }
+        }
 
-        if(pdg == 624)
+        if (pdg == 624)
         {
             Fill1DHisto("mc624Mass_h", massMeV, weight);
             Fill1DHisto("mc624Z_h", zPos, weight);
             Fill1DHisto("mc625Energy_h", energy, weight);
             Fill1DHisto("mc625P_h", momentum, weight);
-    }
+        }
 
 
         if (fabs(pdg) == 13)
         {
             nMuons++;
-            if(energy < minMuonE || minMuonE < 0.0)
+            if (energy < minMuonE || minMuonE < 0.0)
             {
                 minMuonE = energy;
             }
@@ -99,7 +102,7 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, std::string
         if (analysis == "simps"){
             if (fabs(pdg) == 11 && momPdg == 622)
                 partOfInt = true;
-        }else{
+        } else {
             if ((momPdg == 623 || momPdg == 622) && (fabs(pdg) == 11))
                 partOfInt = true;
         }
@@ -113,30 +116,48 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, std::string
             if (pdg == 11)
             {
                 Fill1DHisto("ele_pxz_h", PperpB, weight);
-                Fill2DHisto("ele_pxpy_"+std::to_string(Pxz)+"_hh",part4P.Px(),part4P.Py(), weight);
+                Fill2DHisto("ele_pxpy_" + std::to_string(Pxz) + "_hh", part4P.Px(), part4P.Py(), weight);
+                
+                Fill1DHisto("truthRadElecE_h", energy, weight);
+                Fill1DHisto("truthRadEleczPos_h", zPos, weight);
+                Fill1DHisto("truthRadElecPt_h", part4P.Pt(), weight);
+                Fill1DHisto("truthRadElecPz_h", part4P.Pz(), weight);
+
+                ele = part4P;
             }
             if (pdg == -11)
             {
                 Fill1DHisto("pos_pxz_h", PperpB, weight);
-                Fill2DHisto("pos_pxpy_"+std::to_string(Pxz)+"_hh",part4P.Px(),part4P.Py(), weight);
+                Fill2DHisto("pos_pxpy_" + std::to_string(Pxz) + "_hh", part4P.Px(), part4P.Py(), weight);
+
+                Fill1DHisto("truthRadPosE_h", energy, weight);
+                Fill1DHisto("truthRadPoszPos_h", zPos, weight);
+                Fill1DHisto("truthRadPosPt_h", part4P.Pt(), weight);
+                Fill1DHisto("truthRadPosPz_h", part4P.Pz(), weight);
+
+                pos = part4P;
             }
         }
 
+        if (analysis == "beam") {
+            if (pdg == 11) {
+                nElec++;
+                Fill1DHisto("truthElecE_h", energy, weight);
+                Fill1DHisto("truthElecPt_h", part4P.Pt(), weight);
+                Fill1DHisto("truthElecPz_h", part4P.Pz(), weight);
+            }
 
-        if (pdg == 11 && partOfInt == true){
-            ele = part4P;
-            Fill1DHisto("truthRadElecE_h",energy,weight);
-            Fill1DHisto("truthRadEleczPos_h",zPos,weight);
-            Fill1DHisto("truthRadElecPt_h",part4P.Pt(),weight);
-            Fill1DHisto("truthRadElecPz_h",part4P.Pz(),weight);
-        }
+            if (pdg == -11) {
+                nPos++;
+                Fill1DHisto("truthPosE_h", energy, weight);
+            
+            }
 
-        if (pdg == -11 && partOfInt == true){
-            pos = part4P;
-            Fill1DHisto("truthRadPosE_h",energy,weight);
-            Fill1DHisto("truthRadPoszPos_h",zPos,weight);
-            Fill1DHisto("truthRadPosPt_h",part4P.Pt(),weight);
-            Fill1DHisto("truthRadPosPz_h",part4P.Pz(),weight);
+            if (pdg == 22) {
+                nGamma++;
+                Fill1DHisto("truthGammaE_h", energy, weight);
+                Fill1DHisto("truthGammaELow_h", energy*1000.0, weight);// Scaled to MeV
+            }
         }
 
         Fill1DHisto("MCpartsEnergy_h", energy, weight);
@@ -149,6 +170,10 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, std::string
     Fill1DHisto("numMuons_h", nMuons, weight);
     Fill1DHisto("minMuonE_h", minMuonE, weight);
     Fill1DHisto("minMuonEhigh_h", minMuonE, weight);
+
+    Fill1DHisto("numElectrons_h", nElec, weight);
+    Fill1DHisto("numPositrons_h", nPos, weight);
+    Fill1DHisto("numGammas_h", nGamma, weight);
 }
 
 void MCAnaHistos::FillMCTrackerHits(std::vector<MCTrackerHit*> *mcTrkrHits, float weight ) {

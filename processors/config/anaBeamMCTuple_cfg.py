@@ -7,7 +7,7 @@ import baseConfig as base
 
 
 base.parser.add_argument("-w", "--tracking", type=str, dest="tracking",
-                         help="Which tracking to use to make plots", metavar="tracking", default="KF")
+                  help="Which tracking to use to make plots", metavar="tracking", default="KF")
 options = base.parser.parse_args()
 
 
@@ -17,7 +17,8 @@ print(options)
 infile = options.inFilename
 outfile = options.outFilename
 
-analysis = options.analysis
+analysis = "beam"
+
 
 
 print('Input file: %s' % infile)
@@ -51,7 +52,7 @@ mcana.parameters["partColl"] = "MCParticle"
 mcana.parameters["trkrHitColl"] = "TrackerHits"
 mcana.parameters["ecalHitColl"] = "EcalHits"
 mcana.parameters["analysis"] = analysis
-mcana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
+mcana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/beamMC.json'
 
 # Sequence which the processors will run.
 p.sequence = [mcana]

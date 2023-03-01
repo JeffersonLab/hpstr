@@ -1,0 +1,128 @@
+{
+    "numMCparts_h" : {
+        "bins"   : 60,
+        "minX"   : -0.5,
+        "maxX"   : 59.5,
+        "xtitle" : "Number of Sim Particles",
+        "ytitle" : "Events"
+    },
+    "truthElecE_h" : {
+        "bins" : 600,
+        "minX" : 0,
+        "maxX" : 6.0,
+        "xtitle" : "Energy of Electron [GeV]",
+        "ytitle" : "Sim Particles / 10 MeV"
+    },
+    "truthElecPt_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 2.0,
+        "xtitle" : "p_{T} of Electron [GeV]",
+        "ytitle" : "Sim Particles / 10 MeV"
+    },
+    "truthElecPz_h" : {
+        "bins" : 600,
+        "minX" : 0,
+        "maxX" : 6.0,
+        "xtitle" : "p_{z} of Electron [GeV]",
+        "ytitle" : "Sim Particles / 10 MeV"
+    },
+    "truthPosE_h" : {
+        "bins" : 600,
+        "minX" : 0,
+        "maxX" : 6.0,
+        "xtitle" : "Energy of Positron [GeV]",
+        "ytitle" : "Sim Particles / 10 MeV"
+    },
+    "truthGammaE_h" : {
+        "bins" : 600,
+        "minX" : 0,
+        "maxX" : 6.0,
+        "xtitle" : "Energy of Photon [GeV]",
+        "ytitle" : "Sim Particles / 10 MeV"
+    },
+    "truthGammaELow_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 200,
+        "xtitle" : "Energy of Photon [MeV]",
+        "ytitle" : "Sim Particles / 1 MeV"
+    },
+    "MCpartsEnergy_h" : {
+        "bins" : 600,
+        "minX" : 0,
+        "maxX" : 6.0,
+        "xtitle" : "Energy of Sim Particle [GeV]",
+        "ytitle" : "Sim Particles / 10 MeV"
+    },
+    "MCpartsEnergyLow_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 200,
+        "xtitle" : "Energy of Sim Particle [MeV]",
+        "ytitle" : "Sim Particles / 1 MeV"
+    },
+    "numMuons_h" : {
+        "bins" : 10,
+        "minX" : -0.5,
+        "maxX" : 9.5,
+        "xtitle" : "Number of Sim Muons",
+        "ytitle" : "Events"
+    },
+    "numElectrons_h" : {
+        "bins" : 20,
+        "minX" : -0.5,
+        "maxX" : 19.5,
+        "xtitle" : "Number of Sim Electrons",
+        "ytitle" : "Events"
+    },
+    "numPositrons_h" : {
+        "bins" : 10,
+        "minX" : -0.5,
+        "maxX" : 9.5,
+        "xtitle" : "Number of Sim Positrons",
+        "ytitle" : "Events"
+    },
+    "numGammas_h" : {
+        "bins" : 15,
+        "minX" : -0.5,
+        "maxX" : 14.5,
+        "xtitle" : "Number of Sim Photons",
+        "ytitle" : "Events"
+    },
+    "numMCTrkrHit_h" : {
+        "bins" : 30,
+        "minX" : -0.5,
+        "maxX" : 29.5,
+        "xtitle" : "Number of Sim Tracker Hits",
+        "ytitle" : "Events"
+    },
+    "mcTrkrHitEdep_h" : {
+        "bins" : 80,
+        "minX" : 0,
+        "maxX" : 8,
+        "xtitle" : "Tracker Hit Energy [MeV]",
+        "ytitle" : "Sim Particles / 100 keV"
+    },
+    "mcTrkrHitPdgId_h" : {
+        "bins" : 101,
+        "minX" : -50.5,
+        "maxX" : 50.5,
+        "xtitle" : "PDG ID",
+        "ytitle" : "Sim Particles"
+    },
+    "numMCEcalHit_h" : {
+        "bins" : 60,
+        "minX" : -0.5,
+        "maxX" : 59.5,
+        "xtitle" : "Number of Sim Ecal Hits",
+        "ytitle" : "Events"
+    },
+    "mcEcalHitEnergy_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 400,
+        "xtitle" : "Ecal Hit Energy [MeV]",
+        "ytitle" : "Sim Particles / 2 MeV"
+    }
+}
