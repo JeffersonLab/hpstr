@@ -161,6 +161,7 @@ cvtxgbl.parameters["trkRelCollLcio"] = 'TrackDataRelations'
 mcpart.parameters["debug"] = 0
 mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
+
 if (options.tracking == "KF"):
     sequence = [header, vtx, ecal, track]
     # Get KF svt truth hits
