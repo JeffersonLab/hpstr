@@ -13,9 +13,9 @@ utils.SetStyle()
 parser = OptionParser()
 
 parser.add_option("-i", "--inputFile", type="string", dest="inputFile",
-    help="Name of file to run on.", metavar="inputFile", default="toys/toys.root")
+                  help="Name of file to run on.", metavar="inputFile", default="toys/toys.root")
 parser.add_option("-o", "--outputFile", type="string", dest="outputFile",
-    help="Specify the output filename.", metavar="outputFile", default="testOut.root")
+                  help="Specify the output filename.", metavar="outputFile", default="testOut.root")
 
 (options, args) = parser.parse_args()
 
@@ -43,7 +43,7 @@ invMassHistos['rad'].Scale(3.123e7*Lumi/8740000)
 invMassHistos['tritrig'].Scale(4.566e8*Lumi/9040000)
 invMassHistos['wab'].Scale(4.715e10*Lumi/(4933*20000))
 
-triWab_sh = r.THStack("triWab_sh",";m_{e^{+}e^{-}} [GeV];#frac{dN}{dm} [MeV^{-1}]")
+triWab_sh = r.THStack("triWab_sh", ";m_{e^{+}e^{-}} [GeV];#frac{dN}{dm} [MeV^{-1}]")
 
 triWab_sh.Add(invMassHistos['wab'])
 triWab_sh.Add(invMassHistos['tritrig'])
@@ -56,5 +56,5 @@ triWab_sh.Add(invMassHistos['tritrig'])
 #invMassHistos['rad'].Draw()
 #canv.SetLogy(1)
 
-canv = utils.MakeRadFrac("radFrac", ".", [invMassHistos['rad'],invMassHistos['wab'],invMassHistos['tritrig']], ['rad', 'wab', 'tritrig+wab'],'.png', RatioMin=0.00, RatioMax=0.3, LogY=True)
+canv = utils.MakeRadFrac("radFrac", ".", [invMassHistos['rad'], invMassHistos['wab'], invMassHistos['tritrig']], ['rad', 'wab', 'tritrig+wab'], '.png', RatioMin=0.00, RatioMax=0.3, LogY=True)
 #canv = utils.MakeStackPlot("radFrac", ".", [invMassHistos['rad'],invMassHistos['tritrig']], ['rad', 'tritrig'],'.png', RatioMin=0.02, RatioMax=0.1, LogY=True)
