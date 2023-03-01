@@ -25,8 +25,8 @@ std::string AnaHelpers::getFileName(std::string filePath, bool withExtension)
 
 void AnaHelpers::InnermostLayerCheck(Track* trk, bool& foundL1, bool& foundL2) {
     int innerCount = 0;
-    for (int ihit=0; ihit<trk->getSvtHits()->GetEntries();++ihit) {
-        TrackerHit* hit3d = (TrackerHit*) trk->getSvtHits()->At(ihit);
+    for (int ihit=0; ihit<trk->getSvtHits().GetEntries();++ihit) {
+        TrackerHit* hit3d = (TrackerHit*) trk->getSvtHits().At(ihit);
         if (hit3d->getLayer() == 0 ) {
             innerCount++;
         }
@@ -70,19 +70,19 @@ bool AnaHelpers::GetParticlesFromVtx(Vertex* vtx, Particle*& ele, Particle*& pos
     bool foundele = false;
     bool foundpos = false;
 
-    for (int ipart = 0; ipart < vtx->getParticles()->GetEntries(); ++ipart) {
+    for (int ipart = 0; ipart < vtx->getParticles().GetEntries(); ++ipart) {
 
 
-        int pdg_id = ((Particle*)vtx->getParticles()->At(ipart))->getPDG();
+        int pdg_id = ((Particle*)vtx->getParticles().At(ipart))->getPDG();
         if (debug_) std::cout<<"In Loop "<<pdg_id<< " "<< ipart<<std::endl;
 
         if (pdg_id == 11) {
-            ele =  ((Particle*)vtx->getParticles()->At(ipart));
+            ele =  ((Particle*)vtx->getParticles().At(ipart));
             foundele=true;
             if (debug_) std::cout<<"found ele "<< (int)foundele<<std::endl;
         }
         else if (pdg_id == -11) {
-            pos = (Particle*)vtx->getParticles()->At(ipart);
+            pos = (Particle*)vtx->getParticles().At(ipart);
             foundpos=true;
             if  (debug_) std::cout<<"found pos "<<(int)foundpos<<std::endl;
 

@@ -28,30 +28,37 @@
 
 class EventFile : public IEventFile {
 
-    public: 
-
-        /** Constructor */
+    public:
+        /**
+         * @brief Constructor
+         * 
+         * @param ifilename 
+         * @param ofilename 
+         */
         EventFile(const std::string ifilename, const std::string& ofilename);
 
-        //TODO CHECK THIS
-        /** Destructor */
+        /**
+         * Destructor 
+         * 
+         * \todo CHECK THIS
+         */
         virtual ~EventFile();
 
         /**
-         * Load the next event in the file. 
+         * @brief Load the next event in the file. 
          *
          * @return true if an event was loaded successfully, false otherwise 
          */
         virtual bool nextEvent();
 
         /**
-         * Persists the event
+         * @brief Persists the event
          *
          */
         virtual void FillEvent();
 
         /**
-         * Setup the event object that will be used by this file.
+         * @brief Setup the event object that will be used by this file.
          *
          * @param event The Event container.
          */
@@ -62,13 +69,12 @@ class EventFile : public IEventFile {
          */
         void close();
 
-  /** 
-   * Get output file directory
-   */
-  void resetOutputFileDir();
+        /** 
+         * Get output file directory
+         */
+        void resetOutputFileDir();
 
-    private: 
-
+    private:
         /** The ROOT file to which event data will be written to. */
         TFile* ofile_{nullptr}; 
 
@@ -84,7 +90,10 @@ class EventFile : public IEventFile {
         /** LCIO reader */
         IO::LCReader* lc_reader_{IOIMPL::LCFactory::getInstance()->createLCReader()}; 
 
-        int entry_{0};  
+        int entry_{0}; //!< description
+
+        /** Number used to reset object count in TProcessID */
+        int objNumRoot_{0};
 
 }; // EventFile
 

@@ -38,4 +38,4 @@ bool HpsEventFile::nextEvent() {
   intree_->GetEntry(entry_++);
   
   return true;
-} 
+}

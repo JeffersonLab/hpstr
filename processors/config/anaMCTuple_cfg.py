@@ -7,7 +7,7 @@ import baseConfig as base
 
 
 base.parser.add_argument("-w", "--tracking", type=str, dest="tracking",
-                  help="Which tracking to use to make plots", metavar="tracking", default="KF")
+                         help="Which tracking to use to make plots", metavar="tracking", default="KF")
 options = base.parser.parse_args()
 
 
@@ -20,7 +20,6 @@ outfile = options.outFilename
 analysis = options.analysis
 
 
-
 print('Input file: %s' % infile)
 print('Output file: %s' % outfile)
 print('Analysis : %s' % analysis)
@@ -28,6 +27,9 @@ print('Analysis : %s' % analysis)
 p = HpstrConf.Process()
 
 p.run_mode = 1
+p.skip_events = options.skip_events
+p.max_events = options.nevents
+
 #p.max_events = 1000
 
 # Library containing processors

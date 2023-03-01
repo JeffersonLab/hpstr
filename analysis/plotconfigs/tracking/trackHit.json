@@ -24,11 +24,18 @@
         "ytitle" : "track type"
     },
     "p_h" : {
-        "bins"   : 650,
+        "bins"   : 325,
         "minX"   : 0,
         "maxX"   : 6.5,
         "xtitle" : "p [GeV]",
-        "ytitle" : "Tracks / 10 MeV"
+        "ytitle" : "Tracks / 20 MeV"
+    },
+    "hit_lay_h" : {
+        "bins"   : 16,
+        "minX"   : -0.5,
+        "maxX"   : 15.5,
+        "xtitle" : "Layer",
+        "ytitle" : "Hits on Track"
     },
     "chi2ndf_h" : {
         "bins" : 200,
@@ -78,5 +85,35 @@
         "maxX" : 5,
         "xtitle" : "z_{0} [mm]",
         "ytitle" : "Tracks"
+    },
+    "TanLambda_vs_Phi_hh" : {
+        "binsY" : 200,
+        "minY" : -0.2,
+        "maxY" : 0.2,
+        "binsX" : 100,
+        "minX" : -0.4,
+        "maxX" : 0.4,
+        "xtitle" : "phi_{0}",
+        "ytitle" : "tan(#lambda)"
+    },
+    "p_vs_Phi_hh" : {
+        "binsY"   : 325,
+        "minY"   : 0,
+        "maxY"   : 6.5,
+        "binsX" : 100,
+        "minX" : -0.4,
+        "maxX" : 0.4,
+        "xtitle" : "phi_{0}",
+        "ytitle" : "p [GeV]"
+    },
+    "p_vs_TanLambda_hh" : {
+        "binsY"   : 325,
+        "minY"   : 0,
+        "maxY"   : 6.5,
+        "binsX" : 200,
+        "minX" : -0.2,
+        "maxX" : 0.2,
+        "xtitle" : "tan(#lambda)",
+        "ytitle" : "p [GeV]"
     }
 }

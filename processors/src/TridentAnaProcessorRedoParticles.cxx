@@ -650,7 +650,7 @@ Vertex* TridentAnaProcessorRedoParticles::matchPairToVertex(Track* eleTrk,Track*
 std::pair<Track*,MCParticle*> TridentAnaProcessorRedoParticles::matchToMCParticle(Track* trk, std::vector<MCParticle*>& mcParts){
   int minHitsForMatch=3; 
   MCParticle* matchedMCPart=NULL; 
-  TRefArray* trk_hits = trk->getSvtHits();
+  TRefArray trk_hits = trk->getSvtHits();
   std::map<int, std::vector<int> > trueHitIDs;
 
   for(int i = 0; i < hits_->size(); i++) {
@@ -658,8 +658,8 @@ std::pair<Track*,MCParticle*> TridentAnaProcessorRedoParticles::matchToMCParticl
     trueHitIDs[hit->getID()] = hit->getMCPartIDs();
   }
   std::map<int, int> nHits4part;
-  for(int i = 0; i < trk_hits->GetEntries(); i++){
-    TrackerHit* eleHit = (TrackerHit*)trk_hits->At(i);
+  for(int i = 0; i < trk_hits.GetEntries(); i++){
+    TrackerHit* eleHit = (TrackerHit*)trk_hits.At(i);
     for(int idI = 0; idI < trueHitIDs[eleHit->getID()].size(); idI++ ){
 	int partID = trueHitIDs[eleHit->getID()].at(idI);
 	if ( nHits4part.find(partID) == nHits4part.end() ) {

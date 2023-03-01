@@ -44,7 +44,7 @@ class CalCluster : public TObject {
          * @return An array of references to the calorimeter hits composing 
          * this cluster. 
          */
-        TRefArray* getHits() const { return hits_; }
+        TRefArray getHits() const { return hits_; }
 
         /**
          * @return number of references to the calorimeter hits composing
@@ -97,7 +97,7 @@ class CalCluster : public TObject {
     private:
 
         /** An array of references to the hits associated withi this cluster. */        
-        TRefArray* hits_{new TRefArray{}}; 
+        TRefArray hits_{}; 
 
         /** A reference to the seed hit of this cluster. */ 
         TRef seed_hit_; 

@@ -343,8 +343,8 @@ void TridentHistos::FillResidualHistograms(Track* track, int ly, double res, dou
     
     TrackerHit* hit = nullptr;
     //Get the hits on track 
-    for (int ihit = 0; ihit<track->getSvtHits()->GetEntries();++ihit) {
-        TrackerHit* tmphit = (TrackerHit*) track->getSvtHits()->At(ihit);
+    for (int ihit = 0; ihit<track->getSvtHits().GetEntries();++ihit) {
+        TrackerHit* tmphit = (TrackerHit*) track->getSvtHits().At(ihit);
         if (tmphit->getLayer() == ly) {
             hit = tmphit;
             break;

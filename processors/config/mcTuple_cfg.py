@@ -15,6 +15,7 @@ print('Root file: %s' % root_file)
 p = HpstrConf.Process()
 
 p.run_mode = 0
+p.skip_events = options.skip_events
 p.max_events = options.nevents
 
 # Library containing processors
@@ -32,17 +33,17 @@ mcehits = HpstrConf.Processor('mcehits', 'MCEcalHitProcessor')
 #   Processor Configuration   #
 ###############################
 #MCParticles
-mcpart.parameters["debug"] = 0 
+mcpart.parameters["debug"] = 0
 mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
 #MCTrackerHits
-mcthits.parameters["debug"] = 0 
+mcthits.parameters["debug"] = 0
 mcthits.parameters["hitCollLcio"] = 'TrackerHits'
 mcthits.parameters["hitCollRoot"] = 'TrackerHits'
 
 #MCEcalHits
-mcehits.parameters["debug"] = 0 
+mcehits.parameters["debug"] = 0
 mcehits.parameters["hitCollLcio"] = 'EcalHits'
 mcehits.parameters["hitCollRoot"] = 'EcalHits'
 

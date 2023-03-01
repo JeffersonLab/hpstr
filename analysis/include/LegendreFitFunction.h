@@ -3,11 +3,23 @@
 
 #include "FitFunction.h"
 
+/**
+ * @brief description
+ * 
+ * details
+ */
 class LegendreFitFunction: public FitFunction {
     using FitFunction::FitFunction;
 
     protected:
-    double calculateBackground(double *x, double *par);
+        /**
+         * @brief description
+         * 
+         * @param x 
+         * @param par 
+         * @return double 
+         */
+        double calculateBackground(double *x, double *par);
 };
 
 #endif
