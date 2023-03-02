@@ -214,7 +214,6 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
     //histos = new RawSvtHitHistos(anaName_.c_str(), mmapper_);
     //histos->loadHistoConfig(histCfgFilename_);
     //histos->DefineHistos();
-    //std::cout<<"hello4"<<std::endl;
     //std::cout<<svtHitColl_.c_str()<<std::endl;
     ///std::cout<<svtHits_->size()<<std::endl;
     tree_->SetBranchAddress(svtHitColl_.c_str()  , &svtHits_    , &bsvtHits_    );
@@ -252,14 +251,13 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
 
 
 bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
-    //std::cout<<"hello5"<<std::endl;
     Float_t TimeRef=-0.0;
     Float_t AmpRef=1000.0;
     double weight = 1.;int count1=0;int count2=0;
     long eventTime = evH_->getEventTime();
     
     //I AM DOING CLUSTER MATCHING HERE :)
-    std::cout<<"Here is the eventTime"<<eventTime<<std::endl;
+    //std::cout<<"Here is the eventTime"<<eventTime<<std::endl;
     //std::cout<<"Here is the TSBank Trigger Time"<<tsBank_->T<<std::endl;
     bool doClMatch = true;
     
@@ -271,28 +269,19 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
     //ONCE I DETERMINE A CLUSTER WHICH IS IN LINE WITH TRIG, I CAN USE ANY CLUSTERS CLOSE IN TIME.
     
     //std::cout<<"Trigger Time: "<<vtpBank_->singletrigs.at(0).T<<std::endl;
-    
-    
-    std::cout<<"I got here 9B"<<std::endl;
-
     int trigPhase =  (int)((eventTime%24)/4);
     if((trigPhase!=tphase_)&&(tphase_!=6)){return true;}
-    std::cout<<"I got here 9C"<<std::endl;
     for(unsigned int i = 0; i < svtHits_->size(); i++){ 
         RawSvtHit * thisHit = svtHits_->at(i); 
         int getNum = thisHit->getFitN();//std::cout<<"I got here 10"<<std::endl;
         if(doClMatch){
             bool Continue = true;
             for(int i = 0; i<Part_->size();i++){
-                std::cout<<"Do I break here 3"<<std::endl;
                 if(Part_->at(i)->getPDG()==22){continue;}
-                std::cout<<"Do I break here 4"<<std::endl;
                 if(Part_->at(i)->getCluster().getEnergy()<0){continue;}
-                std::cout<<"Do I break here 5"<<std::endl;
                 if(not((Part_->at(i)->getCluster().getTime()<=40)and(Part_->at(i)->getCluster().getTime()>=36))){continue;}
                 //std::cout<<"For each Tracker Hit I now print out Raw Hit Info: "<<std::endl;
                 for(int j = 0; j<Part_->at(i)->getTrack().getSvtHits().GetEntries();j++){
-                    std::cout<<"Do I break here 6"<<std::endl;
                     TrackerHit * tHit = (TrackerHit*)(Part_->at(i)->getTrack().getSvtHits().At(j));
                     //std::cout<<tHit->getTime()<<std::endl;
                     for(int k = 0;k<tHit->getRawHits().GetEntries();k++){
@@ -300,10 +289,8 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                         if(rHit->getT0(0)==thisHit->getT0(0)){Continue=false;}
                         //std::cout<<"Raw Hit T0: "<<rHit->getT0(0)<<std::endl;
                     }
-                    std::cout<<"Do I break here 7"<<std::endl;
                     //std::cout<<" T0: "<<Part_->at(i)->getTrack().getSvtHits().At(j)->getRawHits().At(0).getT0()<<std::endl; 
                 }
-                std::cout<<"Do I break here 8"<<std::endl;
             }
             if(Continue){
                 return true;
@@ -315,9 +302,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 //std::cout<<"\ngetNum:"<<getNum<<std::endl;
                 //std::cout<<"region No:"<<regions_[i_reg]<<std::endl;
 
-                //std::cout<<"Which Hit:"<<J<<std::endl;
-                std::cout<<"I got here 10"<<std::endl;
-                
+                //std::cout<<"Which Hit:"<<J<<std::endl;                
                 Float_t TimeDiff=-42069.0;
                 Float_t AmpDiff=-42069.0;
                 
@@ -327,9 +312,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                     TimeDiff=(thisHit->getT0(J))-(thisHit->getT0((J+1)%2));
                     AmpDiff=(thisHit->getT0(J))-(thisHit->getT0((J+1)%2)); 
                     if(!(reg_selectors_[regions_[i_reg]]->passCutLt("TimeDiff_lt",TimeDiff*TimeDiff,weight))){continue;}
-                }
-                //std::cout<<"Did I atleast make it here?"<<std::endl;
-                
+                }                
                 if(!(reg_selectors_[regions_[i_reg]]->passCutEq("getId_lt",J,weight))){continue;} 
                 if(!(reg_selectors_[regions_[i_reg]]->passCutEq("getId_gt",J,weight))){continue;}   
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("chi_lt",thisHit->getChiSq(J),weight))){continue;}
@@ -337,7 +320,6 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                                 
                 
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ft",(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)<((thisHit->getT0((J+1)%getNum)-TimeRef)*(thisHit->getT0((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
-                //std::cout<<"I Made it here"<<std::endl;
                 if(i_reg<regionSelections_.size()-1){
                     if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ct",(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)>((thisHit->getT0((J+1)%getNum)-TimeRef)*(thisHit->getT0((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
                 }else{
@@ -345,7 +327,6 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                         if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ct",(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)>((thisHit->getT0((J+1)%getNum)-TimeRef)*(thisHit->getT0((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
                     }
                 }
-                //std::cout<<"I Made it here 2"<<std::endl;
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ca",(((thisHit->getAmp(J))-AmpRef)*((thisHit->getAmp(J))-AmpRef)<((thisHit->getAmp((J+1)%getNum)-AmpRef)*(thisHit->getAmp((J+1)%getNum)-AmpRef)+.00001)),weight))){continue;}
 
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_fterr",(((thisHit->getT0err(J))-TimeRef)*((thisHit->getT0err(J))-TimeRef)<((thisHit->getT0err((J+1)%getNum)-TimeRef)*(thisHit->getT0err((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
@@ -382,9 +363,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 //if(!(reg_selectors_[regions_[i_reg]]->passCutEq("time_phase",trigPhase,weight))){continue;}
                 
                 bool helper = false; 
-                //std::cout<<"hello"<<std::endl;
                 if(doSample_==1){
-                    //std::cout<<"I ACTUALLY DID THIS"<<std::endl;
                     int len=*(&readout+1)-readout;
                     for(int KK=0;KK<len;KK++){
                         if(readout[KK]<200){
@@ -393,7 +372,6 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                     }
                 }
                 if((doSample_==1)and(helper)){
-                    //std::cout<<"I ACTUALLY DID THIS"<<std::endl; 
                     int N = evH_->getEventNumber();
                     //std::cout<<T<<std::endl;
                     //if((regions_[i_reg]=="OneFit")and(feb>=2)){continue;}
@@ -408,7 +386,6 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
         }
         //std::cout<<count1<<std::endl;
         //std::cout<<count2<<std::endl;
-        std::cout<<"I got here 10"<<std::endl;
         return true;
     }
 
@@ -448,7 +425,6 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
             BigCount+=(feb-2)*2560+hyb*640+(int)(thisHit->getStrip());
         }
         //std::cout<<"READ HERE "<<BigCount<<" "<<feb<<" "<<hyb<<" "<<(int)thisHit->getStrip()<<" "<<baseErr1_[feb][hyb][(int)thisHit->getStrip()][0]<<std::endl;
-        //std::cout<<"I GOT HERE"<<std::endl;
         int * adcs2=thisHit->getADCs(); 
         //std::cout<<regions_[i_reg]<<" "<<readout<<std::endl;
 
@@ -515,7 +491,6 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
         for(int K=0; K<Length;K++){
             //std::cout<<K<<std::endl;
             if((word==MatchList_[K])and(readout[K]<200)){ 
-                //std::cout<<"GOT HERE INSIDE IF"<<std::endl;
                 //gPad->vRange(0.0,3000.0,150.0,6000.0);
                 readout[K]++;
                 //auto gr = new TGraph();
