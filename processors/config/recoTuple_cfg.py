@@ -144,7 +144,7 @@ fsp.parameters["fspCollLcio"] = "FinalStateParticles_KF"
 fsp.parameters["fspCollRoot"] = "FinalStateParticles_KF"
 fsp.parameters["kinkRelCollLcio"] = ""
 fsp.parameters["trkRelCollLcio"] = "KFTrackDataRelations"
-
+fsp.parameters["hitFitsCollLcio"] = "SVTFittedRawTrackerHits"
 
 
 # Sequence which the processors will run.
@@ -174,6 +174,7 @@ if options.isData == -1:
     print("Please specficy if this is Data or not via option -t")
 if (not options.isData):
     sequence.append(mcpart)
+sequence.append(fsp)
 
 p.sequence = sequence
 
