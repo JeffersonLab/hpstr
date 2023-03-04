@@ -122,6 +122,15 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
+<tr class="memitem:a85a0416b17d2d9a674b52dd52ac27949"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classTrackerHit.html">TrackerHit</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFinalStateParticleProcessor.html#a85a0416b17d2d9a674b52dd52ac27949">hits_</a> {}</td></tr>
+<tr class="separator:a85a0416b17d2d9a674b52dd52ac27949"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1934ef73cd3d1134f35489f9131c6deb"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFinalStateParticleProcessor.html#a1934ef73cd3d1134f35489f9131c6deb">trkhitCollRoot_</a> {&quot;fspOnTrackHits&quot;}</td></tr>
+<tr class="memdesc:a1934ef73cd3d1134f35489f9131c6deb"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="classFinalStateParticleProcessor.html#a1934ef73cd3d1134f35489f9131c6deb">More...</a><br /></td></tr>
+<tr class="separator:a1934ef73cd3d1134f35489f9131c6deb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fccd8c73f342ab88b9fdd47892b08a0"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classRawSvtHit.html">RawSvtHit</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFinalStateParticleProcessor.html#a6fccd8c73f342ab88b9fdd47892b08a0">rawhits_</a> {}</td></tr>
+<tr class="separator:a6fccd8c73f342ab88b9fdd47892b08a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae43512edf3c3c3642333cfcb6aa9eb8c"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFinalStateParticleProcessor.html#ae43512edf3c3c3642333cfcb6aa9eb8c">rawhitCollRoot_</a> {&quot;fspOnTrackRawHits&quot;}</td></tr>
+<tr class="separator:ae43512edf3c3c3642333cfcb6aa9eb8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa73ad54e67d599b4d3c6b87a049047f3"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classParticle.html">Particle</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFinalStateParticleProcessor.html#aa73ad54e67d599b4d3c6b87a049047f3">fsps_</a> {}</td></tr>
 <tr class="separator:aa73ad54e67d599b4d3c6b87a049047f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aac912b95a36669792c314347ed63d545"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFinalStateParticleProcessor.html#aac912b95a36669792c314347ed63d545">fspCollLcio_</a> {&quot;FinalStateParticles&quot;}</td></tr>
@@ -136,6 +145,8 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a0fb49bb9938aa822ece804ac031128b1"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFinalStateParticleProcessor.html#a0fb49bb9938aa822ece804ac031128b1">trkRelCollLcio_</a> {&quot;TrackDataRelations&quot;}</td></tr>
 <tr class="memdesc:a0fb49bb9938aa822ece804ac031128b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="classFinalStateParticleProcessor.html#a0fb49bb9938aa822ece804ac031128b1">More...</a><br /></td></tr>
 <tr class="separator:a0fb49bb9938aa822ece804ac031128b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5216eefd347c2cdbb66b31f640c7efb3"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFinalStateParticleProcessor.html#a5216eefd347c2cdbb66b31f640c7efb3">hitFitsCollLcio_</a> {&quot;SVTFittedRawTrackerHits&quot;}</td></tr>
+<tr class="separator:a5216eefd347c2cdbb66b31f640c7efb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a174d7e034f9a94c6d3d7300d72ba4d1d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFinalStateParticleProcessor.html#a174d7e034f9a94c6d3d7300d72ba4d1d">debug_</a> {0}</td></tr>
 <tr class="memdesc:a174d7e034f9a94c6d3d7300d72ba4d1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Debug Level.  <a href="classFinalStateParticleProcessor.html#a174d7e034f9a94c6d3d7300d72ba4d1d">More...</a><br /></td></tr>
 <tr class="separator:a174d7e034f9a94c6d3d7300d72ba4d1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,7 +168,7 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Insert description here. more details. </p>
 
-<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8h_source.html#l00039">39</a> of file <a class="el" href="FinalStateParticleProcessor_8h_source.html">FinalStateParticleProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8h_source.html#l00042">42</a> of file <a class="el" href="FinalStateParticleProcessor_8h_source.html">FinalStateParticleProcessor.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a3fc19b62940bb7ec6e2c41bba23f55ef"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3fc19b62940bb7ec6e2c41bba23f55ef">&#9670;&nbsp;</a></span>FinalStateParticleProcessor()</h2>
@@ -284,7 +295,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classProcessor.html#a5882b5eaf11f8b1561d5bb4ecdc217c3">Processor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8cxx_source.html#l00099">99</a> of file <a class="el" href="FinalStateParticleProcessor_8cxx_source.html">FinalStateParticleProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8cxx_source.html#l00158">158</a> of file <a class="el" href="FinalStateParticleProcessor_8cxx_source.html">FinalStateParticleProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -322,7 +333,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classProcessor.html#ac35b4d4ae3c704c4f9764e8cbbb3a790">Processor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8cxx_source.html#l00034">34</a> of file <a class="el" href="FinalStateParticleProcessor_8cxx_source.html">FinalStateParticleProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8cxx_source.html#l00036">36</a> of file <a class="el" href="FinalStateParticleProcessor_8cxx_source.html">FinalStateParticleProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -360,7 +371,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classProcessor.html#a1ed21b6d43e34aa191677e80ecf2fd78">Processor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8cxx_source.html#l00039">39</a> of file <a class="el" href="FinalStateParticleProcessor_8cxx_source.html">FinalStateParticleProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8cxx_source.html#l00047">47</a> of file <a class="el" href="FinalStateParticleProcessor_8cxx_source.html">FinalStateParticleProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -387,7 +398,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Debug Level. </p>
 
-<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8h_source.html#l00092">92</a> of file <a class="el" href="FinalStateParticleProcessor_8h_source.html">FinalStateParticleProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8h_source.html#l00104">104</a> of file <a class="el" href="FinalStateParticleProcessor_8h_source.html">FinalStateParticleProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -413,7 +424,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8h_source.html#l00087">87</a> of file <a class="el" href="FinalStateParticleProcessor_8h_source.html">FinalStateParticleProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8h_source.html#l00098">98</a> of file <a class="el" href="FinalStateParticleProcessor_8h_source.html">FinalStateParticleProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -439,7 +450,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8h_source.html#l00088">88</a> of file <a class="el" href="FinalStateParticleProcessor_8h_source.html">FinalStateParticleProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8h_source.html#l00099">99</a> of file <a class="el" href="FinalStateParticleProcessor_8h_source.html">FinalStateParticleProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -462,9 +473,57 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8h_source.html#l00097">97</a> of file <a class="el" href="FinalStateParticleProcessor_8h_source.html">FinalStateParticleProcessor.h</a>.</p>
+
+</div>
+</div>
+<a id="a5216eefd347c2cdbb66b31f640c7efb3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5216eefd347c2cdbb66b31f640c7efb3">&#9670;&nbsp;</a></span>hitFitsCollLcio_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string hitFitsCollLcio_ {&quot;SVTFittedRawTrackerHits&quot;}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8h_source.html#l00102">102</a> of file <a class="el" href="FinalStateParticleProcessor_8h_source.html">FinalStateParticleProcessor.h</a>.</p>
+
+</div>
+</div>
+<a id="a85a0416b17d2d9a674b52dd52ac27949"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a85a0416b17d2d9a674b52dd52ac27949">&#9670;&nbsp;</a></span>hits_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;<a class="el" href="classTrackerHit.html">TrackerHit</a>*&gt; hits_ {}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 <p>Containers to hold all <a class="el" href="classTrackerHit.html">TrackerHit</a> objects. </p>
 
-<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8h_source.html#l00086">86</a> of file <a class="el" href="FinalStateParticleProcessor_8h_source.html">FinalStateParticleProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8h_source.html#l00091">91</a> of file <a class="el" href="FinalStateParticleProcessor_8h_source.html">FinalStateParticleProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -490,7 +549,81 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8h_source.html#l00089">89</a> of file <a class="el" href="FinalStateParticleProcessor_8h_source.html">FinalStateParticleProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8h_source.html#l00100">100</a> of file <a class="el" href="FinalStateParticleProcessor_8h_source.html">FinalStateParticleProcessor.h</a>.</p>
+
+</div>
+</div>
+<a id="ae43512edf3c3c3642333cfcb6aa9eb8c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae43512edf3c3c3642333cfcb6aa9eb8c">&#9670;&nbsp;</a></span>rawhitCollRoot_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string rawhitCollRoot_ {&quot;fspOnTrackRawHits&quot;}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8h_source.html#l00095">95</a> of file <a class="el" href="FinalStateParticleProcessor_8h_source.html">FinalStateParticleProcessor.h</a>.</p>
+
+</div>
+</div>
+<a id="a6fccd8c73f342ab88b9fdd47892b08a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6fccd8c73f342ab88b9fdd47892b08a0">&#9670;&nbsp;</a></span>rawhits_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;<a class="el" href="classRawSvtHit.html">RawSvtHit</a>*&gt; rawhits_ {}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8h_source.html#l00094">94</a> of file <a class="el" href="FinalStateParticleProcessor_8h_source.html">FinalStateParticleProcessor.h</a>.</p>
+
+</div>
+</div>
+<a id="a1934ef73cd3d1134f35489f9131c6deb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1934ef73cd3d1134f35489f9131c6deb">&#9670;&nbsp;</a></span>trkhitCollRoot_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string trkhitCollRoot_ {&quot;fspOnTrackHits&quot;}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>description </p>
+
+<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8h_source.html#l00092">92</a> of file <a class="el" href="FinalStateParticleProcessor_8h_source.html">FinalStateParticleProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -516,7 +649,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8h_source.html#l00090">90</a> of file <a class="el" href="FinalStateParticleProcessor_8h_source.html">FinalStateParticleProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FinalStateParticleProcessor_8h_source.html#l00101">101</a> of file <a class="el" href="FinalStateParticleProcessor_8h_source.html">FinalStateParticleProcessor.h</a>.</p>
 
 </div>
 </div>
