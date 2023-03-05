@@ -56,10 +56,13 @@ fsp.parameters["fspCollRoot"] = "FinalStateParticles_KF"
 fsp.parameters["kinkRelCollLcio"] = ""
 fsp.parameters["trkRelCollLcio"] = "KFTrackDataRelations"
 if(rawHits==1):
+    fsp.parameters["trkhitCollRoot"] = "fspOnTrackHits"
+    fsp.parameters["rawhitCollRoot"] = "fspOnTrackRawHits"
     fsp.parameters["hitFitsCollLcio"] = "SVTFittedRawTrackerHits"
 else:
+    fsp.parameters["trkhitCollRoot"] = ""
+    fsp.parameters["rawhitCollRoot"] = ""
     fsp.parameters["hitFitsCollLcio"] = ""
-
 sequence = []
 sequence.append(fsp)
 
