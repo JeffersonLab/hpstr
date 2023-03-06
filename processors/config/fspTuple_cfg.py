@@ -55,7 +55,7 @@ fsp.parameters["fspCollLcio"] = "FinalStateParticles_KF"
 fsp.parameters["fspCollRoot"] = "FinalStateParticles_KF"
 fsp.parameters["kinkRelCollLcio"] = ""
 fsp.parameters["trkRelCollLcio"] = "KFTrackDataRelations"
-if(rawHits==1):
+if(options.rawHits==1):
     fsp.parameters["trkhitCollRoot"] = "fspOnTrackHits"
     fsp.parameters["rawhitCollRoot"] = "fspOnTrackRawHits"
     fsp.parameters["hitFitsCollLcio"] = "SVTFittedRawTrackerHits"
