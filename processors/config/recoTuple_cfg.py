@@ -153,7 +153,7 @@ if(options.rawHits==1):
     fsp.parameters["rawhitCollRoot"] = "fspOnTrackRawHits"
     fsp.parameters["hitFitsCollLcio"] = "SVTFittedRawTrackerHits"
 else:
-    fsp.parameters["trkhitCollRoot"] = ""
+    fsp.parameters["trkhitCollRoot"] = "fspOnTrackHits"
     fsp.parameters["rawhitCollRoot"] = ""
     fsp.parameters["hitFitsCollLcio"] = ""
 
