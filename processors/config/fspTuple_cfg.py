@@ -63,8 +63,7 @@ else:
     fsp.parameters["trkhitCollRoot"] = "fspOnTrackHits"
     fsp.parameters["rawhitCollRoot"] = ""
     fsp.parameters["hitFitsCollLcio"] = ""
-sequence = [header]
-sequence.append(fsp)
+sequence = [header,fsp]
 
 p.sequence = sequence
 
