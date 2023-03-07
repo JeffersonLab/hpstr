@@ -63,6 +63,7 @@ else:
     fsp.parameters["trkhitCollRoot"] = "fspOnTrackHits"
     fsp.parameters["rawhitCollRoot"] = ""
     fsp.parameters["hitFitsCollLcio"] = ""
+    
 p.sequence = [header,fsp]
 
 p.input_files = lcio_file
