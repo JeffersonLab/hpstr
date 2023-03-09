@@ -18,6 +18,7 @@
 #include "TFitResultPtr.h"
 #include "TF1.h"
 #include <fstream>
+#include "TRandom3.h"
 
 /**
  * @brief description
@@ -71,6 +72,8 @@ class ZBiHistos : public HistoManager{
 
         void defineCutlistHistos(std::map<std::string,std::pair<double,int>> cutmap);
 
+        void set2DHistoYlabel(std::string histoName, int ybin, std::string ylabel);
+
         void defineAnalysisHistos();
 
         std::vector<double> impactParameterCut();
@@ -87,6 +90,8 @@ class ZBiHistos : public HistoManager{
                 std::cout << it->first << std::endl;
         }
 
+        void defineIterHistos();
+
         /**
          * @brief Set debug
          * 
@@ -101,6 +106,11 @@ class ZBiHistos : public HistoManager{
         double fitZTail(std::string zVtxHistoname, double max_tail_events);
 
         double shosFitZTail(std::string cutname, double max_tail_events);
+
+        void writeGraphs(TFile* outF, std::string folder);
+
+    private:
+        std::map<std::string, TGraph*> graphs_;
 };
 
 #endif

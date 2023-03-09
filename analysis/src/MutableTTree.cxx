@@ -31,6 +31,22 @@ void MutableTTree::defineMassWindow(double lowMass, double highMass){
     highMass_ = highMass;
 }
 
+bool MutableTTree::variableExists(std::string variable){
+    if(tuple_.find(variable) != tuple_.end())
+        return true;
+    else
+        return false;
+}
+
+std::vector<std::string> MutableTTree::getAllVariables(){
+    std::vector<std::string> variables;
+    for(std::map<std::string,double*>::iterator it = tuple_.begin(); it != tuple_.end(); it++){
+       variables.push_back(it->first); 
+    }
+
+    return variables;
+}
+
 void MutableTTree::Fill(){
 
     for(int e=0; e < tree_->GetEntries(); e++){
@@ -38,8 +54,8 @@ void MutableTTree::Fill(){
         
         //Mass Window (if set)
         if(lowMass_ != -999.9 && highMass_ != -999.9){
-            if(getvalue("unc_vtx_mass")*1000.0 > highMass_) continue; 
-            if(getvalue("unc_vtx_mass")*1000.0 < lowMass_) continue; 
+            if(getValue("unc_vtx_mass")*1000.0 > highMass_) continue; 
+            if(getValue("unc_vtx_mass")*1000.0 < lowMass_) continue; 
         }
 
         for(std::map<std::string,double*>::iterator it = new_variables_.begin(); it != new_variables_.end(); it++){
@@ -53,15 +69,38 @@ void MutableTTree::Fill(){
 }
 
 //Add comment
-void MutableTTree::addVariableZalpha(std::vector<double> impact_parameter_cut_){
+void MutableTTree::addVariableZalpha(double y_intercept, double slope, double alpha_z){
 
-    double* zalpha = new double{999.9};
-    tuple_["unc_vtx_zalpha"] = zalpha;
-    newtree_->Branch("unc_vtx_zalpha",tuple_["unc_vtx_zalpha"],"unc_vtx_zalpha/D");  
-    new_variables_["unc_vtx_zalpha"] = zalpha;
+    double* ele_zalpha = new double{999.9};
+    tuple_["unc_vtx_ele_track_zalpha"] = ele_zalpha;
+    newtree_->Branch("unc_vtx_ele_track_zalpha",tuple_["unc_vtx_ele_track_zalpha"],"unc_vtx_ele_track_zalpha/D");  
+    new_variables_["unc_vtx_ele_track_zalpha"] = ele_zalpha;
 
     //Define lambda function to calculate zalpha
-    std::function<double()> myfunc = [&, impact_parameter_cut_]()->double{
+    std::function<double()> calculateZalpha_ele = [&, y_intercept, slope, alpha_z]()->double{
+        if(*tuple_["unc_vtx_ele_track_z0"] > 0)
+            return *tuple_["unc_vtx_z"] - ( ((*tuple_["unc_vtx_ele_track_z0"]-y_intercept)/slope) - alpha_z );
+        else
+            return *tuple_["unc_vtx_z"] - ( ((*tuple_["unc_vtx_ele_track_z0"]+y_intercept)/(-1*slope)) - alpha_z );
+    };
+    functions_["unc_vtx_ele_track_zalpha"] = calculateZalpha_ele;
+
+    double* pos_zalpha = new double{999.9};
+    tuple_["unc_vtx_pos_track_zalpha"] = pos_zalpha;
+    newtree_->Branch("unc_vtx_pos_track_zalpha",tuple_["unc_vtx_pos_track_zalpha"],"unc_vtx_pos_track_zalpha/D");  
+    new_variables_["unc_vtx_pos_track_zalpha"] = pos_zalpha;
+
+    //Define lambda function to calculate zalpha
+    std::function<double()> calculateZalpha_pos = [&, y_intercept, slope, alpha_z]()->double{
+        if(*tuple_["unc_vtx_pos_track_z0"] > 0)
+            return *tuple_["unc_vtx_z"] - ( ((*tuple_["unc_vtx_pos_track_z0"]-y_intercept)/slope) - alpha_z);
+        else
+            return *tuple_["unc_vtx_z"] - ( ((*tuple_["unc_vtx_pos_track_z0"]+y_intercept)/(-1*slope)) - alpha_z );
+    };
+    functions_["unc_vtx_pos_track_zalpha"] = calculateZalpha_pos;
+        
+
+        /*
         double a_p = impact_parameter_cut_[0];
         double b_p = impact_parameter_cut_[1];
         double a_d = impact_parameter_cut_[2];
@@ -73,11 +112,10 @@ void MutableTTree::addVariableZalpha(std::vector<double> impact_parameter_cut_){
             return *tuple_["unc_vtx_z"] - ( ((*tuple_["unc_vtx_ele_track_z0"]-a_p)/b_p) - z_alpha );
         else
             return *tuple_["unc_vtx_z"] - ( ((*tuple_["unc_vtx_ele_track_z0"]-a_d)/b_d) - z_alpha );
-    };
+            */
 
     //double (*myfunc_ptr)();
     //*myfunc_ptr = myfunc;
-    functions_["unc_vtx_zalpha"] = myfunc;
 
 
     //my_functions_["zalpha"] = Function of lambda(param) 

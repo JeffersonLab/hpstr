@@ -27,7 +27,8 @@ class MutableTTree {
 
         void Fill();
 
-        void addVariableZalpha(std::vector<double> impact_parameter_cut);
+        //void addVariableZalpha(std::vector<double> impact_parameter_cut);
+        void addVariableZalpha(double y_intercept, double slope, double alpha_z);
 
         double getValue(std::string branch_name);
 
@@ -42,6 +43,12 @@ class MutableTTree {
         void addNewBranch(std::string branch);
 
         void fillNewBranch(std::string branch, double value);
+
+        void defineMassWindow(double lowMass, double highMass);
+
+        std::vector<std::string> getAllVariables();
+
+        bool variableExists(std::string variable);
 
 
         ~MutableTTree();

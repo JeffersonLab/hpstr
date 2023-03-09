@@ -40,6 +40,8 @@ class IterativeCutSelector : public BaseSelector {
 
         void printCuts();
 
+        int getCutID(std::string cutname){return cuts[cutname].second;};
+
         std::map<std::string, std::pair<double,int>>* getPointerToCuts(){ return &cuts; }
 
 

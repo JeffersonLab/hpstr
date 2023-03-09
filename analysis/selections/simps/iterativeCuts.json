@@ -1,10 +1,10 @@
 {
-    "unc_vtx_ele_track_t" : {
+    "unc_vtx_ele_track_t_lt" : {
         "cut" : 10,
         "id" : 1,
         "info" : "e^{-} trkTime"
     },
-    "unc_vtx_ele_track_t" : {
+    "unc_vtx_pos_track_t_lt" : {
         "cut" : 10,
         "id" : 2,
         "info" : "e^{+} trkTime"
@@ -41,62 +41,72 @@
     },
     "unc_vtx_ele_track_p_gt" : {
         "cut" : 1.75,
-        "id"  : 8,
+        "id"  : 9,
         "info" : "p e^{-}<1.75GeV"
     },
     "unc_vtx_pos_track_p_lt" : {
         "cut" : 0.4,
-        "id"  : 9,
+        "id"  : 10,
         "info" : "p_e^{-}>0.4 [GeV]"
     },
     "unc_vtx_pos_track_p_gt" : {
         "cut" : 0.4,
-        "id"  : 9,
+        "id"  : 11,
         "info" : "p_e^{-}>0.4 [GeV]"
     },
     "unc_vtx_psum_gt" : {
         "cut" : 0.4,
-        "id"  : 10,
+        "id"  : 12,
         "info" : "p_e^{+}>0.4 [GeV]"
     },
     "unc_vtx_psum_lt" : {
         "cut" : 0.4,
-        "id"  : 10,
+        "id"  : 13,
         "info" : "p_e^{+}>0.4 [GeV]"
     },
     "unc_vtx_x_lt" : {
         "cut" : 2.0,
-        "id"  : 11,
+        "id"  : 14,
         "info" : "vtx x < 1.0 mm"
     },
     "unc_vtx_x_gt" : {
         "cut" : -2.0,
-        "id"  : 12,
+        "id"  : 15,
         "info" : "vtx x > 1.0 mm"
     },
     "unc_vtx_y_lt" : {
         "cut" : 1.0,
-        "id"  : 13,
+        "id"  : 16,
         "info" : "vtx x < 1.0 mm"
     },
     "unc_vtx_y_gt" : {
         "cut" : -1.0,
-        "id"  : 14,
+        "id"  : 17,
         "info" : "vtx x > 1.0 mm"
     },
     "unc_vtx_ele_track_omega_gt" : {
         "cut" : 0.1,
-        "id"  : 15,
+        "id"  : 18,
         "info" : "e^{-} Omega > 0.1"
     },
     "unc_vtx_ele_clust_E_lt" : {
         "cut" : 2.0,
-        "id"  : 16,
+        "id"  : 19,
         "info" : "e^{-} Cluster Energy < 2.0"
     },
     "unc_vtx_pos_clust_E_lt" : {
         "cut" : 2.0,
-        "id"  : 17,
+        "id"  : 20,
         "info" : "e^{+} Cluster Energy < 2.0"
+    },
+    "unc_vtx_ele_track_zalpha_lt" : {
+        "cut" : 6.0,
+        "id"  : 21,
+        "info" : "e^{-} zalpha < 50.0"
+    },
+    "unc_vtx_pos_track_zalpha_lt" : {
+        "cut" : 6.0,
+        "id"  : 22,
+        "info" : "e^{+} zalpha < 50.0"
     }
 }

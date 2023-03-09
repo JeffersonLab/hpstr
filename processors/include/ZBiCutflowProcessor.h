@@ -53,13 +53,17 @@ class ZBiCutflowProcessor : public Processor {
 
         void calculateImpactParameterCut();
 
-        bool failPersistentCuts(std::map<std::string,double*> tuple);
+        bool failPersistentCuts(MutableTTree* MTT);
+
+        bool failTestCut(std::string cutname, MutableTTree* MTT);
 
         bool failTestCut(std::string cutname, std::map<std::string,double*> tuple);
 
         double transformImpactParameterZalpha(double track_z0, double vtx_z);
 
         bool failImpactParameterZalphaCut(double ele_track_z0, double pos_track_z0, double vtx_z, double zalpha_cut_lt);
+
+        void getVdSimZ();
 
 
     private:
@@ -98,6 +102,7 @@ class ZBiCutflowProcessor : public Processor {
 
         //histos
         ZBiHistos* debugHistos_{nullptr};
+        ZBiHistos* summaryHistos_{nullptr};
 
         //signal
         std::string signalHistCfgFilename_{""};
@@ -127,6 +132,7 @@ class ZBiCutflowProcessor : public Processor {
 
         //TESTING
         MutableTTree* signalMTT_{nullptr};
+        MutableTTree* tritrigMTT_{nullptr};
 };
 
 
