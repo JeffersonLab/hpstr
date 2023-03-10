@@ -55,15 +55,16 @@ fsp.parameters["fspCollLcio"] = "FinalStateParticles_KF"
 fsp.parameters["fspCollRoot"] = "FinalStateParticles_KF"
 fsp.parameters["kinkRelCollLcio"] = ""
 fsp.parameters["trkRelCollLcio"] = "KFTrackDataRelations"
-if(rawHits==1):
+if(options.rawHits==1):
+    fsp.parameters["trkhitCollRoot"] = "fspOnTrackHits"
+    fsp.parameters["rawhitCollRoot"] = "fspOnTrackRawHits"
     fsp.parameters["hitFitsCollLcio"] = "SVTFittedRawTrackerHits"
 else:
+    fsp.parameters["trkhitCollRoot"] = "fspOnTrackHits"
+    fsp.parameters["rawhitCollRoot"] = ""
     fsp.parameters["hitFitsCollLcio"] = ""
-
-sequence = []
-sequence.append(fsp)
-
-p.sequence = sequence
+    
+p.sequence = [header,fsp]
 
 p.input_files = lcio_file
 p.output_files = [root_file]

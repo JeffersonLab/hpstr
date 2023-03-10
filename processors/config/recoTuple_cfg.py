@@ -46,6 +46,7 @@ cvtx = HpstrConf.Processor('cvtx', 'VertexProcessor')
 vtxgbl = HpstrConf.Processor('vtxgbl', 'VertexProcessor')
 cvtxgbl = HpstrConf.Processor('cvtxgbl', 'VertexProcessor')
 mcpart = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
+fsp = HpstrConf.Processor('fps', 'FinalStateParticleProcessor')
 
 ###############################
 #   Processor Configuration   #
@@ -146,9 +147,14 @@ fsp.parameters["fspCollLcio"] = "FinalStateParticles_KF"
 fsp.parameters["fspCollRoot"] = "FinalStateParticles_KF"
 fsp.parameters["kinkRelCollLcio"] = ""
 fsp.parameters["trkRelCollLcio"] = "KFTrackDataRelations"
-if(rawHits==1):
+
+if(options.rawHits==1):
+    fsp.parameters["trkhitCollRoot"] = "fspOnTrackHits"
+    fsp.parameters["rawhitCollRoot"] = "fspOnTrackRawHits"
     fsp.parameters["hitFitsCollLcio"] = "SVTFittedRawTrackerHits"
 else:
+    fsp.parameters["trkhitCollRoot"] = "fspOnTrackHits"
+    fsp.parameters["rawhitCollRoot"] = ""
     fsp.parameters["hitFitsCollLcio"] = ""
 
 # Sequence which the processors will run.
