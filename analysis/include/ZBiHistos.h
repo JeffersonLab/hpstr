@@ -64,6 +64,8 @@ class ZBiHistos : public HistoManager{
 
         void resetHistograms1d();
 
+        void resetHistograms2d();
+
         void addHistoClone1d(TH1F* parentHisto, std::string clone_histoname);
 
         void addHisto1d(std::string histoname, std::string xtitle, int nbinsX, float xmin, float xmax);
@@ -106,6 +108,8 @@ class ZBiHistos : public HistoManager{
         double fitZTail(std::string zVtxHistoname, double max_tail_events);
 
         double shosFitZTail(std::string cutname, double max_tail_events);
+
+        TF1* getZTailFit(std::string cutname);
 
         void writeGraphs(TFile* outF, std::string folder);
 

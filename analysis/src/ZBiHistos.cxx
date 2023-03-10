@@ -31,6 +31,33 @@ void ZBiHistos::resetHistograms1d(){
     }
 }
 
+void ZBiHistos::resetHistograms2d(){
+    for(it2d it=histos2d.begin(); it != histos2d.end(); it ++){
+        it->second->Reset();
+    }
+}
+
+/*
+void ZBiHistos::getVdSelZEff(std::string cutname, double zcut, TH1F* vdSimZ_h){
+   //Get the 2D histogram of signal unc_vtx_z vs true_vtx_z for the corresponding Test Cut
+   //Take the Y projection of unc_vtx_z < zcut to be the signal_vdSelZ
+   TH2F* vtx_z_hh = (TH2F*)histos2d[m_name+"_unc_vtx_z_vs_true_vtx_z_"+cutname+"_hh"];
+   std::cout << "Taking y projection of unc_v_true_vtx_z between " << vtx_z_hh->GetXaxis()->FindBin(zcut)+1 <<
+       " and " << vtx_z_hh->GetXaxis()->GetNbins() << std::endl;
+   TH1F* true_vtx_z_h = (TH1F*)vtx_z_hh->ProjectionY((m_name+"_"+cutname+"_"+"true_vtx_z_projy").c_str(),vtx_z_hh->GetXaxis()->FindBin(zcut)+1,vtx_z_hh->GetXaxis()->GetNbins(),"");
+
+   //Initialize the vd selection histogram by cloning the structure of vdSimZ
+   TH1F* vdSelZ_h = (TH1F*)vdSimZ_h->Clone(("signal_vdSelZ_"+cutname+"_h").c_str());
+   for(int i=0; i<201; i++){
+       vdSelZ_h->SetBinContent(i,vdSelZ_h->GetBinContent(i));
+   }
+
+   //take the efficiency of vdSelZ to vdSimZ to get F(z)
+   TEfficiency* effCalc_h = new TEfficiency(*vdSelZ_h, *vdSimZ_h_);
+
+}
+*/
+
 /*
 bool ZBiHistos::setTestZtailNevents() {
 
@@ -133,10 +160,15 @@ void ZBiHistos::defineCutlistHistos(std::map<std::string,std::pair<double,int>> 
     for(std::map<std::string,std::pair<double,int>>::iterator it=cutmap.begin(); it != cutmap.end(); it++){
         std::string cutname = it->first;
 
+        //unv_vtx_z vs true_vtx_z
+        addHisto2d("unc_vtx_z_vs_true_vtx_z_"+cutname+"_hh","unc z_{vtx} [mm]", 1500, -50.0, 100.0,"true z_{vtx} [mm]",200,-50.3,149.7); 
         //vdSelZ
         addHisto1d("signal_vdSelZ_"+cutname+"_h","true z_{vtx} [mm]",200, -50.3, 149.7);
         //tritrig zVtx
         addHisto1d("tritrig_zVtx_"+cutname+"_h","unc z_{vtx} [mm]",150, -50.0, 100.0);
+
+        //TGraphs
+
         //ztail fit quality
         TGraph* tgraph = new TGraph();
         tgraph->SetName((m_name+"_tritrig_zVtx_fit_chi2_"+cutname+"_g").c_str());
@@ -160,7 +192,10 @@ void ZBiHistos::defineIterHistos(){
     addHisto2d("persistent_cuts_hh","iteration", 100,-0.5,99.5,"cut_id",25,0.5,25.5);
     addHisto2d("test_cuts_ZBi_hh","iteration", 100,-0.5,99.5,"cut_id",25,0.5,25.5);
     addHisto2d("test_cuts_values_hh","iteration", 100,-0.5,99.5,"cut_id",25,0.5,25.5);
-    addHisto2d("best_test_cut_ZBi_hh","iteration", 100,-0.5,99.5,"cut_id",200, -10.0,10.0);
+    addHisto2d("test_cuts_zcut_hh","iteration", 100,-0.5,99.5,"zcut",25,0.5,25.5);
+    addHisto2d("test_cuts_nbkg_hh","iteration", 100,-0.5,99.5,"zcut",25,0.5,25.5);
+    addHisto2d("test_cuts_nsig_hh","iteration", 100,-0.5,99.5,"zcut",25,0.5,25.5);
+    addHisto2d("best_test_cut_ZBi_hh","iteration", 100,-0.5,99.5,"cut_id",25,0.5,25.5);
     
 }
 
@@ -241,6 +276,68 @@ std::vector<double> ZBiHistos::impactParameterCut(){
     return params;
 }
 
+
+TF1* ZBiHistos::getZTailFit(std::string cutname){
+    std::cout << "Fitting ztail " << std::endl;
+    TF1* fitFunc = new TF1("fitfunc", "[0]* exp( (x<=([1]+[3]))*(-0.5*((x-[1])^2)/([2]^2)) + (x>=[1]+[3])*(-0.5*([3]^2/[2]^2)-(x-[1]-[3])/[4])  )", -100.0, 100.0);
+
+    std::string histoname = m_name+"_tritrig_zVtx_"+cutname+"_h";
+    if(histos1d[histoname]->GetEntries() < 1){
+        std::cout << "WARNING: Background Model is NULL: " << 
+            cutname << " tritrig zVtx distribution was empty and could not be fit!" << std::endl;
+        return nullptr;
+    }
+
+    TFitResultPtr gausResult = (TFitResultPtr)histos1d[histoname]->Fit("gaus","QS"); 
+    double gaus0 = gausResult->GetParams()[0];
+    double gaus1 = gausResult->GetParams()[1];
+    double gaus2 = gausResult->GetParams()[2];
+    //gausResult = histos1d[histoname]->Fit("gaus","QS","",gaus1-2.5*gaus2, gaus1+10.0*gaus2);
+    gausResult = histos1d[histoname]->Fit("gaus","QS","",gaus1-2.5*gaus2, gaus1+10.0*gaus2);
+    gaus0 = gausResult->GetParams()[0];
+    gaus1 = gausResult->GetParams()[1];
+    gaus2 = gausResult->GetParams()[2];
+    double xmin = gaus1 - 2.5*gaus2;
+    double xmax = histos1d[histoname]->GetBinCenter(histos1d[histoname]->FindLastBinAbove(0.0)+1);
+    xmax = 100.0;
+
+    //Fit function for a few different seeds for tail start, and length, keep the best fit
+    double tailZ = gaus1 + 3.0*gaus2;
+    double tail_l = 50.0;
+    TRandom3* ran = new TRandom3();
+    ran->SetSeed(0);
+
+    double best_chi2 = 9999999.9;
+    double best_tailZ;
+    double best_tail_l;
+    double best_gaus0, best_gaus1, best_gaus2;
+
+    int iteration = 20;
+    for(int i =10; i < iteration; i=i+2){
+        tail_l = 50.0;
+        tailZ = gaus1 +(double)(iteration/10.0)*gaus2;
+        fitFunc->SetParameters(gaus0, gaus1, gaus2, tailZ, tail_l);
+        TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", xmin,xmax);
+        if(fitResult->Ndf() <= 0)
+            continue;
+        if(fitResult->Chi2()/fitResult->Ndf() < best_chi2){
+            best_chi2 = fitResult->Chi2()/fitResult->Ndf();
+            best_gaus0 = fitResult->Parameter(0);
+            best_gaus1 = fitResult->Parameter(1);
+            best_gaus2 = fitResult->Parameter(2);
+            best_tailZ = fitResult->Parameter(3);
+            best_tail_l = fitResult->Parameter(4);
+        }
+    }
+
+    fitFunc->SetParameters(best_gaus0, best_gaus1, best_gaus2, best_tailZ, best_tail_l);
+    TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "LSIM", "", xmin, xmax);
+    fitFunc->Draw();
+    std::cout << "Finished fitting ztail" << std::endl;
+
+    delete ran;
+    return fitFunc;
+}
 
 double ZBiHistos::shosFitZTail(std::string cutname, double max_tail_events){
     TF1* fitFunc = new TF1("fitfunc", "[0]* exp( (x<=([1]+[3]))*(-0.5*((x-[1])^2)/([2]^2)) + (x>=[1]+[3])*(-0.5*([3]^2/[2]^2)-(x-[1]-[3])/[4])  )", -100.0, 100.0);
@@ -393,7 +490,7 @@ void ZBiHistos::writeGraphs(TFile* outF, std::string folder){
     TDirectory* dir{nullptr};
     std::cout<<folder.c_str()<<std::endl;
     if (!folder.empty()) {
-        dir = outF->mkdir(folder.c_str());
+        dir = outF->mkdir(folder.c_str(),"",true);
         dir->cd();
     }
     for(std::map<std::string,TGraph*>::iterator it=graphs_.begin(); it != graphs_.end(); ++it){
@@ -410,7 +507,7 @@ void ZBiHistos::writeHistos(TFile* outF, std::string folder) {
     TDirectory* dir{nullptr};
     std::cout<<folder.c_str()<<std::endl;
     if (!folder.empty()) {
-        dir = outF->mkdir(folder.c_str());
+        dir = outF->mkdir(folder.c_str(),"",true);
         dir->cd();
     }
     for (it1d it = histos1d.begin(); it!=histos1d.end(); ++it) {

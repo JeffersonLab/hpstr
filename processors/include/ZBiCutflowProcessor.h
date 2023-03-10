@@ -16,7 +16,10 @@
 #include "TVector3.h"
 #include "TLorentzVector.h"
 #include "TH1F.h"
+#include "TH2F.h"
+#include "TF1.h"
 #include "TEfficiency.h"
+#include "TGraph.h"
 
 // C++ 
 #include <memory>
@@ -64,6 +67,8 @@ class ZBiCutflowProcessor : public Processor {
         bool failImpactParameterZalphaCut(double ele_track_z0, double pos_track_z0, double vtx_z, double zalpha_cut_lt);
 
         void getVdSimZ();
+
+        void writeGraph(TFile* outF, std::string folder, TGraph* g);
 
 
     private:
