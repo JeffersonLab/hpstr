@@ -122,20 +122,21 @@ $(function() {
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;fsp.parameters[<span class="stringliteral">&quot;fspCollRoot&quot;</span>] = <span class="stringliteral">&quot;FinalStateParticles_KF&quot;</span></div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;fsp.parameters[<span class="stringliteral">&quot;kinkRelCollLcio&quot;</span>] = <span class="stringliteral">&quot;&quot;</span></div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;fsp.parameters[<span class="stringliteral">&quot;trkRelCollLcio&quot;</span>] = <span class="stringliteral">&quot;KFTrackDataRelations&quot;</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;if(rawHits==1):</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    fsp.parameters[<span class="stringliteral">&quot;hitFitsCollLcio&quot;</span>] = <span class="stringliteral">&quot;SVTFittedRawTrackerHits&quot;</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keywordflow">else</span>:</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    fsp.parameters[<span class="stringliteral">&quot;hitFitsCollLcio&quot;</span>] = <span class="stringliteral">&quot;&quot;</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
-<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1fspTuple__cfg.html#a3f9c3bf7e2cafc2c46df6d132ea658cc">   63</a></span>&#160;sequence = []</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;sequence.append(fsp)</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;p.sequence = sequence</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
-<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1fspTuple__cfg.html#a27256609f574b662639e0a8cd48b8d3a">   68</a></span>&#160;p.input_files = lcio_file</div>
-<div class="line"><a name="l00069"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1fspTuple__cfg.html#a7882aa8b39a47102a13c2630137590d8">   69</a></span>&#160;p.output_files = [root_file]</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;p.printProcess()</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;if(options.rawHits==1):</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    fsp.parameters[<span class="stringliteral">&quot;trkhitCollRoot&quot;</span>] = <span class="stringliteral">&quot;fspOnTrackHits&quot;</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    fsp.parameters[<span class="stringliteral">&quot;rawhitCollRoot&quot;</span>] = <span class="stringliteral">&quot;fspOnTrackRawHits&quot;</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    fsp.parameters[<span class="stringliteral">&quot;hitFitsCollLcio&quot;</span>] = <span class="stringliteral">&quot;SVTFittedRawTrackerHits&quot;</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="keywordflow">else</span>:</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    fsp.parameters[<span class="stringliteral">&quot;trkhitCollRoot&quot;</span>] = <span class="stringliteral">&quot;fspOnTrackHits&quot;</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    fsp.parameters[<span class="stringliteral">&quot;rawhitCollRoot&quot;</span>] = <span class="stringliteral">&quot;&quot;</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    fsp.parameters[<span class="stringliteral">&quot;hitFitsCollLcio&quot;</span>] = <span class="stringliteral">&quot;&quot;</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    </div>
+<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1fspTuple__cfg.html#a3f9c3bf7e2cafc2c46df6d132ea658cc">   67</a></span>&#160;p.sequence = [header,fsp]</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
+<div class="line"><a name="l00069"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1fspTuple__cfg.html#a27256609f574b662639e0a8cd48b8d3a">   69</a></span>&#160;p.input_files = lcio_file</div>
+<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1fspTuple__cfg.html#a7882aa8b39a47102a13c2630137590d8">   70</a></span>&#160;p.output_files = [root_file]</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;p.printProcess()</div>
 <div class="ttc" id="aclassHpstrConf_1_1Process_html"><div class="ttname"><a href="classHpstrConf_1_1Process.html">HpstrConf.Process</a></div><div class="ttdoc">Process python class.</div><div class="ttdef"><b>Definition:</b> <a href="HpstrConf_8py_source.html#l00020">HpstrConf.py:20</a></div></div>
 <div class="ttc" id="aclassHpstrConf_1_1Processor_html"><div class="ttname"><a href="classHpstrConf_1_1Processor.html">HpstrConf.Processor</a></div><div class="ttdoc">Processor python class.</div><div class="ttdef"><b>Definition:</b> <a href="HpstrConf_8py_source.html#l00004">HpstrConf.py:4</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
