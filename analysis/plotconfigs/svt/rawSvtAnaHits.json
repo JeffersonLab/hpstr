@@ -70,8 +70,43 @@
             "binsY" : 100,
             "minY" : -3000,
             "maxY" : 9000
-
-        },    
+        },
+     "SvtHybrids_T0Strip_hh" : {
+            "prefix" : "adcC",
+            "type" : "hh",
+            "xtitle" : "T0",
+            "binsX" : 100,
+            "minX" : -120,
+            "maxX" : 100,
+            "ytitle" : "Strip Distance",
+            "binsY" : 500,
+            "minY" : -400,
+            "maxY" : 400
+        }, 
+    "SvtHybrids_AmChi_Sqr_hh" : {
+            "prefix" : "T0",
+            "type" : "hh",
+            "xtitle" : "Chi Sqr vs Amplitude",
+            "binsX" : 100,
+            "minX" : 0,
+            "maxX" : 1,
+            "ytitle" : "Amplitude",
+            "binsY" : 100,
+            "minY" : 0,
+            "maxY" : 7000
+        },
+    "SvtHybrids_T0Chi_Sqr_hh" : {
+            "prefix" : "T0",
+            "type" : "hh",
+            "xtitle" : "Chi Sqr vs Amplitude",
+            "binsX" : 100,
+            "minX" : 0,
+            "maxX" : 1,
+            "ytitle" : "T0",
+            "binsY" : 100,
+            "minY" : -120,
+            "maxY" : 100
+        },
     "SvtHybrids_T0Err_hh" : {
             "prefix" : "toerr",
             "type" : "hh",
@@ -83,7 +118,6 @@
             "binsY" : 100,
             "minY" : 0,
             "maxY" : 200
-
         },
     "SvtHybrids_AmErr_hh" : {
             "prefix" : "Amperr",

@@ -44,7 +44,7 @@ fsp = HpstrConf.Processor("fps",'FinalStateParticleProcessor')
 #   Processor Configuration   #
 ###############################
 #Event
-header.parameters["debug"] = 0
+header.parameters["debug"] = 1
 header.parameters["headCollRoot"] = "EventHeader"
 header.parameters["trigCollLcio"] = "TriggerBank"
 header.parameters["rfCollLcio"]   = "RFHits"
@@ -54,19 +54,19 @@ header.parameters["tsCollLcio"]   = "TSBank"
 header.parameters["tsCollRoot"]   = "TSBank"
 
 #SvtRawData
-rawsvt.parameters["debug"] = 0
+rawsvt.parameters["debug"] = 1
 rawsvt.parameters["hitCollLcio"]    = 'SVTRawTrackerHits'
 rawsvt.parameters["hitfitCollLcio"] = 'SVTFittedRawTrackerHits'
 rawsvt.parameters["hitCollRoot"]    = 'SVTRawTrackerHits'
 
 #Tracker3DHits
-svthits.parameters["debug"] = 0
+svthits.parameters["debug"] = 1
 svthits.parameters["hitCollLcio"]    = 'RotatedHelicalTrackHits'
 svthits.parameters["hitCollRoot"]    = 'RotatedHelicalTrackHits'
 
 
 #Tracking
-track.parameters["debug"] = 0
+track.parameters["debug"] = 1
 track.parameters["trkCollLcio"] = 'KalmanFullTracks'
 track.parameters["trkCollRoot"] = 'KalmanFullTracks'
 track.parameters["kinkRelCollLcio"] = ''
@@ -77,7 +77,7 @@ track.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack_KF'
 
 track.parameters["bfield"] = bfield[str(options.year)]
 
-trackgbl.parameters["debug"] = 0
+trackgbl.parameters["debug"] = 1
 trackgbl.parameters["trkCollLcio"] = 'GBLTracks'
 trackgbl.parameters["trkCollRoot"] = 'GBLTracks'
 trackgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
@@ -92,21 +92,21 @@ trackgbl.parameters["bfield"] = bfield[str(options.year)]
 #    trackgbl.parameters["truthTrackCollRoot"] = 'Truth_GBLTracks'
 
 #ECalData
-ecal.parameters["debug"] = 0
+ecal.parameters["debug"] = 1
 ecal.parameters["hitCollLcio"] = 'EcalCalHits'
 ecal.parameters["hitCollRoot"] = 'RecoEcalHits'
 ecal.parameters["clusCollLcio"] = "EcalClustersCorr"
 ecal.parameters["clusCollRoot"] = "RecoEcalClusters"
 
 #Vertex
-vtx.parameters["debug"] = 0
+vtx.parameters["debug"] = 1
 vtx.parameters["vtxCollLcio"]    = 'UnconstrainedV0Vertices_KF'
 vtx.parameters["vtxCollRoot"]    = 'UnconstrainedV0Vertices_KF'
 vtx.parameters["partCollRoot"]   = 'ParticlesOnVertices_KF'
 vtx.parameters["kinkRelCollLcio"] = ''
 vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
-cvtxgbl.parameters["debug"] = 0
+cvtxgbl.parameters["debug"] = 1
 cvtxgbl.parameters["vtxCollLcio"]     = 'TargetConstrainedV0Vertices_KF'
 cvtxgbl.parameters["vtxCollRoot"]     = 'TargetConstrainedV0Vertices_KF'
 cvtxgbl.parameters["partCollRoot"]    = 'ParticlesOnVertices_KF'
@@ -114,14 +114,14 @@ cvtxgbl.parameters["kinkRelCollLcio"] = ''
 cvtxgbl.parameters["trkRelCollLcio"]  = 'KFTrackDataRelations'
 
 
-vtxgbl.parameters["debug"] = 0
+vtxgbl.parameters["debug"] = 1
 vtxgbl.parameters["vtxCollLcio"]     = 'UnconstrainedV0Vertices'
 vtxgbl.parameters["vtxCollRoot"]     = 'UnconstrainedV0Vertices'
 vtxgbl.parameters["partCollRoot"]    = 'ParticlesOnVertices'
 vtxgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
 vtxgbl.parameters["trkRelCollLcio"]  = 'TrackDataRelations'
 
-cvtxgbl.parameters["debug"] = 0
+cvtxgbl.parameters["debug"] = 1
 cvtxgbl.parameters["vtxCollLcio"]     = 'TargetConstrainedV0Vertices'
 cvtxgbl.parameters["vtxCollRoot"]     = 'TargetConstrainedV0Vertices'
 cvtxgbl.parameters["partCollRoot"]    = 'ParticlesOnVertices'
@@ -129,12 +129,12 @@ cvtxgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
 cvtxgbl.parameters["trkRelCollLcio"]  = 'TrackDataRelations'
 
 #MCParticle
-mcpart.parameters["debug"] = 0
+mcpart.parameters["debug"] = 1
 mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
 #FinalStateParticleProcessor
-fsp.parameters["debug"] = 0 
+fsp.parameters["debug"] = 1 
 fsp.parameters["fspCollLcio"] = "FinalStateParticles_KF" 
 fsp.parameters["fspCollRoot"] = "FinalStateParticles_KF"
 fsp.parameters["kinkRelCollLcio"] = ""
@@ -144,11 +144,12 @@ fsp.parameters["trkRelCollLcio"] = "KFTrackDataRelations"
 
 # Sequence which the processors will run.
 if options.isData == -1: print("Please specficy if this is Data or not via option -t")
-if (not options.isData):
-    p.sequence = [header, vtx, cvtx, vtxgbl, cvtxgbl, ecal, track, trackgbl, mcpart]
-else:
-    p.sequence = [header, vtx, cvtx, vtxgbl, cvtxgbl, ecal, track, trackgbl, fsp]
+#if (not options.isData):
+#    p.sequence = [header, vtx, cvtx, vtxgbl, cvtxgbl, ecal, track, trackgbl, mcpart]
+#else:
+    #p.sequence = [header, vtx, cvtx, vtxgbl, cvtxgbl, ecal, track, trackgbl, fsp]
     #p.sequence = [header, vtx, ecal, track]
+p.sequence = [header,fsp]
 
 p.input_files = lcio_file
 p.output_files = [root_file]

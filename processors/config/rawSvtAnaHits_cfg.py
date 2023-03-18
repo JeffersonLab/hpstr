@@ -71,7 +71,7 @@ rawAnaSvt.parameters["regionDefinitions"] = [RegionPath+'OneFit.json',
                                             RegionPath+'TimeResolution.json'
                                            ]
 
-rawAnaSvt.parameters["MatchList"] = ['OneFit','CTFit','SecondFitTimeCT']                                                           
+rawAnaSvt.parameters["MatchList"] = ['OneFit','CTFit','SecondFit']                                                           
 rawAnaSvt.parameters["timeref"]=0.0
 rawAnaSvt.parameters["ampref"]=0.0
 

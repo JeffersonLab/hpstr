@@ -263,7 +263,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
     //std::cout<<"Here is the TSBank Trigger Time"<<tsBank_->T<<std::endl;
     bool doClMatch = true;
     
-    
+    int STR = -10000;
     //if((doClMatch)and(not((tsBank_->prescaled.Single_3_Top==1)or(tsBank_->prescaled.Single_3_Bot==1)))){return true;}
     
     
@@ -273,37 +273,59 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
     //std::cout<<"Trigger Time: "<<vtpBank_->singletrigs.at(0).T<<std::endl;
     
     
-    std::cout<<"I got here 9B"<<std::endl;
+    //std::cout<<"I got here 9B"<<std::endl;
 
     int trigPhase =  (int)((eventTime%24)/4);
     if((trigPhase!=tphase_)&&(tphase_!=6)){return true;}
-    std::cout<<"I got here 9C"<<std::endl;
+    //std::cout<<"I got here 9C"<<std::endl;
     for(unsigned int i = 0; i < svtHits_->size(); i++){ 
         RawSvtHit * thisHit = svtHits_->at(i); 
         int getNum = thisHit->getFitN();//std::cout<<"I got here 10"<<std::endl;
         if(doClMatch){
             bool Continue = true;
             for(int i = 0; i<Part_->size();i++){
-                std::cout<<"Do I break here 3"<<std::endl;
+                //std::cout<<"Do I break here 3"<<std::endl;
                 if(Part_->at(i)->getPDG()==22){continue;}
-                std::cout<<"Do I break here 4"<<std::endl;
+                //std::cout<<"Do I break here 4"<<std::endl;
                 if(Part_->at(i)->getCluster().getEnergy()<0){continue;}
-                std::cout<<"Do I break here 5"<<std::endl;
+                //std::cout<<"Do I break here 5"<<std::endl;
                 if(not((Part_->at(i)->getCluster().getTime()<=40)and(Part_->at(i)->getCluster().getTime()>=36))){continue;}
                 //std::cout<<"For each Tracker Hit I now print out Raw Hit Info: "<<std::endl;
                 for(int j = 0; j<Part_->at(i)->getTrack().getSvtHits().GetEntries();j++){
-                    std::cout<<"Do I break here 6"<<std::endl;
+                    //std::cout<<"Do I break here 6"<<std::endl;
                     TrackerHit * tHit = (TrackerHit*)(Part_->at(i)->getTrack().getSvtHits().At(j));
                     //std::cout<<tHit->getTime()<<std::endl;
                     for(int k = 0;k<tHit->getRawHits().GetEntries();k++){
                         RawSvtHit * rHit = (RawSvtHit*)(tHit->getRawHits().At(k));
-                        if(rHit->getT0(0)==thisHit->getT0(0)){Continue=false;}
+                        //if(rHit->getT0(0)==thisHit->getT0(0)){
+                        //STR=rHit->getStrip();
+                        mode=1;
+                        if((rHit->getT0(0)==thisHit->getT0(0))and(mode==0)){
+                            //This is the HIT ON TRACK Mode
+                            Continue = false;
+                        }
+                        if((rHit->getT0(0)<=-30)and(not(rHit->getT0(0)==thisHit->getT0(0)))and(mode==1)){
+                            //This is the HIT OFF TRACK Mode
+                            if((rHit->getLayer()==thisHit->getLayer())and(rHit->getModule()==thisHit->getModule())){
+                                STR=rHit->getStrip();
+                                Continue = false; 
+                            }
+                        }
+                        //if(rHit->getT0(0)==thisHit->getT0(0)){
+                            //Continue=false;
+                            //bool helper=true;//(Part_->at(i)->getTrack().getTrackerHitCount()>=12);
+                            //helper = (helper)and(thisHit->getChiSq(0)<.9);
+                            //helper=(helper)and(Part_->at(i)->getTrack().getChi2()<=8);
+                            //if(helper){
+                            //    Continue=false;
+                            //}
+                        //}           
                         //std::cout<<"Raw Hit T0: "<<rHit->getT0(0)<<std::endl;
                     }
-                    std::cout<<"Do I break here 7"<<std::endl;
+                    //std::cout<<"Do I break here 7"<<std::endl;
                     //std::cout<<" T0: "<<Part_->at(i)->getTrack().getSvtHits().At(j)->getRawHits().At(0).getT0()<<std::endl; 
                 }
-                std::cout<<"Do I break here 8"<<std::endl;
+                //std::cout<<"Do I break here 8"<<std::endl;
             }
             if(Continue){
                 return true;
@@ -402,7 +424,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 
                 }
 
-                reg_histos_[regions_[i_reg]]->FillHistograms(thisHit,weight,J,i,TimeDiff,AmpDiff);
+                reg_histos_[regions_[i_reg]]->FillHistograms(thisHit,weight,J,i,TimeDiff,AmpDiff,STR);
             }
             }
         }
