@@ -22,7 +22,7 @@ void RawSvtHitHistos::DefineHistos(){
     //std::cout<<"hello2"<<std::endl;
 }
 
-void RawSvtHitHistos::FillHistograms(RawSvtHit* rawSvtHit,float weight,int i,unsigned int i2,Float_t TimeDiff,Float_t AmpDiff, int STR) {
+void RawSvtHitHistos::FillHistograms(RawSvtHit* rawSvtHit,float weight,int i,unsigned int i2,Float_t TimeDiff,Float_t AmpDiff, int STR, int HITC, int HITL) {
     std::vector<std::string> hybridStrings={};
     std::string histokey;
     //std::cout<<Event_number<<std::endl;
@@ -60,6 +60,14 @@ void RawSvtHitHistos::FillHistograms(RawSvtHit* rawSvtHit,float weight,int i,uns
     Fill1DHisto(histokey, rawSvtHit->getAmp(i),weight);
     histokey = swTag + "_SvtHybrids_Chi_Sqr_h";
     Fill1DHisto(histokey, rawSvtHit->getChiSq(i),weight);
+
+    histokey = swTag + "_SvtHybrids_HitsPerCluster_h";
+    Fill1DHisto(histokey,HITC,weight); 
+    //Fill2DHisto(histokey,,,weight);
+
+    histokey = swTag + "_SvtHybrids_HitsOnALayer_h";
+    Fill1DHisto(histokey,HITL,weight);
+
     //std::cout<<rawSvtHit->getStrip()<<std::endl;
     histokey = swTag + "_SvtHybrids_ADCcount_hh";
     int * adcs=rawSvtHit->getADCs();
@@ -103,8 +111,8 @@ void RawSvtHitHistos::FillHistograms(RawSvtHit* rawSvtHit,float weight,int i,uns
     //Fill1DHisto(histokey, -(rawSvthit->getT0(i)),weight);
     
     histokey = swTag + "_SvtHybrids_T0Strip_hh";
-    Fill2DHisto(histokey, rawSvtHit->getT0(i),rawSvtHit->getStrip()-STR,weight);
-
+    Fill2DHisto(histokey,rawSvtHit->getT0(i),rawSvtHit->getStrip()-STR,weight);
+ 
     histokey = swTag + "_SvtHybrids_AmChi_Sqr_hh";
     Fill2DHisto(histokey, rawSvtHit->getChiSq(i), rawSvtHit->getAmp(i),weight);
 

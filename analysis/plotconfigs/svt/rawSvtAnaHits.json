@@ -47,6 +47,26 @@
             "ytitle" : "Chi_Sqr of Fits"
 
         },
+    "SvtHybrids_HitsPerCluster_h" : {
+            "prefix" : "hit_clu",
+            "type" : "h",
+            "xtitle" : "hit_no",
+            "bins" : 8,
+            "minX" : 0,
+            "maxX" : 8,
+            "ytitle" : "Hits On A Cluster"
+
+        },
+    "SvtHybrids_HitsOnALayer_h" : {
+            "prefix" : "hit_lay",
+            "type" : "h",
+            "xtitle" : "hit_no",
+            "bins" : 8,
+            "minX" : 0,
+            "maxX" : 8,
+            "ytitle" : "Hits On A Layer"
+
+        },
     "SvtHybrids_ADCcount_hh" : {
             "prefix" : "adcC",
             "type" : "hh",
@@ -79,9 +99,9 @@
             "minX" : -120,
             "maxX" : 100,
             "ytitle" : "Strip Distance",
-            "binsY" : 500,
-            "minY" : -400,
-            "maxY" : 400
+            "binsY" : 1024,
+            "minY" : -512,
+            "maxY" : 512
         }, 
     "SvtHybrids_AmChi_Sqr_hh" : {
             "prefix" : "T0",

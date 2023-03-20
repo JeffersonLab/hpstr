@@ -86,6 +86,7 @@ class SvtRawDataAnaProcessor : public Processor {
         TBranch* brecoClu_{nullptr};
         TBranch* bPart_{nullptr};
         TBranch* bTrk_{nullptr};
+        TBranch* bClusters_{nullptr};
 
         TBranch* bevH_;
 
@@ -95,6 +96,8 @@ class SvtRawDataAnaProcessor : public Processor {
         std::vector<CalCluster*>* recoClu_{};
         std::vector<Track*>* Trk_{};
         std::vector<Particle*>* Part_{};
+        std::vector<TrackerHit*>* Clusters_{};
+        
         //std::vector<Track> Trk_{};
         EventHeader * evH_;
 

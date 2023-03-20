@@ -223,8 +223,9 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
     //tree_->SetBranchAddress("RecoEcalClusters",&recoClu_,&brecoClu_ );
     //tree_->SetBranchAddress("KalmanFullTracks",&Trk_,&bTrk_);
     tree_->SetBranchAddress("FinalStateParticles_KF",&Part_,&bPart_);
+    tree_->SetBranchAddress("SiClusters",&Clusters_,&bClusters_);
     tree_->SetBranchAddress("EventHeader",&evH_,&bevH_);
-    
+
     for (unsigned int i_reg = 0; i_reg < regionSelections_.size(); i_reg++) 
     {
         std::string regname = AnaHelpers::getFileName(regionSelections_[i_reg],false);
@@ -264,6 +265,8 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
     bool doClMatch = true;
     
     int STR = -10000;
+    int HITC = 0;
+    int HITL = 0;
     //if((doClMatch)and(not((tsBank_->prescaled.Single_3_Top==1)or(tsBank_->prescaled.Single_3_Bot==1)))){return true;}
     
     
@@ -299,7 +302,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                         RawSvtHit * rHit = (RawSvtHit*)(tHit->getRawHits().At(k));
                         //if(rHit->getT0(0)==thisHit->getT0(0)){
                         //STR=rHit->getStrip();
-                        mode=1;
+                        int mode=1;
                         if((rHit->getT0(0)==thisHit->getT0(0))and(mode==0)){
                             //This is the HIT ON TRACK Mode
                             Continue = false;
@@ -308,9 +311,36 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                             //This is the HIT OFF TRACK Mode
                             if((rHit->getLayer()==thisHit->getLayer())and(rHit->getModule()==thisHit->getModule())){
                                 STR=rHit->getStrip();
-                                Continue = false; 
+                                //THIS CONDITIONS ON IT BEING IN CLUSTERS
+                                
+                                
+                                bool InCluster = false;
+                                int LAY = 0;//THE PURPOSE OF LAY IS TO COUNT THE NUMBER OF HITS PER LAYER
+                                std::cout<<"DID I GET HERE B4 CLUSTERS"<<std::endl;
+                                for(int Cl = 0; Cl < Clusters_->size(); Cl++){
+                                    std::cout<<"DO I GET HERE"<<std::endl;
+                                    for(int Clh = 0; Clh < Clusters_->at(Cl)->getRawHits().GetEntries(); Clh++){
+                                        std::cout<<"DO I GET HERE"<<std::endl;
+                                        RawSvtHit * cluHit = (RawSvtHit*)(Clusters_->at(Cl)->getRawHits().At(Clh));
+                                        if((cluHit->getLayer()==thisHit->getLayer())and(cluHit->getModule()==thisHit->getModule())){
+                                            LAY++;
+                                        }
+                                        if(cluHit->getT0(0)==thisHit->getT0(0)){
+                                            InCluster = true;
+                                            HITC=Clusters_->at(Cl)->getRawHits().GetEntries();
+                                            HITL=LAY;
+                                        }
+                                    }
+                                }
+                                if(InCluster){
+                                    Continue = false;
+                                }
+
+
                             }
                         }
+                        
+                        
                         //if(rHit->getT0(0)==thisHit->getT0(0)){
                             //Continue=false;
                             //bool helper=true;//(Part_->at(i)->getTrack().getTrackerHitCount()>=12);
@@ -424,7 +454,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 
                 }
 
-                reg_histos_[regions_[i_reg]]->FillHistograms(thisHit,weight,J,i,TimeDiff,AmpDiff,STR);
+                reg_histos_[regions_[i_reg]]->FillHistograms(thisHit,weight,J,i,TimeDiff,AmpDiff,STR,HITC,HITL);
             }
             }
         }

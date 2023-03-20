@@ -31,6 +31,9 @@ track   = HpstrConf.Processor('track', 'TrackingProcessor')
 trackgbl = HpstrConf.Processor('trackgbl', 'TrackingProcessor')
 trackrefitgbl = HpstrConf.Processor('trackrefitgbl', 'TrackingProcessor')
 svthits = HpstrConf.Processor('svthits', 'Tracker3DHitProcessor')
+
+svthits2 = HpstrConf.Processor('svthitskf', 'Tracker2DHitProcessor')
+
 rawsvt  = HpstrConf.Processor('rawsvt', 'SvtRawDataProcessor')
 ecal    = HpstrConf.Processor('ecal', 'ECalDataProcessor')
 vtx     = HpstrConf.Processor('vtx', 'VertexProcessor')
@@ -64,6 +67,12 @@ svthits.parameters["debug"] = 1
 svthits.parameters["hitCollLcio"]    = 'RotatedHelicalTrackHits'
 svthits.parameters["hitCollRoot"]    = 'RotatedHelicalTrackHits'
 
+#Tracker2DHits
+
+svthits2.parameters["debug"] = 1
+svthits2.parameters["hitCollLcio"]    = 'StripClusterer_SiTrackerHitStrip1D'
+svthits2.parameters["hitCollRoot"]    = 'SiClusters'
+svthits2.parameters["mcPartRelLcio"]    = 'SVTTrueHitRelations'
 
 #Tracking
 track.parameters["debug"] = 1
@@ -149,7 +158,7 @@ if options.isData == -1: print("Please specficy if this is Data or not via optio
 #else:
     #p.sequence = [header, vtx, cvtx, vtxgbl, cvtxgbl, ecal, track, trackgbl, fsp]
     #p.sequence = [header, vtx, ecal, track]
-p.sequence = [header,fsp]
+p.sequence = [header,svthits2,fsp]
 
 p.input_files = lcio_file
 p.output_files = [root_file]
