@@ -316,16 +316,16 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                                 
                                 bool InCluster = false;
                                 int LAY = 0;//THE PURPOSE OF LAY IS TO COUNT THE NUMBER OF HITS PER LAYER
-                                std::cout<<"DID I GET HERE B4 CLUSTERS"<<std::endl;
+                                //std::cout<<"DID I GET HERE B4 CLUSTERS"<<std::endl;
                                 for(int Cl = 0; Cl < Clusters_->size(); Cl++){
-                                    std::cout<<"DO I GET HERE"<<std::endl;
+                                    //std::cout<<"DO I GET HERE"<<std::endl;
                                     for(int Clh = 0; Clh < Clusters_->at(Cl)->getRawHits().GetEntries(); Clh++){
-                                        std::cout<<"DO I GET HERE"<<std::endl;
+                                        //std::cout<<"DO I GET HERE 2"<<std::endl;
                                         RawSvtHit * cluHit = (RawSvtHit*)(Clusters_->at(Cl)->getRawHits().At(Clh));
                                         if((cluHit->getLayer()==thisHit->getLayer())and(cluHit->getModule()==thisHit->getModule())){
                                             LAY++;
                                         }
-                                        if(cluHit->getT0(0)==thisHit->getT0(0)){
+                                        if((cluHit->getT0(0)==thisHit->getT0(0))and(not(Clusters_->at(Cl)->getID()==tHit->getID()))){
                                             InCluster = true;
                                             HITC=Clusters_->at(Cl)->getRawHits().GetEntries();
                                             HITL=LAY;

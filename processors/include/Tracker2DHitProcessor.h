@@ -29,6 +29,7 @@
 #include "Collections.h"
 #include "Processor.h"
 #include "Track.h"
+#include "RawSvtHit.h"
 #include "TrackerHit.h"
 #include "Event.h"
 
@@ -81,6 +82,10 @@ class Tracker2DHitProcessor : public Processor {
         std::vector<TrackerHit*> hits_; 
         std::string hitCollLcio_{"RotatedHelicalTrackHits"};
         std::string hitCollRoot_{"RotatedHelicalTrackHits"};
+
+        std::vector<RawSvtHit*> rawhits_{};
+        std::string rawhitCollRoot_{"fspOnTrackRawHits"};
+        std::string hitFitsCollLcio_{"SVTFittedRawTrackerHits"};
 
         std::string mcPartRelLcio_{"RotatedHelicalTrackMCRelations"};
 
