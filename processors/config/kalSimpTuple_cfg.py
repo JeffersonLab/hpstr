@@ -7,7 +7,7 @@ from baseConfig import bfield
 base.parser.add_argument("-w", "--tracking", type=str, dest="tracking",
                          help="Which tracking to use to make plots", metavar="tracking", default="KF")
 base.parser.add_argument("-s", "--truthHits", type=int, dest="truthHits",
-                         help="Get svt truth hits: 1=yes", metavar="truthHits", default=1)
+                         help="Get svt truth hits: 1=yes", metavar="truthHits", default=0)
 base.parser.add_argument("-r", "--rawHits", type=int, dest="rawHits",
                          help="Keep raw svt hits: 1=yes", metavar="rawHits", default=1)
 
@@ -165,17 +165,17 @@ mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 if (options.tracking == "KF"):
     sequence = [header, vtx, ecal, track]
     # Get KF svt truth hits
-    if (options.truthHits > 0):
+    if (options.truthHits > 0 and not options.isData):
         sequence.append(svthits)
 elif (options.tracking == "GBL"):
     sequence = [header, vtxgbl, ecal, trackgbl]
     # Get GBL svt truth hits
-    if (options.truthHits > 0):
+    if (options.truthHits > 0 and not options.isData):
         sequence.append(svthitsgbl)
 elif (options.tracking == "BOTH"):
     sequence = [header, vtxgbl, trackgbl, vtx, ecal, track]
     # Get KF and GBL svt truth hits
-    if (options.truthHits > 0):
+    if (options.truthHits > 0 and options.isData):
         sequence.append(svthits)
         sequence.append(svthitsgbl)
 else:
