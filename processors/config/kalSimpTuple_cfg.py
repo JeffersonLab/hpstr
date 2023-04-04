@@ -165,17 +165,17 @@ mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 if (options.tracking == "KF"):
     sequence = [header, vtx, ecal, track]
     # Get KF svt truth hits
-    if (options.truthHits > 0 and not options.isData):
+    if (options.truthHits > 0):
         sequence.append(svthits)
 elif (options.tracking == "GBL"):
     sequence = [header, vtxgbl, ecal, trackgbl]
     # Get GBL svt truth hits
-    if (options.truthHits > 0 and not options.isData):
+    if (options.truthHits > 0):
         sequence.append(svthitsgbl)
 elif (options.tracking == "BOTH"):
     sequence = [header, vtxgbl, trackgbl, vtx, ecal, track]
     # Get KF and GBL svt truth hits
-    if (options.truthHits > 0 and options.isData):
+    if (options.truthHits > 0):
         sequence.append(svthits)
         sequence.append(svthitsgbl)
 else:
