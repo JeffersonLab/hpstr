@@ -76,6 +76,7 @@ void MutableTTree::addVariableZalpha(double y_intercept, double slope, double al
     newtree_->Branch("unc_vtx_ele_track_zalpha",tuple_["unc_vtx_ele_track_zalpha"],"unc_vtx_ele_track_zalpha/D");  
     new_variables_["unc_vtx_ele_track_zalpha"] = ele_zalpha;
 
+    //I think I messed up the signs of things here
     //Define lambda function to calculate zalpha
     std::function<double()> calculateZalpha_ele = [&, y_intercept, slope, alpha_z]()->double{
         if(*tuple_["unc_vtx_ele_track_z0"] > 0)
@@ -98,6 +99,30 @@ void MutableTTree::addVariableZalpha(double y_intercept, double slope, double al
             return *tuple_["unc_vtx_z"] - ( ((*tuple_["unc_vtx_pos_track_z0"]+y_intercept)/(-1*slope)) - alpha_z );
     };
     functions_["unc_vtx_pos_track_zalpha"] = calculateZalpha_pos;
+    /*
+    //Define lambda function to calculate zalpha
+    std::function<double()> calculateZalpha_ele = [&, y_intercept, slope, alpha_z]()->double{
+        if(*tuple_["unc_vtx_ele_track_z0"] > 0)
+            return *tuple_["unc_vtx_z"] - ( ((*tuple_["unc_vtx_ele_track_z0"]-y_intercept)/slope) - alpha_z );
+        else
+            return *tuple_["unc_vtx_z"] - ( ((*tuple_["unc_vtx_ele_track_z0"]-y_intercept)/(-1*slope)) - alpha_z );
+    };
+    functions_["unc_vtx_ele_track_zalpha"] = calculateZalpha_ele;
+
+    double* pos_zalpha = new double{999.9};
+    tuple_["unc_vtx_pos_track_zalpha"] = pos_zalpha;
+    newtree_->Branch("unc_vtx_pos_track_zalpha",tuple_["unc_vtx_pos_track_zalpha"],"unc_vtx_pos_track_zalpha/D");  
+    new_variables_["unc_vtx_pos_track_zalpha"] = pos_zalpha;
+
+    //Define lambda function to calculate zalpha
+    std::function<double()> calculateZalpha_pos = [&, y_intercept, slope, alpha_z]()->double{
+        if(*tuple_["unc_vtx_pos_track_z0"] > 0)
+            return *tuple_["unc_vtx_z"] - ( ((*tuple_["unc_vtx_pos_track_z0"]-y_intercept)/slope) - alpha_z);
+        else
+            return *tuple_["unc_vtx_z"] - ( ((*tuple_["unc_vtx_pos_track_z0"]-y_intercept)/(-1*slope)) - alpha_z );
+    };
+    functions_["unc_vtx_pos_track_zalpha"] = calculateZalpha_pos;
+    */
         
 
         /*

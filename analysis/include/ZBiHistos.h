@@ -105,6 +105,8 @@ class ZBiHistos : public HistoManager{
         double cutFractionOfIntegral(std::string histoname, bool isCutGreaterThan, double cutFraction, double initialIntegral);
         double getIntegral(std::string histoname);
 
+        TF1* fitZTailWithExp(std::string cutname);
+
         double fitZTail(std::string zVtxHistoname, double max_tail_events);
 
         double shosFitZTail(std::string cutname, double max_tail_events);

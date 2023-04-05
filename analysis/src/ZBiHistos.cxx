@@ -189,13 +189,22 @@ void ZBiHistos::defineAnalysisHistos(){
 }
 
 void ZBiHistos::defineIterHistos(){
+    /*
     addHisto2d("persistent_cuts_hh","iteration", 100,-0.5,99.5,"cut_id",25,0.5,25.5);
     addHisto2d("test_cuts_ZBi_hh","iteration", 100,-0.5,99.5,"cut_id",25,0.5,25.5);
     addHisto2d("test_cuts_values_hh","iteration", 100,-0.5,99.5,"cut_id",25,0.5,25.5);
     addHisto2d("test_cuts_zcut_hh","iteration", 100,-0.5,99.5,"zcut",25,0.5,25.5);
     addHisto2d("test_cuts_nbkg_hh","iteration", 100,-0.5,99.5,"zcut",25,0.5,25.5);
     addHisto2d("test_cuts_nsig_hh","iteration", 100,-0.5,99.5,"zcut",25,0.5,25.5);
-    addHisto2d("best_test_cut_ZBi_hh","iteration", 100,-0.5,99.5,"cut_id",25,0.5,25.5);
+    addHisto2d("best_test_cut_ZBi_hh","iteration", 100,-0.5,99.5,"ZBi",2000,0.0,20.0);
+    */
+    addHisto2d("persistent_cuts_hh","pct_sig_cut", 1000,-0.5,99.5,"cut_id",25,0.5,25.5);
+    addHisto2d("test_cuts_ZBi_hh","pct_sig_cut", 1000,-0.5,99.5,"cut_id",25,0.5,25.5);
+    addHisto2d("test_cuts_values_hh","pct_sig_cut", 1000,-0.5,99.5,"cut_id",25,0.5,25.5);
+    addHisto2d("test_cuts_zcut_hh","pct_sig_cut", 1000,-0.5,99.5,"zcut",25,0.5,25.5);
+    addHisto2d("test_cuts_nbkg_hh","pct_sig_cut", 1000,-0.5,99.5,"zcut",25,0.5,25.5);
+    addHisto2d("test_cuts_nsig_hh","pct_sig_cut", 1000,-0.5,99.5,"zcut",25,0.5,25.5);
+    addHisto2d("best_test_cut_ZBi_hh","pct_sig_cut", 1000,-0.5,99.5,"ZBi",2000,0.0,20.0);
     
 }
 
@@ -276,9 +285,44 @@ std::vector<double> ZBiHistos::impactParameterCut(){
     return params;
 }
 
+TF1* ZBiHistos::fitZTailWithExp(std::string cutname){
+    TF1* fitFunc = new TF1("fitfunc","[0]*exp([1]*x)",10.0,100.0);
+
+    std::string histoname = m_name+"_tritrig_zVtx_"+cutname+"_h";
+    if(histos1d[histoname]->GetEntries() < 1){
+        std::cout << "WARNING: Background Model is NULL: " << 
+            cutname << " tritrig zVtx distribution was empty and could not be fit!" << std::endl;
+        return nullptr;
+    }
+    TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", 10.0,100.0);
+    double parm0 = fitResult->Parameter(0);
+    double parm1 = fitResult->Parameter(1);
+
+    double best_chi2 = 9999999.9;
+    double best_parm0, best_parm1;
+
+    int iteration = 20;
+    for(int i=0; i < iteration; i++){
+        fitFunc->SetParameters(parm0,parm1);
+        fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", 10.0,100.0);
+        if(fitResult->Ndf() <= 0)
+            continue;
+        if(fitResult->Chi2()/fitResult->Ndf() < best_chi2){
+            best_chi2 = fitResult->Chi2()/fitResult->Ndf();
+            best_parm0 = fitResult->Parameter(0);
+            best_parm1 = fitResult->Parameter(1);
+        }
+    }
+
+    fitFunc->SetParameters(best_parm0,best_parm1);
+    fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "LSIM", "", 10.0, 100.0);
+    fitFunc->Draw();
+
+    return fitFunc;
+}
+
 
 TF1* ZBiHistos::getZTailFit(std::string cutname){
-    std::cout << "Fitting ztail " << std::endl;
     TF1* fitFunc = new TF1("fitfunc", "[0]* exp( (x<=([1]+[3]))*(-0.5*((x-[1])^2)/([2]^2)) + (x>=[1]+[3])*(-0.5*([3]^2/[2]^2)-(x-[1]-[3])/[4])  )", -100.0, 100.0);
 
     std::string histoname = m_name+"_tritrig_zVtx_"+cutname+"_h";
@@ -312,9 +356,31 @@ TF1* ZBiHistos::getZTailFit(std::string cutname){
     double best_tail_l;
     double best_gaus0, best_gaus1, best_gaus2;
 
-    int iteration = 20;
+    /*
+    int iteration = 50;
+    for(int i=0; i < iteration; i++){
+        tailZ = gaus1 + ran->Uniform(1.0,8.0)*gaus2;
+        tail_l = ran->Uniform(0.0,80.0);
+        fitFunc->SetParameters(gaus0, gaus1, gaus2, tailZ, tail_l);
+        TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", xmin,xmax);
+        if(fitResult->Ndf() <= 0)
+            continue;
+        if(fitResult->Chi2()/fitResult->Ndf() < best_chi2){
+            best_chi2 = fitResult->Chi2()/fitResult->Ndf();
+            best_gaus0 = fitResult->Parameter(0);
+            best_gaus1 = fitResult->Parameter(1);
+            best_gaus2 = fitResult->Parameter(2);
+            best_tailZ = fitResult->Parameter(3);
+            best_tail_l = fitResult->Parameter(4);
+        }
+    }
+    */
+
+
+     //Having issues with this fit sometimes. It occassionally underestimates bkg model
+    int iteration = 80;
+    tail_l = 50.0;
     for(int i =10; i < iteration; i=i+2){
-        tail_l = 50.0;
         tailZ = gaus1 +(double)(iteration/10.0)*gaus2;
         fitFunc->SetParameters(gaus0, gaus1, gaus2, tailZ, tail_l);
         TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", xmin,xmax);
@@ -327,6 +393,7 @@ TF1* ZBiHistos::getZTailFit(std::string cutname){
             best_gaus2 = fitResult->Parameter(2);
             best_tailZ = fitResult->Parameter(3);
             best_tail_l = fitResult->Parameter(4);
+            tail_l = fitResult->Parameter(4);
         }
     }
 
@@ -374,7 +441,7 @@ double ZBiHistos::shosFitZTail(std::string cutname, double max_tail_events){
     double best_tail_l;
     double best_gaus0, best_gaus1, best_gaus2;
 
-    int iteration = 50;
+    int iteration = 80;
     for(int i =10; i < iteration; i=i+2){
         tail_l = 50.0;
         tailZ = gaus1 +(double)(iteration/10.0)*gaus2;

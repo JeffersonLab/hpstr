@@ -70,6 +70,8 @@ class ZBiCutflowProcessor : public Processor {
 
         void writeGraph(TFile* outF, std::string folder, TGraph* g);
 
+        double round(double var);
+
 
     private:
 
@@ -126,6 +128,9 @@ class ZBiCutflowProcessor : public Processor {
         TTree* tritrigTree_{nullptr};
 
         double ztail_nevents_ = 1.0;
+        double zalpha_slope_;;
+        bool scan_zcut_ = false;
+        double step_size_ = 0.01;
 
         //simp equations
         SimpEquations* simpEqs_{nullptr};
