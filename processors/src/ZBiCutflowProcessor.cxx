@@ -30,6 +30,10 @@ void ZBiCutflowProcessor::configure(const ParameterSet& parameters) {
         zalpha_slope_ = parameters.getDouble("zalpha_slope",zalpha_slope_);
         scan_zcut_ = parameters.getInteger("scan_zcut",scan_zcut_);
         step_size_ = parameters.getDouble("step_size",step_size_);
+
+        //MC Scale factors
+        luminosity_ = parameters.getDouble("luminosity",luminosity_);
+        tritrig_sf_ = parameters.getDouble("tritrig",tritrig_sf_);
     }
     catch (std::runtime_error& error)
     {
@@ -48,31 +52,21 @@ void ZBiCutflowProcessor::initializeFlatTuple(TTree* tree, std::map<std::string,
     }
 }
 
-void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFilename){
-    std::cout << "[ZBiCutflowProcessor] Initialize" << std::endl;
+void ZBiCutflowProcessor::filterCuts(){
 
-    //initialize cut selector for 'Persistent Cuts' (which are applied to every event)
-    persistentCutsSelector_ = new IterativeCutSelector("bestCuts", cuts_cfgFile_);
-    persistentCutsSelector_->LoadSelection();
-    persistentCuts_ = persistentCutsSelector_->getPointerToCuts();
-
-    //initalize Test Cuts (which will be iteratively changed)
-    testCutsSelector_ = new IterativeCutSelector("testCuts",cuts_cfgFile_);
-    testCutsSelector_->LoadSelection();
-    testCuts_ = testCutsSelector_->getPointerToCuts();
-
-    //Only allow cut to persist if the variable it cuts on is in the list of cutvariables
-    if(debug_) std::cout << "Removing all cuts whose variables are not specified in list of 'cut variables'" << std::endl;
+    //Loop over Test Cuts loaded in from json configuration
     for(cut_iter_ it=testCuts_->begin(); it!=testCuts_->end();){
         std::string cutname = it->first;
         std::string cutvariable = testCutsSelector_->getCutVar(cutname);
         bool found = false;
+        //Confirm that the variable corresponding to this Test Cut exists
         for(std::vector<std::string>::iterator iit=cutVariables_.begin(); iit !=cutVariables_.end(); iit++){
             if((std::string)*iit == cutvariable){
                 found = true;
                 break;
             }
         }
+        //If Test Cut Variable does not exist, remove the Test Cut from the list of cuts
         if(!found){
             std::cout << "[ZBiCutflowProcessor] WARNING::Cut variable corresponding to " << cutname << " does not exist!" << std::endl;
             std::cout << "Removing " << cutname << " from list of cuts." << std::endl;
@@ -82,6 +76,7 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
             ++it;
     }
 
+    //Repeat for persistent cuts list 
     for(cut_iter_ it=persistentCuts_->begin(); it!=persistentCuts_->end();){
         std::string cutname = it->first;
         std::string cutvariable = persistentCutsSelector_->getCutVar(cutname);
@@ -108,25 +103,49 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
         std::cout << "[Persistent Cuts] Initialized and Filtered:" << std::endl;
         persistentCutsSelector_->printCuts();
     }
+}
 
+void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFilename){
+    std::cout << "[ZBiCutflowProcessor] Initialize" << std::endl;
+
+    //initialize cut selector for 'Persistent Cuts' (which are applied to every event)
+    persistentCutsSelector_ = new IterativeCutSelector("bestCuts", cuts_cfgFile_);
+    persistentCutsSelector_->LoadSelection();
+    persistentCuts_ = persistentCutsSelector_->getPointerToCuts();
+
+    //initalize Test Cuts (which will be iteratively changed)
+    testCutsSelector_ = new IterativeCutSelector("testCuts",cuts_cfgFile_);
+    testCutsSelector_->LoannndSelection();
+    testCuts_ = testCutsSelector_->getPointerToCuts();
+
+    //Cuts loaded in from json will not work if their cut variables are not accessible
+    //Remove cuts where the cut variable is missing
+    filterCuts();
+
+    //Set MC Scale factors
+    //scale = xsection*lumi/(madgraph_nevents*nfiles)
+    mcScale_["tritrig"] = tritrig_sf_;
+
+    /*
     //mc scaling... TODO: make configurable 
     double Lumi =10.7; //pb-1
     mcScale_["tritrig"] = 1.416e9*Lumi/(50000*9853);
     mcScale_["wab"] = 0.1985e12*Lumi/(100000*9966);
     mcScale_["rad"] = 66.36e6*Lumi/(10000*9959);
     mcScale_["rad_slic"] = 66.36e6*Lumi/(10000*9959);
+    */
 
     //Initialize output file
     outFile_ = new TFile(outFileName_.c_str(),"RECREATE");
 
-    //Initialize Signal tuple histograms for each variable
+    //Initialize signal histograms
     signalHistos_ = new ZBiHistos("signal");
     signalHistos_->debugMode(debug_);
     signalHistos_->loadHistoConfig(signalHistCfgFilename_);
     signalHistos_->DefineHistos();
     signalHistos_->defineAnalysisHistos();
 
-    ////Initialize  tritrig histograms for each variable
+    ////Initialize background histograms
     tritrigHistos_ = new ZBiHistos("tritrig");
     tritrigHistos_->debugMode(debug_);
     tritrigHistos_->loadHistoConfig(signalHistCfgFilename_);
@@ -173,16 +192,24 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     tritrigMTT_->defineMassWindow(lowMass_, highMass_);
 
     //Add new variables here
+    std::cout << "Adding new variables" << std::endl;
+    signalMTT_->addVariableZalpha(zalpha_slope_);
+    tritrigMTT_->addVariableZalpha(zalpha_slope_);
+    signalMTT_->Fill();
+    tritrigMTT_->Fill();
+    std::cout << "New Variables Added" << std::endl;
+
+    /*
+    //Add new variables here
     signalMTT_->addVariableZalpha(-0.102157, zalpha_slope_, 4.18);
     tritrigMTT_->addVariableZalpha(-0.102157, zalpha_slope_, 4.18);
     signalMTT_->Fill();
     tritrigMTT_->Fill();
+    */
 
     //Impact Parameter and Zalpha distributions
-    //Signal
     for(int e=0; e < signalMTT_->GetEntries(); e++){
         signalMTT_->GetEntry(e);
-
         std::vector<std::string> variables = signalMTT_->getAllVariables();
         for(std::vector<std::string>::iterator it=variables.begin(); it != variables.end(); it++){
             std::string var = *it;
@@ -190,11 +217,48 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
                 signalHistos_->Fill1DHisto(var+"_h", signalMTT_->getValue(var));
             }
         }
-
         signalHistos_->Fill2DHisto("z0_v_recon_z_hh",signalMTT_->getValue("unc_vtx_z"),signalMTT_->getValue("unc_vtx_ele_track_z0"));
         signalHistos_->Fill2DHisto("z0_v_recon_z_hh",signalMTT_->getValue("unc_vtx_z"),signalMTT_->getValue("unc_vtx_pos_track_z0"));
         signalHistos_->Fill2DHisto("z0_v_recon_z_alpha_hh",signalMTT_->getValue("unc_vtx_ele_track_zalpha"), signalMTT_->getValue("unc_vtx_ele_track_z0"));
         signalHistos_->Fill2DHisto("z0_v_recon_z_alpha_hh",signalMTT_->getValue("unc_vtx_pos_track_zalpha"), signalMTT_->getValue("unc_vtx_pos_track_z0"));
+
+        //Post initial impact parameter cut
+        double ele_z0 = signalMTT_->getValue("unc_vtx_ele_track_z0");
+        double pos_z0 = signalMTT_->getValue("unc_vtx_pos_track_z0");
+        double vtx_z = signalMTT_->getValue("unc_vtx_z");
+        //double ip_slope = impact_param_cut.at(0);
+        //double ip_xcept = impact_param_cut.at(1);
+        double ip_slope = zalpha_slope_;
+        double ip_xcept = 4.0;
+        bool pass_ip_cut = true;
+        if(ele_z0 > 0){
+            if(ele_z0 < ip_slope*(vtx_z-ip_xcept))  
+                pass_ip_cut = false;
+        }
+        else{
+            if(ele_z0 > -ip_slope*(vtx_z-ip_xcept))  
+                pass_ip_cut = false;
+        }
+        if(pos_z0 > 0){
+            if(pos_z0 < ip_slope*(vtx_z-ip_xcept))  
+                pass_ip_cut = false;
+        }
+        else{
+            if(pos_z0 > -ip_slope*(vtx_z-ip_xcept))  
+                pass_ip_cut = false;
+        }
+
+        if(pass_ip_cut){
+            signalHistos_->Fill2DHisto("z0_v_recon_z_post_cut_hh",signalMTT_->getValue("unc_vtx_z"),signalMTT_->getValue("unc_vtx_ele_track_z0"));
+            signalHistos_->Fill2DHisto("z0_v_recon_z_post_cut_hh",signalMTT_->getValue("unc_vtx_z"),signalMTT_->getValue("unc_vtx_pos_track_z0"));
+        }
+
+        //Post Zalpha cut
+        if(signalMTT_->getValue("unc_vtx_ele_track_zalpha") <= ip_xcept && signalMTT_->getValue("unc_vtx_pos_track_zalpha") <= ip_xcept){
+            signalHistos_->Fill2DHisto("z0_v_recon_z_alpha_post_cut_hh",signalMTT_->getValue("unc_vtx_ele_track_zalpha"), signalMTT_->getValue("unc_vtx_ele_track_z0"));
+            signalHistos_->Fill2DHisto("z0_v_recon_z_alpha_post_cut_hh",signalMTT_->getValue("unc_vtx_pos_track_zalpha"), signalMTT_->getValue("unc_vtx_pos_track_z0"));
+
+        }
     }
 
     //Impact Parameter and Zalpha distributions
@@ -268,7 +332,7 @@ bool ZBiCutflowProcessor::process(){
     
     double cutFraction = step_size_;
     int max_iteration = (int)1.0/cutFraction;
-    max_iteration = 25;
+    max_iteration = 50;
 
     for(int iteration = 1; iteration < max_iteration; iteration ++){
         double cutSignal = (double)iteration*step_size_*100.0;

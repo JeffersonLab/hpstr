@@ -29,6 +29,7 @@ class MutableTTree {
 
         //void addVariableZalpha(std::vector<double> impact_parameter_cut);
         void addVariableZalpha(double y_intercept, double slope, double alpha_z);
+        void addVariableZalpha(double slope);
 
         double getValue(std::string branch_name);
 

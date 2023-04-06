@@ -50,6 +50,11 @@ zbi.parameters['step_size'] = options.step_size
 zbi.parameters['cutVariables'] = ["unc_vtx_ele_track_zalpha","unc_vtx_pos_track_zalpha","unc_vtx_psum", "unc_vtx_ele_track_p", "unc_vtx_pos_track_p", "unc_vtx_chi2","unc_vtx_ele_clust_E","unc_vtx_pos_clust_E"]
 #zbi.parameters['ApMassMeV'] = 
 
+#Background MC Scales
+luminosity = 10.7 #pb-1
+zbi.parameters['luminosity'] = luminosity
+zbiparameters['tritrig'] = 1.416e9*luminosity/(50000*9853) #pb xsection
+
 # Sequence which the processors will run.
 p.sequence = [zbi]
 

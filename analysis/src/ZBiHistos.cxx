@@ -259,27 +259,29 @@ std::vector<double> ZBiHistos::impactParameterCut(){
         }
     }
 
-    TF1* fitFunc = new TF1("linear_fit","[0] + [1]*x",5.0,70.0);
+    //TF1* fitFunc = new TF1("linear_fit","[0] + [1]*x",5.0,70.0);
+    TF1* fitFunc = new TF1("linear_fit","[0]*(x-[1])",5.0,70.0);
     TFitResultPtr fitResult = (TFitResultPtr)up_h->Fit("linear_fit","QS","",5.0,70.0);
     fitFunc->Draw();
-    double a_p = fitResult->GetParams()[0];
-    double b_p = fitResult->GetParams()[1];
+    double m_p = fitResult->GetParams()[0];
+    double a_p = fitResult->GetParams()[1];
 
     fitResult = (TFitResultPtr)down_h->Fit("linear_fit","QS","",5.0,70.0);
     fitFunc->Draw();
-    double a_d = fitResult->GetParams()[0];
-    double b_d = fitResult->GetParams()[1];
+    double m_d = fitResult->GetParams()[0];
+    double a_d = fitResult->GetParams()[1];
 
     //Find the location in z0 where two lines meet
     double diff = 999.9;
     double x = 10.0;
-    while( std::abs((a_p+b_p*x) - (a_d+b_d*x)) < diff ){
-        diff = std::abs((a_p+b_p*x) - (a_d+b_d*x));    
+    while(std::abs((m_p*(x-a_p) - (m_d*(x-a_d)))) < diff ){
+    //while( std::abs((a_p+b_p*x) - (a_d+b_d*x)) < diff ){
+        diff = std::abs((m_p*(x-a_p)) - (m_d*(x-a_d)));    
         x = x - 0.01;
     }
-    double beta = .5*((a_p+b_p*x) + (a_d+b_d*x));
+    double beta = .5*((m_p*(x-a_p)) + (m_p*(x-a_d)));
     double alpha = x;
-    std::vector<double> params {a_p,b_p,a_d,b_d, beta, alpha};
+    std::vector<double> params {m_p,a_p,m_d,a_d, beta, alpha};
 
     delete fitFunc;
     return params;

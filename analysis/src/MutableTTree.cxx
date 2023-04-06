@@ -68,6 +68,38 @@ void MutableTTree::Fill(){
     tree_ = newtree_;
 }
 
+void MutableTTree::addVariableZalpha(double slope){
+
+    double* ele_zalpha = new double{999.9};
+    tuple_["unc_vtx_ele_track_zalpha"] = ele_zalpha;
+    newtree_->Branch("unc_vtx_ele_track_zalpha",tuple_["unc_vtx_ele_track_zalpha"],"unc_vtx_ele_track_zalpha/D");  
+    new_variables_["unc_vtx_ele_track_zalpha"] = ele_zalpha;
+
+    //I think I messed up the signs of things here
+    //Define lambda function to calculate zalpha
+    std::function<double()> calculateZalpha_ele = [&, slope]()->double{
+        if(*tuple_["unc_vtx_ele_track_z0"] > 0)
+            return *tuple_["unc_vtx_z"] - ((*tuple_["unc_vtx_ele_track_z0"]/slope));
+        else
+            return *tuple_["unc_vtx_z"] - ((*tuple_["unc_vtx_ele_track_z0"])/(-1*slope));
+    };
+    functions_["unc_vtx_ele_track_zalpha"] = calculateZalpha_ele;
+
+    double* pos_zalpha = new double{999.9};
+    tuple_["unc_vtx_pos_track_zalpha"] = pos_zalpha;
+    newtree_->Branch("unc_vtx_pos_track_zalpha",tuple_["unc_vtx_pos_track_zalpha"],"unc_vtx_pos_track_zalpha/D");  
+    new_variables_["unc_vtx_pos_track_zalpha"] = pos_zalpha;
+
+    //Define lambda function to calculate zalpha
+    std::function<double()> calculateZalpha_pos = [&,slope]()->double{
+        if(*tuple_["unc_vtx_pos_track_z0"] > 0)
+            return *tuple_["unc_vtx_z"] - ((*tuple_["unc_vtx_pos_track_z0"]/slope));
+        else
+            return *tuple_["unc_vtx_z"] - ((*tuple_["unc_vtx_pos_track_z0"])/(-1*slope));
+    };
+    functions_["unc_vtx_pos_track_zalpha"] = calculateZalpha_pos;
+}
+
 //Add comment
 void MutableTTree::addVariableZalpha(double y_intercept, double slope, double alpha_z){
 
