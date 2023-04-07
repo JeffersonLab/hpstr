@@ -437,6 +437,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         if (!vtxSelector->passCutGt("minVtxMom_gt",(ele_mom+pos_mom).Mag(),weight))
             continue;
 
+        std::cout << "Fill1dvertex " << std::endl;
         _vtx_histos->Fill1DVertex(vtx,
                 ele,
                 pos,
@@ -447,8 +448,12 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         double ele_pos_dt = corr_eleClusterTime - corr_posClusterTime;
         double psum = ele_mom.Mag()+pos_mom.Mag();
 
+        std::cout << "Filled" << std::endl;
+
         _vtx_histos->Fill1DTrack(ele_trk,weight, "ele_");
+        std::cout << "Fill1dtrack ele " << std::endl;
         _vtx_histos->Fill1DTrack(pos_trk,weight, "pos_");
+        std::cout << "Fill1dtrack pos " << std::endl;
         _vtx_histos->Fill1DHisto("vtx_Psum_h", p_ele.P()+p_pos.P(), weight);
         _vtx_histos->Fill1DHisto("vtx_Esum_h", ele_E + pos_E, weight);
         _vtx_histos->Fill1DHisto("ele_pos_clusTimeDiff_h", (corr_eleClusterTime - corr_posClusterTime), weight);

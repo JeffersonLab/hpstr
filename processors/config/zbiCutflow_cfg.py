@@ -34,12 +34,7 @@ p.libraries.append("libprocessors.so")
 
 zbi = HpstrConf.Processor('zbi','ZBiCutflowProcessor')
 zbi.parameters['debug'] = options.debug
-zbi.parameters['signalFilename'] = '/sdf/group/hps/users/alspellm/projects/THESIS/ZBi/signal/hadd_mass_55_simp_recon_KF_ana.root'
-zbi.parameters['tritrigFilename'] = '/sdf/group/hps/users/alspellm/projects/THESIS/ZBi/tritrig_beam/full_hadd_tritrigv2-beamv6_2500kBunches_HPS-PhysicsRun2016-Pass2_v4_5_0_pairs1_KF_ana_nvtx1.root'
 #zbi.parameters['radSlicFilename'] = ''
-zbi.parameters['vdSimFilename'] = '/sdf/group/hps/users/alspellm/projects/THESIS/mc/2016/simps/slic_ana/hadd_mass_55_simp_mcAna.root'
-zbi.parameters['vdMassMeV'] = 55.0
-zbi.parameters['signalHistCfgFilename'] = '/sdf/group/hps/users/alspellm/src/test/hpstr/analysis/plotconfigs/tracking/zbiCutVariables.json'
 zbi.parameters['outFileName'] = options.outFilename
 zbi.parameters['cuts_cfgFile'] = '/sdf/group/hps/users/alspellm/src/test/hpstr/analysis/selections/simps/iterativeCuts.json'
 zbi.parameters['zalpha_slope'] = options.zalpha_slope
@@ -48,12 +43,25 @@ zbi.parameters['ztail_events'] = options.ztail_nevents # 0.5
 zbi.parameters['step_size'] = options.step_size
 #zbi.parameters['cutVariables'] = ["unc_vtx_ele_track_zalpha","unc_vtx_pos_track_zalpha","unc_vtx_psum", "unc_vtx_ele_track_p", "unc_vtx_pos_track_p", "unc_vtx_chi2", "unc_vtx_ele_track_t", "unc_vtx_pos_track_t", "unc_vtx_ele_track_clust_dt","unc_vtx_pos_track_clust_dt", "unc_vtx_x","unc_vtx_y","unc_vtx_x","unc_vtx_y", "unc_vtx_ele_clust_E","unc_vtx_pos_clust_E"]
 zbi.parameters['cutVariables'] = ["unc_vtx_ele_track_zalpha","unc_vtx_pos_track_zalpha","unc_vtx_psum", "unc_vtx_ele_track_p", "unc_vtx_pos_track_p", "unc_vtx_chi2","unc_vtx_ele_clust_E","unc_vtx_pos_clust_E"]
-#zbi.parameters['ApMassMeV'] = 
 
 #Background MC Scales
 luminosity = 10.7 #pb-1
 zbi.parameters['luminosity'] = luminosity
-zbiparameters['tritrig'] = 1.416e9*luminosity/(50000*9853) #pb xsection
+zbi.parameters['tritrig'] = 1.416e9*luminosity/(50000*9853) #pb xsection
+
+## Background ##
+#MC
+zbi.parameters['bkgVtxAnaFilename'] = '/sdf/group/hps/users/alspellm/projects/THESIS/ZBi/tritrig_beam/full_hadd_tritrigv2-beamv6_2500kBunches_HPS-PhysicsRun2016-Pass2_v4_5_0_pairs1_KF_ana_nvtx1.root'
+zbi.parameters['bkgVtxAnaTreename'] = 'vtxana_kf_Tight_2016_simp_reach_dev/vtxana_kf_Tight_2016_simp_reach_dev_tree'
+
+
+#MC Signal 
+zbi.parameters['signalVtxAnaFilename'] = '/sdf/group/hps/users/alspellm/projects/THESIS/ZBi/signal/hadd_mass_55_simp_recon_KF_ana.root'
+zbi.parameters['signalVtxAnaTreename'] = 'vtxana_kf_Tight_2016_simp_reach_dev/vtxana_kf_Tight_2016_simp_reach_dev_tree'
+zbi.parameters['signalMCAnaFilename'] = '/sdf/group/hps/users/alspellm/projects/THESIS/mc/2016/simps/slic_ana/hadd_mass_55_simp_mcAna.root'
+zbi.parameters['signal_pdgid'] = '625'
+zbi.parameters['signalHistCfgFilename'] = '/sdf/group/hps/users/alspellm/src/test/hpstr/analysis/plotconfigs/tracking/zbiCutVariables.json'
+zbi.parameters['vdMassMeV'] = 55.0
 
 # Sequence which the processors will run.
 p.sequence = [zbi]

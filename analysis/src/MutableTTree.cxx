@@ -1,7 +1,10 @@
 #include <MutableTTree.h>
 
 MutableTTree::MutableTTree(TFile* infile, std::string tree_name){
+   std::cout << "Reading in tree: " << tree_name << std::endl;
    tree_ = (TTree*)infile->Get(tree_name.c_str()); 
+   if(tree_ == nullptr)
+       std::cout << "ERROR READING TREE " << tree_name << " from file " << std::endl;
    initializeFlatTuple(tree_, tuple_);
    newtree_ = new TTree();
    copyTTree();

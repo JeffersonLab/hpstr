@@ -27,13 +27,15 @@ void ZBiHistos::addHisto2d(std::string histoname, std::string xtitle, int nbinsX
 
 void ZBiHistos::resetHistograms1d(){
     for(it1d it=histos1d.begin(); it != histos1d.end(); it ++){
-        it->second->Reset();
+        if(it->second != nullptr)
+            it->second->Reset();
     }
 }
 
 void ZBiHistos::resetHistograms2d(){
     for(it2d it=histos2d.begin(); it != histos2d.end(); it ++){
-        it->second->Reset();
+        if(it->second != nullptr)
+            it->second->Reset();
     }
 }
 
@@ -96,7 +98,8 @@ double ZBiHistos::getIntegral(std::string histoname){
     double integral;
 
     if(!histos1d.count(histoname)){
-        std::cout << "NO HISTOGRAM NAMED " << histoname << " FOUND IN DEFINED HISTOS";
+        std::cout << " NO HISTOGRAM NAMED " << histoname << 
+            " FOUND IN DEFINED HISTOS" << std::endl;
         integral = -9999.9;
     }
     else{
@@ -111,39 +114,25 @@ void ZBiHistos::change1dHistoTitle(std::string histoname, std::string title){
     histos1d[histoname]->SetTitle(title.c_str());
 }
 
-double ZBiHistos::cutFractionOfIntegral(std::string histoname, bool isCutGreaterThan, double cutFraction, double initialIntegral){
+double ZBiHistos::cutFractionOfIntegral(std::string cutvariable, bool isCutGreaterThan, double cutFraction, double initialIntegral){
 
-    TH1F* histo = histos1d[histoname];
+    TH1F* histo = histos1d[m_name+"_"+cutvariable+"_h"];
     int xmax = histo->FindLastBinAbove(0.0);
     int xmin = histo->FindFirstBinAbove(0.0);
-    if(debug_){
-        std::cout << "[ZBiHistos] Initial integral for " << histoname << ": " << initialIntegral << std::endl;
-        std::cout << "Init xmin: " << xmin << " | Init xmax: " << xmax << std::endl;
-    }
     
     double cutvalue;
     if(isCutGreaterThan){
        cutvalue = histo->GetXaxis()->GetBinLowEdge(xmin); 
-       //std::cout << "initial cut value: " << cutvalue << std::endl;
-       //std::cout << "first integral: " << histo->Integral(xmin,xmax) << std::endl;
        while(histo->Integral(xmin,xmax) > initialIntegral*(1.0-cutFraction)){
-           //std::cout << "iter integral: " << histo->Integral(xmin,xmax);
            xmin = xmin + 1;
            cutvalue = histo->GetXaxis()->GetBinLowEdge(xmin);
-           //std::cout << "update xmin: " << xmin << std::endl;
-           //std::cout << "iter cut value: " << cutvalue << std::endl;
        }
     }
     else {
        cutvalue = histo->GetXaxis()->GetBinUpEdge(xmax); 
-       //std::cout << "initial cut value: " << cutvalue << std::endl;
-       //std::cout << "first integral: " << histo->Integral(xmin,xmax) << std::endl;
        while(histo->Integral(xmin,xmax) > initialIntegral*(1.0-cutFraction)){
-           std::cout << "iter integral: " << histo->Integral(xmin,xmax);
            xmax = xmax - 1;
            cutvalue = histo->GetXaxis()->GetBinUpEdge(xmax);
-           //std::cout << "update xmax: " << xmax << std::endl;
-           //std::cout << "iter cut value: " << cutvalue << std::endl;
        }
     }
 
@@ -156,48 +145,7 @@ double ZBiHistos::cutFractionOfIntegral(std::string histoname, bool isCutGreater
     return cutvalue;
 }
 
-void ZBiHistos::defineCutlistHistos(std::map<std::string,std::pair<double,int>> cutmap){
-    for(std::map<std::string,std::pair<double,int>>::iterator it=cutmap.begin(); it != cutmap.end(); it++){
-        std::string cutname = it->first;
-
-        //unv_vtx_z vs true_vtx_z
-        addHisto2d("unc_vtx_z_vs_true_vtx_z_"+cutname+"_hh","unc z_{vtx} [mm]", 1500, -50.0, 100.0,"true z_{vtx} [mm]",200,-50.3,149.7); 
-        //vdSelZ
-        addHisto1d("signal_vdSelZ_"+cutname+"_h","true z_{vtx} [mm]",200, -50.3, 149.7);
-        //tritrig zVtx
-        addHisto1d("tritrig_zVtx_"+cutname+"_h","unc z_{vtx} [mm]",150, -50.0, 100.0);
-
-        //TGraphs
-
-        //ztail fit quality
-        TGraph* tgraph = new TGraph();
-        tgraph->SetName((m_name+"_tritrig_zVtx_fit_chi2_"+cutname+"_g").c_str());
-        graphs_[m_name+"_tritrig_zVtx_fit_chi2_"+cutname+"_g"] = tgraph;
-    }
-}
-
-void ZBiHistos::defineAnalysisHistos(){
-
-    addHisto2d("z0_v_recon_z_hh","recon_z [mm]", 450, -20.0, 70.0, "z0 [mm]", 1000,-10.0,10.0);
-    addHisto2d("z0_v_recon_z_post_cut_hh","recon_z [mm]", 450, -20.0, 70.0, "z0 [mm]", 1000,-10.0,10.0);
-    addHisto2d("z0_v_recon_z_alpha_hh","recon_z [mm]", 450, -20.0, 70.0, "z0 [mm]", 1000,-10.0,10.0);
-    addHisto2d("z0_v_recon_z_alpha_post_cut_hh","recon_z [mm]", 450, -20.0, 70.0, "z0 [mm]", 1000,-10.0,10.0);
-    addHisto1d("impact_parameter_up_h","recon_z [mm]", 450, -20.0, 70.0);
-    addHisto1d("impact_parameter_down_h","recon_z [mm]", 450, -20.0, 70.0);
-    //zalpha 
-    addHisto1d("z_alpha_h","z_alpha", 450, -20.0, 70.0);
-}
-
 void ZBiHistos::defineIterHistos(){
-    /*
-    addHisto2d("persistent_cuts_hh","iteration", 100,-0.5,99.5,"cut_id",25,0.5,25.5);
-    addHisto2d("test_cuts_ZBi_hh","iteration", 100,-0.5,99.5,"cut_id",25,0.5,25.5);
-    addHisto2d("test_cuts_values_hh","iteration", 100,-0.5,99.5,"cut_id",25,0.5,25.5);
-    addHisto2d("test_cuts_zcut_hh","iteration", 100,-0.5,99.5,"zcut",25,0.5,25.5);
-    addHisto2d("test_cuts_nbkg_hh","iteration", 100,-0.5,99.5,"zcut",25,0.5,25.5);
-    addHisto2d("test_cuts_nsig_hh","iteration", 100,-0.5,99.5,"zcut",25,0.5,25.5);
-    addHisto2d("best_test_cut_ZBi_hh","iteration", 100,-0.5,99.5,"ZBi",2000,0.0,20.0);
-    */
     addHisto2d("persistent_cuts_hh","pct_sig_cut", 1000,-0.5,99.5,"cut_id",25,0.5,25.5);
     addHisto2d("test_cuts_ZBi_hh","pct_sig_cut", 1000,-0.5,99.5,"cut_id",25,0.5,25.5);
     addHisto2d("test_cuts_values_hh","pct_sig_cut", 1000,-0.5,99.5,"cut_id",25,0.5,25.5);
@@ -205,7 +153,6 @@ void ZBiHistos::defineIterHistos(){
     addHisto2d("test_cuts_nbkg_hh","pct_sig_cut", 1000,-0.5,99.5,"zcut",25,0.5,25.5);
     addHisto2d("test_cuts_nsig_hh","pct_sig_cut", 1000,-0.5,99.5,"zcut",25,0.5,25.5);
     addHisto2d("best_test_cut_ZBi_hh","pct_sig_cut", 1000,-0.5,99.5,"ZBi",2000,0.0,20.0);
-    
 }
 
 void ZBiHistos::set2DHistoYlabel(std::string histoName, int ybin, std::string ylabel){
@@ -290,7 +237,7 @@ std::vector<double> ZBiHistos::impactParameterCut(){
 TF1* ZBiHistos::fitZTailWithExp(std::string cutname){
     TF1* fitFunc = new TF1("fitfunc","[0]*exp([1]*x)",10.0,100.0);
 
-    std::string histoname = m_name+"_tritrig_zVtx_"+cutname+"_h";
+    std::string histoname = m_name+"_background_zVtx_"+cutname+"_h";
     if(histos1d[histoname]->GetEntries() < 1){
         std::cout << "WARNING: Background Model is NULL: " << 
             cutname << " tritrig zVtx distribution was empty and could not be fit!" << std::endl;

@@ -102,7 +102,7 @@ class ZBiHistos : public HistoManager{
         void setDebug(bool value){debug_ = value;};
 
         //void iterativeSignalCuts(ZBiHistos *zbiHistos, IterativeCutSelector *cutSelector);
-        double cutFractionOfIntegral(std::string histoname, bool isCutGreaterThan, double cutFraction, double initialIntegral);
+        double cutFractionOfIntegral(std::string cutvariable, bool isCutGreaterThan, double cutFraction, double initialIntegral);
         double getIntegral(std::string histoname);
 
         TF1* fitZTailWithExp(std::string cutname);

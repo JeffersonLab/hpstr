@@ -48,13 +48,7 @@ class ZBiCutflowProcessor : public Processor {
 
         double calculateZBi(double n_on, double n_off, double tau);
 
-        bool doesCutVariableExist(std::string cutvariable);
-
         void printZBiMatrix();
-
-        bool failImpactParameterCut(std::map<std::string, double*> tuple);
-
-        void calculateImpactParameterCut();
 
         bool failPersistentCuts(MutableTTree* MTT);
 
@@ -62,75 +56,52 @@ class ZBiCutflowProcessor : public Processor {
 
         bool failTestCut(std::string cutname, std::map<std::string,double*> tuple);
 
-        double transformImpactParameterZalpha(double track_z0, double vtx_z);
-
-        bool failImpactParameterZalphaCut(double ele_track_z0, double pos_track_z0, double vtx_z, double zalpha_cut_lt);
-
         void getVdSimZ();
 
         void writeGraph(TFile* outF, std::string folder, TGraph* g);
 
         double round(double var);
 
+        void getSignalMCAnaVtxZ_h(std::string signalMCAnaFilename, std::string signal_pdgid);
+
+        void testImpactParameterCut(MutableTTree* MTT, ZBiHistos* histos);
+
+        void filterCuts();
+
 
     private:
 
+        std::map<std::string,double> mcScale_;
         int debug_{0}; 
         std::string outFileName_{"zbi_out.root"};
-        std::string cuts_cfgFile_{""};
-        std::string radSlicFilename_{""};
-        std::string vdSimFilename_{""};
+        TFile* outFile_{nullptr};
         double vdMassMeV_;
         double ApMassMeV_;
 
-        std::map<std::string,double> mcScale_;
-
-        std::vector<std::string> cutlist_strings_{};
-        std::vector<std::string> cut_vars_{};
-
-        TFile* outFile_{nullptr};
-
         //cuts
+        std::string cuts_cfgFile_{""};
         typedef std::map<std::string, std::pair<double,int>>::iterator cut_iter_;
-        std::map<std::string, std::pair<double,int>>* testCuts_;
-        std::map<std::string, std::pair<double,int>>* persistentCuts_;
         std::vector<std::string> cutVariables_;
         std::map<std::string,double> initialIntegrals_;
         std::map<std::string,std::vector<std::pair<double,double>>> global_ZBi_map_;
 
-        //cut selector
+        //Cuts
         IterativeCutSelector *testCutsSelector_{nullptr};
+        std::map<std::string, std::pair<double,int>>* testCutsPtr_;
         IterativeCutSelector *persistentCutsSelector_{nullptr};
+        std::map<std::string, std::pair<double,int>>* persistentCutsPtr_;
         ZBiHistos* cutHistos_{nullptr};
-
-        //impact parameter cut parameters for each Test Cut
-        //std::map<std::string,std::vector<double>> impact_param_cuts_;
-        std::vector<double> impact_param_cut_;
 
         //histos
         ZBiHistos* debugHistos_{nullptr};
         ZBiHistos* summaryHistos_{nullptr};
 
         //signal
-        std::string signalHistCfgFilename_{""};
-        std::string signalFilename_{""};
-        ZBiHistos* signalHistos_{nullptr};
-        ZBiHistos* zcutsignalHistos_{nullptr};
-        std::map<std::string,double*> signal_tuple_;
-        TTree* signalTree_{nullptr};
-        //signal pretrigger vtx distribution
-        TH1F* vdSimZ_h_{nullptr};
 
         //background
         std::string tritrigFilename_{""};
-        ZBiHistos* tritrigHistos_{nullptr};
         std::map<std::string,double*> tritrig_tuple_;
         TTree* tritrigTree_{nullptr};
-
-        double ztail_nevents_ = 1.0;
-        double zalpha_slope_;;
-        bool scan_zcut_ = false;
-        double step_size_ = 0.01;
 
         //simp equations
         SimpEquations* simpEqs_{nullptr};
@@ -139,10 +110,31 @@ class ZBiCutflowProcessor : public Processor {
         double highMass_;
         double lowMass_;
 
-
-        //TESTING
+        // Signal //
+        std::string signalHistCfgFilename_{""};
+        std::string signalVtxAnaFilename_{""};
+        std::string signalVtxAnaTreename_{""};
+        std::string signalMCAnaFilename_{""};
+        std::string signal_pdgid_{""};
+        ZBiHistos* signalHistos_{nullptr};
+        TH1F* signalSimZ_h_{nullptr};
         MutableTTree* signalMTT_{nullptr};
-        MutableTTree* tritrigMTT_{nullptr};
+
+        // Background //
+        std::string bkgVtxAnaFilename_{""};
+        std::string bkgVtxAnaTreename_{""};
+        MutableTTree* bkgMTT_{nullptr};
+        ZBiHistos* bkgHistos_{nullptr};
+
+        double luminosity_;
+        double tritrig_sf_;
+
+        double ztail_nevents_ = 1.0;
+        bool scan_zcut_ = false;
+        double step_size_ = 0.01;
+
+        // ZAlpha Cut Variable 
+        double zalpha_slope_;;
 };
 
 
