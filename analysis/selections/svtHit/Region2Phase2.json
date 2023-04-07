@@ -1,0 +1,28 @@
+{
+    "getN_et"  : {
+        "cut"  : 2.0,
+        "id"   : 0,
+        "info" : "How Many Pulses"
+    },
+    "doing_ct" : {
+        "cut"  : 0.0,
+        "id"   : 1,
+        "info" : "Do We Fit Close Time"
+    },  
+    "Otime_lt" : {
+        "cut"  : -160.0,
+        "id"   : 2,
+        "info" : "Upper Bound on Region"
+    },
+    "Otime_gt" : {
+        "cut"  : -190.0,
+        "id"   : 3,
+        "info" : "Lower Bound on Region"
+    },
+    "time_phase" : {
+        "cut"  : 2.0,
+        "id"   : 4,
+        "info" : "Equal Bound on Phase"
+    }
+
+}

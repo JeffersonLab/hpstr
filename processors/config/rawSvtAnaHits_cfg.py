@@ -3,11 +3,17 @@ import sys
 import os
 import baseConfig as base
 
+base.parser.add_argument("-A", "--onTrk", type=int, dest="onTrk",
+                  help="Are we using hits on track or not", metavar="onTrk",default=0)
+base.parser.add_argument("-p", "--tphase", type=int, dest="tphase",
+                  help="The Phase of the Event Time", metavar="tphase",default=6)
+
 options = base.parser.parse_args()
 
 # Use the input file to set the output file name
 root1_file = options.inFilename[0]
 root2_file = options.outFilename
+onTrk = options.onTrk
 
 print('Root file Input: %s' % root1_file)
 print('Root file Output: %s' % root2_file)
@@ -51,15 +57,14 @@ rawAnaSvt.parameters["regionDefinitions"] = [RegionPath+'OneFit.json',
                                              RegionPath+'CTFit.json',
                                              RegionPath+'FTFit.json',
                                              RegionPath+'LowTimeDiff.json',
-                                             RegionPath+'Region1.json',
-                                             RegionPath+'Region2.json',
-                                             RegionPath+'Region3.json',
-                                             RegionPath+'Region4.json',
-                                             RegionPath+'Region5.json',
+                                             RegionPath+'R1.json',
+                                             RegionPath+'R2.json',
+                                             RegionPath+'R3.json',
+                                             RegionPath+'R4.json',
                                              RegionPath+'TimeResolution.json'
                                              ]
 
-rawAnaSvt.parameters["MatchList"] = ['OneFit', 'CTFit', 'SecondFitTimeCT']
+rawAnaSvt.parameters["MatchList"] = ['OneFit', 'CTFit', 'SecondFit']
 rawAnaSvt.parameters["timeref"] = 0.0
 rawAnaSvt.parameters["ampref"] = 0.0
 

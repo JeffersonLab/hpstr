@@ -8,6 +8,8 @@ base.parser.add_argument("-w", "--tracking", type=str, dest="tracking",
                          help="Which tracking to use to make plots", metavar="tracking", default="KF")
 base.parser.add_argument("-s", "--truthHits", type=int, dest="truthHits",
                          help="Get svt truth hits: 1=yes", metavar="truthHits", default=1)
+base.parser.add_argument("-r", "--rawHits", type=int, dest="rawHits",
+        help="Keep raw svt hits: 1=yes", metavar="rawHits", default=1)
 
 options = base.parser.parse_args()
 
@@ -44,6 +46,7 @@ cvtx = HpstrConf.Processor('cvtx', 'VertexProcessor')
 vtxgbl = HpstrConf.Processor('vtxgbl', 'VertexProcessor')
 cvtxgbl = HpstrConf.Processor('cvtxgbl', 'VertexProcessor')
 mcpart = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
+fsp = HpstrConf.Processor('fps', 'FinalStateParticleProcessor')
 
 ###############################
 #   Processor Configuration   #
@@ -138,6 +141,22 @@ mcpart.parameters["debug"] = 0
 mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
+#FinalStateParticleProcessor
+fsp.parameters["debug"] = 0 
+fsp.parameters["fspCollLcio"] = "FinalStateParticles_KF" 
+fsp.parameters["fspCollRoot"] = "FinalStateParticles_KF"
+fsp.parameters["kinkRelCollLcio"] = ""
+fsp.parameters["trkRelCollLcio"] = "KFTrackDataRelations"
+
+if(options.rawHits==1):
+    fsp.parameters["trkhitCollRoot"] = "fspOnTrackHits"
+    fsp.parameters["rawhitCollRoot"] = "fspOnTrackRawHits"
+    fsp.parameters["hitFitsCollLcio"] = "SVTFittedRawTrackerHits"
+else:
+    fsp.parameters["trkhitCollRoot"] = "fspOnTrackHits"
+    fsp.parameters["rawhitCollRoot"] = ""
+    fsp.parameters["hitFitsCollLcio"] = ""
+
 # Sequence which the processors will run.
 
 if (options.tracking == "KF"):
@@ -165,6 +184,7 @@ if options.isData == -1:
     print("Please specficy if this is Data or not via option -t")
 if (not options.isData):
     sequence.append(mcpart)
+sequence.append(fsp)
 
 p.sequence = sequence
 
