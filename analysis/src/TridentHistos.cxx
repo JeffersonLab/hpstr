@@ -169,7 +169,7 @@ void TridentHistos::Fill1DTrack(Track* track, float weight, const std::string& t
         if (!track->getSharedLy0() && !track->getSharedLy1())
             Fill1DHisto(trkname+"sharingHits_h",5.,weight);
     }
-                
+    /*                
     if (track -> is345Seed())
         Fill1DHisto(trkname+"strategy_h",0,weight);
     if (track-> is456Seed())
@@ -182,7 +182,7 @@ void TridentHistos::Fill1DTrack(Track* track, float weight, const std::string& t
         Fill1DHisto(trkname+"strategy_h",4,weight);
     if (track->isGBLTrack())
         Fill1DHisto(trkname+"strategy_h",5,weight);
-        
+    */  
         
     Fill1DHisto(trkname+"type_h",track->getType(),weight);
 }
@@ -421,48 +421,50 @@ std::pair<CalCluster*, Track*> TridentHistos::getTrackClusterPair(Track* trk,std
  *  fill cluster/track times and other ecal stuff for both WAB and trident events
  *  mg...5/9/20 currently just do time
  */
-void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster*, Track*> ele, std::pair<CalCluster*, Track*> posOrGamma, double timeOffset, double weight){
-  CalCluster* eleClu=ele.first;
-  Track* eleTrk=ele.second;
-  CalCluster* posClu=posOrGamma.first; 
-  Track* posTrk=posOrGamma.second; //these "positrons" may be gammas
+void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std::pair<CalCluster, Track> posOrGamma, double timeOffset, double weight){
+  CalCluster eleClu=ele.first;
+  Track eleTrk=ele.second;
+  CalCluster posClu=posOrGamma.first; 
+  Track posTrk=posOrGamma.second; //these "positrons" may be gammas
+  
+  std::cout<<"Positron Cluster Time = "<<posClu.getTime()-timeOffset<<std::endl;
 
 
-  if(eleClu){
-    Fill1DHisto("ele_cl_time_h", eleClu->getTime()-timeOffset,weight);
-    Fill1DHisto("ele_cl_ene_h",eleClu->getEnergy(),weight);
-    if(eleTrk){
-      double pele=sqrt(eleTrk->getMomentum()[0]*eleTrk->getMomentum()[0]+
-		       eleTrk->getMomentum()[1]*eleTrk->getMomentum()[1]+
-		       eleTrk->getMomentum()[2]*eleTrk->getMomentum()[2]);
-      Fill1DHisto("ele_cltrk_time_diff_h", eleClu->getTime()-timeOffset-eleTrk->getTrackTime(),weight);
-      Fill1DHisto("ele_pOverE_h",pele/eleClu->getEnergy(),weight);
-    }
-  }
+  //  if(eleClu.getTime()>-300){
+  Fill1DHisto("ele_cl_time_h", eleClu.getTime()-timeOffset,weight);
+  Fill1DHisto("ele_cl_ene_h",eleClu.getEnergy(),weight);
+  //    if(eleTrk){
+  double pele=sqrt(eleTrk.getMomentum()[0]*eleTrk.getMomentum()[0]+
+                   eleTrk.getMomentum()[1]*eleTrk.getMomentum()[1]+
+                   eleTrk.getMomentum()[2]*eleTrk.getMomentum()[2]);
+  Fill1DHisto("ele_cltrk_time_diff_h", eleClu.getTime()-timeOffset-eleTrk.getTrackTime(),weight);
+  Fill1DHisto("ele_pOverE_h",pele/eleClu.getEnergy(),weight);
+  //    }
+  // }
+  
+  //  if(posClu && posTrk){
+  Fill1DHisto("pos_cl_time_h", posClu.getTime()-timeOffset,weight);
+  Fill1DHisto("pos_cl_ene_h",posClu.getEnergy(),weight);
+  Fill1DHisto("pos_cltrk_time_diff_h", posClu.getTime()-timeOffset-posTrk.getTrackTime(),weight);
+  double ppos=sqrt(posTrk.getMomentum()[0]*posTrk.getMomentum()[0]+
+		     posTrk.getMomentum()[1]*posTrk.getMomentum()[1]+
+		     posTrk.getMomentum()[2]*posTrk.getMomentum()[2]);
+  Fill1DHisto("pos_pOverE_h",ppos/posClu.getEnergy(),weight);
+  //}
 
-  if(posClu && posTrk){
-    Fill1DHisto("pos_cl_time_h", posClu->getTime()-timeOffset,weight);
-    Fill1DHisto("pos_cl_ene_h",posClu->getEnergy(),weight);
-    Fill1DHisto("pos_cltrk_time_diff_h", posClu->getTime()-timeOffset-posTrk->getTrackTime(),weight);
-    double ppos=sqrt(posTrk->getMomentum()[0]*posTrk->getMomentum()[0]+
-		     posTrk->getMomentum()[1]*posTrk->getMomentum()[1]+
-		     posTrk->getMomentum()[2]*posTrk->getMomentum()[2]);
-    Fill1DHisto("pos_pOverE_h",ppos/posClu->getEnergy(),weight);
-  }
-
-  if(posClu && eleClu){ //get cluster time difference
-    Fill1DHisto("cl_time_diff_h", posClu->getTime()-eleClu->getTime(),weight);
+  //  if(posClu && eleClu){ //get cluster time difference
+  Fill1DHisto("cl_time_diff_h", posClu.getTime()-eleClu.getTime(),weight);
     
-  }
+  //}
 
-  if(posTrk && eleTrk){ //get cluster time difference
-    Fill1DHisto("trk_time_diff_h", posTrk->getTrackTime()-eleTrk->getTrackTime(),weight);    
-  }
+  //if(posTrk && eleTrk){ //get cluster time difference
+  Fill1DHisto("trk_time_diff_h", posTrk.getTrackTime()-eleTrk.getTrackTime(),weight);    
+  //}
 
-  if(posClu && !posTrk){ //this is actually a WAB event!  call these gamma
-    Fill1DHisto("gamma_cl_time_h", posClu->getTime()-timeOffset,weight);
-    Fill1DHisto("gamma_cl_ene_h",posClu->getEnergy(),weight);
-  }
+  //if(posClu && !posTrk){ //this is actually a WAB event!  call these gamma
+  Fill1DHisto("gamma_cl_time_h", posClu.getTime()-timeOffset,weight);
+  Fill1DHisto("gamma_cl_ene_h",posClu.getEnergy(),weight);
+  //}
 
 }
 /*

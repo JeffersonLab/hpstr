@@ -23,28 +23,162 @@ std::string AnaHelpers::getFileName(std::string filePath, bool withExtension)
     return "";
 }
 
-void AnaHelpers::InnermostLayerCheck(Track* trk, bool& foundL1, bool& foundL2) {
-    int innerCount = 0;
-    for (int ihit=0; ihit<trk->getSvtHits().GetEntries();++ihit) {
-        TrackerHit* hit3d = (TrackerHit*) trk->getSvtHits().At(ihit);
-        if (hit3d->getLayer() == 0 ) {
-            innerCount++;
-        }
-        if (hit3d->getLayer() == 1) {
-            innerCount++;
-        }
-        if (hit3d->getLayer() == 2) {
-            innerCount++;
-        }
-        if (hit3d->getLayer() == 3) {
-            innerCount++;
-        }
+
+Particle* AnaHelpers::GetParticleFromCluster(CalCluster* clu,std::vector<Particle*>& partList){
+  Particle* matchedPart=NULL;
+  for(auto part:partList){
+    CalCluster partCluster=part->getCluster();
+    if(partCluster.getEnergy()!=-9999){
+      double energy=partCluster.getEnergy();
+      if(clu->getEnergy() == energy)
+        matchedPart=part;
+          
     }
-    if (innerCount == 4) foundL1 = true;
-    if (innerCount == 2) foundL2 = true;
+  }
+  return matchedPart;    
 }
 
-bool AnaHelpers::MatchToGBLTracks(int ele_id, int pos_id, Track* & ele_trk, Track* & pos_trk, std::vector<Track*>& trks) {
+Track* AnaHelpers::GetTrackFromParticle(std::vector<Track*>& trks,Particle* part){
+  int trkID=(part->getTrack()).getID();
+  for (auto trk :trks){
+    if (trkID == trk->getID()) 
+      return trk;
+  }
+  return NULL; 
+}
+
+
+/*
+ *  check for track duplicates and return bool=true if this is best track
+ *  first test: # of hits; if same number of hits, return best chi2
+ */
+bool AnaHelpers::IsBestTrack(Particle* part,std::vector<Track*>& trks){
+  Track* trk=GetTrackFromParticle(trks, part);
+  return IsBestTrack(trk,trks);
+}
+
+bool AnaHelpers::IsBestTrack(Track* trk,std::vector<Track*>& trks){
+  int maxSharedHits=1;
+  if(trk==NULL)
+    return true;
+  for (auto testTrk : trks){
+    if (trk == testTrk)
+      continue;
+    int shrdHits=CountSharedTrackHits(trk,testTrk);
+    if(shrdHits>maxSharedHits){
+      std::cout<<"shared hits = "<<shrdHits<<std::endl;
+    }
+    if(shrdHits>maxSharedHits){
+      if(testTrk->getTrackerHitCount()>trk->getTrackerHitCount()){
+        return false;
+      }else if (testTrk->getTrackerHitCount()==trk->getTrackerHitCount() ){
+        if(testTrk->getChi2Ndf()<trk->getChi2Ndf())
+          return false;
+      }   
+    }   
+  }
+  return true;
+}
+
+int AnaHelpers::CountSharedTrackHits(Track* trk1,Track* trk2){
+
+  TRefArray trk1Hits=trk1->getSvtHits();
+  TRefArray trk2Hits=trk2->getSvtHits();
+  int cnt=0;
+  //  std::cout<<trk1Hits->GetEntries()<<"    "<<trk2Hits->GetEntries()<<std::endl;
+   for(int ihit=0;ihit<trk1Hits.GetEntries();ihit++){
+     TrackerHit* hit1=(TrackerHit*)trk1Hits.At(ihit);
+     for(int jhit=0;jhit<trk2Hits.GetEntries();jhit++){
+       TrackerHit* hit2=(TrackerHit*)trk2Hits.At(jhit);
+       //       std::cout<<hit1->getID()<<"   "<<hit2->getID()<<std::endl;
+       if(hit1->getID()==hit2->getID())
+        cnt++;
+     }
+   }
+   return cnt;
+ }
+
+
+/*  
+ *  checks if cluster is in fiducial region
+ *  this was copied from my DST code -- mg
+ */
+bool AnaHelpers::IsECalFiducial(CalCluster* clu){
+  if(clu==NULL)
+    return false;
+  bool in_fid=false; 
+  double x_edge_low = -262.74; 
+  double x_edge_high = 347.7; 
+  double y_edge_low = 33.54; 
+  double y_edge_high = 75.18; 
+        
+  double x_gap_low = -106.66; 
+  double x_gap_high = 42.17; 
+  double y_gap_high = 47.18; 
+
+  double x=clu->getPosition().at(0);
+  double y=clu->getPosition().at(1);
+  y=abs(y);
+
+  if( x>x_edge_low && x < x_edge_high && y > y_edge_low && y < y_edge_high)
+    if ( !(x > x_gap_low && x < x_gap_high && y > y_edge_low && y < y_gap_high) )
+      in_fid = true;
+    
+  return in_fid;  
+}
+
+double AnaHelpers::GetClusterCoplanarity(CalCluster* cl1,CalCluster* cl2){
+  double photon_nom_x=42.52; //nominal photon position
+  double radian=180.0/3.14; 
+  double cl1X=cl1->getPosition().at(0);
+  double cl1Y=cl1->getPosition().at(1);
+  double cl1Z=cl1->getPosition().at(2);
+  double cl2X=cl2->getPosition().at(0);
+  double cl2Y=cl2->getPosition().at(1);
+  double cl2Z=cl2->getPosition().at(2);
+  double cl1E=cl1->getEnergy();  
+  double cl2E=cl2->getEnergy();
+
+  double cl1_impact_angle=atan2(cl1Y,cl1X-photon_nom_x)*radian;
+  double cl2_impact_angle=atan2(cl2Y,cl2X-photon_nom_x)*radian;
+  if(cl1_impact_angle<0.)
+    cl1_impact_angle+=360.;
+  if(cl2_impact_angle<0.)
+    cl2_impact_angle+=360.;
+  if (cl1Y>0)
+    return cl2_impact_angle-cl1_impact_angle;
+  else
+    return cl1_impact_angle-cl2_impact_angle;
+}
+
+
+void AnaHelpers::InnermostLayerCheck(Track* trk, bool& foundL1, bool& foundL2) {
+
+  bool s0=false; 
+  bool s1=false; 
+  bool s2=false; 
+  bool s3=false; 
+  std::cout<<"Number of hits on track = "<<trk->getSvtHits().GetEntries()<<std::endl;
+  for (int ihit=0; ihit<trk->getSvtHits().GetEntries();++ihit) {
+    TrackerHit* hit = (TrackerHit*) trk->getSvtHits().At(ihit);
+    if (hit->getLayer() == 0 ) {
+      s0=true;
+    }
+    if (hit->getLayer() == 1) {
+      s1=true;
+    }
+    if (hit->getLayer() == 2) {
+      s2=true;
+    }
+    if (hit->getLayer() == 3) {
+      s3=true;
+    }
+  }
+  foundL1 = s0&&s1;
+  foundL2 = s2&&s3;
+}
+
+bool AnaHelpers::MatchToTracks(int ele_id, int pos_id, Track* & ele_trk, Track* & pos_trk, std::vector<Track*>& trks) {
 
     bool foundele = false;
     bool foundpos = false;
@@ -69,7 +203,7 @@ bool AnaHelpers::GetParticlesFromVtx(Vertex* vtx, Particle*& ele, Particle*& pos
 
     bool foundele = false;
     bool foundpos = false;
-
+    debug_=true;
     for (int ipart = 0; ipart < vtx->getParticles().GetEntries(); ++ipart) {
 
 
@@ -96,6 +230,22 @@ bool AnaHelpers::GetParticlesFromVtx(Vertex* vtx, Particle*& ele, Particle*& pos
     if (debug_) std::cout<<"returning "<<(int) (foundele && foundpos) <<std::endl;
     return foundele && foundpos;
 }
+
+
+std::vector<int> AnaHelpers::getMCParticleLayersHit(MCParticle* mcpart, std::vector<MCTrackerHit*>& mchits){
+  
+  std::vector<int> layersHit; 
+  for(auto mchit: mchits){
+    if(mchit->getMCParticleID()==mcpart->getID()){ //hit has MCParticle under consideration
+      if(std::find(layersHit.begin(), layersHit.end(), mchit->getLayer()) == layersHit.end())
+        std::cout<<"Found hit in layer = "<<mchit->getLayer()<<std::endl;
+        layersHit.push_back(mchit->getLayer());
+    }
+  }  
+  std::cout<<"Number of layers hit = "<<layersHit.size()<<std::endl;
+  return layersHit; 
+}
+
 
 AnaHelpers::AnaHelpers() {
     rotSvt.RotateY(SVT_ANGLE);

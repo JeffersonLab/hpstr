@@ -35,17 +35,17 @@ vtxana.parameters["debug"] = 1
 vtxana.parameters["anaName"] = "vtxana"
 vtxana.parameters["cluColl"] = "RecoEcalClusters"
 vtxana.parameters["trkColl"] = "KalmanFullTracks"
-vtxana.parameters["vtxColl"] = "UnconstrainedV0Candidates_KF"
+vtxana.parameters["vtxColl"] = "UnconstrainedV0Vertices_KF"
 #vtxana.parameters["hitColl"]  = "RotatedHelicalTrackHits"
-vtxana.parameters["hitColl"]  = "SiClustersOnTrack"
+vtxana.parameters["hitColl"]  = "fspOnTrackHits"
 vtxana.parameters["mcColl"]  = "MCParticle"
-#vtxana.parameters["fspartColl"] = "FinalStateParticles_KF"
-vtxana.parameters["fspartColl"] = "ParticlesOnVertices_KF"
-vtxana.parameters["trkSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/tridents/trackSelection-4pt5gev.json'
-vtxana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/tridents/tridentSelection-4pt5gev.json'
+vtxana.parameters["fspartColl"] = "FinalStateParticles_KF"
+#vtxana.parameters["fspartColl"] = "ParticlesOnVertices_KF"
+vtxana.parameters["trkSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/tridents/trackSelection-3pt7gev.json'
+vtxana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/tridents/tridentSelection-3pt7gev.json'
 #vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
-vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tridents/triAnalysis-4pt5gev.json"
-vtxana.parameters["beamE"] = 4.5
+vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tridents/triAnalysis-3pt7gev.json"
+vtxana.parameters["beamE"] = 3.7
 vtxana.parameters["isData"] = options.isData
 CalTimeOffset=-999
 
@@ -79,13 +79,13 @@ vtxana.parameters["regionDefinitions"] = [RegionPath+'/tridentAllLayerCombos.jso
                                           RegionPath+'/tridentAllLayerCombos-PositronCluster.json', 
                                           RegionPath+'/tridentAllLayerCombos-PosClust-NoEleClust.json',  
                                           RegionPath+'/tridentAllLayerCombos-BothClusters.json',
-                                          RegionPath+'/tridentAllLayerCombos-RadCut.json', 
-                                          RegionPath+'/tridentAllLayerCombos-PositronCluster-RadCut.json', 
-                                          RegionPath+'/tridentAllLayerCombos-PosClust-NoEleClust-RadCut.json',  
-                                          RegionPath+'/tridentAllLayerCombos-BothClusters-RadCut.json', 
-                                          RegionPath+'/tridentAllLayerCombos-GammaStTruth-RadCut.json', 
-                                          RegionPath+'/tridentAllLayerCombos-GammaStTruth-PositronCluster-RadCut.json', 
-                                          RegionPath+'/tridentAllLayerCombos-GammaStTruth-BothClusters-RadCut.json', 
+#                                          RegionPath+'/tridentAllLayerCombos-RadCut.json', 
+#                                          RegionPath+'/tridentAllLayerCombos-PositronCluster-RadCut.json', 
+#                                          RegionPath+'/tridentAllLayerCombos-PosClust-NoEleClust-RadCut.json',  
+#                                          RegionPath+'/tridentAllLayerCombos-BothClusters-RadCut.json', 
+#                                          RegionPath+'/tridentAllLayerCombos-GammaStTruth-RadCut.json', 
+#                                          RegionPath+'/tridentAllLayerCombos-GammaStTruth-PositronCluster-RadCut.json', 
+#                                          RegionPath+'/tridentAllLayerCombos-GammaStTruth-BothClusters-RadCut.json', 
                                           RegionPath+'/tridentL1L1.json',
                                           RegionPath+'/tridentL1L1-PositronCluster.json',
                                           RegionPath+'/tridentL1L1-BothClusters.json',

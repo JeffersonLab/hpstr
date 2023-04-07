@@ -41,7 +41,14 @@
         "xtitle" : "N_{vertices} passing all cuts",
         "ytitle" : "Events"
     },
-   
+    "ele_strategy_h" : {
+        "bins" : 6,
+        "minX" : -0.5,
+        "maxX" : 5.5,
+        "xtitle" : "Strategy",
+        "ytitle" : "Tracks",
+        "labels" : ["s345","s456","s123c4","s123c5","Match","GBL"]
+    },
     "ele_type_h" : {
         "bins" : 65,
         "minX" : -0.5,
@@ -117,7 +124,7 @@
     "ele_p_h" : {
         "bins" : 100,
         "minX" : 0,
-        "maxX" : 4.8,
+        "maxX" : 4.4,
         "xtitle" : "p_{e^{-}} [GeV]",
         "ytitle" : "Tracks"
     },
@@ -136,7 +143,7 @@
     "ele_d0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
-        "maxX"   : 4.8,
+        "maxX"   : 4.4,
         "binsY"  : 200,
         "minY"   : -3,
         "maxY"   : 3,
@@ -169,7 +176,7 @@
     "ele_z0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
-        "maxX"   : 4.8,
+        "maxX"   : 4.4,
         "binsY"  : 100,
         "minY"   : -2,
         "maxY"   : 2,
@@ -199,6 +206,14 @@
         "ytitle" : "trk z0 [mm]"
     },
     
+    "pos_strategy_h" : {
+        "bins" : 6,
+        "minX" : -0.5,
+        "maxX" : 5.5,
+        "xtitle" : "Strategy",
+        "ytitle" : "Tracks",
+        "labels" : ["s345","s456","s123c4","s123c5","Match","GBL"]
+    },
     "pos_type_h" : {
         "bins" : 65,
         "minX" : -0.5,
@@ -274,7 +289,7 @@
     "pos_p_h" : {
         "bins" : 100,
         "minX" : 0,
-        "maxX" : 4.8,
+        "maxX" : 4.4,
         "xtitle" : "p_{e^{+}} [GeV]",
         "ytitle" : "Tracks"
     },
@@ -293,7 +308,7 @@
     "pos_d0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
-        "maxX"   : 4.8,
+        "maxX"   : 4.4,
         "binsY"  : 200,
         "minY"   : -3,
         "maxY"   : 3,
@@ -326,7 +341,7 @@
     "pos_z0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
-        "maxX"   : 4.8,
+        "maxX"   : 4.4,
         "binsY"  : 100,
         "minY"   : -2,
         "maxY"   : 2,
@@ -464,7 +479,7 @@
     "vtx_pz_h" : {
         "bins" : 100,
         "minX" : 1.0,
-        "maxX" : 5,
+        "maxX" : 5.0,
         "xtitle" : "vtx p_{z} [GeV]",
         "ytitle" : "Vertices"
     },

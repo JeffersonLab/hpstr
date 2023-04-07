@@ -98,13 +98,15 @@ class AnaHelpers {
          * @return true 
          * @return false 
          */
-        bool MatchToGBLTracks(int ele_id, int pos_id, Track* & ele_trk, Track* & pos_trk, std::vector<Track*>& trks);
+        //        bool MatchToGBLTracks(int ele_id, int pos_id, Track* & ele_trk, Track* & pos_trk, std::vector<Track*>& trks);
+        bool MatchToTracks(int ele_id, int pos_id, Track* & ele_trk, Track* & pos_trk, std::vector<Track*>& trks);
         
         static std::string getFileName(std::string filePath, bool withExtension);    
         bool IsBestTrack( Particle* part,std::vector<Track*>& trks);
         bool IsBestTrack( Track* part,std::vector<Track*>& trks);
         int CountSharedTrackHits(Track* trk1,Track* trk2);
-        Track* GetGBLTrackFromParticle(std::vector<Track*>& trks,Particle* part);
+        //        Track* GetGBLTrackFromParticle(std::vector<Track*>& trks,Particle* part);
+        Track* GetTrackFromParticle(std::vector<Track*>& trks,Particle* part);
         Particle* GetParticleFromCluster(CalCluster*, std::vector<Particle*>&);
         bool IsECalFiducial(CalCluster* clu);
         double GetClusterCoplanarity(CalCluster* cl1,CalCluster* cl2); 
