@@ -50,6 +50,18 @@ void ZBiCutflowProcessor::configure(const ParameterSet& parameters) {
         //Zalpha
         zalpha_slope_ = parameters.getDouble("zalpha_slope",zalpha_slope_);
 
+        //Define mass window
+        signal_mass_MeV_ = parameters.getDouble("signal_mass_MeV",signal_mass_MeV_);
+        massRes_MeV_ = parameters.getDouble("massRes_MeV",massRes_MeV_);
+        lowMass_ = signal_mass_MeV_ - 2.0*massRes_MeV_/2.0;
+        highMass_ = signal_mass_MeV_ + 2.0*massRes_MeV_/2.0;
+
+        //Initialize expected signal calculation values
+        radFrac_ = parameters.getDouble("radFrac",radFrac_);
+        simp_radAcc_ = parameters.getDouble("simp_radAcc",simp_radAcc_);
+        dNdm_ = parameters.getDouble("dNdm",dNdm_);
+        logEps2_ = parameters.getDouble("logEps2",logEps2_);
+
     }
     catch (std::runtime_error& error)
     {
@@ -130,11 +142,6 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     //Get the Vd pretrigger simulated vertex z distribution
     getSignalMCAnaVtxZ_h(signalMCAnaFilename_, signal_pdgid_); 
 
-    //Define mass window
-    double mV_MeV = 55.0;
-    double massRes_MeV = 3.0;
-    lowMass_ = mV_MeV - 2.0*massRes_MeV/2.0;
-    highMass_ = mV_MeV + 2.0*massRes_MeV/2.0;
 
     //Read signal ana vertex tuple, and convert to mutable tuple
     TFile* signalVtxAnaFile = new TFile(signalVtxAnaFilename_.c_str(),"READ");
@@ -238,18 +245,7 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     */
 
 
-    //Initialize various values (NEED TO BE CONFIGURABLE THROUGH SINGLE JSON)
-    //Set mass window
-    double mAp_MeV = mV_MeV*(3/1.8);
-    double radFrac = 0.07;
-    double radAcc = 0.125;
-    //double dNdm = 372000.0; Not sure where I got this value from anymore...
-    double dNdm = 513800.0;
 
-    double m_pi = mAp_MeV/3.0;
-    double alpha_D = 0.01;
-    double m_l = 0.511;
-    double f_pi = m_pi/(4.*M_PI);
 
 
     //Impact Parameter and Zalpha distributions
@@ -328,21 +324,12 @@ bool ZBiCutflowProcessor::process(){
     std::cout << "[ZBiCutflowProcessor] process()" << std::endl;
 
     //Initialize various values (NEED TO BE CONFIGURABLE THROUGH SINGLE JSON)
-    double mV_MeV = 55.0;
-    double mAp_MeV = mV_MeV*(3/1.8);
-    double radFrac = 0.07;
-    double radAcc = 0.125;
-    double massRes_MeV = 3.0;
-    //double dNdm = 372000.0; <- not sure where i got this number...
-    double dNdm = 513800.0;
-
-    double m_pi = mAp_MeV/3.0;
-    double alpha_D = 0.01;
-    double m_l = 0.511;
-    double f_pi = m_pi/(4.*M_PI);
-
-    double lowMass_ = mV_MeV - 2.0*massRes_MeV/2.0;
-    double highMass_ = mV_MeV + 2.0*massRes_MeV/2.0;
+    double signal_mass_MeV_ = 55.0;
+    double massRes_MeV_ = 3.0;
+    double radFrac_ = 0.07;
+    double simp_radAcc_ = 0.125;
+    double dNdm_ = 513800.0;
+    //double dNdm_ = 372000.0; <- not sure where i got this number...
 
     //Each iteration loops over the set of cuts being tested. The expected signal and background
     //rate is calculated given each cut independently. 
@@ -352,7 +339,7 @@ bool ZBiCutflowProcessor::process(){
     
     double cutFraction = step_size_;
     int max_iteration = (int)1.0/cutFraction;
-    max_iteration = 5;
+    max_iteration = 30;
 
     //For each Test Cut variable, cut n% of signal in that variable, to determine the 
     //Test Cut value. 
@@ -577,17 +564,17 @@ bool ZBiCutflowProcessor::process(){
             std::cout << "Looping over zcut values between: " << min_zcut << 
                 " to " << max_zcut << std::endl;
             for(double zcut = min_zcut; zcut < std::round(max_zcut+1.0); zcut = zcut+1.0){
-                std::cout << "iterative zcut = " << zcut << std::endl;
+                //std::cout << "iterative zcut = " << zcut << std::endl;
                 double Nbkg = bkg_model->Integral(zcut,bkg_model->GetXmax());
-                std::cout << "Nbkg between " << zcut << " and " << 
-                    bkg_model->GetXmax() << " = " << Nbkg << std::endl;
+                //std::cout << "Nbkg between " << zcut << " and " << 
+                //    bkg_model->GetXmax() << " = " << Nbkg << std::endl;
 
                 //Get signal unc_vtx_z vs true_vtx_z for the corresponding Test Cut
                 //Take the Y projection of unc_vtx_z < zcut to be the signal_signalSelZ
                 TH2F* vtx_z_hh = (TH2F*)cutHistos_->get2dHisto("cutHistos_unc_vtx_z_vs_true_vtx_z_"+cutname+"_hh");
-                std::cout << "Taking y projection of unc_v_true_vtx_z between " 
-                    << vtx_z_hh->GetXaxis()->FindBin(zcut)+1 << " and " << 
-                    vtx_z_hh->GetXaxis()->GetNbins() << std::endl;
+                //std::cout << "Taking y projection of unc_v_true_vtx_z between " 
+                //    << vtx_z_hh->GetXaxis()->FindBin(zcut)+1 << " and " << 
+                //    vtx_z_hh->GetXaxis()->GetNbins() << std::endl;
 
                 TH1F* true_vtx_z_h = (TH1F*)vtx_z_hh->ProjectionY((std::to_string(zcut)+"_"+cutname+"_"+"true_vtx_z_projy").c_str(),vtx_z_hh->GetXaxis()->FindBin(zcut)+1,vtx_z_hh->GetXaxis()->GetNbins(),"");
 
@@ -607,8 +594,14 @@ bool ZBiCutflowProcessor::process(){
                 std::string calculation_type_ = "simps";
                 double Nsig = 0.0;
                 if(calculation_type_ == "simps"){
-                    double logEps2 = -6.5;
-                    double eps2 = std::pow(10, logEps2);
+
+                    double simpAp_mass_MeV = signal_mass_MeV_*(3/1.8);
+                    double m_pi = simpAp_mass_MeV/3.0;
+                    double alpha_D = 0.01;
+                    double m_l = 0.511;
+                    double f_pi = m_pi/(4.*M_PI);
+
+                    double eps2 = std::pow(10, logEps2_);
                     double eps = std::sqrt(eps2);
                     std::string mesons[2] = {"rho","phi"};
                     for(int i =0; i < 2; i++){
@@ -617,9 +610,9 @@ bool ZBiCutflowProcessor::process(){
                         if(mesons[i] == "rho") rho = true;
                         else phi = true;
 
-                        double ctau = simpEqs_->getCtau(mAp_MeV,m_pi,mV_MeV,eps,alpha_D,f_pi,m_l,rho);
+                        double ctau = simpEqs_->getCtau(simpAp_mass_MeV,m_pi,signal_mass_MeV_,eps,alpha_D,f_pi,m_l,rho);
                         double E_V = 1.35; //GeV <-this absolutely needs to be fixed
-                        double gcTau = ctau * simpEqs_->gamma(mV_MeV/1000.0,E_V);
+                        double gcTau = ctau * simpEqs_->gamma(signal_mass_MeV_/1000.0,E_V);
 
                         double effVtx = 0.0;
                         for(int zbin =0; zbin < 201; zbin++){
@@ -631,11 +624,11 @@ bool ZBiCutflowProcessor::process(){
                                 signalSelZ_h->GetBinWidth(zbin);
                         }
 
-                        double tot_apProd = (3.*137/2.)*3.14159*(mAp_MeV*eps2*radFrac*dNdm)/
-                            radAcc;
+                        double tot_apProd = (3.*137/2.)*3.14159*(simpAp_mass_MeV*eps2*radFrac_*dNdm_)/
+                            simp_radAcc_;
 
                         double br_Vpi_val = 
-                            simpEqs_->br_Vpi(mAp_MeV,m_pi,mV_MeV,alpha_D,f_pi,rho,phi);
+                            simpEqs_->br_Vpi(simpAp_mass_MeV,m_pi,signal_mass_MeV_,alpha_D,f_pi,rho,phi);
                         
                         double br_V_to_ee = 1.0;
                         Nsig = Nsig + tot_apProd*effVtx*br_V_to_ee*br_Vpi_val;
@@ -656,11 +649,11 @@ bool ZBiCutflowProcessor::process(){
                 double ZBi = calculateZBi(n_on, n_off, tau);
                 ZBi = round(ZBi);
 
-                std::cout << "Nsig = " << Nsig << std::endl;
-                std::cout << "n_bkg: " << Nbkg << std::endl;
-                std::cout << "n_on: " << n_on << std::endl;
-                std::cout << "n_off: " << n_off << std::endl;
-                std::cout << "ZBi: " << ZBi << std::endl;
+                //std::cout << "Nsig = " << Nsig << std::endl;
+                //std::cout << "n_bkg: " << Nbkg << std::endl;
+                //std::cout << "n_on: " << n_on << std::endl;
+                //std::cout << "n_off: " << n_off << std::endl;
+                //std::cout << "ZBi: " << ZBi << std::endl;
 
                 //Update Test Cut with best scan values
                 if(ZBi > best_scan_zbi){

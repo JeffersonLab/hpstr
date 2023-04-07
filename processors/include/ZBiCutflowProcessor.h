@@ -119,6 +119,12 @@ class ZBiCutflowProcessor : public Processor {
         ZBiHistos* signalHistos_{nullptr};
         TH1F* signalSimZ_h_{nullptr};
         MutableTTree* signalMTT_{nullptr};
+        double signal_mass_MeV_;
+        double massRes_MeV_;
+        double radFrac_;
+        double simp_radAcc_ = 0.0;
+        double dNdm_;
+        double logEps2_;
 
         // Background //
         std::string bkgVtxAnaFilename_{""};
