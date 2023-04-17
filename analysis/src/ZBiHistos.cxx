@@ -11,12 +11,6 @@ ZBiHistos::ZBiHistos(const std::string& inputName){
     m_name = inputName;
 }
 
-void ZBiHistos::addHistoClone1d(TH1F* parentHisto, std::string clone_histoname){
-    std::string histoname = m_name + clone_histoname;
-    TH1F* clone = (TH1F*)parentHisto->Clone(histoname.c_str());    
-    histos1d[histoname] = clone;
-}
-
 void ZBiHistos::addHisto1d(std::string histoname, std::string xtitle, int nbinsX, float xmin, float xmax){
     histos1d[m_name+"_"+histoname] = plot1D(m_name+"_"+histoname, xtitle, nbinsX, xmin, xmax);
 }
@@ -39,60 +33,7 @@ void ZBiHistos::resetHistograms2d(){
     }
 }
 
-/*
-void ZBiHistos::getVdSelZEff(std::string cutname, double zcut, TH1F* vdSimZ_h){
-   //Get the 2D histogram of signal unc_vtx_z vs true_vtx_z for the corresponding Test Cut
-   //Take the Y projection of unc_vtx_z < zcut to be the signal_vdSelZ
-   TH2F* vtx_z_hh = (TH2F*)histos2d[m_name+"_unc_vtx_z_vs_true_vtx_z_"+cutname+"_hh"];
-   std::cout << "Taking y projection of unc_v_true_vtx_z between " << vtx_z_hh->GetXaxis()->FindBin(zcut)+1 <<
-       " and " << vtx_z_hh->GetXaxis()->GetNbins() << std::endl;
-   TH1F* true_vtx_z_h = (TH1F*)vtx_z_hh->ProjectionY((m_name+"_"+cutname+"_"+"true_vtx_z_projy").c_str(),vtx_z_hh->GetXaxis()->FindBin(zcut)+1,vtx_z_hh->GetXaxis()->GetNbins(),"");
-
-   //Initialize the vd selection histogram by cloning the structure of vdSimZ
-   TH1F* vdSelZ_h = (TH1F*)vdSimZ_h->Clone(("signal_vdSelZ_"+cutname+"_h").c_str());
-   for(int i=0; i<201; i++){
-       vdSelZ_h->SetBinContent(i,vdSelZ_h->GetBinContent(i));
-   }
-
-   //take the efficiency of vdSelZ to vdSimZ to get F(z)
-   TEfficiency* effCalc_h = new TEfficiency(*vdSelZ_h, *vdSimZ_h_);
-
-}
-*/
-
-/*
-bool ZBiHistos::setTestZtailNevents() {
-
-    TF1* fitFunc = new TF1("fitfunc", "[0]* exp( (x<=([1]+[3]))*(-0.5*((x-[1])^2)/([2]^2)) + (x>=[1]+[3])*(-0.5*([3]^2/[2]^2)-(x-[1]-[3])/[4])  )", -100.0, 100.0);
-    std::string histoname = m_name+"_zVtx_h";
-    //if(histos1d[histoname]->GetEntries() < 1)
-
-    TFitResultPtr gausResult = (TFitResultPtr)histos1d[histoname]->Fit("gaus","QS"); 
-    double gaus1 = gausResult->GetParams()[1];
-    double gaus2 = gausResult->GetParams()[2];
-    std::cout << "Gaus param 1: " << gaus1 << std::endl;
-    std::cout << "Gaus param 2: " << gaus2 << std::endl;
-    gausResult = histos1d[histoname]->Fit("gaus","QS","",gaus1-3.0*gaus2, gaus1+10.0*gaus2);
-    gaus1 = gausResult->GetParams()[1];
-    gaus2 = gausResult->GetParams()[2];
-    double tailZ = gaus1 + 3.0*gaus2;
-    fitFunc->SetParameters(gausResult->GetParams()[0], gaus1, gaus2, gaus1+5.0*gaus2, 100.0);
-    TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "LSIM", "", gaus1-3.0*gaus2, 150.0);
-    double b = fitResult->GetParams()[3];
-    double l = fitResult->GetParams()[4];
-
-    double zcut = -6.0;
-    double testIntegral = fitFunc->Integral(zcut, 90.0);
-    while(testIntegral > max_tail_events){
-        zcut = zcut+0.1;
-        testIntegral = fitFunc->Integral(zcut, 90.0);
-    }
-    fitFunc->Draw();
-    return zcut;
-}
-*/
-
-double ZBiHistos::getIntegral(std::string histoname){
+double ZBiHistos::integrateHistogram1D(std::string histoname){
     int xmax; 
     int xmin;
     double integral;
@@ -110,11 +51,11 @@ double ZBiHistos::getIntegral(std::string histoname){
     return integral;
 }
 
-void ZBiHistos::change1dHistoTitle(std::string histoname, std::string title){
+void ZBiHistos::setHistogramTitle1D(std::string histoname, std::string title){
     histos1d[histoname]->SetTitle(title.c_str());
 }
 
-double ZBiHistos::cutFractionOfIntegral(std::string cutvariable, bool isCutGreaterThan, double cutFraction, double initialIntegral){
+double ZBiHistos::cutFractionOfSignalVariable(std::string cutvariable, bool isCutGreaterThan, double cutFraction, double initialIntegral){
 
     TH1F* histo = histos1d[m_name+"_"+cutvariable+"_h"];
     int xmax = histo->FindLastBinAbove(0.0);
@@ -136,16 +77,27 @@ double ZBiHistos::cutFractionOfIntegral(std::string cutvariable, bool isCutGreat
        }
     }
 
-    if(debug_){
-        std::cout << "[ZBiHistos] New Integral: " << histo->Integral(xmin,xmax) << std::endl;
-        std::cout << "[ZBiHistos] (New integral/Initial integral) = " << histo->Integral(xmin,xmax)/initialIntegral << 
-            std::endl;
-        std::cout << "[ZBiHistos] cut value = " << cutvalue << std::endl;
-    }
     return cutvalue;
 }
 
-void ZBiHistos::defineIterHistos(){
+void ZBiHistos::defineTestCutHistograms(IterativeCutSelector* testCutsSelector) {
+    for(std::map<std::string,std::pair<double,int>>::iterator it = 
+            testCutsSelector->getPointerToCuts()->begin(); it != testCutsSelector->getPointerToCuts()->end(); it++){
+        std::string name = it->first; 
+        //Used to select true z vertex distribution given a cut in unc_vtx_z
+        addHisto2d("unc_vtx_z_vs_true_vtx_z_"+name+"_hh","unc z_{vtx} [mm]",
+            1500, -50.0, 100.0,"true z_{vtx} [mm]",200,-50.3,149.7);
+        //signalSelZ
+        addHisto1d("signal_SelZ_"+name+"_h","true z_{vtx} [mm]",
+                200, -50.3, 149.7);
+        //tritrig zVtx
+        addHisto1d("background_zVtx_"+name+"_h","unc z_{vtx} [mm]",
+                150, -50.0, 100.0);
+    }
+}
+
+void ZBiHistos::defineZBiCutflowProcessorHistograms(){
+    //These histograms are used specifically for tracking the ZBitCutflowProcessor iterative process
     addHisto2d("persistent_cuts_hh","pct_sig_cut", 1000,-0.5,99.5,"cut_id",25,0.5,25.5);
     addHisto2d("test_cuts_ZBi_hh","pct_sig_cut", 1000,-0.5,99.5,"cut_id",25,0.5,25.5);
     addHisto2d("test_cuts_values_hh","pct_sig_cut", 1000,-0.5,99.5,"cut_id",25,0.5,25.5);
@@ -159,15 +111,14 @@ void ZBiHistos::set2DHistoYlabel(std::string histoName, int ybin, std::string yl
     histos2d[m_name+"_"+histoName]->GetYaxis()->SetBinLabel(ybin, ylabel.c_str());
 }
 
-std::vector<double> ZBiHistos::impactParameterCut(){
-
-    //Loop over 2d histo of z0 vs recon_z, taking projection at each recon_z
-    //Find the value of z0 in each projection that cuts 15% of signal
+std::vector<double> ZBiHistos::defineImpactParameterCut(double alpha){
+    //alpha defines the % of signal we allow to be cut. Default is 15%
     TH2F* hh = (TH2F*)histos2d[m_name+"_z0_v_recon_z_hh"];
+    addHisto1d("impact_parameter_up_h","recon_z [mm]", 450, -20.0, 70.0);
+    addHisto1d("impact_parameter_down_h","recon_z [mm]", 450, -20.0, 70.0);
     TH1F* up_h = (TH1F*)histos1d[m_name+"_impact_parameter_up_h"];
     TH1F* down_h = (TH1F*)histos1d[m_name+"_impact_parameter_down_h"];
 
-    std::cout << "Nbins in impactParameterCut: " << std::to_string(hh->GetEntries()) << std::endl;
     for(int i=0; i < hh->GetNbinsX(); i++){
 
         TH1F* projy = (TH1F*)hh->ProjectionY(("projy_bin_"+std::to_string(i+1)).c_str(),i+1,i+1);
@@ -179,7 +130,7 @@ std::vector<double> ZBiHistos::impactParameterCut(){
         double refIntegral = projy->Integral(start_bin,end_bin);
         int cutz0_bin = start_bin; 
         double testIntegral = refIntegral;
-        while(testIntegral > 0.90*refIntegral && cutz0_bin < end_bin-1){
+        while(testIntegral > (1.0-alpha)*refIntegral && cutz0_bin < end_bin-1){
             cutz0_bin = cutz0_bin + 1;           
             testIntegral = projy->Integral(cutz0_bin, end_bin);
         }
@@ -195,7 +146,7 @@ std::vector<double> ZBiHistos::impactParameterCut(){
         refIntegral = projy->Integral(end_bin, start_bin);
         cutz0_bin = start_bin; 
         testIntegral = refIntegral;
-        while(testIntegral > 0.90*refIntegral && cutz0_bin > end_bin+1){
+        while(testIntegral > (1.0-alpha)*refIntegral && cutz0_bin > end_bin+1){
             cutz0_bin = cutz0_bin - 1;           
             testIntegral = projy->Integral(end_bin, cutz0_bin);
         }
@@ -206,7 +157,6 @@ std::vector<double> ZBiHistos::impactParameterCut(){
         }
     }
 
-    //TF1* fitFunc = new TF1("linear_fit","[0] + [1]*x",5.0,70.0);
     TF1* fitFunc = new TF1("linear_fit","[0]*(x-[1])",5.0,70.0);
     TFitResultPtr fitResult = (TFitResultPtr)up_h->Fit("linear_fit","QS","",5.0,70.0);
     fitFunc->Draw();
@@ -227,8 +177,7 @@ std::vector<double> ZBiHistos::impactParameterCut(){
         x = x - 0.01;
     }
     double beta = .5*((m_p*(x-a_p)) + (m_p*(x-a_d)));
-    double alpha = x;
-    std::vector<double> params {m_p,a_p,m_d,a_d, beta, alpha};
+    std::vector<double> params {m_p,a_p,m_d,a_d, beta, x};
 
     delete fitFunc;
     return params;
@@ -324,7 +273,6 @@ TF1* ZBiHistos::getZTailFit(std::string cutname){
         }
     }
     */
-
 
      //Having issues with this fit sometimes. It occassionally underestimates bkg model
     int iteration = 80;

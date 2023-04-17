@@ -1,4 +1,24 @@
 {
+    "z0_v_recon_z_hh" : {
+        "binsX" : 450,
+        "minX" : -20.0,
+        "maxX" : 70.0,
+        "binsY" : 1000,
+        "minY" : -10.0,
+        "maxY" : 10.0,
+        "xtitle" : "recon_z [mm]",
+        "ytitle" : "z0 [mm]"
+    },
+    "z0_v_recon_zalpha_hh" : {
+        "binsX" : 450,
+        "minX" : -20.0,
+        "maxX" : 70.0,
+        "binsY" : 1000,
+        "minY" : -10.0,
+        "maxY" : 10.0,
+        "xtitle" : "recon_z [mm]",
+        "ytitle" : "z0 [mm]"
+    },
     "unc_vtx_mass_h" : {
         "bins" : 200,
         "minX" : 0.0,

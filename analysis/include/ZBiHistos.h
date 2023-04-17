@@ -19,6 +19,7 @@
 #include "TF1.h"
 #include <fstream>
 #include "TRandom3.h"
+#include "IterativeCutSelector.h"
 
 /**
  * @brief description
@@ -58,7 +59,7 @@ class ZBiHistos : public HistoManager{
             return histos1d;
         }
 
-        void change1dHistoTitle(std::string histoname, std::string title);
+        void setHistogramTitle1D(std::string histoname, std::string title);
     
         void writeHistos(TFile* outF, std::string folder);
 
@@ -66,19 +67,17 @@ class ZBiHistos : public HistoManager{
 
         void resetHistograms2d();
 
-        void addHistoClone1d(TH1F* parentHisto, std::string clone_histoname);
-
         void addHisto1d(std::string histoname, std::string xtitle, int nbinsX, float xmin, float xmax);
 
         void addHisto2d(std::string histoname, std::string xtitle, int nbinsX, float xmin, float xmax, std::string ytitle, int nbinsY, float ymin, float ymax);
 
-        void defineCutlistHistos(std::map<std::string,std::pair<double,int>> cutmap);
-
         void set2DHistoYlabel(std::string histoName, int ybin, std::string ylabel);
 
-        void defineAnalysisHistos();
+        std::vector<double> defineImpactParameterCut(double alpha = 0.15);
 
-        std::vector<double> impactParameterCut();
+        void defineTestCutHistograms(IterativeCutSelector* testCutsSelector);
+
+        void defineZBiCutflowProcessorHistograms();
 
         void printHistos1d(){
             std::cout << "Printing 1d histos" << std::endl;
@@ -102,8 +101,8 @@ class ZBiHistos : public HistoManager{
         void setDebug(bool value){debug_ = value;};
 
         //void iterativeSignalCuts(ZBiHistos *zbiHistos, IterativeCutSelector *cutSelector);
-        double cutFractionOfIntegral(std::string cutvariable, bool isCutGreaterThan, double cutFraction, double initialIntegral);
-        double getIntegral(std::string histoname);
+        double cutFractionOfSignalVariable(std::string cutvariable, bool isCutGreaterThan, double cutFraction, double initialIntegral);
+        double integrateHistogram1D(std::string histoname);
 
         TF1* fitZTailWithExp(std::string cutname);
 

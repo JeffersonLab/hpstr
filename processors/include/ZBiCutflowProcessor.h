@@ -71,6 +71,19 @@ class ZBiCutflowProcessor : public Processor {
 
     private:
 
+        //Histograms
+        std::shared_ptr<ZBiHistos> signalHistos_;
+        std::shared_ptr<ZBiHistos> bkgHistos_;
+        std::shared_ptr<ZBiHistos> testCutHistos_;
+        std::shared_ptr<ZBiHistos> processorHistos_;
+        /*
+        ZBiHistos* signalHistos_{nullptr};
+        ZBiHistos* bkgHistos_{nullptr};
+        ZBiHistos* cutHistos_{nullptr};
+        ZBiHistos* debugHistos_{nullptr};
+        ZBiHistos* summaryHistos_{nullptr};
+        */
+
         std::map<std::string,double> mcScale_;
         int debug_{0}; 
         std::string outFileName_{"zbi_out.root"};
@@ -90,11 +103,7 @@ class ZBiCutflowProcessor : public Processor {
         std::map<std::string, std::pair<double,int>>* testCutsPtr_;
         IterativeCutSelector *persistentCutsSelector_{nullptr};
         std::map<std::string, std::pair<double,int>>* persistentCutsPtr_;
-        ZBiHistos* cutHistos_{nullptr};
 
-        //histos
-        ZBiHistos* debugHistos_{nullptr};
-        ZBiHistos* summaryHistos_{nullptr};
 
         //signal
 
@@ -116,7 +125,6 @@ class ZBiCutflowProcessor : public Processor {
         std::string signalVtxAnaTreename_{""};
         std::string signalMCAnaFilename_{""};
         std::string signal_pdgid_{""};
-        ZBiHistos* signalHistos_{nullptr};
         TH1F* signalSimZ_h_{nullptr};
         MutableTTree* signalMTT_{nullptr};
         double signal_sf_ = 1.0;
@@ -131,7 +139,6 @@ class ZBiCutflowProcessor : public Processor {
         std::string bkgVtxAnaFilename_{""};
         std::string bkgVtxAnaTreename_{""};
         MutableTTree* bkgMTT_{nullptr};
-        ZBiHistos* bkgHistos_{nullptr};
 
         double luminosity_;
         double tritrig_sf_;
