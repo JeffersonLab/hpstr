@@ -71,6 +71,39 @@ void MutableTTree::Fill(){
     tree_ = newtree_;
 }
 
+bool MutableTTree::impactParameterCut2016Canonical(double mass){
+    mass = mass/1000.0;
+    double ele_z0 = getValue("unc_vtx_ele_track_z0");
+    double pos_z0 = getValue("unc_vtx_pos_track_z0");
+    double Z = getValue("unc_vtx_z");
+    //double dz = -0.377 + (13.79*mass) - (55.84*mass*mass) + (84.00*mass*mass*mass);
+    //Z = Z + dz;
+    double a = -0.2018;
+    double b0p = 5.199e-2;
+    double b1p = -2.301e-3;
+    double b0n = -4.716e-2;
+    double b1n = 1.086e-3;
+    double z0p_gt = a + b0p*Z + b1p*Z/mass;
+    double z0n_lt = -a + b0n*Z + b1n*Z/mass;
+
+    bool passCut = true;
+    if(Z < 6.0)
+        return passCut;
+    if(ele_z0 >= 0.0){
+       if(ele_z0 < z0p_gt) passCut = false; 
+    }
+    else
+        if(ele_z0 > z0n_lt) passCut = false;
+
+    if(pos_z0 >= 0.0){
+       if(pos_z0 < z0p_gt) passCut = false; 
+    }
+    else
+        if(pos_z0 > z0n_lt) passCut = false;
+
+    return passCut;
+}
+
 void MutableTTree::addVariableZalpha(double slope){
 
     double* ele_zalpha = new double{999.9};
@@ -81,10 +114,10 @@ void MutableTTree::addVariableZalpha(double slope){
     //I think I messed up the signs of things here
     //Define lambda function to calculate zalpha
     std::function<double()> calculateZalpha_ele = [&, slope]()->double{
-        if(*tuple_["unc_vtx_ele_track_z0"] > 0)
-            return *tuple_["unc_vtx_z"] - ((*tuple_["unc_vtx_ele_track_z0"]/slope));
+        if(*tuple_["unc_vtx_ele_track_z0"] > -0.1)
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"]+0.1)/slope)) );
         else
-            return *tuple_["unc_vtx_z"] - ((*tuple_["unc_vtx_ele_track_z0"])/(-1*slope));
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"]+0.1))/(-1*slope)) );
     };
     functions_["unc_vtx_ele_track_zalpha"] = calculateZalpha_ele;
 
@@ -95,10 +128,10 @@ void MutableTTree::addVariableZalpha(double slope){
 
     //Define lambda function to calculate zalpha
     std::function<double()> calculateZalpha_pos = [&,slope]()->double{
-        if(*tuple_["unc_vtx_pos_track_z0"] > 0)
-            return *tuple_["unc_vtx_z"] - ((*tuple_["unc_vtx_pos_track_z0"]/slope));
+        if(*tuple_["unc_vtx_pos_track_z0"] > -0.1)
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"]+0.1)/slope)) );
         else
-            return *tuple_["unc_vtx_z"] - ((*tuple_["unc_vtx_pos_track_z0"])/(-1*slope));
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"]+0.1))/(-1*slope)) );
     };
     functions_["unc_vtx_pos_track_zalpha"] = calculateZalpha_pos;
 }

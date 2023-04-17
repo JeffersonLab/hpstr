@@ -534,6 +534,7 @@ void ZBiHistos::writeHistos(TFile* outF, std::string folder) {
         it->second->Write();
     }
     for (it2d it = histos2d.begin(); it!=histos2d.end(); ++it) {
+        std::cout << it->first << std::endl;
         if (!it->second){
             std::cout<<it->first<<" Null ptr in saving.."<<std::endl;
             continue;

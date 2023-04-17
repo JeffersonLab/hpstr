@@ -119,6 +119,7 @@ class ZBiCutflowProcessor : public Processor {
         ZBiHistos* signalHistos_{nullptr};
         TH1F* signalSimZ_h_{nullptr};
         MutableTTree* signalMTT_{nullptr};
+        double signal_sf_ = 1.0;
         double signal_mass_MeV_;
         double massRes_MeV_;
         double radFrac_;
@@ -141,6 +142,9 @@ class ZBiCutflowProcessor : public Processor {
 
         // ZAlpha Cut Variable 
         double zalpha_slope_;;
+
+        //Dev
+        bool testSpecialCut_ = false;
 };
 
 

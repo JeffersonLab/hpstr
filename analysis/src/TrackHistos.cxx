@@ -199,7 +199,6 @@ void TrackHistos::Fill2DTrack(Track* track, float weight, const std::string& trk
 void TrackHistos::Fill1DTrack(Track* track, float weight, const std::string& trkname) {
 
     double charge = (double) track->getCharge();
-    std::cout << "Charge " << charge << std::endl;
 
     //2D hits
     int n_hits_2d = track->getTrackerHitCount();

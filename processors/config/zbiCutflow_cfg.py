@@ -17,6 +17,21 @@ def massRes(mass):
     res = 9.73217e-01 + 3.63659e-02*mass + -7.32046e-05*mass*mass #2016 simps alic
     return res
 
+#2016 displaced A'
+def radFrac_ap(mGev):
+    frac = 0.1168 - 1.375*mGev + 10.19*pow(mGev,2) + 9.442*pow(mGev,3) - 367.5*pow(mGev,4) -1023*pow(mGev,5)
+    return frac
+
+#2016 displaced A'
+def nbin_2016_tenpct(mGev):
+    nbin = exp(4.903 + 208.3*mGev - 1880*pow(mGev,2) - 1868*pow(mGev,3) + 6.820e4*pow(mGev,4) - 1.980e5*pow(mGev,5))
+    return nbin
+
+#2016 displaced A'
+def massRes_ap(MeV):
+    res = 0.9348 + 0.05442*MeV - 5.784e-4*pow(MeV,2) + 5.852e-6*pow(MeV,3) - 1.724e-8*pow(MeV,4)
+    return res
+
 base.parser.add_argument("-s", "--zalpha_slope", type=float, dest="zalpha_slope",
             help="Input slope of zalpha cut", metavar="zalpha_slope", default=0.0271352)
 
@@ -50,9 +65,11 @@ p.libraries.append("libprocessors.so")
 #          Processors         #
 ################################
 
+
 #Get expected signal calculation values
 dNdm_VdMass = {50.0:602.e3 , 60.0:324.e3 , 75.0:93200 , 90.0:26247 , 110.0:4133}
 logeps2_VdMass = {50.0:-6.3 , 60.0:-6.4 , 75.0:-6.6, 90.0:-6.7 , 110.0:-6.8}
+
 simp_vd_mass = options.mass
 simp_Ap_mass = simp_vd_mass*(3.0/1.8)
 radFrac = radFrac(simp_Ap_mass)
@@ -62,6 +79,7 @@ dNdm = dNdm_VdMass[simp_vd_mass]
 logeps2 = logeps2_VdMass[simp_vd_mass]
 
 zbi = HpstrConf.Processor('zbi','ZBiCutflowProcessor')
+zbi.parameters['testSpecialCut'] = 0
 zbi.parameters['debug'] = options.debug
 zbi.parameters['outFileName'] = options.outFilename
 zbi.parameters['cuts_cfgFile'] = '/sdf/group/hps/users/alspellm/src/test/hpstr/analysis/selections/simps/iterativeCuts.json'

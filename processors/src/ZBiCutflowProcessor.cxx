@@ -41,6 +41,7 @@ void ZBiCutflowProcessor::configure(const ParameterSet& parameters) {
             parameters.getString("signalMCAnaFilename",signalMCAnaFilename_);
         signal_pdgid_ =
             parameters.getString("signal_pdgid", signal_pdgid_);
+        signal_sf_ = parameters.getDouble("signal_sf", signal_sf_);
 
         //Background
         bkgVtxAnaFilename_ = parameters.getString("bkgVtxAnaFilename", bkgVtxAnaFilename_);
@@ -61,6 +62,9 @@ void ZBiCutflowProcessor::configure(const ParameterSet& parameters) {
         simp_radAcc_ = parameters.getDouble("simp_radAcc",simp_radAcc_);
         dNdm_ = parameters.getDouble("dNdm",dNdm_);
         logEps2_ = parameters.getDouble("logEps2",logEps2_);
+
+        //Dev
+        testSpecialCut_ = parameters.getInteger("testSpecialCut", testSpecialCut_);
 
     }
     catch (std::runtime_error& error)
@@ -323,6 +327,7 @@ double ZBiCutflowProcessor::round(double var){
 bool ZBiCutflowProcessor::process(){
     std::cout << "[ZBiCutflowProcessor] process()" << std::endl;
 
+    /*
     //Initialize various values (NEED TO BE CONFIGURABLE THROUGH SINGLE JSON)
     double signal_mass_MeV_ = 55.0;
     double massRes_MeV_ = 3.0;
@@ -330,6 +335,7 @@ bool ZBiCutflowProcessor::process(){
     double simp_radAcc_ = 0.125;
     double dNdm_ = 513800.0;
     //double dNdm_ = 372000.0; <- not sure where i got this number...
+    */
 
     //Each iteration loops over the set of cuts being tested. The expected signal and background
     //rate is calculated given each cut independently. 
@@ -339,7 +345,7 @@ bool ZBiCutflowProcessor::process(){
     
     double cutFraction = step_size_;
     int max_iteration = (int)1.0/cutFraction;
-    max_iteration = 30;
+    max_iteration = 5;
 
     //For each Test Cut variable, cut n% of signal in that variable, to determine the 
     //Test Cut value. 
@@ -353,7 +359,7 @@ bool ZBiCutflowProcessor::process(){
     //The Test Cut with the overall largest ZBi value is chosen to be the single best 
     //cut that maximizes the signal significance. 
     //The best Test Cut is henceforth applied to all events, and the iterative process continues.
-    for(int iteration = 1; iteration < max_iteration; iteration ++){
+    for(int iteration = 0; iteration < max_iteration; iteration ++){
         double cutSignal = (double)iteration*step_size_*100.0;
         cutSignal = round(cutSignal);
         if(debug_) std::cout << "############### ITERATION " 
@@ -363,6 +369,7 @@ bool ZBiCutflowProcessor::process(){
         signalHistos_->resetHistograms1d();
         signalHistos_->resetHistograms2d();
         bkgHistos_->resetHistograms1d();
+        bkgHistos_->resetHistograms2d();
         cutHistos_->resetHistograms1d();
         cutHistos_->resetHistograms2d();
 
@@ -386,6 +393,11 @@ bool ZBiCutflowProcessor::process(){
             //Apply persistent cuts
             if(failPersistentCuts(signalMTT_))
                 continue;
+
+            signalHistos_->Fill2DHisto("z0_v_recon_z_hh",signalMTT_->getValue("unc_vtx_z"),signalMTT_->getValue("unc_vtx_ele_track_z0"));
+            signalHistos_->Fill2DHisto("z0_v_recon_z_hh",signalMTT_->getValue("unc_vtx_z"),signalMTT_->getValue("unc_vtx_pos_track_z0"));
+            signalHistos_->Fill2DHisto("z0_v_recon_z_alpha_hh",signalMTT_->getValue("unc_vtx_ele_track_zalpha"), signalMTT_->getValue("unc_vtx_ele_track_z0"));
+            signalHistos_->Fill2DHisto("z0_v_recon_z_alpha_hh",signalMTT_->getValue("unc_vtx_pos_track_zalpha"), signalMTT_->getValue("unc_vtx_pos_track_z0"));
 
             //Fill signal variable histograms
             std::vector<std::string> variables = signalMTT_->getAllVariables();
@@ -421,6 +433,11 @@ bool ZBiCutflowProcessor::process(){
             //Apply persistent cuts
             if(failPersistentCuts(bkgMTT_))
                 continue;
+
+            bkgHistos_->Fill2DHisto("z0_v_recon_z_hh",bkgMTT_->getValue("unc_vtx_z"),bkgMTT_->getValue("unc_vtx_ele_track_z0"));
+            bkgHistos_->Fill2DHisto("z0_v_recon_z_hh",bkgMTT_->getValue("unc_vtx_z"),bkgMTT_->getValue("unc_vtx_pos_track_z0"));
+            bkgHistos_->Fill2DHisto("z0_v_recon_z_alpha_hh",bkgMTT_->getValue("unc_vtx_ele_track_zalpha"), bkgMTT_->getValue("unc_vtx_ele_track_z0"));
+            bkgHistos_->Fill2DHisto("z0_v_recon_z_alpha_hh",bkgMTT_->getValue("unc_vtx_pos_track_zalpha"), bkgMTT_->getValue("unc_vtx_pos_track_z0"));
 
             //Fill background variable histograms before applying Test Cuts
             std::vector<std::string> variables = bkgMTT_->getAllVariables();
@@ -556,6 +573,29 @@ bool ZBiCutflowProcessor::process(){
                 min_zcut = max_zcut;
             std::cout << "Minimum Zcut value: " << min_zcut << std::endl;
 
+            outFile_->cd();
+            //Get signal unc_vtx_z vs true_vtx_z for the corresponding Test Cut
+            TH2F* vtx_z_hh = (TH2F*)cutHistos_->get2dHisto("cutHistos_unc_vtx_z_vs_true_vtx_z_"+cutname+"_hh");
+            vtx_z_hh->Write();
+
+            //Get the signal vtx z selection efficiency *before* zcut is applied
+            TH1F* true_vtx_NoZ_h = (TH1F*)vtx_z_hh->ProjectionY((cutname+"_"+"true_vtx_z_projy").c_str(),1,vtx_z_hh->GetXaxis()->GetNbins(),"");
+            true_vtx_NoZ_h->Write();
+            std::cout << "true_vtx_NoZ_h " << std::endl;
+            std::cout << true_vtx_NoZ_h->GetNbinsX() << std::endl;
+            TH1F* signalSelNoZ_h = 
+                (TH1F*)signalSimZ_h_->Clone(("cutHistos_signal_SelNoZ_"+cutname+"_h").c_str());
+            std::cout << "cloned signalSelNoZ_h " << std::endl;
+            std::cout << signalSelNoZ_h->GetNbinsX() << std::endl;
+            for(int i=0; i<201; i++){
+                signalSelNoZ_h->SetBinContent(i,true_vtx_NoZ_h->GetBinContent(i));
+            }
+            signalSelNoZ_h->Write();
+            signalSimZ_h_->Write();
+            TEfficiency* Seff_e = new TEfficiency(*signalSelNoZ_h, *signalSimZ_h_);
+            Seff_e->SetName("prompt_signal_efficiency");
+            std::cout << "Made signal vtx z selection" << std::endl;
+
             //Scan over range of zcut values, fit background model to determine Nbkg
             double best_scan_zbi = -999.9;
             double best_scan_zcut;
@@ -569,13 +609,11 @@ bool ZBiCutflowProcessor::process(){
                 //std::cout << "Nbkg between " << zcut << " and " << 
                 //    bkg_model->GetXmax() << " = " << Nbkg << std::endl;
 
-                //Get signal unc_vtx_z vs true_vtx_z for the corresponding Test Cut
-                //Take the Y projection of unc_vtx_z < zcut to be the signal_signalSelZ
-                TH2F* vtx_z_hh = (TH2F*)cutHistos_->get2dHisto("cutHistos_unc_vtx_z_vs_true_vtx_z_"+cutname+"_hh");
                 //std::cout << "Taking y projection of unc_v_true_vtx_z between " 
                 //    << vtx_z_hh->GetXaxis()->FindBin(zcut)+1 << " and " << 
                 //    vtx_z_hh->GetXaxis()->GetNbins() << std::endl;
 
+                //Take the Y projection of unc_vtx_z < zcut to be the signal_signalSelZ
                 TH1F* true_vtx_z_h = (TH1F*)vtx_z_hh->ProjectionY((std::to_string(zcut)+"_"+cutname+"_"+"true_vtx_z_projy").c_str(),vtx_z_hh->GetXaxis()->FindBin(zcut)+1,vtx_z_hh->GetXaxis()->GetNbins(),"");
 
                 //We need to take the signal selection efficiency, the binned ratio of 
@@ -591,7 +629,7 @@ bool ZBiCutflowProcessor::process(){
                 //in calculating the expected signal for both SIMPS and displaced A's
                 TEfficiency* effCalc_h = new TEfficiency(*signalSelZ_h, *signalSimZ_h_);
 
-                std::string calculation_type_ = "simps";
+                std::string calculation_type_ = "canonical";
                 double Nsig = 0.0;
                 if(calculation_type_ == "simps"){
 
@@ -634,6 +672,29 @@ bool ZBiCutflowProcessor::process(){
                         Nsig = Nsig + tot_apProd*effVtx*br_V_to_ee*br_Vpi_val;
                     }
                 }
+                if(calculation_type_ == "canonical"){
+                    //Prompt decay efficiency
+                    double Seff = (Seff_e->GetEfficiency(47) + Seff_e->GetEfficiency(48) 
+                        + Seff_e->GetEfficiency(49)) / 3.0;
+                    if(Seff > 0)
+                        Seff = 1.0/Seff;
+
+                    double eps2 = std::pow(10, logEps2_);
+                    double eps = std::sqrt(eps2);
+
+                    //lifetime
+                    double gcTau = 8.0*(2.3/10.0)*(1e-8/eps2)*
+                        std::pow(100.0/signal_mass_MeV_, 2);
+                    double effVtx = 0.0;
+                    for(int zbin =0; zbin < 201; zbin++){
+                        double zz = signalSelZ_h->GetBinLowEdge(zbin);
+                        if(zz < zcut) continue;
+                        effVtx += (TMath::Exp((-4.3-zz)/gcTau)/gcTau)*Seff*
+                            (effCalc_h->GetEfficiency(zbin))*
+                            signalSelZ_h->GetBinWidth(zbin);
+                    }
+                    Nsig = signal_sf_*205.5*3.1416*eps2*signal_mass_MeV_*radFrac_*dNdm_*effVtx;
+                }
 
                 //CLEAR POINTERS
                 delete effCalc_h;
@@ -649,11 +710,12 @@ bool ZBiCutflowProcessor::process(){
                 double ZBi = calculateZBi(n_on, n_off, tau);
                 ZBi = round(ZBi);
 
-                //std::cout << "Nsig = " << Nsig << std::endl;
-                //std::cout << "n_bkg: " << Nbkg << std::endl;
-                //std::cout << "n_on: " << n_on << std::endl;
-                //std::cout << "n_off: " << n_off << std::endl;
-                //std::cout << "ZBi: " << ZBi << std::endl;
+                std::cout << "Zcut = " << zcut << std::endl;
+                std::cout << "Nsig = " << Nsig << std::endl;
+                std::cout << "n_bkg: " << Nbkg << std::endl;
+                std::cout << "n_on: " << n_on << std::endl;
+                std::cout << "n_off: " << n_off << std::endl;
+                std::cout << "ZBi: " << ZBi << std::endl;
 
                 //Update Test Cut with best scan values
                 if(ZBi > best_scan_zbi){
@@ -682,6 +744,7 @@ bool ZBiCutflowProcessor::process(){
             writeGraph(outFile_, "testCutsPtr_pct_sig_cut_"+std::to_string(cutSignal), 
                     zcutscan_nsig_g);
 
+            /*
             //Save 2d histos
             outFile_->cd();
             TDirectory* dir{nullptr};
@@ -689,6 +752,7 @@ bool ZBiCutflowProcessor::process(){
             dir->cd();
             nsig_zcut_hh->Write();
             nbkg_zcut_hh->Write();
+            */
 
             //delete TGraph pointers
             delete zcutscan_zbi_g;
@@ -798,6 +862,14 @@ bool ZBiCutflowProcessor::failPersistentCuts(MutableTTree* MTT){
             break;
         }
     }
+
+    //Testing 2016 impact parameter cut 04/10/2023
+    //THIS SHOULD EVENTUALLY BE REMOVED
+    if(testSpecialCut_){
+        if(!MTT->impactParameterCut2016Canonical(signal_mass_MeV_))
+            failCuts = true;
+    }
+
     return failCuts;
 }
 
@@ -835,7 +907,10 @@ void ZBiCutflowProcessor::getSignalMCAnaVtxZ_h(std::string signalMCAnaFilename,
     signalSimZ_h_ = new TH1F("signal_SimZ_h_","signal_SimZ;true z_{vtx} [mm];events", 200, -50.3, 149.7);
     TFile* signalMCAnaFile = new TFile(signalMCAnaFilename_.c_str(), "READ");
     //TH1F* mcAnaSimZ_h = (TH1F*)signalMCAnaFile->Get("mcAna/mcAna_mc625Z_h");
-    TH1F* mcAnaSimZ_h = (TH1F*)signalMCAnaFile->Get(("mcAna/mcAna_mc"+signal_pdgid+"Z_h").c_str());
+    //TH1F* mcAnaSimZ_h = (TH1F*)signalMCAnaFile->Get(("mcAna/mcAna_mc"+signal_pdgid+"Z_h").c_str()); //<-HARDCODE CHANGE 
+    TH1F* mcAnaSimZ_h = (TH1F*)signalMCAnaFile->Get(("mcAna/mcAna_truthRadEleczPos_h")); //<-HARDCODE CHANGE 
+    outFile_->cd();
+    mcAnaSimZ_h->Write();
     for(int i=0; i < 201; i++){
         signalSimZ_h_->SetBinContent(i,mcAnaSimZ_h->GetBinContent(i));
     }
