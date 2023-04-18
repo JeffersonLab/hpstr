@@ -7,9 +7,9 @@ from baseConfig import bfield
 base.parser.add_argument("-w", "--tracking", type=str, dest="tracking",
                          help="Which tracking to use to make plots", metavar="tracking", default="KF")
 base.parser.add_argument("-s", "--truthHits", type=int, dest="truthHits",
-                         help="Get svt truth hits: 1=yes", metavar="truthHits", default=1)
+                         help="Get svt truth hits: 1=yes", metavar="truthHits", default=0)
 base.parser.add_argument("-r", "--rawHits", type=int, dest="rawHits",
-        help="Keep raw svt hits: 1=yes", metavar="rawHits", default=1)
+        help="Keep raw svt hits: 1=yes", metavar="rawHits", default=0)
 
 options = base.parser.parse_args()
 
@@ -92,7 +92,7 @@ trackgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
 trackgbl.parameters["trkRelCollLcio"] = 'TrackDataRelations'
 trackgbl.parameters["trkhitCollRoot"] = 'RotatedHelicalOnTrackHits'
 trackgbl.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
-trackgbl.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack'
+trackgbl.parameters["rawhitCollRoot"] = ''#'SVTRawHitsOnTrack'
 trackgbl.parameters["bfield"] = bfield[str(options.year)]
 
 # if (not options.isData):
