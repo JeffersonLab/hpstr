@@ -28,7 +28,7 @@ void ZBiCutflowProcessor::configure(const ParameterSet& parameters) {
 
         //MC Scale factors
         luminosity_ = parameters.getDouble("luminosity",luminosity_);
-        tritrig_sf_ = parameters.getDouble("tritrig",tritrig_sf_);
+        tritrig_sf_ = parameters.getDouble("tritrig_sf",tritrig_sf_);
 
         //MC Signal
         signalHistCfgFilename_ = 
@@ -70,17 +70,6 @@ void ZBiCutflowProcessor::configure(const ParameterSet& parameters) {
     catch (std::runtime_error& error)
     {
         std::cout << error.what() << std::endl;
-    }
-}
-
-void ZBiCutflowProcessor::initializeFlatTuple(TTree* tree, std::map<std::string, double*> &tuple_map){
-    int nBr = tree->GetListOfBranches()->GetEntries();
-    for(int iBr = 0; iBr < nBr; iBr++){
-        TBranch *br = dynamic_cast<TBranch*>(tree->GetListOfBranches()->At(iBr)); 
-        double* value = new double;
-        std::string varname = (std::string)br->GetFullName();
-        tuple_map[varname] = value;
-        tree->SetBranchAddress(varname.c_str(),tuple_map[varname]);
     }
 }
 
@@ -139,13 +128,13 @@ void ZBiCutflowProcessor::filterCuts(){
 
 void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFilename){
     std::cout << "[ZBiCutflowProcessor] Initialize" << std::endl;
+
     //Initialize output file
     outFile_ = new TFile(outFileName_.c_str(),"RECREATE");
 
     //Signal MC must be used to calculate the expected signal
-    //Get the Vd pretrigger simulated vertex z distribution
+    //Get the signal pretrigger simulated vertex z distribution
     getSignalMCAnaVtxZ_h(signalMCAnaFilename_, signal_pdgid_); 
-
 
     //Read signal ana vertex tuple, and convert to mutable tuple
     TFile* signalVtxAnaFile = new TFile(signalVtxAnaFilename_.c_str(),"READ");
@@ -156,25 +145,38 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     TFile* bkgVtxAnaFile = new TFile(bkgVtxAnaFilename_.c_str(),"READ");
     bkgMTT_ = new MutableTTree(bkgVtxAnaFile, bkgVtxAnaTreename_);
     bkgMTT_->defineMassWindow(lowMass_, highMass_);
+    bkgMTT_->shiftVariable("unc_vtx_ele_track_z0", 0.1);
+    bkgMTT_->shiftVariable("unc_vtx_pos_track_z0", 0.1);
 
     //Add any newly defined cut variables to the mutable TTrees here
     //All new variables should be defined in the MutableTTree class
     signalMTT_->addVariableZalpha(zalpha_slope_);
     bkgMTT_->addVariableZalpha(zalpha_slope_);
+    signalMTT_->addVariableZbravo();
+    bkgMTT_->addVariableZbravo();
+    signalMTT_->addVariableZbravoAlpha(zalpha_slope_);
+    bkgMTT_->addVariableZbravoAlpha(zalpha_slope_);
+    signalMTT_->addVariableZbravosum();
+    bkgMTT_->addVariableZbravosum();
+    signalMTT_->addVariableZbravosumAlpha(zalpha_slope_);
+    bkgMTT_->addVariableZbravosumAlpha(zalpha_slope_);
     //Must fill the TTrees after adding all new variables. CAN ONLY FILL ONCE!
     signalMTT_->Fill();
     bkgMTT_->Fill();
-    std::cout << "LOOK a " << signalMTT_->GetEntries() << std::endl;
 
     //initialize cut selector for 'Persistent Cuts' (which are applied to every event)
-    persistentCutsSelector_ = new IterativeCutSelector("bestCuts", cuts_cfgFile_);
+    persistentCutsSelector_ = new IterativeCutSelector("persistentCuts", cuts_cfgFile_);
     persistentCutsSelector_->LoadSelection();
     persistentCutsPtr_ = persistentCutsSelector_->getPointerToCuts();
+    std::cout << "printing persistent cuts: " << std::endl;
+    persistentCutsSelector_->printCuts();
 
     //initalize Test Cuts (which will be iteratively changed)
     testCutsSelector_ = new IterativeCutSelector("testCuts",cuts_cfgFile_);
     testCutsSelector_->LoadSelection();
     testCutsPtr_ = testCutsSelector_->getPointerToCuts();
+    std::cout << "printing test cuts: " << std::endl;
+    testCutsSelector_->printCuts();
 
     //Cuts loaded in from json will not work if their cut variables are not accessible
     //Remove cuts where the cut variable is missing
@@ -182,24 +184,23 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
 
     //Initialize signal histograms
     signalHistos_= std::make_shared<ZBiHistos>("signal");
-    //signalHistos_ = new ZBiHistos("signal");
     signalHistos_->debugMode(debug_);
     signalHistos_->loadHistoConfig(signalHistCfgFilename_);
     signalHistos_->DefineHistos();
 
     ////Initialize background histograms
     bkgHistos_ = std::make_shared<ZBiHistos>("background");
-    //bkgHistos_ = new ZBiHistos("background");
     bkgHistos_->debugMode(debug_);
     bkgHistos_->loadHistoConfig(signalHistCfgFilename_);
     bkgHistos_->DefineHistos();
     
-    //Initialize cut histograms
-    testCutHistos_ = std::make_shared<ZBiHistos>("cutHistos");
+    //Initialize Test Cut histograms
+    testCutHistos_ = std::make_shared<ZBiHistos>("testCutHistos");
     testCutHistos_->debugMode(debug_);
+    testCutHistos_->DefineHistos();
     testCutHistos_->defineTestCutHistograms(testCutsSelector_);
 
-    //Initialize histograms that summarize iterative results
+    //Initialize processor histograms that summarize iterative results
     processorHistos_ = std::make_shared<ZBiHistos>("zbi_processor");
     processorHistos_->defineZBiCutflowProcessorHistograms();
 
@@ -207,68 +208,55 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     //scale = xsection*lumi/(madgraph_nevents*nfiles)
     mcScale_["tritrig"] = tritrig_sf_;
 
-    //Impact Parameter and Zalpha distributions
+    std::cout << "Filling initial signal histograms" << std::endl;
+    //Fill Initial Signal histograms
     for(int e=0; e < signalMTT_->GetEntries(); e++){
         signalMTT_->GetEntry(e);
-        std::vector<std::string> variables = signalMTT_->getAllVariables();
-        //Fill initial histograms of signal variables
-        //These variable distributions are used to cut n% of signal in a given variable
-        for(std::vector<std::string>::iterator it=variables.begin(); it != variables.end(); it++)        {
-            std::string var = *it;
-            if(signalHistos_->get1dHistos().count("signal_"+var+"_h")){
-                signalHistos_->Fill1DHisto(var+"_h", signalMTT_->getValue(var));
-            }
-        }
-        signalHistos_->Fill2DHisto("z0_v_recon_z_hh",signalMTT_->getValue("unc_vtx_z"),signalMTT_->getValue("unc_vtx_ele_track_z0"));
-        signalHistos_->Fill2DHisto("z0_v_recon_z_hh",signalMTT_->getValue("unc_vtx_z"),signalMTT_->getValue("unc_vtx_pos_track_z0"));
-        signalHistos_->Fill2DHisto("z0_v_recon_zalpha_hh",signalMTT_->getValue("unc_vtx_ele_track_zalpha"), signalMTT_->getValue("unc_vtx_ele_track_z0"));
-        signalHistos_->Fill2DHisto("z0_v_recon_zalpha_hh",signalMTT_->getValue("unc_vtx_pos_track_zalpha"), signalMTT_->getValue("unc_vtx_pos_track_z0"));
+        signalHistos_->fillEventVariableHistograms(signalMTT_);
     }
 
-    //Impact Parameter and Zalpha distributions
-    //Tritrig
+    std::cout << "Filling initial background histograms" << std::endl;
+    //Fill Initial Background Histograms
     for(int e=0; e < bkgMTT_->GetEntries(); e++){
         bkgMTT_->GetEntry(e);
-        std::vector<std::string> variables = bkgMTT_->getAllVariables();
-        for(std::vector<std::string>::iterator it=variables.begin(); it != variables.end(); it++)        {
-            std::string var = *it;
-            if(bkgHistos_->get1dHistos().count("background_"+var+"_h")){
-                bkgHistos_->Fill1DHisto(var+"_h", bkgMTT_->getValue(var));
-            }
-        }
-        bkgHistos_->Fill2DHisto("z0_v_recon_z_hh",bkgMTT_->getValue("unc_vtx_z"),bkgMTT_->getValue("unc_vtx_ele_track_z0"));
-        bkgHistos_->Fill2DHisto("z0_v_recon_z_hh",bkgMTT_->getValue("unc_vtx_z"),bkgMTT_->getValue("unc_vtx_pos_track_z0"));
-        bkgHistos_->Fill2DHisto("z0_v_recon_zalpha_hh",bkgMTT_->getValue("unc_vtx_ele_track_zalpha"), bkgMTT_->getValue("unc_vtx_ele_track_z0"));
-        bkgHistos_->Fill2DHisto("z0_v_recon_zalpha_hh",bkgMTT_->getValue("unc_vtx_pos_track_zalpha"), bkgMTT_->getValue("unc_vtx_pos_track_z0"));
+        bkgHistos_->fillEventVariableHistograms(bkgMTT_);
     }
     
     //Write initial variable histograms for signal and background
-    signalHistos_->writeHistos(outFile_,"");
-    bkgHistos_->writeHistos(outFile_,"");
+    std::cout << "Writing Initial Histograms" << std::endl;
+    signalHistos_->writeHistos(outFile_,"initial_signal");
+    bkgHistos_->writeHistos(outFile_,"initial_background");
 
     //Integrate each signal variable distribution
     //This value is the reference for cutting n% of signal in a given variable
-    std::vector<std::string> variables = signalMTT_->getAllVariables();
-    for(std::vector<std::string>::iterator it=variables.begin(); it != variables.end(); it++){
-        std::string var = *it;
+    std::cout << "Integrate initial signal histograms" << std::endl;
+    //std::vector<std::string> variables = signalMTT_->getAllVariables();
+    for(cut_iter_ it=testCutsPtr_->begin(); it!=testCutsPtr_->end(); it++){
+        std::string cutname = it->first;
+        std::cout << "Cutname: " << cutname << std::endl;
+        std::string var = persistentCutsSelector_->getCutVar(cutname);
+        std::cout << "Integrating signal histogram for " << var << std::endl;
         initialIntegrals_[var] = signalHistos_->integrateHistogram1D("signal_"+var+"_h");
     }
+    /*
+    for(std::vector<std::string>::iterator it=variables.begin(); it != variables.end(); it++){
+        std::string var = *it;
+        std::cout << "Integrating signal histogram for " << var << std::endl;
+        initialIntegrals_[var] = signalHistos_->integrateHistogram1D("signal_"+var+"_h");
+    }
+    */
 
     //Set the values for the initial set of 'persistentCuts' based on the signal 
     //variable histograms cutting 0% of signal
+    std::cout << "Initialize persistent cuts" << std::endl;
     for(cut_iter_ it=persistentCutsPtr_->begin(); it!=persistentCutsPtr_->end(); it++){
         std::string cutname = it->first;
         std::string cutvar = persistentCutsSelector_->getCutVar(cutname);
-        /*
-        //If the cut does not correspond to a variable in the signal tuple, skip the cut. 
-        //The value of a cut fitting this criteria will be whatever it says in the cut config file
-        if (std::find(variables.begin(), variables.end(), cutvar) == variables.end())
-            continue;
-            */
         bool isCutGT = persistentCutsSelector_->isCutGreaterThan(cutname);
         double cutvalue = signalHistos_->cutFractionOfSignalVariable(cutvar, isCutGT, 0.0, initialIntegrals_[cutvar]);
         persistentCutsSelector_->setCutValue(cutname, cutvalue);
-        if(debug_) std::cout << "[Persistent Cuts] Cut "<< cutname << " updated to: " << persistentCutsSelector_->getCut(cutname) << std::endl;
+        if(debug_) std::cout << "[Persistent Cuts] Cut "<< cutname << " updated to: " << 
+            persistentCutsSelector_->getCut(cutname) << std::endl;
     }
 }
 
@@ -298,7 +286,7 @@ bool ZBiCutflowProcessor::process(){
     
     double cutFraction = step_size_;
     int max_iteration = (int)1.0/cutFraction;
-    max_iteration = 5;
+    max_iteration = 30;
 
     //For each Test Cut variable, cut n% of signal in that variable, to determine the 
     //Test Cut value. 
@@ -328,8 +316,7 @@ bool ZBiCutflowProcessor::process(){
         testCutHistos_->resetHistograms1d();
         testCutHistos_->resetHistograms2d();
 
-        //At the start of each iteration, save the values of each cut that is applied
-        //to all of the events
+        //At the start of each iteration, save the persistent cut values
         for(cut_iter_ it=persistentCutsPtr_->begin(); it!=persistentCutsPtr_->end(); it++){
             std::string cutname = it->first;
             double cutvalue = persistentCutsSelector_->getCut(cutname);
@@ -339,30 +326,15 @@ bool ZBiCutflowProcessor::process(){
             processorHistos_->set2DHistoYlabel("persistent_cuts_hh",cutid,cutname);
         }
 
-        //First, apply persistent cuts to all events.
-        //For all signal variables, build the variable distributions (histogram configs
-        //are defined in json configuration file).
+        //Fill signal variable distributions
         for(int e=0;  e < signalMTT_->GetEntries(); e++){
             signalMTT_->GetEntry(e);
 
-            //Apply persistent cuts
+            //Apply persistent cuts to all events
             if(failPersistentCuts(signalMTT_))
                 continue;
 
-            signalHistos_->Fill2DHisto("z0_v_recon_z_hh",signalMTT_->getValue("unc_vtx_z"),signalMTT_->getValue("unc_vtx_ele_track_z0"));
-            signalHistos_->Fill2DHisto("z0_v_recon_z_hh",signalMTT_->getValue("unc_vtx_z"),signalMTT_->getValue("unc_vtx_pos_track_z0"));
-            signalHistos_->Fill2DHisto("z0_v_recon_zalpha_hh",signalMTT_->getValue("unc_vtx_ele_track_zalpha"), signalMTT_->getValue("unc_vtx_ele_track_z0"));
-            signalHistos_->Fill2DHisto("z0_v_recon_zalpha_hh",signalMTT_->getValue("unc_vtx_pos_track_zalpha"), signalMTT_->getValue("unc_vtx_pos_track_z0"));
-
-            //Fill signal variable histograms
-            std::vector<std::string> variables = signalMTT_->getAllVariables();
-            for(std::vector<std::string>::iterator it=variables.begin(); 
-                    it != variables.end(); it++){
-                std::string var = *it;
-                if(signalHistos_->get1dHistos().count("signal_"+var+"_h")){
-                    signalHistos_->Fill1DHisto(var+"_h",signalMTT_->getValue(var));
-                }
-            }
+            signalHistos_->fillEventVariableHistograms(signalMTT_);
         }
         
         //For each Test Cut, find the signal distribution in that Test Cut variable.
@@ -389,35 +361,29 @@ bool ZBiCutflowProcessor::process(){
             if(failPersistentCuts(bkgMTT_))
                 continue;
 
-            bkgHistos_->Fill2DHisto("z0_v_recon_z_hh",bkgMTT_->getValue("unc_vtx_z"),bkgMTT_->getValue("unc_vtx_ele_track_z0"));
-            bkgHistos_->Fill2DHisto("z0_v_recon_z_hh",bkgMTT_->getValue("unc_vtx_z"),bkgMTT_->getValue("unc_vtx_pos_track_z0"));
-            bkgHistos_->Fill2DHisto("z0_v_recon_zalpha_hh",bkgMTT_->getValue("unc_vtx_ele_track_zalpha"), bkgMTT_->getValue("unc_vtx_ele_track_z0"));
-            bkgHistos_->Fill2DHisto("z0_v_recon_zalpha_hh",bkgMTT_->getValue("unc_vtx_pos_track_zalpha"), bkgMTT_->getValue("unc_vtx_pos_track_z0"));
-
-            //Fill background variable histograms before applying Test Cuts
-            std::vector<std::string> variables = bkgMTT_->getAllVariables();
-            for(std::vector<std::string>::iterator it=variables.begin(); 
-                    it != variables.end(); it++){
-                std::string var = *it;
-                bkgHistos_->Fill1DHisto(var+"_h",bkgMTT_->getValue(var));
-            }
+            bkgHistos_->fillEventVariableHistograms(bkgMTT_);
 
             //Build background zVtx distribution corresponding to each Test Cut
             //These background distributions will later be transformed into background models
             for(cut_iter_ it=testCutsPtr_->begin(); it!=testCutsPtr_->end(); it++){
                std::string cutname = it->first;
                std::string cutvar = testCutsSelector_->getCutVar(cutname);
+
                //apply Test Cut
                if(failTestCut(cutname, bkgMTT_))
                    continue;
+
                 //If event passes, fill zVtx distribution
                 testCutHistos_->Fill1DHisto("background_zVtx_"+cutname+"_h",
-                        bkgMTT_->getValue("unc_vtx_z"),mcScale_["tritrig"]);
+                        bkgMTT_->getValue("unc_vtx_z"),1.0);
+
+                //Fill Test Cut variable distribution
                 if(testCutHistos_->get1dHistos().count("testCutHistos_"+cutvar+"_h")){
                     testCutHistos_->Fill1DHisto(cutvar+"_h",bkgMTT_->getValue(cutvar));
                 }
             }
         }
+
 
         //Knowing that we will eventually need to calculate the expected signal, and that 
         //the expected signal calculation requires both the 'true_vtx_z' distribution, and
@@ -497,7 +463,6 @@ bool ZBiCutflowProcessor::process(){
 
             //Fit the zvtx background distribution to get the background model as function of z
             std::cout << "[ZBiCutflowProcessor]::Fitting ztail" << std::endl;
-            //TF1* bkg_model = (TF1*)testCutHistos_->getZTailFit(cutname); <- Fit not great for low MC stats cases
             
             //This is temporary due to low MC stats
             //Fit 10.0 < vtxz < 100.0 with exp 
@@ -527,26 +492,23 @@ bool ZBiCutflowProcessor::process(){
 
             outFile_->cd();
             //Get signal unc_vtx_z vs true_vtx_z for the corresponding Test Cut
+            std::cout << "A" << std::endl;
             TH2F* vtx_z_hh = (TH2F*)testCutHistos_->get2dHisto("testCutHistos_unc_vtx_z_vs_true_vtx_z_"+cutname+"_hh");
-            vtx_z_hh->Write();
+            std::cout << "vtx_z_hh name: " << vtx_z_hh->GetName() << std::endl;
 
             //Get the signal vtx z selection efficiency *before* zcut is applied
             TH1F* true_vtx_NoZ_h = (TH1F*)vtx_z_hh->ProjectionY((cutname+"_"+"true_vtx_z_projy").c_str(),1,vtx_z_hh->GetXaxis()->GetNbins(),"");
-            true_vtx_NoZ_h->Write();
-            std::cout << "true_vtx_NoZ_h " << std::endl;
-            std::cout << true_vtx_NoZ_h->GetNbinsX() << std::endl;
+            std::cout << "B" << std::endl;
             TH1F* signalSelNoZ_h = 
                 (TH1F*)signalSimZ_h_->Clone(("testCutHistos_signal_SelNoZ_"+cutname+"_h").c_str());
-            std::cout << "cloned signalSelNoZ_h " << std::endl;
-            std::cout << signalSelNoZ_h->GetNbinsX() << std::endl;
+            std::cout << "C" << std::endl;
             for(int i=0; i<201; i++){
                 signalSelNoZ_h->SetBinContent(i,true_vtx_NoZ_h->GetBinContent(i));
             }
-            signalSelNoZ_h->Write();
-            signalSimZ_h_->Write();
+            std::cout << "D" << std::endl;
             TEfficiency* Seff_e = new TEfficiency(*signalSelNoZ_h, *signalSimZ_h_);
             Seff_e->SetName("prompt_signal_efficiency");
-            std::cout << "Made signal vtx z selection" << std::endl;
+            std::cout << "E" << std::endl;
 
             //Scan over range of zcut values, fit background model to determine Nbkg
             double best_scan_zbi = -999.9;
@@ -556,16 +518,9 @@ bool ZBiCutflowProcessor::process(){
             std::cout << "Looping over zcut values between: " << min_zcut << 
                 " to " << max_zcut << std::endl;
             for(double zcut = min_zcut; zcut < std::round(max_zcut+1.0); zcut = zcut+1.0){
-                //std::cout << "iterative zcut = " << zcut << std::endl;
                 double Nbkg = bkg_model->Integral(zcut,bkg_model->GetXmax());
-                //std::cout << "Nbkg between " << zcut << " and " << 
-                //    bkg_model->GetXmax() << " = " << Nbkg << std::endl;
-
-                //std::cout << "Taking y projection of unc_v_true_vtx_z between " 
-                //    << vtx_z_hh->GetXaxis()->FindBin(zcut)+1 << " and " << 
-                //    vtx_z_hh->GetXaxis()->GetNbins() << std::endl;
-
                 //Take the Y projection of unc_vtx_z < zcut to be the signal_signalSelZ
+                
                 TH1F* true_vtx_z_h = (TH1F*)vtx_z_hh->ProjectionY((std::to_string(zcut)+"_"+cutname+"_"+"true_vtx_z_projy").c_str(),vtx_z_hh->GetXaxis()->FindBin(zcut)+1,vtx_z_hh->GetXaxis()->GetNbins(),"");
 
                 //We need to take the signal selection efficiency, the binned ratio of 
@@ -581,7 +536,7 @@ bool ZBiCutflowProcessor::process(){
                 //in calculating the expected signal for both SIMPS and displaced A's
                 TEfficiency* effCalc_h = new TEfficiency(*signalSelZ_h, *signalSimZ_h_);
 
-                std::string calculation_type_ = "canonical";
+                std::string calculation_type_ = "simps";
                 double Nsig = 0.0;
                 if(calculation_type_ == "simps"){
 
@@ -695,16 +650,6 @@ bool ZBiCutflowProcessor::process(){
                     zcutscan_nbkg_g);
             writeGraph(outFile_, "testCutsPtr_pct_sig_cut_"+std::to_string(cutSignal), 
                     zcutscan_nsig_g);
-
-            /*
-            //Save 2d histos
-            outFile_->cd();
-            TDirectory* dir{nullptr};
-            dir = outFile_->mkdir(("testCutsPtr_pct_sig_cut_"+std::to_string(cutSignal)).c_str(),"",true);
-            dir->cd();
-            nsig_zcut_hh->Write();
-            nbkg_zcut_hh->Write();
-            */
 
             //delete TGraph pointers
             delete zcutscan_zbi_g;
@@ -858,14 +803,14 @@ void ZBiCutflowProcessor::getSignalMCAnaVtxZ_h(std::string signalMCAnaFilename,
     //Use mcAnaSimZ_h entries to set appropriately binned content in signalSimZ_h
     signalSimZ_h_ = new TH1F("signal_SimZ_h_","signal_SimZ;true z_{vtx} [mm];events", 200, -50.3, 149.7);
     TFile* signalMCAnaFile = new TFile(signalMCAnaFilename_.c_str(), "READ");
-    //TH1F* mcAnaSimZ_h = (TH1F*)signalMCAnaFile->Get("mcAna/mcAna_mc625Z_h");
-    //TH1F* mcAnaSimZ_h = (TH1F*)signalMCAnaFile->Get(("mcAna/mcAna_mc"+signal_pdgid+"Z_h").c_str()); //<-HARDCODE CHANGE 
-    TH1F* mcAnaSimZ_h = (TH1F*)signalMCAnaFile->Get(("mcAna/mcAna_truthRadEleczPos_h")); //<-HARDCODE CHANGE 
+    TH1F* mcAnaSimZ_h = (TH1F*)signalMCAnaFile->Get(("mcAna/mcAna_mc"+signal_pdgid+"Z_h").c_str()); //<-HARDCODE CHANGE 
+    //TH1F* mcAnaSimZ_h = (TH1F*)signalMCAnaFile->Get(("mcAna/mcAna_truthRadEleczPos_h")); //<-HARDCODE CHANGE 
     outFile_->cd();
-    mcAnaSimZ_h->Write();
+    //mcAnaSimZ_h->Write();
     for(int i=0; i < 201; i++){
         signalSimZ_h_->SetBinContent(i,mcAnaSimZ_h->GetBinContent(i));
     }
+    signalSimZ_h_->Write();
     signalMCAnaFile->Close();
     delete signalMCAnaFile;
 }

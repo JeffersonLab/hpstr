@@ -44,8 +44,6 @@ class ZBiCutflowProcessor : public Processor {
 
         virtual void initialize(std::string inFilename, std::string outFilename);
 
-        void initializeFlatTuple(TTree* tree, std::map<std::string, double*> &tuple_map);
-
         double calculateZBi(double n_on, double n_off, double tau);
 
         void printZBiMatrix();
@@ -62,6 +60,8 @@ class ZBiCutflowProcessor : public Processor {
 
         double round(double var);
 
+        //get signal truth vtx z distribution. Used to calculate expected
+        //signal
         void getSignalMCAnaVtxZ_h(std::string signalMCAnaFilename, std::string signal_pdgid);
 
         void testImpactParameterCut(MutableTTree* MTT, ZBiHistos* histos);

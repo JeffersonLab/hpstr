@@ -20,6 +20,7 @@
 #include <fstream>
 #include "TRandom3.h"
 #include "IterativeCutSelector.h"
+#include "MutableTTree.h"
 
 /**
  * @brief description
@@ -78,6 +79,8 @@ class ZBiHistos : public HistoManager{
         void defineTestCutHistograms(IterativeCutSelector* testCutsSelector);
 
         void defineZBiCutflowProcessorHistograms();
+
+        void fillEventVariableHistograms(MutableTTree* MTT);
 
         void printHistos1d(){
             std::cout << "Printing 1d histos" << std::endl;

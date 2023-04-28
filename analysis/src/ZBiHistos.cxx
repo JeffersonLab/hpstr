@@ -80,6 +80,41 @@ double ZBiHistos::cutFractionOfSignalVariable(std::string cutvariable, bool isCu
     return cutvalue;
 }
 
+void ZBiHistos::fillEventVariableHistograms(MutableTTree* MTT){
+
+    //Fill histograms for each variable defined in tree
+    std::vector<std::string> variables = MTT->getAllVariables();
+    for(std::vector<std::string>::iterator it=variables.begin(); it != variables.end(); it++) {
+        std::string var = *it;
+        Fill1DHisto(var+"_h", MTT->getValue(var));
+    }
+
+    //always fill
+    if(MTT->variableExists("unc_vtx_z") && MTT->variableExists("unc_vtx_ele_track_z0") 
+            && MTT->variableExists("unc_vtx_pos_track_z0")){
+        Fill2DHisto("z0_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_ele_track_z0"));
+        Fill2DHisto("z0_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_pos_track_z0"));
+    }
+
+    //Investigating new variables
+    if(MTT->variableExists("unc_vtx_ele_track_zalpha") && MTT->variableExists("unc_vtx_pos_track_zalpha")){
+        Fill2DHisto("z0_v_recon_zalpha_hh",MTT->getValue("unc_vtx_ele_track_zalpha"),MTT->getValue("unc_vtx_ele_track_z0"));
+        Fill2DHisto("z0_v_recon_zalpha_hh",MTT->getValue("unc_vtx_pos_track_zalpha"),MTT->getValue("unc_vtx_pos_track_z0"));
+    }
+    if(MTT->variableExists("unc_vtx_ele_zbravoalpha") && MTT->variableExists("unc_vtx_pos_zbravoalpha")){
+        Fill2DHisto("zbravo_v_zbravoalpha_hh",MTT->getValue("unc_vtx_ele_zbravoalpha"),MTT->getValue("unc_vtx_ele_zbravo"));
+        Fill2DHisto("zbravo_v_zbravoalpha_hh",MTT->getValue("unc_vtx_pos_zbravoalpha"),MTT->getValue("unc_vtx_pos_zbravo"));
+    }
+    if(MTT->variableExists("unc_vtx_ele_zbravo") && MTT->variableExists("unc_vtx_pos_zbravo")){
+        Fill2DHisto("zbravo_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_ele_zbravo"));
+        Fill2DHisto("zbravo_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_pos_zbravo"));
+    }
+    if(MTT->variableExists("unc_vtx_zbravosum")){
+        Fill2DHisto("zbravosum_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_zbravosum"));
+        Fill2DHisto("zbravosum_v_zbravosumalpha_hh",MTT->getValue("unc_vtx_zbravosumalpha"),MTT->getValue("unc_vtx_zbravosum"));
+    }
+}
+
 void ZBiHistos::defineTestCutHistograms(IterativeCutSelector* testCutsSelector) {
     for(std::map<std::string,std::pair<double,int>>::iterator it = 
             testCutsSelector->getPointerToCuts()->begin(); it != testCutsSelector->getPointerToCuts()->end(); it++){
