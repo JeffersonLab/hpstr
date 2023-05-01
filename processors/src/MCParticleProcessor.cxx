@@ -100,7 +100,7 @@ bool MCParticleProcessor::process(IEvent* ievent) {
 
         // Set the PDG of the particle
         std::vector<EVENT::MCParticle*> parentVec = lc_particle->getParents();
-        if(parentVec.size() > 0) particle->setMomPDG(parentVec.at(0)->getPDG());    
+        if(parentVec.size() > 0) particle->setMomPDG(parentVec.at(parentVec.size()-1)->getPDG());    
 
         // Set the generator status of the particle
         particle->setGenStatus(lc_particle->getGeneratorStatus());    
