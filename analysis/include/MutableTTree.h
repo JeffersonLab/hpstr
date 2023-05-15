@@ -36,6 +36,8 @@ class MutableTTree {
         void addVariableZbravosumAlpha(double slope);
         void shiftVariable(std::string variable, double shift);
         bool impactParameterCut2016Canonical(double mass);
+        bool testImpactParameterCut();
+        void addSelectionGreaterThan(std::string selection, double value);
 
         void shiftZ0(double shift);
 
@@ -77,6 +79,7 @@ class MutableTTree {
         std::map<std::string,TBranch*> new_branches;
         std::map<std::string, double*> new_variables_;
         std::map<std::string,std::function<double()>> functions_;
+        std::map<std::string, double> selectionGT_;
         std::map<std::string,std::function<double()>> variable_shifts_;
         double lowMass_{-999.9};
         double highMass_{-999.9};

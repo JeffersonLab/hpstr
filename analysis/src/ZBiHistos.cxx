@@ -227,7 +227,19 @@ TF1* ZBiHistos::fitZTailWithExp(std::string cutname){
             cutname << " tritrig zVtx distribution was empty and could not be fit!" << std::endl;
         return nullptr;
     }
-    TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", 10.0,100.0);
+    //Locate starting position of fit based on point beyond which there are 1000 events
+    int lastbin = histos1d[histoname]->FindLastBinAbove(0.0);
+    int firstbin = lastbin - 1;
+    double test_integral = 0.0;
+    while(test_integral < 200.0 && histos1d[histoname]->GetBinLowEdge(firstbin) > 0.0){
+        test_integral = histos1d[histoname]->Integral(firstbin, lastbin);
+        firstbin = firstbin - 1;
+    }
+
+    double xmin = histos1d[histoname]->GetBinLowEdge(firstbin);
+    double xmax = histos1d[histoname]->GetBinLowEdge(lastbin+1);
+
+    TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", xmin,xmax);
     double parm0 = fitResult->Parameter(0);
     double parm1 = fitResult->Parameter(1);
 
@@ -237,7 +249,7 @@ TF1* ZBiHistos::fitZTailWithExp(std::string cutname){
     int iteration = 20;
     for(int i=0; i < iteration; i++){
         fitFunc->SetParameters(parm0,parm1);
-        fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", 10.0,100.0);
+        fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", xmin,xmax);
         if(fitResult->Ndf() <= 0)
             continue;
         if(fitResult->Chi2()/fitResult->Ndf() < best_chi2){
@@ -248,7 +260,7 @@ TF1* ZBiHistos::fitZTailWithExp(std::string cutname){
     }
 
     fitFunc->SetParameters(best_parm0,best_parm1);
-    fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "LSIM", "", 10.0, 100.0);
+    fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "LSIM", "", xmin, xmax);
     fitFunc->Draw();
 
     return fitFunc;

@@ -186,43 +186,43 @@
         "ytitle" : "Events"
     },
     "unc_vtx_ele_track_zalpha_h" : {
-        "bins" : 750,
-        "minX" : -110.0,
-        "maxX" : 40.0,
+        "bins" : 540,
+        "minX" : -1000.0,
+        "maxX" : 80.0,
         "xtitle" : "e^{-} zalpha ",
         "ytitle" : "Events"
     },
     "unc_vtx_pos_track_zalpha_h" : {
-        "bins" : 750,
-        "minX" : -110.0,
-        "maxX" : 40.0,
+        "bins" : 540,
+        "minX" : -1000.0,
+        "maxX" : 80.0,
         "xtitle" : "e^{+} zalpha ",
         "ytitle" : "Events"
     },
     "unc_vtx_ele_zbravo_h" : {
-        "bins" : 1000,
+        "bins" : 400,
         "minX" : -2.0,
         "maxX" : 2.0,
         "xtitle" : "e^{-} zbravo ",
         "ytitle" : "Events"
     },
     "unc_vtx_pos_zbravo_h" : {
-        "bins" : 1000,
+        "bins" : 400,
         "minX" : -2.0,
         "maxX" : 2.0,
         "xtitle" : "e^{+} zbravoalpha ",
         "ytitle" : "Events"
     },
     "unc_vtx_ele_zbravoalpha_h" : {
-        "bins" : 180,
-        "minX" : -200.0,
+        "bins" : 540,
+        "minX" : -1000.0,
         "maxX" : 80.0,
         "xtitle" : "e^{-} zbravoalpha ",
         "ytitle" : "Events"
     },
     "unc_vtx_pos_zbravoalpha_h" : {
-        "bins" : 180,
-        "minX" : -200.0,
+        "bins" : 540,
+        "minX" : -1000.0,
         "maxX" : 80.0,
         "xtitle" : "e^{+} zbravoalpha ",
         "ytitle" : "Events"
@@ -235,8 +235,8 @@
         "ytitle" : "Events"
     },
     "unc_vtx_zbravosumalpha_h" : {
-        "bins" : 180,
-        "minX" : -200.0,
+        "bins" : 540,
+        "minX" : -1000.0,
         "maxX" : 80.0,
         "xtitle" : "zbravosumalpha ",
         "ytitle" : "Events"

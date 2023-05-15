@@ -5,7 +5,7 @@ import baseConfig as base
 from baseConfig import bfield
 
 base.parser.add_argument("-w", "--tracking", type=str, dest="tracking",
-    help="Which tracking to use to make plots", metavar="tracking", default="KF")
+    help="Which tracking to use to make plots", metavar="tracking", default="GBL")
 base.parser.add_argument("-s", "--truthHits", type=int, dest="truthHits",
         help="Get svt truth hits: 1=yes", metavar="truthHits", default=1)
 base.parser.add_argument("-r", "--rawHits", type=int, dest="rawHits",

@@ -62,6 +62,10 @@ void MutableTTree::shiftZ0(double shift){
     tuple_["unc_vtx_pos_track_z0"] = shifted_pos_z0;
 }
 
+void MutableTTree::addSelectionGreaterThan(std::string selection, double value){
+    selectionGT_[selection] = value;
+}
+
 void MutableTTree::Fill(){
 
     for(int e=0; e < tree_->GetEntries(); e++){
@@ -71,6 +75,11 @@ void MutableTTree::Fill(){
         if(lowMass_ != -999.9 && highMass_ != -999.9){
             if(getValue("unc_vtx_mass")*1000.0 > highMass_) continue; 
             if(getValue("unc_vtx_mass")*1000.0 < lowMass_) continue; 
+        }
+
+        for(std::map<std::string, double>::iterator it = selectionGT_.begin(); it != selectionGT_.end(); it++){
+            if(getValue(it->first) <= selectionGT_[it->first])
+                continue;
         }
 
         //Apply varible shifts here
@@ -89,6 +98,32 @@ void MutableTTree::Fill(){
     
     delete tree_;
     tree_ = newtree_;
+}
+
+bool MutableTTree::testImpactParameterCut(){
+    double ele_z0 = getValue("unc_vtx_ele_track_z0");
+    double pos_z0 = getValue("unc_vtx_pos_track_z0");
+    double Z = getValue("unc_vtx_z");
+    bool passCut = true;
+    if(ele_z0 > 0.0){
+        if(ele_z0 < 0.029816*(Z-3.471875))
+            passCut = false;
+    }
+    else{
+        if(ele_z0 > -0.029530*(Z-3.471875))
+            passCut = false;
+    }
+
+    if(pos_z0 > 0.0){
+        if(pos_z0 < 0.029816*(Z-3.471875))
+            passCut = false;
+    }
+    else{
+        if(pos_z0 > -0.029530*(Z-3.471875))
+            passCut = false;
+    }
+
+    return passCut;
 }
 
 bool MutableTTree::impactParameterCut2016Canonical(double mass){

@@ -56,6 +56,7 @@ void ZBiCutflowProcessor::configure(const ParameterSet& parameters) {
         massRes_MeV_ = parameters.getDouble("massRes_MeV",massRes_MeV_);
         lowMass_ = signal_mass_MeV_ - 2.0*massRes_MeV_/2.0;
         highMass_ = signal_mass_MeV_ + 2.0*massRes_MeV_/2.0;
+        std::cout << "MASS WINDOW: " << lowMass_ << " - " << highMass_ << std::endl;
 
         //Initialize expected signal calculation values
         radFrac_ = parameters.getDouble("radFrac",radFrac_);
@@ -140,6 +141,7 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     TFile* signalVtxAnaFile = new TFile(signalVtxAnaFilename_.c_str(),"READ");
     signalMTT_ = new MutableTTree(signalVtxAnaFile, signalVtxAnaTreename_);
     signalMTT_->defineMassWindow(lowMass_, highMass_);
+    //signalMTT_->addSelectionGreaterThan("unc_vtx_psum",1.0);
 
     //Read background ana vertex tuple, and convert to mutable tuple
     TFile* bkgVtxAnaFile = new TFile(bkgVtxAnaFilename_.c_str(),"READ");
@@ -154,15 +156,17 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     bkgMTT_->addVariableZalpha(zalpha_slope_);
     signalMTT_->addVariableZbravo();
     bkgMTT_->addVariableZbravo();
-    signalMTT_->addVariableZbravoAlpha(zalpha_slope_);
-    bkgMTT_->addVariableZbravoAlpha(zalpha_slope_);
+    signalMTT_->addVariableZbravoAlpha(0.014);
+    bkgMTT_->addVariableZbravoAlpha(0.014);
     signalMTT_->addVariableZbravosum();
     bkgMTT_->addVariableZbravosum();
     signalMTT_->addVariableZbravosumAlpha(zalpha_slope_);
     bkgMTT_->addVariableZbravosumAlpha(zalpha_slope_);
     //Must fill the TTrees after adding all new variables. CAN ONLY FILL ONCE!
     signalMTT_->Fill();
+    std::cout << "FIRST LOOK: SIGNAL ENTRIES = " << signalMTT_->GetEntries() << std::endl;
     bkgMTT_->Fill();
+    std::cout << "FIRST LOOK: bkg ENTRIES = " << bkgMTT_->GetEntries() << std::endl;
 
     //initialize cut selector for 'Persistent Cuts' (which are applied to every event)
     persistentCutsSelector_ = new IterativeCutSelector("persistentCuts", cuts_cfgFile_);
@@ -210,15 +214,25 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
 
     std::cout << "Filling initial signal histograms" << std::endl;
     //Fill Initial Signal histograms
+    std::cout << "LOOK: SIGNAL ENTRIES = " << signalMTT_->GetEntries() << std::endl;
     for(int e=0; e < signalMTT_->GetEntries(); e++){
         signalMTT_->GetEntry(e);
+        if(testSpecialCut_){
+            if(!signalMTT_->testImpactParameterCut())
+                continue;
+        }
         signalHistos_->fillEventVariableHistograms(signalMTT_);
     }
 
     std::cout << "Filling initial background histograms" << std::endl;
+    std::cout << "LOOK: bkg ENTRIES = " << bkgMTT_->GetEntries() << std::endl;
     //Fill Initial Background Histograms
     for(int e=0; e < bkgMTT_->GetEntries(); e++){
         bkgMTT_->GetEntry(e);
+        if(testSpecialCut_){
+            if(!bkgMTT_->testImpactParameterCut())
+                continue;
+        }
         bkgHistos_->fillEventVariableHistograms(bkgMTT_);
     }
     
@@ -286,7 +300,7 @@ bool ZBiCutflowProcessor::process(){
     
     double cutFraction = step_size_;
     int max_iteration = (int)1.0/cutFraction;
-    max_iteration = 30;
+    max_iteration = 60;
 
     //For each Test Cut variable, cut n% of signal in that variable, to determine the 
     //Test Cut value. 
@@ -327,6 +341,7 @@ bool ZBiCutflowProcessor::process(){
         }
 
         //Fill signal variable distributions
+        std::cout << "ITERATION " << iteration << " SIGNAL ENTRIES = " << signalMTT_->GetEntries() << std::endl;
         for(int e=0;  e < signalMTT_->GetEntries(); e++){
             signalMTT_->GetEntry(e);
 
@@ -354,6 +369,7 @@ bool ZBiCutflowProcessor::process(){
         //Build the background vtx z distribution corresponding to each Test Cut
         //Fit this background distribution with chosen function to create a 
         //unique Background Model corresponding to each Test Cut
+        std::cout << "ITERATION " << iteration << " bkg ENTRIES = " << bkgMTT_->GetEntries() << std::endl;
         for(int e=0;  e < bkgMTT_->GetEntries(); e++){
             bkgMTT_->GetEntry(e);
 
@@ -763,7 +779,9 @@ bool ZBiCutflowProcessor::failPersistentCuts(MutableTTree* MTT){
     //Testing 2016 impact parameter cut 04/10/2023
     //THIS SHOULD EVENTUALLY BE REMOVED
     if(testSpecialCut_){
-        if(!MTT->impactParameterCut2016Canonical(signal_mass_MeV_))
+        //if(!MTT->impactParameterCut2016Canonical(signal_mass_MeV_))
+        //    failCuts = true;
+        if(!MTT->testImpactParameterCut())
             failCuts = true;
     }
 

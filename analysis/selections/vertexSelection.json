@@ -29,20 +29,20 @@
         "id"    : 5,
         "info"  : "e^{+} #Delta_{t}(trk,clu)<4ns"
     },
-    "eleMom_lt" : {
-        "cut" : 1.75,
-        "id"  : 6,
-        "info" : "p e^{-}<1.75GeV"
-    },
     "eleTrkChi2Ndf_lt" : {
         "cut"  : 6,
-        "id"   : 7,
+        "id"   : 6,
         "info" : "e^{-} Track #chi^{2}/Ndf<6"
     },
     "posTrkChi2Ndf_lt" : {
         "cut"  : 6,
-        "id"   : 8,
+        "id"   : 7,
         "info" : "e^{+} Track #chi^{2}/Ndf<6"
+    },
+    "eleMom_lt" : {
+        "cut" : 1.75,
+        "id"  : 8,
+        "info" : "p e^{-}<1.75GeV"
     },
     "eleMom_gt" : {
         "cut" : 0.4,
