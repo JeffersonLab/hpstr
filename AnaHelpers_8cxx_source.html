@@ -96,123 +96,149 @@ $(function() {
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;}</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
 <div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#a2f0982918af5f77fb5ae4537b2e67bb5">   26</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classAnaHelpers.html#a2f0982918af5f77fb5ae4537b2e67bb5">AnaHelpers::InnermostLayerCheck</a>(<a class="code" href="classTrack.html">Track</a>* trk, <span class="keywordtype">bool</span>&amp; foundL1, <span class="keywordtype">bool</span>&amp; foundL2) {</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordtype">int</span> innerCount = 0;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> ihit=0; ihit&lt;trk-&gt;<a class="code" href="classTrack.html#aa5f939f8e1961ed57a59f8d01e46438f">getSvtHits</a>().GetEntries();++ihit) {</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <a class="code" href="classTrackerHit.html">TrackerHit</a>* hit3d = (<a class="code" href="classTrackerHit.html">TrackerHit</a>*) trk-&gt;<a class="code" href="classTrack.html#aa5f939f8e1961ed57a59f8d01e46438f">getSvtHits</a>().At(ihit);</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <span class="keywordflow">if</span> (hit3d-&gt;<a class="code" href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">getLayer</a>() == 0 ) {</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            innerCount++;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        }</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="keywordflow">if</span> (hit3d-&gt;<a class="code" href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">getLayer</a>() == 1) {</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;            innerCount++;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        }</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="keywordflow">if</span> (hit3d-&gt;<a class="code" href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">getLayer</a>() == 2) {</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            innerCount++;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        }</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keywordflow">if</span> (hit3d-&gt;<a class="code" href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">getLayer</a>() == 3) {</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            innerCount++;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        }</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    }</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keywordflow">if</span> (innerCount == 4) foundL1 = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keywordflow">if</span> (innerCount == 2) foundL2 = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;}</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#a93f5958d3eee3da25d4c96ee0ba27729">   47</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classAnaHelpers.html#a93f5958d3eee3da25d4c96ee0ba27729">AnaHelpers::MatchToGBLTracks</a>(<span class="keywordtype">int</span> ele_id, <span class="keywordtype">int</span> pos_id, <a class="code" href="classTrack.html">Track</a>* &amp; ele_trk, <a class="code" href="classTrack.html">Track</a>* &amp; pos_trk, std::vector&lt;Track*&gt;&amp; trks) {</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordtype">bool</span> foundele = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordtype">bool</span> foundpos = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> trk : trks) {</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="keywordflow">if</span> (ele_id == trk-&gt;getID())  {</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            ele_trk = trk;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;            foundele = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        }</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="keywordflow">if</span> (pos_id == trk-&gt;getID()) {</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            pos_trk = trk;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            foundpos = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        }</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    }</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordflow">return</span> foundele * foundpos;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;}</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">//TODO clean bit up </span></div>
-<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#af213299f294c6deada0650563e6898fc">   67</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classAnaHelpers.html#af213299f294c6deada0650563e6898fc">AnaHelpers::GetParticlesFromVtx</a>(<a class="code" href="classVertex.html">Vertex</a>* <a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#a0ba66fed21d976c0b188b1e975cb94c0">vtx</a>, <a class="code" href="classParticle.html">Particle</a>*&amp; ele, <a class="code" href="classParticle.html">Particle</a>*&amp; pos) {</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordtype">bool</span> foundele = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordtype">bool</span> foundpos = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> ipart = 0; ipart &lt; <a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#a0ba66fed21d976c0b188b1e975cb94c0">vtx</a>-&gt;getParticles().GetEntries(); ++ipart) {</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keywordtype">int</span> pdg_id = ((<a class="code" href="classParticle.html">Particle</a>*)<a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#a0ba66fed21d976c0b188b1e975cb94c0">vtx</a>-&gt;getParticles().At(ipart))-&gt;getPDG();</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;In Loop &quot;</span>&lt;&lt;pdg_id&lt;&lt; <span class="stringliteral">&quot; &quot;</span>&lt;&lt; ipart&lt;&lt;std::endl;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="keywordflow">if</span> (pdg_id == 11) {</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            ele =  ((<a class="code" href="classParticle.html">Particle</a>*)<a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#a0ba66fed21d976c0b188b1e975cb94c0">vtx</a>-&gt;getParticles().At(ipart));</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            foundele=<span class="keyword">true</span>;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;found ele &quot;</span>&lt;&lt; (<a class="code" href="namespaceconfig_1_1anaBhTuple__cfg.html#a61569f2965b7a369eb10b6d75d410d11">int</a>)foundele&lt;&lt;std::endl;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        }</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (pdg_id == -11) {</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;            pos = (<a class="code" href="classParticle.html">Particle</a>*)<a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#a0ba66fed21d976c0b188b1e975cb94c0">vtx</a>-&gt;getParticles().At(ipart);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            foundpos=<span class="keyword">true</span>;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;            <span class="keywordflow">if</span>  (<a class="code" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;found pos &quot;</span>&lt;&lt;(<a class="code" href="namespaceconfig_1_1anaBhTuple__cfg.html#a61569f2965b7a369eb10b6d75d410d11">int</a>)foundpos&lt;&lt;std::endl;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        }</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    }</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordflow">if</span> (!ele || !pos) {</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        std::cout&lt;&lt;<span class="stringliteral">&quot;Vertex formed without ele/pos. Skip.&quot;</span>&lt;&lt;std::endl;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    }</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;returning &quot;</span>&lt;&lt;(<a class="code" href="namespaceconfig_1_1anaBhTuple__cfg.html#a61569f2965b7a369eb10b6d75d410d11">int</a>) (foundele &amp;&amp; foundpos) &lt;&lt;std::endl;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordflow">return</span> foundele &amp;&amp; foundpos;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;}</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordtype">bool</span> isKF = trk-&gt;<a class="code" href="classTrack.html#a0fe98cdce0b4402fb0173dcc7408a89d">isKalmanTrack</a>();</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keywordtype">int</span> innerCount = 0;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keywordtype">bool</span> hasL1 = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keywordtype">bool</span> hasL2 = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keywordtype">bool</span> hasL3 = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> ihit=0; ihit&lt;trk-&gt;<a class="code" href="classTrack.html#aa5f939f8e1961ed57a59f8d01e46438f">getSvtHits</a>().GetEntries();++ihit) {</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <a class="code" href="classTrackerHit.html">TrackerHit</a>* hit3d = (<a class="code" href="classTrackerHit.html">TrackerHit</a>*) trk-&gt;<a class="code" href="classTrack.html#aa5f939f8e1961ed57a59f8d01e46438f">getSvtHits</a>().At(ihit);</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="keywordflow">if</span>(isKF){</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            <span class="keywordflow">if</span> (hit3d-&gt;<a class="code" href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">getLayer</a>() == 0 ) {</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                innerCount++;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            }</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            <span class="keywordflow">if</span> (hit3d-&gt;<a class="code" href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">getLayer</a>() == 1) {</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                innerCount++;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            }</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            <span class="keywordflow">if</span> (hit3d-&gt;<a class="code" href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">getLayer</a>() == 2) {</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                innerCount++;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                hasL2 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            }</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            <span class="keywordflow">if</span> (hit3d-&gt;<a class="code" href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">getLayer</a>() == 3) {</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                innerCount++;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                hasL3 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            }</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        }</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keywordflow">else</span>{</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            <span class="keywordflow">if</span> (hit3d-&gt;<a class="code" href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">getLayer</a>() == 0 ) {</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                innerCount++;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            }</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;            <span class="keywordflow">if</span> (hit3d-&gt;<a class="code" href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">getLayer</a>() == 1) {</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                innerCount++;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                hasL1 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            }</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        }</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    }</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordflow">if</span>(isKF){</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <span class="keywordflow">if</span> (innerCount == 4) foundL1 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <span class="keywordflow">if</span> (hasL2 &amp;&amp; hasL3) foundL2 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    }</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordflow">else</span>{</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="keywordflow">if</span> (innerCount == 2) foundL1 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="keywordflow">if</span> (hasL1) foundL2 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    }</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;}</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#a93f5958d3eee3da25d4c96ee0ba27729">   72</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classAnaHelpers.html#a93f5958d3eee3da25d4c96ee0ba27729">AnaHelpers::MatchToGBLTracks</a>(<span class="keywordtype">int</span> ele_id, <span class="keywordtype">int</span> pos_id, <a class="code" href="classTrack.html">Track</a>* &amp; ele_trk, <a class="code" href="classTrack.html">Track</a>* &amp; pos_trk, std::vector&lt;Track*&gt;&amp; trks) {</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordtype">bool</span> foundele = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">bool</span> foundpos = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> trk : trks) {</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="keywordflow">if</span> (ele_id == trk-&gt;getID())  {</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            ele_trk = trk;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            foundele = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        }</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="keywordflow">if</span> (pos_id == trk-&gt;getID()) {</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;            pos_trk = trk;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            foundpos = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        }</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    }</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordflow">return</span> foundele * foundpos;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;}</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="comment">//TODO clean bit up </span></div>
+<div class="line"><a name="l00092"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#af213299f294c6deada0650563e6898fc">   92</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classAnaHelpers.html#af213299f294c6deada0650563e6898fc">AnaHelpers::GetParticlesFromVtx</a>(<a class="code" href="classVertex.html">Vertex</a>* <a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#a0ba66fed21d976c0b188b1e975cb94c0">vtx</a>, <a class="code" href="classParticle.html">Particle</a>*&amp; ele, <a class="code" href="classParticle.html">Particle</a>*&amp; pos) {</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordtype">bool</span> foundele = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordtype">bool</span> foundpos = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> ipart = 0; ipart &lt; <a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#a0ba66fed21d976c0b188b1e975cb94c0">vtx</a>-&gt;getParticles().GetEntries(); ++ipart) {</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
-<div class="line"><a name="l00100"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#a36472fb9fabb806ac0d2d7cbff1c5eee">  100</a></span>&#160;<a class="code" href="classAnaHelpers.html#a36472fb9fabb806ac0d2d7cbff1c5eee">AnaHelpers::AnaHelpers</a>() {</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <a class="code" href="classAnaHelpers.html#a2a5a6a06f1ef8c305a704d4e64b70919">rotSvt</a>.RotateY(<a class="code" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <a class="code" href="classAnaHelpers.html#a76c415c6fad993408769670d049a5685">rotSvt_sym</a> =  <span class="keyword">new</span> TMatrixDSym(3);</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    (*rotSvt_sym)(0,0) = cos(<a class="code" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    (*rotSvt_sym)(0,1) = 0.;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    (*rotSvt_sym)(0,2) = sin(<a class="code" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    (*rotSvt_sym)(1,0) = 0.;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    (*rotSvt_sym)(1,1) = 1.;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    (*rotSvt_sym)(1,2) = 0.;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    (*rotSvt_sym)(1,0) = -sin(<a class="code" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    (*rotSvt_sym)(1,1) = 0.;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    (*rotSvt_sym)(1,2) = cos(<a class="code" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <span class="keywordtype">int</span> pdg_id = ((<a class="code" href="classParticle.html">Particle</a>*)<a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#a0ba66fed21d976c0b188b1e975cb94c0">vtx</a>-&gt;getParticles().At(ipart))-&gt;getPDG();</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;In Loop &quot;</span>&lt;&lt;pdg_id&lt;&lt; <span class="stringliteral">&quot; &quot;</span>&lt;&lt; ipart&lt;&lt;std::endl;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        <span class="keywordflow">if</span> (pdg_id == 11) {</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;            ele =  ((<a class="code" href="classParticle.html">Particle</a>*)<a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#a0ba66fed21d976c0b188b1e975cb94c0">vtx</a>-&gt;getParticles().At(ipart));</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            foundele=<span class="keyword">true</span>;</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;found ele &quot;</span>&lt;&lt; (<a class="code" href="namespaceconfig_1_1anaBhTuple__cfg.html#a61569f2965b7a369eb10b6d75d410d11">int</a>)foundele&lt;&lt;std::endl;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        }</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (pdg_id == -11) {</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;            pos = (<a class="code" href="classParticle.html">Particle</a>*)<a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#a0ba66fed21d976c0b188b1e975cb94c0">vtx</a>-&gt;getParticles().At(ipart);</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;            foundpos=<span class="keyword">true</span>;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;            <span class="keywordflow">if</span>  (<a class="code" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;found pos &quot;</span>&lt;&lt;(<a class="code" href="namespaceconfig_1_1anaBhTuple__cfg.html#a61569f2965b7a369eb10b6d75d410d11">int</a>)foundpos&lt;&lt;std::endl;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        }</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    }</div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <a class="code" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a> = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;}</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
-<div class="line"><a name="l00121"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#aaa09d9f9e38b8f1fd1499bf6db19e8ff">  121</a></span>&#160;TVector3 <a class="code" href="classAnaHelpers.html#aaa09d9f9e38b8f1fd1499bf6db19e8ff">AnaHelpers::rotateToSvtFrame</a>(TVector3 v) {</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    v.RotateY(<a class="code" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keywordflow">return</span> v;   </div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;}</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
-<div class="line"><a name="l00127"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#a8b180d5d5c36c12778a7e8fc4c06b561">  127</a></span>&#160;TVector3 <a class="code" href="classAnaHelpers.html#a8b180d5d5c36c12778a7e8fc4c06b561">AnaHelpers::rotationToSvtFrame</a>(<span class="keyword">const</span> TVector3&amp;  v) {</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classAnaHelpers.html#a2a5a6a06f1ef8c305a704d4e64b70919">rotSvt</a>*v;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;}</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keywordflow">if</span> (!ele || !pos) {</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        std::cout&lt;&lt;<span class="stringliteral">&quot;Vertex formed without ele/pos. Skip.&quot;</span>&lt;&lt;std::endl;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    }</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;returning &quot;</span>&lt;&lt;(<a class="code" href="namespaceconfig_1_1anaBhTuple__cfg.html#a61569f2965b7a369eb10b6d75d410d11">int</a>) (foundele &amp;&amp; foundpos) &lt;&lt;std::endl;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keywordflow">return</span> foundele &amp;&amp; foundpos;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;}</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
+<div class="line"><a name="l00125"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#a36472fb9fabb806ac0d2d7cbff1c5eee">  125</a></span>&#160;<a class="code" href="classAnaHelpers.html#a36472fb9fabb806ac0d2d7cbff1c5eee">AnaHelpers::AnaHelpers</a>() {</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <a class="code" href="classAnaHelpers.html#a2a5a6a06f1ef8c305a704d4e64b70919">rotSvt</a>.RotateY(<a class="code" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160; </div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <a class="code" href="classAnaHelpers.html#a76c415c6fad993408769670d049a5685">rotSvt_sym</a> =  <span class="keyword">new</span> TMatrixDSym(3);</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160; </div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    (*rotSvt_sym)(0,0) = cos(<a class="code" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    (*rotSvt_sym)(0,1) = 0.;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    (*rotSvt_sym)(0,2) = sin(<a class="code" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160; </div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    (*rotSvt_sym)(1,0) = 0.;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    (*rotSvt_sym)(1,1) = 1.;</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    (*rotSvt_sym)(1,2) = 0.;</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    (*rotSvt_sym)(1,0) = -sin(<a class="code" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    (*rotSvt_sym)(1,1) = 0.;</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    (*rotSvt_sym)(1,2) = cos(<a class="code" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    <a class="code" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160; </div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;}</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
+<div class="line"><a name="l00146"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#aaa09d9f9e38b8f1fd1499bf6db19e8ff">  146</a></span>&#160;TVector3 <a class="code" href="classAnaHelpers.html#aaa09d9f9e38b8f1fd1499bf6db19e8ff">AnaHelpers::rotateToSvtFrame</a>(TVector3 v) {</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    v.RotateY(<a class="code" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keywordflow">return</span> v;   </div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;}</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160; </div>
+<div class="line"><a name="l00152"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#a8b180d5d5c36c12778a7e8fc4c06b561">  152</a></span>&#160;TVector3 <a class="code" href="classAnaHelpers.html#a8b180d5d5c36c12778a7e8fc4c06b561">AnaHelpers::rotationToSvtFrame</a>(<span class="keyword">const</span> TVector3&amp;  v) {</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classAnaHelpers.html#a2a5a6a06f1ef8c305a704d4e64b70919">rotSvt</a>*v;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;}</div>
 <div class="ttc" id="aAnaHelpers_8h_html"><div class="ttname"><a href="AnaHelpers_8h.html">AnaHelpers.h</a></div><div class="ttdoc">Helper class for hipster analysis.</div></div>
 <div class="ttc" id="aclassAnaHelpers_html_a2a5a6a06f1ef8c305a704d4e64b70919"><div class="ttname"><a href="classAnaHelpers.html#a2a5a6a06f1ef8c305a704d4e64b70919">AnaHelpers::rotSvt</a></div><div class="ttdeci">TRotation rotSvt</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="AnaHelpers_8h_source.html#l00105">AnaHelpers.h:105</a></div></div>
 <div class="ttc" id="aclassAnaHelpers_html_a2f0982918af5f77fb5ae4537b2e67bb5"><div class="ttname"><a href="classAnaHelpers.html#a2f0982918af5f77fb5ae4537b2e67bb5">AnaHelpers::InnermostLayerCheck</a></div><div class="ttdeci">void InnermostLayerCheck(Track *trk, bool &amp;foundL1, bool &amp;foundL2)</div><div class="ttdoc">Checks if a track has a 3d hit on innermost layer and second innermost layer.</div><div class="ttdef"><b>Definition:</b> <a href="AnaHelpers_8cxx_source.html#l00026">AnaHelpers.cxx:26</a></div></div>
-<div class="ttc" id="aclassAnaHelpers_html_a36472fb9fabb806ac0d2d7cbff1c5eee"><div class="ttname"><a href="classAnaHelpers.html#a36472fb9fabb806ac0d2d7cbff1c5eee">AnaHelpers::AnaHelpers</a></div><div class="ttdeci">AnaHelpers()</div><div class="ttdef"><b>Definition:</b> <a href="AnaHelpers_8cxx_source.html#l00100">AnaHelpers.cxx:100</a></div></div>
+<div class="ttc" id="aclassAnaHelpers_html_a36472fb9fabb806ac0d2d7cbff1c5eee"><div class="ttname"><a href="classAnaHelpers.html#a36472fb9fabb806ac0d2d7cbff1c5eee">AnaHelpers::AnaHelpers</a></div><div class="ttdeci">AnaHelpers()</div><div class="ttdef"><b>Definition:</b> <a href="AnaHelpers_8cxx_source.html#l00125">AnaHelpers.cxx:125</a></div></div>
 <div class="ttc" id="aclassAnaHelpers_html_a76c415c6fad993408769670d049a5685"><div class="ttname"><a href="classAnaHelpers.html#a76c415c6fad993408769670d049a5685">AnaHelpers::rotSvt_sym</a></div><div class="ttdeci">TMatrixDSym * rotSvt_sym</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="AnaHelpers_8h_source.html#l00106">AnaHelpers.h:106</a></div></div>
-<div class="ttc" id="aclassAnaHelpers_html_a8b180d5d5c36c12778a7e8fc4c06b561"><div class="ttname"><a href="classAnaHelpers.html#a8b180d5d5c36c12778a7e8fc4c06b561">AnaHelpers::rotationToSvtFrame</a></div><div class="ttdeci">TVector3 rotationToSvtFrame(const TVector3 &amp;v)</div><div class="ttdoc">Rotate a vector from HPS to SVT Frame via TRotation.</div><div class="ttdef"><b>Definition:</b> <a href="AnaHelpers_8cxx_source.html#l00127">AnaHelpers.cxx:127</a></div></div>
-<div class="ttc" id="aclassAnaHelpers_html_a93f5958d3eee3da25d4c96ee0ba27729"><div class="ttname"><a href="classAnaHelpers.html#a93f5958d3eee3da25d4c96ee0ba27729">AnaHelpers::MatchToGBLTracks</a></div><div class="ttdeci">bool MatchToGBLTracks(int ele_id, int pos_id, Track *&amp;ele_trk, Track *&amp;pos_trk, std::vector&lt; Track * &gt; &amp;trks)</div><div class="ttdoc">brief description</div><div class="ttdef"><b>Definition:</b> <a href="AnaHelpers_8cxx_source.html#l00047">AnaHelpers.cxx:47</a></div></div>
+<div class="ttc" id="aclassAnaHelpers_html_a8b180d5d5c36c12778a7e8fc4c06b561"><div class="ttname"><a href="classAnaHelpers.html#a8b180d5d5c36c12778a7e8fc4c06b561">AnaHelpers::rotationToSvtFrame</a></div><div class="ttdeci">TVector3 rotationToSvtFrame(const TVector3 &amp;v)</div><div class="ttdoc">Rotate a vector from HPS to SVT Frame via TRotation.</div><div class="ttdef"><b>Definition:</b> <a href="AnaHelpers_8cxx_source.html#l00152">AnaHelpers.cxx:152</a></div></div>
+<div class="ttc" id="aclassAnaHelpers_html_a93f5958d3eee3da25d4c96ee0ba27729"><div class="ttname"><a href="classAnaHelpers.html#a93f5958d3eee3da25d4c96ee0ba27729">AnaHelpers::MatchToGBLTracks</a></div><div class="ttdeci">bool MatchToGBLTracks(int ele_id, int pos_id, Track *&amp;ele_trk, Track *&amp;pos_trk, std::vector&lt; Track * &gt; &amp;trks)</div><div class="ttdoc">brief description</div><div class="ttdef"><b>Definition:</b> <a href="AnaHelpers_8cxx_source.html#l00072">AnaHelpers.cxx:72</a></div></div>
 <div class="ttc" id="aclassAnaHelpers_html_aa1c2fa69eb035555a23b36f17592a039"><div class="ttname"><a href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">AnaHelpers::SVT_ANGLE</a></div><div class="ttdeci">const double SVT_ANGLE</div><div class="ttdoc">Angle between SVT system and HPS coordinates.</div><div class="ttdef"><b>Definition:</b> <a href="AnaHelpers_8h_source.html#l00104">AnaHelpers.h:104</a></div></div>
-<div class="ttc" id="aclassAnaHelpers_html_aaa09d9f9e38b8f1fd1499bf6db19e8ff"><div class="ttname"><a href="classAnaHelpers.html#aaa09d9f9e38b8f1fd1499bf6db19e8ff">AnaHelpers::rotateToSvtFrame</a></div><div class="ttdeci">TVector3 rotateToSvtFrame(TVector3 v)</div><div class="ttdoc">Rotate a vector from HPS to SVT Frame (i.e. for position/momentum rotation)</div><div class="ttdef"><b>Definition:</b> <a href="AnaHelpers_8cxx_source.html#l00121">AnaHelpers.cxx:121</a></div></div>
+<div class="ttc" id="aclassAnaHelpers_html_aaa09d9f9e38b8f1fd1499bf6db19e8ff"><div class="ttname"><a href="classAnaHelpers.html#aaa09d9f9e38b8f1fd1499bf6db19e8ff">AnaHelpers::rotateToSvtFrame</a></div><div class="ttdeci">TVector3 rotateToSvtFrame(TVector3 v)</div><div class="ttdoc">Rotate a vector from HPS to SVT Frame (i.e. for position/momentum rotation)</div><div class="ttdef"><b>Definition:</b> <a href="AnaHelpers_8cxx_source.html#l00146">AnaHelpers.cxx:146</a></div></div>
 <div class="ttc" id="aclassAnaHelpers_html_ad2e16c52eb34eb9851bd01e93c355aff"><div class="ttname"><a href="classAnaHelpers.html#ad2e16c52eb34eb9851bd01e93c355aff">AnaHelpers::getFileName</a></div><div class="ttdeci">static std::string getFileName(std::string filePath, bool withExtension)</div><div class="ttdef"><b>Definition:</b> <a href="AnaHelpers_8cxx_source.html#l00005">AnaHelpers.cxx:5</a></div></div>
-<div class="ttc" id="aclassAnaHelpers_html_af213299f294c6deada0650563e6898fc"><div class="ttname"><a href="classAnaHelpers.html#af213299f294c6deada0650563e6898fc">AnaHelpers::GetParticlesFromVtx</a></div><div class="ttdeci">bool GetParticlesFromVtx(Vertex *vtx, Particle *&amp;ele, Particle *&amp;pos)</div><div class="ttdoc">Get the Particles From Vtx object.</div><div class="ttdef"><b>Definition:</b> <a href="AnaHelpers_8cxx_source.html#l00067">AnaHelpers.cxx:67</a></div></div>
+<div class="ttc" id="aclassAnaHelpers_html_af213299f294c6deada0650563e6898fc"><div class="ttname"><a href="classAnaHelpers.html#af213299f294c6deada0650563e6898fc">AnaHelpers::GetParticlesFromVtx</a></div><div class="ttdeci">bool GetParticlesFromVtx(Vertex *vtx, Particle *&amp;ele, Particle *&amp;pos)</div><div class="ttdoc">Get the Particles From Vtx object.</div><div class="ttdef"><b>Definition:</b> <a href="AnaHelpers_8cxx_source.html#l00092">AnaHelpers.cxx:92</a></div></div>
 <div class="ttc" id="aclassAnaHelpers_html_afa3f4fa08a8a3b675e2dab06e29412a1"><div class="ttname"><a href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">AnaHelpers::debug_</a></div><div class="ttdeci">bool debug_</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="AnaHelpers_8h_source.html#l00107">AnaHelpers.h:107</a></div></div>
 <div class="ttc" id="aclassParticle_html"><div class="ttname"><a href="classParticle.html">Particle</a></div><div class="ttdef"><b>Definition:</b> <a href="Particle_8h_source.html#l00024">Particle.h:24</a></div></div>
 <div class="ttc" id="aclassTrack_html"><div class="ttname"><a href="classTrack.html">Track</a></div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00032">Track.h:32</a></div></div>
+<div class="ttc" id="aclassTrack_html_a0fe98cdce0b4402fb0173dcc7408a89d"><div class="ttname"><a href="classTrack.html#a0fe98cdce0b4402fb0173dcc7408a89d">Track::isKalmanTrack</a></div><div class="ttdeci">bool isKalmanTrack() const</div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00212">Track.h:212</a></div></div>
 <div class="ttc" id="aclassTrack_html_aa5f939f8e1961ed57a59f8d01e46438f"><div class="ttname"><a href="classTrack.html#aa5f939f8e1961ed57a59f8d01e46438f">Track::getSvtHits</a></div><div class="ttdeci">TRefArray getSvtHits() const</div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00064">Track.h:64</a></div></div>
 <div class="ttc" id="aclassTrackerHit_html"><div class="ttname"><a href="classTrackerHit.html">TrackerHit</a></div><div class="ttdef"><b>Definition:</b> <a href="TrackerHit_8h_source.html#l00022">TrackerHit.h:22</a></div></div>
 <div class="ttc" id="aclassTrackerHit_html_a17a9ca6d361f5e7cdc116c35d699e61f"><div class="ttname"><a href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">TrackerHit::getLayer</a></div><div class="ttdeci">int getLayer() const</div><div class="ttdef"><b>Definition:</b> <a href="TrackerHit_8h_source.html#l00109">TrackerHit.h:109</a></div></div>
