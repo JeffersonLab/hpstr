@@ -1,5 +1,5 @@
-#ifndef __ZBICUTFLOW_ANAPROCESSOR_H__
-#define __ZBICUTFLOW_ANAPROCESSOR_H__
+#ifndef __SIMPZBI_ANAPROCESSOR_H__
+#define __SIMPZBI_ANAPROCESSOR_H__
 
 // HPSTR
 #include "Processor.h"
@@ -24,13 +24,13 @@
 // C++ 
 #include <memory>
 
-class ZBiCutflowProcessor : public Processor {
+class SimpZBiOptimizationProcessor : public Processor {
 
     public:
 
-        ZBiCutflowProcessor(const std::string& name, Process& process);
+        SimpZBiOptimizationProcessor(const std::string& name, Process& process);
 
-        ~ZBiCutflowProcessor();
+        ~SimpZBiOptimizationProcessor();
 
         virtual void configure(const ParameterSet& parameters);
 
@@ -66,10 +66,34 @@ class ZBiCutflowProcessor : public Processor {
 
         void testImpactParameterCut(MutableTTree* MTT, ZBiHistos* histos);
 
-        void filterCuts();
-
-
     private:
+
+        //  Configuration parameters    //
+        std::string cuts_cfgFile_{""};
+        std::string outFileName_{"zbi_out.root"};
+        std::vector<std::string> cutVariables_;
+        
+        //Background config
+        double min_ztail_events_ = 0.5;
+        double background_sf_;
+        std::string bkgVtxAnaFilename_{""};
+        std::string bkgVtxAnaTreename_{""};
+
+        // Signal //
+        std::string signalHistCfgFilename_{""};
+        std::string signalVtxAnaFilename_{""};
+        std::string signalVtxAnaTreename_{""};
+        std::string signalMCAnaFilename_{""};
+        std::string signal_pdgid_{""};
+
+        //Expected Signal Calculation //
+        double signal_mass_;
+        double massResolution_;
+        double signal_sf_ = 1.0;
+        double radFrac_;
+        double radAcc_ = 0.0;
+        double dNdm_;
+        double logEps2_;
 
         //Histograms
         std::shared_ptr<ZBiHistos> signalHistos_;
@@ -86,15 +110,12 @@ class ZBiCutflowProcessor : public Processor {
 
         std::map<std::string,double> mcScale_;
         int debug_{0}; 
-        std::string outFileName_{"zbi_out.root"};
         TFile* outFile_{nullptr};
         double vdMassMeV_;
         double ApMassMeV_;
 
         //cuts
-        std::string cuts_cfgFile_{""};
         typedef std::map<std::string, std::pair<double,int>>::iterator cut_iter_;
-        std::vector<std::string> cutVariables_;
         std::map<std::string,double> initialIntegrals_;
         std::map<std::string,std::vector<std::pair<double,double>>> global_ZBi_map_;
 
@@ -119,31 +140,14 @@ class ZBiCutflowProcessor : public Processor {
         double highMass_;
         double lowMass_;
 
-        // Signal //
-        std::string signalHistCfgFilename_{""};
-        std::string signalVtxAnaFilename_{""};
-        std::string signalVtxAnaTreename_{""};
-        std::string signalMCAnaFilename_{""};
-        std::string signal_pdgid_{""};
         TH1F* signalSimZ_h_{nullptr};
         MutableTTree* signalMTT_{nullptr};
-        double signal_sf_ = 1.0;
-        double signal_mass_MeV_;
-        double massRes_MeV_;
-        double radFrac_;
-        double simp_radAcc_ = 0.0;
-        double dNdm_;
-        double logEps2_;
 
         // Background //
-        std::string bkgVtxAnaFilename_{""};
-        std::string bkgVtxAnaTreename_{""};
         MutableTTree* bkgMTT_{nullptr};
 
         double luminosity_;
-        double tritrig_sf_;
 
-        double ztail_nevents_ = 1.0;
         bool scan_zcut_ = false;
         double step_size_ = 0.01;
 

@@ -19,7 +19,9 @@ using json = nlohmann::json;
  * more details
  */
 class IterativeCutSelector : public BaseSelector { 
+
     public: 
+
         IterativeCutSelector();
         
         IterativeCutSelector(const std::string& inputName);
@@ -34,13 +36,13 @@ class IterativeCutSelector : public BaseSelector {
         
         void setCutValue(std::string cutname, double value);
 
-        void eraseCut(std::string cutname);
-
         bool passCutGTorLT(std::string cutname, double val);
 
         void printCuts();
 
         int getCutID(std::string cutname){return cuts[cutname].second;};
+
+        void filterCuts(std::vector<std::string> cut_variable_list);
 
         std::map<std::string, std::pair<double,int>>* getPointerToCuts(){ return &cuts; }
 

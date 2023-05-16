@@ -166,6 +166,24 @@ void::MutableTTree::shiftVariable(std::string variable, double shift){
     variable_shifts_[variable] = shiftVariableFunc;
 }
 
+void::MutableTTree::addNewVariable(std::string new_variable, double param){
+    int case_id = new_variable_ids_[new_variable];
+    switch(case_id) {
+        case 0 : 
+            addVariableZalpha(param); 
+            break;
+        case 1 : 
+            addVariableZbravo();
+            break;
+        case 2 : 
+            addVariableZbravosum();
+            break;
+        case 3 :
+            addVariableZbravosumAlpha(param);
+            break;
+    }
+}
+
 void::MutableTTree::addVariableZbravosumAlpha(double slope){
     double* zbravosum_alpha = new double {999.9};
     tuple_["unc_vtx_zbravosumalpha"] = zbravosum_alpha;

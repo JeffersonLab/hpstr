@@ -83,7 +83,28 @@ void IterativeCutSelector::printCuts(){
         std::cout << it->first << ": " << it->second.first << std::endl;
 }
 
-void IterativeCutSelector::eraseCut(std::string cutname){
-    std::cout << "Erasing " << cutname << " from list of cuts" << std::endl;
-    cuts.erase(cutname);
+void IterativeCutSelector::filterCuts(std::vector<std::string> cut_variable_list){
+
+    //Loop over Test Cuts loaded in from json configuration
+    for(cut_it it=cuts.begin(); it != cuts.end(); it++){
+        std::string cutname = it->first;
+        std::string cutvariable = getCutVar(cutname);
+        bool found = false;
+
+        //Confirm that cut variable is in list of configurable cut variables
+        for(std::vector<std::string>::iterator iit=cut_variable_list.begin(); iit !=cut_variable_list.end(); iit++){
+            if((std::string)*iit == cutvariable){
+                found = true;
+                break;
+            }
+        }
+
+        //If Test Cut Variable does not exist, remove the Test Cut from the list of cuts
+        if(!found){
+            it = cuts.erase(it);
+        }
+        else
+            ++it;
+    }
 }
+

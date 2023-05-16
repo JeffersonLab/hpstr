@@ -1,34 +1,32 @@
-#include "ZBiCutflowProcessor.h"
-//#include <FlatTupleMaker.h>
+#include "SimpZBiOptimizationProcessor.h"
 #include <string>
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 
-ZBiCutflowProcessor::ZBiCutflowProcessor(const std::string& name, Process& process) : Processor(name,process) {
-    std::cout << "[ZBiCutflowPRocessor] Constructor()" << std::endl;
-
+SimpZBiOptimizationProcessor::SimpZBiOptimizationProcessor(const std::string& name, Process& process) 
+    : Processor(name,process) {
+    std::cout << "[SimpZBiOptimizationProcessor] Constructor()" << std::endl;
 }
 
-ZBiCutflowProcessor::~ZBiCutflowProcessor(){}
+SimpZBiOptimizationProcessor::~SimpZBiOptimizationProcessor(){}
 
-void ZBiCutflowProcessor::configure(const ParameterSet& parameters) {
-    std::cout << "[ZBiCutflowProcessor] configure()" << std::endl;
+void SimpZBiOptimizationProcessor::configure(const ParameterSet& parameters) {
+    std::cout << "[SimpZBiOptimizationProcessor] configure()" << std::endl;
     try
     {
         debug_ = parameters.getInteger("debug",debug_);
         cuts_cfgFile_ = parameters.getString("cuts_cfgFile",cuts_cfgFile_);
-        vdMassMeV_ = parameters.getDouble("vdMassMeV", vdMassMeV_);
-        //ApMassMeV_ = parameters.getDouble("ApMassMeV", ApMassMeV_);
         outFileName_ = parameters.getString("outFileName",outFileName_);
         cutVariables_ = parameters.getVString("cutVariables", cutVariables_);
-        ztail_nevents_ = parameters.getDouble("ztail_events",ztail_nevents_);
+        min_ztail_events_ = parameters.getDouble("ztail_events",min_ztail_events_);
         scan_zcut_ = parameters.getInteger("scan_zcut",scan_zcut_);
         step_size_ = parameters.getDouble("step_size",step_size_);
 
-        //MC Scale factors
-        luminosity_ = parameters.getDouble("luminosity",luminosity_);
-        tritrig_sf_ = parameters.getDouble("tritrig_sf",tritrig_sf_);
+        //Background
+        bkgVtxAnaFilename_ = parameters.getString("bkgVtxAnaFilename", bkgVtxAnaFilename_);
+        bkgVtxAnaTreename_ = parameters.getString("bkgVtxAnaTreename",bkgVtxAnaTreename_);
+        background_sf_ = parameters.getDouble("tritrig_sf",background_sf_);
 
         //MC Signal
         signalHistCfgFilename_ = 
@@ -42,27 +40,23 @@ void ZBiCutflowProcessor::configure(const ParameterSet& parameters) {
         signal_pdgid_ =
             parameters.getString("signal_pdgid", signal_pdgid_);
         signal_sf_ = parameters.getDouble("signal_sf", signal_sf_);
+        signal_mass_ = parameters.getDouble("signal_mass_MeV",signal_mass_);
+        massResolution_ = parameters.getDouble("massRes_MeV",massResolution_);
 
-        //Background
-        bkgVtxAnaFilename_ = parameters.getString("bkgVtxAnaFilename", bkgVtxAnaFilename_);
-        bkgVtxAnaTreename_ = parameters.getString("bkgVtxAnaTreename",bkgVtxAnaTreename_);
+        //Expected Signal Calculation
+        radFrac_ = parameters.getDouble("radFrac",radFrac_);
+        radAcc_ = parameters.getDouble("simp_radAcc",radAcc_);
+        dNdm_ = parameters.getDouble("dNdm",dNdm_);
+        logEps2_ = parameters.getDouble("logEps2",logEps2_);
 
         // New Variables //
         //Zalpha
         zalpha_slope_ = parameters.getDouble("zalpha_slope",zalpha_slope_);
+        new_variables_ = parameters.getVString("add_new_variables", new_variables_);
+        new_variable_params_ = paramters.getVDouble("new_variable_params", new_variable_params_);
 
-        //Define mass window
-        signal_mass_MeV_ = parameters.getDouble("signal_mass_MeV",signal_mass_MeV_);
-        massRes_MeV_ = parameters.getDouble("massRes_MeV",massRes_MeV_);
-        lowMass_ = signal_mass_MeV_ - 2.0*massRes_MeV_/2.0;
-        highMass_ = signal_mass_MeV_ + 2.0*massRes_MeV_/2.0;
-        std::cout << "MASS WINDOW: " << lowMass_ << " - " << highMass_ << std::endl;
 
-        //Initialize expected signal calculation values
-        radFrac_ = parameters.getDouble("radFrac",radFrac_);
-        simp_radAcc_ = parameters.getDouble("simp_radAcc",simp_radAcc_);
-        dNdm_ = parameters.getDouble("dNdm",dNdm_);
-        logEps2_ = parameters.getDouble("logEps2",logEps2_);
+
 
         //Dev
         testSpecialCut_ = parameters.getInteger("testSpecialCut", testSpecialCut_);
@@ -74,61 +68,13 @@ void ZBiCutflowProcessor::configure(const ParameterSet& parameters) {
     }
 }
 
-void ZBiCutflowProcessor::filterCuts(){
+void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::string outFilename){
+    std::cout << "[SimpZBiOptimizationProcessor] Initialize" << std::endl;
 
-    //Loop over Test Cuts loaded in from json configuration
-    for(cut_iter_ it=testCutsPtr_->begin(); it!=testCutsPtr_->end();){
-        std::string cutname = it->first;
-        std::string cutvariable = testCutsSelector_->getCutVar(cutname);
-        bool found = false;
-        //Confirm that the variable corresponding to this Test Cut exists
-        for(std::vector<std::string>::iterator iit=cutVariables_.begin(); iit !=cutVariables_.end(); iit++){
-            if((std::string)*iit == cutvariable){
-                found = true;
-                break;
-            }
-        }
-        //If Test Cut Variable does not exist, remove the Test Cut from the list of cuts
-        if(!found){
-            std::cout << "[ZBiCutflowProcessor] WARNING::Cut variable corresponding to " << cutname << " does not exist!" << std::endl;
-            std::cout << "Removing " << cutname << " from list of cuts." << std::endl;
-            it = testCutsPtr_->erase(it);
-        }
-        else
-            ++it;
-    }
-
-    //Repeat for persistent cuts list 
-    for(cut_iter_ it=persistentCutsPtr_->begin(); it!=persistentCutsPtr_->end();){
-        std::string cutname = it->first;
-        std::string cutvariable = persistentCutsSelector_->getCutVar(cutname);
-        bool found = false;
-        for(std::vector<std::string>::iterator iit=cutVariables_.begin(); iit !=cutVariables_.end(); iit++){
-            if((std::string)*iit == cutvariable){
-                found = true;
-                break;
-            }
-        }
-        if(!found){
-            it = persistentCutsPtr_->erase(it);
-        }
-        else
-            ++it;
-    }
-
-    if(debug_){ 
-        std::cout << "[Test Cuts] Initialized and Filtered:" << std::endl;
-        testCutsSelector_->printCuts();
-    }
-
-    if(debug_){
-        std::cout << "[Persistent Cuts] Initialized and Filtered:" << std::endl;
-        persistentCutsSelector_->printCuts();
-    }
-}
-
-void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFilename){
-    std::cout << "[ZBiCutflowProcessor] Initialize" << std::endl;
+    //Mass window
+    lowMass_ = signal_mass_ - 2.0*massResolution_/2.0;
+    highMass_ = signal_mass_ + 2.0*massResolution_/2.0;
+    std::cout << "MASS WINDOW: " << lowMass_ << " - " << highMass_ << std::endl;
 
     //Initialize output file
     outFile_ = new TFile(outFileName_.c_str(),"RECREATE");
@@ -141,7 +87,13 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     TFile* signalVtxAnaFile = new TFile(signalVtxAnaFilename_.c_str(),"READ");
     signalMTT_ = new MutableTTree(signalVtxAnaFile, signalVtxAnaTreename_);
     signalMTT_->defineMassWindow(lowMass_, highMass_);
-    //signalMTT_->addSelectionGreaterThan("unc_vtx_psum",1.0);
+
+    //Add new variables and set new variable parameters
+    for(std::vector<std::string>::iterator = new_variables_.begin(); it != new_variables.end(); it++){
+        int param_idx = std::distance(new_variables_.begin(), it);
+        signalMTT_->addNewVariable(*it, new_variable_params_.at(param_idx));
+        bkgMTT_->addNewVariable(*it, new_variable_params_.at(param_idx));
+    }
 
     //Read background ana vertex tuple, and convert to mutable tuple
     TFile* bkgVtxAnaFile = new TFile(bkgVtxAnaFilename_.c_str(),"READ");
@@ -171,6 +123,7 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     //initialize cut selector for 'Persistent Cuts' (which are applied to every event)
     persistentCutsSelector_ = new IterativeCutSelector("persistentCuts", cuts_cfgFile_);
     persistentCutsSelector_->LoadSelection();
+    persistentCutsSelector_->filterCuts(cutVariables_);
     persistentCutsPtr_ = persistentCutsSelector_->getPointerToCuts();
     std::cout << "printing persistent cuts: " << std::endl;
     persistentCutsSelector_->printCuts();
@@ -178,13 +131,10 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     //initalize Test Cuts (which will be iteratively changed)
     testCutsSelector_ = new IterativeCutSelector("testCuts",cuts_cfgFile_);
     testCutsSelector_->LoadSelection();
+    testCutsSelector_->filterCuts(cutVariables_);
     testCutsPtr_ = testCutsSelector_->getPointerToCuts();
     std::cout << "printing test cuts: " << std::endl;
     testCutsSelector_->printCuts();
-
-    //Cuts loaded in from json will not work if their cut variables are not accessible
-    //Remove cuts where the cut variable is missing
-    filterCuts();
 
     //Initialize signal histograms
     signalHistos_= std::make_shared<ZBiHistos>("signal");
@@ -210,7 +160,7 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
 
     //Set MC Scale factors
     //scale = xsection*lumi/(madgraph_nevents*nfiles)
-    mcScale_["tritrig"] = tritrig_sf_;
+    mcScale_["tritrig"] = background_sf_;
 
     std::cout << "Filling initial signal histograms" << std::endl;
     //Fill Initial Signal histograms
@@ -274,20 +224,20 @@ void ZBiCutflowProcessor::initialize(std::string inFilename, std::string outFile
     }
 }
 
-double ZBiCutflowProcessor::round(double var){
+double SimpZBiOptimizationProcessor::round(double var){
     float value = (int)(var * 100 + .5);
     return (double)value / 100;
 }
 
-bool ZBiCutflowProcessor::process(){
-    std::cout << "[ZBiCutflowProcessor] process()" << std::endl;
+bool SimpZBiOptimizationProcessor::process(){
+    std::cout << "[SimpZBiOptimizationProcessor] process()" << std::endl;
 
     /*
     //Initialize various values (NEED TO BE CONFIGURABLE THROUGH SINGLE JSON)
-    double signal_mass_MeV_ = 55.0;
-    double massRes_MeV_ = 3.0;
+    double signal_mass_ = 55.0;
+    double massResolution_ = 3.0;
     double radFrac_ = 0.07;
-    double simp_radAcc_ = 0.125;
+    double radAcc_ = 0.125;
     double dNdm_ = 513800.0;
     //double dNdm_ = 372000.0; <- not sure where i got this number...
     */
@@ -478,7 +428,7 @@ bool ZBiCutflowProcessor::process(){
                     200,-50.3,149.7,3000,0.0,300.0);
 
             //Fit the zvtx background distribution to get the background model as function of z
-            std::cout << "[ZBiCutflowProcessor]::Fitting ztail" << std::endl;
+            std::cout << "[SimpZBiOptimizationProcessor]::Fitting ztail" << std::endl;
             
             //This is temporary due to low MC stats
             //Fit 10.0 < vtxz < 100.0 with exp 
@@ -492,8 +442,8 @@ bool ZBiCutflowProcessor::process(){
             std::cout << "bkg_model xmax: " << bkg_model->GetXmax() << std::endl;
             double testIntegral = bkg_model->Integral(max_zcut, bkg_model->GetXmax());
             //Find maximum possible zcut position to test, based on some final number
-            //of background events in the signal region 'ztail_nevents_'
-            while(testIntegral > ztail_nevents_){
+            //of background events in the signal region 'min_ztail_events_'
+            while(testIntegral > min_ztail_events_){
                 max_zcut = max_zcut+0.1;
                 testIntegral = bkg_model->Integral(max_zcut, bkg_model->GetXmax());
             }
@@ -556,7 +506,7 @@ bool ZBiCutflowProcessor::process(){
                 double Nsig = 0.0;
                 if(calculation_type_ == "simps"){
 
-                    double simpAp_mass_MeV = signal_mass_MeV_*(3/1.8);
+                    double simpAp_mass_MeV = signal_mass_*(3/1.8);
                     double m_pi = simpAp_mass_MeV/3.0;
                     double alpha_D = 0.01;
                     double m_l = 0.511;
@@ -571,9 +521,9 @@ bool ZBiCutflowProcessor::process(){
                         if(mesons[i] == "rho") rho = true;
                         else phi = true;
 
-                        double ctau = simpEqs_->getCtau(simpAp_mass_MeV,m_pi,signal_mass_MeV_,eps,alpha_D,f_pi,m_l,rho);
+                        double ctau = simpEqs_->getCtau(simpAp_mass_MeV,m_pi,signal_mass_,eps,alpha_D,f_pi,m_l,rho);
                         double E_V = 1.35; //GeV <-this absolutely needs to be fixed
-                        double gcTau = ctau * simpEqs_->gamma(signal_mass_MeV_/1000.0,E_V);
+                        double gcTau = ctau * simpEqs_->gamma(signal_mass_/1000.0,E_V);
 
                         double effVtx = 0.0;
                         for(int zbin =0; zbin < 201; zbin++){
@@ -586,10 +536,10 @@ bool ZBiCutflowProcessor::process(){
                         }
 
                         double tot_apProd = (3.*137/2.)*3.14159*(simpAp_mass_MeV*eps2*radFrac_*dNdm_)/
-                            simp_radAcc_;
+                            radAcc_;
 
                         double br_Vpi_val = 
-                            simpEqs_->br_Vpi(simpAp_mass_MeV,m_pi,signal_mass_MeV_,alpha_D,f_pi,rho,phi);
+                            simpEqs_->br_Vpi(simpAp_mass_MeV,m_pi,signal_mass_,alpha_D,f_pi,rho,phi);
                         
                         double br_V_to_ee = 1.0;
                         Nsig = Nsig + tot_apProd*effVtx*br_V_to_ee*br_Vpi_val;
@@ -607,7 +557,7 @@ bool ZBiCutflowProcessor::process(){
 
                     //lifetime
                     double gcTau = 8.0*(2.3/10.0)*(1e-8/eps2)*
-                        std::pow(100.0/signal_mass_MeV_, 2);
+                        std::pow(100.0/signal_mass_, 2);
                     double effVtx = 0.0;
                     for(int zbin =0; zbin < 201; zbin++){
                         double zz = signalSelZ_h->GetBinLowEdge(zbin);
@@ -616,7 +566,7 @@ bool ZBiCutflowProcessor::process(){
                             (effCalc_h->GetEfficiency(zbin))*
                             signalSelZ_h->GetBinWidth(zbin);
                     }
-                    Nsig = signal_sf_*205.5*3.1416*eps2*signal_mass_MeV_*radFrac_*dNdm_*effVtx;
+                    Nsig = signal_sf_*205.5*3.1416*eps2*signal_mass_*radFrac_*dNdm_*effVtx;
                 }
 
                 //CLEAR POINTERS
@@ -728,7 +678,7 @@ bool ZBiCutflowProcessor::process(){
     }
 }
 
-void ZBiCutflowProcessor::printZBiMatrix(){
+void SimpZBiOptimizationProcessor::printZBiMatrix(){
     typedef std::map<std::string,std::vector<std::pair<double,double>>>::iterator iter;
     for(iter it = global_ZBi_map_.begin(); it != global_ZBi_map_.end(); it++){
         std::cout << '\n';
@@ -742,8 +692,8 @@ void ZBiCutflowProcessor::printZBiMatrix(){
     }
 }
 
-void ZBiCutflowProcessor::finalize() {
-    std::cout << "[ZBiCutflowProcessor] finalize()" << std::endl;
+void SimpZBiOptimizationProcessor::finalize() {
+    std::cout << "[SimpZBiOptimizationProcessor] finalize()" << std::endl;
 
     if(debug_){
         std::cout << "FINAL LIST OF PERSISTENT CUTS " << std::endl;
@@ -756,13 +706,13 @@ void ZBiCutflowProcessor::finalize() {
     printZBiMatrix();
 }
 
-double ZBiCutflowProcessor::calculateZBi(double n_on, double n_off, double tau){
+double SimpZBiOptimizationProcessor::calculateZBi(double n_on, double n_off, double tau){
     double P_Bi = TMath::BetaIncomplete(1./(1.+tau),n_on,n_off+1);
     double Z_Bi = std::pow(2,0.5)*TMath::ErfInverse(1-2*P_Bi);
     return Z_Bi;
 }
 
-bool ZBiCutflowProcessor::failPersistentCuts(MutableTTree* MTT){
+bool SimpZBiOptimizationProcessor::failPersistentCuts(MutableTTree* MTT){
     bool failCuts = false;
     for(cut_iter_ it=persistentCutsPtr_->begin(); it!=persistentCutsPtr_->end(); it++){
         std::string cutname = it->first;
@@ -779,7 +729,7 @@ bool ZBiCutflowProcessor::failPersistentCuts(MutableTTree* MTT){
     //Testing 2016 impact parameter cut 04/10/2023
     //THIS SHOULD EVENTUALLY BE REMOVED
     if(testSpecialCut_){
-        //if(!MTT->impactParameterCut2016Canonical(signal_mass_MeV_))
+        //if(!MTT->impactParameterCut2016Canonical(signal_mass_))
         //    failCuts = true;
         if(!MTT->testImpactParameterCut())
             failCuts = true;
@@ -788,7 +738,7 @@ bool ZBiCutflowProcessor::failPersistentCuts(MutableTTree* MTT){
     return failCuts;
 }
 
-bool ZBiCutflowProcessor::failTestCut(std::string cutname, MutableTTree* MTT){
+bool SimpZBiOptimizationProcessor::failTestCut(std::string cutname, MutableTTree* MTT){
 
     std::string cutvar = testCutsSelector_->getCutVar(cutname);
     double cutvalue = testCutsSelector_->getCut(cutname);
@@ -801,7 +751,7 @@ bool ZBiCutflowProcessor::failTestCut(std::string cutname, MutableTTree* MTT){
         return false;
 }
 
-bool ZBiCutflowProcessor::failTestCut(std::string cutname, std::map<std::string,double*> tuple){
+bool SimpZBiOptimizationProcessor::failTestCut(std::string cutname, std::map<std::string,double*> tuple){
 
     std::string cutvar = testCutsSelector_->getCutVar(cutname);
     double cutvalue = testCutsSelector_->getCut(cutname);
@@ -814,7 +764,7 @@ bool ZBiCutflowProcessor::failTestCut(std::string cutname, std::map<std::string,
         return false;
 }
 
-void ZBiCutflowProcessor::getSignalMCAnaVtxZ_h(std::string signalMCAnaFilename, 
+void SimpZBiOptimizationProcessor::getSignalMCAnaVtxZ_h(std::string signalMCAnaFilename, 
         std::string signal_pdgid){
     //Read the pre-trigger simulated signal vertex z distribution from the hpstr mcAna file
     //signalSimZ_h binning must match (something)
@@ -834,7 +784,7 @@ void ZBiCutflowProcessor::getSignalMCAnaVtxZ_h(std::string signalMCAnaFilename,
 }
 
 
-void ZBiCutflowProcessor::writeGraph(TFile* outF, std::string folder, TGraph* g){
+void SimpZBiOptimizationProcessor::writeGraph(TFile* outF, std::string folder, TGraph* g){
     if (outF) outF->cd();
     TDirectory* dir{nullptr};
     std::cout<<folder.c_str()<<std::endl;
@@ -845,4 +795,4 @@ void ZBiCutflowProcessor::writeGraph(TFile* outF, std::string folder, TGraph* g)
     g->Write();
 }
 
-DECLARE_PROCESSOR(ZBiCutflowProcessor);
+DECLARE_PROCESSOR(SimpZBiOptimizationProcessor);
