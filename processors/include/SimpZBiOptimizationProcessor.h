@@ -66,12 +66,18 @@ class SimpZBiOptimizationProcessor : public Processor {
 
         void testImpactParameterCut(MutableTTree* MTT, ZBiHistos* histos);
 
+        void addNewVariables(MutableTTree* MTT, std::string variable, double param);
+
+        void fillEventHistograms(std::shared_ptr<ZBiHistos> histos, MutableTTree* MTT);
+
     private:
 
         //  Configuration parameters    //
         std::string cuts_cfgFile_{""};
         std::string outFileName_{"zbi_out.root"};
         std::vector<std::string> cutVariables_;
+        std::vector<std::string> new_variables_;
+        std::vector<double> new_variable_params_;
         
         //Background config
         double min_ztail_events_ = 0.5;

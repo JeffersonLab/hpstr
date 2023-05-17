@@ -2,6 +2,7 @@
 
 MutableTTree::MutableTTree(TFile* infile, std::string tree_name){
    std::cout << "Reading in tree: " << tree_name << std::endl;
+   setNewVariableIDs();
    tree_ = (TTree*)infile->Get(tree_name.c_str()); 
    if(tree_ == nullptr)
        std::cout << "ERROR READING TREE " << tree_name << " from file " << std::endl;
@@ -68,6 +69,8 @@ void MutableTTree::addSelectionGreaterThan(std::string selection, double value){
 
 void MutableTTree::Fill(){
 
+    std::cout << "Filling Mutable TTree" << std::endl;
+    std::cout << "N entries: " << tree_->GetEntries() << std::endl;
     for(int e=0; e < tree_->GetEntries(); e++){
         tree_->GetEntry(e);
         
@@ -159,32 +162,49 @@ bool MutableTTree::impactParameterCut2016Canonical(double mass){
     return passCut;
 }
 
-void::MutableTTree::shiftVariable(std::string variable, double shift){
+void MutableTTree::shiftVariable(std::string variable, double shift){
     std::function<double()> shiftVariableFunc = [&,shift]()->double{
         return *tuple_[variable] = *tuple_[variable] + shift;
     };
     variable_shifts_[variable] = shiftVariableFunc;
 }
 
-void::MutableTTree::addNewVariable(std::string new_variable, double param){
+void MutableTTree::setNewVariableIDs(){
+    new_variable_ids_["zalpha"] = 0;
+    new_variable_ids_["zbravo"] = 1;
+    new_variable_ids_["zbravoalpha"] = 1;
+    new_variable_ids_["zbravosum"] = 3;
+    new_variable_ids_["zbravosumalpha"] = 4;
+    
+}
+
+void MutableTTree::addNewVariable(std::string new_variable, double param){
     int case_id = new_variable_ids_[new_variable];
     switch(case_id) {
         case 0 : 
             addVariableZalpha(param); 
+            std::cout << "[MutableTTree]::Adding New Variable addVariableZalpha with param " << param << std::endl;
             break;
         case 1 : 
             addVariableZbravo();
+            std::cout << "[MutableTTree]::Adding New Variable addVariablebravo" << std::endl;
             break;
         case 2 : 
-            addVariableZbravosum();
+            addVariableZbravoAlpha(param);
+            std::cout << "[MutableTTree]::Adding New Variable addVariableZbravoAlpha with param " << param << std::endl;
             break;
-        case 3 :
+        case 3 : 
+            addVariableZbravosum();
+            std::cout << "[MutableTTree]::Adding New Variable addVariableZbravosum" << std::endl;
+            break;
+        case 4 :
             addVariableZbravosumAlpha(param);
+            std::cout << "[MutableTTree]::Adding New Variable addVariableZbravosumAlpha with param " << param << std::endl;
             break;
     }
 }
 
-void::MutableTTree::addVariableZbravosumAlpha(double slope){
+void MutableTTree::addVariableZbravosumAlpha(double slope){
     double* zbravosum_alpha = new double {999.9};
     tuple_["unc_vtx_zbravosumalpha"] = zbravosum_alpha;
     newtree_->Branch("unc_vtx_zbravosumalpha", tuple_["unc_vtx_zbravosumalpha"],"unc_vtx_zbravosumalpha/D");
@@ -200,7 +220,7 @@ void::MutableTTree::addVariableZbravosumAlpha(double slope){
     functions_["unc_vtx_zbravosumalpha"] = calculateZbravosumalpha;
 }
 
-void::MutableTTree::addVariableZbravosum(){
+void MutableTTree::addVariableZbravosum(){
     double* zbravosum = new double {999.9};
     tuple_["unc_vtx_zbravosum"] = zbravosum;
     newtree_->Branch("unc_vtx_zbravosum", tuple_["unc_vtx_zbravosum"],"unc_vtx_zbravosum/D");

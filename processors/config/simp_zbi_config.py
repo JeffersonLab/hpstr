@@ -79,16 +79,19 @@ logeps2 = -6.5
 #dNdm = dNdm_VdMass[simp_vd_mass]
 #logeps2 = logeps2_VdMass[simp_vd_mass]
 
-zbi = HpstrConf.Processor('zbi','ZBiCutflowProcessor')
+zbi = HpstrConf.Processor('zbi','SimpZBiOptimizationProcessor')
 zbi.parameters['testSpecialCut'] = 0
 zbi.parameters['debug'] = options.debug
 zbi.parameters['outFileName'] = options.outFilename
-zbi.parameters['cuts_cfgFile'] = '/sdf/group/hps/users/alspellm/run/cut_dev/zalpha_slope_scan_05032023/iterativeCuts.json'
+zbi.parameters['cuts_cfgFile'] = '/sdf/group/hps/users/alspellm/src/test/hpstr/analysis/selections/iterativeCuts.json'
 zbi.parameters['zalpha_slope'] = options.zalpha_slope
 zbi.parameters['scan_zcut'] = options.scan_zcut
 zbi.parameters['ztail_events'] = options.ztail_nevents # 0.5
 zbi.parameters['step_size'] = options.step_size
-zbi.parameters['cutVariables'] = ["unc_vtx_ele_track_zalpha","unc_vtx_pos_track_zalpha"]
+zbi.parameters['cutVariables'] = ["unc_vtx_ele_track_zalpha","unc_vtx_pos_track_zalpha","unc_vtx_ele_zbravoalpha","unc_vtx_pos_zbravoalpha"]
+zbi.parameters['add_new_variables'] = ['zalpha','zbravo','zbravoalpha']
+zbi.parameters['new_variable_params'] = [0.02,99.9,0.005]
+
 
 #Background MC Scales
 luminosity = 10.7 #pb-1
@@ -97,25 +100,23 @@ zbi.parameters['luminosity'] = luminosity
 ## Background ##
 zbi.parameters['bkgVtxAnaFilename'] = '/sdf/group/hps/users/alspellm/projects/collaboration_meetings/may_2023/kf_data/kf_041823/output/hadd_hps_BLPass4_1958_files_recon_4.2_ana_kf.root'
 zbi.parameters['bkgVtxAnaTreename'] = 'vtxana_kf_Tight_2016_simp_reach_dev/vtxana_kf_Tight_2016_simp_reach_dev_tree'
-zbi.parameters['tritrig_sf'] = 10.0
+zbi.parameters['background_sf'] = 10.0
 
 #MC Signal 
 zbi.parameters['signal_sf'] = 1.0
-zbi.parameters['signal_mass_MeV'] = simp_vd_mass
+zbi.parameters['signal_mass'] = simp_vd_mass
 zbi.parameters['signalVtxAnaFilename'] = '/sdf/group/hps/users/alspellm/projects/THESIS/cut_dev/zbravo_dev_04242023/signal/kf/ana/hadd_mass_55_simp_recon_KF_ana.root'
 zbi.parameters['signalVtxAnaTreename'] = 'vtxana_kf_radMatchTight_2016_simp_reach_dev/vtxana_kf_radMatchTight_2016_simp_reach_dev_tree'
 zbi.parameters['signalMCAnaFilename'] = '/sdf/group/hps/users/alspellm/projects/THESIS/mc/2016/simps/slic_ana/hadd_mass_55_simp_mcAna.root'
 zbi.parameters['signal_pdgid'] = '625'
 zbi.parameters['signalHistCfgFilename'] = '/sdf/group/hps/users/alspellm/src/test/hpstr/analysis/plotconfigs/tracking/zbiCutVariables.json'
 
-zbi.parameters['massRes_MeV'] = massResolution
+zbi.parameters['massRes'] = massResolution
 zbi.parameters['radFrac'] = radFrac
 zbi.parameters['simp_radAcc'] = simp_radAcc
 zbi.parameters['dNdm'] = dNdm
 zbi.parameters['logEps2'] = logeps2
 
-zbi.parameters['add_new_variables'] = ['zalpha']
-zbi.parameters['new_variable_params'] = [0.20]
 
 # Sequence which the processors will run.
 p.sequence = [zbi]

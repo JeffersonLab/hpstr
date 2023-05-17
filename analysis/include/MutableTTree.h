@@ -28,6 +28,7 @@ class MutableTTree {
         void Fill();
 
         //void addVariableZalpha(std::vector<double> impact_parameter_cut);
+        void addNewVariable(std::string, double param);
         void addVariableZalpha(double y_intercept, double slope, double alpha_z);
         void addVariableZalpha(double slope);
         void addVariableZbravo();
@@ -76,6 +77,7 @@ class MutableTTree {
     private:
         void initializeFlatTuple(TTree* tree, std::map<std::string, double*> &tuple_map);
         void copyTTree();
+        void setNewVariableIDs();
         std::map<std::string,TBranch*> new_branches;
         std::map<std::string, double*> new_variables_;
         std::map<std::string,std::function<double()>> functions_;
@@ -83,6 +85,7 @@ class MutableTTree {
         std::map<std::string,std::function<double()>> variable_shifts_;
         double lowMass_{-999.9};
         double highMass_{-999.9};
+        std::map<std::string, int> new_variable_ids_;
 };
 
 #endif // __MUTABLE_TTREE_H

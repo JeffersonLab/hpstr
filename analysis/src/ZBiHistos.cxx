@@ -80,57 +80,6 @@ double ZBiHistos::cutFractionOfSignalVariable(std::string cutvariable, bool isCu
     return cutvalue;
 }
 
-void ZBiHistos::fillEventVariableHistograms(MutableTTree* MTT){
-
-    //Fill histograms for each variable defined in tree
-    std::vector<std::string> variables = MTT->getAllVariables();
-    for(std::vector<std::string>::iterator it=variables.begin(); it != variables.end(); it++) {
-        std::string var = *it;
-        Fill1DHisto(var+"_h", MTT->getValue(var));
-    }
-
-    //always fill
-    if(MTT->variableExists("unc_vtx_z") && MTT->variableExists("unc_vtx_ele_track_z0") 
-            && MTT->variableExists("unc_vtx_pos_track_z0")){
-        Fill2DHisto("z0_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_ele_track_z0"));
-        Fill2DHisto("z0_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_pos_track_z0"));
-    }
-
-    //Investigating new variables
-    if(MTT->variableExists("unc_vtx_ele_track_zalpha") && MTT->variableExists("unc_vtx_pos_track_zalpha")){
-        Fill2DHisto("z0_v_recon_zalpha_hh",MTT->getValue("unc_vtx_ele_track_zalpha"),MTT->getValue("unc_vtx_ele_track_z0"));
-        Fill2DHisto("z0_v_recon_zalpha_hh",MTT->getValue("unc_vtx_pos_track_zalpha"),MTT->getValue("unc_vtx_pos_track_z0"));
-    }
-    if(MTT->variableExists("unc_vtx_ele_zbravoalpha") && MTT->variableExists("unc_vtx_pos_zbravoalpha")){
-        Fill2DHisto("zbravo_v_zbravoalpha_hh",MTT->getValue("unc_vtx_ele_zbravoalpha"),MTT->getValue("unc_vtx_ele_zbravo"));
-        Fill2DHisto("zbravo_v_zbravoalpha_hh",MTT->getValue("unc_vtx_pos_zbravoalpha"),MTT->getValue("unc_vtx_pos_zbravo"));
-    }
-    if(MTT->variableExists("unc_vtx_ele_zbravo") && MTT->variableExists("unc_vtx_pos_zbravo")){
-        Fill2DHisto("zbravo_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_ele_zbravo"));
-        Fill2DHisto("zbravo_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_pos_zbravo"));
-    }
-    if(MTT->variableExists("unc_vtx_zbravosum")){
-        Fill2DHisto("zbravosum_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_zbravosum"));
-        Fill2DHisto("zbravosum_v_zbravosumalpha_hh",MTT->getValue("unc_vtx_zbravosumalpha"),MTT->getValue("unc_vtx_zbravosum"));
-    }
-}
-
-void ZBiHistos::defineTestCutHistograms(IterativeCutSelector* testCutsSelector) {
-    for(std::map<std::string,std::pair<double,int>>::iterator it = 
-            testCutsSelector->getPointerToCuts()->begin(); it != testCutsSelector->getPointerToCuts()->end(); it++){
-        std::string name = it->first; 
-        //Used to select true z vertex distribution given a cut in unc_vtx_z
-        addHisto2d("unc_vtx_z_vs_true_vtx_z_"+name+"_hh","unc z_{vtx} [mm]",
-            1500, -50.0, 100.0,"true z_{vtx} [mm]",200,-50.3,149.7);
-        //signalSelZ
-        addHisto1d("signal_SelZ_"+name+"_h","true z_{vtx} [mm]",
-                200, -50.3, 149.7);
-        //tritrig zVtx
-        addHisto1d("background_zVtx_"+name+"_h","unc z_{vtx} [mm]",
-                150, -50.0, 100.0);
-    }
-}
-
 void ZBiHistos::defineZBiCutflowProcessorHistograms(){
     //These histograms are used specifically for tracking the ZBitCutflowProcessor iterative process
     addHisto2d("persistent_cuts_hh","pct_sig_cut", 1000,-0.5,99.5,"cut_id",25,0.5,25.5);
