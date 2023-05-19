@@ -17,12 +17,15 @@ void SimpZBiOptimizationProcessor::configure(const ParameterSet& parameters) {
     {
         //Basic config
         debug_ = parameters.getInteger("debug",debug_);
+        max_iteration_ = parameters.getInteger("max_iteration", max_iteration_);
+        year_ = parameters.getInteger("year",year_);
         cuts_cfgFile_ = parameters.getString("cuts_cfgFile",cuts_cfgFile_);
         outFileName_ = parameters.getString("outFileName",outFileName_);
         cutVariables_ = parameters.getVString("cutVariables", cutVariables_);
         min_ztail_events_ = parameters.getDouble("ztail_events",min_ztail_events_);
         scan_zcut_ = parameters.getInteger("scan_zcut",scan_zcut_);
         step_size_ = parameters.getDouble("step_size",step_size_);
+        eq_cfgFile_ = parameters.getString("eq_cfgFile", eq_cfgFile_);
 
         //Background
         bkgVtxAnaFilename_ = parameters.getString("bkgVtxAnaFilename", bkgVtxAnaFilename_);
@@ -30,8 +33,8 @@ void SimpZBiOptimizationProcessor::configure(const ParameterSet& parameters) {
         background_sf_ = parameters.getDouble("background_sf",background_sf_);
 
         //MC Signal
-        signalHistCfgFilename_ = 
-            parameters.getString("signalHistCfgFilename",signalHistCfgFilename_);
+        variableHistCfgFilename_ = 
+            parameters.getString("variableHistCfgFilename",variableHistCfgFilename_);
         signalVtxAnaFilename_ = 
             parameters.getString("signalVtxAnaFilename", signalVtxAnaFilename_);
         signalVtxAnaTreename_ = 
@@ -42,12 +45,9 @@ void SimpZBiOptimizationProcessor::configure(const ParameterSet& parameters) {
             parameters.getString("signal_pdgid", signal_pdgid_);
         signal_sf_ = parameters.getDouble("signal_sf", signal_sf_);
         signal_mass_ = parameters.getDouble("signal_mass",signal_mass_);
-        massResolution_ = parameters.getDouble("massRes",massResolution_);
+        mass_window_nsigma_ = parameters.getDouble("mass_window_nsigma", mass_window_nsigma_);
 
         //Expected Signal Calculation
-        radFrac_ = parameters.getDouble("radFrac",radFrac_);
-        radAcc_ = parameters.getDouble("simp_radAcc",radAcc_);
-        dNdm_ = parameters.getDouble("dNdm",dNdm_);
         logEps2_ = parameters.getDouble("logEps2",logEps2_);
 
         // New Variables //
@@ -67,24 +67,22 @@ void SimpZBiOptimizationProcessor::configure(const ParameterSet& parameters) {
 void SimpZBiOptimizationProcessor::addNewVariables(MutableTTree* MTT, std::string variable, double param){
     if(variable == "zalpha"){
         MTT->addVariableZalpha(param);
-        std::cout << "[MutableTTree]::Adding New Variable addVariableZalpha with param " << param << std::endl;
     }
-    if(variable == "zbravo"){
+    else if(variable == "zbravo"){
         MTT->addVariableZbravo();
-        std::cout << "[MutableTTree]::Adding New Variable addVariablebravo" << std::endl;
     }
-    if(variable == "zbravoalpha"){
+    else if(variable == "zbravoalpha"){
         MTT->addVariableZbravoAlpha(param);
-        std::cout << "[MutableTTree]::Adding New Variable addVariableZbravoAlpha with param " << param << std::endl;
     }
-    if(variable == "zbravosum"){
+    else if(variable == "zbravosum"){
         MTT->addVariableZbravosum();
-        std::cout << "[MutableTTree]::Adding New Variable addVariableZbravosum" << std::endl;
     }
-    if(variable == "zbravosumalpha"){
+    else if(variable == "zbravosumalpha"){
         MTT->addVariableZbravosumAlpha(param);
-        std::cout << "[MutableTTree]::Adding New Variable addVariableZbravosumAlpha with param " << param << std::endl;
     }
+    else
+        std::cout << "[SimpZBiOptimization]::ERROR::NEW VARIABLE " << variable << " IS NOT DEFINED IN MutableTTree.cxx"
+            <<std::endl;
 }
 
 void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos> histos, MutableTTree* MTT){
@@ -125,54 +123,63 @@ void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos
 void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::string outFilename){
     std::cout << "[SimpZBiOptimizationProcessor] Initialize" << std::endl;
 
-    //Mass window
-    lowMass_ = signal_mass_ - 2.0*massResolution_/2.0;
-    highMass_ = signal_mass_ + 2.0*massResolution_/2.0;
-    std::cout << "MASS WINDOW: " << lowMass_ << " - " << highMass_ << std::endl;
+    //Load Simp Equations
+    simpEqs_ = new SimpEquations(year_, eq_cfgFile_);
+    massResolution_ = simpEqs_->massResolution(signal_mass_);
+
+    //Define Mass window
+    lowMass_ = signal_mass_ - mass_window_nsigma_*massResolution_/2.0;
+    highMass_ = signal_mass_ + mass_window_nsigma_*massResolution_/2.0;
+    std::cout << "[SimpZBiOptimization]::Mass Window: " << lowMass_ << " - " << highMass_ << std::endl;
 
     //Initialize output file
+    std::cout << "[SimpZBiOptimization]::Output File: " << outFileName_.c_str() << std::endl;
     outFile_ = new TFile(outFileName_.c_str(),"RECREATE");
 
     //Get the signal pretrigger simulated vertex z distribution
+    std::cout << "[SimpZBiOptimization]::Getting MC Signal pre-trigger vertex z distribution from file "
+        << signalMCAnaFilename_ << std::endl;
     getSignalMCAnaVtxZ_h(signalMCAnaFilename_, signal_pdgid_); 
 
     //Read signal ana vertex tuple, and convert to mutable tuple
+    std::cout << "[SimpZBiOptimization]::Reading Signal AnaVertex Tuple from file " 
+        << signalVtxAnaFilename_.c_str() << std::endl;
     TFile* signalVtxAnaFile = new TFile(signalVtxAnaFilename_.c_str(),"READ");
     signalMTT_ = new MutableTTree(signalVtxAnaFile, signalVtxAnaTreename_);
     signalMTT_->defineMassWindow(lowMass_, highMass_);
 
     //Read background ana vertex tuple, and convert to mutable tuple
+    std::cout << "[SimpZBiOptimization]::Reading Background AnaVertex Tuple from file " 
+        << signalVtxAnaFilename_.c_str() << std::endl;
     TFile* bkgVtxAnaFile = new TFile(bkgVtxAnaFilename_.c_str(),"READ");
     bkgMTT_ = new MutableTTree(bkgVtxAnaFile, bkgVtxAnaTreename_);
     bkgMTT_->defineMassWindow(lowMass_, highMass_);
 
-    /*
-    //Add new variables and set new variable parameters from config
-    //New variables must have corresponding entries in MutableTTree.cxx
-    for(std::vector<std::string>::iterator it = new_variables_.begin(); it != new_variables_.end(); it++){
-        std::cout << "Adding New Variable " << *it << std::endl;
-        int param_idx = std::distance(new_variables_.begin(), it);
-        signalMTT_->addNewVariable(*it, new_variable_params_.at(param_idx));
-        bkgMTT_->addNewVariable(*it, new_variable_params_.at(param_idx));
-    }*/
-
+    //Add new variables, as defined in MutableTTree.cxx, from the processor configuration script
+    std::cout << "[SimpZBiOptimization]::Adding New Variables to Tuples" << std::endl;
     for(std::vector<std::string>::iterator it = new_variables_.begin(); it != new_variables_.end(); it++){
         int param_idx = std::distance(new_variables_.begin(), it);
+        std::cout << "[SimpZBiOptimization]::Attempting to add new variable " << *it << 
+            " with parameter " << new_variable_params_.at(param_idx) << std::endl;
         addNewVariables(signalMTT_, *it, new_variable_params_.at(param_idx));
         addNewVariables(bkgMTT_, *it, new_variable_params_.at(param_idx));
     }
 
-    //Apply any variable shifts here
-    std::cout << "Shifting background unc_vtx_ele_track_z0 by 0.1" << std::endl;
+    //Apply any variable corrections here
+    std::cout << "Shifting background unc_vtx_ele_track_z0 by 0.1 mm" << std::endl;
     bkgMTT_->shiftVariable("unc_vtx_ele_track_z0", 0.1);
-    std::cout << "Shifting background unc_vtx_pos_track_z0 by 0.1" << std::endl;
+    std::cout << "Shifting background unc_vtx_pos_track_z0 by 0.1 mm" << std::endl;
     bkgMTT_->shiftVariable("unc_vtx_pos_track_z0", 0.1);
     
-    //Initialize new trees with new variables, and variable shifts, applied
+    //Finalize Initialization of New Mutable Tuples
+    std::cout << "[SimpZBiOptimization]::Finalizing Initialization of New Mutable Tuples" << std::endl;
     signalMTT_->Fill();
     bkgMTT_->Fill();
 
-    //initialize cut selector for 'Persistent Cuts' (which are applied to every event)
+    //Initialize Persistent Cut Selector. These cuts are applied to all events.
+    //Persistent Cut values are updated each iteration with the value of the best performing Test Cut in
+    //that iteration.
+    std::cout << "[SimpZBiOptimization]::Initializing Set of Persistent Cuts" << std::endl;
     persistentCutsSelector_ = new IterativeCutSelector("persistentCuts", cuts_cfgFile_);
     persistentCutsSelector_->LoadSelection();
     persistentCutsSelector_->filterCuts(cutVariables_);
@@ -180,7 +187,8 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
     std::cout << "Persistent Cuts: " << std::endl;
     persistentCutsSelector_->printCuts();
 
-    //initalize Test Cuts (which will be iteratively changed)
+    //initalize Test Cuts
+    std::cout << "[SimpZBiOptimization]::Initializing Set of Test Cuts" << std::endl;
     testCutsSelector_ = new IterativeCutSelector("testCuts",cuts_cfgFile_);
     testCutsSelector_->LoadSelection();
     testCutsSelector_->filterCuts(cutVariables_);
@@ -189,41 +197,47 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
     testCutsSelector_->printCuts();
 
     //Initialize signal histograms
+    std::cout << "[SimpZBiOptimization]::Initializing Signal Variable Histograms" << std::endl;
     signalHistos_= std::make_shared<ZBiHistos>("signal");
     signalHistos_->debugMode(debug_);
-    signalHistos_->loadHistoConfig(signalHistCfgFilename_);
+    signalHistos_->loadHistoConfig(variableHistCfgFilename_);
     signalHistos_->DefineHistos();
 
     ////Initialize background histograms
+    std::cout << "[SimpZBiOptimization]::Initializing Background Variable Histograms" << std::endl;
     bkgHistos_ = std::make_shared<ZBiHistos>("background");
     bkgHistos_->debugMode(debug_);
-    bkgHistos_->loadHistoConfig(signalHistCfgFilename_);
+    bkgHistos_->loadHistoConfig(variableHistCfgFilename_);
     bkgHistos_->DefineHistos();
     
     //Initialize Test Cut histograms
+    std::cout << "[SimpZBiOptimization]::Initializing Test Cut Variable Histograms" << std::endl;
     testCutHistos_ = std::make_shared<ZBiHistos>("testCutHistos");
     testCutHistos_->debugMode(debug_);
     testCutHistos_->DefineHistos();
-    //Add Test Cut analysis histograms 
+
+    //Add Test Cut Analysis Histograms necessary for calculating background and signal
+    std::cout << "[SimpZBiOptimization]::Initializing Test Cut Analysis Histograms" << std::endl;
     for(cut_iter_ it=testCutsPtr_->begin(); it!=testCutsPtr_->end(); it++){
         std::string name = it->first;
         //Used to select true z vertex distribution given a cut in unc_vtx_z
         testCutHistos_->addHisto2d("unc_vtx_z_vs_true_vtx_z_"+name+"_hh","unc z_{vtx} [mm]",
             1500, -50.0, 100.0,"true z_{vtx} [mm]",200,-50.3,149.7);
-        //signalSelZ
+        //signalSelZ models signal selection efficiency
         testCutHistos_->addHisto1d("signal_SelZ_"+name+"_h","true z_{vtx} [mm]",
                 200, -50.3, 149.7);
-        //tritrig zVtx
+        //background_zVtx provides basis for background model, used to estimate nbackground in signal region
         testCutHistos_->addHisto1d("background_zVtx_"+name+"_h","unc z_{vtx} [mm]",
                 150, -50.0, 100.0);
     }
 
     //Initialize processor histograms that summarize iterative results
+    std::cout << "[SimpZBiOptimization]::Initializing Itearitve Result Histograms" << std::endl;
     processorHistos_ = std::make_shared<ZBiHistos>("zbi_processor");
     processorHistos_->defineZBiCutflowProcessorHistograms();
 
     //Fill Initial Signal histograms
-    std::cout << "Filling initial signal histograms" << std::endl;
+    std::cout << "[SimpZBiOptimization]::Filling initial signal histograms" << std::endl;
     for(int e=0; e < signalMTT_->GetEntries(); e++){
         signalMTT_->GetEntry(e);
         if(testSpecialCut_){
@@ -233,7 +247,7 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
         fillEventHistograms(signalHistos_, signalMTT_);
     }
 
-    std::cout << "Filling initial background histograms" << std::endl;
+    std::cout << "[SimpZBiOptimization]::Filling initial background histograms" << std::endl;
     //Fill Initial Background Histograms
     for(int e=0; e < bkgMTT_->GetEntries(); e++){
         bkgMTT_->GetEntry(e);
@@ -245,73 +259,53 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
     }
     
     //Write initial variable histograms for signal and background
-    std::cout << "Writing Initial Histograms" << std::endl;
+    std::cout << "[SimpZBiOptimization]::Writing Initial Histograms" << std::endl;
     signalHistos_->writeHistos(outFile_,"initial_signal");
     bkgHistos_->writeHistos(outFile_,"initial_background");
 
     //Integrate each signal variable distribution
     //This value is the reference for cutting n% of signal in a given variable
-    std::cout << "Integrate initial signal histograms" << std::endl;
+
+    //Integrate each signal variable distribution.
+    //When iterating Test Cuts, we reference these intial integrals, cutting n% of the original distribution.
+    std::cout << "[SimpZBiOptimization]::Integrating initial Signal distributions" << std::endl;
     for(cut_iter_ it=testCutsPtr_->begin(); it!=testCutsPtr_->end(); it++){
         std::string cutname = it->first;
-        std::cout << "Cutname: " << cutname << std::endl;
         std::string var = persistentCutsSelector_->getCutVar(cutname);
-        std::cout << "Integrating signal histogram for " << var << std::endl;
         initialIntegrals_[var] = signalHistos_->integrateHistogram1D("signal_"+var+"_h");
     }
 
-    //Set the values for the initial set of 'persistentCuts' based on the signal 
-    //variable histograms cutting 0% of signal
-    std::cout << "Initialize persistent cuts" << std::endl;
+    //Set initial value of each Persistent Cut to where 0% of Signal distribution is cut in that variable
+    std::cout << "[SimpZBiOptimization]::Set initial Persistent Cut values based on cutting 0% Signal" << std::endl;
     for(cut_iter_ it=persistentCutsPtr_->begin(); it!=persistentCutsPtr_->end(); it++){
         std::string cutname = it->first;
         std::string cutvar = persistentCutsSelector_->getCutVar(cutname);
         bool isCutGT = persistentCutsSelector_->isCutGreaterThan(cutname);
         double cutvalue = signalHistos_->cutFractionOfSignalVariable(cutvar, isCutGT, 0.0, initialIntegrals_[cutvar]);
         persistentCutsSelector_->setCutValue(cutname, cutvalue);
-        if(debug_) std::cout << "[Persistent Cuts] Cut "<< cutname << " updated to: " << 
-            persistentCutsSelector_->getCut(cutname) << std::endl;
+        std::cout << "[SimpZBiOptimization]::Persistent Cut "<< cutname << ": " << 
+            persistentCutsSelector_->getCut(cutname) << " cuts 0% of Signal in variable " << cutvar << std::endl;
     }
 }
 
-double SimpZBiOptimizationProcessor::round(double var){
-    float value = (int)(var * 100 + .5);
-    return (double)value / 100;
-}
 
 bool SimpZBiOptimizationProcessor::process(){
     std::cout << "[SimpZBiOptimizationProcessor] process()" << std::endl;
 
-    //Each iteration loops over the set of cuts being tested. The expected signal and background
-    //rate is calculated given each cut independently. 
-    //We calculate ZBi, the chosen metric of signal vs background, for each cut.
-    //Within an iteration, the cut the gives the largest ZBi value is selected as the best_cut.
-    //On the next iteration, the best_cut is applied to all events, then the process repeats.
-    
+    //step_size defines n% of signal distribution to cut in a given variable
     double cutFraction = step_size_;
-    int max_iteration = (int)1.0/cutFraction;
-    max_iteration = 5;
+    if(max_iteration_ > (int)1.0/cutFraction)
+        max_iteration_ = (int)1.0/cutFraction;
 
-    //For each Test Cut variable, cut n% of signal in that variable, to determine the 
-    //Test Cut value. 
-    //Apply each Test Cut independently to the signal and background events. 
-    //Model the resulting background for each Test Cut.
-    //Calculate the background rate for each Test Cut background model, as a function of zcut. 
-    //Calculate the expected signal for each Test Cut, as a function of zcut.
-    //Calculate ZBi for each Test Cut, as a function of zcut, where ZBi = f(Nsig,Nbkg).
-    //For a given Test Cut, choose the largest ZBi value as a function of zcut.
-    //Compare the largest ZBi values of each Test Cut. 
-    //The Test Cut with the overall largest ZBi value is chosen to be the single best 
-    //cut that maximizes the signal significance. 
-    //The best Test Cut is henceforth applied to all events, and the iterative process continues.
-
-    for(int iteration = 0; iteration < max_iteration; iteration ++){
+    //Iteratively cut n% of the signal distribution for a given Test Cut variable
+    for(int iteration = 0; iteration < max_iteration_; iteration ++){
         double cutSignal = (double)iteration*step_size_*100.0;
         cutSignal = round(cutSignal);
-        if(debug_) std::cout << "############### ITERATION " 
-            << iteration << " #####################" << std::endl;
+        if(debug_) std::cout << "## ITERATION " << iteration << " ##" << std::endl;
 
         //Reset histograms at the start of each iteration
+        //Histograms will change with each iteration. 
+        if(debug_) std::cout << "[SimpZBiOptimization]::Resetting Histograms for Iteration" << std::endl;
         signalHistos_->resetHistograms1d();
         signalHistos_->resetHistograms2d();
         bkgHistos_->resetHistograms1d();
@@ -333,15 +327,15 @@ bool SimpZBiOptimizationProcessor::process(){
         for(int e=0;  e < signalMTT_->GetEntries(); e++){
             signalMTT_->GetEntry(e);
 
-            //Apply persistent cuts to all events
+            //Apply current set of persistent cuts to all events
             if(failPersistentCuts(signalMTT_))
                 continue;
 
+            //Fill Signal variable distributions
             fillEventHistograms(signalHistos_, signalMTT_);
         }
         
-        //For each Test Cut, find the signal distribution in that Test Cut variable.
-        //Cut n% of the signal using that Test Cut variable
+        //Loop over each Test Cut. Cut n% of signal distribution in Test Cut variable
         for(cut_iter_ it=testCutsPtr_->begin(); it!=testCutsPtr_->end(); it++){
             std::string cutname = it->first;
             std::string cutvar = testCutsSelector_->getCutVar(cutname);
@@ -350,11 +344,14 @@ bool SimpZBiOptimizationProcessor::process(){
             double cutvalue = signalHistos_->cutFractionOfSignalVariable(cutvar, isCutGT, 
                     iteration*cutFraction, initialIntegrals_[cutvar]);
             testCutsSelector_->setCutValue(cutname, cutvalue);
-            if(debug_) std::cout << "[Test Cuts]: " << cutname << 
-                " updated to value " << testCutsSelector_->getCut(cutname) << std::endl;
+            if(debug_){
+                std::cout << "[SimpZBiOptimization]::Test Cut " << cutname << std::endl; 
+                std::cout << "Cut value " << testCutsSelector_->getCut(cutname) << " cuts " << cutSignal 
+                    << "% of signal distribution in this variable." <<  std::endl;
+            }
         }
 
-        //Build Background Model for each Test Cut
+        //Fill Background Histograms corresponding to each Test Cut
         for(int e=0;  e < bkgMTT_->GetEntries(); e++){
             bkgMTT_->GetEntry(e);
 
@@ -364,6 +361,7 @@ bool SimpZBiOptimizationProcessor::process(){
 
             fillEventHistograms(bkgHistos_, bkgMTT_);
 
+            //Loop over each Test Cut
             for(cut_iter_ it=testCutsPtr_->begin(); it!=testCutsPtr_->end(); it++){
                std::string cutname = it->first;
                std::string cutvar = testCutsSelector_->getCutVar(cutname);
@@ -372,18 +370,15 @@ bool SimpZBiOptimizationProcessor::process(){
                if(failTestCut(cutname, bkgMTT_))
                    continue;
 
-                //If event passes, fill zVtx distribution
+                //If event passes Test Cut, fill vertex z distribution. 
+                //This distribution is used to build the Background Model corresponding to each Test Cut
                 testCutHistos_->Fill1DHisto("background_zVtx_"+cutname+"_h",
                         bkgMTT_->getValue("unc_vtx_z"),1.0);
             }
         }
 
-        //Knowing that we will eventually need to calculate the expected signal, and that 
-        //the expected signal calculation requires both the 'true_vtx_z' distribution, and
-        //the 'unc_vtx_z' distribution (which is used to apply the zcut), we simply bundle
-        //these distributions together here for convenience.
-        //By combining these two 1D distributions into a single 2D distribution, we can 
-        //apply a zcut on 'unc_vtx_z', and return the corresponding 'true_vtx_z' distribution.
+        //For each Test Cut, build relationship between Signal truth z_vtx, and reconstructed z_vtx
+        //This is used to get the truth Signal Selection Efficiency F(z), given a Zcut in reconstructed z_vtx
         for(int e=0;  e < signalMTT_->GetEntries(); e++){
             signalMTT_->GetEntry(e);
 
@@ -404,28 +399,33 @@ bool SimpZBiOptimizationProcessor::process(){
             }
         }
 
-        //Now we start calculating the signal significance, ZBi = f(Nsig,Nbkg), corresponding
-        //to each Test Cut independently. 
-        //Nsig and Nbkg both depend on the location of the Zcut, so we can scan over all
-        //possible Zcut values, and calculate ZBi for each zcut value. 
-        //The largest ZBi for a given Test Cut, across all Zcut values, is chosen as the 
-        //best possible signal significance for that Test Cut.
-
-        //Store and update values of the overall best Test Cut
+        //Calcuate the Binomial Significance ZBi corresponding to each Test Cut
+        //Test Cut with maximum ZBi after cutting n% of signal distribution in a given variable is selected
+        //Test Cut value is added to list of Persistent Cuts, and is applied to all events in following iterations.
         double best_zbi = -9999.9;
         std::string best_cutname;
         double best_cutvalue;
 
-        //For each Test Cut, loop over all possible zcut values and calculate ZBi
+        //Loop over Test Cuts
         for(cut_iter_ it=testCutsPtr_->begin(); it!=testCutsPtr_->end(); it++){
             std::string cutname = it->first;
             double cutvalue = testCutsSelector_->getCut(cutname);
             int cutid = testCutsSelector_->getCutID(cutname);
-            std::cout << "Calculating NSig for Test Cut " << cutname << std::endl;
-            std::cout << "Test Cut ID: " << cutid << " | Test Cut Value: " 
-                << cutvalue << std::endl;
+            std::cout << "[SimpZBiOptimization]::Calculating ZBi for Test Cut " << cutname << std::endl;
+            std::cout << "Test Cut ID: " << cutid << " | Test Cut Value: " << cutvalue << std::endl;
 
-            //Make TGraph to track zbi vs zcut
+            //Build Background Model, used to estimate nbkg in Signal Region
+            std::cout << "[SimpZBiOptimization]::Building Background Model to estimate nbkg in Signal Region" 
+                << std::endl;
+            TF1* bkg_model = (TF1*)testCutHistos_->fitExponentialTail("background_zVtx_"+cutname, 200.0); 
+
+            //Get signal unc_vtx_z vs true_vtx_z
+            TH2F* vtx_z_hh = (TH2F*)testCutHistos_->get2dHisto("testCutHistos_unc_vtx_z_vs_true_vtx_z_"+cutname+"_hh");
+
+            //CD to output file to save resulting plots
+            outFile_->cd();
+
+            //Graphs track the performance of a Test Cut as a function of Zcut position
             TGraph* zcutscan_zbi_g = new TGraph();
             zcutscan_zbi_g->SetName(("zcut_vs_zbi_"+cutname+"_g").c_str());
             zcutscan_zbi_g->SetTitle(("zcut_vs_zbi_"+cutname+"_g;zcut [mm];zbi").c_str());
@@ -454,79 +454,81 @@ bool SimpZBiOptimizationProcessor::process(){
                     ("nbkg_v_zcut_zbi_"+cutname+"_hh; zcut [mm]; Nbkg").c_str(),
                     200,-50.3,149.7,3000,0.0,300.0);
 
-            //Fit the zvtx background distribution to get the background model as function of z
-            std::cout << "[SimpZBiOptimizationProcessor]::Fitting ztail" << std::endl;
-            
-            TF1* bkg_model = (TF1*)testCutHistos_->fitZTailWithExp(cutname); 
 
-
-            
-            //If background events = 0, ZBi calculation breaks.
+            //Find maximum position of Zcut --> ZBi calculation requires non-zero background
+            //Start the Zcut position at the target
             double max_zcut = -4.0;
             double testIntegral = bkg_model->Integral(max_zcut, bkg_model->GetXmax());
-            //Find maximum possible zcut position to test, based on some final number
-            //of background events in the signal region 'min_ztail_events_'
             while(testIntegral > min_ztail_events_){
                 max_zcut = max_zcut+0.1;
                 testIntegral = bkg_model->Integral(max_zcut, bkg_model->GetXmax());
             }
-            std::cout << "Maximum Zcut value: " << max_zcut << 
-                " gives NBackground = " << testIntegral << std::endl;
+            std::cout << "[SimpZBiOptimization]::Maximum Zcut: " << max_zcut << 
+                " gives " << testIntegral << " background events"  << std::endl;
 
-            //If we do not want to scan zcut values, set zcut scan window to a single value
+            //If configuration does not specify scanning Zcut values, use single Zcut position at maximum position.
             double min_zcut = -4.0;
             if(!scan_zcut_)
                 min_zcut = max_zcut;
-            std::cout << "Minimum Zcut value: " << min_zcut << std::endl;
-
-            outFile_->cd();
-            //Get signal unc_vtx_z vs true_vtx_z for the corresponding Test Cut
-            TH2F* vtx_z_hh = (TH2F*)testCutHistos_->get2dHisto("testCutHistos_unc_vtx_z_vs_true_vtx_z_"+cutname+"_hh");
+            std::cout << "[SimpZBiOptimization]::Minimum Zcut position: " << min_zcut << std::endl;
 
             //Get the signal vtx z selection efficiency *before* zcut is applied
             TH1F* true_vtx_NoZ_h = (TH1F*)vtx_z_hh->ProjectionY((cutname+"_"+"true_vtx_z_projy").c_str(),1,vtx_z_hh->GetXaxis()->GetNbins(),"");
-            TH1F* signalSelNoZ_h = 
-                (TH1F*)signalSimZ_h_->Clone(("testCutHistos_signal_SelNoZ_"+cutname+"_h").c_str());
-            for(int i=0; i<201; i++){
-                signalSelNoZ_h->SetBinContent(i,true_vtx_NoZ_h->GetBinContent(i));
-            }
-            TEfficiency* Seff_e = new TEfficiency(*signalSelNoZ_h, *signalSimZ_h_);
-            Seff_e->SetName("prompt_signal_efficiency");
 
-            //Scan over range of zcut values, fit background model to determine Nbkg
+            //Scan Zcut position and calculate ZBi
             double best_scan_zbi = -999.9;
             double best_scan_zcut;
             double best_scan_nsig;
             double best_scan_nbkg;
-            std::cout << "Looping over zcut values between: " << min_zcut << 
-                " to " << max_zcut << std::endl;
             for(double zcut = min_zcut; zcut < std::round(max_zcut+1.0); zcut = zcut+1.0){
                 double Nbkg = bkg_model->Integral(zcut,bkg_model->GetXmax());
                 
+                //Get the Signal truth vertex z distribution beyond the reconstructed vertex Zcut
                 TH1F* true_vtx_z_h = (TH1F*)vtx_z_hh->ProjectionY((std::to_string(zcut)+"_"+cutname+"_"+"true_vtx_z_projy").c_str(),vtx_z_hh->GetXaxis()->FindBin(zcut)+1,vtx_z_hh->GetXaxis()->GetNbins(),"");
 
-                //We need to take the signal selection efficiency, the binned ratio of 
-                //selected signal in Z, to the simulated signal in Z. 
-                //This requires that the binning matches, so we force them to match here.
+                //Convert the truth vertex z distribution beyond Zcut into the appropriately binned Selection.
+                //Binning must match Signal pre-trigger distribution, in order to take Efficiency between them. 
                 TH1F* signalSelZ_h = 
                     (TH1F*)signalSimZ_h_->Clone(("testCutHistos_signal_SelZ_"+cutname+"_h").c_str());
                 for(int i=0; i<201; i++){
                     signalSelZ_h->SetBinContent(i,true_vtx_z_h->GetBinContent(i));
                 }
 
-                //The efficiency of signalSelZ to signalSimZ gives us F(z), which is used
-                //in calculating the expected signal for both SIMPS and displaced A's
+                //Get the Signal Selection Efficiency, as a function of truth vertex Z, F(z)
                 TEfficiency* effCalc_h = new TEfficiency(*signalSelZ_h, *signalSimZ_h_);
 
-                double Nsig = 0.0;
+
+                double eps2 = std::pow(10, logEps2_);
+                double eps = std::sqrt(eps2);
+
+                //Calculate expected signal for Neutral Dark Vector "rho"
+                double nSigRho = simpEqs_->expectedSignalCalculation(signal_mass_, eps, true, false, 
+                        1.35, effCalc_h, -4.3, zcut);
+
+                //Calculate expected signal for Neutral Dark Vector "phi"
+                double nSigPhi = simpEqs_->expectedSignalCalculation(signal_mass_, eps, false, true, 
+                        1.35, effCalc_h, -4.3, zcut);
+
+                double Nsig = nSigRho + nSigPhi;
+
+                /*
+                //SIMP EXPECTED SIGNAL CALCUATION
                 double simpAp_mass_MeV = signal_mass_*(3/1.8);
                 double m_pi = simpAp_mass_MeV/3.0;
                 double alpha_D = 0.01;
                 double m_l = 0.511;
                 double f_pi = m_pi/(4.*M_PI);
+                //Calculate expected signal for Neutral Dark Vector "rho"
+                double nSigRho = simpEqs_->expectedSignalCalculation(simpAp_mass_MeV, m_pi, signal_mass_, eps,
+                        alpha_D, f_pi, m_l, true, false, 1.35, effCalc_h, -4.3, zcut);
 
-                double eps2 = std::pow(10, logEps2_);
-                double eps = std::sqrt(eps2);
+                //Calculate expected signal for Neutral Dark Vector "phi"
+                double nSigPhi = simpEqs_->expectedSignalCalculation(simpAp_mass_MeV, m_pi, signal_mass_, eps,
+                        alpha_D, f_pi, m_l, false, true, 1.35, effCalc_h, -4.3, zcut);
+                */
+
+
+                /*
                 std::string mesons[2] = {"rho","phi"};
                 for(int i =0; i < 2; i++){
                     bool rho = false;
@@ -556,7 +558,8 @@ bool SimpZBiOptimizationProcessor::process(){
                     
                     double br_V_to_ee = 1.0;
                     Nsig = Nsig + tot_apProd*effVtx*br_V_to_ee*br_Vpi_val;
-                }
+                }*/
+
 
                 //CLEAR POINTERS
                 delete effCalc_h;
@@ -637,6 +640,7 @@ bool SimpZBiOptimizationProcessor::process(){
                 best_cutname = cutname;
                 best_cutvalue = cutvalue;
             }
+
         } //END LOOP OVER TEST CUTS
 
         //Find the overall Best Test Cut for this iteration. Apply the new best cut to the list of
@@ -756,10 +760,9 @@ bool SimpZBiOptimizationProcessor::failTestCut(std::string cutname, std::map<std
 void SimpZBiOptimizationProcessor::getSignalMCAnaVtxZ_h(std::string signalMCAnaFilename, 
         std::string signal_pdgid){
     //Read pre-trigger Signal MCAna vertex z distribution
-    //Use mcAnaSimZ_h entries to set appropriately binned content in signalSimZ_h
     signalSimZ_h_ = new TH1F("signal_SimZ_h_","signal_SimZ;true z_{vtx} [mm];events", 200, -50.3, 149.7);
     TFile* signalMCAnaFile = new TFile(signalMCAnaFilename_.c_str(), "READ");
-    TH1F* mcAnaSimZ_h = (TH1F*)signalMCAnaFile->Get(("mcAna/mcAna_mc"+signal_pdgid+"Z_h").c_str()); //<-HARDCODE CHANGE 
+    TH1F* mcAnaSimZ_h = (TH1F*)signalMCAnaFile->Get(("mcAna/mcAna_mc"+signal_pdgid+"Z_h").c_str()); 
     for(int i=0; i < 201; i++){
         signalSimZ_h_->SetBinContent(i,mcAnaSimZ_h->GetBinContent(i));
     }
@@ -777,6 +780,11 @@ void SimpZBiOptimizationProcessor::writeGraph(TFile* outF, std::string folder, T
         dir->cd();
     }
     g->Write();
+}
+
+double SimpZBiOptimizationProcessor::round(double var){
+    float value = (int)(var * 100 + .5);
+    return (double)value / 100;
 }
 
 DECLARE_PROCESSOR(SimpZBiOptimizationProcessor);

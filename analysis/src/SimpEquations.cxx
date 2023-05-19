@@ -1,8 +1,58 @@
 #include "SimpEquations.h"
+#include <fstream>
+#include <iostream>
 #include <cmath>
 
-SimpEquations::SimpEquations(){
+SimpEquations::SimpEquations(int year){
+    year_ = year;
 
+    std::cout << "[SimpEquations]::Parameters " << std::endl;
+    std::cout << "mass ratio Ap:Pi_D = " << mass_ratio_Ap_to_Pid_ << std::endl;
+    std::cout << "mass ratio Ap:V_D = " << mass_ratio_Ap_to_Vd_ << std::endl;
+    std::cout << "ratio of dark pion mass to dark pion decay constant: " << ratio_mPi_to_fPi_ << std::endl;
+    std::cout << "Dark Vector decay lepton mass: " << m_l_ << std::endl;
+    std::cout << "Alpha Dark: " << alpha_D_ << std::endl;
+
+}
+
+SimpEquations::SimpEquations(int year, const std::string paramsConfigFile){
+    year_ = year;
+    loadParametersConfig(paramsConfigFile);
+
+    std::cout << "[SimpEquations]::Parameters Loaded From Json Config " << std::endl;
+    std::cout << "mass ratio Ap:Pi_D = " << mass_ratio_Ap_to_Pid_ << std::endl;
+    std::cout << "mass ratio Ap:V_D = " << mass_ratio_Ap_to_Vd_ << std::endl;
+    std::cout << "ratio of dark pion mass to dark pion decay constant: " << ratio_mPi_to_fPi_ << std::endl;
+    std::cout << "Dark Vector decay lepton mass: " << m_l_ << std::endl;
+    std::cout << "Alpha Dark: " << alpha_D_ << std::endl;
+
+}
+
+void SimpEquations::loadParametersConfig(const std::string paramsConfigFile){
+
+    //Read SIMP Model parameters from json
+    std::ifstream i_file(paramsConfigFile);
+    i_file >> params_config_;
+    for(auto& el : params_config_.items())
+        std::cout << el.key() << " : " << el.value() << "\n";
+    i_file.close();
+
+    //Set parameter values. All parameters must be specificed in json config
+    try
+    {
+        for(auto param : params_config_.items()){
+            mass_ratio_Ap_to_Vd_ = param.value().at("mass_ratio_Ap_to_Vd");
+            mass_ratio_Ap_to_Pid_ = param.value().at("mass_ratio_Ap_to_Pid");
+            ratio_mPi_to_fPi_ = param.value().at("ratio_mPi_to_fPi");
+            m_l_ = param.value().at("lepton_mass");
+            alpha_D_ = param.value().at("alpha_dark");
+        }
+    }
+    catch(...)
+    {
+        std::cout << "[SimpEquations]::ERROR::REQUIRED PARAMETER CONFIGURATIONS NOT FOUND IN " 
+            << paramsConfigFile << std::endl;
+    }
 }
 
 double SimpEquations::rate_2pi(double m_Ap, double m_pi, double m_V, double alpha_D){
@@ -76,4 +126,115 @@ double SimpEquations::gamma(double m_V,double E_V){
     double gamma = E_V/m_V;
     return gamma;
 }
+
+double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho, bool phi, 
+        double E_V, TEfficiency* effCalc_h, double target_pos, double zcut){
+
+    //Signal mass dependent SIMP parameters
+    double m_Ap = m_V*(mass_ratio_Ap_to_Vd_);
+    double m_pi = m_Ap/mass_ratio_Ap_to_Pid_;
+    double f_pi = m_pi/ratio_mPi_to_fPi_;
+
+    //Mass in MeV
+    double ctau = getCtau(m_Ap,m_pi, m_V,eps,alpha_D_,f_pi,m_l_,rho);
+    double gcTau = ctau * gamma(m_V/1000.0, E_V); //E_V in GeV
+
+    //Calculate the Efficiency Vertex (Displaced VD Acceptance)
+    double effVtx = 0.0;
+    for(int zbin = 0; zbin < (effCalc_h->GetTotalHistogram()->GetNbinsX())+1; zbin++){
+        double zz = effCalc_h->GetTotalHistogram()->GetBinLowEdge(zbin);
+        if(zz < zcut) continue;
+        effVtx += (TMath::Exp((target_pos-zz)/gcTau)/gcTau)*
+            (effCalc_h->GetEfficiency(zbin) - effCalc_h->GetEfficiencyErrorLow(zbin))*
+            effCalc_h->GetTotalHistogram()->GetBinWidth(zbin);
+    }
+
+
+    //Total A' Production Rate
+    double apProduction = (3.*137/2.)*3.14159*(m_Ap*eps*eps*radiativeFraction(m_Ap)*controlRegionBackgroundRate(m_Ap))
+        /radiativeAcceptance(m_Ap);
+
+    //A' -> V+Pi Branching Ratio
+    double br_VPi = br_Vpi(m_Ap, m_pi, m_V, alpha_D_, f_pi, rho, phi);
+
+    //Vector to e+e- BR = 1
+    double br_V_ee = 1.0;
+
+    //Expected Signal
+    double expSignal = apProduction * effVtx * br_VPi * br_V_ee;
+
+    return expSignal;
+}
+
+double SimpEquations::expectedSignalCalculation(double m_Ap, double m_pi, double m_V, double eps, double alpha_D, 
+        double f_pi, double m_l, bool rho, bool phi, double E_V, TEfficiency* effCalc_h, double target_pos, double zcut){
+
+    //Mass in MeV
+    double ctau = getCtau(m_Ap,m_pi, m_V,eps,alpha_D,f_pi,m_l,rho);
+    double gcTau = ctau * gamma(m_V/1000.0, E_V); //E_V in GeV
+
+    //Calculate the Efficiency Vertex (Displaced VD Acceptance)
+    double effVtx = 0.0;
+    for(int zbin = 0; zbin < (effCalc_h->GetTotalHistogram()->GetNbinsX())+1; zbin++){
+        double zz = effCalc_h->GetTotalHistogram()->GetBinLowEdge(zbin);
+        if(zz < zcut) continue;
+        effVtx += (TMath::Exp((target_pos-zz)/gcTau)/gcTau)*
+            (effCalc_h->GetEfficiency(zbin) - effCalc_h->GetEfficiencyErrorLow(zbin))*
+            effCalc_h->GetTotalHistogram()->GetBinWidth(zbin);
+    }
+
+
+    //Total A' Production Rate
+    double apProduction = (3.*137/2.)*3.14159*(m_Ap*eps*eps*radiativeFraction(m_Ap)*controlRegionBackgroundRate(m_Ap))
+        /radiativeAcceptance(m_Ap);
+
+    //A' -> V+Pi Branching Ratio
+    double br_VPi = br_Vpi(m_Ap, m_pi, m_V, alpha_D, f_pi, rho, phi);
+
+    //Vector to e+e- BR = 1
+    double br_V_ee = 1.0;
+
+    //Expected Signal
+    double expSignal = apProduction * effVtx * br_VPi * br_V_ee;
+
+    return expSignal;
+}
+
+double SimpEquations::radiativeFraction(double m_Ap){
+    double radFrac = 0.0;
+    if(year_ == 2016){
+        radFrac = ( -1.92497e-01 + 1.47144e-02*m_Ap + -2.91966e-04*std::pow(m_Ap,2) + 2.65603e-06*std::pow(m_Ap,3) + -1.12471e-8*std::pow(m_Ap,4) + 1.74765e-11*std::pow(m_Ap,5) + 2.235718e-15*std::pow(m_Ap,6)); //alic 2016 simp reach estimate
+    }
+
+    return radFrac;
+}
+
+double SimpEquations::radiativeAcceptance(double m_Ap){
+    double radAcc = 0.0;
+    if(year_ == 2016){
+        radAcc = ( -7.93151e-01 + 1.04324e-01*m_Ap + -5.55225e-03*std::pow(m_Ap,2) + 1.55480e-04*std::pow(m_Ap,3) + -2.53281e-06*std::pow(m_Ap,4) + 2.54558e-08*std::pow(m_Ap,5) + -1.60877e-10*std::pow(m_Ap,6) + 6.24627e-13*std::pow(m_Ap,7) + -1.36375e-15*std::pow(m_Ap,8) + 1.28312e-18*std::pow(m_Ap,9) ); //alic 2016 simp reach est
+    }
+
+    return radAcc;
+}
+
+double SimpEquations::massResolution(double m_V){
+    double massRes = 0.0;
+    if(year_ == 2016){
+        massRes = 9.73217e-01 + 3.63659e-02*m_V + -7.32046e-05*m_V*m_V; //2016 simps alic
+    }
+
+    return massRes;
+}
+
+double SimpEquations::controlRegionBackgroundRate(double m_Ap){
+    double dNdm = 0.0;
+    if(year_ == 2016){
+        std::cout << "[SimpEquations]::WARNING! BACKGROUND NOT DEFINED FOR MASS SPECTRUM!" << std::endl;
+        dNdm = 513800.0;
+    }
+
+    return dNdm;
+}
+
 

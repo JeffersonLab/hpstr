@@ -107,7 +107,7 @@ class ZBiHistos : public HistoManager{
         double cutFractionOfSignalVariable(std::string cutvariable, bool isCutGreaterThan, double cutFraction, double initialIntegral);
         double integrateHistogram1D(std::string histoname);
 
-        TF1* fitZTailWithExp(std::string cutname);
+        TF1* fitExponentialTail(std::string histogramName, double start_nevents);
 
         double fitZTail(std::string zVtxHistoname, double max_tail_events);
 

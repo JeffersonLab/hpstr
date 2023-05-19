@@ -73,11 +73,16 @@ class SimpZBiOptimizationProcessor : public Processor {
     private:
 
         //  Configuration parameters    //
+        int year_ = 2016;
         std::string cuts_cfgFile_{""};
         std::string outFileName_{"zbi_out.root"};
         std::vector<std::string> cutVariables_;
         std::vector<std::string> new_variables_;
         std::vector<double> new_variable_params_;
+        std::string eq_cfgFile_{""};
+        bool scan_zcut_ = false;
+        double step_size_ = 0.01;
+        int max_iteration_ = 75;
         
         //Background config
         double min_ztail_events_ = 0.5;
@@ -86,15 +91,16 @@ class SimpZBiOptimizationProcessor : public Processor {
         std::string bkgVtxAnaTreename_{""};
 
         // Signal //
-        std::string signalHistCfgFilename_{""};
+        std::string variableHistCfgFilename_{""};
         std::string signalVtxAnaFilename_{""};
         std::string signalVtxAnaTreename_{""};
         std::string signalMCAnaFilename_{""};
         std::string signal_pdgid_{""};
-
-        //Expected Signal Calculation //
         double signal_mass_;
         double massResolution_;
+        double mass_window_nsigma_;
+
+        //Expected Signal Calculation //
         double signal_sf_ = 1.0;
         double radFrac_;
         double radAcc_ = 0.0;
@@ -154,8 +160,6 @@ class SimpZBiOptimizationProcessor : public Processor {
 
         double luminosity_;
 
-        bool scan_zcut_ = false;
-        double step_size_ = 0.01;
 
         // ZAlpha Cut Variable 
         double zalpha_slope_;;

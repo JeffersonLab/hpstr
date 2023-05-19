@@ -2,7 +2,6 @@
 
 MutableTTree::MutableTTree(TFile* infile, std::string tree_name){
    std::cout << "Reading in tree: " << tree_name << std::endl;
-   setNewVariableIDs();
    tree_ = (TTree*)infile->Get(tree_name.c_str()); 
    if(tree_ == nullptr)
        std::cout << "ERROR READING TREE " << tree_name << " from file " << std::endl;
@@ -49,18 +48,6 @@ std::vector<std::string> MutableTTree::getAllVariables(){
     }
 
     return variables;
-}
-
-//add method to do generic var
-void MutableTTree::shiftZ0(double shift){
-
-    double* shifted_ele_z0 = new double{999.9};
-    *shifted_ele_z0 = *tuple_["unc_vtx_ele_track_z0"] + shift;
-    tuple_["unc_vtx_ele_track_z0"] = shifted_ele_z0;
-
-    double* shifted_pos_z0 = new double{999.9};
-    *shifted_pos_z0 = *tuple_["unc_vtx_pos_track_z0"] + shift;
-    tuple_["unc_vtx_pos_track_z0"] = shifted_pos_z0;
 }
 
 void MutableTTree::addSelectionGreaterThan(std::string selection, double value){
@@ -163,48 +150,15 @@ bool MutableTTree::impactParameterCut2016Canonical(double mass){
 }
 
 void MutableTTree::shiftVariable(std::string variable, double shift){
+    std::cout << "[MutableTTree]::Shifting Variable " << variable << " by " << shift << std::endl;
     std::function<double()> shiftVariableFunc = [&,shift]()->double{
         return *tuple_[variable] = *tuple_[variable] + shift;
     };
     variable_shifts_[variable] = shiftVariableFunc;
 }
 
-void MutableTTree::setNewVariableIDs(){
-    new_variable_ids_["zalpha"] = 0;
-    new_variable_ids_["zbravo"] = 1;
-    new_variable_ids_["zbravoalpha"] = 1;
-    new_variable_ids_["zbravosum"] = 3;
-    new_variable_ids_["zbravosumalpha"] = 4;
-    
-}
-
-void MutableTTree::addNewVariable(std::string new_variable, double param){
-    int case_id = new_variable_ids_[new_variable];
-    switch(case_id) {
-        case 0 : 
-            addVariableZalpha(param); 
-            std::cout << "[MutableTTree]::Adding New Variable addVariableZalpha with param " << param << std::endl;
-            break;
-        case 1 : 
-            addVariableZbravo();
-            std::cout << "[MutableTTree]::Adding New Variable addVariablebravo" << std::endl;
-            break;
-        case 2 : 
-            addVariableZbravoAlpha(param);
-            std::cout << "[MutableTTree]::Adding New Variable addVariableZbravoAlpha with param " << param << std::endl;
-            break;
-        case 3 : 
-            addVariableZbravosum();
-            std::cout << "[MutableTTree]::Adding New Variable addVariableZbravosum" << std::endl;
-            break;
-        case 4 :
-            addVariableZbravosumAlpha(param);
-            std::cout << "[MutableTTree]::Adding New Variable addVariableZbravosumAlpha with param " << param << std::endl;
-            break;
-    }
-}
-
 void MutableTTree::addVariableZbravosumAlpha(double slope){
+    std::cout << "[MutableTTree]::addVariableZbravosumalpha" << std::endl;
     double* zbravosum_alpha = new double {999.9};
     tuple_["unc_vtx_zbravosumalpha"] = zbravosum_alpha;
     newtree_->Branch("unc_vtx_zbravosumalpha", tuple_["unc_vtx_zbravosumalpha"],"unc_vtx_zbravosumalpha/D");
@@ -221,6 +175,7 @@ void MutableTTree::addVariableZbravosumAlpha(double slope){
 }
 
 void MutableTTree::addVariableZbravosum(){
+    std::cout << "[MutableTTree]::addVariableZbravosum" << std::endl;
     double* zbravosum = new double {999.9};
     tuple_["unc_vtx_zbravosum"] = zbravosum;
     newtree_->Branch("unc_vtx_zbravosum", tuple_["unc_vtx_zbravosum"],"unc_vtx_zbravosum/D");
@@ -233,6 +188,7 @@ void MutableTTree::addVariableZbravosum(){
 
 
 void MutableTTree::addVariableZbravoAlpha(double slope){
+    std::cout << "[MutableTTree]::addVariableZbravoAlpha with slope " << slope << std::endl;
     //04/24 This variable is defined as the difference between z0, and the 
     //Zbravo line, which is defined by fitting signal z0 v reconz with a line
     //This will depend on signal mass. This is just a starting point
@@ -273,10 +229,9 @@ void MutableTTree::addVariableZbravoAlpha(double slope){
 
 }
 
+//Need to parameterize this transformation
 void MutableTTree::addVariableZbravo(){
-    //04/24 This variable is defined as the difference between z0, and the 
-    //Zbravo line, which is defined by fitting signal z0 v reconz with a line
-    //This will depend on signal mass. This is just a starting point
+    std::cout << "[MutableTTree]::addVariableZbravo" << std::endl;
     double* ele_z0 = tuple_["unc_vtx_ele_track_z0"];
     double* pos_z0 = tuple_["unc_vtx_pos_track_z0"];
     double* recon_z = tuple_["unc_vtx_z"];
@@ -313,14 +268,15 @@ void MutableTTree::addVariableZbravo(){
 }
 
 void MutableTTree::addVariableZalpha(double slope){
+    std::cout << "[MutableTTree]::addVariableZalpha with slope " << slope << std::endl;
 
+    //Create branch to hold new variable
     double* ele_zalpha = new double{999.9};
     tuple_["unc_vtx_ele_track_zalpha"] = ele_zalpha;
     newtree_->Branch("unc_vtx_ele_track_zalpha",tuple_["unc_vtx_ele_track_zalpha"],"unc_vtx_ele_track_zalpha/D");  
     new_variables_["unc_vtx_ele_track_zalpha"] = ele_zalpha;
 
-    //I think I messed up the signs of things here
-    //Define lambda function to calculate zalpha
+    //Define lambda function to calculate ele zalpha
     std::function<double()> calculateZalpha_ele = [&, slope]()->double{
         if(*tuple_["unc_vtx_ele_track_z0"] > 0.0)
             return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"])/slope)) );
@@ -329,50 +285,18 @@ void MutableTTree::addVariableZalpha(double slope){
     };
     functions_["unc_vtx_ele_track_zalpha"] = calculateZalpha_ele;
 
+    //Create branch to hold new variable
     double* pos_zalpha = new double{999.9};
     tuple_["unc_vtx_pos_track_zalpha"] = pos_zalpha;
     newtree_->Branch("unc_vtx_pos_track_zalpha",tuple_["unc_vtx_pos_track_zalpha"],"unc_vtx_pos_track_zalpha/D");  
     new_variables_["unc_vtx_pos_track_zalpha"] = pos_zalpha;
 
-    //Define lambda function to calculate zalpha
+    //Define lambda function to calculate pos zalpha
     std::function<double()> calculateZalpha_pos = [&,slope]()->double{
         if(*tuple_["unc_vtx_pos_track_z0"] > 0.0)
             return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"])/slope)) );
         else
             return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"]))/(-1*slope)) );
-    };
-    functions_["unc_vtx_pos_track_zalpha"] = calculateZalpha_pos;
-}
-
-//Add comment
-void MutableTTree::addVariableZalpha(double y_intercept, double slope, double alpha_z){
-
-    double* ele_zalpha = new double{999.9};
-    tuple_["unc_vtx_ele_track_zalpha"] = ele_zalpha;
-    newtree_->Branch("unc_vtx_ele_track_zalpha",tuple_["unc_vtx_ele_track_zalpha"],"unc_vtx_ele_track_zalpha/D");  
-    new_variables_["unc_vtx_ele_track_zalpha"] = ele_zalpha;
-
-    //I think I messed up the signs of things here
-    //Define lambda function to calculate zalpha
-    std::function<double()> calculateZalpha_ele = [&, y_intercept, slope, alpha_z]()->double{
-        if(*tuple_["unc_vtx_ele_track_z0"] > 0)
-            return *tuple_["unc_vtx_z"] - ( ((*tuple_["unc_vtx_ele_track_z0"]-y_intercept)/slope) - alpha_z );
-        else
-            return *tuple_["unc_vtx_z"] - ( ((*tuple_["unc_vtx_ele_track_z0"]+y_intercept)/(-1*slope)) - alpha_z );
-    };
-    functions_["unc_vtx_ele_track_zalpha"] = calculateZalpha_ele;
-
-    double* pos_zalpha = new double{999.9};
-    tuple_["unc_vtx_pos_track_zalpha"] = pos_zalpha;
-    newtree_->Branch("unc_vtx_pos_track_zalpha",tuple_["unc_vtx_pos_track_zalpha"],"unc_vtx_pos_track_zalpha/D");  
-    new_variables_["unc_vtx_pos_track_zalpha"] = pos_zalpha;
-
-    //Define lambda function to calculate zalpha
-    std::function<double()> calculateZalpha_pos = [&, y_intercept, slope, alpha_z]()->double{
-        if(*tuple_["unc_vtx_pos_track_z0"] > 0)
-            return *tuple_["unc_vtx_z"] - ( ((*tuple_["unc_vtx_pos_track_z0"]-y_intercept)/slope) - alpha_z);
-        else
-            return *tuple_["unc_vtx_z"] - ( ((*tuple_["unc_vtx_pos_track_z0"]+y_intercept)/(-1*slope)) - alpha_z );
     };
     functions_["unc_vtx_pos_track_zalpha"] = calculateZalpha_pos;
 }

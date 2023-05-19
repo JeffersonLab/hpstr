@@ -38,11 +38,13 @@ double ZBiHistos::integrateHistogram1D(std::string histoname){
     int xmin;
     double integral;
 
+    //Check if histogram exists to integrate
     if(!histos1d.count(histoname)){
-        std::cout << " NO HISTOGRAM NAMED " << histoname << 
-            " FOUND IN DEFINED HISTOS" << std::endl;
+        std::cout << "[ZBiHistos}::ERROR::NO HISTOGRAM NAMED " << histoname << 
+            " FOUND! DEFINE HISTOGRAM IN HISTOCONFIG!" << std::endl;
         integral = -9999.9;
     }
+
     else{
         xmax = histos1d[histoname]->FindLastBinAbove(0.0);
         xmin = histos1d[histoname]->FindFirstBinAbove(0.0);
@@ -167,20 +169,24 @@ std::vector<double> ZBiHistos::defineImpactParameterCut(double alpha){
     return params;
 }
 
-TF1* ZBiHistos::fitZTailWithExp(std::string cutname){
+TF1* ZBiHistos::fitExponentialTail(std::string histogramName, double start_nevents){
+    //Background Model Fit Function
     TF1* fitFunc = new TF1("fitfunc","[0]*exp([1]*x)",10.0,100.0);
 
-    std::string histoname = m_name+"_background_zVtx_"+cutname+"_h";
+    //Get z vertex distribution corresponding to Test Cut
+    std::string histoname = m_name+"_"+histogramName+"_h";
+
+    //If histogram is empty, return nullptr
     if(histos1d[histoname]->GetEntries() < 1){
-        std::cout << "WARNING: Background Model is NULL: " << 
-            cutname << " tritrig zVtx distribution was empty and could not be fit!" << std::endl;
+        std::cout << "[ZBiHistos]::WARNING: Background Model is NULL: " << 
+            histogramName << " distribution is empty and could not be fit!" << std::endl;
         return nullptr;
     }
-    //Locate starting position of fit based on point beyond which there are 1000 events
+    //Start fit where start_nevents are left in tail
     int lastbin = histos1d[histoname]->FindLastBinAbove(0.0);
     int firstbin = lastbin - 1;
     double test_integral = 0.0;
-    while(test_integral < 200.0 && histos1d[histoname]->GetBinLowEdge(firstbin) > 0.0){
+    while(test_integral < start_nevents && histos1d[histoname]->GetBinLowEdge(firstbin) > 0.0){
         test_integral = histos1d[histoname]->Integral(firstbin, lastbin);
         firstbin = firstbin - 1;
     }
