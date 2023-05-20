@@ -26,7 +26,7 @@
             "ytitle" : "Events"
 
         },
-    "SvtHybrids0_hh" : {
+    "SvtHybrids_s0_hh" : {
             "prefix" : "baseline0",
             "type" : "hh",
             "xtitle" : "Strip Number",
@@ -39,7 +39,7 @@
             "maxY" : 20000
 
         },
-    "SvtHybrids3_hh" : {
+    "SvtHybrids_s3_hh" : {
             "prefix" : "baseline3",
             "type" : "hh",
             "xtitle" : "Strip Number",
