@@ -7,20 +7,17 @@
 #include "TKey.h"
 #include "TH1.h"
 #include "TH1F.h"
-#include "TrackerHit.h"
 #include "TF1.h"
-#include <string>
-#include "FlatTupleMaker.h"
-#include <math.h>
 #include "TCanvas.h"
-#include <vector>
 #include "TFitResult.h"
 #include "TFitResultPtr.h"
 #include "TF1.h"
-#include <fstream>
 #include "TRandom3.h"
-#include "IterativeCutSelector.h"
 #include "MutableTTree.h"
+#include <vector>
+#include <fstream>
+#include <string>
+#include <math.h>
 
 /**
  * @brief description
@@ -56,12 +53,7 @@ class ZBiHistos : public HistoManager{
          * 
          * @return std::map<std::string,TH1F*> 
          */
-        std::map<std::string, TH1F*> get1dHistos() {
-            return histos1d;
-        }
 
-        void setHistogramTitle1D(std::string histoname, std::string title);
-    
         void writeHistos(TFile* outF, std::string folder);
 
         void resetHistograms1d();
@@ -76,25 +68,8 @@ class ZBiHistos : public HistoManager{
 
         std::vector<double> defineImpactParameterCut(double alpha = 0.15);
 
-        void defineTestCutHistograms(IterativeCutSelector* testCutsSelector);
-
         void defineZBiCutflowProcessorHistograms();
 
-        void fillEventVariableHistograms(MutableTTree* MTT);
-
-        void printHistos1d(){
-            std::cout << "Printing 1d histos" << std::endl;
-            for(it1d it = histos1d.begin(); it != histos1d.end(); it++)
-                std::cout << it->first << std::endl;
-        }
-
-        void printHistos2d(){
-            std::cout << "Printing 2d histos" << std::endl;
-            for(it2d it = histos2d.begin(); it != histos2d.end(); it++)
-                std::cout << it->first << std::endl;
-        }
-
-        void defineIterHistos();
 
         /**
          * @brief Set debug
@@ -103,8 +78,8 @@ class ZBiHistos : public HistoManager{
          */
         void setDebug(bool value){debug_ = value;};
 
-        //void iterativeSignalCuts(ZBiHistos *zbiHistos, IterativeCutSelector *cutSelector);
         double cutFractionOfSignalVariable(std::string cutvariable, bool isCutGreaterThan, double cutFraction, double initialIntegral);
+
         double integrateHistogram1D(std::string histoname);
 
         TF1* fitExponentialTail(std::string histogramName, double start_nevents);

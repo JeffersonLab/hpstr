@@ -86,7 +86,9 @@ void IterativeCutSelector::printCuts(){
 void IterativeCutSelector::filterCuts(std::vector<std::string> cut_variable_list){
 
     //Loop over Test Cuts loaded in from json configuration
-    for(cut_it it=cuts.begin(); it != cuts.end(); it++){
+    //for(std::map<std::string, std::pair<double,int>>::iterator it = cuts_ptr->begin(); it != cuts_ptr->end(); it++){ 
+    for(std::map<std::string, std::pair<double,int>>::iterator it = getPointerToCuts()->begin(); 
+            it != getPointerToCuts()->end();){ 
         std::string cutname = it->first;
         std::string cutvariable = getCutVar(cutname);
         bool found = false;
@@ -101,7 +103,7 @@ void IterativeCutSelector::filterCuts(std::vector<std::string> cut_variable_list
 
         //If Test Cut Variable does not exist, remove the Test Cut from the list of cuts
         if(!found){
-            it = cuts.erase(it);
+            it = getPointerToCuts()->erase(it);
         }
         else
             ++it;

@@ -9,6 +9,12 @@ base.parser.add_argument("-mass", "--mass", type=float, dest="mass",
 base.parser.add_argument("-new_vars", "--new_vars", type=str, dest="new_vars",
         help="List of new variables, strings defined in processor addNewVariables", default=[], nargs='+')
 
+base.parser.add_argument("-new_vars_params", "--new_vars_params", type=float, dest="new_vars_params",
+        help="New variable parameters", default=[], nargs='+')
+
+base.parser.add_argument("-cut_variables", "--cut_variables", type=str, dest="cut_variables",
+        help="Specifcy cut variables to test", default=[], nargs='+')
+
 base.parser.add_argument("-s", "--zalpha_slope", type=float, dest="zalpha_slope",
             help="Input slope of zalpha cut", metavar="zalpha_slope", default=0.0271352)
 
@@ -62,10 +68,11 @@ zbi.parameters['eq_cfgFile'] = '/sdf/group/hps/users/alspellm/src/test/hpstr/ana
 
 #new variable configs
 zbi.parameters['zalpha_slope'] = options.zalpha_slope
-zbi.parameters['cutVariables'] = ["unc_vtx_ele_track_zalpha","unc_vtx_pos_track_zalpha","unc_vtx_ele_zbravoalpha","unc_vtx_pos_zbravoalpha"]
-#zbi.parameters['add_new_variables'] = ['zalpha', 'zbravo', 'zbravoalpha']
+
+zbi.parameters['cutVariables'] = options.cut_variables
+
 zbi.parameters['add_new_variables'] = options.new_vars
-zbi.parameters['new_variable_params'] = [0.02, 99.9, 0.005]
+zbi.parameters['new_variable_params'] = options.new_vars_params
 
 #special config
 zbi.parameters['testSpecialCut'] = 0

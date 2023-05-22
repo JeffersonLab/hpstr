@@ -53,10 +53,6 @@ double ZBiHistos::integrateHistogram1D(std::string histoname){
     return integral;
 }
 
-void ZBiHistos::setHistogramTitle1D(std::string histoname, std::string title){
-    histos1d[histoname]->SetTitle(title.c_str());
-}
-
 double ZBiHistos::cutFractionOfSignalVariable(std::string cutvariable, bool isCutGreaterThan, double cutFraction, double initialIntegral){
 
     TH1F* histo = histos1d[m_name+"_"+cutvariable+"_h"];
@@ -256,27 +252,7 @@ TF1* ZBiHistos::getZTailFit(std::string cutname){
     double best_tail_l;
     double best_gaus0, best_gaus1, best_gaus2;
 
-    /*
-    int iteration = 50;
-    for(int i=0; i < iteration; i++){
-        tailZ = gaus1 + ran->Uniform(1.0,8.0)*gaus2;
-        tail_l = ran->Uniform(0.0,80.0);
-        fitFunc->SetParameters(gaus0, gaus1, gaus2, tailZ, tail_l);
-        TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", xmin,xmax);
-        if(fitResult->Ndf() <= 0)
-            continue;
-        if(fitResult->Chi2()/fitResult->Ndf() < best_chi2){
-            best_chi2 = fitResult->Chi2()/fitResult->Ndf();
-            best_gaus0 = fitResult->Parameter(0);
-            best_gaus1 = fitResult->Parameter(1);
-            best_gaus2 = fitResult->Parameter(2);
-            best_tailZ = fitResult->Parameter(3);
-            best_tail_l = fitResult->Parameter(4);
-        }
-    }
-    */
-
-     //Having issues with this fit sometimes. It occassionally underestimates bkg model
+    //Having issues with this fit sometimes. It occassionally underestimates bkg model
     int iteration = 80;
     tail_l = 50.0;
     for(int i =10; i < iteration; i=i+2){
@@ -316,7 +292,6 @@ double ZBiHistos::shosFitZTail(std::string cutname, double max_tail_events){
     double gaus0 = gausResult->GetParams()[0];
     double gaus1 = gausResult->GetParams()[1];
     double gaus2 = gausResult->GetParams()[2];
-    //gausResult = histos1d[histoname]->Fit("gaus","QS","",gaus1-2.5*gaus2, gaus1+10.0*gaus2);
     gausResult = histos1d[histoname]->Fit("gaus","QS","",gaus1-3.0*gaus2, gaus1+10.0*gaus2);
     gaus0 = gausResult->GetParams()[0];
     gaus1 = gausResult->GetParams()[1];
@@ -324,10 +299,6 @@ double ZBiHistos::shosFitZTail(std::string cutname, double max_tail_events){
     double xmin = gaus1 - 2.5*gaus2;
     double xmax = histos1d[histoname]->GetBinCenter(histos1d[histoname]->FindLastBinAbove(0.0)+1);
     xmax = 100.0;
-    std::cout << "gaus0: " << gaus0 << std::endl;
-    std::cout << "gaus1: " << gaus1 << std::endl;
-    std::cout << "gaus2: " << gaus2 << std::endl;
-    std::cout << "xmin: " << xmin << std::endl;
 
     //Fit function for a few different seeds for tail start, and length, keep the best fit
     double tailZ = gaus1 + 3.0*gaus2;
@@ -350,8 +321,6 @@ double ZBiHistos::shosFitZTail(std::string cutname, double max_tail_events){
             continue;
         if(fitResult->Chi2() < best_chi2){
             best_chi2 = fitResult->Chi2()/fitResult->Ndf();
-            //best_tailZ = tailZ;
-            //best_tail_l = tail_l;
             best_gaus0 = fitResult->Parameter(0);
             best_gaus1 = fitResult->Parameter(1);
             best_gaus2 = fitResult->Parameter(2);
@@ -361,57 +330,8 @@ double ZBiHistos::shosFitZTail(std::string cutname, double max_tail_events){
     }
 
     fitFunc->SetParameters(best_gaus0, best_gaus1, best_gaus2, best_tailZ, best_tail_l);
-    //fitFunc->SetParameters(gaus0, gaus1, gaus2, best_tailZ, best_tail_l);
     TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "LSIM", "", xmin, xmax);
     
-
-    /** //works okay, but try just incrementing the tailZ value
-    int iteration = 30;
-    std::cout << "ITERATIVE GAUS FIT WITH RANDOM SEEDS" << std::endl;
-    for(int i =0; i < iteration; i++){
-        tailZ = gaus1 + ran->Uniform(3.0,8.0)*gaus2;
-        tail_l = ran->Uniform(30.0,80.0);
-        std::cout << "tailZ: " << tailZ << std::endl;
-        std::cout << "tail_l: " << tail_l << std::endl;
-        fitFunc->SetParameters(gaus0, gaus1, gaus2, tailZ, tail_l);
-        std::cout << "set param tailZ: " << tailZ << std::endl;
-        std::cout << "set param tail_l: " << tail_l << std::endl;
-        TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "LSIM", "", xmin,xmax);
-        std::cout << "fitresult tailZ: " << tailZ << std::endl;
-        std::cout << "fitresult tail_l: " << tail_l << std::endl;
-        std::cout << "fit result chi2: " << fitResult->Chi2() << std::endl;
-        if(fitResult->Chi2() < best_chi2){
-            std::cout << "if better chi2 tailZ: " << tailZ << std::endl;
-            std::cout << "if better chi2 tail_l: " << tail_l << std::endl;
-            std::cout << "if better Best tailZ " << best_tailZ << std::endl;
-            std::cout << "if better Best tail_l " << best_tail_l << std::endl;
-            best_chi2 = fitResult->Chi2();
-            best_tailZ = tailZ;
-            best_tail_l = tail_l;
-            std::cout << "updted best tailZ " << best_tailZ << std::endl;
-            std::cout << "updtaed Best tail_l " << best_tail_l << std::endl;
-        }
-        std::cout << "Best tailZ " << best_tailZ << std::endl;
-        std::cout << "Best tail_l " << best_tail_l << std::endl;
-    }
-    std::cout << "FINAL FIT" << std::endl;
-    std::cout << "Best tailZ " << best_tailZ << std::endl;
-    std::cout << "Best tail_l " << best_tail_l << std::endl;
-    fitFunc->SetParameters(gaus0, gaus1, gaus2, best_tailZ, best_tail_l);
-    TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "LSIM", "", xmin, xmax);
-    double ndf = fitResult->Ndf(); 
-
-    std::cout << "MAKING GRAPH" << std::endl;
-    //Graph the final fit chi2 for the test cut
-    TGraph* g = graphs_[m_name+"_tritrig_zVtx_fit_chi2_"+cutname+"_g"];
-    g->SetPoint(g->GetN(),(double)g->GetN(),best_chi2/ndf);
-    */
-    
-    
-    //fitFunc->SetParameters(gausResult->GetParams()[0], gaus1, gaus2, gaus1+3.0*gaus2, 50.0);
-    //TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "LSIM", "", gaus1-3.0*gaus2, 100.0);
-    
-    std::cout << "Integrating fit" << std::endl;
     double zcut = -6.0;
     double testIntegral = fitFunc->Integral(zcut, 100.0);
     while(testIntegral > max_tail_events){
@@ -419,7 +339,6 @@ double ZBiHistos::shosFitZTail(std::string cutname, double max_tail_events){
         testIntegral = fitFunc->Integral(zcut, 100.0);
     }
     fitFunc->Draw();
-    std::cout << "Done integrating" << std::endl;
     delete ran;
     return zcut;
 }

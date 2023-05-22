@@ -46,25 +46,15 @@ class SimpZBiOptimizationProcessor : public Processor {
 
         double calculateZBi(double n_on, double n_off, double tau);
 
-        void printZBiMatrix();
-
         bool failPersistentCuts(MutableTTree* MTT);
 
         bool failTestCut(std::string cutname, MutableTTree* MTT);
-
-        bool failTestCut(std::string cutname, std::map<std::string,double*> tuple);
-
-        void getVdSimZ();
 
         void writeGraph(TFile* outF, std::string folder, TGraph* g);
 
         double round(double var);
 
-        //get signal truth vtx z distribution. Used to calculate expected
-        //signal
         void getSignalMCAnaVtxZ_h(std::string signalMCAnaFilename, std::string signal_pdgid);
-
-        void testImpactParameterCut(MutableTTree* MTT, ZBiHistos* histos);
 
         void addNewVariables(MutableTTree* MTT, std::string variable, double param);
 
@@ -73,9 +63,11 @@ class SimpZBiOptimizationProcessor : public Processor {
     private:
 
         //  Configuration parameters    //
+        int debug_{0}; 
         int year_ = 2016;
         std::string cuts_cfgFile_{""};
         std::string outFileName_{"zbi_out.root"};
+        TFile* outFile_{nullptr};
         std::vector<std::string> cutVariables_;
         std::vector<std::string> new_variables_;
         std::vector<double> new_variable_params_;
@@ -85,10 +77,11 @@ class SimpZBiOptimizationProcessor : public Processor {
         int max_iteration_ = 75;
         
         //Background config
-        double min_ztail_events_ = 0.5;
-        double background_sf_;
         std::string bkgVtxAnaFilename_{""};
         std::string bkgVtxAnaTreename_{""};
+        MutableTTree* bkgMTT_{nullptr};
+        double min_ztail_events_ = 0.5;
+        double background_sf_;
 
         // Signal //
         std::string variableHistCfgFilename_{""};
@@ -96,49 +89,29 @@ class SimpZBiOptimizationProcessor : public Processor {
         std::string signalVtxAnaTreename_{""};
         std::string signalMCAnaFilename_{""};
         std::string signal_pdgid_{""};
+        TH1F* signalSimZ_h_{nullptr};
+        MutableTTree* signalMTT_{nullptr};
+        double signal_sf_ = 1.0;
         double signal_mass_;
+        double logEps2_;
         double massResolution_;
         double mass_window_nsigma_;
-
-        //Expected Signal Calculation //
-        double signal_sf_ = 1.0;
-        double radFrac_;
-        double radAcc_ = 0.0;
-        double dNdm_;
-        double logEps2_;
 
         //Histograms
         std::shared_ptr<ZBiHistos> signalHistos_;
         std::shared_ptr<ZBiHistos> bkgHistos_;
         std::shared_ptr<ZBiHistos> testCutHistos_;
         std::shared_ptr<ZBiHistos> processorHistos_;
-        /*
-        ZBiHistos* signalHistos_{nullptr};
-        ZBiHistos* bkgHistos_{nullptr};
-        ZBiHistos* cutHistos_{nullptr};
-        ZBiHistos* debugHistos_{nullptr};
-        ZBiHistos* summaryHistos_{nullptr};
-        */
-
-        std::map<std::string,double> mcScale_;
-        int debug_{0}; 
-        TFile* outFile_{nullptr};
-        double vdMassMeV_;
-        double ApMassMeV_;
 
         //cuts
         typedef std::map<std::string, std::pair<double,int>>::iterator cut_iter_;
         std::map<std::string,double> initialIntegrals_;
-        std::map<std::string,std::vector<std::pair<double,double>>> global_ZBi_map_;
 
         //Cuts
         IterativeCutSelector *testCutsSelector_{nullptr};
         std::map<std::string, std::pair<double,int>>* testCutsPtr_;
         IterativeCutSelector *persistentCutsSelector_{nullptr};
         std::map<std::string, std::pair<double,int>>* persistentCutsPtr_;
-
-
-        //signal
 
         //background
         std::string tritrigFilename_{""};
@@ -152,22 +125,8 @@ class SimpZBiOptimizationProcessor : public Processor {
         double highMass_;
         double lowMass_;
 
-        TH1F* signalSimZ_h_{nullptr};
-        MutableTTree* signalMTT_{nullptr};
-
-        // Background //
-        MutableTTree* bkgMTT_{nullptr};
-
-        double luminosity_;
-
-
-        // ZAlpha Cut Variable 
-        double zalpha_slope_;;
-
         //Dev
         bool testSpecialCut_ = false;
 };
-
-
 
 #endif

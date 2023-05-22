@@ -64,22 +64,32 @@ void SimpZBiOptimizationProcessor::configure(const ParameterSet& parameters) {
     }
 }
 
+//USE JSON FILE TO LOAD IN NEW VARIABLES AND VARIABLE CONFIGURATIONS
 void SimpZBiOptimizationProcessor::addNewVariables(MutableTTree* MTT, std::string variable, double param){
-    if(variable == "zalpha"){
+    if(variable == "unv_vtx_track_zalpha")
         MTT->addVariableZalpha(param);
-    }
-    else if(variable == "zbravo"){
+
+    else if(variable == "unc_vtx_track_zbravo")
         MTT->addVariableZbravo();
-    }
-    else if(variable == "zbravoalpha"){
-        MTT->addVariableZbravoAlpha(param);
-    }
-    else if(variable == "zbravosum"){
+
+    else if(variable == "zbravosum")
         MTT->addVariableZbravosum();
-    }
-    else if(variable == "zbravosumalpha"){
+
+    else if(variable == "zbravosumalpha")
         MTT->addVariableZbravosumAlpha(param);
-    }
+
+    else if(variable == "unc_vtx_track_zalpha_top")
+        MTT->addVariableZalphaTop(param);
+
+    else if(variable == "unc_vtx_track_zalpha_bot")
+        MTT->addVariableZalphaBot(param);
+
+    else if(variable == "unc_vtx_track_zbravoalpha_top")
+        MTT->addVariableZalphaTop(param);
+
+    else if(variable == "unc_vtx_track_zbravoalpha_bot")
+        MTT->addVariableZalphaBot(param);
+
     else
         std::cout << "[SimpZBiOptimization]::ERROR::NEW VARIABLE " << variable << " IS NOT DEFINED IN MutableTTree.cxx"
             <<std::endl;
@@ -102,10 +112,57 @@ void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos
     }
 
     //Investigating new variables
-    if(MTT->variableExists("unc_vtx_ele_track_zalpha") && MTT->variableExists("unc_vtx_pos_track_zalpha")){
-        histos->Fill2DHisto("z0_v_recon_zalpha_hh",MTT->getValue("unc_vtx_ele_track_zalpha"),MTT->getValue("unc_vtx_ele_track_z0"));
-        histos->Fill2DHisto("z0_v_recon_zalpha_hh",MTT->getValue("unc_vtx_pos_track_zalpha"),MTT->getValue("unc_vtx_pos_track_z0"));
+    
+    //zalpha_top
+    if(MTT->variableExists("unc_vtx_track_zalpha_top")){
+        if(MTT->getValue("unc_vtx_ele_track_z0") > 0.0){
+            histos->Fill2DHisto("z0_v_recon_zalpha_hh",MTT->getValue("unc_vtx_track_zalpha_top"),
+                    MTT->getValue("unc_vtx_ele_track_z0"));
+        }
+        else{
+            histos->Fill2DHisto("z0_v_recon_zalpha_hh",MTT->getValue("unc_vtx_track_zalpha_top"),
+                    MTT->getValue("unc_vtx_pos_track_z0"));
+        }
     }
+    //zalpha_bot
+    if(MTT->variableExists("unc_vtx_track_zalpha_bot")){
+        if(MTT->getValue("unc_vtx_ele_track_z0") < 0.0){
+            histos->Fill2DHisto("z0_v_recon_zalpha_hh",MTT->getValue("unc_vtx_track_zalpha_bot"),
+                    MTT->getValue("unc_vtx_ele_track_z0"));
+        }
+        else{
+            histos->Fill2DHisto("z0_v_recon_zalpha_hh",MTT->getValue("unc_vtx_track_zalpha_bot"),
+                    MTT->getValue("unc_vtx_pos_track_z0"));
+        }
+    }
+
+    //zbravoalpha_top
+    if(MTT->variableExists("unc_vtx_track_zbravoalpha_top")){
+        if(MTT->getValue("unc_vtx_ele_track_zbravo") > 0.0){
+            histos->Fill2DHisto("zbravo_v_zbravoalpha_hh",MTT->getValue("unc_vtx_track_zbravoalpha_top"),
+                    MTT->getValue("unc_vtx_ele_track_zbravo"));
+        }
+        else{
+            histos->Fill2DHisto("zbravo_v_zbravoalpha_hh",MTT->getValue("unc_vtx_track_zbravoalpha_top"),
+                    MTT->getValue("unc_vtx_pos_track_zbravo"));
+        }
+    }
+
+    //zbravoalpha_bot
+    if(MTT->variableExists("unc_vtx_track_zbravoalpha_bot")){
+        if(MTT->getValue("unc_vtx_ele_track_zbravo") < 0.0){
+            histos->Fill2DHisto("zbravo_v_zbravoalpha_hh",MTT->getValue("unc_vtx_track_zbravoalpha_bot"),
+                    MTT->getValue("unc_vtx_ele_track_zbravo"));
+        }
+        else{
+            histos->Fill2DHisto("zbravo_v_zbravoalpha_hh",MTT->getValue("unc_vtx_track_zbravoalpha_bot"),
+                    MTT->getValue("unc_vtx_pos_track_zbravo"));
+        }
+    }
+    
+
+    //old
+    /*
     if(MTT->variableExists("unc_vtx_ele_zbravoalpha") && MTT->variableExists("unc_vtx_pos_zbravoalpha")){
         histos->Fill2DHisto("zbravo_v_zbravoalpha_hh",MTT->getValue("unc_vtx_ele_zbravoalpha"),MTT->getValue("unc_vtx_ele_zbravo"));
         histos->Fill2DHisto("zbravo_v_zbravoalpha_hh",MTT->getValue("unc_vtx_pos_zbravoalpha"),MTT->getValue("unc_vtx_pos_zbravo"));
@@ -118,6 +175,7 @@ void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos
         histos->Fill2DHisto("zbravosum_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_zbravosum"));
         histos->Fill2DHisto("zbravosum_v_zbravosumalpha_hh",MTT->getValue("unc_vtx_zbravosumalpha"),MTT->getValue("unc_vtx_zbravosum"));
     }
+    */
 }
 
 void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::string outFilename){
@@ -182,8 +240,8 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
     std::cout << "[SimpZBiOptimization]::Initializing Set of Persistent Cuts" << std::endl;
     persistentCutsSelector_ = new IterativeCutSelector("persistentCuts", cuts_cfgFile_);
     persistentCutsSelector_->LoadSelection();
-    persistentCutsSelector_->filterCuts(cutVariables_);
     persistentCutsPtr_ = persistentCutsSelector_->getPointerToCuts();
+    persistentCutsSelector_->filterCuts(cutVariables_);
     std::cout << "Persistent Cuts: " << std::endl;
     persistentCutsSelector_->printCuts();
 
@@ -191,8 +249,8 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
     std::cout << "[SimpZBiOptimization]::Initializing Set of Test Cuts" << std::endl;
     testCutsSelector_ = new IterativeCutSelector("testCuts",cuts_cfgFile_);
     testCutsSelector_->LoadSelection();
-    testCutsSelector_->filterCuts(cutVariables_);
     testCutsPtr_ = testCutsSelector_->getPointerToCuts();
+    testCutsSelector_->filterCuts(cutVariables_);
     std::cout << "Test Cuts: " << std::endl;
     testCutsSelector_->printCuts();
 
@@ -280,6 +338,7 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
     for(cut_iter_ it=persistentCutsPtr_->begin(); it!=persistentCutsPtr_->end(); it++){
         std::string cutname = it->first;
         std::string cutvar = persistentCutsSelector_->getCutVar(cutname);
+        std::cout << "Cut variable: " << cutvar << std::endl;
         bool isCutGT = persistentCutsSelector_->isCutGreaterThan(cutname);
         double cutvalue = signalHistos_->cutFractionOfSignalVariable(cutvar, isCutGT, 0.0, initialIntegrals_[cutvar]);
         persistentCutsSelector_->setCutValue(cutname, cutvalue);
@@ -511,56 +570,6 @@ bool SimpZBiOptimizationProcessor::process(){
 
                 double Nsig = nSigRho + nSigPhi;
 
-                /*
-                //SIMP EXPECTED SIGNAL CALCUATION
-                double simpAp_mass_MeV = signal_mass_*(3/1.8);
-                double m_pi = simpAp_mass_MeV/3.0;
-                double alpha_D = 0.01;
-                double m_l = 0.511;
-                double f_pi = m_pi/(4.*M_PI);
-                //Calculate expected signal for Neutral Dark Vector "rho"
-                double nSigRho = simpEqs_->expectedSignalCalculation(simpAp_mass_MeV, m_pi, signal_mass_, eps,
-                        alpha_D, f_pi, m_l, true, false, 1.35, effCalc_h, -4.3, zcut);
-
-                //Calculate expected signal for Neutral Dark Vector "phi"
-                double nSigPhi = simpEqs_->expectedSignalCalculation(simpAp_mass_MeV, m_pi, signal_mass_, eps,
-                        alpha_D, f_pi, m_l, false, true, 1.35, effCalc_h, -4.3, zcut);
-                */
-
-
-                /*
-                std::string mesons[2] = {"rho","phi"};
-                for(int i =0; i < 2; i++){
-                    bool rho = false;
-                    bool phi = false;
-                    if(mesons[i] == "rho") rho = true;
-                    else phi = true;
-
-                    double ctau = simpEqs_->getCtau(simpAp_mass_MeV,m_pi,signal_mass_,eps,alpha_D,f_pi,m_l,rho);
-                    double E_V = 1.35; //GeV <-this absolutely needs to be fixed
-                    double gcTau = ctau * simpEqs_->gamma(signal_mass_/1000.0,E_V);
-
-                    double effVtx = 0.0;
-                    for(int zbin =0; zbin < 201; zbin++){
-                        double zz = signalSelZ_h->GetBinLowEdge(zbin);
-                        if(zz < zcut) continue;
-                        effVtx += (TMath::Exp((-4.3-zz)/gcTau)/gcTau)*
-                            (effCalc_h->GetEfficiency(zbin) - 
-                             effCalc_h->GetEfficiencyErrorLow(zbin))*
-                            signalSelZ_h->GetBinWidth(zbin);
-                    }
-
-                    double tot_apProd = (3.*137/2.)*3.14159*(simpAp_mass_MeV*eps2*radFrac_*dNdm_)/
-                        radAcc_;
-
-                    double br_Vpi_val = 
-                        simpEqs_->br_Vpi(simpAp_mass_MeV,m_pi,signal_mass_,alpha_D,f_pi,rho,phi);
-                    
-                    double br_V_to_ee = 1.0;
-                    Nsig = Nsig + tot_apProd*effVtx*br_V_to_ee*br_Vpi_val;
-                }*/
-
-
                 //CLEAR POINTERS
                 delete effCalc_h;
 
@@ -575,6 +584,7 @@ bool SimpZBiOptimizationProcessor::process(){
                 double ZBi = calculateZBi(n_on, n_off, tau);
                 ZBi = round(ZBi);
 
+                std::cout << "[SimpZBiOptimization]::Iteration Results:" << std::endl;
                 std::cout << "Zcut = " << zcut << std::endl;
                 std::cout << "Nsig = " << Nsig << std::endl;
                 std::cout << "n_bkg: " << Nbkg << std::endl;
@@ -643,11 +653,6 @@ bool SimpZBiOptimizationProcessor::process(){
 
         } //END LOOP OVER TEST CUTS
 
-        //Find the overall Best Test Cut for this iteration. Apply the new best cut to the list of
-        //persistent cuts, so that it carries over to the next iteration
-        processorHistos_->Fill2DHisto("best_test_cut_ZBi_hh",(double)cutSignal, best_zbi, 
-                (double)testCutsSelector_->getCutID(best_cutname));
-
         if(debug_){
             std::cout << "Iteration " << iteration << " Best Test Cut is " << best_cutname 
                 << " "  << best_cutvalue << " with ZBi=" << best_zbi << std::endl;
@@ -656,8 +661,10 @@ bool SimpZBiOptimizationProcessor::process(){
             persistentCutsSelector_->printCuts();
         }
 
-        //Keep the cut that results in the largest ZBi value and apply that cut
-        //to all events in the next iteration
+        //Find best Test Cut for iteration. Add Test Cut value to Persistent Cuts list
+        processorHistos_->Fill2DHisto("best_test_cut_ZBi_hh",(double)cutSignal, best_zbi, 
+                (double)testCutsSelector_->getCutID(best_cutname));
+
         persistentCutsSelector_->setCutValue(best_cutname, best_cutvalue);
         if(debug_){
             std::cout << "[Persistent Cuts] After update:" << std::endl;
@@ -671,19 +678,6 @@ bool SimpZBiOptimizationProcessor::process(){
     }
 }
 
-void SimpZBiOptimizationProcessor::printZBiMatrix(){
-    typedef std::map<std::string,std::vector<std::pair<double,double>>>::iterator iter;
-    for(iter it = global_ZBi_map_.begin(); it != global_ZBi_map_.end(); it++){
-        std::cout << '\n';
-        std::cout << it->first << ": ";
-        for(std::vector<std::pair<double,double>>::iterator vec_it = it->second.begin(); vec_it != it->second.end(); vec_it++){
-            double cutvalue = vec_it->first;
-            double zbi = vec_it->second;
-            std::cout << " |" << cutvalue << "," << zbi << "| ";
-        }
-        std::cout << '\n';
-    }
-}
 
 void SimpZBiOptimizationProcessor::finalize() {
     std::cout << "[SimpZBiOptimizationProcessor] finalize()" << std::endl;
@@ -695,8 +689,6 @@ void SimpZBiOptimizationProcessor::finalize() {
 
     processorHistos_->saveHistos(outFile_);
     testCutHistos_->writeGraphs(outFile_,"");
-
-    printZBiMatrix();
 }
 
 double SimpZBiOptimizationProcessor::calculateZBi(double n_on, double n_off, double tau){
@@ -739,19 +731,6 @@ bool SimpZBiOptimizationProcessor::failTestCut(std::string cutname, MutableTTree
     if(!MTT->variableExists(cutvar))
         return false;
     if(!testCutsSelector_->passCutGTorLT(cutname, MTT->getValue(cutvar)))
-        return true;
-    else
-        return false;
-}
-
-bool SimpZBiOptimizationProcessor::failTestCut(std::string cutname, std::map<std::string,double*> tuple){
-
-    std::string cutvar = testCutsSelector_->getCutVar(cutname);
-    double cutvalue = testCutsSelector_->getCut(cutname);
-    //If cut variable is not found in the list of tuples, do not apply cut
-    if(tuple.find(cutvar) == tuple.end())
-        return false;
-    if(!testCutsSelector_->passCutGTorLT(cutname, *tuple[cutvar]))
         return true;
     else
         return false;
