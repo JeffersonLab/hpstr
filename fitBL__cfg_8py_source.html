@@ -126,21 +126,20 @@ $(function() {
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;fitBL.parameters[<span class="stringliteral">&quot;histCfg&quot;</span>] = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&#39;/analysis/plotconfigs/svt/SvtBlFits.json&#39;</span></div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;fitBL.parameters[<span class="stringliteral">&quot;rawhitsHistCfg&quot;</span>] = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&#39;/analysis/plotconfigs/svt/baselinefits/rawSvtHits.json&#39;</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">#fitBL.parameters[&quot;rawhitsHistCfg&quot;] = os.environ[&#39;HPSTR_BASE&#39;]+&#39;/analysis/plotconfigs/svt/baselinefits/rawSvtHits_old.json&#39;</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;fitBL.parameters[<span class="stringliteral">&quot;layer&quot;</span>] = options.layer</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;fitBL.parameters[<span class="stringliteral">&quot;rebin&quot;</span>] = options.rebin</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;fitBL.parameters[<span class="stringliteral">&quot;minStats&quot;</span>] = options.minStats</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;fitBL.parameters[<span class="stringliteral">&quot;deadRMS&quot;</span>] = options.deadRMS</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;fitBL.parameters[<span class="stringliteral">&quot;thresholdsFileIn&quot;</span>] = options.thresholdsFileIn</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;fitBL.parameters[<span class="stringliteral">&quot;debug&quot;</span>] = options.debug</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment"># Sequence which the processors will run.</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1fitBL__cfg.html#a3f9c3bf7e2cafc2c46df6d132ea658cc">   70</a></span>&#160;p.sequence = [fitBL]</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1fitBL__cfg.html#a27256609f574b662639e0a8cd48b8d3a">   72</a></span>&#160;p.input_files = [histo_file]</div>
-<div class="line"><a name="l00073"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1fitBL__cfg.html#a7882aa8b39a47102a13c2630137590d8">   73</a></span>&#160;p.output_files = [root_file]</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;p.printProcess()</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;fitBL.parameters[<span class="stringliteral">&quot;layer&quot;</span>] = options.layer</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;fitBL.parameters[<span class="stringliteral">&quot;rebin&quot;</span>] = options.rebin</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;fitBL.parameters[<span class="stringliteral">&quot;minStats&quot;</span>] = options.minStats</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;fitBL.parameters[<span class="stringliteral">&quot;deadRMS&quot;</span>] = options.deadRMS</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;fitBL.parameters[<span class="stringliteral">&quot;thresholdsFileIn&quot;</span>] = options.thresholdsFileIn</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;fitBL.parameters[<span class="stringliteral">&quot;debug&quot;</span>] = options.debug</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment"># Sequence which the processors will run.</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1fitBL__cfg.html#a3f9c3bf7e2cafc2c46df6d132ea658cc">   69</a></span>&#160;p.sequence = [fitBL]</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
+<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1fitBL__cfg.html#a27256609f574b662639e0a8cd48b8d3a">   71</a></span>&#160;p.input_files = [histo_file]</div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1fitBL__cfg.html#a7882aa8b39a47102a13c2630137590d8">   72</a></span>&#160;p.output_files = [root_file]</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;p.printProcess()</div>
 <div class="ttc" id="aclassHpstrConf_1_1Process_html"><div class="ttname"><a href="classHpstrConf_1_1Process.html">HpstrConf.Process</a></div><div class="ttdoc">Process python class.</div><div class="ttdef"><b>Definition:</b> <a href="HpstrConf_8py_source.html#l00020">HpstrConf.py:20</a></div></div>
 <div class="ttc" id="aclassHpstrConf_1_1Processor_html"><div class="ttname"><a href="classHpstrConf_1_1Processor.html">HpstrConf.Processor</a></div><div class="ttdoc">Processor python class.</div><div class="ttdef"><b>Definition:</b> <a href="HpstrConf_8py_source.html#l00004">HpstrConf.py:4</a></div></div>
 <div class="ttc" id="anamespaceconfig_1_1fitBL__cfg_html_ade6f6d88f2222e9662a29a3c93799a87"><div class="ttname"><a href="namespaceconfig_1_1fitBL__cfg.html#ade6f6d88f2222e9662a29a3c93799a87">config.fitBL_cfg.timeSample_callback</a></div><div class="ttdeci">def timeSample_callback(options, opt, value, parser)</div><div class="ttdef"><b>Definition:</b> <a href="fitBL__cfg_8py_source.html#l00006">fitBL_cfg.py:6</a></div></div>
