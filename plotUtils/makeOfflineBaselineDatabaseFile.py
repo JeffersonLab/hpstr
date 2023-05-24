@@ -184,7 +184,7 @@ def makeDatabaseBaselinesOnlineNoise(offlineTuple, onlineTuple):
 
             #Append ONLINE noise values
             for i in range(6):
-                row.append(onlineSigma[i][c]
+                row.append(onlineSigma[i][c])
         baselines[c] = row
     return baselines
 
