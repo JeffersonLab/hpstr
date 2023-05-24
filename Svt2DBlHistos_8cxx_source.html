@@ -142,14 +142,14 @@ $(function() {
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        </div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <span class="comment">//Manually select which baselines (0 - 6) are included. THIS MUST MATCH THE JSON FILE!</span></div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keywordtype">int</span> ss = 0;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        histokey = swTag + <span class="stringliteral">&quot;_SvtHybrids&quot;</span>+std::to_string(ss)+<span class="stringliteral">&quot;_hh&quot;</span>;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        histokey = swTag + <span class="stringliteral">&quot;_SvtHybrids_s&quot;</span>+std::to_string(ss)+<span class="stringliteral">&quot;_hh&quot;</span>;</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;                    <a class="code" href="classHistoManager.html#a0d750d7fd7dc85552579a321c674e56f">Fill2DHisto</a>(histokey, </div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;                (<span class="keywordtype">float</span>)rawSvtHit-&gt;<a class="code" href="classRawSvtHit.html#a310cbf5bad976d908c0c816921f7e6cc">getStrip</a>(),</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                (<span class="keywordtype">float</span>)rawSvtHit-&gt;<a class="code" href="classRawSvtHit.html#ad301db33438c718a864994ae7e2d96a5">getADCs</a>()[ss], </div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                weight);</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        ss = 3;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        histokey = swTag + <span class="stringliteral">&quot;_SvtHybrids&quot;</span>+std::to_string(ss)+<span class="stringliteral">&quot;_hh&quot;</span>;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        histokey = swTag + <span class="stringliteral">&quot;_SvtHybrids_s&quot;</span>+std::to_string(ss)+<span class="stringliteral">&quot;_hh&quot;</span>;</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                    <a class="code" href="classHistoManager.html#a0d750d7fd7dc85552579a321c674e56f">Fill2DHisto</a>(histokey, </div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                (<span class="keywordtype">float</span>)rawSvtHit-&gt;<a class="code" href="classRawSvtHit.html#a310cbf5bad976d908c0c816921f7e6cc">getStrip</a>(),</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                (<span class="keywordtype">float</span>)rawSvtHit-&gt;<a class="code" href="classRawSvtHit.html#ad301db33438c718a864994ae7e2d96a5">getADCs</a>()[ss], </div>
