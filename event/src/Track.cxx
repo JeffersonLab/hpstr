@@ -81,6 +81,12 @@ void Track::addHit(TObject* hit) {
     tracker_hits_.Add(hit); 
 }
 
+void Track::applyCorrection(std::string var, double correction){
+    if(var == "z0"){
+        z0_ = z0_ - correction;
+    }
+}
+
 void Track::Print (Option_t *option) const {
     printf("d0     Phi     Omega     TanLambda     Z0     time     chi2\n");
     printf("% 6.4f  % 6.4f  % 6.4f  % 6.4f  % 6.4f  % 6.4f  % 6.4f\n",d0_,phi0_,omega_,tan_lambda_,z0_,track_time_,chi2_);

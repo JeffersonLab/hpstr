@@ -331,6 +331,8 @@ class Track : public TObject {
         bool getSharedLy0() const {return SharedLy0_;};
         bool getSharedLy1() const {return SharedLy1_;};
 
+        //Run Dependent Corrections
+        void applyCorrection(std::string var, double correction);
 
         //TODO doc
 

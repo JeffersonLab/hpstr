@@ -96,6 +96,10 @@ recoana_gbl.parameters["ecalColl"] = "RecoEcalClusters"
 recoana_kf.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+"/analysis/selections/simps/vertexSelection_2016_simp_reach.json"
 recoana_kf.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/simps/vtxAnalysis_2016_simp_reach.json"
 recoana_kf.parameters["mcHistoCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
+if options.year == 2016
+    recoana_kf.parameters["beamPosCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/beamspot_positions_2016.json'
+else:
+    recoana_kf.parameters["beamPosCfg"] = ''
 #####
 recoana_gbl.parameters["beamE"] = base.beamE[str(options.year)]
 recoana_gbl.parameters["isData"] = options.isData

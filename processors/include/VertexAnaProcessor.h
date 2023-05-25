@@ -140,6 +140,9 @@ class VertexAnaProcessor : public Processor {
         std::shared_ptr<AnaHelpers> _ah; //!< description
 
         int debug_{0}; //!< Debug level
+        std::string beamPosCfg_{""}; //!< json containing run dep beamspot positions
+        json bpc_configs_; //!< json object
+        std::vector<double> beamPosCorrections_ = {0.0,0.0,0.0}; //!< holds beam position corrections
 };
 
 #endif

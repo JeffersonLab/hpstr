@@ -6,6 +6,7 @@
 
 #include "VertexAnaProcessor.h"
 #include <iostream>
+#include <fstream>
 #include <map>
 
 VertexAnaProcessor::VertexAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
@@ -42,6 +43,9 @@ void VertexAnaProcessor::configure(const ParameterSet& parameters) {
         //region definitions
         regionSelections_ = parameters.getVString("regionDefinitions",regionSelections_);
 
+        //beamspot positions
+        beamPosCfg_ = parameters.getString("beamPosCfg",beamPosCfg_);
+
 
     }
     catch (std::runtime_error& error)
@@ -66,6 +70,14 @@ void VertexAnaProcessor::initialize(TTree* tree) {
     _mc_vtx_histos->loadHistoConfig(mcHistoCfg_);
     _mc_vtx_histos->DefineHistos();
     _mc_vtx_histos->Define2DHistos();
+
+    //Run Dependent Corrections
+    //Beam Position 
+    if(!beamPosCfg_.empty()){
+        std::ifstream bpc_file(beamPosCfg_);
+        bpc_file >> bpc_configs_;
+        bpc_file.close();
+    }
 
 
     //    histos = new MCAnaHistos(anaName_);
@@ -104,6 +116,7 @@ void VertexAnaProcessor::initialize(TTree* tree) {
             _reg_tuples[regname]->addVariable("unc_vtx_x");
             _reg_tuples[regname]->addVariable("unc_vtx_y");
             _reg_tuples[regname]->addVariable("unc_vtx_ele_pos_clus_dt");
+            _reg_tuples[regname]->addVariable("run_number");
 
             //track vars
             _reg_tuples[regname]->addVariable("unc_vtx_ele_track_p");
@@ -172,6 +185,21 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
     HpsEvent* hps_evt = (HpsEvent*) ievent;
     double weight = 1.;
 
+    int run_number = evth_->getRunNumber();
+    int closest_run;
+    if(!bpc_configs_.empty()){
+        for(auto run : bpc_configs_.items()){
+            int check_run = std::stoi(run.key());
+            if(check_run > run_number)
+                break;
+            else{
+                closest_run = check_run;
+            }
+        }
+        beamPosCorrections_ = {bpc_configs_[std::to_string(closest_run)]["beamspot_x"], 
+            bpc_configs_[std::to_string(closest_run)]["beamspot_y"],
+            bpc_configs_[std::to_string(closest_run)]["beamspot_z"]};
+    }
 
     //Get "true" mass
     double apMass = -0.9;
@@ -276,6 +304,10 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             ele_trk = (Track*)ele->getTrack().Clone();
             pos_trk = (Track*)pos->getTrack().Clone();
         }
+
+        //Beam Position Corrections
+        ele_trk->applyCorrection("z0",beamPosCorrections_.at(1));
+        pos_trk->applyCorrection("z0",beamPosCorrections_.at(1));
 
         //Add the momenta to the tracks - do not do that
         //ele_trk->setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
@@ -551,6 +583,10 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
             Track ele_trk = ele->getTrack();
             Track pos_trk = pos->getTrack();
+
+            //Beam Position Corrections
+            ele_trk.applyCorrection("z0",beamPosCorrections_.at(1));
+            pos_trk.applyCorrection("z0",beamPosCorrections_.at(1));
 
             //Get the shared info - TODO change and improve
 
@@ -966,6 +1002,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             _reg_tuples[region]->setVariableValue("unc_vtx_x", vtx->getX());
             _reg_tuples[region]->setVariableValue("unc_vtx_y", vtx->getY());
             _reg_tuples[region]->setVariableValue("unc_vtx_ele_pos_clust_dt", corr_eleClusterTime - corr_posClusterTime);
+            _reg_tuples[region]->setVariableValue("run_number", evth_->getRunNumber());
 
 
             //track vars
