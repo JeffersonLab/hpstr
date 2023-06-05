@@ -1,5 +1,6 @@
 #include "ZBiHistos.h"
 #include <sstream>
+#include "TMath.h"
 
 ZBiHistos::ZBiHistos() {
 }
@@ -48,6 +49,7 @@ double ZBiHistos::integrateHistogram1D(std::string histoname){
     else{
         xmax = histos1d[histoname]->FindLastBinAbove(0.0);
         xmin = histos1d[histoname]->FindFirstBinAbove(0.0);
+        //integral = histos1d[histoname]->Integral(0,histos1d[histoname]->GetNbinsX()+1);
         integral = histos1d[histoname]->Integral(xmin,xmax);
     }
     return integral;
@@ -58,6 +60,12 @@ double ZBiHistos::cutFractionOfSignalVariable(std::string cutvariable, bool isCu
     TH1F* histo = histos1d[m_name+"_"+cutvariable+"_h"];
     int xmax = histo->FindLastBinAbove(0.0);
     int xmin = histo->FindFirstBinAbove(0.0);
+
+    if(debug_){
+       std::cout << "Initial Integral: " << initialIntegral << std::endl;
+       std::cout << "Cut variable: " << cutvariable << std::endl;
+       std::cout << "Cut fraction: " << cutFraction << std::endl;
+    }
     
     double cutvalue;
     if(isCutGreaterThan){
@@ -165,6 +173,163 @@ std::vector<double> ZBiHistos::defineImpactParameterCut(double alpha){
     return params;
 }
 
+TF1* ZBiHistos::fitExponentialPlusConst(std::string histogramName, double start_nevents){
+
+    //Get z vertex distribution corresponding to Test Cut
+    std::string histoname = m_name+"_"+histogramName+"_h";
+
+    //If histogram is empty, return nullptr
+    if(histos1d[histoname]->GetEntries() < 1){
+        std::cout << "[ZBiHistos]::WARNING: Background Model is NULL: " << 
+            histogramName << " distribution is empty and could not be fit!" << std::endl;
+        return nullptr;
+    }
+    //Start fit where start_nevents are left in tail
+    int lastbin = histos1d[histoname]->FindLastBinAbove(0.0);
+    int firstbin = lastbin - 1;
+    double test_integral = 0.0;
+    while(test_integral < start_nevents && histos1d[histoname]->GetBinLowEdge(firstbin) > 0.0){
+        test_integral = histos1d[histoname]->Integral(firstbin, lastbin);
+        firstbin = firstbin - 1;
+    }
+
+    double xmin = histos1d[histoname]->GetBinLowEdge(firstbin);
+    double xmax = histos1d[histoname]->GetBinLowEdge(lastbin+1);
+
+    //Initially fit tail with exponential to seed params
+    double best_seed_chi2 = 9999999.9;
+    double seed_0;
+    double seed_1;
+    TF1* fitFunc_seed = new TF1("fitfunc_seed", "[0]*exp([1]*x)", xmin, xmax);
+    TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc_seed, "QLSIM", "", xmin,xmax);
+    seed_0 = fitResult->Parameter(0);
+    seed_1 = fitResult->Parameter(1);
+
+    TRandom3* ran = new TRandom3();
+    ran->SetSeed(0);
+    for(int i=0; i < 20; i++){
+        //fitFunc = new TF1("fitfunc_seed", "[0]*exp([1]*x)", xmin, xmax);
+        fitFunc_seed->SetParameters(ran->Gaus(seed_0,2), ran->Gaus(seed_1,2));
+        fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc_seed, "QLSIM", "", xmin,xmax);
+
+        if(fitResult->Ndf() <= 0)
+            continue;
+
+        if(fitResult->Chi2()/fitResult->Ndf() < best_seed_chi2){
+            best_seed_chi2 = fitResult->Chi2()/fitResult->Ndf();
+            seed_0 = fitResult->Parameter(0);
+            seed_1 = fitResult->Parameter(1);
+        }
+    }
+
+    double best_chi2 = 9999999.9;
+    double param_2;
+    TF1* fitFunc = new TF1("fitfunc", " (x<[2])*([0]*exp([1]*x)) + (x>=[2])*([0]*exp([1]*[2]))", xmin, xmax);
+    fitFunc->FixParameter(0, seed_0);
+    fitFunc->FixParameter(1, seed_1);
+    for(int i=0; i < 1000; i++){
+        fitFunc->FixParameter(2, (double)i/10.0);
+        fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", xmin,xmax);
+
+        if(fitResult->Ndf() <= 0)
+            continue;
+
+        if(fitResult->Chi2()/fitResult->Ndf() < best_chi2){
+            best_chi2 = fitResult->Chi2()/fitResult->Ndf();
+            param_2 = fitResult->Parameter(2);
+        }
+    }
+
+    delete ran;
+
+    fitFunc->FixParameter(0, seed_0);
+    fitFunc->FixParameter(1, seed_1);
+    fitFunc->FixParameter(2, param_2);
+    fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", xmin,xmax);
+    delete fitFunc_seed;
+    fitFunc->Draw();
+    return fitFunc;
+    /*
+    if(fitResult->Chi2()/fitResult->Ndf() < best_seed_chi2){
+        delete fitFunc_seed;
+        fitFunc->Draw();
+        return fitFunc;
+    }
+    else{
+        delete fitFunc;
+        fitFunc_seed->Draw();
+        return fitFunc_seed;
+    }
+    */
+
+    /* Fails too often. Any failure breaks the code...not very robust
+    TRandom3* ran = new TRandom3();
+    ran->SetSeed(0);
+
+    //Initially fit tail with exponential to seed params
+    double best_chi2 = 9999999.9;
+    double seed_0;
+    double seed_1;
+    TF1* fitFunc = new TF1("fitfunc", "[0]*exp([1]*x)", xmin, xmax);
+    TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", xmin,xmax);
+    seed_0 = fitResult->Parameter(0);
+    seed_1 = fitResult->Parameter(1);
+
+    for(int i=0; i < 30; i++){
+        fitFunc = new TF1("fitfunc", "[0]*exp([1]*x)", xmin, xmax);
+        fitFunc->SetParameters(ran->Gaus(seed_0,1), ran->Gaus(seed_1,1));
+        fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", xmin,xmax);
+
+        if(fitResult->Ndf() <= 0)
+            continue;
+
+        if(fitResult->Chi2()/fitResult->Ndf() < best_chi2){
+            best_chi2 = fitResult->Chi2()/fitResult->Ndf();
+            seed_0 = fitResult->Parameter(0);
+            seed_1 = fitResult->Parameter(1);
+        }
+    }
+
+    //Exponential plus constant
+    fitFunc = new TF1("fitfunc", " (x<[2])*([0]*exp([1]*x)) + (x>=[2])*([0]*exp([1]*[2]))", xmin, xmax);
+
+    best_chi2 = 9999999.9;
+    double best_0 = seed_0;
+    double best_1 = seed_1;
+    double best_2;
+
+    int iteration = 30;
+    fitFunc->FixParameter(0, seed_0);
+    fitFunc->FixParameter(1, seed_1);
+    for(int i=0; i < iteration; i++){
+        //fitFunc->SetParameter(0, best_0);
+        //fitFunc->SetParameter(1, best_1);
+        fitFunc->SetParameter(2, ran->Uniform(50.0));
+        fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", xmin,xmax);
+
+        if(fitResult->Ndf() <= 0)
+            continue;
+
+        if(fitResult->Chi2()/fitResult->Ndf() < best_chi2){
+            best_chi2 = fitResult->Chi2()/fitResult->Ndf();
+            //best_0 = fitResult->Parameter(0);
+            //best_1 = fitResult->Parameter(1);
+            best_2 = fitResult->Parameter(2);
+        }
+    }
+
+    //fitFunc->SetParameters(best_0, best_1, best_2);
+    //fitFunc->SetParameters(seed_0, seed_1, best_2);
+    fitFunc->FixParameter(0, seed_0);
+    fitFunc->FixParameter(1, seed_1);
+    fitFunc->FixParameter(2, best_2);
+    fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", xmin,xmax);
+    fitFunc->Draw();
+
+    return fitFunc;
+    */
+}
+
 TF1* ZBiHistos::fitExponentialTail(std::string histogramName, double start_nevents){
     //Background Model Fit Function
     TF1* fitFunc = new TF1("fitfunc","[0]*exp([1]*x)",10.0,100.0);
@@ -194,8 +359,74 @@ TF1* ZBiHistos::fitExponentialTail(std::string histogramName, double start_neven
     double parm0 = fitResult->Parameter(0);
     double parm1 = fitResult->Parameter(1);
 
+    TRandom3* ran = new TRandom3();
+    ran->SetSeed(0);
+    double best_chi2 = 999999999.9;
+    double best_parm0 = parm0;
+    double best_parm1 = parm1;
+    double best_parm2;
+    
+    fitFunc = new TF1("fitfunc","[0]*exp([1]*x) + abs([2])",10.0,100.0);
+    int iteration = 25;
+    for(int i=0; i < iteration; i++){
+        fitFunc->SetParameters(ran->Gaus(parm0,2),ran->Gaus(parm1,2), ran->Uniform(10));
+        fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", xmin,xmax);
+        if(fitResult->Ndf() <= 0)
+            continue;
+
+        if(fitResult->Chi2()/fitResult->Ndf() < best_chi2){
+            best_chi2 = fitResult->Chi2()/fitResult->Ndf();
+            best_parm0 = fitResult->Parameter(0);
+            best_parm1 = fitResult->Parameter(1);
+            best_parm2 = fitResult->Parameter(2);
+        }
+    }
+
+    fitFunc->SetParameters(best_parm0, best_parm1, best_parm2);
+    fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "LSIM", "", xmin, xmax);
+    fitFunc->Draw();
+    std::cout << "Fit Params: [0] = " << best_parm0 <<" [1] = " << best_parm1 
+        << " [2] = " << best_parm2 << std::endl;
+
+    return fitFunc;
+}
+
+/*
+TF1* ZBiHistos::fitExponentialTail(std::string histogramName, double start_nevents){
+    //Background Model Fit Function
+    TF1* fitFunc = new TF1("fitfunc","[0]*exp([1]*x)",10.0,100.0);
+    //TF1* fitFunc = new TF1("fitfunc","[0]*exp([1]*x) + [2]*exp([3]*x)",10.0,100.0); 
+    //TF1* fitFunc = new TF1("fitfunc","[0]*exp([1]*x) + [2]",10.0,100.0);
+
+    //Get z vertex distribution corresponding to Test Cut
+    std::string histoname = m_name+"_"+histogramName+"_h";
+
+    //If histogram is empty, return nullptr
+    if(histos1d[histoname]->GetEntries() < 1){
+        std::cout << "[ZBiHistos]::WARNING: Background Model is NULL: " << 
+            histogramName << " distribution is empty and could not be fit!" << std::endl;
+        return nullptr;
+    }
+    //Start fit where start_nevents are left in tail
+    int lastbin = histos1d[histoname]->FindLastBinAbove(0.0);
+    int firstbin = lastbin - 1;
+    double test_integral = 0.0;
+    while(test_integral < start_nevents && histos1d[histoname]->GetBinLowEdge(firstbin) > 0.0){
+        test_integral = histos1d[histoname]->Integral(firstbin, lastbin);
+        firstbin = firstbin - 1;
+    }
+
+    double xmin = histos1d[histoname]->GetBinLowEdge(firstbin);
+    double xmax = histos1d[histoname]->GetBinLowEdge(lastbin+1);
+
+    TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", xmin,xmax);
+    double parm0 = fitResult->Parameter(0);
+    double parm1 = fitResult->Parameter(1);
+    //double parm2 = fitResult->Parameter(2);
+    //double parm3 = fitResult->Parameter(3);
+
     double best_chi2 = 9999999.9;
-    double best_parm0, best_parm1;
+    double best_parm0, best_parm1, best_parm2, best_parm3;
 
     int iteration = 20;
     for(int i=0; i < iteration; i++){
@@ -207,16 +438,116 @@ TF1* ZBiHistos::fitExponentialTail(std::string histogramName, double start_neven
             best_chi2 = fitResult->Chi2()/fitResult->Ndf();
             best_parm0 = fitResult->Parameter(0);
             best_parm1 = fitResult->Parameter(1);
+            //best_parm2 = fitResult->Parameter(2);
+            //best_parm3 = fitResult->Parameter(3);
         }
     }
 
-    fitFunc->SetParameters(best_parm0,best_parm1);
+    //fitFunc = new TF1("fitfunc","[0]*exp([1]*x) + [2]*exp([3]*x)",10.0,100.0); //TRASH
+    fitFunc = new TF1("fitfunc","[0]*exp([1]*x) + [2]",10.0,100.0);
+    double parm2 = best_parm0*0.5;
+    for(int i=0; i < iteration; i++){
+        fitFunc->SetParameters(parm0,parm1,parm2);
+        fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", xmin,xmax);
+        if(fitResult->Ndf() <= 0)
+            continue;
+        if(fitResult->Chi2()/fitResult->Ndf() < best_chi2){
+            best_chi2 = fitResult->Chi2()/fitResult->Ndf();
+            best_parm0 = fitResult->Parameter(0);
+            best_parm1 = fitResult->Parameter(1);
+            best_parm2 = fitResult->Parameter(2);
+            //best_parm3 = fitResult->Parameter(3);
+        }
+    }
+
+
+    //fitFunc->SetParameters(best_parm0,best_parm1, best_parm2, best_parm3);
+    fitFunc->SetParameters(best_parm0,best_parm1, best_parm2);
     fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "LSIM", "", xmin, xmax);
     fitFunc->Draw();
 
     return fitFunc;
 }
+*/
 
+/*
+TF1* ZBiHistos::fitExponentialTail(std::string histogramName, double start_nevents){
+    //Background Model Fit Function
+    TF1* fitFunc = new TF1("fitfunc","[0]*exp([1]*x)",10.0,100.0);
+
+    //Get z vertex distribution corresponding to Test Cut
+    std::string histoname = m_name+"_"+histogramName+"_h";
+
+    //If histogram is empty, return nullptr
+    if(histos1d[histoname]->GetEntries() < 1){
+        std::cout << "[ZBiHistos]::WARNING: Background Model is NULL: " << 
+            histogramName << " distribution is empty and could not be fit!" << std::endl;
+        return nullptr;
+    }
+    //Start fit where start_nevents are left in tail
+    int lastbin = histos1d[histoname]->FindLastBinAbove(0.0);
+    int firstbin = lastbin - 1;
+    double test_integral = 0.0;
+    while(test_integral < start_nevents && histos1d[histoname]->GetBinLowEdge(firstbin) > 0.0){
+        test_integral = histos1d[histoname]->Integral(firstbin, lastbin);
+        firstbin = firstbin - 1;
+    }
+
+    double xmin = histos1d[histoname]->GetBinLowEdge(firstbin);
+    double xmax = histos1d[histoname]->GetBinLowEdge(lastbin+1);
+
+    TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", xmin,xmax);
+    double parm0 = fitResult->Parameter(0);
+    double parm1 = fitResult->Parameter(1);
+
+    double best_chi2 = fitResult->Chi2()/fitResult->Ndf();
+    double best_parm0 = parm0;
+    double best_parm1 = parm1;
+    
+    TRandom3* ran = new TRandom3();
+    ran->SetSeed(0);
+    int iteration = 25;
+    for(int i=0; i < iteration; i++){
+        fitFunc->SetParameters(ran->Gaus(best_parm0,2),ran->Gaus(best_parm1,2));
+        fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", xmin,xmax);
+        if(fitResult->Ndf() <= 0)
+            continue;
+
+        if(fitResult->Chi2()/fitResult->Ndf() < best_chi2){
+            best_chi2 = fitResult->Chi2()/fitResult->Ndf();
+            best_parm0 = fitResult->Parameter(0);
+            best_parm1 = fitResult->Parameter(1);
+        }
+    }
+
+    fitFunc = new TF1("fitfunc","[0]*exp([1]*x) + [2]",10.0,100.0);
+    double best_parm2;
+    best_chi2 = 999999999.9;
+    for(int i=0; i < iteration; i++){
+        fitFunc->SetParameter(2,ran->Uniform(10));
+        fitFunc->FixParameter(0,best_parm0);
+        fitFunc->FixParameter(1,best_parm1);
+        fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", xmin,xmax);
+        if(fitResult->Ndf() <= 0)
+            continue;
+
+        if(fitResult->Chi2()/fitResult->Ndf() < best_chi2){
+            best_chi2 = fitResult->Chi2()/fitResult->Ndf();
+            //best_parm0 = fitResult->Parameter(0);
+            //best_parm1 = fitResult->Parameter(1);
+            best_parm2 = fitResult->Parameter(2);
+            //best_parm3 = fitResult->Parameter(3);
+        }
+    }
+
+    fitFunc->FixParameter(0,best_parm0);
+    fitFunc->FixParameter(1,best_parm1);
+    fitFunc->FixParameter(2,best_parm2);
+    fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "LSIM", "", xmin, xmax);
+    fitFunc->Draw();
+
+    return fitFunc;
+}*/
 
 TF1* ZBiHistos::getZTailFit(std::string cutname){
     TF1* fitFunc = new TF1("fitfunc", "[0]* exp( (x<=([1]+[3]))*(-0.5*((x-[1])^2)/([2]^2)) + (x>=[1]+[3])*(-0.5*([3]^2/[2]^2)-(x-[1]-[3])/[4])  )", -100.0, 100.0);

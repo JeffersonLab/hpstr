@@ -66,7 +66,20 @@ void SimpZBiOptimizationProcessor::configure(const ParameterSet& parameters) {
 
 //USE JSON FILE TO LOAD IN NEW VARIABLES AND VARIABLE CONFIGURATIONS
 void SimpZBiOptimizationProcessor::addNewVariables(MutableTTree* MTT, std::string variable, double param){
-    if(variable == "unv_vtx_track_zalpha")
+    
+    if(variable == "unc_vtx_track_zalpha_top_ele")
+        MTT->addVariableZalphaTopEle(param);
+
+    else if(variable == "unc_vtx_track_zalpha_bot_ele")
+        MTT->addVariableZalphaBotEle(param);
+
+    else if(variable == "unc_vtx_track_zalpha_top_pos")
+        MTT->addVariableZalphaTopPos(param);
+
+    else if(variable == "unc_vtx_track_zalpha_bot_pos")
+        MTT->addVariableZalphaBotPos(param);
+
+    else if(variable == "unc_vtx_track_zalpha")
         MTT->addVariableZalpha(param);
 
     else if(variable == "unc_vtx_track_zbravo")
@@ -109,6 +122,8 @@ void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos
             && MTT->variableExists("unc_vtx_pos_track_z0")){
         histos->Fill2DHisto("z0_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_ele_track_z0"));
         histos->Fill2DHisto("z0_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_pos_track_z0"));
+        histos->Fill2DHisto("ele_track_z0_v_pos_track_z0_hh",MTT->getValue("unc_vtx_pos_track_z0"),
+                MTT->getValue("unc_vtx_ele_track_z0"));
     }
 
     //Investigating new variables
@@ -225,9 +240,9 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
 
     //Apply any variable corrections here
     std::cout << "Shifting background unc_vtx_ele_track_z0 by 0.1 mm" << std::endl;
-    bkgMTT_->shiftVariable("unc_vtx_ele_track_z0", 0.1);
+    //bkgMTT_->shiftVariable("unc_vtx_ele_track_z0", 0.1);
     std::cout << "Shifting background unc_vtx_pos_track_z0 by 0.1 mm" << std::endl;
-    bkgMTT_->shiftVariable("unc_vtx_pos_track_z0", 0.1);
+    //bkgMTT_->shiftVariable("unc_vtx_pos_track_z0", 0.1);
     
     //Finalize Initialization of New Mutable Tuples
     std::cout << "[SimpZBiOptimization]::Finalizing Initialization of New Mutable Tuples" << std::endl;
@@ -331,6 +346,8 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
         std::string cutname = it->first;
         std::string var = persistentCutsSelector_->getCutVar(cutname);
         initialIntegrals_[var] = signalHistos_->integrateHistogram1D("signal_"+var+"_h");
+        if(debug_)
+            std::cout << "Initial Integral for " << var << " is " << initialIntegrals_[var] << std::endl;
     }
 
     //Set initial value of each Persistent Cut to where 0% of Signal distribution is cut in that variable
@@ -432,7 +449,7 @@ bool SimpZBiOptimizationProcessor::process(){
                 //If event passes Test Cut, fill vertex z distribution. 
                 //This distribution is used to build the Background Model corresponding to each Test Cut
                 testCutHistos_->Fill1DHisto("background_zVtx_"+cutname+"_h",
-                        bkgMTT_->getValue("unc_vtx_z"),1.0);
+                        bkgMTT_->getValue("unc_vtx_z"),background_sf_);
             }
         }
 
@@ -476,7 +493,8 @@ bool SimpZBiOptimizationProcessor::process(){
             //Build Background Model, used to estimate nbkg in Signal Region
             std::cout << "[SimpZBiOptimization]::Building Background Model to estimate nbkg in Signal Region" 
                 << std::endl;
-            TF1* bkg_model = (TF1*)testCutHistos_->fitExponentialTail("background_zVtx_"+cutname, 200.0); 
+            //TF1* bkg_model = (TF1*)testCutHistos_->fitExponentialTail("background_zVtx_"+cutname, 1000.0); 
+            TF1* bkg_model = (TF1*)testCutHistos_->fitExponentialPlusConst("background_zVtx_"+cutname, 1000.0); 
 
             //Get signal unc_vtx_z vs true_vtx_z
             TH2F* vtx_z_hh = (TH2F*)testCutHistos_->get2dHisto("testCutHistos_unc_vtx_z_vs_true_vtx_z_"+cutname+"_hh");
@@ -517,10 +535,15 @@ bool SimpZBiOptimizationProcessor::process(){
             //Find maximum position of Zcut --> ZBi calculation requires non-zero background
             //Start the Zcut position at the target
             double max_zcut = -4.0;
-            double testIntegral = bkg_model->Integral(max_zcut, bkg_model->GetXmax());
+            TH1F* bkg_zVtx_h = (TH1F*)testCutHistos_->get1dHisto("testCutHistos_background_zVtx_"+cutname+"_h");
+            double endIntegral = bkg_zVtx_h->GetBinCenter(bkg_zVtx_h->FindLastBinAbove(0.0));
+            //double endIntegral = 
+            //    bkg_model->GetHistogram()->GetBinCenter(bkg_model->GetHistogram()->FindLastBinAbove(0.0));
+            std::cout << "LOOK: END INTEGRAL " << endIntegral << std::endl;
+            double testIntegral = bkg_model->Integral(max_zcut, endIntegral);
             while(testIntegral > min_ztail_events_){
                 max_zcut = max_zcut+0.1;
-                testIntegral = bkg_model->Integral(max_zcut, bkg_model->GetXmax());
+                testIntegral = bkg_model->Integral(max_zcut, endIntegral);
             }
             std::cout << "[SimpZBiOptimization]::Maximum Zcut: " << max_zcut << 
                 " gives " << testIntegral << " background events"  << std::endl;
@@ -540,7 +563,7 @@ bool SimpZBiOptimizationProcessor::process(){
             double best_scan_nsig;
             double best_scan_nbkg;
             for(double zcut = min_zcut; zcut < std::round(max_zcut+1.0); zcut = zcut+1.0){
-                double Nbkg = bkg_model->Integral(zcut,bkg_model->GetXmax());
+                double Nbkg = bkg_model->Integral(zcut,endIntegral);
                 
                 //Get the Signal truth vertex z distribution beyond the reconstructed vertex Zcut
                 TH1F* true_vtx_z_h = (TH1F*)vtx_z_hh->ProjectionY((std::to_string(zcut)+"_"+cutname+"_"+"true_vtx_z_projy").c_str(),vtx_z_hh->GetXaxis()->FindBin(zcut)+1,vtx_z_hh->GetXaxis()->GetNbins(),"");

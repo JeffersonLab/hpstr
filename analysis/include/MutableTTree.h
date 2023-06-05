@@ -35,6 +35,11 @@ class MutableTTree {
         void addVariableZbravoAlphaTop(double slope);
         void addVariableZbravoAlphaBot(double slope);
 
+        void addVariableZalphaBotEle(double slope);
+        void addVariableZalphaTopEle(double slope);
+        void addVariableZalphaTopPos(double slope);
+        void addVariableZalphaBotPos(double slope);
+
         //Apply corrections
         void shiftVariable(std::string variable, double shift);
 
@@ -74,6 +79,7 @@ class MutableTTree {
         std::map<std::string,std::function<double()>> variable_shifts_;
         double lowMass_{-999.9};
         double highMass_{-999.9};
+        double skipCutVarValue_ = -9876543210.0;
 };
 
 #endif // __MUTABLE_TTREE_H

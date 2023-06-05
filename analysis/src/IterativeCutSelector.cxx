@@ -54,11 +54,11 @@ void IterativeCutSelector::setCutValue(std::string cutname, double value){
 
 bool IterativeCutSelector::passCutGTorLT(std::string cutname, double val){
 
-    //Handle Specially named cuts
-    //if(cutname == "ztail_nevents_lt")
-    //    return true;
-
-    //Handle standard cuts
+    //Some events are not defined in a given cut variable, and should not be cut in these cases.
+    //These events are assigned a specific double value that is otherwise impossible to see.
+    //If this value is encountered for a given event, do not apply cut to the event.
+    if(val == skipCutVarValue_)
+        return true;
     if(isCutGreaterThan(cutname)){
         if (hasCut(cutname)) {
             if (val < cuts[cutname].first) {

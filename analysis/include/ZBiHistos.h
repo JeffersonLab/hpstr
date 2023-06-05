@@ -84,6 +84,8 @@ class ZBiHistos : public HistoManager{
 
         TF1* fitExponentialTail(std::string histogramName, double start_nevents);
 
+        TF1* fitExponentialPlusConst(std::string histogramName, double starnt_nevents);
+
         double fitZTail(std::string zVtxHistoname, double max_tail_events);
 
         double shosFitZTail(std::string cutname, double max_tail_events);

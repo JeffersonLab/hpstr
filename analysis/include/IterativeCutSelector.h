@@ -48,6 +48,8 @@ class IterativeCutSelector : public BaseSelector {
 
 
     private:
+        //When this variable value is encountered, do not apply cut to event
+        double skipCutVarValue_ = -9876543210.0; //Must match definition in MutableTTree
 };
 
 #endif

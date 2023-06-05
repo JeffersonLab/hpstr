@@ -292,38 +292,118 @@ void MutableTTree::addVariableZbravo(){
 
 void MutableTTree::addVariableZalphaTop(double slope){
 
-    double* zalpha = new double{999.9};
-    tuple_["unc_vtx_track_zalpha_top"] = zalpha;
+    double* zalpha_top = new double{999.9};
+    tuple_["unc_vtx_track_zalpha_top"] = zalpha_top;
     newtree_->Branch("unc_vtx_track_zalpha_top", tuple_["unc_vtx_track_zalpha_top"],
-        "unc_vtx_track_zalpha/D");
-    new_variables_["unc_vtx_track_zalpha_top"] = zalpha;
+        "unc_vtx_track_zalpha_top/D");
+    new_variables_["unc_vtx_track_zalpha_top"] = zalpha_top;
 
     //Lambda function to calculate zalpha
     std::function<double()> calculate_zalpha_top = [&, slope]()->double{
-        if(*tuple_["unc_vtx_ele_track_z0"] > 0.0)
+        if(*tuple_["unc_vtx_ele_track_z0"] > 0.0 && *tuple_["unc_vtx_pos_track_z0"] < 0.0)
             return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"])/slope)) );
-        else
+        if(*tuple_["unc_vtx_pos_track_z0"] > 0.0 && *tuple_["unc_vtx_ele_track_z0"] < 0.0)
             return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"])/slope)) );
+        if(*tuple_["unc_vtx_ele_track_z0"] < 0.0 && *tuple_["unc_vtx_pos_track_z0"] < 0.0)
+            return skipCutVarValue_;
+        if(*tuple_["unc_vtx_ele_track_z0"] > 0.0 && *tuple_["unc_vtx_pos_track_z0"] > 0.0){
+            double ele_zalpha = ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"])/slope)) );
+            double pos_zalpha = ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"])/slope)) );
+            if(ele_zalpha > pos_zalpha)
+                return ele_zalpha;
+            else
+                return pos_zalpha;
+        }
     };
     functions_["unc_vtx_track_zalpha_top"] = calculate_zalpha_top;
 }
 
 void MutableTTree::addVariableZalphaBot(double slope){
 
-    double* zalpha = new double{999.9};
-    tuple_["unc_vtx_track_zalpha_bot"] = zalpha;
+    double* zalpha_bot = new double{999.9};
+    tuple_["unc_vtx_track_zalpha_bot"] = zalpha_bot;
     newtree_->Branch("unc_vtx_track_zalpha_bot", tuple_["unc_vtx_track_zalpha_bot"],
-            "unc_vtx_track_zalpha/D");
-    new_variables_["unc_vtx_track_zalpha_bot"] = zalpha;
+            "unc_vtx_track_zalpha_bot/D");
+    new_variables_["unc_vtx_track_zalpha_bot"] = zalpha_bot;
 
     //Lambda function to calculate zalpha
     std::function<double()> calculate_zalpha_bot = [&, slope]()->double{
-        if(*tuple_["unc_vtx_ele_track_z0"] < 0.0)
+        if(*tuple_["unc_vtx_ele_track_z0"] < 0.0 && *tuple_["unc_vtx_pos_track_z0"] > 0.0)
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"])/-slope)) );
+        if(*tuple_["unc_vtx_pos_track_z0"] < 0.0 && *tuple_["unc_vtx_ele_track_z0"] > 0.0)
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"])/-slope)) );
+        if(*tuple_["unc_vtx_ele_track_z0"] > 0.0 && *tuple_["unc_vtx_pos_track_z0"] > 0.0)
+            return skipCutVarValue_;
+        if(*tuple_["unc_vtx_ele_track_z0"] < 0.0 && *tuple_["unc_vtx_pos_track_z0"] < 0.0){
+            double ele_zalpha = ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"])/-slope)) );
+            double pos_zalpha = ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"])/-slope)) );
+            if(ele_zalpha > pos_zalpha)
+                return ele_zalpha;
+            else
+                return pos_zalpha;
+        }
+    };
+
+    functions_["unc_vtx_track_zalpha_bot"] = calculate_zalpha_bot;
+}
+
+void MutableTTree::addVariableZalphaTopPos(double slope){
+    double* zalpha_top_pos = new double{999.9};
+    tuple_["unc_vtx_track_zalpha_top_pos"] = zalpha_top_pos;
+    newtree_->Branch("unc_vtx_track_zalpha_top_pos", tuple_["unc_vtx_track_zalpha_top_pos"],
+            "unc_vtx_track_zalpha_top_pos/D");
+    new_variables_["unc_vtx_track_zalpha_top_pos"] = zalpha_top_pos;
+    std::function<double()> calculate_zalpha_top_pos = [&, slope]()->double{
+        if(*tuple_["unc_vtx_pos_track_z0"] > 0.0)
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"])/slope)) );
+        else
+            return skipCutVarValue_;
+    };
+    functions_["unc_vtx_track_zalpha_top_pos"] = calculate_zalpha_top_pos;
+}
+
+void MutableTTree::addVariableZalphaTopEle(double slope){
+    double* zalpha_top_ele = new double{999.9};
+    tuple_["unc_vtx_track_zalpha_top_ele"] = zalpha_top_ele;
+    newtree_->Branch("unc_vtx_track_zalpha_top_ele", tuple_["unc_vtx_track_zalpha_top_ele"],
+            "unc_vtx_track_zalpha_top_ele/D");
+    new_variables_["unc_vtx_track_zalpha_top_ele"] = zalpha_top_ele;
+    std::function<double()> calculate_zalpha_top_ele = [&, slope]()->double{
+        if(*tuple_["unc_vtx_ele_track_z0"] > 0.0)
             return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"])/slope)) );
         else
-            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"])/slope)) );
+            return skipCutVarValue_;
     };
-    functions_["unc_vtx_track_zalpha_bot"] = calculate_zalpha_bot;
+    functions_["unc_vtx_track_zalpha_top_ele"] = calculate_zalpha_top_ele;
+}
+
+void MutableTTree::addVariableZalphaBotEle(double slope){
+    double* zalpha_bot_ele = new double{999.9};
+    tuple_["unc_vtx_track_zalpha_bot_ele"] = zalpha_bot_ele;
+    newtree_->Branch("unc_vtx_track_zalpha_bot_ele", tuple_["unc_vtx_track_zalpha_bot_ele"],
+            "unc_vtx_track_zalpha_bot_ele/D");
+    new_variables_["unc_vtx_track_zalpha_bot_ele"] = zalpha_bot_ele;
+    std::function<double()> calculate_zalpha_bot_ele = [&, slope]()->double{
+        if(*tuple_["unc_vtx_ele_track_z0"] < 0.0)
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"])/-slope)) );
+        else
+            return skipCutVarValue_;
+    };
+    functions_["unc_vtx_track_zalpha_bot_ele"] = calculate_zalpha_bot_ele;
+}
+
+void MutableTTree::addVariableZalphaBotPos(double slope){
+    double* zalpha_bot_pos = new double{999.9};
+    tuple_["unc_vtx_track_zalpha_bot_pos"] = zalpha_bot_pos;
+    newtree_->Branch("unc_vtx_track_zalpha_bot_pos", tuple_["unc_vtx_track_zalpha_bot_pos"],"unc_vtx_track_zalpha_bot_pos/D");
+    new_variables_["unc_vtx_track_zalpha_bot_pos"] = zalpha_bot_pos;
+    std::function<double()> calculate_zalpha_bot_pos = [&, slope]()->double{
+        if(*tuple_["unc_vtx_pos_track_z0"] < 0.0)
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"])/-slope)) );
+        else
+            return skipCutVarValue_;
+    };
+    functions_["unc_vtx_track_zalpha_bot_pos"] = calculate_zalpha_bot_pos;
 }
 
 void MutableTTree::addVariableZalphaTopBot(double top_slope, double bot_slope){
