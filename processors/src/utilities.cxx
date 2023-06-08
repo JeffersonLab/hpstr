@@ -198,6 +198,27 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
         track->setPositionAtEcal(position_at_ecal); 
     }
 
+    const EVENT::TrackState* track_target_state 
+        = lc_track->getTrackState(EVENT::TrackState::LastLocation);
+
+    if (track_target_state) {
+        double position_at_target[3] = {
+            track_target_state->getReferencePoint()[1],  
+            track_target_state->getReferencePoint()[2],  
+            track_target_state->getReferencePoint()[0]
+        };
+        track->setPositionAtTarget(position_at_target);
+
+        double params_at_target[5] = {
+            track_target_state->getD0(),
+            track_target_state->getPhi(),
+            track_target_state->getOmega(),
+            track_target_state->getTanLambda(),
+            track_target_state->getZ0()
+        };
+        track->setTargetTrackParameters(params_at_target);
+    }
+
     if (gbl_kink_data) {
         // Instantiate an LCRelation navigator which will allow faster access 
         // to GBLKinkData object

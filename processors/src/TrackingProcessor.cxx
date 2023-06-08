@@ -52,7 +52,6 @@ void TrackingProcessor::initialize(TTree* tree) {
     if (!truthTracksCollRoot_.empty())
         tree->Branch(truthTracksCollRoot_.c_str(),&truthTracks_);
 
-
     //Residual plotting
     if (doResiduals_) {
         trkResHistos_ = new TrackHistos(trkCollLcio_);
@@ -94,7 +93,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
         }
         truthTracks_.clear();
     }
-    
+
     Event* event = static_cast<Event*> (ievent);
     // Get the collection of 3D hits from the LCIO event. If no such collection 
     // exist, a DataNotAvailableException is thrown
@@ -232,7 +231,6 @@ bool TrackingProcessor::process(IEvent* ievent) {
         track->setNShared(SharedHits[itrack].size());
         track->setSharedLy0(SharedHitsLy0[itrack]);
         track->setSharedLy1(SharedHitsLy1[itrack]);
-        
 
         //Get the truth tracks relations:
         

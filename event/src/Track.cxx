@@ -44,6 +44,21 @@ void Track::setTrackParameters(double d0, double phi0, double omega,
 
 std::vector<double> Track::getTrackParameters() { return { d0_, phi0_, omega_, tan_lambda_, z0_ }; }
 
+void Track::setTargetTrackParameters(const double* params_at_target) {
+    targ_d0_         = params_at_target[0];
+    targ_phi0_       = params_at_target[1];
+    targ_omega_      = params_at_target[2];
+    targ_tan_lambda_ = params_at_target[3];
+    targ_z0_         = params_at_target[4];
+    if (targ_omega_ < 0)
+        charge_   = 1;
+    else
+        charge_   =  -1;
+
+}
+
+std::vector<double> Track::getTargetTrackParameters() { return { targ_d0_, targ_phi0_, targ_omega_, targ_tan_lambda_, targ_z0_ }; }
+
 void Track::setPositionAtEcal(const double* position) { 
     x_at_ecal_ = position[0]; 
     y_at_ecal_ = position[1];
@@ -51,6 +66,14 @@ void Track::setPositionAtEcal(const double* position) {
 }
 
 std::vector<double> Track::getPositionAtEcal() { return { x_at_ecal_, y_at_ecal_, z_at_ecal_ }; }
+
+void Track::setPositionAtTarget(const double* position) { 
+    x_at_target_ = position[0]; 
+    y_at_target_ = position[1];
+    z_at_target_ = position[2];
+}
+
+std::vector<double> Track::getPositionAtTarget() { return { x_at_target_, y_at_target_, z_at_target_ }; }
 
 
 void Track::setMomentum(double bfield) {
