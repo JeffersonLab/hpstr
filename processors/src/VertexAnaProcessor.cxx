@@ -186,19 +186,23 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
     double weight = 1.;
 
     int run_number = evth_->getRunNumber();
-    int closest_run;
-    if(!bpc_configs_.empty()){
-        for(auto run : bpc_configs_.items()){
-            int check_run = std::stoi(run.key());
-            if(check_run > run_number)
-                break;
-            else{
-                closest_run = check_run;
+    //Read in run dependent corrections if run number changes
+    if (run_number != current_run_number_){
+        current_run_number_ = run_number;
+        int closest_run;
+        if(!bpc_configs_.empty()){
+            for(auto run : bpc_configs_.items()){
+                int check_run = std::stoi(run.key());
+                if(check_run > run_number)
+                    break;
+                else{
+                    closest_run = check_run;
+                }
             }
+            beamPosCorrections_ = {bpc_configs_[std::to_string(closest_run)]["beamspot_x"], 
+                bpc_configs_[std::to_string(closest_run)]["beamspot_y"],
+                bpc_configs_[std::to_string(closest_run)]["beamspot_z"]};
         }
-        beamPosCorrections_ = {bpc_configs_[std::to_string(closest_run)]["beamspot_x"], 
-            bpc_configs_[std::to_string(closest_run)]["beamspot_y"],
-            bpc_configs_[std::to_string(closest_run)]["beamspot_z"]};
     }
 
     //Get "true" mass
