@@ -218,6 +218,56 @@ void TrackHistos::Fill1DTrack(Track* track, float weight, const std::string& trk
     Fill1DHisto(trkname+"chi2ndf_h"  ,track->getChi2Ndf()     ,weight);
     Fill1DHisto(trkname+"nShared_h"  ,track->getNShared()     ,weight);
     Fill1DHisto(trkname+"nHits_2d_h" ,n_hits_2d               ,weight);
+
+    Fill1DHisto(trkname+"d0_at_target_h"       ,track->getTargetD0()       ,weight);
+    Fill1DHisto(trkname+"Phi_at_target_h"      ,track->getTargetPhi()      ,weight);
+    Fill1DHisto(trkname+"Omega_at_target_h"    ,track->getTargetOmega()    ,weight);
+    Fill1DHisto(trkname+"TanLambda_at_target_h",track->getTargetTanLambda(),weight);
+    Fill1DHisto(trkname+"Z0_at_target_h"       ,track->getTargetZ0()       ,weight);
+    Fill1DHisto(trkname+"xpos_at_target_h"     ,track->getPositionAtTarget().at(0),weight);
+    Fill1DHisto(trkname+"ypos_at_target_h"     ,track->getPositionAtTarget().at(1),weight);
+    Fill1DHisto(trkname+"zpos_at_target_h"     ,track->getPositionAtTarget().at(2),weight);
+    Fill1DHisto(trkname+"xpos_at_ecal_h"     ,track->getPositionAtEcal().at(0),weight);
+    Fill1DHisto(trkname+"ypos_at_ecal_h"     ,track->getPositionAtEcal().at(1),weight);
+    Fill1DHisto(trkname+"zpos_at_ecal_h"     ,track->getPositionAtEcal().at(2),weight);
+
+    if (track->getTanLambda() > 0.0){
+        if (charge < 0){
+            Fill1DHisto(trkname+"top_ele_Z0_h"       ,track->getZ0()       ,weight);
+            Fill1DHisto(trkname+"top_ele_xpos_at_ecal_h"     ,track->getPositionAtEcal().at(0),weight);
+            Fill1DHisto(trkname+"top_ele_ypos_at_ecal_h"     ,track->getPositionAtEcal().at(1),weight);
+            Fill1DHisto(trkname+"top_ele_Z0_at_target_h"       ,track->getTargetZ0()       ,weight);
+            Fill1DHisto(trkname+"top_ele_xpos_at_target_h"     ,track->getPositionAtTarget().at(0),weight);
+            Fill1DHisto(trkname+"top_ele_ypos_at_target_h"     ,track->getPositionAtTarget().at(1),weight);
+        }
+        else{
+            Fill1DHisto(trkname+"top_pos_Z0_h"       ,track->getZ0()       ,weight);
+            Fill1DHisto(trkname+"top_pos_xpos_at_ecal_h"     ,track->getPositionAtEcal().at(0),weight);
+            Fill1DHisto(trkname+"top_pos_ypos_at_ecal_h"     ,track->getPositionAtEcal().at(1),weight);
+            Fill1DHisto(trkname+"top_pos_Z0_at_target_h"       ,track->getTargetZ0()       ,weight);
+            Fill1DHisto(trkname+"top_pos_xpos_at_target_h"     ,track->getPositionAtTarget().at(0),weight);
+            Fill1DHisto(trkname+"top_pos_ypos_at_target_h"     ,track->getPositionAtTarget().at(1),weight);
+        }
+    }
+    else{
+        if (charge < 0){
+            Fill1DHisto(trkname+"bot_ele_Z0_h"       ,track->getZ0()       ,weight);
+            Fill1DHisto(trkname+"bot_ele_xpos_at_ecal_h"     ,track->getPositionAtEcal().at(0),weight);
+            Fill1DHisto(trkname+"bot_ele_ypos_at_ecal_h"     ,track->getPositionAtEcal().at(1),weight);
+            Fill1DHisto(trkname+"bot_ele_Z0_at_target_h"       ,track->getTargetZ0()       ,weight);
+            Fill1DHisto(trkname+"bot_ele_xpos_at_target_h"     ,track->getPositionAtTarget().at(0),weight);
+            Fill1DHisto(trkname+"bot_ele_ypos_at_target_h"     ,track->getPositionAtTarget().at(1),weight);
+        }
+        else{
+            Fill1DHisto(trkname+"bot_pos_Z0_h"       ,track->getZ0()       ,weight);
+            Fill1DHisto(trkname+"bot_pos_xpos_at_ecal_h"     ,track->getPositionAtEcal().at(0),weight);
+            Fill1DHisto(trkname+"bot_pos_ypos_at_ecal_h"     ,track->getPositionAtEcal().at(1),weight);
+            Fill1DHisto(trkname+"bot_pos_Z0_at_target_h"       ,track->getTargetZ0()       ,weight);
+            Fill1DHisto(trkname+"bot_pos_xpos_at_target_h"     ,track->getPositionAtTarget().at(0),weight);
+            Fill1DHisto(trkname+"bot_pos_ypos_at_target_h"     ,track->getPositionAtTarget().at(1),weight);
+        }
+    }
+
     for (int ihit=0; ihit<track->getSvtHits().GetEntries();++ihit) 
     {
         TrackerHit* hit2d = (TrackerHit*) track->getSvtHits().At(ihit);

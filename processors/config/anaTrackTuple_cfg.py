@@ -1,14 +1,22 @@
 import HpstrConf
 import os
 import sys
+import baseConfig as base
 
 # Use the input file to set the output file name
-inFilename = sys.argv[1].strip()
-outFilename = '%s_anaTrks.root' % inFilename[:-5]
+#inFilename = sys.argv[1].strip()
+#outFilename = '%s_anaTrks.root' % inFilename[:-5]
+
+base.parser.add_argument("-r", "--run_number", type=int, dest="run_number",
+                                 help="set run number", metavar="run_number", default=-999)
+
+options = base.parser.parse_args()
+
+inFilename = options.inFilename[0]
+outFilename = options.outFilename
 
 print('Input file:  %s' % inFilename)
 print('Output file: %s' % outFilename)
-
 p = HpstrConf.Process()
 
 p.run_mode = 1
@@ -30,7 +38,11 @@ anaTrks = HpstrConf.Processor('anaTrks', 'TrackingAnaProcessor')
 anaTrks.parameters["debug"] = 0
 anaTrks.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/tracking/basicTracking.json'
 anaTrks.parameters["trkCollName"] = 'KalmanFullTracks'
-
+anaTrks.parameters["run_number"] = options.run_number
+if options.year == 2016:
+    anaTrks.parameters["beamPosCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/beamspot_positions_2016.json'
+else:
+        anaTrks.parameters["beamPosCfg"] = ''
 # Sequence which the processors will run.
 p.sequence = [anaTrks]
 
