@@ -4,7 +4,7 @@ var searchData=
   ['baseselector_1883',['BaseSelector',['../classBaseSelector.html#a70faa48b7356d1e839ab14e03f431afe',1,'BaseSelector::BaseSelector()'],['../classBaseSelector.html#a255c49f3cdee154e0e91e77153e83efd',1,'BaseSelector::BaseSelector(const std::string &amp;inputName)'],['../classBaseSelector.html#ae77a4bb9007edc5e1c19d429a95eb31f',1,'BaseSelector::BaseSelector(const std::string &amp;inputName, const std::string &amp;cfgFile)']]],
   ['bhmassressystematicsprocessor_1884',['BhMassResSystematicsProcessor',['../classBhMassResSystematicsProcessor.html#a633d6c09bf44d5b10d2432ee06688194',1,'BhMassResSystematicsProcessor']]],
   ['bhtoyshistoprocessor_1885',['BhToysHistoProcessor',['../classBhToysHistoProcessor.html#a96bac042819a4b55e20fe2e5867bf1fa',1,'BhToysHistoProcessor']]],
-  ['blfithistos_1886',['BlFitHistos',['../classBlFitHistos.html#ae8e32913ced803f16e4a35ab3c6aad54',1,'BlFitHistos']]],
+  ['blfithistos_1886',['BlFitHistos',['../classBlFitHistos.html#a99006696c3abb62d30f172cc9bcfe005',1,'BlFitHistos']]],
   ['buildapvchannelmap_1887',['buildApvChannelMap',['../classModuleMapper.html#afda3474d4449108d05d301a5cc0ca08c',1,'ModuleMapper']]],
   ['buildaxes_1888',['BuildAxes',['../classTrackHistos.html#a8b76ba87f6ac7ecb57b1a8ae1d9bc475',1,'TrackHistos']]],
   ['buildcalcluster_1889',['buildCalCluster',['../namespaceutils.html#a2d01ad798936250108f868400e1e3051',1,'utils']]],

@@ -45,7 +45,7 @@ var searchData=
   ['bkg_5fresult_5f_117',['bkg_result_',['../classHpsFitResult.html#ad1acddfd811b94b9b87e19d1fd9d5539',1,'HpsFitResult']]],
   ['bkg_5ftoy_5fresult_5f_118',['bkg_toy_result_',['../classHpsFitResult.html#a29b471ee61140c0be7a98a212381c3bf',1,'HpsFitResult']]],
   ['bkgmodel_119',['BkgModel',['../classFitFunction.html#a4be0c1a828439ca1afb1489b055636e6',1,'FitFunction']]],
-  ['blfithistos_120',['BlFitHistos',['../classBlFitHistos.html#ae8e32913ced803f16e4a35ab3c6aad54',1,'BlFitHistos::BlFitHistos()'],['../classBlFitHistos.html',1,'BlFitHistos']]],
+  ['blfithistos_120',['BlFitHistos',['../classBlFitHistos.html#a99006696c3abb62d30f172cc9bcfe005',1,'BlFitHistos::BlFitHistos()'],['../classBlFitHistos.html',1,'BlFitHistos']]],
   ['blfithistos_2ecxx_121',['BlFitHistos.cxx',['../BlFitHistos_8cxx.html',1,'']]],
   ['blfithistos_2eh_122',['BlFitHistos.h',['../BlFitHistos_8h.html',1,'']]],
   ['blockheader_123',['blockHeader',['../classVTPData.html#abea72606944722372734ea2da24ab092',1,'VTPData']]],

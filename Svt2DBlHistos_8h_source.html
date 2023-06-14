@@ -94,21 +94,19 @@ $(function() {
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classSvt2DBlHistos.html#a14d9cc986fb225a1a68a03317f112a85">DefineHistos</a>();</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classSvt2DBlHistos.html#a326eec930a9f0e88ae5e589a91efd0f0">FillHistograms</a>(std::vector&lt;RawSvtHit*&gt; *rawSvtHits_, <span class="keywordtype">float</span> weight = 1.);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classSvt2DBlHistos.html#a326eec930a9f0e88ae5e589a91efd0f0">FillHistograms</a>(std::vector&lt;RawSvtHit*&gt; *rawSvtHits_,<span class="keywordtype">float</span> weight = 1.);</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="classSvt2DBlHistos.html#adaae2bd68fd9d9ec2da5dafec3278e96">   51</a></span>&#160;        <span class="keywordtype">int</span> <a class="code" href="classSvt2DBlHistos.html#adaae2bd68fd9d9ec2da5dafec3278e96">Event_number</a> = 0; </div>
+<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="classSvt2DBlHistos.html#adaae2bd68fd9d9ec2da5dafec3278e96">   51</a></span>&#160;        <span class="keywordtype">int</span> <a class="code" href="classSvt2DBlHistos.html#adaae2bd68fd9d9ec2da5dafec3278e96">Event_number</a>=0; </div>
 <div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="classSvt2DBlHistos.html#a174d7e034f9a94c6d3d7300d72ba4d1d">   52</a></span>&#160;        <span class="keywordtype">int</span> <a class="code" href="classSvt2DBlHistos.html#a174d7e034f9a94c6d3d7300d72ba4d1d">debug_</a> = 1; </div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
 <div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="classSvt2DBlHistos.html#a8df8ddcac78296288a0771337f254ce6">   54</a></span>&#160;        TH1F* <a class="code" href="classSvt2DBlHistos.html#a8df8ddcac78296288a0771337f254ce6">svtCondHisto</a>{<span class="keyword">nullptr</span>}; </div>
-<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="classSvt2DBlHistos.html#ae08c8c0a30c96131bc7d0cf9612877b9">   55</a></span>&#160;        <a class="code" href="classModuleMapper.html">ModuleMapper</a>* <a class="code" href="classSvt2DBlHistos.html#ae08c8c0a30c96131bc7d0cf9612877b9">mmapper_</a>; </div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <span class="comment">//ModuleMapper</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="classSvt2DBlHistos.html#ae08c8c0a30c96131bc7d0cf9612877b9">   56</a></span>&#160;        <a class="code" href="classModuleMapper.html">ModuleMapper</a>* <a class="code" href="classSvt2DBlHistos.html#ae08c8c0a30c96131bc7d0cf9612877b9">mmapper_</a>; </div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;};</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aHistoManager_8h_html"><div class="ttname"><a href="HistoManager_8h.html">HistoManager.h</a></div></div>
 <div class="ttc" id="aModuleMapper_8h_html"><div class="ttname"><a href="ModuleMapper_8h.html">ModuleMapper.h</a></div></div>
 <div class="ttc" id="aRawSvtHit_8h_html"><div class="ttname"><a href="RawSvtHit_8h.html">RawSvtHit.h</a></div><div class="ttdoc">Class used to encapsulate raw svt hit information.</div></div>
@@ -123,7 +121,7 @@ $(function() {
 <div class="ttc" id="aclassSvt2DBlHistos_html_a8df8ddcac78296288a0771337f254ce6"><div class="ttname"><a href="classSvt2DBlHistos.html#a8df8ddcac78296288a0771337f254ce6">Svt2DBlHistos::svtCondHisto</a></div><div class="ttdeci">TH1F * svtCondHisto</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="Svt2DBlHistos_8h_source.html#l00054">Svt2DBlHistos.h:54</a></div></div>
 <div class="ttc" id="aclassSvt2DBlHistos_html_aaad2b6312c47f2bcd656d7c11716c9f9"><div class="ttname"><a href="classSvt2DBlHistos.html#aaad2b6312c47f2bcd656d7c11716c9f9">Svt2DBlHistos::Svt2DBlHistos</a></div><div class="ttdeci">Svt2DBlHistos(const std::string &amp;inputName, ModuleMapper *mmapper_)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="Svt2DBlHistos_8cxx_source.html#l00005">Svt2DBlHistos.cxx:5</a></div></div>
 <div class="ttc" id="aclassSvt2DBlHistos_html_adaae2bd68fd9d9ec2da5dafec3278e96"><div class="ttname"><a href="classSvt2DBlHistos.html#adaae2bd68fd9d9ec2da5dafec3278e96">Svt2DBlHistos::Event_number</a></div><div class="ttdeci">int Event_number</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="Svt2DBlHistos_8h_source.html#l00051">Svt2DBlHistos.h:51</a></div></div>
-<div class="ttc" id="aclassSvt2DBlHistos_html_ae08c8c0a30c96131bc7d0cf9612877b9"><div class="ttname"><a href="classSvt2DBlHistos.html#ae08c8c0a30c96131bc7d0cf9612877b9">Svt2DBlHistos::mmapper_</a></div><div class="ttdeci">ModuleMapper * mmapper_</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="Svt2DBlHistos_8h_source.html#l00055">Svt2DBlHistos.h:55</a></div></div>
+<div class="ttc" id="aclassSvt2DBlHistos_html_ae08c8c0a30c96131bc7d0cf9612877b9"><div class="ttname"><a href="classSvt2DBlHistos.html#ae08c8c0a30c96131bc7d0cf9612877b9">Svt2DBlHistos::mmapper_</a></div><div class="ttdeci">ModuleMapper * mmapper_</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="Svt2DBlHistos_8h_source.html#l00056">Svt2DBlHistos.h:56</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
