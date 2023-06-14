@@ -3,6 +3,8 @@ import sys
 import os
 import baseConfig as base
 
+base.parser.add_argument("-f", "--makeFlatTuple", type=int, dest="makeFlatTuple", help="Make True to make vertex ana flat tuple", metavar="makeFlatTuple", default=0)
+
 options = base.parser.parse_args()
 
 
@@ -39,30 +41,32 @@ vtxana.parameters["anaName"] = "vtxana"
 vtxana.parameters["trkColl"] = "GBLTracks"
 vtxana.parameters["hitColl"] = "RotatedHelicalOnTrackHits"
 vtxana.parameters["vtxColl"] = "UnconstrainedV0Vertices"
-vtxana.parameters["mcColl"]  = "MCParticle"
+vtxana.parameters["mcColl"] = "MCParticle"
 vtxana.parameters["ecalColl"] = "RecoEcalClusters"
 vtxana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/empty.json'
 vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
 vtxana.parameters["beamE"] = base.beamE[str(options.year)]
 vtxana.parameters["isData"] = options.isData
-CalTimeOffset=-999
+vtxana.parameters["makeFlatTuple"] = options.makeFlatTuple
 
-if (options.isData==1):
-    CalTimeOffset=56.
-    print("Running on data file: Setting CalTimeOffset %d"  % CalTimeOffset)
-    
-elif (options.isData==0):
-    CalTimeOffset=43.
-    print("Running on MC file: Setting CalTimeOffset %d"  % CalTimeOffset)
+CalTimeOffset = -999
+
+if (options.isData == 1):
+    CalTimeOffset = 56.
+    print("Running on data file: Setting CalTimeOffset %d" % CalTimeOffset)
+
+elif (options.isData == 0):
+    CalTimeOffset = 43.
+    print("Running on MC file: Setting CalTimeOffset %d" % CalTimeOffset)
 else:
     print("Specify which type of ntuple you are running on: -t 1 [for Data] / -t 0 [for MC]")
 
 
-vtxana.parameters["CalTimeOffset"]=CalTimeOffset
+vtxana.parameters["CalTimeOffset"] = CalTimeOffset
 
 #Region definitions
 
-RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/"
+RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/"
 
 vtxana.parameters["regionDefinitions"] = [RegionPath+'vertexSelection.json',
                                           RegionPath+'simpTight.json',
@@ -73,9 +77,7 @@ vtxana.parameters["regionDefinitions"] = [RegionPath+'vertexSelection.json',
 # Sequence which the processors will run.
 p.sequence = [vtxana]
 
-p.input_files=infile
-p.output_files=[outfile]
+p.input_files = infile
+p.output_files = [outfile]
 
 p.printProcess()
-
-

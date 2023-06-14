@@ -18,46 +18,46 @@ class ModuleMapper(dict):
 
         if self.year == 2019 or self.year == 2021:
 
-            ModuleMapper.hw_to_sw["F0H0"] = "ly1_m0" ;
-            ModuleMapper.hw_to_sw["F0H1"] = "ly2_m0" ;
-            ModuleMapper.hw_to_sw["F0H2"] = "ly3_m0" ;
-            ModuleMapper.hw_to_sw["F0H3"] = "ly4_m0" ;
-            ModuleMapper.hw_to_sw["F1H0"] = "ly4_m1" ;
-            ModuleMapper.hw_to_sw["F1H1"] = "ly3_m1" ;
-            ModuleMapper.hw_to_sw["F1H2"] = "ly2_m1" ;
-            ModuleMapper.hw_to_sw["F1H3"] = "ly1_m1" ;
-            ModuleMapper.hw_to_sw["F2H0"] = "ly5_m0" ;
-            ModuleMapper.hw_to_sw["F2H1"] = "ly6_m0" ;
-            ModuleMapper.hw_to_sw["F2H2"] = "ly8_m0" ;
-            ModuleMapper.hw_to_sw["F2H3"] = "ly7_m0" ;
-            ModuleMapper.hw_to_sw["F3H0"] = "ly7_m1";
-            ModuleMapper.hw_to_sw["F3H1"] = "ly8_m1";
-            ModuleMapper.hw_to_sw["F3H2"] = "ly5_m1";
-            ModuleMapper.hw_to_sw["F3H3"] = "ly6_m1";
-            ModuleMapper.hw_to_sw["F4H0"] = "ly9_m0" ;
-            ModuleMapper.hw_to_sw["F4H1"] = "ly9_m2" ;
-            ModuleMapper.hw_to_sw["F4H2"] = "ly10_m0";
-            ModuleMapper.hw_to_sw["F4H3"] = "ly10_m2";
-            ModuleMapper.hw_to_sw["F5H0"] = "ly9_m1" ;
-            ModuleMapper.hw_to_sw["F5H1"] = "ly9_m3" ;
-            ModuleMapper.hw_to_sw["F5H2"] = "ly10_m1";
-            ModuleMapper.hw_to_sw["F5H3"] = "ly10_m3";
-            ModuleMapper.hw_to_sw["F6H0"] = "ly11_m0";
-            ModuleMapper.hw_to_sw["F6H1"] = "ly11_m2";
-            ModuleMapper.hw_to_sw["F6H2"] = "ly12_m0";
-            ModuleMapper.hw_to_sw["F6H3"] = "ly12_m2";
-            ModuleMapper.hw_to_sw["F7H0"] = "ly11_m1";
-            ModuleMapper.hw_to_sw["F7H1"] = "ly11_m3";
-            ModuleMapper.hw_to_sw["F7H2"] = "ly12_m1";
-            ModuleMapper.hw_to_sw["F7H3"] = "ly12_m3";
-            ModuleMapper.hw_to_sw["F8H0"] = "ly13_m0";
-            ModuleMapper.hw_to_sw["F8H1"] = "ly13_m2";
-            ModuleMapper.hw_to_sw["F8H2"] = "ly14_m0";
-            ModuleMapper.hw_to_sw["F8H3"] = "ly14_m2";
-            ModuleMapper.hw_to_sw["F9H0"] = "ly13_m1";
-            ModuleMapper.hw_to_sw["F9H1"] = "ly13_m3";
-            ModuleMapper.hw_to_sw["F9H2"] = "ly14_m1";
-            ModuleMapper.hw_to_sw["F9H3"] = "ly14_m3";
+            ModuleMapper.hw_to_sw["F0H0"] = "ly1_m0" 
+            ModuleMapper.hw_to_sw["F0H1"] = "ly2_m0" 
+            ModuleMapper.hw_to_sw["F0H2"] = "ly3_m0" 
+            ModuleMapper.hw_to_sw["F0H3"] = "ly4_m0" 
+            ModuleMapper.hw_to_sw["F1H0"] = "ly4_m1" 
+            ModuleMapper.hw_to_sw["F1H1"] = "ly3_m1" 
+            ModuleMapper.hw_to_sw["F1H2"] = "ly2_m1" 
+            ModuleMapper.hw_to_sw["F1H3"] = "ly1_m1" 
+            ModuleMapper.hw_to_sw["F2H0"] = "ly5_m0" 
+            ModuleMapper.hw_to_sw["F2H1"] = "ly6_m0" 
+            ModuleMapper.hw_to_sw["F2H2"] = "ly8_m0" 
+            ModuleMapper.hw_to_sw["F2H3"] = "ly7_m0" 
+            ModuleMapper.hw_to_sw["F3H0"] = "ly7_m1"
+            ModuleMapper.hw_to_sw["F3H1"] = "ly8_m1"
+            ModuleMapper.hw_to_sw["F3H2"] = "ly5_m1"
+            ModuleMapper.hw_to_sw["F3H3"] = "ly6_m1"
+            ModuleMapper.hw_to_sw["F4H0"] = "ly9_m0" 
+            ModuleMapper.hw_to_sw["F4H1"] = "ly9_m2" 
+            ModuleMapper.hw_to_sw["F4H2"] = "ly10_m0"
+            ModuleMapper.hw_to_sw["F4H3"] = "ly10_m2"
+            ModuleMapper.hw_to_sw["F5H0"] = "ly9_m1" 
+            ModuleMapper.hw_to_sw["F5H1"] = "ly9_m3" 
+            ModuleMapper.hw_to_sw["F5H2"] = "ly10_m1"
+            ModuleMapper.hw_to_sw["F5H3"] = "ly10_m3"
+            ModuleMapper.hw_to_sw["F6H0"] = "ly11_m0"
+            ModuleMapper.hw_to_sw["F6H1"] = "ly11_m2"
+            ModuleMapper.hw_to_sw["F6H2"] = "ly12_m0"
+            ModuleMapper.hw_to_sw["F6H3"] = "ly12_m2"
+            ModuleMapper.hw_to_sw["F7H0"] = "ly11_m1"
+            ModuleMapper.hw_to_sw["F7H1"] = "ly11_m3"
+            ModuleMapper.hw_to_sw["F7H2"] = "ly12_m1"
+            ModuleMapper.hw_to_sw["F7H3"] = "ly12_m3"
+            ModuleMapper.hw_to_sw["F8H0"] = "ly13_m0"
+            ModuleMapper.hw_to_sw["F8H1"] = "ly13_m2"
+            ModuleMapper.hw_to_sw["F8H2"] = "ly14_m0"
+            ModuleMapper.hw_to_sw["F8H3"] = "ly14_m2"
+            ModuleMapper.hw_to_sw["F9H0"] = "ly13_m1"
+            ModuleMapper.hw_to_sw["F9H1"] = "ly13_m3"
+            ModuleMapper.hw_to_sw["F9H2"] = "ly14_m1"
+            ModuleMapper.hw_to_sw["F9H3"] = "ly14_m3"
 
             ModuleMapper.sw_to_hw["ly1_m0" ] = "F0H0" 
             ModuleMapper.sw_to_hw["ly2_m0" ] = "F0H1" 
@@ -268,7 +268,6 @@ class ModuleMapper(dict):
             ModuleMapper.string_to_sw["L6B_axial_pos" ] = "ly14_m3"
 
         elif self.year == 2016:
-
             ModuleMapper.hw_to_sw["F9H0"] = "ly1_m0" 
             ModuleMapper.hw_to_sw["F2H0"] = "ly1_m1" 
             ModuleMapper.hw_to_sw["F9H1"] = "ly2_m0" 

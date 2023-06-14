@@ -81,7 +81,7 @@ class SvtRawDataProcessor : public Processor {
         std::string hitCollLcio_{"SVTRawTrackerHits"}; //!< collection name
         std::string hitfitCollLcio_{"SVTFittedRawTrackerHits"}; //!< collection name
         std::string hitCollRoot_{"SVTRawTrackerHits"}; //!< collection name
-
+        
         int debug_{0}; //!< Debug Level
 
 }; // SvtRawDataProcessor

@@ -8,15 +8,15 @@ from optparse import OptionParser
 # Parse the command line options.
 parser = OptionParser()
 parser.add_option("-i", "--inputDir", type="string", dest="inputDir",
-    help="The directory containing the input ROOT files.", metavar="inputDir", default="toys/toys.root")
+                  help="The directory containing the input ROOT files.", metavar="inputDir", default="toys/toys.root")
 parser.add_option("-o", "--outputFile", type="string", dest="outputFile",
-    help="Specify the output filename.", metavar="outputFile", default="testOut.root")
+                  help="Specify the output filename.", metavar="outputFile", default="testOut.root")
 parser.add_option("-p", "--prefix", type="string", dest="prefix",
-    help="Sets a prefix to prepend to all file names.", metavar="prefix", default="")
+                  help="Sets a prefix to prepend to all file names.", metavar="prefix", default="")
 parser.add_option("-d", "--plotdir", type="string", dest="plot_dir",
-    help="Sets the plot output directory.", metavar="plot_dir", default=".")
+                  help="Sets the plot output directory.", metavar="plot_dir", default=".")
 parser.add_option("-m", "--selectedModels", type="string", dest="modelFile",
-    help="Sets the file containing the selected models for each mass.", metavar="modelFile", default="dat/selectedModels.dat")
+                  help="Sets the file containing the selected models for each mass.", metavar="modelFile", default="dat/selectedModels.dat")
 (options, args) = parser.parse_args()
 
 # Get the command line variables.
@@ -28,9 +28,9 @@ plotDirectory = options.plot_dir
 # Thre should be no empty lines. These should ideally be
 # in ascending order. Unexpected behavior may otherwise
 # be observed.
-masses = [ ]
-polOrder = { }
-winSize = { }
+masses = []
+polOrder = {}
+winSize = {}
 tmfFile = open(options.modelFile, "r")
 print("Reading selected models:")
 for line in tmfFile:
@@ -52,9 +52,9 @@ for line in tmfFile:
 
 # Track the plot values.
 massFloats = []
-pSearch  = []
+pSearch = []
 pSearchG = []
-limitN   = []
+limitN = []
 limitEps = []
 
 toyEpsilon = []
@@ -88,12 +88,14 @@ for mass in masses:
         # Store the p-values for data.
         pSearch.append(entry.p_value)
         globalPValue = entry.p_value * 32.8481
-        if globalPValue > 1: globalPValue = 1
+        if globalPValue > 1:
+            globalPValue = 1
         pSearchG.append(globalPValue)
 
         # Get the signal yield and upper limit for data.
         nSigFit = entry.sig_yield
-        if nSigFit < 0.0: nSigFit = 0.0
+        if nSigFit < 0.0:
+            nSigFit = 0.0
         upLim = nSigFit + 1.64 * entry.sig_yield_err
 
         # Store the upper limit and the epsilon squared upper limit
@@ -101,21 +103,21 @@ for mass in masses:
         limitN.append(upLim)
         limitEps.append(2 * upLim / (411 * 3.14159 * mass * radFrac * 20 * entry.bkg_rate_mass_hypo))
 
-
-
         # Get all values for signal yield, upper limit, and
         # background rate from toys.
-        t_epsilon = [ ]
+        t_epsilon = []
         for toy in range(len(entry.toy_sig_yield)):
             # Skip entries with bad fit stati.
-            if entry.toy_minuit_status[toy] > 0.0: continue
+            if entry.toy_minuit_status[toy] > 0.0:
+                continue
 
             # The signal yield is zero if negative.
             t_sigYieldVal = float(entry.toy_sig_yield[toy])
-            if t_sigYieldVal < 0.0: t_sigYieldVal = 0.0
+            if t_sigYieldVal < 0.0:
+                t_sigYieldVal = 0.0
 
             # Plot the pull.
-            sigPull.Fill( float(mass), float((entry.toy_sig_yield[toy] - entry.toy_sig_samples) / entry.toy_sig_yield_err[toy]) )
+            sigPull.Fill(float(mass), float((entry.toy_sig_yield[toy] - entry.toy_sig_samples) / entry.toy_sig_yield_err[toy]))
 
             # Get the upper limit and background rate.
             t_upperLimit = float(t_sigYieldVal + 1.64 * entry.toy_sig_yield_err[toy])
@@ -128,7 +130,7 @@ for mass in masses:
         # Make plots to store the epsilon squared values.
         minBin = min(t_epsilon) * 0.75
         maxBin = max(t_epsilon) * 1.25
-        epsPlot  = r.TH1D('m%i_epsilon' % (mass), '%i MeV #epsilon^{2};#epsilon^{2};Bin Count' % (mass), 100, minBin, maxBin)
+        epsPlot = r.TH1D('m%i_epsilon' % (mass), '%i MeV #epsilon^{2};#epsilon^{2};Bin Count' % (mass), 100, minBin, maxBin)
 
         for eps2 in t_epsilon:
             epsPlot.Fill(eps2)
@@ -155,7 +157,7 @@ for mass in masses:
         toyEpsilonEL1.append(t_epsilon[i_mean] - t_epsilon[i_1sigma_l])
         toyEpsilonEL2.append(t_epsilon[i_mean] - t_epsilon[i_2sigma_l])
 
-        print('%i MeV :: %f;    %f <-- %f <-- %f --> %f --> %f' % ( mass, limitEps[len(limitEps) - 1], t_epsilon[i_2sigma_l], t_epsilon[i_1sigma_l], t_epsilon[i_mean], t_epsilon[i_1sigma_u], t_epsilon[i_2sigma_u] ));
+        print('%i MeV :: %f;    %f <-- %f <-- %f --> %f --> %f' % (mass, limitEps[len(limitEps) - 1], t_epsilon[i_2sigma_l], t_epsilon[i_1sigma_l], t_epsilon[i_mean], t_epsilon[i_1sigma_u], t_epsilon[i_2sigma_u]))
         pass
     inFile.Close()
     pass
@@ -169,31 +171,31 @@ sigPull.GetXaxis().SetTitleOffset(1.2)
 sigPull.GetYaxis().SetTitleOffset(1.0)
 sigPull.Write()
 
-utils.InsertText("",[],0.15,0.15)
+utils.InsertText("", [], 0.15, 0.15)
 massPullCanvas = r.TCanvas("massPull_canvas", "massPull_canvas", 2500, 1000)
 sigPull.Draw()
 massPullCanvas.SaveAs('%s/%smassPull.png' % (plotDirectory, prefix))
 
 # Make the p-value plots.
-pSearch_g  = r.TGraph(len(massFloats), np.array(massFloats), np.array(pSearch))
+pSearch_g = r.TGraph(len(massFloats), np.array(massFloats), np.array(pSearch))
 pSearch_g.SetName("pSearch_g")
 pSearch_g.SetTitle("pSearch_g;m_{A'} (MeV);Local p-Value")
-pSearchG_g  = r.TGraph(len(massFloats), np.array(massFloats), np.array(pSearchG))
+pSearchG_g = r.TGraph(len(massFloats), np.array(massFloats), np.array(pSearchG))
 pSearchG_g.SetName("pSearchG_g")
 pSearchG_g.SetTitle("pSearch_g;m_{A'} (MeV);Global p-Value")
 
-utils.InsertText("",[],0.15,0.15)
+utils.InsertText("", [], 0.15, 0.15)
 pValueCanvas = r.TCanvas("pValueCanvas", "pValueCanvas", 2500, 1000)
 pValueCanvas.SetLogy(1)
 pSearch_g.Draw()
 pValueCanvas.SaveAs('%s/%spValue.png' % (plotDirectory, prefix))
 
 # Make the upper limit of the signal yield plot.
-limitN_g   = r.TGraph(len(massFloats), np.array(massFloats), np.array(limitN))
+limitN_g = r.TGraph(len(massFloats), np.array(massFloats), np.array(limitN))
 limitN_g.SetName("limitN_g")
 limitN_g.SetTitle("limitN_g;m_{A'} (MeV);N_{up}")
 
-utils.InsertText("",[],0.15,0.15)
+utils.InsertText("", [], 0.15, 0.15)
 sigYieldCanvas = r.TCanvas("sigYieldCanvas", "sigYieldCanvas", 2500, 1000)
 sigYieldCanvas.SetLogy(1)
 limitN_g.Draw()
@@ -205,7 +207,7 @@ canvas.SetLogy(1)
 canvas.cd()
 
 # Make an array of zero for the "x error."
-xErrors = [ ]
+xErrors = []
 for entry in massFloats:
     xErrors.append(0)
     pass

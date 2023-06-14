@@ -26,17 +26,17 @@ p.add_library("libprocessors")
 ###############################
 #          Processors         #
 ###############################
-header  = HpstrConf.Processor('header', 'EventProcessor')
-track   = HpstrConf.Processor('track', 'TrackingProcessor')
+header = HpstrConf.Processor('header', 'EventProcessor')
+track = HpstrConf.Processor('track', 'TrackingProcessor')
 trackgbl = HpstrConf.Processor('trackgbl', 'TrackingProcessor')
 trackrefitgbl = HpstrConf.Processor('trackrefitgbl', 'TrackingProcessor')
 svthits = HpstrConf.Processor('svthits', 'Tracker3DHitProcessor')
-rawsvt  = HpstrConf.Processor('rawsvt', 'SvtRawDataProcessor')
-ecal    = HpstrConf.Processor('ecal', 'ECalDataProcessor')
-vtx     = HpstrConf.Processor('vtx', 'VertexProcessor')
-vtxgbl   = HpstrConf.Processor('vtxgbl', 'VertexProcessor')
-cvtxgbl   = HpstrConf.Processor('cvtxgbl', 'VertexProcessor')
-mcpart  = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
+rawsvt = HpstrConf.Processor('rawsvt', 'SvtRawDataProcessor')
+ecal = HpstrConf.Processor('ecal', 'ECalDataProcessor')
+vtx = HpstrConf.Processor('vtx', 'VertexProcessor')
+vtxgbl = HpstrConf.Processor('vtxgbl', 'VertexProcessor')
+cvtxgbl = HpstrConf.Processor('cvtxgbl', 'VertexProcessor')
+mcpart = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
 
 ###############################
 #   Processor Configuration   #
@@ -45,26 +45,26 @@ mcpart  = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
 header.parameters["debug"] = 0
 header.parameters["headCollRoot"] = "EventHeader"
 header.parameters["trigCollLcio"] = "TriggerBank"
-header.parameters["rfCollLcio"]   = "RFHits"
-header.parameters["vtpCollLcio"]  = "VTPBank"
-header.parameters["vtpCollRoot"]  = "VTPBank"
-header.parameters["tsCollLcio"]   = "TSBank"
-header.parameters["tsCollRoot"]   = "TSBank"
+header.parameters["rfCollLcio"] = "RFHits"
+header.parameters["vtpCollLcio"] = "VTPBank"
+header.parameters["vtpCollRoot"] = "VTPBank"
+header.parameters["tsCollLcio"] = "TSBank"
+header.parameters["tsCollRoot"] = "TSBank"
 
 #SvtRawData
 rawsvt.parameters["debug"] = 0
-rawsvt.parameters["hitCollLcio"]    = 'SVTRawTrackerHits'
+rawsvt.parameters["hitCollLcio"] = 'SVTRawTrackerHits'
 rawsvt.parameters["hitfitCollLcio"] = 'SVTFittedRawTrackerHits'
-rawsvt.parameters["hitCollRoot"]    = 'SVTRawTrackerHits'
+rawsvt.parameters["hitCollRoot"] = 'SVTRawTrackerHits'
 
 #Tracker3DHits
 svthits.parameters["debug"] = 0
-svthits.parameters["hitCollLcio"]    = 'RotatedHelicalTrackHits'
-svthits.parameters["hitCollRoot"]    = 'RotatedHelicalTrackHits'
+svthits.parameters["hitCollLcio"] = 'RotatedHelicalTrackHits'
+svthits.parameters["hitCollRoot"] = 'RotatedHelicalTrackHits'
 
 
 #Tracking
-track.parameters["debug"] = 0 
+track.parameters["debug"] = 0
 track.parameters["trkCollLcio"] = 'KalmanFullTracks'
 track.parameters["trkCollRoot"] = 'KalmanFullTracks'
 track.parameters["kinkRelCollLcio"] = ''
@@ -74,7 +74,7 @@ track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 track.parameters["rawhitCollRoot"] = ''
 
 #Only for detail studies
-track.parameters["rawhitCollRoot"] = ''#'SCTRawHitsOnTrack_KF'
+track.parameters["rawhitCollRoot"] = ''  # 'SCTRawHitsOnTrack_KF'
 
 if (not options.isData):
     track.parameters["truthTrackCollLcio"] = 'KalmanFullTracksToTruthTrackRelations'
@@ -82,7 +82,7 @@ if (not options.isData):
 
 track.parameters["bfield"] = bfield[str(options.year)]
 
-trackgbl.parameters["debug"] = 0 
+trackgbl.parameters["debug"] = 0
 trackgbl.parameters["trkCollLcio"] = 'GBLTracks'
 trackgbl.parameters["trkCollRoot"] = 'GBLTracks'
 trackgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
@@ -91,7 +91,7 @@ trackgbl.parameters["trkhitCollRoot"] = 'RotatedHelicalOnTrackHits'
 trackgbl.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 
 #Only for detail studies
-trackgbl.parameters["rawhitCollRoot"] = ''#'SVTRawHitsOnTrack'
+trackgbl.parameters["rawhitCollRoot"] = ''  # 'SVTRawHitsOnTrack'
 
 if (not options.isData):
     trackgbl.parameters["truthTrackCollLcio"] = 'GBLTracksToTruthTrackRelations'
@@ -99,39 +99,39 @@ if (not options.isData):
 trackgbl.parameters["bfield"] = bfield[str(options.year)]
 
 #ECalData
-ecal.parameters["debug"] = 0 
+ecal.parameters["debug"] = 0
 ecal.parameters["hitCollLcio"] = 'EcalCalHits'
-ecal.parameters["hitCollRoot"] = ''#'RecoEcalHits'
+ecal.parameters["hitCollRoot"] = ''  # 'RecoEcalHits'
 ecal.parameters["clusCollLcio"] = "EcalClustersCorr"
 ecal.parameters["clusCollRoot"] = "RecoEcalClusters"
 
 #Vertex
 vtx.parameters["debug"] = 0
-vtx.parameters["vtxCollLcio"]    = 'UnconstrainedV0Vertices_KF'
-vtx.parameters["vtxCollRoot"]    = 'UnconstrainedV0Vertices_KF'
-vtx.parameters["partCollRoot"]   = 'ParticlesOnVertices_KF'
+vtx.parameters["vtxCollLcio"] = 'UnconstrainedV0Vertices_KF'
+vtx.parameters["vtxCollRoot"] = 'UnconstrainedV0Vertices_KF'
+vtx.parameters["partCollRoot"] = 'ParticlesOnVertices_KF'
 vtx.parameters["kinkRelCollLcio"] = ''
 vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
 
 vtxgbl.parameters["debug"] = 0
-vtxgbl.parameters["vtxCollLcio"]     = 'UnconstrainedV0Vertices'
-vtxgbl.parameters["vtxCollRoot"]     = 'UnconstrainedV0Vertices'
-vtxgbl.parameters["partCollRoot"]    = 'ParticlesOnVertices'
+vtxgbl.parameters["vtxCollLcio"] = 'UnconstrainedV0Vertices'
+vtxgbl.parameters["vtxCollRoot"] = 'UnconstrainedV0Vertices'
+vtxgbl.parameters["partCollRoot"] = 'ParticlesOnVertices'
 vtxgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
-vtxgbl.parameters["trkRelCollLcio"]  = 'TrackDataRelations'
+vtxgbl.parameters["trkRelCollLcio"] = 'TrackDataRelations'
 
 
 cvtxgbl.parameters["debug"] = 0
-cvtxgbl.parameters["vtxCollLcio"]     = 'TargetConstrainedV0Vertices'
-cvtxgbl.parameters["vtxCollRoot"]     = 'TargetConstrainedV0Vertices'
-cvtxgbl.parameters["partCollRoot"]    = 'ParticlesOnVertices'
+cvtxgbl.parameters["vtxCollLcio"] = 'TargetConstrainedV0Vertices'
+cvtxgbl.parameters["vtxCollRoot"] = 'TargetConstrainedV0Vertices'
+cvtxgbl.parameters["partCollRoot"] = 'ParticlesOnVertices'
 cvtxgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
-cvtxgbl.parameters["trkRelCollLcio"]  = 'TrackDataRelations'
+cvtxgbl.parameters["trkRelCollLcio"] = 'TrackDataRelations'
 
 
 #MCParticle
-mcpart.parameters["debug"] = 0 
+mcpart.parameters["debug"] = 0
 mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
@@ -143,7 +143,6 @@ else:
 
 p.input_files = lcio_file
 p.output_files = [root_file]
-
 
 
 p.printProcess()

@@ -33,7 +33,7 @@
             "xtitle" : "Amplitude",
             "bins" : 200,
             "minX" : 0,
-            "maxX" : 4000,
+            "maxX" : 7000,
             "ytitle" : "# of Hits"
 
         },
@@ -91,11 +91,11 @@
             "xtitle" : "Amplitude",
             "binsX" : 100,
             "minX" : 0,
-            "maxX" : 4000,
+            "maxX" : 7000,
             "ytitle" : "Amplitude Error",
             "binsY" : 100,
             "minY" : 0,
-            "maxY" : 4000
+            "maxY" : 7000
 
         },
     "SvtHybrids_AmT0_hh" : {
@@ -108,10 +108,10 @@
             "ytitle" : "Amplitude",
             "binsY" : 100,
             "minY" : 0,
-            "maxY" : 4000
+            "maxY" : 7000
 
         },
-    "SvtHybrids_AmT0Err_hh" : {
+    "SvtHybrids_AmErrT0Err_hh" : {
             "prefix" : "ErrCompare",
             "type" : "hh",
             "xtitle" : "T0 Error",
@@ -121,8 +121,32 @@
             "ytitle" : "Amplitude Error",
             "binsY" : 100,
             "minY" : 0,
-            "maxY" : 4000
+            "maxY" : 7000
 
+        },
+    "SvtHybrids_AmT0Err_hh" : {
+            "prefix" : "T0",
+            "type" : "hh",
+            "xtitle" : "T0 Error vs Amplitude",
+            "binsX" : 100,
+            "minX" : 0,
+            "maxX" : 200,
+            "ytitle" : "Amplitude",
+            "binsY" : 100,
+            "minY" : 0,
+            "maxY" : 7000
+        },
+    "SvtHybrids_AmErrT0_hh" : {
+            "prefix" : "T0 vs Amplitude Error",
+            "type" : "hh",
+            "xtitle" : "T0",
+            "binsX" : 100,
+            "minX" : 0,
+            "maxX" : 200,
+            "ytitle" : "Amplitude Error",
+            "binsY" : 100,
+            "minY" : 0,
+            "maxY" : 7000
         },
     "SvtHybrids_PT1PT2_hh" : {
             "prefix" : "Pulese time 1 vs Pulse time 2",
@@ -155,7 +179,7 @@
             "xtitle" : "Amp Err",
             "binsX" : 100,
             "minX" : 0,
-            "maxX" : 4000,
+            "maxX" : 7000,
             "ytitle" : "Time Difference",
             "binsY" : 100,
             "minY" : -160,
@@ -168,7 +192,7 @@
             "xtitle" : "Pulse Amp",
             "binsX" : 100,
             "minX" : 0,
-            "maxX" : 4000,
+            "maxX" : 7000,
             "ytitle" : "Time Difference",
             "binsY" : 100,
             "minY" : -160,
@@ -181,11 +205,11 @@
             "xtitle" : "Amp Pulse 1",
             "binsX" : 100,
             "minX" : 0,
-            "maxX" : 4000,
+            "maxX" : 7000,
             "ytitle" : "Amp Pulse 2",
             "binsY" : 100,
             "minY" : 0,
-            "maxY" : 4000
+            "maxY" : 7000
 
         },
     "SvtHybrids_ADTD_hh" : {

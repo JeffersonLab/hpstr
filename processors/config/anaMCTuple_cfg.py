@@ -7,7 +7,7 @@ import baseConfig as base
 
 
 base.parser.add_argument("-w", "--tracking", type=str, dest="tracking",
-                  help="Which tracking to use to make plots", metavar="tracking", default="KF")
+                         help="Which tracking to use to make plots", metavar="tracking", default="KF")
 options = base.parser.parse_args()
 
 
@@ -18,7 +18,6 @@ infile = options.inFilename
 outfile = options.outFilename
 
 analysis = options.analysis
-
 
 
 print('Input file: %s' % infile)

@@ -27,23 +27,23 @@ p.add_library("libprocessors")
 ###############################
 #          Processors         #
 ###############################
-trkana    = HpstrConf.Processor('trkana','TrackingAnaProcessor')
-trkgblana = HpstrConf.Processor('trkgblana','TrackingAnaProcessor')
+trkana = HpstrConf.Processor('trkana', 'TrackingAnaProcessor')
+trkgblana = HpstrConf.Processor('trkgblana', 'TrackingAnaProcessor')
 
-trkana.parameters["debug"]  = 0;
+trkana.parameters["debug"] = 0
 trkana.parameters["trkCollName"] = "KalmanFullTracks"
 trkana.parameters["histCfg"] = os.environ['HPSTR_BASE'] + '/analysis/plotconfigs/tracking/basicTracking.json'
 trkana.parameters["doTruth"] = 1
 trkana.parameters["truthHistCfg"] = os.environ['HPSTR_BASE'] + '/analysis/plotconfigs/tracking/truthTrackComparison.json'
 
 
-trkgblana.parameters["debug"]        = 0;
-trkgblana.parameters["trkCollName"]  = "GBLRefittedTracks"
-trkgblana.parameters["histCfg"]      = os.environ['HPSTR_BASE'] + '/analysis/plotconfigs/tracking/basicTracking.json'
-trkgblana.parameters["doTruth"]      = 1
+trkgblana.parameters["debug"] = 0
+trkgblana.parameters["trkCollName"] = "GBLRefittedTracks"
+trkgblana.parameters["histCfg"] = os.environ['HPSTR_BASE'] + '/analysis/plotconfigs/tracking/basicTracking.json'
+trkgblana.parameters["doTruth"] = 1
 trkgblana.parameters["truthHistCfg"] = os.environ['HPSTR_BASE'] + '/analysis/plotconfigs/tracking/truthTrackComparison.json'
 
-p.sequence = [trkana,trkgblana]
+p.sequence = [trkana, trkgblana]
 
 p.input_files = infile
 p.output_files = [outfile]
