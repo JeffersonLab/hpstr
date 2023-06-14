@@ -16,7 +16,7 @@ class ModuleMapper(dict):
 
         self.year = year
 
-        if (year == 2019 or year == 2021):
+        if self.year == 2019 or self.year == 2021:
 
             ModuleMapper.hw_to_sw["F0H0"] = "ly1_m0" 
             ModuleMapper.hw_to_sw["F0H1"] = "ly2_m0" 
@@ -267,8 +267,7 @@ class ModuleMapper(dict):
             ModuleMapper.string_to_sw["L6B_axial_ele" ] = "ly14_m1"
             ModuleMapper.string_to_sw["L6B_axial_pos" ] = "ly14_m3"
 
-        elif year == 2016:
-
+        elif self.year == 2016:
             ModuleMapper.hw_to_sw["F9H0"] = "ly1_m0" 
             ModuleMapper.hw_to_sw["F2H0"] = "ly1_m1" 
             ModuleMapper.hw_to_sw["F9H1"] = "ly2_m0" 
@@ -501,13 +500,13 @@ class ModuleMapper(dict):
         for feb in range(10):
             str_feb = "F" + str(feb)
             max_channel = 640
-            if year != 2016:
+            if self.year != 2016:
                 if feb < 2:
                     max_channel = 512
             for hybrid in range(4):
                 local_to_svtid_map = {}
                 str_hybrid = "H" + str(hybrid)
-                if year == 2016:
+                if self.year == 2016:
                     if (feb == 2 or feb == 9) and hybrid > 1:
                         continue
                 for channel in range(max_channel):
@@ -515,7 +514,7 @@ class ModuleMapper(dict):
                     local_to_svtid_map[channel] = svtid
                 ModuleMapper.global_channel_map[str_feb + str_hybrid] = local_to_svtid_map
                 channel_index = channel_index + max_channel
-        [print(key,':', value) for key,value in ModuleMapper.global_channel_map.items()]
+        #[print(key,':', value) for key,value in ModuleMapper.global_channel_map.items()]
 
 
     def get_hw_to_string(self,string):
@@ -535,5 +534,7 @@ class ModuleMapper(dict):
         except:
             print("Channel %s on %s does not exist. Failed to return global svtid")
             return null
+
+
 
 

@@ -5,9 +5,9 @@
 double fitmin;
 double fitmax;
 
-BlFitHistos::BlFitHistos() {
+BlFitHistos::BlFitHistos(int year) {
     //ModuleMapper used to translate between hw and sw names
-    mmapper_ = new ModuleMapper();
+    mmapper_ = new ModuleMapper(year);
 
     //Global svtIDMap built in ModuleMapper. Required to output baselines in database format
     svtIDMap = mmapper_->buildChannelSvtIDMap();
@@ -208,6 +208,7 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
     //Loop over rawsvthit 2D histograms, one for each selected halfmodule
     for(std::map<std::string, TH2F*>::iterator it = histos2d.begin(); it != histos2d.end(); ++it)
     {
+        gDirectory->cd("/");
         TH2F* halfmodule_hh = it->second; 
         halfmodule_hh->RebinY(rebin_);
         halfmodule_hh->Write();
@@ -228,7 +229,7 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
         //Feb and Hybrid numbers
         std::string feb = (hwTag.substr(1,1));
         std::string hyb = (hwTag.substr(3,1));
-
+        gDirectory->mkdir(("F"+feb+"H"+hyb).c_str())->cd();
         //Perform fitting procedure over all channels on a sensor
         for(int cc=0; cc < 640 ; ++cc) 
         {
@@ -236,7 +237,6 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
                 std::cout << hh_name << " " << cc << std::endl;
                 std::cout << "CHANNEL " << cc << std::endl;
             }
-            //std::cout << hh_name << " " << cc << std::endl;
             if (cc%100 == 0)
                 std::cout << "CHANNEL " << cc << std::endl;
 
@@ -317,7 +317,7 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
             backwardsIterChi2Fit(projy_h, fitmin, fitmax);
 
             TF1 *fit = new TF1("fit", "gaus", fitmin, fitmax);
-            projy_h->Fit("fit","ORQN","");
+            projy_h->Fit("fit","ORQ","");
             double fitmean = fit->GetParameter(1);
             double fitsigma = fit->GetParameter(2);
             double fitnorm = fit->GetParameter(0);
@@ -331,6 +331,8 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
                 std::cout << "Fit min: " << fitmin << std::endl;
                 std::cout << "Fit max: " << fitmax << std::endl;
             }
+            projy_h->Draw();
+            projy_h->Write();
             delete fit;
 
             //If fit mean is less than fitmax, channel does not have full gaussian shape.
