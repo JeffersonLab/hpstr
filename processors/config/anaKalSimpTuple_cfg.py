@@ -51,8 +51,8 @@ recoana_kf.parameters["vtxColl"] = "UnconstrainedV0Vertices_KF"
 recoana_kf.parameters["mcColl"] = "MCParticle"
 recoana_kf.parameters["hitColl"] = "SiClusters"
 recoana_kf.parameters["ecalColl"] = "RecoEcalClusters"
-recoana_kf.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+"/analysis/selections/simps/vertexSelection_2016_simp_reach.json"
-recoana_kf.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/simps/vtxAnalysis_2016_simp_reach.json"
+recoana_kf.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+"/analysis/selections/vertexSelection.json"
+recoana_kf.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
 recoana_kf.parameters["mcHistoCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
 #####
 recoana_kf.parameters["beamE"] = base.beamE[str(options.year)]
@@ -75,14 +75,16 @@ else:
 
 recoana_kf.parameters["CalTimeOffset"] = CalTimeOffset
 #Region definitions
-RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/simps/"
+RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/"
 
-if options.region == "CR":
-    recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_CR.json',
-                                                  RegionPath+'radMatchTight_2016_simp_reach_CR.json']
-elif options.region == "SR":
-    recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_SR.json',
-                                                  RegionPath+'radMatchTight_2016_simp_reach_SR.json']
+recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight_loose.json']
+
+#if options.region == "CR":
+#    recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_CR.json',
+#                                                  RegionPath+'radMatchTight_2016_simp_reach_CR.json']
+#elif options.region == "SR":
+#    recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_SR.json',
+#                                                  RegionPath+'radMatchTight_2016_simp_reach_SR.json']
 
 #RecoHitAna
 recoana_gbl.parameters = recoana_kf.parameters.copy()
@@ -93,13 +95,13 @@ recoana_gbl.parameters["hitColl"] = "RotatedHelicalOnTrackHits"
 recoana_gbl.parameters["trkColl"] = "GBLTracks"
 recoana_gbl.parameters["mcColl"] = "MCParticle"
 recoana_gbl.parameters["ecalColl"] = "RecoEcalClusters"
-recoana_kf.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+"/analysis/selections/simps/vertexSelection_2016_simp_reach.json"
-recoana_kf.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/simps/vtxAnalysis_2016_simp_reach.json"
-recoana_kf.parameters["mcHistoCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
-if options.year == 2016
-    recoana_kf.parameters["beamPosCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/beamspot_positions_2016.json'
+recoana_gbl.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+"/analysis/selections/simps/vertexSelection_2016_simp_reach.json"
+recoana_gbl.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/simps/vtxAnalysis_2016_simp_reach.json"
+recoana_gbl.parameters["mcHistoCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
+if options.year == 2016:
+    recoana_gbl.parameters["beamPosCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/beamspot_positions_2016.json'
 else:
-    recoana_kf.parameters["beamPosCfg"] = ''
+    recoana_gbl.parameters["beamPosCfg"] = ''
 #####
 recoana_gbl.parameters["beamE"] = base.beamE[str(options.year)]
 recoana_gbl.parameters["isData"] = options.isData

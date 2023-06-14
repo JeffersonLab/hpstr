@@ -869,6 +869,87 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             pos_trk_gbl = (Track*) pos_trk.Clone();
         }
 
+        //Calculate track isolation values
+        //utils::getKalmanTrackIsolations(ele_trk_gbl,hits_);
+        std::map<int,double> ele_isolations;
+        std::map<int,double> pos_isolations;
+        for (int c = 0; c < 2; c++){
+            Track* isoTrack;
+            std::string isoCharge;
+            switch (c) {
+                case 0:
+                    isoTrack = ele_trk_gbl;
+                    isoCharge = "ele";
+                    break;
+                case 1:
+                    isoTrack = pos_trk_gbl;
+                    isoCharge = "pos";
+                    break;
+            }
+
+            for (int i = 0; i < isoTrack->getSvtHits().GetEntries(); i++){
+                TrackerHit* track_hit = (TrackerHit*)isoTrack->getSvtHits().At(i);
+                int trackhit_id = track_hit->getID();
+                int trackhit_layer = track_hit->getLayer();
+                int trackhit_volume = track_hit->getVolume();
+                bool isAxial = false; 
+                if(trackhit_volume == 1)
+                    if(trackhit_layer%2 == 1)
+                        isAxial = true; 
+                else if(trackhit_volume == -1)
+                    if(trackhit_layer%2 == 0)
+                        isAxial = true;
+                if(!isAxial)
+                    continue;
+                double trackhit_y = track_hit->getGlobalY();
+                double trackhitCharge = track_hit->getRawCharge();
+                double trackhitTime = track_hit->getTime();
+
+                //Loop over all SiClusters in event
+                double closest_distance = 999999.9;
+                double charge_diff = 99999.9;
+                double time_diff = 999999.9;
+                TrackerHit* closestStrip = nullptr;
+                for (int j = 0; j < hits_->size(); j++){
+                    TrackerHit* altStripCluster = hits_->at(j);
+                    int alt_id = altStripCluster->getID();
+                    //Skip same cluster
+                    if (alt_id == trackhit_id)
+                        continue;
+                    int altLayer = altStripCluster->getLayer();
+                    if (altLayer != trackhit_layer)
+                        continue;
+                    double althit_y = altStripCluster->getGlobalY();
+                    double altCharge = altStripCluster->getRawCharge();
+                    double altTime = altStripCluster->getTime();
+                    _reg_vtx_histos[region]->Fill1DHisto("vtx_axial_allstrips_dt_h", trackhitTime - altTime);
+                    _reg_vtx_histos[region]->Fill1DHisto("vtx_axial_allstrips_dY_h", trackhit_y - althit_y);
+                    _reg_vtx_histos[region]->Fill1DHisto("vtx_axial_allstrips_dCharge_h", trackhitCharge - altCharge);
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_axial_allstrips_dCharge_v_dY_hh", trackhit_y-althit_y, trackhitCharge - altCharge);
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_axial_allstrips_dt_v_dY_hh", trackhit_y-althit_y, trackhitTime - altTime);
+                    //Only look at hits that are further from beam-axis in Global Y
+                    if (althit_y < trackhit_y)
+                        continue;
+                    _reg_vtx_histos[region]->Fill1DHisto("vtx_axial_strips_dt_h", trackhitTime - altTime);
+                    _reg_vtx_histos[region]->Fill1DHisto("vtx_axial_strips_dY_h",(althit_y-trackhit_y));
+                    _reg_vtx_histos[region]->Fill1DHisto("vtx_axial_strips_dCharge_h",trackhitCharge - altCharge);
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_axial_strips_dCharge_v_dY_hh", trackhit_y-althit_y, trackhitCharge - altCharge);
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_axial_strips_dt_v_dY_hh", trackhit_y-althit_y, trackhitTime - altTime);
+                    if (std::abs(althit_y-trackhit_y) < closest_distance){
+                        closest_distance = std::abs(althit_y-trackhit_y);
+                        closestStrip = altStripCluster;
+                        charge_diff = trackhitCharge - altCharge;
+                        time_diff = trackhitTime - altTime;
+                    }
+                }
+                _reg_vtx_histos[region]->Fill1DHisto("vtx_axial_iso_dt_h", time_diff);
+                _reg_vtx_histos[region]->Fill1DHisto("vtx_axial_iso_dY_h", closest_distance);
+                _reg_vtx_histos[region]->Fill1DHisto("vtx_axial_iso_dCharge_h",charge_diff );
+                _reg_vtx_histos[region]->Fill2DHisto("vtx_axial_iso_dCharge_v_dY_hh", closest_distance, charge_diff);
+                _reg_vtx_histos[region]->Fill2DHisto("vtx_axial_iso_dt_v_dY_hh", closest_distance, time_diff);
+            }
+        }
+
         TVector3 ele_mom;
         //ele_mom.SetX(ele->getMomentum()[0]);
         //ele_mom.SetY(ele->getMomentum()[1]);

@@ -332,7 +332,7 @@ void HistoManager::Fill1DHisto(const std::string& histoName,float value, float w
     else {
         printWarnings_++;
         if (doPrintWarnings_) {
-            if (printWarnings_ < maxWarnings_)
+            if (printWarnings_ < 10000)
                 std::cout<<"ERROR::Fill1DHisto Histogram not found! "<<m_name+"_"+histoName<<std::endl;
             else {
                 std::cout<<"Fill1DHisto::Printed max number of warnings " << maxWarnings_ << ". Stop"<<std::endl;

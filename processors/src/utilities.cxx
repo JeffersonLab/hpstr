@@ -504,3 +504,45 @@ bool utils::getParticlesFromVertex(Vertex* vtx, Particle* ele, Particle* pos) {
     return true;
 }
 
+std::map<int,double> utils::getKalmanTrackIsolations(Track* track,std::vector<TrackerHit*>* hits){
+    
+    std::map<int,double> isolations;
+    for (int i = 0; i < track->getSvtHits().GetEntries(); i++){
+        TrackerHit* track_hit = (TrackerHit*)track->getSvtHits().At(i);
+        int trackhit_layer = track_hit->getLayer();
+        int trackhit_volume = track_hit->getVolume();
+        std::cout << "trackhit layer: " << trackhit_layer << std::endl;
+        std::cout << "trackhit volume: " << trackhit_volume << std::endl;
+        bool isAxial = false;
+        if(trackhit_volume == 1)
+            if(trackhit_layer%2 == 1)
+                isAxial = true;
+        else if(trackhit_volume == -1)
+            if(trackhit_layer%2 == 0)
+                isAxial = true;
+        if(!isAxial)
+            continue;
+        double trackhit_y = track_hit->getGlobalY();
+
+        //Loop over all SiClusters in event
+        double closest_distance = 999999.9;
+        TrackerHit* closestStrip = nullptr;
+        for (int j = 0; j < hits->size(); j++){
+            TrackerHit* altStripCluster = hits->at(j);
+            int altLayer = altStripCluster->getLayer();
+            if (altLayer != trackhit_layer)
+                continue;
+            double althit_y = altStripCluster->getGlobalY();
+            //Only look at hits that are further from beam-axis in Global Y
+            if (althit_y < trackhit_y)
+                continue;
+            if (std::abs(althit_y-trackhit_y) < closest_distance){
+                closest_distance = std::abs(althit_y-trackhit_y);
+                closestStrip = altStripCluster;
+            }
+        }
+        isolations[trackhit_layer] = closest_distance;
+    }
+    return isolations;
+}
+
