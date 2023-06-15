@@ -2,10 +2,8 @@ import HpstrConf
 import baseConfig as base
 import os
 
-
 def timeSample_callback(options, opt, value, parser):
     setattr(parser.values, options.dest, value.split(','))
-
 
 #To fit 2d histograms from file, provide a list of strings that match histograms of interest
 #If attempting to run over all layers, aka by not specifying the Layer number, RAM requirements may crash the program.
