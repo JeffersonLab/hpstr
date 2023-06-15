@@ -76,6 +76,14 @@ namespace utils {
                       EVENT::LCCollection* gbl_kink_data, 
                       EVENT::LCCollection* track_data);
 
+    /**
+     * @brief description
+     * 
+     * @param lc_track 
+     * @param location
+     * @return Track* 
+     */
+    Track* buildTrackFromTrackState(EVENT::Track* lc_track, int location);
 
     /**
      * @brief description

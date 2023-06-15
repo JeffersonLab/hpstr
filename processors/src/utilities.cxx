@@ -153,6 +153,45 @@ bool utils::IsSameTrack(Track* trk1, Track* trk2) {
     return true;
 }
 
+Track* utils::buildTrackFromTrackState(EVENT::Track* lc_track, int location) {
+        
+    //EVENT::TrackState::LastLocation
+    if (!lc_track)
+        return nullptr;
+
+    const EVENT::TrackState* ts = lc_track->getTrackState(location);
+    if (ts == nullptr){
+        return nullptr;
+    }
+
+    Track* track = new Track();
+    track->setTrackParameters(ts->getD0(), 
+            ts->getPhi(), 
+            ts->getOmega(), 
+            ts->getTanLambda(), 
+            ts->getZ0());
+
+    // Set the track id  <-Use this to link to original Track
+    track->setID(lc_track->id());
+
+    // Set the track type
+    track->setType(lc_track->getType()); 
+
+    double position[3] = {
+        ts->getReferencePoint()[1],  
+        ts->getReferencePoint()[2],  
+        ts->getReferencePoint()[0]
+    };
+
+    track->setPosition(position);
+
+    // Set the track fit chi^2 <-TODO in hps-java
+
+    // Set the track ndf <-TODO
+    
+    // Set the track covariance matrix <-TODO
+
+}
 
 Track* utils::buildTrack(EVENT::Track* lc_track,
         EVENT::LCCollection* gbl_kink_data,
@@ -196,27 +235,6 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
             track_state->getReferencePoint()[0]
         };
         track->setPositionAtEcal(position_at_ecal); 
-    }
-
-    const EVENT::TrackState* track_target_state 
-        = lc_track->getTrackState(EVENT::TrackState::LastLocation);
-
-    if (track_target_state) {
-        double position_at_target[3] = {
-            track_target_state->getReferencePoint()[1],  
-            track_target_state->getReferencePoint()[2],  
-            track_target_state->getReferencePoint()[0]
-        };
-        track->setPositionAtTarget(position_at_target);
-
-        double params_at_target[5] = {
-            track_target_state->getD0(),
-            track_target_state->getPhi(),
-            track_target_state->getOmega(),
-            track_target_state->getTanLambda(),
-            track_target_state->getZ0()
-        };
-        track->setTargetTrackParameters(params_at_target);
     }
 
     if (gbl_kink_data) {

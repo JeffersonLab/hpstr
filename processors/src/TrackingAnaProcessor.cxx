@@ -20,9 +20,6 @@ void TrackingAnaProcessor::configure(const ParameterSet& parameters) {
         doTruth_              = (bool) parameters.getInteger("doTruth",doTruth_);
         truthHistCfgFilename_ = parameters.getString("truthHistCfg",truthHistCfgFilename_);
         selectionCfg_         = parameters.getString("selectionjson",selectionCfg_); 
-        //beamspot positions
-        run_number_ = parameters.getInteger("run_number",run_number_);
-        beamPosCfg_ = parameters.getString("beamPosCfg",beamPosCfg_);
     }
     catch (std::runtime_error& error)
     {
@@ -58,34 +55,11 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
         //tree->SetBranchAddress(truthCollName_.c_str(),&truth_tracks_,&btruth_tracks_);
     }
 
-    //Run Dependent Corrections
-    //Beam Position 
-    if(!beamPosCfg_.empty() && run_number_ != -999){
-        std::cout << "Loading beam positions" << std::endl;
-        std::cout << "Looking for run closest to " << run_number_ << std::endl;
-        std::ifstream bpc_file(beamPosCfg_);
-        bpc_file >> bpc_configs_;
-        bpc_file.close();
-        int closest_run;
-        for(auto run : bpc_configs_.items()){
-            int check_run = std::stoi(run.key());
-            if(check_run > run_number_)
-                break;
-            else{
-                closest_run = check_run;
-            }
-        }
-        std::cout << "Found beam position corrections from run " << closest_run << std::endl;
-        beamPosCorrections_ = {bpc_configs_[std::to_string(closest_run)]["beamspot_x"], 
-            bpc_configs_[std::to_string(closest_run)]["beamspot_y"],
-            bpc_configs_[std::to_string(closest_run)]["beamspot_z"]};
-    }
 }
 
 bool TrackingAnaProcessor::process(IEvent* ievent) {
 
     double weight = 1.;
-
     // Loop over all the LCIO Tracks and add them to the HPS event.
     int n_sel_tracks = 0;
     for (int itrack = 0; itrack < tracks_->size(); ++itrack) {
@@ -122,31 +96,6 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
         
         trkHistos_->Fill1DHistograms(track);
         trkHistos_->Fill2DTrack(track);
-        //Plot beampos corrected values
-        if(!bpc_configs_.empty()){
-            trkHistos_->Fill1DHisto("Z0_beampos_corr_h",track->getZ0()-beamPosCorrections_.at(1));
-            trkHistos_->Fill1DHisto("Z0_at_target_beampos_corr_h",track->getTargetZ0()-beamPosCorrections_.at(1));
-            if (track->getTanLambda() > 0.0){
-                if (track->getCharge() < 0){
-                    trkHistos_->Fill1DHisto("top_ele_Z0_beampos_corr_h",track->getZ0()-beamPosCorrections_.at(1));
-                    trkHistos_->Fill1DHisto("top_ele_Z0_at_target_beampos_corr_h",track->getTargetZ0()-beamPosCorrections_.at(1));
-                }
-                else{
-                    trkHistos_->Fill1DHisto("top_pos_Z0_beampos_corr_h",track->getZ0()-beamPosCorrections_.at(1));
-                    trkHistos_->Fill1DHisto("top_pos_Z0_at_target_beampos_corr_h",track->getTargetZ0()-beamPosCorrections_.at(1));
-                }
-            }
-            else{
-                if (track->getCharge() < 0){
-                    trkHistos_->Fill1DHisto("bot_ele_Z0_beampos_corr_h",track->getZ0()-beamPosCorrections_.at(1));
-                    trkHistos_->Fill1DHisto("bot_ele_Z0_at_target_beampos_corr_h",track->getTargetZ0()-beamPosCorrections_.at(1));
-                }
-                else{
-                    trkHistos_->Fill1DHisto("bot_pos_Z0_beampos_corr_h",track->getZ0()-beamPosCorrections_.at(1));
-                    trkHistos_->Fill1DHisto("bot_pos_Z0_at_target_beampos_corr_h",track->getTargetZ0()-beamPosCorrections_.at(1));
-                }
-            }   
-        }
         
         if (truthHistos_) {
             truthHistos_->Fill1DHistograms(truth_track);

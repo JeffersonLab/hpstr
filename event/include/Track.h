@@ -62,29 +62,6 @@ class Track : public TObject {
          * @return A reference to the hits associated with this track. 
          */
         TRefArray getSvtHits() const { return tracker_hits_; };
-
-        /**
-         * Set the track at target parameters.
-         *
-         * @param d0 Distance of closest approach to the reference point.
-         * @param phi0 The azimuthal angle of the momentum at the distance of
-         *             closest approach. 
-         * @param omega The curvature of the track.
-         * @param tan_lambda The slope of the track in the SY plane.
-         * @param z0 The y position of the track at the distance of closest 
-         *           approach.
-         */
-        void setTargetTrackParameters(const double* params_at_target);
-
-        /** @return The track at target parameters. */ 
-        std::vector<double> getTargetTrackParameters(); 
-        
-        double getTargetD0       () const {return targ_d0_;}
-        double getTargetPhi      () const {return targ_phi0_;}
-        void   setTargetPhi      (const double phi0) {targ_phi0_ = phi0;}
-        double getTargetOmega    () const {return targ_omega_;}
-        double getTargetTanLambda() const {return targ_tan_lambda_;}
-        double getTargetZ0       () const {return targ_z0_;}
         
         /**
          * Set the track parameters.
@@ -206,17 +183,16 @@ class Track : public TObject {
         /** @return Extrapolated track position at Ecal face. */
         std::vector<double> getPositionAtEcal(); 
 
-
         /**
-         * Set the extrapolated track position at the Target. The 
+         * Set the track state position. The 
          * extrapolation is assumed to use the full 3D field map.
          *
-         * @parm position The extrapolated track position at the Target
+         * @parm position The extrapolated track position at track state
          */
-        void setPositionAtTarget(const double* position);
+        void setPosition(const double* position);
 
-        /** @return Extrapolated track position at Target. */
-        std::vector<double> getPositionAtTarget(); 
+        /** @return Extrapolated track position. */
+        std::vector<double> getPosition(); 
 
         /**
          * Set the track type.  For more details, see {@link StrategyType} and
@@ -230,6 +206,9 @@ class Track : public TObject {
         int getType() const { return type_; }; 
 
         /** @return The track decoded type: GSSSSM. */
+
+        //Run Dependent Corrections
+        void applyCorrection(std::string var, double correction);
 
         //bit1
         bool is345Seed     () const  { return   ((type_  >> 1) & 0x1);}
@@ -366,8 +345,6 @@ class Track : public TObject {
         bool getSharedLy0() const {return SharedLy0_;};
         bool getSharedLy1() const {return SharedLy1_;};
 
-        //Run Dependent Corrections
-        void applyCorrection(std::string var, double correction);
 
         //TODO doc
 
@@ -430,34 +407,6 @@ class Track : public TObject {
         /** The ndfs of the track fit. */
         double ndf_{0.};
 
-        /** The distance of closest approach to the reference point at Target. */
-        double targ_d0_{-999}; 
-
-        /**
-         * The azimuthal angle of the momentum at the position of closest at
-         * Target
-         * approach to the reference point. 
-         */
-        double targ_phi0_{-999};
-
-        /**
-         * The track at target curvature. The curvature is positive (negative) if the particle has a
-         * positive (negative) charge.
-         */
-        double targ_omega_{-999}; 
-
-        /**
-         * The slope of the track at target in the SY plane where S is the arc length of 
-         * the helix in the xz plane.
-         */ 
-        double targ_tan_lambda_{-999};
-
-        /** 
-         * The y position of the track at the distance of closest approach 
-         * in the xz plane.
-         */
-        double targ_z0_{-999}; 
-
         /** 
          * The time of the track.  This is currently the average time of all
          * hits composing the track.
@@ -473,14 +422,14 @@ class Track : public TObject {
         /** The z position of the extrapolated track at the Ecal face. */ 
         double z_at_ecal_{-999};
 
-        /** The x position of the extrapolated track at the Target. */ 
-        double x_at_target_{-999};
+        /** The x position track. */ 
+        double x_{-999};
 
-        /** The y position of the extrapolated track at the Target. */ 
-        double y_at_target_{-999};
+        /** The y position track. */ 
+        double y_{-999};
 
-        /** The z position of the extrapolated track at the Target. */ 
-        double z_at_target_{-999};
+        /** The z position track. */ 
+        double z_{-999};
 
         /** Array used to store the lambda kinks for each of the sensor layers. */
         double lambda_kinks_[14];  
