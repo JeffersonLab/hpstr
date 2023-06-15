@@ -105,11 +105,6 @@ class TrackingProcessor : public Processor {
         std::string hitFitsCollLcio_{"SVTFittedRawTrackerHits"}; //!< collection name
         std::string rawhitCollRoot_{"SVTRawHitsOnTrack"}; //!< collection name
 
-        /**Container to hold tracks at target */
-        std::vector<Track*> targetTracks_{};
-        std::string targetTracksCollRoot_{""}; //!< description
-        std::string targetTracksCollLcio_{""}; //!< description
-
         /**Container to hold tracks at ecal */
         std::vector<Track*> ecalTracks_{};
         std::string ecalTracksCollRoot_{""}; //!< description
@@ -119,6 +114,10 @@ class TrackingProcessor : public Processor {
         std::vector<Track*> truthTracks_{};
         std::string truthTracksCollRoot_{""}; //!< description
         std::string truthTracksCollLcio_{""}; //!< description
+
+        /** Container to hold target tracks */
+        std::vector<Track*> targetTracks_{};
+        std::string targetTracksCollRoot_{""}; //!< description
         
         int debug_{false}; //!< Debug Level
         

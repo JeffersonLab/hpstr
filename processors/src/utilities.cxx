@@ -155,7 +155,6 @@ bool utils::IsSameTrack(Track* trk1, Track* trk2) {
 
 Track* utils::buildTrackFromTrackState(EVENT::Track* lc_track, int location) {
         
-    //EVENT::TrackState::LastLocation
     if (!lc_track)
         return nullptr;
 
@@ -191,6 +190,7 @@ Track* utils::buildTrackFromTrackState(EVENT::Track* lc_track, int location) {
     
     // Set the track covariance matrix <-TODO
 
+    return track;
 }
 
 Track* utils::buildTrack(EVENT::Track* lc_track,

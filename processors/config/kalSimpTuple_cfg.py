@@ -86,6 +86,7 @@ track.parameters["kinkRelCollLcio"] = ''
 track.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 track.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
+track.parameters["targetTrackCollRoot"] = 'KalmanFullTracksAtTarget'
 
 # Only for detail studies
 # LT uncomment

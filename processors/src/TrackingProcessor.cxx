@@ -26,6 +26,8 @@ void TrackingProcessor::configure(const ParameterSet& parameters) {
         truthTracksCollRoot_     = parameters.getString("truthTrackCollRoot",truthTracksCollRoot_);
         bfield_                  = parameters.getDouble("bfield",bfield_);
 
+        targetTracksCollRoot_    = parameters.getString("targetTrackCollRoot", targetTracksCollRoot_);
+
         //Residual plotting is done in this processor for the moment.
         doResiduals_             = parameters.getInteger("doResiduals",doResiduals_);
         trackResDataLcio_        = parameters.getString("trackResDataLcio",trackResDataLcio_);
@@ -51,6 +53,9 @@ void TrackingProcessor::initialize(TTree* tree) {
     
     if (!truthTracksCollRoot_.empty())
         tree->Branch(truthTracksCollRoot_.c_str(),&truthTracks_);
+
+    if (!targetTracksCollRoot_.empty())
+        tree->Branch(targetTracksCollRoot_.c_str(), &targetTracks_);
 
     //Residual plotting
     if (doResiduals_) {
@@ -92,6 +97,13 @@ bool TrackingProcessor::process(IEvent* ievent) {
             delete *it;
         }
         truthTracks_.clear();
+    }
+
+    if (targetTracks_.size() > 0 ) {
+        for (std::vector<Track *>::iterator it = targetTracks_.begin(); it != targetTracks_.end(); ++it) {
+            delete *it;
+        }
+        targetTracks_.clear();
     }
 
     Event* event = static_cast<Event*> (ievent);
@@ -274,8 +286,13 @@ bool TrackingProcessor::process(IEvent* ievent) {
             
         }
         tracks_.push_back(track);
-        
-        
+
+        //Add target tracks from trackstate at target
+        if (!targetTracksCollRoot_.empty()){
+            Track* targetTrack = utils::buildTrackFromTrackState(lc_track,EVENT::TrackState::LastLocation);
+            if (targetTrack != nullptr)
+                targetTracks_.push_back(targetTrack);
+        }
         
         //Do the residual plots -- should be in another function
         if (doResiduals_)  {
