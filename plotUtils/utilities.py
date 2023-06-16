@@ -1,5 +1,6 @@
 from optparse import OptionParser
 import ROOT as r
+from ROOT import *
 from array import array
 from copy import deepcopy
 import os
@@ -669,23 +670,35 @@ def Make2DRatio(name, outdir, histo1, histo2, xtitle="", ytitle="", ztitle="", r
     can.SaveAs(outdir+"/"+name+oFext)
 
 
-def Make2DPlots(name, outdir, histolist, xtitle, ytitle, ztitle="", text="", zmin="", zmax=""):
-    oFext = ".pdf"
+def Make2DPlots(name,outdir,histolist,legends=[],
+                xtitle="",ytitle="",ztitle="",text="",zmin="",zmax="",
+                rangex=[],rangey=[],rangez=[],
+                colors2d=[]):
+    oFext=".pdf"
+
+    debug=True
+    if (debug):
+        print("utilities.py -- Make2DPlots")
     if not os.path.exists(outdir):
         os.mkdir(outdir)
     canvs = []
     for ih in range(0, len(histolist)):
         can = r.TCanvas()
         can.SetRightMargin(0.2)
-
+        can.SetGridx(1)
+        can.SetGridy(1)
+        can.SetFrameFillColor(0);
+        
         #histolist[ih].GetZaxis().SetRangeUser(zmin,zmax)
-        histolist[ih].GetXaxis().SetTitle(xtitle[ih])
+        histolist[ih].GetXaxis().SetTitle(xtitle)
         histolist[ih].GetXaxis().SetTitleSize(
             histolist[ih].GetXaxis().GetTitleSize()*0.7)
         histolist[ih].GetXaxis().SetLabelSize(
             histolist[ih].GetXaxis().GetLabelSize()*0.75)
         histolist[ih].GetXaxis().SetTitleOffset(
             histolist[ih].GetXaxis().GetTitleOffset()*0.8)
+        if len(rangex) > 0:
+            histolist[ih].GetXaxis().SetRangeUser(rangex[0],rangex[1])
 
         histolist[ih].GetYaxis().SetTitleSize(
             histolist[ih].GetYaxis().GetTitleSize()*0.7)
@@ -693,9 +706,13 @@ def Make2DPlots(name, outdir, histolist, xtitle, ytitle, ztitle="", text="", zmi
             histolist[ih].GetYaxis().GetLabelSize()*0.75)
         histolist[ih].GetYaxis().SetTitleOffset(
             histolist[ih].GetYaxis().GetTitleOffset()*1.7)
-        histolist[ih].GetYaxis().SetTitle(ytitle[ih])
+        histolist[ih].GetYaxis().SetTitle(ytitle)
+        if len(rangey) > 0:
+            histolist[ih].GetYaxis().SetRangeUser(rangey[0],rangey[1])
+        if len(rangez) > 0:
+            histolist[ih].GetZaxis().SetRangeUser(rangez[0],rangez[1])
 
-        histolist[ih].Draw("colz")
+        histolist[ih].Draw("colz1")
 
         InsertText(text, "")
 
@@ -748,3 +765,149 @@ def makeHTML(outDir, title, selection):
     f.write("</body>\n")
     f.write("</html>")
     f.close()
+
+
+def Make1DPlot(name,outdir,histos,legends,oFext,xtitle="",ytitle="",ymin=0,ymax=1,noErrors=False,RebinFactor=0,runNumber="",additionalText=[],RatioType="Alternate",LogX=False,LogY=False,RatioMin=0.25,RatioMax=1.75,WriteMean=False,Normalise=False,doFit=False,drawOptions="hist",Xmin=-999,Xmax=-999,legCorner=0):
+    
+    if not os.path.exists(outdir):
+        os.mkdir(outdir)
+        
+    can = TCanvas(name, name, 1000, 800)
+        
+    if LogX:
+        can.SetLogx(1)
+        
+    if LogY:
+        can.SetLogy(1)
+    
+    plotsProperties=[]
+    Ymax=ymax
+    
+    for ih in xrange(len(histos)):
+
+        if (Normalise):
+            if (histos[ih].Integral() == 0):
+                print "MakePlot::ERROR ", histos[ih]," Integral ==0"
+                return None
+            Integral = histos[ih].Integral()
+            maximum = histos[ih].GetMaximum()
+            histos[ih].Scale(1./Integral)
+            #histos[ih].GetYaxis().SetRangeUser(0.00001,histos[ih].GetMaximum()*15000)
+            #calculate y max 
+            
+            print Ymax, maximum / Integral
+            if (maximum / Integral ) > Ymax:
+                print "Ymax Scaled", Ymax, maximum / Integral
+                Ymax = (maximum / Integral) * 1.4
+            
+            
+    for ih in xrange(len(histos)):
+        histos[ih].SetMarkerColor(colors[ih])
+        histos[ih].SetMarkerStyle(markers[ih])
+        histos[ih].SetLineColor(colors[ih])
+        histos[ih].GetXaxis().CenterTitle()
+        histos[ih].GetXaxis().SetLabelSize(0.047)
+        histos[ih].GetXaxis().SetTitleSize(0.05)
+        histos[ih].GetYaxis().SetLabelSize(0.047)
+        histos[ih].GetYaxis().SetTitleSize(0.05)
+        histos[ih].GetYaxis().SetTitleOffset(1.2)
+        histos[ih].GetYaxis().CenterTitle()
+        
+        if (not doFit):
+            plotsProperties.append(("#mu=%.4f"%round(histos[ih].GetMean(),4))+(" #sigma=%.4f"%round(histos[ih].GetRMS(),4)))
+        
+        
+        if RebinFactor>0:
+            histos[ih].Rebin(RebinFactor)
+
+
+        if doFit:
+            #histo = histos[ih].Clone()
+            fit_funcs.append(TF1("fit_func"+str(ih),"gaus",-2.5,2.5))
+            print len(fit_funcs)
+            bad_fit = histos[ih].Fit(fit_funcs[ih],"RQN")
+            
+            mu = fit_funcs[ih].GetParameter(1)
+            mu_err  = fit_funcs[ih].GetParError(1)
+            sigma = fit_funcs[ih].GetParameter(2)
+            sigma_err = fit_funcs[ih].GetParError(2)    
+            
+            plotsProperties.append((" #mu=%.3f"%round(mu,3))+("+/- %.3f"%round(mu_err,3))
+                                   +(" #sigma=%.3f"%round(sigma,3)) +("+/- %.3f"%round(sigma_err,3) ))
+            
+            fit_funcs[ih].SetLineColor(histos[ih].GetLineColor())
+
+        if ih==0:
+            print ymin,Ymax
+            histos[ih].GetYaxis().SetRangeUser(ymin,Ymax)
+            
+            if (Xmin !=-999 and Xmax !=-999):
+                histos[ih].GetXaxis().SetRangeUser(Xmin,Xmax)
+            if noErrors:
+                #histos[ih].GetXaxis().SetTextSize(0.045)
+                #histos[ih].GetYaxis().SetTextSize(0.045)
+                histos[ih].Draw(drawOptions)
+                
+            else:
+                histos[ih].Draw(drawOptions+"e")
+            if xtitle:
+                histos[ih].GetXaxis().SetTitle(xtitle)
+            if ytitle:
+                histos[ih].GetYaxis().SetTitle(ytitle)
+        else:
+            if noErrors:
+                histos[ih].Draw(drawOptions+"same")
+            else:
+                histos[ih].Draw(drawOptions+"esame")
+        
+        if (doFit):
+            fit_funcs[ih].Draw("same")
+            
+
+
+    linevalue = InsertText(runNumber,additionalText,0.8,xoffset=0.75)
+    if (WriteMean):
+        InsertText("",plotsProperties,0.8,0.6,False,True)
+
+    if len(legends)>0:
+        #print "building legend"
+        #upperY=0.6
+        upperY=linevalue-0.04
+        linesep = 0.07
+        lowerY=upperY - len(legends)* linesep
+        #minX = 0.51
+        #minX= 0.75
+        minX  = 0.65
+        maxX = minX+0.15
+        leg=TLegend(minX,upperY,maxX,lowerY)
+        if legCorner == 1:
+            leg = TLegend(minX,0.3,maxX,0.3-len(legends)*linesep)
+        if legCorner == 2:
+            leg = TLegend(0.45,0.85,0.5+0.15,0.85-len(legends)*linesep)
+        leg.SetBorderSize(0)
+        leg.SetFillColor(0)
+        leg.SetTextSize(0.03)
+        for i_leg in xrange(len(legends)):
+            #print "Adding Entry",i_leg, legends[i_leg] 
+            leg.AddEntry(histos[i_leg],legends[i_leg],"lpf") 
+            pass
+        leg.Draw()
+        pass
+        
+
+    '''    
+    reference = histos[0]#.Clone("reference")
+    reference.GetXaxis().SetLabelSize(0.1)
+    reference.GetXaxis().SetTitleSize(0.1)
+    reference.GetYaxis().SetTitle("Ratio")
+    reference.GetYaxis().SetTitleSize(0.1)
+    reference.GetYaxis().SetLabelSize(0.1)
+    reference.GetYaxis().SetTitleOffset(reference.GetYaxis().GetTitleOffset()*0.7)
+    reference.GetYaxis().SetRangeUser(RatioMin,RatioMax)
+    reference.GetYaxis().SetNdivisions(508)
+    reference.GetYaxis().SetDecimals(True)
+    '''
+    #reference.Draw("axis same")
+
+    can.SaveAs(outdir+"/"+name+oFext)
+    return deepcopy(can)
