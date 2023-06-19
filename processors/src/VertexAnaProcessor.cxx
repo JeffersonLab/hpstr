@@ -104,6 +104,7 @@ void VertexAnaProcessor::initialize(TTree* tree) {
             _reg_tuples[regname]->addVariable("unc_vtx_x");
             _reg_tuples[regname]->addVariable("unc_vtx_y");
             _reg_tuples[regname]->addVariable("unc_vtx_ele_pos_clus_dt");
+            _reg_tuples[regname]->addVariable("run_number");
 
             //track vars
             _reg_tuples[regname]->addVariable("unc_vtx_ele_track_p");
@@ -171,6 +172,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
     }
     HpsEvent* hps_evt = (HpsEvent*) ievent;
     double weight = 1.;
+    int run_number = evth_->getRunNumber();
 
 
     //Get "true" mass
@@ -996,6 +998,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
             _reg_tuples[region]->setVariableValue("unc_vtx_pos_clust_E", posClus.getEnergy());
             _reg_tuples[region]->setVariableValue("unc_vtx_pos_clust_corr_t",corr_posClusterTime);
+             _reg_tuples[region]->setVariableValue("run_number", evth_->getRunNumber());
 
             _reg_tuples[region]->fill();
         }
