@@ -155,244 +155,6 @@
         "xtitle" : "bot e^{+} z_0 [mm]",
         "ytitle" : "Tracks"
     },
-    "Z0_beampos_corr_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "z_0 corr [mm]",
-        "ytitle" : "Tracks"
-    },
-    "top_ele_Z0_beampos_corr_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "top e^{-} z_0 corr [mm]",
-        "ytitle" : "Tracks"
-    },
-    "bot_ele_Z0_beampos_corr_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "bot e^{-} z_0 corr [mm]",
-        "ytitle" : "Tracks"
-    },
-    "top_pos_Z0_beampos_corr_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "top e^{+} z_0 corr [mm]",
-        "ytitle" : "Tracks"
-    },
-    "bot_pos_Z0_beampos_corr_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "bot e^{+} z_0 corr [mm]",
-        "ytitle" : "Tracks"
-    },
-    "Z0_at_target_beampos_corr_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "z_0 corr [mm]",
-        "ytitle" : "Tracks"
-    },
-    "top_ele_Z0_at_target_beampos_corr_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "top e^{-} z_0 corr [mm]",
-        "ytitle" : "Tracks"
-    },
-    "bot_ele_Z0_at_target_beampos_corr_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "bot e^{-} z_0 corr [mm]",
-        "ytitle" : "Tracks"
-    },
-    "top_pos_Z0_at_target_beampos_corr_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "top e^{+} z_0 corr [mm]",
-        "ytitle" : "Tracks"
-    },
-    "bot_pos_Z0_at_target_beampos_corr_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "bot e^{+} z_0 corr [mm]",
-        "ytitle" : "Tracks"
-    },
-    "d0_at_target_h" : {
-        "bins" : 200,
-        "minX" : -10,
-        "maxX" : 10,
-        "xtitle" : "d_{0} [mm]",
-        "ytitle" : "Tracks"
-    },
-    "Phi_at_target_h" : {
-        "bins" : 100,
-        "minX" : -0.5,
-        "maxX" : 0.5,
-        "xtitle" : "phi_{0}",
-        "ytitle" : "Tracks"
-    },
-    "Omega_at_target_h" : {
-        "bins" : 100,
-        "minX" : -0.002,
-        "maxX" : 0.002,
-        "xtitle" : "#omega",
-        "ytitle" : "Tracks"
-    },
-    "TanLambda_at_target_h" : {
-        "bins" : 200,
-        "minX" : -0.6,
-        "maxX" : 0.6,
-        "xtitle" : "tan(#lambda)",
-        "ytitle" : "Tracks"
-    },
-    "Z0_at_target_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "z_0 [mm]",
-        "ytitle" : "Tracks"
-    },
-    "top_ele_Z0_at_target_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "top e^{-} z_0 [mm]",
-        "ytitle" : "Tracks"
-    },
-    "bot_ele_Z0_at_target_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "bot e^{-} z_0 [mm]",
-        "ytitle" : "Tracks"
-    },
-    "top_pos_Z0_at_target_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "top e^{+} z_0 [mm]",
-        "ytitle" : "Tracks"
-    },
-    "bot_pos_Z0_at_target_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "bot e^{+} z_0 [mm]",
-        "ytitle" : "Tracks"
-    },
-    "top_ele_Z0_at_target_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "top e^{-} z_0 [mm]",
-        "ytitle" : "Tracks"
-    },
-    "bot_ele_Z0_at_target_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "bot e^{-} z_0 [mm]",
-        "ytitle" : "Tracks"
-    },
-    "top_pos_Z0_at_target_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "top e^{+} z_0 [mm]",
-        "ytitle" : "Tracks"
-    },
-    "bot_pos_Z0_at_target_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "bot e^{+} z_0 [mm]",
-        "ytitle" : "Tracks"
-    },
-    "xpos_at_target_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "track x pos [mm]",
-        "ytitle" : "Tracks"
-    },
-    "ypos_at_target_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "track y pos [mm]",
-        "ytitle" : "Tracks"
-    },
-    "zpos_at_target_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "track z pos [mm]",
-        "ytitle" : "Tracks"
-    },
-    "top_ele_xpos_at_target_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "top e^{-} x pos [mm]",
-        "ytitle" : "Tracks"
-    },
-    "top_ele_ypos_at_target_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "top e^{-} y pos [mm]",
-        "ytitle" : "Tracks"
-    },
-    "bot_ele_xpos_at_target_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "bot e^{-} x pos [mm]",
-        "ytitle" : "Tracks"
-    },
-    "bot_ele_ypos_at_target_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "bot e^{-} y pos [mm]",
-        "ytitle" : "Tracks"
-    },
-    "top_pos_xpos_at_target_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "top e^{+} x pos [mm]",
-        "ytitle" : "Tracks"
-    },
-    "top_pos_ypos_at_target_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "top e^{+} y pos [mm]",
-        "ytitle" : "Tracks"
-    },
-    "bot_pos_xpos_at_target_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "bot e^{+} x pos [mm]",
-        "ytitle" : "Tracks"
-    },
-    "bot_pos_ypos_at_target_h" : {
-        "bins" : 200,
-        "minX" : -5,
-        "maxX" : 5,
-        "xtitle" : "bot e^{+} y pos [mm]",
-        "ytitle" : "Tracks"
-    },
     "xpos_at_ecal_h" : {
         "bins" : 400,
         "minX" : -100,
@@ -414,60 +176,25 @@
         "xtitle" : "track z pos [mm]",
         "ytitle" : "Tracks"
     },
-    "top_ele_xpos_at_ecal_h" : {
-        "bins" : 400,
+    "track_xpos_h" : {
+        "bins" : 500,
         "minX" : -100,
         "maxX" : 100,
-        "xtitle" : "top e^{-} x pos [mm]",
+        "xtitle" : "track x pos [mm]",
         "ytitle" : "Tracks"
     },
-    "top_ele_ypos_at_ecal_h" : {
-        "bins" : 400,
+    "track_ypos_h" : {
+        "bins" : 500,
         "minX" : -100,
         "maxX" : 100,
-        "xtitle" : "top e^{-} y pos [mm]",
+        "xtitle" : "track y pos [mm]",
         "ytitle" : "Tracks"
     },
-    "bot_ele_xpos_at_ecal_h" : {
-        "bins" : 400,
-        "minX" : -100,
-        "maxX" : 100,
-        "xtitle" : "bot e^{-} x pos [mm]",
-        "ytitle" : "Tracks"
-    },
-    "bot_ele_ypos_at_ecal_h" : {
-        "bins" : 400,
-        "minX" : -100,
-        "maxX" : 100,
-        "xtitle" : "bot e^{-} y pos [mm]",
-        "ytitle" : "Tracks"
-    },
-    "top_pos_xpos_at_ecal_h" : {
-        "bins" : 400,
-        "minX" : -100,
-        "maxX" : 100,
-        "xtitle" : "top e^{+} x pos [mm]",
-        "ytitle" : "Tracks"
-    },
-    "top_pos_ypos_at_ecal_h" : {
-        "bins" : 400,
-        "minX" : -100,
-        "maxX" : 100,
-        "xtitle" : "top e^{+} y pos [mm]",
-        "ytitle" : "Tracks"
-    },
-    "bot_pos_xpos_at_ecal_h" : {
-        "bins" : 400,
-        "minX" : -100,
-        "maxX" : 100,
-        "xtitle" : "bot e^{+} x pos [mm]",
-        "ytitle" : "Tracks"
-    },
-    "bot_pos_ypos_at_ecal_h" : {
-        "bins" : 400,
-        "minX" : -100,
-        "maxX" : 100,
-        "xtitle" : "bot e^{+} y pos [mm]",
+    "track_zpos_h" : {
+        "bins" : 200,
+        "minX" : -10,
+        "maxX" : 10,
+        "xtitle" : "track z pos [mm]",
         "ytitle" : "Tracks"
     },
     "time_h" : {

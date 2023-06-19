@@ -81,15 +81,6 @@ namespace utils {
     /**
      * @brief description
      * 
-     * @param lc_track 
-     * @param location
-     * @return Track* 
-     */
-    Track* buildTrackFromTrackState(EVENT::Track* lc_track, int location);
-
-    /**
-     * @brief description
-     * 
      * @param trk1 
      * @param trk2 
      * @return true 

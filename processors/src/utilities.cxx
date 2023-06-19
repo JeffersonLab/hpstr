@@ -154,46 +154,6 @@ bool utils::IsSameTrack(Track* trk1, Track* trk2) {
     return true;
 }
 
-Track* utils::buildTrackFromTrackState(EVENT::Track* lc_track, int location) {
-        
-    if (!lc_track)
-        return nullptr;
-
-    const EVENT::TrackState* ts = lc_track->getTrackState(location);
-    if (ts == nullptr){
-        return nullptr;
-    }
-
-    Track* track = new Track();
-    track->setTrackParameters(ts->getD0(), 
-            ts->getPhi(), 
-            ts->getOmega(), 
-            ts->getTanLambda(), 
-            ts->getZ0());
-
-    // Set the track id  <-Use this to link to original Track
-    track->setID(lc_track->id());
-
-    // Set the track type
-    track->setType(lc_track->getType()); 
-
-    double position[3] = {
-        ts->getReferencePoint()[1],  
-        ts->getReferencePoint()[2],  
-        ts->getReferencePoint()[0]
-    };
-
-    track->setPosition(position);
-
-    // Set the track fit chi^2 <-TODO in hps-java
-
-    // Set the track ndf <-TODO
-    
-    // Set the track covariance matrix <-TODO
-
-    return track;
-}
-
 Track* utils::buildTrack(EVENT::Track* lc_track,
         std::string trackstate_location,
         EVENT::LCCollection* gbl_kink_data,
@@ -253,7 +213,6 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
             ts->getReferencePoint()[0]
         };
 
-        // Set the track covariance matrix <-TODO
         track->setCov(static_cast<std::vector<float> > (ts->getCovMatrix()));
 
         track->setPosition(position);
