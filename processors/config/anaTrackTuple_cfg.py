@@ -42,7 +42,7 @@ anaTrks.parameters["debug"] = 0
 anaTrks.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/tracking/basicTracking.json'
 anaTrks.parameters["trkCollName"] = 'KalmanFullTracks%s'%(options.trackstate)
 anaTrks.parameters["run_number"] = options.run_number
-if options.year == 2016:
+if options.year == 2016 and options.trackstate == "AtTarget":
     anaTrks.parameters["beamPosCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/beamspot_positions_2016.json'
 else:
         anaTrks.parameters["beamPosCfg"] = ''

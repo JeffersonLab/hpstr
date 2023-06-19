@@ -64,6 +64,12 @@ recoana_kf.parameters["analysis"] = options.analysis
 recoana_kf.parameters["debug"] = 0
 recoana_kf.parameters["isRadPDG"] = options.isRadPDG
 recoana_kf.parameters["makeFlatTuple"] = options.makeFlatTuple
+
+if options.year == 2016 and options.trackstate == "AtTarget":
+    anaTrks.parameters["beamPosCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/beamspot_positions_2016.json'
+else:
+    anaTrks.parameters["beamPosCfg"] = ''
+
 CalTimeOffset = -999
 
 if (options.isData == 1):
