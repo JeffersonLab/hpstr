@@ -25,8 +25,7 @@ void TrackingProcessor::configure(const ParameterSet& parameters) {
         truthTracksCollLcio_     = parameters.getString("truthTrackCollLcio",truthTracksCollLcio_);
         truthTracksCollRoot_     = parameters.getString("truthTrackCollRoot",truthTracksCollRoot_);
         bfield_                  = parameters.getDouble("bfield",bfield_);
-
-        targetTracksCollRoot_    = parameters.getString("targetTrackCollRoot", targetTracksCollRoot_);
+        trackStateLocation_      = parameters.getString("trackStateLocation",trackStateLocation_);
 
         //Residual plotting is done in this processor for the moment.
         doResiduals_             = parameters.getInteger("doResiduals",doResiduals_);
@@ -54,8 +53,6 @@ void TrackingProcessor::initialize(TTree* tree) {
     if (!truthTracksCollRoot_.empty())
         tree->Branch(truthTracksCollRoot_.c_str(),&truthTracks_);
 
-    if (!targetTracksCollRoot_.empty())
-        tree->Branch(targetTracksCollRoot_.c_str(), &targetTracks_);
 
     //Residual plotting
     if (doResiduals_) {
@@ -98,14 +95,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
         }
         truthTracks_.clear();
     }
-
-    if (targetTracks_.size() > 0 ) {
-        for (std::vector<Track *>::iterator it = targetTracks_.begin(); it != targetTracks_.end(); ++it) {
-            delete *it;
-        }
-        targetTracks_.clear();
-    }
-
+    
     Event* event = static_cast<Event*> (ievent);
     // Get the collection of 3D hits from the LCIO event. If no such collection 
     // exist, a DataNotAvailableException is thrown
@@ -180,7 +170,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
         }
 
         // Add a track to the event
-        Track* track = utils::buildTrack(lc_track,gbl_kink_data,track_data);
+        Track* track = utils::buildTrack(lc_track,trackStateLocation_, gbl_kink_data,track_data);
         
         //Override the momentum of the track if the bfield_ > 0
         if (bfield_>0)
@@ -243,6 +233,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
         track->setNShared(SharedHits[itrack].size());
         track->setSharedLy0(SharedHitsLy0[itrack]);
         track->setSharedLy1(SharedHitsLy1[itrack]);
+        
 
         //Get the truth tracks relations:
         
@@ -273,7 +264,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
             }
             else {
                 EVENT::Track* lc_truth_track = static_cast<EVENT::Track*> (lc_truth_tracks.at(0));
-                Track* truth_track = utils::buildTrack(lc_truth_track,nullptr,nullptr);
+                Track* truth_track = utils::buildTrack(lc_truth_track,trackStateLocation_,nullptr,nullptr);
                 track->setTruthLink(truth_track);
                 if (bfield_>0)
                     truth_track->setMomentum(bfield_);
@@ -286,13 +277,8 @@ bool TrackingProcessor::process(IEvent* ievent) {
             
         }
         tracks_.push_back(track);
-
-        //Add target tracks from trackstate at target
-        if (!targetTracksCollRoot_.empty()){
-            Track* targetTrack = utils::buildTrackFromTrackState(lc_track,EVENT::TrackState::LastLocation);
-            if (targetTrack != nullptr)
-                targetTracks_.push_back(targetTrack);
-        }
+        
+        
         
         //Do the residual plots -- should be in another function
         if (doResiduals_)  {

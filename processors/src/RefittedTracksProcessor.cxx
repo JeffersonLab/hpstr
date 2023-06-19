@@ -139,7 +139,7 @@ bool RefittedTracksProcessor::process(IEvent* ievent) {
         EVENT::LCCollection* track_data = static_cast<EVENT::LCCollection*>(event->getLCCollection(Collections::TRACK_DATA_REL));
     
         // Add a track to the event
-        Track* track = utils::buildTrack(lc_track, gbl_kink_data, track_data);
+        Track* track = utils::buildTrack(lc_track,"", gbl_kink_data, track_data);
         
 
         //Get the refitted tracks relations
@@ -245,7 +245,7 @@ bool RefittedTracksProcessor::process(IEvent* ievent) {
                 static_cast<EVENT::LCCollection*>(event->getLCCollection("GBLKinkDataRelations_refit"));
             // Get the track data
             EVENT::LCCollection* rfit_track_data = nullptr;
-            Track* rfit_track = utils::buildTrack(lc_rfit_track,rfit_gbl_kink_data,rfit_track_data);
+            Track* rfit_track = utils::buildTrack(lc_rfit_track,"",rfit_gbl_kink_data,rfit_track_data);
             EVENT::TrackerHitVec lc_rf_tracker_hits = lc_rfit_track->getTrackerHits();
       
             //TODO::move to utilities

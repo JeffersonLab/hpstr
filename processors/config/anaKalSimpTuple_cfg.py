@@ -13,6 +13,9 @@ base.parser.add_argument("-f", "--makeFlatTuple", type=int, dest="makeFlatTuple"
                          help="Make True to make vertex ana flat tuple", metavar="makeFlatTuple", default=0)
 base.parser.add_argument("-r", "--isRadPDG", type=int, dest="isRadPDG",
                          help="Set radiative trident PDG ID", metavar="isRadPDG", default=622)
+base.parser.add_argument("-TS", "--trackstate", type=str, dest="trackstate",
+                                 help="Specify Track State | 'AtECal' or 'AtTarget'. Default is origin (AtIP)",
+                                  metavar="trackstate", default="")
 
 options = base.parser.parse_args()
 
@@ -45,7 +48,7 @@ mcana = HpstrConf.Processor('mcpartana', 'MCAnaProcessor')
 ###############################
 #RecoHitAna
 recoana_kf.parameters["anaName"] = "vtxana_kf"
-recoana_kf.parameters["trkColl"] = "KalmanFullTracks"
+recoana_kf.parameters["trkColl"] = "KalmanFullTracks%s"%(options.trackstate)
 recoana_kf.parameters["tsColl"] = "TSData"
 recoana_kf.parameters["vtxColl"] = "UnconstrainedV0Vertices_KF"
 recoana_kf.parameters["mcColl"] = "MCParticle"

@@ -9,6 +9,9 @@ import baseConfig as base
 
 base.parser.add_argument("-r", "--run_number", type=int, dest="run_number",
                                  help="set run number", metavar="run_number", default=-999)
+base.parser.add_argument("-TS", "--trackstate", type=str, dest="trackstate",
+                                 help="Specify Track State | 'AtECal' oe 'AtTarget'. Default is origin (AtIP) ",
+                                  metavar="trackstate", default="")
 
 options = base.parser.parse_args()
 
@@ -37,7 +40,7 @@ anaTrks = HpstrConf.Processor('anaTrks', 'TrackingAnaProcessor')
 ###############################
 anaTrks.parameters["debug"] = 0
 anaTrks.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/tracking/basicTracking.json'
-anaTrks.parameters["trkCollName"] = 'KalmanFullTracks'
+anaTrks.parameters["trkCollName"] = 'KalmanFullTracks%s'%(options.trackstate)
 anaTrks.parameters["run_number"] = options.run_number
 if options.year == 2016:
     anaTrks.parameters["beamPosCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/beamspot_positions_2016.json'

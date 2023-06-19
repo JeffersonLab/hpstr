@@ -218,6 +218,14 @@ void TrackHistos::Fill1DTrack(Track* track, float weight, const std::string& trk
     Fill1DHisto(trkname+"chi2ndf_h"  ,track->getChi2Ndf()     ,weight);
     Fill1DHisto(trkname+"nShared_h"  ,track->getNShared()     ,weight);
     Fill1DHisto(trkname+"nHits_2d_h" ,n_hits_2d               ,weight);
+
+    //Track param errors
+    Fill1DHisto(trkname+"d0_err_h"       ,track->getD0Err()          ,weight);
+    Fill1DHisto(trkname+"Phi_err_h"      ,track->getPhiErr()         ,weight);
+    Fill1DHisto(trkname+"Omega_err_h"    ,track->getOmegaErr()       ,weight);
+    Fill1DHisto(trkname+"TanLambda_err_h",track->getTanLambdaErr()   ,weight);
+    Fill1DHisto(trkname+"Z0_err_h"       ,track->getZ0Err()          ,weight);
+
     for (int ihit=0; ihit<track->getSvtHits().GetEntries();++ihit) 
     {
         TrackerHit* hit2d = (TrackerHit*) track->getSvtHits().At(ihit);

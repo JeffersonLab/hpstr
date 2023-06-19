@@ -54,6 +54,7 @@ Vertex* utils::buildVertex(EVENT::Vertex* lc_vertex) {
 }
 
 Particle* utils::buildParticle(EVENT::ReconstructedParticle* lc_particle,
+        std::string trackstate_location,
         EVENT::LCCollection* gbl_kink_data,
         EVENT::LCCollection* track_data)
 
@@ -87,7 +88,7 @@ Particle* utils::buildParticle(EVENT::ReconstructedParticle* lc_particle,
     // Set the Track for the HpsParticle
     if (lc_particle->getTracks().size()>0)
     {
-        Track * trkPtr = utils::buildTrack(lc_particle->getTracks()[0], gbl_kink_data, track_data);
+        Track * trkPtr = utils::buildTrack(lc_particle->getTracks()[0],trackstate_location, gbl_kink_data, track_data);
         part->setTrack(trkPtr);
         delete trkPtr;
     }
@@ -194,19 +195,69 @@ Track* utils::buildTrackFromTrackState(EVENT::Track* lc_track, int location) {
 }
 
 Track* utils::buildTrack(EVENT::Track* lc_track,
+        std::string trackstate_location,
         EVENT::LCCollection* gbl_kink_data,
         EVENT::LCCollection* track_data) {
 
     if (!lc_track)
         return nullptr;
 
+     //TrackState Location map
+     std::map<std::string, int> trackstateLocationMap_ = {
+        {"", EVENT::TrackState::AtIP},
+        {"AtTarget", EVENT::TrackState::LastLocation}
+     };
+
+    int loc;
+    auto it = trackstateLocationMap_.find(trackstate_location);
+    if (it != trackstateLocationMap_.end()){
+        loc = it->second;
+    }
+    else{
+        std::cout << "[utilities]::ERROR Track State Location " << trackstate_location << " Doesn't Exist!" << std::endl;
+        std::cout << "Check map in utilities::buildTrack for defined locations" << std::endl;
+        return nullptr;
+    }
+
     Track* track = new Track();
-    // Set the track parameters
-    track->setTrackParameters(lc_track->getD0(), 
-            lc_track->getPhi(), 
-            lc_track->getOmega(), 
-            lc_track->getTanLambda(), 
-            lc_track->getZ0());
+    //If using track AtIP, get params from lc_track
+    if (loc == trackstateLocationMap_[""]){
+        // Set the track parameters
+        track->setTrackParameters(lc_track->getD0(), 
+                lc_track->getPhi(), 
+                lc_track->getOmega(), 
+                lc_track->getTanLambda(), 
+                lc_track->getZ0());
+
+        // Set the track covariance matrix
+        track->setCov(static_cast<std::vector<float> > (lc_track->getCovMatrix()));
+    }
+
+    //If other TrackState specified, get track params from track state
+    else {
+        // If track state doesn't exist, no track returned
+        const EVENT::TrackState* ts = lc_track->getTrackState(loc);
+        if (ts == nullptr){
+            return nullptr;
+        }
+        // Set the track parameters using trackstate
+        track->setTrackParameters(ts->getD0(), 
+                ts->getPhi(), 
+                ts->getOmega(), 
+                ts->getTanLambda(), 
+                ts->getZ0());
+
+        double position[3] = {
+            ts->getReferencePoint()[1],  
+            ts->getReferencePoint()[2],  
+            ts->getReferencePoint()[0]
+        };
+
+        // Set the track covariance matrix <-TODO
+        track->setCov(static_cast<std::vector<float> > (ts->getCovMatrix()));
+
+        track->setPosition(position);
+    }
 
     // Set the track id
     track->setID(lc_track->id());
@@ -220,8 +271,6 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
     // Set the track ndf 
     track->setNdf(lc_track->getNdf());
     
-    // Set the track covariance matrix
-    track->setCov(static_cast<std::vector<float> > (lc_track->getCovMatrix()));
     
     // Set the position of the extrapolated track at the ECal face.  The
     // extrapolation uses the full 3D field map.
@@ -288,7 +337,7 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 
             // Check that the TrackData data structure is correct.  If it's
             // not, throw a runtime exception.   
-            if (track_datum->getNDouble() > 14 || track_datum->getNFloat() > 4 
+            if (track_datum->getNDouble() > 14 || track_datum->getNFloat() > 7 
                 || track_datum->getNInt() != 1) {
                 throw std::runtime_error("[ TrackingProcessor ]: The collection " 
                                          + std::string(Collections::TRACK_DATA)
@@ -303,12 +352,25 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
             // Set the SvtTrack time
             track->setTrackTime(track_datum->getFloatVal(0));
 
-	    // Set the Track momentum
-	    if (track_datum->getNFloat()==4)
-	      track->setMomentum(track_datum->getFloatVal(1),track_datum->getFloatVal(2),track_datum->getFloatVal(3));
-	    
+            // Set the Track momentum
+            if (track_datum->getNFloat()>3)
+              track->setMomentum(track_datum->getFloatVal(1),track_datum->getFloatVal(2),track_datum->getFloatVal(3));
+    
             // Set the volume (top/bottom) in which the SvtTrack resides
             track->setTrackVolume(track_datum->getIntVal(0));
+
+            // Set the BfieldY for track state
+            double bfieldY = -999.9;
+            if(track_datum->getNFloat() > 4){
+                if (loc == trackstateLocationMap_[""])
+                    bfieldY = track_datum->getFloatVal(4);
+                if (loc == trackstateLocationMap_["LastLocation"])
+                    bfieldY = track_datum->getFloatVal(5);
+                if (loc == trackstateLocationMap_["AtCalorimeter"])
+                    bfieldY = track_datum->getFloatVal(6);
+                if (bfieldY != -999.9 && loc != trackstateLocationMap_[""])
+                    track->setMomentum(bfieldY);
+            }
         }
 
     } //add track data  

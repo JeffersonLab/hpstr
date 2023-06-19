@@ -6,6 +6,9 @@ from baseConfig import bfield
 
 base.parser.add_argument("-w", "--tracking", type=str, dest="tracking",
                          help="Which tracking to use to make plots", metavar="tracking", default="KF")
+base.parser.add_argument("-TS", "--trackstate", type=str, dest="trackstate",
+                         help="Specify Track State | 'AtECal', 'AtTarget'. Default is origin ", 
+                         metavar="trackstate", default="")
 base.parser.add_argument("-s", "--truthHits", type=int, dest="truthHits",
                          help="Get svt truth hits: 1=yes", metavar="truthHits", default=0)
 base.parser.add_argument("-r", "--rawHits", type=int, dest="rawHits",
@@ -81,12 +84,14 @@ svthitsgbl.parameters["mcPartRelLcio"] = 'RotatedHelicalTrackMCRelations'
 # Tracking
 track.parameters["debug"] = 0
 track.parameters["trkCollLcio"] = 'KalmanFullTracks'
-track.parameters["trkCollRoot"] = 'KalmanFullTracks'
+track.parameters["trkCollRoot"] = 'KalmanFullTracks%s'%(options.trackstate)
+track.parameters["trackStateLocation"] = options.trackstate
 track.parameters["kinkRelCollLcio"] = ''
 track.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 track.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
-track.parameters["targetTrackCollRoot"] = 'KalmanFullTracksAtTarget'
+
+track.parameters["bfield"] = bfield[str(options.year)]
 
 # Only for detail studies
 # LT uncomment
@@ -100,7 +105,6 @@ track.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack_KF'
 # LT check if we need the b field or not -- version of HPS java
 # for Jess's files need to give it b-field
 
-track.parameters["bfield"] = bfield[str(options.year)]
 
 trackgbl.parameters["debug"] = 0
 trackgbl.parameters["trkCollLcio"] = 'GBLTracks'
@@ -136,6 +140,7 @@ vtx.parameters["vtxCollRoot"] = 'UnconstrainedV0Vertices_KF'
 vtx.parameters["partCollRoot"] = 'ParticlesOnUVertices_KF'
 vtx.parameters["kinkRelCollLcio"] = ''
 vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
+vtx.parameters["trackStateLocation"] = options.trackstate 
 
 cvtx.parameters["debug"] = 0
 cvtx.parameters["vtxCollLcio"] = 'TargetConstrainedV0Vertices_KF'
@@ -143,6 +148,7 @@ cvtx.parameters["vtxCollRoot"] = 'TargetConstrainedV0Vertices_KF'
 cvtx.parameters["partCollRoot"] = 'ParticlesOnCVertices_KF'
 cvtx.parameters["kinkRelCollLcio"] = ''
 cvtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
+vtx.parameters["trackStateLocation"] = options.trackstate 
 
 vtxgbl.parameters["debug"] = 0
 vtxgbl.parameters["vtxCollLcio"] = 'UnconstrainedV0Vertices'

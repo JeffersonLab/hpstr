@@ -61,6 +61,7 @@ namespace utils {
      * @return Particle* 
      */
     Particle* buildParticle(EVENT::ReconstructedParticle* lc_particle, 
+                            std::string trackstate_location,
                             EVENT::LCCollection* gbl_kink_data,
                             EVENT::LCCollection* track_data);
 
@@ -73,6 +74,7 @@ namespace utils {
      * @return Track* 
      */
     Track* buildTrack(EVENT::Track* lc_track, 
+                      std::string trackstate_location,
                       EVENT::LCCollection* gbl_kink_data, 
                       EVENT::LCCollection* track_data);
 
@@ -172,7 +174,6 @@ namespace utils {
      * \todo extern?
      */
     static UTIL::BitField64 decoder("system:6,barrel:3,layer:4,module:12,sensor:1,side:32:-2,strip:12");
-
 }
 
 #endif //UTILITIES
