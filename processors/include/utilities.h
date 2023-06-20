@@ -33,6 +33,19 @@
 #include "Event.h"
 #include "TrackerHit.h"
 
+
+//-------//
+// acts  //
+//-------//
+
+#include "Acts/Surfaces/PlaneSurface.hpp"
+#include "Acts/Surfaces/PerigeeSurface.hpp"
+#include "Acts/Propagator/Propagator.hpp"
+#include "Acts/Definitions/TrackParametrization.hpp"
+#include "Acts/EventData/TrackParameters.hpp"
+#include "Acts/Definitions/Algebra.hpp"
+
+
 namespace utils {
     /**
      * @brief description
@@ -165,6 +178,54 @@ namespace utils {
      */
     static UTIL::BitField64 decoder("system:6,barrel:3,layer:4,module:12,sensor:1,side:32:-2,strip:12");
 
-}
+
+    /**
+     * @brief Transform the covariance from vector to ActsSymMatrix
+     * @return Acts BoundSymMatrix Covariance matrix
+     */
+
+    Acts::BoundSymMatrix unpackCov(const std::vector<float>& v_cov);
+
+
+    /**
+     * @brief Transforms the LCIO parameter state to ACTS parameter state
+     * @return ActsBoundVector boundState
+     */
+
+    Acts::BoundVector boundState(const Track& trk);
+
+    /**
+     * @brief Compute the LCIO to ACTS transformation jacobian
+     * @return Acts::BoundMatrix (6x6) transformation jacobian
+     */
+    
+    Acts::BoundMatrix LcioToActsJacobian(const Track& trk);
+     
+    /**
+     * @brief Transform a track into BoundTrackParameters
+     *
+     * @param trk
+     * @return Acts BoundTrackParameters
+     */
+
+    Acts::BoundTrackParameters trackToActsBound(const Track& trk);
+    
+    
+
+    /**
+     * @brief propagate track to target surface.
+     * It will return a track state
+     * 
+     * @param trk
+     * @param target surface: plane surface
+     * @param propagator: user defined propagator
+     */
+    
+    bool propagateTrackToSurface(const Track& trk,
+                                 const Acts::PlaneSurface& target_surface);
+    
+    
+    
+} //namespace utils
 
 #endif //UTILITIES

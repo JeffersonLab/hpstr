@@ -94,7 +94,7 @@ class Track : public TObject {
         /** Set the covariance matrix **/
         void setCov(const std::vector<float>& cov) {cov_ = cov;}
         
-        std::vector<float> getCov() {return cov_;}
+        std::vector<float> getCov() const {return cov_;}
         
         
         double getD0Err () const {return sqrt(cov_[0]);}
@@ -269,9 +269,9 @@ class Track : public TObject {
          * @return momentum magnitude
          */
         
-        double getP(){return sqrt(px_*px_ + py_*py_ + pz_*pz_);};
+        double getP() const {return sqrt(px_*px_ + py_*py_ + pz_*pz_);};
         
-        double getPt() {return sqrt(px_*px_ + pz_*pz_);}
+        double getPt() const {return sqrt(px_*px_ + pz_*pz_);}
         
         /**
          * Set the lambda kink of the given layer.

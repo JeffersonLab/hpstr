@@ -483,3 +483,144 @@ bool utils::getParticlesFromVertex(Vertex* vtx, Particle* ele, Particle* pos) {
     return true;
 }
 
+
+Acts::BoundSymMatrix utils::unpackCov(const std::vector<float>& v_cov) {
+    
+    Acts::BoundSymMatrix cov;
+    cov.setZero();
+    int e{0};
+    for (int i = 0; i< cov.rows(); i++)
+        for (int j = i; j<cov.cols();j++){
+            cov(i,j) = v_cov.at(e);
+            cov(j,i) = cov(i,j);
+            e++;
+        }
+    
+    //Re-order the covariance matrix
+
+    Acts::BoundSymMatrix acts_cov;
+    acts_cov.setZero();
+
+    //d0
+    acts_cov(0,0) = cov(0,0);
+
+    acts_cov(0,1) = cov(0,4);
+    acts_cov(1,0) = acts_cov(0,1);
+
+    acts_cov(0,2) = cov(0,1);
+    acts_cov(2,0) = acts_cov(0,2);
+
+    acts_cov(0,3) = cov(0,3);
+    acts_cov(3,0) = acts_cov(0,3);
+
+    acts_cov(0,4) = cov(0,2);
+    acts_cov(4,0) = acts_cov(0,4);
+
+
+    //z0
+    acts_cov(1,1) = cov(4,4);
+    acts_cov(1,2) = cov(4,1);
+    acts_cov(2,1) = acts_cov(1,2);
+    acts_cov(1,3) = cov(4,3);
+    acts_cov(3,1) = acts_cov(1,3);
+    acts_cov(1,4) = cov(4,2);
+    acts_cov(4,1) = acts_cov(1,4);
+
+
+    //phi
+    acts_cov(2,2) = cov(1,1);
+    acts_cov(2,3) = cov(1,3);
+    acts_cov(3,2) = acts_cov(2,3);
+    acts_cov(4,2) = cov(1,2);
+    acts_cov(2,4) = acts_cov(4,2);
+    
+    
+    //tanL
+    acts_cov(3,3) = cov(3,3);
+    acts_cov(3,4) = cov(3,2);
+    acts_cov(4,3) = cov(3,2);
+    
+    //w
+    acts_cov(4,4) = cov(2,2);
+    
+    
+    //t
+    acts_cov(5,5) =  1. ;
+    
+    return acts_cov;
+}
+
+
+Acts::BoundMatrix LcioToActsJacobian(const Track& trk)  {
+    
+    //Lcio track parametrization (d0,phi0,omega,tan_lambda,z0)
+
+    //Acts track parametrization (d0,z0,phi0,theta,q/p)
+
+    double alpha = 2.99792458e-04;
+    double B = 1.5;
+
+    double tanL = trk.getTanLambda();
+    
+    double den   = sqrt(1+tanL*tanL);
+    double w     = trk.getOmega();
+        
+    double dTheta_dTanL = -1. / ( den* den);
+    double dQoP_dw      = (1./alpha*B) * (1. / den);
+    double dQoP_dTanL   = -(w/alpha*B)  * (tanL / (den*den*den));
+    
+    Acts::BoundMatrix jacobian = Acts::BoundMatrix::Identity();
+    
+    jacobian(3,3) = dTheta_dTanL;
+    jacobian(4,4) = dQoP_dw;
+    jacobian(4,3) = dQoP_dTanL;
+    
+    return jacobian;
+    
+}
+
+
+Acts::BoundVector boundState(const Track& trk) {
+    
+    
+    
+    // Get q/p
+    double charge = trk.getOmega() > 0. ? 1. : -1;
+    double qOverP = charge / trk.getP();
+    double piO2   = 1.57079632679;
+    double theta  = piO2 - std::atan(trk.getTanLambda());
+
+    Acts::BoundVector paramVec;
+    
+    paramVec << trk.getD0(),
+        trk.getZ0(),
+        trk.getPhi(),
+        theta,
+        qOverP,
+        trk.getTrackTime();
+    
+    return paramVec;
+}
+
+
+Acts::BoundTrackParameters utils::trackToActsBound(const Track& trk) {
+
+    Acts::BoundVector paramVec       = utils::boundState(trk);
+    Acts::BoundSymMatrix covMat      = utils::unpackCov(trk.getCov());
+
+    Acts::BoundMatrix jacobian       = utils::LcioToActsJacobian(trk);
+    Acts::BoundSymMatrix acts_covMat = jacobian.transpose() * (covMat * jacobian);
+    
+    std::shared_ptr<Acts::PerigeeSurface> perigeeSurface =
+        Acts::Surface::makeShared<Acts::PerigeeSurface>(Acts::Vector3(0.,0.,0.));
+                                                            
+
+    return Acts::BoundTrackParameters(perigeeSurface, paramVec, std::move(acts_covMat));
+}
+
+bool utils::propagateTrackToSurface(const Track& trk,
+                                    const Acts::PlaneSurface& target_surface){
+    
+    return true;
+}
+
