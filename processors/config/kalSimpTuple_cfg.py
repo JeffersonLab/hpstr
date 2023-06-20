@@ -8,8 +8,7 @@ base.parser.add_argument("-w", "--tracking", type=str, dest="tracking",
                          help="Which tracking to use to make plots", 
                          metavar="tracking", default="KF")
 base.parser.add_argument("-TS", "--trackstate", type=str, dest="trackstate",
-                         help="Specify Track State | 'AtECal', 'AtTarget'. 
-                         Default is origin ",  metavar="trackstate", default="")
+                         help="Specify Track State | 'AtECal', 'AtTarget'. Default is origin ",  metavar="trackstate", default="AtTarget")
 base.parser.add_argument("-s", "--truthHits", type=int, dest="svtHits",
                          help="Get svt hits: 1=yes", metavar="svtHits", default=1)
 base.parser.add_argument("-r", "--rawHits", type=int, dest="rawHits",

@@ -19,8 +19,7 @@ base.parser.add_argument("-r", "--isRadPDG", type=int, dest="isRadPDG",
                          help="Set radiative trident PDG ID", metavar="isRadPDG", 
                          default=622)
 base.parser.add_argument("-TS", "--trackstate", type=str, dest="trackstate",
-                         help="Specify Track State | 'AtECal' or 'AtTarget'.
-                         Default is origin (AtIP)", metavar="trackstate", default="")
+                         help="Specify Track State | 'AtECal' or 'AtTarget'. Default is origin (AtIP)", metavar="trackstate", default="")
 
 options = base.parser.parse_args()
 
