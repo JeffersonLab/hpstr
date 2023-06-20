@@ -127,6 +127,20 @@
         "xtitle" : "z_0 [mm]",
         "ytitle" : "Tracks"
     },
+    "top_track_Z0_h" : {
+        "bins" : 200,
+        "minX" : -5,
+        "maxX" : 5,
+        "xtitle" : "top track z_0 [mm]",
+        "ytitle" : "Tracks"
+    },
+    "bot_track_Z0_h" : {
+        "bins" : 200,
+        "minX" : -5,
+        "maxX" : 5,
+        "xtitle" : "bot track z_0 [mm]",
+        "ytitle" : "Tracks"
+    },
     "top_ele_Z0_h" : {
         "bins" : 200,
         "minX" : -5,
