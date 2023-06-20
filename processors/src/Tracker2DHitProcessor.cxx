@@ -17,6 +17,7 @@ void Tracker2DHitProcessor::configure(const ParameterSet& parameters) {
         hitCollLcio_    = parameters.getString("hitCollLcio", hitCollLcio_);
         hitCollRoot_    = parameters.getString("hitCollRoot", hitCollRoot_);
         mcPartRelLcio_ = parameters.getString("mcPartRelLcio", mcPartRelLcio_);
+        hitFitCollLcio_ = parameters.getString("hitFitCollLcio", hitFitCollLcio_);
     }
     catch (std::runtime_error& error)
     {
@@ -35,6 +36,7 @@ bool Tracker2DHitProcessor::process(IEvent* ievent) {
     hits_.clear();
 
     Event* event = static_cast<Event*> (ievent);
+    UTIL::LCRelationNavigator* rawTracker_hit_fits_nav;
     UTIL::LCRelationNavigator* mcPartRel_nav;
 
     // Get the collection of 2D hits from the LCIO event. If no such collection 
@@ -49,9 +51,22 @@ bool Tracker2DHitProcessor::process(IEvent* ievent) {
         std::cout << e.what() << std::endl;
     }
 
-    //Check to see if MC Particles are in the file
+    //Check to see if fits are in the file
     auto evColls = event->getLCEvent()->getCollectionNames();
-    auto it = std::find (evColls->begin(), evColls->end(), mcPartRelLcio_.c_str());
+    auto it = std::find (evColls->begin(), evColls->end(), hitFitCollLcio_.c_str());
+    bool hasFits = true;
+    EVENT::LCCollection* raw_svt_hit_fits;
+    if(it == evColls->end()) hasFits = false;
+    if(hasFits)
+    {
+        raw_svt_hit_fits = event->getLCCollection(hitFitCollLcio_.c_str());
+        // Heap an LCRelation navigator which will allow faster access 
+        rawTracker_hit_fits_nav = new UTIL::LCRelationNavigator(raw_svt_hit_fits);
+    }
+ 
+
+    //Check to see if MC Particles are in the file
+    it = std::find (evColls->begin(), evColls->end(), mcPartRelLcio_.c_str());
     bool hasMCParts = true;
     EVENT::LCCollection* mcPartRel;
     if(it == evColls->end()) hasMCParts = false;
@@ -70,7 +85,14 @@ bool Tracker2DHitProcessor::process(IEvent* ievent) {
 
     // Loop over all of the 2D hits in the LCIO event and add them to the 
     // HPS event
+    bool rotateHits = true;
+    int hitType = 1;
+
     for (int ihit = 0; ihit < tracker_hits->getNumberOfElements(); ++ihit) { 
+
+        float rawcharge = 0;
+        int volume = -1;
+        int layer = -1;
 
         // Get a 2D hit from the list of hits
         IMPL::TrackerHitImpl* lc_tracker_hit = static_cast<IMPL::TrackerHitImpl*>(tracker_hits->getElementAt(ihit));
@@ -79,17 +101,44 @@ bool Tracker2DHitProcessor::process(IEvent* ievent) {
             std::cout << "tracker hit lcio id: " << lc_tracker_hit->id() << std::endl;
 
         // Build a TrackerHit
-        TrackerHit* tracker_hit = utils::buildTrackerHit(lc_tracker_hit);
+        TrackerHit* tracker_hit = utils::buildTrackerHit(lc_tracker_hit,rotateHits, hitType);
 
-        if(hasMCParts)
-        {
-            //Get the SvtRawTrackerHits that make up the 2D hit
-            EVENT::LCObjectVec rawHits = lc_tracker_hit->getRawHits(); 
-            for(int irawhit = 0; irawhit < rawHits.size(); ++irawhit){
-                IMPL::TrackerHitImpl* rawhit = static_cast<IMPL::TrackerHitImpl*>(rawHits.at(irawhit));
-                if(debug_ > 0)
-                    std::cout << "rawhit on track has lcio id: " << rawhit->id() << std::endl;
+        //Get the SvtRawTrackerHits that make up the 2D hit
+        EVENT::LCObjectVec rawHits = lc_tracker_hit->getRawHits(); 
+        for(int irawhit = 0; irawhit < rawHits.size(); ++irawhit){
+            //IMPL::TrackerHitImpl* rawhit = static_cast<IMPL::TrackerHitImpl*>(rawHits.at(irawhit));
+            //EVENT::TrackerRawData* rawTracker_hit = static_cast<EVENT::TrackerRawData*>(rawHits.at(irawhit));
+            EVENT::TrackerRawData* rawhit = static_cast<EVENT::TrackerRawData*>(rawHits.at(irawhit));
 
+            if(debug_ > 0)
+                std::cout << "rawhit on track has lcio id: " << rawhit->id() << std::endl;
+            if (hasFits){
+                //RawSvtHit* rawsvthit = utils::buildRawHit(rawTracker_hit, raw_svt_hit_fits);
+                RawSvtHit* rawsvthit = utils::buildRawHit(rawhit, raw_svt_hit_fits);
+                rawcharge += rawsvthit->getAmp(0);
+                int currentHitVolume = rawsvthit->getModule() % 2 ? 1 : 0;
+                int currentHitLayer  = (rawsvthit->getLayer() - 1 ) / 2;
+                currentHitLayer = rawsvthit->getLayer() - 1;
+                currentHitLayer = rawsvthit->getLayer() - 1;
+                if (volume == -1 )
+                    volume = currentHitVolume;
+                else {
+                    if ( currentHitVolume != volume)
+                        std::cout<<"[ ERROR ] : utils::addRawInfoTo3dHit raw hits with inconsistent volume found" <<std::endl;
+                }
+
+                if (layer == -1 )
+                    layer = currentHitLayer;
+                else {
+                    if (currentHitLayer != layer)
+                        std::cout<<"[ ERROR ] : utils::addRawInfoTo3dHit raw hits with inconsistent layer found" <<std::endl;
+                }
+                delete rawsvthit;
+            }
+
+
+            if(hasMCParts)
+            {
                 // Get the list of fit params associated with the raw tracker hit
                 EVENT::LCObjectVec lc_simtrackerhits = mcPartRel_nav->getRelatedToObjects(rawhit);
 
@@ -117,14 +166,20 @@ bool Tracker2DHitProcessor::process(IEvent* ievent) {
             }
         }
 
+        if(hasFits){
+            tracker_hit->setRawCharge(rawcharge);
+            tracker_hit->setVolume(volume);
+            tracker_hit->setLayer(layer);
+        }
+
         // Map the TrackerHit object to the corresponding SvtHit object. This
         // will be used later when setting references for hits on tracks.
         //hit_map[lc_tracker_hit] = tracker_hit; 
         hits_.push_back(tracker_hit);
-
     }
 
     if(hasMCParts) delete mcPartRel_nav;
+    if(hasFits) delete rawTracker_hit_fits_nav;
 
     return true;
 }

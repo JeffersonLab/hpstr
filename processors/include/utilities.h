@@ -165,6 +165,14 @@ namespace utils {
      * \todo extern?
      */
     static UTIL::BitField64 decoder("system:6,barrel:3,layer:4,module:12,sensor:1,side:32:-2,strip:12");
+
+    /**
+     * @brief description
+     * 
+     * \todo extern?
+     */
+    std::map<int,double> getKalmanTrackIsolations(Track* track, std::vector<TrackerHit*>* hits);
+
 }
 
 #endif //UTILITIES
