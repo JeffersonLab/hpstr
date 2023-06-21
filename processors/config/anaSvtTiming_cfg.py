@@ -38,13 +38,19 @@ recoana.parameters["trkColl"] = "KalmanFullTracks"
 #recoana.parameters["trkrHitColl"] = "RotatedHelicalTrackHits"
 recoana.parameters["rawHitColl"] = "SVTRawHitsOnTrack_KF"
 recoana.parameters["trkrHitColl"] = "SiClustersOnTrack"
+recoana.parameters["fspColl"] = "FinalStateParticles_KF"
 recoana.parameters["ecalHitColl"] = "RecoEcalHits"
 recoana.parameters["ecalClusColl"] = "RecoEcalClusters"
-recoana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/svtTiming.json'
+recoana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/reco/svtTiming-ecalRef.json'
 recoana.parameters["mcHistoCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
-recoana.parameters["timingCalibFile"]="/sdf/group/hps/users/mgraham/TimingCorrections/physrun2021/run14507_calib.txt"
+#recoana.parameters["timingCalibFile"]="/sdf/group/hps/users/mgraham/TimingCorrections/physrun2021/run14507_calib.txt"
+#recoana.parameters["timingCalibFile"]="/sdf/group/hps/users/mgraham/TimingCorrections/physrun2021/svtTiming_ecalRef_run_14495_preCal_calib.txt"
+recoana.parameters["timingCalibDir"]="/sdf/group/hps/users/mgraham/TimingCorrections/physrun2021/perRunTiming"
+recoana.parameters["postfixTiming"]="_calib_constants_final.txt"
 recoana.parameters["analysis"] = options.analysis
 recoana.parameters["selectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/svttiming_10hit.json'
+print("anaSvtTiming_cfg.py::Setting runNumber to "+str(options.runNumber))
+recoana.parameters["runNumber"]=options.runNumber
 
 RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/svtTiming/"
 recoana.parameters["regionDefinitions"] = [RegionPath+'evtPhase0.json',

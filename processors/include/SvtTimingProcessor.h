@@ -42,11 +42,13 @@ class SvtTimingProcessor : public Processor {
         //Containers to hold histogrammer info
         SvtTimingHistos* histos{nullptr};
         std::string  histCfgFilename_;
+        int runNumber_;
         //TODO Change this to be held from HPSEvent
         TTree* tree_;
         TBranch* brawHits_{nullptr};
         TBranch* btrkrHits_{nullptr};
         TBranch* btracks_{nullptr};
+        TBranch* bfsps_{nullptr};
         TBranch* becalHits_{nullptr};
         TBranch* becalClusters_{nullptr};
         TBranch* bevth_{nullptr};
@@ -54,6 +56,7 @@ class SvtTimingProcessor : public Processor {
         std::vector<RawSvtHit*> * rawHits_{};
         std::vector<TrackerHit*> * trkrHits_{};
         std::vector<Track*>      * tracks_{};
+        std::vector<Particle*>      * fsps_{};
         std::vector<CalHit*>     * ecalHits_{};
         std::vector<CalCluster*> * ecalClusters_{};
         EventHeader* evth_{nullptr};
@@ -62,9 +65,12 @@ class SvtTimingProcessor : public Processor {
         std::string trkColl_{"GBLTracks"};
         std::string rawHitColl_{"SVTRawHitsOnTrack_KF"};
         std::string trkrHitColl_{"RotatedHelicalTrackHits"};
+        std::string fspColl_{"FinalStateParticles_KF"};
         std::string ecalHitColl_{"EcalCalHits"};
         std::string ecalClusColl_{"EcalClustersCorr"};
-        std::string timingCalibFile_{"timingCalibFile"};
+        std::string timingCalibDir_{"timingCalibDir"};
+        std::string postfixTiming_{"postfixTiming"};
+        
         std::shared_ptr<BaseSelector> evtSelector_;
         std::string selectionCfg_;
         
@@ -74,7 +80,7 @@ class SvtTimingProcessor : public Processor {
         std::vector<std::string> _regions;
 
         typedef std::map<std::string,std::shared_ptr<SvtTimingHistos> >::iterator reg_it;
-
+        std::shared_ptr<AnaHelpers> _ah;
         std::map<std::string,double> timingCalibConstants_;
         //Debug Level
         int debug_{0};
