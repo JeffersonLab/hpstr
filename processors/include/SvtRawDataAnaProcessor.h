@@ -10,7 +10,13 @@
 #include "BaseSelector.h"
 #include "RawSvtHitHistos.h"
 #include "EventHeader.h"
+#include "VTPData.h"
+#include "TSData.h"
+#include "CalCluster.h"
+#include "Track.h"
+#include "TrackerHit.h"
 
+//#include <IMPL/TrackerHitImpl.h>"
 //ROOT
 
 #include "Processor.h"
@@ -75,9 +81,21 @@ class SvtRawDataAnaProcessor : public Processor {
 
         TTree* tree_;
         TBranch* bsvtHits_{nullptr};
+        TBranch* bvtpBank_{nullptr};
+        TBranch* btsBank_{nullptr};
+        TBranch* brecoClu_{nullptr};
+        TBranch* bPart_{nullptr};
+        TBranch* bTrk_{nullptr};
+
         TBranch* bevH_;
 
         std::vector<RawSvtHit*> * svtHits_{};
+        VTPData * vtpBank_;
+        TSData * tsBank_;
+        std::vector<CalCluster*>* recoClu_{};
+        std::vector<Track*>* Trk_{};
+        std::vector<Particle*>* Part_{};
+        //std::vector<Track> Trk_{};
         EventHeader * evH_;
 
         std::string anaName_{"rawSvtHitAna"};
@@ -89,6 +107,7 @@ class SvtRawDataAnaProcessor : public Processor {
         std::vector<std::string> regions_;
         std::string baselineFile_;
         std::string timeProfiles_;
+        int tphase_{6};
 
         //Debug Level
         int debug_{0};

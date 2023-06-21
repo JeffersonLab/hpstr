@@ -7,9 +7,9 @@ from optparse import OptionParser
 parser = OptionParser()
 
 parser.add_option("-n", "--nWeeks", type="int", dest="nWeeks",
-        help="The number of weeks worth of lumi.", metavar="nWeeks", default=16)
+                  help="The number of weeks worth of lumi.", metavar="nWeeks", default=16)
 parser.add_option("-s", "--subWeeks", type="int", dest="subWeeks",
-        help="The number of weeks worth of lumi at 2.3 GeV.", metavar="subWeeks", default=6)
+                  help="The number of weeks worth of lumi at 2.3 GeV.", metavar="subWeeks", default=6)
 
 (options, args) = parser.parse_args()
 
@@ -25,7 +25,7 @@ run19SigRate_hh = copy.deepcopy(run19File.Get("Nsig_hh"))
 run19SigRate_hh.SetName("run19SigRate_hh")
 run19File.Close()
 
-e2pt3File = r.TFile("sigRateE2pt3Nw%i.root"%e2pt3Weeks)
+e2pt3File = r.TFile("sigRateE2pt3Nw%i.root" % e2pt3Weeks)
 e2pt3SigRate_hh = copy.deepcopy(e2pt3File.Get("Nsig_hh"))
 e2pt3SigRate_hh.SetName("e2pt3SigRate_hh")
 e2pt3File.Close()
@@ -54,7 +54,7 @@ for mass in range(40, 211, 10):
     for logEps2 in range(-1000, -690):
         logEps2 = logEps2/100.0
         eps2 = pow(10, logEps2)
-        Nsig = run19SigRate_hh.GetBinContent(run19SigRate_hh.FindBin(massF,logEps2))
+        Nsig = run19SigRate_hh.GetBinContent(run19SigRate_hh.FindBin(massF, logEps2))
         if prevRate < excThr and Nsig > excThr:
             downExContourMass.append(massF)
             downExContourEps2.append(eps2)
@@ -76,14 +76,14 @@ exContourMass = upExContourMass + downExContourMass
 exContourEps2 = upExContourEps2 + downExContourEps2
 exContourLogEps2 = upExContourLogEps2 + downExContourLogEps2
 #contOutFile = open("sums/excContour%isw%iw.txt"%(subWeeks, nWeeks),"w")
-contOutFile = open("excContour2019plus2021.txt",'w')
+contOutFile = open("excContour2019plus2021.txt", 'w')
 for i in range(len(exContourMass)):
-    contOutFile.write("%f\t%E\n"%(exContourMass[i], exContourLogEps2[i]))
+    contOutFile.write("%f\t%E\n" % (exContourMass[i], exContourLogEps2[i]))
     pass
 contOutFile.close()
 
 #outFile = r.TFile("sums/sum%isw%iw.root"%(subWeeks, nWeeks),"RECREATE")
-outFile = r.TFile("expSigExc2019plus2021.root","RECREATE")
+outFile = r.TFile("expSigExc2019plus2021.root", "RECREATE")
 outFile.cd()
 run19SigRate_hh.Write()
 if len(exContourEps2) > 0:
@@ -96,5 +96,5 @@ if len(exContourEps2) > 0:
     excContourLog_g.Write()
     pass
 outFile.Close()
-print("E2pt3: %i and E3pt7: %i"%(e2pt3Weeks, e3pt7Weeks))
-print("Excluded Area: %f"%excArea)
+print("E2pt3: %i and E3pt7: %i" % (e2pt3Weeks, e3pt7Weeks))
+print("Excluded Area: %f" % excArea)

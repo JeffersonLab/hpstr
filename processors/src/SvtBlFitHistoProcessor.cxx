@@ -23,12 +23,12 @@ void SvtBlFitHistoProcessor::configure(const ParameterSet& parameters) {
         minStats_ = parameters.getInteger("minStats");
         deadRMS_ = parameters.getInteger("deadRMS");
         debug_ = parameters.getInteger("debug");
+        year_ = parameters.getInteger("year");
     }
     catch (std::runtime_error& error)
     {
         std::cout << error.what() << std::endl;
     }
-
 }
 
 void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outFilename) {
@@ -42,7 +42,7 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     flat_tuple_ = new FlatTupleMaker(outFilename.c_str(), "gaus_fit");
 
     //Initialize fit histos
-    fitHistos_ = new BlFitHistos();
+    fitHistos_ = new BlFitHistos(year_);
     fitHistos_->setDebug(debug_);
     std::cout << "[BlFitHistos] Loading 2D Histos" << std::endl;
     fitHistos_->loadHistoConfig(rawhitsHistCfgFilename_);
@@ -90,10 +90,14 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
 
 
 bool SvtBlFitHistoProcessor::process() { 
+    if(debug_)
+        std::cout << "RUNNING PROCESS ON 2d HISTOS" << std::endl;
     std::map<std::string,TH2F*> histos2d = fitHistos_->get2dHistos();
     std::map<std::string, TH2F*>::iterator it;
     for(it = histos2d.begin(); it != histos2d.end(); it++)
         std::cout << "2d Histo Loaded: " << it->first << std::endl;
+    if(debug_)
+        std::cout << "FIT 2d HISTO Baselines" << std::endl;
     fitHistos_->fit2DHistoChannelBaselines(histos2d,rebin_,minStats_, deadRMS_, thresholdsFileIn_, flat_tuple_);
     return true;
 }

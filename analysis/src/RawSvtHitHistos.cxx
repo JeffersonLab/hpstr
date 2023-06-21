@@ -113,9 +113,18 @@ void RawSvtHitHistos::FillHistograms(RawSvtHit* rawSvtHit,float weight,int i,uns
     histokey = swTag + "_SvtHybrids_AmT0_hh";
     //std::cout<<"hello9"<<std::endl;
     Fill2DHisto(histokey, rawSvtHit->getT0(i), rawSvtHit->getAmp(i),weight);
-    histokey = swTag + "_SvtHybrids_AmT0Err_hh";
+    histokey = swTag + "_SvtHybrids_AmErrT0Err_hh";
     //std::cout<<"hello10"<<std::endl;
     Fill2DHisto(histokey, rawSvtHit->getT0err(i), rawSvtHit->getAmpErr(i),weight);
+    
+    histokey = swTag + "_SvtHybrids_AmT0Err_hh";
+    //std::cout<<"hello10"<<std::endl;
+    Fill2DHisto(histokey, rawSvtHit->getT0err(i), rawSvtHit->getAmp(i),weight);
+
+    histokey = swTag + "_SvtHybrids_AmErrT0_hh";
+    //std::cout<<"hello10"<<std::endl;
+    Fill2DHisto(histokey, rawSvtHit->getT0(i), rawSvtHit->getAmpErr(i),weight);
+    
     if(i==1){
         histokey = swTag + "_SvtHybrids_PT1PT2_hh";
         Fill2DHisto(histokey, rawSvtHit->getT0(1),rawSvtHit->getT0(0));

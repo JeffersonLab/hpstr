@@ -35,22 +35,22 @@ rawsvt = HpstrConf.Processor('svt', 'SvtRawDataProcessor')
 header.parameters["debug"] = 0
 header.parameters["headCollRoot"] = "EventHeader"
 header.parameters["trigCollLcio"] = "TriggerBank"
-header.parameters["rfCollLcio"]   = "RFHits"
-header.parameters["vtpCollLcio"]  = "VTPBank"
-header.parameters["vtpCollRoot"]  = "VTPBank"
-header.parameters["tsCollLcio"]   = "TSBank"
-header.parameters["tsCollRoot"]   = "TSBank"
+header.parameters["rfCollLcio"] = "RFHits"
+header.parameters["vtpCollLcio"] = "VTPBank"
+header.parameters["vtpCollRoot"] = "VTPBank"
+header.parameters["tsCollLcio"] = "TSBank"
+header.parameters["tsCollRoot"] = "TSBank"
 
 #SvtRawData
 rawsvt.parameters["debug"] = 0
-rawsvt.parameters["hitCollLcio"]    = 'SVTRawTrackerHits'
+rawsvt.parameters["hitCollLcio"] = 'SVTRawTrackerHits'
 rawsvt.parameters["hitfitCollLcio"] = 'SVTFittedRawTrackerHits'
-rawsvt.parameters["hitCollRoot"]    = 'SVTRawTrackerHits'
+rawsvt.parameters["hitCollRoot"] = 'SVTRawTrackerHits'
 
 # Sequence which the processors will run.
 p.sequence = [header, rawsvt]
 
-p.input_files=[lcio_file]
+p.input_files = [lcio_file]
 p.output_files = [root_file]
 
 p.printProcess()

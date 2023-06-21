@@ -24,24 +24,49 @@ std::string AnaHelpers::getFileName(std::string filePath, bool withExtension)
 }
 
 void AnaHelpers::InnermostLayerCheck(Track* trk, bool& foundL1, bool& foundL2) {
+
+    bool isKF = trk->isKalmanTrack();
     int innerCount = 0;
+    bool hasL1 = false;
+    bool hasL2 = false;
+    bool hasL3 = false;
     for (int ihit=0; ihit<trk->getSvtHits().GetEntries();++ihit) {
         TrackerHit* hit3d = (TrackerHit*) trk->getSvtHits().At(ihit);
-        if (hit3d->getLayer() == 0 ) {
-            innerCount++;
+        if(isKF){
+            if (hit3d->getLayer() == 0 ) {
+                innerCount++;
+            }
+            if (hit3d->getLayer() == 1) {
+                innerCount++;
+            }
+            if (hit3d->getLayer() == 2) {
+                innerCount++;
+                hasL2 = true;
+            }
+            if (hit3d->getLayer() == 3) {
+                innerCount++;
+                hasL3 = true;
+            }
         }
-        if (hit3d->getLayer() == 1) {
-            innerCount++;
-        }
-        if (hit3d->getLayer() == 2) {
-            innerCount++;
-        }
-        if (hit3d->getLayer() == 3) {
-            innerCount++;
+        else{
+            if (hit3d->getLayer() == 0 ) {
+                innerCount++;
+            }
+            if (hit3d->getLayer() == 1) {
+                innerCount++;
+                hasL1 = true;
+            }
         }
     }
-    if (innerCount == 4) foundL1 = true;
-    if (innerCount == 2) foundL2 = true;
+
+    if(isKF){
+        if (innerCount == 4) foundL1 = true;
+        if (hasL2 && hasL3) foundL2 = true;
+    }
+    else{
+        if (innerCount == 2) foundL1 = true;
+        if (hasL1) foundL2 = true;
+    }
 }
 
 bool AnaHelpers::MatchToGBLTracks(int ele_id, int pos_id, Track* & ele_trk, Track* & pos_trk, std::vector<Track*>& trks) {
