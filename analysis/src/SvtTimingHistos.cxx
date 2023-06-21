@@ -107,7 +107,7 @@ void SvtTimingHistos::FillTracks(std::vector<Track*> *tracks, float weight ) {
     }
 }
 
-void SvtTimingHistos::FillHitsOnTrack(Track* trk, std::map<std::string,double> *timingCalib, int phase, float weight){
+void SvtTimingHistos::FillHitsOnTrack(Track* trk, std::map<std::string,double> *timingCalib, int phase, CalCluster *cluster,  float weight){
   
   int fitNumber=0;
   int secondFit=1;
@@ -118,9 +118,12 @@ void SvtTimingHistos::FillHitsOnTrack(Track* trk, std::map<std::string,double> *
 
   bool useCalibration=true; 
   if(timingCalib->size()<1){
-    //    std::cout<<"Calibration Map is not there...no calib"<<std::endl;
+    if(debug_)std::cout<<"Calibration Map is not there...no calib"<<std::endl;
     useCalibration=false;
   }
+  //////////////   take this out...just for testing //////////
+  //  useCalibration=false;
+
   int nHitsOnTrack=trk->getTrackerHitCount();
   int trkCh=trk->getCharge();
   std::string chStr="electron";
@@ -129,27 +132,55 @@ void SvtTimingHistos::FillHitsOnTrack(Track* trk, std::map<std::string,double> *
     //refModStringT="ly11_m2";
     //    refModStringB="ly11_m3";
   }
+
+  float clTimeOffset=37.5; //ns
+  float roughSVTHitTimeOffsetSlim=-7.0; //ns
+  float roughSVTHitTimeOffsetOld=-16.5; //ns
+  
+
+  float clTime=(float)cluster->getTime()-clTimeOffset;
+  float trkTime=(float)trk->getTrackTime()-roughSVTHitTimeOffsetOld;
   float trkP=(float)trk->getP();
   float refTime=-666.;
   bool hasRefHit=false;
   auto trkHits=trk->getSvtHits();
   Fill1DHisto("trkChiSq_h",(float)trk->getChi2(),weight);
-  Fill1DHisto("trkTime_h",(float)trk->getTrackTime(),weight);
+  Fill1DHisto("trkTime_h",trkTime,weight);
+  Fill1DHisto("trkTime_Minus_CluTime_h",trkTime-clTime,weight);
+  Fill1DHisto("ecalClusterTime_h",clTime,weight);
+  Fill1DHisto("ecalClusterEnergy_h",(float) cluster->getEnergy(),weight);
+  Fill2DHisto("cluTime_vs_trkTime_hh",clTime,trkTime,weight);
+  Fill1DHisto("ecalClusterTime_h",clTime,weight);
   if(trk->isTopTrack()){
-    Fill1DHisto("trkTime_Top_h",(float)trk->getTrackTime(),weight);
+    Fill1DHisto("trkTime_Top_h",trkTime,weight);
+    Fill1DHisto("trkTime_Minus_CluTime_Top_h",trkTime-clTime,weight);
+    Fill1DHisto("ecalClusterTime_Top_h",clTime,weight);
+    Fill2DHisto("cluTime_vs_trkTime_Top_hh",clTime,trkTime,weight);
   } else {
-      Fill1DHisto("trkTime_Bot_h",(float)trk->getTrackTime(),weight);
+      Fill1DHisto("trkTime_Bot_h",trkTime,weight);
+      Fill1DHisto("trkTime_Minus_CluTime_Bot_h",trkTime-clTime,weight);
+      Fill1DHisto("ecalClusterTime_Bot_h",clTime,weight);
+      Fill2DHisto("cluTime_vs_trkTime_Bot_hh",clTime,trkTime,weight);
   }
 
   Fill1DHisto("trkP_h",trkP,weight);
   Fill1DHisto("trkNHits_h",(float)trk->getTrackerHitCount(),weight);   
 
   Fill1DHisto(chStr+"_trkChiSq_h",(float)trk->getChi2(),weight);
-  Fill1DHisto(chStr+"_trkTime_h",(float)trk->getTrackTime(),weight);
+  Fill1DHisto(chStr+"_trkTime_h",trkTime,weight);
+  Fill1DHisto(chStr+"_trkTime_Minus_CluTime_h",trkTime-clTime,weight);
+  Fill1DHisto(chStr+"_ecalClusterTime_h",clTime,weight);
+  Fill2DHisto(chStr+"_cluTime_vs_trkTime_hh",clTime,trkTime,weight);
   if(trk->isTopTrack()){
-    Fill1DHisto(chStr+"_trkTime_Top_h",(float)trk->getTrackTime(),weight);
+    Fill1DHisto(chStr+"_trkTime_Top_h",trkTime,weight);
+    Fill1DHisto(chStr+"_trkTime_Minus_CluTime_Top_h",trkTime-clTime,weight);
+    Fill1DHisto(chStr+"_ecalClusterTime_Top_h",clTime,weight);
+    Fill2DHisto(chStr+"_cluTime_vs_trkTime_Top_hh",clTime,trkTime,weight);
   } else {
-      Fill1DHisto(chStr+"_trkTime_Bot_h",(float)trk->getTrackTime(),weight);
+      Fill1DHisto(chStr+"_trkTime_Bot_h",trkTime,weight);
+      Fill1DHisto(chStr+"_trkTime_Minus_CluTime_Bot_h",trkTime-clTime,weight);
+      Fill1DHisto(chStr+"_ecalClusterTime_Bot_h",clTime,weight);
+      Fill2DHisto(chStr+"_cluTime_vs_trkTime_Bot_hh",clTime,trkTime,weight);
   }
   Fill1DHisto(chStr+"_trkP_h",trkP,weight);  
   Fill1DHisto(chStr+"_trkNHits_h",(float)trk->getTrackerHitCount(),weight);   
@@ -166,40 +197,81 @@ void SvtTimingHistos::FillHitsOnTrack(Track* trk, std::map<std::string,double> *
       std::string phSt=std::to_string(phase);
       std::string calibName=sensorName+"_phase"+phSt;
       if(useCalibration){
-        calibForLayer=timingCalib->at(calibName);
-        //        std::cout<<calibName<<" constant = "<<calibForLayer<<std::endl;
-      } 
+        if(debug_)std::cout<<"Getting calib for "<<calibName<<std::endl;
+        calibForLayer=-timingCalib->at(calibName);
+        if(debug_)std::cout<<calibName<<" constant = "<<calibForLayer<<std::endl;
+      } else {//use rough time offset
+        if (rhit->getLayer()<5)
+          calibForLayer=-roughSVTHitTimeOffsetSlim;
+        else 
+          calibForLayer=-roughSVTHitTimeOffsetOld;
+
+      }
       if (swName==refModStringT || swName==refModStringB){
         hasRefHit=true;
         refTime=hit->getTime();
       }
       
       trkTimeCorr+=hit->getTime()+calibForLayer;
+      float hitTime=hit->getTime()+calibForLayer; 
 
-      Fill1DHisto(sensorName+"_trkSiCluster_Time_h", hit->getTime()+calibForLayer, weight);
-      Fill1DHisto(sensorName+"_trkRawHit_Time_h", rhit->getT0(fitNumber)+calibForLayer, weight);     
-      Fill1DHisto(sensorName+"_"+chStr+"_trkSiCluster_Time_h", hit->getTime()+calibForLayer, weight);
-      Fill1DHisto(sensorName+"_"+chStr+"_trkRawHit_Time_h", rhit->getT0(fitNumber)+calibForLayer, weight);
+      
+      if(debug_)std::cout<<"Original hit time = "<<hit->getTime()<<";  shift = "<<calibForLayer<<"; final hit time = "<<hitTime<<std::endl;
+
+      Fill1DHisto(sensorName+"_trkSiCluster_Time_h",hitTime, weight);
+      //      Fill1DHisto(sensorName+"_trkRawHit_Time_h", rhit->getT0(fitNumber)+calibForLayer, weight);     
+      Fill1DHisto(sensorName+"_"+chStr+"_trkSiCluster_Time_h",hitTime, weight);
+      //Fill1DHisto(sensorName+"_"+chStr+"_trkRawHit_Time_h", rhit->getT0(fitNumber)+calibForLayer, weight);
+
+      Fill2DHisto("HitMinCluTime_Versus_Layer_hh", rhit->getLayer()-1, hitTime-clTime,weight);
+      Fill2DHisto(chStr+"_HitMinCluTime_Versus_Layer_hh", rhit->getLayer()-1, hitTime-clTime,weight);
+      if(trk->isTopTrack()){
+        Fill2DHisto("HitMinCluTime_Versus_Layer_Top_hh", rhit->getLayer()-1, hitTime-clTime,weight);
+        Fill2DHisto(chStr+"_HitMinCluTime_Versus_Layer_Top_hh", rhit->getLayer()-1, hitTime-clTime,weight);
+      }else{
+        Fill2DHisto("HitMinCluTime_Versus_Layer_Bot_hh", rhit->getLayer()-1, hitTime-clTime,weight);
+        Fill2DHisto(chStr+"_HitMinCluTime_Versus_Layer_Bot_hh", rhit->getLayer()-1, hitTime-clTime,weight);
+      }
+
+      Fill1DHisto(sensorName+"_trkSiCluster_Time_Minus_CluTime_h",hitTime-clTime, weight);
+      Fill2DHisto(sensorName+"_trkSiCluster_Time_Versus_CluTime_hh",hitTime, clTime, weight);
+
+      Fill1DHisto(sensorName+"_"+chStr+"_trkSiCluster_Time_Minus_CluTime_h",hitTime-clTime, weight);
+      Fill2DHisto(sensorName+"_"+chStr+"_trkSiCluster_Time_Versus_CluTime_hh",hitTime, clTime, weight);
 
       if(rhit->getFitN()==2){
-	Fill1DHisto(sensorName+"_trkSiCluster_2Fits_Time_h", hit->getTime()+calibForLayer, weight);
-	Fill1DHisto(sensorName+"_trkRawHit_2Fits_Time_h", rhit->getT0(fitNumber)+calibForLayer, weight);     
-	Fill1DHisto(sensorName+"_"+chStr+"_trkSiCluster_2Fits_Time_h", hit->getTime()+calibForLayer, weight);
-	Fill1DHisto(sensorName+"_"+chStr+"_trkRawHit_2Fits_Time_h", rhit->getT0(fitNumber)+calibForLayer, weight);
+	//Fill1DHisto(sensorName+"_trkSiCluster_2Fits_Time_h",hitTime, weight);
+        //	Fill1DHisto(sensorName+"_trkRawHit_2Fits_Time_h", rhit->getT0(fitNumber)+calibForLayer, weight);     
+	//Fill1DHisto(sensorName+"_"+chStr+"_trkSiCluster_2Fits_Time_h",hitTime, weight);
+	//Fill1DHisto(sensorName+"_"+chStr+"_trkRawHit_2Fits_Time_h", rhit->getT0(fitNumber)+calibForLayer, weight);
       }
       
     }
   trkTimeCorr=trkTimeCorr/nHitsOnTrack;
   Fill1DHisto("CalibratedTrackTime_h", trkTimeCorr, weight);
   Fill1DHisto(chStr+"_CalibratedTrackTime_h", trkTimeCorr, weight);
+  Fill1DHisto("CalibratedTrackTime_Minus_CluTime_h", trkTimeCorr-clTime, weight);
+  Fill1DHisto(chStr+"_CalibratedTrackTime_Minus_CluTime_h", trkTimeCorr-clTime, weight);
+  Fill2DHisto("CalibratedTrackTime_Versus_CluTime_hh",clTime,trkTimeCorr,weight);
+  Fill2DHisto(chStr+"_CalibratedTrackTime_Versus_CluTime_hh",clTime,trkTimeCorr,weight);
+
   if(trk->isTopTrack()){
     Fill1DHisto("CalibratedTrackTime_Top_h", trkTimeCorr, weight);
     Fill1DHisto(chStr+"_CalibratedTrackTime_Top_h", trkTimeCorr, weight);
+    Fill1DHisto("CalibratedTrackTime_Minus_CluTime_Top_h", trkTimeCorr-clTime, weight);
+    Fill1DHisto(chStr+"_CalibratedTrackTime_Minus_CluTime_Top_h", trkTimeCorr-clTime, weight);
+    Fill2DHisto("CalibratedTrackTime_Versus_CluTime_Top_hh",clTime,trkTimeCorr,weight);
+    Fill2DHisto(chStr+"_CalibratedTrackTime_Versus_CluTime_Top_hh",clTime,trkTimeCorr,weight);
   }else {
     Fill1DHisto("CalibratedTrackTime_Bot_h", trkTimeCorr, weight);
     Fill1DHisto(chStr+"_CalibratedTrackTime_Bot_h", trkTimeCorr, weight);
+    Fill1DHisto("CalibratedTrackTime_Minus_CluTime_Bot_h", trkTimeCorr-clTime, weight);
+    Fill1DHisto(chStr+"_CalibratedTrackTime_Minus_CluTime_Bot_h", trkTimeCorr-clTime, weight);
+    Fill2DHisto("CalibratedTrackTime_Versus_CluTime_Bot_hh",clTime,trkTimeCorr,weight);
+    Fill2DHisto(chStr+"_CalibratedTrackTime_Versus_CluTime_Bot_hh",clTime,trkTimeCorr,weight);
   }
   // if track doesn't have a hit in reference layer, just return
+  /*
   if(!hasRefHit)
     return; 
   Fill1DHisto("CalTrackTime_Minus_M3L0_h", trkTimeCorr-refTime, weight);
@@ -212,6 +284,7 @@ void SvtTimingHistos::FillHitsOnTrack(Track* trk, std::map<std::string,double> *
     Fill1DHisto("CalTrackTime_Minus_M3L0_Bot_h", trkTimeCorr-refTime, weight);
     Fill1DHisto(chStr+"_CalTrackTime_Minus_M3L0_Bot_h", trkTimeCorr-refTime, weight);
   }
+  
   for (int i=0; i < nHitsOnTrack; i++) 
     {      
       double calibForLayer=0.0; 
@@ -228,19 +301,21 @@ void SvtTimingHistos::FillHitsOnTrack(Track* trk, std::map<std::string,double> *
       } else {
         //std::cout<<calibName<<" not found in map????"<<std::endl;
       }
+      //      Fill2DHisto(sensorName+"_trkSiCluster_M3L0_Minus_LX_Time_Versus_Chi2_hh", refTime-hit->getTime()-calibForLayer,  (float)trk->getChi2(), weight);
       Fill1DHisto(sensorName+"_trkSiCluster_M3L0_Minus_LX_Time_h", refTime-hit->getTime()-calibForLayer, weight);
-      Fill2DHisto(sensorName+"_trkSiCluster_M3L0_Minus_LX_Time_Versus_Chi2_hh", refTime-hit->getTime()-calibForLayer,  (float)trk->getChi2(), weight);
       Fill2DHisto(sensorName+"_trkSiCluster_M3L0_Versus_LX_Time_hh", refTime,hit->getTime()+calibForLayer, weight);
       Fill1DHisto(sensorName+"_"+chStr+"_trkSiCluster_M3L0_Minus_LX_Time_h", refTime-hit->getTime()-calibForLayer, weight);
-      Fill2DHisto(sensorName+"_"+chStr+"_trkSiCluster_M3L0_Minus_LX_Time_Versus_Chi2_hh", refTime-hit->getTime()-calibForLayer,  (float)trk->getChi2(), weight);
+      //      Fill2DHisto(sensorName+"_"+chStr+"_trkSiCluster_M3L0_Minus_LX_Time_Versus_Chi2_hh", refTime-hit->getTime()-calibForLayer,  (float)trk->getChi2(), weight);
       Fill2DHisto(sensorName+"_"+chStr+"_trkSiCluster_M3L0_Versus_LX_Time_hh", refTime,hit->getTime()+calibForLayer, weight);
       if(rhit->getFitN()==2){
-	Fill1DHisto(sensorName+"_trkSiCluster_M3L0_Minus_LX_2Fits_Time_h", refTime-hit->getTime()-calibForLayer, weight);
-	Fill2DHisto(sensorName+"_trkSiCluster_M3L0_Versus_LX_2Fits_Time_hh", refTime,hit->getTime()+calibForLayer, weight);
-	Fill1DHisto(sensorName+"_"+chStr+"_trkSiCluster_M3L0_Minus_LX_2Fits_Time_h", refTime-hit->getTime()-calibForLayer, weight);
-	Fill2DHisto(sensorName+"_"+chStr+"_trkSiCluster_M3L0_Versus_LX_2Fits_Time_hh", refTime,hit->getTime()+calibForLayer, weight);
+	//Fill1DHisto(sensorName+"_trkSiCluster_M3L0_Minus_LX_2Fits_Time_h", refTime-hit->getTime()-calibForLayer, weight);
+	//Fill2DHisto(sensorName+"_trkSiCluster_M3L0_Versus_LX_2Fits_Time_hh", refTime,hit->getTime()+calibForLayer, weight);
+	//Fill1DHisto(sensorName+"_"+chStr+"_trkSiCluster_M3L0_Minus_LX_2Fits_Time_h", refTime-hit->getTime()-calibForLayer, weight);
+	//Fill2DHisto(sensorName+"_"+chStr+"_trkSiCluster_M3L0_Versus_LX_2Fits_Time_hh", refTime,hit->getTime()+calibForLayer, weight);
       }
     }      
+  */
+
 }
 
 void SvtTimingHistos::FillEcalHits(std::vector<CalHit*> *ecalHits, float weight ) {
