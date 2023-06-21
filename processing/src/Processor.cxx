@@ -12,6 +12,5 @@ Processor::Processor(const std::string& name, Process& process) :
 }
 
 void Processor::declare(const std::string& classname, ProcessorMaker* maker) {
-  std::cout<<"Registering "<<classname<<std::endl;
     ProcessorFactory::instance().registerProcessor(classname, maker);
 }
