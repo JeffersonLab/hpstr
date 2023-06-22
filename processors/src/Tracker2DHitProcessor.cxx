@@ -103,42 +103,46 @@ bool Tracker2DHitProcessor::process(IEvent* ievent) {
         // Build a TrackerHit
         TrackerHit* tracker_hit = utils::buildTrackerHit(lc_tracker_hit,rotateHits, hitType);
 
-        //Get the SvtRawTrackerHits that make up the 2D hit
-        EVENT::LCObjectVec rawHits = lc_tracker_hit->getRawHits(); 
-        for(int irawhit = 0; irawhit < rawHits.size(); ++irawhit){
-            //IMPL::TrackerHitImpl* rawhit = static_cast<IMPL::TrackerHitImpl*>(rawHits.at(irawhit));
-            //EVENT::TrackerRawData* rawTracker_hit = static_cast<EVENT::TrackerRawData*>(rawHits.at(irawhit));
-            EVENT::TrackerRawData* rawhit = static_cast<EVENT::TrackerRawData*>(rawHits.at(irawhit));
+        if(hasFits)
+            utils::addRawInfoTo3dHit(tracker_hit, lc_tracker_hit,raw_svt_hit_fits,nullptr,hitType,false);
 
-            if(debug_ > 0)
-                std::cout << "rawhit on track has lcio id: " << rawhit->id() << std::endl;
-            if (hasFits){
-                //RawSvtHit* rawsvthit = utils::buildRawHit(rawTracker_hit, raw_svt_hit_fits);
-                RawSvtHit* rawsvthit = utils::buildRawHit(rawhit, raw_svt_hit_fits);
-                rawcharge += rawsvthit->getAmp(0);
-                int currentHitVolume = rawsvthit->getModule() % 2 ? 1 : 0;
-                int currentHitLayer  = (rawsvthit->getLayer() - 1 ) / 2;
-                currentHitLayer = rawsvthit->getLayer() - 1;
-                currentHitLayer = rawsvthit->getLayer() - 1;
-                if (volume == -1 )
-                    volume = currentHitVolume;
-                else {
-                    if ( currentHitVolume != volume)
-                        std::cout<<"[ ERROR ] : utils::addRawInfoTo3dHit raw hits with inconsistent volume found" <<std::endl;
-                }
+        if(hasMCParts){
+            //Get the SvtRawTrackerHits that make up the 2D hit
+            EVENT::LCObjectVec rawHits = lc_tracker_hit->getRawHits(); 
+            for(int irawhit = 0; irawhit < rawHits.size(); ++irawhit){
+                IMPL::TrackerHitImpl* rawhit = static_cast<IMPL::TrackerHitImpl*>(rawHits.at(irawhit));
+                //EVENT::TrackerRawData* rawTracker_hit = static_cast<EVENT::TrackerRawData*>(rawHits.at(irawhit));
+                //EVENT::TrackerRawData* rawhit = static_cast<EVENT::TrackerRawData*>(rawHits.at(irawhit));
 
-                if (layer == -1 )
-                    layer = currentHitLayer;
-                else {
-                    if (currentHitLayer != layer)
-                        std::cout<<"[ ERROR ] : utils::addRawInfoTo3dHit raw hits with inconsistent layer found" <<std::endl;
-                }
-                delete rawsvthit;
-            }
+                if(debug_ > 0)
+                    std::cout << "rawhit on track has lcio id: " << rawhit->id() << std::endl;
+
+                /*
+                if (hasFits){
+                    //RawSvtHit* rawsvthit = utils::buildRawHit(rawTracker_hit, raw_svt_hit_fits);
+                    RawSvtHit* rawsvthit = utils::buildRawHit(rawhit, raw_svt_hit_fits);
+                    rawcharge += rawsvthit->getAmp(0);
+                    int currentHitVolume = rawsvthit->getModule() % 2 ? 1 : 0;
+                    int currentHitLayer  = (rawsvthit->getLayer() - 1 ) / 2;
+                    currentHitLayer = rawsvthit->getLayer() - 1;
+                    currentHitLayer = rawsvthit->getLayer() - 1;
+                    if (volume == -1 )
+                        volume = currentHitVolume;
+                    else {
+                        if ( currentHitVolume != volume)
+                            std::cout<<"[ ERROR ] : utils::addRawInfoTo3dHit raw hits with inconsistent volume found" <<std::endl;
+                    }
+
+                    if (layer == -1 )
+                        layer = currentHitLayer;
+                    else {
+                        if (currentHitLayer != layer)
+                            std::cout<<"[ ERROR ] : utils::addRawInfoTo3dHit raw hits with inconsistent layer found" <<std::endl;
+                    }
+                    delete rawsvthit;
+                }*/
 
 
-            if(hasMCParts)
-            {
                 // Get the list of fit params associated with the raw tracker hit
                 EVENT::LCObjectVec lc_simtrackerhits = mcPartRel_nav->getRelatedToObjects(rawhit);
 
@@ -164,12 +168,6 @@ bool Tracker2DHitProcessor::process(IEvent* ievent) {
                 }
                 */
             }
-        }
-
-        if(hasFits){
-            tracker_hit->setRawCharge(rawcharge);
-            tracker_hit->setVolume(volume);
-            tracker_hit->setLayer(layer);
         }
 
         // Map the TrackerHit object to the corresponding SvtHit object. This

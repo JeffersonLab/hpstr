@@ -439,7 +439,7 @@ TrackerHit* utils::buildTrackerHit(IMPL::TrackerHitImpl* lc_tracker_hit, bool ro
 //type 0 rotatedHelicalHit  type 1 SiClusterHit
 bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit, 
         IMPL::TrackerHitImpl* lc_tracker_hit,
-        EVENT::LCCollection* raw_svt_fits, std::vector<RawSvtHit*>* rawHits,int type) {
+        EVENT::LCCollection* raw_svt_fits, std::vector<RawSvtHit*>* rawHits,int type, bool storeRawHit) {
 
     if (!tracker_hit || !lc_tracker_hit)
         return false;
@@ -450,13 +450,29 @@ bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit,
     //1-6(7) for rotated  0-13 for SiCluster
     int layer = -1;
 
+    // Get decoders to read cellids
+    UTIL::BitField64 decoder("system:6,barrel:3,layer:4,module:12,sensor:1,side:32:-2,strip:12");
+
     //Get the Raw content of the tracker hits
     EVENT::LCObjectVec lc_rawHits             = lc_tracker_hit->getRawHits();  
 
+    std::vector<int> rawhit_strips;
     for (unsigned int irh = 0 ; irh < lc_rawHits.size(); ++irh) {
+        // Get a raw hit from the list of hits
+        EVENT::TrackerRawData* rawTracker_hit
+            = static_cast<EVENT::TrackerRawData*>(lc_rawHits.at(irh));
+
+        //Decode the cellid
+        EVENT::long64 value = EVENT::long64( rawTracker_hit->getCellID0() & 0xffffffff ) |
+            ( EVENT::long64( rawTracker_hit->getCellID1() ) << 32 ) ;
+        decoder.setValue(value);
+
+        //Get rawhit strip number
+        int stripnumber = decoder["strip"];
+        rawhit_strips.push_back(stripnumber);
 
         //TODO useless to build all of it?
-        RawSvtHit* rawHit = buildRawHit(static_cast<EVENT::TrackerRawData*>(lc_rawHits.at(irh)),raw_svt_fits); 
+        RawSvtHit* rawHit = buildRawHit(rawTracker_hit,raw_svt_fits); 
         rawcharge += rawHit->getAmp(0);
         int currentHitVolume = rawHit->getModule() % 2 ? 1 : 0;
         int currentHitLayer  = (rawHit->getLayer() - 1 ) / 2;
@@ -476,16 +492,18 @@ bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit,
                 std::cout<<"[ ERROR ] : utils::addRawInfoTo3dHit raw hits with inconsistent layer found" <<std::endl;
         }
 
-        //TODO:: store only if asked
-        tracker_hit->addRawHit(rawHit);
-        if (rawHits)
-            rawHits->push_back(rawHit);
+        if(storeRawHit){
+            tracker_hit->addRawHit(rawHit);
+            if (rawHits)
+                rawHits->push_back(rawHit);
+        }
 
     }
 
     tracker_hit->setRawCharge(rawcharge);
     tracker_hit->setVolume(volume);
     tracker_hit->setLayer(layer);
+    tracker_hit->setRawHitStripNumbers(rawhit_strips);
 
     return true;
 }

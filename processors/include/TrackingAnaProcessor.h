@@ -22,6 +22,7 @@
 #include "Track.h"
 #include "Event.h"
 #include "TrackHistos.h"
+#include "TrackerHit.h"
 
 // Forward declarations
 class TTree; 
@@ -80,6 +81,11 @@ class TrackingAnaProcessor : public Processor {
         TBranch* btracks_{nullptr}; //!< description
 
         std::string trkCollName_; //!< Track Collection name
+
+        /** Container to hold strip clusters. */
+        std::string hitColl_{""};
+        std::vector<TrackerHit*>* hits_{};
+        TBranch* bhits_{nullptr};
 
         // Track Selector configuration
         std::string selectionCfg_;

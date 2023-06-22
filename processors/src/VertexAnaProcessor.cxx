@@ -863,6 +863,8 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                         isAxial = true;
                 if(!isAxial)
                     continue;
+                if(trackhit_layer > 1)
+                    continue;
                 double trackhit_y = track_hit->getGlobalY();
                 double trackhitCharge = track_hit->getRawCharge();
                 double trackhitTime = track_hit->getTime();
