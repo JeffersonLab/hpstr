@@ -475,12 +475,11 @@ bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit,
             if (currentHitLayer != layer)
                 std::cout<<"[ ERROR ] : utils::addRawInfoTo3dHit raw hits with inconsistent layer found" <<std::endl;
         }
-        
-        //TODO:: store only if asked
-￼       tracker_hit->addRawHit(rawHit);
-￼       if (rawHits)
-￼           rawHits->push_back(rawHit);
 
+        //TODO:: store only if asked
+        tracker_hit->addRawHit(rawHit);
+        if(rawHits)
+            rawHits->push_back(rawHit);
     }
 
     tracker_hit->setRawCharge(rawcharge);
