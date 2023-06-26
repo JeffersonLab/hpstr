@@ -20,7 +20,6 @@ void TrackingAnaProcessor::configure(const ParameterSet& parameters) {
         doTruth_              = (bool) parameters.getInteger("doTruth",doTruth_);
         truthHistCfgFilename_ = parameters.getString("truthHistCfg",truthHistCfgFilename_);
         selectionCfg_         = parameters.getString("selectionjson",selectionCfg_); 
-        hitColl_ = parameters.getString("hitColl",hitColl_);
     }
     catch (std::runtime_error& error)
     {
@@ -38,10 +37,6 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
     trkHistos_->DefineHistos();
     // Init tree
     tree->SetBranchAddress(trkCollName_.c_str(), &tracks_, &btracks_);
-    if (!hitColl_.empty()){
-        std::cout << "READ BRANCH" << std::endl;
-        tree->SetBranchAddress(hitColl_.c_str(), &hits_   , &bhits_);
-    }
     
     if (!selectionCfg_.empty()) {
         trkSelector_ = std::make_shared<BaseSelector>(name_+"_trkSelector",selectionCfg_);
@@ -109,12 +104,10 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
         }
         
         n_sel_tracks++;
-
     }//Loop on tracks
 
     trkHistos_->Fill1DHisto("n_tracks_h",n_sel_tracks);
-
-
+    
     return true;
 }
 

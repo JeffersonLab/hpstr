@@ -123,7 +123,7 @@ namespace utils {
     bool addRawInfoTo3dHit(TrackerHit* tracker_hit,
                            IMPL::TrackerHitImpl* lc_tracker_hit,
                            EVENT::LCCollection* raw_svt_fits,
-                           std::vector<RawSvtHit*>* rawHits = nullptr, int type = 0, bool storeRawHit = true);
+                           std::vector<RawSvtHit*>* rawHits = nullptr, int type = 0);
 
 
     /**

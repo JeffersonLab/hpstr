@@ -81,7 +81,6 @@ class Tracker2DHitProcessor : public Processor {
         std::vector<TrackerHit*> hits_; 
         std::string hitCollLcio_{"RotatedHelicalTrackHits"};
         std::string hitCollRoot_{"RotatedHelicalTrackHits"};
-        std::string hitFitCollLcio_{"SvtFittedRawTrackerHits"};
 
         std::string mcPartRelLcio_{"RotatedHelicalTrackMCRelations"};
 

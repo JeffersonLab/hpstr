@@ -74,7 +74,6 @@ svthits.parameters["debug"] = 0
 svthits.parameters["hitCollLcio"] = 'StripClusterer_SiTrackerHitStrip1D'
 svthits.parameters["hitCollRoot"] = 'SiClusters'
 svthits.parameters["mcPartRelLcio"] = 'SVTTrueHitRelations'
-svthits.parameters["hitFitCollLcio"] = 'SVTFittedRawTrackerHits'
 
 # Tracker3DHits
 svthitsgbl.parameters["debug"] = 0
