@@ -4,23 +4,19 @@ import os
 import baseConfig as base
 
 base.parser.add_argument("-w", "--tracking", type=str, dest="tracking",
-                         help="Which tracking to use to make plots", 
-                         metavar="tracking", default="KF")
+                         help="Which tracking to use to make plots", metavar="tracking", default="KF")
 base.parser.add_argument("-V", "--splitVolume", type=int, dest="splitVolume",
-                         help="Require positron in Top and Bottom", 
-                         metavar="splitVolume", default=0)
+                         help="Require positron in Top and Bottom", metavar="splitVolume", default=0)
 base.parser.add_argument("-R", "--region", type=str, dest="region",
-                         help="Signal Region (SR) or Control Region (CR)", 
-                         metavar="region", default="CR")
+                         help="Signal Region (SR) or Control Region (CR)", metavar="region", default="CR")
 base.parser.add_argument("-f", "--makeFlatTuple", type=int, dest="makeFlatTuple",
-                         help="Make True to make vertex ana flat tuple", 
-                         metavar="makeFlatTuple", default=0)
+                         help="Make True to make vertex ana flat tuple", metavar="makeFlatTuple", default=0)
 base.parser.add_argument("-r", "--isRadPDG", type=int, dest="isRadPDG",
-                         help="Set radiative trident PDG ID", metavar="isRadPDG", 
-                         default=622)
+                         help="Set radiative trident PDG ID", metavar="isRadPDG", default=622)
 base.parser.add_argument("-TS", "--trackstate", type=str, dest="trackstate",
                          help="Specify Track State | 'AtECal' or 'AtTarget'. Default is origin (AtIP)", metavar="trackstate", default="")
-
+base.parser.add_argument("-bpc", "--beamPosCorr", type=int, dest="beamPosCorr",
+                         help="Load beam position corrections from json", metavar="beamPosCorr", default="")
 options = base.parser.parse_args()
 
 # Use the input file to set the output file name
@@ -58,8 +54,8 @@ recoana_kf.parameters["vtxColl"] = "UnconstrainedV0Vertices_KF"
 recoana_kf.parameters["mcColl"] = "MCParticle"
 recoana_kf.parameters["hitColl"] = "SiClusters"
 recoana_kf.parameters["ecalColl"] = "RecoEcalClusters"
-recoana_kf.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+"/analysis/selections/simps/vertexSelection_2016_simp_reach.json"
-recoana_kf.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/simps/vtxAnalysis_2016_simp_reach.json"
+recoana_kf.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+"/analysis/selections/vertexSelection.json"
+recoana_kf.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
 recoana_kf.parameters["mcHistoCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
 #####
 recoana_kf.parameters["beamE"] = base.beamE[str(options.year)]
@@ -68,6 +64,8 @@ recoana_kf.parameters["analysis"] = options.analysis
 recoana_kf.parameters["debug"] = 0
 recoana_kf.parameters["isRadPDG"] = options.isRadPDG
 recoana_kf.parameters["makeFlatTuple"] = options.makeFlatTuple
+recoana_kf.parameters["beamPosCfg"] = options.bpc
+#recoana_kf.parameters["beamPosCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/beamspot_positions_2016.json'
 
 CalTimeOffset = -999
 
@@ -83,18 +81,10 @@ else:
 
 recoana_kf.parameters["CalTimeOffset"] = CalTimeOffset
 #Region definitions
-RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/simps/"
+RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/"
 
-recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_CR.json',
-                                              RegionPath+'Tight_2016_simp_reach_SR.json',
-                                              RegionPath+'../Tight_loose.json']
-
-#if options.region == "CR":
-#    recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_CR.json',
-#                                                  RegionPath+'radMatchTight_2016_simp_reach_CR.json']
-#elif options.region == "SR":
-#    recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_SR.json',
-#                                                  RegionPath+'radMatchTight_2016_simp_reach_SR.json']
+recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight.json',
+                                              RegionPath+'radMatchTight.json']
 
 #RecoHitAna
 recoana_gbl.parameters = recoana_kf.parameters.copy()
@@ -105,13 +95,9 @@ recoana_gbl.parameters["hitColl"] = "RotatedHelicalOnTrackHits"
 recoana_gbl.parameters["trkColl"] = "GBLTracks"
 recoana_gbl.parameters["mcColl"] = "MCParticle"
 recoana_gbl.parameters["ecalColl"] = "RecoEcalClusters"
-recoana_gbl.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+"/analysis/selections/simps/vertexSelection_2016_simp_reach.json"
-recoana_gbl.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/simps/vtxAnalysis_2016_simp_reach.json"
+recoana_gbl.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+"/analysis/selections/vertexSelection.json"
+recoana_gbl.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/vtxAnalysis.json"
 recoana_gbl.parameters["mcHistoCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
-if options.year == 2016:
-    recoana_gbl.parameters["beamPosCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/beamspot_positions_2016.json'
-else:
-    recoana_gbl.parameters["beamPosCfg"] = ''
 #####
 recoana_gbl.parameters["beamE"] = base.beamE[str(options.year)]
 recoana_gbl.parameters["isData"] = options.isData
@@ -119,15 +105,13 @@ recoana_gbl.parameters["analysis"] = options.analysis
 recoana_gbl.parameters["debug"] = 0
 recoana_gbl.parameters["isRadPDG"] = options.isRadPDG
 recoana_gbl.parameters["makeFlatTuple"] = options.makeFlatTuple
+recoana_gbl.parameters["beamPosCfg"] = options.bpc
 
 recoana_gbl.parameters["CalTimeOffset"] = CalTimeOffset
-if options.region == "CR":
-    recoana_gbl.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_CR.json',
-                                                   RegionPath+'radMatchTight_2016_simp_reach_CR.json']
-elif options.region == "SR":
-    recoana_gbl.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_SR.json',
-                                                   RegionPath+'radMatchTight_2016_simp_reach_SR.json']
-
+#Region definitions
+RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/"
+recoana_gbl.parameters["regionDefinitions"] = [RegionPath+'Tight.json',
+                                               RegionPath+'radMatchTight.json']
 #MCParticleAna
 mcana.parameters["debug"] = 0
 mcana.parameters["anaName"] = "mcAna"
