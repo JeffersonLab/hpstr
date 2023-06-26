@@ -171,6 +171,13 @@ namespace utils {
      * 
      * \todo extern?
      */
+    std::map<int,double> getKFTrackIsolations(Track* track, std::vector<TrackerHit*>* siClusters);
+
+    /**
+     * @brief description
+     * 
+     * \todo extern?
+     */
     std::map<int,double> getKalmanTrackIsolations(Track* track, std::vector<TrackerHit*>* hits);
 
 }

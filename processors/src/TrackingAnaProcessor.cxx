@@ -197,6 +197,10 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
                             (trackhit_volume == 1 && althit_y > trackhit_y))
                         continue;
 
+                    //Require alternative SiClusters to be within +-30ns (based on SiClustersOnTrack t distr)
+                    if(std::abs(althit_time) > 30.0)
+                        continue;
+
                     //Skip adjacent rawhits
                     std::vector<int> althit_rawhits = altStripCluster->getRawHitStripNumbers();
                     int althit_maxstrip = *max_element(althit_rawhits.begin(), althit_rawhits.end());
@@ -205,15 +209,26 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
                         trkHistos_->Fill1DHisto("track_hit_adjacent_cluster_L"+std::to_string(trackhit_layer)+vol+"_dt_h", trackhit_time - althit_time);
                         trkHistos_->Fill1DHisto("track_hit_adjacent_cluster_L"+std::to_string(trackhit_layer)+vol+"_charge_h", althit_charge);
                         trkHistos_->Fill1DHisto("track_hit_plus_adjacent_cluster_L"+std::to_string(trackhit_layer)+vol+"_charge_h", althit_charge + trackhit_charge);
+                        trkHistos_->Fill1DHisto("track_hit_adjacent_cluster_dcharge_h", trackhit_charge - althit_charge);
                         continue;
                     }
+                    
+
 
                     //Alternative SiCluster candidates
+                    trkHistos_->Fill1DHisto("track_hit_altstrips_dcharge_h", trackhit_charge - althit_charge);
+                    trkHistos_->Fill1DHisto("track_hit_altstrips_dt_h", trackhit_time - althit_time);
+                    trkHistos_->Fill1DHisto("track_hit_altstrips_dy_h", std::abs(trackhit_y - althit_y));
+                    trkHistos_->Fill2DHisto("track_hit_altstrips_dcharge_v_dt_hh",(trackhit_time - althit_time),trackhit_charge - althit_charge);
+                    trkHistos_->Fill2DHisto("track_hit_altstrips_dcharge_v_dy_hh",std::abs(trackhit_y - althit_y), trackhit_charge - althit_charge);
+                    trkHistos_->Fill2DHisto("track_hit_altstrips_dt_v_dy_hh",std::abs(trackhit_y - althit_y), trackhit_time - althit_time);
+
+
                     trkHistos_->Fill1DHisto("track_altstrips_L"+std::to_string(trackhit_layer)+vol+"_dt_h", trackhit_time - althit_time);
                     trkHistos_->Fill1DHisto("track_altstrips_L"+std::to_string(trackhit_layer)+vol+"_dy_h", trackhit_y - althit_y);
                     trkHistos_->Fill2DHisto("track_altstrips_L"+std::to_string(trackhit_layer)+vol+"_dt_v_dY_hh", trackhit_y-althit_y, trackhit_time - althit_time);
-                    if(std::abs(trackhit_time-althit_time) <= 10.0)
-                        trkHistos_->Fill2DHisto("track_stripy_v_intime_altstripy_L"+std::to_string(trackhit_layer)+vol+"_hh", trackhit_y, althit_y);
+                    //if(std::abs(trackhit_time-althit_time) <= 10.0)
+                     //   trkHistos_->Fill2DHisto("track_stripy_v_intime_altstripy_L"+std::to_string(trackhit_layer)+vol+"_hh", trackhit_y, althit_y);
 
                     if (std::abs(trackhit_y - althit_y) < closest_distance){
                         closest_distance = std::abs(trackhit_y-althit_y);
@@ -226,8 +241,8 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
                 trkHistos_->Fill1DHisto("track_isostrip_L"+std::to_string(trackhit_layer)+vol+"_dt_h", time_diff);
                 trkHistos_->Fill1DHisto("track_isostrip_L"+std::to_string(trackhit_layer)+vol+"_dy_h", closest_distance);
                 trkHistos_->Fill2DHisto("track_isostrip_L"+std::to_string(trackhit_layer)+vol+"_dt_v_dY_hh", closest_distance, time_diff);
-                if(std::abs(time_diff) <= 10.0)
-                    trkHistos_->Fill2DHisto("track_stripy_v_intime_isostripy_L"+std::to_string(trackhit_layer)+vol+"_hh", trackhit_y, isohit_y);
+                //if(std::abs(time_diff) <= 10.0)
+                //    trkHistos_->Fill2DHisto("track_stripy_v_intime_isostripy_L"+std::to_string(trackhit_layer)+vol+"_hh", trackhit_y, isohit_y);
             }
         }
     }//Loop on tracks
