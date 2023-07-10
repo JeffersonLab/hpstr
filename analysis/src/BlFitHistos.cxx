@@ -178,7 +178,7 @@ void BlFitHistos::iterativeGausFit(TH1D* hist, double min, double max, double si
         if(fitMean + fitSig*sigmaRange < threshold)
             max = fitMean + fitSig*sigmaRange;
         if(fitMean - fitSig*sigmaRange > minthresh)
-            min = fitMean - fitSig*sigmaRange;
+           min = fitMean - fitSig*sigmaRange;
         fit->SetRange(min,max);
         hist->Fit("fit","ORQN","");
 

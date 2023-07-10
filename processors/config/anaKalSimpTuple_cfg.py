@@ -83,8 +83,20 @@ recoana_kf.parameters["CalTimeOffset"] = CalTimeOffset
 #Region definitions
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/"
 
+<<<<<<< HEAD
 recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight.json',
                                               RegionPath+'radMatchTight.json']
+=======
+recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_dev.json',
+                                              RegionPath+'radMatchTight_2016_simp_reach_dev.json']
+
+#if options.region == "CR":
+#    recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_CR.json',
+#                                                  RegionPath+'radMatchTight_2016_simp_reach_CR.json']
+#elif options.region == "SR":
+#    recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_SR.json',
+#                                                  RegionPath+'radMatchTight_2016_simp_reach_SR.json']
+>>>>>>> bdcbb0cfb753803a5c57e93259b404173a3867ca
 
 #RecoHitAna
 recoana_gbl.parameters = recoana_kf.parameters.copy()

@@ -143,24 +143,25 @@ class BaseSelector {
          */
         void clearSelector() { passSelection = true; }
 
+    protected:
+        typedef std::map<std::string, std::pair<double, int>>::iterator cut_it; //!< description
+        std::map<std::string,std::pair<double, int>> cuts; //!< description
+        bool debug_{false}; //!< description
 
     private:
         json _h_selections; //!< description
-        std::string m_name{""}; //!< description
-        std::string m_cfgFile{""}; //!< description
         //string: cutname
         //double: cutvalue
         //int   : cut id (for cut flow book-keeping)
-        std::map<std::string,std::pair<double, int>> cuts; //!< description
         std::map<std::string,std::string> labels; //!< description
+        std::string m_name{""}; //!< description
+        std::string m_cfgFile{""}; //!< description
+        bool passSelection{false}; //!< description
 
-        bool debug_{false}; //!< description
         int ncuts_{0}; //!< description
         std::shared_ptr<TH1F> h_cf_; //!< description
 
-        bool passSelection{false}; //!< description
 
-        typedef std::map<std::string, std::pair<double, int>>::iterator cut_it; //!< description
 };
 
 #endif

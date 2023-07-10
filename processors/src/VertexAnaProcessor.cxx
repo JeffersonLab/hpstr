@@ -129,10 +129,10 @@ void VertexAnaProcessor::initialize(TTree* tree) {
 
             //clust vars
             _reg_tuples[regname]->addVariable("unc_vtx_ele_clust_E");
-            _reg_tuples[regname]->addVariable("unc_vtx_ele_clust_t");
+            _reg_tuples[regname]->addVariable("unc_vtx_ele_clust_corr_t");
 
             _reg_tuples[regname]->addVariable("unc_vtx_pos_clust_E");
-            _reg_tuples[regname]->addVariable("unc_vtx_pos_clust_t");
+            _reg_tuples[regname]->addVariable("unc_vtx_pos_clust_corr_t");
 
             if(!isData_)
             {

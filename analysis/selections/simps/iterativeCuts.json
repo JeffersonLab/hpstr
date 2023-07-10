@@ -1,0 +1,62 @@
+{
+    "unc_vtx_ele_track_chi2ndf_lt" : {
+        "cut"  : 15,
+        "id"   : 1,
+        "info" : "e^{-} Track #chi^{2}/Ndf<15"
+    },
+    "unc_vtx_pos_track_chi2ndf_lt" : {
+        "cut"  : 15,
+        "id"   : 2,
+        "info" : "e^{+} Track #chi^{2}/Ndf<15"
+    },
+    "unc_vtx_ele_track_p_lt" : {
+        "cut" : 1.75,
+        "id"  : 3,
+        "info" : "p e^{-}<1.75GeV"
+    },
+    "unc_vtx_ele_track_p_gt" : {
+        "cut" : 1.75,
+        "id"  : 4,
+        "info" : "p e^{-}<1.75GeV"
+    },
+    "unc_vtx_pos_track_p_lt" : {
+        "cut" : 0.4,
+        "id"  : 5,
+        "info" : "p_e^{-}>0.4 [GeV]"
+    },
+    "unc_vtx_pos_track_p_gt" : {
+        "cut" : 0.4,
+        "id"  : 6,
+        "info" : "p_e^{-}>0.4 [GeV]"
+    },
+    "unc_vtx_psum_gt" : {
+        "cut" : 0.4,
+        "id"  : 7,
+        "info" : "p_e^{+}>0.4 [GeV]"
+    },
+    "unc_vtx_psum_lt" : {
+        "cut" : 0.4,
+        "id"  : 8,
+        "info" : "p_e^{+}>0.4 [GeV]"
+    },
+    "unc_vtx_ele_clust_E_lt" : {
+        "cut" : 2.0,
+        "id"  : 9,
+        "info" : "e^{-} Cluster Energy < 2.0"
+    },
+    "unc_vtx_pos_clust_E_lt" : {
+        "cut" : 2.0,
+        "id"  : 10,
+        "info" : "e^{+} Cluster Energy < 2.0"
+    },
+    "unc_vtx_ele_track_zalpha_lt" : {
+        "cut" : 6.0,
+        "id"  : 11,
+        "info" : "e^{-} zalpha < 50.0"
+    },
+    "unc_vtx_pos_track_zalpha_lt" : {
+        "cut" : 6.0,
+        "id"  : 12,
+        "info" : "e^{+} zalpha < 50.0"
+    }
+}
