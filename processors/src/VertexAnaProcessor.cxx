@@ -777,6 +777,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 if (!_reg_vtx_selectors[region]->passCutLt("momAngle_lt", momAngle, weight)) continue;
 
                 if (!_reg_vtx_selectors[region]->passCutEq("isRadEle_eq", isRadEle, weight)) continue;
+                if (!_reg_vtx_selectors[region]->passCutEq("isNotRadEle_eq", isRadEle, weight)) continue;
                 if (!_reg_vtx_selectors[region]->passCutEq("isRecEle_eq", isRecEle, weight)) continue;
             }
 
@@ -831,6 +832,92 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             pos_trk_gbl = (Track*) pos_trk.Clone();
         }
 
+        //Get track isolations
+        //Only calculate isolations if L1 and L2 hits exist
+        bool hasL1ele = false;
+        bool hasL2ele = false;
+        _ah->InnermostLayerCheck(ele_trk_gbl, hasL1ele, hasL2ele);
+
+        bool hasL1pos = false;
+        bool hasL2pos = false;
+        _ah->InnermostLayerCheck(pos_trk_gbl, hasL1pos, hasL2pos);
+
+        if(hasL1ele && hasL2ele && hasL1pos && hasL2pos){
+            std::map<int, double> ele_isolations;
+            std::map<int, double> pos_isolations;
+            if (ele_trk_gbl->isKalmanTrack()){
+                ele_isolations = utils::getKFTrackIsolations(ele_trk_gbl, hits_);
+                pos_isolations = utils::getKFTrackIsolations(pos_trk_gbl, hits_);
+            }
+
+            double reconz = vtx->getZ(); 
+            //Only use isolation value from first layer L1
+            double ele_trk_z0 = ele_trk_gbl->getZ0();
+            double ele_trk_z0err = ele_trk_gbl->getZ0Err();
+            double ele_trk_iso_L1 = 0.0;
+            if(ele_trk_gbl->isTopTrack())
+                ele_trk_iso_L1 = ele_isolations[0];
+            else
+                ele_trk_iso_L1 = ele_isolations[1];
+
+            double pos_trk_iso_L1 = 0.0;
+            double pos_trk_z0 = pos_trk_gbl->getZ0();
+            double pos_trk_z0err = pos_trk_gbl->getZ0Err();
+            if(pos_trk_gbl->isTopTrack())
+                pos_trk_iso_L1 = pos_isolations[0];
+            else
+                pos_trk_iso_L1 = pos_isolations[1];
+            
+            //std::cout << ele_trk_iso_L1 << std::endl;
+            //construct isolation cut values
+            //double ratio = 0.41; //raatio of (L2Z - L1Z)/(L2Z - Ztarg)
+            double ratio = 0.50; //raatio of (L2Z - L1Z)/(L2Z - Ztarg)
+            double ele_A = (1.0/ratio)*(ele_trk_iso_L1/ele_trk_z0err);
+            double ele_B = ele_trk_z0/ele_trk_z0err;
+            double pos_A = (1.0/ratio)*(pos_trk_iso_L1/pos_trk_z0err);
+            double pos_B = pos_trk_z0/pos_trk_z0err;
+
+            //old version of isolation cut
+            double ele_iso = ele_trk_iso_L1 + 0.5*(ele_trk_z0 - 3.0*ele_trk_z0err);
+            double pos_iso = pos_trk_iso_L1 + 0.5*(pos_trk_z0 - 3.0*pos_trk_z0err);
+
+            _reg_vtx_histos[region]->Fill1DHisto("vtx_track_L1_isolation_h", ele_trk_iso_L1);
+            _reg_vtx_histos[region]->Fill1DHisto("vtx_track_L1_isolation_h", pos_trk_iso_L1);
+            _reg_vtx_histos[region]->Fill1DHisto("vtx_track_L1_isocut_comp_A_h",ele_A);
+            _reg_vtx_histos[region]->Fill1DHisto("vtx_track_L1_isocut_comp_A_h",pos_A);
+            _reg_vtx_histos[region]->Fill1DHisto("vtx_track_L1_isocut_comp_B_h",ele_B);
+            _reg_vtx_histos[region]->Fill1DHisto("vtx_track_L1_isocut_comp_B_h",pos_B);
+            _reg_vtx_histos[region]->Fill1DHisto("vtx_track_L1_isocut_h",ele_A + ele_B);
+            _reg_vtx_histos[region]->Fill1DHisto("vtx_track_L1_isocut_h",pos_A + pos_B);
+
+            if( (ele_A + ele_B > 3.0) && (pos_A + pos_B > 3.0) ){
+                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_reconz_v_isocut_gt_3_hh", ele_A + ele_B, reconz);
+                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_reconz_v_isocut_gt_3_hh", pos_A + pos_B, reconz);
+            }
+
+            if(ele_iso > 0.0 && pos_iso > 0.0){
+                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_gt_0_hh", ele_iso, reconz);
+                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_gt_0_hh", pos_iso, reconz);
+            }
+
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isocut_reconz_v_comp_A_hh", ele_A, reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isocut_reconz_v_comp_A_hh", pos_A, reconz);
+
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isocut_reconz_v_comp_B_hh", ele_B, reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isocut_reconz_v_comp_B_hh", pos_B, reconz);
+
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_reconz_v_isocut_hh", ele_A + ele_B, reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_reconz_v_isocut_hh", pos_A + pos_B, reconz);
+
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_hh", ele_iso, reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_hh", pos_iso, reconz);
+
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_reconz_v_isolation_hh", ele_trk_iso_L1, reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_reconz_v_isolation_hh", pos_trk_iso_L1, reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_reconz_v_Z0err_hh", ele_trk_z0err, reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_reconz_v_Z0err_hh", pos_trk_z0err, reconz);
+        }
+       
         TVector3 ele_mom;
         //ele_mom.SetX(ele->getMomentum()[0]);
         //ele_mom.SetY(ele->getMomentum()[1]);
