@@ -6,7 +6,6 @@
 //-----------------//
 #include <iostream>
 #include <string>
-#include <fstream>
 
 //----------//
 //   ROOT   //
@@ -83,12 +82,6 @@ class TrackingAnaProcessor : public Processor {
         // Track Selector configuration
         std::string selectionCfg_;
         std::shared_ptr<BaseSelector> trkSelector_; //!< description
-
-        // Beampos corrections
-        std::string beamPosCfg_{""}; //!< json containing run dep beamspot positions
-        json bpc_configs_; //!< json object
-        std::vector<double> beamPosCorrections_ = {0.0,0.0,0.0}; //!< holds beam position corrections
-        int run_number_ = -999;
 
         // Containers to hold histogrammer info
         std::string histCfgFilename_; //!< description
