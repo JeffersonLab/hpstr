@@ -134,10 +134,6 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
                     vol = "B";
 
                 bool isAxial = false;
-                //std::cout << "Hit Layer: " << trackhit_layer << std::endl;
-                //std::cout << "Hit Z: " << track_hit->getGlobalZ() << std::endl;
-                //std::cout << "Hit volume: " << trackhit_volume << std::endl;
-                //std::cout << "Vol: " << vol << std::endl;
                 if(trackhit_volume == 1){
                     if(trackhit_layer%2 == 1)
                         isAxial = true;
@@ -146,7 +142,6 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
                     if(trackhit_layer%2 == 0)
                         isAxial = true;
                 }
-                //std::cout << "Is Axial: " << isAxial << std::endl;
                 if(!isAxial)
                     continue;
                 if(trackhit_layer > 1)

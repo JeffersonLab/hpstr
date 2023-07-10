@@ -777,6 +777,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 if (!_reg_vtx_selectors[region]->passCutLt("momAngle_lt", momAngle, weight)) continue;
 
                 if (!_reg_vtx_selectors[region]->passCutEq("isRadEle_eq", isRadEle, weight)) continue;
+                if (!_reg_vtx_selectors[region]->passCutEq("isNotRadEle_eq", isRadEle, weight)) continue;
                 if (!_reg_vtx_selectors[region]->passCutEq("isRecEle_eq", isRecEle, weight)) continue;
             }
 
@@ -872,9 +873,9 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             //construct isolation cut values
             //double ratio = 0.41; //raatio of (L2Z - L1Z)/(L2Z - Ztarg)
             double ratio = 0.50; //raatio of (L2Z - L1Z)/(L2Z - Ztarg)
-            double ele_A = (1.0/ratio) * (ele_trk_iso_L1/ele_trk_z0err);
+            double ele_A = (1.0/ratio)*(ele_trk_iso_L1/ele_trk_z0err);
             double ele_B = ele_trk_z0/ele_trk_z0err;
-            double pos_A = (1.0/ratio) * (pos_trk_iso_L1/pos_trk_z0err);
+            double pos_A = (1.0/ratio)*(pos_trk_iso_L1/pos_trk_z0err);
             double pos_B = pos_trk_z0/pos_trk_z0err;
 
             //old version of isolation cut
