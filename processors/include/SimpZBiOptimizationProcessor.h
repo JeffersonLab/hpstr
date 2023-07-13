@@ -6,7 +6,7 @@
 #include "ZBiHistos.h"
 #include "IterativeCutSelector.h"
 #include "SimpEquations.h"
-#include "MutableTTree.h"
+#include "SimpAnaTTree.h"
 
 // ROOT 
 #include "TFile.h"
@@ -46,19 +46,21 @@ class SimpZBiOptimizationProcessor : public Processor {
 
         double calculateZBi(double n_on, double n_off, double tau);
 
-        bool failPersistentCuts(MutableTTree* MTT);
+        bool failPersistentCuts(SimpAnaTTree* MTT);
 
-        bool failTestCut(std::string cutname, MutableTTree* MTT);
+        bool failTestCut(std::string cutname, SimpAnaTTree* MTT);
 
         void writeGraph(TFile* outF, std::string folder, TGraph* g);
+
+        void writeTH1F(TFile* outF, std::string folder, TH1F* h);
 
         double round(double var);
 
         void getSignalMCAnaVtxZ_h(std::string signalMCAnaFilename, std::string signal_pdgid);
 
-        void addNewVariables(MutableTTree* MTT, std::string variable, double param);
+        void addNewVariables(SimpAnaTTree* MTT, std::string variable, double param);
 
-        void fillEventHistograms(std::shared_ptr<ZBiHistos> histos, MutableTTree* MTT);
+        void fillEventHistograms(std::shared_ptr<ZBiHistos> histos, SimpAnaTTree* MTT);
 
     private:
 
@@ -79,7 +81,7 @@ class SimpZBiOptimizationProcessor : public Processor {
         //Background config
         std::string bkgVtxAnaFilename_{""};
         std::string bkgVtxAnaTreename_{""};
-        MutableTTree* bkgMTT_{nullptr};
+        SimpAnaTTree* bkgMTT_{nullptr};
         double min_ztail_events_ = 0.5;
         double background_sf_;
 
@@ -90,7 +92,7 @@ class SimpZBiOptimizationProcessor : public Processor {
         std::string signalMCAnaFilename_{""};
         std::string signal_pdgid_{""};
         TH1F* signalSimZ_h_{nullptr};
-        MutableTTree* signalMTT_{nullptr};
+        SimpAnaTTree* signalMTT_{nullptr};
         double signal_sf_ = 1.0;
         double signal_mass_;
         double logEps2_;

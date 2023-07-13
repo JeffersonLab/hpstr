@@ -15,9 +15,6 @@ base.parser.add_argument("-new_vars_params", "--new_vars_params", type=float, de
 base.parser.add_argument("-cut_variables", "--cut_variables", type=str, dest="cut_variables",
         help="Specifcy cut variables to test", default=[], nargs='+')
 
-base.parser.add_argument("-s", "--zalpha_slope", type=float, dest="zalpha_slope",
-            help="Input slope of zalpha cut", metavar="zalpha_slope", default=0.0271352)
-
 base.parser.add_argument("-b", "--ztail_nevents", type=float, dest="ztail_nevents",
             help="Define Zcut based on n background events in background fit", metavar="ztail_nevents", default=0.5)
 
@@ -25,7 +22,10 @@ base.parser.add_argument("-z", "--scan_zcut", type=int, dest="scan_zcut",
             help="Choose best ZBi using Zcut Scan (1=yes, 0 = No)", metavar="scan_zcut", default=0)
 
 base.parser.add_argument("-m", "--step_size", type=float, dest="step_size",
-            help="Cut % of signal with each iteration", metavar="step_size", default=0.005)
+            help="Cut % of signal with each iteration", metavar="step_size", default=0.02)
+
+base.parser.add_argument("-e", "--logeps2", type=float, dest="logeps2",
+            help="Cut % of signal with each iteration", metavar="logeps2", default=-6.5)
 
 
 options = base.parser.parse_args()
@@ -53,13 +53,13 @@ logeps2 = -6.5
 
 zbi = HpstrConf.Processor('zbi','SimpZBiOptimizationProcessor')
 #basic config
-zbi.parameters['max_iteration'] = 5
+zbi.parameters['max_iteration'] = 90
 zbi.parameters['year'] = 2016
 zbi.parameters['debug'] = options.debug
 zbi.parameters['outFileName'] = options.outFilename
-zbi.parameters['scan_zcut'] = options.scan_zcut
-zbi.parameters['step_size'] = options.step_size
-zbi.parameters['ztail_events'] = options.ztail_nevents # 0.5
+zbi.parameters['scan_zcut'] = options.scan_zcut #1 will calculate ZBi as function of zcut position
+zbi.parameters['step_size'] = options.step_size #Specify %variable in signal to cut with each iteration
+zbi.parameters['ztail_events'] = options.ztail_nevents # 0.5 is the minimum allowed. ZBi calc breaks if 0.0
 
 #json configs
 zbi.parameters['variableHistCfgFilename'] = '/sdf/group/hps/users/alspellm/src/test/hpstr/analysis/plotconfigs/tracking/zbiCutVariables.json'
@@ -67,10 +67,7 @@ zbi.parameters['cuts_cfgFile'] = '/sdf/group/hps/users/alspellm/src/test/hpstr/a
 zbi.parameters['eq_cfgFile'] = '/sdf/group/hps/users/alspellm/src/test/hpstr/analysis/selections/simps/simp_parameters.json'
 
 #new variable configs
-zbi.parameters['zalpha_slope'] = options.zalpha_slope
-
 zbi.parameters['cutVariables'] = options.cut_variables
-
 zbi.parameters['add_new_variables'] = options.new_vars
 zbi.parameters['new_variable_params'] = options.new_vars_params
 
@@ -78,12 +75,13 @@ zbi.parameters['new_variable_params'] = options.new_vars_params
 zbi.parameters['testSpecialCut'] = 0
 
 #background config
-zbi.parameters['bkgVtxAnaFilename'] = '/sdf/group/hps/users/alspellm/projects/collaboration_meetings/may_2023/kf_data/kf_041823/output/hadd_hps_BLPass4_1958_files_recon_4.2_ana_kf.root'
+zbi.parameters['bkgVtxAnaFilename'] = '/sdf/group/hps/users/alspellm/projects/THESIS/data/2016/BLPass4/ana/20230526/hadd_BLPass4_recon_4.2_ana_kf.root'
 zbi.parameters['bkgVtxAnaTreename'] = 'vtxana_kf_Tight_2016_simp_reach_dev/vtxana_kf_Tight_2016_simp_reach_dev_tree'
-zbi.parameters['background_sf'] = 10.0
+zbi.parameters['background_sf'] = 1.0
 
 #mc signal config
-zbi.parameters['signal_sf'] = 1.0
+#zbi.parameters['signal_sf'] = 1.0
+zbi.parameters['signal_sf'] = 0.1
 zbi.parameters['signal_mass'] = options.mass
 zbi.parameters['mass_window_nsigma'] = 2.8
 zbi.parameters['signalVtxAnaFilename'] = '/sdf/group/hps/users/alspellm/projects/THESIS/cut_dev/zbravo_dev_04242023/signal/kf/ana/hadd_mass_55_simp_recon_KF_ana.root'
@@ -91,7 +89,7 @@ zbi.parameters['signalVtxAnaTreename'] = 'vtxana_kf_radMatchTight_2016_simp_reac
 zbi.parameters['signalMCAnaFilename'] = '/sdf/group/hps/users/alspellm/projects/THESIS/mc/2016/simps/slic_ana/hadd_mass_55_simp_mcAna.root'
 zbi.parameters['signal_pdgid'] = '625'
 
-zbi.parameters['logEps2'] = logeps2
+zbi.parameters['logEps2'] = options.logeps2
 
 
 # Sequence which the processors will run.
