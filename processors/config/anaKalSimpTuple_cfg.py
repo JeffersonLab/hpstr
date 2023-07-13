@@ -64,8 +64,8 @@ recoana_kf.parameters["analysis"] = options.analysis
 recoana_kf.parameters["debug"] = 0
 recoana_kf.parameters["isRadPDG"] = options.isRadPDG
 recoana_kf.parameters["makeFlatTuple"] = options.makeFlatTuple
-recoana_kf.parameters["beamPosCfg"] = options.bpc
-#recoana_kf.parameters["beamPosCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/beamspot_positions_2016.json'
+#recoana_kf.parameters["beamPosCfg"] = options.bpc
+recoana_kf.parameters["beamPosCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/beamspot_positions_2016.json'
 
 CalTimeOffset = -999
 
@@ -83,21 +83,8 @@ recoana_kf.parameters["CalTimeOffset"] = CalTimeOffset
 #Region definitions
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/"
 
-<<<<<<< HEAD
-recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight.json',
-                                              RegionPath+'radMatchTight.json']
-=======
 recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_dev.json',
                                               RegionPath+'radMatchTight_2016_simp_reach_dev.json']
-
-#if options.region == "CR":
-#    recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_CR.json',
-#                                                  RegionPath+'radMatchTight_2016_simp_reach_CR.json']
-#elif options.region == "SR":
-#    recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight_2016_simp_reach_SR.json',
-#                                                  RegionPath+'radMatchTight_2016_simp_reach_SR.json']
->>>>>>> bdcbb0cfb753803a5c57e93259b404173a3867ca
-
 #RecoHitAna
 recoana_gbl.parameters = recoana_kf.parameters.copy()
 recoana_gbl.parameters["anaName"] = "vtxana_gbl"
