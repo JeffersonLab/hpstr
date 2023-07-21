@@ -8,7 +8,7 @@ base.parser.add_argument("-w", "--tracking", type=str, dest="tracking",
                          help="Which tracking to use to make plots", 
                          metavar="tracking", default="KF")
 base.parser.add_argument("-TS", "--trackstate", type=str, dest="trackstate",
-                         help="Specify Track State | 'AtECal', 'AtTarget'. Default is origin ",  metavar="trackstate", default="AtTarget")
+                         help="Specify Track State | 'AtECal', 'AtTarget'. Default is origin ",  metavar="trackstate", default="")
 base.parser.add_argument("-s", "--truthHits", type=int, dest="svtHits",
                          help="Get svt hits: 1=yes", metavar="svtHits", default=1)
 base.parser.add_argument("-r", "--rawHits", type=int, dest="rawHits",
@@ -38,6 +38,7 @@ p.add_library("libprocessors")
 ###############################
 header = HpstrConf.Processor('header', 'EventProcessor')
 track = HpstrConf.Processor('track', 'TrackingProcessor')
+targtrack = HpstrConf.Processor('targtrack', 'TrackingProcessor')
 trackgbl = HpstrConf.Processor('trackgbl', 'TrackingProcessor')
 trackrefitgbl = HpstrConf.Processor('trackrefitgbl', 'TrackingProcessor')
 svthits = HpstrConf.Processor('svthitskf', 'Tracker2DHitProcessor')
@@ -74,6 +75,7 @@ svthits.parameters["debug"] = 0
 svthits.parameters["hitCollLcio"] = 'StripClusterer_SiTrackerHitStrip1D'
 svthits.parameters["hitCollRoot"] = 'SiClusters'
 svthits.parameters["mcPartRelLcio"] = 'SVTTrueHitRelations'
+svthits.parameters["hitFitCollLcio"] = 'SVTFittedRawTrackerHits'
 
 # Tracker3DHits
 svthitsgbl.parameters["debug"] = 0
@@ -90,12 +92,20 @@ track.parameters["kinkRelCollLcio"] = ''
 track.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 track.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
-
 track.parameters["bfield"] = bfield[str(options.year)]
-
-# Only for detail studies
-# LT uncomment
 track.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack_KF'
+
+# Target Tracks
+targtrack.parameters["debug"] = 0
+targtrack.parameters["trkCollLcio"] = 'KalmanFullTracks'
+targtrack.parameters["trkCollRoot"] = 'KalmanFullTracksAtTarget'
+targtrack.parameters["trackStateLocation"] = 'AtTarget'
+targtrack.parameters["kinkRelCollLcio"] = ''
+targtrack.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
+targtrack.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
+targtrack.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
+#targtrack.parameters["bfield"] = bfield[str(options.year)]
+targtrack.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack_KF'
 
 # LT uncommented
 # if (not options.isData):
@@ -170,7 +180,7 @@ mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
 if (options.tracking == "KF"):
-    sequence = [header, vtx, ecal, track]
+    sequence = [header, vtx, ecal, track, targtrack]
     # Get KF svt truth hits
     if (options.svtHits > 0):
         sequence.append(svthits)

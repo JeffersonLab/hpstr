@@ -538,6 +538,41 @@
         "xtitle" : "p_{e^{-}} [GeV]",
         "ytitle" : "Tracks"
     },
+    "ele_D0_err_h" : {
+        "bins" : 500,
+        "minX" : 0,
+        "maxX" : 10,
+        "xtitle" : "e^{-} d_{0} [mm]",
+        "ytitle" : "Tracks"
+    },
+    "ele_Phi_err_h" : {
+        "bins" : 100,
+        "minX" : 0.0,
+        "maxX" : 0.1,
+        "xtitle" : "e^{-} phi_{0}",
+        "ytitle" : "Tracks"
+    },
+    "ele_Omega_err_h" : {
+        "bins" : 100,
+        "minX" : 0.0,
+        "maxX" : 0.0005,
+        "xtitle" : "e^{-} #omega",
+        "ytitle" : "Tracks"
+    },
+    "ele_TanLambda_err_h" : {
+        "bins" : 150,
+        "minX" : 0.0,
+        "maxX" : 0.015,
+        "xtitle" : "e^{-} tan(#lambda)",
+        "ytitle" : "Tracks"
+    },
+    "ele_Z0_err_h" : {
+        "bins" : 200,
+        "minX" : -0.0,
+        "maxX" : 2.0,
+        "xtitle" : "e^{-} z_0 [mm]",
+        "ytitle" : "Tracks"
+    },
     "ele_tanlambda_vs_phi0_hh" : {
         "binsX"  : 100,
         "minX"   : -0.4,
@@ -701,6 +736,41 @@
         "xtitle" : "p_{e^{+}} [GeV]",
         "ytitle" : "Tracks"
     },
+    "pos_D0_err_h" : {
+        "bins" : 500,
+        "minX" : 0,
+        "maxX" : 10,
+        "xtitle" : "e^{+} d_{0} [mm]",
+        "ytitle" : "Tracks"
+    },
+    "pos_Phi_err_h" : {
+        "bins" : 100,
+        "minX" : 0.0,
+        "maxX" : 0.1,
+        "xtitle" : "e^{+} phi_{0}",
+        "ytitle" : "Tracks"
+    },
+    "pos_Omega_err_h" : {
+        "bins" : 100,
+        "minX" : 0.0,
+        "maxX" : 0.0005,
+        "xtitle" : "e^{+} #omega",
+        "ytitle" : "Tracks"
+    },
+    "pos_TanLambda_err_h" : {
+        "bins" : 150,
+        "minX" : 0.0,
+        "maxX" : 0.015,
+        "xtitle" : "e^{+} tan(#lambda)",
+        "ytitle" : "Tracks"
+    },
+    "pos_Z0_err_h" : {
+        "bins" : 200,
+        "minX" : -0.0,
+        "maxX" : 2.0,
+        "xtitle" : "e^{+} z_0 [mm]",
+        "ytitle" : "Tracks"
+    },
     "pos_tanlambda_vs_phi0_hh" : {
         "binsX"  : 100,
         "minX"   : -0.4,
@@ -783,6 +853,20 @@
         "minX" : -50.3,
         "maxX" : 149.7,
         "xtitle" : "MC z_{pdg=622} [mm]",
+        "ytitle" : "Vertices / 1 mm"
+    },
+    "mcMass625_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 0.2,
+        "xtitle" : "MC m_{pdg=625} [GeV]",
+        "ytitle" : "Vertices"
+    },
+    "mcZ625_h" : {
+        "bins" : 200,
+        "minX" : -50.3,
+        "maxX" : 149.7,
+        "xtitle" : "MC z_{pdg=625} [mm]",
         "ytitle" : "Vertices / 1 mm"
     },
     "n_vertices_h" : {
@@ -1161,65 +1245,95 @@
         "xtitle" : "(trackhit - isohit) dy [mm]",
         "ytitle" : "Events"
     },
-    "vtx_track_L1_isocut_comp_A_h" : {
+    "vtx_track_L1_isolation_cut_comp_A_h" : {
         "bins" : 500,
         "minX" : 0.0,
         "maxX" : 50.0,
         "xtitle" : "1/R * #delta/#DeltaZ0",
         "ytitle" : "Events"
     },
-    "vtx_track_L1_isocut_comp_B_h" : {
+    "vtx_track_L1_isolation_cut_comp_B_h" : {
         "bins" : 500,
         "minX" : 0.0,
         "maxX" : 50.0,
-        "xtitle" : "Z0/#DeltaZ0",
+        "xtitle" : "|Z0|/#DeltaZ0",
         "ytitle" : "Events"
     },
-    "vtx_track_L1_isocut_h" : {
+    "vtx_track_L1_isolation_cut_h" : {
         "bins" : 500,
         "minX" : 0.0,
         "maxX" : 50.0,
-        "xtitle" : "1/R * #delta/#DeltaZ0 + Z0/#DeltaZ0",
+        "xtitle" : "2#delta/#DeltaZ0 - |Z0|/#DeltaZ0",
         "ytitle" : "Events"
     },
-    "vtx_track_L1_isocut_reconz_v_comp_A_hh" : {
+    "vtx_track_L1_isolation_cut_reconz_v_comp_A_hh" : {
         "binsX" : 500,
         "minX"  : 0.0,
         "maxX"  : 50.0,
         "binsY" : 500,
         "minY"  : -50.0,
         "maxY"  : 50.0,
-        "xtitle": "1/R * #delta/#DeltaZ0",
+        "xtitle": "2#delta/#DeltaZ0",
         "ytitle": "recon z [mm]"
     },
-    "vtx_track_L1_isocut_reconz_v_comp_B_hh" : {
+    "vtx_track_L1_isolation_cut_reconz_v_comp_B_hh" : {
+        "binsX" : 500,
+        "minX"  : 0.0,
+        "maxX"  : 50.0,
+        "binsY" : 500,
+        "minY"  : -50.0,
+        "maxY"  : 50.0,
+        "xtitle": "|Z0|/#DeltaZ0",
+        "ytitle": "recon z [mm]"
+    },
+    "vtx_track_L1_isolation_cut_hh" : {
         "binsX" : 500,
         "minX"  : -50.0,
         "maxX"  : 50.0,
         "binsY" : 500,
         "minY"  : -50.0,
         "maxY"  : 50.0,
-        "xtitle": "Z0/#DeltaZ0",
+        "xtitle": "2#delta/#DeltaZ0 - |Z0|/#DeltaZ0",
         "ytitle": "recon z [mm]"
     },
-    "vtx_track_L1_reconz_v_isocut_hh" : {
+    "vtx_track_L1_isolation_cut_goodL1hit_hh" : {
         "binsX" : 500,
         "minX"  : -50.0,
         "maxX"  : 50.0,
         "binsY" : 500,
         "minY"  : -50.0,
         "maxY"  : 50.0,
-        "xtitle": "1/R * #delta/#DeltaZ0 + Z0/#DeltaZ0",
+        "xtitle": "2#delta/#DeltaZ0 - |Z0|/#DeltaZ0",
         "ytitle": "recon z [mm]"
     },
-    "vtx_track_L1_reconz_v_isocut_gt_3_hh" : {
+    "vtx_track_L1_isolation_cut_badL1hit_hh" : {
         "binsX" : 500,
         "minX"  : -50.0,
         "maxX"  : 50.0,
         "binsY" : 500,
         "minY"  : -50.0,
         "maxY"  : 50.0,
-        "xtitle": "1/R * #delta/#DeltaZ0 + Z0/#DeltaZ0 > 3.0",
+        "xtitle": "2#delta/#DeltaZ0 - |Z0|/#DeltaZ0",
+        "ytitle": "recon z [mm]"
+    },
+    "vtx_track_L1_isolation_cut_top_hh" : {
+        "binsX" : 500,
+        "minX"  : -50.0,
+        "maxX"  : 50.0,
+        "binsY" : 500,
+        "minY"  : -50.0,
+        "maxY"  : 50.0,
+        "xtitle": "2#delta/#DeltaZ0 - |Z0|/#DeltaZ0",
+        "ytitle": "recon z [mm]"
+    },
+    "vtx_track_L1_isolation_cut_bottom_hh" : {
+        "binsX" : 500,
+        "minX"  : -50.0,
+        "maxX"  : 50.0,
+        "binsY" : 500,
+        "minY"  : -50.0,
+        "maxY"  : 50.0,
+        "xtitle": "2#delta/#DeltaZ0 - |Z0|/#DeltaZ0",
         "ytitle": "recon z [mm]"
     },
     "vtx_track_2016_ana_isolation_cut_hh" : {
@@ -1232,19 +1346,49 @@
         "xtitle": "#delta + 0.5*(Z0 - 3.0*#DeltaZ0)",
         "ytitle": "recon z [mm]"
     },
-    "vtx_track_2016_ana_isolation_cut_gt_0_hh" : {
+    "vtx_track_2016_ana_isolation_cut_goodL1hit_hh" : {
         "binsX" : 1000,
         "minX"  : -50.0,
         "maxX"  : 50.0,
         "binsY" : 500,
         "minY"  : -50.0,
         "maxY"  : 50.0,
-        "xtitle": "#delta + 0.5*(Z0 - 3.0*#DeltaZ0) > 0",
+        "xtitle": "#delta + 0.5*(Z0 - 3.0*#DeltaZ0)",
+        "ytitle": "recon z [mm]"
+    },
+    "vtx_track_2016_ana_isolation_cut_badL1hit_hh" : {
+        "binsX" : 1000,
+        "minX"  : -50.0,
+        "maxX"  : 50.0,
+        "binsY" : 500,
+        "minY"  : -50.0,
+        "maxY"  : 50.0,
+        "xtitle": "#delta + 0.5*(Z0 - 3.0*#DeltaZ0)",
+        "ytitle": "recon z [mm]"
+    },
+    "vtx_track_2016_ana_isolation_cut_top_hh" : {
+        "binsX" : 1000,
+        "minX"  : -50.0,
+        "maxX"  : 50.0,
+        "binsY" : 500,
+        "minY"  : -50.0,
+        "maxY"  : 50.0,
+        "xtitle": "#delta + 0.5*(Z0 - 3.0*#DeltaZ0)",
+        "ytitle": "recon z [mm]"
+    },
+    "vtx_track_2016_ana_isolation_cut_bottom_hh" : {
+        "binsX" : 1000,
+        "minX"  : -50.0,
+        "maxX"  : 50.0,
+        "binsY" : 500,
+        "minY"  : -50.0,
+        "maxY"  : 50.0,
+        "xtitle": "#delta + 0.5*(Z0 - 3.0*#DeltaZ0)",
         "ytitle": "recon z [mm]"
     },
     "vtx_track_reconz_v_isolation_hh" : {
         "binsX" : 1000,
-        "minX"  : -50.0,
+        "minX"  : 0.0,
         "maxX"  : 50.0,
         "binsY" : 500,
         "minY"  : -50.0,

@@ -323,10 +323,14 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
             if(track_datum->getNFloat() > 4){
                 if (loc == trackstateLocationMap_[""])
                     bfieldY = track_datum->getFloatVal(4);
-                if (loc == trackstateLocationMap_["LastLocation"])
-                    bfieldY = track_datum->getFloatVal(5);
+                if (loc == trackstateLocationMap_["AtTarget"]){
+                    bfieldY = -0.422; //2016 hardcode. Had bug in reocn files
+                    //bfieldY = track_datum->getFloatVal(5); <-- correct line, temp need above 7/18/23
+                }
                 if (loc == trackstateLocationMap_["AtCalorimeter"])
                     bfieldY = track_datum->getFloatVal(6);
+                //For now, don't use the AtIP Bfield. Hps-java still uses bfield at SVT center to convert
+                //1/pt to curvature, so does not actually use bfield at origin
                 if (bfieldY != -999.9 && loc != trackstateLocationMap_[""])
                     track->setMomentum(bfieldY);
             }
@@ -561,6 +565,110 @@ bool utils::getParticlesFromVertex(Vertex* vtx, Particle* ele, Particle* pos) {
     return true;
 }
 
+std::pair<double, double> utils::getKalmanTrackL1Isolations(Track* track, std::vector<TrackerHit*>* siClusters){
+    std::pair<double, double> L1_isolations;
+    double L1_axial_iso = 999999.9;
+    double L1_stereo_iso = 999999.9;
+    //Loop over hits on track
+    for(int i = 0; i < track->getSvtHits().GetEntries(); i++){
+        TrackerHit* track_hit = (TrackerHit*)track->getSvtHits().At(i);
+        //Track hit info
+        int trackhit_id = track_hit->getID();
+        int trackhit_layer = track_hit->getLayer();
+        int trackhit_volume = track_hit->getVolume();
+        double trackhit_y = track_hit->getGlobalY();
+        double trackhit_charge = track_hit->getRawCharge();
+        double trackhit_time = track_hit->getTime();
+
+        //Only look at L1
+        if(trackhit_layer > 1)
+            continue;
+
+        //Get rawhit strip information
+        std::vector<int> trackhit_rawhits = track_hit->getRawHitStripNumbers();
+        int trackhit_maxstrip = *max_element(trackhit_rawhits.begin(), trackhit_rawhits.end());
+        int trackhit_minstrip = *min_element(trackhit_rawhits.begin(), trackhit_rawhits.end());
+
+
+        //Isolation only calculated for axial sensors (sensitive to global y)
+        bool isAxial = false;
+        //Axial/Stereo Top/Bot mapping
+        if(trackhit_volume == 1){
+            if(trackhit_layer%2 == 1)
+                isAxial = true;
+        }
+        if(trackhit_volume == 0){
+            if(trackhit_layer%2 == 0)
+                isAxial = true;
+        }
+
+        //Loop over all SiClusters in event
+        //Find closest/best alternative SiCluster to track hit 
+        TrackerHit* closest_althit = nullptr;
+        double isohit_dy = 999999.9;
+        double closest_dcharge = 99999.9;
+        double closest_dt = 999999.9;
+        double isohit_y = 999999.9;
+
+        for(int j = 0; j < siClusters->size(); j++){
+            TrackerHit* althit = siClusters->at(j);
+            int althit_id = althit->getID();
+            int althit_volume = althit->getVolume();
+            int althit_layer = althit->getLayer();
+            double althit_y = althit->getGlobalY();
+            double althit_charge = althit->getRawCharge();
+            double althit_time = althit->getTime();
+
+            //Skip if SiCluster not on same layer as track hit
+            if (althit_layer != trackhit_layer)
+                continue;
+
+            //Skip if volume doesn't match
+            if(althit_volume != trackhit_volume)
+                continue;
+
+            //Skip same hit
+            if (althit_id == trackhit_id)
+                continue;
+
+            //Only look at hits that are further from beam-axis in Global Y
+            if ( (trackhit_volume == 0 && althit_y < trackhit_y) ||
+                    (trackhit_volume == 1 && althit_y > trackhit_y))
+                continue;
+
+            //Require alternative hits to be within +-30ns (based on SiClustersOnTrack t distr)
+            if(std::abs(althit_time) > 30.0)
+                continue;
+
+            //Skip adjacent rawhits
+            std::vector<int> althit_rawhits = althit->getRawHitStripNumbers();
+            int althit_maxstrip = *max_element(althit_rawhits.begin(), althit_rawhits.end());
+            int althit_minstrip = *min_element(althit_rawhits.begin(), althit_rawhits.end());
+            if(trackhit_minstrip - althit_maxstrip <= 1 && althit_minstrip - trackhit_maxstrip <= 1)
+                continue;
+
+            //Pick closest alternative hit
+            if (std::abs(trackhit_y - althit_y) < isohit_dy){
+                isohit_dy = std::abs(trackhit_y-althit_y);
+                closest_althit = althit;
+                closest_dcharge = trackhit_charge - althit_charge;
+                closest_dt = trackhit_time - althit_time;
+                isohit_y = althit_y;
+            }
+        }
+
+        if(isAxial)
+            L1_axial_iso = isohit_dy;
+        else
+            L1_stereo_iso = isohit_dy;
+
+    }
+    L1_isolations.first = L1_axial_iso;
+    L1_isolations.second = L1_stereo_iso;
+    
+    return L1_isolations;
+}
+
 std::map<int, double> utils::getKFTrackIsolations(Track* track, std::vector<TrackerHit*>* siClusters){
 
     //Holds pair<layer,volume>
@@ -635,7 +743,7 @@ std::map<int, double> utils::getKFTrackIsolations(Track* track, std::vector<Trac
             //Require alternative hits to be within +-30ns (based on SiClustersOnTrack t distr)
             if(std::abs(althit_time) > 30.0)
                 continue;
-            
+
             //Skip adjacent rawhits
             std::vector<int> althit_rawhits = althit->getRawHitStripNumbers();
             int althit_maxstrip = *max_element(althit_rawhits.begin(), althit_rawhits.end());

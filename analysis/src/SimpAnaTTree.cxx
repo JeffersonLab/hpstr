@@ -357,3 +357,73 @@ void SimpAnaTTree::addVariableZalpha(double slope){
     };
     functions_["unc_vtx_pos_track_zalpha"] = calculateZalpha_pos;
 }
+
+void SimpAnaTTree::addVariableIsolationZ0Error(){
+    double* ele_iso_z0err = new double{9999.9};
+    tuple_["unc_vtx_ele_iso_z0err"] = ele_iso_z0err;
+    newtree_->Branch("unc_vtx_ele_iso_z0err", tuple_["unc_vtx_ele_iso_z0err"], "unc_vtx_ele_iso_z0err/D");
+    new_variables_["unc_vtx_ele_iso_z0err"] = ele_iso_z0err;
+
+    std::function<double()> calculateIsolationZ0Error_ele = [&]()->double{
+        return 2.0* *tuple_["unc_vtx_ele_track_L1_isolation"] / *tuple_["unc_vtx_ele_track_z0Err"];
+    };
+    functions_["unc_vtx_ele_iso_z0err"] = calculateIsolationZ0Error_ele;
+
+    double* pos_iso_z0err = new double{9999.9};
+    tuple_["unc_vtx_pos_iso_z0err"] = pos_iso_z0err;
+    newtree_->Branch("unc_vtx_pos_iso_z0err", tuple_["unc_vtx_pos_iso_z0err"], "unc_vtx_pos_iso_z0err/D");
+    new_variables_["unc_vtx_pos_iso_z0err"] = pos_iso_z0err;
+
+    std::function<double()> calculateIsolationZ0Error_pos = [&]()->double{
+        return 2.0* *tuple_["unc_vtx_pos_track_L1_isolation"] / *tuple_["unc_vtx_pos_track_z0Err"];
+    };
+    functions_["unc_vtx_pos_iso_z0err"] = calculateIsolationZ0Error_pos;
+}
+
+void SimpAnaTTree::addVariableZ0vsZ0Error(){
+    double* ele_z0_z0err = new double{9999.9};
+    tuple_["unc_vtx_ele_z0_z0err"] = ele_z0_z0err;
+    newtree_->Branch("unc_vtx_ele_z0_z0err", tuple_["unc_vtx_ele_z0_z0err"], "unc_vtx_ele_z0_z0err/D");
+    new_variables_["unc_vtx_ele_z0_z0err"] = ele_z0_z0err;
+
+    std::function<double()> calculate_ratio_Z0_Z0Error_ele = [&]()->double{
+        return std::abs(*tuple_["unc_vtx_ele_track_z0"])/ *tuple_["unc_vtx_ele_track_z0Err"];
+    };
+    functions_["unc_vtx_ele_z0_z0err"] = calculate_ratio_Z0_Z0Error_ele;
+
+    double* pos_z0_z0err = new double{9999.9};
+    tuple_["unc_vtx_pos_z0_z0err"] = pos_z0_z0err;
+    newtree_->Branch("unc_vtx_pos_z0_z0err", tuple_["unc_vtx_pos_z0_z0err"], "unc_vtx_pos_z0_z0err/D");
+    new_variables_["unc_vtx_pos_z0_z0err"] = pos_z0_z0err;
+
+    std::function<double()> calculate_ratio_Z0_Z0Error_pos = [&]()->double{
+        return std::abs(*tuple_["unc_vtx_pos_track_z0"])/ *tuple_["unc_vtx_pos_track_z0Err"];
+    };
+    functions_["unc_vtx_pos_z0_z0err"] = calculate_ratio_Z0_Z0Error_pos;
+}
+
+void SimpAnaTTree::addVariableIsolationCut(){
+    std::cout << "[SimpAnaTTree]::adding variable Isolation Cut " << std::endl;
+    double* ele_isolation = new double{9999.9};
+    tuple_["unc_vtx_ele_isolation_cut"] = ele_isolation;
+    newtree_->Branch("unc_vtx_ele_isolation_cut", tuple_["unc_vtx_ele_isolation_cut"], "unc_vtx_ele_isolation_cut/D");
+    new_variables_["unc_vtx_ele_isolation_cut"] = ele_isolation;
+
+    std::function<double()> calculateIsolation_ele = [&]()->double{
+
+        return ( (2.0* *tuple_["unc_vtx_ele_track_L1_isolation"] / *tuple_["unc_vtx_ele_track_z0Err"]) - (std::abs(*tuple_["unc_vtx_ele_track_z0"])/ *tuple_["unc_vtx_ele_track_z0Err"]) );
+    };
+    functions_["unc_vtx_ele_isolation_cut"] = calculateIsolation_ele;
+
+    double* pos_isolation = new double{9999.9};
+    tuple_["unc_vtx_pos_isolation_cut"] = pos_isolation;
+    newtree_->Branch("unc_vtx_pos_isolation_cut", tuple_["unc_vtx_pos_isolation_cut"], "unc_vtx_pos_isolation_cut/D");
+    new_variables_["unc_vtx_pos_isolation_cut"] = pos_isolation;
+
+    std::function<double()> calculateIsolation_pos = [&]()->double{
+
+        return ( (2.0* *tuple_["unc_vtx_pos_track_L1_isolation"] / *tuple_["unc_vtx_pos_track_z0Err"]) - (std::abs(*tuple_["unc_vtx_pos_track_z0"])/ *tuple_["unc_vtx_pos_track_z0Err"]) );
+    };
+    functions_["unc_vtx_pos_isolation_cut"] = calculateIsolation_pos;
+}
+

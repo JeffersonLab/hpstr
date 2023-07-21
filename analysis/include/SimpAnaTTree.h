@@ -37,6 +37,10 @@ class SimpAnaTTree : public MutableTTree {
         void addVariableZalphaTopPos(double slope);
         void addVariableZalphaBotPos(double slope);
 
+        void addVariableIsolationZ0Error();
+        void addVariableZ0vsZ0Error();
+        void addVariableIsolationCut();
+
         //misc
         bool impactParameterCut2016Canonical(double mass);
         bool testImpactParameterCut();

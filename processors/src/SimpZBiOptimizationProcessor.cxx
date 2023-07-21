@@ -103,6 +103,15 @@ void SimpZBiOptimizationProcessor::addNewVariables(SimpAnaTTree* MTT, std::strin
     else if(variable == "unc_vtx_track_zbravoalpha_bot")
         MTT->addVariableZalphaBot(param);
 
+    else if(variable == "unc_vtx_iso_z0err")
+        MTT->addVariableIsolationZ0Error();
+    
+    else if(variable == "unc_vtx_z0_z0err")
+        MTT->addVariableZ0vsZ0Error();
+    
+    else if(variable == "unc_vtx_isolation_cut")
+        MTT->addVariableIsolationCut();
+
     else
         std::cout << "[SimpZBiOptimization]::ERROR::NEW VARIABLE " << variable << " IS NOT DEFINED IN SimpAnaTTree.cxx"
             <<std::endl;
@@ -173,6 +182,24 @@ void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos
             histos->Fill2DHisto("zbravo_v_zbravoalpha_hh",MTT->getValue("unc_vtx_track_zbravoalpha_bot"),
                     MTT->getValue("unc_vtx_pos_track_zbravo"));
         }
+    }
+
+    //isolation cut
+    if(MTT->variableExists("unc_vtx_iso_z0err")){
+        histos->Fill2DHisto("recon_z_v_iso_z0err_hh", MTT->getValue("unc_vtx_ele_iso_z0err"),MTT->getValue("unc_vtx_z"));
+        histos->Fill2DHisto("recon_z_v_iso_z0err_hh", MTT->getValue("unc_vtx_pos_iso_z0err"),MTT->getValue("unc_vtx_z"));
+    }
+    if(MTT->variableExists("unc_vtx_z0_z0err")){
+        histos->Fill2DHisto("recon_z_v_z0_z0err_hh", MTT->getValue("unc_vtx_ele_z0_z0err"),MTT->getValue("unc_vtx_z"));
+        histos->Fill2DHisto("recon_z_v_z0_z0err_hh", MTT->getValue("unc_vtx_pos_z0_z0err"),MTT->getValue("unc_vtx_z"));
+    }
+    if(MTT->variableExists("unc_vtx_z0_z0err")){
+        histos->Fill2DHisto("recon_z_v_z0_z0err_hh", MTT->getValue("unc_vtx_ele_z0_z0err"),MTT->getValue("unc_vtx_z"));
+        histos->Fill2DHisto("recon_z_v_z0_z0err_hh", MTT->getValue("unc_vtx_pos_z0_z0err"),MTT->getValue("unc_vtx_z"));
+    }
+    if(MTT->variableExists("unc_vtx_isolation_cut")){
+        histos->Fill2DHisto("recon_z_v_isolation_cut_hh", MTT->getValue("unc_vtx_ele_isolation_cut"),MTT->getValue("unc_vtx_z"));
+        histos->Fill2DHisto("recon_z_v_isolation_cut_hh", MTT->getValue("unc_vtx_pos_isolation_cut"),MTT->getValue("unc_vtx_z"));
     }
 }
 
