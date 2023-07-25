@@ -1163,57 +1163,92 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_hh", ele_A - ele_B, reconz);
             _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_hh", pos_A - pos_B, reconz);
 
+            //Charge separated
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_ele_hh", ele_A - ele_B, reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_pos_hh", pos_A - pos_B, reconz);
+
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_ele_vs_pos_isolation_hh", ele_trk_iso_L1, pos_trk_iso_L1);
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_ele_vs_pos_isolation_cut_hh", ele_A-ele_B, pos_A-pos_B);
+
             //old version of isolation cut
             double old_ele_isolation_cut = ele_trk_iso_L1 + 0.5*(-std::abs(ele_trk_z0) - 3.0*ele_trk_z0err);
             double old_pos_isolation_cut = pos_trk_iso_L1 + 0.5*(-std::abs(pos_trk_z0) - 3.0*pos_trk_z0err);
             _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_hh", old_ele_isolation_cut, reconz);
             _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_hh", old_pos_isolation_cut, reconz);
 
+            if(!isData_){
+                if( (ele_trueL1Axial > 0.0 || ele_trueL1Stereo > 0.0) && (pos_trueL1Axial > 0.0 || pos_trueL1Stereo > 0.0 )){
+
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_ele_vs_pos_isolation_goodL1hit_hh", ele_trk_iso_L1, pos_trk_iso_L1);
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_ele_vs_pos_isolation_cut_goodL1hit_hh", ele_A-ele_B, pos_A-pos_B);
+                }
+                else{
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_ele_vs_pos_isolation_badL1hit_hh", ele_trk_iso_L1, pos_trk_iso_L1);
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_ele_vs_pos_isolation_cut_badL1hit_hh", ele_A-ele_B, pos_A-pos_B);
+            
+                }
+            }
+
             //Plot good vs bad L1 hits
-            if(ele_iso_axial){
-                //Good L1 hit
-                if(ele_trueL1Axial > 0.0 ){
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_goodL1hit_hh", ele_A - ele_B, reconz);
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_goodL1hit_hh", old_ele_isolation_cut, reconz);
+            if(!isData_){
+                if(ele_iso_axial){
+                    //Good L1 hit
+                    if(ele_trueL1Axial > 0.0 ){
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_goodL1hit_hh", ele_A - ele_B, reconz);
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_goodL1hit_hh", old_ele_isolation_cut, reconz);
+                    }
+                    else{
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_badL1hit_hh", ele_A - ele_B, reconz);
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_badL1hit_hh", old_ele_isolation_cut, reconz);
+                    }
                 }
                 else{
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_badL1hit_hh", ele_A - ele_B, reconz);
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_badL1hit_hh", old_ele_isolation_cut, reconz);
+                    //Good L1 hit
+                    if(ele_trueL1Stereo > 0.0 ){
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_goodL1hit_hh", ele_A - ele_B, reconz);
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_goodL1hit_hh", old_ele_isolation_cut, reconz);
+                    }
+                    else{
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_badL1hit_hh", ele_A - ele_B, reconz);
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_badL1hit_hh", old_ele_isolation_cut, reconz);
+                    }
                 }
-            }
-            else{
-                //Good L1 hit
-                if(ele_trueL1Stereo > 0.0 ){
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_goodL1hit_hh", ele_A - ele_B, reconz);
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_goodL1hit_hh", old_ele_isolation_cut, reconz);
-                }
-                else{
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_badL1hit_hh", ele_A - ele_B, reconz);
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_badL1hit_hh", old_ele_isolation_cut, reconz);
-                }
-            }
-            if(pos_iso_axial){
-                //Good L1 hit
-                if(pos_trueL1Axial > 0.0 ){
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_goodL1hit_hh", pos_A - pos_B, reconz);
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_goodL1hit_hh", old_pos_isolation_cut, reconz);
-                }
-                else{
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_badL1hit_hh", pos_A - pos_B, reconz);
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_badL1hit_hh", old_pos_isolation_cut, reconz);
-                }
-            }
-            else{
-                //Good L1 hit
-                if(pos_trueL1Stereo > 0.0 ){
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_goodL1hit_hh", pos_A - pos_B, reconz);
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_goodL1hit_hh", old_pos_isolation_cut, reconz);
+                if(pos_iso_axial){
+                    //Good L1 hit
+                    if(pos_trueL1Axial > 0.0 ){
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_goodL1hit_hh", pos_A - pos_B, reconz);
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_goodL1hit_hh", old_pos_isolation_cut, reconz);
+                    }
+                    else{
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_badL1hit_hh", pos_A - pos_B, reconz);
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_badL1hit_hh", old_pos_isolation_cut, reconz);
+                    }
                 }
                 else{
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_badL1hit_hh", pos_A - pos_B, reconz);
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_badL1hit_hh", old_pos_isolation_cut, reconz);
+                    //Good L1 hit
+                    if(pos_trueL1Stereo > 0.0 ){
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_goodL1hit_hh", pos_A - pos_B, reconz);
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_goodL1hit_hh", old_pos_isolation_cut, reconz);
+                    }
+                    else{
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_badL1hit_hh", pos_A - pos_B, reconz);
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_badL1hit_hh", old_pos_isolation_cut, reconz);
+                    }
                 }
+
+                if(ele_trueL1Stereo > 0.0 && ele_trueL1Axial > 0.0){
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_goodL1_axster_hit_hh", ele_A - ele_B, reconz);
+                }
+                else
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_badL1_axster_hit_hh", ele_A - ele_B, reconz);
+
+                if(pos_trueL1Stereo > 0.0 && pos_trueL1Axial > 0.0){
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_goodL1_axster_hit_hh", pos_A - pos_B, reconz);
+                }
+                else
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_badL1_axster_hit_hh", pos_A - pos_B, reconz);
             }
+
 
             //Check Top and Bottom
             if(ele_trk_gbl->isTopTrack()){
@@ -1341,6 +1376,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         _reg_vtx_histos[region]->Fill2DHisto("pos_track_cluster_dt_v_EoverP_hh",posClus.getEnergy()/pos_trk_gbl->getP(), pos_trk_gbl->getTrackTime() - corr_posClusterTime, weight);
         _reg_vtx_histos[region]->Fill2DHisto("ele_track_clus_dt_v_p_hh",ele_trk_gbl->getP(), ele_trk_gbl->getTrackTime() - corr_eleClusterTime, weight);
         _reg_vtx_histos[region]->Fill2DHisto("pos_track_clus_dt_v_p_hh",pos_trk_gbl->getP(), pos_trk_gbl->getTrackTime() - corr_posClusterTime, weight);
+        _reg_vtx_histos[region]->Fill2DHisto("ele_z0_vs_pos_z0_hh",ele_trk_gbl->getZ0(), pos_trk_gbl->getZ0(), weight);
         //chi2 2d plots
         _reg_vtx_histos[region]->Fill2DHisto("ele_track_chi2ndf_v_time_hh", ele_trk_gbl->getTrackTime(), ele_trk_gbl->getChi2Ndf(), weight);
         _reg_vtx_histos[region]->Fill2DHisto("ele_track_chi2ndf_v_p_hh", ele_trk_gbl->getP(), ele_trk_gbl->getChi2Ndf(), weight);
