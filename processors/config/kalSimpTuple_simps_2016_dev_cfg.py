@@ -104,6 +104,7 @@ targtrack.parameters["kinkRelCollLcio"] = ''
 targtrack.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 targtrack.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
 targtrack.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
+#targtrack.parameters["bfield"] = bfield[str(options.year)]
 targtrack.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack_KF'
 
 # LT uncommented

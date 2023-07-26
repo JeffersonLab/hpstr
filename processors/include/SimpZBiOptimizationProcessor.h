@@ -24,6 +24,10 @@
 // C++ 
 #include <memory>
 
+/**
+ *@brief Cutflow optimization tool for SIMPS
+ */
+
 class SimpZBiOptimizationProcessor : public Processor {
 
     public:
@@ -32,103 +36,148 @@ class SimpZBiOptimizationProcessor : public Processor {
 
         ~SimpZBiOptimizationProcessor();
 
+        /**
+         *@brief description
+         */
         virtual void configure(const ParameterSet& parameters);
 
+        /**
+         *@brief description
+         */
         virtual void initialize(TTree* tree) {};
 
+        /**
+         *@brief description
+         */
         virtual bool process(IEvent* event) {};
 
+        /**
+         *@brief description
+         */
         virtual void finalize();
 
+        /**
+         *@brief description
+         */
         virtual bool process();
 
+        /**
+         *@brief description
+         */
         virtual void initialize(std::string inFilename, std::string outFilename);
 
+        /**
+         *@brief description
+         */
         double calculateZBi(double n_on, double n_off, double tau);
 
+        /**
+         *@brief description
+         */
         bool failPersistentCuts(SimpAnaTTree* MTT);
 
+        /**
+         *@brief description
+         */
         bool failTestCut(std::string cutname, SimpAnaTTree* MTT);
 
+        /**
+         *@brief description
+         */
         void writeGraph(TFile* outF, std::string folder, TGraph* g);
 
+        /**
+         *@brief description
+         */
         void writeTH1F(TFile* outF, std::string folder, TH1F* h);
 
+        /**
+         *@brief description
+         */
         double round(double var);
 
+        /**
+         *@brief description
+         */
         void getSignalMCAnaVtxZ_h(std::string signalMCAnaFilename, std::string signal_pdgid);
 
+        /**
+         *@brief description
+         */
         void addNewVariables(SimpAnaTTree* MTT, std::string variable, double param);
 
+        /**
+         *@brief description
+         */
         void fillEventHistograms(std::shared_ptr<ZBiHistos> histos, SimpAnaTTree* MTT);
 
     private:
 
         //  Configuration parameters    //
-        int debug_{0}; 
-        int year_ = 2016;
-        std::string cuts_cfgFile_{""};
-        std::string outFileName_{"zbi_out.root"};
-        TFile* outFile_{nullptr};
-        std::vector<std::string> cutVariables_;
-        std::vector<std::string> new_variables_;
-        std::vector<double> new_variable_params_;
-        std::string eq_cfgFile_{""};
-        bool scan_zcut_ = false;
-        double step_size_ = 0.01;
-        int max_iteration_ = 75;
-        
+        int debug_{0}; //!< //<! description
+        int year_ = 2016; //<! description
+        std::string cuts_cfgFile_{""}; //<! description
+        std::string outFileName_{"zbi_out.root"}; //<! description
+        TFile* outFile_{nullptr}; //<! description
+        std::vector<std::string> cutVariables_; //<! description
+        std::vector<std::string> new_variables_; //<! description
+        std::vector<double> new_variable_params_; //<! description
+        std::string eq_cfgFile_{""}; //<! description
+        bool scan_zcut_ = false; //<! description
+        double step_size_ = 0.01; //<! description
+        int max_iteration_ = 75; //<! description
+
         //Background config
-        std::string bkgVtxAnaFilename_{""};
-        std::string bkgVtxAnaTreename_{""};
-        SimpAnaTTree* bkgMTT_{nullptr};
-        double min_ztail_events_ = 0.5;
-        double background_sf_;
+        std::string bkgVtxAnaFilename_{""}; //<! description
+        std::string bkgVtxAnaTreename_{""}; //<! description
+        SimpAnaTTree* bkgMTT_{nullptr}; //<! description
+        double min_ztail_events_ = 0.5; //<! description
+        double background_sf_; //<! description
 
         // Signal //
-        std::string variableHistCfgFilename_{""};
-        std::string signalVtxAnaFilename_{""};
-        std::string signalVtxAnaTreename_{""};
-        std::string signalMCAnaFilename_{""};
-        std::string signal_pdgid_{""};
-        TH1F* signalSimZ_h_{nullptr};
-        SimpAnaTTree* signalMTT_{nullptr};
-        double signal_sf_ = 1.0;
-        double signal_mass_;
-        double logEps2_;
-        double massResolution_;
-        double mass_window_nsigma_;
+        std::string variableHistCfgFilename_{""}; //<! description
+        std::string signalVtxAnaFilename_{""}; //<! description
+        std::string signalVtxAnaTreename_{""}; //<! description
+        std::string signalMCAnaFilename_{""}; //<! description
+        std::string signal_pdgid_{""}; //<! description
+        TH1F* signalSimZ_h_{nullptr}; //<! description
+        SimpAnaTTree* signalMTT_{nullptr}; //<! description
+        double signal_sf_ = 1.0; //<! description
+        double signal_mass_; //<! description
+        double logEps2_; //<! description
+        double massResolution_; //<! description
+        double mass_window_nsigma_; //<! description
 
-        //Histograms
-        std::shared_ptr<ZBiHistos> signalHistos_;
-        std::shared_ptr<ZBiHistos> bkgHistos_;
-        std::shared_ptr<ZBiHistos> testCutHistos_;
-        std::shared_ptr<ZBiHistos> processorHistos_;
+        //Histograms 
+        std::shared_ptr<ZBiHistos> signalHistos_; //<! description
+        std::shared_ptr<ZBiHistos> bkgHistos_; //<! description
+        std::shared_ptr<ZBiHistos> testCutHistos_; //<! description
+        std::shared_ptr<ZBiHistos> processorHistos_; //<! description
 
-        //cuts
-        typedef std::map<std::string, std::pair<double,int>>::iterator cut_iter_;
-        std::map<std::string,double> initialIntegrals_;
+        //cuts 
+        typedef std::map<std::string, std::pair<double,int>>::iterator cut_iter_; //<! description
+        std::map<std::string,double> initialIntegrals_; //<! description
 
         //Cuts
-        IterativeCutSelector *testCutsSelector_{nullptr};
-        std::map<std::string, std::pair<double,int>>* testCutsPtr_;
-        IterativeCutSelector *persistentCutsSelector_{nullptr};
-        std::map<std::string, std::pair<double,int>>* persistentCutsPtr_;
+        IterativeCutSelector *testCutsSelector_{nullptr}; //<! description
+        std::map<std::string, std::pair<double,int>>* testCutsPtr_; //<! description
+        IterativeCutSelector *persistentCutsSelector_{nullptr}; //<! description
+        std::map<std::string, std::pair<double,int>>* persistentCutsPtr_; //<! description
 
-        //background
-        std::string tritrigFilename_{""};
-        std::map<std::string,double*> tritrig_tuple_;
-        TTree* tritrigTree_{nullptr};
+        //backgroun
+        std::string tritrigFilename_{""}; //<! description
+        std::map<std::string,double*> tritrig_tuple_; //<! description
+        TTree* tritrigTree_{nullptr}; //<! description
 
         //simp equations
-        SimpEquations* simpEqs_{nullptr};
+        SimpEquations* simpEqs_{nullptr}; //<! description
 
-        //mass window
-        double highMass_;
-        double lowMass_;
+        //mass window 
+        double highMass_; //<! description
+        double lowMass_; //<! description
 
-        //Dev
-        bool testSpecialCut_ = false;
+        //Dev 
+        bool testSpecialCut_ = false; //<! description
 };
 
 #endif

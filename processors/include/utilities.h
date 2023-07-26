@@ -78,6 +78,7 @@ namespace utils {
                       EVENT::LCCollection* gbl_kink_data, 
                       EVENT::LCCollection* track_data);
 
+
     /**
      * @brief description
      * 
@@ -165,13 +166,6 @@ namespace utils {
      * \todo extern?
      */
     static UTIL::BitField64 decoder("system:6,barrel:3,layer:4,module:12,sensor:1,side:32:-2,strip:12");
-
-    /**
-     * @brief description
-     * 
-     * \todo extern?
-     */
-    std::map<int,double> getKFTrackIsolations(Track* track, std::vector<TrackerHit*>* siClusters);
 
     /**
      * @brief description

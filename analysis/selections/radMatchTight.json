@@ -4,21 +4,22 @@
         "id"   : 0,
         "info" : "#chi^{2}_{unc}<4"
     },
+    "pSum_gt"  : {
+        "cut"  : 2.0,
+        "id"   : 1,
+        "info" : "P_{e^{-}} +  P_{e^{+}} > 2.0 GeV"
+    },
     "L1Requirement_eq" : {
         "cut"  : 1,
-        "id"   : 1,
+        "id"   : 2,
         "info" : "L1L1"
     },
     "isRadEle_eq" : {
         "cut"  : 1,
-        "id"   : 2,
+        "id"   : 3,
         "info" : "isRadEle"
     },
-    "pSum_gt"  : {
-        "cut"  : 2.0,
-        "id"   : 3,
-        "info" : "P_{e^{-}} +  P_{e^{+}} > 2.0 GeV"
-    },
+
     "nVtxs_eq" : {
         "cut"  : 1,
         "id"   : 4,

@@ -1,62 +1,162 @@
 {
-    "unc_vtx_ele_track_chi2ndf_lt" : {
-        "cut"  : 15,
-        "id"   : 1,
-        "info" : "e^{-} Track #chi^{2}/Ndf<15"
+    "unc_vtx_track_zalpha_top_lt": {
+        "cut" : 999.9,
+        "id" : 1, 
+        "info": "track zalpha top < "
     },
-    "unc_vtx_pos_track_chi2ndf_lt" : {
-        "cut"  : 15,
-        "id"   : 2,
-        "info" : "e^{+} Track #chi^{2}/Ndf<15"
+    "unc_vtx_track_zalpha_top_gt": {
+        "cut" : -999.9,
+        "id" : 2, 
+        "info": "track zalpha top > "
     },
-    "unc_vtx_ele_track_p_lt" : {
-        "cut" : 1.75,
-        "id"  : 3,
-        "info" : "p e^{-}<1.75GeV"
+    "unc_vtx_track_zalpha_bot_lt": {
+        "cut" : 999.9,
+        "id" : 3, 
+        "info": "track zalpha bot < "
     },
-    "unc_vtx_ele_track_p_gt" : {
-        "cut" : 1.75,
-        "id"  : 4,
-        "info" : "p e^{-}<1.75GeV"
+    "unc_vtx_track_zalpha_bot_gt": {
+        "cut" : -999.9,
+        "id" : 4, 
+        "info": "track zalpha bot > "
     },
-    "unc_vtx_pos_track_p_lt" : {
-        "cut" : 0.4,
-        "id"  : 5,
-        "info" : "p_e^{-}>0.4 [GeV]"
+    "unc_vtx_track_zbravoalpha_top_lt": {
+        "cut" : 999.9,
+        "id" : 5, 
+        "info": "track zbravoalpha top < "
     },
-    "unc_vtx_pos_track_p_gt" : {
-        "cut" : 0.4,
-        "id"  : 6,
-        "info" : "p_e^{-}>0.4 [GeV]"
+    "unc_vtx_track_zbravoalpha_top_gt": {
+        "cut" : -999.9,
+        "id" : 6, 
+        "info": "track zbravoalpha top > "
     },
-    "unc_vtx_psum_gt" : {
-        "cut" : 0.4,
-        "id"  : 7,
-        "info" : "p_e^{+}>0.4 [GeV]"
+    "unc_vtx_track_zbravoalpha_bot_lt": {
+        "cut" : 999.9,
+        "id" : 7, 
+        "info": "track zbravoalpha bot < "
     },
-    "unc_vtx_psum_lt" : {
-        "cut" : 0.4,
-        "id"  : 8,
-        "info" : "p_e^{+}>0.4 [GeV]"
+    "unc_vtx_track_zbravoalpha_bot_gt": {
+        "cut" : -999.9,
+        "id" : 8, 
+        "info": "track zbravoalpha bot > "
     },
-    "unc_vtx_ele_clust_E_lt" : {
-        "cut" : 2.0,
-        "id"  : 9,
-        "info" : "e^{-} Cluster Energy < 2.0"
+    "unc_vtx_track_zalpha_top_ele_gt": {
+        "cut" : -999.9,
+        "id" : 9, 
+        "info": "track zalpha top ele > "
     },
-    "unc_vtx_pos_clust_E_lt" : {
-        "cut" : 2.0,
-        "id"  : 10,
-        "info" : "e^{+} Cluster Energy < 2.0"
+    "unc_vtx_track_zalpha_top_ele_lt": {
+        "cut" : -999.9,
+        "id" : 10, 
+        "info": "track zalpha top ele < "
     },
-    "unc_vtx_ele_track_zalpha_lt" : {
-        "cut" : 6.0,
-        "id"  : 11,
-        "info" : "e^{-} zalpha < 50.0"
+    "unc_vtx_track_zalpha_bot_ele_gt": {
+        "cut" : -999.9,
+        "id" : 11, 
+        "info": "track zalpha bot ele > "
     },
-    "unc_vtx_pos_track_zalpha_lt" : {
-        "cut" : 6.0,
-        "id"  : 12,
-        "info" : "e^{+} zalpha < 50.0"
+    "unc_vtx_track_zalpha_bot_ele_lt": {
+        "cut" : -999.9,
+        "id" : 12, 
+        "info": "track zalpha bot ele < "
+    },
+    "unc_vtx_track_zalpha_top_pos_gt": {
+        "cut" : -999.9,
+        "id" : 13, 
+        "info": "track zalpha top pos > "
+    },
+    "unc_vtx_track_zalpha_top_pos_lt": {
+        "cut" : -999.9,
+        "id" : 14, 
+        "info": "track zalpha top pos < "
+    },
+    "unc_vtx_track_zalpha_bot_pos_gt": {
+        "cut" : -999.9,
+        "id" : 15, 
+        "info": "track zalpha bot pos > "
+    },
+    "unc_vtx_track_zalpha_bot_pos_lt": {
+        "cut" : -999.9,
+        "id" : 16, 
+        "info": "track zalpha bot pos < "
+    },
+    "unc_vtx_pos_track_zalpha_lt": {
+        "cut" : -999.9,
+        "id" : 17, 
+        "info": "pos track zalpha < "
+    },
+    "unc_vtx_pos_track_zalpha_gt": {
+        "cut" : -999.9,
+        "id" : 18, 
+        "info": "pos track zalpha > "
+    },
+    "unc_vtx_ele_track_zalpha_lt": {
+        "cut" : -999.9,
+        "id" : 19, 
+        "info": "ele track zalpha < "
+    },
+    "unc_vtx_ele_track_zalpha_gt": {
+        "cut" : -999.9,
+        "id" : 20, 
+        "info": "ele track zalpha > "
+    },
+    "unc_vtx_ele_iso_z0err_gt": {
+        "cut" : -999.9,
+        "id" : 21, 
+        "info": "ele track 2*#delta/#Deltaz0 > "
+    },
+    "unc_vtx_pos_iso_z0err_gt": {
+        "cut" : -999.9,
+        "id" : 22, 
+        "info": "pos track 2*#delta/#Deltaz0 > "
+    },
+    "unc_vtx_ele_iso_z0err_lt": {
+        "cut" : -999.9,
+        "id" : 23, 
+        "info": "ele track 2*#delta/#Deltaz0 < "
+    },
+    "unc_vtx_pos_iso_z0err_lt": {
+        "cut" : -999.9,
+        "id" : 24, 
+        "info": "pos track 2*#delta/#Deltaz0 < "
+    },
+    "unc_vtx_ele_z0_z0err_gt": {
+        "cut" : -999.9,
+        "id" : 25, 
+        "info": "ele track |z0|/#Deltaz0 > "
+    },
+    "unc_vtx_pos_z0_z0err_gt": {
+        "cut" : -999.9,
+        "id" : 26, 
+        "info": "pos track |z0|/#Deltaz0 > "
+    },
+    "unc_vtx_ele_z0_z0err_lt": {
+        "cut" : -999.9,
+        "id" : 27, 
+        "info": "ele track |z0|/#Deltaz0 < "
+    },
+    "unc_vtx_pos_z0_z0err_lt": {
+        "cut" : -999.9,
+        "id" : 28, 
+        "info": "pos track |z0|/#Deltaz0 < "
+    },
+    "unc_vtx_ele_isolation_cut_gt": {
+        "cut" : -999999999.9,
+        "id" : 29, 
+        "info": "ele track(2*#delta/#Deltaz0) - (|z0|/#Deltaz0) > "
+    },
+    "unc_vtx_pos_isolation_cut_gt": {
+        "cut" : -999999999.9,
+        "id" : 30, 
+        "info": "pos track(2*#delta/#Deltaz0) - (|z0|/#Deltaz0) > "
+    },
+    "unc_vtx_ele_isolation_cut_lt": {
+        "cut" : 200.0,
+        "id" : 31, 
+        "info": "ele track(2*#delta/#Deltaz0) - (|z0|/#Deltaz0) < "
+    },
+    "unc_vtx_pos_isolation_cut_lt": {
+        "cut" : 200.0,
+        "id" : 32, 
+        "info": "pos track(2*#delta/#Deltaz0) - (|z0|/#Deltaz0) < "
     }
 }

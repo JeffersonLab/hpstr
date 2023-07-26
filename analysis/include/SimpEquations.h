@@ -6,6 +6,10 @@
 
 using json = nlohmann::json;
 
+/**
+ *@brief All SIMP Equations for calculating expected signal
+ */
+
 class SimpEquations {
 
     public:
@@ -56,12 +60,12 @@ class SimpEquations {
 
     private:
 
-        int year_ = 2016;
-        json params_config_;
-        double mass_ratio_Ap_to_Pid_ = 3.0;
-        double mass_ratio_Ap_to_Vd_ = 3.0/1.8;
-        double ratio_mPi_to_fPi_ = 4.*M_PI;
-        double m_l_ = 0.511;
-        double alpha_D_ = 0.01;
+        int year_ = 2016;//!< year (used to specify polynomial choices)
+        json params_config_;//!< read in simp params
+        double mass_ratio_Ap_to_Pid_ = 3.0;//!< default Ap to dark pion mass ratio
+        double mass_ratio_Ap_to_Vd_ = 3.0/1.8;//!< default Ap to dark vector mass ratio
+        double ratio_mPi_to_fPi_ = 4.*M_PI;//!< defualt dark pion mass to decay constant ratio
+        double m_l_ = 0.511;//!< default lepton mass (ele/pos only)
+        double alpha_D_ = 0.1;//!< default A' to dark meson coupling
 
 };

@@ -30,20 +30,66 @@ class IterativeCutSelector : public BaseSelector {
         
         virtual ~IterativeCutSelector();
 
+        /**
+         * @brief get cut variable from name
+         *
+         * @param cutname
+         */
         std::string getCutVar(std::string cutname);
         
+        /**
+         * @brief is cut of type 'greater than'
+         *
+         * @param cutname
+         * @return true
+         * @return false
+         */
         bool isCutGreaterThan(std::string cutname);
         
+        /**
+         * @brief set cut value
+         *
+         * @param cutname
+         * @param value
+         */
         void setCutValue(std::string cutname, double value);
 
+        /**
+         * @brief does value pass cut
+         *
+         * @param cutname
+         * @param val
+         * @return true
+         * @return false
+         */
         bool passCutGTorLT(std::string cutname, double val);
 
+        /**
+         * @brief prints cuts and values
+         *
+         */
         void printCuts();
 
+        /**
+         * @brief get cut ID
+         * @param cutname
+         * @return cut ID
+         *
+         */
         int getCutID(std::string cutname){return cuts[cutname].second;};
 
+        /**
+         * @brief remove cuts that aren't specified in the list of cut
+         * variables
+         * @param cut_variables_list
+         *
+         */
         void filterCuts(std::vector<std::string> cut_variable_list);
 
+        /**
+         * @brief get pointer to the base class cuts
+         *
+         */
         std::map<std::string, std::pair<double,int>>* getPointerToCuts(){ return &cuts; }
 
 

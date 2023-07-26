@@ -4,8 +4,8 @@ import sys
 import baseConfig as base
 
 # Use the input file to set the output file name
-#inFilename = sys.argv[1].strip()
-#outFilename = '%s_anaTrks.root' % inFilename[:-5]
+inFilename = sys.argv[1].strip()
+outFilename = '%s_anaTrks.root' % inFilename[:-5]
 
 base.parser.add_argument("-r", "--run_number", type=int, dest="run_number",
                                  help="set run number", metavar="run_number", default=-999)
@@ -15,11 +15,12 @@ base.parser.add_argument("-TS", "--trackstate", type=str, dest="trackstate",
 
 options = base.parser.parse_args()
 
-inFilename = options.inFilename[0]
-outFilename = options.outFilename
+#inFilename = options.inFilename[0]
+#outFilename = options.outFilename
 
 print('Input file:  %s' % inFilename)
 print('Output file: %s' % outFilename)
+
 p = HpstrConf.Process()
 
 p.run_mode = 1

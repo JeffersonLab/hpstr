@@ -11,6 +11,9 @@
 
 #include "MutableTTree.h"
 
+/**
+ *@brief Read in flat TTree and create new cut variables for SIMP analysis
+ */
 class SimpAnaTTree : public MutableTTree {
 
     public:
@@ -18,7 +21,9 @@ class SimpAnaTTree : public MutableTTree {
         SimpAnaTTree(TFile* infile, std::string tree_name) : MutableTTree(infile,tree_name){};
         ~SimpAnaTTree();
 
-        //New variables
+        /**
+         *@brief New Variables
+         */
         void addVariableZalpha(double y_intercept, double slope, double alpha_z);
         void addVariableZalpha(double slope);
         void addVariableZbravo();
@@ -46,7 +51,7 @@ class SimpAnaTTree : public MutableTTree {
         bool testImpactParameterCut();
 
     private:
-        double skipCutVarValue_ = -9876543210.0;
+        double skipCutVarValue_ = -9876543210.0;//<! if cut variable is not defined for an event, assign this value
 };
 
 #endif // __SIMP_ANA_TTREE_H

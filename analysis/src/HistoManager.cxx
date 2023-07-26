@@ -58,7 +58,6 @@ void HistoManager::DefineHistos(){
             std::string extension = hist.key().substr(found+1);
 
             if (extension == "h") {
-                if (debug_ > 0) std::cout << "Adding " << h_name << std::endl;
                 histos1d[h_name] = plot1D(h_name,hist.value().at("xtitle"),
                         hist.value().at("bins"),
                         hist.value().at("minX"),
