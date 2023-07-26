@@ -229,11 +229,21 @@ double SimpEquations::massResolution(double m_V){
 
 double SimpEquations::controlRegionBackgroundRate(double m_Ap){
     double dNdm = 0.0;
+    m_Ap = m_Ap/1000.0;
+    /*
     if(year_ == 2016){
         std::cout << "[SimpEquations]::WARNING! BACKGROUND NOT DEFINED FOR MASS SPECTRUM!" << std::endl;
         dNdm = 513800.0;
+    }*/
+
+    if(year_ == 2016){
+        std::cout << "[SimpEquations]::WARNING! USING TEMPORARY BACKGROUND MODEL" << std::endl;
+        dNdm = 100000 + -1.02011e07*std::pow(m_Ap,1) + 4.02136e08*std::pow(m_Ap,2) + -8.02288e09*std::pow(m_Ap,3) 
+            + 9.16485e10*std::pow(m_Ap,4) + -6.2886e11*std::pow(m_Ap,5) + 2.57095e12*std::pow(m_Ap,6) 
+            + -5.78477e12*std::pow(m_Ap,7) + 5.52322e12*std::pow(m_Ap, 8);
     }
 
+    std::cout << "LOOK: Background Rate taken from Control Region InvMass is " << dNdm << std::endl;
     return dNdm;
 }
 

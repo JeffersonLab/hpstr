@@ -403,7 +403,7 @@ void SimpAnaTTree::addVariableZ0vsZ0Error(){
 }
 
 void SimpAnaTTree::addVariableIsolationCut(){
-    std::cout << "[SimpAnaTTree]::adding variable Isolation Cut " << std::endl;
+    std::cout << "[SimpAnaTTree]::adding variable 'unc_vtx_ele_isolation_cut' and 'unc_vtx_pos_isolation_cut' " << std::endl;
     double* ele_isolation = new double{9999.9};
     tuple_["unc_vtx_ele_isolation_cut"] = ele_isolation;
     newtree_->Branch("unc_vtx_ele_isolation_cut", tuple_["unc_vtx_ele_isolation_cut"], "unc_vtx_ele_isolation_cut/D");

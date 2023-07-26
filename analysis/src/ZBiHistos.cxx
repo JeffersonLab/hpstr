@@ -88,12 +88,12 @@ double ZBiHistos::cutFractionOfSignalVariable(std::string cutvariable, bool isCu
 
 void ZBiHistos::defineZBiCutflowProcessorHistograms(){
     //These histograms are used specifically for tracking the ZBitCutflowProcessor iterative process
-    addHisto2d("persistent_cuts_hh","pct_sig_cut", 1000,-0.5,99.5,"cut_id",25,0.5,25.5);
-    addHisto2d("test_cuts_ZBi_hh","pct_sig_cut", 1000,-0.5,99.5,"cut_id",25,0.5,25.5);
-    addHisto2d("test_cuts_values_hh","pct_sig_cut", 1000,-0.5,99.5,"cut_id",25,0.5,25.5);
-    addHisto2d("test_cuts_zcut_hh","pct_sig_cut", 1000,-0.5,99.5,"zcut",25,0.5,25.5);
-    addHisto2d("test_cuts_nbkg_hh","pct_sig_cut", 1000,-0.5,99.5,"zcut",25,0.5,25.5);
-    addHisto2d("test_cuts_nsig_hh","pct_sig_cut", 1000,-0.5,99.5,"zcut",25,0.5,25.5);
+    addHisto2d("persistent_cuts_hh","pct_sig_cut", 1000,-0.5,99.5,"cut_id",50,0.5,50.5);
+    addHisto2d("test_cuts_ZBi_hh","pct_sig_cut", 1000,-0.5,99.5,"cut_id",50,0.5,50.5);
+    addHisto2d("test_cuts_values_hh","pct_sig_cut", 1000,-0.5,99.5,"cut_id",50,0.5,50.5);
+    addHisto2d("test_cuts_zcut_hh","pct_sig_cut", 1000,-0.5,99.5,"zcut",50,0.5,50.5);
+    addHisto2d("test_cuts_nbkg_hh","pct_sig_cut", 1000,-0.5,99.5,"zcut",50,0.5,50.5);
+    addHisto2d("test_cuts_nsig_hh","pct_sig_cut", 1000,-0.5,99.5,"zcut",50,0.5,50.5);
     addHisto2d("best_test_cut_ZBi_hh","pct_sig_cut", 1000,-0.5,99.5,"ZBi",2000,0.0,20.0);
 }
 

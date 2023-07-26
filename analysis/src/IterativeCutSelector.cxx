@@ -35,7 +35,7 @@ std::string IterativeCutSelector::getCutVar(std::string cutname){
     if(ind !=std::string::npos){
         cutvar = cutname.erase(ind,substr.length()); // erase function takes two parameter, the starting index in the string from where you want to erase characters and total no of characters you want to erase.
     }else{
-        std::cout<<"Substring does not exist in the string\n";
+        std::cout<<"Substring does not exist in the string: "+cutname << std::endl;
     }
 
     return cutvar;
