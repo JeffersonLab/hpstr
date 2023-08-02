@@ -8,6 +8,7 @@
 #include <TTree.h>
 #include <TFile.h>
 #include <TBranch.h>
+#include <functional>
 
 /**
  * @brief Reads flat TTree and allows user to create new variables in the TTree
