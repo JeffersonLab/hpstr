@@ -113,6 +113,9 @@ void VertexAnaProcessor::initialize(TTree* tree) {
             _reg_tuples[regname]->addVariable("unc_vtx_y");
             _reg_tuples[regname]->addVariable("unc_vtx_ele_pos_clus_dt");
             _reg_tuples[regname]->addVariable("run_number");
+            _reg_tuples[regname]->addVariable("unc_vtx_cxx");
+            _reg_tuples[regname]->addVariable("unc_vtx_cyy");
+            _reg_tuples[regname]->addVariable("unc_vtx_czz");
 
             //track vars
             _reg_tuples[regname]->addVariable("unc_vtx_ele_track_p");
@@ -1127,10 +1130,6 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 pos_trk_iso_L1 = pos_isolations.second;
             }
 
-
-           // ele_trk_iso_L1 = (ele_isolations.first < ele_isolations.second) ? ele_isolations.first : ele_isolations.second;
-            //pos_trk_iso_L1 = (pos_isolations.first < pos_isolations.second) ? pos_isolations.first : pos_isolations.second;
-            
             double reconz = vtx->getZ(); 
             double ele_trk_z0 = ele_trk_gbl->getZ0();
             double ele_trk_z0err = ele_trk_gbl->getZ0Err();
@@ -1176,19 +1175,146 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_hh", old_ele_isolation_cut, reconz);
             _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_hh", old_pos_isolation_cut, reconz);
 
-            if(!isData_){
-                if( (ele_trueL1Axial > 0.0 || ele_trueL1Stereo > 0.0) && (pos_trueL1Axial > 0.0 || pos_trueL1Stereo > 0.0 )){
+            //recon_z vs z0tanlambda
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_hh", ele_trk_z0/ele_trk_gbl->getTanLambda(), reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_hh", pos_trk_z0/pos_trk_gbl->getTanLambda(), reconz);
 
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_ele_vs_pos_isolation_goodL1hit_hh", ele_trk_iso_L1, pos_trk_iso_L1);
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_ele_vs_pos_isolation_cut_goodL1hit_hh", ele_A-ele_B, pos_A-pos_B);
-                }
-                else{
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_ele_vs_pos_isolation_badL1hit_hh", ele_trk_iso_L1, pos_trk_iso_L1);
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_ele_vs_pos_isolation_cut_badL1hit_hh", ele_A-ele_B, pos_A-pos_B);
+            //recon_z vs z0
+            _reg_vtx_histos[region]->Fill2DHisto("z0_v_recon_z_hh", reconz, ele_trk_z0);
+            _reg_vtx_histos[region]->Fill2DHisto("z0_v_recon_z_hh", reconz, pos_trk_z0);
             
+
+
+            if(!isData_){
+                //If ele axial and stereo hits are true, independent of pos
+                if( ele_trueL1Axial > 0.0 && ele_trueL1Stereo > 0.0 ){
+
+                    //Isolation Cut
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_goodL1_axial_stereo_hit_hh", old_ele_isolation_cut, reconz);
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_goodL1_axial_stereo_hit_hh", ele_A - ele_B, reconz);
+                    //z0tanlambda
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_goodL1_axial_stereo_hit_hh", ele_trk_z0/ele_trk_gbl->getTanLambda(), reconz);
+
+                    //z0
+                    _reg_vtx_histos[region]->Fill2DHisto("z0_v_recon_z_goodL1_axial_stereo_hit_hh", reconz, ele_trk_z0);
+
+                    //If both ele and pos hits are true
+                    if( pos_trueL1Axial > 0.0 && pos_trueL1Stereo > 0.0 ){
+                        //Isolation Cut
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_goodL1L1_axial_stereo_hit_hh", old_ele_isolation_cut, reconz);
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_goodL1L1_axial_stereo_hit_hh", old_pos_isolation_cut, reconz);
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_goodL1L1_axial_stereo_hit_hh", ele_A - ele_B, reconz);
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_goodL1L1_axial_stereo_hit_hh", pos_A - pos_B, reconz);
+
+                    //z0tanlambda
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_goodL1L1_axial_stereo_hit_hh", ele_trk_z0/ele_trk_gbl->getTanLambda(), reconz);
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_goodL1L1_axial_stereo_hit_hh", pos_trk_z0/pos_trk_gbl->getTanLambda(), reconz);
+
+                    //z0
+                    _reg_vtx_histos[region]->Fill2DHisto("z0_v_recon_z_goodL1L1_axial_stereo_hit_hh", reconz, ele_trk_z0);
+                    _reg_vtx_histos[region]->Fill2DHisto("z0_v_recon_z_goodL1L1_axial_stereo_hit_hh", reconz, pos_trk_z0);
+                    }
+
                 }
+                //Both electron hits are bad
+                else if( ele_trueL1Axial < 1.0 && ele_trueL1Stereo < 1.0 ){
+                    //Isolation Cut
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_badL1_axial_stereo_hit_hh", old_ele_isolation_cut, reconz);
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_badL1_axial_stereo_hit_hh", ele_A - ele_B, reconz);
+
+                    //z0tanlambda
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_badL1_axial_stereo_hit_hh", ele_trk_z0/ele_trk_gbl->getTanLambda(), reconz);
+
+                    //z0
+                    _reg_vtx_histos[region]->Fill2DHisto("z0_v_recon_z_badL1_axial_stereo_hit_hh", reconz, ele_trk_z0);
+
+                    //Both ele AND Both pos hits are bad
+                    if (pos_trueL1Axial < 1.0 && pos_trueL1Stereo < 1.0 ){
+                        //Isolation Cut
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_badL1L1_axial_stereo_hit_hh", old_ele_isolation_cut, reconz);
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_badL1L1_axial_stereo_hit_hh", old_pos_isolation_cut, reconz);
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_badL1L1_axial_stereo_hit_hh", ele_A - ele_B, reconz);
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_badL1L1_axial_stereo_hit_hh", pos_A - pos_B, reconz);
+
+                    //z0tanlambda
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_badL1L1_axial_stereo_hit_hh", ele_trk_z0/ele_trk_gbl->getTanLambda(), reconz);
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_badL1L1_axial_stereo_hit_hh", pos_trk_z0/pos_trk_gbl->getTanLambda(), reconz);
+
+                    //z0
+                    _reg_vtx_histos[region]->Fill2DHisto("z0_v_recon_z_badL1L1_axial_stereo_hit_hh", reconz, ele_trk_z0);
+                    _reg_vtx_histos[region]->Fill2DHisto("z0_v_recon_z_badL1L1_axial_stereo_hit_hh", reconz, pos_trk_z0);
+                    }
+                }
+                //One of the two electron hits are bad
+                else{
+                    //Isolation Cut
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_badL1_hit_hh", old_ele_isolation_cut, reconz);
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_badL1_hit_hh", ele_A - ele_B, reconz);
+                    //z0tanlambda
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_badL1_hit_hh", ele_trk_z0/ele_trk_gbl->getTanLambda(), reconz);
+
+                    //z0
+                    _reg_vtx_histos[region]->Fill2DHisto("z0_v_recon_z_badL1_hit_hh", reconz, ele_trk_z0);
+
+                    //If either positron hit is also bad
+                    if (pos_trueL1Axial < 1.0 || pos_trueL1Stereo < 1.0 ){
+                        //Isolation Cut
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_badL1L1_hit_hh", old_ele_isolation_cut, reconz);
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_badL1L1_hit_hh", ele_A - ele_B, reconz);
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_badL1L1_hit_hh", old_pos_isolation_cut, reconz);
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_badL1L1_hit_hh", pos_A - pos_B, reconz);
+                        //z0tanlambda
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_badL1L1_hit_hh", ele_trk_z0/ele_trk_gbl->getTanLambda(), reconz);
+                        _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_badL1L1_hit_hh", pos_trk_z0/pos_trk_gbl->getTanLambda(), reconz);
+
+                        //z0
+                        _reg_vtx_histos[region]->Fill2DHisto("z0_v_recon_z_badL1L1_hit_hh", reconz, ele_trk_z0);
+                        _reg_vtx_histos[region]->Fill2DHisto("z0_v_recon_z_badL1L1_hit_hh", reconz, pos_trk_z0);
+
+                    }
+                }
+
+                //If pos axial and stereo hits are true, independent of ele
+                if( pos_trueL1Axial > 0.0 && pos_trueL1Stereo > 0.0 ){
+                    //Isolation Cut
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_goodL1_axial_stereo_hit_hh", old_pos_isolation_cut, reconz);
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_goodL1_axial_stereo_hit_hh", pos_A - pos_B, reconz);
+                    //z0tanlambda
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_goodL1_axial_stereo_hit_hh", pos_trk_z0/pos_trk_gbl->getTanLambda(), reconz);
+
+                    //z0
+                    _reg_vtx_histos[region]->Fill2DHisto("z0_v_recon_z_goodL1_axial_stereo_hit_hh", reconz, pos_trk_z0);
+
+                }
+
+                //Both pos hits are bad
+                else if( pos_trueL1Axial < 1.0 && pos_trueL1Stereo < 1.0 ){
+                    //Isolation Cut
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_badL1_axial_stereo_hit_hh", old_pos_isolation_cut, reconz);
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_badL1_axial_stereo_hit_hh", pos_A - pos_B, reconz);
+                    //z0tanlambda
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_badL1_axial_stereo_hit_hh", pos_trk_z0/pos_trk_gbl->getTanLambda(), reconz);
+
+                    //z0
+                    _reg_vtx_histos[region]->Fill2DHisto("z0_v_recon_z_badL1_axial_stereo_hit_hh", reconz, pos_trk_z0);
+                }
+
+                //One of the two positron hits are bad
+                else{
+                    //Isolation Cut
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_badL1_hit_hh", old_pos_isolation_cut, reconz);
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_badL1_hit_hh", pos_A - pos_B, reconz);
+                    //z0tanlambda
+                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_badL1_hit_hh", pos_trk_z0/pos_trk_gbl->getTanLambda(), reconz);
+
+                    //z0
+                    _reg_vtx_histos[region]->Fill2DHisto("z0_v_recon_z_badL1_hit_hh", reconz, pos_trk_z0);
+                }
+                
             }
 
+
+            /*
             //Plot good vs bad L1 hits
             if(!isData_){
                 if(ele_iso_axial){
@@ -1247,7 +1373,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 }
                 else
                     _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_badL1_axster_hit_hh", pos_A - pos_B, reconz);
-            }
+            }*/
 
 
             //Check Top and Bottom
@@ -1278,6 +1404,11 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_bottom_hh", old_pos_isolation_cut, reconz);
             
         }
+
+        std::vector<float> vtx_cov = vtx->getCovariance();
+        float cxx = vtx_cov.at(0);
+        float cyy = vtx_cov.at(3);
+        float czz = vtx_cov.at(5);
        
         TVector3 ele_mom;
         //ele_mom.SetX(ele->getMomentum()[0]);
@@ -1426,6 +1557,9 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             _reg_tuples[region]->setVariableValue("unc_vtx_x", vtx->getX());
             _reg_tuples[region]->setVariableValue("unc_vtx_y", vtx->getY());
             _reg_tuples[region]->setVariableValue("unc_vtx_ele_pos_clust_dt", corr_eleClusterTime - corr_posClusterTime);
+            _reg_tuples[region]->setVariableValue("unc_vtx_cxx", cxx);
+            _reg_tuples[region]->setVariableValue("unc_vtx_cyy", cyy);
+            _reg_tuples[region]->setVariableValue("unc_vtx_czz", czz);
 
             //track vars
             _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_p", ele_trk_gbl->getP());
