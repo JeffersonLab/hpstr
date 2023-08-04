@@ -44,6 +44,12 @@ double ZBiHistos::integrateHistogram1D(std::string histoname){
         std::cout << "[ZBiHistos}::ERROR::NO HISTOGRAM NAMED " << histoname << 
             " FOUND! DEFINE HISTOGRAM IN HISTOCONFIG!" << std::endl;
         integral = -9999.9;
+    
+    }
+
+    if(histos1d[histoname] == nullptr){
+        std::cout << "ERROR: Histogram for " << histoname << " is NULLPTR" << std::endl;
+        return -9999.9;
     }
 
     else{
@@ -394,10 +400,13 @@ TF1* ZBiHistos::fitExponentialPlusConst(std::string histogramName, double start_
             histogramName << " distribution is empty and could not be fit!" << std::endl;
         return nullptr;
     }
+    double originalXmin = histos1d[histoname]->GetXaxis()->GetXmin();
+    double originalXmax = histos1d[histoname]->GetXaxis()->GetXmax();
+
     //Start fit where start_nevents are left in tail
     int lastbin = histos1d[histoname]->FindLastBinAbove(0.0);
     if(histos1d[histoname]->Integral() < start_nevents)
-        start_nevents = histos1d[histoname]->Integral();
+        start_nevents = histos1d[histoname]->GetBinContent(histos1d[histoname]->GetMaximumBin());
     int firstbin = lastbin - 1;
     double test_integral = 0.0;
     while(test_integral < start_nevents && histos1d[histoname]->GetBinLowEdge(firstbin) > 0.0){
@@ -481,6 +490,10 @@ TF1* ZBiHistos::fitExponentialPlusConst(std::string histogramName, double start_
     fitFunc->FixParameter(2, param_2);
     fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QSIM", "", xmin,xmax);
     fitFunc->Draw();
+
+    //return histogram to original range
+    histos1d[histoname]->GetXaxis()->SetRangeUser(originalXmin,originalXmax);
+
     delete fitFunc_seed;
     return fitFunc;
     /*

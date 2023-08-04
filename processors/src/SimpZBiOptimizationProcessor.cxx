@@ -300,7 +300,7 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
     persistentCutsSelector_ = new IterativeCutSelector("persistentCuts", cuts_cfgFile_);
     persistentCutsSelector_->LoadSelection();
     persistentCutsPtr_ = persistentCutsSelector_->getPointerToCuts();
-    persistentCutsSelector_->filterCuts(cutVariables_);
+    //persistentCutsSelector_->filterCuts(cutVariables_);
     std::cout << "Persistent Cuts: " << std::endl;
     persistentCutsSelector_->printCuts();
 
@@ -359,7 +359,6 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
     for(int e=0; e < signalMTT_->GetEntries(); e++){
         signalMTT_->GetEntry(e);
 
-        /*
         //Apply current set of persistent cuts to all events
         if(failPersistentCuts(signalMTT_))
             continue;
@@ -367,7 +366,7 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
         if(testSpecialCut_){
             if(!signalMTT_->testImpactParameterCut())
                 continue;
-        }*/
+        }
 
         fillEventHistograms(signalHistos_, signalMTT_);
     }
@@ -379,7 +378,6 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
 
         bkgMTT_->GetEntry(e);
 
-        /*
         //Apply current set of persistent cuts to all events
         if(failPersistentCuts(bkgMTT_))
             continue;
@@ -387,7 +385,7 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
         if(testSpecialCut_){
             if(!bkgMTT_->testImpactParameterCut())
                 continue;
-        }*/
+        }
         fillEventHistograms(bkgHistos_, bkgMTT_);
     }
     
@@ -404,7 +402,7 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
     std::cout << "[SimpZBiOptimization]::Integrating initial Signal distributions" << std::endl;
     for(cut_iter_ it=testCutsPtr_->begin(); it!=testCutsPtr_->end(); it++){
         std::string cutname = it->first;
-        std::string var = persistentCutsSelector_->getCutVar(cutname);
+        std::string var = testCutsSelector_->getCutVar(cutname);
         initialIntegrals_[var] = signalHistos_->integrateHistogram1D("signal_"+var+"_h");
         if(debug_)
             std::cout << "Initial Integral for " << var << " is " << initialIntegrals_[var] << std::endl;
