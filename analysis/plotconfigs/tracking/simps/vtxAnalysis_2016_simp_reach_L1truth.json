@@ -1188,9 +1188,9 @@
         "binsX" : 500,
         "minX"  : -50.0,
         "maxX"  : 50.0,
-        "binsY" : 500,
-        "minY"  : -50.0,
-        "maxY"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
         "xtitle": "2#delta/#DeltaZ0 - |Z0|/#DeltaZ0",
         "ytitle": "recon z [mm]"
     },
@@ -1198,9 +1198,9 @@
         "binsX" : 1000,
         "minX"  : -50.0,
         "maxX"  : 50.0,
-        "binsY" : 500,
-        "minY"  : -50.0,
-        "maxY"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
         "xtitle": "#delta + 0.5*(-|Z0| - 3.0*#DeltaZ0)",
         "ytitle": "recon z [mm]"
     },
@@ -1228,9 +1228,9 @@
         "binsX" : 500,
         "minX"  : -50.0,
         "maxX"  : 50.0,
-        "binsY" : 500,
-        "minY"  : -50.0,
-        "maxY"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
         "xtitle": "2#delta/#DeltaZ0 - |Z0|/#DeltaZ0",
         "ytitle": "recon z [mm]"
     },
@@ -1238,9 +1238,9 @@
         "binsX" : 1000,
         "minX"  : -50.0,
         "maxX"  : 50.0,
-        "binsY" : 500,
-        "minY"  : -50.0,
-        "maxY"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
         "xtitle": "#delta + 0.5*(-|Z0| - 3.0*#DeltaZ0)",
         "ytitle": "recon z [mm]"
     },
@@ -1268,9 +1268,9 @@
         "binsX" : 500,
         "minX"  : -50.0,
         "maxX"  : 50.0,
-        "binsY" : 500,
-        "minY"  : -50.0,
-        "maxY"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
         "xtitle": "2#delta/#DeltaZ0 - |Z0|/#DeltaZ0",
         "ytitle": "recon z [mm]"
     },
@@ -1278,9 +1278,9 @@
         "binsX" : 1000,
         "minX"  : -50.0,
         "maxX"  : 50.0,
-        "binsY" : 500,
-        "minY"  : -50.0,
-        "maxY"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
         "xtitle": "#delta + 0.5*(-|Z0| - 3.0*#DeltaZ0)",
         "ytitle": "recon z [mm]"
     },
@@ -1294,7 +1294,7 @@
         "xtitle" : "recon_z [mm]",
         "ytitle" : "z0 [mm]"
     },
-    "z0_v_recon_z_goodEleL1AxSt_badPosL1AxSt_hh" : {
+    "vtx_track_recon_z_v_z0tanlambda_goodEleL1AxSt_badPosL1AxSt_hh" : {
         "binsX" : 4000,
         "minX" : -200.0,
         "maxX" : 200.0,
@@ -1308,9 +1308,9 @@
         "binsX" : 500,
         "minX"  : -50.0,
         "maxX"  : 50.0,
-        "binsY" : 500,
-        "minY"  : -50.0,
-        "maxY"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
         "xtitle": "2#delta/#DeltaZ0 - |Z0|/#DeltaZ0",
         "ytitle": "recon z [mm]"
     },
@@ -1318,9 +1318,9 @@
         "binsX" : 1000,
         "minX"  : -50.0,
         "maxX"  : 50.0,
-        "binsY" : 500,
-        "minY"  : -50.0,
-        "maxY"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
         "xtitle": "#delta + 0.5*(-|Z0| - 3.0*#DeltaZ0)",
         "ytitle": "recon z [mm]"
     },
@@ -1334,7 +1334,7 @@
         "xtitle" : "recon_z [mm]",
         "ytitle" : "z0 [mm]"
     },
-    "z0_v_recon_z_badEleL1AxSt_goodPosL1AxSt_hh" : {
+    "vtx_track_recon_z_v_z0tanlambda_badEleL1AxSt_goodPosL1AxSt_hh" : {
         "binsX" : 4000,
         "minX" : -200.0,
         "maxX" : 200.0,
@@ -1348,9 +1348,9 @@
         "binsX" : 500,
         "minX"  : -50.0,
         "maxX"  : 50.0,
-        "binsY" : 500,
-        "minY"  : -50.0,
-        "maxY"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
         "xtitle": "2#delta/#DeltaZ0 - |Z0|/#DeltaZ0",
         "ytitle": "recon z [mm]"
     },
@@ -1358,9 +1358,9 @@
         "binsX" : 1000,
         "minX"  : -50.0,
         "maxX"  : 50.0,
-        "binsY" : 500,
-        "minY"  : -50.0,
-        "maxY"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
         "xtitle": "#delta + 0.5*(-|Z0| - 3.0*#DeltaZ0)",
         "ytitle": "recon z [mm]"
     },
@@ -1374,7 +1374,47 @@
         "xtitle" : "recon_z [mm]",
         "ytitle" : "z0 [mm]"
     },
-    "z0_v_recon_z_badL1AxSt_hh" : {
+    "vtx_track_recon_z_v_z0tanlambda_badL1AxSt_hh" : {
+        "binsX" : 4000,
+        "minX" : -200.0,
+        "maxX" : 200.0,
+        "binsY" : 450,
+        "minY" : -20.0,
+        "maxY" : 70.0,
+        "xtitle" : " track z0/tanlambda",
+        "ytitle" : "recon_z [mm]"
+    },
+    "vtx_track_L1_isolation_cut_badEleL1_goodPosL1AxSt_hh" : {
+        "binsX" : 500,
+        "minX"  : -50.0,
+        "maxX"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
+        "xtitle": "2#delta/#DeltaZ0 - |Z0|/#DeltaZ0",
+        "ytitle": "recon z [mm]"
+    },
+    "vtx_track_2016_ana_isolation_cut_badEleL1_goodPosL1AxSt_hh" : {
+        "binsX" : 1000,
+        "minX"  : -50.0,
+        "maxX"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
+        "xtitle": "#delta + 0.5*(-|Z0| - 3.0*#DeltaZ0)",
+        "ytitle": "recon z [mm]"
+    },
+    "z0_v_recon_z_badEleL1_goodPosL1AxSt_hh" : {
+        "binsX" : 450,
+        "minX" : -20.0,
+        "maxX" : 70.0,
+        "binsY" : 1000,
+        "minY" : -10.0,
+        "maxY" : 10.0,
+        "xtitle" : "recon_z [mm]",
+        "ytitle" : "z0 [mm]"
+    },
+    "vtx_track_recon_z_v_z0tanlambda_badEleL1_goodPosL1AxSt_hh" : {
         "binsX" : 4000,
         "minX" : -200.0,
         "maxX" : 200.0,
@@ -1388,9 +1428,9 @@
         "binsX" : 500,
         "minX"  : -50.0,
         "maxX"  : 50.0,
-        "binsY" : 500,
-        "minY"  : -50.0,
-        "maxY"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
         "xtitle": "2#delta/#DeltaZ0 - |Z0|/#DeltaZ0",
         "ytitle": "recon z [mm]"
     },
@@ -1398,9 +1438,9 @@
         "binsX" : 1000,
         "minX"  : -50.0,
         "maxX"  : 50.0,
-        "binsY" : 500,
-        "minY"  : -50.0,
-        "maxY"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
         "xtitle": "#delta + 0.5*(-|Z0| - 3.0*#DeltaZ0)",
         "ytitle": "recon z [mm]"
     },
@@ -1414,7 +1454,7 @@
         "xtitle" : "recon_z [mm]",
         "ytitle" : "z0 [mm]"
     },
-    "z0_v_recon_z_badPosL1_goodEleL1AxSt_hh" : {
+    "vtx_track_recon_z_v_z0tanlambda_badPosL1_goodEleL1AxSt_hh" : {
         "binsX" : 4000,
         "minX" : -200.0,
         "maxX" : 200.0,
@@ -1428,9 +1468,9 @@
         "binsX" : 500,
         "minX"  : -50.0,
         "maxX"  : 50.0,
-        "binsY" : 500,
-        "minY"  : -50.0,
-        "maxY"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
         "xtitle": "2#delta/#DeltaZ0 - |Z0|/#DeltaZ0",
         "ytitle": "recon z [mm]"
     },
@@ -1438,9 +1478,9 @@
         "binsX" : 1000,
         "minX"  : -50.0,
         "maxX"  : 50.0,
-        "binsY" : 500,
-        "minY"  : -50.0,
-        "maxY"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
         "xtitle": "#delta + 0.5*(-|Z0| - 3.0*#DeltaZ0)",
         "ytitle": "recon z [mm]"
     },
@@ -1454,7 +1494,7 @@
         "xtitle" : "recon_z [mm]",
         "ytitle" : "z0 [mm]"
     },
-    "z0_v_recon_z_badL1_hh" : {
+    "vtx_track_recon_z_v_z0tanlambda_badL1_hh" : {
         "binsX" : 4000,
         "minX" : -200.0,
         "maxX" : 200.0,
@@ -1468,9 +1508,9 @@
         "binsX" : 500,
         "minX"  : 0.0,
         "maxX"  : 50.0,
-        "binsY" : 500,
-        "minY"  : -50.0,
-        "maxY"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
         "xtitle": "2#delta/#DeltaZ0",
         "ytitle": "recon z [mm]"
     },
@@ -1478,9 +1518,9 @@
         "binsX" : 500,
         "minX"  : 0.0,
         "maxX"  : 50.0,
-        "binsY" : 500,
-        "minY"  : -50.0,
-        "maxY"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
         "xtitle": "|Z0|/#DeltaZ0",
         "ytitle": "recon z [mm]"
     },
@@ -1488,9 +1528,9 @@
         "binsX" : 500,
         "minX"  : -50.0,
         "maxX"  : 50.0,
-        "binsY" : 500,
-        "minY"  : -50.0,
-        "maxY"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
         "xtitle": "2#delta/#DeltaZ0 - |Z0|/#DeltaZ0",
         "ytitle": "recon z [mm]"
     },
@@ -1498,9 +1538,9 @@
         "binsX" : 500,
         "minX"  : -50.0,
         "maxX"  : 50.0,
-        "binsY" : 500,
-        "minY"  : -50.0,
-        "maxY"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
         "xtitle": "e^{-} 2#delta/#DeltaZ0 - |Z0|/#DeltaZ0",
         "ytitle": "recon z [mm]"
     },
@@ -1508,9 +1548,9 @@
         "binsX" : 500,
         "minX"  : -50.0,
         "maxX"  : 50.0,
-        "binsY" : 500,
-        "minY"  : -50.0,
-        "maxY"  : 50.0,
+        "binsY" : 450,
+        "minY"  : -20.0,
+        "maxY"  : 70.0,
         "xtitle": "e^{+} 2#delta/#DeltaZ0 - |Z0|/#DeltaZ0",
         "ytitle": "recon z [mm]"
     },

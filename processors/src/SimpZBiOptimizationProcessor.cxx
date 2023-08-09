@@ -359,6 +359,7 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
     for(int e=0; e < signalMTT_->GetEntries(); e++){
         signalMTT_->GetEntry(e);
 
+        /*
         //Apply current set of persistent cuts to all events
         if(failPersistentCuts(signalMTT_))
             continue;
@@ -367,6 +368,7 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
             if(!signalMTT_->testImpactParameterCut())
                 continue;
         }
+        */
 
         fillEventHistograms(signalHistos_, signalMTT_);
     }
@@ -378,6 +380,7 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
 
         bkgMTT_->GetEntry(e);
 
+        /*
         //Apply current set of persistent cuts to all events
         if(failPersistentCuts(bkgMTT_))
             continue;
@@ -386,6 +389,7 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
             if(!bkgMTT_->testImpactParameterCut())
                 continue;
         }
+        */
         fillEventHistograms(bkgHistos_, bkgMTT_);
     }
     
@@ -397,6 +401,7 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
     //Integrate each signal variable distribution
     //This value is the reference for cutting n% of signal in a given variable
 
+    /*
     //Integrate each signal variable distribution.
     //When iterating Test Cuts, we reference these intial integrals, cutting n% of the original distribution.
     std::cout << "[SimpZBiOptimization]::Integrating initial Signal distributions" << std::endl;
@@ -407,6 +412,7 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
         if(debug_)
             std::cout << "Initial Integral for " << var << " is " << initialIntegrals_[var] << std::endl;
     }
+    */
 
     /*
     //Set initial value of each Persistent Cut to where 0% of Signal distribution is cut in that variable
@@ -474,6 +480,20 @@ bool SimpZBiOptimizationProcessor::process(){
 
             //Fill Signal variable distributions
             fillEventHistograms(signalHistos_, signalMTT_);
+        }
+
+
+        if(iteration == 0){
+            //Integrate each signal variable distribution.
+            //When iterating Test Cuts, we reference these intial integrals, cutting n% of the original distribution.
+            std::cout << "[SimpZBiOptimization]::Integrating initial Signal distributions" << std::endl;
+            for(cut_iter_ it=testCutsPtr_->begin(); it!=testCutsPtr_->end(); it++){
+                std::string cutname = it->first;
+                std::string var = testCutsSelector_->getCutVar(cutname);
+                initialIntegrals_[var] = signalHistos_->integrateHistogram1D("signal_"+var+"_h");
+                if(debug_)
+                    std::cout << "Initial Integral for " << var << " is " << initialIntegrals_[var] << std::endl;
+            }
         }
         
         //Loop over each Test Cut. Cut n% of signal distribution in Test Cut variable
