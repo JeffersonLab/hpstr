@@ -24,33 +24,43 @@ class SimpAnaTTree : public MutableTTree {
         /**
          *@brief New Variables
          */
-        void addVariableZalpha(double y_intercept, double slope, double alpha_z);
-        void addVariableZalpha(double slope);
-        void addVariableZbravo();
-        void addVariableZbravoAlpha(double slope);
-        void addVariableZbravosum();
-        void addVariableZbravosumAlpha(double slope);
+        /*
+        void addVariable_unc_vtx_zalpha(double y_intercept, double slope, double alpha_z);
+        void addVariable_unc_vtx_zbravo();
+        void addVariable_unc_vtx_zbravoAlpha(double slope);
+        void addVariable_unc_vtx_zbravosum();
+        void addVariable_unc_vtx_zbravosumAlpha(double slope);
 
-        void addVariableZalphaTop(double slope);
-        void addVariableZalphaBot(double slope);
-        void addVariableZalphaTopBot(double top_slope, double bot_slope);
-        void addVariableZbravoAlphaTop(double slope);
-        void addVariableZbravoAlphaBot(double slope);
+        void addVariable_unc_vtx_ZalphaTop(double slope);
+        void addVariable_unc_vtx_ZalphaBot(double slope);
+        void addVariable_unc_vtx_ZalphaTopBot(double top_slope, double bot_slope);
+        void addVariable_unc_vtx_ZbravoAlphaTop(double slope);
+        void addVariable_unc_vtx_ZbravoAlphaBot(double slope);
 
-        void addVariableZalphaBotEle(double slope);
-        void addVariableZalphaTopEle(double slope);
-        void addVariableZalphaTopPos(double slope);
-        void addVariableZalphaBotPos(double slope);
+        void addVariable_unc_vtx_ZalphaBotEle(double slope);
+        void addVariable_unc_vtx_ZalphaTopEle(double slope);
+        void addVariable_unc_vtx_ZalphaTopPos(double slope);
+        void addVariable_unc_vtx_ZalphaBotPos(double slope);
+        */
 
-        void addVariableIsolationZ0Error();
-        void addVariableZ0vsZ0Error();
-        void addVariableIsolationCut();
+        void addVariable_unc_vtx_ele_zalpha(double slope);
+        void addVariable_unc_vtx_pos_zalpha(double slope);
+        void addVariable_unc_vtx_zalpha_max(double slope);
+        void addVariable_unc_vtx_zalpha_min(double slope);
 
-        void addVariableZ0Tanlambda();
-        void addVariableZ0TanlambdaRight(double slope);
-        void addVariableZ0TanlambdaLeft(double slope);
-        void addVariableZalphaMax(double slope);
-        void addVariableZalphaMin(double slope);
+        void addVariable_unc_vtx_ele_iso_z0err();
+        void addVariable_unc_vtx_pos_iso_z0err();
+        void addVariable_unc_vtx_ele_z0_z0err();
+        void addVariable_unc_vtx_pos_z0_z0err();
+        void addVariable_unc_vtx_ele_isolation_cut();
+        void addVariable_unc_vtx_pos_isolation_cut();
+
+        void addVariable_unc_vtx_ele_z0tanlambda();
+        void addVariable_unc_vtx_pos_z0tanlambda();
+        void addVariable_unc_vtx_ele_z0tanlambda_right(double slope);
+        void addVariable_unc_vtx_pos_z0tanlambda_right(double slope);
+        void addVariable_unc_vtx_ele_z0tanlambda_left(double slope);
+        void addVariable_unc_vtx_pos_z0tanlambda_left(double slope);
 
         //misc
         bool impactParameterCut2016Canonical(double mass);

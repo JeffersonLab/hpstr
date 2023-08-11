@@ -59,13 +59,265 @@ bool SimpAnaTTree::impactParameterCut2016Canonical(double mass){
     return passCut;
 }
 
-void SimpAnaTTree::addVariableZbravosumAlpha(double slope){
-    std::cout << "[MutableTTree]::addVariableZbravosumalpha" << std::endl;
-    double* zbravosum_alpha = new double {999.9};
-    tuple_["unc_vtx_zbravosumalpha"] = zbravosum_alpha;
-    newtree_->Branch("unc_vtx_zbravosumalpha", tuple_["unc_vtx_zbravosumalpha"],"unc_vtx_zbravosumalpha/D");
-    new_variables_["unc_vtx_zbravosumalpha"] = zbravosum_alpha;
-    std::function<double()> calculateZbravosumalpha = [&,slope]()->double{
+
+void SimpAnaTTree::addVariable_unc_vtx_ele_zalpha(double slope){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_ele_zalpha with slope " << slope << std::endl;
+
+    //Create branch to hold new variable
+    double* ele_zalpha = new double{999.9};
+    tuple_["unc_vtx_ele_zalpha"] = ele_zalpha;
+    newtree_->Branch("unc_vtx_ele_zalpha",tuple_["unc_vtx_ele_zalpha"],"unc_vtx_ele_zalpha/D");  
+    new_variables_["unc_vtx_ele_zalpha"] = ele_zalpha;
+
+    //Define lambda function to calculate ele zalpha
+    std::function<double()> calculate_ele_zalpha = [&, slope]()->double{
+        if(*tuple_["unc_vtx_ele_track_z0"] > 0.0)
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"])/slope)) );
+        else
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"])/(-1*slope)) ));
+    };
+    functions_["unc_vtx_ele_zalpha"] = calculate_ele_zalpha;
+}
+
+void SimpAnaTTree::addVariable_unc_vtx_pos_zalpha(double slope){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_pos_zalpha with slope " << slope << std::endl;
+
+    //Create branch to hold new variable
+    double* pos_zalpha = new double{999.9};
+    tuple_["unc_vtx_pos_zalpha"] = pos_zalpha;
+    newtree_->Branch("unc_vtx_pos_zalpha",tuple_["unc_vtx_pos_zalpha"],"unc_vtx_pos_zalpha/D");  
+    new_variables_["unc_vtx_pos_zalpha"] = pos_zalpha;
+
+    //Define lambda function to calculate pos zalpha
+    std::function<double()> calculate_pos_zalpha = [&,slope]()->double{
+        if(*tuple_["unc_vtx_pos_track_z0"] > 0.0)
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"])/slope)) );
+        else
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"]))/(-1*slope)) );
+    };
+    functions_["unc_vtx_pos_zalpha"] = calculate_pos_zalpha;
+}
+
+void SimpAnaTTree::addVariable_unc_vtx_zalpha_max(double slope){
+    std::cout << "[SimpAnaTTree]::Add variable unc_vtx_zalpha_max with slope " << slope << std::endl;
+
+    //Create branch to hold new variable
+    double* zalpha_max = new double{999.9};
+    tuple_["unc_vtx_zalpha_max"] = zalpha_max;
+    newtree_->Branch("unc_vtx_zalpha_max",tuple_["unc_vtx_zalpha_max"],"unc_vtx_zalpha_max/D");  
+    new_variables_["unc_vtx_zalpha_max"] = zalpha_max;
+
+    //Define lambda function to calculate ele zalpha
+    std::function<double()> calculate_zalpha_max = [&, slope]()->double{
+        double ele_zalpha;
+        double pos_zalpha;
+        if(*tuple_["unc_vtx_ele_track_z0"] > 0.0)
+            ele_zalpha = ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"])/slope)) );
+        else
+            ele_zalpha = ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"])/(-1*slope)) ));
+
+        if(*tuple_["unc_vtx_pos_track_z0"] > 0.0)
+            pos_zalpha = ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"])/slope)) );
+        else
+            pos_zalpha = ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"])/(-1*slope)) ));
+        if(ele_zalpha > pos_zalpha)
+            return ele_zalpha;
+        else
+            return pos_zalpha;
+    };
+    functions_["unc_vtx_zalpha_max"] = calculate_zalpha_max;
+}
+
+void SimpAnaTTree::addVariable_unc_vtx_zalpha_min(double slope){
+    std::cout << "[SimpAnaTTree]::Add variable unc_vtx_zalpha_min with slope " << slope << std::endl;
+
+    //Create branch to hold new variable
+    double* zalpha_min = new double{999.9};
+    tuple_["unc_vtx_zalpha_min"] = zalpha_min;
+    newtree_->Branch("unc_vtx_zalpha_min",tuple_["unc_vtx_zalpha_min"],"unc_vtx_zalpha_min/D");  
+    new_variables_["unc_vtx_zalpha_min"] = zalpha_min;
+
+    //Define lambda function to calculate ele zalpha
+    std::function<double()> calculate_zalpha_min = [&, slope]()->double{
+        double ele_zalpha;
+        double pos_zalpha;
+        if(*tuple_["unc_vtx_ele_track_z0"] > 0.0)
+            ele_zalpha = ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"])/slope)) );
+        else
+            ele_zalpha = ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"])/(-1*slope)) ));
+
+        if(*tuple_["unc_vtx_pos_track_z0"] > 0.0)
+            pos_zalpha = ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"])/slope)) );
+        else
+            pos_zalpha = ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"])/(-1*slope)) ));
+        if(ele_zalpha < pos_zalpha)
+            return ele_zalpha;
+        else
+            return pos_zalpha;
+    };
+    functions_["unc_vtx_zalpha_min"] = calculate_zalpha_min;
+}
+
+void SimpAnaTTree::addVariable_unc_vtx_ele_iso_z0err(){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_ele_iso_z0err " << std::endl;
+    double* ele_iso_z0err = new double{9999.9};
+    tuple_["unc_vtx_ele_iso_z0err"] = ele_iso_z0err;
+    newtree_->Branch("unc_vtx_ele_iso_z0err", tuple_["unc_vtx_ele_iso_z0err"], "unc_vtx_ele_iso_z0err/D");
+    new_variables_["unc_vtx_ele_iso_z0err"] = ele_iso_z0err;
+
+    std::function<double()> calculate_ele_iso_z0err = [&]()->double{
+        return 2.0* *tuple_["unc_vtx_ele_track_L1_isolation"] / *tuple_["unc_vtx_ele_track_z0Err"];
+    };
+    functions_["unc_vtx_ele_iso_z0err"] = calculate_ele_iso_z0err;
+}
+
+void SimpAnaTTree::addVariable_unc_vtx_pos_iso_z0err(){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_pos_iso_z0err " << std::endl;
+    double* pos_iso_z0err = new double{9999.9};
+    tuple_["unc_vtx_pos_iso_z0err"] = pos_iso_z0err;
+    newtree_->Branch("unc_vtx_pos_iso_z0err", tuple_["unc_vtx_pos_iso_z0err"], "unc_vtx_pos_iso_z0err/D");
+    new_variables_["unc_vtx_pos_iso_z0err"] = pos_iso_z0err;
+
+    std::function<double()> calculate_pos_iso_z0err = [&]()->double{
+        return 2.0* *tuple_["unc_vtx_pos_track_L1_isolation"] / *tuple_["unc_vtx_pos_track_z0Err"];
+    };
+    functions_["unc_vtx_pos_iso_z0err"] = calculate_pos_iso_z0err;
+}
+
+void SimpAnaTTree::addVariable_unc_vtx_ele_z0_z0err(){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_ele_z0_z0err " << std::endl;
+    double* ele_z0_z0err = new double{9999.9};
+    tuple_["unc_vtx_ele_z0_z0err"] = ele_z0_z0err;
+    newtree_->Branch("unc_vtx_ele_z0_z0err", tuple_["unc_vtx_ele_z0_z0err"], "unc_vtx_ele_z0_z0err/D");
+    new_variables_["unc_vtx_ele_z0_z0err"] = ele_z0_z0err;
+
+    std::function<double()> calculate_ele_z0_z0err = [&]()->double{
+        return std::abs(*tuple_["unc_vtx_ele_track_z0"])/ *tuple_["unc_vtx_ele_track_z0Err"];
+    };
+    functions_["unc_vtx_ele_z0_z0err"] = calculate_ele_z0_z0err;
+}
+
+void SimpAnaTTree::addVariable_unc_vtx_pos_z0_z0err(){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_pos_z0_z0err " << std::endl;
+    double* pos_z0_z0err = new double{9999.9};
+    tuple_["unc_vtx_pos_z0_z0err"] = pos_z0_z0err;
+    newtree_->Branch("unc_vtx_pos_z0_z0err", tuple_["unc_vtx_pos_z0_z0err"], "unc_vtx_pos_z0_z0err/D");
+    new_variables_["unc_vtx_pos_z0_z0err"] = pos_z0_z0err;
+
+    std::function<double()> calculate_pos_z0_z0err = [&]()->double{
+        return std::abs(*tuple_["unc_vtx_pos_track_z0"])/ *tuple_["unc_vtx_pos_track_z0Err"];
+    };
+    functions_["unc_vtx_pos_z0_z0err"] = calculate_pos_z0_z0err;
+}
+
+void SimpAnaTTree::addVariable_unc_vtx_ele_isolation_cut(){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_ele_isolation_cut" << std::endl;
+    double* ele_isolation = new double{9999.9};
+    tuple_["unc_vtx_ele_isolation_cut"] = ele_isolation;
+    newtree_->Branch("unc_vtx_ele_isolation_cut", tuple_["unc_vtx_ele_isolation_cut"], "unc_vtx_ele_isolation_cut/D");
+    new_variables_["unc_vtx_ele_isolation_cut"] = ele_isolation;
+
+    std::function<double()> calculate_ele_isolation_cut = [&]()->double{
+
+        return ( (2.0* *tuple_["unc_vtx_ele_track_L1_isolation"] / *tuple_["unc_vtx_ele_track_z0Err"]) - (std::abs(*tuple_["unc_vtx_ele_track_z0"])/ *tuple_["unc_vtx_ele_track_z0Err"]) );
+    };
+    functions_["unc_vtx_ele_isolation_cut"] = calculate_ele_isolation_cut;
+}
+
+void SimpAnaTTree::addVariable_unc_vtx_pos_isolation_cut(){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_pos_isolation_cut" << std::endl;
+    double* pos_isolation = new double{9999.9};
+    tuple_["unc_vtx_pos_isolation_cut"] = pos_isolation;
+    newtree_->Branch("unc_vtx_pos_isolation_cut", tuple_["unc_vtx_pos_isolation_cut"], "unc_vtx_pos_isolation_cut/D");
+    new_variables_["unc_vtx_pos_isolation_cut"] = pos_isolation;
+
+    std::function<double()> calculate_pos_isolation_cut = [&]()->double{
+
+        return ( (2.0* *tuple_["unc_vtx_pos_track_L1_isolation"] / *tuple_["unc_vtx_pos_track_z0Err"]) - (std::abs(*tuple_["unc_vtx_pos_track_z0"])/ *tuple_["unc_vtx_pos_track_z0Err"]) );
+    };
+    functions_["unc_vtx_pos_isolation_cut"] = calculate_pos_isolation_cut;
+}
+
+void SimpAnaTTree::addVariable_unc_vtx_ele_z0tanlambda(){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_ele_z0tanlambda" << std::endl;
+    double* ele_z0tanlambda = new double{999.9};
+    tuple_["unc_vtx_ele_z0tanlambda"] = ele_z0tanlambda;
+    newtree_->Branch("unc_vtx_ele_z0tanlambda", tuple_["unc_vtx_ele_z0tanlambda"], "unc_vtx_ele_z0tanlambda/D");
+    new_variables_["unc_vtx_ele_z0tanlambda"] = ele_z0tanlambda;
+    std::function<double()> calculate_ele_z0tanlambda = [&]()->double{
+        return *tuple_["unc_vtx_ele_track_z0"] /  *tuple_["unc_vtx_ele_track_tanLambda"];
+    };
+    functions_["unc_vtx_ele_z0tanlambda"] = calculate_ele_z0tanlambda;
+}
+
+void SimpAnaTTree::addVariable_unc_vtx_pos_z0tanlambda(){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_pos_z0tanlambda" << std::endl;
+    double* pos_z0tanlambda = new double{999.9};
+    tuple_["unc_vtx_pos_z0tanlambda"] = pos_z0tanlambda;
+    newtree_->Branch("unc_vtx_pos_z0tanlambda", tuple_["unc_vtx_pos_z0tanlambda"], "unc_vtx_pos_z0tanlambda/D");
+    new_variables_["unc_vtx_pos_z0tanlambda"] = pos_z0tanlambda;
+    std::function<double()> calculate_pos_z0tanlambda = [&]()->double{
+        return *tuple_["unc_vtx_pos_track_z0"] /  *tuple_["unc_vtx_pos_track_tanLambda"];
+    };
+    functions_["unc_vtx_pos_z0tanlambda"] = calculate_pos_z0tanlambda;
+}
+
+void SimpAnaTTree::addVariable_unc_vtx_ele_z0tanlambda_right(double slope){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_ele_z0tanlambda_right with slope " << slope <<  std::endl;
+    double* ele_z0tanlambda_right = new double{999.9};
+    tuple_["unc_vtx_ele_z0tanlambda_right"] = ele_z0tanlambda_right;
+    newtree_->Branch("unc_vtx_ele_z0tanlambda_right", tuple_["unc_vtx_ele_z0tanlambda_right"], "unc_vtx_ele_z0tanlambda_right/D");
+    new_variables_["unc_vtx_ele_z0tanlambda_right"] = ele_z0tanlambda_right;
+    std::function<double()> calculate_ele_z0tanlambda_right = [&,slope]()->double{
+        return (*tuple_["unc_vtx_ele_track_z0"] /  *tuple_["unc_vtx_ele_track_tanLambda"]) + (-*tuple_["unc_vtx_z"]/-slope);
+    };
+    functions_["unc_vtx_ele_z0tanlambda_right"] = calculate_ele_z0tanlambda_right;
+}
+
+void SimpAnaTTree::addVariable_unc_vtx_pos_z0tanlambda_right(double slope){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_pos_z0tanlambda_right with slope " << slope <<  std::endl;
+    double* pos_z0tanlambda_right = new double{999.9};
+    tuple_["unc_vtx_pos_z0tanlambda_right"] = pos_z0tanlambda_right;
+    newtree_->Branch("unc_vtx_pos_z0tanlambda_right", tuple_["unc_vtx_pos_z0tanlambda_right"], "unc_vtx_pos_z0tanlambda_right/D");
+    new_variables_["unc_vtx_pos_z0tanlambda_right"] = pos_z0tanlambda_right;
+    std::function<double()> calculate_pos_z0tanlambda_right = [&, slope]()->double{
+        return (*tuple_["unc_vtx_pos_track_z0"] /  *tuple_["unc_vtx_pos_track_tanLambda"]) + (-*tuple_["unc_vtx_z"]/-slope);
+    };
+    functions_["unc_vtx_pos_z0tanlambda_right"] = calculate_pos_z0tanlambda_right;
+}
+
+void SimpAnaTTree::addVariable_unc_vtx_ele_z0tanlambda_left(double slope){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_ele_z0tanlambda_left with slope " << slope <<  std::endl;
+    double* ele_z0tanlambda_left = new double{999.9};
+    tuple_["unc_vtx_ele_z0tanlambda_left"] = ele_z0tanlambda_left;
+    newtree_->Branch("unc_vtx_ele_z0tanlambda_left", tuple_["unc_vtx_ele_z0tanlambda_left"], "unc_vtx_ele_z0tanlambda_left/D");
+    new_variables_["unc_vtx_ele_z0tanlambda_left"] = ele_z0tanlambda_left;
+    std::function<double()> calculate_ele_z0tanlambda_left = [&,slope]()->double{
+        return (*tuple_["unc_vtx_ele_track_z0"] /  *tuple_["unc_vtx_ele_track_tanLambda"]) + (-*tuple_["unc_vtx_z"]/-slope);
+    };
+    functions_["unc_vtx_ele_z0tanlambda_left"] = calculate_ele_z0tanlambda_left;
+}
+
+void SimpAnaTTree::addVariable_unc_vtx_pos_z0tanlambda_left(double slope){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_pos_z0tanlambda_left with slope " << slope <<  std::endl;
+    double* pos_z0tanlambda_left = new double{999.9};
+    tuple_["unc_vtx_pos_z0tanlambda_left"] = pos_z0tanlambda_left;
+    newtree_->Branch("unc_vtx_pos_z0tanlambda_left", tuple_["unc_vtx_pos_z0tanlambda_left"], "unc_vtx_pos_z0tanlambda_left/D");
+    new_variables_["unc_vtx_pos_z0tanlambda_left"] = pos_z0tanlambda_left;
+    std::function<double()> calculate_pos_z0tanlambda_left = [&, slope]()->double{
+        return (*tuple_["unc_vtx_pos_track_z0"] /  *tuple_["unc_vtx_pos_track_tanLambda"]) + (-*tuple_["unc_vtx_z"]/-slope);
+    };
+    functions_["unc_vtx_pos_z0tanlambda_left"] = calculate_pos_z0tanlambda_left;
+}
+
+/*
+void SimpAnaTTree::addVariable_unc_vtx_zbravosumAlpha(double slope){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_zbravosumAlpha" << std::endl;
+    double* zbravosumAlpha = new double {999.9};
+    tuple_["unc_vtx_zbravosumAlpha"] = zbravosumAlpha;
+    newtree_->Branch("unc_vtx_zbravosumAlpha", tuple_["unc_vtx_zbravosumAlpha"],"unc_vtx_zbravosumAlpha/D");
+    new_variables_["unc_vtx_zbravosumAlpha"] = zbravosumAlpha;
+    std::function<double()> calculatezbravosumAlpha = [&,slope]()->double{
         if(*tuple_["unc_vtx_zbravosum"] > 0.0){
             return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_zbravosum"])/slope)) );
         }
@@ -73,111 +325,112 @@ void SimpAnaTTree::addVariableZbravosumAlpha(double slope){
             return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_zbravosum"])/(-1.0*slope))) );
         }
     };
-    functions_["unc_vtx_zbravosumalpha"] = calculateZbravosumalpha;
+    functions_["unc_vtx_zbravosumAlpha"] = calculatezbravosumAlpha;
 }
 
-void SimpAnaTTree::addVariableZbravosum(){
-    std::cout << "[MutableTTree]::addVariableZbravosum" << std::endl;
+void SimpAnaTTree::addVariable_unc_vtx_zbravosum(){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_zbravosum" << std::endl;
     double* zbravosum = new double {999.9};
     tuple_["unc_vtx_zbravosum"] = zbravosum;
     newtree_->Branch("unc_vtx_zbravosum", tuple_["unc_vtx_zbravosum"],"unc_vtx_zbravosum/D");
     new_variables_["unc_vtx_zbravosum"] = zbravosum;
     std::function<double()> calculateZbravosum = [&]()->double{
-            return *tuple_["unc_vtx_ele_track_zbravo"] + *tuple_["unc_vtx_pos_track_zbravo"];
+            return *tuple_["unc_vtx_ele_zbravo"] + *tuple_["unc_vtx_pos_zbravo"];
     };
     functions_["unc_vtx_zbravosum"] = calculateZbravosum;
 }
 
-void SimpAnaTTree::addVariableZbravoAlphaTop(double slope){
-    double* zbravoalpha = new double{999.9};
-    tuple_["unc_vtx_track_zbravoalpha_top"] = zbravoalpha;
-    newtree_->Branch("unc_vtx_track_zbravoalpha_top", tuple_["unc_vtx_track_zbravoalpha_top"],
-        "unc_vtx_track_zbravoalpha/D");
-    new_variables_["unc_vtx_track_zbravoalpha_top"] = zbravoalpha;
+void SimpAnaTTree::addVariable_unc_vtx_zbravoAlphaTop(double slope){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_zbravoAlphaTop" << std::endl;
+    double* zbravoAlphaTop = new double{999.9};
+    tuple_["unc_vtx_zbravoAlphaTop"] = zbravoAlphaTop;
+    newtree_->Branch("unc_vtx_zbravoAlphaTop", tuple_["unc_vtx_zbravoAlphaTop"],
+        "unc_vtx_zbravoAlpha/D");
+    new_variables_["unc_vtx_zbravoAlphaTop"] = zbravoAlphaTop;
 
-    //Lambda function to calculate zbravoalpha
-    std::function<double()> calculate_zbravoalpha_top = [&, slope]()->double{
-        if(*tuple_["unc_vtx_ele_track_zbravo"] > 0.0)
-            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_zbravo"])/slope)) );
+    //Lambda function to calculate zbravoAlpha
+    std::function<double()> calculate_zbravoAlphaTop = [&, slope]()->double{
+        if(*tuple_["unc_vtx_ele_zbravo"] > 0.0)
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_zbravo"])/slope)) );
         else
-            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_zbravo"])/slope)) );
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_zbravo"])/slope)) );
     };
-    functions_["unc_vtx_track_zbravoalpha_top"] = calculate_zbravoalpha_top;
+    functions_["unc_vtx_zbravoAlphaTop"] = calculate_zbravoAlphaTop;
 }
 
-void SimpAnaTTree::addVariableZbravoAlphaBot(double slope){
-    double* zbravoalpha = new double{999.9};
-    tuple_["unc_vtx_track_zbravoalpha_bot"] = zbravoalpha;
-    newtree_->Branch("unc_vtx_track_zbravoalpha_bot", tuple_["unc_vtx_track_zbravoalpha_bot"],
-        "unc_vtx_track_zbravoalpha/D");
-    new_variables_["unc_vtx_track_zbravoalpha_bot"] = zbravoalpha;
+void SimpAnaTTree::addVariable_unc_vtx_zbravoAlphaBot(double slope){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_zbravoAlphaBot" << std::endl;
+    double* zbravoAlphaBot = new double{999.9};
+    tuple_["unc_vtx_zbravoAlphaBot"] = zbravoAlphaBot;
+    newtree_->Branch("unc_vtx_zbravoAlphaBot", tuple_["unc_vtx_zbravoAlphaBot"],
+        "unc_vtx_zbravoAlpha/D");
+    new_variables_["unc_vtx_zbravoAlphaBot"] = zbravoAlphaBot;
 
-    //Lambda function to calculate zbravoalpha
-    std::function<double()> calculate_zbravoalpha_bot = [&, slope]()->double{
-        if(*tuple_["unc_vtx_ele_track_zbravo"] < 0.0)
-            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_zbravo"])/slope)) );
+    //Lambda function to calculate zbravoAlpha
+    std::function<double()> calculate_zbravoAlphaBot = [&, slope]()->double{
+        if(*tuple_["unc_vtx_ele_zbravo"] > 0.0)
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_zbravo"])/slope)) );
         else
-            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_zbravo"])/slope)) );
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_zbravo"])/slope)) );
     };
-    functions_["unc_vtx_track_zbravoalpha_bot"] = calculate_zbravoalpha_bot;
+    functions_["unc_vtx_zbravoAlphaBot"] = calculate_zbravoAlphaBot;
 }
 
-
-void SimpAnaTTree::addVariableZbravoAlpha(double slope){
-    std::cout << "[MutableTTree]::addVariableZbravoAlpha with slope " << slope << std::endl;
+void SimpAnaTTree::addVariable_unc_vtx_ele_zbravoAlpha(double slope){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_ele_zbravoAlpha with slope " << slope << std::endl;
     //04/24 This variable is defined as the difference between z0, and the 
     //Zbravo line, which is defined by fitting signal z0 v reconz with a line
     //This will depend on signal mass. This is just a starting point
-    //double* ele_zbravo = tuple_["unc_vtx_ele_track_zbravo"];
-    //double* pos_bravo = tuple_["unc_vtx_pos_track_zbravo"];
-    //double* recon_z = tuple_["unc_vtx_z"];
 
     //ele
-    double* ele_zbalpha = new double {999.9};
-    tuple_["unc_vtx_ele_track_zbravoalpha"] = ele_zbalpha;
-    newtree_->Branch("unc_vtx_ele_track_zbravoalpha",tuple_["unc_vtx_ele_track_zbravoalpha"],"unc_vtx_ele_track_zbravoalpha/D");  
-    new_variables_["unc_vtx_ele_track_zbravoalpha"] = ele_zbalpha;
+    double* ele_zbravoAlpha = new double {999.9};
+    tuple_["unc_vtx_ele_zbravoAlpha"] = ele_zbravoAlpha;
+    newtree_->Branch("unc_vtx_ele_zbravoAlpha",tuple_["unc_vtx_ele_zbravoAlpha"],"unc_vtx_ele_zbravoAlpha/D");  
+    new_variables_["unc_vtx_ele_zbravoAlpha"] = ele_zbravoAlpha;
     double z0_correction = 0.0; //Details of this not clear yet 04/24/23
-    std::function<double()> calculateZbravoalpha_ele = [&,slope]()->double{
-        if(*tuple_["unc_vtx_ele_track_zbravo"] > -z0_correction){
-            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_zbravo"]+z0_correction)/slope)) );
+    std::function<double()> calculate_ele_zbravoAlpha = [&,slope]()->double{
+        if(*tuple_["unc_vtx_ele_zbravo"] > -z0_correction){
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_zbravo"]+z0_correction)/slope)) );
         }
         else{
-            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_zbravo"]+z0_correction)/(-1.0*slope))) );
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_zbravo"]+z0_correction)/(-1.0*slope))) );
         }
     };
-    functions_["unc_vtx_ele_track_zbravoalpha"] = calculateZbravoalpha_ele;
-
+    functions_["unc_vtx_ele_zbravoAlpha"] = calculate_ele_zbravoAlpha;
+}
+void SimpAnaTTree::addVariable_unc_vtx_pos_zbravoAlpha(double slope){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_pos_zbravoAlpha with slope " << slope << std::endl;
+    //04/24 This variable is defined as the difference between z0, and the 
+    //Zbravo line, which is defined by fitting signal z0 v reconz with a line
+    //This will depend on signal mass. This is just a starting point
+    //
     //pos
-    double* pos_zbalpha = new double {999.9};
-    tuple_["unc_vtx_pos_track_zbravoalpha"] = pos_zbalpha;
-    newtree_->Branch("unc_vtx_pos_track_zbravoalpha",tuple_["unc_vtx_pos_track_zbravoalpha"],"unc_vtx_pos_track_zbravoalpha/D");  
-    new_variables_["unc_vtx_pos_track_zbravoalpha"] = pos_zbalpha;
-    std::function<double()> calculateZbravoalpha_pos = [&,slope]()->double{
-        if(*tuple_["unc_vtx_pos_track_zbravo"] > -z0_correction){
-            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_zbravo"]+z0_correction)/slope)) );
+    double* pos_zbravoAlpha = new double {999.9};
+    tuple_["unc_vtx_pos_zbravoAlpha"] = pos_zbravoAlpha;
+    newtree_->Branch("unc_vtx_pos_zbravoAlpha",tuple_["unc_vtx_pos_zbravoAlpha"],"unc_vtx_pos_zbravoAlpha/D");  
+    new_variables_["unc_vtx_pos_zbravoAlpha"] = pos_zbravoAlpha;
+    std::function<double()> calculate_pos_zbravoAlpha = [&,slope]()->double{
+        if(*tuple_["unc_vtx_pos_zbravo"] > -z0_correction){
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_zbravo"]+z0_correction)/slope)) );
         }
         else{
-            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_zbravo"]+z0_correction)/(-1.0*slope))) );
+            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_zbravo"]+z0_correction)/(-1.0*slope))) );
         }
     };
-    functions_["unc_vtx_pos_track_zbravoalpha"] = calculateZbravoalpha_pos;
-
+    functions_["unc_vtx_pos_zbravoAlpha"] = calculate_pos_zbravoAlpha;
 }
 
-//Need to parameterize this transformation
-void SimpAnaTTree::addVariableZbravo(){
-    std::cout << "[MutableTTree]::addVariableZbravo" << std::endl;
+void SimpAnaTTree::addVariable_unc_vtx_ele_zbravo(){
+    std::cout << "[SimpAnaTTree]::Adding variable ele_zbravo" << std::endl;
     double* ele_z0 = tuple_["unc_vtx_ele_track_z0"];
-    double* pos_z0 = tuple_["unc_vtx_pos_track_z0"];
     double* recon_z = tuple_["unc_vtx_z"];
 
     //ele
     double* ele_zbravo = new double {999.9};
-    tuple_["unc_vtx_ele_track_zbravo"] = ele_zbravo;
-    newtree_->Branch("unc_vtx_ele_track_zbravo",tuple_["unc_vtx_ele_track_zbravo"],"unc_vtx_ele_track_zbravo/D");  
-    new_variables_["unc_vtx_ele_track_zbravo"] = ele_zbravo;
-    std::function<double()> calculateZbravo_ele = [&]()->double{
+    tuple_["unc_vtx_ele_zbravo"] = ele_zbravo;
+    newtree_->Branch("unc_vtx_ele_zbravo",tuple_["unc_vtx_ele_zbravo"],"unc_vtx_ele_zbravo/D");  
+    new_variables_["unc_vtx_ele_zbravo"] = ele_zbravo;
+    std::function<double()> calculate_ele_zbravo = [&]()->double{
         if(*tuple_["unc_vtx_ele_track_tanLambda"] > 0.0){
             return *tuple_["unc_vtx_ele_track_z0"] - (-0.039151**tuple_["unc_vtx_z"] - 0.031282);
         }
@@ -185,14 +438,20 @@ void SimpAnaTTree::addVariableZbravo(){
             return *tuple_["unc_vtx_ele_track_z0"] - (0.040086**tuple_["unc_vtx_z"] + 0.016186);
         }
     };
-    functions_["unc_vtx_ele_track_zbravo"] = calculateZbravo_ele;
+    functions_["unc_vtx_ele_zbravo"] = ele_zbravo;
+}
+
+void SimpAnaTTree::addVariable_unc_vtx_pos_zbravo(){
+    std::cout << "[SimpAnaTTree]::Adding variable pos_zbravo" << std::endl;
+    double* pos_z0 = tuple_["unc_vtx_pos_track_z0"];
+    double* recon_z = tuple_["unc_vtx_z"];
 
     //pos
     double* pos_zbravo = new double {999.9};
-    tuple_["unc_vtx_pos_track_zbravo"] = pos_zbravo;
-    newtree_->Branch("unc_vtx_pos_track_zbravo",tuple_["unc_vtx_pos_track_zbravo"],"unc_vtx_pos_track_zbravo/D");  
-    new_variables_["unc_vtx_pos_track_zbravo"] = pos_zbravo;
-    std::function<double()> calculateZbravo_pos = [&]()->double{
+    tuple_["unc_vtx_pos_zbravo"] = pos_zbravo;
+    newtree_->Branch("unc_vtx_pos_zbravo",tuple_["unc_vtx_pos_zbravo"],"unc_vtx_pos_zbravo/D");  
+    new_variables_["unc_vtx_pos_zbravo"] = pos_zbravo;
+    std::function<double()> calculate_pos_zbravo = [&]()->double{
         if(*tuple_["unc_vtx_pos_track_tanLambda"] > 0.0){
             return *tuple_["unc_vtx_pos_track_z0"] - (-0.037899**tuple_["unc_vtx_z"] - 0.0094);
         }
@@ -200,7 +459,7 @@ void SimpAnaTTree::addVariableZbravo(){
             return *tuple_["unc_vtx_pos_track_z0"] - (0.039501**tuple_["unc_vtx_z"] + 0.004176);
         }
     };
-    functions_["unc_vtx_pos_track_zbravo"] = calculateZbravo_pos;
+    functions_["unc_vtx_pos_zbravo"] = calculate_pos_zbravo;
 }
 
 void SimpAnaTTree::addVariableZalphaTop(double slope){
@@ -324,227 +583,4 @@ void SimpAnaTTree::addVariableZalphaTopBot(double top_slope, double bot_slope){
     addVariableZalphaBot(bot_slope);
 }
 
-void SimpAnaTTree::addVariableZalpha(double slope){
-    std::cout << "[MutableTTree]::addVariableZalpha with slope " << slope << std::endl;
-
-    //Create branch to hold new variable
-    double* ele_zalpha = new double{999.9};
-    tuple_["unc_vtx_ele_track_zalpha"] = ele_zalpha;
-    newtree_->Branch("unc_vtx_ele_track_zalpha",tuple_["unc_vtx_ele_track_zalpha"],"unc_vtx_ele_track_zalpha/D");  
-    new_variables_["unc_vtx_ele_track_zalpha"] = ele_zalpha;
-
-    //Define lambda function to calculate ele zalpha
-    std::function<double()> calculateZalpha_ele = [&, slope]()->double{
-        if(*tuple_["unc_vtx_ele_track_z0"] > 0.0)
-            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"])/slope)) );
-        else
-            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"])/(-1*slope)) ));
-    };
-    functions_["unc_vtx_ele_track_zalpha"] = calculateZalpha_ele;
-
-    //Create branch to hold new variable
-    double* pos_zalpha = new double{999.9};
-    tuple_["unc_vtx_pos_track_zalpha"] = pos_zalpha;
-    newtree_->Branch("unc_vtx_pos_track_zalpha",tuple_["unc_vtx_pos_track_zalpha"],"unc_vtx_pos_track_zalpha/D");  
-    new_variables_["unc_vtx_pos_track_zalpha"] = pos_zalpha;
-
-    //Define lambda function to calculate pos zalpha
-    std::function<double()> calculateZalpha_pos = [&,slope]()->double{
-        if(*tuple_["unc_vtx_pos_track_z0"] > 0.0)
-            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"])/slope)) );
-        else
-            return ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"]))/(-1*slope)) );
-    };
-    functions_["unc_vtx_pos_track_zalpha"] = calculateZalpha_pos;
-}
-
-void SimpAnaTTree::addVariableZalphaMax(double slope){
-    std::cout << "[MutableTTree]::addVariableZalpha with slope " << slope << std::endl;
-
-    //Create branch to hold new variable
-    double* zalpha_max = new double{999.9};
-    tuple_["unc_vtx_zalpha_max"] = zalpha_max;
-    newtree_->Branch("unc_vtx_zalpha_max",tuple_["unc_vtx_zalpha_max"],"unc_vtx_zalpha_max/D");  
-    new_variables_["unc_vtx_zalpha_max"] = zalpha_max;
-
-    //Define lambda function to calculate ele zalpha
-    std::function<double()> calculateZalphaMax = [&, slope]()->double{
-        double ele_zalpha;
-        double pos_zalpha;
-        if(*tuple_["unc_vtx_ele_track_z0"] > 0.0)
-            ele_zalpha = ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"])/slope)) );
-        else
-            ele_zalpha = ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"])/(-1*slope)) ));
-
-        if(*tuple_["unc_vtx_pos_track_z0"] > 0.0)
-            pos_zalpha = ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"])/slope)) );
-        else
-            pos_zalpha = ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"])/(-1*slope)) ));
-        if(ele_zalpha > pos_zalpha)
-            return ele_zalpha;
-        else
-            return pos_zalpha;
-    };
-    functions_["unc_vtx_zalpha_max"] = calculateZalphaMax;
-}
-
-void SimpAnaTTree::addVariableZalphaMin(double slope){
-    std::cout << "[MutableTTree]::addVariableZalpha with slope " << slope << std::endl;
-
-    //Create branch to hold new variable
-    double* zalpha_min = new double{999.9};
-    tuple_["unc_vtx_zalpha_min"] = zalpha_min;
-    newtree_->Branch("unc_vtx_zalpha_min",tuple_["unc_vtx_zalpha_min"],"unc_vtx_zalpha_min/D");  
-    new_variables_["unc_vtx_zalpha_min"] = zalpha_min;
-
-    //Define lambda function to calculate ele zalpha
-    std::function<double()> calculateZalphaMin = [&, slope]()->double{
-        double ele_zalpha;
-        double pos_zalpha;
-        if(*tuple_["unc_vtx_ele_track_z0"] > 0.0)
-            ele_zalpha = ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"])/slope)) );
-        else
-            ele_zalpha = ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_ele_track_z0"])/(-1*slope)) ));
-
-        if(*tuple_["unc_vtx_pos_track_z0"] > 0.0)
-            pos_zalpha = ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"])/slope)) );
-        else
-            pos_zalpha = ( *tuple_["unc_vtx_z"] - (((*tuple_["unc_vtx_pos_track_z0"])/(-1*slope)) ));
-        if(ele_zalpha < pos_zalpha)
-            return ele_zalpha;
-        else
-            return pos_zalpha;
-    };
-    functions_["unc_vtx_zalpha_min"] = calculateZalphaMin;
-}
-
-void SimpAnaTTree::addVariableIsolationZ0Error(){
-    double* ele_iso_z0err = new double{9999.9};
-    tuple_["unc_vtx_ele_iso_z0err"] = ele_iso_z0err;
-    newtree_->Branch("unc_vtx_ele_iso_z0err", tuple_["unc_vtx_ele_iso_z0err"], "unc_vtx_ele_iso_z0err/D");
-    new_variables_["unc_vtx_ele_iso_z0err"] = ele_iso_z0err;
-
-    std::function<double()> calculateIsolationZ0Error_ele = [&]()->double{
-        return 2.0* *tuple_["unc_vtx_ele_track_L1_isolation"] / *tuple_["unc_vtx_ele_track_z0Err"];
-    };
-    functions_["unc_vtx_ele_iso_z0err"] = calculateIsolationZ0Error_ele;
-
-    double* pos_iso_z0err = new double{9999.9};
-    tuple_["unc_vtx_pos_iso_z0err"] = pos_iso_z0err;
-    newtree_->Branch("unc_vtx_pos_iso_z0err", tuple_["unc_vtx_pos_iso_z0err"], "unc_vtx_pos_iso_z0err/D");
-    new_variables_["unc_vtx_pos_iso_z0err"] = pos_iso_z0err;
-
-    std::function<double()> calculateIsolationZ0Error_pos = [&]()->double{
-        return 2.0* *tuple_["unc_vtx_pos_track_L1_isolation"] / *tuple_["unc_vtx_pos_track_z0Err"];
-    };
-    functions_["unc_vtx_pos_iso_z0err"] = calculateIsolationZ0Error_pos;
-}
-
-void SimpAnaTTree::addVariableZ0vsZ0Error(){
-    double* ele_z0_z0err = new double{9999.9};
-    tuple_["unc_vtx_ele_z0_z0err"] = ele_z0_z0err;
-    newtree_->Branch("unc_vtx_ele_z0_z0err", tuple_["unc_vtx_ele_z0_z0err"], "unc_vtx_ele_z0_z0err/D");
-    new_variables_["unc_vtx_ele_z0_z0err"] = ele_z0_z0err;
-
-    std::function<double()> calculate_ratio_Z0_Z0Error_ele = [&]()->double{
-        return std::abs(*tuple_["unc_vtx_ele_track_z0"])/ *tuple_["unc_vtx_ele_track_z0Err"];
-    };
-    functions_["unc_vtx_ele_z0_z0err"] = calculate_ratio_Z0_Z0Error_ele;
-
-    double* pos_z0_z0err = new double{9999.9};
-    tuple_["unc_vtx_pos_z0_z0err"] = pos_z0_z0err;
-    newtree_->Branch("unc_vtx_pos_z0_z0err", tuple_["unc_vtx_pos_z0_z0err"], "unc_vtx_pos_z0_z0err/D");
-    new_variables_["unc_vtx_pos_z0_z0err"] = pos_z0_z0err;
-
-    std::function<double()> calculate_ratio_Z0_Z0Error_pos = [&]()->double{
-        return std::abs(*tuple_["unc_vtx_pos_track_z0"])/ *tuple_["unc_vtx_pos_track_z0Err"];
-    };
-    functions_["unc_vtx_pos_z0_z0err"] = calculate_ratio_Z0_Z0Error_pos;
-}
-
-void SimpAnaTTree::addVariableIsolationCut(){
-    std::cout << "[SimpAnaTTree]::adding variable 'unc_vtx_ele_isolation_cut' and 'unc_vtx_pos_isolation_cut' " << std::endl;
-    double* ele_isolation = new double{9999.9};
-    tuple_["unc_vtx_ele_isolation_cut"] = ele_isolation;
-    newtree_->Branch("unc_vtx_ele_isolation_cut", tuple_["unc_vtx_ele_isolation_cut"], "unc_vtx_ele_isolation_cut/D");
-    new_variables_["unc_vtx_ele_isolation_cut"] = ele_isolation;
-
-    std::function<double()> calculateIsolation_ele = [&]()->double{
-
-        return ( (2.0* *tuple_["unc_vtx_ele_track_L1_isolation"] / *tuple_["unc_vtx_ele_track_z0Err"]) - (std::abs(*tuple_["unc_vtx_ele_track_z0"])/ *tuple_["unc_vtx_ele_track_z0Err"]) );
-    };
-    functions_["unc_vtx_ele_isolation_cut"] = calculateIsolation_ele;
-
-    double* pos_isolation = new double{9999.9};
-    tuple_["unc_vtx_pos_isolation_cut"] = pos_isolation;
-    newtree_->Branch("unc_vtx_pos_isolation_cut", tuple_["unc_vtx_pos_isolation_cut"], "unc_vtx_pos_isolation_cut/D");
-    new_variables_["unc_vtx_pos_isolation_cut"] = pos_isolation;
-
-    std::function<double()> calculateIsolation_pos = [&]()->double{
-
-        return ( (2.0* *tuple_["unc_vtx_pos_track_L1_isolation"] / *tuple_["unc_vtx_pos_track_z0Err"]) - (std::abs(*tuple_["unc_vtx_pos_track_z0"])/ *tuple_["unc_vtx_pos_track_z0Err"]) );
-    };
-    functions_["unc_vtx_pos_isolation_cut"] = calculateIsolation_pos;
-}
-
-void SimpAnaTTree::addVariableZ0Tanlambda(){
-    double* ele_z0tanlambda = new double{999.9};
-    tuple_["unc_vtx_ele_track_z0tanlambda"] = ele_z0tanlambda;
-    newtree_->Branch("unc_vtx_ele_track_z0tanlambda", tuple_["unc_vtx_ele_track_z0tanlambda"], "unc_vtx_ele_track_z0tanlambda/D");
-    new_variables_["unc_vtx_ele_track_z0tanlambda"] = ele_z0tanlambda;
-    std::function<double()> calculateZ0Tanlambda_ele = [&]()->double{
-        return *tuple_["unc_vtx_ele_track_z0"] /  *tuple_["unc_vtx_ele_track_tanLambda"];
-    };
-    functions_["unc_vtx_ele_track_z0tanlambda"] = calculateZ0Tanlambda_ele;
-
-    double* pos_z0tanlambda = new double{999.9};
-    tuple_["unc_vtx_pos_track_z0tanlambda"] = pos_z0tanlambda;
-    newtree_->Branch("unc_vtx_pos_track_z0tanlambda", tuple_["unc_vtx_pos_track_z0tanlambda"], "unc_vtx_pos_track_z0tanlambda/D");
-    new_variables_["unc_vtx_pos_track_z0tanlambda"] = pos_z0tanlambda;
-    std::function<double()> calculateZ0Tanlambda_pos = [&]()->double{
-        return *tuple_["unc_vtx_pos_track_z0"] /  *tuple_["unc_vtx_pos_track_tanLambda"];
-    };
-    functions_["unc_vtx_pos_track_z0tanlambda"] = calculateZ0Tanlambda_pos;
-
-}
-
-void SimpAnaTTree::addVariableZ0TanlambdaRight(double slope){
-    double* ele_z0tanlambda_right = new double{999.9};
-    tuple_["unc_vtx_ele_track_z0tanlambda_right"] = ele_z0tanlambda_right;
-    newtree_->Branch("unc_vtx_ele_track_z0tanlambda_right", tuple_["unc_vtx_ele_track_z0tanlambda_right"], "unc_vtx_ele_track_z0tanlambda_right/D");
-    new_variables_["unc_vtx_ele_track_z0tanlambda_right"] = ele_z0tanlambda_right;
-    std::function<double()> calculatez0tanlambda_right_ele = [&,slope]()->double{
-        return (*tuple_["unc_vtx_ele_track_z0"] /  *tuple_["unc_vtx_ele_track_tanLambda"]) + (-*tuple_["unc_vtx_z"]/-slope);
-    };
-    functions_["unc_vtx_ele_track_z0tanlambda_right"] = calculatez0tanlambda_right_ele;
-
-    double* pos_z0tanlambda_right = new double{999.9};
-    tuple_["unc_vtx_pos_track_z0tanlambda_right"] = pos_z0tanlambda_right;
-    newtree_->Branch("unc_vtx_pos_track_z0tanlambda_right", tuple_["unc_vtx_pos_track_z0tanlambda_right"], "unc_vtx_pos_track_z0tanlambda_right/D");
-    new_variables_["unc_vtx_pos_track_z0tanlambda_right"] = pos_z0tanlambda_right;
-    std::function<double()> calculatez0tanlambda_right_pos = [&, slope]()->double{
-        return (*tuple_["unc_vtx_pos_track_z0"] /  *tuple_["unc_vtx_pos_track_tanLambda"]) + (-*tuple_["unc_vtx_z"]/-slope);
-    };
-    functions_["unc_vtx_pos_track_z0tanlambda_right"] = calculatez0tanlambda_right_pos;
-}
-
-void SimpAnaTTree::addVariableZ0TanlambdaLeft(double slope){
-    double* ele_z0tanlambda_left = new double{999.9};
-    tuple_["unc_vtx_ele_track_z0tanlambda_left"] = ele_z0tanlambda_left;
-    newtree_->Branch("unc_vtx_ele_track_z0tanlambda_left", tuple_["unc_vtx_ele_track_z0tanlambda_left"], "unc_vtx_ele_track_z0tanlambda_left/D");
-    new_variables_["unc_vtx_ele_track_z0tanlambda_left"] = ele_z0tanlambda_left;
-    std::function<double()> calculatez0tanlambda_left_ele = [&,slope]()->double{
-        return (*tuple_["unc_vtx_ele_track_z0"] /  *tuple_["unc_vtx_ele_track_tanLambda"]) + (-*tuple_["unc_vtx_z"]/-slope);
-    };
-    functions_["unc_vtx_ele_track_z0tanlambda_left"] = calculatez0tanlambda_left_ele;
-
-    double* pos_z0tanlambda_left = new double{999.9};
-    tuple_["unc_vtx_pos_track_z0tanlambda_left"] = pos_z0tanlambda_left;
-    newtree_->Branch("unc_vtx_pos_track_z0tanlambda_left", tuple_["unc_vtx_pos_track_z0tanlambda_left"], "unc_vtx_pos_track_z0tanlambda_left/D");
-    new_variables_["unc_vtx_pos_track_z0tanlambda_left"] = pos_z0tanlambda_left;
-    std::function<double()> calculatez0tanlambda_left_pos = [&, slope]()->double{
-        return (*tuple_["unc_vtx_pos_track_z0"] /  *tuple_["unc_vtx_pos_track_tanLambda"]) + (-*tuple_["unc_vtx_z"]/-slope);
-    };
-    functions_["unc_vtx_pos_track_z0tanlambda_left"] = calculatez0tanlambda_left_pos;
-
-}
+*/

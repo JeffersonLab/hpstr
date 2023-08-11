@@ -12,7 +12,6 @@ MutableTTree::MutableTTree(TFile* infile, std::string tree_name){
 
 double MutableTTree::getValue(std::string branch_name){
     if(tuple_.find(branch_name) == tuple_.end()){
-        std::cout << "[MutableTTree] ERROR: No branch named " << branch_name << " found inside TTree" << std::endl;
         return -9999.9;
     }
     else

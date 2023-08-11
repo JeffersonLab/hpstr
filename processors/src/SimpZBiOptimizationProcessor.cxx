@@ -67,65 +67,46 @@ void SimpZBiOptimizationProcessor::configure(const ParameterSet& parameters) {
 //USE JSON FILE TO LOAD IN NEW VARIABLES AND VARIABLE CONFIGURATIONS
 void SimpZBiOptimizationProcessor::addNewVariables(SimpAnaTTree* MTT, std::string variable, double param){
     
-    if(variable == "unc_vtx_track_zalpha_top_ele")
-        MTT->addVariableZalphaTopEle(param);
+    if(variable == "unc_vtx_ele_zalpha")
+        MTT->addVariable_unc_vtx_ele_zalpha(param);
+    if(variable == "unc_vtx_pos_zalpha")
+        MTT->addVariable_unc_vtx_pos_zalpha(param);
 
-    else if(variable == "unc_vtx_track_zalpha_bot_ele")
-        MTT->addVariableZalphaBotEle(param);
 
-    else if(variable == "unc_vtx_track_zalpha_top_pos")
-        MTT->addVariableZalphaTopPos(param);
+    if(variable == "unc_vtx_zalpha_max")
+        MTT->addVariable_unc_vtx_zalpha_max(param);
+    if(variable == "unc_vtx_zalpha_min")
+        MTT->addVariable_unc_vtx_zalpha_min(param);
 
-    else if(variable == "unc_vtx_track_zalpha_bot_pos")
-        MTT->addVariableZalphaBotPos(param);
+    if(variable == "unc_vtx_ele_iso_z0err")
+        MTT->addVariable_unc_vtx_ele_iso_z0err();
+    if(variable == "unc_vtx_pos_iso_z0err")
+        MTT->addVariable_unc_vtx_pos_iso_z0err();
 
-    else if(variable == "unc_vtx_track_zalpha")
-        MTT->addVariableZalpha(param);
+    if(variable == "unc_vtx_ele_z0_z0err")
+        MTT->addVariable_unc_vtx_ele_z0_z0err();
+    if(variable == "unc_vtx_pos_z0_z0err")
+        MTT->addVariable_unc_vtx_pos_z0_z0err();
 
-    else if(variable == "unc_vtx_track_zbravo")
-        MTT->addVariableZbravo();
+    if(variable == "unc_vtx_ele_isolation_cut")
+        MTT->addVariable_unc_vtx_ele_isolation_cut();
+    if(variable == "unc_vtx_pos_isolation_cut")
+        MTT->addVariable_unc_vtx_pos_isolation_cut();
 
-    else if(variable == "zbravosum")
-        MTT->addVariableZbravosum();
+    if(variable == "unc_vtx_ele_z0tanlambda")
+        MTT->addVariable_unc_vtx_ele_z0tanlambda();
+    if(variable == "unc_vtx_pos_z0tanlambda")
+        MTT->addVariable_unc_vtx_pos_z0tanlambda();
 
-    else if(variable == "zbravosumalpha")
-        MTT->addVariableZbravosumAlpha(param);
+    if(variable == "unc_vtx_ele_z0tanlambda_right")
+        MTT->addVariable_unc_vtx_ele_z0tanlambda_right(param);
+    if(variable == "unc_vtx_pos_z0tanlambda_right")
+        MTT->addVariable_unc_vtx_pos_z0tanlambda_right(param);
 
-    else if(variable == "unc_vtx_track_zalpha_top")
-        MTT->addVariableZalphaTop(param);
-
-    else if(variable == "unc_vtx_track_zalpha_bot")
-        MTT->addVariableZalphaBot(param);
-
-    else if(variable == "unc_vtx_track_zbravoalpha_top")
-        MTT->addVariableZalphaTop(param);
-
-    else if(variable == "unc_vtx_track_zbravoalpha_bot")
-        MTT->addVariableZalphaBot(param);
-
-    else if(variable == "unc_vtx_iso_z0err")
-        MTT->addVariableIsolationZ0Error();
-    
-    else if(variable == "unc_vtx_z0_z0err")
-        MTT->addVariableZ0vsZ0Error();
-    
-    else if(variable == "unc_vtx_isolation_cut")
-        MTT->addVariableIsolationCut();
-
-    else if(variable == "unc_vtx_z0tanlambda")
-        MTT->addVariableZ0Tanlambda();
-
-    else if(variable == "unc_vtx_z0tanlambda_right")
-        MTT->addVariableZ0TanlambdaRight(param);
-
-    else if(variable == "unc_vtx_z0tanlambda_left")
-        MTT->addVariableZ0TanlambdaLeft(param);
-
-    else if(variable == "unc_vtx_zalpha_max")
-        MTT->addVariableZalphaMax(param);
-
-    else if(variable == "unc_vtx_zalpha_min")
-        MTT->addVariableZalphaMin(param);
+    if(variable == "unc_vtx_ele_z0tanlambda_left")
+        MTT->addVariable_unc_vtx_ele_z0tanlambda_left(param);
+    if(variable == "unc_vtx_pos_z0tanlambda_left")
+        MTT->addVariable_unc_vtx_pos_z0tanlambda_left(param);
 
     else
         std::cout << "[SimpZBiOptimization]::ERROR::NEW VARIABLE " << variable << " IS NOT DEFINED IN SimpAnaTTree.cxx"
@@ -142,68 +123,19 @@ void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos
     }
 
     //always fill
-    if(MTT->variableExists("unc_vtx_z") && MTT->variableExists("unc_vtx_ele_track_z0") 
-            && MTT->variableExists("unc_vtx_pos_track_z0")){
-        histos->Fill2DHisto("z0_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_ele_track_z0"));
-        histos->Fill2DHisto("z0_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_pos_track_z0"));
-        histos->Fill2DHisto("ele_track_z0_v_pos_track_z0_hh",MTT->getValue("unc_vtx_pos_track_z0"),
-                MTT->getValue("unc_vtx_ele_track_z0"));
-    }
+    histos->Fill2DHisto("z0_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_ele_track_z0"));
+    histos->Fill2DHisto("z0_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_pos_track_z0"));
+    histos->Fill2DHisto("ele_track_z0_v_pos_track_z0_hh",MTT->getValue("unc_vtx_pos_track_z0"),
+            MTT->getValue("unc_vtx_ele_track_z0"));
 
     //Investigating new variables
-    if(MTT->variableExists("unc_vtx_track_zalpha")){
-        histos->Fill2DHisto("z0_v_recon_zalpha_hh",MTT->getValue("unc_vtx_ele_track_zalpha"),
+    if(MTT->variableExists("unc_vtx_ele_zalpha")){
+        histos->Fill2DHisto("z0_v_recon_zalpha_hh",MTT->getValue("unc_vtx_ele_zalpha"),
                 MTT->getValue("unc_vtx_ele_track_z0"));
-        histos->Fill2DHisto("z0_v_recon_zalpha_hh",MTT->getValue("unc_vtx_pos_track_zalpha"),
+    }
+    if(MTT->variableExists("unc_vtx_pos_zalpha")){
+        histos->Fill2DHisto("z0_v_recon_zalpha_hh",MTT->getValue("unc_vtx_pos_zalpha"),
                 MTT->getValue("unc_vtx_pos_track_z0"));
-    }
-
-    
-    //zalpha_top
-    if(MTT->variableExists("unc_vtx_track_zalpha_top")){
-        if(MTT->getValue("unc_vtx_ele_track_z0") > 0.0){
-            histos->Fill2DHisto("z0_v_recon_zalpha_hh",MTT->getValue("unc_vtx_track_zalpha_top"),
-                    MTT->getValue("unc_vtx_ele_track_z0"));
-        }
-        else{
-            histos->Fill2DHisto("z0_v_recon_zalpha_hh",MTT->getValue("unc_vtx_track_zalpha_top"),
-                    MTT->getValue("unc_vtx_pos_track_z0"));
-        }
-    }
-    //zalpha_bot
-    if(MTT->variableExists("unc_vtx_track_zalpha_bot")){
-        if(MTT->getValue("unc_vtx_ele_track_z0") < 0.0){
-            histos->Fill2DHisto("z0_v_recon_zalpha_hh",MTT->getValue("unc_vtx_track_zalpha_bot"),
-                    MTT->getValue("unc_vtx_ele_track_z0"));
-        }
-        else{
-            histos->Fill2DHisto("z0_v_recon_zalpha_hh",MTT->getValue("unc_vtx_track_zalpha_bot"),
-                    MTT->getValue("unc_vtx_pos_track_z0"));
-        }
-    }
-
-    //zbravoalpha_top
-    if(MTT->variableExists("unc_vtx_track_zbravoalpha_top")){
-        if(MTT->getValue("unc_vtx_ele_track_zbravo") > 0.0){
-            histos->Fill2DHisto("zbravo_v_zbravoalpha_hh",MTT->getValue("unc_vtx_track_zbravoalpha_top"),
-                    MTT->getValue("unc_vtx_ele_track_zbravo"));
-        }
-        else{
-            histos->Fill2DHisto("zbravo_v_zbravoalpha_hh",MTT->getValue("unc_vtx_track_zbravoalpha_top"),
-                    MTT->getValue("unc_vtx_pos_track_zbravo"));
-        }
-    }
-
-    //zbravoalpha_bot
-    if(MTT->variableExists("unc_vtx_track_zbravoalpha_bot")){
-        if(MTT->getValue("unc_vtx_ele_track_zbravo") < 0.0){
-            histos->Fill2DHisto("zbravo_v_zbravoalpha_hh",MTT->getValue("unc_vtx_track_zbravoalpha_bot"),
-                    MTT->getValue("unc_vtx_ele_track_zbravo"));
-        }
-        else{
-            histos->Fill2DHisto("zbravo_v_zbravoalpha_hh",MTT->getValue("unc_vtx_track_zbravoalpha_bot"),
-                    MTT->getValue("unc_vtx_pos_track_zbravo"));
-        }
     }
 
     //isolation cut
@@ -233,18 +165,18 @@ void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos
     //Z0TanLambda
     histos->Fill2DHisto("recon_z_v_z0tanlambda_hh", MTT->getValue("unc_vtx_ele_track_z0")/MTT->getValue("unc_vtx_ele_track_tanLambda"),MTT->getValue("unc_vtx_z"));
     histos->Fill2DHisto("recon_z_v_z0tanlambda_hh", MTT->getValue("unc_vtx_pos_track_z0")/MTT->getValue("unc_vtx_pos_track_tanLambda"),MTT->getValue("unc_vtx_z"));
-    if(MTT->variableExists("unc_vtx_ele_track_z0tanlambda_right")){
-        histos->Fill2DHisto("recon_z_v_z0tanlambda_right_hh", MTT->getValue("unc_vtx_ele_track_z0tanlambda_right"),MTT->getValue("unc_vtx_z"));
-        histos->Fill2DHisto("recon_z_v_z0tanlambda_right_hh", MTT->getValue("unc_vtx_pos_track_z0tanlambda_right"),MTT->getValue("unc_vtx_z"));
+    if(MTT->variableExists("unc_vtx_ele_z0tanlambda_right")){
+        histos->Fill2DHisto("recon_z_v_z0tanlambda_right_hh", MTT->getValue("unc_vtx_ele_z0tanlambda_right"),MTT->getValue("unc_vtx_z"));
+        histos->Fill2DHisto("recon_z_v_z0tanlambda_right_hh", MTT->getValue("unc_vtx_pos_z0tanlambda_right"),MTT->getValue("unc_vtx_z"));
         }
-    if(MTT->variableExists("unc_vtx_ele_track_z0tanlambda_left")){
-        histos->Fill2DHisto("recon_z_v_z0tanlambda_left_hh", MTT->getValue("unc_vtx_ele_track_z0tanlambda_left"),MTT->getValue("unc_vtx_z"));
-        histos->Fill2DHisto("recon_z_v_z0tanlambda_left_hh", MTT->getValue("unc_vtx_pos_track_z0tanlambda_left"),MTT->getValue("unc_vtx_z"));
+    if(MTT->variableExists("unc_vtx_ele_z0tanlambda_left")){
+        histos->Fill2DHisto("recon_z_v_z0tanlambda_left_hh", MTT->getValue("unc_vtx_ele_z0tanlambda_left"),MTT->getValue("unc_vtx_z"));
+        histos->Fill2DHisto("recon_z_v_z0tanlambda_left_hh", MTT->getValue("unc_vtx_pos_z0tanlambda_left"),MTT->getValue("unc_vtx_z"));
         }
 }
 
 void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::string outFilename){
-    std::cout << "[SimpZBiOptimizationProcessor] Initialize" << std::endl;
+    std::cout << "[SimpZBiOptimizationProcessor] Initialize " << inFilename << std::endl;
 
     //Load Simp Equations
     simpEqs_ = new SimpEquations(year_, eq_cfgFile_);
@@ -263,6 +195,8 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
     std::cout << "[SimpZBiOptimization]::Getting MC Signal pre-trigger vertex z distribution from file "
         << signalMCAnaFilename_ << std::endl;
     getSignalMCAnaVtxZ_h(signalMCAnaFilename_, signal_pdgid_); 
+    outFile_->cd();
+    signalSimZ_h_>Write();
 
     //Read signal ana vertex tuple, and convert to mutable tuple
     std::cout << "[SimpZBiOptimization]::Reading Signal AnaVertex Tuple from file " 
@@ -279,7 +213,6 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
     bkgMTT_->defineMassWindow(lowMass_, highMass_);
 
     //Add new variables, as defined in SimpAnaTTree.cxx, from the processor configuration script
-    std::cout << "[SimpZBiOptimization]::Adding New Variables to Tuples" << std::endl;
     for(std::vector<std::string>::iterator it = new_variables_.begin(); it != new_variables_.end(); it++){
         int param_idx = std::distance(new_variables_.begin(), it);
         std::cout << "[SimpZBiOptimization]::Attempting to add new variable " << *it << 
@@ -300,7 +233,6 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
     persistentCutsSelector_ = new IterativeCutSelector("persistentCuts", cuts_cfgFile_);
     persistentCutsSelector_->LoadSelection();
     persistentCutsPtr_ = persistentCutsSelector_->getPointerToCuts();
-    //persistentCutsSelector_->filterCuts(cutVariables_);
     std::cout << "Persistent Cuts: " << std::endl;
     persistentCutsSelector_->printCuts();
 
@@ -358,18 +290,6 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
     std::cout << "LOOK 1: Number of Signal entries " << signalMTT_->GetEntries() << std::endl;
     for(int e=0; e < signalMTT_->GetEntries(); e++){
         signalMTT_->GetEntry(e);
-
-        /*
-        //Apply current set of persistent cuts to all events
-        if(failPersistentCuts(signalMTT_))
-            continue;
-
-        if(testSpecialCut_){
-            if(!signalMTT_->testImpactParameterCut())
-                continue;
-        }
-        */
-
         fillEventHistograms(signalHistos_, signalMTT_);
     }
 
@@ -379,17 +299,6 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
 
 
         bkgMTT_->GetEntry(e);
-
-        /*
-        //Apply current set of persistent cuts to all events
-        if(failPersistentCuts(bkgMTT_))
-            continue;
-
-        if(testSpecialCut_){
-            if(!bkgMTT_->testImpactParameterCut())
-                continue;
-        }
-        */
         fillEventHistograms(bkgHistos_, bkgMTT_);
     }
     
@@ -413,21 +322,6 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
             std::cout << "Initial Integral for " << var << " is " << initialIntegrals_[var] << std::endl;
     }
     */
-
-    /*
-    //Set initial value of each Persistent Cut to where 0% of Signal distribution is cut in that variable
-    std::cout << "[SimpZBiOptimization]::Set initial Persistent Cut values based on cutting 0% Signal" << std::endl;
-    for(cut_iter_ it=persistentCutsPtr_->begin(); it!=persistentCutsPtr_->end(); it++){
-        std::string cutname = it->first;
-        std::string cutvar = persistentCutsSelector_->getCutVar(cutname);
-        std::cout << "Cut variable: " << cutvar << std::endl;
-        bool isCutGT = persistentCutsSelector_->isCutGreaterThan(cutname);
-        double cutvalue = signalHistos_->cutFractionOfSignalVariable(cutvar, isCutGT, 0.0, initialIntegrals_[cutvar]);
-        persistentCutsSelector_->setCutValue(cutname, cutvalue);
-        std::cout << "[SimpZBiOptimization]::Persistent Cut "<< cutname << ": " << 
-            persistentCutsSelector_->getCut(cutname) << " cuts 0% of Signal in variable " << cutvar << std::endl;
-    }
-    */
 }
 
 bool SimpZBiOptimizationProcessor::process(){
@@ -446,7 +340,7 @@ bool SimpZBiOptimizationProcessor::process(){
 
         //Reset histograms at the start of each iteration
         //Histograms will change with each iteration. 
-        if(debug_) std::cout << "[SimpZBiOptimization]::Resetting Histograms for Iteration" << std::endl;
+        if(debug_) std::cout << "[SimpZBiOptimization]::Resetting Histograms" << std::endl;
         signalHistos_->resetHistograms1d();
         signalHistos_->resetHistograms2d();
         bkgHistos_->resetHistograms1d();
@@ -468,9 +362,6 @@ bool SimpZBiOptimizationProcessor::process(){
         }
 
         //Fill signal variable distributions
-        if(debug_)
-            std::cout << "Filling Signal Variable Distributions" << std::endl;
-        std::cout << "LOOK 2: Number of Signal entries " << signalMTT_->GetEntries() << std::endl;
         for(int e=0;  e < signalMTT_->GetEntries(); e++){
             signalMTT_->GetEntry(e);
 
@@ -483,6 +374,7 @@ bool SimpZBiOptimizationProcessor::process(){
         }
 
 
+        //Initialize Signal Integrals
         if(iteration == 0){
             //Integrate each signal variable distribution.
             //When iterating Test Cuts, we reference these intial integrals, cutting n% of the original distribution.
@@ -582,7 +474,7 @@ bool SimpZBiOptimizationProcessor::process(){
             //Build Background Model, used to estimate nbkg in Signal Region
             if(debug_) std::cout << "Build Background Model" << std::endl;
             //TF1* bkg_model = (TF1*)testCutHistos_->fitExponentialTail("background_zVtx_"+cutname, 1000.0); 
-            TF1* bkg_model = (TF1*)testCutHistos_->fitExponentialPlusConst("background_zVtx_"+cutname, background_sf_*500.0); 
+            TF1* bkg_model = (TF1*)testCutHistos_->fitExponentialPlusConst("background_zVtx_"+cutname, 1000.0); 
             if(debug_) std::cout << "END Build Background Model" << std::endl;
 
             //Get signal unc_vtx_z vs true_vtx_z

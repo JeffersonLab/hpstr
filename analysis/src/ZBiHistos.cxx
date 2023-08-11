@@ -443,12 +443,7 @@ TF1* ZBiHistos::fitExponentialPlusConst(std::string histogramName, double start_
         if(fitResult->Ndf() <= 0)
             continue;
 
-        //std::cout << "Iter Seed 0: " << fitResult->Parameter(0) << std::endl;
-        //std::cout << "Iter Seed 1: " << fitResult->Parameter(1) << std::endl;
-        //std::cout << "Iter Seed Chi2: " << fitResult->Chi2()/fitResult->Ndf() << std::endl;
-
         if(fitResult->Chi2()/fitResult->Ndf() < best_seed_chi2){
-            //Issue with other local minimum ~10.0 breaks next step of fitting. Dont allow
             if(fitResult->Parameter(0) < 1000.0)
                 continue;
             best_seed_chi2 = fitResult->Chi2()/fitResult->Ndf();
@@ -477,11 +472,6 @@ TF1* ZBiHistos::fitExponentialPlusConst(std::string histogramName, double start_
             //std::cout << "set param_2: " << param_2 <<  std::endl;
         }
     }
-
-    std::cout << "Final Seed 0: " << seed_0 << std::endl;
-    std::cout << "Final Seed 1: " << seed_1 << std::endl;
-    std::cout << "param 2: " << param_2 << std::endl;
-    std::cout << "Best Chi2: " << best_chi2 << std::endl;
 
     //delete ran;
 
