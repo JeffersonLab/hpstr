@@ -180,10 +180,10 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 
     // Set the track ndf 
     track->setNdf(lc_track->getNdf());
-    
+
     // Set the track covariance matrix
     track->setCov(static_cast<std::vector<float> > (lc_track->getCovMatrix()));
-    
+
     // Set the position of the extrapolated track at the ECal face.  The
     // extrapolation uses the full 3D field map.
     const EVENT::TrackState* track_state 
@@ -249,25 +249,25 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 
             // Check that the TrackData data structure is correct.  If it's
             // not, throw a runtime exception.   
-            if (track_datum->getNDouble() > 14 || track_datum->getNFloat() > 4 
-                || track_datum->getNInt() != 1) {
+            if (track_datum->getNDouble() > 14 || track_datum->getNFloat() > 7 
+                    || track_datum->getNInt() != 1) {
                 throw std::runtime_error("[ TrackingProcessor ]: The collection " 
-                                         + std::string(Collections::TRACK_DATA)
-                                         + " has the wrong structure.");
+                        + std::string(Collections::TRACK_DATA)
+                        + " has the wrong structure.");
             }
 
             // Set the SvtTrack isolation values
             for (int iso_index = 0; iso_index < track_datum->getNDouble(); ++iso_index) { 
                 track->setIsolation(iso_index, track_datum->getDoubleVal(iso_index));
             }
-	    
+
             // Set the SvtTrack time
             track->setTrackTime(track_datum->getFloatVal(0));
 
-	    // Set the Track momentum
-	    if (track_datum->getNFloat()==4)
-	      track->setMomentum(track_datum->getFloatVal(1),track_datum->getFloatVal(2),track_datum->getFloatVal(3));
-	    
+            // Set the Track momentum
+            if (track_datum->getNFloat()>3)
+                track->setMomentum(track_datum->getFloatVal(1),track_datum->getFloatVal(2),track_datum->getFloatVal(3));
+
             // Set the volume (top/bottom) in which the SvtTrack resides
             track->setTrackVolume(track_datum->getIntVal(0));
         }
