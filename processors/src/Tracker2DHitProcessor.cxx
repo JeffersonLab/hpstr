@@ -52,7 +52,6 @@ bool Tracker2DHitProcessor::process(IEvent* ievent) {
     }
 
     //Check to see if fits are in the file
-    std::cout << "LOOK A" << std::endl;
     auto evColls = event->getLCEvent()->getCollectionNames();
     auto it = std::find (evColls->begin(), evColls->end(), hitFitCollLcio_.c_str());
     bool hasFits = true;
@@ -64,8 +63,6 @@ bool Tracker2DHitProcessor::process(IEvent* ievent) {
         // Heap an LCRelation navigator which will allow faster access 
         rawTracker_hit_fits_nav = new UTIL::LCRelationNavigator(raw_svt_hit_fits);
     }
-    std::cout << "LOOK B" << std::endl;
- 
 
     //Check to see if MC Particles are in the file
     it = std::find (evColls->begin(), evColls->end(), mcPartRelLcio_.c_str());
@@ -80,7 +77,6 @@ bool Tracker2DHitProcessor::process(IEvent* ievent) {
 
     }
 
-    std::cout << "LOOK C" << std::endl;
     // Create a map from an LCIO TrackerHit to a SvtHit. This will be used when
     // assigning references to a track
     // TODO: Use an unordered map for faster access
@@ -98,30 +94,22 @@ bool Tracker2DHitProcessor::process(IEvent* ievent) {
         int layer = -1;
 
         // Get a 2D hit from the list of hits
-        std::cout << "LOOK D" << std::endl;
         IMPL::TrackerHitImpl* lc_tracker_hit = static_cast<IMPL::TrackerHitImpl*>(tracker_hits->getElementAt(ihit));
-        std::cout << "LOOK E" << std::endl;
 
         if(debug_ > 0)
             std::cout << "tracker hit lcio id: " << lc_tracker_hit->id() << std::endl;
 
         // Build a TrackerHit
         TrackerHit* tracker_hit = utils::buildTrackerHit(lc_tracker_hit,rotateHits, hitType);
-        std::cout << "LOOK F" << std::endl;
 
         if(hasFits)
             utils::addRawInfoTo3dHit(tracker_hit, lc_tracker_hit,raw_svt_hit_fits,nullptr,hitType,false);
 
-        std::cout << "LOOK G" << std::endl;
         if(hasMCParts){
-            std::cout << "LOOK H" << std::endl;
             //Get the SvtRawTrackerHits that make up the 2D hit
             EVENT::LCObjectVec rawHits = lc_tracker_hit->getRawHits(); 
-            std::cout << "LOOK I" << std::endl;
             for(int irawhit = 0; irawhit < rawHits.size(); ++irawhit){
-                std::cout << "LOOK rJI" << std::endl;
                 IMPL::TrackerHitImpl* rawhit = static_cast<IMPL::TrackerHitImpl*>(rawHits.at(irawhit));
-                std::cout << "LOOK K" << std::endl;
                 //EVENT::TrackerRawData* rawTracker_hit = static_cast<EVENT::TrackerRawData*>(rawHits.at(irawhit));
                 //EVENT::TrackerRawData* rawhit = static_cast<EVENT::TrackerRawData*>(rawHits.at(irawhit));
 
@@ -130,26 +118,20 @@ bool Tracker2DHitProcessor::process(IEvent* ievent) {
 
                 // Get the list of fit params associated with the raw tracker hit
                 EVENT::LCObjectVec lc_simtrackerhits = mcPartRel_nav->getRelatedToObjects(rawhit);
-                std::cout << "LOOK Ka" << std::endl;
 
                 //Loop over SimTrackerHits to get MCParticles
                 for(int isimhit = 0; isimhit < lc_simtrackerhits.size(); isimhit++){
-                    std::cout << "LOOK Kb" << std::endl;
                     IMPL::SimTrackerHitImpl* lc_simhit = static_cast<IMPL::SimTrackerHitImpl*>(lc_simtrackerhits.at(isimhit));
-                    std::cout << "LOOK Kc" << std::endl;
                     IMPL::MCParticleImpl* lc_mcp = static_cast<IMPL::MCParticleImpl*>(lc_simhit->getMCParticle());
                     if(lc_mcp == nullptr)
                         std::cout << "mcp is null" << std::endl;
-                    std::cout << "LOOK Kd" << std::endl;
                     tracker_hit->addMCPartID(lc_mcp->id());
-                    std::cout << "LOOK Ke" << std::endl;
                     if(debug_ > 0) {
                         std::cout << "simtrackerhit lcio id: " << lc_simhit->id() << std::endl;
                         std::cout << "mcp lcio id: " << lc_mcp->id() << std::endl;
                     }
                 }
 
-                std::cout << "LOOK L" << std::endl;
                 /*
                 // Get all the MC Particle IDs associated to the hit
                 for(int ipart = 0; ipart < mcPart_list.size(); ipart++)
@@ -167,7 +149,6 @@ bool Tracker2DHitProcessor::process(IEvent* ievent) {
         // will be used later when setting references for hits on tracks.
         //hit_map[lc_tracker_hit] = tracker_hit; 
         hits_.push_back(tracker_hit);
-        std::cout << "LOOK rML" << std::endl;
     }
 
     if(hasMCParts) delete mcPartRel_nav;
