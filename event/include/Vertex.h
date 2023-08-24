@@ -78,7 +78,7 @@ class Vertex : public TObject {
          *  Covariance matrix of the position (stored as lower triangle matrix, i.e.
          *  cov(xx),cov(y,x),cov(y,y) ).
          */
-        void setCovariance( const std::vector<float>& vec);
+        void setCovariance(const std::vector<float>& vec);
 
         /** Set the probability */
         void setProbability(const float probability) {probability_ = probability;}

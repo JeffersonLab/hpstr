@@ -15,8 +15,8 @@ base.parser.add_argument("-TS", "--trackstate", type=str, dest="trackstate",
 
 options = base.parser.parse_args()
 
-#inFilename = options.inFilename[0]
-#outFilename = options.outFilename
+inFilename = options.inFilename[0]
+outFilename = options.outFilename
 
 print('Input file:  %s' % inFilename)
 print('Output file: %s' % outFilename)
@@ -40,7 +40,8 @@ anaTrks = HpstrConf.Processor('anaTrks', 'TrackingAnaProcessor')
 #   Processor Configuration   #
 ###############################
 anaTrks.parameters["debug"] = 0
-anaTrks.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/tracking/basicTracking.json'
+#anaTrks.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/tracking/basicTracking.json'
+anaTrks.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/tracking/trackHit.json'
 anaTrks.parameters["trkCollName"] = 'KalmanFullTracks%s'%(options.trackstate)
 anaTrks.parameters["run_number"] = options.run_number
 anaTrks.parameters["hitColl"] = 'SiClusters'

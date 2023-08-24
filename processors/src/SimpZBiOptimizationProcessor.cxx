@@ -196,7 +196,7 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
         << signalMCAnaFilename_ << std::endl;
     getSignalMCAnaVtxZ_h(signalMCAnaFilename_, signal_pdgid_); 
     outFile_->cd();
-    signalSimZ_h_>Write();
+    signalSimZ_h_->Write();
 
     //Read signal ana vertex tuple, and convert to mutable tuple
     std::cout << "[SimpZBiOptimization]::Reading Signal AnaVertex Tuple from file " 

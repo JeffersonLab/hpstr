@@ -255,5 +255,33 @@
         "maxX" : 400,
         "xtitle" : "Ecal Hit Energy [MeV]",
         "ytitle" : "Sim Particles / 2 MeV"
+    },
+    "recoil_ele_p_h" : {
+        "bins" : 450,
+        "minX" : 0,
+        "maxX" : 4.5,
+        "xtitle" : "Recoil Ele Momentum [GeV]",
+        "ytitle" : "Events"
+    },
+    "recoil_ele_px_h" : {
+        "bins" : 450,
+        "minX" : 0,
+        "maxX" : 4.5,
+        "xtitle" : "Recoil Ele Momentum in X [GeV]",
+        "ytitle" : "Events"
+    },
+    "recoil_ele_py_h" : {
+        "bins" : 450,
+        "minX" : 0,
+        "maxX" : 4.5,
+        "xtitle" : "Recoil Ele Momentum in Y [GeV]",
+        "ytitle" : "Events"
+    },
+    "recoil_ele_pz_h" : {
+        "bins" : 450,
+        "minX" : 0,
+        "maxX" : 4.5,
+        "xtitle" : "Recoil Ele Momentum in Z [GeV]",
+        "ytitle" : "Events"
     }
 }
