@@ -498,6 +498,8 @@ bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit,
             if (rawHits)
                 rawHits->push_back(rawHit);
         }
+        else
+            delete rawHit;
 
     }
 
