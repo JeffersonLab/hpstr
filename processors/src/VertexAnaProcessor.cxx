@@ -837,8 +837,6 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                             trueEsum = trueEleE + truePosE;
                         }
 
-                        std::cout << "MOM PDG ID IS " << momPDG << std::endl;
-                        std::cout << "MAX ID IS " << maxID << std::endl;
                         if(mcParts_->at(i)->getID() != maxID) continue;
                         //Default isRadPDG = 622
                         if(momPDG == isRadPDG_) isRadEle = 1;
