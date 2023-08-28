@@ -114,7 +114,7 @@ double SimpEquations::rate_2l(double m_Ap,double m_pi,double m_V,double eps,doub
 }
 
 double SimpEquations::getCtau(double m_Ap,double m_pi,double m_V,double eps,double alpha_D,double f_pi,double m_l,bool rho){
-    double c = 3.00e10; //cm/s
+    double c = 3.00e11; //mm/s
     double hbar = 6.58e-22; //MeV*sec
     double rate = rate_2l(m_Ap,m_pi,m_V,eps,alpha_D,f_pi,m_l,rho); //MeV
     double tau = hbar/rate;

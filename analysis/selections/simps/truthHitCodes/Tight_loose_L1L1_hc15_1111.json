@@ -1,0 +1,27 @@
+{
+    "chi2unc_lt": {
+        "cut": 20,
+        "id": 0,
+        "info": "#chi^{2}_{unc}<20"
+    },
+    "L1Requirement_eq": {
+        "cut": 1,
+        "id": 1,
+        "info": "L1L1"
+    },
+    "nVtxs_eq": {
+        "cut": 1,
+        "id": 2,
+        "info": "N_{vtx}=1"
+    },
+    "hitCode_lt": {
+        "cut": 15.0,
+        "id": 3,
+        "info": "< hit code 1111"
+    },
+    "hitCode_gt": {
+        "cut": 15.0,
+        "id": 4,
+        "info": "> hit code 1111"
+    }
+}
