@@ -127,6 +127,49 @@ double SimpEquations::gamma(double m_V,double E_V){
     return gamma;
 }
 
+//Allow passage of radFrac, radAcc, and dNdm from python config
+double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho, bool phi, 
+        double E_V, TEfficiency* effCalc_h, double dNdm, double radFrac, double radAcc, double target_pos, double zcut){
+
+    //Signal mass dependent SIMP parameters
+    double m_Ap = m_V*(mass_ratio_Ap_to_Vd_);
+    double m_pi = m_Ap/mass_ratio_Ap_to_Pid_;
+    double f_pi = m_pi/ratio_mPi_to_fPi_;
+
+    //Mass in MeV
+    double ctau = getCtau(m_Ap,m_pi, m_V,eps,alpha_D_,f_pi,m_l_,rho);
+    double gcTau = ctau * gamma(m_V/1000.0, E_V); //E_V in GeV
+    std::cout << "gcTau: " << gcTau << std::endl;
+    std::cout << "radFrac: " << radFrac << std::endl;
+    std::cout << "radAcc: " << radAcc << std::endl;
+    std::cout << "dNdm:" << dNdm << std::endl;
+
+    //Calculate the Efficiency Vertex (Displaced VD Acceptance)
+    double effVtx = 0.0;
+    for(int zbin = 0; zbin < (effCalc_h->GetTotalHistogram()->GetNbinsX())+1; zbin++){
+        double zz = effCalc_h->GetTotalHistogram()->GetBinLowEdge(zbin);
+        if(zz < zcut) continue;
+        effVtx += (TMath::Exp((target_pos-zz)/gcTau)/gcTau)*
+            (effCalc_h->GetEfficiency(zbin) - effCalc_h->GetEfficiencyErrorLow(zbin))*
+            effCalc_h->GetTotalHistogram()->GetBinWidth(zbin);
+    }
+
+
+    //Total A' Production Rate
+    double apProduction = (3.*137/2.)*3.14159*(m_Ap*eps*eps*radFrac*dNdm)/radAcc;
+
+    //A' -> V+Pi Branching Ratio
+    double br_VPi = br_Vpi(m_Ap, m_pi, m_V, alpha_D_, f_pi, rho, phi);
+
+    //Vector to e+e- BR = 1
+    double br_V_ee = 1.0;
+
+    //Expected Signal
+    double expSignal = apProduction * effVtx * br_VPi * br_V_ee;
+
+    return expSignal;
+}
+
 double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho, bool phi, 
         double E_V, TEfficiency* effCalc_h, double target_pos, double zcut){
 

@@ -310,6 +310,21 @@ void SimpAnaTTree::addVariable_unc_vtx_pos_z0tanlambda_left(double slope){
     functions_["unc_vtx_pos_z0tanlambda_left"] = calculate_pos_z0tanlambda_left;
 }
 
+void SimpAnaTTree::addVariable_unc_vtx_abs_delta_z0tanlambda(){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_abs_delta_z0tanlambda" << std::endl;
+    double* abs_delta_z0tanlambda = new double{999.9};
+    tuple_["unc_vtx_abs_delta_z0tanlambda"] = abs_delta_z0tanlambda;
+    newtree_->Branch("unc_vtx_abs_delta_z0tanlambda", tuple_["unc_vtx_abs_delta_z0tanlambda"], 
+            "unc_vtx_abs_delta_z0tanlambda/D");
+    new_variables_["unc_vtx_abs_delta_z0tanlambda"] = abs_delta_z0tanlambda;
+
+    std::function<double()> calculate_abs_delta_z0tanlambda = [&]()->double{
+        return ( std::abs((*tuple_["unc_vtx_pos_track_z0"] / *tuple_["unc_vtx_pos_track_tanLambda"]) -
+                   (*tuple_["unc_vtx_ele_track_z0"] / *tuple_["unc_vtx_ele_track_tanLambda"])));
+    };
+    functions_["unc_vtx_abs_delta_z0tanlambda"] = calculate_abs_delta_z0tanlambda;
+}
+
 /*
 void SimpAnaTTree::addVariable_unc_vtx_zbravosumAlpha(double slope){
     std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_zbravosumAlpha" << std::endl;

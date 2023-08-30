@@ -39,6 +39,8 @@ void SimpZBiOptimizationProcessor::configure(const ParameterSet& parameters) {
             parameters.getString("signalVtxAnaFilename", signalVtxAnaFilename_);
         signalVtxAnaTreename_ = 
             parameters.getString("signalVtxAnaTreename",signalVtxAnaTreename_);
+        signalVtxMCSelection_ = 
+            parameters.getString("signalVtxMCSelection",signalVtxMCSelection_);
         signalMCAnaFilename_ =
             parameters.getString("signalMCAnaFilename",signalMCAnaFilename_);
         signal_pdgid_ =
@@ -46,9 +48,14 @@ void SimpZBiOptimizationProcessor::configure(const ParameterSet& parameters) {
         signal_sf_ = parameters.getDouble("signal_sf", signal_sf_);
         signal_mass_ = parameters.getDouble("signal_mass",signal_mass_);
         mass_window_nsigma_ = parameters.getDouble("mass_window_nsigma", mass_window_nsigma_);
+        logEps2_ = parameters.getDouble("logEps2",logEps2_);
 
         //Expected Signal Calculation
-        logEps2_ = parameters.getDouble("logEps2",logEps2_);
+        radFrac_ = parameters.getDouble("radFrac", radFrac_);
+        radAcc_  = parameters.getDouble("radAcc", radAcc_);
+        bkgControlRegionFilename_ = parameters.getString("bkgControlRegionFilename", bkgControlRegionFilename_);
+        bkgControlRegionTreename_ = parameters.getString("bkgControlRegionTreename", bkgControlRegionTreename_);
+        dNdm_sf_ = parameters.getDouble("dNdm_sf", dNdm_sf_);
 
         // New Variables //
         new_variables_ = parameters.getVString("add_new_variables", new_variables_);
@@ -107,6 +114,9 @@ void SimpZBiOptimizationProcessor::addNewVariables(SimpAnaTTree* MTT, std::strin
         MTT->addVariable_unc_vtx_ele_z0tanlambda_left(param);
     if(variable == "unc_vtx_pos_z0tanlambda_left")
         MTT->addVariable_unc_vtx_pos_z0tanlambda_left(param);
+
+    if(variable == "unc_vtx_abs_delta_z0tanlambda")
+        MTT->addVariable_unc_vtx_abs_delta_z0tanlambda();
 
     else
         std::cout << "[SimpZBiOptimization]::ERROR::NEW VARIABLE " << variable << " IS NOT DEFINED IN SimpAnaTTree.cxx"
@@ -173,6 +183,34 @@ void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos
         histos->Fill2DHisto("recon_z_v_z0tanlambda_left_hh", MTT->getValue("unc_vtx_ele_z0tanlambda_left"),MTT->getValue("unc_vtx_z"));
         histos->Fill2DHisto("recon_z_v_z0tanlambda_left_hh", MTT->getValue("unc_vtx_pos_z0tanlambda_left"),MTT->getValue("unc_vtx_z"));
         }
+
+    if(MTT->variableExists("unc_vtx_abs_delta_z0tanlambda")){
+        histos->Fill2DHisto("recon_z_v_abs_delta_z0tanlambda_hh", MTT->getValue("unc_vtx_abs_delta_z0tanlambda"),MTT->getValue("unc_vtx_z"));
+    }
+}
+
+double SimpZBiOptimizationProcessor::countControlRegionBackgroundRate(std::string inFilename, std::string tree_name, 
+        double m_Ap, double Mbin, double dNdm_sf){
+    double dNdm = 0.0;
+    TFile inFile(inFilename.c_str(), "READ");
+    TTree* tree = (TTree*)inFile.Get((tree_name+"/"+tree_name+"_tree").c_str());
+    double mass;
+    std::cout << "Counting: Ap mass is " << m_Ap << std::endl;
+    tree->SetBranchAddress("unc_vtx_mass", &mass);
+    std::cout << "N entries: " << tree->GetEntries() << std::endl;
+    for(int e=0; e < tree->GetEntries(); e++){
+        tree->GetEntry(e);
+        if(mass*1000.0 > m_Ap + (Mbin/2)) continue;
+        if(mass*1000.0 < m_Ap - (Mbin/2)) continue;
+        dNdm = dNdm + 1.0;
+    }
+    std::cout << "Mbin is " << Mbin << std::endl;
+    dNdm = dNdm/Mbin;
+    dNdm = dNdm * dNdm_sf;
+    std::cout << "Background Rate in CR: " << dNdm << std::endl;
+    inFile.Close();
+
+    return dNdm;
 }
 
 void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::string outFilename){
@@ -202,14 +240,22 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
     std::cout << "[SimpZBiOptimization]::Reading Signal AnaVertex Tuple from file " 
         << signalVtxAnaFilename_.c_str() << std::endl;
     TFile* signalVtxAnaFile = new TFile(signalVtxAnaFilename_.c_str(),"READ");
-    signalMTT_ = new SimpAnaTTree(signalVtxAnaFile, signalVtxAnaTreename_);
+    signalMTT_ = new SimpAnaTTree(signalVtxAnaFile,(signalVtxAnaTreename_+"/"+signalVtxAnaTreename_+"_tree").c_str());
     signalMTT_->defineMassWindow(lowMass_, highMass_);
+
+    //Get Simp Mean Truth Energy
+    std::cout << "Get Mean Truth Energy" << std::endl;
+    TH1F* signalEnergy_h = (TH1F*)signalVtxAnaFile->Get((signalVtxMCSelection_+"/"+signalVtxMCSelection_+"_mc"+signal_pdgid_+"Energy_h").c_str());
+    std::cout << "Got the histo " << std::endl;
+    if(signalEnergy_h == nullptr) std::cout << "HISTO IS NULL" << std::endl;
+    E_Vd_ = (double)signalEnergy_h->GetMean();
+    std::cout << "Mean Energy is " << E_Vd_ << std::endl;
 
     //Read background ana vertex tuple, and convert to mutable tuple
     std::cout << "[SimpZBiOptimization]::Reading Background AnaVertex Tuple from file " 
         << signalVtxAnaFilename_.c_str() << std::endl;
     TFile* bkgVtxAnaFile = new TFile(bkgVtxAnaFilename_.c_str(),"READ");
-    bkgMTT_ = new SimpAnaTTree(bkgVtxAnaFile, bkgVtxAnaTreename_);
+    bkgMTT_ = new SimpAnaTTree(bkgVtxAnaFile, (bkgVtxAnaTreename_+"/"+bkgVtxAnaTreename_+"_tree").c_str());
     bkgMTT_->defineMassWindow(lowMass_, highMass_);
 
     //Add new variables, as defined in SimpAnaTTree.cxx, from the processor configuration script
@@ -301,6 +347,10 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
         bkgMTT_->GetEntry(e);
         fillEventHistograms(bkgHistos_, bkgMTT_);
     }
+
+    //Count background rate in the Control Region (used to calculate total A' Rate)
+    double m_Ap = simpEqs_->getAprimeMassFromVectorMass(signal_mass_);
+    dNdm_ = countControlRegionBackgroundRate(bkgControlRegionFilename_, bkgControlRegionTreename_, m_Ap, 30.0, dNdm_sf_);
     
     //Write initial variable histograms for signal and background
     std::cout << "[SimpZBiOptimization]::Writing Initial Histograms" << std::endl;
@@ -328,10 +378,12 @@ bool SimpZBiOptimizationProcessor::process(){
     std::cout << "[SimpZBiOptimizationProcessor]::process()" << std::endl;
 
     //step_size defines n% of signal distribution to cut in a given variable
+    std::cout << "step_size_ " << step_size_ << std::endl;
     double cutFraction = step_size_;
     if(max_iteration_ > (int)1.0/cutFraction)
         max_iteration_ = (int)1.0/cutFraction;
 
+    std::cout << "max iteration: " << max_iteration_ << std::endl;
     //Iteratively cut n% of the signal distribution for a given Test Cut variable
     for(int iteration = 0; iteration < max_iteration_; iteration ++){
         double cutSignal = (double)iteration*step_size_*100.0;
@@ -473,8 +525,8 @@ bool SimpZBiOptimizationProcessor::process(){
 
             //Build Background Model, used to estimate nbkg in Signal Region
             if(debug_) std::cout << "Build Background Model" << std::endl;
-            //TF1* bkg_model = (TF1*)testCutHistos_->fitExponentialTail("background_zVtx_"+cutname, 1000.0); 
-            TF1* bkg_model = (TF1*)testCutHistos_->fitExponentialPlusConst("background_zVtx_"+cutname, 1000.0); 
+            TF1* bkg_model = (TF1*)testCutHistos_->fitExponentialTail("background_zVtx_"+cutname, 100.0*background_sf_); 
+            //TF1* bkg_model = (TF1*)testCutHistos_->fitExponentialPlusConst("background_zVtx_"+cutname, 1000.0); 
             if(debug_) std::cout << "END Build Background Model" << std::endl;
 
             //Get signal unc_vtx_z vs true_vtx_z
@@ -516,12 +568,21 @@ bool SimpZBiOptimizationProcessor::process(){
             //Find maximum position of Zcut --> ZBi calculation requires non-zero background
             //Start the Zcut position at the target
             double max_zcut = -4.0;
+            double zcut_step = 0.5;
             TH1F* bkg_zVtx_h = (TH1F*)testCutHistos_->get1dHisto("testCutHistos_background_zVtx_"+cutname+"_h");
-            double endIntegral = bkg_zVtx_h->GetBinCenter(bkg_zVtx_h->FindLastBinAbove(0.0));
+            //double endIntegral = bkg_zVtx_h->GetBinCenter(bkg_zVtx_h->FindLastBinAbove(0.0));
+            double endIntegral = 100.0;
             double testIntegral = bkg_model->Integral(max_zcut, endIntegral);
+            if(debug_) std::cout << "Background between " << max_zcut << "and end of histo is " << 
+                testIntegral << std::endl;
             while(testIntegral > min_ztail_events_){
-                max_zcut = max_zcut+0.1;
+                max_zcut = max_zcut+zcut_step;
                 testIntegral = bkg_model->Integral(max_zcut, endIntegral);
+                if(testIntegral == 0.0){
+                    max_zcut = max_zcut-zcut_step;
+                    testIntegral = bkg_model->Integral(max_zcut, endIntegral);
+                    break;
+                }
             }
             if(debug_) std::cout << "Maximum Zcut: " << max_zcut << " gives " << testIntegral << " background events"  << std::endl;
 
@@ -543,12 +604,10 @@ bool SimpZBiOptimizationProcessor::process(){
             double best_scan_nsig;
             double best_scan_nbkg;
             if(debug_) std::cout << "Scanning zcut position" << std::endl;
-            for(double zcut = min_zcut; zcut < std::round(max_zcut+1.0); zcut = zcut+1.0){
+            for(double zcut = min_zcut; zcut < (max_zcut+zcut_step); zcut = zcut+zcut_step){
                 double Nbkg = bkg_model->Integral(zcut,endIntegral);
-                if(debug_){
-                    std::cout << "zcut: " << zcut << std::endl;
-                    std::cout << "Nbkg: " << Nbkg << std::endl;
-                }
+                std::cout << "zcut: " << zcut << std::endl;
+                std::cout << "Nbkg: " << Nbkg << std::endl;
                 
                 //Get the Signal truth vertex z distribution beyond the reconstructed vertex Zcut
                 TH1F* true_vtx_z_h = (TH1F*)vtx_z_hh->ProjectionY((std::to_string(zcut)+"_"+cutname+"_"+"true_vtx_z_projy").c_str(),vtx_z_hh->GetXaxis()->FindBin(zcut)+1,vtx_z_hh->GetXaxis()->GetNbins(),"");
@@ -573,14 +632,23 @@ bool SimpZBiOptimizationProcessor::process(){
                 double eps = std::sqrt(eps2);
 
                 //Calculate expected signal for Neutral Dark Vector "rho"
-                //!!! 1.35 is hardcoded, should not be the case...
+                double nSigRho = simpEqs_->expectedSignalCalculation(signal_mass_, 
+                        eps, true, false, E_Vd_, effCalc_h, dNdm_, radFrac_, radAcc_, -4.3, zcut);
+
+                //Calculate expected signal for Neutral Dark Vector "rho"
+                double nSigPhi = simpEqs_->expectedSignalCalculation(signal_mass_, 
+                        eps, false, true, E_Vd_, effCalc_h, dNdm_, radFrac_, radAcc_, -4.3, zcut);
+
+                /*
+                //Calculate expected signal for Neutral Dark Vector "rho"
                 double nSigRho = background_sf_*simpEqs_->expectedSignalCalculation(signal_mass_, 
-                        eps, true, false, 1.35, effCalc_h, -4.3, zcut);
+                        eps, true, false, E_Vd_, effCalc_h, -4.3, zcut);
 
                 //Calculate expected signal for Neutral Dark Vector "phi"
                 double nSigPhi = background_sf_*simpEqs_->expectedSignalCalculation(signal_mass_, 
-                        eps, false, true, 1.35, effCalc_h, -4.3, zcut);
+                        eps, false, true, E_Vd_, effCalc_h, -4.3, zcut);
 
+                */
                 double Nsig = nSigRho + nSigPhi;
 
                 if(debug_){

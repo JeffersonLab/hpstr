@@ -104,6 +104,12 @@ class SimpZBiOptimizationProcessor : public Processor {
         /**
          *@brief description
          */
+        double countControlRegionBackgroundRate(std::string inFilename, std::string tree_name, 
+                double m_Ap, double Mbin=30.0, double dNdm_sf = 1.0);
+
+        /**
+         *@brief description
+         */
         void addNewVariables(SimpAnaTTree* MTT, std::string variable, double param);
 
         /**
@@ -138,6 +144,7 @@ class SimpZBiOptimizationProcessor : public Processor {
         std::string variableHistCfgFilename_{""}; //<! description
         std::string signalVtxAnaFilename_{""}; //<! description
         std::string signalVtxAnaTreename_{""}; //<! description
+        std::string signalVtxMCSelection_{""}; //<! description
         std::string signalMCAnaFilename_{""}; //<! description
         std::string signal_pdgid_{""}; //<! description
         TH1F* signalSimZ_h_{nullptr}; //<! description
@@ -147,6 +154,7 @@ class SimpZBiOptimizationProcessor : public Processor {
         double logEps2_; //<! description
         double massResolution_; //<! description
         double mass_window_nsigma_; //<! description
+        double E_Vd_ = 1.35; //<! mean truth signal energy...default is 1.35
 
         //Histograms 
         std::shared_ptr<ZBiHistos> signalHistos_; //<! description
@@ -171,6 +179,14 @@ class SimpZBiOptimizationProcessor : public Processor {
 
         //simp equations
         SimpEquations* simpEqs_{nullptr}; //<! description
+
+        //Total A' Rate terms
+        double radFrac_ = 0.0;
+        double radAcc_ = 0.0;
+        double dNdm_ = 0.0;
+        double dNdm_sf_ = 1.0;
+        std::string bkgControlRegionFilename_{""};
+        std::string bkgControlRegionTreename_{""};
 
         //mass window 
         double highMass_; //<! description

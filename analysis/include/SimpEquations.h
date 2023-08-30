@@ -58,6 +58,11 @@ class SimpEquations {
             double f_pi, double m_l, bool rho, bool phi, double E_V, TEfficiency* effCalc_h, double target_pos, 
             double zcut);
 
+        double expectedSignalCalculation(double m_V, double eps, bool rho, bool phi, double E_V, 
+                TEfficiency* effCalc_h, double dNdm, double radFrac, double radAcc, double target_pos, double zcut);
+        
+        double getAprimeMassFromVectorMass(double m_V){return m_V * mass_ratio_Ap_to_Vd_;};
+
     private:
 
         int year_ = 2016;//!< year (used to specify polynomial choices)
