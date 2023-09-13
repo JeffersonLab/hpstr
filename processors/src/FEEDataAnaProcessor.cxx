@@ -14,6 +14,10 @@
 #define TRACKPMIN 3.77 // 3 sigma
 #define TRACKPMAX 5.34 // 3 sigma
 #define SEEDENERGYMIN 2.5
+#define EOVERPMIN 1.08
+#define EOVERPMAX 1.24
+//#define EOVERPMIN 0.95
+//#define EOVERPMAX 1.11
 
 #define DIFFIX 0 // Limit for ix difference between Ecal and VTP clusters
 #define DIFFIY 0 // Limit for iy difference between Ecal and VTP clusters
@@ -117,6 +121,7 @@ bool FEEDataAnaProcessor::process(IEvent* ievent) {
         }
 
         std::vector<CalCluster*> ecalClulsters_cut;
+        std::vector<Track*> tracks_cut;
 
         if(flag_event_selction == true){
 
@@ -150,6 +155,7 @@ bool FEEDataAnaProcessor::process(IEvent* ievent) {
 								&& positionAtEcal[1] > func_top_botCutY->Eval(positionCluster[1])) {
 						 */
 							ecalClulsters_cut.push_back(cluster);
+							tracks_cut.push_back(track);
 							break;
 						//}
 					}
@@ -165,6 +171,7 @@ bool FEEDataAnaProcessor::process(IEvent* ievent) {
 								&& positionAtEcal[1] > func_bot_botCutY->Eval(positionCluster[1])) {
 								*/
 							ecalClulsters_cut.push_back(cluster);
+							tracks_cut.push_back(track);
 							break;
 						//}
 					}
@@ -195,6 +202,15 @@ bool FEEDataAnaProcessor::process(IEvent* ievent) {
 
 			histos->Fill1DHisto("ecalSeedEnergy_with_event_selction_and_track_cluster_matching_h", seedEcal->getEnergy(), weight);
     		if(seedEcal->getEnergy() < SEEDENERGYMIN) continue;
+
+    		Track* trk = tracks_cut.at(i);
+            std::vector<double> mom = trk->getMomentum();
+            double p = sqrt(pow(mom[0], 2) + pow(mom[1], 2) + pow(mom[2], 2));
+            double eoverp = p / energyEcalCluster;
+            histos->Fill1DHisto("eoverp_with_event_selction_and_track_cluster_matching_h", eoverp, weight);
+
+            if(eoverp < EOVERPMIN || eoverp > EOVERPMAX) continue;
+
 
 			std::vector<VTPData::hpsCluster> vtpClusters = vtpData_->clusters;
 		    for (int j = 0; j < vtpClusters.size(); j++){

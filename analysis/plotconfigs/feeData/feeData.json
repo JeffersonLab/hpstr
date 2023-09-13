@@ -243,6 +243,14 @@
         "ytitle" : "Clusters / 0.06 GeV"
     },
     
+   	"eoverp_with_event_selction_and_track_cluster_matching_h" : {
+        "bins" : 100,
+        "minX" : 0.5,
+        "maxX" : 1.5,
+        "xtitle" : "E over p",
+        "ytitle" : "Clusters"
+    },
+    
 	"ecalClusterEnergy_with_event_selction_and_track_cluster_matching_h" : {
         "bins" : 100,
         "minX" : 0,
