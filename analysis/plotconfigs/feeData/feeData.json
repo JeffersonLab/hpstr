@@ -235,6 +235,14 @@
 		"ytitle" : "Y of track extrapolation at Ecal face [mm]"
     },
     
+   	"ecalSeedEnergy_with_event_selction_and_track_cluster_matching_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 6,
+        "xtitle" : "Reco Ecal Seed Energy [GeV]",
+        "ytitle" : "Clusters / 0.06 GeV"
+    },
+    
 	"ecalClusterEnergy_with_event_selction_and_track_cluster_matching_h" : {
         "bins" : 100,
         "minX" : 0,
@@ -274,10 +282,17 @@
         "ytitle" : "IY difference between Ecal and VTP clusters"
     },
 	"VTPClusterEnergy_with_Ecal_VTP_cluster_matching_h" : {
-        "bins" : 100,
-        "minX" : 0,
+        "bins" : 50,
+        "minX" : 2,
         "maxX" : 6,
         "xtitle" : "Reco VTP Cluster Energy [GeV]",
+        "ytitle" : "Clusters / 0.06 GeV"
+    },
+	"EcalClusterEnergy_with_Ecal_VTP_cluster_matching_h" : {
+        "bins" : 50,
+        "minX" : 2,
+        "maxX" : 6,
+        "xtitle" : "Reco Ecal Cluster Energy [GeV]",
         "ytitle" : "Clusters / 0.06 GeV"
     }
       

@@ -13,6 +13,7 @@
 #define XMAX 40
 #define TRACKPMIN 3.77 // 3 sigma
 #define TRACKPMAX 5.34 // 3 sigma
+#define SEEDENERGYMIN 2.5
 
 #define DIFFIX 0 // Limit for ix difference between Ecal and VTP clusters
 #define DIFFIY 0 // Limit for iy difference between Ecal and VTP clusters
@@ -142,26 +143,30 @@ bool FEEDataAnaProcessor::process(IEvent* ievent) {
 						histos->Fill2DHisto("trackX_vs_ClusterX_top_with_event_selction_hh", positionCluster[0], positionAtEcal[0], weight);
 						histos->Fill2DHisto("trackY_vs_ClusterY_top_with_event_selction_hh", positionCluster[1], positionAtEcal[1], weight);
 
+						/*
 						if (positionAtEcal[0]< func_top_topCutX->Eval(positionCluster[0])
 								&& positionAtEcal[0] > func_top_botCutX->Eval(positionCluster[0])
 								&& positionAtEcal[1] < func_top_topCutY->Eval(positionCluster[1])
 								&& positionAtEcal[1] > func_top_botCutY->Eval(positionCluster[1])) {
+						 */
 							ecalClulsters_cut.push_back(cluster);
 							break;
-						}
+						//}
 					}
 
 					else if(iy < 0 && positionAtEcal[1] < 0){
 						histos->Fill2DHisto("trackX_vs_ClusterX_bot_with_event_selction_hh", positionCluster[0], positionAtEcal[0], weight);
 						histos->Fill2DHisto("trackY_vs_ClusterY_bot_with_event_selction_hh", positionCluster[1], positionAtEcal[1], weight);
 
+						/*
 						if (positionAtEcal[0]< func_bot_topCutX->Eval(positionCluster[0])
 								&& positionAtEcal[0] > func_bot_botCutX->Eval(positionCluster[0])
 								&& positionAtEcal[1] < func_bot_topCutY->Eval(positionCluster[1])
 								&& positionAtEcal[1] > func_bot_botCutY->Eval(positionCluster[1])) {
+								*/
 							ecalClulsters_cut.push_back(cluster);
 							break;
-						}
+						//}
 					}
 				}
 			}
@@ -169,6 +174,7 @@ bool FEEDataAnaProcessor::process(IEvent* ievent) {
         }
 
         std::vector<VTPData::hpsCluster> vtpClulsters_cut;
+        std::vector<CalCluster> vect_ecalClus_cut;
 
         for(int i = 0; i < ecalClulsters_cut.size(); i++){
 			CalCluster *ecalCluster = ecalClulsters_cut.at(i);
@@ -176,14 +182,19 @@ bool FEEDataAnaProcessor::process(IEvent* ievent) {
             double energyEcalCluster = ecalCluster->getEnergy();
             double timeEcalCluster = ecalCluster->getTime();
 
-
 			histos->Fill1DHisto("ecalClusterEnergy_with_event_selction_and_track_cluster_matching_h", ecalCluster->getEnergy(), weight);
 
 			CalHit* seedEcal = (CalHit*)ecalCluster->getSeed();
-
 			int ixEcal = seedEcal -> getCrystalIndices()[0];
 			if(ixEcal < 0) ixEcal++;
 			int iyEcal = seedEcal -> getCrystalIndices()[1];
+
+    		if(ixEcal == -22 || ixEcal == 23 || iyEcal == -5 || iyEcal == -1 || iyEcal == 1 || iyEcal == 5) continue;
+    		if((ixEcal >= -9 && ixEcal <= -1) && (iyEcal == 2 || iyEcal == -2)) continue;
+    		if((ixEcal == -10 || ixEcal == 0) && (iyEcal == 2 || iyEcal == -2)) continue;
+
+			histos->Fill1DHisto("ecalSeedEnergy_with_event_selction_and_track_cluster_matching_h", seedEcal->getEnergy(), weight);
+    		if(seedEcal->getEnergy() < SEEDENERGYMIN) continue;
 
 			std::vector<VTPData::hpsCluster> vtpClusters = vtpData_->clusters;
 		    for (int j = 0; j < vtpClusters.size(); j++){
@@ -205,13 +216,19 @@ bool FEEDataAnaProcessor::process(IEvent* ievent) {
 
         		if(ixDiff == DIFFIX && iyDiff == DIFFIX){
         			vtpClulsters_cut.push_back(vtpCluster);
+        			vect_ecalClus_cut.push_back(*ecalCluster);
+        			break;
         		}
 		    }
         }
 
         for(int i = 0; i < vtpClulsters_cut.size(); i++){
         	VTPData::hpsCluster vtpCluster = vtpClulsters_cut.at(i);
-        	histos->Fill1DHisto("VTPClusterEnergy_with_Ecal_VTP_cluster_matching_h", vtpCluster.E/1000., weight);
+    		histos->Fill1DHisto("VTPClusterEnergy_with_Ecal_VTP_cluster_matching_h", vtpCluster.E/1000., weight);
+
+        	CalCluster ecalClus = vect_ecalClus_cut.at(i);
+        	histos->Fill1DHisto("EcalClusterEnergy_with_Ecal_VTP_cluster_matching_h", ecalClus.getEnergy(), weight);
+
         }
 
 
