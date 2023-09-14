@@ -263,6 +263,7 @@ bool FEEMCAnaProcessor::process(IEvent* ievent) {
 		if((ixEcal == -10 || ixEcal == 0) && (iyEcal == 2 || iyEcal == -2)) continue;
 
 		histos->Fill1DHisto("ecalSeedEnergy_with_event_selction_and_track_cluster_matching_h", seedEcal->getEnergy(), weight);
+		histos_prescale->Fill1DHisto("ecalSeedEnergy_with_event_selction_and_track_cluster_matching_h", seedEcal->getEnergy(), weight_prescale);
 		if(seedEcal->getEnergy() < SEEDENERGYMIN) continue;
 
 		Track* trk = tracks_cut.at(i);
@@ -270,6 +271,7 @@ bool FEEMCAnaProcessor::process(IEvent* ievent) {
         double p = sqrt(pow(mom[0], 2) + pow(mom[1], 2) + pow(mom[2], 2));
         double eoverp = p / energyEcalCluster;
         histos->Fill1DHisto("eoverp_with_event_selction_and_track_cluster_matching_h", eoverp, weight);
+        histos_prescale->Fill1DHisto("eoverp_with_event_selction_and_track_cluster_matching_h", eoverp, weight_prescale);
 
         if(eoverp < EOVERPMIN || eoverp > EOVERPMAX) continue;
 
@@ -314,7 +316,7 @@ bool FEEMCAnaProcessor::process(IEvent* ievent) {
 
     	CalCluster ecalClus = vect_ecalClus_cut.at(i);
     	histos->Fill1DHisto("EcalClusterEnergy_with_Ecal_VTP_cluster_matching_h", ecalClus.getEnergy(), weight);
-    	histos->Fill1DHisto("EcalClusterEnergy_with_Ecal_VTP_cluster_matching_h", ecalClus.getEnergy(), weight_prescale);
+    	histos_prescale->Fill1DHisto("EcalClusterEnergy_with_Ecal_VTP_cluster_matching_h", ecalClus.getEnergy(), weight_prescale);
 	}
 
     return true;
