@@ -1,0 +1,27 @@
+{
+    "eleClusterMatched" : {
+        "cut" : 1, 
+        "id"  : 0,
+        "info": "Electron Cluster Match"
+    },
+    "posClusterMatched" : {
+        "cut" : 0, 
+        "id"  : 1,
+        "info": "Positron Cluster Match"
+    },
+    "ele_FoundL2" : {
+        "cut"  : 1,
+        "id"   : 2,
+        "info" : "L2{e^{-}}=True"
+    }, 	
+    "pos_FoundL2" : {
+        "cut"  : 1,
+        "id"   : 3,
+        "info" : "L2{e^{+}}=True"
+    }, 	
+    "nVtxs_eq" : {
+        "cut"  : 1,
+        "id"   : 4,
+        "info" : "N_{vtx}=1"
+    } 
+}

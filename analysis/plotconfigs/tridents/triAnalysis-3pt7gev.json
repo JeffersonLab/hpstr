@@ -41,6 +41,20 @@
         "xtitle" : "N_{vertices} passing all cuts",
         "ytitle" : "Events"
     },
+    "n_ele_clusters_h":{
+	"bins"   : 10,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "N_{clusters} Electron Side (x<0 mm)",
+        "ytitle" : "Events"
+    },
+    "n_pos_clusters_h":{
+	"bins"   : 10,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "N_{clusters} Positron Side (x>100 mm)",
+        "ytitle" : "Events"
+    },
     "ele_strategy_h" : {
         "bins" : 6,
         "minX" : -0.5,
@@ -54,6 +68,13 @@
         "minX" : -0.5,
         "maxX" : 64.5,
         "xtitle" : "Type",
+        "ytitle" : "Tracks"
+    },
+    "ele_nHits_2d_h" : {
+        "bins" : 10,
+        "minX" : 4.5,
+        "maxX" : 14.5,
+        "xtitle" : "Number of Hits on Electron Track",
         "ytitle" : "Tracks"
     },
     "ele_nShared_h" : {
@@ -71,6 +92,13 @@
         "ytitle" : "Tracks",
         "labels" : ["All Tracks","nShared = 0","SharedLy0","SharedLy1","SharedLy0AndLy1","SharedOthers"]
     },
+    "ele_layersHit_h":{
+         "bins" : 14,
+        "minX" : 0.5,
+        "maxX" : 14.5,
+        "xtitle" : "SVT Layer On Track",
+        "ytitle" : "Tracks"
+    },
     "ele_d0_h" : {
         "bins" : 200,
         "minX" : -3,
@@ -79,9 +107,9 @@
         "ytitle" : "Tracks"
     },
     "ele_Phi_h" : {
-        "bins" : 100,
-        "minX" : -0.2,
-        "maxX" : 0.2,
+        "bins" : 60,
+        "minX" : -0.15,
+        "maxX" : 0.15,
         "xtitle" : "phi_{0}",
         "ytitle" : "Tracks"
     },
@@ -106,6 +134,13 @@
         "xtitle" : "z_0 [mm]",
         "ytitle" : "Tracks"
     },
+    "ele_Z0_over_TanLambda_h": {
+        "bins" : 100,
+        "minX" : -100,
+        "maxX" : 100,
+        "xtitle": "z_0/tan(#lambda) [mm]",
+        "ytitle": "Tracks"
+    },
     "ele_time_h" : {
         "bins" : 200,
         "minX" : -25,
@@ -128,7 +163,26 @@
         "xtitle" : "p_{e^{-}} [GeV]",
         "ytitle" : "Tracks"
     },
-    
+    "ele_vtx_z_vs_z0_over_tanLambda_m_eq_92_hh":{
+        "binsX"  : 100,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "binsY"  : 100,
+        "minY"   : -20,
+        "maxY"   : 70,
+        "xtitle" : "z_0/tan(#lambda) [mm]",
+        "ytitle" : "vertex z [mm]"
+    },
+    "ele_vtx_z_vs_z0_over_tanLambda_hh":{
+        "binsX"  : 100,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "binsY"  : 100,
+        "minY"   : -20,
+        "maxY"   : 70,
+        "xtitle" : "z_0/tan(#lambda) [mm]",
+        "ytitle" : "vertex z [mm]"
+    },
     "ele_tanlambda_vs_phi0_hh" : {
         "binsX"  : 100,
         "minX"   : -0.3,
@@ -221,6 +275,13 @@
         "xtitle" : "Type",
         "ytitle" : "Tracks"
     },
+    "pos_nHits_2d_h" : {
+        "bins" : 10,
+        "minX" : 4.5,
+        "maxX" : 14.5,
+        "xtitle" : "Number of Hits on Positron Track",
+        "ytitle" : "Tracks"
+    },
     "pos_nShared_h" : {
         "bins" : 8,
         "minX" : -0.5,
@@ -236,6 +297,13 @@
         "ytitle" : "Tracks",
         "labels" : ["All Tracks","nShared = 0","SharedLy0","SharedLy1","SharedLy0AndLy1","SharedOthers"]
     },
+    "pos_layersHit_h":{
+         "bins" : 14,
+        "minX" : 0.5,
+        "maxX" : 14.5,
+        "xtitle" : "SVT Layer On Track",
+        "ytitle" : "Tracks"
+    },
     "pos_d0_h" : {
         "bins" : 200,
         "minX" : -3,
@@ -244,9 +312,9 @@
         "ytitle" : "Tracks"
     },
     "pos_Phi_h" : {
-        "bins" : 100,
-        "minX" : -0.2,
-        "maxX" : 0.2,
+        "bins" : 60,
+        "minX" : -0.15,
+        "maxX" : 0.15,
         "xtitle" : "phi_{0}",
         "ytitle" : "Tracks"
     },
@@ -264,10 +332,17 @@
         "xtitle" : "tan(#lambda)",
         "ytitle" : "Tracks"
     },
+    "pos_Z0_over_TanLambda_h": {
+        "bins" : 100,
+        "minX" : -100,
+        "maxX" : 100,
+        "xtitle": "z_0/tan(#lambda) [mm]",
+        "ytitle": "Tracks"
+    },
     "pos_Z0_h" : {
-        "bins" : 200,
-        "minX" : -2,
-        "maxX" : 2,
+        "bins" : 100,
+        "minX" : -1,
+        "maxX" : 1,
         "xtitle" : "z_0 [mm]",
         "ytitle" : "Tracks"
     },
@@ -294,6 +369,27 @@
         "ytitle" : "Tracks"
     },
 
+    "pos_vtx_z_vs_z0_over_tanLambda_m_eq_92_hh":{
+        "binsX"  : 100,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "binsY"  : 100,
+        "minY"   : -20,
+        "maxY"   : 70,
+        "xtitle" : "z_0/tan(#lambda) [mm]",
+        "ytitle" : "vertex z [mm]"
+    },
+    "pos_vtx_z_vs_z0_over_tanLambda_hh":{
+        "binsX"  : 100,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "binsY"  : 100,
+        "minY"   : -20,
+        "maxY"   : 70,
+        "xtitle" : "z_0/tan(#lambda) [mm]",
+        "ytitle" : "vertex z [mm]"
+    },
+    
     "pos_tanlambda_vs_phi0_hh" : {
         "binsX"  : 100,
         "minX"   : -0.3,
@@ -386,45 +482,45 @@
         "ytitle" : "Vertices"
     },
     "vtx_X_h" : {
-        "bins" : 200,
+        "bins" : 100,
         "minX" : -1.5,
         "maxX" : 1.5,
-        "xtitle" : "vtx x pos [mm]",
+        "xtitle" : "vtx x Global [mm]",
         "ytitle" : "Vertices"
     },
     "vtx_Y_h" : {
-        "bins" : 200,
-        "minX" : -1.5,
-        "maxX" : 1.5,
-        "xtitle" : "vtx Y pos [mm]",
+        "bins" : 100,
+        "minX" : -1.0,
+        "maxX" : 1.0,
+        "xtitle" : "vtx Y Global [mm]",
         "ytitle" : "Vertices"
     },
     "vtx_Z_h" : {
-        "bins" : 400,
-        "minX" : -50,
-        "maxX" : 50,
-        "xtitle" : "vtx Z pos [mm]",
+        "bins" : 120,
+        "minX" : -30,
+        "maxX" : 30,
+        "xtitle" : "vtx Z Global [mm]",
         "ytitle" : "Vertices"
     },
     "vtx_X_svt_h" : {
-        "bins" : 200,
+        "bins" : 100,
         "minX" : -1.5,
         "maxX" : 1.5,
-        "xtitle" : "vtx x pos [mm]",
+        "xtitle" : "vtx x SVT [mm]",
         "ytitle" : "Vertices"
     },
     "vtx_Y_svt_h" : {
-        "bins" : 200,
-        "minX" : -1.5,
-        "maxX" : 1.5,
-        "xtitle" : "vtx Y pos [mm]",
+        "bins" : 100,
+        "minX" : -1.0,
+        "maxX" : 1.0,
+        "xtitle" : "vtx Y SVT [mm]",
         "ytitle" : "Vertices"
     },
     "vtx_Z_svt_h" : {
-        "bins" : 200,
-        "minX" : -50,
-        "maxX" : 50,
-        "xtitle" : "vtx Z pos [mm]",
+        "bins" : 120,
+        "minX" : -30,
+        "maxX" : 30,
+        "xtitle" : "vtx Z SVT [mm]",
         "ytitle" : "Vertices"
     },
      "vtx_sigma_X_h" : {
@@ -471,8 +567,8 @@
     },
     "vtx_py_h" : {
         "bins" : 100,
-        "minX" : -0.2,
-        "maxX" : 0.2,
+        "minX" : -0.15,
+        "maxX" : 0.15,
         "xtitle" : "vtx p_{y} [GeV]",
         "ytitle" : "Vertices"
     },
@@ -575,9 +671,9 @@
         "ytitle" : "Clusters"
     },
     "ele_cltrk_time_diff_h" : {
-	"bins" : 100,
-        "minX" : -50,
-        "maxX" : 50,
+	"bins" : 40,
+        "minX" : -20,
+        "maxX" : 20,
         "xtitle" : "electron cluster-track time (ns)",
         "ytitle" : "Tracks"
     },
@@ -589,9 +685,9 @@
         "ytitle" : "Clusters"
     },
     "pos_cltrk_time_diff_h" : {
-	"bins" : 100,
-        "minX" : -50,
-        "maxX" : 50,
+	"bins" : 40,
+        "minX" : -20,
+        "maxX" : 20,
         "xtitle" : "positron cluster-track time (ns)",
         "ytitle" : "Tracks"
     },
@@ -602,11 +698,11 @@
         "xtitle" : "electron cluster energy (gev)",
         "ytitle" : "Clusters"
     },
-    "ele_pOverE_h" : {
+    "ele_EOverp_h" : {
 	"bins" : 100,
         "minX" : 0,
         "maxX" : 2,
-        "xtitle" : "electron p/E",
+        "xtitle" : "electron E/p",
         "ytitle" : "Tracks"
     },
  "pos_cl_ene_h" : {
@@ -616,11 +712,11 @@
         "xtitle" : "positron cluster energy (gev)",
         "ytitle" : "Clusters"
     },
-    "pos_pOverE_h" : {
+    "pos_EOverp_h" : {
 	"bins" : 100,
         "minX" : 0,
         "maxX" : 2,
-        "xtitle" : "positron p/E",
+        "xtitle" : "positron E/p",
         "ytitle" : "Tracks"
     },
     "gamma_cl_time_h" : {
@@ -638,10 +734,10 @@
         "ytitle" : "Clusters"
     }, 
    "cl_time_diff_h" : {
-	"bins" : 100,
-        "minX" : -20,
-        "maxX" : 20,
-        "xtitle" : "gamma-electron cluster time (ns)",
+	"bins" : 40,
+        "minX" : -10,
+        "maxX" : 10,
+        "xtitle" : "positron-electron cluster time (ns)",
         "ytitle" : "Tracks"
     },
      "wab_esum_h" : {
@@ -657,5 +753,280 @@
         "maxX" : 6.0,
         "xtitle" : "energy+momentum sum (GeV)",
         "ytitle" : "Events"
-    } 
+    }, 
+    "ele_clu_trk_deltaX_h":{
+        "bins" : 100,
+        "minX" : -30,
+        "maxX" : 30,
+        "xtitle" : "electron cluster-track delta X (mm)",
+        "ytitle" : "Events"
+    },
+    "ele_clu_trk_deltaY_h":{
+        "bins" : 100,
+        "minX" : -30,
+        "maxX" : 30,
+        "xtitle" : "electron cluster-track delta Y (mm) ",
+        "ytitle" : "Events"
+    },
+    "pos_clu_trk_deltaX_h":{
+        "bins" : 100,
+        "minX" : -30,
+        "maxX" : 30,
+        "xtitle" : "positron cluster-track delta X (mm)",
+        "ytitle" : "Events"
+    },
+    "pos_clu_trk_deltaY_h":{
+        "bins" : 100,
+        "minX" : -30,
+        "maxX" : 30,
+        "xtitle" : "positron cluster-track delta Y (mm)",
+        "ytitle" : "Events"
+    },
+    "ele_cluY_vs_cluX_hh":{
+        "binsX" : 100,
+        "minX" : -300,
+        "maxX" : 50,
+        "binsY" : 100,
+        "minY" : -90,
+        "maxY" : 90,
+        "ytitle" : "electron cluster Y (mm)",
+        "xtitle" : "electron cluster X (mm)"
+    },
+    "ele_clu_trk_deltaX_vs_cluX_hh":{
+        "binsX" : 100,
+        "minX" : -300,
+        "maxX" : 50,
+        "binsY" : 100,
+        "minY" : -30,
+        "maxY" : 30,
+        "ytitle" : "electron cluster-track delta X (mm)",
+        "xtitle" : "electron cluster X (mm)"
+    },
+    "ele_clu_trk_deltaY_vs_cluX_hh":{
+        "binsX" : 100,
+        "minX" : -300,
+        "maxX" : 50,
+        "binsY" : 100,
+        "minY" : -30,
+        "maxY" : 30,
+        "ytitle" : "electron cluster-track delta Y (mm)",
+        "xtitle" : "electron cluster X (mm)"
+    },
+    "pos_cluY_vs_cluX_hh":{
+        "binsX" : 100,
+        "minX" : -50,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -90,
+        "maxY" : 90,
+        "ytitle" : "positron cluster Y (mm)",
+        "xtitle" : "positron cluster X (mm)"
+    },
+    "pos_clu_trk_deltaX_vs_cluX_hh":{
+        "binsX" : 100,
+        "minX" : -50,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -30,
+        "maxY" : 30,
+        "ytitle" : "positron cluster-track delta X (mm)",
+        "xtitle" : "positron cluster X (mm)"
+    },
+    "pos_clu_trk_deltaY_vs_cluX_hh":{
+        "binsX" : 100,
+        "minX" : -50,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -30,
+        "maxY" : 30,
+        "ytitle" : "positron cluster-track delta Y (mm)",
+        "xtitle" : "positron cluster X (mm)"
+    },
+    "new_ele_clu_trk_deltaX_h":{
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "electron cluster-track delta X (mm)",
+        "ytitle" : "Events"
+    },
+    "new_ele_clu_trk_deltaY_h":{
+        "bins" : 100,
+        "minX" : -30,
+        "maxX" : 30,
+        "xtitle" : "electron cluster-track delta Y (mm) ",
+        "ytitle" : "Events"
+    },
+    "new_pos_clu_trk_deltaX_h":{
+        "bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "positron cluster-track delta X (mm)",
+        "ytitle" : "Events"
+    },
+    "new_pos_clu_trk_deltaY_h":{
+        "bins" : 100,
+        "minX" : -30,
+        "maxX" : 30,
+        "xtitle" : "positron cluster-track delta Y (mm)",
+        "ytitle" : "Events"
+    },
+    "new_ele_clu_trk_deltaX_vs_cluX_hh":{
+        "binsX" : 100,
+        "minX" : -300,
+        "maxX" : 50,
+        "binsY" : 100,
+        "minY" : -50,
+        "maxY" : 50,
+        "ytitle" : "electron cluster-track delta X (mm)",
+        "xtitle" : "electron cluster X (mm)"
+    },
+    "new_ele_clu_trk_deltaY_vs_cluX_hh":{
+        "binsX" : 100,
+        "minX" : -300,
+        "maxX" : 50,
+        "binsY" : 100,
+        "minY" : -30,
+        "maxY" : 30,
+        "ytitle" : "electron cluster-track delta Y (mm)",
+        "xtitle" : "electron cluster X (mm)"
+    },
+    "new_pos_clu_trk_deltaX_vs_cluX_hh":{
+        "binsX" : 100,
+        "minX" : -50,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -50,
+        "maxY" : 50,
+        "ytitle" : "positron cluster-track delta X (mm)",
+        "xtitle" : "positron cluster X (mm)"
+    },
+    "new_pos_clu_trk_deltaY_vs_cluX_hh":{
+        "binsX" : 100,
+        "minX" : -50,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -30,
+        "maxY" : 30,
+        "ytitle" : "positron cluster-track delta Y (mm)",
+        "xtitle" : "positron cluster X (mm)"
+    },
+    "new_ele_cl_time_h" : {
+	"bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "positron cluster time (ns)",
+        "ytitle" : "Clusters"
+    },
+    "new_ele_cl_ene_h" : {
+	"bins" : 100,
+        "minX" : 0,
+        "maxX" : 6,
+        "xtitle" : "positron cluster energy (gev)",
+        "ytitle" : "Clusters"
+    },
+    "new_pos_cl_time_h" : {
+	"bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "positron cluster time (ns)",
+        "ytitle" : "Clusters"
+    },
+    "new_pos_cl_ene_h" : {
+	"bins" : 100,
+        "minX" : 0,
+        "maxX" : 6,
+        "xtitle" : "positron cluster energy (gev)",
+        "ytitle" : "Clusters"
+    },
+    "new_ele_cluster_match_code_h":{
+        "bins":5,
+        "minX":-2,
+        "maxX":3,
+        "xtitle":"electron cluster re-match code",
+        "ytitle": "events"
+    },
+    "new_pos_cluster_match_code_h":{
+        "bins":5,
+        "minX":-2,
+        "maxX":3,
+        "xtitle":"positron cluster re-match code",
+        "ytitle": "events"
+    },
+
+    "new_ele_EOverp_h" : {
+	"bins" : 100,
+        "minX" : 0,
+        "maxX" : 2,
+        "xtitle" : "new electron E/p",
+        "ytitle" : "Tracks"
+    },
+
+    "new_pos_EOverp_h" : {
+	"bins" : 100,
+        "minX" : 0,
+        "maxX" : 2,
+        "xtitle" : "new electron E/p",
+        "ytitle" : "Tracks"
+    },
+    "ele_EOverp_vs_cluX_hh":{
+        "binsX" : 100,
+        "minX" : -300,
+        "maxX" : 50,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 2,
+        "ytitle" : "electron E/p (mm)",
+        "xtitle" : "electron cluster X (mm)"
+    },
+     "pos_EOverp_vs_cluX_hh":{
+        "binsX" : 100,
+        "minX" : -50,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 2,
+        "ytitle" : "positron E/p (mm)",
+        "xtitle" : "positron cluster X (mm)"
+    },
+    "new_ele_EOverp_vs_cluX_hh":{
+        "binsX" : 100,
+        "minX" : -300,
+        "maxX" : 50,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 2,
+        "ytitle" : "electron E/p (mm)",
+        "xtitle" : "electron cluster X (mm)"
+    },
+     "new_pos_EOverp_vs_cluX_hh":{
+        "binsX" : 100,
+        "minX" : -50,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : 0,
+        "maxY" : 2,
+        "ytitle" : "positron E/p (mm)",
+        "xtitle" : "positron cluster X (mm)"
+    },
+    "new_ele_cluY_vs_cluX_hh":{
+        "binsX" : 100,
+        "minX" : -300,
+        "maxX" : 40,
+        "binsY" : 100,
+        "minY" : -90,
+        "maxY" : 90,
+        "ytitle" : "electron cluster Y (mm)",
+        "xtitle" : "electron cluster X (mm)"
+    },
+     "new_pos_cluY_vs_cluX_hh":{
+        "binsX" : 100,
+        "minX" : -50,
+        "maxX" : 400,
+        "binsY" : 100,
+        "minY" : -90,
+        "maxY" : 90,
+        "ytitle" : "positron cluster Y (mm)",
+        "xtitle" : "positron cluster X (mm)"
+    }    
+
 }

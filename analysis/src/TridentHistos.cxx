@@ -36,19 +36,19 @@ void TridentHistos::Define2DHistos() {
 
 
 void TridentHistos::Fill1DVertex(Vertex* vtx, 
-                               Particle* ele, 
-                               Particle* pos, 
-                               Track* ele_trk,
-                               Track* pos_trk,
-                               float weight) {
+                                 Particle* ele, 
+                                 Particle* pos, 
+                                 Track* ele_trk,
+                                 Track* pos_trk,
+                                 double trkTimeOffset,
+                                 float weight) {
     
     Fill1DVertex(vtx,weight);
 
-    //TODO remove hardcode!
     if (ele_trk)
-        Fill1DTrack(ele_trk,weight,"ele_");
+      Fill1DTrack(ele_trk,trkTimeOffset,weight,"ele_");
     if (pos_trk)
-        Fill1DTrack(pos_trk,weight,"pos_");
+      Fill1DTrack(pos_trk,trkTimeOffset,weight,"pos_");
     
     
     TLorentzVector p_ele;
@@ -105,6 +105,16 @@ void TridentHistos::Fill1DVertex(Vertex* vtx,
     Fill1DHisto("thetay_pos_h",thetay_pos_val,weight);
     Fill1DHisto("thetay_miss_h",thetay_miss_val,weight);
     Fill1DHisto("thetay_diff_h",thetay_diff_val,weight);
+    //
+    //std::cout<<"filling z/tanlambda 2d plots"<<std::endl;
+    //std::cout<<ele_trk->getZ0()/ele_trk->getTanLambda()<<std::endl;
+    Fill2DHisto("ele_vtx_z_vs_z0_over_tanLambda_hh",ele_trk->getZ0()/ele_trk->getTanLambda(), vtx->getZ());
+    Fill2DHisto("pos_vtx_z_vs_z0_over_tanLambda_hh",pos_trk->getZ0()/pos_trk->getTanLambda(), vtx->getZ());
+    if(fabs(vtx->getInvMass()-0.0925)<0.010){
+      Fill2DHisto("ele_vtx_z_vs_z0_over_tanLambda_m_eq_92_hh",ele_trk->getZ0()/ele_trk->getTanLambda(), vtx->getZ());
+      Fill2DHisto("pos_vtx_z_vs_z0_over_tanLambda_m_eq_92_hh",pos_trk->getZ0()/pos_trk->getTanLambda(), vtx->getZ());
+    }
+
 }
 
 
@@ -127,14 +137,15 @@ void TridentHistos::Fill2DTrack(Track* track, float weight, const std::string& t
     }
 }
 
-void TridentHistos::Fill1DTrack(Track* track, float weight, const std::string& trkname) {
+void TridentHistos::Fill1DTrack(Track* track, double trkTimeOffset,float weight, const std::string& trkname) {
     
     double charge = (double) track->getCharge();
 
-    //2D hits
+      //2D hits
     int n_hits_2d = track->getTrackerHitCount();
-    if (!track->isKalmanTrack())
-        n_hits_2d*=2;
+    //    std::cout<<"Fill1DTrack::Number of hits on track = "<<n_hits_2d<<std::endl;
+    //    if (!track->isKalmanTrack())
+    //    n_hits_2d*=2;
 
     TVector3 p_trk;
     p_trk.SetXYZ(track->getMomentum()[0],track->getMomentum()[1],track->getMomentum()[2]);
@@ -148,12 +159,29 @@ void TridentHistos::Fill1DTrack(Track* track, float weight, const std::string& t
     Fill1DHisto(trkname+"invpT_h"    ,-1*charge/track->getPt()   ,weight);
     Fill1DHisto(trkname+"TanLambda_h",track->getTanLambda()   ,weight);
     Fill1DHisto(trkname+"Z0_h"       ,track->getZ0()          ,weight);
-    Fill1DHisto(trkname+"time_h"     ,track->getTrackTime()   ,weight);
+    Fill1DHisto(trkname+"Z0_over_TanLambda_h",track->getZ0()/track->getTanLambda()   ,weight);
+    Fill1DHisto(trkname+"time_h"     ,track->getTrackTime()-trkTimeOffset   ,weight);
     Fill1DHisto(trkname+"chi2_h"     ,track->getChi2()        ,weight);
     Fill1DHisto(trkname+"chi2ndf_h"  ,track->getChi2Ndf()     ,weight);
     Fill1DHisto(trkname+"nShared_h"  ,track->getNShared()     ,weight);
     Fill1DHisto(trkname+"nHits_2d_h" ,n_hits_2d               ,weight);
-        
+    
+
+    bool hasLayer4=false;
+    for (int ihit=0; ihit<track->getTrackerHitCount();++ihit) {
+      TrackerHit* hit = (TrackerHit*) track->getSvtHits().At(ihit);
+      RawSvtHit* rhit=(RawSvtHit*)(hit->getRawHits()).At(0);
+      int layer=rhit->getLayer();
+      if(layer==4){
+        if(hasLayer4)
+          std::cout<<"What...I already counted layer 4!"<<std::endl;
+        else
+          hasLayer4=true;
+      }
+      Fill1DHisto(trkname+"layersHit_h",layer,weight);
+    }
+
+
     //All Tracks
     Fill1DHisto(trkname+"sharingHits_h",0,weight);
     if (track->getNShared() == 0)
@@ -220,7 +248,7 @@ void TridentHistos::Fill1DVertex(Vertex* vtx, float weight) {
 void TridentHistos::Fill1DHistograms(Track *track, Vertex* vtx, float weight ) {
     
     if (track) {
-        Fill1DTrack(track);
+      Fill1DTrack(track,-666);
     }
   
     //Vertices
@@ -421,50 +449,208 @@ std::pair<CalCluster*, Track*> TridentHistos::getTrackClusterPair(Track* trk,std
  *  fill cluster/track times and other ecal stuff for both WAB and trident events
  *  mg...5/9/20 currently just do time
  */
-void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std::pair<CalCluster, Track> posOrGamma, double timeOffset, double weight){
+void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std::pair<CalCluster, Track> posOrGamma, double calTimeOffset, double trkTimeOffset,std::vector<CalCluster*>  * clusterList, double weight){
   CalCluster eleClu=ele.first;
   Track eleTrk=ele.second;
   CalCluster posClu=posOrGamma.first; 
   Track posTrk=posOrGamma.second; //these "positrons" may be gammas
   
-  std::cout<<"Positron Cluster Time = "<<posClu.getTime()-timeOffset<<std::endl;
 
+  double ele_cluTime=eleClu.getTime()-calTimeOffset;
+  double pos_cluTime=posClu.getTime()-calTimeOffset;
+  double ele_trkTime=eleTrk.getTrackTime()-trkTimeOffset;
+  double pos_trkTime=posTrk.getTrackTime()-trkTimeOffset;
+
+
+  double ele_cluX=eleClu.getPosition().at(0);
+  double ele_cluY=eleClu.getPosition().at(1);
+  double pos_cluX=posClu.getPosition().at(0);
+  double pos_cluY=posClu.getPosition().at(1);
+
+  ////
+  double ele_trkX=eleTrk.getPositionAtEcal().at(0);
+  double ele_trkY=eleTrk.getPositionAtEcal().at(1);
+  double pos_trkX=posTrk.getPositionAtEcal().at(0);
+  double pos_trkY=posTrk.getPositionAtEcal().at(1);
+  ////
+
+  double ele_clu_trk_deltaX=ele_cluX-ele_trkX;
+  double pos_clu_trk_deltaX=pos_cluX-pos_trkX;
+
+  double ele_clu_trk_deltaY=ele_cluY-ele_trkY;
+  double pos_clu_trk_deltaY=pos_cluY-pos_trkY;
 
   //  if(eleClu.getTime()>-300){
-  Fill1DHisto("ele_cl_time_h", eleClu.getTime()-timeOffset,weight);
+  Fill1DHisto("ele_cl_time_h", eleClu.getTime()-calTimeOffset,weight);
   Fill1DHisto("ele_cl_ene_h",eleClu.getEnergy(),weight);
-  //    if(eleTrk){
+  Fill1DHisto("ele_clu_trk_deltaX_h",ele_clu_trk_deltaX,weight);
+  Fill1DHisto("ele_clu_trk_deltaY_h",ele_clu_trk_deltaY,weight);
+
+  Fill2DHisto("ele_clu_trk_deltaX_vs_cluX_hh",ele_cluX,ele_clu_trk_deltaX,weight);
+  Fill2DHisto("ele_clu_trk_deltaY_vs_cluX_hh",ele_cluX,ele_clu_trk_deltaY,weight);
+  Fill2DHisto("ele_cluY_vs_cluX_hh",ele_cluX,ele_cluY,weight);
+
   double pele=sqrt(eleTrk.getMomentum()[0]*eleTrk.getMomentum()[0]+
                    eleTrk.getMomentum()[1]*eleTrk.getMomentum()[1]+
                    eleTrk.getMomentum()[2]*eleTrk.getMomentum()[2]);
-  Fill1DHisto("ele_cltrk_time_diff_h", eleClu.getTime()-timeOffset-eleTrk.getTrackTime(),weight);
-  Fill1DHisto("ele_pOverE_h",pele/eleClu.getEnergy(),weight);
-  //    }
-  // }
+  Fill1DHisto("ele_cltrk_time_diff_h", eleClu.getTime()-calTimeOffset-eleTrk.getTrackTime()+trkTimeOffset,weight);
+  Fill1DHisto("ele_EOverp_h",eleClu.getEnergy()/pele,weight);
+  Fill2DHisto("ele_EOverp_vs_cluX_hh",ele_cluX,eleClu.getEnergy()/pele,weight);
   
-  //  if(posClu && posTrk){
-  Fill1DHisto("pos_cl_time_h", posClu.getTime()-timeOffset,weight);
+  Fill1DHisto("pos_cl_time_h", posClu.getTime()-calTimeOffset,weight);
   Fill1DHisto("pos_cl_ene_h",posClu.getEnergy(),weight);
-  Fill1DHisto("pos_cltrk_time_diff_h", posClu.getTime()-timeOffset-posTrk.getTrackTime(),weight);
+  Fill1DHisto("pos_clu_trk_deltaX_h",pos_clu_trk_deltaX,weight);
+  Fill1DHisto("pos_clu_trk_deltaY_h",pos_clu_trk_deltaY,weight);
+  Fill1DHisto("pos_cltrk_time_diff_h", posClu.getTime()-calTimeOffset-posTrk.getTrackTime()+trkTimeOffset,weight);
   double ppos=sqrt(posTrk.getMomentum()[0]*posTrk.getMomentum()[0]+
 		     posTrk.getMomentum()[1]*posTrk.getMomentum()[1]+
 		     posTrk.getMomentum()[2]*posTrk.getMomentum()[2]);
-  Fill1DHisto("pos_pOverE_h",ppos/posClu.getEnergy(),weight);
-  //}
+  Fill1DHisto("pos_EOverp_h",posClu.getEnergy()/ppos,weight);
+  Fill2DHisto("pos_EOverp_vs_cluX_hh",pos_cluX,posClu.getEnergy()/ppos,weight);
+  Fill2DHisto("pos_cluY_vs_cluX_hh",pos_cluX,pos_cluY,weight);
+  Fill2DHisto("pos_clu_trk_deltaX_vs_cluX_hh",pos_cluX,pos_clu_trk_deltaX,weight);
+  Fill2DHisto("pos_clu_trk_deltaY_vs_cluX_hh",pos_cluX,pos_clu_trk_deltaY,weight);
 
-  //  if(posClu && eleClu){ //get cluster time difference
-  Fill1DHisto("cl_time_diff_h", posClu.getTime()-eleClu.getTime(),weight);
+  //find the closest cluster that makes sense
+  double minDistX=99999; 
+  double minDistY=99999; 
+  double minDist=99999; 
+  int ele_minDistCluIndex=-666; 
+  for(int i_clu=0; i_clu<clusterList->size(); i_clu++){
+    CalCluster* clu=clusterList->at(i_clu);
+    double clX=clu->getPosition().at(0);
+    double clY=clu->getPosition().at(1);
+    double clTime=clu->getTime()-calTimeOffset;
+    if(ele_trkY*clY<0)// make sure track and cluster in same half of ecal
+      continue;    
+    //add in a cluster-track time cut to get rid of garbage
+    double absClTrkTimeDiff=abs(clTime-ele_trkTime);    
+    if(absClTrkTimeDiff>10)
+      continue; 
+
+    //find the min distance in 
+    double dist=sqrt(pow(ele_trkX-clX,2)+pow(ele_trkY-clY,2));
+    if(dist<minDist){
+     ele_minDistCluIndex=i_clu;
+    }    
+  }
+
+  minDistX=99999; 
+  minDistY=99999; 
+  minDist=99999; 
+  int pos_minDistCluIndex=-666; 
+  for(int i_clu=0; i_clu<clusterList->size(); i_clu++){
+    CalCluster* clu=clusterList->at(i_clu);
+    double clX=clu->getPosition().at(0);
+    double clY=clu->getPosition().at(1);
+    double clTime=clu->getTime()-calTimeOffset;
+    if(pos_trkY*clY<0)// make sure track and cluster in same half of ecal
+      continue;    
+    //add in a cluster-track time cut to get rid of garbage
+    double absClTrkTimeDiff=abs(clTime-pos_trkTime);    
+    if(absClTrkTimeDiff>10)
+      continue; 
     
-  //}
+    //find the min distance in 
+    double dist=sqrt(pow(pos_trkX-clX,2)+pow(pos_trkY-clY,2));
+    if(dist<minDist){
+      pos_minDistCluIndex=i_clu;
+    }    
+  }
+  //////   do new electron cluster stuff
+  bool foundOgCluster=false;
+  bool foundNewCluster=false;
+  bool foundSameCluster=false;
+  if(eleClu.getTime()>-300)
+    foundOgCluster=true;
+  if(ele_minDistCluIndex>-1){
+    foundNewCluster=true;
+    CalCluster* ele_myBestClu=clusterList->at(ele_minDistCluIndex);
+    //see if this cluster is the same as cluster found by hps-java
+    double clX=ele_myBestClu->getPosition().at(0);
+    double clY=ele_myBestClu->getPosition().at(1);
+    double clE=ele_myBestClu->getEnergy();
+    double clTime=ele_myBestClu->getTime()-calTimeOffset;;
+    if(clTime!= ele_cluTime){
+      //found a different cluster...plot new parameters
+      double new_deltaX=clX-ele_trkX; 
+      double new_deltaY=clY-ele_trkY; 
+      Fill1DHisto("new_ele_cl_time_h",clTime,weight);
+      Fill1DHisto("new_ele_cl_ene_h",clE,weight);
+      Fill1DHisto("new_ele_clu_trk_deltaX_h",new_deltaX,weight);
+      Fill1DHisto("new_ele_clu_trk_deltaY_h",new_deltaY,weight);
+      Fill1DHisto("new_ele_EOverp_h",clE/pele,weight);
+      Fill2DHisto("new_ele_clu_trk_deltaX_vs_cluX_hh",clX,new_deltaX,weight);
+      Fill2DHisto("new_ele_clu_trk_deltaY_vs_cluX_hh",clX,new_deltaY,weight);      
+      Fill2DHisto("new_ele_EOverp_vs_cluX_hh",clX,clE/pele,weight);
+      Fill2DHisto("new_ele_cluY_vs_cluX_hh",clX,clY,weight);
+    }else{
+      foundSameCluster=true;
+    }    
+  } 
+  int clMatchCode=-666;
+  if(foundSameCluster)
+    clMatchCode=0;
+  else if(foundOgCluster and !foundNewCluster)
+    clMatchCode=-1; 
+  else if(!foundOgCluster and foundNewCluster)
+    clMatchCode=1; 
+  else if(foundOgCluster and foundNewCluster)
+    clMatchCode=2; 
+  else
+    clMatchCode=-2; // didn't find cluster match with either old or new algorithm
+  Fill1DHisto("new_ele_cluster_match_code_h",clMatchCode,weight);
 
-  //if(posTrk && eleTrk){ //get cluster time difference
+  
+  //////   do new positron cluster stuff
+  foundOgCluster=false;
+  foundNewCluster=false;
+  foundSameCluster=false;
+  if(posClu.getTime()>-300)
+    foundOgCluster=true;
+  if(pos_minDistCluIndex>-1){
+    foundNewCluster=true;
+    CalCluster* pos_myBestClu=clusterList->at(pos_minDistCluIndex);
+    //see if this cluster is the same as cluster found by hps-java
+    double clX=pos_myBestClu->getPosition().at(0);
+    double clY=pos_myBestClu->getPosition().at(1);
+    double clE=pos_myBestClu->getEnergy();
+    double clTime=pos_myBestClu->getTime()-calTimeOffset;;
+    if(clTime!= pos_cluTime){
+      //found a different cluster...plot new parameters
+      double new_deltaX=clX-pos_trkX; 
+      double new_deltaY=clY-pos_trkY; 
+      Fill1DHisto("new_pos_cl_time_h",clTime,weight);
+      Fill1DHisto("new_pos_cl_ene_h",clE,weight);
+      Fill1DHisto("new_pos_clu_trk_deltaX_h",new_deltaX,weight);
+      Fill1DHisto("new_pos_clu_trk_deltaY_h",new_deltaY,weight);
+      Fill1DHisto("new_pos_EOverp_h",clE/ppos,weight);
+      Fill2DHisto("new_pos_clu_trk_deltaX_vs_cluX_hh",clX,new_deltaX,weight);
+      Fill2DHisto("new_pos_clu_trk_deltaY_vs_cluX_hh",clX,new_deltaY,weight);
+      Fill2DHisto("new_pos_EOverp_vs_cluX_hh",clX,clE/ppos,weight);
+      Fill2DHisto("new_pos_cluY_vs_cluX_hh",clX,clY,weight);
+    }else{
+      foundSameCluster=true;
+    }    
+  } 
+  clMatchCode=-666;
+  if(foundSameCluster)
+    clMatchCode=0;
+  else if(foundOgCluster and !foundNewCluster)
+    clMatchCode=-1; 
+  else if(!foundOgCluster and foundNewCluster)
+    clMatchCode=1; 
+  else if(foundOgCluster and foundNewCluster)
+    clMatchCode=2; 
+  else
+    clMatchCode=-2; // didn't find cluster match with either old or new algorithm
+  Fill1DHisto("new_pos_cluster_match_code_h",clMatchCode,weight);
+
+
+  Fill1DHisto("cl_time_diff_h", posClu.getTime()-eleClu.getTime(),weight);    
   Fill1DHisto("trk_time_diff_h", posTrk.getTrackTime()-eleTrk.getTrackTime(),weight);    
-  //}
-
-  //if(posClu && !posTrk){ //this is actually a WAB event!  call these gamma
-  Fill1DHisto("gamma_cl_time_h", posClu.getTime()-timeOffset,weight);
+  Fill1DHisto("gamma_cl_time_h", posClu.getTime()-calTimeOffset,weight);
   Fill1DHisto("gamma_cl_ene_h",posClu.getEnergy(),weight);
-  //}
 
 }
 /*

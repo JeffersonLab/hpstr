@@ -268,7 +268,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                     ele_trk, pos_trk, *trks_);
 
             if (!foundTracks) {
-                if(debug_) std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
+                if(debug_) std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the Tracks collection"<<std::endl;
                 continue;
             }
         }

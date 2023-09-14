@@ -13,47 +13,58 @@
 //}//define 2dhistos
 
 
-void TrackEfficHistos::FillEffPlots(std::pair<CalCluster*,Track*> ele, 
-                               	std::pair<CalCluster*,Track*> pos, 
-                               float weight) {   
-  
-  CalCluster* eleClu=ele.first;
-  CalCluster* posClu=pos.first;
-  Track* eleTrk=ele.second;
-  Track* posTrk=pos.second;
+void TrackEfficHistos::FillEffPlots(Particle* ele, 
+                                    Particle* pos, 
+                                    float weight) { 
+  CalCluster eleClu=ele->getCluster();
+  CalCluster posClu=pos->getCluster();
+  Track eleTrk=ele->getTrack();
+  Track posTrk=pos->getTrack();
   bool hasElectronTrack=false;
   bool hasPositronTrack=false;
-  /*
-  double elePid=ele->getGoodnessOfPID();
-  double posPid=pos->getGoodnessOfPID();
-  if(elePid<99999&&elePid>0)
+  if(eleTrk.getTrackerHitCount()>0)
     hasElectronTrack=true;
-  //Pos Track-cluster match
-  if(posPid<99999&&posPid>0)
-    hasPositronTrack=true;	
-  */
-
-  if(eleTrk!=NULL)
-    hasElectronTrack=true;
-  if(posTrk!=NULL)
+  if(posTrk.getTrackerHitCount()>0)
     hasPositronTrack=true;
 
-  //  if (cluSelector->passCutLt("posTrkCluMatch_lt",positron->getGoodnessOfPID(),weight))
-  //  std::cout<<"FillEffPlots::filling plots"<<std::endl;
-
-  double eleE=eleClu->getEnergy();
-  double eleX=eleClu->getPosition().at(0);
-  double eleY=eleClu->getPosition().at(1);
-  double posE=posClu->getEnergy();
-  double posX=posClu->getPosition().at(0);
-  double posY=posClu->getPosition().at(1);
-
+  if(hasElectronTrack)
+    if(eleTrk.getCharge()==1){
+      std::cout<<"Oops...positron pointing to electron-side cluster...lets skip it...return without filling"<<std::endl;
+      return;
+    }
+       
+  if(hasPositronTrack)
+    if(posTrk.getCharge()==-1){
+      std::cout<<"Oops...electron pointing to positron-side cluster...lets skip it...return without filling"<<std::endl;
+      return;
+    }
+  
+  
+  double eleE=eleClu.getEnergy();
+  double eleX=eleClu.getPosition().at(0);
+  double eleY=eleClu.getPosition().at(1);
+  double eleZ=eleClu.getPosition().at(2);
+  double posE=posClu.getEnergy();
+  double posX=posClu.getPosition().at(0);
+  double posY=posClu.getPosition().at(1);
+  double posZ=posClu.getPosition().at(2);
+  double coplan=_ah->GetClusterCoplanarity(&eleClu, &posClu);
+  int eleTrkNHits=eleTrk.getTrackerHitCount();
+  int posTrkNHits=posTrk.getTrackerHitCount();
+  double eleTrkMom=eleTrk.getMomentum()[2];
+  double posTrkMom=posTrk.getMomentum()[2];
+  //roughly the amount of "energy in E"...true for photons, approximation for charged tracks
+  double eleClYEne=sin(atan2(eleY,eleZ))*eleE; 
+  double posClYEne=sin(atan2(posY,posZ))*posE; 
+  double netClYEne=posClYEne+eleClYEne; 
   Fill1DHisto("clE_ele_allpos_allele_h",eleE,weight);
   Fill1DHisto("clX_ele_allpos_allele_h",eleX,weight);
   Fill1DHisto("clY_ele_allpos_allele_h",eleY,weight);
   Fill1DHisto("clE_pos_allpos_allele_h",posE,weight);
   Fill1DHisto("clX_pos_allpos_allele_h",posX,weight);
   Fill1DHisto("clY_pos_allpos_allele_h",posY,weight);
+  Fill1DHisto("clE_sum_allpos_allele_h",eleE+posE,weight);
+  Fill1DHisto("coplan_allpos_allele_h",coplan);
   Fill2DHisto("clY_vs_clX_ele_allpos_allele_hh",eleX,eleY,weight);
   Fill2DHisto("clY_vs_clE_ele_allpos_allele_hh",eleE,eleY,weight);
   Fill2DHisto("clE_vs_clX_ele_allpos_allele_hh",eleX,eleE,weight);        
@@ -68,12 +79,22 @@ void TrackEfficHistos::FillEffPlots(std::pair<CalCluster*,Track*> ele,
     Fill1DHisto("clE_pos_foundpos_foundele_h",posE,weight);
     Fill1DHisto("clX_pos_foundpos_foundele_h",posX,weight);
     Fill1DHisto("clY_pos_foundpos_foundele_h",posY,weight);
+    Fill1DHisto("clE_sum_foundpos_foundele_h",eleE+posE,weight);
+    Fill1DHisto("clNet_EY_foundpos_foundele_h",netClYEne,weight);
+    Fill1DHisto("coplan_foundpos_foundele_h",coplan);
     Fill2DHisto("clY_vs_clX_ele_foundpos_foundele_hh",eleX,eleY,weight);
     Fill2DHisto("clY_vs_clE_ele_foundpos_foundele_hh",eleE,eleY,weight);
     Fill2DHisto("clE_vs_clX_ele_foundpos_foundele_hh",eleX,eleE,weight);        
     Fill2DHisto("clY_vs_clX_pos_foundpos_foundele_hh",posX,posY,weight);
     Fill2DHisto("clY_vs_clE_pos_foundpos_foundele_hh",posE,posY,weight);
     Fill2DHisto("clE_vs_clX_pos_foundpos_foundele_hh",posX,posE,weight);        
+    Fill1DHisto("nHits_ele_foundpos_foundele_h",eleTrkNHits,weight);
+    Fill1DHisto("trkMom_ele_foundpos_foundele_h",eleTrkMom,weight);
+    Fill1DHisto("trkEoverP_ele_foundpos_foundele_h",eleE/eleTrkMom,weight);
+    Fill1DHisto("nHits_pos_foundpos_foundele_h",posTrkNHits,weight);
+    Fill1DHisto("trkMom_pos_foundpos_foundele_h",posTrkMom,weight);
+    Fill1DHisto("trkEoverP_pos_foundpos_foundele_h",posE/posTrkMom,weight);
+
   }else  if(!hasElectronTrack && hasPositronTrack){
     Fill1DHisto("clE_ele_foundpos_missele_h",eleE,weight);
     Fill1DHisto("clX_ele_foundpos_missele_h",eleX,weight);
@@ -81,12 +102,18 @@ void TrackEfficHistos::FillEffPlots(std::pair<CalCluster*,Track*> ele,
     Fill1DHisto("clE_pos_foundpos_missele_h",posE,weight);
     Fill1DHisto("clX_pos_foundpos_missele_h",posX,weight);
     Fill1DHisto("clY_pos_foundpos_missele_h",posY,weight);   
+    Fill1DHisto("clE_sum_foundpos_missele_h",eleE+posE,weight);
+    Fill1DHisto("clNet_EY_foundpos_missele_h",netClYEne,weight);
+    Fill1DHisto("coplan_foundpos_missele_h",coplan);
     Fill2DHisto("clY_vs_clX_ele_foundpos_missele_hh",eleX,eleY,weight);
     Fill2DHisto("clY_vs_clE_ele_foundpos_missele_hh",eleE,eleY,weight);
     Fill2DHisto("clE_vs_clX_ele_foundpos_missele_hh",eleX,eleE,weight);        
     Fill2DHisto("clY_vs_clX_pos_foundpos_missele_hh",posX,posY,weight);
     Fill2DHisto("clY_vs_clE_pos_foundpos_missele_hh",posE,posY,weight);
     Fill2DHisto("clE_vs_clX_pos_foundpos_missele_hh",posX,posE,weight);  
+    Fill1DHisto("nHits_pos_foundpos_missele_h",posTrkNHits,weight);
+    Fill1DHisto("trkMom_pos_foundpos_missele_h",posTrkMom,weight);
+    Fill1DHisto("trkEoverP_pos_foundpos_missele_h",posE/posTrkMom,weight);
   }else  if(hasElectronTrack && !hasPositronTrack){
     Fill1DHisto("clE_ele_misspos_foundele_h",eleE,weight);
     Fill1DHisto("clX_ele_misspos_foundele_h",eleX,weight);
@@ -94,12 +121,19 @@ void TrackEfficHistos::FillEffPlots(std::pair<CalCluster*,Track*> ele,
     Fill1DHisto("clE_pos_misspos_foundele_h",posE,weight);
     Fill1DHisto("clX_pos_misspos_foundele_h",posX,weight);
     Fill1DHisto("clY_pos_misspos_foundele_h",posY,weight); 
+    Fill1DHisto("clE_sum_misspos_foundele_h",eleE+posE,weight);
+    Fill1DHisto("clNet_EY_misspos_foundele_h",netClYEne,weight);
+    Fill1DHisto("coplan_misspos_foundele_h",coplan);
     Fill2DHisto("clY_vs_clX_ele_misspos_foundele_hh",eleX,eleY,weight);
     Fill2DHisto("clY_vs_clE_ele_misspos_foundele_hh",eleE,eleY,weight);
     Fill2DHisto("clE_vs_clX_ele_misspos_foundele_hh",eleX,eleE,weight);        
     Fill2DHisto("clY_vs_clX_pos_misspos_foundele_hh",posX,posY,weight);
     Fill2DHisto("clY_vs_clE_pos_misspos_foundele_hh",posE,posY,weight);
-    Fill2DHisto("clE_vs_clX_pos_misspos_foundele_hh",posX,posE,weight);  
+    Fill2DHisto("clE_vs_clX_pos_misspos_foundele_hh",posX,posE,weight);
+    Fill1DHisto("nHits_ele_misspos_foundele_h",eleTrkNHits,weight);
+    Fill1DHisto("trkMom_ele_misspos_foundele_h",eleTrkMom,weight);
+    Fill1DHisto("trkEoverP_ele_misspos_foundele_h",eleE/eleTrkMom,weight);
+    
   } else{
     Fill1DHisto("clE_ele_misspos_missele_h",eleE,weight);
     Fill1DHisto("clX_ele_misspos_missele_h",eleX,weight);
@@ -107,14 +141,19 @@ void TrackEfficHistos::FillEffPlots(std::pair<CalCluster*,Track*> ele,
     Fill1DHisto("clE_pos_misspos_missele_h",posE,weight);
     Fill1DHisto("clX_pos_misspos_missele_h",posX,weight);
     Fill1DHisto("clY_pos_misspos_missele_h",posY,weight);
+    Fill1DHisto("clE_sum_misspos_missele_h",eleE+posE,weight);
+    Fill1DHisto("clNet_EY_misspos_missele_h",netClYEne,weight);
+    Fill1DHisto("coplan_misspos_missele_h",coplan);
     Fill2DHisto("clY_vs_clX_ele_misspos_missele_hh",eleX,eleY,weight);
     Fill2DHisto("clY_vs_clE_ele_misspos_missele_hh",eleE,eleY,weight);
     Fill2DHisto("clE_vs_clX_ele_misspos_missele_hh",eleX,eleE,weight);        
     Fill2DHisto("clY_vs_clX_pos_misspos_missele_hh",posX,posY,weight);
     Fill2DHisto("clY_vs_clE_pos_misspos_missele_hh",posE,posY,weight);
-    Fill2DHisto("clE_vs_clX_pos_misspos_missele_hh",posY,posE,weight);  
+    Fill2DHisto("clE_vs_clX_pos_misspos_missele_hh",posX,posE,weight);  
   }     
+
 }
+
 
 void TrackEfficHistos::FillPreSelectionPlots(CalCluster* clu, 
                                float weight) {
@@ -199,4 +238,6 @@ std::pair<CalCluster*, Track*> TrackEfficHistos::getClusterTrackPair(CalCluster*
 
 
   return std::pair<CalCluster*,Track*>(cluster,bestTrack);
+
+
 }

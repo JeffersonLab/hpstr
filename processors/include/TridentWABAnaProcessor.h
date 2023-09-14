@@ -9,6 +9,7 @@
 #include "Vertex.h"
 #include "Track.h"
 #include "TrackerHit.h"
+#include "RawSvtHit.h"
 #include "Particle.h"
 #include "Processor.h"
 #include "BaseSelector.h"
@@ -55,6 +56,7 @@ private:
     TBranch* bvtxs_{nullptr};
     TBranch* btrks_{nullptr};
     TBranch* bhits_{nullptr};
+    TBranch* brawhits_{nullptr};
     TBranch* bclus_{nullptr};
     TBranch* btsdata_{nullptr};
     TBranch* bmcParts_{nullptr};
@@ -62,6 +64,7 @@ private:
     
     std::vector<Vertex*> * vtxs_{};
     std::vector<TrackerHit*> * hits_{};
+    std::vector<RawSvtHit*> * rawhits_{};
     std::vector<Particle*> * fspart_{};
     std::vector<Track*>  * trks_{};
     std::vector<CalCluster*>  * clus_{};
@@ -71,7 +74,8 @@ private:
     
     std::string anaName_{"vtxAna"};
     std::string mcColl_{"MCParticle"};
-    std::string hitColl_{"RotatedHelicalTrackHits"};
+    std::string hitColl_{"SiClustersOnTrack"};
+    std::string rawhitColl_{"TrackRawHits"};
     std::string cluColl_{"Vertices"};
     std::string vtxColl_{"Vertices"};
     std::string tsdataColl_{"TSData"};
@@ -96,7 +100,8 @@ private:
     typedef std::map<std::string,std::shared_ptr<TridentHistos> >::iterator reg_it;
 
     std::string histoCfg_{""};
-    double timeOffset_{-999};
+    double calTimeOffset_{-999};
+    double trkTimeOffset_{-999};
     //In GeV. Default is 2016 value;
     double beamE_{2.3};
     int isData{0};

@@ -4,6 +4,7 @@
 #include "HistoManager.h"
 #include "Track.h"
 #include "TrackerHit.h"
+#include "RawSvtHit.h"
 #include "CalCluster.h"
 #include "Vertex.h"
 #include "Particle.h"
@@ -26,8 +27,8 @@ class TridentHistos : public HistoManager {
         
         void BuildAxes();
 
-        void Fill1DTrack(Track* track, float weight = 1., const std::string& trkname = "");
-        void Fill2DTrack(Track* track, float weight = 1., const std::string& trkname = "");
+        void Fill1DTrack(Track* track, double trkTimeOffset,float weight = 1., const std::string& trkname = "");
+        void Fill2DTrack(Track* track,float weight = 1., const std::string& trkname = "");
 
         //This should probably go somewhere else
         void FillResidualHistograms(Track* track, int ly, double res, double sigma);
@@ -35,7 +36,7 @@ class TridentHistos : public HistoManager {
         void Fill1DVertex(Vertex* vtx, float weight = 1.);
         
         //TODO Change this
-        void Fill1DVertex(Vertex* vtx, Particle* ele, Particle* pos, Track* ele_trk, Track* pos_trk, float weight = 1.);
+        void Fill1DVertex(Vertex* vtx, Particle* ele, Particle* pos, Track* ele_trk, Track* pos_trk, double trkTimeOffset,float weight = 1.);
 
         void Fill1DHistograms(Track* track = nullptr, Vertex* vtx = nullptr, float weight = 1.);
         void Fill2DHistograms(Vertex* vtx = nullptr, float weight = 1.);
@@ -46,7 +47,7 @@ class TridentHistos : public HistoManager {
         //track_x goes for x axis, and y for y axis
         void FillTrackComparisonHistograms(Track* track_x, Track* track_y, float weight = 1.);
         void doTrackComparisonPlots(bool doplots) {doTrkCompPlots = doplots;};
-	void FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std::pair<CalCluster, Track> posOrGamma, double timeOffset, double weight); 
+	void FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std::pair<CalCluster, Track> posOrGamma, double calTimeOffset, double trkTimeOffset,std::vector<CalCluster*>  * clusterList, double weight); 
 	void FillWABHistos(std::pair<CalCluster*, Track*> ele, CalCluster* gamma,  double weight);
     private:
 

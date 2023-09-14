@@ -23,82 +23,6 @@ std::string AnaHelpers::getFileName(std::string filePath, bool withExtension)
     return "";
 }
 
-
-Particle* AnaHelpers::GetParticleFromCluster(CalCluster* clu,std::vector<Particle*>& partList){
-  Particle* matchedPart=NULL;
-  for(auto part:partList){
-    CalCluster partCluster=part->getCluster();
-    if(partCluster.getEnergy()!=-9999){
-      double energy=partCluster.getEnergy();
-      if(clu->getEnergy() == energy)
-        matchedPart=part;
-          
-    }
-  }
-  return matchedPart;    
-}
-
-Track* AnaHelpers::GetTrackFromParticle(std::vector<Track*>& trks,Particle* part){
-  int trkID=(part->getTrack()).getID();
-  for (auto trk :trks){
-    if (trkID == trk->getID()) 
-      return trk;
-  }
-  return NULL; 
-}
-
-
-/*
- *  check for track duplicates and return bool=true if this is best track
- *  first test: # of hits; if same number of hits, return best chi2
- */
-bool AnaHelpers::IsBestTrack(Particle* part,std::vector<Track*>& trks){
-  Track* trk=GetTrackFromParticle(trks, part);
-  return IsBestTrack(trk,trks);
-}
-
-bool AnaHelpers::IsBestTrack(Track* trk,std::vector<Track*>& trks){
-  int maxSharedHits=1;
-  if(trk==NULL)
-    return true;
-  for (auto testTrk : trks){
-    if (trk == testTrk)
-      continue;
-    int shrdHits=CountSharedTrackHits(trk,testTrk);
-    if(shrdHits>maxSharedHits){
-      std::cout<<"shared hits = "<<shrdHits<<std::endl;
-    }
-    if(shrdHits>maxSharedHits){
-      if(testTrk->getTrackerHitCount()>trk->getTrackerHitCount()){
-        return false;
-      }else if (testTrk->getTrackerHitCount()==trk->getTrackerHitCount() ){
-        if(testTrk->getChi2Ndf()<trk->getChi2Ndf())
-          return false;
-      }   
-    }   
-  }
-  return true;
-}
-
-int AnaHelpers::CountSharedTrackHits(Track* trk1,Track* trk2){
-
-  TRefArray trk1Hits=trk1->getSvtHits();
-  TRefArray trk2Hits=trk2->getSvtHits();
-  int cnt=0;
-  //  std::cout<<trk1Hits->GetEntries()<<"    "<<trk2Hits->GetEntries()<<std::endl;
-   for(int ihit=0;ihit<trk1Hits.GetEntries();ihit++){
-     TrackerHit* hit1=(TrackerHit*)trk1Hits.At(ihit);
-     for(int jhit=0;jhit<trk2Hits.GetEntries();jhit++){
-       TrackerHit* hit2=(TrackerHit*)trk2Hits.At(jhit);
-       //       std::cout<<hit1->getID()<<"   "<<hit2->getID()<<std::endl;
-       if(hit1->getID()==hit2->getID())
-        cnt++;
-     }
-   }
-   return cnt;
- }
-
-
 /*  
  *  checks if cluster is in fiducial region
  *  this was copied from my DST code -- mg
@@ -153,32 +77,40 @@ double AnaHelpers::GetClusterCoplanarity(CalCluster* cl1,CalCluster* cl2){
 
 
 void AnaHelpers::InnermostLayerCheck(Track* trk, bool& foundL1, bool& foundL2) {
-
-  bool s0=false; 
   bool s1=false; 
   bool s2=false; 
   bool s3=false; 
-  std::cout<<"Number of hits on track = "<<trk->getSvtHits().GetEntries()<<std::endl;
-  for (int ihit=0; ihit<trk->getSvtHits().GetEntries();++ihit) {
+  bool s4=false; 
+  //  std::cout<<"InnermostLayerCheck::Number of hits on track = "<<trk->getTrackerHitCount()<<std::endl;
+  for (int ihit=0; ihit<trk->getTrackerHitCount();++ihit) {
+    //std::cout<<"InnermostLayerCheck::svt hit list size = "<<trk->getSvtHits().GetEntries()<<std::endl; 
     TrackerHit* hit = (TrackerHit*) trk->getSvtHits().At(ihit);
-    if (hit->getLayer() == 0 ) {
-      s0=true;
+    //std::cout<<"InnermostLayerCheck::got Tracker hit "<<hit<<std::endl; 
+    //std::cout<<"InnermostLayerCheck::layer hit = "<<hit->getLayer()<<std::endl;
+    RawSvtHit* rhit=(RawSvtHit*)(hit->getRawHits()).At(0);
+    //std::cout<<"InnermostLayerCheck::RawHit layer hit = "<<rhit->getLayer()<<std::endl;
+    if(rhit->getLayer() == 0 ){
+      std::cout<<"I didn't think you could have layer 0???"<<std::endl;
     }
-    if (hit->getLayer() == 1) {
+    if (rhit->getLayer() == 1 ) {
       s1=true;
     }
-    if (hit->getLayer() == 2) {
+    if (rhit->getLayer() == 2) {
       s2=true;
     }
-    if (hit->getLayer() == 3) {
+    if (rhit->getLayer() == 3) {
       s3=true;
     }
+    if (rhit->getLayer() == 4) {
+      s4=true;
+    }
   }
-  foundL1 = s0&&s1;
-  foundL2 = s2&&s3;
+  foundL1 = s1&&s2;
+  foundL2 = s3&&s4;
+  //  std::cout<<"s1 = "<<s1<<"    s2 = "<<s2<<"   foundL1 = "<<foundL1<<std::endl;
 }
 
-bool AnaHelpers::MatchToTracks(int ele_id, int pos_id, Track* & ele_trk, Track* & pos_trk, std::vector<Track*>& trks) {
+bool AnaHelpers::MatchToGBLTracks(int ele_id, int pos_id, Track* & ele_trk, Track* & pos_trk, std::vector<Track*>& trks) {
 
     bool foundele = false;
     bool foundpos = false;
@@ -196,6 +128,27 @@ bool AnaHelpers::MatchToTracks(int ele_id, int pos_id, Track* & ele_trk, Track* 
     return foundele * foundpos;
 }
 
+Track* AnaHelpers::GetTrackFromParticle(std::vector<Track*>& trks,Particle* part){
+  int trkID=(part->getTrack()).getID();
+  for (auto trk :trks){
+    if (trkID == trk->getID()) 
+      return trk;
+  }
+  return NULL; 
+}
+
+Particle* AnaHelpers::GetParticleFromCluster(std::vector<Particle*>& parts,CalCluster* cluster){
+  CalHit* clusSeed=(CalHit*)cluster->getSeed();
+  for (auto part :parts){
+    CalCluster pClus=part->getCluster();
+    if(pClus.getNHits() == 0)
+      continue;
+    CalHit* pClusSeed=(CalHit*)pClus.getSeed();
+    if ( clusSeed== pClusSeed) 
+      return part;
+  }
+  return NULL; 
+}
 
 //TODO clean bit up 
 bool AnaHelpers::GetParticlesFromVtx(Vertex* vtx, Particle*& ele, Particle*& pos) {
@@ -203,7 +156,7 @@ bool AnaHelpers::GetParticlesFromVtx(Vertex* vtx, Particle*& ele, Particle*& pos
 
     bool foundele = false;
     bool foundpos = false;
-    debug_=true;
+
     for (int ipart = 0; ipart < vtx->getParticles().GetEntries(); ++ipart) {
 
 
@@ -231,19 +184,72 @@ bool AnaHelpers::GetParticlesFromVtx(Vertex* vtx, Particle*& ele, Particle*& pos
     return foundele && foundpos;
 }
 
+//TODO clean bit up 
+bool AnaHelpers::GetParticlesFromVtxAndParticleList(std::vector<Particle*>& parts, Vertex* vtx, Particle*& ele, Particle*& pos) {
 
-std::vector<int> AnaHelpers::getMCParticleLayersHit(MCParticle* mcpart, std::vector<MCTrackerHit*>& mchits){
-  
-  std::vector<int> layersHit; 
-  for(auto mchit: mchits){
-    if(mchit->getMCParticleID()==mcpart->getID()){ //hit has MCParticle under consideration
-      if(std::find(layersHit.begin(), layersHit.end(), mchit->getLayer()) == layersHit.end())
-        std::cout<<"Found hit in layer = "<<mchit->getLayer()<<std::endl;
-        layersHit.push_back(mchit->getLayer());
+
+    bool foundele = false;
+    bool foundpos = false;
+    bool matchele=false;
+    bool matchpos=false;
+    Particle* eleTmp=nullptr;
+    Particle* posTmp=nullptr;
+    for (int ipart = 0; ipart < vtx->getParticles().GetEntries(); ++ipart) {
+
+
+        int pdg_id = ((Particle*)vtx->getParticles().At(ipart))->getPDG();
+        if (debug_) std::cout<<"In Loop "<<pdg_id<< " "<< ipart<<std::endl;
+
+        if (pdg_id == 11) {
+            eleTmp =  ((Particle*)vtx->getParticles().At(ipart));
+            foundele=true;
+            if (debug_) std::cout<<"found ele "<< (int)foundele<<std::endl;
+        }
+        else if (pdg_id == -11) {
+            posTmp = (Particle*)vtx->getParticles().At(ipart);
+            foundpos=true;
+            if  (debug_) std::cout<<"found pos "<<(int)foundpos<<std::endl;
+
+        }
     }
-  }  
-  std::cout<<"Number of layers hit = "<<layersHit.size()<<std::endl;
-  return layersHit; 
+
+    if (!eleTmp || !posTmp) {
+        std::cout<<"Vertex formed without ele/pos. Skip."<<std::endl;
+        return false;
+    }
+
+    double eleEne=eleTmp->getMomentum().at(2);//this is a dumb way to match but particles don't have IDs...
+    double posEne=posTmp->getMomentum().at(2);
+    //    std::cout<<"eleEne = "<<eleEne<<"; posEne = "<<posEne<<std::cout; 
+    for (auto part :parts){
+      //      std::cout<<"Looking at new particle with charge = "<<part->getCharge()<<std::endl;
+      //      Track trk=part->getTrack(); 
+      //if(&trk==NULL)
+      //  continue;
+      //      std::cout<<"In GetParticlesFromVtxAndPartList::Number of hits on track = "<<trk.getTrackerHitCount()<<std::endl;
+      //      for (int ihit=0; ihit<trk.getTrackerHitCount();++ihit) {
+        //        std::cout<<"In GetParticlesFromVtxAndPartList::svt hit list size = "<<trk.getSvtHits().GetEntries()<<std::endl; 
+        //TrackerHit* hit = (TrackerHit*) trk.getSvtHits().At(ihit);
+        //std::cout<<"In GetParticlesFromVtxAndPartList::got Tracker hit "<<hit<<std::endl; 
+        //std::cout<<"In GetParticlesFromVtxAndPartList::layer hit = "<<hit->getLayer()<<std::endl;
+      //      }
+      
+      if (eleEne == part->getMomentum().at(2)) { 
+        matchele=true;
+        ele=part;
+        //        std::cout<<"Found Electron Particle!  "<<ele<<std::endl; 
+     }
+      if (posEne == part->getMomentum().at(2)) {
+        matchpos=true;
+        pos=part;
+        //        std::cout<<"Found Positron Particle!  "<<pos<<std::endl;
+      }
+      
+    }
+    
+
+    //    std::cout<<"GetParticlesFromVtxAndParticleList::returning "<<(int) (foundele && foundpos && matchele && matchpos) <<std::endl;
+    return foundele && foundpos && matchpos &&matchele;
 }
 
 

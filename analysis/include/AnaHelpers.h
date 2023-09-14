@@ -15,12 +15,11 @@
 // HPSTR
 #include "Track.h"
 #include "TrackerHit.h"
+#include "RawSvtHit.h"
 #include "Particle.h"
 #include "Vertex.h"
-#include "MCTrackerHit.h"
-#include "MCParticle.h"
-
-
+#include "CalCluster.h"
+#include "CalHit.h"
 /**
  * @brief brief description
  * more details
@@ -98,21 +97,19 @@ class AnaHelpers {
          * @return true 
          * @return false 
          */
-        //        bool MatchToGBLTracks(int ele_id, int pos_id, Track* & ele_trk, Track* & pos_trk, std::vector<Track*>& trks);
-        bool MatchToTracks(int ele_id, int pos_id, Track* & ele_trk, Track* & pos_trk, std::vector<Track*>& trks);
+        bool MatchToGBLTracks(int ele_id, int pos_id, Track* & ele_trk, Track* & pos_trk, std::vector<Track*>& trks);
         
-        static std::string getFileName(std::string filePath, bool withExtension);    
-        bool IsBestTrack( Particle* part,std::vector<Track*>& trks);
-        bool IsBestTrack( Track* part,std::vector<Track*>& trks);
-        int CountSharedTrackHits(Track* trk1,Track* trk2);
-        //        Track* GetGBLTrackFromParticle(std::vector<Track*>& trks,Particle* part);
-        Track* GetTrackFromParticle(std::vector<Track*>& trks,Particle* part);
-        Particle* GetParticleFromCluster(CalCluster*, std::vector<Particle*>&);
+
+        bool GetParticlesFromVtxAndParticleList(std::vector<Particle*>& parts, Vertex* vtx, Particle*& ele, Particle*& pos);
         bool IsECalFiducial(CalCluster* clu);
         double GetClusterCoplanarity(CalCluster* cl1,CalCluster* cl2); 
-        std::vector<int> getMCParticleLayersHit(MCParticle* mcpart, std::vector<MCTrackerHit*>& mchits);
+        Particle* GetParticleFromCluster(std::vector<Particle*>& parts,CalCluster* cluster);
+        static std::string getFileName(std::string filePath, bool withExtension);    
+        Track* GetTrackFromParticle(std::vector<Track*>& trks,Particle* part);
+
+        
     private:
-              
+        
         const double SVT_ANGLE = -30.5e-3; //!< Angle between SVT system and HPS coordinates
         TRotation rotSvt; //!< description
         TMatrixDSym* rotSvt_sym; //!< description

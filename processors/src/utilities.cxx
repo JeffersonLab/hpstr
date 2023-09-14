@@ -249,8 +249,12 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 
             // Check that the TrackData data structure is correct.  If it's
             // not, throw a runtime exception.   
-            if (track_datum->getNDouble() > 14 || track_datum->getNFloat() > 4 
-                || track_datum->getNInt() != 1) {
+	    // this is prior to alic's addition of BFields at target & ecal
+	    //            if (track_datum->getNDouble() > 14 || track_datum->getNFloat() > 4 
+	    //   || track_datum->getNInt() != 1) {
+	    //this is after  alic's addition of BFields at target & ecal
+	    if (track_datum->getNDouble() > 14 || track_datum->getNFloat() > 7 
+		|| track_datum->getNInt() != 1) {
                 throw std::runtime_error("[ TrackingProcessor ]: The collection " 
                                          + std::string(Collections::TRACK_DATA)
                                          + " has the wrong structure.");
