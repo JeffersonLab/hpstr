@@ -70,14 +70,14 @@ void Svt2DBlHistos::FillHistograms(std::vector<RawSvtHit*> *rawSvtHits_,float we
         
         //Manually select which baselines (0 - 6) are included. THIS MUST MATCH THE JSON FILE!
         int ss = 0;
-        histokey = swTag + "_SvtHybrids"+std::to_string(ss)+"_hh";
+        histokey = swTag + "_SvtHybrids_s"+std::to_string(ss)+"_hh";
                     Fill2DHisto(histokey, 
                 (float)rawSvtHit->getStrip(),
                 (float)rawSvtHit->getADCs()[ss], 
                 weight);
 
         ss = 3;
-        histokey = swTag + "_SvtHybrids"+std::to_string(ss)+"_hh";
+        histokey = swTag + "_SvtHybrids_s"+std::to_string(ss)+"_hh";
                     Fill2DHisto(histokey, 
                 (float)rawSvtHit->getStrip(),
                 (float)rawSvtHit->getADCs()[ss], 

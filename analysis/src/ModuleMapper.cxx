@@ -3,6 +3,9 @@
 #include "TString.h"
 ModuleMapper::ModuleMapper(const int year) {
 
+    year_ = year;
+    std::cout << "MODULE MAPPER YEAR " << year_ << std::endl;
+
     if (year_ == 2019 || year_ == 2021) {
 
         hw_to_sw["F0H0"] = "ly1_m0" ;
@@ -507,8 +510,13 @@ std::map<std::string, std::map<int,int>> ModuleMapper::buildChannelSvtIDMap(){
     for(int feb=0; feb < 10; feb++){
         std::string str_feb = "F" + std::to_string(feb);
         int max_channel = 640;
-        if (feb == 0 || feb == 1) max_channel = 512;
+        if(year_ != 2016)
+            if (feb == 0 || feb == 1) max_channel = 512;
         for(int hybrid=0; hybrid < 4; hybrid++){
+            if(year_ == 2016){
+            if( (feb == 2 || feb == 9) and hybrid > 1)
+                continue;
+            }
             std::string str_hybrid = "H" + std::to_string(hybrid);
             for(int channel=0; channel < max_channel; channel++){
                 int svtid = channel_index + channel;
@@ -519,7 +527,6 @@ std::map<std::string, std::map<int,int>> ModuleMapper::buildChannelSvtIDMap(){
         }
     }
     return channel_map;
-
 }
 
 int ModuleMapper::getSvtIDFromHWChannel(int channel, std::string hwTag, std::map<std::string,std::map<int,int>> svtid_map) {
@@ -587,22 +594,46 @@ void ModuleMapper::buildApvChannelMap() {
                 std::vector<int> channels;
                 int a;
                 int b;
-                if(feb < 2){
-                    if(apv == 0){
-                        a=128;
-                        b=255;
+                if(year_ != 2016){
+                    if(feb < 2){
+                        if(apv == 0){
+                            a=128;
+                            b=255;
+                        }
+                        if(apv == 1){
+                            a=0;
+                            b=127;
+                        }
+                        if(apv == 2){
+                            a=256;
+                            b=383;
+                        }
+                        if(apv == 3){
+                            a=384;
+                            b=511;
+                        }
                     }
-                    if(apv == 1){
-                        a=0;
-                        b=127;
-                    }
-                    if(apv == 2){
-                        a=256;
-                        b=383;
-                    }
-                    if(apv == 3){
-                        a=384;
-                        b=511;
+                    else {
+                        if(apv == 0){
+                            a=512;
+                            b=639;
+                        }
+                        if(apv == 1){
+                            a=384;
+                            b=511;
+                        }
+                        if(apv == 2){
+                            a=256;
+                            b=383;
+                        }
+                        if(apv == 3){
+                            a=128;
+                            b=255;
+                        }
+                        if(apv == 4){
+                            a=0;
+                            b=127;
+                        }
                     }
                 }
                 else {
