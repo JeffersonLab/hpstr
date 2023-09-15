@@ -155,15 +155,15 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
 
                if (PyLong_Check(value)) {
                    pi.params_.insert(skey, int(PyLong_AsLong(value)));
-                   printf("Int Key: %s\n",skey.c_str());
+                   //printf("Int Key: %s\n",skey.c_str());
                } else if (PyFloat_Check(value)) {
                    pi.params_.insert(skey, PyFloat_AsDouble(value));
-                   printf("Double Key: %s\n",skey.c_str());
+                   //printf("Double Key: %s\n",skey.c_str());
                } else if (PyUnicode_Check(value)) {
                    PyObject* pyStr = PyUnicode_AsEncodedString(value, "utf-8","Error ~");
                    pi.params_.insert(skey, PyBytes_AS_STRING(pyStr));
                    Py_XDECREF(pyStr);
-                   printf("String Key: %s\n",skey.c_str());
+                   //printf("String Key: %s\n",skey.c_str());
                } else if (PyList_Check(value)) { // assume everything is same value as first value
                    if (PyList_Size(value) > 0) {
                        PyObject* vec0 = PyList_GetItem(value, 0);
@@ -172,13 +172,13 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
                            for (Py_ssize_t j = 0; j < PyList_Size(value); j++)
                                vals.push_back(PyLong_AsLong(PyList_GetItem(value, j)));
                            pi.params_.insert(skey, vals);
-                           printf("VInt Key: %s\n",skey.c_str());
+                           //printf("VInt Key: %s\n",skey.c_str());
                        } else if (PyFloat_Check(vec0)) {
                            std::vector<double> vals;
                            for (Py_ssize_t j = 0; j < PyList_Size(value); j++)
                                vals.push_back(PyFloat_AsDouble(PyList_GetItem(value, j)));
                            pi.params_.insert(skey, vals);
-                           printf("VDouble Key: %s\n",skey.c_str());
+                           //printf("VDouble Key: %s\n",skey.c_str());
                        } else if (PyUnicode_Check(vec0)) {
                            std::vector<std::string> vals;
                            for (Py_ssize_t j = 0; j < PyList_Size(value); j++){
@@ -187,7 +187,7 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
                                 Py_XDECREF(pyStr);
                            }
                            pi.params_.insert(skey, vals);
-                           printf("VString Key: %s\n",skey.c_str());
+                           //printf("VString Key: %s\n",skey.c_str());
                        }
                    }
                }
@@ -233,10 +233,7 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
 
         sequence_.push_back(pi);
     }
-    std::cout<<"ConfigurePython::Done Reading Params"<<std::endl;
-
     Py_DECREF(p_sequence);
-    std::cout<<"ConfigurePython::Done Looding Sequence"<<std::endl;
 
     py_list = PyObject_GetAttrString(p_process, "input_files");
     if (!PyList_Check(py_list)) {
@@ -293,7 +290,7 @@ ConfigurePython::ConfigurePython(const std::string& python_script, char* args[],
     } catch (std::exception& e) { 
         std::cout << e.what() << std::endl;
     }
-    std::cout<<"Done with ConfigurePython"<<std::endl;
+
 }
 
 ConfigurePython::~ConfigurePython() {
