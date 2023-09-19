@@ -101,6 +101,12 @@ void ZBiHistos::defineZBiCutflowProcessorHistograms(){
     addHisto2d("test_cuts_nbkg_hh","pct_sig_cut", 1000,-0.5,99.5,"zcut",50,0.5,50.5);
     addHisto2d("test_cuts_nsig_hh","pct_sig_cut", 1000,-0.5,99.5,"zcut",50,0.5,50.5);
     addHisto2d("best_test_cut_ZBi_hh","pct_sig_cut", 1000,-0.5,99.5,"ZBi",2000,0.0,20.0);
+
+    addHisto1d("best_test_cut_ZBi_h","pct_sig_cut", 1000,-0.5,99.5);
+    addHisto1d("best_test_cut_zcut_h","pct_sig_cut", 1000,-0.5,99.5);
+    addHisto1d("best_test_cut_nsig_h","pct_sig_cut", 1000,-0.5,99.5);
+    addHisto1d("best_test_cut_nbkg_h","pct_sig_cut", 1000,-0.5,99.5);
+    addHisto1d("best_test_cut_id_h","pct_sig_cut", 1000,-0.5,99.5);
 }
 
 void ZBiHistos::set2DHistoYlabel(std::string histoName, int ybin, std::string ylabel){
@@ -490,7 +496,8 @@ TF1* ZBiHistos::fitExponentialPlusConst(std::string histogramName, double start_
 
 TF1* ZBiHistos::fitExponentialTail(std::string histogramName, double start_nevents){
     //Background Model Fit Function
-    TF1* fitFunc = new TF1("fitfunc","[0]*exp([1]*x)",0.0,100.0);
+    //TF1* fitFunc = new TF1("fitfunc","[0]*exp([1]*x)",0.0,100.0);
+    TF1* fitFunc = new TF1("fitfunc","expo",0.0,100.0);
 
     //Get z vertex distribution corresponding to Test Cut
     std::string histoname = m_name+"_"+histogramName+"_h";
@@ -512,7 +519,8 @@ TF1* ZBiHistos::fitExponentialTail(std::string histogramName, double start_neven
         start_nevents = histos1d[histoname]->GetBinContent(histos1d[histoname]->GetMaximumBin());
     int firstbin = lastbin - 1;
     double test_integral = 0.0;
-    while(test_integral < start_nevents && histos1d[histoname]->GetBinLowEdge(firstbin) > 0.0){
+    int peak_bin = histos1d[histoname]->GetMaximumBin();
+    while(test_integral < start_nevents && firstbin > peak_bin){
         test_integral = histos1d[histoname]->Integral(firstbin, lastbin);
         firstbin = firstbin - 1;
     }
@@ -523,20 +531,20 @@ TF1* ZBiHistos::fitExponentialTail(std::string histogramName, double start_neven
     std::cout << "fit xmax " << xmax << std::endl;
     histos1d[histoname]->GetXaxis()->SetRangeUser(xmin,xmax);
 
+    fitFunc->SetParameters(50*start_nevents, -0.5);
     TFitResultPtr fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", xmin,xmax);
     double parm0 = fitResult->Parameter(0);
     double parm1 = fitResult->Parameter(1);
 
-    /*
     TRandom3* ran = new TRandom3();
     ran->SetSeed(0);
     double best_chi2 = 999999999.9;
     double best_parm0 = parm0;
     double best_parm1 = parm1;
     
-    int iteration = 25;
+    int iteration = 50;
     for(int i=0; i < iteration; i++){
-        fitFunc->SetParameters(std::abs(ran->Gaus(parm0,1)),ran->Gaus(parm1,1));
+        fitFunc->SetParameters(std::abs(ran->Gaus(parm0,2)),ran->Uniform(-1.0,-0.1));
         fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "QLSIM", "", xmin,xmax);
         if(fitResult->Ndf() <= 0)
             continue;
@@ -548,16 +556,16 @@ TF1* ZBiHistos::fitExponentialTail(std::string histogramName, double start_neven
         }
     }
 
-    fitFunc->FixParameter(0,best_parm0);
-    fitFunc->FixParameter(1,best_parm1);
+    std::cout << "Fit Params: [0] = " << best_parm0 <<" [1] = " << best_parm1 
+       << std::endl;
+    fitFunc->SetParameter(0,best_parm0);
+    fitFunc->SetParameter(1,best_parm1);
     fitResult = (TFitResultPtr)histos1d[histoname]->Fit(fitFunc, "LSIM", "", xmin, xmax);
     fitFunc->Draw();
     //std::cout << "Fit Params: [0] = " << best_parm0 <<" [1] = " << best_parm1 
     //    << " [2] = " << best_parm2 << std::endl;
-    std::cout << "Fit Params: [0] = " << best_parm0 <<" [1] = " << best_parm1 
-       << std::endl;
-
-    */
+    std::cout << "Final fit param 0: " << fitResult->Parameter(0) << std::endl;
+    std::cout << "Final fit param 1: " << fitResult->Parameter(1) << std::endl;
     //return histogram to original range
     fitFunc->Draw();
     histos1d[histoname]->GetXaxis()->SetRangeUser(originalXmin,originalXmax);

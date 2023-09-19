@@ -144,6 +144,8 @@ class VertexAnaProcessor : public Processor {
         std::string beamPosCfg_{""}; //!< json containing run dep beamspot positions
         json bpc_configs_; //!< json object
         std::vector<double> beamPosCorrections_ = {0.0,0.0,0.0}; //!< holds beam position corrections
+        double eleTrackTimeBias_ = 0.0;
+        double posTrackTimeBias_ = 0.0;
         int current_run_number_{-999}; //!< track current run number
 };
 
