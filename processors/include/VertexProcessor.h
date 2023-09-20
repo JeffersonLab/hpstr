@@ -84,6 +84,7 @@ class VertexProcessor : public Processor {
         std::string partCollRoot_{"ParticlesOnVertices"}; //!< description
         std::string kinkRelCollLcio_{"GBLKinkDataRelations"}; //!< description
         std::string trkRelCollLcio_{"TrackDataRelations"}; //!< description
+        std::string trackStateLocation_{""}; //!< select track state for tracks DEFAULT AtIP
 
         int debug_{0}; //!< Debug Level
 

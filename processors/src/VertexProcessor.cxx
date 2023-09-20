@@ -24,6 +24,7 @@ void VertexProcessor::configure(const ParameterSet& parameters) {
         partCollRoot_      = parameters.getString("partCollRoot", partCollRoot_);
         kinkRelCollLcio_   = parameters.getString("kinkRelCollLcio", kinkRelCollLcio_);
         trkRelCollLcio_    = parameters.getString("trkRelCollLcio", trkRelCollLcio_);
+        trackStateLocation_= parameters.getString("trackStateLocation", trackStateLocation_);
         
     }
     catch (std::runtime_error& error)
@@ -99,7 +100,7 @@ bool VertexProcessor::process(IEvent* ievent) {
         for(auto lc_part : lc_parts)
         {
            if (debug_ > 0) std::cout << "VertexProcessor: Build particle" << std::endl;
-           Particle * part = utils::buildParticle(lc_part, gbl_kink_data, track_data);
+           Particle * part = utils::buildParticle(lc_part,trackStateLocation_, gbl_kink_data, track_data);
            if (debug_ > 0) std::cout << "VertexProcessor: Add particle" << std::endl;
             parts_.push_back(part);
             vtx->addParticle(part);

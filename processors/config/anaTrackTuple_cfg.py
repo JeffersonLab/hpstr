@@ -1,10 +1,22 @@
 import HpstrConf
 import os
 import sys
+import baseConfig as base
 
 # Use the input file to set the output file name
 inFilename = sys.argv[1].strip()
 outFilename = '%s_anaTrks.root' % inFilename[:-5]
+
+base.parser.add_argument("-r", "--run_number", type=int, dest="run_number",
+                                 help="set run number", metavar="run_number", default=-999)
+base.parser.add_argument("-TS", "--trackstate", type=str, dest="trackstate",
+                                 help="Specify Track State | 'AtECal' oe 'AtTarget'. Default is origin (AtIP) ",
+                                  metavar="trackstate", default="")
+
+options = base.parser.parse_args()
+
+inFilename = options.inFilename[0]
+outFilename = options.outFilename
 
 print('Input file:  %s' % inFilename)
 print('Output file: %s' % outFilename)
@@ -28,9 +40,11 @@ anaTrks = HpstrConf.Processor('anaTrks', 'TrackingAnaProcessor')
 #   Processor Configuration   #
 ###############################
 anaTrks.parameters["debug"] = 0
-anaTrks.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/tracking/basicTracking.json'
-anaTrks.parameters["trkCollName"] = 'KalmanFullTracks'
-
+#anaTrks.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/tracking/basicTracking.json'
+anaTrks.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/tracking/trackHit.json'
+anaTrks.parameters["trkCollName"] = 'KalmanFullTracks%s'%(options.trackstate)
+anaTrks.parameters["run_number"] = options.run_number
+anaTrks.parameters["hitColl"] = 'SiClusters'
 # Sequence which the processors will run.
 p.sequence = [anaTrks]
 

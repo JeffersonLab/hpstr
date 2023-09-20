@@ -109,6 +109,9 @@ class TrackingProcessor : public Processor {
         std::vector<Track*> truthTracks_{};
         std::string truthTracksCollRoot_{""}; //!< description
         std::string truthTracksCollLcio_{""}; //!< description
+
+        //Specify trackstate location used for tracks
+        std::string trackStateLocation_{""}; //!< Specify track state used for track collection DEFAULT AtIP
         
         int debug_{false}; //!< Debug Level
         
