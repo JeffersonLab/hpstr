@@ -7,12 +7,12 @@ from baseConfig import bfield
 base.parser.add_argument("-w", "--tracking", type=str, dest="tracking",
                          help="Which tracking to use to make plots", 
                          metavar="tracking", default="KF")
-base.parser.add_argument("-TS", "--trackstate", type=str, dest="trackstate",
-                         help="Specify Track State | 'AtECal', 'AtTarget'. Default is origin ",  metavar="trackstate", default="")
+base.parser.add_argument("-TS", "--targetTracks", type=int, dest="targetTracks",
+                         help="Include Target Tracks as separate collection",  metavar="targetTracks", default=0)
 base.parser.add_argument("-s", "--truthHits", type=int, dest="svtHits",
-                         help="Get svt hits: 1=yes", metavar="svtHits", default=1)
+                         help="Get svt hits: 1=yes", metavar="svtHits", default=0)
 base.parser.add_argument("-r", "--rawHits", type=int, dest="rawHits",
-                         help="Keep raw svt hits: 1=yes", metavar="rawHits", default=1)
+                         help="Keep raw svt hits: 1=yes", metavar="rawHits", default=0)
 
 options = base.parser.parse_args()
 
@@ -86,13 +86,13 @@ svthitsgbl.parameters["mcPartRelLcio"] = 'RotatedHelicalTrackMCRelations'
 # Tracking
 track.parameters["debug"] = 0
 track.parameters["trkCollLcio"] = 'KalmanFullTracks'
-track.parameters["trkCollRoot"] = 'KalmanFullTracks%s'%(options.trackstate)
-track.parameters["trackStateLocation"] = options.trackstate
+track.parameters["trkCollRoot"] = 'KalmanFullTracks'
+track.parameters["trackStateLocation"] = ''
 track.parameters["kinkRelCollLcio"] = ''
 track.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 track.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
-track.parameters["bfield"] = bfield[str(options.year)]
+track.parameters["bfield"] = bfield[str(options.year)] 
 track.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack_KF'
 
 # Target Tracks
@@ -113,7 +113,6 @@ targtrack.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack_KF'
 
 # LT check if we need the b field or not -- version of HPS java
 # for Jess's files need to give it b-field
-
 
 trackgbl.parameters["debug"] = 0
 trackgbl.parameters["trkCollLcio"] = 'GBLTracks'
@@ -149,7 +148,7 @@ vtx.parameters["vtxCollRoot"] = 'UnconstrainedV0Vertices_KF'
 vtx.parameters["partCollRoot"] = 'ParticlesOnUVertices_KF'
 vtx.parameters["kinkRelCollLcio"] = ''
 vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
-vtx.parameters["trackStateLocation"] = options.trackstate 
+vtx.parameters["trackStateLocation"] = ''
 
 cvtx.parameters["debug"] = 0
 cvtx.parameters["vtxCollLcio"] = 'TargetConstrainedV0Vertices_KF'
@@ -157,7 +156,7 @@ cvtx.parameters["vtxCollRoot"] = 'TargetConstrainedV0Vertices_KF'
 cvtx.parameters["partCollRoot"] = 'ParticlesOnCVertices_KF'
 cvtx.parameters["kinkRelCollLcio"] = ''
 cvtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
-vtx.parameters["trackStateLocation"] = options.trackstate 
+vtx.parameters["trackStateLocation"] = ''
 
 vtxgbl.parameters["debug"] = 0
 vtxgbl.parameters["vtxCollLcio"] = 'UnconstrainedV0Vertices'
@@ -179,7 +178,10 @@ mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
 if (options.tracking == "KF"):
-    sequence = [header, vtx, ecal, track, targtrack]
+    sequence = [header, vtx, ecal, track]
+    #Add target tracks coll
+    if options.targetTracks > 0:
+        sequence.append(targtrack)
     # Get KF svt truth hits
     if (options.svtHits > 0):
         sequence.append(svthits)

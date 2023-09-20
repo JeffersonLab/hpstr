@@ -110,9 +110,6 @@ bool Tracker2DHitProcessor::process(IEvent* ievent) {
             EVENT::LCObjectVec rawHits = lc_tracker_hit->getRawHits(); 
             for(int irawhit = 0; irawhit < rawHits.size(); ++irawhit){
                 IMPL::TrackerHitImpl* rawhit = static_cast<IMPL::TrackerHitImpl*>(rawHits.at(irawhit));
-                //EVENT::TrackerRawData* rawTracker_hit = static_cast<EVENT::TrackerRawData*>(rawHits.at(irawhit));
-                //EVENT::TrackerRawData* rawhit = static_cast<EVENT::TrackerRawData*>(rawHits.at(irawhit));
-
                 if(debug_ > 0)
                     std::cout << "rawhit on track has lcio id: " << rawhit->id() << std::endl;
 

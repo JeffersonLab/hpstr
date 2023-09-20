@@ -127,10 +127,10 @@ class TrackerHit : public TObject {
         std::vector<int> getMCPartIDs() const {return mcPartIDs_;};
 
         /** Return rawhit strip numbers on hit */
-        std::vector<int> getRawHitStripNumbers(){return rawhits_;};
+        std::vector<int> getRawHitStripNumbers(){return rawhit_strips_;};
 
         /** Set rawhit strips on hit */
-        void setRawHitStripNumbers(std::vector<int> rawhits){rawhits_ = rawhits;};
+        void setRawHitStripNumbers(std::vector<int> rawhit_strips){rawhit_strips_ = rawhit_strips;};
 
         ClassDef(TrackerHit, 1);	
 
@@ -187,7 +187,7 @@ class TrackerHit : public TObject {
         std::vector<int> mcPartIDs_;
 
         /** RawHit Strip numbers on hit */
-        std::vector<int> rawhits_;
+        std::vector<int> rawhit_strips_;
 
 
 }; // TrackerHit

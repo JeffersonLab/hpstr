@@ -150,16 +150,16 @@ class BaseSelector {
 
     private:
         json _h_selections; //!< description
+        std::string m_name{""}; //!< description
+        std::string m_cfgFile{""}; //!< description
         //string: cutname
         //double: cutvalue
         //int   : cut id (for cut flow book-keeping)
         std::map<std::string,std::string> labels; //!< description
-        std::string m_name{""}; //!< description
-        std::string m_cfgFile{""}; //!< description
-        bool passSelection{false}; //!< description
 
         int ncuts_{0}; //!< description
         std::shared_ptr<TH1F> h_cf_; //!< description
+        bool passSelection{false}; //!< description
 
 
 };

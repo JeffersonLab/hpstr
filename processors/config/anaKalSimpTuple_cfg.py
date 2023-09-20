@@ -79,7 +79,7 @@ recoana_kf.parameters["CalTimeOffset"] = CalTimeOffset
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/"
 
 recoana_kf.parameters["regionDefinitions"] = [RegionPath+'Tight.json',
-                                              RegionPath+'radMatchTight_.json']
+                                              RegionPath+'radMatchTight.json']
 
 #RecoHitAna
 recoana_gbl.parameters = recoana_kf.parameters.copy()

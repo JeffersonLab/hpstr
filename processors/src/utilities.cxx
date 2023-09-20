@@ -565,8 +565,7 @@ bool utils::getParticlesFromVertex(Vertex* vtx, Particle* ele, Particle* pos) {
     return true;
 }
 
-std::pair<double, double> utils::getKalmanTrackL1Isolations(Track* track, std::vector<TrackerHit*>* siClusters){
-    std::pair<double, double> L1_isolations;
+double utils::getKalmanTrackL1Isolations(Track* track, std::vector<TrackerHit*>* siClusters){
     double L1_axial_iso = 999999.9;
     double L1_stereo_iso = 999999.9;
     //Loop over hits on track
@@ -663,8 +662,235 @@ std::pair<double, double> utils::getKalmanTrackL1Isolations(Track* track, std::v
             L1_stereo_iso = isohit_dy;
 
     }
-    L1_isolations.first = L1_axial_iso;
-    L1_isolations.second = L1_stereo_iso;
+
+    if(L1_axial_iso < L1_stereo_iso){
+        return L1_axial_iso;
+    }
+    else
+        return L1_stereo_iso;
+}
+
+void get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, std::vector<TrackerHit*>* hits, int& L1L2hitCode, int& L1hitCode, int& L2hitCode){
+    //Build map of hits and the associated MC part ids for later
+    TRefArray ele_trk_hits = ele_trk->getSvtHits();
+    TRefArray pos_trk_hits = pos_trk->getSvtHits();
+    std::map<int, std::vector<int> > trueHitIDs;
+    for(int i = 0; i < hits->size(); i++)
+    {
+        TrackerHit* hit = hits->at(i);
+        trueHitIDs[hit->getID()] = hit->getMCPartIDs();
+    }
+    //Count the number of hits per part on the ele track
+    std::map<int, int> nHits4part_ele;
+    for(int i = 0; i < ele_trk_hits.GetEntries(); i++)
+    {
+        TrackerHit* eleHit = (TrackerHit*)ele_trk_hits.At(i);
+        for(int idI = 0; idI < trueHitIDs[eleHit->getID()].size(); idI++ )
+        {
+            int partID = trueHitIDs[eleHit->getID()].at(idI);
+            if ( nHits4part_ele.find(partID) == nHits4part_ele.end() )
+            {
+                // not found
+                nHits4part_ele[partID] = 1;
+            }
+            else
+            {
+                // found
+                nHits4part_ele[partID]++;
+            }
+        }
+    }
+
+    //Determine the MC part with the most hits on the track
+    int maxNHits_ele = 0;
+    int maxID_ele = 0;
+    for (std::map<int,int>::iterator it=nHits4part_ele.begin(); it!=nHits4part_ele.end(); ++it)
+    {
+        if(it->second > maxNHits_ele)
+        {
+            maxNHits_ele = it->second;
+            maxID_ele = it->first;
+        }
+    }
+
+    //Count the number of hits per part on the pos track
+    std::map<int, int> nHits4part_pos;
+    for(int i = 0; i < pos_trk_hits.GetEntries(); i++)
+    {
+        TrackerHit* posHit = (TrackerHit*)pos_trk_hits.At(i);
+        for(int idI = 0; idI < trueHitIDs[posHit->getID()].size(); idI++ )
+        {
+            int partID = trueHitIDs[posHit->getID()].at(idI);
+            if ( nHits4part_pos.find(partID) == nHits4part_pos.end() )
+            {
+                // not found
+                nHits4part_pos[partID] = 1;
+            }
+            else
+            {
+                // found
+                nHits4part_pos[partID]++;
+            }
+        }
+    }
+
+    //Determine the MC part with the most hits on the track
+    int maxNHits_pos = 0;
+    int maxID_pos = 0;
+    for (std::map<int,int>::iterator it=nHits4part_pos.begin(); it!=nHits4part_pos.end(); ++it)
+    {
+        if(it->second > maxNHits_pos)
+        {
+            maxNHits_pos = it->second;
+            maxID_pos = it->first;
+        }
+    }
+
+    //Determine Ele L1 and L2 truth information
+    bool ele_trueAxialL1 = false;
+    bool ele_trueStereoL1 = false;
+    bool ele_trueAxialL2 = false;
+    bool ele_trueStereoL2 = false;
+    bool pos_trueAxialL1 = false;
+    bool pos_trueStereoL1 = false;
+    bool pos_trueAxialL2 = false;
+    bool pos_trueStereoL2 = false;
+    if (ele_trk->isKalmanTrack()){
+
+        for(int i = 0; i < ele_trk_hits.GetEntries(); i++)
+        {
+            TrackerHit* hit = (TrackerHit*)ele_trk_hits.At(i);
+            int trackhit_layer = hit->getLayer();
+            int trackhit_volume = hit->getVolume();
+            bool isAxial = false;
+            bool isStereo = false; 
+            bool isL1 = false;
+            bool isL2 = false;
+            bool isGood = false;
+
+            //L1 and L2 only
+            if(trackhit_layer < 2)
+                isL1 = true;
+            else if(trackhit_layer > 1 && trackhit_layer < 4)
+                isL2 = true;
+            else
+                continue;
+
+            if(trackhit_volume == 1){
+                if(trackhit_layer%2 == 1)
+                    isAxial = true;
+                else
+                    isStereo = true;
+            }
+            if(trackhit_volume == 0){
+                if(trackhit_layer%2 == 0)
+                    isAxial = true;
+                else
+                    isStereo = true;
+            }
+            //Check if truth hit is from truth track MCP
+            for(int idI = 0; idI < trueHitIDs[hit->getID()].size(); idI++ )
+            {
+                int partID = trueHitIDs[hit->getID()].at(idI);
+                //hit is from best track MCP
+                if(partID == maxID_ele){
+                    isGood = true;
+                }
+            }
+
+            if(isGood){
+                if(isAxial){
+                    if(isL1)
+                        ele_trueAxialL1 = true;
+                    if(isL2)
+                        ele_trueAxialL2 = true;
+                }
+                if(isStereo){
+                    if(isL1)
+                        ele_trueStereoL1 = true;
+                    if(isL2)
+                        ele_trueStereoL2 = true;
+                }
+            }
+        }
+    }
+
+    //Positron
+    if (pos_trk->isKalmanTrack()){
+
+        for(int i = 0; i < pos_trk_hits.GetEntries(); i++)
+        {
+            TrackerHit* hit = (TrackerHit*)pos_trk_hits.At(i);
+            int trackhit_layer = hit->getLayer();
+            int trackhit_volume = hit->getVolume();
+            bool isAxial = false;
+            bool isStereo = false; 
+            bool isL1 = false;
+            bool isL2 = false;
+            bool isGood = false;
+
+            //L1 and L2 only
+            if(trackhit_layer < 2)
+                isL1 = true;
+            else if(trackhit_layer > 1 && trackhit_layer < 4)
+                isL2 = true;
+            else
+                continue;
+
+            if(trackhit_volume == 1){
+                if(trackhit_layer%2 == 1)
+                    isAxial = true;
+                else
+                    isStereo = true;
+            }
+            if(trackhit_volume == 0){
+                if(trackhit_layer%2 == 0)
+                    isAxial = true;
+                else
+                    isStereo = true;
+            }
+            //Check if truth hit is from truth track MCP
+            for(int idI = 0; idI < trueHitIDs[hit->getID()].size(); idI++ )
+            {
+                int partID = trueHitIDs[hit->getID()].at(idI);
+                //hit is from best track MCP
+                if(partID == maxID_pos){
+                    isGood = true;
+                }
+            }
+
+            if(isGood){
+                if(isAxial){
+                    if(isL1)
+                        pos_trueAxialL1 = true;
+                    if(isL2)
+                        pos_trueAxialL2 = true;
+                }
+                if(isStereo){
+                    if(isL1)
+                        pos_trueStereoL1 = true;
+                    if(isL2)
+                        pos_trueStereoL2 = true;
+                }
+            }
+        }
+    }
+    //Require both Axial and Stereo truth hits to be 'Good' hit
+    if(ele_trueAxialL1 && ele_trueStereoL1) L1L2hitCode = L1L2hitCode | (0x1 << 3);           
+    if(pos_trueAxialL1 && pos_trueStereoL1) L1L2hitCode = L1L2hitCode | (0x1 << 2);           
+    if(ele_trueAxialL2 && ele_trueStereoL2) L1L2hitCode = L1L2hitCode | (0x1 << 1);           
+    if(pos_trueAxialL2 && pos_trueStereoL2) L1L2hitCode = L1L2hitCode | (0x1 << 0);           
     
-    return L1_isolations;
+    
+    //Set L1 axial/stereo hit code for ele and positron
+    if(ele_trueAxialL1) L1hitCode = L1hitCode | (0x1 << 3);
+    if(ele_trueStereoL1) L1hitCode = L1hitCode | (0x1 << 2);
+    if(pos_trueAxialL1) L1hitCode = L1hitCode | (0x1 << 1);
+    if(pos_trueStereoL1) L1hitCode = L1hitCode | (0x1 << 0);
+
+    //Set L2 axial/stereo hit code for ele and positron
+    if(ele_trueAxialL2) L2hitCode = L2hitCode | (0x1 << 3);
+    if(ele_trueStereoL2) L2hitCode = L2hitCode | (0x1 << 2);
+    if(pos_trueAxialL2) L2hitCode = L2hitCode | (0x1 << 1);
+    if(pos_trueStereoL2) L2hitCode = L2hitCode | (0x1 << 0);
 }

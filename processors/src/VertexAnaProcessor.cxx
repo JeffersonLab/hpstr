@@ -42,6 +42,7 @@ void VertexAnaProcessor::configure(const ParameterSet& parameters) {
 
         //region definitions
         regionSelections_ = parameters.getVString("regionDefinitions",regionSelections_);
+
         //beamspot positions
         beamPosCfg_ = parameters.getString("beamPosCfg", beamPosCfg_);
         //track time bias corrections
@@ -634,14 +635,6 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             CalCluster eleClus = ele->getCluster();
             CalCluster posClus = pos->getCluster();
 
-            //vtx Z position
-            //if (!_reg_vtx_selectors[region]->passCutGt("uncVtxZ_gt",vtx->getZ(),weight))
-            //    continue;
-
-            //Chi2
-            //if (!_reg_vtx_selectors[region]->passCutLt("chi2unc_lt",vtx->getChi2(),weight))
-            //    continue;
-
             double ele_E = ele->getEnergy();
             double pos_E = pos->getEnergy();
 
@@ -744,7 +737,6 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             if (!_reg_vtx_selectors[region]->passCutLt("posClusE_lt",posClus.getEnergy(),weight))
                 continue;
 
-
             double corr_eleClusterTime = ele->getCluster().getTime() - timeOffset_;
             double corr_posClusterTime = pos->getCluster().getTime() - timeOffset_;
 
@@ -781,8 +773,6 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             pos_mom.SetX(pos_trk_gbl->getMomentum()[0]);
             pos_mom.SetY(pos_trk_gbl->getMomentum()[1]);
             pos_mom.SetZ(pos_trk_gbl->getMomentum()[2]);
-
-
 
             //Ele Track Quality - Chi2
             if (!_reg_vtx_selectors[region]->passCutLt("eleTrkChi2_lt",ele_trk_gbl->getChi2(),weight))
@@ -850,8 +840,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             //Min vtx momentum
             if (!_reg_vtx_selectors[region]->passCutGt("minVtxMom_gt",(ele_mom+pos_mom).Mag(),weight))
                 continue;
-                
-            
+
             //END PRESELECTION CUTS
 
             //L1 requirement
@@ -1017,7 +1006,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             goodVtx = vtx;
             nGoodVtx++;
             goodVtxs.push_back(vtx);
-        } // preselected vertices
+        } // selected vertices
 
         //N selected vertices - this is quite a silly cut to make at the end. But okay. that's how we decided atm.
         if (!_reg_vtx_selectors[region]->passCutEq("nVtxs_eq", nGoodVtx, weight))
@@ -1025,9 +1014,9 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         //Move to after N vertices cut (was filled before)
         _reg_vtx_histos[region]->Fill1DHisto("n_vertices_h", nGoodVtx, weight);
 
+        //Loop over all selected vertices in the region
         for(std::vector<Vertex*>::iterator it = goodVtxs.begin(); it != goodVtxs.end(); it++){
 
-            //Vertex* vtx = goodVtx;
             Vertex* vtx = *it;
 
             Particle* ele = nullptr;
@@ -1069,6 +1058,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 pos_trk_gbl = (Track*) pos_trk.Clone();
             }
 
+            //Vertex Covariance
             std::vector<float> vtx_cov = vtx->getCovariance();
             float cxx = vtx_cov.at(0);
             float cyx = vtx_cov.at(1);
@@ -1077,259 +1067,24 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             float czy = vtx_cov.at(4);
             float czz = vtx_cov.at(5);
 
-            //Get L1 truth information if MC
-            double ele_trueL1Axial = -0.9;
-            double ele_trueL1Stereo = -0.9;
-            double pos_trueL1Axial = -0.9;
-            double pos_trueL1Stereo = -0.9;
-
-
-            int hitCode = 0;
-            int L1hitCode = 0;
-            int L2hitCode = 0;
+            //MC Truth hits in first 4 sensors
+            int L1L2hitCode = 0; //hit code '1111' means truth ax+ster hits in L1_ele, L1_pos, L2_ele, L2_pos
+            int L1hitCode = 0; //hit code '1111' means truth in L1_ele_ax, L1_ele_ster, L1_pos_ax, L1_pos_ster
+            int L2hitCode = 0; // hit code '1111' means truth in L2_ele_ax, L2_ele_ster, L2_pos_ax, L2_pos_ster
             if(!isData_){
-
-                //Build map of hits and the associated MC part ids for later
-                TRefArray ele_trk_hits = ele_trk_gbl->getSvtHits();
-                TRefArray pos_trk_hits = pos_trk_gbl->getSvtHits();
-                std::map<int, std::vector<int> > trueHitIDs;
-                for(int i = 0; i < hits_->size(); i++)
-                {
-                    TrackerHit* hit = hits_->at(i);
-                    trueHitIDs[hit->getID()] = hit->getMCPartIDs();
-                }
-                //Count the number of hits per part on the ele track
-                std::map<int, int> nHits4part_ele;
-                for(int i = 0; i < ele_trk_hits.GetEntries(); i++)
-                {
-                    TrackerHit* eleHit = (TrackerHit*)ele_trk_hits.At(i);
-                    for(int idI = 0; idI < trueHitIDs[eleHit->getID()].size(); idI++ )
-                    {
-                        int partID = trueHitIDs[eleHit->getID()].at(idI);
-                        if ( nHits4part_ele.find(partID) == nHits4part_ele.end() )
-                        {
-                            // not found
-                            nHits4part_ele[partID] = 1;
-                        }
-                        else
-                        {
-                            // found
-                            nHits4part_ele[partID]++;
-                        }
-                    }
-                }
-
-                //Determine the MC part with the most hits on the track
-                int maxNHits_ele = 0;
-                int maxID_ele = 0;
-                for (std::map<int,int>::iterator it=nHits4part_ele.begin(); it!=nHits4part_ele.end(); ++it)
-                {
-                    if(it->second > maxNHits_ele)
-                    {
-                        maxNHits_ele = it->second;
-                        maxID_ele = it->first;
-                    }
-                }
-
-                //Count the number of hits per part on the pos track
-                std::map<int, int> nHits4part_pos;
-                for(int i = 0; i < pos_trk_hits.GetEntries(); i++)
-                {
-                    TrackerHit* posHit = (TrackerHit*)pos_trk_hits.At(i);
-                    for(int idI = 0; idI < trueHitIDs[posHit->getID()].size(); idI++ )
-                    {
-                        int partID = trueHitIDs[posHit->getID()].at(idI);
-                        if ( nHits4part_pos.find(partID) == nHits4part_pos.end() )
-                        {
-                            // not found
-                            nHits4part_pos[partID] = 1;
-                        }
-                        else
-                        {
-                            // found
-                            nHits4part_pos[partID]++;
-                        }
-                    }
-                }
-
-                //Determine the MC part with the most hits on the track
-                int maxNHits_pos = 0;
-                int maxID_pos = 0;
-                for (std::map<int,int>::iterator it=nHits4part_pos.begin(); it!=nHits4part_pos.end(); ++it)
-                {
-                    if(it->second > maxNHits_pos)
-                    {
-                        maxNHits_pos = it->second;
-                        maxID_pos = it->first;
-                    }
-                }
-
-                //Determine Ele L1 and L2 truth information
-                bool ele_trueAxialL1 = false;
-                bool ele_trueStereoL1 = false;
-                bool ele_trueAxialL2 = false;
-                bool ele_trueStereoL2 = false;
-                bool pos_trueAxialL1 = false;
-                bool pos_trueStereoL1 = false;
-                bool pos_trueAxialL2 = false;
-                bool pos_trueStereoL2 = false;
-                if (ele_trk_gbl->isKalmanTrack()){
-
-                    for(int i = 0; i < ele_trk_hits.GetEntries(); i++)
-                    {
-                        TrackerHit* hit = (TrackerHit*)ele_trk_hits.At(i);
-                        int trackhit_layer = hit->getLayer();
-                        int trackhit_volume = hit->getVolume();
-                        bool isAxial = false;
-                        bool isStereo = false; 
-                        bool isL1 = false;
-                        bool isL2 = false;
-                        bool isGood = false;
-
-                        //L1 and L2 only
-                        if(trackhit_layer < 2)
-                            isL1 = true;
-                        else if(trackhit_layer > 1 && trackhit_layer < 4)
-                            isL2 = true;
-                        else
-                            continue;
-
-                        if(trackhit_volume == 1){
-                            if(trackhit_layer%2 == 1)
-                                isAxial = true;
-                            else
-                                isStereo = true;
-                        }
-                        if(trackhit_volume == 0){
-                            if(trackhit_layer%2 == 0)
-                                isAxial = true;
-                            else
-                                isStereo = true;
-                        }
-                        //Check if truth hit is from truth track MCP
-                        for(int idI = 0; idI < trueHitIDs[hit->getID()].size(); idI++ )
-                        {
-                            int partID = trueHitIDs[hit->getID()].at(idI);
-                            //hit is from best track MCP
-                            if(partID == maxID_ele){
-                                isGood = true;
-                            }
-                        }
-
-                        if(isGood){
-                            if(isAxial){
-                                if(isL1)
-                                    ele_trueAxialL1 = true;
-                                if(isL2)
-                                    ele_trueAxialL2 = true;
-                            }
-                            if(isStereo){
-                                if(isL1)
-                                    ele_trueStereoL1 = true;
-                                if(isL2)
-                                    ele_trueStereoL2 = true;
-                            }
-                        }
-
-                    }
-
-                }
-
-                //Positron
-                if (pos_trk_gbl->isKalmanTrack()){
-
-                    for(int i = 0; i < pos_trk_hits.GetEntries(); i++)
-                    {
-                        TrackerHit* hit = (TrackerHit*)pos_trk_hits.At(i);
-                        int trackhit_layer = hit->getLayer();
-                        int trackhit_volume = hit->getVolume();
-                        bool isAxial = false;
-                        bool isStereo = false; 
-                        bool isL1 = false;
-                        bool isL2 = false;
-                        bool isGood = false;
-
-                        //L1 and L2 only
-                        if(trackhit_layer < 2)
-                            isL1 = true;
-                        else if(trackhit_layer > 1 && trackhit_layer < 4)
-                            isL2 = true;
-                        else
-                            continue;
-
-                        if(trackhit_volume == 1){
-                            if(trackhit_layer%2 == 1)
-                                isAxial = true;
-                            else
-                                isStereo = true;
-                        }
-                        if(trackhit_volume == 0){
-                            if(trackhit_layer%2 == 0)
-                                isAxial = true;
-                            else
-                                isStereo = true;
-                        }
-                        //Check if truth hit is from truth track MCP
-                        for(int idI = 0; idI < trueHitIDs[hit->getID()].size(); idI++ )
-                        {
-                            int partID = trueHitIDs[hit->getID()].at(idI);
-                            //hit is from best track MCP
-                            if(partID == maxID_pos){
-                                isGood = true;
-                            }
-                        }
-
-                        if(isGood){
-                            if(isAxial){
-                                if(isL1)
-                                    pos_trueAxialL1 = true;
-                                if(isL2)
-                                    pos_trueAxialL2 = true;
-                            }
-                            if(isStereo){
-                                if(isL1)
-                                    pos_trueStereoL1 = true;
-                                if(isL2)
-                                    pos_trueStereoL2 = true;
-                            }
-                        }
-                    }
-                }
-                //Require both Axial and Stereo truth hits to be 'Good' hit
-                if(ele_trueAxialL1 && ele_trueStereoL1){
-                    hitCode = hitCode | (0x1 << 3);           
-                }
-                if(pos_trueAxialL1 && pos_trueStereoL1){
-                    hitCode = hitCode | (0x1 << 2);           
-                }
-                if(ele_trueAxialL2 && ele_trueStereoL2){
-                    hitCode = hitCode | (0x1 << 1);           
-                }
-                if(pos_trueAxialL2 && pos_trueStereoL2){
-                    hitCode = hitCode | (0x1 << 0);           
-                }
-                
-                if (!_reg_vtx_selectors[region]->passCutLt("hitCode_lt",((double)hitCode)-0.5, weight)) continue;
-                if (!_reg_vtx_selectors[region]->passCutGt("hitCode_gt",((double)hitCode)+0.5, weight)) continue;
-                _reg_vtx_histos[region]->Fill1DHisto("hitCode_h", hitCode,weight);
-
-                //Set L1 axial/stereo hit code for ele and positron
-                if(ele_trueAxialL1) L1hitCode = L1hitCode | (0x1 << 3);
-                if(ele_trueStereoL1) L1hitCode = L1hitCode | (0x1 << 2);
-                if(pos_trueAxialL1) L1hitCode = L1hitCode | (0x1 << 1);
-                if(pos_trueStereoL1) L1hitCode = L1hitCode | (0x1 << 0);
+                //Get hit codes. Only sure this works for 2016 KF as is.
+                utils::get2016KFMCTruthHitCodes(ele_trk_gbl, pos_trk_gbl, hits_, L1L2hitCode, L1hitCode, L2hitCode);
+                //L1L2 truth hit selection
+                if (!_reg_vtx_selectors[region]->passCutLt("hitCode_lt",((double)L1L2hitCode)-0.5, weight)) continue;
+                if (!_reg_vtx_selectors[region]->passCutGt("hitCode_gt",((double)L1L2hitCode)+0.5, weight)) continue;
+                //Fil hitcodes
+                _reg_vtx_histos[region]->Fill1DHisto("hitCode_h", L1L2hitCode,weight);
                 _reg_vtx_histos[region]->Fill1DHisto("L1hitCode_h", L1hitCode,weight);
-
-                //Set L2 axial/stereo hit code for ele and positron
-                if(ele_trueAxialL2) L2hitCode = L2hitCode | (0x1 << 3);
-                if(ele_trueStereoL2) L2hitCode = L2hitCode | (0x1 << 2);
-                if(pos_trueAxialL2) L2hitCode = L2hitCode | (0x1 << 1);
-                if(pos_trueStereoL2) L2hitCode = L2hitCode | (0x1 << 0);
                 _reg_vtx_histos[region]->Fill1DHisto("L2hitCode_h", L2hitCode,weight);
             }
 
             //track isolations
-            //Only calculate isolations if L1 and L2 hits exist
+            //Only calculate isolations if both track L1 and L2 hits exist
             bool hasL1ele = false;
             bool hasL2ele = false;
             _ah->InnermostLayerCheck(ele_trk_gbl, hasL1ele, hasL2ele);
@@ -1338,140 +1093,13 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             bool hasL2pos = false;
             _ah->InnermostLayerCheck(pos_trk_gbl, hasL1pos, hasL2pos);
 
-            //std::pair<axial, stereo>
-            std::pair<double,double> ele_isolations;
-            std::pair<double,double> pos_isolations;
             double ele_trk_iso_L1 = 99999.9;
             double pos_trk_iso_L1 = 99999.9;
             if(hasL1ele && hasL2ele && hasL1pos && hasL2pos){
                 if (ele_trk_gbl->isKalmanTrack()){
-                    ele_isolations = utils::getKalmanTrackL1Isolations(ele_trk_gbl, hits_);
-                    pos_isolations = utils::getKalmanTrackL1Isolations(pos_trk_gbl, hits_);
+                    ele_trk_iso_L1 = utils::getKalmanTrackL1Isolations(ele_trk_gbl, hits_);
+                    pos_trk_iso_L1 = utils::getKalmanTrackL1Isolations(pos_trk_gbl, hits_);
                 }
-
-                //Get track isolations and note stereo or axial
-                bool ele_iso_axial;
-                if(ele_isolations.first < ele_isolations.second){
-                    ele_iso_axial = true;
-                    ele_trk_iso_L1 = ele_isolations.first;
-                }
-                else{
-                    ele_iso_axial = false;
-                    ele_trk_iso_L1 = ele_isolations.second;
-                }
-
-                bool pos_iso_axial;
-                if(pos_isolations.first < pos_isolations.second){
-                    pos_iso_axial = true;
-                    pos_trk_iso_L1 = pos_isolations.first;
-                }
-                else{
-                    pos_iso_axial = false;
-                    pos_trk_iso_L1 = pos_isolations.second;
-                }
-
-                double reconz = vtx->getZ(); 
-                double ele_trk_z0 = ele_trk_gbl->getZ0();
-                double ele_trk_z0err = ele_trk_gbl->getZ0Err();
-                double pos_trk_z0 = pos_trk_gbl->getZ0();
-                double pos_trk_z0err = pos_trk_gbl->getZ0Err();
-
-                double ratio = 0.50; //raatio of (L2Z - L1Z)/(L2Z - Ztarg)
-                double ele_A = (1.0/ratio)*(ele_trk_iso_L1/ele_trk_z0err);
-                double ele_B = std::abs(ele_trk_z0)/ele_trk_z0err;
-                double pos_A = (1.0/ratio)*(pos_trk_iso_L1/pos_trk_z0err);
-                double pos_B = std::abs(pos_trk_z0)/pos_trk_z0err;
-                _reg_vtx_histos[region]->Fill1DHisto("vtx_track_L1_isolation_h", ele_trk_iso_L1);
-                _reg_vtx_histos[region]->Fill1DHisto("vtx_track_L1_isolation_h", pos_trk_iso_L1);
-                _reg_vtx_histos[region]->Fill1DHisto("vtx_track_L1_isolation_cut_comp_A_h",ele_A);
-                _reg_vtx_histos[region]->Fill1DHisto("vtx_track_L1_isolation_cut_comp_A_h",pos_A);
-                _reg_vtx_histos[region]->Fill1DHisto("vtx_track_L1_isolation_cut_comp_B_h",ele_B);
-                _reg_vtx_histos[region]->Fill1DHisto("vtx_track_L1_isolation_cut_comp_B_h",pos_B);
-                _reg_vtx_histos[region]->Fill1DHisto("vtx_track_L1_isolation_cut_h",ele_A - ele_B);
-                _reg_vtx_histos[region]->Fill1DHisto("vtx_track_L1_isolation_cut_h",pos_A - pos_B);
-
-                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_reconz_v_isolation_hh", ele_trk_iso_L1, reconz);
-                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_reconz_v_isolation_hh", pos_trk_iso_L1, reconz);
-                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_reconz_v_Z0err_hh", ele_trk_z0err, reconz);
-                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_reconz_v_Z0err_hh", pos_trk_z0err, reconz);
-
-                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_reconz_v_comp_A_hh", ele_A, reconz);
-                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_reconz_v_comp_A_hh", pos_A, reconz);
-                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_reconz_v_comp_B_hh", ele_B, reconz);
-                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_reconz_v_comp_B_hh", pos_B, reconz);
-                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_hh", ele_A - ele_B, reconz);
-                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_hh", pos_A - pos_B, reconz);
-
-                //Charge separated
-                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_ele_hh", ele_A - ele_B, reconz);
-                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_pos_hh", pos_A - pos_B, reconz);
-
-                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_ele_vs_pos_isolation_hh", ele_trk_iso_L1, pos_trk_iso_L1);
-                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_ele_vs_pos_isolation_cut_hh", ele_A-ele_B, pos_A-pos_B);
-
-                //old version of isolation cut
-                double old_ele_isolation_cut = ele_trk_iso_L1 + 0.5*(-std::abs(ele_trk_z0) - 3.0*ele_trk_z0err);
-                double old_pos_isolation_cut = pos_trk_iso_L1 + 0.5*(-std::abs(pos_trk_z0) - 3.0*pos_trk_z0err);
-                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_hh", old_ele_isolation_cut, reconz);
-                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_hh", old_pos_isolation_cut, reconz);
-
-                //recon_z vs z0tanlambda
-                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_hh", ele_trk_z0/ele_trk_gbl->getTanLambda(), reconz);
-                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_hh", pos_trk_z0/pos_trk_gbl->getTanLambda(), reconz);
-
-
-                //recon_z vs z0
-                _reg_vtx_histos[region]->Fill2DHisto("z0_v_recon_z_hh", reconz, ele_trk_z0);
-                _reg_vtx_histos[region]->Fill2DHisto("z0_v_recon_z_hh", reconz, pos_trk_z0);
-
-                //New histos
-                _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_z0_hh", ele_trk_z0, reconz);
-                _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_z0_hh", pos_trk_z0, reconz);
-
-                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_ABSdz0tanlambda_hh", std::abs((ele_trk_z0/ele_trk_gbl->getTanLambda()) - (pos_trk_z0/pos_trk_gbl->getTanLambda())), reconz);
-                _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_dz0tanlambda_hh", ((ele_trk_z0/ele_trk_gbl->getTanLambda()) - (pos_trk_z0/pos_trk_gbl->getTanLambda())), reconz);
-                
-                _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_cxx_hh", cxx, reconz);
-                _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_cyy_hh", cyy, reconz);
-                _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_czz_hh", czz, reconz);
-                _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_cyx_hh", cyx, reconz);
-                _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_czx_hh", czx, reconz);
-                _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_czy_hh", czy, reconz);
-
-                _reg_vtx_histos[region]->Fill1DHisto("cxx_h", cxx);
-                _reg_vtx_histos[region]->Fill1DHisto("cyy_h", cyy);
-                _reg_vtx_histos[region]->Fill1DHisto("czz_h", czz);
-                _reg_vtx_histos[region]->Fill1DHisto("cyx_h", cyx);
-                _reg_vtx_histos[region]->Fill1DHisto("czx_h", czx);
-                _reg_vtx_histos[region]->Fill1DHisto("czy_h", czy);
-
-                //Check Top and Bottom
-                if(ele_trk_gbl->isTopTrack()){
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_top_hh", (ele_A - ele_B), reconz);
-                }
-                else
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_bottom_hh", (ele_A - ele_B), reconz);
-
-                if(pos_trk_gbl->isTopTrack()){
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_top_hh", (pos_A - pos_B), reconz);
-                }
-                else
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_L1_isolation_cut_bottom_hh", (pos_A - pos_B), reconz);
-
-
-                //old version split into top and bottom
-                if(ele_trk_gbl->isTopTrack()){
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_top_hh", old_ele_isolation_cut, reconz);
-                }
-                else
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_bottom_hh", old_ele_isolation_cut, reconz);
-
-                if(pos_trk_gbl->isTopTrack()){
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_top_hh", old_pos_isolation_cut, reconz);
-                }
-                else
-                    _reg_vtx_histos[region]->Fill2DHisto("vtx_track_2016_ana_isolation_cut_bottom_hh", old_pos_isolation_cut, reconz);
-                
             }
 
             TVector3 ele_mom;
@@ -1529,6 +1157,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             TLorentzVector p_pos;
             p_pos.SetPxPyPzE(pos_trk_gbl->getMomentum()[0],pos_trk_gbl->getMomentum()[1],pos_trk_gbl->getMomentum()[2], pos_E);
 
+
             _reg_vtx_histos[region]->Fill2DHistograms(vtx,weight);
             _reg_vtx_histos[region]->Fill1DVertex(vtx,
                     ele,
@@ -1552,6 +1181,8 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             _reg_vtx_histos[region]->Fill1DHisto("mcZ625_h",vdZ);
 
             if (trks_) _reg_vtx_histos[region]->Fill1DHisto("n_tracks_h",trks_->size(),weight);
+            _reg_vtx_histos[region]->Fill1DHisto("vtx_track_L1_isolation_h", ele_trk_iso_L1);
+            _reg_vtx_histos[region]->Fill1DHisto("vtx_track_L1_isolation_h", pos_trk_iso_L1);
 
             //Just for the selected vertex
             if(!isData_)
@@ -1561,9 +1192,31 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 _reg_vtx_histos[region]->Fill1DHisto("true_vtx_psum_h",truePsum,weight);
             }
 
-
-            //New SIMP histos for developing loose preselection cuts
-            //2d histos
+            double reconz = vtx->getZ(); 
+            double ele_trk_z0 = ele_trk_gbl->getZ0();
+            double ele_trk_z0err = ele_trk_gbl->getZ0Err();
+            double pos_trk_z0 = pos_trk_gbl->getZ0();
+            double pos_trk_z0err = pos_trk_gbl->getZ0Err();
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_reconz_v_Z0err_hh", ele_trk_z0err, reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_reconz_v_Z0err_hh", pos_trk_z0err, reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_z0_hh", ele_trk_z0, reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_z0_hh", pos_trk_z0, reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_ABSdz0tanlambda_hh", std::abs((ele_trk_z0/ele_trk_gbl->getTanLambda()) - (pos_trk_z0/pos_trk_gbl->getTanLambda())), reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_dz0tanlambda_hh", ((ele_trk_z0/ele_trk_gbl->getTanLambda()) - (pos_trk_z0/pos_trk_gbl->getTanLambda())), reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_cxx_hh", cxx, reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_cyy_hh", cyy, reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_czz_hh", czz, reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_cyx_hh", cyx, reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_czx_hh", czx, reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_czy_hh", czy, reconz);
+            _reg_vtx_histos[region]->Fill1DHisto("cxx_h", cxx);
+            _reg_vtx_histos[region]->Fill1DHisto("cyy_h", cyy);
+            _reg_vtx_histos[region]->Fill1DHisto("czz_h", czz);
+            _reg_vtx_histos[region]->Fill1DHisto("cyx_h", cyx);
+            _reg_vtx_histos[region]->Fill1DHisto("czx_h", czx);
+            _reg_vtx_histos[region]->Fill1DHisto("czy_h", czy);
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_hh", ele_trk_z0/ele_trk_gbl->getTanLambda(), reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_hh", pos_trk_z0/pos_trk_gbl->getTanLambda(), reconz);
             _reg_vtx_histos[region]->Fill2DHisto("ele_clusT_v_ele_trackT_hh", ele_trk_gbl->getTrackTime(), corr_eleClusterTime, weight);
             _reg_vtx_histos[region]->Fill2DHisto("pos_clusT_v_pos_trackT_hh", pos_trk_gbl->getTrackTime(), corr_posClusterTime, weight);
             _reg_vtx_histos[region]->Fill2DHisto("ele_track_time_v_P_hh", ele_trk_gbl->getP(), ele_trk_gbl->getTrackTime(), weight);
@@ -1595,7 +1248,6 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             _reg_vtx_histos[region]->Fill1DHisto("ele_track_clus_dt_h", ele_trk_gbl->getTrackTime() - corr_eleClusterTime, weight);
             _reg_vtx_histos[region]->Fill1DHisto("pos_track_clus_dt_h", pos_trk_gbl->getTrackTime() - corr_posClusterTime, weight);
 
-
             //TODO put this in the Vertex!
             TVector3 vtxPosSvt;
             vtxPosSvt.SetX(vtx->getX());
@@ -1612,7 +1264,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                     _reg_tuples[region]->setVariableValue("vd_true_vtx_z", vdZ);
                     _reg_tuples[region]->setVariableValue("vd_true_vtx_mass", vdMass);
                     _reg_tuples[region]->setVariableValue("vd_true_vtx_energy", vdEnergy);
-                    _reg_tuples[region]->setVariableValue("hitCode", float(hitCode));
+                    _reg_tuples[region]->setVariableValue("hitCode", float(L1L2hitCode));
                     _reg_tuples[region]->setVariableValue("L1hitCode", float(L1hitCode));
                     _reg_tuples[region]->setVariableValue("L2hitCode", float(L2hitCode));
                 }

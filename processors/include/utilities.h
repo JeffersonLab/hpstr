@@ -33,6 +33,11 @@
 #include "Event.h"
 #include "TrackerHit.h"
 
+//-----------//
+//   ROOT    //
+//-----------//
+#include "TRefArray.h"
+
 namespace utils {
     /**
      * @brief description
@@ -172,7 +177,14 @@ namespace utils {
      * 
      * \todo extern?
      */
-    std::pair<double, double> getKalmanTrackL1Isolations(Track* track, std::vector<TrackerHit*>* siClusters);
+    double getKalmanTrackL1Isolations(Track* track, std::vector<TrackerHit*>* siClusters);
+
+    /**
+     * @brief description
+     * 
+     * \todo extern?
+     */
+    void get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, std::vector<TrackerHit*>* hits, int& L1L2hitCode, int& L1hitCode, int& L2hitCode);
 }
 
 #endif //UTILITIES
