@@ -583,6 +583,8 @@ double utils::getKalmanTrackL1Isolations(Track* track, std::vector<TrackerHit*>*
 
         //Get rawhit strip information
         std::vector<int> trackhit_rawhits = track_hit->getRawHitStripNumbers();
+        if(trackhit_rawhits.size() < 1)
+            continue;
         int trackhit_maxstrip = *max_element(trackhit_rawhits.begin(), trackhit_rawhits.end());
         int trackhit_minstrip = *min_element(trackhit_rawhits.begin(), trackhit_rawhits.end());
 
@@ -668,7 +670,7 @@ double utils::getKalmanTrackL1Isolations(Track* track, std::vector<TrackerHit*>*
         return L1_stereo_iso;
 }
 
-void get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, std::vector<TrackerHit*>* hits, int& L1L2hitCode, int& L1hitCode, int& L2hitCode){
+void utils::get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, std::vector<TrackerHit*>* hits, int& L1L2hitCode, int& L1hitCode, int& L2hitCode){
     //Build map of hits and the associated MC part ids for later
     TRefArray ele_trk_hits = ele_trk->getSvtHits();
     TRefArray pos_trk_hits = pos_trk->getSvtHits();

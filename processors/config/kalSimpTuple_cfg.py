@@ -102,9 +102,9 @@ targtrack.parameters["trkCollRoot"] = 'KalmanFullTracksAtTarget'
 targtrack.parameters["trackStateLocation"] = 'AtTarget'
 targtrack.parameters["kinkRelCollLcio"] = ''
 targtrack.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
-targtrack.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
+targtrack.parameters["trkhitCollRoot"] = 'SiClustersOnTrackAtTarget'
 targtrack.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
-targtrack.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack_KF'
+targtrack.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack_KF_AtTarget'
 
 # LT uncommented
 # if (not options.isData):
