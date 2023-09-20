@@ -99,6 +99,7 @@ $(function() {
 <code>#include &quot;<a class="el" href="CalHit_8h_source.html">CalHit.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Event_8h_source.html">Event.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>&quot;</code><br />
+<code>#include &quot;TRefArray.h&quot;</code><br />
 </div>
 <p><a href="utilities_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -115,12 +116,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a38245351b04f5e711d627819b932fbd4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classVertex.html">Vertex</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceutils.html#a38245351b04f5e711d627819b932fbd4">buildVertex</a> (EVENT::Vertex *lc_vertex)</td></tr>
 <tr class="memdesc:a38245351b04f5e711d627819b932fbd4"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="namespaceutils.html#a38245351b04f5e711d627819b932fbd4">More...</a><br /></td></tr>
 <tr class="separator:a38245351b04f5e711d627819b932fbd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8472a8f8efa0e72f364542ad79a5c697"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParticle.html">Particle</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceutils.html#a8472a8f8efa0e72f364542ad79a5c697">buildParticle</a> (EVENT::ReconstructedParticle *lc_particle, EVENT::LCCollection *gbl_kink_data, EVENT::LCCollection *track_data)</td></tr>
-<tr class="memdesc:a8472a8f8efa0e72f364542ad79a5c697"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="namespaceutils.html#a8472a8f8efa0e72f364542ad79a5c697">More...</a><br /></td></tr>
-<tr class="separator:a8472a8f8efa0e72f364542ad79a5c697"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a721ed160b22a3a70f98dba79789df5c9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classTrack.html">Track</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceutils.html#a721ed160b22a3a70f98dba79789df5c9">buildTrack</a> (EVENT::Track *lc_track, EVENT::LCCollection *gbl_kink_data, EVENT::LCCollection *track_data)</td></tr>
-<tr class="memdesc:a721ed160b22a3a70f98dba79789df5c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="namespaceutils.html#a721ed160b22a3a70f98dba79789df5c9">More...</a><br /></td></tr>
-<tr class="separator:a721ed160b22a3a70f98dba79789df5c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f0793ae3975d895fb1306504c017110"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classParticle.html">Particle</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceutils.html#a7f0793ae3975d895fb1306504c017110">buildParticle</a> (EVENT::ReconstructedParticle *lc_particle, std::string trackstate_location, EVENT::LCCollection *gbl_kink_data, EVENT::LCCollection *track_data)</td></tr>
+<tr class="memdesc:a7f0793ae3975d895fb1306504c017110"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="namespaceutils.html#a7f0793ae3975d895fb1306504c017110">More...</a><br /></td></tr>
+<tr class="separator:a7f0793ae3975d895fb1306504c017110"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a331cab836b576d7a988d81e008242528"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classTrack.html">Track</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceutils.html#a331cab836b576d7a988d81e008242528">buildTrack</a> (EVENT::Track *lc_track, std::string trackstate_location, EVENT::LCCollection *gbl_kink_data, EVENT::LCCollection *track_data)</td></tr>
+<tr class="memdesc:a331cab836b576d7a988d81e008242528"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="namespaceutils.html#a331cab836b576d7a988d81e008242528">More...</a><br /></td></tr>
+<tr class="separator:a331cab836b576d7a988d81e008242528"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac358ecc5a6e709ba4b0923fb312283d4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceutils.html#ac358ecc5a6e709ba4b0923fb312283d4">IsSameTrack</a> (<a class="el" href="classTrack.html">Track</a> *trk1, <a class="el" href="classTrack.html">Track</a> *trk2)</td></tr>
 <tr class="memdesc:ac358ecc5a6e709ba4b0923fb312283d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="namespaceutils.html#ac358ecc5a6e709ba4b0923fb312283d4">More...</a><br /></td></tr>
 <tr class="separator:ac358ecc5a6e709ba4b0923fb312283d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -132,9 +133,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a2d01ad798936250108f868400e1e3051"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classCalCluster.html">CalCluster</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceutils.html#a2d01ad798936250108f868400e1e3051">buildCalCluster</a> (EVENT::Cluster *lc_cluster)</td></tr>
 <tr class="memdesc:a2d01ad798936250108f868400e1e3051"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="namespaceutils.html#a2d01ad798936250108f868400e1e3051">More...</a><br /></td></tr>
 <tr class="separator:a2d01ad798936250108f868400e1e3051"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a434b38abbf31e8df9d32eda0de82e2f9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceutils.html#a434b38abbf31e8df9d32eda0de82e2f9">addRawInfoTo3dHit</a> (<a class="el" href="classTrackerHit.html">TrackerHit</a> *tracker_hit, IMPL::TrackerHitImpl *lc_tracker_hit, EVENT::LCCollection *raw_svt_fits, std::vector&lt; <a class="el" href="classRawSvtHit.html">RawSvtHit</a> * &gt; *rawHits=nullptr, int type=0)</td></tr>
-<tr class="memdesc:a434b38abbf31e8df9d32eda0de82e2f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="namespaceutils.html#a434b38abbf31e8df9d32eda0de82e2f9">More...</a><br /></td></tr>
-<tr class="separator:a434b38abbf31e8df9d32eda0de82e2f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d15b32d30266551f22e870e6613f109"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceutils.html#a0d15b32d30266551f22e870e6613f109">addRawInfoTo3dHit</a> (<a class="el" href="classTrackerHit.html">TrackerHit</a> *tracker_hit, IMPL::TrackerHitImpl *lc_tracker_hit, EVENT::LCCollection *raw_svt_fits, std::vector&lt; <a class="el" href="classRawSvtHit.html">RawSvtHit</a> * &gt; *rawHits=nullptr, int type=0, bool storeRawHit=true)</td></tr>
+<tr class="memdesc:a0d15b32d30266551f22e870e6613f109"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="namespaceutils.html#a0d15b32d30266551f22e870e6613f109">More...</a><br /></td></tr>
+<tr class="separator:a0d15b32d30266551f22e870e6613f109"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e1646b6a827eb4b57b130766d574583"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceutils.html#a5e1646b6a827eb4b57b130766d574583">isUsedByTrack</a> (IMPL::TrackerHitImpl *lc_tracker_hit, EVENT::Track *lc_track)</td></tr>
 <tr class="memdesc:a5e1646b6a827eb4b57b130766d574583"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="namespaceutils.html#a5e1646b6a827eb4b57b130766d574583">More...</a><br /></td></tr>
 <tr class="separator:a5e1646b6a827eb4b57b130766d574583"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -147,6 +148,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a1ed2a27a078620b6befd9411673440da"><td class="memItemLeft" align="right" valign="top">static UTIL::BitField64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceutils.html#a1ed2a27a078620b6befd9411673440da">decoder</a> (&quot;system:6,barrel:3,layer:4,module:12,sensor:1,side:32:-2,strip:12&quot;)</td></tr>
 <tr class="memdesc:a1ed2a27a078620b6befd9411673440da"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="namespaceutils.html#a1ed2a27a078620b6befd9411673440da">More...</a><br /></td></tr>
 <tr class="separator:a1ed2a27a078620b6befd9411673440da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a738247811cec3af04d9b6a7868aa8eb4"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceutils.html#a738247811cec3af04d9b6a7868aa8eb4">getKalmanTrackL1Isolations</a> (<a class="el" href="classTrack.html">Track</a> *track, std::vector&lt; <a class="el" href="classTrackerHit.html">TrackerHit</a> * &gt; *siClusters)</td></tr>
+<tr class="memdesc:a738247811cec3af04d9b6a7868aa8eb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="namespaceutils.html#a738247811cec3af04d9b6a7868aa8eb4">More...</a><br /></td></tr>
+<tr class="separator:a738247811cec3af04d9b6a7868aa8eb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b19c1ba52775ddffc7e4a2c81ff48f3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceutils.html#a2b19c1ba52775ddffc7e4a2c81ff48f3">get2016KFMCTruthHitCodes</a> (<a class="el" href="classTrack.html">Track</a> *ele_trk, <a class="el" href="classTrack.html">Track</a> *pos_trk, std::vector&lt; <a class="el" href="classTrackerHit.html">TrackerHit</a> * &gt; *hits, int &amp;L1L2hitCode, int &amp;L1hitCode, int &amp;L2hitCode)</td></tr>
+<tr class="memdesc:a2b19c1ba52775ddffc7e4a2c81ff48f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <a href="namespaceutils.html#a2b19c1ba52775ddffc7e4a2c81ff48f3">More...</a><br /></td></tr>
+<tr class="separator:a2b19c1ba52775ddffc7e4a2c81ff48f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

@@ -135,6 +135,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a9c9659a6c6ba66b4107ba59c95a24241"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a19f10bcec9a8533dcbad84548fc9b352"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackerHit.html#a19f10bcec9a8533dcbad84548fc9b352">getMCPartIDs</a> () const</td></tr>
 <tr class="separator:a19f10bcec9a8533dcbad84548fc9b352"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae80386c1bf1fba767630c9aa19151d95"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackerHit.html#ae80386c1bf1fba767630c9aa19151d95">getRawHitStripNumbers</a> ()</td></tr>
+<tr class="separator:ae80386c1bf1fba767630c9aa19151d95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ac3f940950e7982b3cce292c72e1a36"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackerHit.html#a7ac3f940950e7982b3cce292c72e1a36">setRawHitStripNumbers</a> (std::vector&lt; int &gt; rawhit_strips)</td></tr>
+<tr class="separator:a7ac3f940950e7982b3cce292c72e1a36"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46c5e9beb36a5e392e4e020441998428"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackerHit.html#a46c5e9beb36a5e392e4e020441998428">ClassDef</a> (<a class="el" href="classTrackerHit.html">TrackerHit</a>, 1)</td></tr>
 <tr class="separator:a46c5e9beb36a5e392e4e020441998428"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -180,6 +184,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a2e4b4228853bed24d6d8e8a03dba6922"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad030081e4c24c834dde23b429612e988"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackerHit.html#ad030081e4c24c834dde23b429612e988">mcPartIDs_</a></td></tr>
 <tr class="separator:ad030081e4c24c834dde23b429612e988"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a478b501952d7d549ea6bb1547d089bd9"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackerHit.html#a478b501952d7d549ea6bb1547d089bd9">rawhit_strips_</a></td></tr>
+<tr class="separator:a478b501952d7d549ea6bb1547d089bd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
@@ -643,6 +649,34 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="ae80386c1bf1fba767630c9aa19151d95"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae80386c1bf1fba767630c9aa19151d95">&#9670;&nbsp;</a></span>getRawHitStripNumbers()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;int&gt; getRawHitStripNumbers </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Return rawhit strip numbers on hit </p>
+
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00130">130</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+
+</div>
+</div>
 <a id="afbffc04e39811037c7b7c79f29af16f5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afbffc04e39811037c7b7c79f29af16f5">&#9670;&nbsp;</a></span>getTime()</h2>
 
@@ -906,6 +940,35 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a7ac3f940950e7982b3cce292c72e1a36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ac3f940950e7982b3cce292c72e1a36">&#9670;&nbsp;</a></span>setRawHitStripNumbers()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void setRawHitStripNumbers </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; int &gt;&#160;</td>
+          <td class="paramname"><em>rawhit_strips</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Set rawhit strips on hit </p>
+
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00133">133</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+
+</div>
+</div>
 <a id="acb0ffd73929350f517aeba27c9463e7f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acb0ffd73929350f517aeba27c9463e7f">&#9670;&nbsp;</a></span>setTime()</h2>
 
@@ -991,7 +1054,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The hit charge deposit. </p>
 
-<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00157">157</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00163">163</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -1016,7 +1079,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Components of the covariance matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00146">146</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00152">152</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -1040,7 +1103,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00147">147</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00153">153</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -1064,7 +1127,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00148">148</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00154">154</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -1088,7 +1151,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00149">149</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00155">155</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -1112,7 +1175,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00150">150</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00156">156</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -1136,7 +1199,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00151">151</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00157">157</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -1161,7 +1224,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>LCIO id </p>
 
-<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00175">175</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00181">181</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -1186,7 +1249,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Layer (Axial + Stereo). 1-6 in 2015/2016 geometry, 0-7 in 2019 geometry </p>
 
-<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00163">163</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00169">169</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -1211,7 +1274,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>LCIO ids of MC Particles associated to the hit </p>
 
-<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00181">181</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00187">187</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -1236,7 +1299,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Number of raw hits forming the Tracker hit </p>
 
-<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00134">134</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00140">140</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -1261,7 +1324,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The raw hits </p>
 
-<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00160">160</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00166">166</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -1286,7 +1349,32 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Raw charge: sum of the raw hit fit amplitudes </p>
 
-<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00169">169</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00175">175</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+
+</div>
+</div>
+<a id="a478b501952d7d549ea6bb1547d089bd9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a478b501952d7d549ea6bb1547d089bd9">&#9670;&nbsp;</a></span>rawhit_strips_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;int&gt; rawhit_strips_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>RawHit Strip numbers on hit </p>
+
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00190">190</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -1311,7 +1399,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>How many tracks share this hit </p>
 
-<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00172">172</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00178">178</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -1336,7 +1424,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The hit time. </p>
 
-<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00154">154</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00160">160</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -1361,7 +1449,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Tracks that share this hit </p>
 
-<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00178">178</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00184">184</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -1386,7 +1474,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Volume 0-top 1-bottom) </p>
 
-<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00166">166</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00172">172</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -1411,7 +1499,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The x position of the hit. </p>
 
-<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00137">137</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00143">143</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -1436,7 +1524,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The x position of the hit. </p>
 
-<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00140">140</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00146">146</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -1461,7 +1549,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The x position of the hit. </p>
 
-<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00143">143</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackerHit_8h_source.html#l00149">149</a> of file <a class="el" href="TrackerHit_8h_source.html">TrackerHit.h</a>.</p>
 
 </div>
 </div>
