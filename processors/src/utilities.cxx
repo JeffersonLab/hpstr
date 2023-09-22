@@ -609,6 +609,8 @@ double utils::getKalmanTrackL1Isolations(Track* track, std::vector<TrackerHit*>*
         double closest_dt = 999999.9;
         double isohit_y = 999999.9;
 
+        if ( siClusters == nullptr )
+            return isohit_dy;
         for(int j = 0; j < siClusters->size(); j++){
             TrackerHit* althit = siClusters->at(j);
             int althit_id = althit->getID();
@@ -675,6 +677,8 @@ void utils::get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, std::vector
     TRefArray ele_trk_hits = ele_trk->getSvtHits();
     TRefArray pos_trk_hits = pos_trk->getSvtHits();
     std::map<int, std::vector<int> > trueHitIDs;
+    if(hits == nullptr)
+        return;
     for(int i = 0; i < hits->size(); i++)
     {
         TrackerHit* hit = hits->at(i);

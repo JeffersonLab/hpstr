@@ -218,7 +218,7 @@ void VertexAnaProcessor::initialize(TTree* tree) {
     tree_->SetBranchAddress("EventHeader", &evth_ , &bevth_);
     if (brMap_.find(tsColl_.c_str()) != brMap_.end()) tree_->SetBranchAddress(tsColl_.c_str(), &ts_ , &bts_);
     tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_ , &bvtxs_);
-    tree_->SetBranchAddress(hitColl_.c_str(), &hits_   , &bhits_);
+    if (brMap_.find(hitColl_.c_str()) != brMap_.end()) tree_->SetBranchAddress(hitColl_.c_str(), &hits_ , &bhits_);
     tree_->SetBranchAddress(ecalColl_.c_str(), &ecal_  , &becal_);
     if(!isData_ && !mcColl_.empty()) tree_->SetBranchAddress(mcColl_.c_str() , &mcParts_, &bmcParts_);
     //If track collection name is empty take the tracks from the particles. TODO:: change this
