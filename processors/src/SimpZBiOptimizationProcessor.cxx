@@ -117,6 +117,9 @@ void SimpZBiOptimizationProcessor::addNewVariables(SimpAnaTTree* MTT, std::strin
     if(variable == "unc_vtx_abs_delta_z0tanlambda")
         MTT->addVariable_unc_vtx_abs_delta_z0tanlambda();
 
+    //if(variable == "unc_vtx_proj_significance")
+    //    MTT->addVariable_unc_vtx_proj_significance();
+
     else
         std::cout << "[SimpZBiOptimization]::ERROR::NEW VARIABLE " << variable << " IS NOT DEFINED IN SimpAnaTTree.cxx"
             <<std::endl;
@@ -131,21 +134,37 @@ void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos
         histos->Fill1DHisto(var+"_h", MTT->getValue(var));
     }
 
-    //always fill
+    //Impact Parameter
     histos->Fill2DHisto("z0_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_ele_track_z0"));
     histos->Fill2DHisto("z0_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_pos_track_z0"));
     histos->Fill2DHisto("ele_track_z0_v_pos_track_z0_hh",MTT->getValue("unc_vtx_pos_track_z0"),
             MTT->getValue("unc_vtx_ele_track_z0"));
     histos->Fill2DHisto("vtx_InvM_vtx_z_hh",MTT->getValue("unc_vtx_mass")*1000.0, MTT->getValue("unc_vtx_z"));
+    histos->Fill2DHisto("ele_track_z0_v_pos_track_z0_hh", MTT->getValue("unc_vtx_ele_track_z0"), 
+            MTT->getValue("unc_vtx_pos_track_z0"));
 
-    //Investigating new variables
+    //Zalpha
     if(MTT->variableExists("unc_vtx_ele_zalpha")){
-        histos->Fill2DHisto("z0_v_recon_zalpha_hh",MTT->getValue("unc_vtx_ele_zalpha"),
+        histos->Fill2DHisto("z0_v_unc_vtx_zalpha_hh",MTT->getValue("unc_vtx_ele_zalpha"),
                 MTT->getValue("unc_vtx_ele_track_z0"));
     }
     if(MTT->variableExists("unc_vtx_pos_zalpha")){
-        histos->Fill2DHisto("z0_v_recon_zalpha_hh",MTT->getValue("unc_vtx_pos_zalpha"),
+        histos->Fill2DHisto("z0_v_unc_vtx_zalpha_hh",MTT->getValue("unc_vtx_pos_zalpha"),
                 MTT->getValue("unc_vtx_pos_track_z0"));
+    }
+
+    //v0 projection
+    if(MTT->variableExists("unc_vtx_proj_x")){
+        histos->Fill2DHisto("vtx_proj_x_v_unc_vtx_proj_y_hh", 
+            MTT->getValue("unc_vtx_proj_x"), MTT->getValue("unc_vtx_proj_y"));
+    }
+    if(MTT->variableExists("unc_vtx_proj_x_sig")){
+        histos->Fill2DHisto("unc_vtx_proj_x_y_significance_hh", 
+            MTT->getValue("unc_vtx_proj_x_sig"), MTT->getValue("unc_vtx_proj_y_sig"));
+    }
+    if(MTT->variableExists("unc_vtx_proj_sig")){
+        histos->Fill2DHisto("unc_vtx_proj_significance_hh", 
+            MTT->getValue("unc_vtx_proj_sig"), MTT->getValue("unc_vtx_z"));
     }
 
     //isolation cut
@@ -162,8 +181,10 @@ void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos
         histos->Fill2DHisto("recon_z_v_z0_z0err_hh", MTT->getValue("unc_vtx_pos_z0_z0err"),MTT->getValue("unc_vtx_z"));
     }
     if(MTT->variableExists("unc_vtx_ele_isolation_cut")){
-        histos->Fill2DHisto("recon_z_v_isolation_cut_hh", MTT->getValue("unc_vtx_ele_isolation_cut"),MTT->getValue("unc_vtx_z"));
-        histos->Fill2DHisto("recon_z_v_isolation_cut_hh", MTT->getValue("unc_vtx_pos_isolation_cut"),MTT->getValue("unc_vtx_z"));
+        histos->Fill2DHisto("recon_z_v_isolation_cut_hh", 
+                MTT->getValue("unc_vtx_ele_isolation_cut"),MTT->getValue("unc_vtx_z"));
+        histos->Fill2DHisto("recon_z_v_isolation_cut_hh", MTT->getValue("unc_vtx_pos_isolation_cut"),
+                MTT->getValue("unc_vtx_z"));
     }
 
     if(MTT->variableExists("unc_vtx_cxx")){
@@ -173,19 +194,12 @@ void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos
     }
 
     //Z0TanLambda
-    histos->Fill2DHisto("recon_z_v_z0tanlambda_hh", MTT->getValue("unc_vtx_ele_track_z0")/MTT->getValue("unc_vtx_ele_track_tanLambda"),MTT->getValue("unc_vtx_z"));
-    histos->Fill2DHisto("recon_z_v_z0tanlambda_hh", MTT->getValue("unc_vtx_pos_track_z0")/MTT->getValue("unc_vtx_pos_track_tanLambda"),MTT->getValue("unc_vtx_z"));
-    if(MTT->variableExists("unc_vtx_ele_z0tanlambda_right")){
-        histos->Fill2DHisto("recon_z_v_z0tanlambda_right_hh", MTT->getValue("unc_vtx_ele_z0tanlambda_right"),MTT->getValue("unc_vtx_z"));
-        histos->Fill2DHisto("recon_z_v_z0tanlambda_right_hh", MTT->getValue("unc_vtx_pos_z0tanlambda_right"),MTT->getValue("unc_vtx_z"));
-        }
-    if(MTT->variableExists("unc_vtx_ele_z0tanlambda_left")){
-        histos->Fill2DHisto("recon_z_v_z0tanlambda_left_hh", MTT->getValue("unc_vtx_ele_z0tanlambda_left"),MTT->getValue("unc_vtx_z"));
-        histos->Fill2DHisto("recon_z_v_z0tanlambda_left_hh", MTT->getValue("unc_vtx_pos_z0tanlambda_left"),MTT->getValue("unc_vtx_z"));
-        }
-
-    if(MTT->variableExists("unc_vtx_abs_delta_z0tanlambda")){
-        histos->Fill2DHisto("recon_z_v_abs_delta_z0tanlambda_hh", MTT->getValue("unc_vtx_abs_delta_z0tanlambda"),MTT->getValue("unc_vtx_z"));
+    histos->Fill2DHisto("recon_z_v_z0tanlambda_hh", 
+            MTT->getValue("unc_vtx_ele_track_z0")/MTT->getValue("unc_vtx_ele_track_tanLambda"),MTT->getValue("unc_vtx_z"));
+    histos->Fill2DHisto("recon_z_v_z0tanlambda_hh",
+            MTT->getValue("unc_vtx_pos_track_z0")/MTT->getValue("unc_vtx_pos_track_tanLambda"),MTT->getValue("unc_vtx_z"));
+    if(MTT->variableExists("unc_vtx_deltaZ")){
+        histos->Fill2DHisto("recon_z_v_unc_vtx_deltaZ_hh", MTT->getValue("unc_vtx_deltaZ"),MTT->getValue("unc_vtx_z"));
     }
 }
 
@@ -262,8 +276,10 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
         int param_idx = std::distance(new_variables_.begin(), it);
         std::cout << "[SimpZBiOptimization]::Attempting to add new variable " << *it << 
             " with parameter " << new_variable_params_.at(param_idx) << std::endl;
-        addNewVariables(signalMTT_, *it, new_variable_params_.at(param_idx));
-        addNewVariables(bkgMTT_, *it, new_variable_params_.at(param_idx));
+        signalMTT_->addVariable(*it, new_variable_params_.at(param_idx));
+        bkgMTT_->addVariable(*it, new_variable_params_.at(param_idx));
+        //addNewVariables(signalMTT_, *it, new_variable_params_.at(param_idx));
+        //addNewVariables(bkgMTT_, *it, new_variable_params_.at(param_idx));
     }
 
     //Finalize Initialization of New Mutable Tuples
@@ -823,15 +839,6 @@ bool SimpZBiOptimizationProcessor::failPersistentCuts(SimpAnaTTree* MTT){
             failCuts = true;
             break;
         }
-    }
-
-    //Testing 2016 impact parameter cut 04/10/2023
-    //THIS SHOULD EVENTUALLY BE REMOVED
-    if(testSpecialCut_){
-        //if(!MTT->impactParameterCut2016Canonical(signal_mass_))
-        //    failCuts = true;
-        if(!MTT->testImpactParameterCut())
-            failCuts = true;
     }
 
     return failCuts;

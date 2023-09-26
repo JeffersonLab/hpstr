@@ -109,3 +109,11 @@ void MutableTTree::initializeFlatTuple(TTree* tree, std::map<std::string, double
         tree->SetBranchAddress(varname.c_str(),tuple_map[varname]);
     }
 }
+
+void MutableTTree::addVariableToTBranch(const std::string& variableName){
+    double* variable = new double{999.9};
+    tuple_[variableName] = variable;
+    newtree_->Branch(variableName.c_str(), tuple_[variableName], (variableName+"/D").c_str());
+    new_variables_[variableName] = variable;
+}
+

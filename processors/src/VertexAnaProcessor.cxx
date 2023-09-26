@@ -43,6 +43,9 @@ void VertexAnaProcessor::configure(const ParameterSet& parameters) {
         //region definitions
         regionSelections_ = parameters.getVString("regionDefinitions",regionSelections_);
 
+        //v0 projection fits
+        v0ProjectionFitsCfg_ = parameters.getString("v0ProjectionFitsCfg", v0ProjectionFitsCfg_);
+
         //beamspot positions
         beamPosCfg_ = parameters.getString("beamPosCfg", beamPosCfg_);
         //track time bias corrections
@@ -73,6 +76,13 @@ void VertexAnaProcessor::initialize(TTree* tree) {
         _mc_vtx_histos->loadHistoConfig(mcHistoCfg_);
         _mc_vtx_histos->DefineHistos();
         _mc_vtx_histos->Define2DHistos();
+    }
+
+    //Load Run Dependent V0 target projection fits from json
+    if(!v0ProjectionFitsCfg_.empty()){
+        std::ifstream v0proj_file(v0ProjectionFitsCfg_);
+        v0proj_file >> v0proj_fits_;
+        v0proj_file.close();
     }
 
     //Run Dependent Corrections
@@ -130,6 +140,11 @@ void VertexAnaProcessor::initialize(TTree* tree) {
             _reg_tuples[regname]->addVariable("unc_vtx_cyx");
             _reg_tuples[regname]->addVariable("unc_vtx_czy");
             _reg_tuples[regname]->addVariable("unc_vtx_czx");
+            _reg_tuples[regname]->addVariable("unc_vtx_proj_x");
+            _reg_tuples[regname]->addVariable("unc_vtx_proj_y");
+            _reg_tuples[regname]->addVariable("unc_vtx_proj_x_sig");
+            _reg_tuples[regname]->addVariable("unc_vtx_proj_y_sig");
+            _reg_tuples[regname]->addVariable("unc_vtx_proj_sig");
 
             //track vars
             _reg_tuples[regname]->addVariable("unc_vtx_ele_track_p");
@@ -1200,6 +1215,22 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             double ele_trk_z0err = ele_trk_gbl->getZ0Err();
             double pos_trk_z0 = pos_trk_gbl->getZ0();
             double pos_trk_z0err = pos_trk_gbl->getZ0Err();
+
+            //Project vertex to target
+            double vtx_proj_x = -999.9;
+            double vtx_proj_y = -999.9;
+            double vtx_proj_x_sig = -999.9;
+            double vtx_proj_y_sig = -999.9;
+            double vtx_proj_sig = -999.9;
+            if(!v0ProjectionFitsCfg_.empty())
+                vtx_proj_sig = utils::v0_projection_to_target_significance(v0proj_fits_, evth_->getRunNumber(), 
+                        vtx_proj_x, vtx_proj_y, vtx_proj_x_sig, vtx_proj_y_sig, vtx->getX(), vtx->getY(),
+                        reconz, vtx->getP().X(), vtx->getP().Y(), vtx->getP().Z());
+
+            _reg_vtx_histos[region]->Fill2DHisto("unc_vtx_x_v_unc_vtx_y_hh", vtx->getX(), vtx->getY());
+            _reg_vtx_histos[region]->Fill2DHisto("unc_vtx_proj_x_v_unc_vtx_proj_y_hh", vtx_proj_x, vtx_proj_y);
+            _reg_vtx_histos[region]->Fill2DHisto("unc_vtx_proj_x_y_significance_hh", vtx_proj_x_sig, vtx_proj_y_sig);
+            _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_vtx_proj_significance_hh", vtx_proj_sig, reconz);
             _reg_vtx_histos[region]->Fill2DHisto("vtx_track_reconz_v_Z0err_hh", ele_trk_z0err, reconz);
             _reg_vtx_histos[region]->Fill2DHisto("vtx_track_reconz_v_Z0err_hh", pos_trk_z0err, reconz);
             _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_z0_hh", ele_trk_z0, reconz);
@@ -1288,6 +1319,11 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 _reg_tuples[region]->setVariableValue("unc_vtx_cyx", cyx);
                 _reg_tuples[region]->setVariableValue("unc_vtx_czy", czy);
                 _reg_tuples[region]->setVariableValue("unc_vtx_czx", czx);
+                _reg_tuples[region]->setVariableValue("unc_vtx_proj_x", vtx_proj_x);
+                _reg_tuples[region]->setVariableValue("unc_vtx_proj_y", vtx_proj_y);
+                _reg_tuples[region]->setVariableValue("unc_vtx_proj_x_sig", vtx_proj_x_sig);
+                _reg_tuples[region]->setVariableValue("unc_vtx_proj_y_sig", vtx_proj_y_sig);
+                _reg_tuples[region]->setVariableValue("unc_vtx_proj_sig", vtx_proj_sig);
 
                 //track vars
                 _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_p", ele_trk_gbl->getP());

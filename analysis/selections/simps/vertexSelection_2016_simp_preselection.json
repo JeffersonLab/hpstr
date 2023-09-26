@@ -1,0 +1,77 @@
+{
+    "Pair1_eq" : {
+        "cut"  : 1,
+        "id"   : 0,
+        "info" : "Trigger Pair1"
+    },
+    "eleTrkTime_lt" : {
+        "cut" : 6,
+        "id" : 1,
+        "info" : "e^{-} trkTime<6ns"
+    },
+    "posTrkTime_lt" : {
+        "cut" : 6,
+        "id" : 2,
+        "info" : "e^{+} trkTime<6ns"
+    },
+    "eleposCluTimeDiff_lt" : {
+        "cut"  : 1.45,
+        "id"   : 3,
+        "info" : "#Delta_{t}(clu_{e^{-}},clu_{e^{+}})<1.45ns"
+    },
+    "eleTrkCluTimeDiff_lt" : {
+        "cut"   : 4,
+        "id"    : 4,
+        "info"  : "e^{-} #Delta_{t}(trk,clu)<4ns"
+    },
+    "posTrkCluTimeDiff_lt" : {
+        "cut"   : 4,
+        "id"    : 5,
+        "info"  : "e^{+} #Delta_{t}(trk,clu)<4ns"
+    },
+    "eleTrkChi2Ndf_lt" : {
+        "cut"  : 20,
+        "id"   : 6,
+        "info" : "e^{-} Track #chi^{2}/Ndf<20"
+    },
+    "posTrkChi2Ndf_lt" : {
+        "cut"  : 20,
+        "id"   : 7,
+        "info" : "e^{+} Track #chi^{2}/Ndf<20"
+    },
+    "eleMom_lt" : {
+        "cut" : 1.75,
+        "id"  : 8,
+        "info" : "p e^{-}<1.75GeV"
+    },
+    "eleMom_gt" : {
+        "cut" : 0.4,
+        "id"  : 9,
+        "info" : "p_e^{-}>0.4 [GeV]"
+    },
+    "posMom_gt" : {
+        "cut" : 0.4,
+        "id"  : 10,
+        "info" : "p_e^{+}>0.4 [GeV]"
+    },
+    "eleN2Dhits_gt" : {
+        "cut" : 7,
+        "id"  : 11,
+        "info" : "eleN2Dhits > 7"
+    },
+    "posN2Dhits_gt" : {
+        "cut" : 7,
+        "id"  : 12,
+        "info" : "posN2Dhits > 7"
+    },
+    "maxVtxMom_lt" : {
+        "cut" : 2.4,
+        "id"  : 13,
+        "info" : "maxVtxMom<2.4 [GeV]"
+    },
+    "chi2unc_lt" : {
+        "cut"   : 20,
+        "id"    : 14,
+        "info"  : "#chi^{2}_{unc}<20"
+    }
+}

@@ -18,6 +18,10 @@
 #include <UTIL/BitField64.h>
 
 #include <vector>
+#include <iostream>
+#include <fstream>
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 //-----------//
 //   hpstr   //
@@ -185,6 +189,15 @@ namespace utils {
      * \todo extern?
      */
     void get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, std::vector<TrackerHit*>* hits, int& L1L2hitCode, int& L1hitCode, int& L2hitCode);
+
+    /**
+     * @brief description
+     * 
+     * \todo extern?
+     */
+    double v0_projection_to_target_significance(json v0proj_fits, int run, double &vtx_proj_x, double &vtx_proj_y,
+            double &vtx_proj_x_signif, double &vtx_proj_y_signif, double vtx_x, double vtx_y, double vtx_z, 
+            double vtx_px, double vtx_py, double vtx_pz);
 }
 
 #endif //UTILITIES

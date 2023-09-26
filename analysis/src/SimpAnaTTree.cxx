@@ -1,31 +1,5 @@
 #include <SimpAnaTTree.h>
 
-bool SimpAnaTTree::testImpactParameterCut(){
-    double ele_z0 = getValue("unc_vtx_ele_track_z0");
-    double pos_z0 = getValue("unc_vtx_pos_track_z0");
-    double Z = getValue("unc_vtx_z");
-    bool passCut = true;
-    if(ele_z0 > 0.0){
-        if(ele_z0 < 0.029816*(Z-3.471875))
-            passCut = false;
-    }
-    else{
-        if(ele_z0 > -0.029530*(Z-3.471875))
-            passCut = false;
-    }
-
-    if(pos_z0 > 0.0){
-        if(pos_z0 < 0.029816*(Z-3.471875))
-            passCut = false;
-    }
-    else{
-        if(pos_z0 > -0.029530*(Z-3.471875))
-            passCut = false;
-    }
-
-    return passCut;
-}
-
 bool SimpAnaTTree::impactParameterCut2016Canonical(double mass){
     mass = mass/1000.0;
     double ele_z0 = getValue("unc_vtx_ele_track_z0");
@@ -59,6 +33,75 @@ bool SimpAnaTTree::impactParameterCut2016Canonical(double mass){
     return passCut;
 }
 
+void SimpAnaTTree::addVariable(std::string variableName, double param){
+    if(variableName == "unc_vtx_ele_zalpha")
+        unc_vtx_ele_zalpha(param);
+    if(variableName == "unc_vtx_pos_zalpha")
+        unc_vtx_pos_zalpha(param);
+    if(variableName == "unc_vtx_deltaZ")
+        unc_vtx_deltaZ();
+
+}
+/*
+void SimpAnaTTree::addVariableToTBranch(const std::string& variableName){
+    double* variable = new double{999.9};
+    tuple_[variableName] = variable;
+    newtree_->Branch(variableName, tuple_[variableName], variableName+"/D");
+    new_variables_[variableName] = variable;
+}
+*/
+void SimpAnaTTree::unc_vtx_ele_zalpha(double slope){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_ele_zalpha with param " << slope << std::endl;
+    std::string variableName = "unc_vtx_ele_zalpha";
+    //Create TBranch for variable
+    addVariableToTBranch(variableName);
+
+    double& ele_z0 = *tuple_["unc_vtx_ele_track_z0"];
+    double& recon_z = *tuple_["unc_vtx_z"];
+
+    std::function<double()> calculate_ele_zalpha = [&, slope]()->double{
+        if(ele_z0 > 0.0)
+            return (recon_z - (ele_z0/slope));
+        else
+            return (recon_z - (ele_z0/-slope));
+    };
+    functions_[variableName] = calculate_ele_zalpha;
+}
+
+void SimpAnaTTree::unc_vtx_pos_zalpha(double slope){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_pos_zalpha with param " << slope << std::endl;
+    std::string variableName = "unc_vtx_pos_zalpha";
+    //Create TBranch for variable
+    addVariableToTBranch(variableName);
+
+    double& pos_z0 = *tuple_["unc_vtx_pos_track_z0"];
+    double& recon_z = *tuple_["unc_vtx_z"];
+
+    std::function<double()> calculate_pos_zalpha = [&, slope]()->double{
+        if(pos_z0 > 0.0)
+            return (recon_z - (pos_z0/slope));
+        else
+            return (recon_z - (pos_z0/-slope));
+    };
+    functions_[variableName] = calculate_pos_zalpha;
+}
+
+void SimpAnaTTree::unc_vtx_deltaZ(){
+    std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_deltaZ" << std::endl;
+    std::string variableName = "unc_vtx_deltaZ";
+    //Create TBranch for variable
+    addVariableToTBranch(variableName);
+
+    double& pos_z0 = *tuple_["unc_vtx_pos_track_z0"];
+    double& ele_z0 = *tuple_["unc_vtx_ele_track_z0"];
+    double& ele_tanlambda = *tuple_["unc_vtx_ele_track_tanLambda"];
+    double& pos_tanlambda = *tuple_["unc_vtx_pos_track_tanLambda"];
+
+    std::function<double()> calculate_unc_vtx_deltaZ = [&]()->double{
+        return std::abs((pos_z0/pos_tanlambda) - (ele_z0/ele_tanlambda));
+    };
+    functions_[variableName] = calculate_unc_vtx_deltaZ;
+}
 
 void SimpAnaTTree::addVariable_unc_vtx_ele_zalpha(double slope){
     std::cout << "[SimpAnaTTree]::Adding variable unc_vtx_ele_zalpha with slope " << slope << std::endl;
@@ -324,6 +367,88 @@ void SimpAnaTTree::addVariable_unc_vtx_abs_delta_z0tanlambda(){
     };
     functions_["unc_vtx_abs_delta_z0tanlambda"] = calculate_abs_delta_z0tanlambda;
 }
+
+/*
+void SimpAnaTTree::vertex_target_projection(double target_pos){
+    double* proj_x  = new double{9999.9};
+    tuple_["unc_vtx_proj_x"] = proj_x;
+    newtree_->Branch("unc_vtx_proj_x",  tuple_["unc_vtx_proj_x"], "unc_vtx_proj_x/D");
+    new_variables_["unc_vtx_proj_x"] = proj_x;
+    std::function<double()> calculate_vtx_proj_x = [&, target_pos]()->double{
+        double* vtx_x = tuple_["unc_vtx_x"];
+        double* vtx_z = tuple_["unc_vtx_z"];
+        double* pz = tuple_["unc_vtx_pz"];
+        double* px = tuple_["unc_vtx_px"];
+        double projx = (*vtx_x - (*vtx_z - target_pos))*( *px / *pz);
+        return projx;
+    };
+    functions_["unc_vtx_proj_x"] = calculate_vtx_proj_x;
+
+    double* proj_y  = new double{9999.9};
+    tuple_["unc_vtx_proj_y"] = proj_y;
+    newtree_->Branch("unc_vtx_proj_y",  tuple_["unc_vtx_proj_y"], "unc_vtx_proj_y/D");
+    new_variables_["unc_vtx_proj_y"] = proj_y;
+    std::function<double()> calculate_vtx_proj_y = [&, target_pos]()->double{
+        double* vtx_y = tuple_["unc_vtx_y"];
+        double* vtx_z = tuple_["unc_vtx_z"];
+        double* pz = tuple_["unc_vtx_pz"];
+        double* py = tuple_["unc_vtx_py"];
+        double projy = (*vtx_y - (*vtx_z - target_pos))*( *py / *pz);
+        return projy;
+    };
+    functions_["unc_vtx_proj_y"] = calculate_vtx_proj_y;
+}
+
+void SimpAnaTTree::vertex_target_projection_rotation(double angle){
+    double* rot_x  = new double{9999.9};
+    tuple_["unc_vtx_proj_x_rot"] = rot_x;
+    newtree_->Branch("unc_vtx_proj_x_rot",  tuple_["unc_vtx_proj_x_rot"], "unc_vtx_proj_x_rot/D");
+    new_variables_["unc_vtx_proj_x_rot"] = rot_x;
+    std::function<double()> rotate_vtx_proj_x = [&, angle]()->double{
+        double* x = tuple_["unc_vtx_proj_x"];
+        double* y = tuple_["unc_vtx_proj_y"];
+        return *x*std::cos(angle) - *y*std::sin(angle);
+    };
+    functions_["unc_vtx_proj_x_rot"] = rotate_vtx_proj_x;
+
+    double* rot_y  = new double{9999.9};
+    tuple_["unc_vtx_proj_y_rot"] = rot_y;
+    newtree_->Branch("unc_vtx_proj_y_rot",  tuple_["unc_vtx_proj_y_rot"], "unc_vtx_proj_y_rot/D");
+    new_variables_["unc_vtx_proj_y_rot"] = rot_y;
+    std::function<double()> rotate_vtx_proj_y = [&, angle]()->double{
+        double* x = tuple_["unc_vtx_proj_x"];
+        double* y = tuple_["unc_vtx_proj_y"];
+        return *x*std::sin(angle) + *y*std::cos(angle);
+    };
+    functions_["unc_vtx_proj_y_rot"] = rotate_vtx_proj_y;
+}
+
+void SimpAnaTTree::addVariable_unc_vtx_proj_significance(){
+
+    //Create target projection values
+    vertex_target_projection(-4.3);
+    //Rotate projections
+    double angle = -0.060;
+    vertex_target_projection_rotation(angle);
+
+    double* radius = new double{0.0};
+    tuple_["unc_vtx_proj_significance"] = radius;
+    newtree_->Branch("unc_vtx_proj_significance", tuple_["unc_vtx_proj_significance"], "unc_vtx_proj_significance/D");
+    new_variables_["unc_vtx_proj_significance"] = radius;
+    std::function<double()> calculate_vtx_proj_significance = [&]()->double{
+        double xmean = -0.24;
+        double ymean = -0.06;
+        double xsigma = 0.38 ;
+        double ysigma = 0.1  ;
+        double* x = tuple_["unc_vtx_proj_x_rot"];
+        double* y = tuple_["unc_vtx_proj_y_rot"];
+        double x_sig = (*x-xmean)/xsigma;
+        double y_sig = (*y-ymean)/ysigma;
+        return std::sqrt( std::pow(x_sig,2) + std::pow(y_sig, 2) ); 
+    };
+    functions_["unc_vtx_proj_significance"] = calculate_vtx_proj_significance;
+}
+*/
 
 /*
 void SimpAnaTTree::addVariable_unc_vtx_zbravosumAlpha(double slope){
