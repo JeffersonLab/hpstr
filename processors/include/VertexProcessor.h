@@ -23,6 +23,8 @@
 #include "Vertex.h"
 #include "Particle.h"
 #include "Event.h"
+#include "TrackerHit.h"
+#include "RawSvtHit.h"
 
 // Forward declarations
 class TTree; 
@@ -77,6 +79,10 @@ class VertexProcessor : public Processor {
     private: 
 
         /** Containers to hold all TrackerHit objects. */
+        std::vector<TrackerHit*> hits_{};
+        std::string trkhitCollRoot_{"fspOnTrackHits"};
+        std::vector<RawSvtHit*> rawhits_{};
+        std::string rawhitCollRoot_{"fspOnTrackRawHits"};
         std::vector<Vertex*> vtxs_{}; //!< description
         std::vector<Particle*> parts_{}; //!< description
         std::string vtxCollLcio_{"UnconstrainedV0Vertices"}; //!< description
@@ -84,7 +90,10 @@ class VertexProcessor : public Processor {
         std::string partCollRoot_{"ParticlesOnVertices"}; //!< description
         std::string kinkRelCollLcio_{"GBLKinkDataRelations"}; //!< description
         std::string trkRelCollLcio_{"TrackDataRelations"}; //!< description
+        std::string hitFitsCollLcio_{"SVTFittedRawTrackerHits"};
         std::string trackStateLocation_{""}; //!< select track state for tracks DEFAULT AtIP
+
+        double bfield_{-1.}; //!< magnetic field
 
         int debug_{0}; //!< Debug Level
 

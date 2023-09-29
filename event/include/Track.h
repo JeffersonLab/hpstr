@@ -95,7 +95,9 @@ class Track : public TObject {
         void setCov(const std::vector<float>& cov) {cov_ = cov;}
         
         std::vector<float> getCov() {return cov_;}
-        
+
+        std::vector<int> getHitLayers() {return hit_layers_;}
+        void addHitLayer(int layer) {hit_layers_.push_back(layer);}
         
         double getD0Err () const {return sqrt(cov_[0]);}
         double getPhiErr () const {return sqrt(cov_[2]);}
@@ -353,7 +355,7 @@ class Track : public TObject {
     private:
 
         /** Reference to the 3D hits associated with this track. */
-        TRefArray tracker_hits_{}; 
+        TRefArray tracker_hits_{TRefArray{}};
 
         /** Reference to the reconstructed particle associated with this track. */
         TRef particle_;
@@ -372,7 +374,9 @@ class Track : public TObject {
 
         /** Cov matrix */
         std::vector<float> cov_;
-            
+
+        /** hit layers */
+        std::vector<int> hit_layers_;
 
         /** The distance of closest approach to the reference point. */
         double d0_{-999.}; 

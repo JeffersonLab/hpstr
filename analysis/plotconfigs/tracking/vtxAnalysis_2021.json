@@ -154,6 +154,34 @@
         "xtitle" : "track #chi^{2} / ndf",
         "ytitle" : "Tracks"
     },
+    "pos_trkClusX_h" : {
+        "bins" : 80,
+        "minX" : -40,
+        "maxX" : 40,
+        "xtitle" : "Track X - Cluster X [mm]",
+        "ytitle" : "Positrons"
+    },
+    "pos_trkClusY_h" : {
+        "bins" : 200,
+        "minX" : -10,
+        "maxX" : 10,
+        "xtitle" : "Track Y - Cluster Y [mm]",
+        "ytitle" : "Positrons"
+    },
+    "ele_trkClusX_h" : {
+        "bins" : 80,
+        "minX" : -40,
+        "maxX" : 40,
+        "xtitle" : "Track X - Cluster X [mm]",
+        "ytitle" : "Electrons"
+    },
+    "ele_trkClusY_h" : {
+        "bins" : 200,
+        "minX" : -10,
+        "maxX" : 10,
+        "xtitle" : "Track Y - Cluster Y [mm]",
+        "ytitle" : "Electrons"
+    },
     "ele_clusE_h" : {
         "bins" : 100,
         "minX" : 0,
@@ -181,6 +209,76 @@
         "maxX"  : 0.14e-3,
         "xtitle" : "prop to dEdX",
         "ytitle" : "Tracks"
+    },
+    "ele_trkClusX_p_hh" : {
+        "binsX"  : 100,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "binsY"  : 80,
+        "minY"   : -40,
+        "maxY"   : 40,
+        "ytitle" : "Track X - Cluster X [mm]",
+        "xtitle" : "Track P [GeV]"
+    },
+    "ele_trkClusX_phi_hh" : {
+        "binsX"  : 100,
+        "minX"   : -0.5,
+        "maxX"   : 0.5,
+        "binsY"  : 80,
+        "minY"   : -40,
+        "maxY"   : 40,
+        "ytitle" : "Track X - Cluster X [mm]",
+        "xtitle" : "Track #phi [rad]"
+    },
+    "ele_trkClusX_z0_hh" : {
+        "binsX"  : 100,
+        "minX"   : -5,
+        "maxX"   : 5,
+        "binsY"  : 80,
+        "minY"   : -40,
+        "maxY"   : 40,
+        "ytitle" : "Track X - Cluster X [mm]",
+        "xtitle" : "Track z0 [rad]"
+    },
+    "ele_trkClusX_d0_hh" : {
+        "binsX"  : 100,
+        "minX"   : -5,
+        "maxX"   : 5,
+        "binsY"  : 80,
+        "minY"   : -40,
+        "maxY"   : 40,
+        "ytitle" : "Track X - Cluster X [mm]",
+        "xtitle" : "Track d0 [rad]"
+    },
+    "ele_trkClusX_tanL_hh" : {
+        "binsX"  : 100,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "binsY"  : 80,
+        "minY"   : -40,
+        "maxY"   : 40,
+        "ytitle" : "Track X - Cluster X [mm]",
+        "xtitle" : "Track tan(#lambda) [rad]"
+    },
+    "ele_trkClusX_clusX_hh" : {
+        "binsX"  : 400,
+        "minX"   : -400,
+        "maxX"   : 400,
+        "binsY"  : 80,
+        "minY"   : -40,
+        "maxY"   : 40,
+        "ytitle" : "Track X - Cluster X [mm]",
+        "xtitle" : "Cluster X [mm]"
+    },
+    "ele_trkClusX_hitLay_hh" : {
+        "binsX"  : 15,
+        "minX"   : -0.5,
+        "maxX"   : 14.5,
+        "binsY"  : 80,
+        "minY"   : -40,
+        "maxY"   : 40,
+        "ytitle" : "Track X - Cluster X [mm]",
+        "xtitle" : "Layer w/ Hit"
     },
     "ele_dEdx_vs_p_hh" : {
         "binsX"  : 200,
@@ -427,6 +525,76 @@
         "maxX"  : 0.14e-3,
         "xtitle" : "prop to dEdX",
         "ytitle" : "Tracks"
+    },
+    "pos_trkClusX_p_hh" : {
+        "binsX"  : 100,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "binsY"  : 80,
+        "minY"   : -40,
+        "maxY"   : 40,
+        "ytitle" : "Track X - Cluster X [mm]",
+        "xtitle" : "Track P [GeV]"
+    },
+    "pos_trkClusX_phi_hh" : {
+        "binsX"  : 100,
+        "minX"   : -0.5,
+        "maxX"   : 0.5,
+        "binsY"  : 80,
+        "minY"   : -40,
+        "maxY"   : 40,
+        "ytitle" : "Track X - Cluster X [mm]",
+        "xtitle" : "Track #phi [rad]"
+    },
+    "pos_trkClusX_z0_hh" : {
+        "binsX"  : 100,
+        "minX"   : -5,
+        "maxX"   : 5,
+        "binsY"  : 80,
+        "minY"   : -40,
+        "maxY"   : 40,
+        "ytitle" : "Track X - Cluster X [mm]",
+        "xtitle" : "Track z0 [rad]"
+    },
+    "pos_trkClusX_d0_hh" : {
+        "binsX"  : 100,
+        "minX"   : -5,
+        "maxX"   : 5,
+        "binsY"  : 80,
+        "minY"   : -40,
+        "maxY"   : 40,
+        "ytitle" : "Track X - Cluster X [mm]",
+        "xtitle" : "Track d0 [rad]"
+    },
+    "pos_trkClusX_tanL_hh" : {
+        "binsX"  : 100,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "binsY"  : 80,
+        "minY"   : -40,
+        "maxY"   : 40,
+        "ytitle" : "Track X - Cluster X [mm]",
+        "xtitle" : "Track tan(#lambda) [rad]"
+    },
+    "pos_trkClusX_clusX_hh" : {
+        "binsX"  : 400,
+        "minX"   : -400,
+        "maxX"   : 400,
+        "binsY"  : 80,
+        "minY"   : -40,
+        "maxY"   : 40,
+        "ytitle" : "Track X - Cluster X [mm]",
+        "xtitle" : "Cluster X [mm]"
+    },
+    "pos_trkClusX_hitLay_hh" : {
+        "binsX"  : 15,
+        "minX"   : -0.5,
+        "maxX"   : 14.5,
+        "binsY"  : 80,
+        "minY"   : -40,
+        "maxY"   : 40,
+        "ytitle" : "Track X - Cluster X [mm]",
+        "xtitle" : "Layer w/ Hit"
     },
     "pos_dEdx_vs_p_hh" : {
         "binsX"  : 200,
