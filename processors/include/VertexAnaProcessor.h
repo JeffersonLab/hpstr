@@ -149,6 +149,8 @@ class VertexAnaProcessor : public Processor {
         double eleTrackTimeBias_ = 0.0;
         double posTrackTimeBias_ = 0.0;
         int current_run_number_{-999}; //!< track current run number
+
+        bool mc_reg_on_ = false;
 };
 
 #endif

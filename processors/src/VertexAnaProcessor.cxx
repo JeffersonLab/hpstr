@@ -71,7 +71,7 @@ void VertexAnaProcessor::initialize(TTree* tree) {
     _vtx_histos->loadHistoConfig(histoCfg_);
     _vtx_histos->DefineHistos();
 
-    if(!isData_){
+    if(!isData_ && mc_reg_on_){
         _mc_vtx_histos = std::make_shared<MCAnaHistos>(anaName_+"_mc_"+"vtxSelection");
         _mc_vtx_histos->loadHistoConfig(mcHistoCfg_);
         _mc_vtx_histos->DefineHistos();
@@ -112,7 +112,8 @@ void VertexAnaProcessor::initialize(TTree* tree) {
         _reg_vtx_histos[regname]->DefineHistos();
 
 
-        if(!isData_){
+        bool mc_reg_on_ = false;
+        if(!isData_ && mc_reg_on_){
             _reg_mc_vtx_histos[regname] = std::make_shared<MCAnaHistos>(anaName_+"_mc_"+regname);
             _reg_mc_vtx_histos[regname]->loadHistoConfig(mcHistoCfg_);
             _reg_mc_vtx_histos[regname]->DefineHistos();
@@ -308,7 +309,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             }
         }
 
-        if (!isData_) _mc_vtx_histos->FillMCParticles(mcParts_, analysis_);
+        if (!isData_ && mc_reg_on_) _mc_vtx_histos->FillMCParticles(mcParts_, analysis_);
     }
     //Store processed number of events
     std::vector<Vertex*> selected_vtxs;
@@ -928,7 +929,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             {
 
                 //Fill MC plots after all selections
-                if (!isData_) _reg_mc_vtx_histos[region]->FillMCParticles(mcParts_, analysis_);
+                if (!isData_ && mc_reg_on_) _reg_mc_vtx_histos[region]->FillMCParticles(mcParts_, analysis_);
 
                 //Build map of hits and the associated MC part ids for later
                 TRefArray ele_trk_hits = ele_trk_gbl->getSvtHits();
@@ -1399,7 +1400,7 @@ void VertexAnaProcessor::finalize() {
     vtxSelector->getCutFlowHisto()->Write();
 
     outF_->cd();
-    if(!isData_)
+    if(!isData_ && mc_reg_on_)
         _mc_vtx_histos->saveHistos(outF_, _mc_vtx_histos->getName());
     //delete histos;
     //histos = nullptr;
@@ -1416,7 +1417,7 @@ void VertexAnaProcessor::finalize() {
 
     }
 
-    if(!isData_){
+    if(!isData_ && mc_reg_on_){
         for (reg_mc_it it = _reg_mc_vtx_histos.begin(); it!=_reg_mc_vtx_histos.end(); ++it) {
             std::string dirName = anaName_+"_mc_"+it->first;
             (it->second)->saveHistos(outF_,dirName);

@@ -85,14 +85,14 @@
         "ytitle" : "Events"
     },
     "unc_vtx_x_h" : {
-        "bins" : 200,
+        "bins" : 1000,
         "minX" : -4.0,
-        "maxX" : 4.0,
+        "maxX" : 6.0,
         "xtitle" : "unc vtx x [mm]",
         "ytitle" : "Events"
     },
-"unc_vtx_y_h" : {
-        "bins" : 200,
+    "unc_vtx_y_h" : {
+        "bins" : 800,
         "minX" : -4.0,
         "maxX" : 4.0,
         "xtitle" : "unc vtx x [mm]",
@@ -192,7 +192,7 @@
     "unc_vtx_cyy_h" : {
         "bins" : 200,
         "minX" : 0.0,
-        "maxX" : 1.0,
+        "maxX" : 0.1,
         "xtitle" : "vertex covariance yy",
         "ytitle" : "Events"
     },
@@ -290,7 +290,7 @@
     "recon_z_v_cxx_hh" : {
         "binsX" : 200,
         "minX" : 0.0,
-        "maxX" : 1.0,
+        "maxX" : 0.5,
         "binsY" : 450,
         "minY" : -20.0,
         "maxY" : 70.0,
@@ -300,7 +300,7 @@
     "recon_z_v_cyy_hh" : {
         "binsX" : 200,
         "minX" : 0.0,
-        "maxX" : 1.0,
+        "maxX" : 0.1,
         "binsY" : 450,
         "minY" : -20.0,
         "maxY" : 70.0,

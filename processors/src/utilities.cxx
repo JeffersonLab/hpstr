@@ -910,8 +910,8 @@ double utils::v0_projection_to_target_significance(json v0proj_fits, int run, do
     
     //Read v0 projection fits from json file
     int closest_run;
-    for(auto run : v0proj_fits.items()){
-        int check_run = std::stoi(run.key());
+    for(auto entry : v0proj_fits.items()){
+        int check_run = std::stoi(entry.key());
         if(check_run > run)
             break;
         else{
@@ -923,7 +923,7 @@ double utils::v0_projection_to_target_significance(json v0proj_fits, int run, do
     double rot_mean_y = v0proj_fits[std::to_string(closest_run)]["rotated_mean_y"];
     double rot_sigma_x = v0proj_fits[std::to_string(closest_run)]["rotated_sigma_x"];
     double rot_sigma_y = v0proj_fits[std::to_string(closest_run)]["rotated_sigma_y"];
-    double rotation_angle = 1000.0 * (double)v0proj_fits[std::to_string(closest_run)]["rotation_angle_mrad"];
+    double rotation_angle = (double)v0proj_fits[std::to_string(closest_run)]["rotation_angle_mrad"]/1000.0;
 
     //project vertex to target position
     vtx_proj_x = vtx_x - ((vtx_z - target_pos)*(vtx_px/vtx_pz));
@@ -931,7 +931,7 @@ double utils::v0_projection_to_target_significance(json v0proj_fits, int run, do
 
     //Rotate projected vertex by angle corresponding to run number
     double rot_vtx_proj_x = vtx_proj_x*std::cos(rotation_angle) - vtx_proj_y*std::sin(rotation_angle);
-    double rot_vtx_proj_y = vtx_proj_y*std::sin(rotation_angle) + vtx_proj_y*std::cos(rotation_angle);
+    double rot_vtx_proj_y = vtx_proj_x*std::sin(rotation_angle) + vtx_proj_y*std::cos(rotation_angle);
 
     //Calculate significance
     vtx_proj_x_signif = (rot_vtx_proj_x - rot_mean_x)/rot_sigma_x;

@@ -163,7 +163,7 @@ void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos
             MTT->getValue("unc_vtx_proj_x_sig"), MTT->getValue("unc_vtx_proj_y_sig"));
     }
     if(MTT->variableExists("unc_vtx_proj_sig")){
-        histos->Fill2DHisto("unc_vtx_proj_significance_hh", 
+        histos->Fill2DHisto("recon_z_v_vtx_proj_significance_hh", 
             MTT->getValue("unc_vtx_proj_sig"), MTT->getValue("unc_vtx_z"));
     }
 
