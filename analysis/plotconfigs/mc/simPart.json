@@ -6,6 +6,13 @@
         "xtitle" : "Number of Sim Particles",
         "ytitle" : "Events"
     },
+    "particle_pdgid_h" : {
+        "bins"   : 100,
+        "minX"   : 50,
+        "maxX"   : 55,
+        "xtitle" : "PDG ID of Sim Particles",
+        "ytitle" : "Events"
+    },
     "ele_pxpz_pypz_hh" : {
         "binsX"  : 2000,
         "minX"   : -0.8,
@@ -13,7 +20,7 @@
         "binsY"  : 500,
         "minY"   : -0.2,
         "maxY"   : 0.2,
-        "xtitle" : "pos p_{x}",
-        "ytitle" : "pos p_{y}"
+        "xtitle" : "ele p_{x}/p_{z}",
+        "ytitle" : "ele p_{y}/p_{z}"
     }
 }

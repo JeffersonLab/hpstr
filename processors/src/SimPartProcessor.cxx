@@ -20,9 +20,9 @@ void SimPartProcessor::configure(const ParameterSet& parameters) {
         MCParticleColl_        = parameters.getString("MCParticleColl");
         MCTrackerHitColl_     = parameters.getString("MCTrackerHitColl");
         MCEcalHitColl_     = parameters.getString("MCEcalHitColl");
-        RecoTrackColl_     = parameters.getString("RecoTrackColl")
-        RecoTrackerClusterColl_     = parameters.getString("RecoTrackerClusterColl")
-        RecoEcalClusterColl_     = parameters.getString("RecoEcalClusterColl")
+        RecoTrackColl_     = parameters.getString("RecoTrackColl");
+        RecoTrackerClusterColl_     = parameters.getString("RecoTrackerClusterColl");
+        RecoEcalClusterColl_     = parameters.getString("RecoEcalClusterColl");
         histCfgFilename_ = parameters.getString("histCfg");
         analysis_        = parameters.getString("analysis");
     }
@@ -69,7 +69,7 @@ void SimPartProcessor::initialize(TTree* tree) {
 
 bool SimPartProcessor::process(IEvent* ievent) {
 
-    histos->FillAcceptance(MCParticles_, RecoTracks_, RecoTrackerClusters_, RecoTrackerClusters_)
+    histos->FillAcceptance(MCParticles_, RecoTracks_, RecoTrackerClusters_, RecoEcalClusters_);
 
     return true;
 }

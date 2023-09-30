@@ -9,6 +9,9 @@
 #include "MCParticle.h"
 #include "MCTrackerHit.h"
 #include "MCEcalHit.h"
+#include "Track.h"
+#include "TrackerHit.h"
+#include "CalCluster.h"
 #include <string>
 #include <vector>
 

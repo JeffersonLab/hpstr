@@ -17,7 +17,8 @@ void SimPartHistos::FillAcceptance(std::vector<MCParticle*> *MCParticles_, std::
         if (gen != 1)
             continue;
 
-        if (pdg == -11) {
+        Fill1DHisto("particle_pdgid_h", pdg, weight);
+        if (pdg == 11) {
             Fill2DHisto("ele_pxpz_pypz_hh", px/pz, py/pz, weight);
 
 
