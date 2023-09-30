@@ -52,6 +52,13 @@ void Track::setPositionAtEcal(const double* position) {
 
 std::vector<double> Track::getPositionAtEcal() { return { x_at_ecal_, y_at_ecal_, z_at_ecal_ }; }
 
+void Track::setPosition(const double* position) { 
+    x_ = position[0]; 
+    y_ = position[1];
+    z_ = position[2];
+}
+
+std::vector<double> Track::getPosition() { return { x_, y_, z_ }; }
 
 void Track::setMomentum(double bfield) {
     
@@ -79,6 +86,15 @@ void Track::setMomentum(double px, double py, double pz) {
 void Track::addHit(TObject* hit) {
     ++n_hits_; 
     tracker_hits_.Add(hit); 
+}
+
+void Track::applyCorrection(std::string var, double correction){
+    if(var == "z0"){
+        z0_ = z0_ - correction;
+    }
+    if(var == "track_time"){
+        track_time_ = track_time_ + correction;
+    }
 }
 
 void Track::Print (Option_t *option) const {

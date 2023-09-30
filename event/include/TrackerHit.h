@@ -126,6 +126,12 @@ class TrackerHit : public TObject {
         /** LCIO IDs of related MC Particles */
         std::vector<int> getMCPartIDs() const {return mcPartIDs_;};
 
+        /** Return rawhit strip numbers on hit */
+        std::vector<int> getRawHitStripNumbers(){return rawhit_strips_;};
+
+        /** Set rawhit strips on hit */
+        void setRawHitStripNumbers(std::vector<int> rawhit_strips){rawhit_strips_ = rawhit_strips;};
+
         ClassDef(TrackerHit, 1);	
 
     private:
@@ -179,6 +185,9 @@ class TrackerHit : public TObject {
 
         /** LCIO ids of MC Particles associated to the hit */
         std::vector<int> mcPartIDs_;
+
+        /** RawHit Strip numbers on hit */
+        std::vector<int> rawhit_strips_;
 
 
 }; // TrackerHit

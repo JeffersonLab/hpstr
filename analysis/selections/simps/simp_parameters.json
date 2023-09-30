@@ -1,0 +1,9 @@
+{
+    "SIMP Parameters"  : {
+        "mass_ratio_Ap_to_Vd" : 1.6666, 
+        "mass_ratio_Ap_to_Pid" : 3.0,
+        "ratio_mPi_to_fPi" : 12.566, 
+        "lepton_mass" : 0.511, 
+        "alpha_dark" : 0.01
+    }
+}
