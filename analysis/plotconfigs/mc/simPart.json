@@ -22,5 +22,145 @@
         "maxY"   : 0.2,
         "xtitle" : "ele p_{x}/p_{z}",
         "ytitle" : "ele p_{y}/p_{z}"
+    },
+    "ele_pxpz_pypz_noTrack_hh" : {
+        "binsX"  : 2000,
+        "minX"   : -0.8,
+        "maxX"   : 0.8,
+        "binsY"  : 500,
+        "minY"   : -0.2,
+        "maxY"   : 0.2,
+        "xtitle" : "ele p_{x}/p_{z}",
+        "ytitle" : "ele p_{y}/p_{z}"
+    },
+    "ele_pxpz_pypz_Track_noECal_hh" : {
+        "binsX"  : 2000,
+        "minX"   : -0.8,
+        "maxX"   : 0.8,
+        "binsY"  : 500,
+        "minY"   : -0.2,
+        "maxY"   : 0.2,
+        "xtitle" : "ele p_{x}/p_{z}",
+        "ytitle" : "ele p_{y}/p_{z}"
+    },
+    "ele_pxpz_pypz_noEcal_hh" : {
+        "binsX"  : 2000,
+        "minX"   : -0.8,
+        "maxX"   : 0.8,
+        "binsY"  : 500,
+        "minY"   : -0.2,
+        "maxY"   : 0.2,
+        "xtitle" : "ele p_{x}/p_{z}",
+        "ytitle" : "ele p_{y}/p_{z}"
+    },
+    "ele_pxpz_pypz_noTrack_ECal_hh" : {
+        "binsX"  : 2000,
+        "minX"   : -0.8,
+        "maxX"   : 0.8,
+        "binsY"  : 500,
+        "minY"   : -0.2,
+        "maxY"   : 0.2,
+        "xtitle" : "ele p_{x}/p_{z}",
+        "ytitle" : "ele p_{y}/p_{z}"
+    },
+    "track_phi0_tanlambda_minhits7_hh" : {
+        "binsX"  : 2000,
+        "minX"   : -0.2,
+        "maxX"   : 0.3,
+        "binsY"  : 500,
+        "minY"   : -0.15,
+        "maxY"   : 0.15,
+        "xtitle" : "Track #{phi}_{0}",
+        "ytitle" : "Track tan#{lambda}}"
+    },
+    "track_phi0_tanlambda_minhits8_hh" : {
+        "binsX"  : 2000,
+        "minX"   : -0.2,
+        "maxX"   : 0.3,
+        "binsY"  : 500,
+        "minY"   : -0.15,
+        "maxY"   : 0.15,
+        "xtitle" : "Track #{phi}_{0}",
+        "ytitle" : "Track tan#{lambda}}"
+    },
+    "track_phi0_tanlambda_minhits9_hh" : {
+        "binsX"  : 2000,
+        "minX"   : -0.2,
+        "maxX"   : 0.3,
+        "binsY"  : 500,
+        "minY"   : -0.15,
+        "maxY"   : 0.15,
+        "xtitle" : "Track #{phi}_{0}",
+        "ytitle" : "Track tan#{lambda}}"
+    },
+    "track_phi0_tanlambda_minhits10_hh" : {
+        "binsX"  : 2000,
+        "minX"   : -0.2,
+        "maxX"   : 0.3,
+        "binsY"  : 500,
+        "minY"   : -0.15,
+        "maxY"   : 0.15,
+        "xtitle" : "Track #{phi}_{0}",
+        "ytitle" : "Track tan#{lambda}}"
+    },
+    "track_phi0_tanlambda_minhits11_hh" : {
+        "binsX"  : 2000,
+        "minX"   : -0.2,
+        "maxX"   : 0.3,
+        "binsY"  : 500,
+        "minY"   : -0.15,
+        "maxY"   : 0.15,
+        "xtitle" : "Track #{phi}_{0}",
+        "ytitle" : "Track tan#{lambda}}"
+    },
+    "track_phi0_tanlambda_minhits12_hh" : {
+        "binsX"  : 2000,
+        "minX"   : -0.2,
+        "maxX"   : 0.3,
+        "binsY"  : 500,
+        "minY"   : -0.15,
+        "maxY"   : 0.15,
+        "xtitle" : "Track #{phi}_{0}",
+        "ytitle" : "Track tan#{lambda}}"
+    },
+    "track_phi0_tanlambda_minhits13_hh" : {
+        "binsX"  : 2000,
+        "minX"   : -0.2,
+        "maxX"   : 0.3,
+        "binsY"  : 500,
+        "minY"   : -0.15,
+        "maxY"   : 0.15,
+        "xtitle" : "Track #{phi}_{0}",
+        "ytitle" : "Track tan#{lambda}}"
+    },
+    "track_phi0_tanlambda_minhits14_hh" : {
+        "binsX"  : 2000,
+        "minX"   : -0.2,
+        "maxX"   : 0.3,
+        "binsY"  : 500,
+        "minY"   : -0.15,
+        "maxY"   : 0.15,
+        "xtitle" : "Track #{phi}_{0}",
+        "ytitle" : "Track tan#{lambda}}"
+    },
+    "ecal_x_y_hh" : {
+        "binsX"  : 2000,
+        "minX"   : -340,
+        "maxX"   : 420,
+        "binsY"  : 500,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Ecal cluster x",
+        "ytitle" : "Ecal cluster y"
+    },
+    "ecal_x_y_noTrack_hh" : {
+        "binsX"  : 2000,
+        "minX"   : -340,
+        "maxX"   : 420,
+        "binsY"  : 500,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Ecal cluster x",
+        "ytitle" : "Ecal cluster y"
     }
 }
