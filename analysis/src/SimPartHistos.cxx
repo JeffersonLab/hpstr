@@ -47,22 +47,22 @@ void SimPartHistos::FillAcceptance(std::vector<MCParticle*> *MCParticles_, std::
         double phi0 = track->getPhi();
         double tan_lambda = track->getTanLambda();
 
-        if (n_hits >= 7)
-            Fill2DHisto("track_phi0_tanlambda_minhits7_hh", phi0, tan_lambda, weight);
-        else if (n_hits >= 8)
-            Fill2DHisto("track_phi0_tanlambda_minhits8_hh", phi0, tan_lambda, weight);
-        else if (n_hits >= 9)
-            Fill2DHisto("track_phi0_tanlambda_minhits9_hh", phi0, tan_lambda, weight);
-        else if (n_hits >= 10)
-            Fill2DHisto("track_phi0_tanlambda_minhits10_hh", phi0, tan_lambda, weight);
-        else if (n_hits >= 11)
-            Fill2DHisto("track_phi0_tanlambda_minhits11_hh", phi0, tan_lambda, weight);
-        else if (n_hits >= 12)
-            Fill2DHisto("track_phi0_tanlambda_minhits12_hh", phi0, tan_lambda, weight);
+        if (n_hits >= 14)
+            Fill2DHisto("track_phi0_tanlambda_minhits14_hh", phi0, tan_lambda, weight);
         else if (n_hits >= 13)
             Fill2DHisto("track_phi0_tanlambda_minhits13_hh", phi0, tan_lambda, weight);
-        else if (n_hits >= 14)
-            Fill2DHisto("track_phi0_tanlambda_minhits14_hh", phi0, tan_lambda, weight);
+        else if (n_hits >= 12)
+            Fill2DHisto("track_phi0_tanlambda_minhits12_hh", phi0, tan_lambda, weight);
+        else if (n_hits >= 11)
+            Fill2DHisto("track_phi0_tanlambda_minhits11_hh", phi0, tan_lambda, weight);
+        else if (n_hits >= 10)
+            Fill2DHisto("track_phi0_tanlambda_minhits10_hh", phi0, tan_lambda, weight);
+        else if (n_hits >= 9)
+            Fill2DHisto("track_phi0_tanlambda_minhits9_hh", phi0, tan_lambda, weight);
+        else if (n_hits >= 8)
+            Fill2DHisto("track_phi0_tanlambda_minhits8_hh", phi0, tan_lambda, weight);
+        else if (n_hits >= 7)
+            Fill2DHisto("track_phi0_tanlambda_minhits7_hh", phi0, tan_lambda, weight);
 
     }
 
