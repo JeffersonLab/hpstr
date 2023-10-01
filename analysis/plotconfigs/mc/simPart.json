@@ -8,8 +8,8 @@
     },
     "particle_pdgid_h" : {
         "bins"   : 100,
-        "minX"   : 50,
-        "maxX"   : 55,
+        "minX"   : -50,
+        "maxX"   : 50,
         "xtitle" : "PDG ID of Sim Particles",
         "ytitle" : "Events"
     },
