@@ -38,6 +38,7 @@ p.add_library("libprocessors")
 ###############################
 header = HpstrConf.Processor('header', 'EventProcessor')
 vtx = HpstrConf.Processor('vtx', 'VertexProcessor')
+mcpart = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
 
 ###############################
 #   Processor Configuration   #
@@ -63,13 +64,22 @@ vtx.parameters["trkhitCollRoot"] = ''
 vtx.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 vtx.parameters["rawhitCollRoot"] = ''
 vtx.parameters["trackStateLocation"] = options.trackstate
+vtx.parameters["mcPartRelLcio"] = 'SVTTrueHitRelations'
 if options.trackstate == "":
     vtx.parameters["bfield"] = bfield[str(options.year)]
+
+# MCParticle
+mcpart.parameters["debug"] = 0
+mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
+mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
 
 # Sequence which the processors will run.
 
 sequence = [header, vtx]
+
+if (not options.isData):
+    sequence.append(mcpart)
 
 p.sequence = sequence
 
