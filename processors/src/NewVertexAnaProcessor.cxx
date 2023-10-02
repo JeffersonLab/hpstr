@@ -41,6 +41,9 @@ void NewVertexAnaProcessor::configure(const ParameterSet& parameters) {
         //region definitions
         regionSelections_ = parameters.getVString("regionDefinitions",regionSelections_);
 
+        //v0 projection fits
+        v0ProjectionFitsCfg_ = parameters.getString("v0ProjectionFitsCfg", v0ProjectionFitsCfg_);
+
         //beamspot positions
         beamPosCfg_ = parameters.getString("beamPosCfg", beamPosCfg_);
         //track time bias corrections
@@ -71,6 +74,13 @@ void NewVertexAnaProcessor::initialize(TTree* tree) {
         _mc_vtx_histos->loadHistoConfig(mcHistoCfg_);
         _mc_vtx_histos->DefineHistos();
         _mc_vtx_histos->Define2DHistos();
+    }
+
+    //Load Run Dependent V0 target projection fits from json
+    if(!v0ProjectionFitsCfg_.empty()){
+        std::ifstream v0proj_file(v0ProjectionFitsCfg_);
+        v0proj_file >> v0proj_fits_;
+        v0proj_file.close();
     }
 
     //Run Dependent Corrections
@@ -128,6 +138,12 @@ void NewVertexAnaProcessor::initialize(TTree* tree) {
             _reg_tuples[regname]->addVariable("unc_vtx_cyx");
             _reg_tuples[regname]->addVariable("unc_vtx_czy");
             _reg_tuples[regname]->addVariable("unc_vtx_czx");
+            _reg_tuples[regname]->addVariable("unc_vtx_proj_x");
+            _reg_tuples[regname]->addVariable("unc_vtx_proj_y");
+            _reg_tuples[regname]->addVariable("unc_vtx_proj_x_sig");
+            _reg_tuples[regname]->addVariable("unc_vtx_proj_y_sig");
+            _reg_tuples[regname]->addVariable("unc_vtx_proj_sig");
+
 
             //track vars
             _reg_tuples[regname]->addVariable("unc_vtx_ele_track_p");
@@ -217,6 +233,7 @@ void NewVertexAnaProcessor::initialize(TTree* tree) {
     if (brMap_.find(tsColl_.c_str()) != brMap_.end()) tree_->SetBranchAddress(tsColl_.c_str(), &ts_ , &bts_);
     tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_ , &bvtxs_);
     //tree_->SetBranchAddress(hitColl_.c_str(), &hits_   , &bhits_);
+    if (brMap_.find(hitColl_.c_str()) != brMap_.end()) tree_->SetBranchAddress(hitColl_.c_str(), &hits_ , &bhits_);
     if(!isData_ && !mcColl_.empty()) tree_->SetBranchAddress(mcColl_.c_str() , &mcParts_, &bmcParts_);
 }
 
@@ -266,8 +283,10 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
     _vtx_histos->Fill1DHisto("n_vtx_h", vtxs_->size()); 
 
     if (mcParts_) {
+        std::cout << "hasmcparts" << std::endl;
         for(int i = 0; i < mcParts_->size(); i++)
         {
+            std::cout << "A" << std::endl;
             if(mcParts_->at(i)->getPDG() == 622)
             {
                 apMass = mcParts_->at(i)->getMass();
@@ -282,7 +301,9 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             }
         }
 
+        std::cout << "B" << std::endl;
         if (!isData_) _mc_vtx_histos->FillMCParticles(mcParts_, analysis_);
+        std::cout << "C" << std::endl;
     }
     //Store processed number of events
     std::vector<Vertex*> selected_vtxs;
@@ -651,6 +672,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
 
             //PRESELECTION CUTS
             if (isData_) {
+                std::cout << "D" << std::endl;
                 if (!_reg_vtx_selectors[region]->passCutEq("Pair1_eq",(int)evth_->isPair1Trigger(),weight))
                     break;
             }
@@ -850,6 +872,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             if(!isData_)
             {
 
+                std::cout << "E" << std::endl;
                 //Fill MC plots after all selections
                 if (!isData_) _reg_mc_vtx_histos[region]->FillMCParticles(mcParts_, analysis_);
 
@@ -882,6 +905,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
                         }
                     }
                 }
+                std::cout << "F" << std::endl;
 
                 //Determine the MC part with the most hits on the track
                 int maxNHits = 0;
@@ -1097,12 +1121,29 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             double ele_trk_z0err = ele_trk->getZ0Err();
             double pos_trk_z0 = pos_trk->getZ0();
             double pos_trk_z0err = pos_trk->getZ0Err();
+            
+            //Project vertex to target
+            double vtx_proj_x = -999.9;
+            double vtx_proj_y = -999.9;
+            double vtx_proj_x_sig = -999.9;
+            double vtx_proj_y_sig = -999.9;
+            double vtx_proj_sig = -999.9;
+            if(!v0ProjectionFitsCfg_.empty())
+                vtx_proj_sig = utils::v0_projection_to_target_significance(v0proj_fits_, evth_->getRunNumber(),
+                        vtx_proj_x, vtx_proj_y, vtx_proj_x_sig, vtx_proj_y_sig, vtx->getX(), vtx->getY(),
+                        reconz, vtx->getP().X(), vtx->getP().Y(), vtx->getP().Z());
+
+            _reg_vtx_histos[region]->Fill2DHisto("unc_vtx_x_v_unc_vtx_y_hh", vtx->getX(), vtx->getY());
+            _reg_vtx_histos[region]->Fill2DHisto("unc_vtx_proj_x_v_unc_vtx_proj_y_hh", vtx_proj_x, vtx_proj_y);
+            _reg_vtx_histos[region]->Fill2DHisto("unc_vtx_proj_x_y_significance_hh", vtx_proj_x_sig, vtx_proj_y_sig);
+            _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_vtx_proj_significance_hh", vtx_proj_sig, reconz);
             _reg_vtx_histos[region]->Fill2DHisto("vtx_track_reconz_v_Z0err_hh", ele_trk_z0err, reconz);
             _reg_vtx_histos[region]->Fill2DHisto("vtx_track_reconz_v_Z0err_hh", pos_trk_z0err, reconz);
             _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_z0_hh", ele_trk_z0, reconz);
             _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_z0_hh", pos_trk_z0, reconz);
             _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_ABSdz0tanlambda_hh", std::abs((ele_trk_z0/ele_trk->getTanLambda()) - (pos_trk_z0/pos_trk->getTanLambda())), reconz);
             _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_dz0tanlambda_hh", ((ele_trk_z0/ele_trk->getTanLambda()) - (pos_trk_z0/pos_trk->getTanLambda())), reconz);
+
             _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_cxx_hh", cxx, reconz);
             _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_cyy_hh", cyy, reconz);
             _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_czz_hh", czz, reconz);
@@ -1129,6 +1170,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             _reg_vtx_histos[region]->Fill2DHisto("ele_track_clus_dt_v_p_hh",ele_trk->getP(), ele_trk->getTrackTime() - corr_eleClusterTime, weight);
             _reg_vtx_histos[region]->Fill2DHisto("pos_track_clus_dt_v_p_hh",pos_trk->getP(), pos_trk->getTrackTime() - corr_posClusterTime, weight);
             _reg_vtx_histos[region]->Fill2DHisto("ele_z0_vs_pos_z0_hh",ele_trk->getZ0(), pos_trk->getZ0(), weight);
+
             //chi2 2d plots
             _reg_vtx_histos[region]->Fill2DHisto("ele_track_chi2ndf_v_time_hh", ele_trk->getTrackTime(), ele_trk->getChi2Ndf(), weight);
             _reg_vtx_histos[region]->Fill2DHisto("ele_track_chi2ndf_v_p_hh", ele_trk->getP(), ele_trk->getChi2Ndf(), weight);
@@ -1147,6 +1189,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             //1d histos
             _reg_vtx_histos[region]->Fill1DHisto("ele_track_clus_dt_h", ele_trk->getTrackTime() - corr_eleClusterTime, weight);
             _reg_vtx_histos[region]->Fill1DHisto("pos_track_clus_dt_h", pos_trk->getTrackTime() - corr_posClusterTime, weight);
+ 
 
             //TODO put this in the Vertex!
             TVector3 vtxPosSvt;
