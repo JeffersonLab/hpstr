@@ -64,9 +64,20 @@ class SimpAnaTTree : public MutableTTree {
 
         void addVariable_unc_vtx_abs_delta_z0tanlambda();
 
+        //V0 target projection
+        //void vertex_target_projection(double target_pos);
+        //void vertex_target_projection_rotation(double angle); 
+        //void addVariable_unc_vtx_proj_significance();
+
+        void addVariable(std::string variableName, double param) override;
+
+        //Restructring add variables
+        void unc_vtx_ele_zalpha(double slope);
+        void unc_vtx_pos_zalpha(double slope);
+        void unc_vtx_deltaZ();
+
         //misc
         bool impactParameterCut2016Canonical(double mass);
-        bool testImpactParameterCut();
 
     private:
         double skipCutVarValue_ = -9876543210.0;//<! if cut variable is not defined for an event, assign this value

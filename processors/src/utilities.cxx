@@ -609,6 +609,8 @@ double utils::getKalmanTrackL1Isolations(Track* track, std::vector<TrackerHit*>*
         double closest_dt = 999999.9;
         double isohit_y = 999999.9;
 
+        if ( siClusters == nullptr )
+            return isohit_dy;
         for(int j = 0; j < siClusters->size(); j++){
             TrackerHit* althit = siClusters->at(j);
             int althit_id = althit->getID();
@@ -675,6 +677,8 @@ void utils::get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, std::vector
     TRefArray ele_trk_hits = ele_trk->getSvtHits();
     TRefArray pos_trk_hits = pos_trk->getSvtHits();
     std::map<int, std::vector<int> > trueHitIDs;
+    if(hits == nullptr)
+        return;
     for(int i = 0; i < hits->size(); i++)
     {
         TrackerHit* hit = hits->at(i);
@@ -893,4 +897,48 @@ void utils::get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, std::vector
     if(ele_trueStereoL2) L2hitCode = L2hitCode | (0x1 << 2);
     if(pos_trueAxialL2) L2hitCode = L2hitCode | (0x1 << 1);
     if(pos_trueStereoL2) L2hitCode = L2hitCode | (0x1 << 0);
+}
+
+double utils::v0_projection_to_target_significance(json v0proj_fits, int run, double &vtx_proj_x, double &vtx_proj_y,
+        double &vtx_proj_x_signif, double &vtx_proj_y_signif, double vtx_x, double vtx_y, double vtx_z,
+        double vtx_px, double vtx_py, double vtx_pz){
+    //V0 Projection fit parameters are calculated externally by projecting vertices to the target z position,
+    //and then fitting the 2D distribution vtx_x vs vtx_y with a rotated 2D Gaussian.
+    //The fit parameters are defined along the rotated coordinate system.
+    //Therefore, the vertex position must be rotated into this coordinate system before calculating significance.
+    //The rotation angle corresponding to the fit is provided in the json file containing the rotated fit values.
+    
+    //Read v0 projection fits from json file
+    int closest_run;
+    for(auto entry : v0proj_fits.items()){
+        int check_run = std::stoi(entry.key());
+        if(check_run > run)
+            break;
+        else{
+            closest_run = check_run;
+        }
+    }
+    double target_pos = v0proj_fits[std::to_string(closest_run)]["target_position"];
+    double rot_mean_x = v0proj_fits[std::to_string(closest_run)]["rotated_mean_x"];
+    double rot_mean_y = v0proj_fits[std::to_string(closest_run)]["rotated_mean_y"];
+    double rot_sigma_x = v0proj_fits[std::to_string(closest_run)]["rotated_sigma_x"];
+    double rot_sigma_y = v0proj_fits[std::to_string(closest_run)]["rotated_sigma_y"];
+    double rotation_angle = (double)v0proj_fits[std::to_string(closest_run)]["rotation_angle_mrad"]/1000.0;
+
+    //project vertex to target position
+    vtx_proj_x = vtx_x - ((vtx_z - target_pos)*(vtx_px/vtx_pz));
+    vtx_proj_y = vtx_y - ((vtx_z - target_pos)*(vtx_py/vtx_pz));
+
+    //Rotate projected vertex by angle corresponding to run number
+    double rot_vtx_proj_x = vtx_proj_x*std::cos(rotation_angle) - vtx_proj_y*std::sin(rotation_angle);
+    double rot_vtx_proj_y = vtx_proj_x*std::sin(rotation_angle) + vtx_proj_y*std::cos(rotation_angle);
+
+    //Calculate significance
+    vtx_proj_x_signif = (rot_vtx_proj_x - rot_mean_x)/rot_sigma_x;
+    vtx_proj_y_signif = (rot_vtx_proj_y - rot_mean_y)/rot_sigma_y;
+
+    //
+    double significance = std::sqrt( vtx_proj_x_signif*vtx_proj_x_signif + vtx_proj_y_signif*vtx_proj_y_signif );
+
+    return significance;
 }
