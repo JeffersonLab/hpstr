@@ -64,14 +64,14 @@
         "id"  : 12,
         "info" : "posN2Dhits > 7"
     },
-    "maxVtxMom_lt" : {
-        "cut" : 2.4,
-        "id"  : 13,
-        "info" : "maxVtxMom<2.4 [GeV]"
-    },
     "chi2unc_lt" : {
         "cut"   : 20,
-        "id"    : 14,
+        "id"    : 13,
         "info"  : "#chi^{2}_{unc}<20"
+    },
+    "maxVtxMom_lt" : {
+        "cut" : 2.4,
+        "id"  : 14,
+        "info" : "maxVtxMom<2.4 [GeV]"
     }
 }

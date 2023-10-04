@@ -51,7 +51,10 @@ vtxana.parameters["isData"] = options.isData
 vtxana.parameters["isRadPDG"] = options.isRadPDG
 vtxana.parameters["makeFlatTuple"] = options.makeFlatTuple
 vtxana.parameters["beamPosCfg"] = ""
-if isData:
+if options.isData:
+    vtxana.parameters["v0ProjectionFitsCfg"] = '/sdf/group/hps/users/alspellm/src/hpstr/analysis/data/v0_projection_2016_config.json'
+
+if options.isData:
     vtxana.parameters["eleTrackTimeBias"] = -1.5
     vtxana.parameters["posTrackTimeBias"] = -1.5
 else:
