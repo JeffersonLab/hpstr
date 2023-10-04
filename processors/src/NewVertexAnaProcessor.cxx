@@ -283,10 +283,8 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
     _vtx_histos->Fill1DHisto("n_vtx_h", vtxs_->size()); 
 
     if (mcParts_) {
-        std::cout << "hasmcparts" << std::endl;
         for(int i = 0; i < mcParts_->size(); i++)
         {
-            std::cout << "A" << std::endl;
             if(mcParts_->at(i)->getPDG() == 622)
             {
                 apMass = mcParts_->at(i)->getMass();
@@ -301,9 +299,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             }
         }
 
-        std::cout << "B" << std::endl;
         if (!isData_) _mc_vtx_histos->FillMCParticles(mcParts_, analysis_);
-        std::cout << "C" << std::endl;
     }
     //Store processed number of events
     std::vector<Vertex*> selected_vtxs;
@@ -672,7 +668,6 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
 
             //PRESELECTION CUTS
             if (isData_) {
-                std::cout << "D" << std::endl;
                 if (!_reg_vtx_selectors[region]->passCutEq("Pair1_eq",(int)evth_->isPair1Trigger(),weight))
                     break;
             }
@@ -872,7 +867,6 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             if(!isData_)
             {
 
-                std::cout << "E" << std::endl;
                 //Fill MC plots after all selections
                 if (!isData_) _reg_mc_vtx_histos[region]->FillMCParticles(mcParts_, analysis_);
 
@@ -905,7 +899,6 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
                         }
                     }
                 }
-                std::cout << "F" << std::endl;
 
                 //Determine the MC part with the most hits on the track
                 int maxNHits = 0;
