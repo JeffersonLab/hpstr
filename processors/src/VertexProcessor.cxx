@@ -173,19 +173,22 @@ bool VertexProcessor::process(IEvent* ievent) {
                         if(debug_ > 0)
                             std::cout << "rawhit on track has lcio id: " << rawhit->id() << std::endl;
 
-                        // Get the list of fit params associated with the raw tracker hit
-                        EVENT::LCObjectVec lc_simtrackerhits = mcPartRel_nav->getRelatedToObjects(rawhit);
+                        if (hasMCParts)
+                        {
+                            // Get the list of fit params associated with the raw tracker hit
+                            EVENT::LCObjectVec lc_simtrackerhits = mcPartRel_nav->getRelatedToObjects(rawhit);
 
-                        //Loop over SimTrackerHits to get MCParticles
-                        for(int isimhit = 0; isimhit < lc_simtrackerhits.size(); isimhit++){
-                            IMPL::SimTrackerHitImpl* lc_simhit = static_cast<IMPL::SimTrackerHitImpl*>(lc_simtrackerhits.at(isimhit));
-                            IMPL::MCParticleImpl* lc_mcp = static_cast<IMPL::MCParticleImpl*>(lc_simhit->getMCParticle());
-                            if(lc_mcp == nullptr)
-                                std::cout << "mcp is null" << std::endl;
-                            track->addMcpHit(hitLayer, lc_mcp->id());
-                            if(debug_ > 0) {
-                                std::cout << "simtrackerhit lcio id: " << lc_simhit->id() << std::endl;
-                                std::cout << "mcp lcio id: " << lc_mcp->id() << std::endl;
+                            //Loop over SimTrackerHits to get MCParticles
+                            for(int isimhit = 0; isimhit < lc_simtrackerhits.size(); isimhit++){
+                                IMPL::SimTrackerHitImpl* lc_simhit = static_cast<IMPL::SimTrackerHitImpl*>(lc_simtrackerhits.at(isimhit));
+                                IMPL::MCParticleImpl* lc_mcp = static_cast<IMPL::MCParticleImpl*>(lc_simhit->getMCParticle());
+                                if(lc_mcp == nullptr)
+                                    std::cout << "mcp is null" << std::endl;
+                                track->addMcpHit(hitLayer, lc_mcp->id());
+                                if(debug_ > 0) {
+                                    std::cout << "simtrackerhit lcio id: " << lc_simhit->id() << std::endl;
+                                    std::cout << "mcp lcio id: " << lc_mcp->id() << std::endl;
+                                }
                             }
                         }
                     }
