@@ -351,18 +351,21 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
 	if(hasEleCluster && hasPosCluster)
 	  if (!vtxSelector->passCutLt("eleposCluTimeDiff_lt",fabs(corr_eleClusterTime - corr_posClusterTime),weight))
 	    continue;
-
+	Track* ele_trk_from_list = _ah->GetTrackFromParticle(*trks_,ele);
+	Track* pos_trk_from_list = _ah->GetTrackFromParticle(*trks_,pos);
         _vtx_histos->Fill1DVertex(vtx,
                                   ele,
                                   pos,
-                                  &ele_trk,
-                                  &pos_trk,
+				  // &ele_trk,
+				  // &pos_trk,
+                                  ele_trk_from_list,
+                                  pos_trk_from_list,
                                   trkTimeOffset_,
                                   weight);
         
         _vtx_histos->Fill2DHistograms(vtx,weight);
-        _vtx_histos->Fill2DTrack(&ele_trk,weight,"ele_");
-        _vtx_histos->Fill2DTrack(&pos_trk,weight,"pos_");
+        _vtx_histos->Fill2DTrack(ele_trk_from_list,weight,"ele_");
+        _vtx_histos->Fill2DTrack(pos_trk_from_list,weight,"pos_");
         
         selected_tri.push_back(vtx);       
         vtxSelector->clearSelector();
@@ -503,13 +506,15 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
 	        
 	bool foundL1ele = false;
 	bool foundL2ele = false;
-        //_ah->InnermostLayerCheck(ele_trk_from_trkList, foundL1ele, foundL2ele);   
-        _ah->InnermostLayerCheck(&ele_trk, foundL1ele, foundL2ele);   
+	Track* ele_trk_from_list = _ah->GetTrackFromParticle(*trks_,ele);
+	Track* pos_trk_from_list = _ah->GetTrackFromParticle(*trks_,pos);
+        _ah->InnermostLayerCheck(ele_trk_from_list, foundL1ele, foundL2ele);   
+	//_ah->InnermostLayerCheck(&ele_trk, foundL1ele, foundL2ele);   
         
 	bool foundL1pos = false;
 	bool foundL2pos = false;
-        //_ah->InnermostLayerCheck(pos_trk_from_trkList, foundL1pos, foundL2pos);  
-       	_ah->InnermostLayerCheck(&pos_trk, foundL1pos, foundL2pos);  
+        _ah->InnermostLayerCheck(pos_trk_from_list, foundL1pos, foundL2pos);  
+	//       	_ah->InnermostLayerCheck(&pos_trk, foundL1pos, foundL2pos);  
         
 	int layerCombo=-1;
 	if (foundL1pos&&foundL1ele) //L1L1
@@ -590,18 +595,23 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
         //      _reg_vtx_histos[region]->Fill1DHisto("ele_nHits_2d_h",ele_trk.getTrackerHitCount(),weight);
         // _reg_vtx_histos[region]->Fill1DHisto("pos_nHits_2d_h",pos_trk.getTrackerHitCount(),weight);
       }
-      //	continue;    
+      //	continue;   
+
+      Track* ele_trk_from_list = _ah->GetTrackFromParticle(*trks_,ele);
+      Track* pos_trk_from_list = _ah->GetTrackFromParticle(*trks_,pos);
       _reg_vtx_histos[region]->Fill2DHistograms(vtx,weight);
       _reg_vtx_histos[region]->Fill1DVertex(vtx,
                                             ele,
-                                            pos,
-                                            &ele_trk,
-                                            &pos_trk,
-                                            trkTimeOffset_,
+                                            pos, 
+                                            //&ele_trk,
+                                            //&pos_trk,
+                                            ele_trk_from_list,
+                                            pos_trk_from_list,
+					    trkTimeOffset_,
                                             weight);
       
-      _reg_vtx_histos[region]->Fill2DTrack(&ele_trk,weight,"ele_");
-      _reg_vtx_histos[region]->Fill2DTrack(&pos_trk,weight,"pos_");
+      _reg_vtx_histos[region]->Fill2DTrack(ele_trk_from_list,weight,"ele_");
+      _reg_vtx_histos[region]->Fill2DTrack(pos_trk_from_list,weight,"pos_");
       _reg_vtx_histos[region]->FillTrackClusterHistos(std::pair<CalCluster,Track>(ele_clu,ele_trk),std::pair<CalCluster,Track>(pos_clu,pos_trk),calTimeOffset_,trkTimeOffset_,clus_,weight);
       
       

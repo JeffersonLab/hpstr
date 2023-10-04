@@ -271,7 +271,7 @@ class Track : public TObject {
         
         double getP(){return sqrt(px_*px_ + py_*py_ + pz_*pz_);};
         
-        double getPt() {return sqrt(px_*px_ + pz_*pz_);}
+        double getPt() {return sqrt(px_*px_ + py_*py_);}
         
         /**
          * Set the lambda kink of the given layer.

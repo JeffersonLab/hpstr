@@ -88,20 +88,21 @@ void AnaHelpers::InnermostLayerCheck(Track* trk, bool& foundL1, bool& foundL2) {
     //std::cout<<"InnermostLayerCheck::got Tracker hit "<<hit<<std::endl; 
     //std::cout<<"InnermostLayerCheck::layer hit = "<<hit->getLayer()<<std::endl;
     RawSvtHit* rhit=(RawSvtHit*)(hit->getRawHits()).At(0);
-    //std::cout<<"InnermostLayerCheck::RawHit layer hit = "<<rhit->getLayer()<<std::endl;
-    if(rhit->getLayer() == 0 ){
+    int layer=rhit->getLayer();
+    //    std::cout<<"InnermostLayerCheck::layer hit = "<<layer<<std::endl;
+    if(layer == 0 ){
       std::cout<<"I didn't think you could have layer 0???"<<std::endl;
     }
-    if (rhit->getLayer() == 1 ) {
+    if (layer == 1 ) {
       s1=true;
     }
-    if (rhit->getLayer() == 2) {
+    if (layer == 2) {
       s2=true;
     }
-    if (rhit->getLayer() == 3) {
+    if (layer == 3) {
       s3=true;
     }
-    if (rhit->getLayer() == 4) {
+    if (layer == 4) {
       s4=true;
     }
   }

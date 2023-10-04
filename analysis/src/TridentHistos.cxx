@@ -2,15 +2,132 @@
 #include "TLorentzVector.h"
 #include "TVector3.h"
 #include <iostream>
-
+#include <regex>
+#include <cstddef>
 void TridentHistos::BuildAxes(){}
+
+void TridentHistos::DefineHistos(){  
+  std::vector<std::string> halfTags{"","top","bot"};
+  std::vector<std::string> trkTags{"pos","ele"};
+  std::vector<std::string> layerTags;
+  unsigned char lbits=15;
+  int counter=15; 
+  while(counter>=0){
+    std::string lstring="";
+    for (int i = 4; i < 8; i++) {
+      //      char* tmpSt;
+      printf("%d", !!((lbits << i) & 0x80));
+      int tmpCh=!!((lbits << i) & 0x80);
+      std::string tmpSt="0";
+      if(tmpCh==1)
+	tmpSt="1";
+      lstring+=tmpSt;      
+    }
+    printf("\n");
+    std::cout<<"String value is:  "<<lstring<<std::endl;
+    layerTags.push_back(lstring);
+    counter--;
+    lbits--;
+  }
+       
+  std::vector<std::string> trkCombos;  
+  std::vector<std::string>::iterator halfIter = halfTags.begin();
+  for(halfIter; halfIter < halfTags.end(); halfIter++){
+    std::string half=*halfIter;
+    std::vector<std::string>::iterator trkIter = trkTags.begin();
+    for(trkIter; trkIter < trkTags.end(); trkIter++){
+      std::string trk=*trkIter; 
+      std::string comboStr=half+"_"+trk;
+      if(half=="")
+	comboStr=trk;
+      trkCombos.push_back(comboStr);
+      std::cout<<comboStr<<std::endl;
+    }
+  }
+  
+
+  std::vector<std::string> halfCombos{"","top","bot"};
+  std::vector<std::string> V0Combos{"","top_pos","bot_pos"};  
+
+  std::vector<std::string> trkLayerCombos; 
+  std::vector<std::string>::iterator trkIter = trkCombos.begin();
+  for(trkIter;trkIter<trkCombos.end();trkIter++){
+    std::string trkSt=*trkIter;
+    std::vector<std::string>::iterator lIter = layerTags.begin();
+    for(lIter;lIter<layerTags.end();lIter++){
+      std::string lSt=*lIter; 
+      std::string comboStr="L"+lSt+"_"+trkSt;
+      if(trkSt=="")
+	comboStr="L"+lSt;
+      trkLayerCombos.push_back(comboStr);
+      std::cout<<comboStr<<std::endl;
+
+    }
+  }
+
+  std::vector<std::string>  layerTagsForV0{"1111","0011","0111"};
+  std::vector<std::string> v0LayerCombos; 
+  std::vector<std::string>::iterator v0Iter = V0Combos.begin();
+  for(v0Iter;v0Iter<V0Combos.end();v0Iter++){
+    std::string v0St=*v0Iter;
+    std::vector<std::string>::iterator lIter = layerTagsForV0.begin();
+    for(lIter;lIter<layerTagsForV0.end();lIter++){
+      std::string l1St=*lIter; 
+      std::vector<std::string>::iterator l2Iter = layerTagsForV0.begin();
+      for(l2Iter;l2Iter<layerTagsForV0.end();l2Iter++){
+	std::string l2St=*l2Iter; 
+	std::string comboStr="pos"+l1St+"_ele"+l2St+"_"+v0St;
+	if(v0St=="")
+	  comboStr="pos"+l1St+"_ele"+l2St;
+	v0LayerCombos.push_back(comboStr);
+	std::cout<<comboStr<<std::endl;	
+      }
+    }
+  }
+
+  HistoManager::DefineHistosFromTemplateOnly(trkCombos,"_tc_h");  //should match both 1d and 2d histos
+  HistoManager::DefineHistosFromTemplateOnly(halfCombos, "_hc_h");  //should match both 1d and 2d histos (though, I think there are o
+  HistoManager::DefineHistosFromTemplateOnly(trkLayerCombos,"_tc_h");   //should match both 1d and 2d histos
+  HistoManager::DefineHistosFromTemplateOnly(V0Combos,"_vc_h");   //should match both 1d and 2d histos
+  HistoManager::DefineHistosFromTemplateOnly(v0LayerCombos,"_vc_h");   //should match both 1d and 2d histos
+
+  HistoManager::DefineOneTimeHistos();  
+  /*
+  std::regex pat;
+  try
+    {
+      pat="3";
+    }
+    catch (const std::regex_error& e)
+    {
+        std::cout << "regex_error caught: " << e.what() << '\n';
+	std::cout<< "error code was "<<e.code()<<std::endl;
+	if (e.code() == std::regex_constants::error_escape)
+            std::cout << "The code was error_escape\n"; 
+	if (e.code() == std::regex_constants::error_ctype)
+            std::cout << "The code was error_ctype\n";
+	if (e.code() == std::regex_constants::error_brack)
+            std::cout << "The code was error_brack\n";
+   }
+  std::smatch smash;
+  std::string matchme="3234";
+  std::regex pat("3",   std::regex_constants::ECMAScript);
+  std::cout<<"is "<<pat<<" in "<<matchme<<std::endl;
+  if(std::regex_search(matchme,smash,pat)){
+    std::cout<<"matched it, janet!"<<std::endl;
+  }else{
+    std::cout<<"damn it, janet!"<<std::endl;;    
+  }
+  */
+}
+
 
 void TridentHistos::Define2DHistos() {
 
     //TODO improve naming
     std::string h_name = "";
   
-    //TODO improve binning
+    //TODO improve binning 
     if (doTrkCompPlots) {
         /*
         for (unsigned int itp = 0; itp<tPs.size(); ++itp){
@@ -43,14 +160,95 @@ void TridentHistos::Fill1DVertex(Vertex* vtx,
                                  double trkTimeOffset,
                                  float weight) {
     
-    Fill1DVertex(vtx,weight);
 
     if (ele_trk)
       Fill1DTrack(ele_trk,trkTimeOffset,weight,"ele_");
     if (pos_trk)
       Fill1DTrack(pos_trk,trkTimeOffset,weight,"pos_");
+    std::string half="top";
+    if(pos_trk->getTanLambda()<0)
+      half="bot";    
+    std::string posTag=half+"_pos_";
+    half="top";
+    if(ele_trk->getTanLambda()<0)
+      half="bot";
+    std::string eleTag=half+"_ele_";
+    std::string eleLayerCode=getLayerCodeFromTrack(ele_trk);
+    std::string posLayerCode=getLayerCodeFromTrack(pos_trk);
+    std::string layerCode="pos"+eleLayerCode+"_ele"+posLayerCode+"_";
+
+    Fill1DHisto("vtx_chi2_vc_h"   ,vtx->getChi2(),weight);
+    Fill1DHisto("vtx_X_vc_h"      ,vtx->getX(),weight);
+    Fill1DHisto("vtx_Y_vc_h"      ,vtx->getY(),weight);
+    Fill1DHisto("vtx_Z_vc_h"      ,vtx->getZ(),weight);
+
+    Fill1DHisto(posTag+"vtx_chi2_vc_h"   ,vtx->getChi2(),weight);
+    Fill1DHisto(posTag+"vtx_X_vc_h"      ,vtx->getX(),weight);
+    Fill1DHisto(posTag+"vtx_Y_vc_h"      ,vtx->getY(),weight);
+    Fill1DHisto(posTag+"vtx_Z_vc_h"      ,vtx->getZ(),weight);
+
+    Fill1DHisto(layerCode+"vtx_chi2_vc_h"   ,vtx->getChi2(),weight);
+    Fill1DHisto(layerCode+"vtx_X_vc_h"      ,vtx->getX(),weight);
+    Fill1DHisto(layerCode+"vtx_Y_vc_h"      ,vtx->getY(),weight);
+    Fill1DHisto(layerCode+"vtx_Z_vc_h"      ,vtx->getZ(),weight);
+
+    Fill1DHisto(layerCode+posTag+"vtx_chi2_vc_h"   ,vtx->getChi2(),weight);
+    Fill1DHisto(layerCode+posTag+"vtx_X_vc_h"      ,vtx->getX(),weight);
+    Fill1DHisto(layerCode+posTag+"vtx_Y_vc_h"      ,vtx->getY(),weight);
+    Fill1DHisto(layerCode+posTag+"vtx_Z_vc_h"      ,vtx->getZ(),weight);
+
+    TVector3 vtxPosSvt;
+    vtxPosSvt.SetX(vtx->getX());
+    vtxPosSvt.SetY(vtx->getY());
+    vtxPosSvt.SetZ(vtx->getZ());
     
+    vtxPosSvt.RotateY(-0.0305);
+
+    //Fill1DHisto("vtx_X_svt_vc_h",vtxPosSvt.X(),weight);
+    //Fill1DHisto("vtx_Y_svt_vc_h",vtxPosSvt.Y(),weight);
+    //Fill1DHisto("vtx_Z_svt_vc_h",vtxPosSvt.Z(),weight);
     
+    // 0 xx 1 xy 2 xz 3 yy 4 yz 5 zz
+    Fill1DHisto("vtx_sigma_X_vc_h",sqrt(vtx->getCovariance()[0]),weight);
+    Fill1DHisto("vtx_sigma_Y_vc_h",sqrt(vtx->getCovariance()[3]),weight);
+    Fill1DHisto("vtx_sigma_Z_vc_h",sqrt(vtx->getCovariance()[5]),weight);
+    Fill1DHisto("vtx_InvM_vc_h"   ,vtx->getInvMass(),weight);
+    Fill1DHisto("vtx_InvMErr_Z_vc_h",vtx->getInvMassErr(),weight);
+    Fill1DHisto("vtx_px_vc_h",vtx->getP().X());
+    Fill1DHisto("vtx_py_vc_h",vtx->getP().Y());
+    Fill1DHisto("vtx_pz_vc_h",vtx->getP().Z());
+    Fill1DHisto("vtx_p_vc_h" ,vtx->getP().Mag());
+    
+    Fill1DHisto(posTag+"vtx_sigma_X_vc_h",sqrt(vtx->getCovariance()[0]),weight);
+    Fill1DHisto(posTag+"vtx_sigma_Y_vc_h",sqrt(vtx->getCovariance()[3]),weight);
+    Fill1DHisto(posTag+"vtx_sigma_Z_vc_h",sqrt(vtx->getCovariance()[5]),weight);
+    Fill1DHisto(posTag+"vtx_InvM_vc_h"   ,vtx->getInvMass(),weight);
+    Fill1DHisto(posTag+"vtx_InvMErr_Z_vc_h",vtx->getInvMassErr(),weight);
+    Fill1DHisto(posTag+"vtx_px_vc_h",vtx->getP().X());
+    Fill1DHisto(posTag+"vtx_py_vc_h",vtx->getP().Y());
+    Fill1DHisto(posTag+"vtx_pz_vc_h",vtx->getP().Z());
+    Fill1DHisto(posTag+"vtx_p_vc_h" ,vtx->getP().Mag());
+
+    Fill1DHisto(layerCode+"vtx_sigma_X_vc_h",sqrt(vtx->getCovariance()[0]),weight);
+    Fill1DHisto(layerCode+"vtx_sigma_Y_vc_h",sqrt(vtx->getCovariance()[3]),weight);
+    Fill1DHisto(layerCode+"vtx_sigma_Z_vc_h",sqrt(vtx->getCovariance()[5]),weight);
+    Fill1DHisto(layerCode+"vtx_InvM_vc_h"   ,vtx->getInvMass(),weight);
+    Fill1DHisto(layerCode+"vtx_InvMErr_Z_vc_h",vtx->getInvMassErr(),weight);
+    Fill1DHisto(layerCode+"vtx_px_vc_h",vtx->getP().X());
+    Fill1DHisto(layerCode+"vtx_py_vc_h",vtx->getP().Y());
+    Fill1DHisto(layerCode+"vtx_pz_vc_h",vtx->getP().Z());
+    Fill1DHisto(layerCode+"vtx_p_vc_h" ,vtx->getP().Mag());
+    
+    Fill1DHisto(layerCode+posTag+"vtx_sigma_X_vc_h",sqrt(vtx->getCovariance()[0]),weight);
+    Fill1DHisto(layerCode+posTag+"vtx_sigma_Y_vc_h",sqrt(vtx->getCovariance()[3]),weight);
+    Fill1DHisto(layerCode+posTag+"vtx_sigma_Z_vc_h",sqrt(vtx->getCovariance()[5]),weight);
+    Fill1DHisto(layerCode+posTag+"vtx_InvM_vc_h"   ,vtx->getInvMass(),weight);
+    Fill1DHisto(layerCode+posTag+"vtx_InvMErr_Z_vc_h",vtx->getInvMassErr(),weight);
+    Fill1DHisto(layerCode+posTag+"vtx_px_vc_h",vtx->getP().X());
+    Fill1DHisto(layerCode+posTag+"vtx_py_vc_h",vtx->getP().Y());
+    Fill1DHisto(layerCode+posTag+"vtx_pz_vc_h",vtx->getP().Z());
+    Fill1DHisto(layerCode+posTag+"vtx_p_vc_h" ,vtx->getP().Mag());
+
     TLorentzVector p_ele;
     //p_ele.SetPxPyPzE(ele->getMomentum()[0], ele->getMomentum()[1],ele->getMomentum()[2],ele->getEnergy());
     p_ele.SetPxPyPzE(ele_trk->getMomentum()[0],ele_trk->getMomentum()[1],ele_trk->getMomentum()[2],ele->getEnergy());
@@ -75,44 +273,78 @@ void TridentHistos::Fill1DVertex(Vertex* vtx,
     TLorentzVector p_miss =  p_beam - p_v0;
         
     double thetax_v0_val   = TMath::ATan2(p_v0.X(),p_v0.Z());
-    double thetax_pos_val  = TMath::ATan2(p_pos.X(),p_pos.Z());
+    double thetay_v0_val   = TMath::ATan2(p_v0.Y(),p_v0.Z());
     
+    double thetax_miss_val = TMath::ATan2(p_miss.X(),p_miss.Z());
     double thetay_miss_val = TMath::ATan2(p_miss.Y(),p_miss.Z());
-    double thetay_pos_val  = TMath::ATan2(p_pos.Y(),p_pos.Z());
 
     double pt_ele = p_ele.Pt();
     double pt_pos = p_pos.Pt();
 
     double pt_asym_val = (pt_ele-pt_pos) / (pt_ele+pt_pos);
     
-    double thetay_diff_val;
     
-    if (thetay_pos_val>0) {
-        thetay_diff_val = thetay_miss_val - thetay_pos_val;
-    }
-    else {
-        thetay_diff_val = thetay_pos_val - thetay_miss_val;
-    }
-
     //Fill event information
 
-    //Esum
-    Fill1DHisto("Esum_h",ele->getEnergy() + pos->getEnergy(),weight);
-    Fill1DHisto("Psum_h",p_ele.P() + p_pos.P());
-    Fill1DHisto("PtAsym_h",pt_asym_val,weight);
-    Fill1DHisto("thetax_v0_h",thetax_v0_val,weight);
-    Fill1DHisto("thetax_pos_h",thetax_pos_val,weight);
-    Fill1DHisto("thetay_pos_h",thetay_pos_val,weight);
-    Fill1DHisto("thetay_miss_h",thetay_miss_val,weight);
-    Fill1DHisto("thetay_diff_h",thetay_diff_val,weight);
+    //1D histos
+    Fill1DHisto("Esum_vc_h",ele->getEnergy() + pos->getEnergy(),weight);
+    Fill1DHisto("Psum_vc_h",p_ele.P() + p_pos.P());
+    Fill1DHisto("PtAsym_vc_h",pt_asym_val,weight);
+    Fill1DHisto("Pmiss_vc_h",p_miss.P());
+    Fill1DHisto("thetax_v0_vc_h",thetax_v0_val,weight);
+    Fill1DHisto("thetay_v0_vc_h",thetay_v0_val,weight);
+    Fill1DHisto("thetax_miss_vc_h",thetax_miss_val,weight);
+    Fill1DHisto("thetay_miss_vc_h",thetay_miss_val,weight);
+
+
+    //1D histos
+    Fill1DHisto(posTag+"Esum_vc_h",ele->getEnergy() + pos->getEnergy(),weight);
+    Fill1DHisto(posTag+"Psum_vc_h",p_ele.P() + p_pos.P());
+    Fill1DHisto(posTag+"PtAsym_vc_h",pt_asym_val,weight);
+    Fill1DHisto(posTag+"Pmiss_vc_h",p_miss.P());
+    Fill1DHisto(posTag+"thetax_v0_vc_h",thetax_v0_val,weight);
+    Fill1DHisto(posTag+"thetay_v0_vc_h",thetay_v0_val,weight);
+    Fill1DHisto(posTag+"thetax_miss_vc_h",thetax_miss_val,weight);
+    Fill1DHisto(posTag+"thetay_miss_vc_h",thetay_miss_val,weight);
+
+  //1D histos
+    Fill1DHisto(layerCode+"Esum_vc_h",ele->getEnergy() + pos->getEnergy(),weight);
+    Fill1DHisto(layerCode+"Psum_vc_h",p_ele.P() + p_pos.P());
+    Fill1DHisto(layerCode+"PtAsym_vc_h",pt_asym_val,weight);
+    Fill1DHisto(layerCode+"Pmiss_vc_h",p_miss.P());
+    Fill1DHisto(layerCode+"thetax_v0_vc_h",thetax_v0_val,weight);
+    Fill1DHisto(layerCode+"thetay_v0_vc_h",thetay_v0_val,weight);
+    Fill1DHisto(layerCode+"thetax_miss_vc_h",thetax_miss_val,weight);
+    Fill1DHisto(layerCode+"thetay_miss_vc_h",thetay_miss_val,weight);
+
+
+    //1D histos
+    Fill1DHisto(layerCode+posTag+"Esum_vc_h",ele->getEnergy() + pos->getEnergy(),weight);
+    Fill1DHisto(layerCode+posTag+"Psum_vc_h",p_ele.P() + p_pos.P());
+    Fill1DHisto(layerCode+posTag+"PtAsym_vc_h",pt_asym_val,weight);
+    Fill1DHisto(layerCode+posTag+"Pmiss_vc_h",p_miss.P());
+    Fill1DHisto(layerCode+posTag+"thetax_v0_vc_h",thetax_v0_val,weight);
+    Fill1DHisto(layerCode+posTag+"thetay_v0_vc_h",thetay_v0_val,weight);
+    Fill1DHisto(layerCode+posTag+"thetax_miss_vc_h",thetax_miss_val,weight);
+    Fill1DHisto(layerCode+posTag+"thetay_miss_vc_h",thetay_miss_val,weight);
+
+    Fill2DHisto("vtx_InvM_vtx_z_vc_hh",vtx->getInvMass(),vtx->getZ(),weight);
+    Fill2DHisto(posTag+"vtx_InvM_vtx_z_vc_hh",vtx->getInvMass(),vtx->getZ(),weight);
+    Fill2DHisto(layerCode+"vtx_InvM_vtx_z_vc_hh",vtx->getInvMass(),vtx->getZ(),weight);
+    Fill2DHisto(layerCode+posTag+"vtx_InvM_vtx_z_vc_hh",vtx->getInvMass(),vtx->getZ(),weight);
+
     //
     //std::cout<<"filling z/tanlambda 2d plots"<<std::endl;
     //std::cout<<ele_trk->getZ0()/ele_trk->getTanLambda()<<std::endl;
-    Fill2DHisto("ele_vtx_z_vs_z0_over_tanLambda_hh",ele_trk->getZ0()/ele_trk->getTanLambda(), vtx->getZ());
-    Fill2DHisto("pos_vtx_z_vs_z0_over_tanLambda_hh",pos_trk->getZ0()/pos_trk->getTanLambda(), vtx->getZ());
+    Fill2DHisto("ele_vtx_z_vs_z0_over_tanLambda_tc_hh",ele_trk->getZ0()/ele_trk->getTanLambda(), vtx->getZ());
+    Fill2DHisto("pos_vtx_z_vs_z0_over_tanLambda_tc_hh",pos_trk->getZ0()/pos_trk->getTanLambda(), vtx->getZ());
+    Fill2DHisto(eleTag+"vtx_z_vs_z0_over_tanLambda_tc_hh",ele_trk->getZ0()/ele_trk->getTanLambda(), vtx->getZ());
+    Fill2DHisto(posTag+"vtx_z_vs_z0_over_tanLambda_tc_hh",pos_trk->getZ0()/pos_trk->getTanLambda(), vtx->getZ());
     if(fabs(vtx->getInvMass()-0.0925)<0.010){
-      Fill2DHisto("ele_vtx_z_vs_z0_over_tanLambda_m_eq_92_hh",ele_trk->getZ0()/ele_trk->getTanLambda(), vtx->getZ());
-      Fill2DHisto("pos_vtx_z_vs_z0_over_tanLambda_m_eq_92_hh",pos_trk->getZ0()/pos_trk->getTanLambda(), vtx->getZ());
+      Fill2DHisto("ele_vtx_z_vs_z0_over_tanLambda_m_eq_92_tc_hh",ele_trk->getZ0()/ele_trk->getTanLambda(), vtx->getZ());
+      Fill2DHisto("pos_vtx_z_vs_z0_over_tanLambda_m_eq_92_tc_hh",pos_trk->getZ0()/pos_trk->getTanLambda(), vtx->getZ());
+      Fill2DHisto(eleTag+"vtx_z_vs_z0_over_tanLambda_m_eq_92_tc_hh",ele_trk->getZ0()/ele_trk->getTanLambda(), vtx->getZ());
+      Fill2DHisto(posTag+"vtx_z_vs_z0_over_tanLambda_m_eq_92_tc_hh",pos_trk->getZ0()/pos_trk->getTanLambda(), vtx->getZ());
     }
 
 }
@@ -122,18 +354,52 @@ void TridentHistos::Fill2DTrack(Track* track, float weight, const std::string& t
     
     
     if (track) {
-        
-        double d0 = track->getD0();
-        double z0 = track->getZ0();
-        Fill2DHisto(trkname+"tanlambda_vs_phi0_hh",track->getPhi(),track->getTanLambda(), weight);
-        Fill2DHisto(trkname+"d0_vs_p_hh",track->getP(),d0,weight);
-        Fill2DHisto(trkname+"d0_vs_phi0_hh",track->getPhi(),d0,weight);
-        Fill2DHisto(trkname+"d0_vs_tanlambda_hh",track->getTanLambda(),d0,weight);
-        
-        Fill2DHisto(trkname+"z0_vs_p_hh",track->getP(),z0,weight);
-        Fill2DHisto(trkname+"z0_vs_phi0_hh",track->getPhi(),z0,weight);
-        Fill2DHisto(trkname+"z0_vs_tanlambda_hh",track->getTanLambda(),z0,weight);
-        
+      std::string half="top";
+      
+      if(track->getTanLambda()<0)
+	half="bot";
+      std::string tag=half+"_"+trkname;
+      std::string layerCode="L"+getLayerCodeFromTrack(track)+"_";
+      double d0 = track->getD0();
+      double z0 = track->getZ0();
+      Fill2DHisto(trkname+"tanlambda_vs_phi0_tc_hh",track->getPhi(),track->getTanLambda(), weight);
+      Fill2DHisto(trkname+"d0_vs_p_tc_hh",track->getP(),d0,weight);
+      Fill2DHisto(trkname+"d0_vs_phi0_tc_hh",track->getPhi(),d0,weight);
+      Fill2DHisto(trkname+"d0_vs_tanlambda_tc_hh",track->getTanLambda(),d0,weight);
+      
+      Fill2DHisto(trkname+"z0_vs_p_tc_hh",track->getP(),z0,weight);
+      Fill2DHisto(trkname+"z0_vs_phi0_tc_hh",track->getPhi(),z0,weight);
+      Fill2DHisto(trkname+"z0_vs_tanlambda_tc_hh",track->getTanLambda(),z0,weight);
+
+      Fill2DHisto(tag+"tanlambda_vs_phi0_tc_hh",track->getPhi(),track->getTanLambda(), weight);
+      Fill2DHisto(tag+"d0_vs_p_tc_hh",track->getP(),d0,weight);
+      Fill2DHisto(tag+"d0_vs_phi0_tc_hh",track->getPhi(),d0,weight);
+      Fill2DHisto(tag+"d0_vs_tanlambda_tc_hh",track->getTanLambda(),d0,weight);
+      
+      Fill2DHisto(tag+"z0_vs_p_tc_hh",track->getP(),z0,weight);
+      Fill2DHisto(tag+"z0_vs_phi0_tc_hh",track->getPhi(),z0,weight);
+      Fill2DHisto(tag+"z0_vs_tanlambda_tc_hh",track->getTanLambda(),z0,weight);
+
+
+      Fill2DHisto(layerCode+trkname+"tanlambda_vs_phi0_tc_hh",track->getPhi(),track->getTanLambda(), weight);
+      Fill2DHisto(layerCode+trkname+"d0_vs_p_tc_hh",track->getP(),d0,weight);
+      Fill2DHisto(layerCode+trkname+"d0_vs_phi0_tc_hh",track->getPhi(),d0,weight);
+      Fill2DHisto(layerCode+trkname+"d0_vs_tanlambda_tc_hh",track->getTanLambda(),d0,weight);
+      
+      Fill2DHisto(layerCode+trkname+"z0_vs_p_tc_hh",track->getP(),z0,weight);
+      Fill2DHisto(layerCode+trkname+"z0_vs_phi0_tc_hh",track->getPhi(),z0,weight);
+      Fill2DHisto(layerCode+trkname+"z0_vs_tanlambda_tc_hh",track->getTanLambda(),z0,weight);
+
+      Fill2DHisto(layerCode+tag+"tanlambda_vs_phi0_tc_hh",track->getPhi(),track->getTanLambda(), weight);
+      Fill2DHisto(layerCode+tag+"d0_vs_p_tc_hh",track->getP(),d0,weight);
+      Fill2DHisto(layerCode+tag+"d0_vs_phi0_tc_hh",track->getPhi(),d0,weight);
+      Fill2DHisto(layerCode+tag+"d0_vs_tanlambda_tc_hh",track->getTanLambda(),d0,weight);
+      
+      Fill2DHisto(layerCode+tag+"z0_vs_p_tc_hh",track->getP(),z0,weight);
+      Fill2DHisto(layerCode+tag+"z0_vs_phi0_tc_hh",track->getPhi(),z0,weight);
+      Fill2DHisto(layerCode+tag+"z0_vs_tanlambda_tc_hh",track->getTanLambda(),z0,weight);
+      
+      
     }
 }
 
@@ -149,23 +415,77 @@ void TridentHistos::Fill1DTrack(Track* track, double trkTimeOffset,float weight,
 
     TVector3 p_trk;
     p_trk.SetXYZ(track->getMomentum()[0],track->getMomentum()[1],track->getMomentum()[2]);
+    std::string half="top";
+   
+    if(track->getTanLambda()<0)
+      half="bot";
+    std::string tag=half+"_"+trkname;
+
+    //    std::string layerCode="L"+getLayerCodeFromTrack(track)+"_"+tag;
+    std::string layerCode="L"+getLayerCodeFromTrack(track)+"_";
+
+    Fill1DHisto(trkname+"p_tc_h",p_trk.Mag(),weight);
+    Fill1DHisto(trkname+"d0_tc_h"       ,track->getD0()          ,weight);
+    Fill1DHisto(trkname+"Phi_tc_h"      ,track->getPhi()         ,weight);
+    Fill1DHisto(trkname+"Omega_tc_h"    ,track->getOmega()       ,weight);
+    Fill1DHisto(trkname+"pT_tc_h"       ,charge*track->getPt()   ,weight);
+    Fill1DHisto(trkname+"invpT_tc_h"    ,charge/track->getPt()   ,weight);
+    Fill1DHisto(trkname+"TanLambda_tc_h",track->getTanLambda()   ,weight);
+    Fill1DHisto(trkname+"Z0_tc_h"       ,track->getZ0()          ,weight);
+    Fill1DHisto(trkname+"Z0_over_TanLambda_tc_h",track->getZ0()/track->getTanLambda()   ,weight);
+    Fill1DHisto(trkname+"time_tc_h"     ,track->getTrackTime()-trkTimeOffset   ,weight);
+    Fill1DHisto(trkname+"chi2_tc_h"     ,track->getChi2()        ,weight);
+    Fill1DHisto(trkname+"chi2ndf_tc_h"  ,track->getChi2Ndf()     ,weight);
+    Fill1DHisto(trkname+"nShared_tc_h"  ,track->getNShared()     ,weight);
+    Fill1DHisto(trkname+"nHits_2d_tc_h" ,n_hits_2d             ,weight);
+
+
+    Fill1DHisto(tag+"p_tc_h",p_trk.Mag(),weight);
+    Fill1DHisto(tag+"d0_tc_h"       ,track->getD0()          ,weight);
+    Fill1DHisto(tag+"Phi_tc_h"      ,track->getPhi()         ,weight);
+    Fill1DHisto(tag+"Omega_tc_h"    ,track->getOmega()       ,weight);
+    Fill1DHisto(tag+"pT_tc_h"       ,-1*charge*track->getPt()   ,weight);
+    Fill1DHisto(tag+"invpT_tc_h"    ,-1*charge/track->getPt()   ,weight);
+    Fill1DHisto(tag+"TanLambda_tc_h",track->getTanLambda()   ,weight);
+    Fill1DHisto(tag+"Z0_tc_h"       ,track->getZ0()          ,weight);
+    Fill1DHisto(tag+"Z0_over_TanLambda_tc_h",track->getZ0()/track->getTanLambda()   ,weight);
+    Fill1DHisto(tag+"time_tc_h"     ,track->getTrackTime()-trkTimeOffset   ,weight);
+    Fill1DHisto(tag+"chi2_tc_h"     ,track->getChi2()        ,weight);
+    Fill1DHisto(tag+"chi2ndf_tc_h"  ,track->getChi2Ndf()     ,weight);
+    Fill1DHisto(tag+"nShared_tc_h"  ,track->getNShared()     ,weight);
+    Fill1DHisto(tag+"nHits_2d_tc_h" ,n_hits_2d               ,weight);
     
-    
-    Fill1DHisto(trkname+"p_h",p_trk.Mag(),weight);
-    Fill1DHisto(trkname+"d0_h"       ,track->getD0()          ,weight);
-    Fill1DHisto(trkname+"Phi_h"      ,track->getPhi()         ,weight);
-    Fill1DHisto(trkname+"Omega_h"    ,track->getOmega()       ,weight);
-    Fill1DHisto(trkname+"pT_h"       ,-1*charge*track->getPt()   ,weight);
-    Fill1DHisto(trkname+"invpT_h"    ,-1*charge/track->getPt()   ,weight);
-    Fill1DHisto(trkname+"TanLambda_h",track->getTanLambda()   ,weight);
-    Fill1DHisto(trkname+"Z0_h"       ,track->getZ0()          ,weight);
-    Fill1DHisto(trkname+"Z0_over_TanLambda_h",track->getZ0()/track->getTanLambda()   ,weight);
-    Fill1DHisto(trkname+"time_h"     ,track->getTrackTime()-trkTimeOffset   ,weight);
-    Fill1DHisto(trkname+"chi2_h"     ,track->getChi2()        ,weight);
-    Fill1DHisto(trkname+"chi2ndf_h"  ,track->getChi2Ndf()     ,weight);
-    Fill1DHisto(trkname+"nShared_h"  ,track->getNShared()     ,weight);
-    Fill1DHisto(trkname+"nHits_2d_h" ,n_hits_2d               ,weight);
-    
+    Fill1DHisto(layerCode+trkname+"p_tc_h",p_trk.Mag(),weight);
+    Fill1DHisto(layerCode+trkname+"d0_tc_h"       ,track->getD0()          ,weight);
+    Fill1DHisto(layerCode+trkname+"Phi_tc_h"      ,track->getPhi()         ,weight);
+    Fill1DHisto(layerCode+trkname+"Omega_tc_h"    ,track->getOmega()       ,weight);
+    Fill1DHisto(layerCode+trkname+"pT_tc_h"       ,charge*track->getPt()   ,weight);
+    Fill1DHisto(layerCode+trkname+"invpT_tc_h"    ,charge/track->getPt()   ,weight);
+    Fill1DHisto(layerCode+trkname+"TanLambda_tc_h",track->getTanLambda()   ,weight);
+    Fill1DHisto(layerCode+trkname+"Z0_tc_h"       ,track->getZ0()          ,weight);
+    Fill1DHisto(layerCode+trkname+"Z0_over_TanLambda_tc_h",track->getZ0()/track->getTanLambda()   ,weight);
+    Fill1DHisto(layerCode+trkname+"time_tc_h"     ,track->getTrackTime()-trkTimeOffset   ,weight);
+    Fill1DHisto(layerCode+trkname+"chi2_tc_h"     ,track->getChi2()        ,weight);
+    Fill1DHisto(layerCode+trkname+"chi2ndf_tc_h"  ,track->getChi2Ndf()     ,weight);
+    Fill1DHisto(layerCode+trkname+"nShared_tc_h"  ,track->getNShared()     ,weight);
+    Fill1DHisto(layerCode+trkname+"nHits_2d_tc_h" ,n_hits_2d             ,weight);
+
+
+    Fill1DHisto(layerCode+tag+"p_tc_h",p_trk.Mag(),weight);
+    Fill1DHisto(layerCode+tag+"d0_tc_h"       ,track->getD0()          ,weight);
+    Fill1DHisto(layerCode+tag+"Phi_tc_h"      ,track->getPhi()         ,weight);
+    Fill1DHisto(layerCode+tag+"Omega_tc_h"    ,track->getOmega()       ,weight);
+    Fill1DHisto(layerCode+tag+"pT_tc_h"       ,-1*charge*track->getPt()   ,weight);
+    Fill1DHisto(layerCode+tag+"invpT_tc_h"    ,-1*charge/track->getPt()   ,weight);
+    Fill1DHisto(layerCode+tag+"TanLambda_tc_h",track->getTanLambda()   ,weight);
+    Fill1DHisto(layerCode+tag+"Z0_tc_h"       ,track->getZ0()          ,weight);
+    Fill1DHisto(layerCode+tag+"Z0_over_TanLambda_tc_h",track->getZ0()/track->getTanLambda()   ,weight);
+    Fill1DHisto(layerCode+tag+"time_tc_h"     ,track->getTrackTime()-trkTimeOffset   ,weight);
+    Fill1DHisto(layerCode+tag+"chi2_tc_h"     ,track->getChi2()        ,weight);
+    Fill1DHisto(layerCode+tag+"chi2ndf_tc_h"  ,track->getChi2Ndf()     ,weight);
+    Fill1DHisto(layerCode+tag+"nShared_tc_h"  ,track->getNShared()     ,weight);
+    Fill1DHisto(layerCode+tag+"nHits_2d_tc_h" ,n_hits_2d               ,weight);
+  
 
     bool hasLayer4=false;
     for (int ihit=0; ihit<track->getTrackerHitCount();++ihit) {
@@ -178,72 +498,15 @@ void TridentHistos::Fill1DTrack(Track* track, double trkTimeOffset,float weight,
         else
           hasLayer4=true;
       }
-      Fill1DHisto(trkname+"layersHit_h",layer,weight);
-    }
+      Fill1DHisto(trkname+"layersHit_tc_h",layer,weight);
+      Fill1DHisto(tag+"layersHit_tc_h",layer,weight);
+      Fill1DHisto(layerCode+trkname+"layersHit_tc_h",layer,weight);
+      Fill1DHisto(layerCode+tag+"layersHit_tc_h",layer,weight);
 
-
-    //All Tracks
-    Fill1DHisto(trkname+"sharingHits_h",0,weight);
-    if (track->getNShared() == 0)
-        Fill1DHisto(trkname+"sharingHits_h",1.,weight);
-    else {
-        //track has shared hits
-        if (track->getSharedLy0())
-            Fill1DHisto(trkname+"sharingHits_h",2.,weight);
-        if (track->getSharedLy1())
-            Fill1DHisto(trkname+"sharingHits_h",3.,weight);
-        if (track->getSharedLy0() && track->getSharedLy1())
-            Fill1DHisto(trkname+"sharingHits_h",4.,weight);
-        if (!track->getSharedLy0() && !track->getSharedLy1())
-            Fill1DHisto(trkname+"sharingHits_h",5.,weight);
     }
-    /*                
-    if (track -> is345Seed())
-        Fill1DHisto(trkname+"strategy_h",0,weight);
-    if (track-> is456Seed())
-        Fill1DHisto(trkname+"strategy_h",1,weight);
-    if (track-> is123SeedC4())
-        Fill1DHisto(trkname+"strategy_h",2,weight);
-    if (track->is123SeedC5())
-        Fill1DHisto(trkname+"strategy_h",3,weight);
-    if (track->isMatchedTrack())
-        Fill1DHisto(trkname+"strategy_h",4,weight);
-    if (track->isGBLTrack())
-        Fill1DHisto(trkname+"strategy_h",5,weight);
-    */  
-        
-    Fill1DHisto(trkname+"type_h",track->getType(),weight);
+   
 }
 
-void TridentHistos::Fill1DVertex(Vertex* vtx, float weight) {
-    
-    Fill1DHisto("vtx_chi2_h"   ,vtx->getChi2(),weight);
-    Fill1DHisto("vtx_X_h"      ,vtx->getX(),weight);
-    Fill1DHisto("vtx_Y_h"      ,vtx->getY(),weight);
-    Fill1DHisto("vtx_Z_h"      ,vtx->getZ(),weight);
-    
-    TVector3 vtxPosSvt;
-    vtxPosSvt.SetX(vtx->getX());
-    vtxPosSvt.SetY(vtx->getY());
-    vtxPosSvt.SetZ(vtx->getZ());
-    
-    vtxPosSvt.RotateY(-0.0305);
-
-    Fill1DHisto("vtx_X_svt_h",vtxPosSvt.X(),weight);
-    Fill1DHisto("vtx_Y_svt_h",vtxPosSvt.Y(),weight);
-    Fill1DHisto("vtx_Z_svt_h",vtxPosSvt.Z(),weight);
-    
-    // 0 xx 1 xy 2 xz 3 yy 4 yz 5 zz
-    Fill1DHisto("vtx_sigma_X_h",sqrt(vtx->getCovariance()[0]),weight);
-    Fill1DHisto("vtx_sigma_Y_h",sqrt(vtx->getCovariance()[3]),weight);
-    Fill1DHisto("vtx_sigma_Z_h",sqrt(vtx->getCovariance()[5]),weight);
-    Fill1DHisto("vtx_InvM_h"   ,vtx->getInvMass(),weight);
-    Fill1DHisto("vtx_InvMErr_Z_h",vtx->getInvMassErr(),weight);
-    Fill1DHisto("vtx_px_h",vtx->getP().X());
-    Fill1DHisto("vtx_py_h",vtx->getP().Y());
-    Fill1DHisto("vtx_pz_h",vtx->getP().Z());
-    Fill1DHisto("vtx_p_h" ,vtx->getP().Mag());
-}
 
 void TridentHistos::Fill1DHistograms(Track *track, Vertex* vtx, float weight ) {
     
@@ -316,7 +579,7 @@ void TridentHistos::Fill1DTrackTruth(Track *track, Track* truth_track, float wei
 
 
 void TridentHistos::Fill2DHistograms(Vertex* vtx, float weight) {    
-
+  /*
     if (vtx) {
                 
         //TODO Improve this.
@@ -332,14 +595,16 @@ void TridentHistos::Fill2DHistograms(Vertex* vtx, float weight) {
         
         Fill2DHisto("vtx_InvM_vtx_z_hh",vtx->getInvMass(),vtx->getZ(),weight);
         Fill2DHisto("vtx_InvM_vtx_svt_z_hh",vtx->getInvMass(),vtxPosSvt.Z(),weight);
-        Fill2DHisto("vtx_p_svt_z_hh",vtxP,vtxPosSvt.Z(),weight);
-        Fill2DHisto("vtx_p_svt_x_hh",vtxP,vtxPosSvt.X(),weight);
-        Fill2DHisto("vtx_p_svt_y_hh",vtxP,vtxPosSvt.Y(),weight);
+
+        //Fill2DHisto("vtx_p_svt_z_hh",vtxP,vtxPosSvt.Z(),weight);
+	// Fill2DHisto("vtx_p_svt_x_hh",vtxP,vtxPosSvt.X(),weight);
+        //Fill2DHisto("vtx_p_svt_y_hh",vtxP,vtxPosSvt.Y(),weight);
         
-        Fill2DHisto("vtx_p_sigmaZ_hh",vtxP,vtx->getCovariance()[5],weight);
-        Fill2DHisto("vtx_p_sigmaX_hh",vtxP,vtx->getCovariance()[3],weight);
-        Fill2DHisto("vtx_p_sigmaY_hh",vtxP,vtx->getCovariance()[0],weight);
+        //Fill2DHisto("vtx_p_sigmaZ_hh",vtxP,vtx->getCovariance()[5],weight);
+	// Fill2DHisto("vtx_p_sigmaX_hh",vtxP,vtx->getCovariance()[3],weight);
+        //Fill2DHisto("vtx_p_sigmaY_hh",vtxP,vtx->getCovariance()[0],weight);
     }
+  */
 }
 
 void TridentHistos::FillTrackComparisonHistograms(Track* track_x, Track* track_y, float weight) {
@@ -455,6 +720,20 @@ void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std
   CalCluster posClu=posOrGamma.first; 
   Track posTrk=posOrGamma.second; //these "positrons" may be gammas
   
+  std::string half="top";  
+  if(eleTrk.getTanLambda()<0)
+    half="bot";
+  std::string eleTag=half+"_ele_";
+
+  half="top";
+  if(posTrk.getTanLambda()<0)
+    half="bot";
+  std::string posTag=half+"_pos_";
+
+  /* this does not work, but maybe in new tuple???
+  std::string eleLayerCode="L"+getLayerCodeFromTrack(&eleTrk)+"_";
+  std::string posLayerCode="L"+getLayerCodeFromTrack(&posTrk)+"_";
+  */  
 
   double ele_cluTime=eleClu.getTime()-calTimeOffset;
   double pos_cluTime=posClu.getTime()-calTimeOffset;
@@ -481,36 +760,92 @@ void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std
   double pos_clu_trk_deltaY=pos_cluY-pos_trkY;
 
   //  if(eleClu.getTime()>-300){
-  Fill1DHisto("ele_cl_time_h", eleClu.getTime()-calTimeOffset,weight);
-  Fill1DHisto("ele_cl_ene_h",eleClu.getEnergy(),weight);
-  Fill1DHisto("ele_clu_trk_deltaX_h",ele_clu_trk_deltaX,weight);
-  Fill1DHisto("ele_clu_trk_deltaY_h",ele_clu_trk_deltaY,weight);
+  Fill1DHisto("ele_cl_time_tc_h", eleClu.getTime()-calTimeOffset,weight);
+  Fill1DHisto("ele_cl_ene_tc_h",eleClu.getEnergy(),weight);
+  Fill1DHisto("ele_clu_trk_deltaX_tc_h",ele_clu_trk_deltaX,weight);
+  Fill1DHisto("ele_clu_trk_deltaY_tc_h",ele_clu_trk_deltaY,weight);
 
-  Fill2DHisto("ele_clu_trk_deltaX_vs_cluX_hh",ele_cluX,ele_clu_trk_deltaX,weight);
-  Fill2DHisto("ele_clu_trk_deltaY_vs_cluX_hh",ele_cluX,ele_clu_trk_deltaY,weight);
-  Fill2DHisto("ele_cluY_vs_cluX_hh",ele_cluX,ele_cluY,weight);
+  /*
+  Fill1DHisto(eleLayerCode+"ele_cl_time_tc_h", eleClu.getTime()-calTimeOffset,weight);
+  Fill1DHisto(eleLayerCode+"ele_cl_ene_tc_h",eleClu.getEnergy(),weight);
+  Fill1DHisto(eleLayerCode+"ele_clu_trk_deltaX_tc_h",ele_clu_trk_deltaX,weight);
+  Fill1DHisto(eleLayerCode+"ele_clu_trk_deltaY_tc_h",ele_clu_trk_deltaY,weight);
+  */
+  Fill2DHisto("ele_clu_trk_deltaX_vs_cluX_hc_hh",ele_cluX,ele_clu_trk_deltaX,weight);
+  Fill2DHisto("ele_clu_trk_deltaY_vs_cluX_hc_hh",ele_cluX,ele_clu_trk_deltaY,weight);
+  Fill2DHisto("ele_cluY_vs_cluX_hc_hh",ele_cluX,ele_cluY,weight);
+
+  Fill1DHisto(eleTag+"cl_time_tc_h", eleClu.getTime()-calTimeOffset,weight);
+  Fill1DHisto(eleTag+"cl_ene_tc_h",eleClu.getEnergy(),weight);
+  Fill1DHisto(eleTag+"clu_trk_deltaX_tc_h",ele_clu_trk_deltaX,weight);
+  Fill1DHisto(eleTag+"clu_trk_deltaY_tc_h",ele_clu_trk_deltaY,weight);
+  /*
+  Fill1DHisto(eleLayerCode+eleTag+"cl_time_tc_h", eleClu.getTime()-calTimeOffset,weight);
+  Fill1DHisto(eleLayerCode+eleTag+"cl_ene_tc_h",eleClu.getEnergy(),weight);
+  Fill1DHisto(eleLayerCode+eleTag+"clu_trk_deltaX_tc_h",ele_clu_trk_deltaX,weight);
+  Fill1DHisto(eleLayerCode+eleTag+"clu_trk_deltaY_tc_h",ele_clu_trk_deltaY,weight);
+  */
+  Fill2DHisto(eleTag+"clu_trk_deltaX_vs_cluX_hc_hh",ele_cluX,ele_clu_trk_deltaX,weight);
+  Fill2DHisto(eleTag+"clu_trk_deltaY_vs_cluX_hc_hh",ele_cluX,ele_clu_trk_deltaY,weight);
+  Fill2DHisto(eleTag+"cluY_vs_cluX_hc_hh",ele_cluX,ele_cluY,weight);
 
   double pele=sqrt(eleTrk.getMomentum()[0]*eleTrk.getMomentum()[0]+
                    eleTrk.getMomentum()[1]*eleTrk.getMomentum()[1]+
                    eleTrk.getMomentum()[2]*eleTrk.getMomentum()[2]);
-  Fill1DHisto("ele_cltrk_time_diff_h", eleClu.getTime()-calTimeOffset-eleTrk.getTrackTime()+trkTimeOffset,weight);
-  Fill1DHisto("ele_EOverp_h",eleClu.getEnergy()/pele,weight);
-  Fill2DHisto("ele_EOverp_vs_cluX_hh",ele_cluX,eleClu.getEnergy()/pele,weight);
-  
-  Fill1DHisto("pos_cl_time_h", posClu.getTime()-calTimeOffset,weight);
-  Fill1DHisto("pos_cl_ene_h",posClu.getEnergy(),weight);
-  Fill1DHisto("pos_clu_trk_deltaX_h",pos_clu_trk_deltaX,weight);
-  Fill1DHisto("pos_clu_trk_deltaY_h",pos_clu_trk_deltaY,weight);
-  Fill1DHisto("pos_cltrk_time_diff_h", posClu.getTime()-calTimeOffset-posTrk.getTrackTime()+trkTimeOffset,weight);
+  Fill1DHisto("ele_cltrk_time_diff_tc_h", eleClu.getTime()-calTimeOffset-eleTrk.getTrackTime()+trkTimeOffset,weight);
+  Fill1DHisto("ele_EOverp_tc_h",eleClu.getEnergy()/pele,weight);
+  Fill2DHisto("ele_EOverp_vs_cluX_hc_hh",ele_cluX,eleClu.getEnergy()/pele,weight);
+  /*  
+  Fill1DHisto(eleLayerCode+"ele_cltrk_time_diff_tc_h", eleClu.getTime()-calTimeOffset-eleTrk.getTrackTime()+trkTimeOffset,weight);
+  Fill1DHisto(eleLayerCode+"ele_EOverp_tc_h",eleClu.getEnergy()/pele,weight);
+  */
+  Fill1DHisto(eleTag+"cltrk_time_diff_tc_h", eleClu.getTime()-calTimeOffset-eleTrk.getTrackTime()+trkTimeOffset,weight);
+  Fill1DHisto(eleTag+"EOverp_tc_h",eleClu.getEnergy()/pele,weight);
+  Fill2DHisto(eleTag+"EOverp_vs_cluX_hc_hh",ele_cluX,eleClu.getEnergy()/pele,weight);
+  /*
+  Fill1DHisto(eleLayerCode+eleTag+"cltrk_time_diff_tc_h", eleClu.getTime()-calTimeOffset-eleTrk.getTrackTime()+trkTimeOffset,weight);
+  Fill1DHisto(eleLayerCode+eleTag+"EOverp_tc_h",eleClu.getEnergy()/pele,weight);
+  */
+  Fill1DHisto("pos_cl_time_tc_h", posClu.getTime()-calTimeOffset,weight);
+  Fill1DHisto("pos_cl_ene_tc_h",posClu.getEnergy(),weight);
+  Fill1DHisto("pos_clu_trk_deltaX_tc_h",pos_clu_trk_deltaX,weight);
+  Fill1DHisto("pos_clu_trk_deltaY_tc_h",pos_clu_trk_deltaY,weight);
+  Fill1DHisto("pos_cltrk_time_diff_tc_h", posClu.getTime()-calTimeOffset-posTrk.getTrackTime()+trkTimeOffset,weight);
+
+  Fill1DHisto(posTag+"cl_time_tc_h", posClu.getTime()-calTimeOffset,weight);
+  Fill1DHisto(posTag+"cl_ene_tc_h",posClu.getEnergy(),weight);
+  Fill1DHisto(posTag+"clu_trk_deltaX_tc_h",pos_clu_trk_deltaX,weight);
+  Fill1DHisto(posTag+"clu_trk_deltaY_tc_h",pos_clu_trk_deltaY,weight);
+  Fill1DHisto(posTag+"cltrk_time_diff_tc_h", posClu.getTime()-calTimeOffset-posTrk.getTrackTime()+trkTimeOffset,weight);
+  /*
+  Fill1DHisto(posLayerCode+"pos_cl_time_tc_h", posClu.getTime()-calTimeOffset,weight);
+  Fill1DHisto(posLayerCode+"pos_cl_ene_tc_h",posClu.getEnergy(),weight);
+  Fill1DHisto(posLayerCode+"pos_clu_trk_deltaX_tc_h",pos_clu_trk_deltaX,weight);
+  Fill1DHisto(posLayerCode+"pos_clu_trk_deltaY_tc_h",pos_clu_trk_deltaY,weight);
+  Fill1DHisto(posLayerCode+"pos_cltrk_time_diff_tc_h", posClu.getTime()-calTimeOffset-posTrk.getTrackTime()+trkTimeOffset,weight);
+
+  Fill1DHisto(posLayerCode+posTag+"cl_time_tc_h", posClu.getTime()-calTimeOffset,weight);
+  Fill1DHisto(posLayerCode+posTag+"cl_ene_tc_h",posClu.getEnergy(),weight);
+  Fill1DHisto(posLayerCode+posTag+"clu_trk_deltaX_tc_h",pos_clu_trk_deltaX,weight);
+  Fill1DHisto(posLayerCode+posTag+"clu_trk_deltaY_tc_h",pos_clu_trk_deltaY,weight);
+  Fill1DHisto(posLayerCode+posTag+"cltrk_time_diff_tc_h", posClu.getTime()-calTimeOffset-posTrk.getTrackTime()+trkTimeOffset,weight);
+  */
   double ppos=sqrt(posTrk.getMomentum()[0]*posTrk.getMomentum()[0]+
 		     posTrk.getMomentum()[1]*posTrk.getMomentum()[1]+
 		     posTrk.getMomentum()[2]*posTrk.getMomentum()[2]);
-  Fill1DHisto("pos_EOverp_h",posClu.getEnergy()/ppos,weight);
-  Fill2DHisto("pos_EOverp_vs_cluX_hh",pos_cluX,posClu.getEnergy()/ppos,weight);
-  Fill2DHisto("pos_cluY_vs_cluX_hh",pos_cluX,pos_cluY,weight);
-  Fill2DHisto("pos_clu_trk_deltaX_vs_cluX_hh",pos_cluX,pos_clu_trk_deltaX,weight);
-  Fill2DHisto("pos_clu_trk_deltaY_vs_cluX_hh",pos_cluX,pos_clu_trk_deltaY,weight);
+  Fill1DHisto("pos_EOverp_tc_h",posClu.getEnergy()/ppos,weight);
+  //  Fill1DHisto(posLayerCode+"pos_EOverp_tc_h",posClu.getEnergy()/ppos,weight);
+  Fill2DHisto("pos_EOverp_vs_cluX_hc_hh",pos_cluX,posClu.getEnergy()/ppos,weight);
+  Fill2DHisto("pos_cluY_vs_cluX_hc_hh",pos_cluX,pos_cluY,weight);
+  Fill2DHisto("pos_clu_trk_deltaX_vs_cluX_hc_hh",pos_cluX,pos_clu_trk_deltaX,weight);
+  Fill2DHisto("pos_clu_trk_deltaY_vs_cluX_hc_hh",pos_cluX,pos_clu_trk_deltaY,weight);
 
+  Fill1DHisto(posTag+"EOverp_tc_h",posClu.getEnergy()/ppos,weight);
+  //  Fill1DHisto(posLayerCode+posTag+"EOverp_tc_h",posClu.getEnergy()/ppos,weight);
+  Fill2DHisto(posTag+"EOverp_vs_cluX_hc_hh",pos_cluX,posClu.getEnergy()/ppos,weight);
+  Fill2DHisto(posTag+"cluY_vs_cluX_hc_hh",pos_cluX,pos_cluY,weight);
+  Fill2DHisto(posTag+"clu_trk_deltaX_vs_cluX_hc_hh",pos_cluX,pos_clu_trk_deltaX,weight);
+  Fill2DHisto(posTag+"clu_trk_deltaY_vs_cluX_hc_hh",pos_cluX,pos_clu_trk_deltaY,weight);
   //find the closest cluster that makes sense
   double minDistX=99999; 
   double minDistY=99999; 
@@ -571,19 +906,46 @@ void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std
     double clY=ele_myBestClu->getPosition().at(1);
     double clE=ele_myBestClu->getEnergy();
     double clTime=ele_myBestClu->getTime()-calTimeOffset;;
-    if(clTime!= ele_cluTime){
+    //    if(clTime!= ele_cluTime){
+    if(clTime!= ele_cluTime && !foundOgCluster){ //only plot if there was no match
       //found a different cluster...plot new parameters
       double new_deltaX=clX-ele_trkX; 
       double new_deltaY=clY-ele_trkY; 
-      Fill1DHisto("new_ele_cl_time_h",clTime,weight);
-      Fill1DHisto("new_ele_cl_ene_h",clE,weight);
-      Fill1DHisto("new_ele_clu_trk_deltaX_h",new_deltaX,weight);
-      Fill1DHisto("new_ele_clu_trk_deltaY_h",new_deltaY,weight);
-      Fill1DHisto("new_ele_EOverp_h",clE/pele,weight);
-      Fill2DHisto("new_ele_clu_trk_deltaX_vs_cluX_hh",clX,new_deltaX,weight);
-      Fill2DHisto("new_ele_clu_trk_deltaY_vs_cluX_hh",clX,new_deltaY,weight);      
-      Fill2DHisto("new_ele_EOverp_vs_cluX_hh",clX,clE/pele,weight);
-      Fill2DHisto("new_ele_cluY_vs_cluX_hh",clX,clY,weight);
+      Fill1DHisto("ele_new_cl_time_tc_h",clTime,weight);
+      Fill1DHisto("ele_new_cl_ene_tc_h",clE,weight);
+      Fill1DHisto("ele_new_clu_trk_deltaX_tc_h",new_deltaX,weight);
+      Fill1DHisto("ele_new_clu_trk_deltaY_tc_h",new_deltaY,weight);
+      Fill1DHisto("ele_new_EOverp_tc_h",clE/pele,weight);
+      /*
+      Fill1DHisto(eleLayerCode+"ele_new_cl_time_tc_h",clTime,weight);
+      Fill1DHisto(eleLayerCode+"ele_new_cl_ene_tc_h",clE,weight);
+      Fill1DHisto(eleLayerCode+"ele_new_clu_trk_deltaX_tc_h",new_deltaX,weight);
+      Fill1DHisto(eleLayerCode+"ele_new_clu_trk_deltaY_tc_h",new_deltaY,weight);
+      Fill1DHisto(eleLayerCode+"ele_new_EOverp_tc_h",clE/pele,weight);
+      */
+      Fill2DHisto("ele_new_clu_trk_deltaX_vs_cluX_hc_hh",clX,new_deltaX,weight);
+      Fill2DHisto("ele_new_clu_trk_deltaY_vs_cluX_hc_hh",clX,new_deltaY,weight);      
+      Fill2DHisto("ele_new_EOverp_vs_cluX_hc_hh",clX,clE/pele,weight);
+      Fill2DHisto("ele_new_cluY_vs_cluX_hc_hh",clX,clY,weight);
+
+      Fill1DHisto(eleTag+"new_cl_time_tc_h",clTime,weight);
+      Fill1DHisto(eleTag+"new_cl_ene_tc_h",clE,weight);
+      Fill1DHisto(eleTag+"new_clu_trk_deltaX_tc_h",new_deltaX,weight);
+      Fill1DHisto(eleTag+"new_clu_trk_deltaY_tc_h",new_deltaY,weight);
+      Fill1DHisto(eleTag+"new_EOverp_tc_h",clE/pele,weight);
+      /*
+      Fill1DHisto(eleLayerCode+eleTag+"new_cl_time_tc_h",clTime,weight);
+      Fill1DHisto(eleLayerCode+eleTag+"new_cl_ene_tc_h",clE,weight);
+      Fill1DHisto(eleLayerCode+eleTag+"new_clu_trk_deltaX_tc_h",new_deltaX,weight);
+      Fill1DHisto(eleLayerCode+eleTag+"new_clu_trk_deltaY_tc_h",new_deltaY,weight);
+      Fill1DHisto(eleLayerCode+eleTag+"new_EOverp_tc_h",clE/pele,weight);
+      */
+      Fill2DHisto(eleTag+"new_clu_trk_deltaX_vs_cluX_hc_hh",clX,new_deltaX,weight);
+      Fill2DHisto(eleTag+"new_clu_trk_deltaY_vs_cluX_hc_hh",clX,new_deltaY,weight);      
+      Fill2DHisto(eleTag+"new_EOverp_vs_cluX_hc_hh",clX,clE/pele,weight);
+      Fill2DHisto(eleTag+"new_cluY_vs_cluX_hc_hh",clX,clY,weight);
+      
+
     }else{
       foundSameCluster=true;
     }    
@@ -599,8 +961,12 @@ void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std
     clMatchCode=2; 
   else
     clMatchCode=-2; // didn't find cluster match with either old or new algorithm
-  Fill1DHisto("new_ele_cluster_match_code_h",clMatchCode,weight);
-
+  Fill1DHisto("ele_new_cluster_match_code_tc_h",clMatchCode,weight);
+  Fill1DHisto(eleTag+"new_cluster_match_code_tc_h",clMatchCode,weight);
+  /*
+  Fill1DHisto(eleLayerCode+"ele_new_cluster_match_code_tc_h",clMatchCode,weight);
+  Fill1DHisto(eleLayerCode+eleTag+"new_cluster_match_code_tc_h",clMatchCode,weight);
+  */
   
   //////   do new positron cluster stuff
   foundOgCluster=false;
@@ -616,19 +982,45 @@ void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std
     double clY=pos_myBestClu->getPosition().at(1);
     double clE=pos_myBestClu->getEnergy();
     double clTime=pos_myBestClu->getTime()-calTimeOffset;;
-    if(clTime!= pos_cluTime){
+    //    if(clTime!= pos_cluTime){
+    if(clTime!= pos_cluTime&& !foundOgCluster){ //only plot if there was no match
       //found a different cluster...plot new parameters
       double new_deltaX=clX-pos_trkX; 
       double new_deltaY=clY-pos_trkY; 
-      Fill1DHisto("new_pos_cl_time_h",clTime,weight);
-      Fill1DHisto("new_pos_cl_ene_h",clE,weight);
-      Fill1DHisto("new_pos_clu_trk_deltaX_h",new_deltaX,weight);
-      Fill1DHisto("new_pos_clu_trk_deltaY_h",new_deltaY,weight);
-      Fill1DHisto("new_pos_EOverp_h",clE/ppos,weight);
-      Fill2DHisto("new_pos_clu_trk_deltaX_vs_cluX_hh",clX,new_deltaX,weight);
-      Fill2DHisto("new_pos_clu_trk_deltaY_vs_cluX_hh",clX,new_deltaY,weight);
-      Fill2DHisto("new_pos_EOverp_vs_cluX_hh",clX,clE/ppos,weight);
-      Fill2DHisto("new_pos_cluY_vs_cluX_hh",clX,clY,weight);
+      Fill1DHisto("pos_new_cl_time_tc_h",clTime,weight);
+      Fill1DHisto("pos_new_cl_ene_tc_h",clE,weight);
+      Fill1DHisto("pos_new_clu_trk_deltaX_tc_h",new_deltaX,weight);
+      Fill1DHisto("pos_new_clu_trk_deltaY_tc_h",new_deltaY,weight);
+      Fill1DHisto("pos_new_EOverp_tc_h",clE/ppos,weight);
+      /*
+      Fill1DHisto(posLayerCode+"pos_new_cl_time_tc_h",clTime,weight);
+      Fill1DHisto(posLayerCode+"pos_new_cl_ene_tc_h",clE,weight);
+      Fill1DHisto(posLayerCode+"pos_new_clu_trk_deltaX_tc_h",new_deltaX,weight);
+      Fill1DHisto(posLayerCode+"pos_new_clu_trk_deltaY_tc_h",new_deltaY,weight);
+      Fill1DHisto(posLayerCode+"pos_new_EOverp_tc_h",clE/ppos,weight);
+      */
+      Fill2DHisto("pos_new_clu_trk_deltaX_vs_cluX_hc_hh",clX,new_deltaX,weight);
+      Fill2DHisto("pos_new_clu_trk_deltaY_vs_cluX_hc_hh",clX,new_deltaY,weight);
+      Fill2DHisto("pos_new_EOverp_vs_cluX_hc_hh",clX,clE/ppos,weight);
+      Fill2DHisto("pos_new_cluY_vs_cluX_hc_hh",clX,clY,weight);
+
+      Fill1DHisto(posTag+"new_cl_time_tc_h",clTime,weight);
+      Fill1DHisto(posTag+"new_cl_ene_tc_h",clE,weight);
+      Fill1DHisto(posTag+"new_clu_trk_deltaX_tc_h",new_deltaX,weight);
+      Fill1DHisto(posTag+"new_clu_trk_deltaY_tc_h",new_deltaY,weight);
+      Fill1DHisto(posTag+"new_EOverp_tc_h",clE/ppos,weight);
+      /*
+	Fill1DHisto(posLayerCode+posTag+"new_cl_time_tc_h",clTime,weight);
+      Fill1DHisto(posLayerCode+posTag+"new_cl_ene_tc_h",clE,weight);
+      Fill1DHisto(posLayerCode+posTag+"new_clu_trk_deltaX_tc_h",new_deltaX,weight);
+      Fill1DHisto(posLayerCode+posTag+"new_clu_trk_deltaY_tc_h",new_deltaY,weight);
+      Fill1DHisto(posLayerCode+posTag+"new_EOverp_tc_h",clE/ppos,weight);
+      */
+      Fill2DHisto(posTag+"new_clu_trk_deltaX_vs_cluX_hc_hh",clX,new_deltaX,weight);
+      Fill2DHisto(posTag+"new_clu_trk_deltaY_vs_cluX_hc_hh",clX,new_deltaY,weight);
+      Fill2DHisto(posTag+"new_EOverp_vs_cluX_hc_hh",clX,clE/ppos,weight);
+      Fill2DHisto(posTag+"new_cluY_vs_cluX_hc_hh",clX,clY,weight);
+
     }else{
       foundSameCluster=true;
     }    
@@ -644,13 +1036,20 @@ void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std
     clMatchCode=2; 
   else
     clMatchCode=-2; // didn't find cluster match with either old or new algorithm
-  Fill1DHisto("new_pos_cluster_match_code_h",clMatchCode,weight);
+  Fill1DHisto("pos_new_cluster_match_code_tc_h",clMatchCode,weight);
+  Fill1DHisto(posTag+"new_cluster_match_code_tc_h",clMatchCode,weight);
+  //  Fill1DHisto(posLayerCode+"pos_new_cluster_match_code_tc_h",clMatchCode,weight);
+  //  Fill1DHisto(posLayerCode+posTag+"new_cluster_match_code_tc_h",clMatchCode,weight);
+
+  Fill1DHisto("cl_time_diff_vc_h", posClu.getTime()-eleClu.getTime(),weight);    
+  Fill1DHisto("trk_time_diff_vc_h", posTrk.getTrackTime()-eleTrk.getTrackTime(),weight);    
+
+  Fill1DHisto(posTag+"cl_time_diff_vc_h", posClu.getTime()-eleClu.getTime(),weight);    
+  Fill1DHisto(posTag+"trk_time_diff_vc_h", posTrk.getTrackTime()-eleTrk.getTrackTime(),weight);    
 
 
-  Fill1DHisto("cl_time_diff_h", posClu.getTime()-eleClu.getTime(),weight);    
-  Fill1DHisto("trk_time_diff_h", posTrk.getTrackTime()-eleTrk.getTrackTime(),weight);    
-  Fill1DHisto("gamma_cl_time_h", posClu.getTime()-calTimeOffset,weight);
-  Fill1DHisto("gamma_cl_ene_h",posClu.getEnergy(),weight);
+  //  Fill1DHisto("gamma_cl_time_h", posClu.getTime()-calTimeOffset,weight);
+  //Fill1DHisto("gamma_cl_ene_h",posClu.getEnergy(),weight);
 
 }
 /*
@@ -669,4 +1068,181 @@ void TridentHistos::FillWABHistos(std::pair<CalCluster*, Track*> ele, CalCluster
   if(eleClu)
     Fill1DHisto("wab_esum_h",esum,weight); 
   Fill1DHisto("wab_psum_h",psum,weight);   
+}
+
+void TridentHistos::Fill1DVertex(Vertex* vtx, float weight){
+  //kept for now...
+}
+
+
+/*
+ *  overwrite the saveHistos routine to make layer-based directories....
+ */
+
+void TridentHistos::saveHistos(TFile* outF,std::string folder) {
+    if (outF) outF->cd();
+    TDirectory* dir{nullptr};
+    std::cout<<folder.c_str()<<std::endl;
+    if (!folder.empty()) {
+        dir = outF->mkdir(folder.c_str());
+        dir->cd();
+    }
+    
+    std::regex pat;
+  
+    for (it3d it = histos3d.begin(); it!=histos3d.end(); ++it) {
+        if (!it->second){
+            std::cout<<it->first<<" Null ptr in saving.."<<std::endl;
+            continue;
+        }
+	setOutputDir(outF,folder,it->first);      
+        it->second->Write();
+    }
+    for (it2d it = histos2d.begin(); it!=histos2d.end(); ++it) {
+        if (!(it->second)) {
+            std::cout<<it->first<<" Null ptr in saving.."<<std::endl;
+            continue;
+        }
+	setOutputDir(outF,folder,it->first);
+        it->second->Write();
+    }
+
+    for (it1d it = histos1d.begin(); it!=histos1d.end(); ++it) {
+      //      std::cout<<"Saving 1d histo:  "<<it->first<<std::endl;
+      if (!it->second){
+	std::cout<<it->first<<" Null ptr in saving.."<<std::endl;
+	continue;
+      }   
+      setOutputDir(outF,folder,it->first);
+      it->second->Write();
+    }
+
+    //dir->Write();
+    //if (dir) {delete dir; dir=0;}
+
+    Clear();
+
+}
+
+/*
+ *  Figure out if we want this histo in a layer-seperated directory, find layer code, 
+ *  make directory if needed, an cd to appropriate dir
+ */
+void   TridentHistos::setOutputDir(TFile* outF, std::string folder, std::string histoName){
+  std::string fullDirPath=folder;
+  std::string layerCode="";
+  //first, check if this histo was split by both ele/pos layers (e.g. for V0 quantities)
+  std::string dualLayerCode=splitByElePosLayerCombos(histoName);
+  if(dualLayerCode.length()>0)
+    layerCode=dualLayerCode;
+  else
+    layerCode=getLayerCodeFromHistoName(histoName);      
+  if(layerCode.length()>0){
+    std::cout<<"Found a per-layer histo:  "<<histoName<<std::endl;
+    std::cout<<"layer pattern = "<<layerCode<<std::endl;
+    fullDirPath=folder+"/"+layerCode;
+    if(outF->GetDirectory(fullDirPath.c_str())==0){
+      std::cout<<"Making "<<fullDirPath<<std::endl;
+      TDirectory* ldir{nullptr};
+      ldir=outF->mkdir(std::string(fullDirPath).c_str());
+    }
+  }
+  outF->GetDirectory(fullDirPath.c_str())->cd();
+}
+
+
+/*
+ *check if the histo name has a layer code in it; if it does, return the layer code
+ *else return empty string
+ *....the easy way to do this is to use regex but it's broken for GCC 4.8.5??
+ */
+
+std::string TridentHistos::getLayerCodeFromHistoName(std::string histoName){
+  std::string layerCode="";
+  int nLayers=4;
+  int padding=1;//the "L" 
+  for (int i=0; i<histoName.length()-(padding+nLayers); i++)
+    if(isLayerCode(histoName, nLayers,i)){
+      layerCode=histoName.substr(i,padding+nLayers);
+      std::cout<<"found layer code = "<<layerCode<<std::endl;
+      break;
+    }
+  
+  return layerCode;      
+}
+
+bool TridentHistos::isLayerCode(std::string histoName, int nLayers, int ptr ){
+  if(histoName.substr(ptr,1)!="L")//my code starts with capital L
+    return false;
+  for(int i=0; i<nLayers;i++){
+    if(! (histoName.substr(ptr+i+1,1)=="0" ||histoName.substr(ptr+i+1,1)=="1"))
+      return false;    
+  }
+  //if we make it this far, it must be true
+  return true;
+
+}
+
+
+std::string TridentHistos::getLayerCodeFromTrack(Track* trk){
+  std::string s1="0";
+  std::string s2="0"; 
+  std::string s3="0"; 
+  std::string s4="0"; 
+  //  std::cout<<"InnermostLayerCheck::Number of hits on track = "<<trk->getTrackerHitCount()<<std::endl;
+  for (int ihit=0; ihit<trk->getTrackerHitCount();++ihit) {
+    TrackerHit* hit = (TrackerHit*) trk->getSvtHits().At(ihit);
+    RawSvtHit* rhit=(RawSvtHit*)(hit->getRawHits()).At(0);
+    int layer=rhit->getLayer();
+    if(layer == 0 ){
+      std::cout<<"I didn't think you could have layer 0???"<<std::endl;
+    }
+    if (layer == 1 ) {
+      s1="1";
+    }
+    if (layer == 2) {
+      s2="1";
+    }
+    if (layer == 3) {
+      s3="1";
+    }
+    if (layer == 4) {
+      s4="1";
+    }
+  }
+
+  return std::string(s1+s2+s3+s4);
+
+}
+
+/*
+ *   look for the electron/positron layer codes for splitting V0-related quantities
+ *   code should look like  posXXXX_eleXXXX
+ */
+std::string  TridentHistos::splitByElePosLayerCombos(std::string histoName){
+  std::string layerCode="";
+  int nLayers=4;
+  int padding=3;//the "ele" or "pos" 
+  std::string firstSt="pos"; 
+  std::string secSt="ele"; 
+  bool foundFirst=false;
+  for (int i=0; i<histoName.length()-(padding+nLayers); i++){
+    foundFirst=false;
+    layerCode="";
+    if(histoName.substr(i,padding)==firstSt && (histoName.substr(i+padding,1)=="0"||histoName.substr(i+padding,1)=="1")){
+      foundFirst=true; 
+      layerCode=histoName.substr(i,padding+nLayers);
+      std::cout<<"Found first code "<<layerCode<<std::endl;
+    }
+    if(foundFirst){
+      std::cout<<histoName.substr(i+padding+nLayers+1,padding)<<std::endl;
+      if(histoName.substr(i+padding+nLayers+1,padding)==secSt && (histoName.substr(i+2*padding+nLayers+1,1)=="0"||histoName.substr(i+2*padding+nLayers+1,1)=="1")){
+	layerCode+="_"+histoName.substr(i+padding+nLayers+1,padding+nLayers);
+	std::cout<<"Found second code "<<layerCode<<std::endl;	
+	return layerCode;
+      }
+    }
+  }
+  return layerCode;
+  
 }

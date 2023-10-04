@@ -24,8 +24,15 @@ class TridentHistos : public HistoManager {
             
         virtual void Define3DHistos(){};
         virtual void Define2DHistos();
-        
-        void BuildAxes();
+        void DefineHistos();
+	void saveHistos(TFile* outF,std::string folder);
+
+	std::string getLayerCodeFromHistoName(std::string name);
+	bool isLayerCode(std::string histoName, int nLayers, int ptr );
+	void setOutputDir(TFile* outF, std::string folder, std::string histoName);
+	std::string getLayerCodeFromTrack(Track* trk);
+	std::string splitByElePosLayerCombos(std::string histoName); 
+	void BuildAxes();
 
         void Fill1DTrack(Track* track, double trkTimeOffset,float weight = 1., const std::string& trkname = "");
         void Fill2DTrack(Track* track,float weight = 1., const std::string& trkname = "");
