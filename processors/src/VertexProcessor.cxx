@@ -155,6 +155,7 @@ bool VertexProcessor::process(IEvent* ievent) {
             if (lc_part->getTracks().size()>0){
                 EVENT::Track* lc_track = static_cast<EVENT::Track*>(lc_part->getTracks()[0]);
                 Track* track = utils::buildTrack(lc_track,trackStateLocation_,gbl_kink_data,track_data);
+                int nHits = 0;
                 if (bfield_ > 0.0) track->setMomentum(bfield_);
                 if (track->isKalmanTrack()) hitType = 1; //SiClusters
                 EVENT::TrackerHitVec lc_tracker_hits = lc_track->getTrackerHits();
@@ -165,6 +166,7 @@ bool VertexProcessor::process(IEvent* ievent) {
                             raw_svt_hit_fits,&rawSvthitsOn3d,hitType);
 
                     int hitLayer = tracker_hit->getLayer();
+                    nHits++;
                     EVENT::LCObjectVec rawHits = lc_tracker_hit->getRawHits();
                     for(int irawhit = 0; irawhit < rawHits.size(); ++irawhit){
                         IMPL::TrackerHitImpl* rawhit = static_cast<IMPL::TrackerHitImpl*>(rawHits.at(irawhit));
@@ -193,6 +195,7 @@ bool VertexProcessor::process(IEvent* ievent) {
                     rawSvthitsOn3d.clear();
                     // loop on j>i tracks
                 }
+                track->setTrackerHitCount(nHits);
                 part->setTrack(track);
             }
             //=============================================

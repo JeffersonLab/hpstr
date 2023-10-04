@@ -335,6 +335,11 @@ class Track : public TObject {
         bool isBottomTrack() const { return track_volume_ ? true : false; };
 
         /**
+         * Set the number of tracker hits associated with this track.
+         */
+        void setTrackerHitCount(int nHits) { n_hits_ = nHits; };
+
+        /**
          * @return Number of tracker hits associated with this track.
          */
         int getTrackerHitCount() const { return n_hits_; };
