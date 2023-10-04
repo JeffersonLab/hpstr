@@ -43,6 +43,9 @@ void VertexAnaProcessor::configure(const ParameterSet& parameters) {
         //region definitions
         regionSelections_ = parameters.getVString("regionDefinitions",regionSelections_);
 
+        //v0 projection fits
+        v0ProjectionFitsCfg_ = parameters.getString("v0ProjectionFitsCfg", v0ProjectionFitsCfg_);
+
         //beamspot positions
         beamPosCfg_ = parameters.getString("beamPosCfg", beamPosCfg_);
         //track time bias corrections
@@ -68,11 +71,18 @@ void VertexAnaProcessor::initialize(TTree* tree) {
     _vtx_histos->loadHistoConfig(histoCfg_);
     _vtx_histos->DefineHistos();
 
-    if(!isData_){
+    if(!isData_ && mc_reg_on_){
         _mc_vtx_histos = std::make_shared<MCAnaHistos>(anaName_+"_mc_"+"vtxSelection");
         _mc_vtx_histos->loadHistoConfig(mcHistoCfg_);
         _mc_vtx_histos->DefineHistos();
         _mc_vtx_histos->Define2DHistos();
+    }
+
+    //Load Run Dependent V0 target projection fits from json
+    if(!v0ProjectionFitsCfg_.empty()){
+        std::ifstream v0proj_file(v0ProjectionFitsCfg_);
+        v0proj_file >> v0proj_fits_;
+        v0proj_file.close();
     }
 
     //Run Dependent Corrections
@@ -102,7 +112,8 @@ void VertexAnaProcessor::initialize(TTree* tree) {
         _reg_vtx_histos[regname]->DefineHistos();
 
 
-        if(!isData_){
+        bool mc_reg_on_ = false;
+        if(!isData_ && mc_reg_on_){
             _reg_mc_vtx_histos[regname] = std::make_shared<MCAnaHistos>(anaName_+"_mc_"+regname);
             _reg_mc_vtx_histos[regname]->loadHistoConfig(mcHistoCfg_);
             _reg_mc_vtx_histos[regname]->DefineHistos();
@@ -130,6 +141,11 @@ void VertexAnaProcessor::initialize(TTree* tree) {
             _reg_tuples[regname]->addVariable("unc_vtx_cyx");
             _reg_tuples[regname]->addVariable("unc_vtx_czy");
             _reg_tuples[regname]->addVariable("unc_vtx_czx");
+            _reg_tuples[regname]->addVariable("unc_vtx_proj_x");
+            _reg_tuples[regname]->addVariable("unc_vtx_proj_y");
+            _reg_tuples[regname]->addVariable("unc_vtx_proj_x_sig");
+            _reg_tuples[regname]->addVariable("unc_vtx_proj_y_sig");
+            _reg_tuples[regname]->addVariable("unc_vtx_proj_sig");
 
             //track vars
             _reg_tuples[regname]->addVariable("unc_vtx_ele_track_p");
@@ -218,7 +234,7 @@ void VertexAnaProcessor::initialize(TTree* tree) {
     tree_->SetBranchAddress("EventHeader", &evth_ , &bevth_);
     if (brMap_.find(tsColl_.c_str()) != brMap_.end()) tree_->SetBranchAddress(tsColl_.c_str(), &ts_ , &bts_);
     tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_ , &bvtxs_);
-    tree_->SetBranchAddress(hitColl_.c_str(), &hits_   , &bhits_);
+    if (brMap_.find(hitColl_.c_str()) != brMap_.end()) tree_->SetBranchAddress(hitColl_.c_str(), &hits_ , &bhits_);
     tree_->SetBranchAddress(ecalColl_.c_str(), &ecal_  , &becal_);
     if(!isData_ && !mcColl_.empty()) tree_->SetBranchAddress(mcColl_.c_str() , &mcParts_, &bmcParts_);
     //If track collection name is empty take the tracks from the particles. TODO:: change this
@@ -293,7 +309,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             }
         }
 
-        if (!isData_) _mc_vtx_histos->FillMCParticles(mcParts_, analysis_);
+        if (!isData_ && mc_reg_on_) _mc_vtx_histos->FillMCParticles(mcParts_, analysis_);
     }
     //Store processed number of events
     std::vector<Vertex*> selected_vtxs;
@@ -913,7 +929,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             {
 
                 //Fill MC plots after all selections
-                if (!isData_) _reg_mc_vtx_histos[region]->FillMCParticles(mcParts_, analysis_);
+                if (!isData_ && mc_reg_on_) _reg_mc_vtx_histos[region]->FillMCParticles(mcParts_, analysis_);
 
                 //Build map of hits and the associated MC part ids for later
                 TRefArray ele_trk_hits = ele_trk_gbl->getSvtHits();
@@ -1200,6 +1216,22 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             double ele_trk_z0err = ele_trk_gbl->getZ0Err();
             double pos_trk_z0 = pos_trk_gbl->getZ0();
             double pos_trk_z0err = pos_trk_gbl->getZ0Err();
+
+            //Project vertex to target
+            double vtx_proj_x = -999.9;
+            double vtx_proj_y = -999.9;
+            double vtx_proj_x_sig = -999.9;
+            double vtx_proj_y_sig = -999.9;
+            double vtx_proj_sig = -999.9;
+            if(!v0ProjectionFitsCfg_.empty())
+                vtx_proj_sig = utils::v0_projection_to_target_significance(v0proj_fits_, evth_->getRunNumber(), 
+                        vtx_proj_x, vtx_proj_y, vtx_proj_x_sig, vtx_proj_y_sig, vtx->getX(), vtx->getY(),
+                        reconz, vtx->getP().X(), vtx->getP().Y(), vtx->getP().Z());
+
+            _reg_vtx_histos[region]->Fill2DHisto("unc_vtx_x_v_unc_vtx_y_hh", vtx->getX(), vtx->getY());
+            _reg_vtx_histos[region]->Fill2DHisto("unc_vtx_proj_x_v_unc_vtx_proj_y_hh", vtx_proj_x, vtx_proj_y);
+            _reg_vtx_histos[region]->Fill2DHisto("unc_vtx_proj_x_y_significance_hh", vtx_proj_x_sig, vtx_proj_y_sig);
+            _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_vtx_proj_significance_hh", vtx_proj_sig, reconz);
             _reg_vtx_histos[region]->Fill2DHisto("vtx_track_reconz_v_Z0err_hh", ele_trk_z0err, reconz);
             _reg_vtx_histos[region]->Fill2DHisto("vtx_track_reconz_v_Z0err_hh", pos_trk_z0err, reconz);
             _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_z0_hh", ele_trk_z0, reconz);
@@ -1288,6 +1320,11 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 _reg_tuples[region]->setVariableValue("unc_vtx_cyx", cyx);
                 _reg_tuples[region]->setVariableValue("unc_vtx_czy", czy);
                 _reg_tuples[region]->setVariableValue("unc_vtx_czx", czx);
+                _reg_tuples[region]->setVariableValue("unc_vtx_proj_x", vtx_proj_x);
+                _reg_tuples[region]->setVariableValue("unc_vtx_proj_y", vtx_proj_y);
+                _reg_tuples[region]->setVariableValue("unc_vtx_proj_x_sig", vtx_proj_x_sig);
+                _reg_tuples[region]->setVariableValue("unc_vtx_proj_y_sig", vtx_proj_y_sig);
+                _reg_tuples[region]->setVariableValue("unc_vtx_proj_sig", vtx_proj_sig);
 
                 //track vars
                 _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_p", ele_trk_gbl->getP());
@@ -1363,7 +1400,7 @@ void VertexAnaProcessor::finalize() {
     vtxSelector->getCutFlowHisto()->Write();
 
     outF_->cd();
-    if(!isData_)
+    if(!isData_ && mc_reg_on_)
         _mc_vtx_histos->saveHistos(outF_, _mc_vtx_histos->getName());
     //delete histos;
     //histos = nullptr;
@@ -1380,7 +1417,7 @@ void VertexAnaProcessor::finalize() {
 
     }
 
-    if(!isData_){
+    if(!isData_ && mc_reg_on_){
         for (reg_mc_it it = _reg_mc_vtx_histos.begin(); it!=_reg_mc_vtx_histos.end(); ++it) {
             std::string dirName = anaName_+"_mc_"+it->first;
             (it->second)->saveHistos(outF_,dirName);

@@ -28,6 +28,7 @@ void VertexProcessor::configure(const ParameterSet& parameters) {
         hitFitsCollLcio_   = parameters.getString("hitFitsCollLcio", hitFitsCollLcio_);
         trkhitCollRoot_    = parameters.getString("trkhitCollRoot",trkhitCollRoot_);
         rawhitCollRoot_    = parameters.getString("rawhitCollRoot",rawhitCollRoot_);
+        mcPartRelLcio_     = parameters.getString("mcPartRelLcio", mcPartRelLcio_);
         bfield_            = parameters.getDouble("bfield",bfield_);
     }
     catch (std::runtime_error& error)
@@ -71,6 +72,7 @@ bool VertexProcessor::process(IEvent* ievent) {
     parts_.clear();
 
     Event* event = static_cast<Event*> (ievent);
+    UTIL::LCRelationNavigator* mcPartRel_nav;
 
     // Get the collection of vertices from the LCIO event. If no such collection 
     // exist, a DataNotAvailableException is thrown
@@ -107,7 +109,6 @@ bool VertexProcessor::process(IEvent* ievent) {
 
     }
 
-
     bool rotateHits = true;
     int hitType = 0;
     EVENT::LCCollection* raw_svt_hit_fits = nullptr;
@@ -120,6 +121,19 @@ bool VertexProcessor::process(IEvent* ievent) {
     {
         raw_svt_hit_fits = event->getLCCollection(hitFitsCollLcio_.c_str());
     }
+    //Check to see if MC Particles are in the file
+    it = std::find (evColls->begin(), evColls->end(), mcPartRelLcio_.c_str());
+    bool hasMCParts = true;
+    EVENT::LCCollection* mcPartRel;
+    if(it == evColls->end()) hasMCParts = false;
+    if(hasMCParts)
+    {
+        mcPartRel = event->getLCCollection(mcPartRelLcio_.c_str());
+        // Heap an LCRelation navigator which will allow faster access 
+        mcPartRel_nav = new UTIL::LCRelationNavigator(mcPartRel);
+
+    }
+
 
     if (debug_ > 0) std::cout << "VertexProcessor: Converting Verteces" << std::endl;
     for (int ivtx = 0 ; ivtx < lc_vtxs->getNumberOfElements(); ++ivtx) 
@@ -140,7 +154,7 @@ bool VertexProcessor::process(IEvent* ievent) {
             //=============================================
             if (lc_part->getTracks().size()>0){
                 EVENT::Track* lc_track = static_cast<EVENT::Track*>(lc_part->getTracks()[0]);
-                Track* track = utils::buildTrack(lc_track,"",gbl_kink_data,track_data);
+                Track* track = utils::buildTrack(lc_track,trackStateLocation_,gbl_kink_data,track_data);
                 if (bfield_ > 0.0) track->setMomentum(bfield_);
                 if (track->isKalmanTrack()) hitType = 1; //SiClusters
                 EVENT::TrackerHitVec lc_tracker_hits = lc_track->getTrackerHits();
@@ -149,12 +163,32 @@ bool VertexProcessor::process(IEvent* ievent) {
                     std::vector<RawSvtHit*> rawSvthitsOn3d;
                     utils::addRawInfoTo3dHit(tracker_hit,static_cast<IMPL::TrackerHitImpl*>(lc_tracker_hit),
                             raw_svt_hit_fits,&rawSvthitsOn3d,hitType);
-                    for (auto rhit : rawSvthitsOn3d)
-                        rawhits_.push_back(rhit);
-                    //rawhits_->addHit(rhit);
 
-                    track->addHit(tracker_hit);
-                    track->addHitLayer(tracker_hit->getLayer());
+                    int hitLayer = tracker_hit->getLayer();
+                    EVENT::LCObjectVec rawHits = lc_tracker_hit->getRawHits();
+                    for(int irawhit = 0; irawhit < rawHits.size(); ++irawhit){
+                        IMPL::TrackerHitImpl* rawhit = static_cast<IMPL::TrackerHitImpl*>(rawHits.at(irawhit));
+                        if(debug_ > 0)
+                            std::cout << "rawhit on track has lcio id: " << rawhit->id() << std::endl;
+
+                        // Get the list of fit params associated with the raw tracker hit
+                        EVENT::LCObjectVec lc_simtrackerhits = mcPartRel_nav->getRelatedToObjects(rawhit);
+
+                        //Loop over SimTrackerHits to get MCParticles
+                        for(int isimhit = 0; isimhit < lc_simtrackerhits.size(); isimhit++){
+                            IMPL::SimTrackerHitImpl* lc_simhit = static_cast<IMPL::SimTrackerHitImpl*>(lc_simtrackerhits.at(isimhit));
+                            IMPL::MCParticleImpl* lc_mcp = static_cast<IMPL::MCParticleImpl*>(lc_simhit->getMCParticle());
+                            if(lc_mcp == nullptr)
+                                std::cout << "mcp is null" << std::endl;
+                            track->addMcpHit(hitLayer, lc_mcp->id());
+                            if(debug_ > 0) {
+                                std::cout << "simtrackerhit lcio id: " << lc_simhit->id() << std::endl;
+                                std::cout << "mcp lcio id: " << lc_mcp->id() << std::endl;
+                            }
+                        }
+                    }
+
+                    track->addHitLayer(hitLayer);
                     hits_.push_back(tracker_hit);
                     rawSvthitsOn3d.clear();
                     // loop on j>i tracks
@@ -171,6 +205,7 @@ bool VertexProcessor::process(IEvent* ievent) {
         vtxs_.push_back(vtx);
     }
 
+    if(hasMCParts) delete mcPartRel_nav;
     if (debug_ > 0) std::cout << "VertexProcessor: End process" << std::endl;
     return true;
 }

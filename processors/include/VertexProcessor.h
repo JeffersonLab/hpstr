@@ -12,9 +12,13 @@
 //   LCIO   //
 //----------//
 #include <EVENT/LCCollection.h>
+#include <EVENT/TrackerHit.h>
+#include <IMPL/LCGenericObjectImpl.h>
 #include <EVENT/ReconstructedParticle.h>
 #include <IMPL/LCGenericObjectImpl.h>
 #include <UTIL/LCRelationNavigator.h>
+#include <IMPL/MCParticleImpl.h>
+#include <IMPL/SimTrackerHitImpl.h>
 
 //-----------//
 //   hpstr   //
@@ -91,6 +95,7 @@ class VertexProcessor : public Processor {
         std::string kinkRelCollLcio_{"GBLKinkDataRelations"}; //!< description
         std::string trkRelCollLcio_{"TrackDataRelations"}; //!< description
         std::string hitFitsCollLcio_{"SVTFittedRawTrackerHits"};
+        std::string mcPartRelLcio_{"RotatedHelicalTrackMCRelations"};
         std::string trackStateLocation_{""}; //!< select track state for tracks DEFAULT AtIP
 
         double bfield_{-1.}; //!< magnetic field

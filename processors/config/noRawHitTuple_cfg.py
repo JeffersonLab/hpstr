@@ -10,6 +10,9 @@ base.parser.add_argument("-s", "--truthHits", type=int, dest="truthHits",
                          help="Get svt truth hits: 1=yes", metavar="truthHits", default=0)
 base.parser.add_argument("-r", "--rawHits", type=int, dest="rawHits",
         help="Keep raw svt hits: 1=yes", metavar="rawHits", default=0)
+base.parser.add_argument("-TS", "--trackstate", type=str, dest="trackstate",
+                                 help="Specify Track State | 'AtECal' or 'AtTarget'. Default is origin (AtIP)", metavar="trackstate", default="AtTarget")
+
 
 options = base.parser.parse_args()
 
@@ -35,6 +38,7 @@ p.add_library("libprocessors")
 ###############################
 header = HpstrConf.Processor('header', 'EventProcessor')
 vtx = HpstrConf.Processor('vtx', 'VertexProcessor')
+mcpart = HpstrConf.Processor('mcpart', 'MCParticleProcessor')
 
 ###############################
 #   Processor Configuration   #
@@ -56,15 +60,26 @@ vtx.parameters["vtxCollRoot"] = 'UnconstrainedV0Vertices_KF'
 vtx.parameters["partCollRoot"] = 'ParticlesOnUVertices_KF'
 vtx.parameters["kinkRelCollLcio"] = ''
 vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
-vtx.parameters["trkhitCollRoot"] = 'SiClustersOnTrackOnPartOnUVtx'
+vtx.parameters["trkhitCollRoot"] = ''
 vtx.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 vtx.parameters["rawhitCollRoot"] = ''
-vtx.parameters["bfield"] = bfield[str(options.year)]
+vtx.parameters["trackStateLocation"] = options.trackstate
+vtx.parameters["mcPartRelLcio"] = 'SVTTrueHitRelations'
+if options.trackstate == "":
+    vtx.parameters["bfield"] = bfield[str(options.year)]
+
+# MCParticle
+mcpart.parameters["debug"] = 0
+mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
+mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
 
 # Sequence which the processors will run.
 
 sequence = [header, vtx]
+
+if (not options.isData):
+    sequence.append(mcpart)
 
 p.sequence = sequence
 

@@ -4,10 +4,10 @@
         "id"   : 0,
         "info" : "L1L1"
     },
-    "pSum_gt"  : {
-        "cut"  : 1.9,
+    "isRadEle_eq" : {
+        "cut"  : 1,
         "id"   : 1,
-        "info" : "P_{e^{-}} + P_{e^{+}} > 1.9 GeV"
+        "info" : "isRadEle"
     },
     "nVtxs_eq" : {
         "cut"  : 1,

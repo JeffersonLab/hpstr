@@ -99,6 +99,9 @@ class Track : public TObject {
         std::vector<int> getHitLayers() {return hit_layers_;}
         void addHitLayer(int layer) {hit_layers_.push_back(layer);}
         
+        void addMcpHit(int layer, int mcpID) {mcp_hits_.push_back(std::make_pair(layer,mcpID));}
+        std::vector<std::pair<int,int>> getMcpHits() {return mcp_hits_;}
+        
         double getD0Err () const {return sqrt(cov_[0]);}
         double getPhiErr () const {return sqrt(cov_[2]);}
         double getOmegaErr () const {return sqrt(cov_[5]);}
@@ -377,6 +380,9 @@ class Track : public TObject {
 
         /** hit layers */
         std::vector<int> hit_layers_;
+
+        /** truth mcp hits */
+        std::vector<std::pair<int,int>> mcp_hits_;
 
         /** The distance of closest approach to the reference point. */
         double d0_{-999.}; 
