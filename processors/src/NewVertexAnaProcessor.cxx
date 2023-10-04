@@ -846,6 +846,9 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             if (!_reg_vtx_selectors[region]->passCutLt("volPos_bot", p_pos.Py(), weight))
                 continue;
 
+            if (!_reg_vtx_selectors[region]->passCutLt("deltaZ_lt", std::abs((ele_trk->getZ0()/ele_trk->getTanLambda()) - (pos_trk->getZ0()/pos_trk->getTanLambda())), weight))
+                continue;
+
             //If this is MC check if MCParticle matched to the electron track is from rad or recoil
             if(!isData_)
             {
