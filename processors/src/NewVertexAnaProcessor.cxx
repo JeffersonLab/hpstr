@@ -982,6 +982,10 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             Track * ele_trk = (Track*) ele->getTrack().Clone();
             Track * pos_trk = (Track*) pos->getTrack().Clone();
             //Get the shared info - TODO change and improve
+            
+            //Track Time Corrections
+            ele_trk->applyCorrection("track_time",eleTrackTimeBias_);
+            pos_trk->applyCorrection("track_time", posTrackTimeBias_);
 
             //Vertex Covariance
             std::vector<float> vtx_cov = vtx->getCovariance();
