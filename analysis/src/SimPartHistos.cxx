@@ -82,7 +82,7 @@ void SimPartHistos::FillAcceptance(std::vector<MCParticle*> *MCParticles_, std::
 
 void SimPartHistos::FillEfficiency(std::vector<MCParticle*> *MCParticles_, std::vector<Track*> *RecoTracks_, std::vector<MCTrackerHit*> *MCTrackerHits_, std::vector<MCEcalHit*> *MCEcalHits_, std::vector<TrackerHit*> *RecoTrackerClusters_, std::vector<CalCluster*> *RecoEcalClusters_, float weight){
     
-    int nSim_Tracker_hits = MCTrackerHit->size();
+    int nSim_Tracker_hits = MCTrackerHits->size();
     int nSim_Ecal_hits = MCEcalHits_->size(); 
     int nReco_Tracks = RecoTracks_->size();
     int nReco_Tracker_clusters = RecoTrackerClusters_->size();
