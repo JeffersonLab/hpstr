@@ -50,19 +50,19 @@ void SimPartHistos::FillAcceptance(std::vector<MCParticle*> *MCParticles_, std::
 
         if (n_hits >= 14)
             Fill2DHisto("track_phi0_tanlambda_minhits14_hh", phi0, tan_lambda, weight);
-        else if (n_hits >= 13)
+        if (n_hits >= 13)
             Fill2DHisto("track_phi0_tanlambda_minhits13_hh", phi0, tan_lambda, weight);
-        else if (n_hits >= 12)
+        if (n_hits >= 12)
             Fill2DHisto("track_phi0_tanlambda_minhits12_hh", phi0, tan_lambda, weight);
-        else if (n_hits >= 11)
+        if (n_hits >= 11)
             Fill2DHisto("track_phi0_tanlambda_minhits11_hh", phi0, tan_lambda, weight);
-        else if (n_hits >= 10)
+        if (n_hits >= 10)
             Fill2DHisto("track_phi0_tanlambda_minhits10_hh", phi0, tan_lambda, weight);
-        else if (n_hits >= 9)
+        if (n_hits >= 9)
             Fill2DHisto("track_phi0_tanlambda_minhits9_hh", phi0, tan_lambda, weight);
-        else if (n_hits >= 8)
+        if (n_hits >= 8)
             Fill2DHisto("track_phi0_tanlambda_minhits8_hh", phi0, tan_lambda, weight);
-        else if (n_hits >= 7)
+        if (n_hits >= 7)
             Fill2DHisto("track_phi0_tanlambda_minhits7_hh", phi0, tan_lambda, weight);
 
     }
