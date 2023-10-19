@@ -40,7 +40,8 @@ class SimPartHistos : public HistoManager {
          * @param weight 
          */
         void FillAcceptance(std::vector<MCParticle*> *MCParticles_, std::vector<Track*> *RecoTracks_, std::vector<TrackerHit*> *RecoTrackerClusters_, std::vector<CalCluster*> *RecoEcalClusters_, float weight = 1.);
-  
+        void FillEfficiency(std::vector<MCParticle*> *MCParticles_, std::vector<Track*> *RecoTracks_, std::vector<MCTrackerHit*> *MCTrackerHits_, std::vector<MCEcalHit*> *MCEcalHits_, std::vector<TrackerHit*> *RecoTrackerClusters_, std::vector<CalCluster*> *RecoEcalClusters_, float weight = 1.);
+
 };
 
 #endif //SIMPARTHISTOS_H

@@ -70,6 +70,7 @@ void SimPartProcessor::initialize(TTree* tree) {
 bool SimPartProcessor::process(IEvent* ievent) {
 
     histos->FillAcceptance(MCParticles_, RecoTracks_, RecoTrackerClusters_, RecoEcalClusters_);
+    histos->FillEfficiency(MCParticles_, RecoTracks_, MCTrackerHits_, MCECalHits_, RecoTrackerClusters_, RecoEcalClusters_);
 
     return true;
 }
