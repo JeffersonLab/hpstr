@@ -27,11 +27,11 @@
         "xtitle" : "Number of Sim Tracker Hits",
         "ytitle" : "Events"
     },
-    "numRecoTrackerHits_h" : {
+    "numRecoTrackerClusters_h" : {
         "bins"   : 60,
         "minX"   : -0.5,
         "maxX"   : 59.5,
-        "xtitle" : "Number of Reco Tracker Hits",
+        "xtitle" : "Number of Reco Tracker Clusters",
         "ytitle" : "Events"
     },
     "numSimEcalHits_h" : {
@@ -41,11 +41,11 @@
         "xtitle" : "Number of Sim Ecal Hits",
         "ytitle" : "Events"
     },
-    "numRecoEcalHits_h" : {
+    "numRecoEcalClusters_h" : {
         "bins"   : 60,
         "minX"   : -0.5,
         "maxX"   : 59.5,
-        "xtitle" : "Number of Reco Ecal Hits",
+        "xtitle" : "Number of Reco Ecal Clusters",
         "ytitle" : "Events"
     },
     "ele_pxpz_pypz_hh" : {

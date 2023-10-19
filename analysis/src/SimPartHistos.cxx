@@ -81,19 +81,20 @@ void SimPartHistos::FillAcceptance(std::vector<MCParticle*> *MCParticles_, std::
 }
 
 void SimPartHistos::FillEfficiency(std::vector<MCParticle*> *MCParticles_, std::vector<Track*> *RecoTracks_, std::vector<MCTrackerHit*> *MCTrackerHits_, std::vector<MCEcalHit*> *MCEcalHits_, std::vector<TrackerHit*> *RecoTrackerClusters_, std::vector<CalCluster*> *RecoEcalClusters_, float weight){
-    
+    int nParts = MCParticles_->size();
     int nSim_Tracker_hits = MCTrackerHits_->size();
     int nSim_Ecal_hits = MCEcalHits_->size(); 
     int nReco_Tracks = RecoTracks_->size();
     int nReco_Tracker_clusters = RecoTrackerClusters_->size();
     int nReco_Ecal_clusters = RecoEcalClusters_->size(); 
 
-    Fill1DHisto("numRecoTracks_h", (float)nReco_Tracks, weight);
-    Fill1DHisto("numSimTrackerHits_h", (float)nSim_Tracker_hits, weight);
-    Fill1DHisto("numSimEcalHits_h", (float)nSim_Ecal_hits, weight);
-    Fill1DHisto("numRecoTrackerHits_h", (float)nReco_Tracker_clusters, weight);
-    Fill1DHisto("numRecoEcalHits_h", (float)nReco_Ecal_clusters, weight);
-
+    if (nParts>0){
+        Fill1DHisto("numRecoTracks_h", (float)nReco_Tracks, weight);
+        Fill1DHisto("numSimTrackerHits_h", (float)nSim_Tracker_hits, weight);
+        Fill1DHisto("numSimEcalHits_h", (float)nSim_Ecal_hits, weight);
+        Fill1DHisto("numRecoTrackerClusters_h", (float)nReco_Tracker_clusters, weight);
+        Fill1DHisto("numRecoEcalClusters_h", (float)nReco_Ecal_clusters, weight);
+    }
 }
 
 
