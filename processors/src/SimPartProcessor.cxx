@@ -88,7 +88,8 @@ void SimPartProcessor::initialize(TTree* tree) {
         reg_histos_[regname]->loadHistoConfig(histCfgFilename_);
         reg_histos_[regname]->DefineHistos();
 
-        reg_tuples_[regname] = std::make_shared<FlatTupleMaker>(anaName_+"_"+regname+"_tree");
+        //reg_tuples_[regname] = std::make_shared<FlatTupleMaker>(anaName_+"_"+regname+"_tree");
+        reg_tuples_[regname] = new FlatTupleMaker(anaName_+"_"+regname+"_tree");
         reg_tuples_[regname]->addVariable("numMCparts");
         reg_tuples_[regname]->addVariable("numRecoTracks");
         reg_tuples_[regname]->addVariable("numSimTrackerHits");
@@ -130,7 +131,7 @@ void SimPartProcessor::initialize(TTree* tree) {
     else
         std::cout<<"WARNING: No MC tracker hit collection"<<std::endl;
     if ( tree_->FindBranch(MCEcalHitColl_.c_str()))
-        tree_->SetBranchAddress(MCEcalHitColl_.c_str(), &MCECalHits_, &bMCECalHits_);
+        tree_->SetBranchAddress(MCEcalHitColl_.c_str(), &MCEcalHits_, &bMCEcalHits_);
     else
         std::cout<<"WARNING: No MC Ecal hit collection"<<std::endl;
 
@@ -164,7 +165,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
 
     // Event Selection
     if (EventSelector_ && !EventSelector_->passCutGt("n_simpart_gt", nParts, weight))
-        continue;
+        return true;
 
     histos->Fill1DHisto("numMCparts_h", (float)nParts, weight);
     histos->Fill1DHisto("numRecoTracks_h", (float)nReco_Tracks, weight);
@@ -201,7 +202,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
         histos->FillRecoEcalCuster(ecal_cluster, tuples);
     }
 
-    tuple->fill();
+    tuples->fill();
 
     // Regions
     for (auto region : regions_ ) {

@@ -81,14 +81,14 @@ class SimPartProcessor : public Processor {
         TTree* tree_;
         TBranch* bMCParticles_{nullptr}; //!< description
         TBranch* bMCTrackerHits_{nullptr}; //!< description
-        TBranch* bMCECalHits_{nullptr}; //!< description
+        TBranch* bMCEcalHits_{nullptr}; //!< description
         TBranch* bRecoTracks_{nullptr}; //!< description
         TBranch* bRecoTrackerClusters_{nullptr}; //!< description
         TBranch* bRecoEcalClusters_{nullptr}; //!< description
 
         std::vector<MCParticle*>   * MCParticles_{nullptr}; //!< description
         std::vector<MCTrackerHit*> * MCTrackerHits_{nullptr}; //!< description
-        std::vector<MCEcalHit*>    * MCECalHits_{nullptr}; //!< description
+        std::vector<MCEcalHit*>    * MCEcalHits_{nullptr}; //!< description
         std::vector<Track*>   * RecoTracks_{nullptr}; //!< description
         std::vector<TrackerHit*> * RecoTrackerClusters_{nullptr}; //!< description
         std::vector<CalCluster*>    * RecoEcalClusters_{nullptr}; //!< description
@@ -110,7 +110,8 @@ class SimPartProcessor : public Processor {
 
         std::map<std::string, std::shared_ptr<SimPartHistos>> reg_histos_; //!< description
         typedef std::map<std::string, std::shared_ptr<SimPartHistos>>::iterator reg_it; //!< description
-        std::map<std::string, std::shared_ptr<FlatTupleMaker>> reg_tuples_; //!< description
+        //std::map<std::string, std::shared_ptr<FlatTupleMaker>> reg_tuples_; //!< description
+        std::map<std::string, FlatTupleMaker*> reg_tuples_; //!< description
 
         int debug_{0}; //!< Debug Level
 
