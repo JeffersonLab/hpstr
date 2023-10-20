@@ -7,7 +7,7 @@ void SimPartHistos::FillMCParticle(MCParticle* part, FlatTupleMaker* tuples, flo
     double px = momentum_V.at(0);
     double py = momentum_V.at(1);
     double pz = momentum_V.at(2);
-    double p = part->getP();
+    double p = sqrt(px*px + py*py + pz*pz);
     double energy = part->getEnergy();
 
     Fill1DHisto("particle_pdgid_h", pdg, weight);

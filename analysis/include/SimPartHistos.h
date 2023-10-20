@@ -15,6 +15,7 @@
 #include "FlatTupleMaker.h"
 #include <string>
 #include <vector>
+#include <cmath>
 
 /**
  * @brief description
