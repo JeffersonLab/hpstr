@@ -74,7 +74,7 @@ void SimPartHistos::FillRecoTrack(Track* track, FlatTupleMaker* tuples, float we
     tuples->addToVector("track_ecal_y", track_ecal_y);
 }
 
-void SimPartHistos::FillRecoEcalCuster(CalCluster* cluster, FlatTupleMaker* tuples, float weight){
+void SimPartHistos::FillRecoEcalCuster(CalCluster* ecal_cluster, FlatTupleMaker* tuples, float weight){
     std::vector<double> position_V = ecal_cluster->getPosition();
     double cluster_x = position_V.at(0);
     double cluster_y = position_V.at(1);

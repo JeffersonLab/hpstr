@@ -43,7 +43,7 @@ class SimPartHistos : public HistoManager {
          */
         void FillMCParticle(MCParticle* part, FlatTupleMaker* tuples, float weight = 1.);
         void FillRecoTrack(Track* track, FlatTupleMaker* tuples, float weight = 1.);
-        void FillRecoEcalCuster(CalCluster* cluster, FlatTupleMaker* tuples, float weight = 1.);
+        void FillRecoEcalCuster(CalCluster* ecal_cluster, FlatTupleMaker* tuples, float weight = 1.);
 };
 
 #endif //SIMPARTHISTOS_H
