@@ -49,15 +49,15 @@
         "ytitle" : "Events"
     },
     "ele_px_h" : {
-        "bins"   : 100,
-        "minX"   : 0,
+        "bins"   : 200,
+        "minX"   : -10,
         "maxX"   : 10,
         "xtitle" : "ele p_{x}",
         "ytitle" : "Events"
     },
     "ele_py_h" : {
-        "bins"   : 100,
-        "minX"   : 0,
+        "bins"   : 200,
+        "minX"   : -10,
         "maxX"   : 10,
         "xtitle" : "ele p_{y}",
         "ytitle" : "Events"
@@ -91,15 +91,15 @@
         "ytitle" : "Events"
     },
     "track_px_h" : {
-        "bins"   : 100,
-        "minX"   : 0,
+        "bins"   : 200,
+        "minX"   : -10,
         "maxX"   : 10,
         "xtitle" : "Track p_{x}",
         "ytitle" : "Events"
     },
     "track_py_h" : {
-        "bins"   : 100,
-        "minX"   : 0,
+        "bins"   : 200,
+        "minX"   : -10,
         "maxX"   : 10,
         "xtitle" : "Track p_{y}",
         "ytitle" : "Events"
