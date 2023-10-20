@@ -12,6 +12,7 @@
 #include "TrackerHit.h"
 #include "CalCluster.h"
 #include "AnaHelpers.h"
+#include "BaseSelector.h"
 #include "FlatTupleMaker.h"
 
 //ROOT
