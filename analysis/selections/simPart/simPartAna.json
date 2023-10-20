@@ -1,0 +1,7 @@
+{
+    "n_simpart_gt"  : {
+        "cut"  : 1,
+        "id"   : 0,
+        "info" : "N Sim Particles >= 1"
+    }
+}

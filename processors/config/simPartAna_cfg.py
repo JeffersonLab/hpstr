@@ -54,6 +54,22 @@ sim_part_ana.parameters["RecoEcalClusterColl"] = "RecoEcalClusters"
 sim_part_ana.parameters["analysis"] = analysis
 sim_part_ana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/simPart.json'
 
+sim_part_ana.parameters["selectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/simPart/simPartAna.json'
+RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/simPart/"
+sim_part_ana.parameters["regionDefinitions"] = [RegionPath+'noTrack.json',
+                                                RegionPath+'noTrack_Ecal.json',
+                                                RegionPath+'noEcal.json',
+                                                RegionPath+'Track_noEcal.json',
+                                                RegionPath+'Track_nhit7.json',
+                                                RegionPath+'Track_nhit8.json',
+                                                RegionPath+'Track_nhit9.json',
+                                                RegionPath+'Track_nhit10.json',
+                                                RegionPath+'Track_nhit11.json',
+                                                RegionPath+'Track_nhit12.json',
+                                                RegionPath+'Track_nhit13.json',
+                                                RegionPath+'Track_nhit14.json'
+                                           ]
+
 # Sequence which the processors will run.
 p.sequence = [sim_part_ana]
 

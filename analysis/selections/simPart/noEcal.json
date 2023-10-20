@@ -1,0 +1,27 @@
+{
+    "n_track_gt"  : {
+        "cut"  : 0.0,
+        "id"   : 0,
+        "info" : "N Tracks >= 0"
+    },
+    "n_track_lt"  : {
+        "cut"  : 99999.0,
+        "id"   : 0,
+        "info" : "N Tracks <= 99999"
+    },
+    "n_ecal_cluster_gt"  : {
+        "cut"  : 0.0,
+        "id"   : 0,
+        "info" : "N Ecal Clusters >= 0"
+    },
+    "n_ecal_cluster_lt"  : {
+        "cut"  : 0.0,
+        "id"   : 0,
+        "info" : "N Ecal Clusters <= 0"
+    },
+    "n_track_hits_gt"  : {
+        "cut"  : 0.0,
+        "id"   : 0,
+        "info" : "N Reco Track Hits >= 0"
+    }
+}

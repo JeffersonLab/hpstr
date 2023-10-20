@@ -6,13 +6,6 @@
         "xtitle" : "Number of Sim Particles",
         "ytitle" : "Events"
     },
-    "particle_pdgid_h" : {
-        "bins"   : 100,
-        "minX"   : -50,
-        "maxX"   : 50,
-        "xtitle" : "PDG ID of Sim Particles",
-        "ytitle" : "Events"
-    },
     "numRecoTracks_h" : {
         "bins"   : 60,
         "minX"   : -0.5,
@@ -48,6 +41,97 @@
         "xtitle" : "Number of Reco Ecal Clusters",
         "ytitle" : "Events"
     },
+    "particle_pdgid_h" : {
+        "bins"   : 100,
+        "minX"   : -50,
+        "maxX"   : 50,
+        "xtitle" : "PDG ID of Sim Particles",
+        "ytitle" : "Events"
+    },
+    "ele_px_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "ele p_{x}",
+        "ytitle" : "Events"
+    },
+    "ele_py_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "ele p_{y}",
+        "ytitle" : "Events"
+    },
+    "ele_pz_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "ele p_{z}",
+        "ytitle" : "Events"
+    },
+    "ele_p_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "ele p",
+        "ytitle" : "Events"
+    },
+    "ele_energy_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "ele energy",
+        "ytitle" : "Events"
+    },
+    "track_n_hits_h" : {
+        "bins"   : 20,
+        "minX"   : -0.5,
+        "maxX"   : 19.5,
+        "xtitle" : "Track nr. of hits",
+        "ytitle" : "Events"
+    },
+    "track_px_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "Track p_{x}",
+        "ytitle" : "Events"
+    },
+    "track_py_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "Track p_{y}",
+        "ytitle" : "Events"
+    },
+    "track_pz_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "Track p_{z}",
+        "ytitle" : "Events"
+    },
+    "track_p_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "Track p",
+        "ytitle" : "Events"
+    },
+    "ecal_n_hits_h" : {
+        "bins"   : 20,
+        "minX"   : -0.5,
+        "maxX"   : 19.5,
+        "xtitle" : "ECal nr. of hits",
+        "ytitle" : "Events"
+    },
+    "ecal_energy_h" : {
+        "bins"   : 100,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "ECal energy",
+        "ytitle" : "Events"
+    },
     "ele_pxpz_pypz_hh" : {
         "binsX"  : 2000,
         "minX"   : -0.8,
@@ -58,47 +142,7 @@
         "xtitle" : "ele p_{x}/p_{z}",
         "ytitle" : "ele p_{y}/p_{z}"
     },
-    "ele_pxpz_pypz_noTrack_hh" : {
-        "binsX"  : 2000,
-        "minX"   : -0.8,
-        "maxX"   : 0.8,
-        "binsY"  : 500,
-        "minY"   : -0.2,
-        "maxY"   : 0.2,
-        "xtitle" : "ele p_{x}/p_{z}",
-        "ytitle" : "ele p_{y}/p_{z}"
-    },
-    "ele_pxpz_pypz_Track_noECal_hh" : {
-        "binsX"  : 2000,
-        "minX"   : -0.8,
-        "maxX"   : 0.8,
-        "binsY"  : 500,
-        "minY"   : -0.2,
-        "maxY"   : 0.2,
-        "xtitle" : "ele p_{x}/p_{z}",
-        "ytitle" : "ele p_{y}/p_{z}"
-    },
-    "ele_pxpz_pypz_noEcal_hh" : {
-        "binsX"  : 2000,
-        "minX"   : -0.8,
-        "maxX"   : 0.8,
-        "binsY"  : 500,
-        "minY"   : -0.2,
-        "maxY"   : 0.2,
-        "xtitle" : "ele p_{x}/p_{z}",
-        "ytitle" : "ele p_{y}/p_{z}"
-    },
-    "ele_pxpz_pypz_noTrack_ECal_hh" : {
-        "binsX"  : 2000,
-        "minX"   : -0.8,
-        "maxX"   : 0.8,
-        "binsY"  : 500,
-        "minY"   : -0.2,
-        "maxY"   : 0.2,
-        "xtitle" : "ele p_{x}/p_{z}",
-        "ytitle" : "ele p_{y}/p_{z}"
-    },
-    "track_phi0_tanlambda_minhits7_hh" : {
+    "track_phi0_tanlambda_hh" : {
         "binsX"  : 2000,
         "minX"   : -0.2,
         "maxX"   : 0.3,
@@ -108,87 +152,27 @@
         "xtitle" : "Track #{phi}_{0}",
         "ytitle" : "Track tan#{lambda}}"
     },
-    "track_phi0_tanlambda_minhits8_hh" : {
-        "binsX"  : 2000,
-        "minX"   : -0.2,
-        "maxX"   : 0.3,
-        "binsY"  : 500,
-        "minY"   : -0.15,
-        "maxY"   : 0.15,
-        "xtitle" : "Track #{phi}_{0}",
-        "ytitle" : "Track tan#{lambda}}"
-    },
-    "track_phi0_tanlambda_minhits9_hh" : {
-        "binsX"  : 2000,
-        "minX"   : -0.2,
-        "maxX"   : 0.3,
-        "binsY"  : 500,
-        "minY"   : -0.15,
-        "maxY"   : 0.15,
-        "xtitle" : "Track #{phi}_{0}",
-        "ytitle" : "Track tan#{lambda}}"
-    },
-    "track_phi0_tanlambda_minhits10_hh" : {
-        "binsX"  : 2000,
-        "minX"   : -0.2,
-        "maxX"   : 0.3,
-        "binsY"  : 500,
-        "minY"   : -0.15,
-        "maxY"   : 0.15,
-        "xtitle" : "Track #{phi}_{0}",
-        "ytitle" : "Track tan#{lambda}}"
-    },
-    "track_phi0_tanlambda_minhits11_hh" : {
-        "binsX"  : 2000,
-        "minX"   : -0.2,
-        "maxX"   : 0.3,
-        "binsY"  : 500,
-        "minY"   : -0.15,
-        "maxY"   : 0.15,
-        "xtitle" : "Track #{phi}_{0}",
-        "ytitle" : "Track tan#{lambda}}"
-    },
-    "track_phi0_tanlambda_minhits12_hh" : {
-        "binsX"  : 2000,
-        "minX"   : -0.2,
-        "maxX"   : 0.3,
-        "binsY"  : 500,
-        "minY"   : -0.15,
-        "maxY"   : 0.15,
-        "xtitle" : "Track #{phi}_{0}",
-        "ytitle" : "Track tan#{lambda}}"
-    },
-    "track_phi0_tanlambda_minhits13_hh" : {
-        "binsX"  : 2000,
-        "minX"   : -0.2,
-        "maxX"   : 0.3,
-        "binsY"  : 500,
-        "minY"   : -0.15,
-        "maxY"   : 0.15,
-        "xtitle" : "Track #{phi}_{0}",
-        "ytitle" : "Track tan#{lambda}}"
-    },
-    "track_phi0_tanlambda_minhits14_hh" : {
-        "binsX"  : 2000,
-        "minX"   : -0.2,
-        "maxX"   : 0.3,
-        "binsY"  : 500,
-        "minY"   : -0.15,
-        "maxY"   : 0.15,
-        "xtitle" : "Track #{phi}_{0}",
-        "ytitle" : "Track tan#{lambda}}"
-    },
-    "ecal_x_y_hh" : {
+    "track_x_y_hh" : {
         "binsX"  : 2000,
         "minX"   : -340,
         "maxX"   : 420,
         "binsY"  : 500,
         "minY"   : -100,
         "maxY"   : 100,
-        "xtitle" : "Ecal cluster x",
-        "ytitle" : "Ecal cluster y"
+        "xtitle" : "Track x",
+        "ytitle" : "Track y"
     },
-    "ecal_x_y_noTrack_hh" : {
+    "track_ecal_x_y_hh" : {
+        "binsX"  : 2000,
+        "minX"   : -340,
+        "maxX"   : 420,
+        "binsY"  : 500,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Track (at ECal) x",
+        "ytitle" : "Track (at ECal) y"
+    },
+    "ecal_x_y_hh" : {
         "binsX"  : 2000,
         "minX"   : -340,
         "maxX"   : 420,

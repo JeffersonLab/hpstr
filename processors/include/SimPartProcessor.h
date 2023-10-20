@@ -11,6 +11,8 @@
 #include "Track.h"
 #include "TrackerHit.h"
 #include "CalCluster.h"
+#include "AnaHelpers.h"
+#include "FlatTupleMaker.h"
 
 //ROOT
 #include "Processor.h"
@@ -72,6 +74,7 @@ class SimPartProcessor : public Processor {
         /** Containers to hold histogrammer info */
         SimPartHistos* histos{nullptr};
         std::string  histCfgFilename_; //!< description
+        FlatTupleMaker* tuples{nullptr};
 
         /** \todo Change this to be held from HPSEvent */
         TTree* tree_;
@@ -96,8 +99,17 @@ class SimPartProcessor : public Processor {
         std::string RecoTrackColl_{"KalmanFullTracks"}; //!< description
         std::string RecoTrackerClusterColl_{"SiClustersOnTrack"}; //!< description
         std::string RecoEcalClusterColl_{"RecoEcalClusters"}; //!< description
-
         std::string analysis_{"sim_part"}; //!< description
+
+        std::string selectionCfg_;
+        std::shared_ptr<BaseSelector> EventSelector_; //!< description
+        std::vector<std::string> regions_; //!< description
+        std::vector<std::string> regionSelections_; //!< description
+        std::map<std::string, std::shared_ptr<BaseSelector>> reg_selectors_; //!< description
+
+        std::map<std::string, std::shared_ptr<SimPartHistos>> reg_histos_; //!< description
+        typedef std::map<std::string, std::shared_ptr<SimPartHistos>>::iterator reg_it; //!< description
+        std::map<std::string, std::shared_ptr<FlatTupleMaker>> reg_tuples_; //!< description
 
         int debug_{0}; //!< Debug Level
 

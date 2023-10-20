@@ -12,6 +12,7 @@
 #include "Track.h"
 #include "TrackerHit.h"
 #include "CalCluster.h"
+#include "FlatTupleMaker.h"
 #include <string>
 #include <vector>
 
@@ -39,9 +40,9 @@ class SimPartHistos : public HistoManager {
          * @param RecoEcalClusters 
          * @param weight 
          */
-        void FillAcceptance(std::vector<MCParticle*> *MCParticles_, std::vector<Track*> *RecoTracks_, std::vector<TrackerHit*> *RecoTrackerClusters_, std::vector<CalCluster*> *RecoEcalClusters_, float weight = 1.);
-        void FillEfficiency(std::vector<MCParticle*> *MCParticles_, std::vector<Track*> *RecoTracks_, std::vector<MCTrackerHit*> *MCTrackerHits_, std::vector<MCEcalHit*> *MCEcalHits_, std::vector<TrackerHit*> *RecoTrackerClusters_, std::vector<CalCluster*> *RecoEcalClusters_, float weight = 1.);
-
+        void FillMCParticle(MCParticle* part, FlatTupleMaker* tuples, float weight = 1.);
+        void FillRecoTrack(Track* track, FlatTupleMaker* tuples, float weight = 1.);
+        void FillRecoEcalCuster(CalCluster* cluster, FlatTupleMaker* tuples, float weight = 1.);
 };
 
 #endif //SIMPARTHISTOS_H
