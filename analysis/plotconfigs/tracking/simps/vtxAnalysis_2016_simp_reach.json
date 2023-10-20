@@ -21,8 +21,8 @@
     },
     "ele_track_chi2ndf_v_time_hh" : {
         "binsX" : 1600,
-        "minX" : -80,
-        "maxX" : 80,
+        "minX" : -20,
+        "maxX" : 20,
         "xtitle" : "ele track time [ns]",
         "binsY" : 200,
         "minY" : 0,
@@ -61,8 +61,8 @@
     },
     "pos_track_chi2ndf_v_time_hh" : {
         "binsX" : 1600,
-        "minX" : -80,
-        "maxX" : 80,
+        "minX" : -20,
+        "maxX" : 20,
         "xtitle" : "pos track time [ns]",
         "binsY" : 200,
         "minY" : 0,
@@ -105,8 +105,8 @@
         "maxX" : 10.0,
         "xtitle" : "e^{-} E/P",
         "binsY" : 400,
-        "minY" : -20, 
-        "maxY" : 20,
+        "minY" : -10, 
+        "maxY" : 10,
         "ytitle" : "e^{-} Track Cluster #Delta_{t} [ns]"
     },
     "pos_track_cluster_dt_v_EoverP_hh": {
@@ -115,8 +115,8 @@
         "maxX" : 10.0,
         "xtitle" : "e^{+} E/P",
         "binsY" : 400,
-        "minY" : -20, 
-        "maxY" : 20,
+        "minY" : -10, 
+        "maxY" : 10,
         "ytitle" : "e^{+} Track Cluster #Delta_{t} [ns]"
     },
     "ele_cluster_energy_v_track_p_hh": {
@@ -231,22 +231,22 @@
     },
     "ele_clusT_v_ele_trackT_hh": {
         "binsX" : 200,
-        "minX" : -100, 
-        "maxX" : 100,
+        "minX" : -20, 
+        "maxX" : 20,
         "xtitle" : "e^{-} Track time [ns]",
         "binsY" : 200,
-        "minY" : -100, 
-        "maxY" : 100,
+        "minY" : -20, 
+        "maxY" : 20,
         "ytitle" : "e^{-} Cluster time [ns]"
     },
     "pos_clusT_v_pos_trackT_hh": {
         "binsX" : 200,
-        "minX" : -100, 
-        "maxX" : 100,
+        "minX" : -20, 
+        "maxX" : 20,
         "xtitle" : "e^{+} Track time [ns]",
         "binsY" : 200,
-        "minY" : -100, 
-        "maxY" : 100,
+        "minY" : -20, 
+        "maxY" : 20,
         "ytitle" : "e^{+} Cluster time [ns]"
     },
     "ele_pos_clusTimeDiff_v_pSum_hh": {
@@ -261,8 +261,8 @@
     },
     "ele_track_clus_dt_v_track_time_hh": {
         "binsX" : 1600,
-        "minX" : -80, 
-        "maxX" : 80,
+        "minX" : -20, 
+        "maxX" : 20,
         "xtitle" : "e^{-} Track Time [ns]",
         "binsY" : 400,
         "minY" : -20, 
@@ -291,8 +291,8 @@
     },
     "pos_track_clus_dt_v_track_time_hh": {
         "binsX" : 1600,
-        "minX" : -80, 
-        "maxX" : 80,
+        "minX" : -20, 
+        "maxX" : 20,
         "xtitle" : "e^{-} Track Time [ns]",
         "binsY" : 400,
         "minY" : -20, 
@@ -370,15 +370,15 @@
     },
     "ele_track_clus_dt_h": {
         "bins" : 200,
-        "minX" : -100, 
-        "maxX" : 100,
+        "minX" : -20, 
+        "maxX" : 20,
         "xtitle" : "e^{-} Track Cluster #Delta_{t} [ns]",
         "ytitle" : "Events"
     },
     "pos_track_clus_dt_h": {
         "bins" : 200,
-        "minX" : -100, 
-        "maxX" : 100,
+        "minX" : -20, 
+        "maxX" : 20,
         "xtitle" : "e^{+} Track Cluster #Delta_{t} [ns]",
         "ytitle" : "Events"
     },
@@ -574,12 +574,12 @@
         "ytitle" : "Tracks"
     },
     "ele_tanlambda_vs_phi0_hh" : {
-        "binsX"  : 100,
+        "binsX"  : 400,
         "minX"   : -0.4,
         "maxX"   : 0.4,
-        "binsY"  : 100,
-        "minY"   : -0.2,
-        "maxY"   : 0.2,
+        "binsY"  : 300,
+        "minY"   : -0.15,
+        "maxY"   : 0.15,
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk tan(#lambda)"
     },
@@ -617,24 +617,24 @@
         "binsX"  : 250,
         "minX"   : 0,
         "maxX"   : 2.5,
-        "binsY"  : 100,
+        "binsY"  : 500,
         "minY"   : -5,
         "maxY"   : 5,
         "xtitle" : "p_{e^{-}} [GeV]",
         "ytitle" : "trk z0 [mm]"
     },
     "ele_z0_vs_phi0_hh" : {
-        "binsX"  : 100,
+        "binsX"  : 200,
         "minX"   : -0.4,
         "maxX"   : 0.4,
-        "binsY"  : 100,
+        "binsY"  : 500,
         "minY"   : -5,
         "maxY"   : 5,
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk z0 [mm]"
     },
     "ele_z0_vs_tanlambda_hh" : {
-        "binsX"  : 200,
+        "binsX"  : 400,
         "minX"   : -0.2,
         "maxX"   : 0.2,
         "binsY"  : 100,
@@ -644,10 +644,10 @@
         "ytitle" : "trk z0 [mm]"
     },
     "ele_z0_vs_pos_z0_hh" : {
-        "binsX"  : 100,
+        "binsX"  : 500,
         "minX"   : -5.0,
         "maxX"   : 5.0,
-        "binsY"  : 100,
+        "binsY"  : 500,
         "minY"   : -5.0,
         "maxY"   : 5.0,
         "xtitle" : "e^{-} track z0 [mm]",
@@ -782,12 +782,12 @@
         "ytitle" : "Tracks"
     },
     "pos_tanlambda_vs_phi0_hh" : {
-        "binsX"  : 100,
+        "binsX"  : 400,
         "minX"   : -0.4,
         "maxX"   : 0.4,
-        "binsY"  : 100,
-        "minY"   : -0.2,
-        "maxY"   : 0.2,
+        "binsY"  : 300,
+        "minY"   : -0.15,
+        "maxY"   : 0.15,
         "xtitle" : "trk #phi_{0}",
         "ytitle" : "trk tan(#lambda)"
     },

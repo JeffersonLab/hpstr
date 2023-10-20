@@ -44,34 +44,24 @@
         "id"  : 8,
         "info" : "p e^{-}<1.75GeV"
     },
-    "eleMom_gt" : {
-        "cut" : 0.4,
-        "id"  : 9,
-        "info" : "p_e^{-}>0.4 [GeV]"
-    },
-    "posMom_gt" : {
-        "cut" : 0.4,
-        "id"  : 10,
-        "info" : "p_e^{+}>0.4 [GeV]"
-    },
     "eleN2Dhits_gt" : {
         "cut" : 7,
-        "id"  : 11,
+        "id"  : 9,
         "info" : "eleN2Dhits > 7"
     },
     "posN2Dhits_gt" : {
         "cut" : 7,
-        "id"  : 12,
+        "id"  : 10,
         "info" : "posN2Dhits > 7"
     },
     "chi2unc_lt" : {
         "cut"   : 20,
-        "id"    : 13,
+        "id"    : 11,
         "info"  : "#chi^{2}_{unc}<20"
     },
     "maxVtxMom_lt" : {
         "cut" : 2.4,
-        "id"  : 14,
+        "id"  : 12,
         "info" : "maxVtxMom<2.4 [GeV]"
     }
 }

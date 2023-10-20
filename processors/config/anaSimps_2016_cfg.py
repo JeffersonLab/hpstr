@@ -53,6 +53,8 @@ vtxana.parameters["makeFlatTuple"] = options.makeFlatTuple
 vtxana.parameters["beamPosCfg"] = ""
 if options.isData:
     vtxana.parameters["v0ProjectionFitsCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/v0_projection_2016_config.json'
+else:
+    vtxana.parameters["v0ProjectionFitsCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/v0_projection_2016_mc_7800_config.json'
 
 if options.isData:
     vtxana.parameters["eleTrackTimeBias"] = -1.5
