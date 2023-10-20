@@ -280,7 +280,7 @@ void SimPartProcessor::finalize() {
         outF_->cd(dirName.c_str());
         reg_selectors_[it->first]->getCutFlowHisto()->Scale(0.5);
         reg_selectors_[it->first]->getCutFlowHisto()->Write();
-        reg_tuples_[region]->writeTree();
+        reg_tuples_[it->first]->writeTree();
         outF_->cd();
     }
     outF_->Close();
