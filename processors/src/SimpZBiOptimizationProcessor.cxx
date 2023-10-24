@@ -206,17 +206,17 @@ void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos
     histos->Fill2DHisto("recon_z_v_pos_track_nhits_hh",MTT->getValue("unc_vtx_pos_track_nhits"), MTT->getValue("unc_vtx_z"));
 
     //track params vs params
-    histo->Fill2DHisto("ele_tanlambda_vs_phi0_hh",MTT->getValue("unc_vtx_ele_track_phi0"),
+    histos->Fill2DHisto("ele_tanlambda_vs_phi0_hh",MTT->getValue("unc_vtx_ele_track_phi0"),
             MTT->getValue("unc_vtx_ele_track_tanLambda"));
-    histo->Fill2DHisto("pos_tanlambda_vs_phi0_hh",MTT->getValue("unc_vtx_pos_track_phi0"),
+    histos->Fill2DHisto("pos_tanlambda_vs_phi0_hh",MTT->getValue("unc_vtx_pos_track_phi0"),
             MTT->getValue("unc_vtx_pos_track_tanLambda"));
-    histo->Fill2DHisto("ele_cluster_energy_v_track_p_hh",MTT->getValue("unc_vtx_ele_track_p"),
+    histos->Fill2DHisto("ele_cluster_energy_v_track_p_hh",MTT->getValue("unc_vtx_ele_track_p"),
             MTT->getValue("unc_vtx_ele_clust_E"));
-    histo->Fill2DHisto("pos_cluster_energy_v_track_p_hh",MTT->getValue("unc_vtx_pos_track_p"),
+    histos->Fill2DHisto("pos_cluster_energy_v_track_p_hh",MTT->getValue("unc_vtx_pos_track_p"),
             MTT->getValue("unc_vtx_pos_clust_E"));
-    histo->Fill2DHisto("ele_z0_vs_tanlambda_hh",MTT->getValue("unc_vtx_ele_track_tanLambda"),
+    histos->Fill2DHisto("ele_z0_vs_tanlambda_hh",MTT->getValue("unc_vtx_ele_track_tanLambda"),
         MTT->getValue("unc_vtx_ele_track_z0"));
-    histo->Fill2DHisto("pos_z0_vs_tanlambda_hh",MTT->getValue("unc_vtx_pos_track_tanLambda"),
+    histos->Fill2DHisto("pos_z0_vs_tanlambda_hh",MTT->getValue("unc_vtx_pos_track_tanLambda"),
         MTT->getValue("unc_vtx_pos_track_z0"));
 
 }

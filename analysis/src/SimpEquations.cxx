@@ -83,7 +83,7 @@ double SimpEquations::rate_Vcharged_pi(double m_Ap, double m_pi, double m_V,
         double alpha_dark, double f_pi){
     double x = m_pi / m_Ap;
     double y = m_V / m_Ap;
-    double Tv = 3.0/2.0;
+    double Tv = 18.0;
     double coeff = alpha_dark*Tv/(192.*std::pow(M_PI,4));
     return coeff * std::pow((m_Ap/m_pi),2) * std::pow(m_V/m_pi,2) * std::pow((m_pi/f_pi),4) * m_Ap*std::pow(Beta(x,y),3./2.);
 }
@@ -221,12 +221,13 @@ double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho
     double apProduction = (3.*137/2.)*3.14159*(m_Ap*eps*eps*radFrac*dNdm)/radAcc;
 
     //A' -> V+Pi Branching Ratio
-    double br_VPi;
+    double br_VPi = 0.0;
     if(rho)
         br_VPi = br_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark_, f_pi);
     else
         br_VPi = br_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark_, f_pi);
 
+    std::cout << "Branching ratio is " << br_VPi << std::endl;
     //Vector to e+e- BR = 1
     double br_V_ee = 1.0;
 
