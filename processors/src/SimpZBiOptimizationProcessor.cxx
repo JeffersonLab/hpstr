@@ -134,9 +134,10 @@ void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos
     //Impact Parameter
     histos->Fill2DHisto("z0_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_ele_track_z0"));
     histos->Fill2DHisto("z0_v_recon_z_hh",MTT->getValue("unc_vtx_z"),MTT->getValue("unc_vtx_pos_track_z0"));
-    histos->Fill2DHisto("ele_track_z0_v_pos_track_z0_hh",MTT->getValue("unc_vtx_pos_track_z0"),
-            MTT->getValue("unc_vtx_ele_track_z0"));
+
+    //Inv mass
     histos->Fill2DHisto("vtx_InvM_vtx_z_hh",MTT->getValue("unc_vtx_mass")*1000.0, MTT->getValue("unc_vtx_z"));
+    //track z0
     histos->Fill2DHisto("ele_track_z0_v_pos_track_z0_hh", MTT->getValue("unc_vtx_ele_track_z0"), 
             MTT->getValue("unc_vtx_pos_track_z0"));
 
@@ -152,7 +153,7 @@ void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos
 
     //v0 projection
     if(MTT->variableExists("unc_vtx_proj_x")){
-        histos->Fill2DHisto("vtx_proj_x_v_unc_vtx_proj_y_hh", 
+        histos->Fill2DHisto("unc_vtx_proj_x_v_unc_vtx_proj_y_hh", 
             MTT->getValue("unc_vtx_proj_x"), MTT->getValue("unc_vtx_proj_y"));
     }
     if(MTT->variableExists("unc_vtx_proj_x_sig")){
@@ -160,36 +161,19 @@ void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos
             MTT->getValue("unc_vtx_proj_x_sig"), MTT->getValue("unc_vtx_proj_y_sig"));
     }
     if(MTT->variableExists("unc_vtx_proj_sig")){
-        histos->Fill2DHisto("recon_z_v_vtx_proj_significance_hh", 
+        histos->Fill2DHisto("recon_z_v_proj_sig_hh", 
             MTT->getValue("unc_vtx_proj_sig"), MTT->getValue("unc_vtx_z"));
     }
 
-    //isolation cut
-    if(MTT->variableExists("unc_vtx_ele_iso_z0err")){
-        histos->Fill2DHisto("recon_z_v_iso_z0err_hh", MTT->getValue("unc_vtx_ele_iso_z0err"),MTT->getValue("unc_vtx_z"));
-        histos->Fill2DHisto("recon_z_v_iso_z0err_hh", MTT->getValue("unc_vtx_pos_iso_z0err"),MTT->getValue("unc_vtx_z"));
-    }
-    if(MTT->variableExists("unc_vtx_ele_z0_z0err")){
-        histos->Fill2DHisto("recon_z_v_z0_z0err_hh", MTT->getValue("unc_vtx_ele_z0_z0err"),MTT->getValue("unc_vtx_z"));
-        histos->Fill2DHisto("recon_z_v_z0_z0err_hh", MTT->getValue("unc_vtx_pos_z0_z0err"),MTT->getValue("unc_vtx_z"));
-    }
-    if(MTT->variableExists("unc_vtx_ele_z0_z0err")){
-        histos->Fill2DHisto("recon_z_v_z0_z0err_hh", MTT->getValue("unc_vtx_ele_z0_z0err"),MTT->getValue("unc_vtx_z"));
-        histos->Fill2DHisto("recon_z_v_z0_z0err_hh", MTT->getValue("unc_vtx_pos_z0_z0err"),MTT->getValue("unc_vtx_z"));
-    }
-    if(MTT->variableExists("unc_vtx_ele_isolation_cut")){
-        histos->Fill2DHisto("recon_z_v_isolation_cut_hh", 
-                MTT->getValue("unc_vtx_ele_isolation_cut"),MTT->getValue("unc_vtx_z"));
-        histos->Fill2DHisto("recon_z_v_isolation_cut_hh", MTT->getValue("unc_vtx_pos_isolation_cut"),
-                MTT->getValue("unc_vtx_z"));
-    }
-
+    //Vertex Errors
     if(MTT->variableExists("unc_vtx_cxx")){
         histos->Fill2DHisto("recon_z_v_cxx_hh", MTT->getValue("unc_vtx_cxx"),MTT->getValue("unc_vtx_z"));
         histos->Fill2DHisto("recon_z_v_cyy_hh", MTT->getValue("unc_vtx_cyy"),MTT->getValue("unc_vtx_z"));
         histos->Fill2DHisto("recon_z_v_czz_hh", MTT->getValue("unc_vtx_czz"),MTT->getValue("unc_vtx_z"));
+        histos->Fill2DHisto("recon_z_v_czx_hh", MTT->getValue("unc_vtx_czx"),MTT->getValue("unc_vtx_z"));
+        histos->Fill2DHisto("recon_z_v_czy_hh", MTT->getValue("unc_vtx_czy"),MTT->getValue("unc_vtx_z"));
+        histos->Fill2DHisto("recon_z_v_cyx_hh", MTT->getValue("unc_vtx_cyx"),MTT->getValue("unc_vtx_z"));
     }
-
     //Z0TanLambda
     histos->Fill2DHisto("recon_z_v_z0tanlambda_hh", 
             MTT->getValue("unc_vtx_ele_track_z0")/MTT->getValue("unc_vtx_ele_track_tanLambda"),MTT->getValue("unc_vtx_z"));
@@ -198,6 +182,43 @@ void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos
     if(MTT->variableExists("unc_vtx_deltaZ")){
         histos->Fill2DHisto("recon_z_v_unc_vtx_deltaZ_hh", MTT->getValue("unc_vtx_deltaZ"),MTT->getValue("unc_vtx_z"));
     }
+    //z0 error
+    histos->Fill2DHisto("recon_z_v_Z0err_hh", 
+            MTT->getValue("unc_vtx_ele_track_z0Err"),MTT->getValue("unc_vtx_z"));
+    histos->Fill2DHisto("recon_z_v_Z0err_hh", 
+            MTT->getValue("unc_vtx_pos_track_z0Err"),MTT->getValue("unc_vtx_z"));
+    //track time
+    histos->Fill2DHisto("recon_z_v_track_t_hh", MTT->getValue("unc_vtx_ele_track_t"),MTT->getValue("unc_vtx_z"));
+    histos->Fill2DHisto("recon_z_v_track_t_hh", MTT->getValue("unc_vtx_pos_track_t"),MTT->getValue("unc_vtx_z"));
+
+    //Track parameters
+    histos->Fill2DHisto("recon_z_v_ele_track_d0_hh",MTT->getValue("unc_vtx_ele_track_d0"), MTT->getValue("unc_vtx_z"));
+    histos->Fill2DHisto("recon_z_v_pos_track_d0_hh",MTT->getValue("unc_vtx_pos_track_d0"), MTT->getValue("unc_vtx_z"));
+    histos->Fill2DHisto("recon_z_v_ele_track_phi0_hh",MTT->getValue("unc_vtx_ele_track_phi0"), MTT->getValue("unc_vtx_z"));
+    histos->Fill2DHisto("recon_z_v_pos_track_phi0_hh",MTT->getValue("unc_vtx_pos_track_phi0"), MTT->getValue("unc_vtx_z"));
+    histos->Fill2DHisto("recon_z_v_ele_track_px_hh",MTT->getValue("unc_vtx_ele_track_px"), MTT->getValue("unc_vtx_z"));
+    histos->Fill2DHisto("recon_z_v_pos_track_px_hh",MTT->getValue("unc_vtx_pos_track_px"), MTT->getValue("unc_vtx_z"));
+    histos->Fill2DHisto("recon_z_v_ele_track_py_hh",MTT->getValue("unc_vtx_ele_track_py"), MTT->getValue("unc_vtx_z"));
+    histos->Fill2DHisto("recon_z_v_pos_track_py_hh",MTT->getValue("unc_vtx_pos_track_py"), MTT->getValue("unc_vtx_z"));
+    histos->Fill2DHisto("recon_z_v_ele_track_pz_hh",MTT->getValue("unc_vtx_ele_track_pz"), MTT->getValue("unc_vtx_z"));
+    histos->Fill2DHisto("recon_z_v_pos_track_pz_hh",MTT->getValue("unc_vtx_pos_track_pz"), MTT->getValue("unc_vtx_z"));
+    histos->Fill2DHisto("recon_z_v_ele_track_nhits_hh",MTT->getValue("unc_vtx_ele_track_nhits"), MTT->getValue("unc_vtx_z"));
+    histos->Fill2DHisto("recon_z_v_pos_track_nhits_hh",MTT->getValue("unc_vtx_pos_track_nhits"), MTT->getValue("unc_vtx_z"));
+
+    //track params vs params
+    histo->Fill2DHisto("ele_tanlambda_vs_phi0_hh",MTT->getValue("unc_vtx_ele_track_phi0"),
+            MTT->getValue("unc_vtx_ele_track_tanLambda"));
+    histo->Fill2DHisto("pos_tanlambda_vs_phi0_hh",MTT->getValue("unc_vtx_pos_track_phi0"),
+            MTT->getValue("unc_vtx_pos_track_tanLambda"));
+    histo->Fill2DHisto("ele_cluster_energy_v_track_p_hh",MTT->getValue("unc_vtx_ele_track_p"),
+            MTT->getValue("unc_vtx_ele_clust_E"));
+    histo->Fill2DHisto("pos_cluster_energy_v_track_p_hh",MTT->getValue("unc_vtx_pos_track_p"),
+            MTT->getValue("unc_vtx_pos_clust_E"));
+    histo->Fill2DHisto("ele_z0_vs_tanlambda_hh",MTT->getValue("unc_vtx_ele_track_tanLambda"),
+        MTT->getValue("unc_vtx_ele_track_z0"));
+    histo->Fill2DHisto("pos_z0_vs_tanlambda_hh",MTT->getValue("unc_vtx_pos_track_tanLambda"),
+        MTT->getValue("unc_vtx_pos_track_z0"));
+
 }
 
 double SimpZBiOptimizationProcessor::countControlRegionBackgroundRate(std::string inFilename, std::string tree_name, 
