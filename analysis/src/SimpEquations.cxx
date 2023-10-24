@@ -132,20 +132,6 @@ double SimpEquations::br_Vcharged_pi(double m_Ap, double m_pi, double m_V,
     return rate_Vcharged_pi(m_Ap, m_pi, m_V, alpha_dark,f_pi)/total_rate;
 }
 
-//Delete me
-double SimpEquations::rate_Vpi(double m_Ap, double m_pi, double m_V, double alpha_dark, double f_pi, bool rho, bool phi){
-    double x = m_pi/m_Ap;
-    double y = m_V/m_Ap;
-    double coeff = alpha_dark*Tv(rho, phi)/(192.*std::pow(M_PI,4));
-    return coeff * std::pow((m_Ap/m_pi),2) * std::pow(m_V/m_pi,2) * std::pow((m_pi/f_pi),4) * m_Ap*std::pow(Beta(x,y),3./2.);
-}
-
-double SimpEquations::br_Vpi(double m_Ap, double m_pi, double m_V, double alpha_dark, double f_pi, bool rho, bool phi){
-    double rate = rate_Vpi(m_Ap,m_pi,m_V,alpha_dark,f_pi,rho,phi) + rate_2pi(m_Ap,m_pi,m_V,alpha_dark);
-    if(2*m_V < m_Ap) rate = rate_Vpi(m_Ap, m_pi, m_V, alpha_dark, f_pi, rho,phi) + rate_2pi(m_Ap,m_pi,m_V,alpha_dark) + rate_2V(m_Ap,m_V,alpha_dark);
-    return rate_Vpi(m_Ap,m_pi,m_V,alpha_dark,f_pi,rho,phi)/rate;
-}
-
 double SimpEquations::br_2V(double m_Ap,double m_pi,double m_V,double alpha_dark,double f_pi,double rho,double phi){
     double total_rate = rate_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +
         rate_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +
@@ -204,8 +190,8 @@ double SimpEquations::gamma(double m_V,double E_V){
     return gamma;
 }
 
-//Allow passage of radFrac, radAcc, and dNdm from python config
-double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho, bool phi, 
+//Calculate expected signal by passing radFrac, radAcc, and dNdm
+double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho, 
         double E_V, TEfficiency* effCalc_h, double dNdm, double radFrac, double radAcc, double target_pos, double zcut){
 
     //Signal mass dependent SIMP parameters
@@ -231,12 +217,15 @@ double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho
             effCalc_h->GetTotalHistogram()->GetBinWidth(zbin);
     }
 
-
     //Total A' Production Rate
     double apProduction = (3.*137/2.)*3.14159*(m_Ap*eps*eps*radFrac*dNdm)/radAcc;
 
     //A' -> V+Pi Branching Ratio
-    double br_VPi = br_Vpi(m_Ap, m_pi, m_V, alpha_dark_, f_pi, rho, phi);
+    double br_VPi;
+    if(rho)
+        br_VPi = br_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark_, f_pi);
+    else
+        br_VPi = br_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark_, f_pi);
 
     //Vector to e+e- BR = 1
     double br_V_ee = 1.0;
@@ -247,7 +236,7 @@ double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho
     return expSignal;
 }
 
-double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho, bool phi, 
+double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho, 
         double E_V, TEfficiency* effCalc_h, double target_pos, double zcut){
 
     //Signal mass dependent SIMP parameters
@@ -275,7 +264,11 @@ double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho
         /radiativeAcceptance(m_Ap);
 
     //A' -> V+Pi Branching Ratio
-    double br_VPi = br_Vpi(m_Ap, m_pi, m_V, alpha_dark_, f_pi, rho, phi);
+    double br_VPi;
+    if(rho)
+        br_VPi = br_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark_, f_pi);
+    else
+        br_VPi = br_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark_, f_pi);
 
     //Vector to e+e- BR = 1
     double br_V_ee = 1.0;
@@ -287,7 +280,7 @@ double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho
 }
 
 double SimpEquations::expectedSignalCalculation(double m_Ap, double m_pi, double m_V, double eps, double alpha_dark, 
-        double f_pi, double m_l, bool rho, bool phi, double E_V, TEfficiency* effCalc_h, double target_pos, double zcut){
+        double f_pi, double m_l, bool rho, double E_V, TEfficiency* effCalc_h, double target_pos, double zcut){
 
     //Mass in MeV
     double ctau = getCtau(m_Ap,m_pi, m_V,eps,alpha_dark,f_pi,m_l,rho);
@@ -309,7 +302,11 @@ double SimpEquations::expectedSignalCalculation(double m_Ap, double m_pi, double
         /radiativeAcceptance(m_Ap);
 
     //A' -> V+Pi Branching Ratio
-    double br_VPi = br_Vpi(m_Ap, m_pi, m_V, alpha_dark, f_pi, rho, phi);
+    double br_VPi;
+    if(rho)
+        br_VPi = br_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark_, f_pi);
+    else
+        br_VPi = br_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark_, f_pi);
 
     //Vector to e+e- BR = 1
     double br_V_ee = 1.0;

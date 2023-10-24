@@ -39,10 +39,6 @@ class SimpEquations {
         double br_Vcharged_pi(double m_Ap, double m_pi, double m_V, 
                 double alpha_dark, double f_pi);
 
-        double rate_Vpi(double m_Ap, double m_pi, double m_V, double alpha_dark, double f_pi, bool rho, bool phi);
-        
-        double br_Vpi(double m_Ap, double m_pi, double m_V, double alpha_dark, double f_pi, bool rho, bool phi);
-        
         double br_2V(double m_Ap,double m_pi,double m_V,double alpha_dark,double f_pi,double rho,double phi);
         
         double Tv(bool rho,bool phi);
@@ -67,14 +63,14 @@ class SimpEquations {
 
         double controlRegionBackgroundRate(double m_Ap);
 
-        double expectedSignalCalculation(double m_V, double eps, bool rho, bool phi,
+        double expectedSignalCalculation(double m_V, double eps, bool rho,
                         double E_V, TEfficiency* effCalc_h, double target_pos, double zcut);
 
         double expectedSignalCalculation(double m_Ap, double m_pi, double m_V, double eps, double alpha_dark,
-            double f_pi, double m_l, bool rho, bool phi, double E_V, TEfficiency* effCalc_h, double target_pos, 
+            double f_pi, double m_l, bool rho,double E_V, TEfficiency* effCalc_h, double target_pos, 
             double zcut);
 
-        double expectedSignalCalculation(double m_V, double eps, bool rho, bool phi, double E_V, 
+        double expectedSignalCalculation(double m_V, double eps, bool rho, double E_V, 
                 TEfficiency* effCalc_h, double dNdm, double radFrac, double radAcc, double target_pos, double zcut);
         
         double getAprimeMassFromVectorMass(double m_V){return m_V * mass_ratio_Ap_to_Vd_;};

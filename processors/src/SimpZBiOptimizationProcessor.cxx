@@ -61,9 +61,6 @@ void SimpZBiOptimizationProcessor::configure(const ParameterSet& parameters) {
         new_variables_ = parameters.getVString("add_new_variables", new_variables_);
         new_variable_params_ = parameters.getVDouble("new_variable_params", new_variable_params_);
 
-        //Dev
-        testSpecialCut_ = parameters.getInteger("testSpecialCut", testSpecialCut_);
-
     }
     catch (std::runtime_error& error)
     {
@@ -660,11 +657,11 @@ bool SimpZBiOptimizationProcessor::process(){
 
                 //Calculate expected signal for Neutral Dark Vector "rho"
                 double nSigRho = simpEqs_->expectedSignalCalculation(signal_mass_, 
-                        eps, true, false, E_Vd_, effCalc_h, dNdm_, radFrac_, radAcc_, -4.3, zcut);
+                        eps, true, E_Vd_, effCalc_h, dNdm_, radFrac_, radAcc_, -4.3, zcut);
 
                 //Calculate expected signal for Neutral Dark Vector "rho"
                 double nSigPhi = simpEqs_->expectedSignalCalculation(signal_mass_, 
-                        eps, false, true, E_Vd_, effCalc_h, dNdm_, radFrac_, radAcc_, -4.3, zcut);
+                        eps, false, E_Vd_, effCalc_h, dNdm_, radFrac_, radAcc_, -4.3, zcut);
 
                 /*
                 //Calculate expected signal for Neutral Dark Vector "rho"

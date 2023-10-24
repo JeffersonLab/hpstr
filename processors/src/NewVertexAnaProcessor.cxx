@@ -143,6 +143,7 @@ void NewVertexAnaProcessor::initialize(TTree* tree) {
             _reg_tuples[regname]->addVariable("unc_vtx_proj_x_sig");
             _reg_tuples[regname]->addVariable("unc_vtx_proj_y_sig");
             _reg_tuples[regname]->addVariable("unc_vtx_proj_sig");
+            _reg_tuples[regname]->addVariable("unc_vtx_deltaZ");
 
 
             //track vars
@@ -996,6 +997,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             float czy = vtx_cov.at(4);
             float czz = vtx_cov.at(5);
 
+
             //MC Truth hits in first 4 sensors
             int L1L2hitCode = 0; //hit code '1111' means truth ax+ster hits in L1_ele, L1_pos, L2_ele, L2_pos
             int L1hitCode = 0; //hit code '1111' means truth in L1_ele_ax, L1_ele_ster, L1_pos_ax, L1_pos_ster
@@ -1104,6 +1106,9 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             double ele_trk_z0err = ele_trk->getZ0Err();
             double pos_trk_z0 = pos_trk->getZ0();
             double pos_trk_z0err = pos_trk->getZ0Err();
+
+            //DeltaZ
+            double deltaZ = std::abs( (ele_trk_z0/ele_trk->getTanLambda()) - (pos_trk_z0/pos_trk->getTanLambda()) );
             
             //Project vertex to target
             double vtx_proj_x = -999.9;
@@ -1204,13 +1209,20 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
                 _reg_tuples[region]->setVariableValue("unc_vtx_pz", vtx->getP().Z());
                 _reg_tuples[region]->setVariableValue("unc_vtx_x", vtx->getX());
                 _reg_tuples[region]->setVariableValue("unc_vtx_y", vtx->getY());
+                _reg_tuples[region]->setVariableValue("unc_vtx_proj_x", vtx_proj_x);
+                _reg_tuples[region]->setVariableValue("unc_vtx_proj_y", vtx_proj_y);
+                _reg_tuples[region]->setVariableValue("unc_vtx_proj_x_sig", vtx_proj_x_sig);
+                _reg_tuples[region]->setVariableValue("unc_vtx_proj_y_sig", vtx_proj_y_sig);
+                _reg_tuples[region]->setVariableValue("unc_vtx_proj_sig", vtx_proj_sig);
                 _reg_tuples[region]->setVariableValue("unc_vtx_ele_pos_clust_dt", corr_eleClusterTime - corr_posClusterTime);
+
                 _reg_tuples[region]->setVariableValue("unc_vtx_cxx", cxx);
                 _reg_tuples[region]->setVariableValue("unc_vtx_cyy", cyy);
                 _reg_tuples[region]->setVariableValue("unc_vtx_czz", czz);
                 _reg_tuples[region]->setVariableValue("unc_vtx_cyx", cyx);
                 _reg_tuples[region]->setVariableValue("unc_vtx_czy", czy);
                 _reg_tuples[region]->setVariableValue("unc_vtx_czx", czx);
+                _reg_tuples[region]->setVariableValue("unc_vtx_deltaZ", deltaZ);
 
                 //track vars
                 _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_p", ele_trk->getP());

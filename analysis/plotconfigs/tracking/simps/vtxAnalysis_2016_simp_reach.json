@@ -1321,44 +1321,44 @@
         "ytitle" : "recon_z [mm]"
     },
     "cxx_h": {
-        "bins" : 5000,
+        "bins" : 200,
         "minX" : 0.0,
-        "maxX" : 50.0,
+        "maxX" : 0.2,
         "xtitle" : "vtx cxx",
         "ytitle" : "Events"
     },
     "cyy_h": {
-        "bins" : 5000,
+        "bins" : 500,
         "minX" : 0.0,
-        "maxX" : 50.0,
+        "maxX" : 0.1,
         "xtitle" : "vtx cyy",
         "ytitle" : "Events"
     },
     "czz_h": {
-        "bins" : 5000,
+        "bins" : 500,
         "minX" : 0.0,
         "maxX" : 50.0,
         "xtitle" : "vtx czz",
         "ytitle" : "Events"
     },
     "cyx_h": {
-        "bins" : 5000,
+        "bins" : 500,
         "minX" : 0.0,
-        "maxX" : 50.0,
+        "maxX" : 0.05,
         "xtitle" : "vtx cyx",
         "ytitle" : "Events"
     },
     "czx_h": {
-        "bins" : 5000,
+        "bins" : 500,
         "minX" : 0.0,
-        "maxX" : 50.0,
+        "maxX" : 1.0,
         "xtitle" : "vtx czx",
         "ytitle" : "Events"
     },
     "czy_h": {
-        "bins" : 5000,
+        "bins" : 500,
         "minX" : 0.0,
-        "maxX" : 50.0,
+        "maxX" : 1.0,
         "xtitle" : "vtx czy",
         "ytitle" : "Events"
     },
