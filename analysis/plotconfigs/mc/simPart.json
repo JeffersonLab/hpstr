@@ -41,46 +41,46 @@
         "xtitle" : "Number of Reco Ecal Clusters",
         "ytitle" : "Events"
     },
-    "particle_pdgid_h" : {
+    "sim_pdgid_h" : {
         "bins"   : 100,
         "minX"   : -50,
         "maxX"   : 50,
         "xtitle" : "PDG ID of Sim Particles",
         "ytitle" : "Events"
     },
-    "ele_px_h" : {
+    "sim_px_h" : {
         "bins"   : 200,
         "minX"   : -10,
         "maxX"   : 10,
-        "xtitle" : "ele p_{x}",
+        "xtitle" : "sim p_{x}",
         "ytitle" : "Events"
     },
-    "ele_py_h" : {
+    "sim_py_h" : {
         "bins"   : 200,
         "minX"   : -10,
         "maxX"   : 10,
-        "xtitle" : "ele p_{y}",
+        "xtitle" : "sim p_{y}",
         "ytitle" : "Events"
     },
-    "ele_pz_h" : {
+    "sim_pz_h" : {
         "bins"   : 100,
         "minX"   : 0,
         "maxX"   : 10,
-        "xtitle" : "ele p_{z}",
+        "xtitle" : "sim p_{z}",
         "ytitle" : "Events"
     },
-    "ele_p_h" : {
+    "sim_p_h" : {
         "bins"   : 100,
         "minX"   : 0,
         "maxX"   : 10,
-        "xtitle" : "ele p",
+        "xtitle" : "sim p",
         "ytitle" : "Events"
     },
-    "ele_energy_h" : {
+    "sim_energy_h" : {
         "bins"   : 100,
         "minX"   : 0,
         "maxX"   : 10,
-        "xtitle" : "ele energy",
+        "xtitle" : "sim energy",
         "ytitle" : "Events"
     },
     "track_n_hits_h" : {
@@ -132,15 +132,55 @@
         "xtitle" : "ECal energy",
         "ytitle" : "Events"
     },
-    "ele_pxpz_pypz_hh" : {
+    "sim_pxpz_pypz_hh" : {
         "binsX"  : 2000,
         "minX"   : -0.8,
         "maxX"   : 0.8,
         "binsY"  : 500,
         "minY"   : -0.2,
         "maxY"   : 0.2,
-        "xtitle" : "ele p_{x}/p_{z}",
-        "ytitle" : "ele p_{y}/p_{z}"
+        "xtitle" : "sim p_{x}/p_{z}",
+        "ytitle" : "sim p_{y}/p_{z}"
+    },
+    "sim_pxpz_p_hh" : {
+        "binsX"  : 2000,
+        "minX"   : -0.8,
+        "maxX"   : 0.8,
+        "binsY"  : 100,
+        "minY"   : 0,
+        "maxY"   : 10,
+        "xtitle" : "sim p_{x}/p_{z}",
+        "ytitle" : "sim p"
+    },
+    "sim_pxpz_energy_hh" : {
+        "binsX"  : 2000,
+        "minX"   : -0.8,
+        "maxX"   : 0.8,
+        "binsY"  : 100,
+        "minY"   : 0,
+        "maxY"   : 10,
+        "xtitle" : "sim p_{x}/p_{z}",
+        "ytitle" : "sim energy"
+    },
+    "track_sim_p_sim_p_hh" : {
+        "binsX"  : 100,
+        "minX"   : 0,
+        "maxX"   : 1,
+        "binsY"  : 100,
+        "minY"   : 0,
+        "maxY"   : 10,
+        "xtitle" : "track p / sim p",
+        "ytitle" : "sim p"
+    },
+    "track_phi0_p_hh" : {
+        "binsX"  : 2000,
+        "minX"   : -0.2,
+        "maxX"   : 0.3,
+        "binsY"  : 100,
+        "minY"   : 0,
+        "maxY"   : 10,
+        "xtitle" : "Track #{phi}_{0}",
+        "ytitle" : "Track p"
     },
     "track_phi0_tanlambda_hh" : {
         "binsX"  : 2000,
@@ -150,6 +190,16 @@
         "minY"   : -0.15,
         "maxY"   : 0.15,
         "xtitle" : "Track #{phi}_{0}",
+        "ytitle" : "Track tan#{lambda}}"
+    },
+    "track_z0_tanlambda_hh" : {
+        "binsX"  : 2000,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "binsY"  : 500,
+        "minY"   : -0.15,
+        "maxY"   : 0.15,
+        "xtitle" : "Track #z_{0}",
         "ytitle" : "Track tan#{lambda}}"
     },
     "track_x_y_hh" : {
@@ -181,5 +231,15 @@
         "maxY"   : 100,
         "xtitle" : "Ecal cluster x",
         "ytitle" : "Ecal cluster y"
+    },
+    "track_ecal_x_track_p_hh" : {
+        "binsX"  : 1000,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "binsY"  : 100,
+        "minY"   : 0,
+        "maxY"   : 10,
+        "xtitle" : "Track (at ECal) x - Ecal x",
+        "ytitle" : "Track p"
     }
 }

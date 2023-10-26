@@ -56,10 +56,18 @@ sim_part_ana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotcon
 
 sim_part_ana.parameters["selectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/simPart/simPartAna.json'
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/simPart/"
-sim_part_ana.parameters["regionDefinitions"] = [RegionPath+'noTrack.json',
+sim_part_ana.parameters["regionDefinitions"] = [RegionPath+'1Sim_1Track.json',
+                                                RegionPath+'Track.json',
+                                                RegionPath+'Ecal.json',
+                                                RegionPath+'1Track_1Ecal.json',
+                                                RegionPath+'Track_Ecal.json',
+                                                RegionPath+'noTrack.json',
                                                 RegionPath+'noTrack_Ecal.json',
                                                 RegionPath+'noEcal.json',
                                                 RegionPath+'Track_noEcal.json',
+                                                RegionPath+'noTrack_noEcal.json',
+                                                RegionPath+'1Track_pos_Omega.json',
+                                                RegionPath+'1Track_neg_Omega.json',
                                                 RegionPath+'Track_nhit7.json',
                                                 RegionPath+'Track_nhit8.json',
                                                 RegionPath+'Track_nhit9.json',

@@ -10,23 +10,23 @@ void SimPartHistos::FillMCParticle(MCParticle* part, FlatTupleMaker* tuples, flo
     double p = sqrt(px*px + py*py + pz*pz);
     double energy = part->getEnergy();
 
-    Fill1DHisto("particle_pdgid_h", pdg, weight);
+    Fill1DHisto("sim_pdgid_h", pdg, weight);
+    Fill1DHisto("sim_px_h", px, weight);
+    Fill1DHisto("sim_py_h", py, weight);
+    Fill1DHisto("sim_pz_h", pz, weight);
+    Fill1DHisto("sim_p_h", p, weight);
+    Fill1DHisto("sim_energy_h", energy, weight);
+    Fill2DHisto("sim_pxpz_pypz_hh", px/pz, py/pz, weight);
+    Fill2DHisto("sim_pxpz_p_hh", px/pz, p, weight);
+    Fill2DHisto("sim_pxpz_energy_hh", px/pz, energy, weight);
     tuples->addToVector("particle_pdgid", pdg);
-    if (pdg == 11) {
-        Fill1DHisto("ele_px_h", px, weight);
-        Fill1DHisto("ele_py_h", py, weight);
-        Fill1DHisto("ele_pz_h", pz, weight);
-        Fill1DHisto("ele_p_h", p, weight);
-        Fill1DHisto("ele_energy_h", energy, weight);
-        Fill2DHisto("ele_pxpz_pypz_hh", px/pz, py/pz, weight);
-        tuples->addToVector("ele_px", px);
-        tuples->addToVector("ele_py", py);
-        tuples->addToVector("ele_pz", pz);
-        tuples->addToVector("ele_p", p);
-        tuples->addToVector("ele_energy", energy);
-        tuples->addToVector("ele_pxpy", px/pz);
-        tuples->addToVector("ele_pypz", py/pz);
-    }
+    tuples->addToVector("sim_px", px);
+    tuples->addToVector("sim_py", py);
+    tuples->addToVector("sim_pz", pz);
+    tuples->addToVector("sim_p", p);
+    tuples->addToVector("sim_energy", energy);
+    tuples->addToVector("sim_pxpz", px/pz);
+    tuples->addToVector("sim_pypz", py/pz);
 }
 
 void SimPartHistos::FillRecoTrack(Track* track, FlatTupleMaker* tuples, float weight){
@@ -38,6 +38,9 @@ void SimPartHistos::FillRecoTrack(Track* track, FlatTupleMaker* tuples, float we
     int n_hits = track->getTrackerHitCount();
     double phi0 = track->getPhi();
     double tan_lambda = track->getTanLambda();
+    double d0 = track->getD0();
+    double z0 = track->getZ0();
+    double omega = track->getOmega();
 
     std::vector<double> position_V = track->getPosition();
     double track_x = position_V.at(0);
@@ -57,7 +60,9 @@ void SimPartHistos::FillRecoTrack(Track* track, FlatTupleMaker* tuples, float we
     Fill1DHisto("track_py_h", py, weight);
     Fill1DHisto("track_pz_h", pz, weight);
     Fill1DHisto("track_p_h", p, weight);
+    Fill2DHisto("track_phi0_p_hh", phi0, p, weight);
     Fill2DHisto("track_phi0_tanlambda_hh", phi0, tan_lambda, weight);
+    Fill2DHisto("track_z0_tanlambda_hh", z0, tan_lambda, weight);
     Fill2DHisto("track_x_y_hh", track_x, track_y, weight);
     Fill2DHisto("track_ecal_x_y_hh", track_ecal_x, track_ecal_y, weight);
 
@@ -68,6 +73,9 @@ void SimPartHistos::FillRecoTrack(Track* track, FlatTupleMaker* tuples, float we
     tuples->addToVector("track_p", p);
     tuples->addToVector("track_phi0", phi0);
     tuples->addToVector("track_tanlambda", tan_lambda);
+    tuples->addToVector("track_d0", d0);
+    tuples->addToVector("track_z0", z0);
+    tuples->addToVector("track_omega", omega);
     tuples->addToVector("track_x", track_x);
     tuples->addToVector("track_y", track_y);
     tuples->addToVector("track_ecal_x", track_ecal_x);
@@ -89,7 +97,6 @@ void SimPartHistos::FillRecoEcalCuster(CalCluster* ecal_cluster, FlatTupleMaker*
     tuples->addToVector("ecal_x", cluster_x);
     tuples->addToVector("ecal_y", cluster_y);
 }
-
 
 
 

@@ -3,5 +3,10 @@
         "cut"  : 1,
         "id"   : 0,
         "info" : "N Sim Particles >= 1"
+    },
+    "n_simpart_lt"  : {
+        "cut"  : 0,
+        "id"   : 1,
+        "info" : "N Sim Particles <= 0"
     }
 }

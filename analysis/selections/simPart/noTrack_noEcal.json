@@ -1,8 +1,8 @@
 {
-    "n_track_gt"  : {
-        "cut"  : 1.0,
+    "n_track_eq"  : {
+        "cut"  : 0.0,
         "id"   : 0,
-        "info" : "N Tracks >= 1"
+        "info" : "N Tracks == 0"
     },
     "n_ecal_cluster_eq"  : {
         "cut"  : 0.0,
