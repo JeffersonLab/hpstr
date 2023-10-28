@@ -195,6 +195,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
         if (gen != 1)
             continue;
         histos->FillMCParticle(part, tuples);
+        std::vector<double> momentum_V = part->getMomentum();
         double px = momentum_V.at(0);
         double py = momentum_V.at(1);
         double pz = momentum_V.at(2);
@@ -207,6 +208,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
     int min_n_Track_hits = 99999;
     double track_omega = -99999;
     double track_max_p_ecal_x = -99999;
+    double track_max_p = -99999;
     for (int i=0; i<nReco_Tracks; i++) {
         Track* track = RecoTracks_->at(i);
         int n_hits = track->getTrackerHitCount();
@@ -231,12 +233,12 @@ bool SimPartProcessor::process(IEvent* ievent) {
         double energy = ecal_cluster->getEnergy();
         if (energy > ecal_max_energy){
             ecal_max_energy = energy;
-            ecal_max_p_x = ecal_cluster->getPositionAtEcal().at(0)
+            ecal_max_p_x = ecal_cluster->getPosition().at(0)
         }
     }
 
-    Fill2DHisto("track_sim_p_sim_p_hh", track_max_p/sim_max_p, sim_max_p, weight);
-    Fill2DHisto("track_ecal_x_track_p_hh", (track_max_p_ecal_x-ecal_max_p_x), track_max_p, weight);
+    histos->Fill2DHisto("track_sim_p_sim_p_hh", track_max_p/sim_max_p, sim_max_p, weight);
+    histos->Fill2DHisto("track_ecal_x_track_p_hh", (track_max_p_ecal_x-ecal_max_p_x), track_max_p, weight);
 
     tuples->fill();
 
@@ -298,6 +300,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
             if (gen != 1)
                 continue;
             histos->FillMCParticle(part, tuples);
+            std::vector<double> momentum_V = part->getMomentum();
             double px = momentum_V.at(0);
             double py = momentum_V.at(1);
             double pz = momentum_V.at(2);
@@ -334,12 +337,12 @@ bool SimPartProcessor::process(IEvent* ievent) {
            double energy = ecal_cluster->getEnergy();
            if (energy > ecal_max_energy){
                ecal_max_energy = energy;
-               ecal_max_p_x = ecal_cluster->getPositionAtEcal().at(0)
+               ecal_max_p_x = ecal_cluster->getPosition().at(0)
           }
         }
 
-        Fill2DHisto("track_sim_p_sim_p_hh", track_max_p/sim_max_p, sim_max_p, weight);
-        Fill2DHisto("track_ecal_x_track_p_hh", (track_max_p_ecal_x-ecal_max_p_x), track_max_p, weight);
+        histos->Fill2DHisto("track_sim_p_sim_p_hh", track_max_p/sim_max_p, sim_max_p, weight);
+        histos->Fill2DHisto("track_ecal_x_track_p_hh", (track_max_p_ecal_x-ecal_max_p_x), track_max_p, weight);
     }
     
     return true;
