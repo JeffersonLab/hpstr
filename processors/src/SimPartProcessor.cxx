@@ -233,7 +233,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
         double energy = ecal_cluster->getEnergy();
         if (energy > ecal_max_energy){
             ecal_max_energy = energy;
-            ecal_max_p_x = ecal_cluster->getPosition().at(0)
+            ecal_max_p_x = ecal_cluster->getPosition().at(0);
         }
     }
 
@@ -337,7 +337,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
            double energy = ecal_cluster->getEnergy();
            if (energy > ecal_max_energy){
                ecal_max_energy = energy;
-               ecal_max_p_x = ecal_cluster->getPosition().at(0)
+               ecal_max_p_x = ecal_cluster->getPosition().at(0);
           }
         }
 
