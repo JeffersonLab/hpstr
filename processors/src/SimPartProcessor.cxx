@@ -333,7 +333,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
         double ecal_max_p_x = -99999;
         for (int i=0; i<nReco_Ecal_clusters; i++) {
             CalCluster *ecal_cluster = RecoEcalClusters_->at(i); 
-           hisreg_histos_[region]tos->FillRecoEcalCuster(ecal_cluster, tuples);
+           reg_histos_[region]tos->FillRecoEcalCuster(ecal_cluster, tuples);
            double energy = ecal_cluster->getEnergy();
            if (energy > ecal_max_energy){
                ecal_max_energy = energy;
