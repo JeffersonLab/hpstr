@@ -299,7 +299,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
             int gen = part->getGenStatus();
             if (gen != 1)
                 continue;
-            histos->FillMCParticle(part, tuples);
+            reg_histos_[region]->FillMCParticle(part, tuples);
             std::vector<double> momentum_V = part->getMomentum();
             double px = momentum_V.at(0);
             double py = momentum_V.at(1);
@@ -318,7 +318,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
             int n_hits = track->getTrackerHitCount();
             if (n_hits < min_n_Track_hits)
                 min_n_Track_hits = n_hits;
-            histos->FillRecoTrack(track, tuples);
+            reg_histos_[region]->FillRecoTrack(track, tuples);
             track_omega = track->getOmega();
             double p = track->getP();
             if (p > track_max_p){
@@ -333,7 +333,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
         double ecal_max_p_x = -99999;
         for (int i=0; i<nReco_Ecal_clusters; i++) {
             CalCluster *ecal_cluster = RecoEcalClusters_->at(i); 
-           histos->FillRecoEcalCuster(ecal_cluster, tuples);
+           hisreg_histos_[region]tos->FillRecoEcalCuster(ecal_cluster, tuples);
            double energy = ecal_cluster->getEnergy();
            if (energy > ecal_max_energy){
                ecal_max_energy = energy;
@@ -341,8 +341,8 @@ bool SimPartProcessor::process(IEvent* ievent) {
           }
         }
 
-        histos->Fill2DHisto("track_sim_p_sim_p_hh", track_max_p/sim_max_p, sim_max_p, weight);
-        histos->Fill2DHisto("track_ecal_x_track_p_hh", (track_max_p_ecal_x-ecal_max_p_x), track_max_p, weight);
+        reg_histos_[region]->Fill2DHisto("track_sim_p_sim_p_hh", track_max_p/sim_max_p, sim_max_p, weight);
+        reg_histos_[region]->Fill2DHisto("track_ecal_x_track_p_hh", (track_max_p_ecal_x-ecal_max_p_x), track_max_p, weight);
     }
     
     return true;
