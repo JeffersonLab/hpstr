@@ -15,6 +15,8 @@ void SimPartHistos::FillMCParticle(MCParticle* part, FlatTupleMaker* tuples, flo
     Fill1DHisto("sim_py_h", py, weight);
     Fill1DHisto("sim_pz_h", pz, weight);
     Fill1DHisto("sim_p_h", p, weight);
+    Fill1DHisto("sim_pxpz_h", px/pz, weight);
+    Fill1DHisto("sim_pypz_h", py/pz, weight);
     Fill1DHisto("sim_energy_h", energy, weight);
     Fill2DHisto("sim_pxpz_pypz_hh", px/pz, py/pz, weight);
     Fill2DHisto("sim_pxpz_p_hh", px/pz, p, weight);
@@ -60,10 +62,17 @@ void SimPartHistos::FillRecoTrack(Track* track, FlatTupleMaker* tuples, float we
     Fill1DHisto("track_py_h", py, weight);
     Fill1DHisto("track_pz_h", pz, weight);
     Fill1DHisto("track_p_h", p, weight);
+    Fill1DHisto("track_phi0", phi0, weight);
+    Fill1DHisto("track_tanlambda", tan_lambda, weight);
+    Fill1DHisto("track_d0", d0, weight);
+    Fill1DHisto("track_z0", z0, weight);
+    Fill1DHisto("track_omega", omega, weight);
+    Fill1DHisto("track_ecal_x", track_ecal_x, weight);
+    Fill1DHisto("track_ecal_y", track_ecal_y, weight);
     Fill2DHisto("track_phi0_p_hh", phi0, p, weight);
     Fill2DHisto("track_phi0_tanlambda_hh", phi0, tan_lambda, weight);
     Fill2DHisto("track_z0_tanlambda_hh", z0, tan_lambda, weight);
-    Fill2DHisto("track_x_y_hh", track_x, track_y, weight);
+    //Fill2DHisto("track_x_y_hh", track_x, track_y, weight);
     Fill2DHisto("track_ecal_x_y_hh", track_ecal_x, track_ecal_y, weight);
 
     tuples->addToVector("track_n_hits", n_hits);
@@ -76,8 +85,8 @@ void SimPartHistos::FillRecoTrack(Track* track, FlatTupleMaker* tuples, float we
     tuples->addToVector("track_d0", d0);
     tuples->addToVector("track_z0", z0);
     tuples->addToVector("track_omega", omega);
-    tuples->addToVector("track_x", track_x);
-    tuples->addToVector("track_y", track_y);
+    //tuples->addToVector("track_x", track_x);
+    //tuples->addToVector("track_y", track_y);
     tuples->addToVector("track_ecal_x", track_ecal_x);
     tuples->addToVector("track_ecal_y", track_ecal_y);
 }
@@ -91,6 +100,8 @@ void SimPartHistos::FillRecoEcalCuster(CalCluster* ecal_cluster, FlatTupleMaker*
 
     Fill1DHisto("ecal_n_hits_h", n_hits, weight);
     Fill1DHisto("ecal_energy_h", energy, weight);
+    Fill1DHisto("ecal_x", cluster_x, weight);
+    Fill1DHisto("ecal_y", cluster_y, weight);
     Fill2DHisto("ecal_x_y_hh", cluster_x, cluster_y, weight);
     tuples->addToVector("ecal_n_hits", n_hits);
     tuples->addToVector("ecal_energy", energy);

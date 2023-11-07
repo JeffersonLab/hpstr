@@ -76,6 +76,20 @@
         "xtitle" : "sim p",
         "ytitle" : "Events"
     },
+    "sim_pxpz_h" : {
+        "bins"  : 2000,
+        "min"   : -0.8,
+        "max"   : 0.8,
+        "xtitle" : "sim p_{x}/p_{z}",
+        "ytitle" : "Events"
+    },
+    "sim_pypz_h" : {
+        "bins"  : 500,
+        "min"   : -0.2,
+        "max"   : 0.2,
+        "xtitle" : "sim p_{y}/p_{z}",
+        "ytitle" : "Events"
+    },
     "sim_energy_h" : {
         "bins"   : 100,
         "minX"   : 0,
@@ -118,6 +132,55 @@
         "xtitle" : "Track p",
         "ytitle" : "Events"
     },
+    "track_phi0_h" : {
+        "bins"  : 2000,
+        "min"   : -0.2,
+        "max"   : 0.3,
+        "xtitle" : "Track #{phi}_{0}",
+        "ytitle" : "Events"
+    },
+    "track_tanlambda_h" : {
+        "bins"  : 500,
+        "min"   : -0.15,
+        "max"   : 0.15,
+        "xtitle" : "Track tan#{lambda}}",
+        "ytitle" : "Events"
+    },
+    "track_d0_h" : {
+        "bins"  : 2000,
+        "min"   : -100,
+        "max"   : 100,
+        "xtitle" : "Track d_{0}",
+        "ytitle" : "Events"
+    },
+    "track_z0_h" : {
+        "bins"  : 2000,
+        "min"   : -100,
+        "max"   : 100,
+        "xtitle" : "Track z_{0}",
+        "ytitle" : "Events"
+    },
+    "track_omega_h" : {
+        "bins"   : 100,
+        "minX"   : -10,
+        "maxX"   : 10,
+        "xtitle" : "Track #{Omega}",
+        "ytitle" : "Events"
+    },
+    "track_ecal_x_h" : {
+        "bins"  : 2000,
+        "min"   : -340,
+        "max"   : 420,
+        "xtitle" : "Track ECal Position x",
+        "ytitle" : "Events"
+    },
+    "track_ecal_y_h" : {
+        "bins"  : 500,
+        "min"   : -100,
+        "max"   : 100,
+        "xtitle" : "Track ECal Position y",
+        "ytitle" : "Events"
+    },
     "ecal_n_hits_h" : {
         "bins"   : 20,
         "minX"   : -0.5,
@@ -130,6 +193,20 @@
         "minX"   : 0,
         "maxX"   : 10,
         "xtitle" : "ECal energy",
+        "ytitle" : "Events"
+    },
+    "ecal_x_h" : {
+        "bins"  : 2000,
+        "min"   : -340,
+        "max"   : 420,
+        "xtitle" : "Ecal cluster x",
+        "ytitle" : "Events"
+    },
+    "ecal_y_h" : {
+        "bins"  : 500,
+        "min"   : -100,
+        "max"   : 100,
+        "xtitle" : "Ecal cluster y",
         "ytitle" : "Events"
     },
     "sim_pxpz_pypz_hh" : {
@@ -202,16 +279,6 @@
         "xtitle" : "Track #z_{0}",
         "ytitle" : "Track tan#{lambda}}"
     },
-    "track_x_y_hh" : {
-        "binsX"  : 2000,
-        "minX"   : -340,
-        "maxX"   : 420,
-        "binsY"  : 500,
-        "minY"   : -100,
-        "maxY"   : 100,
-        "xtitle" : "Track x",
-        "ytitle" : "Track y"
-    },
     "track_ecal_x_y_hh" : {
         "binsX"  : 2000,
         "minX"   : -340,
@@ -241,5 +308,15 @@
         "maxY"   : 10,
         "xtitle" : "Track (at ECal) x - Ecal x",
         "ytitle" : "Track p"
+    },
+    "track_ecal_x_sim_p_hh" : {
+        "binsX"  : 1000,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "binsY"  : 100,
+        "minY"   : 0,
+        "maxY"   : 10,
+        "xtitle" : "Track (at ECal) x - Ecal x",
+        "ytitle" : "sim p"
     }
 }

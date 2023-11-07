@@ -47,6 +47,7 @@ sim_part_ana.parameters["debug"] = 0
 sim_part_ana.parameters["anaName"] = "sim_part"
 sim_part_ana.parameters["MCParticleColl"] = "MCParticle"
 sim_part_ana.parameters["MCTrackerHitColl"] = "TrackerSimHits"
+sim_part_ana.parameters["MCTrackerHitECalColl"] = "TrackerSimHitsECal"
 sim_part_ana.parameters["MCEcalHitColl"] = "EcalSimHits"
 sim_part_ana.parameters["RecoTrackColl"] = "KalmanFullTracks"
 sim_part_ana.parameters["RecoTrackerClusterColl"] = "SiClustersOnTrack"
@@ -60,6 +61,7 @@ sim_part_ana.parameters["regionDefinitions"] = [RegionPath+'1Sim_1Track.json',
                                                 RegionPath+'Track.json',
                                                 RegionPath+'Ecal.json',
                                                 RegionPath+'1Track_1Ecal.json',
+                                                RegionPath+'1Sim_1Track_1Ecal.json',
                                                 RegionPath+'Track_Ecal.json',
                                                 RegionPath+'noTrack.json',
                                                 RegionPath+'noTrack_Ecal.json',

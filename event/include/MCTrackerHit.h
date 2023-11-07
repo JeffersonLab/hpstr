@@ -88,6 +88,12 @@ class MCTrackerHit : public TObject {
         //** @return the pdg id of particle that made the hit */
         int getPDG() const {return pdg_;};
 
+        //** set the lcio id of particle that made the hit */
+        void setPartID(const int id) {partID_ = id;};
+
+        //** @return the lcio id of particle that made the hit */
+        int getPartID() const {return partID_;};
+
         ClassDef(MCTrackerHit, 1);	
 
     private:
@@ -115,6 +121,9 @@ class MCTrackerHit : public TObject {
 
         /** pdg id of particle that made the hit */
         int pdg_{-999};
+
+        /** lcio id of particle that made the hit */
+        int partID_{-999};
 
 }; // MCTrackerHit
 
