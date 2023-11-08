@@ -217,21 +217,21 @@
         "ytitle" : "Events"
     },
     "track_ecal_x_diff_h" : {
-        "bins"  : 100,
+        "bins"  : 1000,
         "minX"   : -100,
         "maxX"   : 100,
         "xtitle" : "Track (at ECal) x - Ecal x",
         "ytitle" : "Events"
     },
     "sim_track_x_diff_h" : {
-        "bins"  : 100,
+        "bins"  : 1000,
         "minX"   : -100,
         "maxX"   : 100,
         "xtitle" : "Sim x (at ECal) x - Track x",
         "ytitle" : "Events"
     },
     "sim_ecal_x_diff_h" : {
-        "bins"  : 100,
+        "bins"  : 1000,
         "minX"   : -100,
         "maxX"   : 100,
         "xtitle" : "Sim x (at ECal) x - Ecal x",
