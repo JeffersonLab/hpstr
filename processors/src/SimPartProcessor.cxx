@@ -200,6 +200,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
 
     double sim_max_p = -99999;
     std::vector<double> sim_p_list;
+    sim_p_list.clear();
     for (int i=0; i<nParts; i++) {
         MCParticle *part = MCParticles_->at(i);
         int gen = part->getGenStatus();
@@ -222,6 +223,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
     double track_max_p_ecal_x = -99999;
     double track_max_p = -99999;
     std::vector<double> track_p_list;
+    track_p_list.clear();
     for (int i=0; i<nReco_Tracks; i++) {
         Track* track = RecoTracks_->at(i);
         int n_hits = track->getTrackerHitCount();
@@ -376,7 +378,6 @@ bool SimPartProcessor::process(IEvent* ievent) {
         reg_tuples_[region]->setVariableValue("numRecoEcalClusters", (float)nReco_Ecal_clusters);
 
         double sim_max_p_region = -99999;
-        std::vector<double> sim_p_list_region;
         for (int i=0; i<nParts; i++) {
             MCParticle *part = MCParticles_->at(i);
             int gen = part->getGenStatus();
@@ -388,7 +389,6 @@ bool SimPartProcessor::process(IEvent* ievent) {
             double py = momentum_V.at(1);
             double pz = momentum_V.at(2);
             double p = sqrt(px*px + py*py + pz*pz);
-            sim_p_list_region.push_back(p);
             if (p > sim_max_p_region){
                 sim_max_p_region = p;
             }
@@ -398,7 +398,6 @@ bool SimPartProcessor::process(IEvent* ievent) {
         double track_omega_region = -99999;
         double track_max_p_ecal_x_region = -99999;
         double track_max_p_region = -99999;
-        std::vector<double> track_p_list_region;
         for (int i=0; i<nReco_Tracks; i++) {
             Track* track = RecoTracks_->at(i);
             int n_hits = track->getTrackerHitCount();
@@ -406,7 +405,6 @@ bool SimPartProcessor::process(IEvent* ievent) {
                 min_n_Track_hits_region = n_hits;
             reg_histos_[region]->FillRecoTrack(track, reg_tuples_[region]);
             double p = track->getP();
-            track_p_list_region.push_back(p);
             if (p > track_max_p_region){
                 track_max_p_region = p;
                 track_max_p_ecal_x_region = track->getPositionAtEcal().at(0);
