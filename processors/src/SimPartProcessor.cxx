@@ -419,9 +419,9 @@ bool SimPartProcessor::process(IEvent* ievent) {
         reg_histos_[region]->Fill2DHisto("track_sim_p_sim_p_hh", track_max_p_region/sim_max_p_region, sim_max_p_region, weight);
         reg_histos_[region]->Fill2DHisto("track_ecal_x_track_p_hh", (track_max_p_ecal_x_region-ecal_max_p_x_region), track_max_p_region, weight);
         reg_histos_[region]->Fill2DHisto("track_ecal_x_sim_p_hh", (track_max_p_ecal_x_region-ecal_max_p_x_region), sim_max_p_region, weight);
-    }
 
-    reg_tuples_[region]->fill();
+        reg_tuples_[region]->fill();
+    }
     
     return true;
 }
