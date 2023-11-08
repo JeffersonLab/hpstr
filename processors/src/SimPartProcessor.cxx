@@ -171,6 +171,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
 
     int nParts = MCParticles_->size();
     int nSim_Tracker_hits = MCTrackerHits_->size();
+    int nSim_Tracker_hits_Ecal = MCTrackerHitsEcal_->size();
     int nSim_Ecal_hits = MCEcalHits_->size(); 
     int nReco_Tracks = RecoTracks_->size();
     int nReco_Tracker_clusters = RecoTrackerClusters_->size();
@@ -242,9 +243,43 @@ bool SimPartProcessor::process(IEvent* ievent) {
         }
     }
 
+    double mc_tracker_hit_ecal_max_p = -99999;
+    double mc_tracker_hit_ecal_max_p_x = -99999;
+    for (int i=0; i<nSim_Tracker_hits_Ecal; i++){
+        MCTrackerHit *mc_tracker_hit_ecal = MCTrackerHitsEcal_->at(i);
+        int track_id = mc_tracker_hit_ecal->getPartID();
+        double sim_p = -99999;
+        for (int j=0; j<nParts; j++) {
+            MCParticle *part = MCParticles_->at(j);
+            int gen = part->getGenStatus();
+            if (gen != 1)
+                continue;
+            int sim_id = part->getID();
+            std::vector<double> momentum_V = part->getMomentum();
+            double px = momentum_V.at(0);
+            double py = momentum_V.at(1);
+            double pz = momentum_V.at(2);
+            if (sim_id == track_id){
+                sim_p = sqrt(px*px + py*py + pz*pz);
+                break;
+            }
+        }
+        if (sim_p > mc_tracker_hit_ecal_max_p){
+            mc_tracker_hit_ecal_max_p = sim_p;
+            mc_tracker_hit_ecal_max_p_x = mc_tracker_hit_ecal->getPosition().at(0);
+        }
+    }
+
     histos->Fill2DHisto("track_sim_p_sim_p_hh", track_max_p/sim_max_p, sim_max_p, weight);
     histos->Fill2DHisto("track_ecal_x_track_p_hh", (track_max_p_ecal_x-ecal_max_p_x), track_max_p, weight);
     histos->Fill2DHisto("track_ecal_x_sim_p_hh", (track_max_p_ecal_x-ecal_max_p_x), sim_max_p, weight);
+    histos->Fill2DHisto("track_ecal_x_ecal_energy_hh", (track_max_p_ecal_x-ecal_max_p_x), ecal_max_energy, weight);
+    histos->Fill2DHisto("sim_track_x_track_p_hh", (mc_tracker_hit_ecal_max_p_x-track_max_p_ecal_x), track_max_p, weight);
+    histos->Fill2DHisto("sim_track_x_sim_p_hh", (mc_tracker_hit_ecal_max_p_x-track_max_p_ecal_x), sim_max_p, weight);
+    histos->Fill2DHisto("sim_track_x_ecal_energy_hh", (mc_tracker_hit_ecal_max_p_x-track_max_p_ecal_x), ecal_max_energy, weight);
+    histos->Fill2DHisto("sim_ecal_x_track_p_hh", (mc_tracker_hit_ecal_max_p_x-ecal_max_p_x), track_max_p, weight);
+    histos->Fill2DHisto("sim_ecal_x_sim_p_hh", (mc_tracker_hit_ecal_max_p_x-ecal_max_p_x), sim_max_p, weight);
+    histos->Fill2DHisto("sim_ecal_x_ecal_energy_hh", (mc_tracker_hit_ecal_max_p_x-ecal_max_p_x), ecal_max_energy, weight);
 
     // Regions
     for (auto region : regions_ ) {
