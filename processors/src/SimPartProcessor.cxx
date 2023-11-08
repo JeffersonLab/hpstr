@@ -246,7 +246,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
     double mc_tracker_hit_ecal_max_p = -99999;
     double mc_tracker_hit_ecal_max_p_x = -99999;
     for (int i=0; i<nSim_Tracker_hits_Ecal; i++){
-        MCTrackerHit *mc_tracker_hit_ecal = MCTrackerHitsEcal_->at(i);
+        MCTrackerHit *mc_tracker_hit_ecal = MCTrackerHitsECal_->at(i);
         int track_id = mc_tracker_hit_ecal->getPartID();
         double sim_p = -99999;
         for (int j=0; j<nParts; j++) {
