@@ -57,6 +57,13 @@ void SimPartHistos::FillRecoTrack(Track* track, FlatTupleMaker* tuples, float we
     double pz = momentum_V.at(2);
     double p = track->getP();
 
+    std::vector<int> hit_layers;
+    for (int ihit = 0; ihit<track->getSvtHits().GetEntries(); ++ihit) {
+        TrackerHit* hit = (TrackerHit*) track->getSvtHits().At(ihit);
+        int layer = hit->getLayer();
+        hit_layers.push_back(layer);
+    }
+
     Fill1DHisto("track_n_hits_h", n_hits, weight);
     Fill1DHisto("track_px_h", px, weight);
     Fill1DHisto("track_py_h", py, weight);
@@ -89,6 +96,11 @@ void SimPartHistos::FillRecoTrack(Track* track, FlatTupleMaker* tuples, float we
     //tuples->addToVector("track_y", track_y);
     tuples->addToVector("track_ecal_x", track_ecal_x);
     tuples->addToVector("track_ecal_y", track_ecal_y);
+
+    for (int i=0; i<hit_layers.size(); i++){
+        Fill1DHisto("track_hit_layer_h", hit_layers[i], weight);
+        tuples->addToVector("track_hit_layrer", hit_layers[i]);
+    }
 }
 
 void SimPartHistos::FillRecoEcalCuster(CalCluster* ecal_cluster, FlatTupleMaker* tuples, float weight){
