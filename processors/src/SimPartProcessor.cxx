@@ -171,7 +171,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
 
     int nParts = MCParticles_->size();
     int nSim_Tracker_hits = MCTrackerHits_->size();
-    int nSim_Tracker_hits_Ecal = MCTrackerHitsEcal_->size();
+    int nSim_Tracker_hits_Ecal = MCTrackerHitsECal_->size();
     int nSim_Ecal_hits = MCEcalHits_->size(); 
     int nReco_Tracks = RecoTracks_->size();
     int nReco_Tracker_clusters = RecoTrackerClusters_->size();
