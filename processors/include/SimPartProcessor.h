@@ -114,7 +114,7 @@ class SimPartProcessor : public Processor {
         std::map<std::string, std::shared_ptr<SimPartHistos>> reg_histos_; //!< description
         typedef std::map<std::string, std::shared_ptr<SimPartHistos>>::iterator reg_it; //!< description
         //std::map<std::string, std::shared_ptr<FlatTupleMaker>> reg_tuples_; //!< description
-        std::map<std::string, FlatTupleMaker*> reg_tuples_; //!< description
+        //std::map<std::string, FlatTupleMaker*> reg_tuples_; //!< description
 
         int debug_{0}; //!< Debug Level
 
