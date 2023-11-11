@@ -134,15 +134,15 @@
     },
     "track_phi0_h" : {
         "bins"  : 200,
-        "minX"   : -0.2,
-        "maxX"   : 0.5,
+        "minX"   : -0.8,
+        "maxX"   : 0.8,
         "xtitle" : "Track #phi_{0}",
         "ytitle" : "Events"
     },
     "track_tanlambda_h" : {
         "bins"  : 50,
-        "minX"   : -0.15,
-        "maxX"   : 0.15,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
         "xtitle" : "Track tan#lambda",
         "ytitle" : "Events"
     },
@@ -169,15 +169,15 @@
     },
     "track_ecal_x_h" : {
         "bins"  : 100,
-        "minX"   : -500,
-        "maxX"   : 400,
+        "minX"   : -600,
+        "maxX"   : 600,
         "xtitle" : "Track ECal Position x",
         "ytitle" : "Events"
     },
     "track_ecal_y_h" : {
         "bins"  : 50,
-        "minX"   : -150,
-        "maxX"   : 150,
+        "minX"   : -200,
+        "maxX"   : 200,
         "xtitle" : "Track ECal Position y",
         "ytitle" : "Events"
     },
@@ -268,7 +268,7 @@
         "ytitle" : "sim energy"
     },
     "track_sim_p_sim_p_hh" : {
-        "binsX"  : 20,
+        "binsX"  : 100,
         "minX"   : 0,
         "maxX"   : 2,
         "binsY"  : 20,
@@ -279,8 +279,8 @@
     },
     "track_phi0_p_hh" : {
         "binsX"  : 100,
-        "minX"   : -0.2,
-        "maxX"   : 0.5,
+        "minX"   : -0.8,
+        "maxX"   : 0.8,
         "binsY"  : 20,
         "minY"   : 0,
         "maxY"   : 10,
@@ -289,11 +289,11 @@
     },
     "track_phi0_tanlambda_hh" : {
         "binsX"  : 100,
-        "minX"   : -0.2,
-        "maxX"   : 0.5,
+        "minX"   : -0.8,
+        "maxX"   : 0.8,
         "binsY"  : 20,
-        "minY"   : -0.15,
-        "maxY"   : 0.15,
+        "minY"   : -0.2,
+        "maxY"   : 0.2,
         "xtitle" : "Track #phi_{0}",
         "ytitle" : "Track tan#lambda"
     },
@@ -302,18 +302,18 @@
         "minX"   : -20,
         "maxX"   : 20,
         "binsY"  : 20,
-        "minY"   : -0.15,
-        "maxY"   : 0.15,
+        "minY"   : -0.2,
+        "maxY"   : 0.8,
         "xtitle" : "Track z_{0}",
         "ytitle" : "Track tan#lambda"
     },
     "track_ecal_x_y_hh" : {
         "binsX"  : 100,
-        "minX"   : -500,
-        "maxX"   : 400,
+        "minX"   : -600,
+        "maxX"   : 600,
         "binsY"  : 50,
-        "minY"   : -150,
-        "maxY"   : 150,
+        "minY"   : -200,
+        "maxY"   : 200,
         "xtitle" : "Track (at ECal) x",
         "ytitle" : "Track (at ECal) y"
     },
@@ -364,7 +364,7 @@
         "binsY"  : 20,
         "minY"   : 0,
         "maxY"   : 10,
-        "xtitle" : "Sim x (at ECal) - Track (at ECal) x",
+        "xtitle" : "Track (at ECal) x - Sim x (at ECal)",
         "ytitle" : "Track p"
     },
     "sim_track_x_sim_p_hh" : {
@@ -374,7 +374,7 @@
         "binsY"  : 20,
         "minY"   : 0,
         "maxY"   : 10,
-        "xtitle" : "Sim x (at ECal) - Track (at ECal) x",
+        "xtitle" : "Track (at ECal) x - Sim x (at ECal)",
         "ytitle" : "sim p"
     },
     "sim_track_x_ecal_energy_hh" : {
@@ -384,7 +384,7 @@
         "binsY"  : 20,
         "minY"   : 0,
         "maxY"   : 10,
-        "xtitle" : "Sim x (at ECal) - Track (at ECal) x",
+        "xtitle" : "Track (at ECal) x - Sim x (at ECal)",
         "ytitle" : "Ecal energy"
     },
     "sim_ecal_x_track_p_hh" : {

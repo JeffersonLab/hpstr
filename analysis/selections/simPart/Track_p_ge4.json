@@ -1,7 +1,0 @@
-{
-    "track_p_gt"  : {
-        "cut"  : 4.0,
-        "id"   : 0,
-        "info" : "Tracks pT >= 4"
-    }
-}

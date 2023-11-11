@@ -289,10 +289,10 @@ bool SimPartProcessor::process(IEvent* ievent) {
         histos->Fill2DHisto("track_ecal_x_ecal_energy_hh", (track_max_p_ecal_x-ecal_max_p_x), ecal_max_energy, weight);
     }
     if (mc_tracker_hit_ecal_max_p_x != -99999 && track_max_p_ecal_x != 99999){
-        histos->Fill1DHisto("sim_track_x_diff_h", (mc_tracker_hit_ecal_max_p_x-track_max_p_ecal_x), weight);
-        histos->Fill2DHisto("sim_track_x_track_p_hh", (mc_tracker_hit_ecal_max_p_x-track_max_p_ecal_x), track_max_p, weight);
-        histos->Fill2DHisto("sim_track_x_sim_p_hh", (mc_tracker_hit_ecal_max_p_x-track_max_p_ecal_x), sim_max_p, weight);
-        histos->Fill2DHisto("sim_track_x_ecal_energy_hh", (mc_tracker_hit_ecal_max_p_x-track_max_p_ecal_x), ecal_max_energy, weight);
+        histos->Fill1DHisto("sim_track_x_diff_h", (track_max_p_ecal_x-mc_tracker_hit_ecal_max_p_x), weight);
+        histos->Fill2DHisto("sim_track_x_track_p_hh", (track_max_p_ecal_x-mc_tracker_hit_ecal_max_p_x), track_max_p, weight);
+        histos->Fill2DHisto("sim_track_x_sim_p_hh", (track_max_p_ecal_x-mc_tracker_hit_ecal_max_p_x), sim_max_p, weight);
+        histos->Fill2DHisto("sim_track_x_ecal_energy_hh", (track_max_p_ecal_x-mc_tracker_hit_ecal_max_p_x), ecal_max_energy, weight);
     }
     if (mc_tracker_hit_ecal_max_p_x != -99999 && ecal_max_p_x != 99999){
         histos->Fill1DHisto("sim_ecal_x_diff_h", (mc_tracker_hit_ecal_max_p_x-ecal_max_p_x), weight);
@@ -470,10 +470,10 @@ bool SimPartProcessor::process(IEvent* ievent) {
             histos->Fill2DHisto("track_ecal_x_ecal_energy_hh", (track_max_p_ecal_x_region-ecal_max_p_x_region), ecal_max_energy_region, weight);
         }
         if (mc_tracker_hit_ecal_max_p_x_region != -99999 && track_max_p_ecal_x_region != 99999){
-            histos->Fill1DHisto("sim_track_x_diff_h", (mc_tracker_hit_ecal_max_p_x_region-track_max_p_ecal_x_region), weight);
-            histos->Fill2DHisto("sim_track_x_track_p_hh", (mc_tracker_hit_ecal_max_p_x_region-track_max_p_ecal_x_region), track_max_p_region, weight);
-            histos->Fill2DHisto("sim_track_x_sim_p_hh", (mc_tracker_hit_ecal_max_p_x_region-track_max_p_ecal_x_region), sim_max_p_region, weight);
-            histos->Fill2DHisto("sim_track_x_ecal_energy_hh", (mc_tracker_hit_ecal_max_p_x_region-track_max_p_ecal_x_region), ecal_max_energy_region, weight);
+            histos->Fill1DHisto("sim_track_x_diff_h", (track_max_p_ecal_x_region-mc_tracker_hit_ecal_max_p_x_region), weight);
+            histos->Fill2DHisto("sim_track_x_track_p_hh", (track_max_p_ecal_x_region-mc_tracker_hit_ecal_max_p_x_region), track_max_p_region, weight);
+            histos->Fill2DHisto("sim_track_x_sim_p_hh", (track_max_p_ecal_x_region-mc_tracker_hit_ecal_max_p_x_region), sim_max_p_region, weight);
+            histos->Fill2DHisto("sim_track_x_ecal_energy_hh", (track_max_p_ecal_x_region-mc_tracker_hit_ecal_max_p_x_region), ecal_max_energy_region, weight);
         }
         if (mc_tracker_hit_ecal_max_p_x_region != -99999 && ecal_max_p_x_region != 99999){
             histos->Fill1DHisto("sim_ecal_x_diff_h", (mc_tracker_hit_ecal_max_p_x_region-ecal_max_p_x_region), weight);

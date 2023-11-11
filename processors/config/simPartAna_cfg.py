@@ -78,9 +78,9 @@ sim_part_ana.parameters["regionDefinitions"] = [RegionPath+'1Sim_1Track.json',
                                                 RegionPath+'Track_nhit12.json',
                                                 RegionPath+'Track_nhit13.json',
                                                 RegionPath+'Track_nhit14.json',
-                                                RegionPath+'Track_p_ge4.json',
-                                                RegionPath+'Sim_p_ge1.json',
-                                                RegionPath+'Sim_p_le1.json'
+                                                RegionPath+'Track_Ecal_Track_p_ge4.json',
+                                                RegionPath+'Track_Ecal_Sim_p_ge1.json',
+                                                RegionPath+'Track_Ecal_Sim_p_le1.json'
                                            ]
 
 # Sequence which the processors will run.
