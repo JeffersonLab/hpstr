@@ -303,7 +303,7 @@
         "maxX"   : 20,
         "binsY"  : 20,
         "minY"   : -0.2,
-        "maxY"   : 0.8,
+        "maxY"   : 0.2,
         "xtitle" : "Track z_{0}",
         "ytitle" : "Track tan#lambda"
     },
