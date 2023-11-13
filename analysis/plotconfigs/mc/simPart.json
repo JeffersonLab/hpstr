@@ -442,7 +442,7 @@
         "ytitle" : "Track tan#lambda / Sim p_{y}/p_{z}"
     },
     "track_phi0_simpxpz_sim_p_hh" : {
-        "bins"  : 100,
+        "binsX"  : 100,
         "minX"   : -2,
         "maxX"   : 2,
         "binsY"  : 20,
@@ -452,7 +452,7 @@
         "ytitle" : "Sim p"
     },
     "track_tanlambda_simpypz_sim_p_hh" : {
-        "bins"  : 100,
+        "binsX"  : 100,
         "minX"   : -2,
         "maxX"   : 2,
         "binsY"  : 20,
