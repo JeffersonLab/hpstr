@@ -401,7 +401,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
         if (sim_pypz_fail) continue;
         if(debug_) std::cout<<"Pass Sim py/pz Gt cut"<<std::endl;
 
-        int sim_pypz_fail = 0;
+        sim_pypz_fail = 0;
         for (int i=0; i<sim_pypz_list.size(); i++){
             if ( !reg_selectors_[region]->passCutLt("sim_pypz_lt", sim_pypz_list[i], weight) ){
                 sim_pypz_fail = 1;
@@ -576,7 +576,8 @@ bool SimPartProcessor::process(IEvent* ievent) {
             reg_histos_[region]->Fill2DHisto("sim_ecal_x_track_p_hh", (ecal_max_p_x-mc_tracker_hit_ecal_max_p_x), track_max_p, weight);
             reg_histos_[region]->Fill2DHisto("sim_ecal_x_sim_p_hh", (ecal_max_p_x-mc_tracker_hit_ecal_max_p_x), sim_max_p, weight);
             reg_histos_[region]->Fill2DHisto("sim_ecal_x_ecal_energy_hh", (-ecal_max_p_x-mc_tracker_hit_ecal_max_p_x), ecal_max_energy, weight);
-
+        }
+        
         //reg_tuples_[region]->fill();
     }
     
