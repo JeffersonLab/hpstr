@@ -237,6 +237,20 @@
         "xtitle" : "Sim x (at ECal) x - Ecal x",
         "ytitle" : "Events"
     },
+    "track_phi0_simpxpz_h" : {
+        "bins"  : 100,
+        "minX"   : -2,
+        "maxX"   : 2,
+        "xtitle" : "Track #phi_{0} / Sim p_{x}/p_{z}",
+        "ytitle" : "Events"
+    },
+    "track_tanlambda_simpypz_h" : {
+        "bins"  : 100,
+        "minX"   : -2,
+        "maxX"   : 2,
+        "xtitle" : "Track tan#lambda / Sim p_{y}/p_{z}",
+        "ytitle" : "Events"
+    },
     "sim_pxpz_pypz_hh" : {
         "binsX"  : 200,
         "minX"   : -0.8,
@@ -278,7 +292,7 @@
         "ytitle" : "sim p"
     },
     "track_phi0_p_hh" : {
-        "binsX"  : 100,
+        "binsX"  : 200,
         "minX"   : -0.8,
         "maxX"   : 0.8,
         "binsY"  : 20,
@@ -288,10 +302,10 @@
         "ytitle" : "Track p"
     },
     "track_phi0_tanlambda_hh" : {
-        "binsX"  : 100,
+        "binsX"  : 200,
         "minX"   : -0.8,
         "maxX"   : 0.8,
-        "binsY"  : 20,
+        "binsY"  : 50,
         "minY"   : -0.2,
         "maxY"   : 0.2,
         "xtitle" : "Track #phi_{0}",
@@ -301,7 +315,7 @@
         "binsX"  : 10,
         "minX"   : -20,
         "maxX"   : 20,
-        "binsY"  : 20,
+        "binsY"  : 50,
         "minY"   : -0.2,
         "maxY"   : 0.2,
         "xtitle" : "Track z_{0}",
@@ -394,7 +408,7 @@
         "binsY"  : 20,
         "minY"   : 0,
         "maxY"   : 10,
-        "xtitle" : "Sim x (at ECal) - Ecal x",
+        "xtitle" : "Ecal x - Sim x (at ECal)",
         "ytitle" : "Track p"
     },
     "sim_ecal_x_sim_p_hh" : {
@@ -404,7 +418,7 @@
         "binsY"  : 20,
         "minY"   : 0,
         "maxY"   : 10,
-        "xtitle" : "Sim x (at ECal) - Ecal x",
+        "xtitle" : "Ecal x - Sim x (at ECal)",
         "ytitle" : "sim p"
     },
     "sim_ecal_x_ecal_energy_hh" : {
@@ -414,7 +428,47 @@
         "binsY"  : 20,
         "minY"   : 0,
         "maxY"   : 10,
-        "xtitle" : "Sim x (at ECal) - Ecal x",
+        "xtitle" : "Ecal x - Sim x (at ECal)",
         "ytitle" : "Ecal energy"
+    },
+    "track_tanlambda_simpypz_phi0_simpxpz_hh" : {
+        "binsX"  : 100,
+        "minX"   : -2,
+        "maxX"   : 2,
+        "binsY"  : 100,
+        "minY"   : -2,
+        "maxY"   : 2,
+        "xtitle" : "Track #phi_{0} / Sim p_{x}/p_{z}",
+        "ytitle" : "Track tan#lambda / Sim p_{y}/p_{z}"
+    },
+    "track_phi0_simpxpz_sim_p_hh" : {
+        "bins"  : 100,
+        "minX"   : -2,
+        "maxX"   : 2,
+        "binsY"  : 20,
+        "minY"   : 0,
+        "maxY"   : 10,
+        "xtitle" : "Track #phi_{0} / Sim p_{x}/p_{z}",
+        "ytitle" : "Sim p"
+    },
+    "track_tanlambda_simpypz_sim_p_hh" : {
+        "bins"  : 100,
+        "minX"   : -2,
+        "maxX"   : 2,
+        "binsY"  : 20,
+        "minY"   : 0,
+        "maxY"   : 10,
+        "xtitle" : "Track tan#lambda / Sim p_{y}/p_{z}",
+        "ytitle" : "Sim p"
+    },
+    "track_ecal_x_ecal_x_hh" : {
+        "binsX"  : 100,
+        "minX"   : -600,
+        "maxX"   : 600,
+        "binsY"  : 1000,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "ECal x",
+        "ytitle" : "Track (at ECal) x - Ecal x"
     }
 }

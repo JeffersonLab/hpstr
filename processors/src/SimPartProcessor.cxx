@@ -201,8 +201,12 @@ bool SimPartProcessor::process(IEvent* ievent) {
     tuples->setVariableValue("numRecoEcalClusters", (float)nReco_Ecal_clusters);
 
     double sim_max_p = -99999;
+    double sim_pxpz = -99999;
+    double sim_pypz = -99999;
     std::vector<double> sim_p_list;
+    std::vector<double> sim_pypz_list;
     sim_p_list.clear();
+    sim_pypz_list.clear();
     for (int i=0; i<nParts; i++) {
         MCParticle *part = MCParticles_->at(i);
         int gen = part->getGenStatus();
@@ -215,13 +219,18 @@ bool SimPartProcessor::process(IEvent* ievent) {
         double pz = momentum_V.at(2);
         double p = sqrt(px*px + py*py + pz*pz);
         sim_p_list.push_back(p);
+        sim_pypz_list.push_back(py/pz);
         if (p > sim_max_p){
             sim_max_p = p;
+            sim_pxpz = px/pz;
+            sim_pypz = py/pz;
         }
     }
 
     int min_n_Track_hits = 99999;
     double track_omega = -99999;
+    double track_phi0 = -99999;
+    double track_tanlamda = -99999;
     double track_max_p_ecal_x = -99999;
     double track_max_p = -99999;
     std::vector<double> track_p_list;
@@ -238,6 +247,8 @@ bool SimPartProcessor::process(IEvent* ievent) {
             track_max_p = p;
             track_max_p_ecal_x = track->getPositionAtEcal().at(0);
             track_omega = track->getOmega();
+            track_phi0 = track->getPhi();
+            track_tanlamda = track->getTanLambda();
         }
     }
 
@@ -282,11 +293,23 @@ bool SimPartProcessor::process(IEvent* ievent) {
 
     if (track_max_p != -99999 && sim_max_p != -99999)
         histos->Fill2DHisto("track_sim_p_sim_p_hh", track_max_p/sim_max_p, sim_max_p, weight);
+
+    if (sim_pxpz != -99999 && track_phi0 != -99999){
+        histos->Fill1DHisto("track_phi0_simpxpz_h", (track_phi0/sim_pxpz), weight);
+        histos->Fill2DHisto("track_phi0_simpxpz_sim_p_hh", (track_phi0/sim_pxpz), sim_max_p, weight);
+    }
+    if (sim_pypz != -99999 && track_tanlamda != -99999){
+        histos->Fill1DHisto("track_phi0_simpxpz_h", (track_tanlamda/sim_pypz), weight);
+        histos->Fill2DHisto("track_phi0_simpxpz_sim_p_hh", (track_tanlamda/sim_pypz), sim_max_p, weight);
+    }
+    if (sim_pxpz != -99999 && track_phi0 != -99999 && sim_pypz != -99999 && track_tanlamda != -99999)
+        histos->Fill2DHisto("track_tanlambda_simpypz_phi0_simpxpz_hh", (track_phi0/sim_pxpz), (track_tanlamda/sim_pypz), weight);
     if (track_max_p_ecal_x != -99999 && ecal_max_p_x != 99999){
         histos->Fill1DHisto("track_ecal_x_diff_h", (track_max_p_ecal_x-ecal_max_p_x), weight);
         histos->Fill2DHisto("track_ecal_x_track_p_hh", (track_max_p_ecal_x-ecal_max_p_x), track_max_p, weight);
         histos->Fill2DHisto("track_ecal_x_sim_p_hh", (track_max_p_ecal_x-ecal_max_p_x), sim_max_p, weight);
         histos->Fill2DHisto("track_ecal_x_ecal_energy_hh", (track_max_p_ecal_x-ecal_max_p_x), ecal_max_energy, weight);
+        histos->Fill2DHisto("track_ecal_x_ecal_x_hh", ecal_max_p_x, (track_max_p_ecal_x-ecal_max_p_x), weight);
     }
     if (mc_tracker_hit_ecal_max_p_x != -99999 && track_max_p_ecal_x != 99999){
         histos->Fill1DHisto("sim_track_x_diff_h", (track_max_p_ecal_x-mc_tracker_hit_ecal_max_p_x), weight);
@@ -295,10 +318,10 @@ bool SimPartProcessor::process(IEvent* ievent) {
         histos->Fill2DHisto("sim_track_x_ecal_energy_hh", (track_max_p_ecal_x-mc_tracker_hit_ecal_max_p_x), ecal_max_energy, weight);
     }
     if (mc_tracker_hit_ecal_max_p_x != -99999 && ecal_max_p_x != 99999){
-        histos->Fill1DHisto("sim_ecal_x_diff_h", (mc_tracker_hit_ecal_max_p_x-ecal_max_p_x), weight);
-        histos->Fill2DHisto("sim_ecal_x_track_p_hh", (mc_tracker_hit_ecal_max_p_x-ecal_max_p_x), track_max_p, weight);
-        histos->Fill2DHisto("sim_ecal_x_sim_p_hh", (mc_tracker_hit_ecal_max_p_x-ecal_max_p_x), sim_max_p, weight);
-        histos->Fill2DHisto("sim_ecal_x_ecal_energy_hh", (mc_tracker_hit_ecal_max_p_x-ecal_max_p_x), ecal_max_energy, weight);
+        histos->Fill1DHisto("sim_ecal_x_diff_h", (ecal_max_p_x-mc_tracker_hit_ecal_max_p_x), weight);
+        histos->Fill2DHisto("sim_ecal_x_track_p_hh", (ecal_max_p_x-mc_tracker_hit_ecal_max_p_x), track_max_p, weight);
+        histos->Fill2DHisto("sim_ecal_x_sim_p_hh", (ecal_max_p_x-mc_tracker_hit_ecal_max_p_x), sim_max_p, weight);
+        histos->Fill2DHisto("sim_ecal_x_ecal_energy_hh", (-ecal_max_p_x-mc_tracker_hit_ecal_max_p_x), ecal_max_energy, weight);
     }
 
     tuples->fill();
@@ -368,6 +391,25 @@ bool SimPartProcessor::process(IEvent* ievent) {
         }
         if (sim_p_fail) continue;
         if(debug_) std::cout<<"Pass Sim pT Lt cut"<<std::endl;
+        int sim_pypz_fail = 0;
+        for (int i=0; i<sim_pypz_list.size(); i++){
+            if ( !reg_selectors_[region]->passCutLt("sim_pypz_gt", sim_pypz_list[i], weight) ){
+                sim_pypz_fail = 1;
+                break;
+            }
+        }
+        if (sim_pypz_fail) continue;
+        if(debug_) std::cout<<"Pass Sim py/pz Gt cut"<<std::endl;
+
+        int sim_pypz_fail = 0;
+        for (int i=0; i<sim_pypz_list.size(); i++){
+            if ( !reg_selectors_[region]->passCutLt("sim_pypz_lt", sim_pypz_list[i], weight) ){
+                sim_pypz_fail = 1;
+                break;
+            }
+        }
+        if (sim_pypz_fail) continue;
+        if(debug_) std::cout<<"Pass Sim py/pz Lt cut"<<std::endl;
 
         if(debug_) std::cout<<"Pass region "<<region<<std::endl;
 
@@ -385,6 +427,8 @@ bool SimPartProcessor::process(IEvent* ievent) {
         //reg_tuples_[region]->setVariableValue("numRecoEcalClusters", (float)nReco_Ecal_clusters);
 
         double sim_max_p_region = -99999;
+        double sim_pxpz_region = -99999;
+        double sim_pypz_region = -99999;
         for (int i=0; i<nParts; i++) {
             MCParticle *part = MCParticles_->at(i);
             int gen = part->getGenStatus();
@@ -399,10 +443,14 @@ bool SimPartProcessor::process(IEvent* ievent) {
             double p = sqrt(px*px + py*py + pz*pz);
             if (p > sim_max_p_region){
                 sim_max_p_region = p;
+                sim_pxpz_region = px/pz;
+                sim_pypz_region = py/pz;
             }
         }
 
         int min_n_Track_hits_region = 99999;
+        double track_phi0_region = -99999;
+        double track_tanlamda_region = -99999;
         double track_omega_region = -99999;
         double track_max_p_ecal_x_region = -99999;
         double track_max_p_region = -99999;
@@ -418,6 +466,8 @@ bool SimPartProcessor::process(IEvent* ievent) {
                 track_max_p_region = p;
                 track_max_p_ecal_x_region = track->getPositionAtEcal().at(0);
                 track_omega_region = track->getOmega();
+                track_phi0_region = track->getPhi();
+                track_tanlamda_region = track->getTanLambda();
             }
         }
 
@@ -463,6 +513,16 @@ bool SimPartProcessor::process(IEvent* ievent) {
 
         if (track_max_p_region != -99999 && sim_max_p_region != -99999)
             reg_histos_[region]->Fill2DHisto("track_sim_p_sim_p_hh", track_max_p_region/sim_max_p_region, sim_max_p_region, weight);
+        if (sim_pxpz_region != -99999 && track_phi0_region != -99999){
+            reg_histos_[region]->Fill1DHisto("track_phi0_simpxpz_h", (track_phi0_region/sim_pxpz_region), weight);
+            reg_histos_[region]->Fill2DHisto("track_phi0_simpxpz_sim_p_hh", (track_phi0_region/sim_pxpz_region), sim_max_p_region, weight);
+        }
+        if (sim_pypz_region != -99999 && track_tanlamda_region != -99999){
+            reg_histos_[region]->Fill1DHisto("track_tanlambda_simpypz_h", (track_tanlamda_region/sim_pypz_region), weight);
+            reg_histos_[region]->Fill2DHisto("track_tanlambda_simpypz_sim_p_hh", (track_tanlamda_region/sim_pypz_region), sim_max_p_region, weight);
+        }
+        if (sim_pxpz_region != -99999 && track_phi0_region != -99999 && sim_pypz_region != -99999 && track_tanlamda_region != -99999)
+            reg_histos_[region]->Fill2DHisto("track_tanlambda_simpypz_phi0_simpxpz_hh", (track_phi0_region/sim_pxpz_region), (track_tanlamda_region/sim_pypz_region), weight);
         if (track_max_p_ecal_x_region != -99999 && ecal_max_p_x_region != 99999){
             reg_histos_[region]->Fill1DHisto("track_ecal_x_diff_h", (track_max_p_ecal_x_region-ecal_max_p_x_region), weight);
             reg_histos_[region]->Fill2DHisto("track_ecal_x_track_p_hh", (track_max_p_ecal_x_region-ecal_max_p_x_region), track_max_p_region, weight);
@@ -474,12 +534,13 @@ bool SimPartProcessor::process(IEvent* ievent) {
             reg_histos_[region]->Fill2DHisto("sim_track_x_track_p_hh", (track_max_p_ecal_x_region-mc_tracker_hit_ecal_max_p_x_region), track_max_p_region, weight);
             reg_histos_[region]->Fill2DHisto("sim_track_x_sim_p_hh", (track_max_p_ecal_x_region-mc_tracker_hit_ecal_max_p_x_region), sim_max_p_region, weight);
             reg_histos_[region]->Fill2DHisto("sim_track_x_ecal_energy_hh", (track_max_p_ecal_x_region-mc_tracker_hit_ecal_max_p_x_region), ecal_max_energy_region, weight);
+            reg_histos_[region]->Fill2DHisto("track_ecal_x_ecal_x_hh", ecal_max_p_x_region, (track_max_p_ecal_x_region-ecal_max_p_x_region), weight);
         }
         if (mc_tracker_hit_ecal_max_p_x_region != -99999 && ecal_max_p_x_region != 99999){
-            reg_histos_[region]->Fill1DHisto("sim_ecal_x_diff_h", (mc_tracker_hit_ecal_max_p_x_region-ecal_max_p_x_region), weight);
-            reg_histos_[region]->Fill2DHisto("sim_ecal_x_track_p_hh", (mc_tracker_hit_ecal_max_p_x_region-ecal_max_p_x_region), track_max_p_region, weight);
-            reg_histos_[region]->Fill2DHisto("sim_ecal_x_sim_p_hh", (mc_tracker_hit_ecal_max_p_x_region-ecal_max_p_x_region), sim_max_p_region, weight);
-            reg_histos_[region]->Fill2DHisto("sim_ecal_x_ecal_energy_hh", (mc_tracker_hit_ecal_max_p_x_region-ecal_max_p_x_region), ecal_max_energy_region, weight);
+            reg_histos_[region]->Fill1DHisto("sim_ecal_x_diff_h", (ecal_max_p_x_region-mc_tracker_hit_ecal_max_p_x_region), weight);
+            reg_histos_[region]->Fill2DHisto("sim_ecal_x_track_p_hh", (ecal_max_p_x_region-mc_tracker_hit_ecal_max_p_x_region), track_max_p_region, weight);
+            reg_histos_[region]->Fill2DHisto("sim_ecal_x_sim_p_hh", (ecal_max_p_x_region-mc_tracker_hit_ecal_max_p_x_region), sim_max_p_region, weight);
+            reg_histos_[region]->Fill2DHisto("sim_ecal_x_ecal_energy_hh", (ecal_max_p_x_region-mc_tracker_hit_ecal_max_p_x_region), ecal_max_energy_region, weight);
         }
 
         //reg_tuples_[region]->fill();
