@@ -259,6 +259,18 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         else {
             las3pluslas6_FitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::NONE, isExp);
             bkg_global = new TF1("bkg", bkg_func, window_start, window_end, poly_order_ );
+
+            //For the global bkg only model. Function= las3_plus_las6. Using the 10 parameters found on [45,200] MeV that found a pvalue of 5.8e-2 as initial parameters for fitting.
+            bkg_global->SetParameter(0, 0.02655677447001521);
+            bkg_global->SetParameter(1, 0.09575583442743552);
+            bkg_global->SetParameter(2, 1.6087608867103269e-06);
+            bkg_global->SetParameter(3, -12.14155381679078);
+            bkg_global->SetParameter(4, -9.88122176150782);
+            bkg_global->SetParameter(5, -0.015730267362833915);
+            bkg_global->SetParameter(6, 0.11327528231496534);
+            bkg_global->SetParameter(7, -14701589.955451723);
+            bkg_global->SetParameter(8, 117.94823473423622);
+            bkg_global->SetParameter(9, 423.73510122988904);
         }
 
         //For the first two bkg-only models
@@ -271,17 +283,6 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
                 bkg->SetParName(i, Form("pol%i", i));
             }
         }
-        //For the global bkg only model. Function= las3_plus_las6. Using the 10 parameters found on [45,200] MeV that found a pvalue of 5.8e-2 as initial parameters for fitting.
-        bkg_global->SetParameter(0,0.02655677447001521);
-        bkg_global->SetParameter(1, 0.09575583442743552);
-        bkg_global->SetParameter(2,1.6087608867103269e-06);
-        bkg_global->SetParameter(3,-12.14155381679078);
-        bkg_global->SetParameter(4, -9.88122176150782);
-        bkg_global->SetParameter(5,-0.015730267362833915);
-        bkg_global->SetParameter(6,0.11327528231496534);
-        bkg_global->SetParameter(7, -14701589.955451723);
-        bkg_global->SetParameter(8,117.94823473423622);
-        bkg_global->SetParameter(9,423.73510122988904);
         // Define the toy generator fit model.
         if(isChebyshev) {
             ChebyshevFitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, toy_order_model, FitFunction::SignalFitModel::NONE, isExp);
@@ -292,21 +293,9 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         }
 
         else {
+            //for the global fit toy model
             las3pluslas6_FitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, toy_order_model, FitFunction::SignalFitModel::NONE, isExp);
             bkg_toys = new TF1("bkg_toys", bkg_toy_func, window_start, window_end, poly_order_);
-
-        }    
-
-        if(isChebyshev or isLegendre) {
-            bkg_toys->SetParameter(0, initNorm);
-            bkg_toys->SetParName(0, "pol0");
-            for(int i = 1; i < toy_poly_order_ + 1; i++) {
-                bkg_toys->SetParameter(i, 0);
-                bkg_toys->SetParName(i, Form("pol%i", i));
-            }
-        }
-        //For the global toy model
-        else {
 
             bkg_toys->SetParameter(0,0.02655677447001521);
             bkg_toys->SetParameter(1, 0.09575583442743552);
@@ -318,10 +307,16 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
             bkg_toys->SetParameter(7, -14701589.955451723);
             bkg_toys->SetParameter(8,117.94823473423622);
             bkg_toys->SetParameter(9,423.73510122988904);
+        }    
 
+        if(isChebyshev or isLegendre) {
+            bkg_toys->SetParameter(0, initNorm);
+            bkg_toys->SetParName(0, "pol0");
+            for(int i = 1; i < toy_poly_order_ + 1; i++) {
+                bkg_toys->SetParameter(i, 0);
+                bkg_toys->SetParName(i, Form("pol%i", i));
+            }
         }
-
-
         // Perform the background-only fit and store the result.
         if(isChebyshev or isLegendre) {
             TFitResultPtr result = histogram->Fit("bkg", "QLES+", "", window_start_, window_end_);
@@ -408,16 +403,14 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         else {
 
             las3pluslas6_FitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);       
-
-
             full = new TF1("full", full_func, window_start_, window_end_, poly_order_ + 4); //10 is number of parameters of las3pluslas6, fit window shouold be not -1,1   
             //signal model info    
             //full->SetParameter(0, initNorm);
             //full->SetParName(0, "pol0");
-            full->SetParameter(poly_order_ + 1, 0.0);
-            full->SetParName(poly_order_ + 1, "signal norm");
-            full->SetParName(poly_order_ + 2, "mean");
-            full->SetParName(poly_order_ + 3, "sigma");
+            full->SetParameter(poly_order_ , 0.0);
+            full->SetParName(poly_order_ , "signal norm");
+            full->SetParName(poly_order_ + 1, "mean");
+            full->SetParName(poly_order_ + 2, "sigma");
             //for(int i = 1; i < poly_order_ + 1; i++) {
             //    full->SetParameter(i, 0);
             //    full->SetParName(i, Form("pol%i", i));
@@ -444,7 +437,7 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
             full->FixParameter(poly_order_ + 2, mass_hypothesis);
             full->FixParameter(poly_order_ + 3, mass_resolution_);
 
-            for(int parI = 0; parI < poly_order_ + 1; parI++) {
+            for(int parI = 0; parI < poly_order_ ; parI++) {
                 full->SetParameter(parI, bkg_global->GetParameter(parI));
             }
         }    
@@ -476,8 +469,17 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
 
     void BumpHunter::calculatePValue(HpsFitResult* result) {
         std::cout << "[ BumpHunter ]: Calculating p-value: " << std::endl;
+        
+        if(bkg_model_ < 4){
 
-        double signal_yield = result->getCompFitResult()->Parameter(poly_order_ + 1);
+            double signal_yield = result->getCompFitResult()->Parameter(poly_order_ + 1);
+        } else {
+            double signal_yield = result->getCompFitResult()->Parameter(poly_order_ ); 
+        }
+
+
+
+
         printDebug("Signal yield: " + std::to_string(signal_yield));
 
         // In searching for a resonance, a signal is expected to lead to an 
@@ -535,10 +537,15 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         std::cout << "[ BumpHunter ]: Calculating upper limit." << std::endl;
 
         // Get the signal yield and signal yield error.
-        double signal_yield = result->getCompFitResult()->Parameter(poly_order_ + 1);
-        if(signal_yield < 0) { signal_yield = 0; }
-        double signal_yield_error = result->getCompFitResult()->ParError(poly_order_ + 1);
-
+        if(bkg_model_ < 4){
+            double signal_yield = result->getCompFitResult()->Parameter(poly_order_ + 1);
+            if(signal_yield < 0) { signal_yield = 0; }
+            double signal_yield_error = result->getCompFitResult()->ParError(poly_order_ + 1);
+        } else { 
+            double signal_yield = result->getCompFitResult()->Parameter(poly_order_ );
+            if(signal_yield < 0) { signal_yield = 0; }
+            double signal_yield_error = result->getCompFitResult()->ParError(poly_order_ );
+        }
         // Debug print the signal yield and its error.
         std::cout << "Signal Yield       :: " << signal_yield << std::endl;
         std::cout << "Signal Yield Error :: " << signal_yield_error << std::endl;
@@ -575,6 +582,8 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         if(poly_order_ == 1) { bkg_order_model = FitFunction::ModelOrder::FIRST; }
         else if(poly_order_ == 3) { bkg_order_model = FitFunction::ModelOrder::THIRD; }
         else if(poly_order_ == 5) { bkg_order_model = FitFunction::ModelOrder::FIFTH; }
+        else {bkg_order_model = FitFunction::ModelOrder::GLOBAL;}
+        
         if(isChebyshev) {
             ChebyshevFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);
             comp = new TF1("comp_ul", comp_func, -1, 1, poly_order_ + 4);
@@ -586,10 +595,7 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
 
 
         else {
-
             las3pluslas6_FitFunction comp_func(mass_hypothesis, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);       
-
-
             comp = new TF1("comp_ul", comp_func, window_start_, window_end_, poly_order_ + 3);
         }
         if(isChebyshev || isLegendre){
@@ -613,7 +619,7 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
 
             //comp->SetParameter(0, initNorm);
             //comp->SetParName(0, "pol0");
-            comp->SetParameter(poly_order_ + 1, 0.0);
+            comp->SetParameter(poly_order_ , 0.0);
             comp->SetParName(poly_order_ , "signal norm");
             comp->SetParName(poly_order_ + 1, "mean");
             comp->SetParName(poly_order_ + 2, "sigma");
@@ -755,6 +761,9 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         } else if(isLegendre){
             LegendreFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);
             comp = new TF1("comp_ul", comp_func, -1, 1, poly_order_ + 4);
+        } else {
+            las3pluslas6_FitFunction comp_func(mass_hypothesis, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);       
+            comp = new TF1("comp_ul", comp_func, window_start_, window_end_, poly_order_ + 3);
         }
 
 
@@ -829,10 +838,9 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
             if (isChebyshev || isLegendre){
                 comp->FixParameter(poly_order_ + 1, signal_yield);
             } else {comp->FixParameter(poly_order_ , signal_yield);}
+
             TFitResultPtr full_result = histogram->Fit("comp_ul", "QLES+", "", window_start_, window_end_);
             double cond_nll = full_result->MinFcnValue();
-
-            
 
             // 1) Calculate the likelihood ratio which is chi2 distributed.
             // 2) From the chi2, calculate the p-value.
