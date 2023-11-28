@@ -40,6 +40,9 @@
 #include "HpsFitResult.h"
 #include "ChebyshevFitFunction.h"
 #include "LegendreFitFunction.h"
+#include "las3pluslas6_FitFunction.h"
+
+
 
 /**
  * @brief description

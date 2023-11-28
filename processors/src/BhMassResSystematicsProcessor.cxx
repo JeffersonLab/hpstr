@@ -140,6 +140,14 @@ void BhMassResSystematicsProcessor::initialize(std::string inFilename, std::stri
     flat_tuple_->addVector("sig_yield_err");
     flat_tuple_->addVector("upper_limit");
     flat_tuple_->addVector("ul_p_value");
+
+
+    flat_tuple_->addVector("bkg_poly");
+    flat_tuple_->addVector("sbkg_poly");
+    flat_tuple_->addVector("bkg_poly_err");
+    flat_tuple_->addVector("sbkg_poly_err");
+
+
 }
 
 bool BhMassResSystematicsProcessor::process() {
@@ -191,6 +199,28 @@ bool BhMassResSystematicsProcessor::process() {
     flat_tuple_->setVariableValue("nominal_sig_yield_err",          nominal_result->getSignalYieldErr());
     flat_tuple_->setVariableValue("nominal_upper_limit",            nominal_result->getUpperLimit());
     flat_tuple_->setVariableValue("nominal_ul_p_value",             nominal_result->getUpperLimitPValue());
+
+    //filling a vector with coefficients from polynomials fit to bkg and bkg +sig
+    const double * bkg_fit_params = nominal_bkg_result->GetParams();
+    const double * sbkg_fit_params = nominal_sig_result->GetParams();
+    
+    const double * bkg_fit_params_err = nominal_bkg_result->GetErrors();
+    const double * sbkg_fit_params_err = nominal_sig_result->GetErrors();
+
+
+
+    for(int i = 0; i < poly_order_ + 1; i++) {
+        flat_tuple_->addToVector("bkg_poly",bkg_fit_params[i]);
+        flat_tuple_->addToVector("sbkg_poly",sbkg_fit_params[i]);
+
+        flat_tuple_->addToVector("bkg_poly_err",bkg_fit_params_err[i]);
+        flat_tuple_->addToVector("sbkg_poly_err",sbkg_fit_params_err[i]);
+    }
+    
+
+
+
+
 
     // Make a random number generator.
     TRandom3 *rng = new TRandom3();

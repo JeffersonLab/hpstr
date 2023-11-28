@@ -29,7 +29,8 @@ class FitFunction {
             FIRST   = 0,
             THIRD   = 1,
             FIFTH   = 2,
-            SEVENTH = 3
+            SEVENTH = 3,
+            GLOBAL  = 4
         };
 
         /**
@@ -40,7 +41,8 @@ class FitFunction {
             CHEBYSHEV     = 0,
             EXP_CHEBYSHEV = 1,
             LEGENDRE      = 2,
-            EXP_LEGENDRE  = 3
+            EXP_LEGENDRE  = 3,
+            LAS3PLUSLAS6  = 4    
         };
 
         /**
@@ -78,6 +80,9 @@ class FitFunction {
             } else if(model_order == FitFunction::ModelOrder::SEVENTH) {
                 order = 7;
                 sigParm = 8;
+            } else if(model_order == FitFunction::ModelOrder::GLOBAL) {
+                order = 10;
+                sigParm = 11;
             }
         }
 

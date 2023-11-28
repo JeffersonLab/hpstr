@@ -24,6 +24,14 @@ class FunctionMath {
         static double LegendreFunction(double x, double* p, int order);
 
         /**
+         * @brief Defines a las3pluslas6 global fit function.
+         * 
+         * @param x 
+         * @param p 
+         * @return double 
+         */
+        static double las3pluslas6_Function(double x, double* p);
+        /**
          * @brief Defines a Gaussian function for signal-fitting.
          * 
          * @param x 
