@@ -288,9 +288,9 @@ class Track : public TObject {
          * @return momentum magnitude
          */
         
-        double getP(){return sqrt(px_*px_ + py_*py_ + pz_*pz_);};
+        double getP() const {return sqrt(px_*px_ + py_*py_ + pz_*pz_);};
         
-        double getPt() {return sqrt(px_*px_ + pz_*pz_);}
+        double getPt() const {return sqrt(px_*px_ + pz_*pz_);}
         
         /**
          * Set the lambda kink of the given layer.
