@@ -15,6 +15,7 @@
 #include <EVENT/TrackerHit.h>
 #include <EVENT/TrackState.h>
 #include <EVENT/TrackerRawData.h>
+#include <IMPL/ClusterImpl.h>
 #include <IMPL/LCGenericObjectImpl.h>
 #include <IMPL/TrackerHitImpl.h>
 #include <UTIL/LCRelationNavigator.h>
@@ -99,7 +100,7 @@ class TrackingProcessor : public Processor {
         std::string kinkRelCollLcio_{"GBLKinkDataRelations"}; //!< collection name
         std::string trkRelCollLcio_{"TrackDataRelations"}; //!< collection name
         std::string trkCollRoot_{"GBLTracks"}; //!< collection name
-
+        
         /** Container to hold all raw hits objecs. */
         std::vector<RawSvtHit*> rawhits_{};
         std::string hitFitsCollLcio_{"SVTFittedRawTrackerHits"}; //!< collection name
