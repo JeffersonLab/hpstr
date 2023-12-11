@@ -43,11 +43,14 @@ double TrackSmearingTool::smearTrackP(const Track& track) {
   double p     = track.getP();
   double nhits = track.getTrackerHitCount();
   bool isTop   = track.getTanLambda() > 0. ? true : false;
-  int binN     = smearing_histo_top_->GetBin(nhits);
+  int binN     = smearing_histo_top_->FindBin(nhits);
 
-  if (binN < 1 || binN > smearing_histo_top_->GetXaxis()->GetNbins()) 
-    throw std::invalid_argument("Bin not found in smearing histogram");
+  if (debug_)
+    std::cout<<"Track nhits="<<nhits<<" bin="<<binN<<std::endl;
   
+  if (binN < 1 || binN > smearing_histo_top_->GetXaxis()->GetNbins()) {
+    throw std::invalid_argument("Bin not found in smearing histogram");
+  }
   float sp = 0.;
   if (isTop) {
     sp = (*(normals_top_.at(binN-1)))(*generator_);

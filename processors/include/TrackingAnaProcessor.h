@@ -11,6 +11,8 @@
 //   ROOT   //
 //----------//
 #include "TClonesArray.h"
+#include "TH1D.h"
+#include "TH2D.h"
 
 //-----------//
 //   hpstr   //
@@ -114,10 +116,15 @@ class TrackingAnaProcessor : public Processor {
         int isData_{1}; //! is data
         int debug_{0}; //!< debug level
         float time_offset_{0}; //! time offset
-
+        
+        //Momentum smearing closure test
         std::shared_ptr<TrackSmearingTool> smearingTool_;
-
-
+        std::string pSmearingFile_{""};
+        TH1D* psmear_h_;
+        TH2D* psmear_vs_nHits_hh_;
+        TH2D* psmear_vs_nHits_top_hh_;
+        TH2D* psmear_vs_nHits_bot_hh_;
+        
 }; // TrackingAnaProcessor
 
 #endif // __TRACKING_ANAPROCESSOR_
