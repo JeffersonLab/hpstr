@@ -6,7 +6,7 @@ import baseConfig as base
 base.parser.add_argument("-f", "--makeFlatTuple", type=int, dest="makeFlatTuple",
                          help="Make True to make vertex ana flat tuple", metavar="makeFlatTuple", default=1)
 base.parser.add_argument("-r", "--isRadPDG", type=int, dest="isRadPDG",
-                         help="Set radiative trident PDG ID", metavar="isRadPDG", default=625)
+                         help="Set radiative trident PDG ID", metavar="isRadPDG", default=622)
 options = base.parser.parse_args()
 
 # Use the input file to set the output file name
@@ -43,7 +43,7 @@ vtxana.parameters["mcColl"] = "MCParticle"
 vtxana.parameters["hitColl"] = "SiClustersOnTrackOnPartOnUVtx"
 vtxana.parameters["analysis"] = "vertex"
 vtxana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+"/analysis/selections/simps/vertexSelection_2016_simp_preselection.json"
-vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/simps/vtxAnalysis_2016_simp_reach.json"
+vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/simps/vtxAnalysis_2016_simp_reach_light.json"
 vtxana.parameters["mcHistoCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
 #####
 vtxana.parameters["beamE"] = base.beamE[str(options.year)]
@@ -54,8 +54,8 @@ vtxana.parameters["beamPosCfg"] = ""
 if options.isData:
     vtxana.parameters["v0ProjectionFitsCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/v0_projection_2016_config.json'
 else:
-    #vtxana.parameters["v0ProjectionFitsCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/v0_projection_2016_mc_7800_config.json'  #For tritrig and wab mc
-    vtxana.parameters["v0ProjectionFitsCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/v0_projection_2016_mc_signal_config.json' #For signal (accidentally gen with bspt=(0,0)
+    vtxana.parameters["v0ProjectionFitsCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/v0_projection_2016_mc_7800_config.json'  #For tritrig and wab mc
+    #vtxana.parameters["v0ProjectionFitsCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/v0_projection_2016_mc_signal_config.json' #For signal (accidentally gen with bspt=(0,0)
 
 if options.isData:
     vtxana.parameters["eleTrackTimeBias"] = -1.5
@@ -63,6 +63,8 @@ if options.isData:
 else:
     vtxana.parameters["eleTrackTimeBias"] = -2.2 #MC
     vtxana.parameters["posTrackTimeBias"] = -2.2 #MC
+    vtxana.parameters["eleTrackTimeBias"] = -5.5 #MC For TTs new smearing samples
+    vtxana.parameters["posTrackTimeBias"] = -5.5 #MC For TTs new smearing samples
 
 
 CalTimeOffset = -999

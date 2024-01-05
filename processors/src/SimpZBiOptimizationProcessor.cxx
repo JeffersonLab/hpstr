@@ -71,6 +71,7 @@ void SimpZBiOptimizationProcessor::configure(const ParameterSet& parameters) {
 //USE JSON FILE TO LOAD IN NEW VARIABLES AND VARIABLE CONFIGURATIONS
 void SimpZBiOptimizationProcessor::addNewVariables(SimpAnaTTree* MTT, std::string variable, double param){
     
+    std::cout << "[SimpZBiOptimizationProcessor]::addNewVariable " << variable << " with param " << param << std::endl;
     if(variable == "unc_vtx_ele_zalpha")
         MTT->addVariable_unc_vtx_ele_zalpha(param);
     if(variable == "unc_vtx_pos_zalpha")
@@ -117,9 +118,9 @@ void SimpZBiOptimizationProcessor::addNewVariables(SimpAnaTTree* MTT, std::strin
     //if(variable == "unc_vtx_proj_significance")
     //    MTT->addVariable_unc_vtx_proj_significance();
 
-    else
-        std::cout << "[SimpZBiOptimization]::ERROR::NEW VARIABLE " << variable << " IS NOT DEFINED IN SimpAnaTTree.cxx"
-            <<std::endl;
+    //else
+    //    std::cout << "[SimpZBiOptimization]::ERROR::NEW VARIABLE " << variable << " IS NOT DEFINED IN SimpAnaTTree.cxx"
+    //        <<std::endl;
 }
 
 void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos> histos, SimpAnaTTree* MTT){
@@ -149,6 +150,10 @@ void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos
     if(MTT->variableExists("unc_vtx_pos_zalpha")){
         histos->Fill2DHisto("z0_v_unc_vtx_zalpha_hh",MTT->getValue("unc_vtx_pos_zalpha"),
                 MTT->getValue("unc_vtx_pos_track_z0"));
+    }
+    if(MTT->variableExists("unc_vtx_zalpha_max")){
+        histos->Fill2DHisto("recon_z_v_unc_vtx_zalpha_max_hh",MTT->getValue("unc_vtx_zalpha_max"),
+                MTT->getValue("unc_vtx_z"));
     }
 
     //v0 projection
@@ -294,14 +299,16 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
         int param_idx = std::distance(new_variables_.begin(), it);
         std::cout << "[SimpZBiOptimization]::Attempting to add new variable " << *it << 
             " with parameter " << new_variable_params_.at(param_idx) << std::endl;
-        signalMTT_->addVariable(*it, new_variable_params_.at(param_idx));
-        bkgMTT_->addVariable(*it, new_variable_params_.at(param_idx));
-        //addNewVariables(signalMTT_, *it, new_variable_params_.at(param_idx));
-        //addNewVariables(bkgMTT_, *it, new_variable_params_.at(param_idx));
+        //signalMTT_->addVariable(*it, new_variable_params_.at(param_idx));
+        //bkgMTT_->addVariable(*it, new_variable_params_.at(param_idx));
+        addNewVariables(signalMTT_, *it, new_variable_params_.at(param_idx));
+        addNewVariables(bkgMTT_, *it, new_variable_params_.at(param_idx));
     }
 
     //Finalize Initialization of New Mutable Tuples
     std::cout << "[SimpZBiOptimization]::Finalizing Initialization of New Mutable Tuples" << std::endl;
+    signalMTT_->shiftVariable("unc_vtx_ele_track_z0", -0.07);
+    signalMTT_->shiftVariable("unc_vtx_pos_track_z0", -0.07);
     signalMTT_->Fill();
     bkgMTT_->Fill();
 
@@ -399,7 +406,7 @@ bool SimpZBiOptimizationProcessor::process(){
 
     std::cout << "max iteration: " << max_iteration_ << std::endl;
     //Iteratively cut n% of the signal distribution for a given Test Cut variable
-    for(int iteration = 0; iteration < max_iteration_; iteration ++){
+    for(int iteration = 0; iteration < max_iteration_+1; iteration ++){
         double cutSignal = (double)iteration*step_size_*100.0;
         cutSignal = round(cutSignal);
         if(debug_) std::cout << "## ITERATION " << iteration << " ##" << std::endl;
@@ -437,6 +444,12 @@ bool SimpZBiOptimizationProcessor::process(){
 
             //Fill Signal variable distributions
             fillEventHistograms(signalHistos_, signalMTT_);
+        }
+        if(iteration == max_iteration_){
+            //Write iteration histos
+            signalHistos_->writeHistos(outFile_,"signal_pct_sig_cut_"+std::to_string(cutSignal));
+            bkgHistos_->writeHistos(outFile_,"background_pct_sig_cut_"+std::to_string(cutSignal));
+            break;
         }
 
         //Initialize Signal Integrals
@@ -549,8 +562,9 @@ bool SimpZBiOptimizationProcessor::process(){
 
             //Build Background Model, used to estimate nbkg in Signal Region
             if(debug_) std::cout << "Build Background Model" << std::endl;
-            TF1* bkg_model = (TF1*)testCutHistos_->fitExponentialTail("background_zVtx_"+cutname, 100.0*background_sf_); 
-            //TF1* bkg_model = (TF1*)testCutHistos_->fitExponentialPlusConst("background_zVtx_"+cutname, 1000.0); 
+            double start_fit = 500.0*background_sf_;
+            TF1* bkg_model = (TF1*)testCutHistos_->fitExponentialTail("background_zVtx_"+cutname, start_fit); 
+            //TF1* bkg_model = (TF1*)testCutHistos_->fitExponentialPlusConst("background_zVtx_"+cutname, start_fit); 
             if(debug_) std::cout << "END Build Background Model" << std::endl;
 
             //Get signal unc_vtx_z vs true_vtx_z
@@ -600,18 +614,17 @@ bool SimpZBiOptimizationProcessor::process(){
 
             //Find maximum position of Zcut --> ZBi calculation requires non-zero background
             //Start the Zcut position at the target
-            double max_zcut = -4.0;
-            double zcut_step = 0.5;
+            double zcut_step = 0.1;
             TH1F* bkg_zVtx_h = (TH1F*)testCutHistos_->get1dHisto("testCutHistos_background_zVtx_"+cutname+"_h");
-            //double endIntegral = bkg_zVtx_h->GetBinCenter(bkg_zVtx_h->FindLastBinAbove(0.0));
-            double endIntegral = 100.0;
+            double max_zcut = bkg_model->GetXmin();
+            double endIntegral = bkg_zVtx_h->GetBinLowEdge(bkg_zVtx_h->FindLastBinAbove(0.0)) + bkg_zVtx_h->GetBinWidth(1);
+            //double endIntegral = 100.0
             double testIntegral = bkg_model->Integral(max_zcut, endIntegral);
-            if(debug_) std::cout << "Background between " << max_zcut << "and end of histo is " << 
-                testIntegral << std::endl;
+            if(debug_) std::cout << "Background between " << max_zcut << "and end of histo is " << testIntegral << std::endl;
             while(testIntegral > min_ztail_events_){
                 max_zcut = max_zcut+zcut_step;
                 testIntegral = bkg_model->Integral(max_zcut, endIntegral);
-                if(testIntegral == 0.0){
+                if(testIntegral < min_ztail_events_){
                     max_zcut = max_zcut-zcut_step;
                     testIntegral = bkg_model->Integral(max_zcut, endIntegral);
                     break;
@@ -620,7 +633,7 @@ bool SimpZBiOptimizationProcessor::process(){
             if(debug_) std::cout << "Maximum Zcut: " << max_zcut << " gives " << testIntegral << " background events"  << std::endl;
 
             //If configuration does not specify scanning Zcut values, use single Zcut position at maximum position.
-            double min_zcut = 10.0;
+            double min_zcut = bkg_model->GetXmin();
             if(!scan_zcut_)
                 min_zcut = max_zcut;
             std::cout << "Minimum Zcut position: " << min_zcut << std::endl;
@@ -651,8 +664,8 @@ bool SimpZBiOptimizationProcessor::process(){
             if(debug_) std::cout << "Scanning zcut position" << std::endl;
             for(double zcut = min_zcut; zcut < (max_zcut+zcut_step); zcut = zcut+zcut_step){
                 double Nbkg = bkg_model->Integral(zcut,endIntegral);
-                std::cout << "zcut: " << zcut << std::endl;
-                std::cout << "Nbkg: " << Nbkg << std::endl;
+                //std::cout << "zcut: " << zcut << std::endl;
+                //std::cout << "Nbkg: " << Nbkg << std::endl;
                 
                 //Get the Signal truth vertex z distribution beyond the reconstructed vertex Zcut
                 TH1F* true_vtx_z_h = (TH1F*)vtx_z_hh->ProjectionY((std::to_string(zcut)+"_"+cutname+"_"+"true_vtx_z_projy").c_str(),vtx_z_hh->GetXaxis()->FindBin(zcut)+1,vtx_z_hh->GetXaxis()->GetNbins(),"");
@@ -666,7 +679,7 @@ bool SimpZBiOptimizationProcessor::process(){
                 }
 
                 //Get Signal Selection Efficiency, as a function of truth vertex Z, F(z)
-                if(debug_) std::cout << "Get Signal Selection Efficiency" << std::endl;
+                //if(debug_) std::cout << "Get Signal Selection Efficiency" << std::endl;
                 TEfficiency* effCalc_h = new TEfficiency(*signalSelZ_h, *signalSimZ_h_);
                 //if(zcut == min_zcut){
                 //    outFile_->cd(("testCuts_pct_sig_cut_"+std::to_string(cutSignal)).c_str());
@@ -696,14 +709,14 @@ bool SimpZBiOptimizationProcessor::process(){
                 */
                 double Nsig = nSigRho + nSigPhi;
 
-                if(debug_){
-                    std::cout << "nSigRho: " << nSigRho << std::endl;
-                    std::cout << "nSigPhi: " << nSigPhi << std::endl;
-                    std::cout << "Nsig: " << Nsig << std::endl;
-                }
+                //if(debug_){
+                //    std::cout << "nSigRho: " << nSigRho << std::endl;
+                //    std::cout << "nSigPhi: " << nSigPhi << std::endl;
+                //    std::cout << "Nsig: " << Nsig << std::endl;
+                //}
 
                 Nsig = Nsig*signal_sf_;
-                if(debug_) std::cout << "Nsig after scale factor: " << Nsig << std::endl;
+                //if(debug_) std::cout << "Nsig after scale factor: " << Nsig << std::endl;
 
 
                 //CLEAR POINTERS
@@ -721,6 +734,7 @@ bool SimpZBiOptimizationProcessor::process(){
                 std::cout << "ZBi before rounding: " << ZBi << std::endl;
                 ZBi = round(ZBi);
 
+                /*
                 std::cout << "[SimpZBiOptimization]::Iteration Results:" << std::endl;
                 std::cout << "Zcut = " << zcut << std::endl;
                 std::cout << "Nsig = " << Nsig << std::endl;
@@ -728,6 +742,7 @@ bool SimpZBiOptimizationProcessor::process(){
                 std::cout << "n_on: " << n_on << std::endl;
                 std::cout << "n_off: " << n_off << std::endl;
                 std::cout << "ZBi: " << ZBi << std::endl;
+                */
 
                 //Update Test Cut with best scan values
                 if(ZBi > best_scan_zbi){

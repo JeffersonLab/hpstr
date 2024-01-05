@@ -83,7 +83,7 @@ double SimpEquations::rate_Vcharged_pi(double m_Ap, double m_pi, double m_V,
         double alpha_dark, double f_pi){
     double x = m_pi / m_Ap;
     double y = m_V / m_Ap;
-    double Tv = 18.0;
+    double Tv = 18.0-((3.0/2.0) +(3.0/4.0)) ;
     double coeff = alpha_dark*Tv/(192.*std::pow(M_PI,4));
     return coeff * std::pow((m_Ap/m_pi),2) * std::pow(m_V/m_pi,2) * std::pow((m_pi/f_pi),4) * m_Ap*std::pow(Beta(x,y),3./2.);
 }
