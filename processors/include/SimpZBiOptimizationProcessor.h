@@ -192,8 +192,6 @@ class SimpZBiOptimizationProcessor : public Processor {
         double highMass_; //<! description
         double lowMass_; //<! description
 
-        //Dev 
-        bool testSpecialCut_ = false; //<! description
 };
 
 #endif

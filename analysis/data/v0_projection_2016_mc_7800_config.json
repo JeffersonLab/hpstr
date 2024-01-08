@@ -1,0 +1,10 @@
+{
+    "7800": {
+        "target_position": -4.3,
+        "rotated_mean_x": -2.31164e-01,
+        "rotated_mean_y": -5.15632e-02,
+        "rotated_sigma_x": 2.01293e-01,
+        "rotated_sigma_y": 8.16385e-02,
+        "rotation_angle_mrad": -120.719
+    }
+}

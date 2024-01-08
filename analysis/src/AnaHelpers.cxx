@@ -30,29 +30,29 @@ void AnaHelpers::InnermostLayerCheck(Track* trk, bool& foundL1, bool& foundL2) {
     bool hasL1 = false;
     bool hasL2 = false;
     bool hasL3 = false;
-    for (int ihit=0; ihit<trk->getSvtHits().GetEntries();++ihit) {
-        TrackerHit* hit3d = (TrackerHit*) trk->getSvtHits().At(ihit);
+    for (int ihit=0; ihit<trk->getHitLayers().size();++ihit) {
+        int hit3d = trk->getHitLayers().at(ihit);
         if(isKF){
-            if (hit3d->getLayer() == 0 ) {
+            if (hit3d == 0 ) {
                 innerCount++;
             }
-            if (hit3d->getLayer() == 1) {
+            if (hit3d == 1) {
                 innerCount++;
             }
-            if (hit3d->getLayer() == 2) {
+            if (hit3d == 2) {
                 innerCount++;
                 hasL2 = true;
             }
-            if (hit3d->getLayer() == 3) {
+            if (hit3d == 3) {
                 innerCount++;
                 hasL3 = true;
             }
         }
         else{
-            if (hit3d->getLayer() == 0 ) {
+            if (hit3d == 0 ) {
                 innerCount++;
             }
-            if (hit3d->getLayer() == 1) {
+            if (hit3d == 1) {
                 innerCount++;
                 hasL1 = true;
             }

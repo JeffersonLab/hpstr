@@ -1,5 +1,5 @@
-#ifndef __VERTEX_ANAPROCESSOR_H__
-#define __VERTEX_ANAPROCESSOR_H__
+#ifndef __NEWVERTEX_ANAPROCESSOR_H__
+#define __NEWVERTEX_ANAPROCESSOR_H__
 
 // HPSTR
 #include "HpsEvent.h"
@@ -42,7 +42,7 @@ struct char_cmp {
  * @brief Insert description here.
  * more details
  */
-class VertexAnaProcessor : public Processor {
+class NewVertexAnaProcessor : public Processor {
 
     public:
         /**
@@ -51,9 +51,9 @@ class VertexAnaProcessor : public Processor {
          * @param name 
          * @param process 
          */
-        VertexAnaProcessor(const std::string& name, Process& process);
+        NewVertexAnaProcessor(const std::string& name, Process& process);
 
-        ~VertexAnaProcessor();
+        ~NewVertexAnaProcessor();
 
         /**
          * @brief description
@@ -93,7 +93,6 @@ class VertexAnaProcessor : public Processor {
         TBranch* bts_{nullptr}; //!< description
         TBranch* bvtxs_{nullptr}; //!< description
         TBranch* bhits_{nullptr}; //!< description
-        TBranch* btrks_{nullptr}; //!< description
         TBranch* bmcParts_{nullptr}; //!< description
         TBranch* bevth_{nullptr}; //!< description
         TBranch* becal_{nullptr}; //!< description
@@ -102,7 +101,6 @@ class VertexAnaProcessor : public Processor {
         TSData* ts_{nullptr}; //!< description
         std::vector<CalCluster*>* ecal_{}; //!< description
         std::vector<Vertex*>* vtxs_{}; //!< description
-        std::vector<Track*>* trks_{}; //!< description
         std::vector<TrackerHit*>* hits_{}; //!< description
         std::vector<MCParticle*>* mcParts_{}; //!< description
 
@@ -110,7 +108,6 @@ class VertexAnaProcessor : public Processor {
         std::string tsColl_{"TSBank"}; //!< description
         std::string vtxColl_{"Vertices"}; //!< description
         std::string hitColl_{"RotatedHelicalTrackHits"}; //!< description
-        std::string trkColl_{"GBLTracks"}; //!< description
         std::string ecalColl_{"RecoEcalClusters"}; //!< description
         std::string mcColl_{"MCParticle"}; //!< description
         int isRadPDG_{622}; //!< description
@@ -149,8 +146,6 @@ class VertexAnaProcessor : public Processor {
         double eleTrackTimeBias_ = 0.0;
         double posTrackTimeBias_ = 0.0;
         int current_run_number_{-999}; //!< track current run number
-
-        bool mc_reg_on_ = false;
 };
 
 #endif

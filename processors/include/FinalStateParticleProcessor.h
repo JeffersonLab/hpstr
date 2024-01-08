@@ -100,6 +100,8 @@ class FinalStateParticleProcessor : public Processor {
         std::string kinkRelCollLcio_{"GBLKinkDataRelations"}; //!< description
         std::string trkRelCollLcio_{"TrackDataRelations"}; //!< description
         std::string hitFitsCollLcio_{"SVTFittedRawTrackerHits"};
+
+        double bfield_{-1.}; //!< magnetic field
         
         int debug_{0}; //!< Debug Level
 

@@ -85,7 +85,23 @@ void HistoManager::DefineHistos(){
                         hist.value().at("xtitle"),hist.value().at("binsX"),hist.value().at("minX"),hist.value().at("maxX"),
                         hist.value().at("ytitle"),hist.value().at("binsY"),hist.value().at("minY"),hist.value().at("maxY"));
             }
-
+            
+            //3D histogram
+            else if (extension == "hhh") {
+              histos3d[h_name] = plot3D(h_name,
+                                        hist.value().at("xtitle"),
+                                        hist.value().at("binsX"),
+                                        hist.value().at("minX"),
+                                        hist.value().at("maxX"),
+                                        hist.value().at("ytitle"),
+                                        hist.value().at("binsY"),
+                                        hist.value().at("minY"),
+                                        hist.value().at("maxY"),
+                                        hist.value().at("ztitle"),
+                                        hist.value().at("binsZ"),
+                                        hist.value().at("minZ"),
+                                        hist.value().at("maxZ"));
+            }
     }//loop on config
 }
 
@@ -324,6 +340,24 @@ void HistoManager::Fill2DHisto(const std::string& histoName,float valuex, float 
         }
     }
 }
+
+void HistoManager::Fill3DHisto(const std::string& histoName,float valuex, float valuey, float valuez, float weight) {
+    if (histos3d[m_name+"_"+histoName])
+      histos3d[m_name+"_"+histoName]->Fill(valuex,valuey,valuez, weight);
+    else {
+        printWarnings_++;
+        if (doPrintWarnings_) {
+            if (printWarnings_ < maxWarnings_)
+                std::cout<<"ERROR::Fill3DHisto Histogram not found! "<<m_name+"_"+histoName<<std::endl;
+            else {
+                std::cout<<"Fill3DHisto::Printed max number of warnings " << maxWarnings_ << ". Stop"<<std::endl;
+                doPrintWarnings_ = false;
+            }
+        }
+    }
+}
+
+
 
 
 void HistoManager::Fill1DHisto(const std::string& histoName,float value, float weight) {

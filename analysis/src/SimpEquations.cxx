@@ -11,7 +11,7 @@ SimpEquations::SimpEquations(int year){
     std::cout << "mass ratio Ap:V_D = " << mass_ratio_Ap_to_Vd_ << std::endl;
     std::cout << "ratio of dark pion mass to dark pion decay constant: " << ratio_mPi_to_fPi_ << std::endl;
     std::cout << "Dark Vector decay lepton mass: " << m_l_ << std::endl;
-    std::cout << "Alpha Dark: " << alpha_D_ << std::endl;
+    std::cout << "Alpha Dark: " << alpha_dark_ << std::endl;
 
 }
 
@@ -24,7 +24,7 @@ SimpEquations::SimpEquations(int year, const std::string paramsConfigFile){
     std::cout << "mass ratio Ap:V_D = " << mass_ratio_Ap_to_Vd_ << std::endl;
     std::cout << "ratio of dark pion mass to dark pion decay constant: " << ratio_mPi_to_fPi_ << std::endl;
     std::cout << "Dark Vector decay lepton mass: " << m_l_ << std::endl;
-    std::cout << "Alpha Dark: " << alpha_D_ << std::endl;
+    std::cout << "Alpha Dark: " << alpha_dark_ << std::endl;
 
 }
 
@@ -45,7 +45,7 @@ void SimpEquations::loadParametersConfig(const std::string paramsConfigFile){
             mass_ratio_Ap_to_Pid_ = param.value().at("mass_ratio_Ap_to_Pid");
             ratio_mPi_to_fPi_ = param.value().at("ratio_mPi_to_fPi");
             m_l_ = param.value().at("lepton_mass");
-            alpha_D_ = param.value().at("alpha_dark");
+            alpha_dark_ = param.value().at("alpha_dark");
         }
     }
     catch(...)
@@ -55,30 +55,93 @@ void SimpEquations::loadParametersConfig(const std::string paramsConfigFile){
     }
 }
 
-double SimpEquations::rate_2pi(double m_Ap, double m_pi, double m_V, double alpha_D){
-    double coeff = (2.0*alpha_D/3.0) * m_Ap;
+double SimpEquations::rate_2pi(double m_Ap, double m_pi, double m_V, double alpha_dark){
+    double coeff = (2.0*alpha_dark/3.0) * m_Ap;
     double pow1 = std::pow((1-(4*m_pi*m_pi/(m_Ap*m_Ap))),3/2.);
     double pow2 = std::pow(((m_V*m_V)/((m_Ap*m_Ap)-(m_V*m_V))),2);
     return coeff*pow1*pow2;
 }
 
-double SimpEquations::rate_Vpi(double m_Ap, double m_pi, double m_V, double alpha_D, double f_pi, bool rho, bool phi){
-    double x = m_pi/m_Ap;
-    double y = m_V/m_Ap;
-    double coeff = alpha_D*Tv(rho, phi)/(192.*std::pow(M_PI,4));
+double SimpEquations::rate_Vrho_pi(double m_Ap, double m_pi, double m_V, 
+        double alpha_dark, double f_pi){
+    double x = m_pi / m_Ap;
+    double y = m_V / m_Ap;
+    double Tv = 3.0/4.0;
+    double coeff = alpha_dark*Tv/(192.*std::pow(M_PI,4));
     return coeff * std::pow((m_Ap/m_pi),2) * std::pow(m_V/m_pi,2) * std::pow((m_pi/f_pi),4) * m_Ap*std::pow(Beta(x,y),3./2.);
 }
 
-double SimpEquations::br_Vpi(double m_Ap, double m_pi, double m_V, double alpha_D, double f_pi, bool rho, bool phi){
-    double rate = rate_Vpi(m_Ap,m_pi,m_V,alpha_D,f_pi,rho,phi) + rate_2pi(m_Ap,m_pi,m_V,alpha_D);
-    if(2*m_V < m_Ap) rate = rate_Vpi(m_Ap, m_pi, m_V, alpha_D, f_pi, rho,phi) + rate_2pi(m_Ap,m_pi,m_V,alpha_D) + rate_2V(m_Ap,m_V,alpha_D);
-    return rate_Vpi(m_Ap,m_pi,m_V,alpha_D,f_pi,rho,phi)/rate;
+double SimpEquations::rate_Vphi_pi(double m_Ap, double m_pi, double m_V, 
+        double alpha_dark, double f_pi){
+    double x = m_pi / m_Ap;
+    double y = m_V / m_Ap;
+    double Tv = 3.0/2.0;
+    double coeff = alpha_dark*Tv/(192.*std::pow(M_PI,4));
+    return coeff * std::pow((m_Ap/m_pi),2) * std::pow(m_V/m_pi,2) * std::pow((m_pi/f_pi),4) * m_Ap*std::pow(Beta(x,y),3./2.);
+}
+double SimpEquations::rate_Vcharged_pi(double m_Ap, double m_pi, double m_V, 
+        double alpha_dark, double f_pi){
+    double x = m_pi / m_Ap;
+    double y = m_V / m_Ap;
+    double Tv = 18.0-((3.0/2.0) +(3.0/4.0)) ;
+    double coeff = alpha_dark*Tv/(192.*std::pow(M_PI,4));
+    return coeff * std::pow((m_Ap/m_pi),2) * std::pow(m_V/m_pi,2) * std::pow((m_pi/f_pi),4) * m_Ap*std::pow(Beta(x,y),3./2.);
 }
 
-double SimpEquations::br_2V(double m_Ap,double m_pi,double m_V,double alpha_D,double f_pi,double rho,double phi){
-    if(2*m_V >= m_Ap) return 0.;
-    double rate = rate_Vpi(m_Ap,m_pi,m_V,alpha_D,f_pi,rho,phi) + rate_2pi(m_Ap,m_pi,m_V,alpha_D) + rate_2V(m_Ap,m_V,alpha_D);
-    return rate_2V(m_Ap,m_V,alpha_D)/rate;
+double SimpEquations::br_2pi(double m_Ap, double m_pi, double m_V, double alpha_dark, 
+        double f_pi){
+    double total_rate = rate_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +
+        rate_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +
+        rate_Vcharged_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +
+        rate_2pi(m_Ap, m_pi, m_V, alpha_dark);
+    if(m_Ap > 2.0*m_V)
+        total_rate + rate_2V(m_Ap, m_V, alpha_dark);
+    return rate_2pi(m_Ap, m_pi, m_V, alpha_dark)/total_rate;
+}
+
+double SimpEquations::br_Vrho_pi(double m_Ap, double m_pi, double m_V, double alpha_dark, 
+        double f_pi){
+    double total_rate = rate_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +
+        rate_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +
+        rate_Vcharged_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +
+        rate_2pi(m_Ap, m_pi, m_V, alpha_dark);
+    if(m_Ap > 2.0*m_V)
+        total_rate + rate_2V(m_Ap, m_V, alpha_dark);
+    return rate_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi)/total_rate;
+}
+
+double SimpEquations::br_Vphi_pi(double m_Ap, double m_pi, double m_V, double alpha_dark, 
+        double f_pi){
+    double total_rate = rate_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +
+        rate_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +
+        rate_Vcharged_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +
+        rate_2pi(m_Ap, m_pi, m_V, alpha_dark);
+    if(m_Ap > 2.0*m_V)
+        total_rate + rate_2V(m_Ap, m_V, alpha_dark);
+    return rate_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi)/total_rate;
+}
+
+double SimpEquations::br_Vcharged_pi(double m_Ap, double m_pi, double m_V, 
+        double alpha_dark, double f_pi){
+    double total_rate = rate_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +
+        rate_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +
+        rate_Vcharged_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +
+        rate_2pi(m_Ap, m_pi, m_V, alpha_dark);
+    if(m_Ap > 2.0*m_V)
+        total_rate + rate_2V(m_Ap, m_V, alpha_dark);
+    return rate_Vcharged_pi(m_Ap, m_pi, m_V, alpha_dark,f_pi)/total_rate;
+}
+
+double SimpEquations::br_2V(double m_Ap,double m_pi,double m_V,double alpha_dark,double f_pi,double rho,double phi){
+    double total_rate = rate_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +
+        rate_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +
+        rate_Vcharged_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +
+        rate_2pi(m_Ap, m_pi, m_V, alpha_dark);
+    if(m_Ap > 2.0*m_V){
+        total_rate + rate_2V(m_Ap, m_V, alpha_dark);
+        return 0.0;
+    }
+    return rate_2V(m_Ap,m_V,alpha_dark)/total_rate;
 }
 
 double SimpEquations::Tv(bool rho,bool phi){
@@ -91,9 +154,9 @@ double SimpEquations::Beta(double x,double y){
     return (1+std::pow(y,2)-std::pow(x,2)-2*y)*(1+std::pow(y,2)-std::pow(x,2)+2*y);
 }
 
-double SimpEquations::rate_2V(double m_Ap,double m_V,double alpha_D){
+double SimpEquations::rate_2V(double m_Ap,double m_V,double alpha_dark){
     double r = m_V/m_Ap;
-    return alpha_D/6. * m_Ap * f(r);
+    return alpha_dark/6. * m_Ap * f(r);
 }
 
 double SimpEquations::f(double r){
@@ -102,9 +165,9 @@ double SimpEquations::f(double r){
     return num/den * std::pow((1-4*std::pow(r,2)),0.5);
 }
 
-double SimpEquations::rate_2l(double m_Ap,double m_pi,double m_V,double eps,double alpha_D,double f_pi,double m_l,bool rho){
+double SimpEquations::rate_2l(double m_Ap,double m_pi,double m_V,double eps,double alpha_dark,double f_pi,double m_l,bool rho){
     double alpha = 1./137.0;
-    double coeff = 16*M_PI*alpha_D*alpha*std::pow(eps,2)*std::pow(f_pi,2)/(3*std::pow(m_V,2));
+    double coeff = 16*M_PI*alpha_dark*alpha*std::pow(eps,2)*std::pow(f_pi,2)/(3*std::pow(m_V,2));
     double term1 = std::pow((std::pow(m_V,2)/(std::pow(m_Ap,2) - std::pow(m_V,2))),2);
     double term2 = std::pow((1-(4*std::pow(m_l,2)/std::pow(m_V,2))),0.5);
     double term3 = 1+(2*std::pow(m_l,2)/std::pow(m_V,2));
@@ -113,10 +176,10 @@ double SimpEquations::rate_2l(double m_Ap,double m_pi,double m_V,double eps,doub
     return coeff * term1 * term2 * term3 * m_V * constant;
 }
 
-double SimpEquations::getCtau(double m_Ap,double m_pi,double m_V,double eps,double alpha_D,double f_pi,double m_l,bool rho){
+double SimpEquations::getCtau(double m_Ap,double m_pi,double m_V,double eps,double alpha_dark,double f_pi,double m_l,bool rho){
     double c = 3.00e11; //mm/s
     double hbar = 6.58e-22; //MeV*sec
-    double rate = rate_2l(m_Ap,m_pi,m_V,eps,alpha_D,f_pi,m_l,rho); //MeV
+    double rate = rate_2l(m_Ap,m_pi,m_V,eps,alpha_dark,f_pi,m_l,rho); //MeV
     double tau = hbar/rate;
     double ctau = c*tau;
     return ctau;
@@ -127,8 +190,8 @@ double SimpEquations::gamma(double m_V,double E_V){
     return gamma;
 }
 
-//Allow passage of radFrac, radAcc, and dNdm from python config
-double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho, bool phi, 
+//Calculate expected signal by passing radFrac, radAcc, and dNdm
+double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho, 
         double E_V, TEfficiency* effCalc_h, double dNdm, double radFrac, double radAcc, double target_pos, double zcut){
 
     //Signal mass dependent SIMP parameters
@@ -137,7 +200,7 @@ double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho
     double f_pi = m_pi/ratio_mPi_to_fPi_;
 
     //Mass in MeV
-    double ctau = getCtau(m_Ap,m_pi, m_V,eps,alpha_D_,f_pi,m_l_,rho);
+    double ctau = getCtau(m_Ap,m_pi, m_V,eps,alpha_dark_,f_pi,m_l_,rho);
     double gcTau = ctau * gamma(m_V/1000.0, E_V); //E_V in GeV
     std::cout << "gcTau: " << gcTau << std::endl;
     std::cout << "radFrac: " << radFrac << std::endl;
@@ -154,13 +217,17 @@ double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho
             effCalc_h->GetTotalHistogram()->GetBinWidth(zbin);
     }
 
-
     //Total A' Production Rate
     double apProduction = (3.*137/2.)*3.14159*(m_Ap*eps*eps*radFrac*dNdm)/radAcc;
 
     //A' -> V+Pi Branching Ratio
-    double br_VPi = br_Vpi(m_Ap, m_pi, m_V, alpha_D_, f_pi, rho, phi);
+    double br_VPi = 0.0;
+    if(rho)
+        br_VPi = br_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark_, f_pi);
+    else
+        br_VPi = br_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark_, f_pi);
 
+    std::cout << "Branching ratio is " << br_VPi << std::endl;
     //Vector to e+e- BR = 1
     double br_V_ee = 1.0;
 
@@ -170,7 +237,7 @@ double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho
     return expSignal;
 }
 
-double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho, bool phi, 
+double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho, 
         double E_V, TEfficiency* effCalc_h, double target_pos, double zcut){
 
     //Signal mass dependent SIMP parameters
@@ -179,7 +246,7 @@ double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho
     double f_pi = m_pi/ratio_mPi_to_fPi_;
 
     //Mass in MeV
-    double ctau = getCtau(m_Ap,m_pi, m_V,eps,alpha_D_,f_pi,m_l_,rho);
+    double ctau = getCtau(m_Ap,m_pi, m_V,eps,alpha_dark_,f_pi,m_l_,rho);
     double gcTau = ctau * gamma(m_V/1000.0, E_V); //E_V in GeV
 
     //Calculate the Efficiency Vertex (Displaced VD Acceptance)
@@ -198,7 +265,11 @@ double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho
         /radiativeAcceptance(m_Ap);
 
     //A' -> V+Pi Branching Ratio
-    double br_VPi = br_Vpi(m_Ap, m_pi, m_V, alpha_D_, f_pi, rho, phi);
+    double br_VPi;
+    if(rho)
+        br_VPi = br_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark_, f_pi);
+    else
+        br_VPi = br_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark_, f_pi);
 
     //Vector to e+e- BR = 1
     double br_V_ee = 1.0;
@@ -209,11 +280,11 @@ double SimpEquations::expectedSignalCalculation(double m_V, double eps, bool rho
     return expSignal;
 }
 
-double SimpEquations::expectedSignalCalculation(double m_Ap, double m_pi, double m_V, double eps, double alpha_D, 
-        double f_pi, double m_l, bool rho, bool phi, double E_V, TEfficiency* effCalc_h, double target_pos, double zcut){
+double SimpEquations::expectedSignalCalculation(double m_Ap, double m_pi, double m_V, double eps, double alpha_dark, 
+        double f_pi, double m_l, bool rho, double E_V, TEfficiency* effCalc_h, double target_pos, double zcut){
 
     //Mass in MeV
-    double ctau = getCtau(m_Ap,m_pi, m_V,eps,alpha_D,f_pi,m_l,rho);
+    double ctau = getCtau(m_Ap,m_pi, m_V,eps,alpha_dark,f_pi,m_l,rho);
     double gcTau = ctau * gamma(m_V/1000.0, E_V); //E_V in GeV
 
     //Calculate the Efficiency Vertex (Displaced VD Acceptance)
@@ -232,7 +303,11 @@ double SimpEquations::expectedSignalCalculation(double m_Ap, double m_pi, double
         /radiativeAcceptance(m_Ap);
 
     //A' -> V+Pi Branching Ratio
-    double br_VPi = br_Vpi(m_Ap, m_pi, m_V, alpha_D, f_pi, rho, phi);
+    double br_VPi;
+    if(rho)
+        br_VPi = br_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark_, f_pi);
+    else
+        br_VPi = br_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark_, f_pi);
 
     //Vector to e+e- BR = 1
     double br_V_ee = 1.0;
