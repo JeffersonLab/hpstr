@@ -63,8 +63,8 @@ if options.isData:
 else:
     vtxana.parameters["eleTrackTimeBias"] = -2.2 #MC
     vtxana.parameters["posTrackTimeBias"] = -2.2 #MC
-    vtxana.parameters["eleTrackTimeBias"] = -5.5 #MC For TTs new smearing samples
-    vtxana.parameters["posTrackTimeBias"] = -5.5 #MC For TTs new smearing samples
+    #vtxana.parameters["eleTrackTimeBias"] = -5.5 #MC For TTs new smearing samples...due to readout bug
+    #vtxana.parameters["posTrackTimeBias"] = -5.5 #MC For TTs new smearing samples...due to readout bug
 
 
 CalTimeOffset = -999

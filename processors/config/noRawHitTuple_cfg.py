@@ -11,7 +11,7 @@ base.parser.add_argument("-s", "--truthHits", type=int, dest="truthHits",
 base.parser.add_argument("-r", "--rawHits", type=int, dest="rawHits",
         help="Keep raw svt hits: 1=yes", metavar="rawHits", default=0)
 base.parser.add_argument("-TS", "--trackstate", type=str, dest="trackstate",
-                                 help="Specify Track State | 'AtECal' or 'AtTarget'. Default is origin (AtIP)", metavar="trackstate", default="AtTarget")
+                                 help="Specify Track State | 'AtECal' or 'AtTarget'. Default is origin (AtIP)", metavar="trackstate", default="")
 
 
 options = base.parser.parse_args()

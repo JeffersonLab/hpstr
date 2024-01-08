@@ -133,6 +133,13 @@
         "xtitle" : "z_0 [mm]",
         "ytitle" : "Tracks"
     },
+    "ele_Z0oTanLambda_h" : {
+        "bins" : 200,
+        "minX" : -5,
+        "maxX" : 5,
+        "xtitle" : "z_0/tan(#lambda) [mm]",
+        "ytitle" : "Tracks"
+    },
     "ele_time_h" : {
         "bins" : 200,
         "minX" : -30,
@@ -374,6 +381,16 @@
         "xtitle" : "trk(#lamdba)",
         "ytitle" : "trk z0 [mm]"
     },
+    "ele_p_vs_tanlambda_hh" : {
+        "binsX"  : 200,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "binsY"  : 100,
+        "minY"   : 0.0,
+        "maxY"   : 5.0,
+        "xtitle" : "trk(#lamdba)",
+        "ytitle" : "trk p [GeV]"
+    },
     "ele_phi0_vs_p_hh" : {
         "binsX"  : 100,
         "minX"   : 0,
@@ -475,6 +492,13 @@
         "minX" : -5,
         "maxX" : 5,
         "xtitle" : "z_0 [mm]",
+        "ytitle" : "Tracks"
+    },
+    "pos_Z0oTanLambda_h" : {
+        "bins" : 200,
+        "minX" : -5,
+        "maxX" : 5,
+        "xtitle" : "z_0/tan(#lambda) [mm]",
         "ytitle" : "Tracks"
     },
     "pos_time_h" : {
@@ -685,6 +709,16 @@
         "maxY"   : 5,
         "xtitle" : "trk(#lamdba)",
         "ytitle" : "trk z0 [mm]"
+    },
+    "pos_p_vs_tanlambda_hh" : {
+        "binsX"  : 200,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "binsY"  : 100,
+        "minY"   : 0.0,
+        "maxY"   : 5.0,
+        "xtitle" : "trk(#lamdba)",
+        "ytitle" : "trk p [GeV]"
     },
     "ep_InvMass_h" : {
         "bins" : 400,
@@ -1098,6 +1132,26 @@
         "maxX" :  5.0 ,
         "xtitle" : " vtx E_{sum} [GeV] ",
         "ytitle" : " Vertices "
+    },
+    "vtx_track_recon_z_v_ABSdz0tanlambda_hh" : {
+        "binsX" :  100 ,
+        "minX" :  0.0 ,
+        "maxX" :  50.0 ,
+        "binsY" :  280 ,
+        "minY" :  -40.0 ,
+        "maxY" :  100.0 ,
+        "xtitle" : "#Delta Z",
+        "ytitle" : " z_{vtx} "
+    },
+    "vtx_track_recon_z_v_dz0tanlambda_hh" : {
+        "binsX" :  200 ,
+        "minX" :  -50.0 ,
+        "maxX" :  50.0 ,
+        "binsY" :  280 ,
+        "minY" :  -40.0 ,
+        "maxY" :  100.0 ,
+        "xtitle" : "#Delta Z",
+        "ytitle" : " z_{vtx} "
     },
     "ele_vtxZ_iso_hh" : {
         "binsX" :  150 ,

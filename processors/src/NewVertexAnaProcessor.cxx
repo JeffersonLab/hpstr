@@ -163,8 +163,11 @@ void NewVertexAnaProcessor::initialize(TTree* tree) {
             _reg_tuples[regname]->addVariable("unc_vtx_ele_track_OmegaErr");
             _reg_tuples[regname]->addVariable("unc_vtx_ele_track_L1_isolation");
             _reg_tuples[regname]->addVariable("unc_vtx_ele_track_nhits");
-            _reg_tuples[regname]->addVariable("unc_vtx_ele_track_x");
-            _reg_tuples[regname]->addVariable("unc_vtx_ele_track_y");
+            _reg_tuples[regname]->addVariable("unc_vtx_ele_track_lastlayer");
+            _reg_tuples[regname]->addVariable("unc_vtx_ele_track_si0");
+            _reg_tuples[regname]->addVariable("unc_vtx_ele_track_si1");
+            _reg_tuples[regname]->addVariable("unc_vtx_ele_track_ecal_x");
+            _reg_tuples[regname]->addVariable("unc_vtx_ele_track_ecal_y");
             _reg_tuples[regname]->addVariable("unc_vtx_ele_track_z");
             _reg_tuples[regname]->addVariable("unc_vtx_ele_track_px");
             _reg_tuples[regname]->addVariable("unc_vtx_ele_track_py");
@@ -186,8 +189,11 @@ void NewVertexAnaProcessor::initialize(TTree* tree) {
             _reg_tuples[regname]->addVariable("unc_vtx_pos_track_OmegaErr");
             _reg_tuples[regname]->addVariable("unc_vtx_pos_track_L1_isolation");
             _reg_tuples[regname]->addVariable("unc_vtx_pos_track_nhits");
-            _reg_tuples[regname]->addVariable("unc_vtx_pos_track_x");
-            _reg_tuples[regname]->addVariable("unc_vtx_pos_track_y");
+            _reg_tuples[regname]->addVariable("unc_vtx_pos_track_lastlayer");
+            _reg_tuples[regname]->addVariable("unc_vtx_pos_track_si0");
+            _reg_tuples[regname]->addVariable("unc_vtx_pos_track_si1");
+            _reg_tuples[regname]->addVariable("unc_vtx_pos_track_ecal_x");
+            _reg_tuples[regname]->addVariable("unc_vtx_pos_track_ecal_y");
             _reg_tuples[regname]->addVariable("unc_vtx_pos_track_z");
             _reg_tuples[regname]->addVariable("unc_vtx_pos_track_px");
             _reg_tuples[regname]->addVariable("unc_vtx_pos_track_py");
@@ -195,9 +201,11 @@ void NewVertexAnaProcessor::initialize(TTree* tree) {
 
             //clust vars
             _reg_tuples[regname]->addVariable("unc_vtx_ele_clust_E");
+            _reg_tuples[regname]->addVariable("unc_vtx_ele_clust_x");
             _reg_tuples[regname]->addVariable("unc_vtx_ele_clust_corr_t");
 
             _reg_tuples[regname]->addVariable("unc_vtx_pos_clust_E");
+            _reg_tuples[regname]->addVariable("unc_vtx_pos_clust_x");
             _reg_tuples[regname]->addVariable("unc_vtx_pos_clust_corr_t");
 
             if(!isData_)
@@ -608,6 +616,14 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
 
             CalCluster eleClus = ele->getCluster();
             CalCluster posClus = pos->getCluster();
+            //vtx X position
+            if (!_reg_vtx_selectors[region]->passCutLt("uncVtxX_lt",fabs(vtx->getX()),weight))
+                continue;
+
+            //vtx Y position
+            if (!_reg_vtx_selectors[region]->passCutLt("uncVtxY_lt",fabs(vtx->getY()),weight))
+                continue;
+
             //vtx Z position
             if (!_reg_vtx_selectors[region]->passCutGt("uncVtxZ_gt",vtx->getZ(),weight))
                 continue;
@@ -638,6 +654,31 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             p_ele.SetPxPyPzE(ele_trk->getMomentum()[0],ele_trk->getMomentum()[1],ele_trk->getMomentum()[2], ele_E);
             TLorentzVector p_pos;
             p_pos.SetPxPyPzE(pos_trk->getMomentum()[0],pos_trk->getMomentum()[1],pos_trk->getMomentum()[2], pos_E);
+
+            //Get the layers hit on each track
+            std::vector<int> ele_hit_layers = ele_trk->getHitLayers();
+            int ele_Si0 = 0;
+            int ele_Si1 = 0;
+            int ele_lastlayer = 0;
+            for(int i=0; i<ele_hit_layers.size(); i++)
+            {
+                int layer = ele_hit_layers.at(i);
+                ele_lastlayer = layer;
+                if (layer == 0) ele_Si0++;
+                if (layer == 1) ele_Si1++;
+            }
+
+            std::vector<int> pos_hit_layers = pos_trk->getHitLayers();
+            int pos_Si0 = 0;
+            int pos_Si1 = 0;
+            int pos_lastlayer = 0;
+            for(int i=0; i<pos_hit_layers.size(); i++)
+            {
+                int layer = pos_hit_layers.at(i);
+                pos_lastlayer = layer;
+                if (layer == 0) pos_Si0++;
+                if (layer == 1) pos_Si1++;
+            }
 
             //Defining these here so they are in scope elsewhere
             TVector3 trueEleP;
@@ -864,6 +905,9 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             if (!_reg_vtx_selectors[region]->passCutLt("volPos_bot", p_pos.Py(), weight))
                 continue;
 
+            if (!_reg_vtx_selectors[region]->passCutLt("deltaZ_lt", std::abs((ele_trk->getZ0()/ele_trk->getTanLambda()) - (pos_trk->getZ0()/pos_trk->getTanLambda())), weight))
+                continue;
+
             //If this is MC check if MCParticle matched to the electron track is from rad or recoil
             if(!isData_)
             {
@@ -987,6 +1031,31 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             //Track Time Corrections
             ele_trk->applyCorrection("track_time",eleTrackTimeBias_);
             pos_trk->applyCorrection("track_time", posTrackTimeBias_);
+
+            //Get the layers hit on each track
+            std::vector<int> ele_hit_layers = ele_trk->getHitLayers();
+            int ele_Si0 = 0;
+            int ele_Si1 = 0;
+            int ele_lastlayer = 0;
+            for(int i=0; i<ele_hit_layers.size(); i++)
+            {
+                int layer = ele_hit_layers.at(i);
+                ele_lastlayer = layer;
+                if (layer == 0) ele_Si0++;
+                if (layer == 1) ele_Si1++;
+            }
+
+            std::vector<int> pos_hit_layers = pos_trk->getHitLayers();
+            int pos_Si0 = 0;
+            int pos_Si1 = 0;
+            int pos_lastlayer = 0;
+            for(int i=0; i<pos_hit_layers.size(); i++)
+            {
+                int layer = pos_hit_layers.at(i);
+                pos_lastlayer = layer;
+                if (layer == 0) pos_Si0++;
+                if (layer == 1) pos_Si1++;
+            }
 
             //Vertex Covariance
             std::vector<float> vtx_cov = vtx->getCovariance();
@@ -1240,6 +1309,9 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
                 _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_PhiErr", ele_trk->getPhiErr());
                 _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_OmegaErr", ele_trk->getOmegaErr());
                 _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_nhits",ele2dHits);
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_lastlayer",ele_lastlayer);
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_si0",ele_Si0);
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_si1",ele_Si1);
 
                 _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_p", pos_trk->getP());
                 _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_t", pos_trk->getTrackTime());
@@ -1256,20 +1328,25 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
                 _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_PhiErr", pos_trk->getPhiErr());
                 _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_OmegaErr", pos_trk->getOmegaErr());
                 _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_nhits",pos2dHits);
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_lastlayer",pos_lastlayer);
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_si0",pos_Si0);
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_si1",pos_Si1);
 
                 //clust vars
                 _reg_tuples[region]->setVariableValue("unc_vtx_ele_clust_E", eleClus.getEnergy());
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_clust_x", eleClus.getPosition().at(0));
                 _reg_tuples[region]->setVariableValue("unc_vtx_ele_clust_corr_t",corr_eleClusterTime);
 
                 _reg_tuples[region]->setVariableValue("unc_vtx_pos_clust_E", posClus.getEnergy());
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_clust_x", posClus.getPosition().at(0));
                 _reg_tuples[region]->setVariableValue("unc_vtx_pos_clust_corr_t",corr_posClusterTime);
                 _reg_tuples[region]->setVariableValue("run_number", evth_->getRunNumber());
 
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_x", ele_trk->getPosition().at(0));
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_y", ele_trk->getPosition().at(1));
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_ecal_x", ele_trk->getPositionAtEcal().at(0));
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_ecal_y", ele_trk->getPositionAtEcal().at(1));
                 _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_z", ele_trk->getPosition().at(2));
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_x", pos_trk->getPosition().at(0));
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_y", pos_trk->getPosition().at(1));
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_ecal_x", pos_trk->getPositionAtEcal().at(0));
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_ecal_y", pos_trk->getPositionAtEcal().at(1));
                 _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_z", pos_trk->getPosition().at(2));
                 _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_px", ele_trk->getMomentum().at(0));
                 _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_py", ele_trk->getMomentum().at(1));

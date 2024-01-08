@@ -5,28 +5,23 @@
         "info" : "#chi^{2}_{unc}<20"
     },
     "eleN2Dhits_gt" :  {
-        "cut"  : 10,
+        "cut"  : 9,
         "id"   : 1,
-        "info" : "e^{-} Track n2d Hits >=10"
+        "info" : "e^{-} Track n2d Hits >=9"
     },
     "posN2Dhits_gt" :  {
-        "cut"  : 10,
+        "cut"  : 9,
         "id"   : 2,
-        "info" : "p^{+} Track n2d Hits >=10"
+        "info" : "p^{+} Track n2d Hits >=9"
     },
     "pSum_gt"  : {
         "cut"  : 0.5,
         "id"   : 3,
         "info" : "P_{e^{-}} + P_{e^{+}}>0.5 GeV"
     },
-    "deltaZ_lt"  : {
-        "cut"  : 10.0,
-        "id"   : 4,
-        "info" : "|#Delta Z| < 10"
-    },
     "nVtxs_eq" : {
         "cut"  : 1,
-        "id"   : 5,
+        "id"   : 4,
         "info" : "N_{vtx}=1"
     }
 }

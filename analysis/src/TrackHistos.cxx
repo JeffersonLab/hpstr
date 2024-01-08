@@ -207,7 +207,7 @@ void TrackHistos::Fill2DTrack(Track* track, float weight, const std::string& trk
 
         double d0 = track->getD0();
         double z0 = track->getZ0();
-        Fill2DHisto(trkname+"tanlambda_vs_phi0_hh",track->getPhi(),track->getTanLambda(), weight);
+        //Fill2DHisto(trkname+"tanlambda_vs_phi0_hh",track->getPhi(),track->getTanLambda(), weight);
         Fill2DHisto(trkname+"d0_vs_p_hh",track->getP(),d0,weight);
         Fill2DHisto(trkname+"d0_vs_phi0_hh",track->getPhi(),d0,weight);
         Fill2DHisto(trkname+"d0_vs_tanlambda_hh",track->getTanLambda(),d0,weight);
@@ -216,6 +216,11 @@ void TrackHistos::Fill2DTrack(Track* track, float weight, const std::string& trk
         Fill2DHisto(trkname+"phi0_vs_p_hh",track->getP(),track->getPhi(),weight);
         Fill2DHisto(trkname+"z0_vs_phi0_hh",track->getPhi(),z0,weight);
         Fill2DHisto(trkname+"z0_vs_tanlambda_hh",track->getTanLambda(),z0,weight);
+                
+        Fill2DHisto(trkname+"TanLambda_vs_Phi_hh"      ,track->getPhi()  , track->getTanLambda()       ,weight);
+        Fill2DHisto(trkname+"p_vs_Phi_hh"      ,track->getPhi()  , track->getP()       ,weight);
+        Fill2DHisto(trkname+"p_vs_TanLambda_hh"      ,track->getTanLambda()  , track->getP()       ,weight);
+
 
     }
 }
@@ -237,6 +242,7 @@ void TrackHistos::Fill1DTrack(Track* track, float weight, const std::string& trk
     Fill1DHisto(trkname+"invpT_h"    ,-1*charge/track->getPt(),weight);
     Fill1DHisto(trkname+"TanLambda_h",track->getTanLambda()   ,weight);
     Fill1DHisto(trkname+"Z0_h"       ,track->getZ0()          ,weight);
+    Fill1DHisto(trkname+"Z0oTanLambda_h",track->getZ0()/track->getTanLambda()   ,weight);
     Fill1DHisto(trkname+"time_h"     ,track->getTrackTime()   ,weight);
     Fill1DHisto(trkname+"chi2_h"     ,track->getChi2()        ,weight);
     Fill1DHisto(trkname+"chi2ndf_h"  ,track->getChi2Ndf()     ,weight);
@@ -267,11 +273,7 @@ void TrackHistos::Fill1DTrack(Track* track, float weight, const std::string& trk
         int hit2d = track->getHitLayers().at(ihit);
         Fill1DHisto(trkname+"hit_lay_h",(float) hit2d  ,weight);
     }
-    //Fill 2D histos
-    Fill2DHisto(trkname+"TanLambda_vs_Phi_hh"      ,track->getPhi()  , track->getTanLambda()       ,weight);
-    Fill2DHisto(trkname+"p_vs_Phi_hh"      ,track->getPhi()  , track->getP()       ,weight);
-    Fill2DHisto(trkname+"p_vs_TanLambda_hh"      ,track->getTanLambda()  , track->getP()       ,weight);
-
+    
     //All Tracks
     Fill1DHisto(trkname+"sharingHits_h",0,weight);
     if (track->getNShared() == 0)
