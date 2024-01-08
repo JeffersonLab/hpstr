@@ -157,221 +157,221 @@ $(function() {
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;                        hist.value().at(<span class="stringliteral">&quot;xtitle&quot;</span>),hist.value().at(<span class="stringliteral">&quot;binsX&quot;</span>),hist.value().at(<span class="stringliteral">&quot;minX&quot;</span>),hist.value().at(<span class="stringliteral">&quot;maxX&quot;</span>),</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                        hist.value().at(<span class="stringliteral">&quot;ytitle&quot;</span>),hist.value().at(<span class="stringliteral">&quot;binsY&quot;</span>),hist.value().at(<span class="stringliteral">&quot;minY&quot;</span>),hist.value().at(<span class="stringliteral">&quot;maxY&quot;</span>));</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;            }</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    }<span class="comment">//loop on config</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;}</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment">//This DefineHistos method is only used if you want to make multiple differently named copies of a particular json file histogram configuration. </span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">//The json histo config entry key value must contain a special string tag that indicates whether or not to make copies.</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment">//Must also provide a list of names that will be appended to the histo config key</span></div>
-<div class="line"><a name="l00095"></a><span class="lineno"><a class="line" href="classHistoManager.html#abb61d52ce2a6bc1d79ca972e57e7d126">   95</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classHistoManager.html#a14d9cc986fb225a1a68a03317f112a85">HistoManager::DefineHistos</a>(std::vector&lt;std::string&gt; histoCopyNames, std::string makeCopyJsonTag){</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a> &gt; 0) std::cout &lt;&lt; <span class="stringliteral">&quot;[HistoManager] DefineHistos&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    std::string h_name = <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a> &gt; 0){    </div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span> hist : <a class="code" href="classHistoManager.html#ab20a1d19398c0c0c5bbeb8f26294cbf6">_h_configs</a>.items()){</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;            std::cout&lt;&lt;hist.key()&lt;&lt;std::endl;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        }</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    }</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="comment">//std::cout&lt;&lt;_h_configs.items()&lt;&lt;std::endl;</span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> hist : <a class="code" href="classHistoManager.html#ab20a1d19398c0c0c5bbeb8f26294cbf6">_h_configs</a>.items()) {</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        <span class="keywordtype">bool</span> singleCopy = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        std::cout &lt;&lt; <span class="stringliteral">&quot;hist copy list size &quot;</span> &lt;&lt; histoCopyNames.size() &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; histoCopyNames.size(); i++){</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            h_name = <a class="code" href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">m_name</a>+<span class="stringliteral">&quot;_&quot;</span> + hist.key() ;</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;            <span class="keywordflow">if</span> (histoCopyNames.size() &gt; 1 &amp;&amp; std::string(hist.key()).find(makeCopyJsonTag) != std::string::npos){ </div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;                h_name = <a class="code" href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">m_name</a>+<span class="stringliteral">&quot;_&quot;</span>+ histoCopyNames.at(i) + <span class="stringliteral">&quot;_&quot;</span> + hist.key() ;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;                singleCopy = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;            }</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;            std::size_t found = (hist.key()).find_last_of(<span class="stringliteral">&quot;_&quot;</span>);</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;            std::string extension = hist.key().substr(found+1);</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;            <span class="keywordflow">if</span>(<a class="code" href="classHistoManager.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>){</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                std::cout &lt;&lt; <span class="stringliteral">&quot;DefineHisto: &quot;</span> &lt;&lt; h_name &lt;&lt; std::endl;  </div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                std::cout &lt;&lt; extension &lt;&lt; hist.value().at(<span class="stringliteral">&quot;xtitle&quot;</span>) &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;            }</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;            <span class="keywordflow">if</span> (extension == <span class="stringliteral">&quot;h&quot;</span>) {</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;                <a class="code" href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">histos1d</a>[h_name] = <a class="code" href="classHistoManager.html#ab10c4e6288f32f72eff9fdc32966141b">plot1D</a>(h_name,hist.value().at(<span class="stringliteral">&quot;xtitle&quot;</span>),</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;                        hist.value().at(<span class="stringliteral">&quot;bins&quot;</span>),</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                        hist.value().at(<span class="stringliteral">&quot;minX&quot;</span>),</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;                        hist.value().at(<span class="stringliteral">&quot;maxX&quot;</span>));</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;                std::string ytitle = hist.value().at(<span class="stringliteral">&quot;ytitle&quot;</span>);</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;                <a class="code" href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">histos1d</a>[h_name]-&gt;GetYaxis()-&gt;SetTitle(ytitle.c_str());</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;                <span class="keywordflow">if</span> (hist.value().contains(<span class="stringliteral">&quot;labels&quot;</span>)) {</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;                    std::vector&lt;std::string&gt; labels = hist.value().at(<span class="stringliteral">&quot;labels&quot;</span>).get&lt;std::vector&lt;std::string&gt; &gt;();</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;                    <span class="keywordflow">if</span> (labels.size() &lt; hist.value().at(<span class="stringliteral">&quot;bins&quot;</span>)) {</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;                        std::cout&lt;&lt;<span class="stringliteral">&quot;Cannot apply labels to histogram:&quot;</span>&lt;&lt;h_name&lt;&lt;std::endl;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;                    }</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;                    <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;                        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 1; i&lt;=hist.value().at(<span class="stringliteral">&quot;bins&quot;</span>);++i)</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;                            <a class="code" href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">histos1d</a>[h_name]-&gt;GetXaxis()-&gt;SetBinLabel(i,labels[i-1].c_str());</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;                    }<span class="comment">//bins</span></div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;                }<span class="comment">//labels</span></div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;            }<span class="comment">//1D histo</span></div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (extension == <span class="stringliteral">&quot;hh&quot;</span>) {</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;                <a class="code" href="classHistoManager.html#a10335fa6c3b50bcc19eb80359bfb4d24">histos2d</a>[h_name] = <a class="code" href="classHistoManager.html#a26cebf7306e8cbc633738b311fc708b5">plot2D</a>(h_name,</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;                        hist.value().at(<span class="stringliteral">&quot;xtitle&quot;</span>),hist.value().at(<span class="stringliteral">&quot;binsX&quot;</span>),hist.value().at(<span class="stringliteral">&quot;minX&quot;</span>),hist.value().at(<span class="stringliteral">&quot;maxX&quot;</span>),</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;                        hist.value().at(<span class="stringliteral">&quot;ytitle&quot;</span>),hist.value().at(<span class="stringliteral">&quot;binsY&quot;</span>),hist.value().at(<span class="stringliteral">&quot;minY&quot;</span>),hist.value().at(<span class="stringliteral">&quot;maxY&quot;</span>));</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;            }</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            </div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            <span class="comment">//3D histogram</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (extension == <span class="stringliteral">&quot;hhh&quot;</span>) {</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;              <a class="code" href="classHistoManager.html#a6abbc70f89f3379dc69d50aa94a1b9a8">histos3d</a>[h_name] = <a class="code" href="classHistoManager.html#a88f86c6745f30209340bc7d305a850ac">plot3D</a>(h_name,</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;                                        hist.value().at(<span class="stringliteral">&quot;xtitle&quot;</span>),</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                                        hist.value().at(<span class="stringliteral">&quot;binsX&quot;</span>),</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                                        hist.value().at(<span class="stringliteral">&quot;minX&quot;</span>),</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                                        hist.value().at(<span class="stringliteral">&quot;maxX&quot;</span>),</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;                                        hist.value().at(<span class="stringliteral">&quot;ytitle&quot;</span>),</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                                        hist.value().at(<span class="stringliteral">&quot;binsY&quot;</span>),</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                                        hist.value().at(<span class="stringliteral">&quot;minY&quot;</span>),</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                                        hist.value().at(<span class="stringliteral">&quot;maxY&quot;</span>),</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                                        hist.value().at(<span class="stringliteral">&quot;ztitle&quot;</span>),</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                                        hist.value().at(<span class="stringliteral">&quot;binsZ&quot;</span>),</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;                                        hist.value().at(<span class="stringliteral">&quot;minZ&quot;</span>),</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                                        hist.value().at(<span class="stringliteral">&quot;maxZ&quot;</span>));</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;            }</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    }<span class="comment">//loop on config</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;}</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="comment">//This DefineHistos method is only used if you want to make multiple differently named copies of a particular json file histogram configuration. </span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment">//The json histo config entry key value must contain a special string tag that indicates whether or not to make copies.</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">//Must also provide a list of names that will be appended to the histo config key</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno"><a class="line" href="classHistoManager.html#abb61d52ce2a6bc1d79ca972e57e7d126">  111</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classHistoManager.html#a14d9cc986fb225a1a68a03317f112a85">HistoManager::DefineHistos</a>(std::vector&lt;std::string&gt; histoCopyNames, std::string makeCopyJsonTag){</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a> &gt; 0) std::cout &lt;&lt; <span class="stringliteral">&quot;[HistoManager] DefineHistos&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    std::string h_name = <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a> &gt; 0){    </div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span> hist : <a class="code" href="classHistoManager.html#ab20a1d19398c0c0c5bbeb8f26294cbf6">_h_configs</a>.items()){</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;            std::cout&lt;&lt;hist.key()&lt;&lt;std::endl;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        }</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    }</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    <span class="comment">//std::cout&lt;&lt;_h_configs.items()&lt;&lt;std::endl;</span></div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">auto</span> hist : <a class="code" href="classHistoManager.html#ab20a1d19398c0c0c5bbeb8f26294cbf6">_h_configs</a>.items()) {</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        <span class="keywordtype">bool</span> singleCopy = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        std::cout &lt;&lt; <span class="stringliteral">&quot;hist copy list size &quot;</span> &lt;&lt; histoCopyNames.size() &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; histoCopyNames.size(); i++){</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;            h_name = <a class="code" href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">m_name</a>+<span class="stringliteral">&quot;_&quot;</span> + hist.key() ;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;            <span class="keywordflow">if</span> (histoCopyNames.size() &gt; 1 &amp;&amp; std::string(hist.key()).find(makeCopyJsonTag) != std::string::npos){ </div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;                h_name = <a class="code" href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">m_name</a>+<span class="stringliteral">&quot;_&quot;</span>+ histoCopyNames.at(i) + <span class="stringliteral">&quot;_&quot;</span> + hist.key() ;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;                singleCopy = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;            }</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;            std::size_t found = (hist.key()).find_last_of(<span class="stringliteral">&quot;_&quot;</span>);</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;            std::string extension = hist.key().substr(found+1);</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;            <span class="keywordflow">if</span>(<a class="code" href="classHistoManager.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>){</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;                std::cout &lt;&lt; <span class="stringliteral">&quot;DefineHisto: &quot;</span> &lt;&lt; h_name &lt;&lt; std::endl;  </div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;                std::cout &lt;&lt; extension &lt;&lt; hist.value().at(<span class="stringliteral">&quot;xtitle&quot;</span>) &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            }</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;            <span class="keywordflow">if</span> (extension == <span class="stringliteral">&quot;h&quot;</span>) {</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;                <a class="code" href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">histos1d</a>[h_name] = <a class="code" href="classHistoManager.html#ab10c4e6288f32f72eff9fdc32966141b">plot1D</a>(h_name,hist.value().at(<span class="stringliteral">&quot;xtitle&quot;</span>),</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;                        hist.value().at(<span class="stringliteral">&quot;bins&quot;</span>),</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;                        hist.value().at(<span class="stringliteral">&quot;minX&quot;</span>),</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;                        hist.value().at(<span class="stringliteral">&quot;maxX&quot;</span>));</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160; </div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;                std::string ytitle = hist.value().at(<span class="stringliteral">&quot;ytitle&quot;</span>);</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160; </div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;                <a class="code" href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">histos1d</a>[h_name]-&gt;GetYaxis()-&gt;SetTitle(ytitle.c_str());</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160; </div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;                <span class="keywordflow">if</span> (hist.value().contains(<span class="stringliteral">&quot;labels&quot;</span>)) {</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;                    std::vector&lt;std::string&gt; labels = hist.value().at(<span class="stringliteral">&quot;labels&quot;</span>).get&lt;std::vector&lt;std::string&gt; &gt;();</div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;            <span class="keywordflow">if</span>(singleCopy)</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;        }</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    }<span class="comment">//loop on config</span></div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;}</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
-<div class="line"><a name="l00155"></a><span class="lineno"><a class="line" href="classHistoManager.html#a1d6a53e655bd418c172f199a9509b9f4">  155</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classHistoManager.html#a1d6a53e655bd418c172f199a9509b9f4">HistoManager::GetHistosFromFile</a>(TFile* inFile, <span class="keyword">const</span> std::string&amp; name, <span class="keyword">const</span> std::string&amp; folder) {</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160; </div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    <span class="comment">//Todo: use name as regular expression.</span></div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    <span class="comment">//Todo: use folder to choose a folder. </span></div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    TIter next(inFile-&gt;GetListOfKeys());</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    TKey *key;</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    <span class="keywordflow">while</span> ((key = (TKey*)next())) {</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        std::string classType = key-&gt;GetClassName();</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        <span class="keywordflow">if</span> (classType.find(<span class="stringliteral">&quot;TH1&quot;</span>)!=std::string::npos)</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;            <a class="code" href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">histos1d</a>[key-&gt;GetName()] = (TH1F*) key-&gt;ReadObj();</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        <span class="keywordflow">if</span> (classType.find(<span class="stringliteral">&quot;TH2&quot;</span>)!=std::string::npos)</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;            <a class="code" href="classHistoManager.html#a10335fa6c3b50bcc19eb80359bfb4d24">histos2d</a>[key-&gt;GetName()] = (TH2F*) key-&gt;ReadObj();</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        <span class="keywordflow">if</span> (classType.find(<span class="stringliteral">&quot;TH3&quot;</span>)!=std::string::npos)</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;            <a class="code" href="classHistoManager.html#a6abbc70f89f3379dc69d50aa94a1b9a8">histos3d</a>[key-&gt;GetName()] = (TH3F*) key-&gt;ReadObj();</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    }</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;}</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160; </div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;                    <span class="keywordflow">if</span> (labels.size() &lt; hist.value().at(<span class="stringliteral">&quot;bins&quot;</span>)) {</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;                        std::cout&lt;&lt;<span class="stringliteral">&quot;Cannot apply labels to histogram:&quot;</span>&lt;&lt;h_name&lt;&lt;std::endl;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;                    }</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;                        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 1; i&lt;=hist.value().at(<span class="stringliteral">&quot;bins&quot;</span>);++i)</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                            <a class="code" href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">histos1d</a>[h_name]-&gt;GetXaxis()-&gt;SetBinLabel(i,labels[i-1].c_str());</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;                    }<span class="comment">//bins</span></div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;                }<span class="comment">//labels</span></div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;            }<span class="comment">//1D histo</span></div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160; </div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (extension == <span class="stringliteral">&quot;hh&quot;</span>) {</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                <a class="code" href="classHistoManager.html#a10335fa6c3b50bcc19eb80359bfb4d24">histos2d</a>[h_name] = <a class="code" href="classHistoManager.html#a26cebf7306e8cbc633738b311fc708b5">plot2D</a>(h_name,</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;                        hist.value().at(<span class="stringliteral">&quot;xtitle&quot;</span>),hist.value().at(<span class="stringliteral">&quot;binsX&quot;</span>),hist.value().at(<span class="stringliteral">&quot;minX&quot;</span>),hist.value().at(<span class="stringliteral">&quot;maxX&quot;</span>),</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;                        hist.value().at(<span class="stringliteral">&quot;ytitle&quot;</span>),hist.value().at(<span class="stringliteral">&quot;binsY&quot;</span>),hist.value().at(<span class="stringliteral">&quot;minY&quot;</span>),hist.value().at(<span class="stringliteral">&quot;maxY&quot;</span>));</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;            }</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160; </div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;            <span class="keywordflow">if</span>(singleCopy)</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;                <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160; </div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        }</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    }<span class="comment">//loop on config</span></div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;}</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160; </div>
+<div class="line"><a name="l00171"></a><span class="lineno"><a class="line" href="classHistoManager.html#a1d6a53e655bd418c172f199a9509b9f4">  171</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classHistoManager.html#a1d6a53e655bd418c172f199a9509b9f4">HistoManager::GetHistosFromFile</a>(TFile* inFile, <span class="keyword">const</span> std::string&amp; name, <span class="keyword">const</span> std::string&amp; folder) {</div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160; </div>
-<div class="line"><a name="l00173"></a><span class="lineno"><a class="line" href="classHistoManager.html#ab10c4e6288f32f72eff9fdc32966141b">  173</a></span>&#160;TH1F* <a class="code" href="classHistoManager.html#ab10c4e6288f32f72eff9fdc32966141b">HistoManager::plot1D</a>(<span class="keyword">const</span> std::string&amp; name,<span class="keyword">const</span> std::string&amp; xtitle, <span class="keywordtype">int</span> nbinsX, <span class="keywordtype">float</span> xmin, <span class="keywordtype">float</span> xmax) {</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    TH1F* h= <span class="keyword">new</span> TH1F(name.c_str(),name.c_str(),nbinsX,xmin,xmax);</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    h-&gt;GetXaxis()-&gt;SetTitle(xtitle.c_str());</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    h-&gt;Sumw2();</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    <span class="keywordflow">return</span> h;</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;}</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160; </div>
-<div class="line"><a name="l00180"></a><span class="lineno"><a class="line" href="classHistoManager.html#a1784a6375a5fff92f7149de40aef2284">  180</a></span>&#160;TH1F* <a class="code" href="classHistoManager.html#ab10c4e6288f32f72eff9fdc32966141b">HistoManager::plot1D</a>(<span class="keyword">const</span> std::string&amp; name,<span class="keyword">const</span> std::string&amp; xtitle, <span class="keywordtype">int</span> nbinsX, <span class="keywordtype">double</span>* axisX) {</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    TH1F* h= <span class="keyword">new</span> TH1F(name.c_str(),name.c_str(),nbinsX,axisX);</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    h-&gt;GetXaxis()-&gt;SetTitle(xtitle.c_str());</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    h-&gt;Sumw2();</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <span class="keywordflow">return</span> h;</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;}</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160; </div>
-<div class="line"><a name="l00187"></a><span class="lineno"><a class="line" href="classHistoManager.html#a26cebf7306e8cbc633738b311fc708b5">  187</a></span>&#160;TH2F* <a class="code" href="classHistoManager.html#a26cebf7306e8cbc633738b311fc708b5">HistoManager::plot2D</a>(std::string name,</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        std::string xtitle, <span class="keywordtype">int</span> nbinsX, <span class="keywordtype">float</span> xmin, <span class="keywordtype">float</span> xmax,</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        std::string ytitle, <span class="keywordtype">int</span> nbinsY, <span class="keywordtype">float</span> ymin, <span class="keywordtype">float</span> ymax) {</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160; </div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    TH2F* h = <span class="keyword">new</span> TH2F(name.c_str(),name.c_str(),</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;            nbinsX,xmin,xmax,</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;            nbinsY,ymin,ymax);</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    h-&gt;GetXaxis()-&gt;SetTitle(xtitle.c_str());</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    h-&gt;GetYaxis()-&gt;SetTitle(ytitle.c_str());</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    h-&gt;Sumw2();</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    <span class="keywordflow">return</span> h;</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;}</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160; </div>
-<div class="line"><a name="l00200"></a><span class="lineno"><a class="line" href="classHistoManager.html#a8dec78d64754066ae15256ed78df2e9f">  200</a></span>&#160;TH2F* <a class="code" href="classHistoManager.html#a26cebf7306e8cbc633738b311fc708b5">HistoManager::plot2D</a>(std::string name,</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;        std::string xtitle, <span class="keywordtype">int</span> nbinsX, <span class="keywordtype">double</span>* axisX,</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;        std::string ytitle, <span class="keywordtype">int</span> nbinsY, <span class="keywordtype">double</span>* axisY) {</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160; </div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    TH2F * h = <span class="keyword">new</span> TH2F(name.c_str(),name.c_str(),</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;            nbinsX,axisX,</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;            nbinsY,axisY);</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    h-&gt;GetXaxis()-&gt;SetTitle(xtitle.c_str());</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    h-&gt;GetYaxis()-&gt;SetTitle(ytitle.c_str());</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    h-&gt;Sumw2();</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    <span class="keywordflow">return</span> h;</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;}</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160; </div>
-<div class="line"><a name="l00213"></a><span class="lineno"><a class="line" href="classHistoManager.html#aad4e8754a5108022fcfcf7c560f5be15">  213</a></span>&#160;TH2F* <a class="code" href="classHistoManager.html#a26cebf7306e8cbc633738b311fc708b5">HistoManager::plot2D</a>(std::string name,</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;        std::string xtitle, <span class="keywordtype">int</span> nbinsX, <span class="keyword">const</span> <span class="keywordtype">double</span>* axisX,</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        std::string ytitle, <span class="keywordtype">int</span> nbinsY, <span class="keyword">const</span> <span class="keywordtype">double</span>* axisY) {</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160; </div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;    TH2F * h = <span class="keyword">new</span> TH2F(name.c_str(),name.c_str(),</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;            nbinsX,axisX,</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;            nbinsY,axisY);</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    h-&gt;GetXaxis()-&gt;SetTitle(xtitle.c_str());</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    h-&gt;GetYaxis()-&gt;SetTitle(ytitle.c_str());</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    h-&gt;Sumw2();</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    <span class="keywordflow">return</span> h;</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;}</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160; </div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160; </div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160; </div>
-<div class="line"><a name="l00228"></a><span class="lineno"><a class="line" href="classHistoManager.html#ac25bd87e4dd1f3091a0397a4aaa92cd4">  228</a></span>&#160;TH2F* <a class="code" href="classHistoManager.html#a26cebf7306e8cbc633738b311fc708b5">HistoManager::plot2D</a>(std::string name,</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        std::string xtitle, <span class="keywordtype">int</span> nbinsX, <span class="keywordtype">double</span>* axisX,</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        std::string ytitle, <span class="keywordtype">int</span> nbinsY, <span class="keywordtype">float</span>  ymin, <span class="keywordtype">float</span> ymax) {</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160; </div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    TH2F * h = <span class="keyword">new</span> TH2F(name.c_str(),name.c_str(),</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;            nbinsX,axisX,</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;            nbinsY,ymin,ymax);</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    h-&gt;GetXaxis()-&gt;SetTitle(xtitle.c_str());</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    h-&gt;GetYaxis()-&gt;SetTitle(ytitle.c_str());</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    h-&gt;Sumw2();</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    <span class="keywordflow">return</span> h;</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;}</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160; </div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    <span class="comment">//Todo: use name as regular expression.</span></div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    <span class="comment">//Todo: use folder to choose a folder. </span></div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    TIter next(inFile-&gt;GetListOfKeys());</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    TKey *key;</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    <span class="keywordflow">while</span> ((key = (TKey*)next())) {</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;        std::string classType = key-&gt;GetClassName();</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;        <span class="keywordflow">if</span> (classType.find(<span class="stringliteral">&quot;TH1&quot;</span>)!=std::string::npos)</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;            <a class="code" href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">histos1d</a>[key-&gt;GetName()] = (TH1F*) key-&gt;ReadObj();</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;        <span class="keywordflow">if</span> (classType.find(<span class="stringliteral">&quot;TH2&quot;</span>)!=std::string::npos)</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;            <a class="code" href="classHistoManager.html#a10335fa6c3b50bcc19eb80359bfb4d24">histos2d</a>[key-&gt;GetName()] = (TH2F*) key-&gt;ReadObj();</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        <span class="keywordflow">if</span> (classType.find(<span class="stringliteral">&quot;TH3&quot;</span>)!=std::string::npos)</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;            <a class="code" href="classHistoManager.html#a6abbc70f89f3379dc69d50aa94a1b9a8">histos3d</a>[key-&gt;GetName()] = (TH3F*) key-&gt;ReadObj();</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    }</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;}</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160; </div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160; </div>
+<div class="line"><a name="l00189"></a><span class="lineno"><a class="line" href="classHistoManager.html#ab10c4e6288f32f72eff9fdc32966141b">  189</a></span>&#160;TH1F* <a class="code" href="classHistoManager.html#ab10c4e6288f32f72eff9fdc32966141b">HistoManager::plot1D</a>(<span class="keyword">const</span> std::string&amp; name,<span class="keyword">const</span> std::string&amp; xtitle, <span class="keywordtype">int</span> nbinsX, <span class="keywordtype">float</span> xmin, <span class="keywordtype">float</span> xmax) {</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    TH1F* h= <span class="keyword">new</span> TH1F(name.c_str(),name.c_str(),nbinsX,xmin,xmax);</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    h-&gt;GetXaxis()-&gt;SetTitle(xtitle.c_str());</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    h-&gt;Sumw2();</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    <span class="keywordflow">return</span> h;</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;}</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160; </div>
+<div class="line"><a name="l00196"></a><span class="lineno"><a class="line" href="classHistoManager.html#a1784a6375a5fff92f7149de40aef2284">  196</a></span>&#160;TH1F* <a class="code" href="classHistoManager.html#ab10c4e6288f32f72eff9fdc32966141b">HistoManager::plot1D</a>(<span class="keyword">const</span> std::string&amp; name,<span class="keyword">const</span> std::string&amp; xtitle, <span class="keywordtype">int</span> nbinsX, <span class="keywordtype">double</span>* axisX) {</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    TH1F* h= <span class="keyword">new</span> TH1F(name.c_str(),name.c_str(),nbinsX,axisX);</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    h-&gt;GetXaxis()-&gt;SetTitle(xtitle.c_str());</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    h-&gt;Sumw2();</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    <span class="keywordflow">return</span> h;</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;}</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160; </div>
+<div class="line"><a name="l00203"></a><span class="lineno"><a class="line" href="classHistoManager.html#a26cebf7306e8cbc633738b311fc708b5">  203</a></span>&#160;TH2F* <a class="code" href="classHistoManager.html#a26cebf7306e8cbc633738b311fc708b5">HistoManager::plot2D</a>(std::string name,</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;        std::string xtitle, <span class="keywordtype">int</span> nbinsX, <span class="keywordtype">float</span> xmin, <span class="keywordtype">float</span> xmax,</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        std::string ytitle, <span class="keywordtype">int</span> nbinsY, <span class="keywordtype">float</span> ymin, <span class="keywordtype">float</span> ymax) {</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160; </div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    TH2F* h = <span class="keyword">new</span> TH2F(name.c_str(),name.c_str(),</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;            nbinsX,xmin,xmax,</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;            nbinsY,ymin,ymax);</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    h-&gt;GetXaxis()-&gt;SetTitle(xtitle.c_str());</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    h-&gt;GetYaxis()-&gt;SetTitle(ytitle.c_str());</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    h-&gt;Sumw2();</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    <span class="keywordflow">return</span> h;</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;}</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160; </div>
+<div class="line"><a name="l00216"></a><span class="lineno"><a class="line" href="classHistoManager.html#a8dec78d64754066ae15256ed78df2e9f">  216</a></span>&#160;TH2F* <a class="code" href="classHistoManager.html#a26cebf7306e8cbc633738b311fc708b5">HistoManager::plot2D</a>(std::string name,</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        std::string xtitle, <span class="keywordtype">int</span> nbinsX, <span class="keywordtype">double</span>* axisX,</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;        std::string ytitle, <span class="keywordtype">int</span> nbinsY, <span class="keywordtype">double</span>* axisY) {</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160; </div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    TH2F * h = <span class="keyword">new</span> TH2F(name.c_str(),name.c_str(),</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;            nbinsX,axisX,</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;            nbinsY,axisY);</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    h-&gt;GetXaxis()-&gt;SetTitle(xtitle.c_str());</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    h-&gt;GetYaxis()-&gt;SetTitle(ytitle.c_str());</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    h-&gt;Sumw2();</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    <span class="keywordflow">return</span> h;</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;}</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160; </div>
+<div class="line"><a name="l00229"></a><span class="lineno"><a class="line" href="classHistoManager.html#aad4e8754a5108022fcfcf7c560f5be15">  229</a></span>&#160;TH2F* <a class="code" href="classHistoManager.html#a26cebf7306e8cbc633738b311fc708b5">HistoManager::plot2D</a>(std::string name,</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        std::string xtitle, <span class="keywordtype">int</span> nbinsX, <span class="keyword">const</span> <span class="keywordtype">double</span>* axisX,</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;        std::string ytitle, <span class="keywordtype">int</span> nbinsY, <span class="keyword">const</span> <span class="keywordtype">double</span>* axisY) {</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160; </div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    TH2F * h = <span class="keyword">new</span> TH2F(name.c_str(),name.c_str(),</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;            nbinsX,axisX,</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;            nbinsY,axisY);</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    h-&gt;GetXaxis()-&gt;SetTitle(xtitle.c_str());</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    h-&gt;GetYaxis()-&gt;SetTitle(ytitle.c_str());</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    h-&gt;Sumw2();</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    <span class="keywordflow">return</span> h;</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;}</div>
 <div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160; </div>
-<div class="line"><a name="l00242"></a><span class="lineno"><a class="line" href="classHistoManager.html#a251210e06296419373281b214cd7f497">  242</a></span>&#160;TH3F*  <a class="code" href="classHistoManager.html#a88f86c6745f30209340bc7d305a850ac">HistoManager::plot3D</a>(std::string name,</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        std::string xtitle, <span class="keywordtype">int</span> nbinsX, <span class="keywordtype">double</span>* axisX,</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;        std::string ytitle, <span class="keywordtype">int</span> nbinsY, <span class="keywordtype">double</span>* axisY,</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;        std::string ztitle, <span class="keywordtype">int</span> nbinsZ, <span class="keywordtype">double</span>* axisZ) {</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160; </div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160; </div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160; </div>
+<div class="line"><a name="l00244"></a><span class="lineno"><a class="line" href="classHistoManager.html#ac25bd87e4dd1f3091a0397a4aaa92cd4">  244</a></span>&#160;TH2F* <a class="code" href="classHistoManager.html#a26cebf7306e8cbc633738b311fc708b5">HistoManager::plot2D</a>(std::string name,</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;        std::string xtitle, <span class="keywordtype">int</span> nbinsX, <span class="keywordtype">double</span>* axisX,</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        std::string ytitle, <span class="keywordtype">int</span> nbinsY, <span class="keywordtype">float</span>  ymin, <span class="keywordtype">float</span> ymax) {</div>
 <div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160; </div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    TH3F* h = <span class="keyword">new</span> TH3F(name.c_str(),name.c_str(),</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    TH2F * h = <span class="keyword">new</span> TH2F(name.c_str(),name.c_str(),</div>
 <div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;            nbinsX,axisX,</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;            nbinsY,axisY,</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;            nbinsZ,axisZ);</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160; </div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160; </div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    h-&gt;GetXaxis()-&gt;SetTitle(xtitle.c_str());</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    h-&gt;GetYaxis()-&gt;SetTitle(ytitle.c_str());</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    h-&gt;GetZaxis()-&gt;SetTitle(ztitle.c_str());</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    h-&gt;Sumw2();</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    <span class="keywordflow">return</span> h;</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;}</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160; </div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160; </div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;            nbinsY,ymin,ymax);</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    h-&gt;GetXaxis()-&gt;SetTitle(xtitle.c_str());</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    h-&gt;GetYaxis()-&gt;SetTitle(ytitle.c_str());</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    h-&gt;Sumw2();</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    <span class="keywordflow">return</span> h;</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;}</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160; </div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160; </div>
+<div class="line"><a name="l00258"></a><span class="lineno"><a class="line" href="classHistoManager.html#a251210e06296419373281b214cd7f497">  258</a></span>&#160;TH3F*  <a class="code" href="classHistoManager.html#a88f86c6745f30209340bc7d305a850ac">HistoManager::plot3D</a>(std::string name,</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        std::string xtitle, <span class="keywordtype">int</span> nbinsX, <span class="keywordtype">double</span>* axisX,</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;        std::string ytitle, <span class="keywordtype">int</span> nbinsY, <span class="keywordtype">double</span>* axisY,</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;        std::string ztitle, <span class="keywordtype">int</span> nbinsZ, <span class="keywordtype">double</span>* axisZ) {</div>
 <div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160; </div>
 <div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160; </div>
-<div class="line"><a name="l00264"></a><span class="lineno"><a class="line" href="classHistoManager.html#a88f86c6745f30209340bc7d305a850ac">  264</a></span>&#160;TH3F*  <a class="code" href="classHistoManager.html#a88f86c6745f30209340bc7d305a850ac">HistoManager::plot3D</a>(std::string name,</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;        std::string xtitle, <span class="keywordtype">int</span> nbinsX, <span class="keywordtype">float</span> xmin, <span class="keywordtype">float</span> xmax,</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;        std::string ytitle, <span class="keywordtype">int</span> nbinsY, <span class="keywordtype">float</span> ymin, <span class="keywordtype">float</span> ymax,</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;        std::string ztitle, <span class="keywordtype">int</span> nbinsZ, <span class="keywordtype">float</span> zmin, <span class="keywordtype">float</span> zmax) {</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    TH3F* h = <span class="keyword">new</span> TH3F(name.c_str(),name.c_str(),</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;            nbinsX,axisX,</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;            nbinsY,axisY,</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;            nbinsZ,axisZ);</div>
 <div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160; </div>
 <div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160; </div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    TH3F* h = <span class="keyword">new</span> TH3F(name.c_str(),name.c_str(),</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;            nbinsX,xmin,xmax,</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;            nbinsY,ymin,ymax,</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;            nbinsZ,zmin,zmax);</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160; </div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    h-&gt;GetXaxis()-&gt;SetTitle(xtitle.c_str());</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    h-&gt;GetYaxis()-&gt;SetTitle(ytitle.c_str());</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    h-&gt;GetZaxis()-&gt;SetTitle(ztitle.c_str());</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    h-&gt;Sumw2();</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    <span class="keywordflow">return</span> h;</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;}</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160; </div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160; </div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160; </div>
-<div class="line"><a name="l00284"></a><span class="lineno"><a class="line" href="classHistoManager.html#aae63fe0635230dde47fe82cac581aac7">  284</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classHistoManager.html#aae63fe0635230dde47fe82cac581aac7">HistoManager::sumw2</a>() {</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    h-&gt;GetXaxis()-&gt;SetTitle(xtitle.c_str());</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    h-&gt;GetYaxis()-&gt;SetTitle(ytitle.c_str());</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    h-&gt;GetZaxis()-&gt;SetTitle(ztitle.c_str());</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    h-&gt;Sumw2();</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    <span class="keywordflow">return</span> h;</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;}</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160; </div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160; </div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160; </div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160; </div>
+<div class="line"><a name="l00280"></a><span class="lineno"><a class="line" href="classHistoManager.html#a88f86c6745f30209340bc7d305a850ac">  280</a></span>&#160;TH3F*  <a class="code" href="classHistoManager.html#a88f86c6745f30209340bc7d305a850ac">HistoManager::plot3D</a>(std::string name,</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;        std::string xtitle, <span class="keywordtype">int</span> nbinsX, <span class="keywordtype">float</span> xmin, <span class="keywordtype">float</span> xmax,</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;        std::string ytitle, <span class="keywordtype">int</span> nbinsY, <span class="keywordtype">float</span> ymin, <span class="keywordtype">float</span> ymax,</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;        std::string ztitle, <span class="keywordtype">int</span> nbinsZ, <span class="keywordtype">float</span> zmin, <span class="keywordtype">float</span> zmax) {</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160; </div>
 <div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160; </div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="classHistoManager.html#a0c6850f545249acc67ffabd3c7bcf402">it3d</a> it = <a class="code" href="classHistoManager.html#a6abbc70f89f3379dc69d50aa94a1b9a8">histos3d</a>.begin(); it!=<a class="code" href="classHistoManager.html#a6abbc70f89f3379dc69d50aa94a1b9a8">histos3d</a>.end(); ++it) {</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;        <span class="keywordflow">if</span> (!it-&gt;second){</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            std::cout&lt;&lt;it-&gt;first&lt;&lt;<span class="stringliteral">&quot; Null ptr in saving..&quot;</span>&lt;&lt;std::endl;</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;        }</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;        it-&gt;second-&gt;Sumw2();</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    }</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160; </div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="classHistoManager.html#a12f9a23b891a227fd89df98f02e29f73">it2d</a> it = <a class="code" href="classHistoManager.html#a10335fa6c3b50bcc19eb80359bfb4d24">histos2d</a>.begin(); it!=<a class="code" href="classHistoManager.html#a10335fa6c3b50bcc19eb80359bfb4d24">histos2d</a>.end(); ++it) {</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;        <span class="keywordflow">if</span> (!(it-&gt;second)) {</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;            std::cout&lt;&lt;it-&gt;first&lt;&lt;<span class="stringliteral">&quot; Null ptr in saving..&quot;</span>&lt;&lt;std::endl;</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;            <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;        }</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;        it-&gt;second-&gt;Sumw2();</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    }</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    TH3F* h = <span class="keyword">new</span> TH3F(name.c_str(),name.c_str(),</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;            nbinsX,xmin,xmax,</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            nbinsY,ymin,ymax,</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            nbinsZ,zmin,zmax);</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160; </div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    h-&gt;GetXaxis()-&gt;SetTitle(xtitle.c_str());</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    h-&gt;GetYaxis()-&gt;SetTitle(ytitle.c_str());</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    h-&gt;GetZaxis()-&gt;SetTitle(ztitle.c_str());</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;    h-&gt;Sumw2();</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    <span class="keywordflow">return</span> h;</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;}</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160; </div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160; </div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160; </div>
+<div class="line"><a name="l00300"></a><span class="lineno"><a class="line" href="classHistoManager.html#aae63fe0635230dde47fe82cac581aac7">  300</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classHistoManager.html#aae63fe0635230dde47fe82cac581aac7">HistoManager::sumw2</a>() {</div>
 <div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160; </div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="classHistoManager.html#a1af89c5145c69d9b6a5aaea829e561c0">it1d</a> it = <a class="code" href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">histos1d</a>.begin(); it!=<a class="code" href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">histos1d</a>.end(); ++it) {</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="classHistoManager.html#a0c6850f545249acc67ffabd3c7bcf402">it3d</a> it = <a class="code" href="classHistoManager.html#a6abbc70f89f3379dc69d50aa94a1b9a8">histos3d</a>.begin(); it!=<a class="code" href="classHistoManager.html#a6abbc70f89f3379dc69d50aa94a1b9a8">histos3d</a>.end(); ++it) {</div>
 <div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;        <span class="keywordflow">if</span> (!it-&gt;second){</div>
 <div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;            std::cout&lt;&lt;it-&gt;first&lt;&lt;<span class="stringliteral">&quot; Null ptr in saving..&quot;</span>&lt;&lt;std::endl;</div>
 <div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;            <span class="keywordflow">continue</span>;</div>
@@ -379,122 +379,157 @@ $(function() {
 <div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;        it-&gt;second-&gt;Sumw2();</div>
 <div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;    }</div>
 <div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160; </div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;}</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160; </div>
-<div class="line"><a name="l00312"></a><span class="lineno"><a class="line" href="classHistoManager.html#a0d750d7fd7dc85552579a321c674e56f">  312</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classHistoManager.html#a0d750d7fd7dc85552579a321c674e56f">HistoManager::Fill2DHisto</a>(<span class="keyword">const</span> std::string&amp; histoName,<span class="keywordtype">float</span> valuex, <span class="keywordtype">float</span> valuey, <span class="keywordtype">float</span> weight) {</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#a10335fa6c3b50bcc19eb80359bfb4d24">histos2d</a>[<a class="code" href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">m_name</a>+<span class="stringliteral">&quot;_&quot;</span>+histoName])</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;        <a class="code" href="classHistoManager.html#a10335fa6c3b50bcc19eb80359bfb4d24">histos2d</a>[<a class="code" href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">m_name</a>+<span class="stringliteral">&quot;_&quot;</span>+histoName]-&gt;Fill(valuex,valuey,weight);</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;        <a class="code" href="classHistoManager.html#aed86b24017d3610dffdf54751b8d1c56">printWarnings_</a>++;</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#a1cf0d8cd57948e1e373da2ccdd330d65">doPrintWarnings_</a>) {</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#aed86b24017d3610dffdf54751b8d1c56">printWarnings_</a> &lt; <a class="code" href="classHistoManager.html#a624e3732b093bb86fe22bd51f87a0f75">maxWarnings_</a>)</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;                std::cout&lt;&lt;<span class="stringliteral">&quot;ERROR::Fill2DHisto Histogram not found! &quot;</span>&lt;&lt;<a class="code" href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">m_name</a>+<span class="stringliteral">&quot;_&quot;</span>+histoName&lt;&lt;std::endl;</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;            <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;                std::cout&lt;&lt;<span class="stringliteral">&quot;Fill2DHisto::Printed max number of warnings &quot;</span> &lt;&lt; <a class="code" href="classHistoManager.html#a624e3732b093bb86fe22bd51f87a0f75">maxWarnings_</a> &lt;&lt; <span class="stringliteral">&quot;. Stop&quot;</span>&lt;&lt;std::endl;</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;                <a class="code" href="classHistoManager.html#a1cf0d8cd57948e1e373da2ccdd330d65">doPrintWarnings_</a> = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;            }</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        }</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    }</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="classHistoManager.html#a12f9a23b891a227fd89df98f02e29f73">it2d</a> it = <a class="code" href="classHistoManager.html#a10335fa6c3b50bcc19eb80359bfb4d24">histos2d</a>.begin(); it!=<a class="code" href="classHistoManager.html#a10335fa6c3b50bcc19eb80359bfb4d24">histos2d</a>.end(); ++it) {</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;        <span class="keywordflow">if</span> (!(it-&gt;second)) {</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;            std::cout&lt;&lt;it-&gt;first&lt;&lt;<span class="stringliteral">&quot; Null ptr in saving..&quot;</span>&lt;&lt;std::endl;</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;            <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;        }</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;        it-&gt;second-&gt;Sumw2();</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    }</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160; </div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="classHistoManager.html#a1af89c5145c69d9b6a5aaea829e561c0">it1d</a> it = <a class="code" href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">histos1d</a>.begin(); it!=<a class="code" href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">histos1d</a>.end(); ++it) {</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;        <span class="keywordflow">if</span> (!it-&gt;second){</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;            std::cout&lt;&lt;it-&gt;first&lt;&lt;<span class="stringliteral">&quot; Null ptr in saving..&quot;</span>&lt;&lt;std::endl;</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;            <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;        }</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;        it-&gt;second-&gt;Sumw2();</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    }</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160; </div>
 <div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;}</div>
 <div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160; </div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160; </div>
-<div class="line"><a name="l00329"></a><span class="lineno"><a class="line" href="classHistoManager.html#aaddcc8ff9b59c3f9d0036e5145f4fd10">  329</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classHistoManager.html#aaddcc8ff9b59c3f9d0036e5145f4fd10">HistoManager::Fill1DHisto</a>(<span class="keyword">const</span> std::string&amp; histoName,<span class="keywordtype">float</span> value, <span class="keywordtype">float</span> weight) {</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">histos1d</a>[<a class="code" href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">m_name</a>+<span class="stringliteral">&quot;_&quot;</span>+histoName])</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;        <a class="code" href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">histos1d</a>[<a class="code" href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">m_name</a>+<span class="stringliteral">&quot;_&quot;</span>+histoName]-&gt;Fill(value,weight);</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;        <a class="code" href="classHistoManager.html#aed86b24017d3610dffdf54751b8d1c56">printWarnings_</a>++;</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#a1cf0d8cd57948e1e373da2ccdd330d65">doPrintWarnings_</a>) {</div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#aed86b24017d3610dffdf54751b8d1c56">printWarnings_</a> &lt; <a class="code" href="classHistoManager.html#a624e3732b093bb86fe22bd51f87a0f75">maxWarnings_</a>)</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;                std::cout&lt;&lt;<span class="stringliteral">&quot;ERROR::Fill1DHisto Histogram not found! &quot;</span>&lt;&lt;<a class="code" href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">m_name</a>+<span class="stringliteral">&quot;_&quot;</span>+histoName&lt;&lt;std::endl;</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;            <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;                std::cout&lt;&lt;<span class="stringliteral">&quot;Fill1DHisto::Printed max number of warnings &quot;</span> &lt;&lt; <a class="code" href="classHistoManager.html#a624e3732b093bb86fe22bd51f87a0f75">maxWarnings_</a> &lt;&lt; <span class="stringliteral">&quot;. Stop&quot;</span>&lt;&lt;std::endl;</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;                <a class="code" href="classHistoManager.html#a1cf0d8cd57948e1e373da2ccdd330d65">doPrintWarnings_</a> = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;            }</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;        }</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    }</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;}</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160; </div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160; </div>
-<div class="line"><a name="l00346"></a><span class="lineno"><a class="line" href="classHistoManager.html#ac49873e57b0f6b48c50b6b9f3faeefa1">  346</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classHistoManager.html#ac49873e57b0f6b48c50b6b9f3faeefa1">HistoManager::loadHistoConfig</a>(<span class="keyword">const</span> std::string histoConfigFile) {</div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160; </div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    std::ifstream i_file(histoConfigFile);</div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;    i_file &gt;&gt; <a class="code" href="classHistoManager.html#ab20a1d19398c0c0c5bbeb8f26294cbf6">_h_configs</a>;</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) {</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; el : <a class="code" href="classHistoManager.html#ab20a1d19398c0c0c5bbeb8f26294cbf6">_h_configs</a>.items()) </div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;            std::cout &lt;&lt; el.key() &lt;&lt; <span class="stringliteral">&quot; : &quot;</span> &lt;&lt; el.value() &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    }</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;    i_file.close();</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160; </div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;}</div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160; </div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160; </div>
+<div class="line"><a name="l00328"></a><span class="lineno"><a class="line" href="classHistoManager.html#a0d750d7fd7dc85552579a321c674e56f">  328</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classHistoManager.html#a0d750d7fd7dc85552579a321c674e56f">HistoManager::Fill2DHisto</a>(<span class="keyword">const</span> std::string&amp; histoName,<span class="keywordtype">float</span> valuex, <span class="keywordtype">float</span> valuey, <span class="keywordtype">float</span> weight) {</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#a10335fa6c3b50bcc19eb80359bfb4d24">histos2d</a>[<a class="code" href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">m_name</a>+<span class="stringliteral">&quot;_&quot;</span>+histoName])</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;        <a class="code" href="classHistoManager.html#a10335fa6c3b50bcc19eb80359bfb4d24">histos2d</a>[<a class="code" href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">m_name</a>+<span class="stringliteral">&quot;_&quot;</span>+histoName]-&gt;Fill(valuex,valuey,weight);</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;        <a class="code" href="classHistoManager.html#aed86b24017d3610dffdf54751b8d1c56">printWarnings_</a>++;</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#a1cf0d8cd57948e1e373da2ccdd330d65">doPrintWarnings_</a>) {</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#aed86b24017d3610dffdf54751b8d1c56">printWarnings_</a> &lt; <a class="code" href="classHistoManager.html#a624e3732b093bb86fe22bd51f87a0f75">maxWarnings_</a>)</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;                std::cout&lt;&lt;<span class="stringliteral">&quot;ERROR::Fill2DHisto Histogram not found! &quot;</span>&lt;&lt;<a class="code" href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">m_name</a>+<span class="stringliteral">&quot;_&quot;</span>+histoName&lt;&lt;std::endl;</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;            <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;                std::cout&lt;&lt;<span class="stringliteral">&quot;Fill2DHisto::Printed max number of warnings &quot;</span> &lt;&lt; <a class="code" href="classHistoManager.html#a624e3732b093bb86fe22bd51f87a0f75">maxWarnings_</a> &lt;&lt; <span class="stringliteral">&quot;. Stop&quot;</span>&lt;&lt;std::endl;</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;                <a class="code" href="classHistoManager.html#a1cf0d8cd57948e1e373da2ccdd330d65">doPrintWarnings_</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;            }</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;        }</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;    }</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;}</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160; </div>
+<div class="line"><a name="l00344"></a><span class="lineno"><a class="line" href="classHistoManager.html#a4ebf1dfcfe5ad6b65a42957022057e0c">  344</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classHistoManager.html#a4ebf1dfcfe5ad6b65a42957022057e0c">HistoManager::Fill3DHisto</a>(<span class="keyword">const</span> std::string&amp; histoName,<span class="keywordtype">float</span> valuex, <span class="keywordtype">float</span> valuey, <span class="keywordtype">float</span> valuez, <span class="keywordtype">float</span> weight) {</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#a6abbc70f89f3379dc69d50aa94a1b9a8">histos3d</a>[<a class="code" href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">m_name</a>+<span class="stringliteral">&quot;_&quot;</span>+histoName])</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;      <a class="code" href="classHistoManager.html#a6abbc70f89f3379dc69d50aa94a1b9a8">histos3d</a>[<a class="code" href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">m_name</a>+<span class="stringliteral">&quot;_&quot;</span>+histoName]-&gt;Fill(valuex,valuey,valuez, weight);</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;        <a class="code" href="classHistoManager.html#aed86b24017d3610dffdf54751b8d1c56">printWarnings_</a>++;</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#a1cf0d8cd57948e1e373da2ccdd330d65">doPrintWarnings_</a>) {</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#aed86b24017d3610dffdf54751b8d1c56">printWarnings_</a> &lt; <a class="code" href="classHistoManager.html#a624e3732b093bb86fe22bd51f87a0f75">maxWarnings_</a>)</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;                std::cout&lt;&lt;<span class="stringliteral">&quot;ERROR::Fill3DHisto Histogram not found! &quot;</span>&lt;&lt;<a class="code" href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">m_name</a>+<span class="stringliteral">&quot;_&quot;</span>+histoName&lt;&lt;std::endl;</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;            <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;                std::cout&lt;&lt;<span class="stringliteral">&quot;Fill3DHisto::Printed max number of warnings &quot;</span> &lt;&lt; <a class="code" href="classHistoManager.html#a624e3732b093bb86fe22bd51f87a0f75">maxWarnings_</a> &lt;&lt; <span class="stringliteral">&quot;. Stop&quot;</span>&lt;&lt;std::endl;</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;                <a class="code" href="classHistoManager.html#a1cf0d8cd57948e1e373da2ccdd330d65">doPrintWarnings_</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;            }</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;        }</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;    }</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;}</div>
 <div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160; </div>
 <div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160; </div>
-<div class="line"><a name="l00361"></a><span class="lineno"><a class="line" href="classHistoManager.html#aee2310abd744257ed230e751c53eacdb">  361</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classHistoManager.html#aee2310abd744257ed230e751c53eacdb">HistoManager::saveHistos</a>(TFile* outF,std::string folder) {</div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;    <span class="keywordflow">if</span> (outF) outF-&gt;cd();</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    TDirectory* dir{<span class="keyword">nullptr</span>};</div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;    std::cout&lt;&lt;folder.c_str()&lt;&lt;std::endl;</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;    <span class="keywordflow">if</span> (!folder.empty()) {</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;        dir = outF-&gt;mkdir(folder.c_str());</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;        dir-&gt;cd();</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;    }</div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="classHistoManager.html#a0c6850f545249acc67ffabd3c7bcf402">it3d</a> it = <a class="code" href="classHistoManager.html#a6abbc70f89f3379dc69d50aa94a1b9a8">histos3d</a>.begin(); it!=<a class="code" href="classHistoManager.html#a6abbc70f89f3379dc69d50aa94a1b9a8">histos3d</a>.end(); ++it) {</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;        <span class="keywordflow">if</span> (!it-&gt;second){</div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;            std::cout&lt;&lt;it-&gt;first&lt;&lt;<span class="stringliteral">&quot; Null ptr in saving..&quot;</span>&lt;&lt;std::endl;</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;            <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;        }</div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;        it-&gt;second-&gt;Write();</div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;    }</div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="classHistoManager.html#a12f9a23b891a227fd89df98f02e29f73">it2d</a> it = <a class="code" href="classHistoManager.html#a10335fa6c3b50bcc19eb80359bfb4d24">histos2d</a>.begin(); it!=<a class="code" href="classHistoManager.html#a10335fa6c3b50bcc19eb80359bfb4d24">histos2d</a>.end(); ++it) {</div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;        <span class="keywordflow">if</span> (!(it-&gt;second)) {</div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;            std::cout&lt;&lt;it-&gt;first&lt;&lt;<span class="stringliteral">&quot; Null ptr in saving..&quot;</span>&lt;&lt;std::endl;</div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;            <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;        }</div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;        it-&gt;second-&gt;Write();</div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;    }</div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160; </div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="classHistoManager.html#a1af89c5145c69d9b6a5aaea829e561c0">it1d</a> it = <a class="code" href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">histos1d</a>.begin(); it!=<a class="code" href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">histos1d</a>.end(); ++it) {</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;        <span class="keywordflow">if</span> (!it-&gt;second){</div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;            std::cout&lt;&lt;it-&gt;first&lt;&lt;<span class="stringliteral">&quot; Null ptr in saving..&quot;</span>&lt;&lt;std::endl;</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;            <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;        }</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;        it-&gt;second-&gt;Write();</div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;    }</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160; </div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160; </div>
+<div class="line"><a name="l00363"></a><span class="lineno"><a class="line" href="classHistoManager.html#aaddcc8ff9b59c3f9d0036e5145f4fd10">  363</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classHistoManager.html#aaddcc8ff9b59c3f9d0036e5145f4fd10">HistoManager::Fill1DHisto</a>(<span class="keyword">const</span> std::string&amp; histoName,<span class="keywordtype">float</span> value, <span class="keywordtype">float</span> weight) {</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">histos1d</a>[<a class="code" href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">m_name</a>+<span class="stringliteral">&quot;_&quot;</span>+histoName])</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;        <a class="code" href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">histos1d</a>[<a class="code" href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">m_name</a>+<span class="stringliteral">&quot;_&quot;</span>+histoName]-&gt;Fill(value,weight);</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;        <a class="code" href="classHistoManager.html#aed86b24017d3610dffdf54751b8d1c56">printWarnings_</a>++;</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#a1cf0d8cd57948e1e373da2ccdd330d65">doPrintWarnings_</a>) {</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;            <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#aed86b24017d3610dffdf54751b8d1c56">printWarnings_</a> &lt; <a class="code" href="classHistoManager.html#a624e3732b093bb86fe22bd51f87a0f75">maxWarnings_</a>)</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;                std::cout&lt;&lt;<span class="stringliteral">&quot;ERROR::Fill1DHisto Histogram not found! &quot;</span>&lt;&lt;<a class="code" href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">m_name</a>+<span class="stringliteral">&quot;_&quot;</span>+histoName&lt;&lt;std::endl;</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;            <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;                std::cout&lt;&lt;<span class="stringliteral">&quot;Fill1DHisto::Printed max number of warnings &quot;</span> &lt;&lt; <a class="code" href="classHistoManager.html#a624e3732b093bb86fe22bd51f87a0f75">maxWarnings_</a> &lt;&lt; <span class="stringliteral">&quot;. Stop&quot;</span>&lt;&lt;std::endl;</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;                <a class="code" href="classHistoManager.html#a1cf0d8cd57948e1e373da2ccdd330d65">doPrintWarnings_</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;            }</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;        }</div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;    }</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;}</div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160; </div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160; </div>
+<div class="line"><a name="l00380"></a><span class="lineno"><a class="line" href="classHistoManager.html#ac49873e57b0f6b48c50b6b9f3faeefa1">  380</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classHistoManager.html#ac49873e57b0f6b48c50b6b9f3faeefa1">HistoManager::loadHistoConfig</a>(<span class="keyword">const</span> std::string histoConfigFile) {</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160; </div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;    std::ifstream i_file(histoConfigFile);</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    i_file &gt;&gt; <a class="code" href="classHistoManager.html#ab20a1d19398c0c0c5bbeb8f26294cbf6">_h_configs</a>;</div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classHistoManager.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) {</div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; el : <a class="code" href="classHistoManager.html#ab20a1d19398c0c0c5bbeb8f26294cbf6">_h_configs</a>.items()) </div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;            std::cout &lt;&lt; el.key() &lt;&lt; <span class="stringliteral">&quot; : &quot;</span> &lt;&lt; el.value() &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;    }</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;    i_file.close();</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160; </div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;}</div>
 <div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160; </div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;    <span class="comment">//dir-&gt;Write();</span></div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;    <span class="comment">//if (dir) {delete dir; dir=0;}</span></div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160; </div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160; </div>
 <div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160; </div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;    <a class="code" href="classHistoManager.html#aa71d36872f416feaa853788a7a7a7ef8">Clear</a>();</div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160; </div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;}</div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160; </div>
-<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160; </div>
+<div class="line"><a name="l00395"></a><span class="lineno"><a class="line" href="classHistoManager.html#aee2310abd744257ed230e751c53eacdb">  395</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classHistoManager.html#aee2310abd744257ed230e751c53eacdb">HistoManager::saveHistos</a>(TFile* outF,std::string folder) {</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;    <span class="keywordflow">if</span> (outF) outF-&gt;cd();</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;    TDirectory* dir{<span class="keyword">nullptr</span>};</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    std::cout&lt;&lt;folder.c_str()&lt;&lt;std::endl;</div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;    <span class="keywordflow">if</span> (!folder.empty()) {</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;        dir = outF-&gt;mkdir(folder.c_str());</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;        dir-&gt;cd();</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;    }</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="classHistoManager.html#a0c6850f545249acc67ffabd3c7bcf402">it3d</a> it = <a class="code" href="classHistoManager.html#a6abbc70f89f3379dc69d50aa94a1b9a8">histos3d</a>.begin(); it!=<a class="code" href="classHistoManager.html#a6abbc70f89f3379dc69d50aa94a1b9a8">histos3d</a>.end(); ++it) {</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;        <span class="keywordflow">if</span> (!it-&gt;second){</div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;            std::cout&lt;&lt;it-&gt;first&lt;&lt;<span class="stringliteral">&quot; Null ptr in saving..&quot;</span>&lt;&lt;std::endl;</div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;            <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;        }</div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;        it-&gt;second-&gt;Write();</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;    }</div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="classHistoManager.html#a12f9a23b891a227fd89df98f02e29f73">it2d</a> it = <a class="code" href="classHistoManager.html#a10335fa6c3b50bcc19eb80359bfb4d24">histos2d</a>.begin(); it!=<a class="code" href="classHistoManager.html#a10335fa6c3b50bcc19eb80359bfb4d24">histos2d</a>.end(); ++it) {</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;        <span class="keywordflow">if</span> (!(it-&gt;second)) {</div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;            std::cout&lt;&lt;it-&gt;first&lt;&lt;<span class="stringliteral">&quot; Null ptr in saving..&quot;</span>&lt;&lt;std::endl;</div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;            <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;        }</div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;        it-&gt;second-&gt;Write();</div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;    }</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160; </div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="classHistoManager.html#a1af89c5145c69d9b6a5aaea829e561c0">it1d</a> it = <a class="code" href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">histos1d</a>.begin(); it!=<a class="code" href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">histos1d</a>.end(); ++it) {</div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;        <span class="keywordflow">if</span> (!it-&gt;second){</div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;            std::cout&lt;&lt;it-&gt;first&lt;&lt;<span class="stringliteral">&quot; Null ptr in saving..&quot;</span>&lt;&lt;std::endl;</div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;            <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;        }</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;        it-&gt;second-&gt;Write();</div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;    }</div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160; </div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;    <span class="comment">//dir-&gt;Write();</span></div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;    <span class="comment">//if (dir) {delete dir; dir=0;}</span></div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160; </div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;    <a class="code" href="classHistoManager.html#aa71d36872f416feaa853788a7a7a7ef8">Clear</a>();</div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160; </div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;}</div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160; </div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160; </div>
 <div class="ttc" id="aHistoManager_8h_html"><div class="ttname"><a href="HistoManager_8h.html">HistoManager.h</a></div></div>
 <div class="ttc" id="aclassHistoManager_html_a0a480c624f4dce3a2eb400c516d3d331"><div class="ttname"><a href="classHistoManager.html#a0a480c624f4dce3a2eb400c516d3d331">HistoManager::~HistoManager</a></div><div class="ttdeci">virtual ~HistoManager()</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00049">HistoManager.cxx:49</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_a0c6850f545249acc67ffabd3c7bcf402"><div class="ttname"><a href="classHistoManager.html#a0c6850f545249acc67ffabd3c7bcf402">HistoManager::it3d</a></div><div class="ttdeci">std::map&lt; std::string, TH3F * &gt;::iterator it3d</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00324">HistoManager.h:324</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_a0d750d7fd7dc85552579a321c674e56f"><div class="ttname"><a href="classHistoManager.html#a0d750d7fd7dc85552579a321c674e56f">HistoManager::Fill2DHisto</a></div><div class="ttdeci">void Fill2DHisto(const std::string &amp;histoName, float valuex, float valuey, float weight=1.)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00312">HistoManager.cxx:312</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_a10335fa6c3b50bcc19eb80359bfb4d24"><div class="ttname"><a href="classHistoManager.html#a10335fa6c3b50bcc19eb80359bfb4d24">HistoManager::histos2d</a></div><div class="ttdeci">std::map&lt; std::string, TH2F * &gt; histos2d</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00321">HistoManager.h:321</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_a12f9a23b891a227fd89df98f02e29f73"><div class="ttname"><a href="classHistoManager.html#a12f9a23b891a227fd89df98f02e29f73">HistoManager::it2d</a></div><div class="ttdeci">std::map&lt; std::string, TH2F * &gt;::iterator it2d</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00322">HistoManager.h:322</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_a0c6850f545249acc67ffabd3c7bcf402"><div class="ttname"><a href="classHistoManager.html#a0c6850f545249acc67ffabd3c7bcf402">HistoManager::it3d</a></div><div class="ttdeci">std::map&lt; std::string, TH3F * &gt;::iterator it3d</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00338">HistoManager.h:338</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_a0d750d7fd7dc85552579a321c674e56f"><div class="ttname"><a href="classHistoManager.html#a0d750d7fd7dc85552579a321c674e56f">HistoManager::Fill2DHisto</a></div><div class="ttdeci">void Fill2DHisto(const std::string &amp;histoName, float valuex, float valuey, float weight=1.)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00328">HistoManager.cxx:328</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_a10335fa6c3b50bcc19eb80359bfb4d24"><div class="ttname"><a href="classHistoManager.html#a10335fa6c3b50bcc19eb80359bfb4d24">HistoManager::histos2d</a></div><div class="ttdeci">std::map&lt; std::string, TH2F * &gt; histos2d</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00335">HistoManager.h:335</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_a12f9a23b891a227fd89df98f02e29f73"><div class="ttname"><a href="classHistoManager.html#a12f9a23b891a227fd89df98f02e29f73">HistoManager::it2d</a></div><div class="ttdeci">std::map&lt; std::string, TH2F * &gt;::iterator it2d</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00336">HistoManager.h:336</a></div></div>
 <div class="ttc" id="aclassHistoManager_html_a14d9cc986fb225a1a68a03317f112a85"><div class="ttname"><a href="classHistoManager.html#a14d9cc986fb225a1a68a03317f112a85">HistoManager::DefineHistos</a></div><div class="ttdeci">virtual void DefineHistos()</div><div class="ttdoc">Definition of histograms from json config.</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00051">HistoManager.cxx:51</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_a1af89c5145c69d9b6a5aaea829e561c0"><div class="ttname"><a href="classHistoManager.html#a1af89c5145c69d9b6a5aaea829e561c0">HistoManager::it1d</a></div><div class="ttdeci">std::map&lt; std::string, TH1F * &gt;::iterator it1d</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00320">HistoManager.h:320</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_a1cf0d8cd57948e1e373da2ccdd330d65"><div class="ttname"><a href="classHistoManager.html#a1cf0d8cd57948e1e373da2ccdd330d65">HistoManager::doPrintWarnings_</a></div><div class="ttdeci">bool doPrintWarnings_</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00330">HistoManager.h:330</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_a1d6a53e655bd418c172f199a9509b9f4"><div class="ttname"><a href="classHistoManager.html#a1d6a53e655bd418c172f199a9509b9f4">HistoManager::GetHistosFromFile</a></div><div class="ttdeci">virtual void GetHistosFromFile(TFile *inFile, const std::string &amp;name, const std::string &amp;folder=&quot;&quot;)</div><div class="ttdoc">Get histograms from input file.</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00155">HistoManager.cxx:155</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_a26cebf7306e8cbc633738b311fc708b5"><div class="ttname"><a href="classHistoManager.html#a26cebf7306e8cbc633738b311fc708b5">HistoManager::plot2D</a></div><div class="ttdeci">TH2F * plot2D(std::string name, std::string xtitle, int nbinsX, float xmin, float xmax, std::string ytitle, int nbinsY, float ymin, float ymax)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00187">HistoManager.cxx:187</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_a1af89c5145c69d9b6a5aaea829e561c0"><div class="ttname"><a href="classHistoManager.html#a1af89c5145c69d9b6a5aaea829e561c0">HistoManager::it1d</a></div><div class="ttdeci">std::map&lt; std::string, TH1F * &gt;::iterator it1d</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00334">HistoManager.h:334</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_a1cf0d8cd57948e1e373da2ccdd330d65"><div class="ttname"><a href="classHistoManager.html#a1cf0d8cd57948e1e373da2ccdd330d65">HistoManager::doPrintWarnings_</a></div><div class="ttdeci">bool doPrintWarnings_</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00344">HistoManager.h:344</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_a1d6a53e655bd418c172f199a9509b9f4"><div class="ttname"><a href="classHistoManager.html#a1d6a53e655bd418c172f199a9509b9f4">HistoManager::GetHistosFromFile</a></div><div class="ttdeci">virtual void GetHistosFromFile(TFile *inFile, const std::string &amp;name, const std::string &amp;folder=&quot;&quot;)</div><div class="ttdoc">Get histograms from input file.</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00171">HistoManager.cxx:171</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_a26cebf7306e8cbc633738b311fc708b5"><div class="ttname"><a href="classHistoManager.html#a26cebf7306e8cbc633738b311fc708b5">HistoManager::plot2D</a></div><div class="ttdeci">TH2F * plot2D(std::string name, std::string xtitle, int nbinsX, float xmin, float xmax, std::string ytitle, int nbinsY, float ymin, float ymax)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00203">HistoManager.cxx:203</a></div></div>
 <div class="ttc" id="aclassHistoManager_html_a4c1b1275e9188e9d59ff21175da36372"><div class="ttname"><a href="classHistoManager.html#a4c1b1275e9188e9d59ff21175da36372">HistoManager::HistoManager</a></div><div class="ttdeci">HistoManager()</div><div class="ttdoc">default constructor</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00009">HistoManager.cxx:9</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_a624e3732b093bb86fe22bd51f87a0f75"><div class="ttname"><a href="classHistoManager.html#a624e3732b093bb86fe22bd51f87a0f75">HistoManager::maxWarnings_</a></div><div class="ttdeci">int maxWarnings_</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00328">HistoManager.h:328</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_a6abbc70f89f3379dc69d50aa94a1b9a8"><div class="ttname"><a href="classHistoManager.html#a6abbc70f89f3379dc69d50aa94a1b9a8">HistoManager::histos3d</a></div><div class="ttdeci">std::map&lt; std::string, TH3F * &gt; histos3d</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00323">HistoManager.h:323</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_a8216c92895370ea61d7a8e527b0474f3"><div class="ttname"><a href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">HistoManager::histos1d</a></div><div class="ttdeci">std::map&lt; std::string, TH1F * &gt; histos1d</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00319">HistoManager.h:319</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_a88f86c6745f30209340bc7d305a850ac"><div class="ttname"><a href="classHistoManager.html#a88f86c6745f30209340bc7d305a850ac">HistoManager::plot3D</a></div><div class="ttdeci">TH3F * plot3D(std::string name, std::string xtitle, int nbinsX, float xmin, float xmax, std::string ytitle, int nbinsY, float ymin, float ymax, std::string ztitle, int nbinsZ, float zmin, float zmax)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00264">HistoManager.cxx:264</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_a4ebf1dfcfe5ad6b65a42957022057e0c"><div class="ttname"><a href="classHistoManager.html#a4ebf1dfcfe5ad6b65a42957022057e0c">HistoManager::Fill3DHisto</a></div><div class="ttdeci">void Fill3DHisto(const std::string &amp;histoName, float valuex, float valuey, float valuez, float weight=1.)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00344">HistoManager.cxx:344</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_a624e3732b093bb86fe22bd51f87a0f75"><div class="ttname"><a href="classHistoManager.html#a624e3732b093bb86fe22bd51f87a0f75">HistoManager::maxWarnings_</a></div><div class="ttdeci">int maxWarnings_</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00342">HistoManager.h:342</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_a6abbc70f89f3379dc69d50aa94a1b9a8"><div class="ttname"><a href="classHistoManager.html#a6abbc70f89f3379dc69d50aa94a1b9a8">HistoManager::histos3d</a></div><div class="ttdeci">std::map&lt; std::string, TH3F * &gt; histos3d</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00337">HistoManager.h:337</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_a8216c92895370ea61d7a8e527b0474f3"><div class="ttname"><a href="classHistoManager.html#a8216c92895370ea61d7a8e527b0474f3">HistoManager::histos1d</a></div><div class="ttdeci">std::map&lt; std::string, TH1F * &gt; histos1d</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00333">HistoManager.h:333</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_a88f86c6745f30209340bc7d305a850ac"><div class="ttname"><a href="classHistoManager.html#a88f86c6745f30209340bc7d305a850ac">HistoManager::plot3D</a></div><div class="ttdeci">TH3F * plot3D(std::string name, std::string xtitle, int nbinsX, float xmin, float xmax, std::string ytitle, int nbinsY, float ymin, float ymax, std::string ztitle, int nbinsZ, float zmin, float zmax)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00280">HistoManager.cxx:280</a></div></div>
 <div class="ttc" id="aclassHistoManager_html_aa71d36872f416feaa853788a7a7a7ef8"><div class="ttname"><a href="classHistoManager.html#aa71d36872f416feaa853788a7a7a7ef8">HistoManager::Clear</a></div><div class="ttdeci">virtual void Clear()</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00018">HistoManager.cxx:18</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_aaddcc8ff9b59c3f9d0036e5145f4fd10"><div class="ttname"><a href="classHistoManager.html#aaddcc8ff9b59c3f9d0036e5145f4fd10">HistoManager::Fill1DHisto</a></div><div class="ttdeci">void Fill1DHisto(const std::string &amp;histoName, float value, float weight=1.)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00329">HistoManager.cxx:329</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_aae63fe0635230dde47fe82cac581aac7"><div class="ttname"><a href="classHistoManager.html#aae63fe0635230dde47fe82cac581aac7">HistoManager::sumw2</a></div><div class="ttdeci">virtual void sumw2()</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00284">HistoManager.cxx:284</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_ab10c4e6288f32f72eff9fdc32966141b"><div class="ttname"><a href="classHistoManager.html#ab10c4e6288f32f72eff9fdc32966141b">HistoManager::plot1D</a></div><div class="ttdeci">TH1F * plot1D(const std::string &amp;name, const std::string &amp;xtitle, int nbinsX, float xmin, float xmax)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00173">HistoManager.cxx:173</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_ab20a1d19398c0c0c5bbeb8f26294cbf6"><div class="ttname"><a href="classHistoManager.html#ab20a1d19398c0c0c5bbeb8f26294cbf6">HistoManager::_h_configs</a></div><div class="ttdeci">json _h_configs</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00327">HistoManager.h:327</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_ac49873e57b0f6b48c50b6b9f3faeefa1"><div class="ttname"><a href="classHistoManager.html#ac49873e57b0f6b48c50b6b9f3faeefa1">HistoManager::loadHistoConfig</a></div><div class="ttdeci">virtual void loadHistoConfig(const std::string histoConfigFile)</div><div class="ttdoc">load histogram config</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00346">HistoManager.cxx:346</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_adb41893ba19e889e56c559f25fc1a68a"><div class="ttname"><a href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">HistoManager::m_name</a></div><div class="ttdeci">std::string m_name</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00317">HistoManager.h:317</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_aed86b24017d3610dffdf54751b8d1c56"><div class="ttname"><a href="classHistoManager.html#aed86b24017d3610dffdf54751b8d1c56">HistoManager::printWarnings_</a></div><div class="ttdeci">int printWarnings_</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00329">HistoManager.h:329</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_aee2310abd744257ed230e751c53eacdb"><div class="ttname"><a href="classHistoManager.html#aee2310abd744257ed230e751c53eacdb">HistoManager::saveHistos</a></div><div class="ttdeci">virtual void saveHistos(TFile *outF=nullptr, std::string folder=&quot;&quot;)</div><div class="ttdoc">save histograms</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00361">HistoManager.cxx:361</a></div></div>
-<div class="ttc" id="aclassHistoManager_html_afa3f4fa08a8a3b675e2dab06e29412a1"><div class="ttname"><a href="classHistoManager.html#afa3f4fa08a8a3b675e2dab06e29412a1">HistoManager::debug_</a></div><div class="ttdeci">bool debug_</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00326">HistoManager.h:326</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_aaddcc8ff9b59c3f9d0036e5145f4fd10"><div class="ttname"><a href="classHistoManager.html#aaddcc8ff9b59c3f9d0036e5145f4fd10">HistoManager::Fill1DHisto</a></div><div class="ttdeci">void Fill1DHisto(const std::string &amp;histoName, float value, float weight=1.)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00363">HistoManager.cxx:363</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_aae63fe0635230dde47fe82cac581aac7"><div class="ttname"><a href="classHistoManager.html#aae63fe0635230dde47fe82cac581aac7">HistoManager::sumw2</a></div><div class="ttdeci">virtual void sumw2()</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00300">HistoManager.cxx:300</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_ab10c4e6288f32f72eff9fdc32966141b"><div class="ttname"><a href="classHistoManager.html#ab10c4e6288f32f72eff9fdc32966141b">HistoManager::plot1D</a></div><div class="ttdeci">TH1F * plot1D(const std::string &amp;name, const std::string &amp;xtitle, int nbinsX, float xmin, float xmax)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00189">HistoManager.cxx:189</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_ab20a1d19398c0c0c5bbeb8f26294cbf6"><div class="ttname"><a href="classHistoManager.html#ab20a1d19398c0c0c5bbeb8f26294cbf6">HistoManager::_h_configs</a></div><div class="ttdeci">json _h_configs</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00341">HistoManager.h:341</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_ac49873e57b0f6b48c50b6b9f3faeefa1"><div class="ttname"><a href="classHistoManager.html#ac49873e57b0f6b48c50b6b9f3faeefa1">HistoManager::loadHistoConfig</a></div><div class="ttdeci">virtual void loadHistoConfig(const std::string histoConfigFile)</div><div class="ttdoc">load histogram config</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00380">HistoManager.cxx:380</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_adb41893ba19e889e56c559f25fc1a68a"><div class="ttname"><a href="classHistoManager.html#adb41893ba19e889e56c559f25fc1a68a">HistoManager::m_name</a></div><div class="ttdeci">std::string m_name</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00331">HistoManager.h:331</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_aed86b24017d3610dffdf54751b8d1c56"><div class="ttname"><a href="classHistoManager.html#aed86b24017d3610dffdf54751b8d1c56">HistoManager::printWarnings_</a></div><div class="ttdeci">int printWarnings_</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00343">HistoManager.h:343</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_aee2310abd744257ed230e751c53eacdb"><div class="ttname"><a href="classHistoManager.html#aee2310abd744257ed230e751c53eacdb">HistoManager::saveHistos</a></div><div class="ttdeci">virtual void saveHistos(TFile *outF=nullptr, std::string folder=&quot;&quot;)</div><div class="ttdoc">save histograms</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8cxx_source.html#l00395">HistoManager.cxx:395</a></div></div>
+<div class="ttc" id="aclassHistoManager_html_afa3f4fa08a8a3b675e2dab06e29412a1"><div class="ttname"><a href="classHistoManager.html#afa3f4fa08a8a3b675e2dab06e29412a1">HistoManager::debug_</a></div><div class="ttdeci">bool debug_</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="HistoManager_8h_source.html#l00340">HistoManager.h:340</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

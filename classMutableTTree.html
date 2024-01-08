@@ -69,7 +69,7 @@ $(function() {
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classMutableTTree-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">MutableTTree Class Reference</div>  </div>
+<div class="title">MutableTTree Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -124,6 +124,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad4c39a1f92a6ddf05d1fb65bc7a43443"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMutableTTree.html#ad4c39a1f92a6ddf05d1fb65bc7a43443">variableExists</a> (std::string variable)</td></tr>
 <tr class="memdesc:ad4c39a1f92a6ddf05d1fb65bc7a43443"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if a variable exists in the ttree.  <a href="classMutableTTree.html#ad4c39a1f92a6ddf05d1fb65bc7a43443">More...</a><br /></td></tr>
 <tr class="separator:ad4c39a1f92a6ddf05d1fb65bc7a43443"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94ee0491e8151aa6d9675e70d088cd36"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMutableTTree.html#a94ee0491e8151aa6d9675e70d088cd36">addVariable</a> (std::string variableName, double param)=0</td></tr>
+<tr class="separator:a94ee0491e8151aa6d9675e70d088cd36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac0aa05dd98dba7fdcce8177c05471ee8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMutableTTree.html#ac0aa05dd98dba7fdcce8177c05471ee8">addVariableToTBranch</a> (const std::string &amp;variableName)</td></tr>
+<tr class="separator:ac0aa05dd98dba7fdcce8177c05471ee8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:accc17107865c7dd0143608d79900cdca"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMutableTTree.html#accc17107865c7dd0143608d79900cdca">~MutableTTree</a> ()</td></tr>
 <tr class="separator:accc17107865c7dd0143608d79900cdca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -247,6 +251,64 @@ Private Attributes</h2></td></tr>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="MutableTTree_8cxx_source.html#l00089">89</a> of file <a class="el" href="MutableTTree_8cxx_source.html">MutableTTree.cxx</a>.</p>
+
+</div>
+</div>
+<a id="a94ee0491e8151aa6d9675e70d088cd36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94ee0491e8151aa6d9675e70d088cd36">&#9670;&nbsp;</a></span>addVariable()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void addVariable </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>variableName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>param</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="classSimpAnaTTree.html#ac89509a9438768ac1bd9591b499c6f7b">SimpAnaTTree</a>.</p>
+
+</div>
+</div>
+<a id="ac0aa05dd98dba7fdcce8177c05471ee8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac0aa05dd98dba7fdcce8177c05471ee8">&#9670;&nbsp;</a></span>addVariableToTBranch()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void addVariableToTBranch </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>variableName</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="MutableTTree_8cxx_source.html#l00113">113</a> of file <a class="el" href="MutableTTree_8cxx_source.html">MutableTTree.cxx</a>.</p>
 
 </div>
 </div>
@@ -662,7 +724,7 @@ false </dd></dl>
 
 <p>functions that calculate new variables </p>
 
-<p class="definition">Definition at line <a class="el" href="MutableTTree_8h_source.html#l00098">98</a> of file <a class="el" href="MutableTTree_8h_source.html">MutableTTree.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MutableTTree_8h_source.html#l00102">102</a> of file <a class="el" href="MutableTTree_8h_source.html">MutableTTree.h</a>.</p>
 
 </div>
 </div>
@@ -688,7 +750,7 @@ false </dd></dl>
 
 <p>mass window high </p>
 
-<p class="definition">Definition at line <a class="el" href="MutableTTree_8h_source.html#l00115">115</a> of file <a class="el" href="MutableTTree_8h_source.html">MutableTTree.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MutableTTree_8h_source.html#l00119">119</a> of file <a class="el" href="MutableTTree_8h_source.html">MutableTTree.h</a>.</p>
 
 </div>
 </div>
@@ -714,7 +776,7 @@ false </dd></dl>
 
 <p>mass window low </p>
 
-<p class="definition">Definition at line <a class="el" href="MutableTTree_8h_source.html#l00114">114</a> of file <a class="el" href="MutableTTree_8h_source.html">MutableTTree.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MutableTTree_8h_source.html#l00118">118</a> of file <a class="el" href="MutableTTree_8h_source.html">MutableTTree.h</a>.</p>
 
 </div>
 </div>
@@ -740,7 +802,7 @@ false </dd></dl>
 
 <p>list of new branches added to ttree </p>
 
-<p class="definition">Definition at line <a class="el" href="MutableTTree_8h_source.html#l00096">96</a> of file <a class="el" href="MutableTTree_8h_source.html">MutableTTree.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MutableTTree_8h_source.html#l00100">100</a> of file <a class="el" href="MutableTTree_8h_source.html">MutableTTree.h</a>.</p>
 
 </div>
 </div>
@@ -766,7 +828,7 @@ false </dd></dl>
 
 <p>list of new variables </p>
 
-<p class="definition">Definition at line <a class="el" href="MutableTTree_8h_source.html#l00097">97</a> of file <a class="el" href="MutableTTree_8h_source.html">MutableTTree.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MutableTTree_8h_source.html#l00101">101</a> of file <a class="el" href="MutableTTree_8h_source.html">MutableTTree.h</a>.</p>
 
 </div>
 </div>
@@ -792,7 +854,7 @@ false </dd></dl>
 
 <p>temporary ttree used to create and fill new branches </p>
 
-<p class="definition">Definition at line <a class="el" href="MutableTTree_8h_source.html#l00094">94</a> of file <a class="el" href="MutableTTree_8h_source.html">MutableTTree.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MutableTTree_8h_source.html#l00098">98</a> of file <a class="el" href="MutableTTree_8h_source.html">MutableTTree.h</a>.</p>
 
 </div>
 </div>
@@ -818,7 +880,7 @@ false </dd></dl>
 
 <p>flat ttree </p>
 
-<p class="definition">Definition at line <a class="el" href="MutableTTree_8h_source.html#l00093">93</a> of file <a class="el" href="MutableTTree_8h_source.html">MutableTTree.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MutableTTree_8h_source.html#l00097">97</a> of file <a class="el" href="MutableTTree_8h_source.html">MutableTTree.h</a>.</p>
 
 </div>
 </div>
@@ -844,7 +906,7 @@ false </dd></dl>
 
 <p>holds all variables and values </p>
 
-<p class="definition">Definition at line <a class="el" href="MutableTTree_8h_source.html#l00095">95</a> of file <a class="el" href="MutableTTree_8h_source.html">MutableTTree.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MutableTTree_8h_source.html#l00099">99</a> of file <a class="el" href="MutableTTree_8h_source.html">MutableTTree.h</a>.</p>
 
 </div>
 </div>
@@ -870,7 +932,7 @@ false </dd></dl>
 
 <p>variable corrections </p>
 
-<p class="definition">Definition at line <a class="el" href="MutableTTree_8h_source.html#l00099">99</a> of file <a class="el" href="MutableTTree_8h_source.html">MutableTTree.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MutableTTree_8h_source.html#l00103">103</a> of file <a class="el" href="MutableTTree_8h_source.html">MutableTTree.h</a>.</p>
 
 </div>
 </div>

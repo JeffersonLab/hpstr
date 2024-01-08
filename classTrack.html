@@ -116,6 +116,14 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:abbcadc899b766ba1a71984966d4c1781"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaeb26425331b4cde1d8570390bacb081"><td class="memItemLeft" align="right" valign="top">std::vector&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrack.html#aaeb26425331b4cde1d8570390bacb081">getCov</a> ()</td></tr>
 <tr class="separator:aaeb26425331b4cde1d8570390bacb081"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a581ce837833727229f082d587c39b601"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrack.html#a581ce837833727229f082d587c39b601">getHitLayers</a> ()</td></tr>
+<tr class="separator:a581ce837833727229f082d587c39b601"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4465e79baff212750e7428163cb3bbb0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrack.html#a4465e79baff212750e7428163cb3bbb0">addHitLayer</a> (int layer)</td></tr>
+<tr class="separator:a4465e79baff212750e7428163cb3bbb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad58528b49795962909868dcb7a23dfe5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrack.html#ad58528b49795962909868dcb7a23dfe5">addMcpHit</a> (int layer, int mcpID)</td></tr>
+<tr class="separator:ad58528b49795962909868dcb7a23dfe5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9d14694ada963b1caeffa3f60c7d364"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair&lt; int, int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrack.html#af9d14694ada963b1caeffa3f60c7d364">getMcpHits</a> ()</td></tr>
+<tr class="separator:af9d14694ada963b1caeffa3f60c7d364"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a94ba9c7f37ca40dadae8d7ed16bab101"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrack.html#a94ba9c7f37ca40dadae8d7ed16bab101">getD0Err</a> () const</td></tr>
 <tr class="separator:a94ba9c7f37ca40dadae8d7ed16bab101"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37e4d2654e3ef764fad9827c3900e78c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrack.html#a37e4d2654e3ef764fad9827c3900e78c">getPhiErr</a> () const</td></tr>
@@ -212,6 +220,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a1b85afd754a3524090061303d684b0f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a10e7e916bc06a5c039d15c83a7fde231"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrack.html#a10e7e916bc06a5c039d15c83a7fde231">isBottomTrack</a> () const</td></tr>
 <tr class="separator:a10e7e916bc06a5c039d15c83a7fde231"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80542412f6235b9c8cbb7217e6d0a955"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrack.html#a80542412f6235b9c8cbb7217e6d0a955">setTrackerHitCount</a> (int nHits)</td></tr>
+<tr class="separator:a80542412f6235b9c8cbb7217e6d0a955"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5464e097b969841cc8cd1f084421009e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrack.html#a5464e097b969841cc8cd1f084421009e">getTrackerHitCount</a> () const</td></tr>
 <tr class="separator:a5464e097b969841cc8cd1f084421009e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a85fa439ebe9b751f99fe99e7ffdfd426"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrack.html#a85fa439ebe9b751f99fe99e7ffdfd426">setNShared</a> (const int nShared)</td></tr>
@@ -236,7 +246,7 @@ Private Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a90b3440442c73ca66180769f7a2092ff"><td class="memItemLeft" align="right" valign="top">TRefArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrack.html#a90b3440442c73ca66180769f7a2092ff">tracker_hits_</a> {}</td></tr>
+<tr class="memitem:a90b3440442c73ca66180769f7a2092ff"><td class="memItemLeft" align="right" valign="top">TRefArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrack.html#a90b3440442c73ca66180769f7a2092ff">tracker_hits_</a> {TRefArray{}}</td></tr>
 <tr class="separator:a90b3440442c73ca66180769f7a2092ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a89517b0b01ec57bee2c578d6c91e61ed"><td class="memItemLeft" align="right" valign="top">TRef&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrack.html#a89517b0b01ec57bee2c578d6c91e61ed">particle_</a></td></tr>
 <tr class="separator:a89517b0b01ec57bee2c578d6c91e61ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -250,6 +260,10 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a10596f82afde0cad9858e13bbead3a3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b6530ccba8330daac0409c856b5c23b"><td class="memItemLeft" align="right" valign="top">std::vector&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrack.html#a4b6530ccba8330daac0409c856b5c23b">cov_</a></td></tr>
 <tr class="separator:a4b6530ccba8330daac0409c856b5c23b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adcbe0cbd434b2858ad8ede412e931eb3"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrack.html#adcbe0cbd434b2858ad8ede412e931eb3">hit_layers_</a></td></tr>
+<tr class="separator:adcbe0cbd434b2858ad8ede412e931eb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d722983a2b666efa18e6b8bc74b560c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair&lt; int, int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrack.html#a5d722983a2b666efa18e6b8bc74b560c">mcp_hits_</a></td></tr>
+<tr class="separator:a5d722983a2b666efa18e6b8bc74b560c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64e01c226980614be69cad3a5f4f3735"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrack.html#a64e01c226980614be69cad3a5f4f3735">d0_</a> {-999.}</td></tr>
 <tr class="separator:a64e01c226980614be69cad3a5f4f3735"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a263c7361343abc86d966109ee8b8f12c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrack.html#a263c7361343abc86d966109ee8b8f12c">phi0_</a> {-999.}</td></tr>
@@ -373,6 +387,72 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a4465e79baff212750e7428163cb3bbb0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4465e79baff212750e7428163cb3bbb0">&#9670;&nbsp;</a></span>addHitLayer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void addHitLayer </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>layer</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00100">100</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+
+</div>
+</div>
+<a id="ad58528b49795962909868dcb7a23dfe5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad58528b49795962909868dcb7a23dfe5">&#9670;&nbsp;</a></span>addMcpHit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void addMcpHit </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>layer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>mcpID</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00102">102</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+
+</div>
+</div>
 <a id="af280c8b9c4b898587bd23877390c49e0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af280c8b9c4b898587bd23877390c49e0">&#9670;&nbsp;</a></span>applyCorrection()</h2>
 
@@ -486,7 +566,7 @@ Private Attributes</h2></td></tr>
 <p>Get the charge of a the track.</p>
 <dl class="section return"><dt>Returns</dt><dd>The charge associated of the track. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00242">242</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00247">247</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -514,7 +594,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>the chi^2 of the fit to the track. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00118">118</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00123">123</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -542,7 +622,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>the chi^2 / ndf of the fit to the track. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00121">121</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00126">126</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -623,7 +703,34 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00100">100</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00105">105</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+
+</div>
+</div>
+<a id="a581ce837833727229f082d587c39b601"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a581ce837833727229f082d587c39b601">&#9670;&nbsp;</a></span>getHitLayers()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;int&gt; getHitLayers </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00099">99</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -651,7 +758,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the track id. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00257">257</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00262">262</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -687,7 +794,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The isolation value of the given layer. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00144">144</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00149">149</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -723,7 +830,34 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The lambda kink value of the given layer. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00304">304</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00309">309</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+
+</div>
+</div>
+<a id="af9d14694ada963b1caeffa3f60c7d364"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af9d14694ada963b1caeffa3f60c7d364">&#9670;&nbsp;</a></span>getMcpHits()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::pair&lt;int,int&gt; &gt; getMcpHits </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00103">103</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -751,7 +885,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>The track momentum. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00280">280</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00285">285</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -778,7 +912,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00108">108</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00113">113</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -805,7 +939,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00340">340</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00350">350</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -859,7 +993,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00102">102</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00107">107</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -887,7 +1021,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>momentum magnitude </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00286">286</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00291">291</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -915,7 +1049,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>The <a class="el" href="classParticle.html">Particle</a> associated with this track. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00173">173</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00178">178</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -969,7 +1103,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00101">101</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00106">106</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1005,7 +1139,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The phi kink value of the given layer. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00320">320</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00325">325</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1072,7 +1206,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00288">288</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00293">293</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1099,7 +1233,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00345">345</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00355">355</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1126,7 +1260,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00346">346</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00356">356</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1208,7 +1342,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00103">103</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00108">108</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1236,7 +1370,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>Number of tracker hits associated with this track. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00335">335</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00345">345</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1285,7 +1419,7 @@ Private Attributes</h2></td></tr>
 <p>Get the time of the track.</p>
 <dl class="section return"><dt>Returns</dt><dd>The track time. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00155">155</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00160">160</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1340,7 +1474,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>The track type. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00206">206</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00211">211</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1394,7 +1528,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00104">104</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00109">109</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1421,7 +1555,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00218">218</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00223">223</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1448,7 +1582,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00220">220</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00225">225</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1475,7 +1609,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00214">214</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00219">219</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1502,7 +1636,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00216">216</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00221">221</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1530,7 +1664,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>True if the track is in the bottom SVT volume, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00330">330</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00335">335</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1557,7 +1691,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00224">224</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00229">229</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1584,7 +1718,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00226">226</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00231">231</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1611,7 +1745,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00222">222</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00227">227</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1639,7 +1773,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00228">228</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00233">233</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1667,7 +1801,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>True if the track is in the top SVT volume, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00325">325</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00330">330</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1722,7 +1856,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00235">235</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00240">240</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1757,7 +1891,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00115">115</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00120">120</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1815,7 +1949,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Set the track id. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00250">250</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00255">255</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1861,7 +1995,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00135">135</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00140">140</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -1907,7 +2041,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00296">296</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00301">301</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2025,7 +2159,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00107">107</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00112">112</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2054,7 +2188,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Set number of shared 3D hits </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00338">338</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00348">348</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2089,7 +2223,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00170">170</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00175">175</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2163,7 +2297,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00312">312</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00317">317</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2235,7 +2369,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00342">342</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00352">352</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2263,7 +2397,36 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00343">343</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00353">353</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+
+</div>
+</div>
+<a id="a80542412f6235b9c8cbb7217e6d0a955"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80542412f6235b9c8cbb7217e6d0a955">&#9670;&nbsp;</a></span>setTrackerHitCount()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void setTrackerHitCount </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nHits</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Set the number of tracker hits associated with this track. </p>
+
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00340">340</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2356,7 +2519,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00148">148</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00153">153</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2391,7 +2554,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00162">162</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00167">167</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2461,7 +2624,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00203">203</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00208">208</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2487,7 +2650,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p><a class="el" href="classTrack.html">Track</a> charge. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00449">449</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00464">464</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2512,7 +2675,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The chi^2 of the track fit. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00405">405</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00420">420</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2537,7 +2700,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Cov matrix </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00374">374</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00384">384</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2562,7 +2725,32 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The distance of closest approach to the reference point. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00378">378</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00393">393</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+
+</div>
+</div>
+<a id="adcbe0cbd434b2858ad8ede412e931eb3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adcbe0cbd434b2858ad8ede412e931eb3">&#9670;&nbsp;</a></span>hit_layers_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;int&gt; hit_layers_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>hit layers </p>
+
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00387">387</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2587,7 +2775,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p><a class="el" href="classTrack.html">Track</a> id. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00446">446</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00461">461</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2612,7 +2800,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Array used to store the isolation variables for each of the sensor layers. Updated to 2019 geometry. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00362">362</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00372">372</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2637,7 +2825,32 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Array used to store the lambda kinks for each of the sensor layers. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00435">435</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00450">450</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+
+</div>
+</div>
+<a id="a5d722983a2b666efa18e6b8bc74b560c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d722983a2b666efa18e6b8bc74b560c">&#9670;&nbsp;</a></span>mcp_hits_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::pair&lt;int,int&gt; &gt; mcp_hits_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>truth mcp hits </p>
+
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00390">390</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2662,7 +2875,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Reference to MC <a class="el" href="classParticle.html">Particle</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00464">464</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00479">479</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2687,7 +2900,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The number of 3D hits associated with this track. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00365">365</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00375">375</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2712,7 +2925,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The ndfs of the track fit. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00408">408</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00423">423</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2737,7 +2950,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>N Shared hits. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00452">452</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00467">467</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2762,7 +2975,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The track curvature. The curvature is positive (negative) if the particle has a positive (negative) charge. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00390">390</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00405">405</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2787,7 +3000,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Reference to the reconstructed particle associated with this track. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00359">359</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00369">369</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2812,7 +3025,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The azimuthal angle of the momentum at the position of closest approach to the reference point. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00384">384</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00399">399</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2837,7 +3050,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Array used to store the phi kinks for each of the sensor layers. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00438">438</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00453">453</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2862,7 +3075,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p><a class="el" href="classTrack.html">Track</a> momentum. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00441">441</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00456">456</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2886,7 +3099,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00442">442</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00457">457</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2910,7 +3123,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00443">443</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00458">458</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2935,7 +3148,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Has Ly0 Shared hits. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00455">455</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00470">470</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2960,7 +3173,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Has Ly1 Shared hits. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00458">458</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00473">473</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -2985,7 +3198,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The slope of the track in the SY plane where S is the arc length of the helix in the xz plane. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00396">396</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00411">411</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -3010,7 +3223,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The time of the track. This is currently the average time of all hits composing the track. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00414">414</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00429">429</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -3035,7 +3248,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The volume to which this track belongs to. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00368">368</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00378">378</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -3049,7 +3262,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">TRefArray tracker_hits_ {}</td>
+          <td class="memname">TRefArray tracker_hits_ {TRefArray{}}</td>
         </tr>
       </table>
   </td>
@@ -3060,7 +3273,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Reference to the 3D hits associated with this track. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00356">356</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00366">366</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -3085,7 +3298,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Reference to a truth track </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00461">461</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00476">476</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -3110,7 +3323,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The track type. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00371">371</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00381">381</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -3135,7 +3348,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The x position track. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00426">426</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00441">441</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -3160,7 +3373,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The x position of the extrapolated track at the Ecal face. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00417">417</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00432">432</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -3185,7 +3398,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The y position track. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00429">429</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00444">444</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -3210,7 +3423,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The y position of the extrapolated track at the Ecal face. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00420">420</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00435">435</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -3235,7 +3448,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The y position of the track at the distance of closest approach in the xz plane. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00402">402</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00417">417</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -3260,7 +3473,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The z position track. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00432">432</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00447">447</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>
@@ -3285,7 +3498,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The z position of the extrapolated track at the Ecal face. </p>
 
-<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00423">423</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Track_8h_source.html#l00438">438</a> of file <a class="el" href="Track_8h_source.html">Track.h</a>.</p>
 
 </div>
 </div>

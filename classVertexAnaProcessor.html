@@ -270,6 +270,12 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:ae239162de82b0ce004a868981fd6eff3"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexAnaProcessor.html#ae239162de82b0ce004a868981fd6eff3">beamPosCorrections_</a> = {0.0,0.0,0.0}</td></tr>
 <tr class="memdesc:ae239162de82b0ce004a868981fd6eff3"><td class="mdescLeft">&#160;</td><td class="mdescRight">holds beam position corrections  <a href="classVertexAnaProcessor.html#ae239162de82b0ce004a868981fd6eff3">More...</a><br /></td></tr>
 <tr class="separator:ae239162de82b0ce004a868981fd6eff3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a100993dd4a387166d9cd8cba0220aae0"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexAnaProcessor.html#a100993dd4a387166d9cd8cba0220aae0">v0ProjectionFitsCfg_</a> {&quot;&quot;}</td></tr>
+<tr class="memdesc:a100993dd4a387166d9cd8cba0220aae0"><td class="mdescLeft">&#160;</td><td class="mdescRight">json file w run dependent v0 projection fits  <a href="classVertexAnaProcessor.html#a100993dd4a387166d9cd8cba0220aae0">More...</a><br /></td></tr>
+<tr class="separator:a100993dd4a387166d9cd8cba0220aae0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9080ac7a2e0c6b3f16d1746d8edb8387"><td class="memItemLeft" align="right" valign="top"><a class="el" href="BaseSelector_8h.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexAnaProcessor.html#a9080ac7a2e0c6b3f16d1746d8edb8387">v0proj_fits_</a></td></tr>
+<tr class="memdesc:a9080ac7a2e0c6b3f16d1746d8edb8387"><td class="mdescLeft">&#160;</td><td class="mdescRight">json object v0proj  <a href="classVertexAnaProcessor.html#a9080ac7a2e0c6b3f16d1746d8edb8387">More...</a><br /></td></tr>
+<tr class="separator:a9080ac7a2e0c6b3f16d1746d8edb8387"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4bd8b199c6b13da876301e14cf47cb8e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexAnaProcessor.html#a4bd8b199c6b13da876301e14cf47cb8e">eleTrackTimeBias_</a> = 0.0</td></tr>
 <tr class="separator:a4bd8b199c6b13da876301e14cf47cb8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acdef4265432b861ae6aad573fe6e6044"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexAnaProcessor.html#acdef4265432b861ae6aad573fe6e6044">posTrackTimeBias_</a> = 0.0</td></tr>
@@ -277,6 +283,8 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:aae6e3074dd80f83b09d762b60f9c2192"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexAnaProcessor.html#aae6e3074dd80f83b09d762b60f9c2192">current_run_number_</a> {-999}</td></tr>
 <tr class="memdesc:aae6e3074dd80f83b09d762b60f9c2192"><td class="mdescLeft">&#160;</td><td class="mdescRight">track current run number  <a href="classVertexAnaProcessor.html#aae6e3074dd80f83b09d762b60f9c2192">More...</a><br /></td></tr>
 <tr class="separator:aae6e3074dd80f83b09d762b60f9c2192"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e6370b4bbe80b2141a2622073e18400"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertexAnaProcessor.html#a9e6370b4bbe80b2141a2622073e18400">mc_reg_on_</a> = false</td></tr>
+<tr class="separator:a9e6370b4bbe80b2141a2622073e18400"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -474,7 +482,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classProcessor.html#a5882b5eaf11f8b1561d5bb4ecdc217c3">Processor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="VertexAnaProcessor_8cxx_source.html#l01357">1357</a> of file <a class="el" href="VertexAnaProcessor_8cxx_source.html">VertexAnaProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexAnaProcessor_8cxx_source.html#l01394">1394</a> of file <a class="el" href="VertexAnaProcessor_8cxx_source.html">VertexAnaProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -512,7 +520,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classProcessor.html#ac35b4d4ae3c704c4f9764e8cbbb3a790">Processor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="VertexAnaProcessor_8cxx_source.html#l00059">59</a> of file <a class="el" href="VertexAnaProcessor_8cxx_source.html">VertexAnaProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexAnaProcessor_8cxx_source.html#l00062">62</a> of file <a class="el" href="VertexAnaProcessor_8cxx_source.html">VertexAnaProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -553,7 +561,7 @@ false </dd></dl>
 
 <p>Implements <a class="el" href="classProcessor.html#a1ed21b6d43e34aa191677e80ecf2fd78">Processor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="VertexAnaProcessor_8cxx_source.html#l00229">229</a> of file <a class="el" href="VertexAnaProcessor_8cxx_source.html">VertexAnaProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexAnaProcessor_8cxx_source.html#l00245">245</a> of file <a class="el" href="VertexAnaProcessor_8cxx_source.html">VertexAnaProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -709,7 +717,7 @@ false </dd></dl>
 </div><div class="memdoc">
 
 <p>description </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000015">Todo:</a></b></dt><dd>Duplicate.. We can make a single class.. ? </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000017">Todo:</a></b></dt><dd>Duplicate.. We can make a single class.. ? </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="VertexAnaProcessor_8h_source.html#l00124">124</a> of file <a class="el" href="VertexAnaProcessor_8h_source.html">VertexAnaProcessor.h</a>.</p>
 
@@ -1153,7 +1161,7 @@ false </dd></dl>
 
 <p>track current run number </p>
 
-<p class="definition">Definition at line <a class="el" href="VertexAnaProcessor_8h_source.html#l00149">149</a> of file <a class="el" href="VertexAnaProcessor_8h_source.html">VertexAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexAnaProcessor_8h_source.html#l00151">151</a> of file <a class="el" href="VertexAnaProcessor_8h_source.html">VertexAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1255,7 +1263,7 @@ false </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="VertexAnaProcessor_8h_source.html#l00147">147</a> of file <a class="el" href="VertexAnaProcessor_8h_source.html">VertexAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexAnaProcessor_8h_source.html#l00149">149</a> of file <a class="el" href="VertexAnaProcessor_8h_source.html">VertexAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1441,6 +1449,30 @@ false </dd></dl>
 
 </div>
 </div>
+<a id="a9e6370b4bbe80b2141a2622073e18400"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9e6370b4bbe80b2141a2622073e18400">&#9670;&nbsp;</a></span>mc_reg_on_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool mc_reg_on_ = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="VertexAnaProcessor_8h_source.html#l00153">153</a> of file <a class="el" href="VertexAnaProcessor_8h_source.html">VertexAnaProcessor.h</a>.</p>
+
+</div>
+</div>
 <a id="a5b68f1e558dc935165bf5fa26558fd3c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5b68f1e558dc935165bf5fa26558fd3c">&#9670;&nbsp;</a></span>mcColl_</h2>
 
@@ -1539,7 +1571,7 @@ false </dd></dl>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="VertexAnaProcessor_8h_source.html#l00148">148</a> of file <a class="el" href="VertexAnaProcessor_8h_source.html">VertexAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexAnaProcessor_8h_source.html#l00150">150</a> of file <a class="el" href="VertexAnaProcessor_8h_source.html">VertexAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1748,6 +1780,58 @@ false </dd></dl>
 <p>description </p>
 
 <p class="definition">Definition at line <a class="el" href="VertexAnaProcessor_8h_source.html#l00110">110</a> of file <a class="el" href="VertexAnaProcessor_8h_source.html">VertexAnaProcessor.h</a>.</p>
+
+</div>
+</div>
+<a id="a9080ac7a2e0c6b3f16d1746d8edb8387"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9080ac7a2e0c6b3f16d1746d8edb8387">&#9670;&nbsp;</a></span>v0proj_fits_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="BaseSelector_8h.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> v0proj_fits_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>json object v0proj </p>
+
+<p class="definition">Definition at line <a class="el" href="VertexAnaProcessor_8h_source.html#l00148">148</a> of file <a class="el" href="VertexAnaProcessor_8h_source.html">VertexAnaProcessor.h</a>.</p>
+
+</div>
+</div>
+<a id="a100993dd4a387166d9cd8cba0220aae0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a100993dd4a387166d9cd8cba0220aae0">&#9670;&nbsp;</a></span>v0ProjectionFitsCfg_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string v0ProjectionFitsCfg_ {&quot;&quot;}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>json file w run dependent v0 projection fits </p>
+
+<p class="definition">Definition at line <a class="el" href="VertexAnaProcessor_8h_source.html#l00147">147</a> of file <a class="el" href="VertexAnaProcessor_8h_source.html">VertexAnaProcessor.h</a>.</p>
 
 </div>
 </div>

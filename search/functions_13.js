@@ -1,9 +1,10 @@
 var searchData=
 [
-  ['writegraph_2702',['writeGraph',['../classSimpZBiOptimizationProcessor.html#aaec7b91c34866d747994e7d3bcf65b0c',1,'SimpZBiOptimizationProcessor']]],
-  ['writegraphs_2703',['writeGraphs',['../classZBiHistos.html#a31e96c43beeb92b552c51709df157e01',1,'ZBiHistos']]],
-  ['writehistos_2704',['writeHistos',['../classZBiHistos.html#af8dbd13254ec00b8604bbfe26e79d79f',1,'ZBiHistos']]],
-  ['writeresults_2705',['writeResults',['../classBumpHunter.html#acfc2583d61a3bf3305bd8ff119b0b0c1',1,'BumpHunter']]],
-  ['writeth1f_2706',['writeTH1F',['../classSimpZBiOptimizationProcessor.html#a82c0722e46c2db9b92f0a76f6a32c26e',1,'SimpZBiOptimizationProcessor']]],
-  ['writetree_2707',['writeTree',['../classFlatTupleMaker.html#a348efc14d9fec5901a6c60752142dd00',1,'FlatTupleMaker']]]
+  ['v0_5fprojection_5fto_5ftarget_5fsignificance_2760',['v0_projection_to_target_significance',['../namespaceutils.html#aa54b8be934579198d0bcfed387562ee0',1,'utils']]],
+  ['variableexists_2761',['variableExists',['../classMutableTTree.html#ad4c39a1f92a6ddf05d1fb65bc7a43443',1,'MutableTTree']]],
+  ['vertex_2762',['Vertex',['../classVertex.html#a1ae26ed9ee56ee76ada81da66dd0c869',1,'Vertex']]],
+  ['vertexanaprocessor_2763',['VertexAnaProcessor',['../classVertexAnaProcessor.html#a57f3be230aa19e196aa1af2c4c8858ed',1,'VertexAnaProcessor']]],
+  ['vertexprocessor_2764',['VertexProcessor',['../classVertexProcessor.html#af9b2eb31ef1deaf820ace54bfc0203b4',1,'VertexProcessor']]],
+  ['vtpdata_2765',['VTPData',['../classVTPData.html#a31aaad7f513a33c599b5920224bdc8d6',1,'VTPData']]],
+  ['vtxhistoprocessor_2766',['VtxHistoProcessor',['../classVtxHistoProcessor.html#a189981b43e9e0fef3ea400e59ce2a33e',1,'VtxHistoProcessor']]]
 ];

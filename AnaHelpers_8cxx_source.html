@@ -102,29 +102,29 @@ $(function() {
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keywordtype">bool</span> hasL1 = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keywordtype">bool</span> hasL2 = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keywordtype">bool</span> hasL3 = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> ihit=0; ihit&lt;trk-&gt;<a class="code" href="classTrack.html#aa5f939f8e1961ed57a59f8d01e46438f">getSvtHits</a>().GetEntries();++ihit) {</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <a class="code" href="classTrackerHit.html">TrackerHit</a>* hit3d = (<a class="code" href="classTrackerHit.html">TrackerHit</a>*) trk-&gt;<a class="code" href="classTrack.html#aa5f939f8e1961ed57a59f8d01e46438f">getSvtHits</a>().At(ihit);</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> ihit=0; ihit&lt;trk-&gt;<a class="code" href="classTrack.html#a581ce837833727229f082d587c39b601">getHitLayers</a>().size();++ihit) {</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="keywordtype">int</span> hit3d = trk-&gt;<a class="code" href="classTrack.html#a581ce837833727229f082d587c39b601">getHitLayers</a>().at(ihit);</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="keywordflow">if</span>(isKF){</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            <span class="keywordflow">if</span> (hit3d-&gt;<a class="code" href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">getLayer</a>() == 0 ) {</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            <span class="keywordflow">if</span> (hit3d == 0 ) {</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                innerCount++;</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            }</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            <span class="keywordflow">if</span> (hit3d-&gt;<a class="code" href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">getLayer</a>() == 1) {</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            <span class="keywordflow">if</span> (hit3d == 1) {</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                innerCount++;</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            }</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            <span class="keywordflow">if</span> (hit3d-&gt;<a class="code" href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">getLayer</a>() == 2) {</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            <span class="keywordflow">if</span> (hit3d == 2) {</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                innerCount++;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                hasL2 = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            }</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            <span class="keywordflow">if</span> (hit3d-&gt;<a class="code" href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">getLayer</a>() == 3) {</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            <span class="keywordflow">if</span> (hit3d == 3) {</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                innerCount++;</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                hasL3 = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            }</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        }</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keywordflow">else</span>{</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            <span class="keywordflow">if</span> (hit3d-&gt;<a class="code" href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">getLayer</a>() == 0 ) {</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            <span class="keywordflow">if</span> (hit3d == 0 ) {</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                innerCount++;</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            }</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;            <span class="keywordflow">if</span> (hit3d-&gt;<a class="code" href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">getLayer</a>() == 1) {</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;            <span class="keywordflow">if</span> (hit3d == 1) {</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                innerCount++;</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                hasL1 = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            }</div>
@@ -238,10 +238,8 @@ $(function() {
 <div class="ttc" id="aclassAnaHelpers_html_afa3f4fa08a8a3b675e2dab06e29412a1"><div class="ttname"><a href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">AnaHelpers::debug_</a></div><div class="ttdeci">bool debug_</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="AnaHelpers_8h_source.html#l00107">AnaHelpers.h:107</a></div></div>
 <div class="ttc" id="aclassParticle_html"><div class="ttname"><a href="classParticle.html">Particle</a></div><div class="ttdef"><b>Definition:</b> <a href="Particle_8h_source.html#l00024">Particle.h:24</a></div></div>
 <div class="ttc" id="aclassTrack_html"><div class="ttname"><a href="classTrack.html">Track</a></div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00032">Track.h:32</a></div></div>
-<div class="ttc" id="aclassTrack_html_a0fe98cdce0b4402fb0173dcc7408a89d"><div class="ttname"><a href="classTrack.html#a0fe98cdce0b4402fb0173dcc7408a89d">Track::isKalmanTrack</a></div><div class="ttdeci">bool isKalmanTrack() const</div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00226">Track.h:226</a></div></div>
-<div class="ttc" id="aclassTrack_html_aa5f939f8e1961ed57a59f8d01e46438f"><div class="ttname"><a href="classTrack.html#aa5f939f8e1961ed57a59f8d01e46438f">Track::getSvtHits</a></div><div class="ttdeci">TRefArray getSvtHits() const</div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00064">Track.h:64</a></div></div>
-<div class="ttc" id="aclassTrackerHit_html"><div class="ttname"><a href="classTrackerHit.html">TrackerHit</a></div><div class="ttdef"><b>Definition:</b> <a href="TrackerHit_8h_source.html#l00022">TrackerHit.h:22</a></div></div>
-<div class="ttc" id="aclassTrackerHit_html_a17a9ca6d361f5e7cdc116c35d699e61f"><div class="ttname"><a href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">TrackerHit::getLayer</a></div><div class="ttdeci">int getLayer() const</div><div class="ttdef"><b>Definition:</b> <a href="TrackerHit_8h_source.html#l00109">TrackerHit.h:109</a></div></div>
+<div class="ttc" id="aclassTrack_html_a0fe98cdce0b4402fb0173dcc7408a89d"><div class="ttname"><a href="classTrack.html#a0fe98cdce0b4402fb0173dcc7408a89d">Track::isKalmanTrack</a></div><div class="ttdeci">bool isKalmanTrack() const</div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00231">Track.h:231</a></div></div>
+<div class="ttc" id="aclassTrack_html_a581ce837833727229f082d587c39b601"><div class="ttname"><a href="classTrack.html#a581ce837833727229f082d587c39b601">Track::getHitLayers</a></div><div class="ttdeci">std::vector&lt; int &gt; getHitLayers()</div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00099">Track.h:99</a></div></div>
 <div class="ttc" id="aclassVertex_html"><div class="ttname"><a href="classVertex.html">Vertex</a></div><div class="ttdef"><b>Definition:</b> <a href="Vertex_8h_source.html#l00021">Vertex.h:21</a></div></div>
 <div class="ttc" id="anamespaceconfig_1_1anaBhTuple__cfg_html_a61569f2965b7a369eb10b6d75d410d11"><div class="ttname"><a href="namespaceconfig_1_1anaBhTuple__cfg.html#a61569f2965b7a369eb10b6d75d410d11">config.anaBhTuple_cfg.int</a></div><div class="ttdeci">int</div><div class="ttdef"><b>Definition:</b> <a href="anaBhTuple__cfg_8py_source.html#l00006">anaBhTuple_cfg.py:6</a></div></div>
 <div class="ttc" id="anamespaceconfig_1_1kalSimpTuple__cfg_html_a0ba66fed21d976c0b188b1e975cb94c0"><div class="ttname"><a href="namespaceconfig_1_1kalSimpTuple__cfg.html#a0ba66fed21d976c0b188b1e975cb94c0">config.kalSimpTuple_cfg.vtx</a></div><div class="ttdeci">vtx</div><div class="ttdef"><b>Definition:</b> <a href="kalSimpTuple__cfg_8py_source.html#l00048">kalSimpTuple_cfg.py:48</a></div></div>

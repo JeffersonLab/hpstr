@@ -70,7 +70,7 @@ $(function() {
 <dt>Member <a class="el" href="classApv25RoXtalkAnaProcessor.html#a5953b7896f712a1cc6c7495d7f887fe3">Apv25RoXtalkAnaProcessor::tree_</a>  </dt>
 <dd><a class="anchor" id="_todo000008"></a>Change this to be held from HPSEvent  </dd>
 <dt>Member <a class="el" href="classApv25RoXtalkAnaProcessor.html#ab264c56ead4503f4e9bb41879a1d43af">Apv25RoXtalkAnaProcessor::~Apv25RoXtalkAnaProcessor</a>  ()</dt>
-<dd><a class="anchor" id="_todo000016"></a>CHECK THIS DESTRUCTOR  </dd>
+<dd><a class="anchor" id="_todo000018"></a>CHECK THIS DESTRUCTOR  </dd>
 <dt>Member <a class="el" href="classClusterHistos.html#ae08c8c0a30c96131bc7d0cf9612877b9">ClusterHistos::mmapper_</a>  </dt>
 <dd><a class="anchor" id="_todo000001"></a>clean this up  </dd>
 <dt>Member <a class="el" href="classClusterOnTrackAnaProcessor.html#a5953b7896f712a1cc6c7495d7f887fe3">ClusterOnTrackAnaProcessor::tree_</a>  </dt>
@@ -81,24 +81,28 @@ $(function() {
 <dd><a class="anchor" id="_todo000010"></a>Change this to be held from HPSEvent  </dd>
 <dt>Member <a class="el" href="classModuleMapper.html#a2e632dcbd5dfcc522392e58fa715fa7f">ModuleMapper::~ModuleMapper</a>  ()</dt>
 <dd><a class="anchor" id="_todo000002"></a>, clean up?  </dd>
+<dt>Member <a class="el" href="classNewVertexAnaProcessor.html#a63df974d1d6aaea5181b47fcdd64cf74">NewVertexAnaProcessor::_reg_vtx_selectors</a>  </dt>
+<dd><a class="anchor" id="_todo000011"></a>Duplicate.. We can make a single class.. ?  </dd>
 <dt>Class <a class="el" href="structParameterSet_1_1Element.html">ParameterSet::Element</a>  </dt>
 <dd><a class="anchor" id="_todo000006"></a>Fully document me!  </dd>
 <dt>Member <a class="el" href="classProcessorFactory.html#ae8221d81ffe82fc25f4a487acc3a5d6e">ProcessorFactory::createProcessor</a>  (const std::string &amp;classname, const std::string &amp;module_instance_name, <a class="el" href="classProcess.html">Process</a> &amp;process)</dt>
 <dd><a class="anchor" id="_todo000007"></a>add description.  </dd>
 <dt>Member <a class="el" href="classRecoHitAnaProcessor.html#a5953b7896f712a1cc6c7495d7f887fe3">RecoHitAnaProcessor::tree_</a>  </dt>
-<dd><a class="anchor" id="_todo000011"></a>Change this to be held from HPSEvent  </dd>
+<dd><a class="anchor" id="_todo000012"></a>Change this to be held from HPSEvent  </dd>
 <dt>Member <a class="el" href="classTrackHistos.html#ae8e83f90eec34e37a2ddb504bf0098a9">TrackHistos::Fill1DVertex</a>  (<a class="el" href="classVertex.html">Vertex</a> *vtx, <a class="el" href="classParticle.html">Particle</a> *ele, <a class="el" href="classParticle.html">Particle</a> *pos, <a class="el" href="classTrack.html">Track</a> *ele_trk, <a class="el" href="classTrack.html">Track</a> *pos_trk, float weight=1.)</dt>
 <dd><a class="anchor" id="_todo000004"></a>change this </dd>
 <dt>Member <a class="el" href="classTrackHistos.html#a6c3baba572cf0246106fa53b6e2057e1">TrackHistos::FillResidualHistograms</a>  (<a class="el" href="classTrack.html">Track</a> *track, int ly, double res, double sigma)</dt>
 <dd><a class="anchor" id="_todo000003"></a>This should probably go somewhere else </dd>
 <dt>Member <a class="el" href="namespaceutils.html#a1ed2a27a078620b6befd9411673440da">utils::decoder</a>  ("system:6,barrel:3,layer:4,module:12,sensor:1,side:32:-2,strip:12")</dt>
-<dd><a class="anchor" id="_todo000012"></a>extern?  </dd>
-<dt>Member <a class="el" href="namespaceutils.html#a2b19c1ba52775ddffc7e4a2c81ff48f3">utils::get2016KFMCTruthHitCodes</a>  (<a class="el" href="classTrack.html">Track</a> *ele_trk, <a class="el" href="classTrack.html">Track</a> *pos_trk, std::vector&lt; TrackerHit * &gt; *hits, int &amp;L1L2hitCode, int &amp;L1hitCode, int &amp;L2hitCode)</dt>
-<dd><a class="anchor" id="_todo000014"></a>extern?  </dd>
-<dt>Member <a class="el" href="namespaceutils.html#a738247811cec3af04d9b6a7868aa8eb4">utils::getKalmanTrackL1Isolations</a>  (<a class="el" href="classTrack.html">Track</a> *track, std::vector&lt; TrackerHit * &gt; *siClusters)</dt>
 <dd><a class="anchor" id="_todo000013"></a>extern?  </dd>
+<dt>Member <a class="el" href="namespaceutils.html#ab32ee0dd27142e56bd20ad7d6c5ee592">utils::get2016KFMCTruthHitCodes</a>  (<a class="el" href="classTrack.html">Track</a> *ele_trk, <a class="el" href="classTrack.html">Track</a> *pos_trk, int &amp;L1L2hitCode, int &amp;L1hitCode, int &amp;L2hitCode)</dt>
+<dd><a class="anchor" id="_todo000015"></a>extern?  </dd>
+<dt>Member <a class="el" href="namespaceutils.html#a738247811cec3af04d9b6a7868aa8eb4">utils::getKalmanTrackL1Isolations</a>  (<a class="el" href="classTrack.html">Track</a> *track, std::vector&lt; TrackerHit * &gt; *siClusters)</dt>
+<dd><a class="anchor" id="_todo000014"></a>extern?  </dd>
+<dt>Member <a class="el" href="namespaceutils.html#aa54b8be934579198d0bcfed387562ee0">utils::v0_projection_to_target_significance</a>  (json v0proj_fits, int run, double &amp;vtx_proj_x, double &amp;vtx_proj_y, double &amp;vtx_proj_x_signif, double &amp;vtx_proj_y_signif, double vtx_x, double vtx_y, double vtx_z, double vtx_px, double vtx_py, double vtx_pz)</dt>
+<dd><a class="anchor" id="_todo000016"></a>extern?  </dd>
 <dt>Member <a class="el" href="classVertexAnaProcessor.html#a63df974d1d6aaea5181b47fcdd64cf74">VertexAnaProcessor::_reg_vtx_selectors</a>  </dt>
-<dd><a class="anchor" id="_todo000015"></a>Duplicate.. We can make a single class.. ? </dd>
+<dd><a class="anchor" id="_todo000017"></a>Duplicate.. We can make a single class.. ? </dd>
 </dl>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->

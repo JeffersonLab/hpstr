@@ -681,291 +681,317 @@ $(function() {
 <div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160;        <span class="keywordtype">double</span> closest_dt = 999999.9;</div>
 <div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;        <span class="keywordtype">double</span> isohit_y = 999999.9;</div>
 <div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160; </div>
-<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> j = 0; j &lt; siClusters-&gt;size(); j++){</div>
-<div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;            <a class="code" href="classTrackerHit.html">TrackerHit</a>* althit = siClusters-&gt;at(j);</div>
-<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;            <span class="keywordtype">int</span> althit_id = althit-&gt;<a class="code" href="classTrackerHit.html#a9c9659a6c6ba66b4107ba59c95a24241">getID</a>();</div>
-<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;            <span class="keywordtype">int</span> althit_volume = althit-&gt;<a class="code" href="classTrackerHit.html#aac9746ddc550ec176b0957affafbdbe7">getVolume</a>();</div>
-<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;            <span class="keywordtype">int</span> althit_layer = althit-&gt;<a class="code" href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">getLayer</a>();</div>
-<div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160;            <span class="keywordtype">double</span> althit_y = althit-&gt;<a class="code" href="classTrackerHit.html#a037dbf33c23e4f394e56a71b8cb4e8ea">getGlobalY</a>();</div>
-<div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;            <span class="keywordtype">double</span> althit_charge = althit-&gt;<a class="code" href="classTrackerHit.html#ac5d16fb092048cfea6230708bfe6d2f0">getRawCharge</a>();</div>
-<div class="line"><a name="l00619"></a><span class="lineno">  619</span>&#160;            <span class="keywordtype">double</span> althit_time = althit-&gt;<a class="code" href="classTrackerHit.html#afbffc04e39811037c7b7c79f29af16f5">getTime</a>();</div>
-<div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160; </div>
-<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;            <span class="comment">//Skip if SiCluster not on same layer as track hit</span></div>
-<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;            <span class="keywordflow">if</span> (althit_layer != trackhit_layer)</div>
-<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;                <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160; </div>
-<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;            <span class="comment">//Skip if volume doesn&#39;t match</span></div>
-<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;            <span class="keywordflow">if</span>(althit_volume != trackhit_volume)</div>
-<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;                <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160; </div>
-<div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;            <span class="comment">//Skip same hit</span></div>
-<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;            <span class="keywordflow">if</span> (althit_id == trackhit_id)</div>
-<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;                <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160; </div>
-<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;            <span class="comment">//Only look at hits that are further from beam-axis in Global Y</span></div>
-<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;            <span class="keywordflow">if</span> ( (trackhit_volume == 0 &amp;&amp; althit_y &lt; trackhit_y) ||</div>
-<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;                    (trackhit_volume == 1 &amp;&amp; althit_y &gt; trackhit_y))</div>
-<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;                <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160; </div>
-<div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;            <span class="comment">//Require alternative hits to be within +-30ns (based on SiClustersOnTrack t distr)</span></div>
-<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;            <span class="keywordflow">if</span>(std::abs(althit_time) &gt; 30.0)</div>
-<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;                <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160; </div>
-<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;            <span class="comment">//Skip adjacent rawhits</span></div>
-<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;            std::vector&lt;int&gt; althit_rawhits = althit-&gt;<a class="code" href="classTrackerHit.html#ae80386c1bf1fba767630c9aa19151d95">getRawHitStripNumbers</a>();</div>
-<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;            <span class="keywordtype">int</span> althit_maxstrip = *max_element(althit_rawhits.begin(), althit_rawhits.end());</div>
-<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;            <span class="keywordtype">int</span> althit_minstrip = *min_element(althit_rawhits.begin(), althit_rawhits.end());</div>
-<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;            <span class="keywordflow">if</span>(trackhit_minstrip - althit_maxstrip &lt;= 1 &amp;&amp; althit_minstrip - trackhit_maxstrip &lt;= 1)</div>
-<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;                <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160; </div>
-<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;            <span class="comment">//Pick closest alternative hit</span></div>
-<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;            <span class="keywordflow">if</span> (std::abs(trackhit_y - althit_y) &lt; isohit_dy){</div>
-<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;                isohit_dy = std::abs(trackhit_y-althit_y);</div>
-<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;                closest_althit = althit;</div>
-<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;                closest_dcharge = trackhit_charge - althit_charge;</div>
-<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;                closest_dt = trackhit_time - althit_time;</div>
-<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;                isohit_y = althit_y;</div>
-<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;            }</div>
-<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;        }</div>
-<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160; </div>
-<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;        <span class="keywordflow">if</span>(isAxial)</div>
-<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;            L1_axial_iso = isohit_dy;</div>
-<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;            L1_stereo_iso = isohit_dy;</div>
-<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160; </div>
-<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;    }</div>
+<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;        <span class="keywordflow">if</span> ( siClusters == <span class="keyword">nullptr</span> )</div>
+<div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;            <span class="keywordflow">return</span> isohit_dy;</div>
+<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> j = 0; j &lt; siClusters-&gt;size(); j++){</div>
+<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;            <a class="code" href="classTrackerHit.html">TrackerHit</a>* althit = siClusters-&gt;at(j);</div>
+<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;            <span class="keywordtype">int</span> althit_id = althit-&gt;<a class="code" href="classTrackerHit.html#a9c9659a6c6ba66b4107ba59c95a24241">getID</a>();</div>
+<div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160;            <span class="keywordtype">int</span> althit_volume = althit-&gt;<a class="code" href="classTrackerHit.html#aac9746ddc550ec176b0957affafbdbe7">getVolume</a>();</div>
+<div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;            <span class="keywordtype">int</span> althit_layer = althit-&gt;<a class="code" href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">getLayer</a>();</div>
+<div class="line"><a name="l00619"></a><span class="lineno">  619</span>&#160;            <span class="keywordtype">double</span> althit_y = althit-&gt;<a class="code" href="classTrackerHit.html#a037dbf33c23e4f394e56a71b8cb4e8ea">getGlobalY</a>();</div>
+<div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160;            <span class="keywordtype">double</span> althit_charge = althit-&gt;<a class="code" href="classTrackerHit.html#ac5d16fb092048cfea6230708bfe6d2f0">getRawCharge</a>();</div>
+<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;            <span class="keywordtype">double</span> althit_time = althit-&gt;<a class="code" href="classTrackerHit.html#afbffc04e39811037c7b7c79f29af16f5">getTime</a>();</div>
+<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160; </div>
+<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;            <span class="comment">//Skip if SiCluster not on same layer as track hit</span></div>
+<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;            <span class="keywordflow">if</span> (althit_layer != trackhit_layer)</div>
+<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;                <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160; </div>
+<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;            <span class="comment">//Skip if volume doesn&#39;t match</span></div>
+<div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;            <span class="keywordflow">if</span>(althit_volume != trackhit_volume)</div>
+<div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;                <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160; </div>
+<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;            <span class="comment">//Skip same hit</span></div>
+<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;            <span class="keywordflow">if</span> (althit_id == trackhit_id)</div>
+<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;                <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160; </div>
+<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;            <span class="comment">//Only look at hits that are further from beam-axis in Global Y</span></div>
+<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;            <span class="keywordflow">if</span> ( (trackhit_volume == 0 &amp;&amp; althit_y &lt; trackhit_y) ||</div>
+<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;                    (trackhit_volume == 1 &amp;&amp; althit_y &gt; trackhit_y))</div>
+<div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;                <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160; </div>
+<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;            <span class="comment">//Require alternative hits to be within +-30ns (based on SiClustersOnTrack t distr)</span></div>
+<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;            <span class="keywordflow">if</span>(std::abs(althit_time) &gt; 30.0)</div>
+<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;                <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160; </div>
+<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;            <span class="comment">//Skip adjacent rawhits</span></div>
+<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;            std::vector&lt;int&gt; althit_rawhits = althit-&gt;<a class="code" href="classTrackerHit.html#ae80386c1bf1fba767630c9aa19151d95">getRawHitStripNumbers</a>();</div>
+<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;            <span class="keywordtype">int</span> althit_maxstrip = *max_element(althit_rawhits.begin(), althit_rawhits.end());</div>
+<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;            <span class="keywordtype">int</span> althit_minstrip = *min_element(althit_rawhits.begin(), althit_rawhits.end());</div>
+<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;            <span class="keywordflow">if</span>(trackhit_minstrip - althit_maxstrip &lt;= 1 &amp;&amp; althit_minstrip - trackhit_maxstrip &lt;= 1)</div>
+<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;                <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160; </div>
+<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;            <span class="comment">//Pick closest alternative hit</span></div>
+<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;            <span class="keywordflow">if</span> (std::abs(trackhit_y - althit_y) &lt; isohit_dy){</div>
+<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;                isohit_dy = std::abs(trackhit_y-althit_y);</div>
+<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;                closest_althit = althit;</div>
+<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;                closest_dcharge = trackhit_charge - althit_charge;</div>
+<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;                closest_dt = trackhit_time - althit_time;</div>
+<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;                isohit_y = althit_y;</div>
+<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;            }</div>
+<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;        }</div>
+<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160; </div>
+<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;        <span class="keywordflow">if</span>(isAxial)</div>
+<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;            L1_axial_iso = isohit_dy;</div>
+<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;            L1_stereo_iso = isohit_dy;</div>
 <div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160; </div>
-<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;    <span class="keywordflow">if</span>(L1_axial_iso &lt; L1_stereo_iso){</div>
-<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;        <span class="keywordflow">return</span> L1_axial_iso;</div>
-<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;    }</div>
-<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;        <span class="keywordflow">return</span> L1_stereo_iso;</div>
-<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;}</div>
-<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160; </div>
-<div class="line"><a name="l00673"></a><span class="lineno"><a class="line" href="namespaceutils.html#a2b19c1ba52775ddffc7e4a2c81ff48f3">  673</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespaceutils.html#a2b19c1ba52775ddffc7e4a2c81ff48f3">utils::get2016KFMCTruthHitCodes</a>(<a class="code" href="classTrack.html">Track</a>* ele_trk, <a class="code" href="classTrack.html">Track</a>* pos_trk, std::vector&lt;TrackerHit*&gt;* hits, <span class="keywordtype">int</span>&amp; L1L2hitCode, <span class="keywordtype">int</span>&amp; L1hitCode, <span class="keywordtype">int</span>&amp; L2hitCode){</div>
-<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;    <span class="comment">//Build map of hits and the associated MC part ids for later</span></div>
-<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;    TRefArray ele_trk_hits = ele_trk-&gt;<a class="code" href="classTrack.html#aa5f939f8e1961ed57a59f8d01e46438f">getSvtHits</a>();</div>
-<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;    TRefArray pos_trk_hits = pos_trk-&gt;<a class="code" href="classTrack.html#aa5f939f8e1961ed57a59f8d01e46438f">getSvtHits</a>();</div>
-<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;    std::map&lt;int, std::vector&lt;int&gt; &gt; trueHitIDs;</div>
-<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; hits-&gt;size(); i++)</div>
+<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;    }</div>
+<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160; </div>
+<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;    <span class="keywordflow">if</span>(L1_axial_iso &lt; L1_stereo_iso){</div>
+<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;        <span class="keywordflow">return</span> L1_axial_iso;</div>
+<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;    }</div>
+<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;        <span class="keywordflow">return</span> L1_stereo_iso;</div>
+<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;}</div>
+<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160; </div>
+<div class="line"><a name="l00675"></a><span class="lineno"><a class="line" href="namespaceutils.html#ab32ee0dd27142e56bd20ad7d6c5ee592">  675</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespaceutils.html#ab32ee0dd27142e56bd20ad7d6c5ee592">utils::get2016KFMCTruthHitCodes</a>(<a class="code" href="classTrack.html">Track</a>* ele_trk, <a class="code" href="classTrack.html">Track</a>* pos_trk, <span class="keywordtype">int</span>&amp; L1L2hitCode, <span class="keywordtype">int</span>&amp; L1hitCode, <span class="keywordtype">int</span>&amp; L2hitCode){</div>
+<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;    <span class="comment">//Count the number of hits per part on the ele track</span></div>
+<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;    std::map&lt;int, int&gt; nHits4part_ele;</div>
+<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i =0; i &lt; ele_trk-&gt;<a class="code" href="classTrack.html#af9d14694ada963b1caeffa3f60c7d364">getMcpHits</a>().size(); i++)</div>
 <div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;    {</div>
-<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;        <a class="code" href="classTrackerHit.html">TrackerHit</a>* hit = hits-&gt;at(i);</div>
-<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;        trueHitIDs[hit-&gt;<a class="code" href="classTrackerHit.html#a9c9659a6c6ba66b4107ba59c95a24241">getID</a>()] = hit-&gt;<a class="code" href="classTrackerHit.html#a19f10bcec9a8533dcbad84548fc9b352">getMCPartIDs</a>();</div>
-<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;    }</div>
-<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;    <span class="comment">//Count the number of hits per part on the ele track</span></div>
-<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;    std::map&lt;int, int&gt; nHits4part_ele;</div>
-<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; ele_trk_hits.GetEntries(); i++)</div>
-<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;    {</div>
-<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;        <a class="code" href="classTrackerHit.html">TrackerHit</a>* eleHit = (<a class="code" href="classTrackerHit.html">TrackerHit</a>*)ele_trk_hits.At(i);</div>
-<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> idI = 0; idI &lt; trueHitIDs[eleHit-&gt;<a class="code" href="classTrackerHit.html#a9c9659a6c6ba66b4107ba59c95a24241">getID</a>()].size(); idI++ )</div>
-<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;        {</div>
-<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;            <span class="keywordtype">int</span> partID = trueHitIDs[eleHit-&gt;<a class="code" href="classTrackerHit.html#a9c9659a6c6ba66b4107ba59c95a24241">getID</a>()].at(idI);</div>
-<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;            <span class="keywordflow">if</span> ( nHits4part_ele.find(partID) == nHits4part_ele.end() )</div>
-<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;            {</div>
-<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;                <span class="comment">// not found</span></div>
-<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;                nHits4part_ele[partID] = 1;</div>
-<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;            }</div>
-<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;            {</div>
-<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;                <span class="comment">// found</span></div>
-<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;                nHits4part_ele[partID]++;</div>
-<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;            }</div>
-<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;        }</div>
-<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;    }</div>
-<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160; </div>
-<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;    <span class="comment">//Determine the MC part with the most hits on the track</span></div>
-<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;    <span class="keywordtype">int</span> maxNHits_ele = 0;</div>
-<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;    <span class="keywordtype">int</span> maxID_ele = 0;</div>
-<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;    <span class="keywordflow">for</span> (std::map&lt;int,int&gt;::iterator it=nHits4part_ele.begin(); it!=nHits4part_ele.end(); ++it)</div>
+<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;        <span class="keywordtype">int</span> partID = ele_trk-&gt;<a class="code" href="classTrack.html#af9d14694ada963b1caeffa3f60c7d364">getMcpHits</a>().at(i).second;</div>
+<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;        <span class="keywordflow">if</span> ( nHits4part_ele.find(partID) == nHits4part_ele.end() )</div>
+<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;        {</div>
+<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;            <span class="comment">// not found</span></div>
+<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;            nHits4part_ele[partID] = 1;</div>
+<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;        }</div>
+<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;        {</div>
+<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;            <span class="comment">// found</span></div>
+<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;            nHits4part_ele[partID]++;</div>
+<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;        }</div>
+<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;    }</div>
+<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160; </div>
+<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;    <span class="comment">//Determine the MC part with the most hits on the track</span></div>
+<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;    <span class="keywordtype">int</span> maxNHits_ele = 0;</div>
+<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;    <span class="keywordtype">int</span> maxID_ele = 0;</div>
+<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;    <span class="keywordflow">for</span> (std::map&lt;int,int&gt;::iterator it=nHits4part_ele.begin(); it!=nHits4part_ele.end(); ++it)</div>
+<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;    {</div>
+<div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;        <span class="keywordflow">if</span>(it-&gt;second &gt; maxNHits_ele)</div>
+<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;        {</div>
+<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;            maxNHits_ele = it-&gt;second;</div>
+<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;            maxID_ele = it-&gt;first;</div>
+<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;        }</div>
+<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;    }</div>
+<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160; </div>
+<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;    <span class="comment">//Count the number of hits per part on the pos track</span></div>
+<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;    std::map&lt;int, int&gt; nHits4part_pos;</div>
+<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i =0; i &lt; pos_trk-&gt;<a class="code" href="classTrack.html#af9d14694ada963b1caeffa3f60c7d364">getMcpHits</a>().size(); i++)</div>
 <div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;    {</div>
-<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;        <span class="keywordflow">if</span>(it-&gt;second &gt; maxNHits_ele)</div>
-<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;        {</div>
-<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;            maxNHits_ele = it-&gt;second;</div>
-<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;            maxID_ele = it-&gt;first;</div>
-<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;        }</div>
-<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;    }</div>
-<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160; </div>
-<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;    <span class="comment">//Count the number of hits per part on the pos track</span></div>
-<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;    std::map&lt;int, int&gt; nHits4part_pos;</div>
-<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; pos_trk_hits.GetEntries(); i++)</div>
-<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;    {</div>
-<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;        <a class="code" href="classTrackerHit.html">TrackerHit</a>* posHit = (<a class="code" href="classTrackerHit.html">TrackerHit</a>*)pos_trk_hits.At(i);</div>
-<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> idI = 0; idI &lt; trueHitIDs[posHit-&gt;<a class="code" href="classTrackerHit.html#a9c9659a6c6ba66b4107ba59c95a24241">getID</a>()].size(); idI++ )</div>
-<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;        {</div>
-<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;            <span class="keywordtype">int</span> partID = trueHitIDs[posHit-&gt;<a class="code" href="classTrackerHit.html#a9c9659a6c6ba66b4107ba59c95a24241">getID</a>()].at(idI);</div>
-<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;            <span class="keywordflow">if</span> ( nHits4part_pos.find(partID) == nHits4part_pos.end() )</div>
-<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;            {</div>
-<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;                <span class="comment">// not found</span></div>
-<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;                nHits4part_pos[partID] = 1;</div>
-<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;            }</div>
-<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;            {</div>
-<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;                <span class="comment">// found</span></div>
-<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;                nHits4part_pos[partID]++;</div>
-<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;            }</div>
-<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;        }</div>
-<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;    }</div>
-<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160; </div>
-<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;    <span class="comment">//Determine the MC part with the most hits on the track</span></div>
-<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;    <span class="keywordtype">int</span> maxNHits_pos = 0;</div>
-<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;    <span class="keywordtype">int</span> maxID_pos = 0;</div>
-<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;    <span class="keywordflow">for</span> (std::map&lt;int,int&gt;::iterator it=nHits4part_pos.begin(); it!=nHits4part_pos.end(); ++it)</div>
-<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;    {</div>
-<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;        <span class="keywordflow">if</span>(it-&gt;second &gt; maxNHits_pos)</div>
-<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;        {</div>
-<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;            maxNHits_pos = it-&gt;second;</div>
-<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;            maxID_pos = it-&gt;first;</div>
-<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;        }</div>
-<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;    }</div>
-<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160; </div>
-<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;    <span class="comment">//Determine Ele L1 and L2 truth information</span></div>
-<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;    <span class="keywordtype">bool</span> ele_trueAxialL1 = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;    <span class="keywordtype">bool</span> ele_trueStereoL1 = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;    <span class="keywordtype">bool</span> ele_trueAxialL2 = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;    <span class="keywordtype">bool</span> ele_trueStereoL2 = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;    <span class="keywordtype">bool</span> pos_trueAxialL1 = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;    <span class="keywordtype">bool</span> pos_trueStereoL1 = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;    <span class="keywordtype">bool</span> pos_trueAxialL2 = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;    <span class="keywordtype">bool</span> pos_trueStereoL2 = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;    <span class="keywordflow">if</span> (ele_trk-&gt;<a class="code" href="classTrack.html#a0fe98cdce0b4402fb0173dcc7408a89d">isKalmanTrack</a>()){</div>
+<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;        <span class="keywordtype">int</span> partID = pos_trk-&gt;<a class="code" href="classTrack.html#af9d14694ada963b1caeffa3f60c7d364">getMcpHits</a>().at(i).second;</div>
+<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;        <span class="keywordflow">if</span> ( nHits4part_pos.find(partID) == nHits4part_pos.end() )</div>
+<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;        {</div>
+<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;            <span class="comment">// not found</span></div>
+<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;            nHits4part_pos[partID] = 1;</div>
+<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;        }</div>
+<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;        {</div>
+<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;            <span class="comment">// found</span></div>
+<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;            nHits4part_pos[partID]++;</div>
+<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;        }</div>
+<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;    }</div>
+<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160; </div>
+<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;    <span class="comment">//Determine the MC part with the most hits on the track</span></div>
+<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;    <span class="keywordtype">int</span> maxNHits_pos = 0;</div>
+<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;    <span class="keywordtype">int</span> maxID_pos = 0;</div>
+<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;    <span class="keywordflow">for</span> (std::map&lt;int,int&gt;::iterator it=nHits4part_pos.begin(); it!=nHits4part_pos.end(); ++it)</div>
+<div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;    {</div>
+<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;        <span class="keywordflow">if</span>(it-&gt;second &gt; maxNHits_pos)</div>
+<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;        {</div>
+<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;            maxNHits_pos = it-&gt;second;</div>
+<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;            maxID_pos = it-&gt;first;</div>
+<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;        }</div>
+<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;    }</div>
+<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160; </div>
+<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;    <span class="comment">//Determine Ele L1 and L2 truth information</span></div>
+<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;    <span class="keywordtype">bool</span> ele_trueAxialL1 = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;    <span class="keywordtype">bool</span> ele_trueStereoL1 = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;    <span class="keywordtype">bool</span> ele_trueAxialL2 = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;    <span class="keywordtype">bool</span> ele_trueStereoL2 = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;    <span class="keywordtype">bool</span> pos_trueAxialL1 = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;    <span class="keywordtype">bool</span> pos_trueStereoL1 = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;    <span class="keywordtype">bool</span> pos_trueAxialL2 = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;    <span class="keywordtype">bool</span> pos_trueStereoL2 = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160; </div>
+<div class="line"><a name="l00744"></a><span class="lineno">  744</span>&#160;    <span class="keywordflow">if</span>(ele_trk-&gt;<a class="code" href="classTrack.html#a0fe98cdce0b4402fb0173dcc7408a89d">isKalmanTrack</a>()){</div>
+<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; ele_trk-&gt;<a class="code" href="classTrack.html#af9d14694ada963b1caeffa3f60c7d364">getMcpHits</a>().size(); i++){</div>
+<div class="line"><a name="l00746"></a><span class="lineno">  746</span>&#160;            <span class="keywordtype">int</span> mcpid = ele_trk-&gt;<a class="code" href="classTrack.html#af9d14694ada963b1caeffa3f60c7d364">getMcpHits</a>().at(i).second;</div>
+<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;            <span class="keywordtype">int</span> <a class="code" href="namespaceconfig_1_1fitBL__cfg.html#a95f2e9e3b2b2d837f962bcfb58a2011e">layer</a> = ele_trk-&gt;<a class="code" href="classTrack.html#af9d14694ada963b1caeffa3f60c7d364">getMcpHits</a>().at(i).first;</div>
+<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;            <span class="keywordtype">int</span> volume = -1;</div>
+<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;            <span class="keywordflow">if</span>(ele_trk-&gt;<a class="code" href="classTrack.html#a1b85afd754a3524090061303d684b0f2">isTopTrack</a>() == 1)</div>
+<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;                volume = 0;</div>
+<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;                volume = 1;</div>
+<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160; </div>
+<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;            <span class="keywordtype">bool</span> isAxial = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;            <span class="keywordtype">bool</span> isStereo = <span class="keyword">false</span>; </div>
+<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;            <span class="keywordtype">bool</span> isL1 = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;            <span class="keywordtype">bool</span> isL2 = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;            <span class="keywordtype">bool</span> isGood = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160; </div>
-<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; ele_trk_hits.GetEntries(); i++)</div>
-<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;        {</div>
-<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;            <a class="code" href="classTrackerHit.html">TrackerHit</a>* hit = (<a class="code" href="classTrackerHit.html">TrackerHit</a>*)ele_trk_hits.At(i);</div>
-<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;            <span class="keywordtype">int</span> trackhit_layer = hit-&gt;<a class="code" href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">getLayer</a>();</div>
-<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;            <span class="keywordtype">int</span> trackhit_volume = hit-&gt;<a class="code" href="classTrackerHit.html#aac9746ddc550ec176b0957affafbdbe7">getVolume</a>();</div>
-<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;            <span class="keywordtype">bool</span> isAxial = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;            <span class="keywordtype">bool</span> isStereo = <span class="keyword">false</span>; </div>
-<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;            <span class="keywordtype">bool</span> isL1 = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;            <span class="keywordtype">bool</span> isL2 = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;            <span class="keywordtype">bool</span> isGood = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160; </div>
-<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;            <span class="comment">//L1 and L2 only</span></div>
-<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;            <span class="keywordflow">if</span>(trackhit_layer &lt; 2)</div>
-<div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;                isL1 = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span>(trackhit_layer &gt; 1 &amp;&amp; trackhit_layer &lt; 4)</div>
-<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;                isL2 = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;                <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160; </div>
-<div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;            <span class="keywordflow">if</span>(trackhit_volume == 1){</div>
-<div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160;                <span class="keywordflow">if</span>(trackhit_layer%2 == 1)</div>
-<div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160;                    isAxial = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00782"></a><span class="lineno">  782</span>&#160;                <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00783"></a><span class="lineno">  783</span>&#160;                    isStereo = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160;            }</div>
-<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160;            <span class="keywordflow">if</span>(trackhit_volume == 0){</div>
-<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;                <span class="keywordflow">if</span>(trackhit_layer%2 == 0)</div>
-<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;                    isAxial = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;                <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;                    isStereo = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160;            }</div>
-<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;            <span class="comment">//Check if truth hit is from truth track MCP</span></div>
-<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160;            <span class="keywordflow">for</span>(<span class="keywordtype">int</span> idI = 0; idI &lt; trueHitIDs[hit-&gt;<a class="code" href="classTrackerHit.html#a9c9659a6c6ba66b4107ba59c95a24241">getID</a>()].size(); idI++ )</div>
-<div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160;            {</div>
-<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;                <span class="keywordtype">int</span> partID = trueHitIDs[hit-&gt;<a class="code" href="classTrackerHit.html#a9c9659a6c6ba66b4107ba59c95a24241">getID</a>()].at(idI);</div>
-<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160;                <span class="comment">//hit is from best track MCP</span></div>
-<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160;                <span class="keywordflow">if</span>(partID == maxID_ele){</div>
-<div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;                    isGood = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;                }</div>
-<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;            }</div>
+<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;            <span class="comment">//L1 and L2 only</span></div>
+<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;            <span class="keywordflow">if</span>(<a class="code" href="namespaceconfig_1_1fitBL__cfg.html#a95f2e9e3b2b2d837f962bcfb58a2011e">layer</a> &lt; 2)</div>
+<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;                isL1 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span>(<a class="code" href="namespaceconfig_1_1fitBL__cfg.html#a95f2e9e3b2b2d837f962bcfb58a2011e">layer</a> &gt; 1 &amp;&amp; <a class="code" href="namespaceconfig_1_1fitBL__cfg.html#a95f2e9e3b2b2d837f962bcfb58a2011e">layer</a> &lt; 4)</div>
+<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;                isL2 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;                <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160; </div>
+<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;            <span class="keywordflow">if</span>(volume == 1){</div>
+<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;                <span class="keywordflow">if</span>(<a class="code" href="namespaceconfig_1_1fitBL__cfg.html#a95f2e9e3b2b2d837f962bcfb58a2011e">layer</a>%2 == 1)</div>
+<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;                    isAxial = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;                <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;                    isStereo = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;            }</div>
+<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;            <span class="keywordflow">if</span>(volume == 0){</div>
+<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;                <span class="keywordflow">if</span>(<a class="code" href="namespaceconfig_1_1fitBL__cfg.html#a95f2e9e3b2b2d837f962bcfb58a2011e">layer</a>%2 == 0)</div>
+<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;                    isAxial = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;                <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;                    isStereo = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;            }</div>
+<div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160; </div>
+<div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160;            <span class="keywordflow">if</span>(mcpid == maxID_ele)</div>
+<div class="line"><a name="l00782"></a><span class="lineno">  782</span>&#160;                isGood = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00783"></a><span class="lineno">  783</span>&#160; </div>
+<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160;            <span class="keywordflow">if</span>(isGood){</div>
+<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160;                <span class="keywordflow">if</span>(isAxial){</div>
+<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;                    <span class="keywordflow">if</span>(isL1)</div>
+<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;                        ele_trueAxialL1 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;                    <span class="keywordflow">if</span>(isL2)</div>
+<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;                        ele_trueAxialL2 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160;                }</div>
+<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160;                <span class="keywordflow">if</span>(isStereo){</div>
+<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160;                    <span class="keywordflow">if</span>(isL1)</div>
+<div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160;                        ele_trueStereoL1 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;                    <span class="keywordflow">if</span>(isL2)</div>
+<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160;                        ele_trueStereoL2 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160;                }</div>
+<div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;            }</div>
+<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;        }</div>
+<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;    }</div>
 <div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160; </div>
-<div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;            <span class="keywordflow">if</span>(isGood){</div>
-<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;                <span class="keywordflow">if</span>(isAxial){</div>
-<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;                    <span class="keywordflow">if</span>(isL1)</div>
-<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;                        ele_trueAxialL1 = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;                    <span class="keywordflow">if</span>(isL2)</div>
-<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;                        ele_trueAxialL2 = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;                }</div>
-<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;                <span class="keywordflow">if</span>(isStereo){</div>
-<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;                    <span class="keywordflow">if</span>(isL1)</div>
-<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;                        ele_trueStereoL1 = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;                    <span class="keywordflow">if</span>(isL2)</div>
-<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;                        ele_trueStereoL2 = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;                }</div>
-<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;            }</div>
-<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;        }</div>
-<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;    }</div>
-<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160; </div>
-<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;    <span class="comment">//Positron</span></div>
-<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;    <span class="keywordflow">if</span> (pos_trk-&gt;<a class="code" href="classTrack.html#a0fe98cdce0b4402fb0173dcc7408a89d">isKalmanTrack</a>()){</div>
-<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160; </div>
-<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; pos_trk_hits.GetEntries(); i++)</div>
-<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;        {</div>
-<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;            <a class="code" href="classTrackerHit.html">TrackerHit</a>* hit = (<a class="code" href="classTrackerHit.html">TrackerHit</a>*)pos_trk_hits.At(i);</div>
-<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160;            <span class="keywordtype">int</span> trackhit_layer = hit-&gt;<a class="code" href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">getLayer</a>();</div>
-<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160;            <span class="keywordtype">int</span> trackhit_volume = hit-&gt;<a class="code" href="classTrackerHit.html#aac9746ddc550ec176b0957affafbdbe7">getVolume</a>();</div>
-<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;            <span class="keywordtype">bool</span> isAxial = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160;            <span class="keywordtype">bool</span> isStereo = <span class="keyword">false</span>; </div>
-<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;            <span class="keywordtype">bool</span> isL1 = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160;            <span class="keywordtype">bool</span> isL2 = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160;            <span class="keywordtype">bool</span> isGood = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00831"></a><span class="lineno">  831</span>&#160; </div>
-<div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160;            <span class="comment">//L1 and L2 only</span></div>
-<div class="line"><a name="l00833"></a><span class="lineno">  833</span>&#160;            <span class="keywordflow">if</span>(trackhit_layer &lt; 2)</div>
-<div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160;                isL1 = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00835"></a><span class="lineno">  835</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span>(trackhit_layer &gt; 1 &amp;&amp; trackhit_layer &lt; 4)</div>
-<div class="line"><a name="l00836"></a><span class="lineno">  836</span>&#160;                isL2 = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00838"></a><span class="lineno">  838</span>&#160;                <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160; </div>
-<div class="line"><a name="l00840"></a><span class="lineno">  840</span>&#160;            <span class="keywordflow">if</span>(trackhit_volume == 1){</div>
-<div class="line"><a name="l00841"></a><span class="lineno">  841</span>&#160;                <span class="keywordflow">if</span>(trackhit_layer%2 == 1)</div>
-<div class="line"><a name="l00842"></a><span class="lineno">  842</span>&#160;                    isAxial = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00843"></a><span class="lineno">  843</span>&#160;                <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00844"></a><span class="lineno">  844</span>&#160;                    isStereo = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00845"></a><span class="lineno">  845</span>&#160;            }</div>
-<div class="line"><a name="l00846"></a><span class="lineno">  846</span>&#160;            <span class="keywordflow">if</span>(trackhit_volume == 0){</div>
-<div class="line"><a name="l00847"></a><span class="lineno">  847</span>&#160;                <span class="keywordflow">if</span>(trackhit_layer%2 == 0)</div>
-<div class="line"><a name="l00848"></a><span class="lineno">  848</span>&#160;                    isAxial = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00849"></a><span class="lineno">  849</span>&#160;                <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00850"></a><span class="lineno">  850</span>&#160;                    isStereo = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00851"></a><span class="lineno">  851</span>&#160;            }</div>
-<div class="line"><a name="l00852"></a><span class="lineno">  852</span>&#160;            <span class="comment">//Check if truth hit is from truth track MCP</span></div>
-<div class="line"><a name="l00853"></a><span class="lineno">  853</span>&#160;            <span class="keywordflow">for</span>(<span class="keywordtype">int</span> idI = 0; idI &lt; trueHitIDs[hit-&gt;<a class="code" href="classTrackerHit.html#a9c9659a6c6ba66b4107ba59c95a24241">getID</a>()].size(); idI++ )</div>
-<div class="line"><a name="l00854"></a><span class="lineno">  854</span>&#160;            {</div>
-<div class="line"><a name="l00855"></a><span class="lineno">  855</span>&#160;                <span class="keywordtype">int</span> partID = trueHitIDs[hit-&gt;<a class="code" href="classTrackerHit.html#a9c9659a6c6ba66b4107ba59c95a24241">getID</a>()].at(idI);</div>
-<div class="line"><a name="l00856"></a><span class="lineno">  856</span>&#160;                <span class="comment">//hit is from best track MCP</span></div>
-<div class="line"><a name="l00857"></a><span class="lineno">  857</span>&#160;                <span class="keywordflow">if</span>(partID == maxID_pos){</div>
-<div class="line"><a name="l00858"></a><span class="lineno">  858</span>&#160;                    isGood = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00859"></a><span class="lineno">  859</span>&#160;                }</div>
-<div class="line"><a name="l00860"></a><span class="lineno">  860</span>&#160;            }</div>
-<div class="line"><a name="l00861"></a><span class="lineno">  861</span>&#160; </div>
-<div class="line"><a name="l00862"></a><span class="lineno">  862</span>&#160;            <span class="keywordflow">if</span>(isGood){</div>
-<div class="line"><a name="l00863"></a><span class="lineno">  863</span>&#160;                <span class="keywordflow">if</span>(isAxial){</div>
-<div class="line"><a name="l00864"></a><span class="lineno">  864</span>&#160;                    <span class="keywordflow">if</span>(isL1)</div>
-<div class="line"><a name="l00865"></a><span class="lineno">  865</span>&#160;                        pos_trueAxialL1 = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00866"></a><span class="lineno">  866</span>&#160;                    <span class="keywordflow">if</span>(isL2)</div>
-<div class="line"><a name="l00867"></a><span class="lineno">  867</span>&#160;                        pos_trueAxialL2 = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00868"></a><span class="lineno">  868</span>&#160;                }</div>
-<div class="line"><a name="l00869"></a><span class="lineno">  869</span>&#160;                <span class="keywordflow">if</span>(isStereo){</div>
-<div class="line"><a name="l00870"></a><span class="lineno">  870</span>&#160;                    <span class="keywordflow">if</span>(isL1)</div>
-<div class="line"><a name="l00871"></a><span class="lineno">  871</span>&#160;                        pos_trueStereoL1 = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00872"></a><span class="lineno">  872</span>&#160;                    <span class="keywordflow">if</span>(isL2)</div>
-<div class="line"><a name="l00873"></a><span class="lineno">  873</span>&#160;                        pos_trueStereoL2 = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00874"></a><span class="lineno">  874</span>&#160;                }</div>
-<div class="line"><a name="l00875"></a><span class="lineno">  875</span>&#160;            }</div>
-<div class="line"><a name="l00876"></a><span class="lineno">  876</span>&#160;        }</div>
-<div class="line"><a name="l00877"></a><span class="lineno">  877</span>&#160;    }</div>
-<div class="line"><a name="l00878"></a><span class="lineno">  878</span>&#160;    <span class="comment">//Require both Axial and Stereo truth hits to be &#39;Good&#39; hit</span></div>
-<div class="line"><a name="l00879"></a><span class="lineno">  879</span>&#160;    <span class="keywordflow">if</span>(ele_trueAxialL1 &amp;&amp; ele_trueStereoL1) L1L2hitCode = L1L2hitCode | (0x1 &lt;&lt; 3);           </div>
-<div class="line"><a name="l00880"></a><span class="lineno">  880</span>&#160;    <span class="keywordflow">if</span>(pos_trueAxialL1 &amp;&amp; pos_trueStereoL1) L1L2hitCode = L1L2hitCode | (0x1 &lt;&lt; 2);           </div>
-<div class="line"><a name="l00881"></a><span class="lineno">  881</span>&#160;    <span class="keywordflow">if</span>(ele_trueAxialL2 &amp;&amp; ele_trueStereoL2) L1L2hitCode = L1L2hitCode | (0x1 &lt;&lt; 1);           </div>
-<div class="line"><a name="l00882"></a><span class="lineno">  882</span>&#160;    <span class="keywordflow">if</span>(pos_trueAxialL2 &amp;&amp; pos_trueStereoL2) L1L2hitCode = L1L2hitCode | (0x1 &lt;&lt; 0);           </div>
-<div class="line"><a name="l00883"></a><span class="lineno">  883</span>&#160;    </div>
-<div class="line"><a name="l00884"></a><span class="lineno">  884</span>&#160;    </div>
-<div class="line"><a name="l00885"></a><span class="lineno">  885</span>&#160;    <span class="comment">//Set L1 axial/stereo hit code for ele and positron</span></div>
-<div class="line"><a name="l00886"></a><span class="lineno">  886</span>&#160;    <span class="keywordflow">if</span>(ele_trueAxialL1) L1hitCode = L1hitCode | (0x1 &lt;&lt; 3);</div>
-<div class="line"><a name="l00887"></a><span class="lineno">  887</span>&#160;    <span class="keywordflow">if</span>(ele_trueStereoL1) L1hitCode = L1hitCode | (0x1 &lt;&lt; 2);</div>
-<div class="line"><a name="l00888"></a><span class="lineno">  888</span>&#160;    <span class="keywordflow">if</span>(pos_trueAxialL1) L1hitCode = L1hitCode | (0x1 &lt;&lt; 1);</div>
-<div class="line"><a name="l00889"></a><span class="lineno">  889</span>&#160;    <span class="keywordflow">if</span>(pos_trueStereoL1) L1hitCode = L1hitCode | (0x1 &lt;&lt; 0);</div>
-<div class="line"><a name="l00890"></a><span class="lineno">  890</span>&#160; </div>
-<div class="line"><a name="l00891"></a><span class="lineno">  891</span>&#160;    <span class="comment">//Set L2 axial/stereo hit code for ele and positron</span></div>
-<div class="line"><a name="l00892"></a><span class="lineno">  892</span>&#160;    <span class="keywordflow">if</span>(ele_trueAxialL2) L2hitCode = L2hitCode | (0x1 &lt;&lt; 3);</div>
-<div class="line"><a name="l00893"></a><span class="lineno">  893</span>&#160;    <span class="keywordflow">if</span>(ele_trueStereoL2) L2hitCode = L2hitCode | (0x1 &lt;&lt; 2);</div>
-<div class="line"><a name="l00894"></a><span class="lineno">  894</span>&#160;    <span class="keywordflow">if</span>(pos_trueAxialL2) L2hitCode = L2hitCode | (0x1 &lt;&lt; 1);</div>
-<div class="line"><a name="l00895"></a><span class="lineno">  895</span>&#160;    <span class="keywordflow">if</span>(pos_trueStereoL2) L2hitCode = L2hitCode | (0x1 &lt;&lt; 0);</div>
-<div class="line"><a name="l00896"></a><span class="lineno">  896</span>&#160;}</div>
+<div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;    <span class="keywordflow">if</span>(pos_trk-&gt;<a class="code" href="classTrack.html#a0fe98cdce0b4402fb0173dcc7408a89d">isKalmanTrack</a>()){</div>
+<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; pos_trk-&gt;<a class="code" href="classTrack.html#af9d14694ada963b1caeffa3f60c7d364">getMcpHits</a>().size(); i++){</div>
+<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;            <span class="keywordtype">int</span> mcpid = pos_trk-&gt;<a class="code" href="classTrack.html#af9d14694ada963b1caeffa3f60c7d364">getMcpHits</a>().at(i).second;</div>
+<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;            <span class="keywordtype">int</span> <a class="code" href="namespaceconfig_1_1fitBL__cfg.html#a95f2e9e3b2b2d837f962bcfb58a2011e">layer</a> = pos_trk-&gt;<a class="code" href="classTrack.html#af9d14694ada963b1caeffa3f60c7d364">getMcpHits</a>().at(i).first;</div>
+<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;            <span class="keywordtype">int</span> volume = -1;</div>
+<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;            <span class="keywordflow">if</span>(pos_trk-&gt;<a class="code" href="classTrack.html#a1b85afd754a3524090061303d684b0f2">isTopTrack</a>() == 1)</div>
+<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;                volume = 0;</div>
+<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;                volume = 1;</div>
+<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160; </div>
+<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;            <span class="keywordtype">bool</span> isAxial = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;            <span class="keywordtype">bool</span> isStereo = <span class="keyword">false</span>; </div>
+<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;            <span class="keywordtype">bool</span> isL1 = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;            <span class="keywordtype">bool</span> isL2 = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;            <span class="keywordtype">bool</span> isGood = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160; </div>
+<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;            <span class="comment">//L1 and L2 only</span></div>
+<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;            <span class="keywordflow">if</span>(<a class="code" href="namespaceconfig_1_1fitBL__cfg.html#a95f2e9e3b2b2d837f962bcfb58a2011e">layer</a> &lt; 2)</div>
+<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;                isL1 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span>(<a class="code" href="namespaceconfig_1_1fitBL__cfg.html#a95f2e9e3b2b2d837f962bcfb58a2011e">layer</a> &gt; 1 &amp;&amp; <a class="code" href="namespaceconfig_1_1fitBL__cfg.html#a95f2e9e3b2b2d837f962bcfb58a2011e">layer</a> &lt; 4)</div>
+<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;                isL2 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;                <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160; </div>
+<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160;            <span class="keywordflow">if</span>(volume == 1){</div>
+<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;                <span class="keywordflow">if</span>(<a class="code" href="namespaceconfig_1_1fitBL__cfg.html#a95f2e9e3b2b2d837f962bcfb58a2011e">layer</a>%2 == 1)</div>
+<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160;                    isAxial = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;                <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160;                    isStereo = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160;            }</div>
+<div class="line"><a name="l00831"></a><span class="lineno">  831</span>&#160;            <span class="keywordflow">if</span>(volume == 0){</div>
+<div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160;                <span class="keywordflow">if</span>(<a class="code" href="namespaceconfig_1_1fitBL__cfg.html#a95f2e9e3b2b2d837f962bcfb58a2011e">layer</a>%2 == 0)</div>
+<div class="line"><a name="l00833"></a><span class="lineno">  833</span>&#160;                    isAxial = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160;                <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00835"></a><span class="lineno">  835</span>&#160;                    isStereo = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00836"></a><span class="lineno">  836</span>&#160;            }</div>
+<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160; </div>
+<div class="line"><a name="l00838"></a><span class="lineno">  838</span>&#160;            <span class="keywordflow">if</span>(mcpid == maxID_pos)</div>
+<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160;                isGood = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00840"></a><span class="lineno">  840</span>&#160; </div>
+<div class="line"><a name="l00841"></a><span class="lineno">  841</span>&#160;            <span class="keywordflow">if</span>(isGood){</div>
+<div class="line"><a name="l00842"></a><span class="lineno">  842</span>&#160;                <span class="keywordflow">if</span>(isAxial){</div>
+<div class="line"><a name="l00843"></a><span class="lineno">  843</span>&#160;                    <span class="keywordflow">if</span>(isL1)</div>
+<div class="line"><a name="l00844"></a><span class="lineno">  844</span>&#160;                        pos_trueAxialL1 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00845"></a><span class="lineno">  845</span>&#160;                    <span class="keywordflow">if</span>(isL2)</div>
+<div class="line"><a name="l00846"></a><span class="lineno">  846</span>&#160;                        pos_trueAxialL2 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00847"></a><span class="lineno">  847</span>&#160;                }</div>
+<div class="line"><a name="l00848"></a><span class="lineno">  848</span>&#160;                <span class="keywordflow">if</span>(isStereo){</div>
+<div class="line"><a name="l00849"></a><span class="lineno">  849</span>&#160;                    <span class="keywordflow">if</span>(isL1)</div>
+<div class="line"><a name="l00850"></a><span class="lineno">  850</span>&#160;                        pos_trueStereoL1 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00851"></a><span class="lineno">  851</span>&#160;                    <span class="keywordflow">if</span>(isL2)</div>
+<div class="line"><a name="l00852"></a><span class="lineno">  852</span>&#160;                        pos_trueStereoL2 = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00853"></a><span class="lineno">  853</span>&#160;                }</div>
+<div class="line"><a name="l00854"></a><span class="lineno">  854</span>&#160;            }</div>
+<div class="line"><a name="l00855"></a><span class="lineno">  855</span>&#160;        }</div>
+<div class="line"><a name="l00856"></a><span class="lineno">  856</span>&#160;    }</div>
+<div class="line"><a name="l00857"></a><span class="lineno">  857</span>&#160; </div>
+<div class="line"><a name="l00858"></a><span class="lineno">  858</span>&#160; </div>
+<div class="line"><a name="l00859"></a><span class="lineno">  859</span>&#160;    <span class="comment">//Require both Axial and Stereo truth hits to be &#39;Good&#39; hit</span></div>
+<div class="line"><a name="l00860"></a><span class="lineno">  860</span>&#160;    <span class="keywordflow">if</span>(ele_trueAxialL1 &amp;&amp; ele_trueStereoL1) L1L2hitCode = L1L2hitCode | (0x1 &lt;&lt; 3);           </div>
+<div class="line"><a name="l00861"></a><span class="lineno">  861</span>&#160;    <span class="keywordflow">if</span>(pos_trueAxialL1 &amp;&amp; pos_trueStereoL1) L1L2hitCode = L1L2hitCode | (0x1 &lt;&lt; 2);           </div>
+<div class="line"><a name="l00862"></a><span class="lineno">  862</span>&#160;    <span class="keywordflow">if</span>(ele_trueAxialL2 &amp;&amp; ele_trueStereoL2) L1L2hitCode = L1L2hitCode | (0x1 &lt;&lt; 1);           </div>
+<div class="line"><a name="l00863"></a><span class="lineno">  863</span>&#160;    <span class="keywordflow">if</span>(pos_trueAxialL2 &amp;&amp; pos_trueStereoL2) L1L2hitCode = L1L2hitCode | (0x1 &lt;&lt; 0);           </div>
+<div class="line"><a name="l00864"></a><span class="lineno">  864</span>&#160;    </div>
+<div class="line"><a name="l00865"></a><span class="lineno">  865</span>&#160;    </div>
+<div class="line"><a name="l00866"></a><span class="lineno">  866</span>&#160;    <span class="comment">//Set L1 axial/stereo hit code for ele and positron</span></div>
+<div class="line"><a name="l00867"></a><span class="lineno">  867</span>&#160;    <span class="keywordflow">if</span>(ele_trueAxialL1) L1hitCode = L1hitCode | (0x1 &lt;&lt; 3);</div>
+<div class="line"><a name="l00868"></a><span class="lineno">  868</span>&#160;    <span class="keywordflow">if</span>(ele_trueStereoL1) L1hitCode = L1hitCode | (0x1 &lt;&lt; 2);</div>
+<div class="line"><a name="l00869"></a><span class="lineno">  869</span>&#160;    <span class="keywordflow">if</span>(pos_trueAxialL1) L1hitCode = L1hitCode | (0x1 &lt;&lt; 1);</div>
+<div class="line"><a name="l00870"></a><span class="lineno">  870</span>&#160;    <span class="keywordflow">if</span>(pos_trueStereoL1) L1hitCode = L1hitCode | (0x1 &lt;&lt; 0);</div>
+<div class="line"><a name="l00871"></a><span class="lineno">  871</span>&#160; </div>
+<div class="line"><a name="l00872"></a><span class="lineno">  872</span>&#160;    <span class="comment">//Set L2 axial/stereo hit code for ele and positron</span></div>
+<div class="line"><a name="l00873"></a><span class="lineno">  873</span>&#160;    <span class="keywordflow">if</span>(ele_trueAxialL2) L2hitCode = L2hitCode | (0x1 &lt;&lt; 3);</div>
+<div class="line"><a name="l00874"></a><span class="lineno">  874</span>&#160;    <span class="keywordflow">if</span>(ele_trueStereoL2) L2hitCode = L2hitCode | (0x1 &lt;&lt; 2);</div>
+<div class="line"><a name="l00875"></a><span class="lineno">  875</span>&#160;    <span class="keywordflow">if</span>(pos_trueAxialL2) L2hitCode = L2hitCode | (0x1 &lt;&lt; 1);</div>
+<div class="line"><a name="l00876"></a><span class="lineno">  876</span>&#160;    <span class="keywordflow">if</span>(pos_trueStereoL2) L2hitCode = L2hitCode | (0x1 &lt;&lt; 0);</div>
+<div class="line"><a name="l00877"></a><span class="lineno">  877</span>&#160;}</div>
+<div class="line"><a name="l00878"></a><span class="lineno">  878</span>&#160; </div>
+<div class="line"><a name="l00879"></a><span class="lineno"><a class="line" href="namespaceutils.html#aa54b8be934579198d0bcfed387562ee0">  879</a></span>&#160;<span class="keywordtype">double</span> <a class="code" href="namespaceutils.html#aa54b8be934579198d0bcfed387562ee0">utils::v0_projection_to_target_significance</a>(<a class="code" href="BaseSelector_8h.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> v0proj_fits, <span class="keywordtype">int</span> run, <span class="keywordtype">double</span> &amp;vtx_proj_x, <span class="keywordtype">double</span> &amp;vtx_proj_y,</div>
+<div class="line"><a name="l00880"></a><span class="lineno">  880</span>&#160;        <span class="keywordtype">double</span> &amp;vtx_proj_x_signif, <span class="keywordtype">double</span> &amp;vtx_proj_y_signif, <span class="keywordtype">double</span> vtx_x, <span class="keywordtype">double</span> vtx_y, <span class="keywordtype">double</span> vtx_z,</div>
+<div class="line"><a name="l00881"></a><span class="lineno">  881</span>&#160;        <span class="keywordtype">double</span> vtx_px, <span class="keywordtype">double</span> vtx_py, <span class="keywordtype">double</span> vtx_pz){</div>
+<div class="line"><a name="l00882"></a><span class="lineno">  882</span>&#160;    <span class="comment">//V0 Projection fit parameters are calculated externally by projecting vertices to the target z position,</span></div>
+<div class="line"><a name="l00883"></a><span class="lineno">  883</span>&#160;    <span class="comment">//and then fitting the 2D distribution vtx_x vs vtx_y with a rotated 2D Gaussian.</span></div>
+<div class="line"><a name="l00884"></a><span class="lineno">  884</span>&#160;    <span class="comment">//The fit parameters are defined along the rotated coordinate system.</span></div>
+<div class="line"><a name="l00885"></a><span class="lineno">  885</span>&#160;    <span class="comment">//Therefore, the vertex position must be rotated into this coordinate system before calculating significance.</span></div>
+<div class="line"><a name="l00886"></a><span class="lineno">  886</span>&#160;    <span class="comment">//The rotation angle corresponding to the fit is provided in the json file containing the rotated fit values.</span></div>
+<div class="line"><a name="l00887"></a><span class="lineno">  887</span>&#160;    </div>
+<div class="line"><a name="l00888"></a><span class="lineno">  888</span>&#160;    <span class="comment">//Read v0 projection fits from json file</span></div>
+<div class="line"><a name="l00889"></a><span class="lineno">  889</span>&#160;    <span class="keywordtype">int</span> closest_run;</div>
+<div class="line"><a name="l00890"></a><span class="lineno">  890</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">auto</span> entry : v0proj_fits.items()){</div>
+<div class="line"><a name="l00891"></a><span class="lineno">  891</span>&#160;        <span class="keywordtype">int</span> check_run = std::stoi(entry.key());</div>
+<div class="line"><a name="l00892"></a><span class="lineno">  892</span>&#160;        <span class="keywordflow">if</span>(check_run &gt; run)</div>
+<div class="line"><a name="l00893"></a><span class="lineno">  893</span>&#160;            <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00894"></a><span class="lineno">  894</span>&#160;        <span class="keywordflow">else</span>{</div>
+<div class="line"><a name="l00895"></a><span class="lineno">  895</span>&#160;            closest_run = check_run;</div>
+<div class="line"><a name="l00896"></a><span class="lineno">  896</span>&#160;        }</div>
+<div class="line"><a name="l00897"></a><span class="lineno">  897</span>&#160;    }</div>
+<div class="line"><a name="l00898"></a><span class="lineno">  898</span>&#160;    <span class="keywordtype">double</span> target_pos = v0proj_fits[std::to_string(closest_run)][<span class="stringliteral">&quot;target_position&quot;</span>];</div>
+<div class="line"><a name="l00899"></a><span class="lineno">  899</span>&#160;    <span class="keywordtype">double</span> rot_mean_x = v0proj_fits[std::to_string(closest_run)][<span class="stringliteral">&quot;rotated_mean_x&quot;</span>];</div>
+<div class="line"><a name="l00900"></a><span class="lineno">  900</span>&#160;    <span class="keywordtype">double</span> rot_mean_y = v0proj_fits[std::to_string(closest_run)][<span class="stringliteral">&quot;rotated_mean_y&quot;</span>];</div>
+<div class="line"><a name="l00901"></a><span class="lineno">  901</span>&#160;    <span class="keywordtype">double</span> rot_sigma_x = v0proj_fits[std::to_string(closest_run)][<span class="stringliteral">&quot;rotated_sigma_x&quot;</span>];</div>
+<div class="line"><a name="l00902"></a><span class="lineno">  902</span>&#160;    <span class="keywordtype">double</span> rot_sigma_y = v0proj_fits[std::to_string(closest_run)][<span class="stringliteral">&quot;rotated_sigma_y&quot;</span>];</div>
+<div class="line"><a name="l00903"></a><span class="lineno">  903</span>&#160;    <span class="keywordtype">double</span> rotation_angle = (double)v0proj_fits[std::to_string(closest_run)][<span class="stringliteral">&quot;rotation_angle_mrad&quot;</span>]/1000.0;</div>
+<div class="line"><a name="l00904"></a><span class="lineno">  904</span>&#160; </div>
+<div class="line"><a name="l00905"></a><span class="lineno">  905</span>&#160;    <span class="comment">//project vertex to target position</span></div>
+<div class="line"><a name="l00906"></a><span class="lineno">  906</span>&#160;    vtx_proj_x = vtx_x - ((vtx_z - target_pos)*(vtx_px/vtx_pz));</div>
+<div class="line"><a name="l00907"></a><span class="lineno">  907</span>&#160;    vtx_proj_y = vtx_y - ((vtx_z - target_pos)*(vtx_py/vtx_pz));</div>
+<div class="line"><a name="l00908"></a><span class="lineno">  908</span>&#160; </div>
+<div class="line"><a name="l00909"></a><span class="lineno">  909</span>&#160;    <span class="comment">//Rotate projected vertex by angle corresponding to run number</span></div>
+<div class="line"><a name="l00910"></a><span class="lineno">  910</span>&#160;    <span class="keywordtype">double</span> rot_vtx_proj_x = vtx_proj_x*std::cos(rotation_angle) - vtx_proj_y*std::sin(rotation_angle);</div>
+<div class="line"><a name="l00911"></a><span class="lineno">  911</span>&#160;    <span class="keywordtype">double</span> rot_vtx_proj_y = vtx_proj_x*std::sin(rotation_angle) + vtx_proj_y*std::cos(rotation_angle);</div>
+<div class="line"><a name="l00912"></a><span class="lineno">  912</span>&#160; </div>
+<div class="line"><a name="l00913"></a><span class="lineno">  913</span>&#160;    <span class="comment">//Calculate significance</span></div>
+<div class="line"><a name="l00914"></a><span class="lineno">  914</span>&#160;    vtx_proj_x_signif = (rot_vtx_proj_x - rot_mean_x)/rot_sigma_x;</div>
+<div class="line"><a name="l00915"></a><span class="lineno">  915</span>&#160;    vtx_proj_y_signif = (rot_vtx_proj_y - rot_mean_y)/rot_sigma_y;</div>
+<div class="line"><a name="l00916"></a><span class="lineno">  916</span>&#160; </div>
+<div class="line"><a name="l00917"></a><span class="lineno">  917</span>&#160;    <span class="comment">//</span></div>
+<div class="line"><a name="l00918"></a><span class="lineno">  918</span>&#160;    <span class="keywordtype">double</span> significance = std::sqrt( vtx_proj_x_signif*vtx_proj_x_signif + vtx_proj_y_signif*vtx_proj_y_signif );</div>
+<div class="line"><a name="l00919"></a><span class="lineno">  919</span>&#160; </div>
+<div class="line"><a name="l00920"></a><span class="lineno">  920</span>&#160;    <span class="keywordflow">return</span> significance;</div>
+<div class="line"><a name="l00921"></a><span class="lineno">  921</span>&#160;}</div>
+<div class="ttc" id="aBaseSelector_8h_html_ab701e3ac61a85b337ec5c1abaad6742d"><div class="ttname"><a href="BaseSelector_8h.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a></div><div class="ttdeci">nlohmann::json json</div><div class="ttdef"><b>Definition:</b> <a href="BaseSelector_8h_source.html#l00014">BaseSelector.h:14</a></div></div>
 <div class="ttc" id="aECalDataProcessor_8h_html_ac2cde2846de17b59e2d372137b8dcb9c"><div class="ttname"><a href="ECalDataProcessor_8h.html#ac2cde2846de17b59e2d372137b8dcb9c">long64</a></div><div class="ttdeci">long long long64</div><div class="ttdef"><b>Definition:</b> <a href="ECalDataProcessor_8h_source.html#l00037">ECalDataProcessor.h:37</a></div></div>
 <div class="ttc" id="aclassCalCluster_html"><div class="ttname"><a href="classCalCluster.html">CalCluster</a></div><div class="ttdef"><b>Definition:</b> <a href="CalCluster_8h_source.html#l00023">CalCluster.h:23</a></div></div>
 <div class="ttc" id="aclassCalCluster_html_a22f0c3dd9d115832baf9e9ccecbee37f"><div class="ttname"><a href="classCalCluster.html#a22f0c3dd9d115832baf9e9ccecbee37f">CalCluster::setPosition</a></div><div class="ttdeci">void setPosition(const float *position)</div><div class="ttdef"><b>Definition:</b> <a href="CalCluster_8cxx_source.html#l00030">CalCluster.cxx:30</a></div></div>
@@ -996,19 +1022,19 @@ $(function() {
 <div class="ttc" id="aclassRawSvtHit_html_afbd2fbd594c8ee140b028f505631f682"><div class="ttname"><a href="classRawSvtHit.html#afbd2fbd594c8ee140b028f505631f682">RawSvtHit::setLayer</a></div><div class="ttdeci">void setLayer(int layer)</div><div class="ttdef"><b>Definition:</b> <a href="RawSvtHit_8cxx_source.html#l00052">RawSvtHit.cxx:52</a></div></div>
 <div class="ttc" id="aclassRawSvtHit_html_affd2ff44d4a988d312672fef9a9f6f72"><div class="ttname"><a href="classRawSvtHit.html#affd2ff44d4a988d312672fef9a9f6f72">RawSvtHit::setModule</a></div><div class="ttdeci">void setModule(int module)</div><div class="ttdef"><b>Definition:</b> <a href="RawSvtHit_8cxx_source.html#l00056">RawSvtHit.cxx:56</a></div></div>
 <div class="ttc" id="aclassTrack_html"><div class="ttname"><a href="classTrack.html">Track</a></div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00032">Track.h:32</a></div></div>
-<div class="ttc" id="aclassTrack_html_a0fe98cdce0b4402fb0173dcc7408a89d"><div class="ttname"><a href="classTrack.html#a0fe98cdce0b4402fb0173dcc7408a89d">Track::isKalmanTrack</a></div><div class="ttdeci">bool isKalmanTrack() const</div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00226">Track.h:226</a></div></div>
+<div class="ttc" id="aclassTrack_html_a0fe98cdce0b4402fb0173dcc7408a89d"><div class="ttname"><a href="classTrack.html#a0fe98cdce0b4402fb0173dcc7408a89d">Track::isKalmanTrack</a></div><div class="ttdeci">bool isKalmanTrack() const</div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00231">Track.h:231</a></div></div>
+<div class="ttc" id="aclassTrack_html_a1b85afd754a3524090061303d684b0f2"><div class="ttname"><a href="classTrack.html#a1b85afd754a3524090061303d684b0f2">Track::isTopTrack</a></div><div class="ttdeci">bool isTopTrack() const</div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00330">Track.h:330</a></div></div>
 <div class="ttc" id="aclassTrack_html_a3f251561299bdaf6e3acefef6c7bf6af"><div class="ttname"><a href="classTrack.html#a3f251561299bdaf6e3acefef6c7bf6af">Track::getPhi</a></div><div class="ttdeci">double getPhi() const</div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00088">Track.h:88</a></div></div>
-<div class="ttc" id="aclassTrack_html_a4f0ac38a52ef74d7167b02e514d2232d"><div class="ttname"><a href="classTrack.html#a4f0ac38a52ef74d7167b02e514d2232d">Track::getChi2Ndf</a></div><div class="ttdeci">double getChi2Ndf() const</div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00121">Track.h:121</a></div></div>
+<div class="ttc" id="aclassTrack_html_a4f0ac38a52ef74d7167b02e514d2232d"><div class="ttname"><a href="classTrack.html#a4f0ac38a52ef74d7167b02e514d2232d">Track::getChi2Ndf</a></div><div class="ttdeci">double getChi2Ndf() const</div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00126">Track.h:126</a></div></div>
 <div class="ttc" id="aclassTrack_html_a671056cd2b40700574324838f7a99143"><div class="ttname"><a href="classTrack.html#a671056cd2b40700574324838f7a99143">Track::getOmega</a></div><div class="ttdeci">double getOmega() const</div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00090">Track.h:90</a></div></div>
 <div class="ttc" id="aclassTrack_html_a872032bb26c1b5a2103ec9ee34a3408b"><div class="ttname"><a href="classTrack.html#a872032bb26c1b5a2103ec9ee34a3408b">Track::getD0</a></div><div class="ttdeci">double getD0() const</div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00087">Track.h:87</a></div></div>
 <div class="ttc" id="aclassTrack_html_a9dc9df56c8f1b2a740e645058348aa40"><div class="ttname"><a href="classTrack.html#a9dc9df56c8f1b2a740e645058348aa40">Track::getTanLambda</a></div><div class="ttdeci">double getTanLambda() const</div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00091">Track.h:91</a></div></div>
-<div class="ttc" id="aclassTrack_html_aa5f939f8e1961ed57a59f8d01e46438f"><div class="ttname"><a href="classTrack.html#aa5f939f8e1961ed57a59f8d01e46438f">Track::getSvtHits</a></div><div class="ttdeci">TRefArray getSvtHits() const</div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00064">Track.h:64</a></div></div>
 <div class="ttc" id="aclassTrack_html_ac657325cfc2596e354e5262a9c264526"><div class="ttname"><a href="classTrack.html#ac657325cfc2596e354e5262a9c264526">Track::getZ0</a></div><div class="ttdeci">double getZ0() const</div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00092">Track.h:92</a></div></div>
+<div class="ttc" id="aclassTrack_html_af9d14694ada963b1caeffa3f60c7d364"><div class="ttname"><a href="classTrack.html#af9d14694ada963b1caeffa3f60c7d364">Track::getMcpHits</a></div><div class="ttdeci">std::vector&lt; std::pair&lt; int, int &gt; &gt; getMcpHits()</div><div class="ttdef"><b>Definition:</b> <a href="Track_8h_source.html#l00103">Track.h:103</a></div></div>
 <div class="ttc" id="aclassTrackerHit_html"><div class="ttname"><a href="classTrackerHit.html">TrackerHit</a></div><div class="ttdef"><b>Definition:</b> <a href="TrackerHit_8h_source.html#l00022">TrackerHit.h:22</a></div></div>
 <div class="ttc" id="aclassTrackerHit_html_a037dbf33c23e4f394e56a71b8cb4e8ea"><div class="ttname"><a href="classTrackerHit.html#a037dbf33c23e4f394e56a71b8cb4e8ea">TrackerHit::getGlobalY</a></div><div class="ttdeci">double getGlobalY() const</div><div class="ttdef"><b>Definition:</b> <a href="TrackerHit_8h_source.html#l00053">TrackerHit.h:53</a></div></div>
 <div class="ttc" id="aclassTrackerHit_html_a14249dd02874bf12134f0d5241912490"><div class="ttname"><a href="classTrackerHit.html#a14249dd02874bf12134f0d5241912490">TrackerHit::setLayer</a></div><div class="ttdeci">void setLayer(const int layer)</div><div class="ttdef"><b>Definition:</b> <a href="TrackerHit_8h_source.html#l00106">TrackerHit.h:106</a></div></div>
 <div class="ttc" id="aclassTrackerHit_html_a17a9ca6d361f5e7cdc116c35d699e61f"><div class="ttname"><a href="classTrackerHit.html#a17a9ca6d361f5e7cdc116c35d699e61f">TrackerHit::getLayer</a></div><div class="ttdeci">int getLayer() const</div><div class="ttdef"><b>Definition:</b> <a href="TrackerHit_8h_source.html#l00109">TrackerHit.h:109</a></div></div>
-<div class="ttc" id="aclassTrackerHit_html_a19f10bcec9a8533dcbad84548fc9b352"><div class="ttname"><a href="classTrackerHit.html#a19f10bcec9a8533dcbad84548fc9b352">TrackerHit::getMCPartIDs</a></div><div class="ttdeci">std::vector&lt; int &gt; getMCPartIDs() const</div><div class="ttdef"><b>Definition:</b> <a href="TrackerHit_8h_source.html#l00127">TrackerHit.h:127</a></div></div>
 <div class="ttc" id="aclassTrackerHit_html_a1c9289fa499243af8164eb1d851784a1"><div class="ttname"><a href="classTrackerHit.html#a1c9289fa499243af8164eb1d851784a1">TrackerHit::setVolume</a></div><div class="ttdeci">void setVolume(const int volume)</div><div class="ttdef"><b>Definition:</b> <a href="TrackerHit_8h_source.html#l00100">TrackerHit.h:100</a></div></div>
 <div class="ttc" id="aclassTrackerHit_html_a2df57089ab769b31361900ffffb483a2"><div class="ttname"><a href="classTrackerHit.html#a2df57089ab769b31361900ffffb483a2">TrackerHit::addRawHit</a></div><div class="ttdeci">void addRawHit(TObject *rawhit)</div><div class="ttdef"><b>Definition:</b> <a href="TrackerHit_8h_source.html#l00115">TrackerHit.h:115</a></div></div>
 <div class="ttc" id="aclassTrackerHit_html_a2f109bf8d5ff2fb4cd2693d7fe31bb70"><div class="ttname"><a href="classTrackerHit.html#a2f109bf8d5ff2fb4cd2693d7fe31bb70">TrackerHit::setCovarianceMatrix</a></div><div class="ttdeci">void setCovarianceMatrix(std::vector&lt; float &gt; cov)</div><div class="ttdef"><b>Definition:</b> <a href="TrackerHit_8cxx_source.html#l00070">TrackerHit.cxx:70</a></div></div>
@@ -1039,7 +1065,6 @@ $(function() {
 <div class="ttc" id="anamespaceconfig_1_1kalSimpTuple__cfg_html_adb5e2391917cad02d6ca0c5ab0a46149"><div class="ttname"><a href="namespaceconfig_1_1kalSimpTuple__cfg.html#adb5e2391917cad02d6ca0c5ab0a46149">config.kalSimpTuple_cfg.track</a></div><div class="ttdeci">track</div><div class="ttdef"><b>Definition:</b> <a href="kalSimpTuple__cfg_8py_source.html#l00040">kalSimpTuple_cfg.py:40</a></div></div>
 <div class="ttc" id="anamespaceutils_html_a0d15b32d30266551f22e870e6613f109"><div class="ttname"><a href="namespaceutils.html#a0d15b32d30266551f22e870e6613f109">utils::addRawInfoTo3dHit</a></div><div class="ttdeci">bool addRawInfoTo3dHit(TrackerHit *tracker_hit, IMPL::TrackerHitImpl *lc_tracker_hit, EVENT::LCCollection *raw_svt_fits, std::vector&lt; RawSvtHit * &gt; *rawHits=nullptr, int type=0, bool storeRawHit=true)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cxx_source.html#l00440">utilities.cxx:440</a></div></div>
 <div class="ttc" id="anamespaceutils_html_a1ed2a27a078620b6befd9411673440da"><div class="ttname"><a href="namespaceutils.html#a1ed2a27a078620b6befd9411673440da">utils::decoder</a></div><div class="ttdeci">static UTIL::BitField64 decoder(&quot;system:6,barrel:3,layer:4,module:12,sensor:1,side:32:-2,strip:12&quot;)</div><div class="ttdoc">description</div></div>
-<div class="ttc" id="anamespaceutils_html_a2b19c1ba52775ddffc7e4a2c81ff48f3"><div class="ttname"><a href="namespaceutils.html#a2b19c1ba52775ddffc7e4a2c81ff48f3">utils::get2016KFMCTruthHitCodes</a></div><div class="ttdeci">void get2016KFMCTruthHitCodes(Track *ele_trk, Track *pos_trk, std::vector&lt; TrackerHit * &gt; *hits, int &amp;L1L2hitCode, int &amp;L1hitCode, int &amp;L2hitCode)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cxx_source.html#l00673">utilities.cxx:673</a></div></div>
 <div class="ttc" id="anamespaceutils_html_a2d01ad798936250108f868400e1e3051"><div class="ttname"><a href="namespaceutils.html#a2d01ad798936250108f868400e1e3051">utils::buildCalCluster</a></div><div class="ttdeci">CalCluster * buildCalCluster(EVENT::Cluster *lc_cluster)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cxx_source.html#l00107">utilities.cxx:107</a></div></div>
 <div class="ttc" id="anamespaceutils_html_a331cab836b576d7a988d81e008242528"><div class="ttname"><a href="namespaceutils.html#a331cab836b576d7a988d81e008242528">utils::buildTrack</a></div><div class="ttdeci">Track * buildTrack(EVENT::Track *lc_track, std::string trackstate_location, EVENT::LCCollection *gbl_kink_data, EVENT::LCCollection *track_data)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cxx_source.html#l00158">utilities.cxx:158</a></div></div>
 <div class="ttc" id="anamespaceutils_html_a38245351b04f5e711d627819b932fbd4"><div class="ttname"><a href="namespaceutils.html#a38245351b04f5e711d627819b932fbd4">utils::buildVertex</a></div><div class="ttdeci">Vertex * buildVertex(EVENT::Vertex *lc_vertex)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cxx_source.html#l00031">utilities.cxx:31</a></div></div>
@@ -1049,6 +1074,8 @@ $(function() {
 <div class="ttc" id="anamespaceutils_html_a738247811cec3af04d9b6a7868aa8eb4"><div class="ttname"><a href="namespaceutils.html#a738247811cec3af04d9b6a7868aa8eb4">utils::getKalmanTrackL1Isolations</a></div><div class="ttdeci">double getKalmanTrackL1Isolations(Track *track, std::vector&lt; TrackerHit * &gt; *siClusters)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cxx_source.html#l00566">utilities.cxx:566</a></div></div>
 <div class="ttc" id="anamespaceutils_html_a7e5c97f6c3d48e86b50baaefeb659369"><div class="ttname"><a href="namespaceutils.html#a7e5c97f6c3d48e86b50baaefeb659369">utils::getParticlesFromVertex</a></div><div class="ttdeci">bool getParticlesFromVertex(Vertex *vtx, Particle *ele, Particle *pos)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cxx_source.html#l00541">utilities.cxx:541</a></div></div>
 <div class="ttc" id="anamespaceutils_html_a7f0793ae3975d895fb1306504c017110"><div class="ttname"><a href="namespaceutils.html#a7f0793ae3975d895fb1306504c017110">utils::buildParticle</a></div><div class="ttdeci">Particle * buildParticle(EVENT::ReconstructedParticle *lc_particle, std::string trackstate_location, EVENT::LCCollection *gbl_kink_data, EVENT::LCCollection *track_data)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cxx_source.html#l00056">utilities.cxx:56</a></div></div>
+<div class="ttc" id="anamespaceutils_html_aa54b8be934579198d0bcfed387562ee0"><div class="ttname"><a href="namespaceutils.html#aa54b8be934579198d0bcfed387562ee0">utils::v0_projection_to_target_significance</a></div><div class="ttdeci">double v0_projection_to_target_significance(json v0proj_fits, int run, double &amp;vtx_proj_x, double &amp;vtx_proj_y, double &amp;vtx_proj_x_signif, double &amp;vtx_proj_y_signif, double vtx_x, double vtx_y, double vtx_z, double vtx_px, double vtx_py, double vtx_pz)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cxx_source.html#l00879">utilities.cxx:879</a></div></div>
+<div class="ttc" id="anamespaceutils_html_ab32ee0dd27142e56bd20ad7d6c5ee592"><div class="ttname"><a href="namespaceutils.html#ab32ee0dd27142e56bd20ad7d6c5ee592">utils::get2016KFMCTruthHitCodes</a></div><div class="ttdeci">void get2016KFMCTruthHitCodes(Track *ele_trk, Track *pos_trk, int &amp;L1L2hitCode, int &amp;L1hitCode, int &amp;L2hitCode)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cxx_source.html#l00675">utilities.cxx:675</a></div></div>
 <div class="ttc" id="anamespaceutils_html_ac358ecc5a6e709ba4b0923fb312283d4"><div class="ttname"><a href="namespaceutils.html#ac358ecc5a6e709ba4b0923fb312283d4">utils::IsSameTrack</a></div><div class="ttdeci">bool IsSameTrack(Track *trk1, Track *trk2)</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cxx_source.html#l00143">utilities.cxx:143</a></div></div>
 <div class="ttc" id="anamespaceutils_html_afd800cb48040eb2458c898be282a731c"><div class="ttname"><a href="namespaceutils.html#afd800cb48040eb2458c898be282a731c">utils::buildRawHit</a></div><div class="ttdeci">RawSvtHit * buildRawHit(EVENT::TrackerRawData *rawTracker_hit, EVENT::LCCollection *raw_svt_hit_fits)</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cxx_source.html#l00340">utilities.cxx:340</a></div></div>
 <div class="ttc" id="autilities_8h_html"><div class="ttname"><a href="utilities_8h.html">utilities.h</a></div></div>
