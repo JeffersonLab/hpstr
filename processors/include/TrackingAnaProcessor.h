@@ -23,8 +23,6 @@
 #include "EventHeader.h"
 #include "TrackHistos.h"
 
-#include "TrackSmearingTool.h"
-
 // Forward declarations
 class TTree; 
 
@@ -114,8 +112,6 @@ class TrackingAnaProcessor : public Processor {
         int isData_{1}; //! is data
         int debug_{0}; //!< debug level
         float time_offset_{0}; //! time offset
-
-        std::shared_ptr<TrackSmearingTool> smearingTool_;
 
 
 }; // TrackingAnaProcessor
