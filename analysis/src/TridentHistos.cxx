@@ -7,29 +7,28 @@
 void TridentHistos::BuildAxes(){}
 
 void TridentHistos::DefineHistos(){  
-  std::vector<std::string> halfTags{"","top","bot"};
-  std::vector<std::string> trkTags{"pos","ele"};
   std::vector<std::string> layerTags;
   unsigned char lbits=15;
   int counter=15; 
   while(counter>=0){
     std::string lstring="";
-    for (int i = 4; i < 8; i++) {
+    for (int i = 4; i < 8; i++) { //just doing sensor layers 1-4
       //      char* tmpSt;
-      printf("%d", !!((lbits << i) & 0x80));
+      //      printf("%d", !!((lbits << i) & 0x80));
       int tmpCh=!!((lbits << i) & 0x80);
       std::string tmpSt="0";
       if(tmpCh==1)
 	tmpSt="1";
       lstring+=tmpSt;      
     }
-    printf("\n");
-    std::cout<<"String value is:  "<<lstring<<std::endl;
+    //    printf("\n");
     layerTags.push_back(lstring);
     counter--;
     lbits--;
   }
        
+  std::vector<std::string> halfTags{"","top","bot"};
+  std::vector<std::string> trkTags{"pos","ele"};
   std::vector<std::string> trkCombos;  
   std::vector<std::string>::iterator halfIter = halfTags.begin();
   for(halfIter; halfIter < halfTags.end(); halfIter++){
@@ -41,14 +40,10 @@ void TridentHistos::DefineHistos(){
       if(half=="")
 	comboStr=trk;
       trkCombos.push_back(comboStr);
-      std::cout<<comboStr<<std::endl;
     }
-  }
-  
+  }  
 
-  std::vector<std::string> halfCombos{"","top","bot"};
-  std::vector<std::string> V0Combos{"","top_pos","bot_pos"};  
-
+  /*
   std::vector<std::string> trkLayerCombos; 
   std::vector<std::string>::iterator trkIter = trkCombos.begin();
   for(trkIter;trkIter<trkCombos.end();trkIter++){
@@ -60,12 +55,32 @@ void TridentHistos::DefineHistos(){
       if(trkSt=="")
 	comboStr="L"+lSt;
       trkLayerCombos.push_back(comboStr);
-      std::cout<<comboStr<<std::endl;
+      //      std::cout<<comboStr<<std::endl;
 
     }
   }
+  */
+  //  std::vector<std::string>  layerTagsForV0{"1111","0011","0111"};
+  std::vector<std::string>  layerTagsForV0{"1111","0011","0111","1011"};
+  std::vector<std::string> trkLayerCombos; 
+  std::vector<std::string>::iterator trkIter = trkCombos.begin();
+  for(trkIter;trkIter<trkCombos.end();trkIter++){
+    std::string trkSt=*trkIter;
+    std::vector<std::string>::iterator lIter = layerTagsForV0.begin();
+    for(lIter;lIter<layerTagsForV0.end();lIter++){
+      std::string l1St=*lIter; 
+      std::vector<std::string>::iterator l2Iter = layerTagsForV0.begin();
+      for(l2Iter;l2Iter<layerTagsForV0.end();l2Iter++){
+	std::string l2St=*l2Iter; 
+	std::string comboStr="pos"+l1St+"_ele"+l2St+"_"+trkSt;
+	trkLayerCombos.push_back(comboStr);
+      }
+      
+    }
+  }
 
-  std::vector<std::string>  layerTagsForV0{"1111","0011","0111"};
+
+  std::vector<std::string> V0Combos{"","top_pos","bot_pos"};  
   std::vector<std::string> v0LayerCombos; 
   std::vector<std::string>::iterator v0Iter = V0Combos.begin();
   for(v0Iter;v0Iter<V0Combos.end();v0Iter++){
@@ -80,77 +95,34 @@ void TridentHistos::DefineHistos(){
 	if(v0St=="")
 	  comboStr="pos"+l1St+"_ele"+l2St;
 	v0LayerCombos.push_back(comboStr);
-	std::cout<<comboStr<<std::endl;	
       }
     }
   }
 
-  HistoManager::DefineHistosFromTemplateOnly(trkCombos,"_tc_h");  //should match both 1d and 2d histos
-  HistoManager::DefineHistosFromTemplateOnly(halfCombos, "_hc_h");  //should match both 1d and 2d histos (though, I think there are o
-  HistoManager::DefineHistosFromTemplateOnly(trkLayerCombos,"_tc_h");   //should match both 1d and 2d histos
-  HistoManager::DefineHistosFromTemplateOnly(V0Combos,"_vc_h");   //should match both 1d and 2d histos
-  HistoManager::DefineHistosFromTemplateOnly(v0LayerCombos,"_vc_h");   //should match both 1d and 2d histos
 
-  HistoManager::DefineOneTimeHistos();  
-  /*
-  std::regex pat;
-  try
-    {
-      pat="3";
-    }
-    catch (const std::regex_error& e)
-    {
-        std::cout << "regex_error caught: " << e.what() << '\n';
-	std::cout<< "error code was "<<e.code()<<std::endl;
-	if (e.code() == std::regex_constants::error_escape)
-            std::cout << "The code was error_escape\n"; 
-	if (e.code() == std::regex_constants::error_ctype)
-            std::cout << "The code was error_ctype\n";
-	if (e.code() == std::regex_constants::error_brack)
-            std::cout << "The code was error_brack\n";
-   }
-  std::smatch smash;
-  std::string matchme="3234";
-  std::regex pat("3",   std::regex_constants::ECMAScript);
-  std::cout<<"is "<<pat<<" in "<<matchme<<std::endl;
-  if(std::regex_search(matchme,smash,pat)){
-    std::cout<<"matched it, janet!"<<std::endl;
-  }else{
-    std::cout<<"damn it, janet!"<<std::endl;;    
-  }
-  */
+
+  DefineHistosFromTemplateOnly(trkCombos,"_tc_h");  //should match both 1d and 2d histos
+  DefineHistosFromTemplateOnly(halfTags, "_hc_h");  //should match both 1d and 2d histos (though, I think there are o
+  //  DefineHistosFromTemplateOnly(trkLayerCombos,"_tc_h");   //should match both 1d and 2d histos
+  DefineHistosFromTemplateOnly(V0Combos,"_vc_h");   //should match both 1d and 2d histos
+  //  DefineHistosFromTemplateOnly(V0Combos,"_tc_h");   //should match both 1d and 2d histos
+  DefineHistosFromTemplateOnly(v0LayerCombos,"_vc_h");   //should match both 1d and 2d histos
+  DefineHistosFromTemplateOnly(trkLayerCombos,"_tc_h");   //should match both 1d and 2d histos
+
+  DefineOneTimeHistos();   
 }
 
 
 void TridentHistos::Define2DHistos() {
-
-    //TODO improve naming
-    std::string h_name = "";
-  
-    //TODO improve binning 
-    if (doTrkCompPlots) {
-        /*
-        for (unsigned int itp = 0; itp<tPs.size(); ++itp){
-      
-            if (debug_)
-                std::cout<<"Bulding:: TH2::" + m_name+"_"+tPs[itp]+"_vs_"+tPs[itp] << std::endl;
-            
-            histos2d[m_name+"_"+tPs[itp]+"_vs_"+tPs[itp] ] = plot2D(m_name+tPs[itp]+"_vs_"+tPs[itp],
-                                                                    tPs[itp],axes[tPs[itp]][0],axes[tPs[itp]][1],axes[tPs[itp]][2],
-                                                                    tPs[itp],axes[tPs[itp]][0],axes[tPs[itp]][1],axes[tPs[itp]][2]);
-      
-        }//loop on vars
-        */
-    }//do track comparison
-    /*
-      histos2d[m_name+"_vtxY_vs_vtxX"] = plot2D(m_name+"_vtxY_vs_vtxX",
-      "vtxX",axes["vtx_X"][0],axes["vtx_X"][1],axes["vtx_X"][2],
-      "vtxY",axes["vtx_Y"][0],axes["vtx_Y"][1],axes["vtx_Y"][2]);
-    */
-  
   
 }//define 2dhistos
 
+void TridentHistos::AssignLayerCode(Track* ele_trk,
+				    Track* pos_trk){
+  std::string eleLayerCode=getLayerCodeFromTrack(ele_trk);
+  std::string posLayerCode=getLayerCodeFromTrack(pos_trk);
+  this->layerCode="pos"+posLayerCode+"_ele"+eleLayerCode+"_";
+}
 
 void TridentHistos::Fill1DVertex(Vertex* vtx, 
                                  Particle* ele, 
@@ -173,10 +145,11 @@ void TridentHistos::Fill1DVertex(Vertex* vtx,
     if(ele_trk->getTanLambda()<0)
       half="bot";
     std::string eleTag=half+"_ele_";
+    /*
     std::string eleLayerCode=getLayerCodeFromTrack(ele_trk);
     std::string posLayerCode=getLayerCodeFromTrack(pos_trk);
     std::string layerCode="pos"+eleLayerCode+"_ele"+posLayerCode+"_";
-
+    */
     Fill1DHisto("vtx_chi2_vc_h"   ,vtx->getChi2(),weight);
     Fill1DHisto("vtx_X_vc_h"      ,vtx->getX(),weight);
     Fill1DHisto("vtx_Y_vc_h"      ,vtx->getY(),weight);
@@ -334,8 +307,6 @@ void TridentHistos::Fill1DVertex(Vertex* vtx,
     Fill2DHisto(layerCode+posTag+"vtx_InvM_vtx_z_vc_hh",vtx->getInvMass(),vtx->getZ(),weight);
 
     //
-    //std::cout<<"filling z/tanlambda 2d plots"<<std::endl;
-    //std::cout<<ele_trk->getZ0()/ele_trk->getTanLambda()<<std::endl;
     Fill2DHisto("ele_vtx_z_vs_z0_over_tanLambda_tc_hh",ele_trk->getZ0()/ele_trk->getTanLambda(), vtx->getZ());
     Fill2DHisto("pos_vtx_z_vs_z0_over_tanLambda_tc_hh",pos_trk->getZ0()/pos_trk->getTanLambda(), vtx->getZ());
     Fill2DHisto(eleTag+"vtx_z_vs_z0_over_tanLambda_tc_hh",ele_trk->getZ0()/ele_trk->getTanLambda(), vtx->getZ());
@@ -359,7 +330,7 @@ void TridentHistos::Fill2DTrack(Track* track, float weight, const std::string& t
       if(track->getTanLambda()<0)
 	half="bot";
       std::string tag=half+"_"+trkname;
-      std::string layerCode="L"+getLayerCodeFromTrack(track)+"_";
+      //      std::string layerCode="L"+getLayerCodeFromTrack(track)+"_";
       double d0 = track->getD0();
       double z0 = track->getZ0();
       Fill2DHisto(trkname+"tanlambda_vs_phi0_tc_hh",track->getPhi(),track->getTanLambda(), weight);
@@ -409,20 +380,18 @@ void TridentHistos::Fill1DTrack(Track* track, double trkTimeOffset,float weight,
 
       //2D hits
     int n_hits_2d = track->getTrackerHitCount();
-    //    std::cout<<"Fill1DTrack::Number of hits on track = "<<n_hits_2d<<std::endl;
-    //    if (!track->isKalmanTrack())
-    //    n_hits_2d*=2;
 
     TVector3 p_trk;
     p_trk.SetXYZ(track->getMomentum()[0],track->getMomentum()[1],track->getMomentum()[2]);
     std::string half="top";
-   
+
     if(track->getTanLambda()<0)
       half="bot";
+    
     std::string tag=half+"_"+trkname;
 
     //    std::string layerCode="L"+getLayerCodeFromTrack(track)+"_"+tag;
-    std::string layerCode="L"+getLayerCodeFromTrack(track)+"_";
+    //    std::string layerCode="L"+getLayerCodeFromTrack(track)+"_";
 
     Fill1DHisto(trkname+"p_tc_h",p_trk.Mag(),weight);
     Fill1DHisto(trkname+"d0_tc_h"       ,track->getD0()          ,weight);
@@ -795,6 +764,11 @@ void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std
   Fill1DHisto("ele_cltrk_time_diff_tc_h", eleClu.getTime()-calTimeOffset-eleTrk.getTrackTime()+trkTimeOffset,weight);
   Fill1DHisto("ele_EOverp_tc_h",eleClu.getEnergy()/pele,weight);
   Fill2DHisto("ele_EOverp_vs_cluX_hc_hh",ele_cluX,eleClu.getEnergy()/pele,weight);
+  //  if(eleClu.getEnergy()/pele<=0.02){
+  //  std::cout<<"ele E/p<=0.02:  "<<eleClu.getEnergy()<<"   "<<pele<<std::endl;
+  //  std::cout<<"electron momentum::  x = "<<eleTrk.getMomentum()[0]<<"  y = "<<eleTrk.getMomentum()[1]<<"  z = "<<eleTrk.getMomentum()[2]<<std::endl;
+  //  std::cout<<"cluster time = "<<ele_cluTime<<"  track time = "<<ele_trkTime<<std::endl;
+  //}
   /*  
   Fill1DHisto(eleLayerCode+"ele_cltrk_time_diff_tc_h", eleClu.getTime()-calTimeOffset-eleTrk.getTrackTime()+trkTimeOffset,weight);
   Fill1DHisto(eleLayerCode+"ele_EOverp_tc_h",eleClu.getEnergy()/pele,weight);
@@ -1082,7 +1056,6 @@ void TridentHistos::Fill1DVertex(Vertex* vtx, float weight){
 void TridentHistos::saveHistos(TFile* outF,std::string folder) {
     if (outF) outF->cd();
     TDirectory* dir{nullptr};
-    std::cout<<folder.c_str()<<std::endl;
     if (!folder.empty()) {
         dir = outF->mkdir(folder.c_str());
         dir->cd();
@@ -1092,7 +1065,6 @@ void TridentHistos::saveHistos(TFile* outF,std::string folder) {
   
     for (it3d it = histos3d.begin(); it!=histos3d.end(); ++it) {
         if (!it->second){
-            std::cout<<it->first<<" Null ptr in saving.."<<std::endl;
             continue;
         }
 	setOutputDir(outF,folder,it->first);      
@@ -1100,7 +1072,6 @@ void TridentHistos::saveHistos(TFile* outF,std::string folder) {
     }
     for (it2d it = histos2d.begin(); it!=histos2d.end(); ++it) {
         if (!(it->second)) {
-            std::cout<<it->first<<" Null ptr in saving.."<<std::endl;
             continue;
         }
 	setOutputDir(outF,folder,it->first);
@@ -1108,9 +1079,7 @@ void TridentHistos::saveHistos(TFile* outF,std::string folder) {
     }
 
     for (it1d it = histos1d.begin(); it!=histos1d.end(); ++it) {
-      //      std::cout<<"Saving 1d histo:  "<<it->first<<std::endl;
       if (!it->second){
-	std::cout<<it->first<<" Null ptr in saving.."<<std::endl;
 	continue;
       }   
       setOutputDir(outF,folder,it->first);
@@ -1138,11 +1107,8 @@ void   TridentHistos::setOutputDir(TFile* outF, std::string folder, std::string 
   else
     layerCode=getLayerCodeFromHistoName(histoName);      
   if(layerCode.length()>0){
-    std::cout<<"Found a per-layer histo:  "<<histoName<<std::endl;
-    std::cout<<"layer pattern = "<<layerCode<<std::endl;
     fullDirPath=folder+"/"+layerCode;
     if(outF->GetDirectory(fullDirPath.c_str())==0){
-      std::cout<<"Making "<<fullDirPath<<std::endl;
       TDirectory* ldir{nullptr};
       ldir=outF->mkdir(std::string(fullDirPath).c_str());
     }
@@ -1164,7 +1130,6 @@ std::string TridentHistos::getLayerCodeFromHistoName(std::string histoName){
   for (int i=0; i<histoName.length()-(padding+nLayers); i++)
     if(isLayerCode(histoName, nLayers,i)){
       layerCode=histoName.substr(i,padding+nLayers);
-      std::cout<<"found layer code = "<<layerCode<<std::endl;
       break;
     }
   
@@ -1189,7 +1154,6 @@ std::string TridentHistos::getLayerCodeFromTrack(Track* trk){
   std::string s2="0"; 
   std::string s3="0"; 
   std::string s4="0"; 
-  //  std::cout<<"InnermostLayerCheck::Number of hits on track = "<<trk->getTrackerHitCount()<<std::endl;
   for (int ihit=0; ihit<trk->getTrackerHitCount();++ihit) {
     TrackerHit* hit = (TrackerHit*) trk->getSvtHits().At(ihit);
     RawSvtHit* rhit=(RawSvtHit*)(hit->getRawHits()).At(0);
@@ -1232,13 +1196,10 @@ std::string  TridentHistos::splitByElePosLayerCombos(std::string histoName){
     if(histoName.substr(i,padding)==firstSt && (histoName.substr(i+padding,1)=="0"||histoName.substr(i+padding,1)=="1")){
       foundFirst=true; 
       layerCode=histoName.substr(i,padding+nLayers);
-      std::cout<<"Found first code "<<layerCode<<std::endl;
     }
     if(foundFirst){
-      std::cout<<histoName.substr(i+padding+nLayers+1,padding)<<std::endl;
       if(histoName.substr(i+padding+nLayers+1,padding)==secSt && (histoName.substr(i+2*padding+nLayers+1,1)=="0"||histoName.substr(i+2*padding+nLayers+1,1)=="1")){
 	layerCode+="_"+histoName.substr(i+padding+nLayers+1,padding+nLayers);
-	std::cout<<"Found second code "<<layerCode<<std::endl;	
 	return layerCode;
       }
     }
@@ -1246,3 +1207,150 @@ std::string  TridentHistos::splitByElePosLayerCombos(std::string histoName){
   return layerCode;
   
 }
+
+/*************************************************
+*     
+*   Makes histograms based on template in json file
+*   like DefineHistos but _only_ makes the histos
+*   that are split by the makeCopyJsonTag.
+*
+*************************************************/
+
+void TridentHistos::DefineHistosFromTemplateOnly(std::vector<std::string> histoCopyNames, std::string makeCopyJsonTag){
+    if (debug_ ) std::cout << "[HistoManager] DefineHistosFromTemplateOnly" << std::endl;
+    std::string h_name = "";
+    if (debug_ ){    
+        for (auto hist : _h_configs.items()){
+            std::cout<<hist.key()<<std::endl;
+        }
+    }
+    for (auto hist : _h_configs.items()) {
+        bool singleCopy = true;
+        for(int i = 0; i < histoCopyNames.size(); i++){
+            h_name = m_name+"_" + hist.key() ;	   
+	    std::size_t found = (hist.key()).find_last_of("_");
+	    std::string extension = hist.key().substr(found+1);
+            if (histoCopyNames.size() > 1 && std::string(hist.key()).find(makeCopyJsonTag) != std::string::npos){
+                h_name = m_name+"_"+ histoCopyNames.at(i) + "_" + hist.key() ;
+		if (debug_ )std::cout <<"DefineHistosFromTemplateOnly:  base hist name:  "<<m_name<<"_"<< hist.key()<<"  copy tag:  "<<makeCopyJsonTag<<"  hist copy list size " << histoCopyNames.size() << std::endl;
+		if (debug_ )std::cout<<"new name = "<<h_name<<std::endl;
+
+		if(histoCopyNames.at(i)=="")
+		  h_name = m_name+"_"+ hist.key();//this lets you use and empty string and not screw up spacing
+                singleCopy = false;
+            }          
+	    ////this just moves the loop break to earlier ... could just add switch to "Define Histos"
+            if(singleCopy)
+                break;
+	    
+            if(debug_){
+                std::cout << "DefineHistosFromTemplateOnly: " << h_name << std::endl;  
+                std::cout << extension << hist.value().at("xtitle") << std::endl;
+            }
+            if (extension == "h") {
+                histos1d[h_name] = plot1D(h_name,hist.value().at("xtitle"),
+                        hist.value().at("bins"),
+                        hist.value().at("minX"),
+                        hist.value().at("maxX"));
+
+                std::string ytitle = hist.value().at("ytitle");
+
+                histos1d[h_name]->GetYaxis()->SetTitle(ytitle.c_str());
+
+                if (hist.value().contains("labels")) {
+                    std::vector<std::string> labels = hist.value().at("labels").get<std::vector<std::string> >();
+
+                    if (labels.size() < hist.value().at("bins")) {
+                        std::cout<<"Cannot apply labels to histogram:"<<h_name<<std::endl;
+                    }
+                    else {
+                        for (int i = 1; i<=hist.value().at("bins");++i)
+                            histos1d[h_name]->GetXaxis()->SetBinLabel(i,labels[i-1].c_str());
+                    }//bins
+                }//labels
+            }//1D histo
+
+            else if (extension == "hh") {
+                histos2d[h_name] = plot2D(h_name,
+                        hist.value().at("xtitle"),hist.value().at("binsX"),hist.value().at("minX"),hist.value().at("maxX"),
+                        hist.value().at("ytitle"),hist.value().at("binsY"),hist.value().at("minY"),hist.value().at("maxY"));
+            }
+
+
+        }
+    }//loop on config
+    if(debug_)std::cout<<"DefineHistosFromTemplateOnly:  Done with copies"<<std::endl;
+}
+
+/*
+ *    call this after you've made all of the split histograms via DefineHistosFromTemplateOnly
+ *    to make the histograms with no split
+ */
+void TridentHistos::DefineOneTimeHistos(){
+    if(debug_)std::cout << "[HistoManager] DefineOneTimeHistos" << std::endl;
+    std::string h_name = "";
+   
+    for (auto hist : _h_configs.items()) {
+
+	h_name =hist.key() ;
+	bool foundMatch=false;
+	//check 1d histo list
+	for (auto i=histos1d.begin(); i!=histos1d.end(); i++){
+	  if( std::string(i->first).find(h_name) != std::string::npos && std::string(i->first).find(m_name)!= std::string::npos){
+	    foundMatch=true;
+	  }
+	}
+	if(foundMatch)
+	  continue;
+	//check 2d histo list
+	for (auto i=histos2d.begin(); i!=histos2d.end(); i++){
+	  if( std::string(i->first).find(h_name) != std::string::npos && std::string(i->first).find(m_name)!= std::string::npos){
+	    foundMatch=true;
+	  }
+	}
+
+	if(foundMatch)
+	  continue;
+
+	//if we get here, haven't found any existing histos with a name like stub=hname
+	//so, make it.  
+	h_name=m_name+"_"+hist.key();
+	std::size_t found = (hist.key()).find_last_of("_");
+	std::string extension = hist.key().substr(found+1);
+	if(debug_){
+	  std::cout << "DefineOneTimeHistos: " << h_name << std::endl;  
+	  std::cout << extension << hist.value().at("xtitle") << std::endl;
+	}
+	if (extension == "h") {
+	  histos1d[h_name] = plot1D(h_name,hist.value().at("xtitle"),
+				    hist.value().at("bins"),
+				    hist.value().at("minX"),
+				    hist.value().at("maxX"));
+	  
+	  std::string ytitle = hist.value().at("ytitle");
+		
+	  histos1d[h_name]->GetYaxis()->SetTitle(ytitle.c_str());
+	  
+	  if (hist.value().contains("labels")) {
+	    std::vector<std::string> labels = hist.value().at("labels").get<std::vector<std::string> >();
+	    
+	    if (labels.size() < hist.value().at("bins")) {
+	      std::cout<<"Cannot apply labels to histogram:"<<h_name<<std::endl;
+	    }
+	    else {
+	      for (int i = 1; i<=hist.value().at("bins");++i)
+		histos1d[h_name]->GetXaxis()->SetBinLabel(i,labels[i-1].c_str());
+	    }//bins
+	  }//labels
+	}
+	else if (extension == "hh") {
+	  histos2d[h_name] = plot2D(h_name,
+				    hist.value().at("xtitle"),hist.value().at("binsX"),hist.value().at("minX"),hist.value().at("maxX"),
+				    hist.value().at("ytitle"),hist.value().at("binsY"),hist.value().at("minY"),hist.value().at("maxY"));
+	}
+
+	  
+    }
+    if(debug_)std::cout<<"DefineOneTimeHistos:  Done with copies"<<std::endl;
+}
+

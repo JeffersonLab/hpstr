@@ -26,7 +26,7 @@ class TridentHistos : public HistoManager {
         virtual void Define2DHistos();
         void DefineHistos();
 	void saveHistos(TFile* outF,std::string folder);
-
+	void AssignLayerCode(Track* ele_trk, Track* pos_trk);
 	std::string getLayerCodeFromHistoName(std::string name);
 	bool isLayerCode(std::string histoName, int nLayers, int ptr );
 	void setOutputDir(TFile* outF, std::string folder, std::string histoName);
@@ -60,9 +60,14 @@ class TridentHistos : public HistoManager {
 
         // Vertices
         std::vector<std::string> vPs{"vtx_chi2", "vtx_X", "vtx_Y", "vtx_Z", "vtx_sigma_X","vtx_sigma_Y","vtx_sigma_Z","vtx_InvM","vtx_InvMErr"};
-	
+	std::string layerCode;
 
         bool doTrkCompPlots{false};
+
+	//histogram template splitting 
+	virtual void DefineHistosFromTemplateOnly(std::vector<std::string> histoCopyNames,
+						  std::string makeCopyJsonTag = "default=single_copy");
+	virtual void DefineOneTimeHistos();
 
 };
 

@@ -50,8 +50,7 @@ HistoManager::~HistoManager() {}
 
 void HistoManager::DefineHistos(){
 
-   //    if (debug_ > 0) std::cout << "[HistoManager] DefineHistos" << std::endl;
-    std::cout << "[HistoManager] DefineHistos with no arguments" << std::endl;
+    if (debug_ > 0) std::cout << "[HistoManager] DefineHistos" << std::endl;
     std::string h_name = "";
     for (auto hist : _h_configs.items()) {
             h_name = m_name+"_" + hist.key() ;
@@ -59,7 +58,6 @@ void HistoManager::DefineHistos(){
             std::string extension = hist.key().substr(found+1);
 
             if (extension == "h") {
-	      std::cout<<"DefineHistoOne: Making 1D histo "<<h_name<<std::endl;
                 histos1d[h_name] = plot1D(h_name,hist.value().at("xtitle"),
                         hist.value().at("bins"),
                         hist.value().at("minX"),
@@ -88,13 +86,13 @@ void HistoManager::DefineHistos(){
                         hist.value().at("ytitle"),hist.value().at("binsY"),hist.value().at("minY"),hist.value().at("maxY"));
             }
 
-    }//loop on confi
+    }//loop on config
 }
 
 //This DefineHistos method is only used if you want to make multiple differently named copies of a particular json file histogram configuration. 
 //The json histo config entry key value must contain a special string tag that indicates whether or not to make copies.
 //Must also provide a list of names that will be appended to the histo config key
-void HistoManager::DefineHistos(std::vector<std::string> histoCopyNames, std::string makeCopyJsonTag,std::string splitExt){
+void HistoManager::DefineHistos(std::vector<std::string> histoCopyNames, std::string makeCopyJsonTag){
     if (debug_ > 0) std::cout << "[HistoManager] DefineHistos" << std::endl;
     std::string h_name = "";
     if (debug_ > 0){    
@@ -105,24 +103,20 @@ void HistoManager::DefineHistos(std::vector<std::string> histoCopyNames, std::st
     //std::cout<<_h_configs.items()<<std::endl;
     for (auto hist : _h_configs.items()) {
         bool singleCopy = true;
-        std::cout <<"DefineHistoCopy:  base hist name:  "<<m_name<<"_"<< hist.key()<<"  copy tag:  "<<makeCopyJsonTag<<"  hist copy list size " << histoCopyNames.size() << std::endl;
+        std::cout << "hist copy list size " << histoCopyNames.size() << std::endl;
         for(int i = 0; i < histoCopyNames.size(); i++){
-            h_name = m_name+"_" + hist.key() ;	   
-	    std::cout<<h_name<<std::endl;
-	    std::size_t found = (hist.key()).find_last_of("_");
-	    std::string extension = hist.key().substr(found+1);
-            if (histoCopyNames.size() > 1 && std::string(hist.key()).find(makeCopyJsonTag) != std::string::npos && 
-		(extension==splitExt || splitExt=="all")){ 
+            h_name = m_name+"_" + hist.key() ;
+            if (histoCopyNames.size() > 1 && std::string(hist.key()).find(makeCopyJsonTag) != std::string::npos){ 
                 h_name = m_name+"_"+ histoCopyNames.at(i) + "_" + hist.key() ;
-		std::cout<<"DefineHistoCopy: new name"<< h_name<<"   "<<makeCopyJsonTag<<std::endl;
                 singleCopy = false;
-            }          
+            }
+            std::size_t found = (hist.key()).find_last_of("_");
+            std::string extension = hist.key().substr(found+1);
             if(debug_){
                 std::cout << "DefineHisto: " << h_name << std::endl;  
                 std::cout << extension << hist.value().at("xtitle") << std::endl;
             }
             if (extension == "h") {
-	      std::cout<<"DefineHistoCopy:  Making 1D histo "<<h_name<<std::endl;
                 histos1d[h_name] = plot1D(h_name,hist.value().at("xtitle"),
                         hist.value().at("bins"),
                         hist.value().at("minX"),
@@ -146,7 +140,6 @@ void HistoManager::DefineHistos(std::vector<std::string> histoCopyNames, std::st
             }//1D histo
 
             else if (extension == "hh") {
-	      std::cout<<"Making 2D histo "<<h_name<<std::endl;
                 histos2d[h_name] = plot2D(h_name,
                         hist.value().at("xtitle"),hist.value().at("binsX"),hist.value().at("minX"),hist.value().at("maxX"),
                         hist.value().at("ytitle"),hist.value().at("binsY"),hist.value().at("minY"),hist.value().at("maxY"));
@@ -157,166 +150,7 @@ void HistoManager::DefineHistos(std::vector<std::string> histoCopyNames, std::st
 
         }
     }//loop on config
-    std::cout<<"DefineHistoCopy:  Done with copies"<<std::endl;
 }
-
-/*************************************************
-*     
-*   Makes histograms based on template in json file
-*   like DefineHistos but _only_ makes the histos
-*   that are split by the makeCopyJsonTag.
-*
-*************************************************/
-
-void HistoManager::DefineHistosFromTemplateOnly(std::vector<std::string> histoCopyNames, std::string makeCopyJsonTag){
-    if (debug_ > 0) std::cout << "[HistoManager] DefineHistosFromTemplateOnly" << std::endl;
-    std::string h_name = "";
-    if (debug_ > 0){    
-        for (auto hist : _h_configs.items()){
-            std::cout<<hist.key()<<std::endl;
-        }
-    }
-    //std::cout<<_h_configs.items()<<std::endl;
-    for (auto hist : _h_configs.items()) {
-        bool singleCopy = true;
-	std::cout <<"DefineHistosFromTemplateOnly:  base hist name:  "<<m_name<<"_"<< hist.key()<<"  copy tag:  "<<makeCopyJsonTag<<"  hist copy list size " << histoCopyNames.size() << std::endl;
-        for(int i = 0; i < histoCopyNames.size(); i++){
-            h_name = m_name+"_" + hist.key() ;	   
-	    //	    std::cout<<h_name<<std::endl;
-	    std::size_t found = (hist.key()).find_last_of("_");
-	    std::string extension = hist.key().substr(found+1);
-            if (histoCopyNames.size() > 1 && std::string(hist.key()).find(makeCopyJsonTag) != std::string::npos){	      
-                h_name = m_name+"_"+ histoCopyNames.at(i) + "_" + hist.key() ;
-		if(histoCopyNames.at(i)=="")
-		  h_name = m_name+"_"+ hist.key();//this lets you use and empty string and not screw up spacing
-		//		std::cout<<"DefineHistosFromTemplateOnly: new name "<< h_name<<"   "<<makeCopyJsonTag<<std::endl;
-                singleCopy = false;
-            }          
-	    ////this just moves the loop break to earlier ... could just add switch to "Define Histos"
-            if(singleCopy)
-                break;
-	    
-            if(debug_){
-                std::cout << "DefineHistosFromTemplateOnly: " << h_name << std::endl;  
-                std::cout << extension << hist.value().at("xtitle") << std::endl;
-            }
-            if (extension == "h") {
-	      //	      std::cout<<"DefineHistosFromTemplateOnly:  Making 1D histo "<<h_name<<std::endl;
-                histos1d[h_name] = plot1D(h_name,hist.value().at("xtitle"),
-                        hist.value().at("bins"),
-                        hist.value().at("minX"),
-                        hist.value().at("maxX"));
-
-                std::string ytitle = hist.value().at("ytitle");
-
-                histos1d[h_name]->GetYaxis()->SetTitle(ytitle.c_str());
-
-                if (hist.value().contains("labels")) {
-                    std::vector<std::string> labels = hist.value().at("labels").get<std::vector<std::string> >();
-
-                    if (labels.size() < hist.value().at("bins")) {
-                        std::cout<<"Cannot apply labels to histogram:"<<h_name<<std::endl;
-                    }
-                    else {
-                        for (int i = 1; i<=hist.value().at("bins");++i)
-                            histos1d[h_name]->GetXaxis()->SetBinLabel(i,labels[i-1].c_str());
-                    }//bins
-                }//labels
-            }//1D histo
-
-            else if (extension == "hh") {
-	      //	      std::cout<<"Making 2D histo "<<h_name<<std::endl;
-                histos2d[h_name] = plot2D(h_name,
-                        hist.value().at("xtitle"),hist.value().at("binsX"),hist.value().at("minX"),hist.value().at("maxX"),
-                        hist.value().at("ytitle"),hist.value().at("binsY"),hist.value().at("minY"),hist.value().at("maxY"));
-            }
-
-
-        }
-    }//loop on config
-    std::cout<<"DefineHistosFromTemplateOnly:  Done with copies"<<std::endl;
-}
-
-/*
- *    call this after you've made all of the split histograms via DefineHistosFromTemplateOnly
- *    to make the histograms with no split
- */
-void HistoManager::DefineOneTimeHistos(){
-  //  std::cout << "[HistoManager] DefineOneTimeHistos" << std::endl;
-    std::string h_name = "";
-   
-    for (auto hist : _h_configs.items()) {
-
-	h_name =hist.key() ;
-	bool foundMatch=false;
-	//check 1d histo list
-	for (auto i=histos1d.begin(); i!=histos1d.end(); i++){
-	  //	  std::cout << "DefineOneTimeHistos: 1d list " << h_name << " " <<i->first<<std::endl;  
-	  if( std::string(i->first).find(h_name) != std::string::npos && std::string(i->first).find(m_name)!= std::string::npos){
-	    //	    std::cout<<"found match...kicking"<<std::endl;
-	    foundMatch=true;
-	    break;//  found this histo-stub....so break
-	  }
-	}
-	if(foundMatch)
-	  continue;
-	//check 2d histo list
-	for (auto i=histos2d.begin(); i!=histos2d.end(); i++){
-	  //	  std::cout << "DefineOneTimeHistos: 2d list " << h_name << " " <<i->first<<std::endl; 
-	  if( std::string(i->first).find(h_name) != std::string::npos && std::string(i->first).find(m_name)!= std::string::npos){
-	    //	    std::cout<<"found match...kicking"<<std::endl;
-	    foundMatch=true;
-	    break;//  found this histo-stub....so break
-	  }
-	}
-
-	if(foundMatch)
-	  continue;
-
-	//if we get here, haven't found any existing histos with a name like stub=hname
-	//so, make it.  
-	h_name=m_name+"_"+hist.key();
-	std::size_t found = (hist.key()).find_last_of("_");
-	std::string extension = hist.key().substr(found+1);
-	if(debug_){
-	  std::cout << "DefineOneTimeHistos: " << h_name << std::endl;  
-	  std::cout << extension << hist.value().at("xtitle") << std::endl;
-	}
-	if (extension == "h") {
-	  //	  std::cout<<"DefineOneTimeHistos:  Making 1D histo "<<h_name<<std::endl;
-	  histos1d[h_name] = plot1D(h_name,hist.value().at("xtitle"),
-				    hist.value().at("bins"),
-				    hist.value().at("minX"),
-				    hist.value().at("maxX"));
-	  
-	  std::string ytitle = hist.value().at("ytitle");
-		
-	  histos1d[h_name]->GetYaxis()->SetTitle(ytitle.c_str());
-	  
-	  if (hist.value().contains("labels")) {
-	    std::vector<std::string> labels = hist.value().at("labels").get<std::vector<std::string> >();
-	    
-	    if (labels.size() < hist.value().at("bins")) {
-	      std::cout<<"Cannot apply labels to histogram:"<<h_name<<std::endl;
-	    }
-	    else {
-	      for (int i = 1; i<=hist.value().at("bins");++i)
-		histos1d[h_name]->GetXaxis()->SetBinLabel(i,labels[i-1].c_str());
-	    }//bins
-	  }//labels
-	}
-	else if (extension == "hh") {
-	  //	  std::cout<<"Making 2D histo "<<h_name<<std::endl;
-	  histos2d[h_name] = plot2D(h_name,
-				    hist.value().at("xtitle"),hist.value().at("binsX"),hist.value().at("minX"),hist.value().at("maxX"),
-				    hist.value().at("ytitle"),hist.value().at("binsY"),hist.value().at("minY"),hist.value().at("maxY"));
-	}
-
-	  
-    }
-    std::cout<<"DefineOneTimeHistos:  Done with copies"<<std::endl;
-}
-
 
 void HistoManager::GetHistosFromFile(TFile* inFile, const std::string& name, const std::string& folder) {
 

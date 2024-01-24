@@ -236,15 +236,9 @@ class HistoManager {
          * @param makeCopyJsonTag 
          */
         virtual void DefineHistos(std::vector<std::string> histoCopyNames,
-                                  std::string makeCopyJsonTag = "default=single_copy",std::string splitExt="all");
-	
+                                  std::string makeCopyJsonTag = "default=single_copy");
 
-	virtual void DefineHistosFromTemplateOnly(std::vector<std::string> histoCopyNames,
-						  std::string makeCopyJsonTag = "default=single_copy");
-	virtual void DefineOneTimeHistos();
-	
-        	
-	/**
+        /**
          * @brief description
          * 
          * @param histoName 
