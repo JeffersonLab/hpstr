@@ -18,6 +18,10 @@
 #include <UTIL/BitField64.h>
 
 #include <vector>
+#include <iostream>
+#include <fstream>
+#include <json.hpp>
+using json = nlohmann::json;
 
 //-----------//
 //   hpstr   //
@@ -32,6 +36,11 @@
 #include "CalHit.h"
 #include "Event.h"
 #include "TrackerHit.h"
+
+//-----------//
+//   ROOT    //
+//-----------//
+#include "TRefArray.h"
 
 namespace utils {
     /**
@@ -61,6 +70,7 @@ namespace utils {
      * @return Particle* 
      */
     Particle* buildParticle(EVENT::ReconstructedParticle* lc_particle, 
+                            std::string trackstate_location,
                             EVENT::LCCollection* gbl_kink_data,
                             EVENT::LCCollection* track_data);
 
@@ -73,6 +83,7 @@ namespace utils {
      * @return Track* 
      */
     Track* buildTrack(EVENT::Track* lc_track, 
+                      std::string trackstate_location,
                       EVENT::LCCollection* gbl_kink_data, 
                       EVENT::LCCollection* track_data);
 
@@ -122,7 +133,7 @@ namespace utils {
     bool addRawInfoTo3dHit(TrackerHit* tracker_hit,
                            IMPL::TrackerHitImpl* lc_tracker_hit,
                            EVENT::LCCollection* raw_svt_fits,
-                           std::vector<RawSvtHit*>* rawHits = nullptr, int type = 0);
+                           std::vector<RawSvtHit*>* rawHits = nullptr, int type = 0, bool storeRawHit = true);
 
 
     /**
@@ -165,6 +176,28 @@ namespace utils {
      */
     static UTIL::BitField64 decoder("system:6,barrel:3,layer:4,module:12,sensor:1,side:32:-2,strip:12");
 
+    /**
+     * @brief description
+     * 
+     * \todo extern?
+     */
+    double getKalmanTrackL1Isolations(Track* track, std::vector<TrackerHit*>* siClusters);
+
+    /**
+     * @brief description
+     * 
+     * \todo extern?
+     */
+    void get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, int& L1L2hitCode, int& L1hitCode, int& L2hitCode);
+
+    /**
+     * @brief description
+     * 
+     * \todo extern?
+     */
+    double v0_projection_to_target_significance(json v0proj_fits, int run, double &vtx_proj_x, double &vtx_proj_y,
+            double &vtx_proj_x_signif, double &vtx_proj_y_signif, double vtx_x, double vtx_y, double vtx_z, 
+            double vtx_px, double vtx_py, double vtx_pz);
 }
 
 #endif //UTILITIES

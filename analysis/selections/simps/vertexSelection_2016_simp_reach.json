@@ -30,14 +30,14 @@
         "info"  : "e^{+} #Delta_{t}(trk,clu)<10ns"
     },
     "eleTrkChi2Ndf_lt" : {
-        "cut"  : 15,
+        "cut"  : 20,
         "id"   : 6,
-        "info" : "e^{-} Track #chi^{2}/Ndf<15"
+        "info" : "e^{-} Track #chi^{2}/Ndf<20"
     },
     "posTrkChi2Ndf_lt" : {
-        "cut"  : 15,
+        "cut"  : 20,
         "id"   : 7,
-        "info" : "e^{+} Track #chi^{2}/Ndf<15"
+        "info" : "e^{+} Track #chi^{2}/Ndf<20"
     },
     "eleMom_lt" : {
         "cut" : 1.75,
@@ -63,5 +63,10 @@
         "cut" : 9,
         "id"  : 12,
         "info" : "posN2Dhits > 9"
+    },
+    "chi2unc_lt" : {
+        "cut"   : 20,
+        "id"    : 13,
+        "info"  : "#chi^{2}_{unc}<20"
     }
 }

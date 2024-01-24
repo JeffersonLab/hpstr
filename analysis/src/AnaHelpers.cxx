@@ -51,6 +51,42 @@ bool AnaHelpers::IsECalFiducial(CalCluster* clu){
   return in_fid;  
 }
 
+void AnaHelpers::InnermostLayerCheck(Track* trk, bool& foundL1, bool& foundL2) {
+    bool isKF = trk->isKalmanTrack();
+    int innerCount = 0;
+    bool hasL1 = false;
+    bool hasL2 = false;
+    bool hasL3 = false;
+    for (int ihit=0; ihit<trk->getHitLayers().size();++ihit) {
+        int hit3d = trk->getHitLayers().at(ihit);
+        if(isKF){
+            if (hit3d == 0 ) {
+                innerCount++;
+            }
+            if (hit3d == 1) {
+                innerCount++;
+            }
+            if (hit3d == 2) {
+                innerCount++;
+                hasL2 = true;
+            }
+            if (hit3d == 3) {
+                innerCount++;
+                hasL3 = true;
+            }
+        }
+        else{
+            if (hit3d == 0 ) {
+                innerCount++;
+            }
+            if (hit3d == 1) {
+                innerCount++;
+                hasL1 = true;
+            }
+        }
+    }
+}
+
 double AnaHelpers::GetClusterCoplanarity(CalCluster* cl1,CalCluster* cl2){
   double photon_nom_x=42.52; //nominal photon position
   double radian=180.0/3.14; 
@@ -76,40 +112,6 @@ double AnaHelpers::GetClusterCoplanarity(CalCluster* cl1,CalCluster* cl2){
 }
 
 
-void AnaHelpers::InnermostLayerCheck(Track* trk, bool& foundL1, bool& foundL2) {
-  bool s1=false; 
-  bool s2=false; 
-  bool s3=false; 
-  bool s4=false; 
-  //  std::cout<<"InnermostLayerCheck::Number of hits on track = "<<trk->getTrackerHitCount()<<std::endl;
-  for (int ihit=0; ihit<trk->getTrackerHitCount();++ihit) {
-    //std::cout<<"InnermostLayerCheck::svt hit list size = "<<trk->getSvtHits().GetEntries()<<std::endl; 
-    TrackerHit* hit = (TrackerHit*) trk->getSvtHits().At(ihit);
-    //std::cout<<"InnermostLayerCheck::got Tracker hit "<<hit<<std::endl; 
-    //std::cout<<"InnermostLayerCheck::layer hit = "<<hit->getLayer()<<std::endl;
-    RawSvtHit* rhit=(RawSvtHit*)(hit->getRawHits()).At(0);
-    int layer=rhit->getLayer();
-    //    std::cout<<"InnermostLayerCheck::layer hit = "<<layer<<std::endl;
-    if(layer == 0 ){
-      std::cout<<"I didn't think you could have layer 0???"<<std::endl;
-    }
-    if (layer == 1 ) {
-      s1=true;
-    }
-    if (layer == 2) {
-      s2=true;
-    }
-    if (layer == 3) {
-      s3=true;
-    }
-    if (layer == 4) {
-      s4=true;
-    }
-  }
-  foundL1 = s1&&s2;
-  foundL2 = s3&&s4;
-  //  std::cout<<"s1 = "<<s1<<"    s2 = "<<s2<<"   foundL1 = "<<foundL1<<std::endl;
-}
 
 bool AnaHelpers::MatchToGBLTracks(int ele_id, int pos_id, Track* & ele_trk, Track* & pos_trk, std::vector<Track*>& trks) {
 
@@ -221,35 +223,20 @@ bool AnaHelpers::GetParticlesFromVtxAndParticleList(std::vector<Particle*>& part
 
     double eleEne=eleTmp->getMomentum().at(2);//this is a dumb way to match but particles don't have IDs...
     double posEne=posTmp->getMomentum().at(2);
-    //    std::cout<<"eleEne = "<<eleEne<<"; posEne = "<<posEne<<std::cout; 
-    for (auto part :parts){
-      //      std::cout<<"Looking at new particle with charge = "<<part->getCharge()<<std::endl;
-      //      Track trk=part->getTrack(); 
-      //if(&trk==NULL)
-      //  continue;
-      //      std::cout<<"In GetParticlesFromVtxAndPartList::Number of hits on track = "<<trk.getTrackerHitCount()<<std::endl;
-      //      for (int ihit=0; ihit<trk.getTrackerHitCount();++ihit) {
-        //        std::cout<<"In GetParticlesFromVtxAndPartList::svt hit list size = "<<trk.getSvtHits().GetEntries()<<std::endl; 
-        //TrackerHit* hit = (TrackerHit*) trk.getSvtHits().At(ihit);
-        //std::cout<<"In GetParticlesFromVtxAndPartList::got Tracker hit "<<hit<<std::endl; 
-        //std::cout<<"In GetParticlesFromVtxAndPartList::layer hit = "<<hit->getLayer()<<std::endl;
-      //      }
+
+    for (auto part :parts){     
       
       if (eleEne == part->getMomentum().at(2)) { 
         matchele=true;
         ele=part;
-        //        std::cout<<"Found Electron Particle!  "<<ele<<std::endl; 
      }
       if (posEne == part->getMomentum().at(2)) {
         matchpos=true;
         pos=part;
-        //        std::cout<<"Found Positron Particle!  "<<pos<<std::endl;
       }
       
     }
     
-
-    //    std::cout<<"GetParticlesFromVtxAndParticleList::returning "<<(int) (foundele && foundpos && matchele && matchpos) <<std::endl;
     return foundele && foundpos && matchpos &&matchele;
 }
 

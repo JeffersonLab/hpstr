@@ -1,22 +1,32 @@
 {
+    "eleN2Dhits_gt" :  {
+        "cut"  : 10,
+        "id"   : 0,
+        "info" : "e^{-} Track n2d Hits >=10"
+    },
+    "posN2Dhits_gt" :  {
+        "cut"  : 10,
+        "id"   : 1,
+        "info" : "p^{+} Track n2d Hits >=10"
+    },
     "chi2unc_lt" : {
         "cut"  : 20.0,
-        "id"   : 0,
+        "id"   : 2,
         "info" : "#chi^{2}_{unc}<20"
     },
     "pSum_gt"  : {
         "cut"  : 0.5,
-        "id"   : 1,
+        "id"   : 3,
         "info" : "P_{e^{-}} + P_{e^{+}}>0.5 GeV"
     },
     "volPos_bot"  : {
         "cut"  : 0.0,
-        "id"   : 2,
+        "id"   : 4,
         "info" : "e^{+} in Bot"
     },
     "nVtxs_eq" : {
         "cut"  : 1,
-        "id"   : 3,
+        "id"   : 5,
         "info" : "N_{vtx}=1"
     }
 

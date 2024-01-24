@@ -107,7 +107,7 @@ if __name__ == '__main__':
     parser.add_option("-c", "--config", type="string", dest="configFile",
                       help="Configuration file to use", metavar="configFile", default="dst.py")
     parser.add_option("-f", "--fileList", type="string", dest="fileList",
-                      help="List of files to run on.", metavar="fileList", default="fileList.txt")
+                      help="List of files to run on.", metavar="fileList", default="")
     parser.add_option("-m", "--fileMod", type="string", dest="fileMod",
                       help="Modifier for output file names.", metavar="fileMod", default="_hpstr")
     parser.add_option("-r", "--fileExt", dest="fileExt",
@@ -129,14 +129,21 @@ if __name__ == '__main__':
 
     cfgList = []
     fnList = range(1, 10001)
+    listfiles=[]
 
-    listfiles = glob.glob(options.inDir+"/*"+options.fileExt)
-    if (len(listfiles) == 0):
-        print("Try */*"+options.fileExt)
-        listfiles = glob.glob(options.inDir+"/*/*"+options.fileExt)
-
-    print(options.inDir)
-
+    if (options.fileList==""):
+        
+        listfiles = glob.glob(options.inDir+"/*"+options.fileExt)
+        if (len(listfiles) == 0):
+            print("Try */*"+options.fileExt)
+            listfiles = glob.glob(options.inDir+"/*/*"+options.fileExt)
+            
+            print(options.inDir)
+    else:
+        with open(options.fileList,'r') as inputFileList:
+            for line in inputFileList:
+                listfiles.append(line.strip())
+    
     fnList = range(1, len(listfiles)+1)
 
     #create folder if doesn't exists

@@ -36,6 +36,8 @@ void MCAnaHistos::Define2DHistos() {
 }
 
 void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, std::string analysis, float weight) {
+    if(mcParts == nullptr)
+        std::cout << "MCPARTS IS NULL" << std::endl;
     int nParts = mcParts->size();
     Fill1DHisto("numMCparts_h", (float)nParts, weight);
     int nMuons = 0;
@@ -62,6 +64,14 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, std::string
         TLorentzVector part4P(partP.at(0), partP.at(1), partP.at(2), energy);
         part4P.RotateY(-0.0305);
         double momentum = part4P.P();
+
+        if (momPdg == 623)
+        {
+            Fill1DHisto("recoil_ele_p_h",momentum, weight);
+            Fill1DHisto("recoil_ele_px_h",part4P.X(), weight);
+            Fill1DHisto("recoil_ele_py_h",part4P.Y(), weight);
+            Fill1DHisto("recoil_ele_pz_h",part4P.Z(), weight);
+        }
 
         if (pdg == 622)
         {
@@ -100,7 +110,7 @@ void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, std::string
         bool partOfInt = false;
         //	std::cout<<analysis<<std::endl;
         if (analysis == "simps"){
-            if (fabs(pdg) == 11 && momPdg == 622)
+            if (fabs(pdg) == 11 && momPdg == 625)
                 partOfInt = true;
         } else {
             if ((momPdg == 623 || momPdg == 622) && (fabs(pdg) == 11))

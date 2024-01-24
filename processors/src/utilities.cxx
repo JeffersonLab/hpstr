@@ -54,6 +54,7 @@ Vertex* utils::buildVertex(EVENT::Vertex* lc_vertex) {
 }
 
 Particle* utils::buildParticle(EVENT::ReconstructedParticle* lc_particle,
+        std::string trackstate_location,
         EVENT::LCCollection* gbl_kink_data,
         EVENT::LCCollection* track_data)
 
@@ -87,7 +88,7 @@ Particle* utils::buildParticle(EVENT::ReconstructedParticle* lc_particle,
     // Set the Track for the HpsParticle
     if (lc_particle->getTracks().size()>0)
     {
-        Track * trkPtr = utils::buildTrack(lc_particle->getTracks()[0], gbl_kink_data, track_data);
+        Track * trkPtr = utils::buildTrack(lc_particle->getTracks()[0],trackstate_location, gbl_kink_data, track_data);
         part->setTrack(trkPtr);
         delete trkPtr;
     }
@@ -155,19 +156,68 @@ bool utils::IsSameTrack(Track* trk1, Track* trk2) {
 
 
 Track* utils::buildTrack(EVENT::Track* lc_track,
+        std::string trackstate_location,
         EVENT::LCCollection* gbl_kink_data,
         EVENT::LCCollection* track_data) {
 
     if (!lc_track)
         return nullptr;
 
+     //TrackState Location map
+     std::map<std::string, int> trackstateLocationMap_ = {
+        {"", EVENT::TrackState::AtIP},
+        {"AtTarget", EVENT::TrackState::LastLocation}
+     };
+
+    int loc;
+    auto it = trackstateLocationMap_.find(trackstate_location);
+    if (it != trackstateLocationMap_.end()){
+        loc = it->second;
+    }
+    else{
+        std::cout << "[utilities]::ERROR Track State Location " << trackstate_location << " Doesn't Exist!" << std::endl;
+        std::cout << "Check map in utilities::buildTrack for defined locations" << std::endl;
+        return nullptr;
+    }
+
     Track* track = new Track();
-    // Set the track parameters
-    track->setTrackParameters(lc_track->getD0(), 
-            lc_track->getPhi(), 
-            lc_track->getOmega(), 
-            lc_track->getTanLambda(), 
-            lc_track->getZ0());
+    //If using track AtIP, get params from lc_track
+    if (loc == trackstateLocationMap_[""]){
+        // Set the track parameters
+        track->setTrackParameters(lc_track->getD0(), 
+                lc_track->getPhi(), 
+                lc_track->getOmega(), 
+                lc_track->getTanLambda(), 
+                lc_track->getZ0());
+
+        // Set the track covariance matrix
+        track->setCov(static_cast<std::vector<float> > (lc_track->getCovMatrix()));
+    }
+
+    //If other TrackState specified, get track params from track state
+    else {
+        // If track state doesn't exist, no track returned
+        const EVENT::TrackState* ts = lc_track->getTrackState(loc);
+        if (ts == nullptr){
+            return nullptr;
+        }
+        // Set the track parameters using trackstate
+        track->setTrackParameters(ts->getD0(), 
+                ts->getPhi(), 
+                ts->getOmega(), 
+                ts->getTanLambda(), 
+                ts->getZ0());
+
+        double position[3] = {
+            ts->getReferencePoint()[1],  
+            ts->getReferencePoint()[2],  
+            ts->getReferencePoint()[0]
+        };
+
+        track->setCov(static_cast<std::vector<float> > (ts->getCovMatrix()));
+
+        track->setPosition(position);
+    }
 
     // Set the track id
     track->setID(lc_track->id());
@@ -180,10 +230,7 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 
     // Set the track ndf 
     track->setNdf(lc_track->getNdf());
-
-    // Set the track covariance matrix
-    track->setCov(static_cast<std::vector<float> > (lc_track->getCovMatrix()));
-
+    
     // Set the position of the extrapolated track at the ECal face.  The
     // extrapolation uses the full 3D field map.
     const EVENT::TrackState* track_state 
@@ -249,8 +296,7 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 
             // Check that the TrackData data structure is correct.  If it's
             // not, throw a runtime exception.   
-            if (track_datum->getNDouble() > 14 || track_datum->getNFloat() > 7 
-                    || track_datum->getNInt() != 1) {
+            if (track_datum->getNDouble() > 14 || track_datum->getNFloat() > 7 || track_datum->getNInt() != 1) {
                 throw std::runtime_error("[ TrackingProcessor ]: The collection " 
                         + std::string(Collections::TRACK_DATA)
                         + " has the wrong structure.");
@@ -266,10 +312,24 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 
             // Set the Track momentum
             if (track_datum->getNFloat()>3)
-                track->setMomentum(track_datum->getFloatVal(1),track_datum->getFloatVal(2),track_datum->getFloatVal(3));
+              track->setMomentum(track_datum->getFloatVal(1),track_datum->getFloatVal(2),track_datum->getFloatVal(3));
 
             // Set the volume (top/bottom) in which the SvtTrack resides
             track->setTrackVolume(track_datum->getIntVal(0));
+
+            // Set the BfieldY for track state
+            double bfieldY = -999.9;
+            if(track_datum->getNFloat() > 4){
+                if (loc == trackstateLocationMap_[""])
+                    bfieldY = track_datum->getFloatVal(4);
+                if (loc == trackstateLocationMap_["AtTarget"]){
+                    bfieldY = track_datum->getFloatVal(5);
+                }
+                if (loc == trackstateLocationMap_["AtCalorimeter"])
+                    bfieldY = track_datum->getFloatVal(6);
+                //Bfield needs factor of -1, not sure why... <-TODO investigate
+                track->setMomentum(-bfieldY);
+            }
         }
 
     } //add track data  
@@ -379,7 +439,7 @@ TrackerHit* utils::buildTrackerHit(IMPL::TrackerHitImpl* lc_tracker_hit, bool ro
 //type 0 rotatedHelicalHit  type 1 SiClusterHit
 bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit, 
         IMPL::TrackerHitImpl* lc_tracker_hit,
-        EVENT::LCCollection* raw_svt_fits, std::vector<RawSvtHit*>* rawHits,int type) {
+        EVENT::LCCollection* raw_svt_fits, std::vector<RawSvtHit*>* rawHits,int type, bool storeRawHit) {
 
     if (!tracker_hit || !lc_tracker_hit)
         return false;
@@ -390,13 +450,29 @@ bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit,
     //1-6(7) for rotated  0-13 for SiCluster
     int layer = -1;
 
+    // Get decoders to read cellids
+    UTIL::BitField64 decoder("system:6,barrel:3,layer:4,module:12,sensor:1,side:32:-2,strip:12");
+
     //Get the Raw content of the tracker hits
     EVENT::LCObjectVec lc_rawHits             = lc_tracker_hit->getRawHits();  
 
+    std::vector<int> rawhit_strips;
     for (unsigned int irh = 0 ; irh < lc_rawHits.size(); ++irh) {
+        // Get a raw hit from the list of hits
+        EVENT::TrackerRawData* rawTracker_hit
+            = static_cast<EVENT::TrackerRawData*>(lc_rawHits.at(irh));
+
+        //Decode the cellid
+        EVENT::long64 value = EVENT::long64( rawTracker_hit->getCellID0() & 0xffffffff ) |
+            ( EVENT::long64( rawTracker_hit->getCellID1() ) << 32 ) ;
+        decoder.setValue(value);
+
+        //Get rawhit strip number
+        int stripnumber = decoder["strip"];
+        rawhit_strips.push_back(stripnumber);
 
         //TODO useless to build all of it?
-        RawSvtHit* rawHit = buildRawHit(static_cast<EVENT::TrackerRawData*>(lc_rawHits.at(irh)),raw_svt_fits); 
+        RawSvtHit* rawHit = buildRawHit(rawTracker_hit,raw_svt_fits); 
         rawcharge += rawHit->getAmp(0);
         int currentHitVolume = rawHit->getModule() % 2 ? 1 : 0;
         int currentHitLayer  = (rawHit->getLayer() - 1 ) / 2;
@@ -416,16 +492,20 @@ bool utils::addRawInfoTo3dHit(TrackerHit* tracker_hit,
                 std::cout<<"[ ERROR ] : utils::addRawInfoTo3dHit raw hits with inconsistent layer found" <<std::endl;
         }
 
-        //TODO:: store only if asked
-        tracker_hit->addRawHit(rawHit);
-        if (rawHits)
-            rawHits->push_back(rawHit);
+        if(storeRawHit){
+            tracker_hit->addRawHit(rawHit);
+            if (rawHits)
+                rawHits->push_back(rawHit);
+        }
+        else
+            delete rawHit;
 
     }
 
     tracker_hit->setRawCharge(rawcharge);
     tracker_hit->setVolume(volume);
     tracker_hit->setLayer(layer);
+    tracker_hit->setRawHitStripNumbers(rawhit_strips);
 
     return true;
 }
@@ -483,3 +563,359 @@ bool utils::getParticlesFromVertex(Vertex* vtx, Particle* ele, Particle* pos) {
     return true;
 }
 
+double utils::getKalmanTrackL1Isolations(Track* track, std::vector<TrackerHit*>* siClusters){
+    double L1_axial_iso = 999999.9;
+    double L1_stereo_iso = 999999.9;
+    //Loop over hits on track
+    for(int i = 0; i < track->getSvtHits().GetEntries(); i++){
+        TrackerHit* track_hit = (TrackerHit*)track->getSvtHits().At(i);
+        //Track hit info
+        int trackhit_id = track_hit->getID();
+        int trackhit_layer = track_hit->getLayer();
+        int trackhit_volume = track_hit->getVolume();
+        double trackhit_y = track_hit->getGlobalY();
+        double trackhit_charge = track_hit->getRawCharge();
+        double trackhit_time = track_hit->getTime();
+
+        //Only look at L1
+        if(trackhit_layer > 1)
+            continue;
+
+        //Get rawhit strip information
+        std::vector<int> trackhit_rawhits = track_hit->getRawHitStripNumbers();
+        if(trackhit_rawhits.size() < 1)
+            continue;
+        int trackhit_maxstrip = *max_element(trackhit_rawhits.begin(), trackhit_rawhits.end());
+        int trackhit_minstrip = *min_element(trackhit_rawhits.begin(), trackhit_rawhits.end());
+
+
+        //Isolation only calculated for axial sensors (sensitive to global y)
+        bool isAxial = false;
+        //Axial/Stereo Top/Bot mapping
+        if(trackhit_volume == 1){
+            if(trackhit_layer%2 == 1)
+                isAxial = true;
+        }
+        if(trackhit_volume == 0){
+            if(trackhit_layer%2 == 0)
+                isAxial = true;
+        }
+
+        //Loop over all SiClusters in event
+        //Find closest/best alternative SiCluster to track hit 
+        TrackerHit* closest_althit = nullptr;
+        double isohit_dy = 999999.9;
+        double closest_dcharge = 99999.9;
+        double closest_dt = 999999.9;
+        double isohit_y = 999999.9;
+
+        if ( siClusters == nullptr )
+            return isohit_dy;
+        for(int j = 0; j < siClusters->size(); j++){
+            TrackerHit* althit = siClusters->at(j);
+            int althit_id = althit->getID();
+            int althit_volume = althit->getVolume();
+            int althit_layer = althit->getLayer();
+            double althit_y = althit->getGlobalY();
+            double althit_charge = althit->getRawCharge();
+            double althit_time = althit->getTime();
+
+            //Skip if SiCluster not on same layer as track hit
+            if (althit_layer != trackhit_layer)
+                continue;
+
+            //Skip if volume doesn't match
+            if(althit_volume != trackhit_volume)
+                continue;
+
+            //Skip same hit
+            if (althit_id == trackhit_id)
+                continue;
+
+            //Only look at hits that are further from beam-axis in Global Y
+            if ( (trackhit_volume == 0 && althit_y < trackhit_y) ||
+                    (trackhit_volume == 1 && althit_y > trackhit_y))
+                continue;
+
+            //Require alternative hits to be within +-30ns (based on SiClustersOnTrack t distr)
+            if(std::abs(althit_time) > 30.0)
+                continue;
+
+            //Skip adjacent rawhits
+            std::vector<int> althit_rawhits = althit->getRawHitStripNumbers();
+            int althit_maxstrip = *max_element(althit_rawhits.begin(), althit_rawhits.end());
+            int althit_minstrip = *min_element(althit_rawhits.begin(), althit_rawhits.end());
+            if(trackhit_minstrip - althit_maxstrip <= 1 && althit_minstrip - trackhit_maxstrip <= 1)
+                continue;
+
+            //Pick closest alternative hit
+            if (std::abs(trackhit_y - althit_y) < isohit_dy){
+                isohit_dy = std::abs(trackhit_y-althit_y);
+                closest_althit = althit;
+                closest_dcharge = trackhit_charge - althit_charge;
+                closest_dt = trackhit_time - althit_time;
+                isohit_y = althit_y;
+            }
+        }
+
+        if(isAxial)
+            L1_axial_iso = isohit_dy;
+        else
+            L1_stereo_iso = isohit_dy;
+
+    }
+
+    if(L1_axial_iso < L1_stereo_iso){
+        return L1_axial_iso;
+    }
+    else
+        return L1_stereo_iso;
+}
+
+void utils::get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, int& L1L2hitCode, int& L1hitCode, int& L2hitCode){
+    //Count the number of hits per part on the ele track
+    std::map<int, int> nHits4part_ele;
+    for(int i =0; i < ele_trk->getMcpHits().size(); i++)
+    {
+        int partID = ele_trk->getMcpHits().at(i).second;
+        if ( nHits4part_ele.find(partID) == nHits4part_ele.end() )
+        {
+            // not found
+            nHits4part_ele[partID] = 1;
+        }
+        else
+        {
+            // found
+            nHits4part_ele[partID]++;
+        }
+    }
+
+    //Determine the MC part with the most hits on the track
+    int maxNHits_ele = 0;
+    int maxID_ele = 0;
+    for (std::map<int,int>::iterator it=nHits4part_ele.begin(); it!=nHits4part_ele.end(); ++it)
+    {
+        if(it->second > maxNHits_ele)
+        {
+            maxNHits_ele = it->second;
+            maxID_ele = it->first;
+        }
+    }
+
+    //Count the number of hits per part on the pos track
+    std::map<int, int> nHits4part_pos;
+    for(int i =0; i < pos_trk->getMcpHits().size(); i++)
+    {
+        int partID = pos_trk->getMcpHits().at(i).second;
+        if ( nHits4part_pos.find(partID) == nHits4part_pos.end() )
+        {
+            // not found
+            nHits4part_pos[partID] = 1;
+        }
+        else
+        {
+            // found
+            nHits4part_pos[partID]++;
+        }
+    }
+
+    //Determine the MC part with the most hits on the track
+    int maxNHits_pos = 0;
+    int maxID_pos = 0;
+    for (std::map<int,int>::iterator it=nHits4part_pos.begin(); it!=nHits4part_pos.end(); ++it)
+    {
+        if(it->second > maxNHits_pos)
+        {
+            maxNHits_pos = it->second;
+            maxID_pos = it->first;
+        }
+    }
+
+    //Determine Ele L1 and L2 truth information
+    bool ele_trueAxialL1 = false;
+    bool ele_trueStereoL1 = false;
+    bool ele_trueAxialL2 = false;
+    bool ele_trueStereoL2 = false;
+    bool pos_trueAxialL1 = false;
+    bool pos_trueStereoL1 = false;
+    bool pos_trueAxialL2 = false;
+    bool pos_trueStereoL2 = false;
+
+    if(ele_trk->isKalmanTrack()){
+        for(int i = 0; i < ele_trk->getMcpHits().size(); i++){
+            int mcpid = ele_trk->getMcpHits().at(i).second;
+            int layer = ele_trk->getMcpHits().at(i).first;
+            int volume = -1;
+            if(ele_trk->isTopTrack() == 1)
+                volume = 0;
+            else
+                volume = 1;
+
+            bool isAxial = false;
+            bool isStereo = false; 
+            bool isL1 = false;
+            bool isL2 = false;
+            bool isGood = false;
+
+            //L1 and L2 only
+            if(layer < 2)
+                isL1 = true;
+            else if(layer > 1 && layer < 4)
+                isL2 = true;
+            else
+                continue;
+
+            if(volume == 1){
+                if(layer%2 == 1)
+                    isAxial = true;
+                else
+                    isStereo = true;
+            }
+            if(volume == 0){
+                if(layer%2 == 0)
+                    isAxial = true;
+                else
+                    isStereo = true;
+            }
+
+            if(mcpid == maxID_ele)
+                isGood = true;
+
+            if(isGood){
+                if(isAxial){
+                    if(isL1)
+                        ele_trueAxialL1 = true;
+                    if(isL2)
+                        ele_trueAxialL2 = true;
+                }
+                if(isStereo){
+                    if(isL1)
+                        ele_trueStereoL1 = true;
+                    if(isL2)
+                        ele_trueStereoL2 = true;
+                }
+            }
+        }
+    }
+
+    if(pos_trk->isKalmanTrack()){
+        for(int i = 0; i < pos_trk->getMcpHits().size(); i++){
+            int mcpid = pos_trk->getMcpHits().at(i).second;
+            int layer = pos_trk->getMcpHits().at(i).first;
+            int volume = -1;
+            if(pos_trk->isTopTrack() == 1)
+                volume = 0;
+            else
+                volume = 1;
+
+            bool isAxial = false;
+            bool isStereo = false; 
+            bool isL1 = false;
+            bool isL2 = false;
+            bool isGood = false;
+
+            //L1 and L2 only
+            if(layer < 2)
+                isL1 = true;
+            else if(layer > 1 && layer < 4)
+                isL2 = true;
+            else
+                continue;
+
+            if(volume == 1){
+                if(layer%2 == 1)
+                    isAxial = true;
+                else
+                    isStereo = true;
+            }
+            if(volume == 0){
+                if(layer%2 == 0)
+                    isAxial = true;
+                else
+                    isStereo = true;
+            }
+
+            if(mcpid == maxID_pos)
+                isGood = true;
+
+            if(isGood){
+                if(isAxial){
+                    if(isL1)
+                        pos_trueAxialL1 = true;
+                    if(isL2)
+                        pos_trueAxialL2 = true;
+                }
+                if(isStereo){
+                    if(isL1)
+                        pos_trueStereoL1 = true;
+                    if(isL2)
+                        pos_trueStereoL2 = true;
+                }
+            }
+        }
+    }
+
+
+    //Require both Axial and Stereo truth hits to be 'Good' hit
+    if(ele_trueAxialL1 && ele_trueStereoL1) L1L2hitCode = L1L2hitCode | (0x1 << 3);           
+    if(pos_trueAxialL1 && pos_trueStereoL1) L1L2hitCode = L1L2hitCode | (0x1 << 2);           
+    if(ele_trueAxialL2 && ele_trueStereoL2) L1L2hitCode = L1L2hitCode | (0x1 << 1);           
+    if(pos_trueAxialL2 && pos_trueStereoL2) L1L2hitCode = L1L2hitCode | (0x1 << 0);           
+    
+    
+    //Set L1 axial/stereo hit code for ele and positron
+    if(ele_trueAxialL1) L1hitCode = L1hitCode | (0x1 << 3);
+    if(ele_trueStereoL1) L1hitCode = L1hitCode | (0x1 << 2);
+    if(pos_trueAxialL1) L1hitCode = L1hitCode | (0x1 << 1);
+    if(pos_trueStereoL1) L1hitCode = L1hitCode | (0x1 << 0);
+
+    //Set L2 axial/stereo hit code for ele and positron
+    if(ele_trueAxialL2) L2hitCode = L2hitCode | (0x1 << 3);
+    if(ele_trueStereoL2) L2hitCode = L2hitCode | (0x1 << 2);
+    if(pos_trueAxialL2) L2hitCode = L2hitCode | (0x1 << 1);
+    if(pos_trueStereoL2) L2hitCode = L2hitCode | (0x1 << 0);
+}
+
+double utils::v0_projection_to_target_significance(json v0proj_fits, int run, double &vtx_proj_x, double &vtx_proj_y,
+        double &vtx_proj_x_signif, double &vtx_proj_y_signif, double vtx_x, double vtx_y, double vtx_z,
+        double vtx_px, double vtx_py, double vtx_pz){
+    //V0 Projection fit parameters are calculated externally by projecting vertices to the target z position,
+    //and then fitting the 2D distribution vtx_x vs vtx_y with a rotated 2D Gaussian.
+    //The fit parameters are defined along the rotated coordinate system.
+    //Therefore, the vertex position must be rotated into this coordinate system before calculating significance.
+    //The rotation angle corresponding to the fit is provided in the json file containing the rotated fit values.
+    
+    //Read v0 projection fits from json file
+    int closest_run;
+    for(auto entry : v0proj_fits.items()){
+        int check_run = std::stoi(entry.key());
+        if(check_run > run)
+            break;
+        else{
+            closest_run = check_run;
+        }
+    }
+    double target_pos = v0proj_fits[std::to_string(closest_run)]["target_position"];
+    double rot_mean_x = v0proj_fits[std::to_string(closest_run)]["rotated_mean_x"];
+    double rot_mean_y = v0proj_fits[std::to_string(closest_run)]["rotated_mean_y"];
+    double rot_sigma_x = v0proj_fits[std::to_string(closest_run)]["rotated_sigma_x"];
+    double rot_sigma_y = v0proj_fits[std::to_string(closest_run)]["rotated_sigma_y"];
+    double rotation_angle = (double)v0proj_fits[std::to_string(closest_run)]["rotation_angle_mrad"]/1000.0;
+
+    //project vertex to target position
+    vtx_proj_x = vtx_x - ((vtx_z - target_pos)*(vtx_px/vtx_pz));
+    vtx_proj_y = vtx_y - ((vtx_z - target_pos)*(vtx_py/vtx_pz));
+
+    //Rotate projected vertex by angle corresponding to run number
+    double rot_vtx_proj_x = vtx_proj_x*std::cos(rotation_angle) - vtx_proj_y*std::sin(rotation_angle);
+    double rot_vtx_proj_y = vtx_proj_x*std::sin(rotation_angle) + vtx_proj_y*std::cos(rotation_angle);
+
+    //Calculate significance
+    vtx_proj_x_signif = (rot_vtx_proj_x - rot_mean_x)/rot_sigma_x;
+    vtx_proj_y_signif = (rot_vtx_proj_y - rot_mean_y)/rot_sigma_y;
+
+    //
+    double significance = std::sqrt( vtx_proj_x_signif*vtx_proj_x_signif + vtx_proj_y_signif*vtx_proj_y_signif );
+
+    return significance;
+}

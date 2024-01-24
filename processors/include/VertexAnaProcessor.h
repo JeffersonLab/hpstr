@@ -15,6 +15,7 @@
 #include "BaseSelector.h"
 #include "TrackHistos.h"
 #include "MCAnaHistos.h"
+#include "utilities.h"
 
 #include "FlatTupleMaker.h"
 #include "AnaHelpers.h"
@@ -140,6 +141,16 @@ class VertexAnaProcessor : public Processor {
         std::shared_ptr<AnaHelpers> _ah; //!< description
 
         int debug_{0}; //!< Debug level
+        std::string beamPosCfg_{""}; //!< json containing run dep beamspot positions
+        json bpc_configs_; //!< json object
+        std::vector<double> beamPosCorrections_ = {0.0,0.0,0.0}; //!< holds beam position corrections
+        std::string v0ProjectionFitsCfg_{""};//!< json file w run dependent v0 projection fits
+        json v0proj_fits_;//!< json object v0proj
+        double eleTrackTimeBias_ = 0.0;
+        double posTrackTimeBias_ = 0.0;
+        int current_run_number_{-999}; //!< track current run number
+
+        bool mc_reg_on_ = false;
 };
 
 #endif

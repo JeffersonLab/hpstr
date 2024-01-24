@@ -95,7 +95,12 @@ class Track : public TObject {
         void setCov(const std::vector<float>& cov) {cov_ = cov;}
         
         std::vector<float> getCov() {return cov_;}
+
+        std::vector<int> getHitLayers() {return hit_layers_;}
+        void addHitLayer(int layer) {hit_layers_.push_back(layer);}
         
+        void addMcpHit(int layer, int mcpID) {mcp_hits_.push_back(std::make_pair(layer,mcpID));}
+        std::vector<std::pair<int,int>> getMcpHits() {return mcp_hits_;}
         
         double getD0Err () const {return sqrt(cov_[0]);}
         double getPhiErr () const {return sqrt(cov_[2]);}
@@ -184,6 +189,17 @@ class Track : public TObject {
         std::vector<double> getPositionAtEcal(); 
 
         /**
+         * Set the track state position. The 
+         * extrapolation is assumed to use the full 3D field map.
+         *
+         * @parm position The extrapolated track position at track state
+         */
+        void setPosition(const double* position);
+
+        /** @return Extrapolated track position. */
+        std::vector<double> getPosition(); 
+
+        /**
          * Set the track type.  For more details, see {@link StrategyType} and
          * {@link TrackType}.
          *
@@ -195,6 +211,9 @@ class Track : public TObject {
         int getType() const { return type_; }; 
 
         /** @return The track decoded type: GSSSSM. */
+
+        //Run Dependent Corrections
+        void applyCorrection(std::string var, double correction);
 
         //bit1
         bool is345Seed     () const  { return   ((type_  >> 1) & 0x1);}
@@ -316,6 +335,11 @@ class Track : public TObject {
         bool isBottomTrack() const { return track_volume_ ? true : false; };
 
         /**
+         * Set the number of tracker hits associated with this track.
+         */
+        void setTrackerHitCount(int nHits) { n_hits_ = nHits; };
+
+        /**
          * @return Number of tracker hits associated with this track.
          */
         int getTrackerHitCount() const { return n_hits_; };
@@ -339,7 +363,7 @@ class Track : public TObject {
     private:
 
         /** Reference to the 3D hits associated with this track. */
-        TRefArray tracker_hits_{}; 
+        TRefArray tracker_hits_{TRefArray{}};
 
         /** Reference to the reconstructed particle associated with this track. */
         TRef particle_;
@@ -358,37 +382,42 @@ class Track : public TObject {
 
         /** Cov matrix */
         std::vector<float> cov_;
-            
+
+        /** hit layers */
+        std::vector<int> hit_layers_;
+
+        /** truth mcp hits */
+        std::vector<std::pair<int,int>> mcp_hits_;
 
         /** The distance of closest approach to the reference point. */
-        double d0_{-999}; 
+        double d0_{-999.}; 
 
         /**
          * The azimuthal angle of the momentum at the position of closest
          * approach to the reference point. 
          */
-        double phi0_{-999};
+        double phi0_{-999.};
 
         /**
          * The track curvature. The curvature is positive (negative) if the particle has a
          * positive (negative) charge.
          */
-        double omega_{-999}; 
+        double omega_{-999.}; 
 
         /**
          * The slope of the track in the SY plane where S is the arc length of 
          * the helix in the xz plane.
          */ 
-        double tan_lambda_{-999};
+        double tan_lambda_{-999.};
 
         /** 
          * The y position of the track at the distance of closest approach 
          * in the xz plane.
          */
-        double z0_{-999}; 
+        double z0_{-999.}; 
 
         /** The chi^2 of the track fit. */ 
-        double chi2_{-999};
+        double chi2_{-999.};
 
         /** The ndfs of the track fit. */
         double ndf_{0.};
@@ -397,16 +426,25 @@ class Track : public TObject {
          * The time of the track.  This is currently the average time of all
          * hits composing the track.
          */
-        double track_time_{-999};
+        double track_time_{-999.};
 
         /** The x position of the extrapolated track at the Ecal face. */ 
-        double x_at_ecal_{-999};
+        double x_at_ecal_{-999.};
 
         /** The y position of the extrapolated track at the Ecal face. */ 
-        double y_at_ecal_{-999};
+        double y_at_ecal_{-999.};
 
         /** The z position of the extrapolated track at the Ecal face. */ 
-        double z_at_ecal_{-999};
+        double z_at_ecal_{-999.};
+
+        /** The x position track. */ 
+        double x_{-999.};
+
+        /** The y position track. */ 
+        double y_{-999.};
+
+        /** The z position track. */ 
+        double z_{-999.};
 
         /** Array used to store the lambda kinks for each of the sensor layers. */
         double lambda_kinks_[14];  
@@ -415,9 +453,9 @@ class Track : public TObject {
         double phi_kinks_[14];  
 
         /** Track momentum. */
-        double px_{-9999}; 
-        double py_{-9999}; 
-        double pz_{-9999};
+        double px_{-9999.}; 
+        double py_{-9999.}; 
+        double pz_{-9999.};
                 
         /** Track id. */
         int id_{0};

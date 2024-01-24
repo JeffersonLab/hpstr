@@ -1,6 +1,7 @@
 #include "TrackingAnaProcessor.h"
 #include <iomanip>
 #include "utilities.h"
+#include "AnaHelpers.h"
 
 TrackingAnaProcessor::TrackingAnaProcessor(const std::string& name, Process& process)
     : Processor(name, process) { 
@@ -20,16 +21,21 @@ void TrackingAnaProcessor::configure(const ParameterSet& parameters) {
         doTruth_              = (bool) parameters.getInteger("doTruth",doTruth_);
         truthHistCfgFilename_ = parameters.getString("truthHistCfg",truthHistCfgFilename_);
         selectionCfg_         = parameters.getString("selectionjson",selectionCfg_); 
+        isData_               = parameters.getInteger("isData",isData_);
+        ecalCollName_         = parameters.getString("ecalCollName",ecalCollName_);
+        regionSelections_     = parameters.getVString("regionDefinitions",regionSelections_);
     }
     catch (std::runtime_error& error)
     {
         std::cout << error.what() << std::endl;
     }
 
+    if (!isData_)
+      time_offset_ = 5.;
 }
 
 void TrackingAnaProcessor::initialize(TTree* tree) {
-
+  
     //Init histos
     trkHistos_ = new TrackHistos(trkCollName_);
     trkHistos_->loadHistoConfig(histCfgFilename_);
@@ -45,7 +51,7 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
     }
     
     if (doTruth_) {
-        truthHistos_ = new TrackHistos(trkCollName_+"_truthComparison");
+      truthHistos_ = new TrackHistos(trkCollName_+"_truthComparison");
         truthHistos_->loadHistoConfig(histCfgFilename_);
         truthHistos_->DefineHistos();
         truthHistos_->loadHistoConfig(truthHistCfgFilename_);
@@ -55,13 +61,85 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
         //tree->SetBranchAddress(truthCollName_.c_str(),&truth_tracks_,&btruth_tracks_);
     }
 
+    // Setup track selections plots
+    for (unsigned int i_reg = 0;
+         i_reg < regionSelections_.size(); 
+         i_reg++) {
+      std::string regname = AnaHelpers::getFileName(regionSelections_[i_reg],false);
+      std::cout<< "Setting up region "<< regname<<std::endl;
+      
+      reg_selectors_[regname] = std::make_shared<BaseSelector>(regname, regionSelections_[i_reg]);
+      reg_selectors_[regname]->setDebug(false);
+      reg_selectors_[regname]->LoadSelection();
+      
+      reg_histos_[regname] = std::make_shared<TrackHistos>(regname);
+      reg_histos_[regname]->loadHistoConfig(histCfgFilename_);
+      reg_histos_[regname]->doTrackComparisonPlots(false);
+      reg_histos_[regname]->DefineTrkHitHistos();
+      
+      regions_.push_back(regname);
+      
+    }
+      
+
+    
+    
+    //Get event header information for trigger
+    tree->SetBranchAddress("EventHeader", &evth_ , &bevth_);
+    
+    //Get cluster information for FEEs
+    if (!ecalCollName_.empty()) 
+      tree->SetBranchAddress(ecalCollName_.c_str(),&ecal_, &becal_);
+    
 }
 
 bool TrackingAnaProcessor::process(IEvent* ievent) {
-
+  
     double weight = 1.;
     // Loop over all the LCIO Tracks and add them to the HPS event.
     int n_sel_tracks = 0;
+    
+    
+    //Trigger requirements - Singles 0 and 1. 
+    //TODO use cutFlow 
+    if (isData_ && (!evth_->isSingle0Trigger() && !evth_->isSingle1Trigger()))
+      return true; //true is correct?
+
+    //Ask for 1 cluster p > 1.2 GeV with time [40,70]
+    //TODO Use Cutflow
+    
+    double minTime = 40;
+    double maxTime = 70;
+    
+    if (!isData_) {
+      minTime = 30;
+      maxTime = 50;
+    }
+        
+    if (ecal_->size() <= 2)
+      return true;
+    
+    bool foundFeeCluster = false;
+    
+    for (unsigned int iclu = 0; iclu < ecal_->size(); iclu++) {
+      if (ecal_->at(iclu)->getEnergy() > 1.5)
+        foundFeeCluster = true;
+      break;
+    }
+    
+    if (!foundFeeCluster)
+      return true;
+    
+    bool clusterInTime = true;
+    
+    for (unsigned int iclu = 0; iclu < ecal_->size(); iclu++) { 
+      if (ecal_->at(iclu)->getTime() < 40 || ecal_->at(iclu)->getTime() > 70)
+        clusterInTime = false;
+    }
+
+    if (!clusterInTime)
+      return true;
+        
     for (int itrack = 0; itrack < tracks_->size(); ++itrack) {
         
         if (trkSelector_) trkSelector_->getCutFlowHisto()->Fill(0.,weight);
@@ -69,16 +147,41 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
         // Get a track
         Track* track = tracks_->at(itrack);
         int n2dhits_onTrack = !track->isKalmanTrack() ? track->getTrackerHitCount() * 2 : track->getTrackerHitCount();
+
+        TVector3 trk_mom;
+        trk_mom.SetX(track->getMomentum()[0]);
+        trk_mom.SetY(track->getMomentum()[1]);
+        trk_mom.SetZ(track->getMomentum()[2]);
+
         
         //Track Selection
         if (trkSelector_ && !trkSelector_->passCutGt("n_hits_gt",n2dhits_onTrack,weight))
             continue;
+
+        if (trkSelector_ && !trkSelector_->passCutLt("chi2ndf_lt",track->getChi2Ndf(),weight))
+          continue;
         
-        if (trkSelector_ && !trkSelector_->passCutGt("pt_gt",fabs(track->getPt()),weight))
-            continue;
+        if (trkSelector_ && !trkSelector_->passCutGt("p_gt",trk_mom.Mag(),weight))
+          continue;
 
+        if (trkSelector_ && !trkSelector_->passCutLt("p_lt",trk_mom.Mag(),weight))
+          continue;
+        
+        if (trkSelector_ && !trkSelector_->passCutLt("trk_ecal_lt",track->getPositionAtEcal()[0],weight))
+          continue;
+        
+        
+        if (trkSelector_ && !trkSelector_->passCutGt("trk_ecal_gt",track->getPositionAtEcal()[0],weight))
+          continue;
+        
+        if (trkSelector_ && !trkSelector_->passCutGt("trk_time_gt",track->getTrackTime()-time_offset_,weight))
+          continue;
+        
+        if (trkSelector_ && !trkSelector_->passCutLt("trk_time_lt",track->getTrackTime()-time_offset_,weight))
+          continue;
+        
         Track* truth_track = nullptr;
-
+        
         //Get the truth track
         if (doTruth_) { 
             truth_track = (Track*) track->getTruthLink().GetObject();
@@ -104,11 +207,33 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
         }
         
         n_sel_tracks++;
+
+        
+
+        //Fill histograms for FEE smearing analysis
+        trkHistos_->Fill2DHisto("xypos_at_ecal_hh",
+                                track->getPositionAtEcal()[0],
+                                track->getPositionAtEcal()[1]);
+        
+        trkHistos_->Fill3DHisto("p_vs_TanLambda_Phi_hhh",
+                                track->getPhi(),
+                                track->getTanLambda(),
+                                track->getP());
+        
+        trkHistos_->Fill2DHisto("p_vs_nHits_hh",
+                                track->getTrackerHitCount(),
+                                track->getP());
+
+        trkHistos_->Fill3DHisto("p_vs_TanLambda_nHits_hhh",
+                                track->getTanLambda(),
+                                track->getTrackerHitCount(),
+                                track->getP());
+        
+        
     }//Loop on tracks
 
     trkHistos_->Fill1DHisto("n_tracks_h",n_sel_tracks);
     
-
     return true;
 }
 
@@ -125,6 +250,14 @@ void TrackingAnaProcessor::finalize() {
         delete truthHistos_;
         truthHistos_ = nullptr;
     }
+
+    for (reg_it it = reg_histos_.begin(); it!=reg_histos_.end(); ++it) {
+      std::string dirName = it->first;
+      (it->second)->saveHistos(outF_,dirName);
+      outF_->cd(dirName.c_str());
+      reg_selectors_[it->first]->getCutFlowHisto()->Write();
+    }
+    
     //trkHistos_->Clear();
 }
 

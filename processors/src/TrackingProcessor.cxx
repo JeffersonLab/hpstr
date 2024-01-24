@@ -25,13 +25,14 @@ void TrackingProcessor::configure(const ParameterSet& parameters) {
         truthTracksCollLcio_     = parameters.getString("truthTrackCollLcio",truthTracksCollLcio_);
         truthTracksCollRoot_     = parameters.getString("truthTrackCollRoot",truthTracksCollRoot_);
         bfield_                  = parameters.getDouble("bfield",bfield_);
-
+        trackStateLocation_      = parameters.getString("trackStateLocation",trackStateLocation_);
+        
         //Residual plotting is done in this processor for the moment.
         doResiduals_             = parameters.getInteger("doResiduals",doResiduals_);
         trackResDataLcio_        = parameters.getString("trackResDataLcio",trackResDataLcio_);
         resCfgFilename_          = parameters.getString("resPlots",resCfgFilename_);
         resoutname_              = parameters.getString("resoutname",resoutname_);
-
+        
     }
     catch (std::runtime_error& error)
     {
@@ -65,8 +66,9 @@ void TrackingProcessor::initialize(TTree* tree) {
 }
 
 bool TrackingProcessor::process(IEvent* ievent) {
-
-    //Clean up
+  
+  
+  //Clean up
     if (tracks_.size() > 0 ) {
         for (std::vector<Track *>::iterator it = tracks_.begin(); it != tracks_.end(); ++it) {
             delete *it;
@@ -115,7 +117,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
         // Heap an LCRelation navigator which will allow faster access 
         rawTracker_hit_fits_nav = new UTIL::LCRelationNavigator(raw_svt_hit_fits);     
     }
-
+    
     EVENT::LCCollection* tracks{nullptr};
     try
     {
@@ -127,7 +129,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
         std::cout << e.what() << std::endl;
         return false;
     }
-
+    
 
     //Initialize map of shared hits
     std::map <int, std::vector<int> > SharedHits;
@@ -169,7 +171,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
         }
 
         // Add a track to the event
-        Track* track = utils::buildTrack(lc_track,gbl_kink_data,track_data);
+        Track* track = utils::buildTrack(lc_track,trackStateLocation_, gbl_kink_data,track_data);
         
         //Override the momentum of the track if the bfield_ > 0
         if (bfield_>0)
@@ -263,7 +265,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
             }
             else {
                 EVENT::Track* lc_truth_track = static_cast<EVENT::Track*> (lc_truth_tracks.at(0));
-                Track* truth_track = utils::buildTrack(lc_truth_track,nullptr,nullptr);
+                Track* truth_track = utils::buildTrack(lc_truth_track,trackStateLocation_,nullptr,nullptr);
                 track->setTruthLink(truth_track);
                 if (bfield_>0)
                     truth_track->setMomentum(bfield_);

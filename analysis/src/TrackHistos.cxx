@@ -122,8 +122,32 @@ void TrackHistos::Fill1DVertex(Vertex* vtx,
     Fill1DHisto("ele_clusE_h",eleClus.getEnergy(),weight);
     Fill1DHisto("pos_clusE_h",posClus.getEnergy(),weight);
     Fill1DHisto("ele_EoP_h",eleClus.getEnergy()/p_ele.P(),weight);
+    Fill1DHisto("ele_trkClusX_h",ele_trk->getPositionAtEcal()[0] - eleClus.getPosition()[0],weight);
+    Fill1DHisto("ele_trkClusY_h",ele_trk->getPositionAtEcal()[1] - eleClus.getPosition()[1],weight);
+    Fill1DHisto("pos_trkClusX_h",pos_trk->getPositionAtEcal()[0] - posClus.getPosition()[0],weight);
+    Fill1DHisto("pos_trkClusY_h",pos_trk->getPositionAtEcal()[1] - posClus.getPosition()[1],weight);
     Fill1DHisto("pos_EoP_h",posClus.getEnergy()/p_pos.P(),weight);
     Fill2DHisto("EoP_hh", eleClus.getEnergy()/p_ele.P(), posClus.getEnergy()/p_pos.P(),weight);
+    Fill2DHisto("ele_trkClusX_p_hh", ele_trk->getP(),ele_trk->getPositionAtEcal()[0] - eleClus.getPosition()[0], weight);
+    Fill2DHisto("pos_trkClusX_p_hh", pos_trk->getP(),pos_trk->getPositionAtEcal()[0] - posClus.getPosition()[0], weight);
+    Fill2DHisto("ele_trkClusX_phi_hh", ele_trk->getPhi(),ele_trk->getPositionAtEcal()[0] - eleClus.getPosition()[0], weight);
+    Fill2DHisto("pos_trkClusX_phi_hh", pos_trk->getPhi(),pos_trk->getPositionAtEcal()[0] - posClus.getPosition()[0], weight);
+    Fill2DHisto("ele_trkClusX_z0_hh", ele_trk->getZ0(),ele_trk->getPositionAtEcal()[0] - eleClus.getPosition()[0], weight);
+    Fill2DHisto("pos_trkClusX_z0_hh", pos_trk->getZ0(),pos_trk->getPositionAtEcal()[0] - posClus.getPosition()[0], weight);
+    Fill2DHisto("ele_trkClusX_d0_hh", ele_trk->getD0(),ele_trk->getPositionAtEcal()[0] - eleClus.getPosition()[0], weight);
+    Fill2DHisto("pos_trkClusX_d0_hh", pos_trk->getD0(),pos_trk->getPositionAtEcal()[0] - posClus.getPosition()[0], weight);
+    Fill2DHisto("ele_trkClusX_tanL_hh", ele_trk->getTanLambda(),ele_trk->getPositionAtEcal()[0] - eleClus.getPosition()[0], weight);
+    Fill2DHisto("pos_trkClusX_tanL_hh", pos_trk->getTanLambda(), pos_trk->getPositionAtEcal()[0] - posClus.getPosition()[0], weight);
+    Fill2DHisto("ele_trkClusX_clusX_hh", eleClus.getPosition()[0],ele_trk->getPositionAtEcal()[0] - eleClus.getPosition()[0], weight);
+    Fill2DHisto("pos_trkClusX_clusX_hh", posClus.getPosition()[0], pos_trk->getPositionAtEcal()[0] - posClus.getPosition()[0], weight);
+    for(int i = 0; i < ele_trk->getHitLayers().size(); i++)
+    {
+        Fill2DHisto("ele_trkClusX_hitLay_hh", (float) ele_trk->getHitLayers().at(i), ele_trk->getPositionAtEcal()[0] - eleClus.getPosition()[0], weight);
+    }
+    for(int i = 0; i < pos_trk->getHitLayers().size(); i++)
+    {
+        Fill2DHisto("pos_trkClusX_hitLay_hh", (float) pos_trk->getHitLayers().at(i), pos_trk->getPositionAtEcal()[0] - posClus.getPosition()[0], weight);
+    }
 
 
     //Compute some extra variables 
@@ -183,7 +207,7 @@ void TrackHistos::Fill2DTrack(Track* track, float weight, const std::string& trk
 
         double d0 = track->getD0();
         double z0 = track->getZ0();
-        Fill2DHisto(trkname+"tanlambda_vs_phi0_hh",track->getPhi(),track->getTanLambda(), weight);
+        //Fill2DHisto(trkname+"tanlambda_vs_phi0_hh",track->getPhi(),track->getTanLambda(), weight);
         Fill2DHisto(trkname+"d0_vs_p_hh",track->getP(),d0,weight);
         Fill2DHisto(trkname+"d0_vs_phi0_hh",track->getPhi(),d0,weight);
         Fill2DHisto(trkname+"d0_vs_tanlambda_hh",track->getTanLambda(),d0,weight);
@@ -192,6 +216,11 @@ void TrackHistos::Fill2DTrack(Track* track, float weight, const std::string& trk
         Fill2DHisto(trkname+"phi0_vs_p_hh",track->getP(),track->getPhi(),weight);
         Fill2DHisto(trkname+"z0_vs_phi0_hh",track->getPhi(),z0,weight);
         Fill2DHisto(trkname+"z0_vs_tanlambda_hh",track->getTanLambda(),z0,weight);
+                
+        Fill2DHisto(trkname+"TanLambda_vs_Phi_hh"      ,track->getPhi()  , track->getTanLambda()       ,weight);
+        Fill2DHisto(trkname+"p_vs_Phi_hh"      ,track->getPhi()  , track->getP()       ,weight);
+        Fill2DHisto(trkname+"p_vs_TanLambda_hh"      ,track->getTanLambda()  , track->getP()       ,weight);
+
 
     }
 }
@@ -213,21 +242,38 @@ void TrackHistos::Fill1DTrack(Track* track, float weight, const std::string& trk
     Fill1DHisto(trkname+"invpT_h"    ,-1*charge/track->getPt(),weight);
     Fill1DHisto(trkname+"TanLambda_h",track->getTanLambda()   ,weight);
     Fill1DHisto(trkname+"Z0_h"       ,track->getZ0()          ,weight);
+    Fill1DHisto(trkname+"Z0oTanLambda_h",track->getZ0()/track->getTanLambda()   ,weight);
     Fill1DHisto(trkname+"time_h"     ,track->getTrackTime()   ,weight);
     Fill1DHisto(trkname+"chi2_h"     ,track->getChi2()        ,weight);
     Fill1DHisto(trkname+"chi2ndf_h"  ,track->getChi2Ndf()     ,weight);
     Fill1DHisto(trkname+"nShared_h"  ,track->getNShared()     ,weight);
     Fill1DHisto(trkname+"nHits_2d_h" ,n_hits_2d               ,weight);
-    for (int ihit=0; ihit<track->getSvtHits().GetEntries();++ihit) 
-    {
-        TrackerHit* hit2d = (TrackerHit*) track->getSvtHits().At(ihit);
-        Fill1DHisto(trkname+"hit_lay_h",hit2d->getLayer()  ,weight);
-    }
-    //Fill 2D histos
-    Fill2DHisto(trkname+"TanLambda_vs_Phi_hh"      ,track->getPhi()  , track->getTanLambda()       ,weight);
-    Fill2DHisto(trkname+"p_vs_Phi_hh"      ,track->getPhi()  , track->getP()       ,weight);
-    Fill2DHisto(trkname+"p_vs_TanLambda_hh"      ,track->getTanLambda()  , track->getP()       ,weight);
+    Fill1DHisto(trkname+"track_xpos_h",track->getPosition().at(0) ,weight);
+    Fill1DHisto(trkname+"track_ypos_h",track->getPosition().at(1) ,weight);
+    Fill1DHisto(trkname+"track_zpos_h",track->getPosition().at(2) ,weight);
+    Fill1DHisto(trkname+"xpos_at_ecal_h",track->getPositionAtEcal().at(0) ,weight);
+    Fill1DHisto(trkname+"ypos_at_ecal_h",track->getPositionAtEcal().at(1) ,weight);
+    Fill1DHisto(trkname+"zpos_at_ecal_h",track->getPositionAtEcal().at(2) ,weight);
 
+    //Top vs Bot
+    if(track->getTanLambda() > 0.0)
+        Fill1DHisto(trkname+"top_track_z0_h", track->getZ0(), weight);
+    else
+        Fill1DHisto(trkname+"bot_track_z0_h", track->getZ0(), weight);
+
+    //Track param errors
+    Fill1DHisto(trkname+"d0_err_h"       ,track->getD0Err()          ,weight);
+    Fill1DHisto(trkname+"Phi_err_h"      ,track->getPhiErr()         ,weight);
+    Fill1DHisto(trkname+"Omega_err_h"    ,track->getOmegaErr()       ,weight);
+    Fill1DHisto(trkname+"TanLambda_err_h",track->getTanLambdaErr()   ,weight);
+    Fill1DHisto(trkname+"Z0_err_h"       ,track->getZ0Err()          ,weight);
+
+    for (int ihit=0; ihit<track->getHitLayers().size();++ihit) 
+    {
+        int hit2d = track->getHitLayers().at(ihit);
+        Fill1DHisto(trkname+"hit_lay_h",(float) hit2d  ,weight);
+    }
+    
     //All Tracks
     Fill1DHisto(trkname+"sharingHits_h",0,weight);
     if (track->getNShared() == 0)
