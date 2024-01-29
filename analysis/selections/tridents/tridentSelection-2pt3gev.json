@@ -1,0 +1,55 @@
+{
+
+    "eleNHits_gt" : {
+        "cut" : 9, 
+        "id" : 0, 
+        "info": "Ele NHits > 9" 
+    },
+    
+    "posNHits_gt" : {
+        "cut" : 9, 
+        "id" : 1, 
+        "info": "Pos NHits > 9" 
+    },
+
+    "eleMom_lt" : {
+        "cut" : 1.8,
+        "id"  : 2,
+        "info" : "p e^{-}<1.8GeV"
+    },
+    "eleTrkChi2_lt" : {
+        "cut"  : 50,
+        "id"   : 3,
+        "info" : "e^{-} Track #chi^{2}<50"
+    },
+    "posTrkChi2_lt" : {
+        "cut"  : 50,
+        "id"   : 4,
+        "info" : "e^{+} Track #chi^{2}<50"
+    },
+    "chi2unc_lt" : {
+        "cut"   : 50,
+        "id"    : 5,
+        "info"  : "#chi^{2}_{unc}<50"
+    },
+    "eleMom_gt" : {
+        "cut" : 0.25,
+        "id"  : 6,
+        "info" : "p_e^{-}>0.25 [GeV]"
+    },
+    "posMom_gt" : {
+        "cut" : 0.25,
+        "id"  : 7,
+        "info" : "p_e^{+}>0.25 [GeV]"
+    },
+    "maxVtxMom_lt" : {
+        "cut" : 3,
+        "id"  : 8,
+        "info" : "p_{vtx}<3 [GeV]"
+    },
+    "minVtxMom_gt"  : { 
+        "cut"  : 1.0,
+        "id"   : 9,
+        "info" : "P_{e^{-}} +  P_{e^{+}}>1.0"
+    }  
+}

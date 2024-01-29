@@ -1,0 +1,14 @@
+{   
+    
+    "posClusterMatched" : {
+        "cut" : 1, 
+        "id"  : 0,
+        "info": "Positron Cluster Match"
+    },
+
+    "nVtxs_eq" : {
+        "cut"  : 1,
+        "id"   : 1,
+        "info" : "N_{vtx}=1"
+    }
+}

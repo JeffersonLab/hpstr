@@ -1,0 +1,18 @@
+{
+ 
+    "cluTime_lt" : {
+        "cut" : 10,
+        "id"  : 0,
+        "info" : "Cluster Time - Offset<10ns"
+    },
+    "cluTime_gt" : {
+        "cut" : -10,
+        "id"  : 1,
+        "info" : "ClusterTime - Offset >-10ns"
+    },
+    "cluTimeDiff_lt" :{
+	"cut" : 10,
+        "id"  : 2,
+	"info" : "abs(cl1Time-cl2Time)<10ns"	
+    }
+}

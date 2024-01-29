@@ -1,0 +1,7 @@
+{
+  "minModHits_gt":{
+	"cut" : 4,
+        "id"  : 0,
+	"info" : "# module hits >4"
+    }
+}
