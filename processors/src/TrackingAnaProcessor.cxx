@@ -16,6 +16,7 @@ void TrackingAnaProcessor::configure(const ParameterSet& parameters) {
     try
     {
         debug_                = parameters.getInteger("debug",debug_);
+        seed_                 = parameters.getInteger("seed",seed_);
         trkCollName_          = parameters.getString("trkCollName",trkCollName_);
         histCfgFilename_      = parameters.getString("histCfg",histCfgFilename_);
         doTruth_              = (bool) parameters.getInteger("doTruth",doTruth_);
@@ -98,11 +99,14 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
 
     //Momentum smearing closure test
     if (!pSmearingFile_.empty()) {
-      smearingTool_ =   std::make_shared<TrackSmearingTool>(pSmearingFile_);
+      
+      std::cout<<"Smearing Tool Seed "<<seed_<<std::endl;
+      smearingTool_    =   std::make_shared<TrackSmearingTool>(pSmearingFile_,false,seed_);
+      smearingToolRel_ =   std::make_shared<TrackSmearingTool>(pSmearingFile_,true, seed_);
       
       psmear_h_     =   new TH1D("psmear_h",
                                  "psmear_h",200,0,4);
-      
+
       psmear_vs_nHits_hh_ =  new TH2D("psmear_vs_nHits_hh",
                                       "psmear_vs_nHits_hh",
                                       5,8,13,
@@ -115,6 +119,23 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
                                           "psmear_vs_nHits_bot_hh",
                                           5,8,13,
                                           200,0,4);
+
+
+      psmear_rel_h_     =   new TH1D("psmear_rel_h",
+                                     "psmear_rel_h",200,0,4);
+      
+      psmear_vs_nHits_rel_hh_ =  new TH2D("psmear_vs_nHits_rel_hh",
+                                          "psmear_vs_nHits_rel_hh",
+                                          5,8,13,
+                                          200,0,4);
+      psmear_vs_nHits_top_rel_hh_ =  new TH2D("psmear_vs_nHits_top_rel_hh",
+                                              "psmear_vs_nHits_top_rel_hh",
+                                              5,8,13,
+                                              200,0,4);
+      psmear_vs_nHits_bot_rel_hh_ =  new TH2D("psmear_vs_nHits_bot_rel_hh",
+                                              "psmear_vs_nHits_bot_rel_hh",
+                                              5,8,13,
+                                              200,0,4);
       
     }
       
@@ -144,8 +165,8 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
       maxTime = 50;
     }
         
-    if (ecal_->size() <= 2)
-      return true;
+    //if (ecal_->size() <= 2)
+    //  return true;
     
     bool foundFeeCluster = false;
     
@@ -267,9 +288,18 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
                                 track->getP());
         
         
+
         //pSmearing closure Test
         if (!isData_ && !pSmearingFile_.empty()) {
-          double psmear = smearingTool_->smearTrackP(*track);
+
+
+          //Check that I get a gaussian as expected
+          double p_base      = 1.;
+          
+          
+          double psmear     = smearingTool_->smearTrackP(*track);
+          double psmear_rel = smearingToolRel_->smearTrackP(*track);
+          
           double nhits  = track->getTrackerHitCount();
           double isTop  = track->getTanLambda() > 0 ? true : false;
           
@@ -282,6 +312,18 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
           else {
             psmear_vs_nHits_bot_hh_->Fill(nhits,psmear);
           }
+
+
+          psmear_rel_h_->Fill(psmear_rel);
+          psmear_vs_nHits_rel_hh_->Fill(nhits,psmear_rel);
+          
+          if (isTop) {
+            psmear_vs_nHits_top_rel_hh_->Fill(nhits,psmear_rel);
+          }
+          else {
+            psmear_vs_nHits_bot_rel_hh_->Fill(nhits,psmear_rel);
+          }
+          
         } // closer test
         
     }//Loop on tracks
@@ -315,6 +357,7 @@ void TrackingAnaProcessor::finalize() {
     if (!pSmearingFile_.empty()) {
       outF_->cd(trkCollName_.c_str());
       psmear_h_->Write();
+
       psmear_vs_nHits_hh_->Write();
       psmear_vs_nHits_top_hh_->Write();
       psmear_vs_nHits_bot_hh_->Write();
@@ -322,11 +365,18 @@ void TrackingAnaProcessor::finalize() {
       delete psmear_vs_nHits_hh_;
       delete psmear_vs_nHits_top_hh_;
       delete psmear_vs_nHits_bot_hh_;
+
+      psmear_rel_h_->Write();
+      psmear_vs_nHits_rel_hh_->Write();
+      psmear_vs_nHits_top_rel_hh_->Write();
+      psmear_vs_nHits_bot_rel_hh_->Write();
+      delete psmear_rel_h_;
+      delete psmear_vs_nHits_rel_hh_;
+      delete psmear_vs_nHits_top_rel_hh_;
+      delete psmear_vs_nHits_bot_rel_hh_;
+            
     }
-    
-    
-    
-    
+        
     //trkHistos_->Clear();
 }
 

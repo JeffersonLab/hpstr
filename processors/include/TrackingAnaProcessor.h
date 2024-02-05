@@ -115,15 +115,23 @@ class TrackingAnaProcessor : public Processor {
         bool doTruth_{false}; //!< description
         int isData_{1}; //! is data
         int debug_{0}; //!< debug level
+        int seed_{0};  //!< seed
         float time_offset_{0}; //! time offset
         
         //Momentum smearing closure test
         std::shared_ptr<TrackSmearingTool> smearingTool_;
+        std::shared_ptr<TrackSmearingTool> smearingToolRel_;
         std::string pSmearingFile_{""};
         TH1D* psmear_h_;
         TH2D* psmear_vs_nHits_hh_;
         TH2D* psmear_vs_nHits_top_hh_;
         TH2D* psmear_vs_nHits_bot_hh_;
+        
+        TH1D* psmear_rel_h_;
+        TH2D* psmear_vs_nHits_rel_hh_;
+        TH2D* psmear_vs_nHits_top_rel_hh_;
+        TH2D* psmear_vs_nHits_bot_rel_hh_;
+
         
 }; // TrackingAnaProcessor
 

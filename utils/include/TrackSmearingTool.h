@@ -20,22 +20,22 @@ class TrackSmearingTool {
   
  public : 
   
+  // The seed needs to be set accordingly for each instance / job of the smearing tool
   TrackSmearingTool(const std::string& smearingfile,
+                    const bool relSmearing = true,
                     const int seed = 42,
                     const std::string& tracks = "KalmanFullTracks");  
-
+  
   double smearTrackP(const Track& trk);
   
-  void loadSmearingFile() {};
-    
  private:
   
   //Random engine
   std::shared_ptr<std::default_random_engine> generator_;
-  
-  //Vector of normal distributions, one distribution for each sigma
-  std::vector<std::shared_ptr<std::normal_distribution<float>>> normals_top_;
-  std::vector<std::shared_ptr<std::normal_distribution<float>>> normals_bot_;
+
+  // General Normal distributions
+
+  std::shared_ptr<std::normal_distribution<double>> normal_;
   
   std::shared_ptr<TFile> smearingfile_;
   
@@ -43,8 +43,8 @@ class TrackSmearingTool {
   TH1D* smearing_histo_top_;
   TH1D* smearing_histo_bot_;
   
-
   // debug
-  bool debug_{true};
+  bool debug_{false};
+  bool relSmearing_{false};
   
 };

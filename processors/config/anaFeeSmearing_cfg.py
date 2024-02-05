@@ -6,8 +6,11 @@ import baseConfig as base
 options = base.parser.parse_args()
 
 # Use the input file to set the output file name
-inFilename = options.inFilename
-outFilename = options.outFilename
+inFilename   = options.inFilename
+outFilename  = options.outFilename
+
+# The seed is the file number.
+smearingSeed = options.seed
 
 print('Input file:  %s' % inFilename)
 print('Output file: %s' % outFilename)
@@ -24,6 +27,7 @@ p.add_library("libprocessors")
 #anaTrks = HpstrConf.Processor('anaTrks', 'TrackHitAnaProcessor')
 anaTrks = HpstrConf.Processor('anaTrks', 'TrackingAnaProcessor')
 anaTrks.parameters["debug"] = 0
+anaTrks.parameters["seed"] = smearingSeed
 anaTrks.parameters["trkCollName"] = 'KalmanFullTracks'
 anaTrks.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/fee_smearing/feeSmearing.json'
 anaTrks.parameters["selectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/trackHit/trackHitAna.json'
