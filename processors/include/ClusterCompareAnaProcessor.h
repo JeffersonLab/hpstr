@@ -48,18 +48,18 @@ class ClusterCompareAnaProcessor : public Processor {
         virtual bool process(IEvent* ievent);
 
         virtual void initialize(TTree* tree);
-        
-        virtual void Plot1();
-        
-        virtual void Plot2();
-        
-        virtual void Plot3();
-        
-        virtual void Plot4();
 
-        virtual void TrackPlot1();
+        virtual void PlotClusterLayers();  
+
+        virtual void PlotClusterCharges();
         
-        virtual void TrackPlot2();
+        virtual void PlotClusterTimes();
+        
+        virtual void PlotClusterPositions();
+        
+        virtual void TrackMomenta();
+        
+        virtual void TrackTransverseMomenta(); 
         
         virtual void fillDeads();
 
@@ -72,7 +72,6 @@ class ClusterCompareAnaProcessor : public Processor {
     private:
 
         //Containers to hold histogrammer info
-        //RawSvtHitHistos* histos{nullptr};
         ModuleMapper * mmapper_;
        
         TTree* tree_;
