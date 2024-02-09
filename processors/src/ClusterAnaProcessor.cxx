@@ -1,20 +1,20 @@
 /**
- * @file RoryClusterAnaProcessor.cxx
+ * @file ClusterAnaProcessor.cxx
  * @brief AnaProcessor used fill histograms to study svt hit fitting
  * @author Rory O'Dwyer and Cameron Bravo, SLAC National Accelerator Laboratory
  */     
-#include "RoryClusterAnaProcessor.h"
+#include "ClusterAnaProcessor.h"
 //#include "Int_t.h"
 #include <iostream>
 
-RoryClusterAnaProcessor::RoryClusterAnaProcessor(const std::string& name, Process& process) : Processor(name,process){
+ClusterAnaProcessor::ClusterAnaProcessor(const std::string& name, Process& process) : Processor(name,process){
     mmapper_ = new ModuleMapper(2021);
 }
 //TODO CHECK THIS DESTRUCTOR
-RoryClusterAnaProcessor::~RoryClusterAnaProcessor(){}
+ClusterAnaProcessor::~ClusterAnaProcessor(){}
 
-void RoryClusterAnaProcessor::configure(const ParameterSet& parameters) {
-    std::cout << "Configuring RoryClusterAnaProcessor" << std::endl;
+void ClusterAnaProcessor::configure(const ParameterSet& parameters) {
+    std::cout << "Configuring ClusterAnaProcessor" << std::endl;
     try
     {
         debug_           = parameters.getInteger("debug");
@@ -33,7 +33,7 @@ void RoryClusterAnaProcessor::configure(const ParameterSet& parameters) {
 }
 
 
-void RoryClusterAnaProcessor::initialize(TTree* tree) {
+void ClusterAnaProcessor::initialize(TTree* tree) {
     fillDeads();
     tree_= tree;
     //tree_->Print();
@@ -115,7 +115,7 @@ void RoryClusterAnaProcessor::initialize(TTree* tree) {
     std::cout<<"I GET HERE 2"<<std::endl;
 }
 
-bool RoryClusterAnaProcessor::process(IEvent* ievent) {
+bool ClusterAnaProcessor::process(IEvent* ievent) {
     
     //std::cout<<"We have "<< ClustersKF_->size()<<" hits"<<std::endl;
     if(doingTracks_){
@@ -259,7 +259,7 @@ bool RoryClusterAnaProcessor::process(IEvent* ievent) {
     return true;
 }
 
-void RoryClusterAnaProcessor::fillDeads(){
+void ClusterAnaProcessor::fillDeads(){
     for(int i = 0;i<24576;i++){
         Deads_[i]=0.0;
     }
@@ -275,7 +275,7 @@ void RoryClusterAnaProcessor::fillDeads(){
     return;
 }
 
-int RoryClusterAnaProcessor::GetStrip(int feb,int hyb,int strip){
+int ClusterAnaProcessor::GetStrip(int feb,int hyb,int strip){
 	int BigCount = 0;
     if(feb<=1){
         BigCount+=feb*2048+hyb*512+strip;
@@ -286,7 +286,7 @@ int RoryClusterAnaProcessor::GetStrip(int feb,int hyb,int strip){
     return BigCount;
 }
 
-void RoryClusterAnaProcessor::Plot1(){
+void ClusterAnaProcessor::Plot1(){
     std::cout<<"I AM IN THE FINAL STEP"<<std::endl; 
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
@@ -332,7 +332,7 @@ void RoryClusterAnaProcessor::Plot1(){
     return;
 }
 
-void RoryClusterAnaProcessor::Plot2(){
+void ClusterAnaProcessor::Plot2(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
     c1->cd();
@@ -378,7 +378,7 @@ void RoryClusterAnaProcessor::Plot2(){
     return;
 }
 
-void RoryClusterAnaProcessor::Plot3(){
+void ClusterAnaProcessor::Plot3(){
     std::cout<<"I AM IN THE FINAL STEP"<<std::endl; 
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
@@ -424,7 +424,7 @@ void RoryClusterAnaProcessor::Plot3(){
     return;
 }
 
-void RoryClusterAnaProcessor::Plot4(){
+void ClusterAnaProcessor::Plot4(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
     c1->cd();
@@ -470,7 +470,7 @@ void RoryClusterAnaProcessor::Plot4(){
     return;
 }
 
-void RoryClusterAnaProcessor::Plot5(){
+void ClusterAnaProcessor::Plot5(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
     c1->cd();
@@ -513,7 +513,7 @@ void RoryClusterAnaProcessor::Plot5(){
     c1->Clear();
 }
 
-void RoryClusterAnaProcessor::Plot6(){
+void ClusterAnaProcessor::Plot6(){
     std::cout<<"I AM IN THE FINAL STEP"<<std::endl; 
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
@@ -559,7 +559,7 @@ void RoryClusterAnaProcessor::Plot6(){
     return;
 }
 
-void RoryClusterAnaProcessor::Plot7(){
+void ClusterAnaProcessor::Plot7(){
     std::cout<<"I AM IN THE FINAL STEP"<<std::endl; 
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
@@ -605,7 +605,7 @@ void RoryClusterAnaProcessor::Plot7(){
     return;
 }
 
-void RoryClusterAnaProcessor::TrackPlot1(){
+void ClusterAnaProcessor::TrackPlot1(){
     TCanvas *c1 = new TCanvas("c");
     c1->cd();
     //FIRST I DO THE PROFILES OF THE NSHARED HITS PLOTS
@@ -656,11 +656,11 @@ void RoryClusterAnaProcessor::TrackPlot1(){
     return;    
 }
     
-/*void RoryClusterAnaProcessor::ClusterFit(){
+/*void ClusterAnaProcessor::ClusterFit(){
     return;
 }*/
 
-void RoryClusterAnaProcessor::finalize() {
+void ClusterAnaProcessor::finalize() {
     Plot1(); 
     Plot2();
     Plot3();
@@ -674,4 +674,4 @@ void RoryClusterAnaProcessor::finalize() {
     //ClusterFit();
     return;
 }
-DECLARE_PROCESSOR(RoryClusterAnaProcessor);
+DECLARE_PROCESSOR(ClusterAnaProcessor);
