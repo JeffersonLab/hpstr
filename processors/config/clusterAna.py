@@ -8,7 +8,7 @@ base.parser.add_argument("-L", "--layer", type=int, dest="layer",
 base.parser.add_argument("-M", "--module", type=int, dest="module",
                   help="Module Under Investigation", metavar="module",default=-1)
 base.parser.add_argument("-MC", "--MC", type=int, dest="isMC",
-                  help="IS IT MC", metavar="module",default=0)
+                  help="Is the file used generated from Monte Carlo", metavar="module",default=0)
 base.parser.add_argument("-doT", "--doT", type=int, dest="doTrack",
                   help="We plot the tracking based cluster performance metrics", metavar="doTrack",default=0)
 base.parser.add_argument("-cut", "--cut", type=float, dest="cut",
