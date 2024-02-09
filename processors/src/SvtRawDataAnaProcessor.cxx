@@ -217,9 +217,9 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
     long eventTime = evH_->getEventTime();
         bool doClMatch = true;
     
-    int STR = -10000;
-    int HITC = 0;
-    int HITL = 0;
+    int stripID = -10000;
+    int hitc = 0;
+    int hitl = 0;
     float otherTime = 69420.0;
     
     
@@ -261,8 +261,8 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                                         }
                                         if((cluHit->getT0(0)==thisHit->getT0(0))){//and(not(Clusters_->at(Cl)->getID()==tHit->getID()))){
                                             InCluster = true;
-                                            HITC=Clusters_->at(Cl)->getRawHits().GetEntries();
-                                            HITL=LAY;
+                                            hitc=Clusters_->at(Cl)->getRawHits().GetEntries();
+                                            hitl=LAY;
                                             if(Clusters_->at(Cl)->getRawHits().GetEntries()==2){
                                                 RawSvtHit * otherHit = (RawSvtHit*)(Clusters_->at(Cl)->getRawHits().At((Clh+1)%2));
                                                 otherTime = otherHit->getT0(0);
@@ -281,9 +281,8 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                             //to see if you have evidence of a misplaced hit.
                             
                             if((rHit->getLayer()==thisHit->getLayer())and(rHit->getModule()==thisHit->getModule())){
-                                STR=rHit->getStrip();
+                                stripID=rHit->getStrip();
                                 //THIS CONDITIONS ON IT BEING IN CLUSTERS
-                                
                                 
                                 bool InCluster = false;
                                 int LAY = 0;//THE PURPOSE OF LAY IS TO COUNT THE NUMBER OF HITS PER LAYER
@@ -295,8 +294,8 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                                         }
                                         if((cluHit->getT0(0)==thisHit->getT0(0))and(not(Clusters_->at(Cl)->getID()==tHit->getID()))){
                                             InCluster = true;
-                                            HITC=Clusters_->at(Cl)->getRawHits().GetEntries();
-                                            HITL=LAY;
+                                            hitc=Clusters_->at(Cl)->getRawHits().GetEntries();
+                                            hitl=LAY;
                                         }
                                     }
                                 }
@@ -381,7 +380,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                     sample(thisHit,regions_[i_reg],ievent,eventTime,N); 
                 
                 }
-                reg_histos_[regions_[i_reg]]->FillHistograms(thisHit,weight,J,i,TimeDiff,AmpDiff,STR,HITC,HITL,otherTime);
+                reg_histos_[regions_[i_reg]]->FillHistograms(thisHit,weight,J,i,TimeDiff,AmpDiff,stripID,hitc,hitl,otherTime);
                 }
             }
         }
