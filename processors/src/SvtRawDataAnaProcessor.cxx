@@ -1,7 +1,7 @@
 /**
  * @file SvtRawDataAnaProcessor.cxx
  * @brief AnaProcessor used fill histograms to study svt hit fitting
- * @author Cameron Bravo, SLAC National Accelerator Laboratory
+ * @author Rory O'Dwyer and Cameron Bravo, SLAC National Accelerator Laboratory
  */     
 #include "SvtRawDataAnaProcessor.h"
 
@@ -210,10 +210,12 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
 
 
     tree_= tree;
+    //tree->Show();
     // init histos
     //histos = new RawSvtHitHistos(anaName_.c_str(), mmapper_);
     //histos->loadHistoConfig(histCfgFilename_);
     //histos->DefineHistos();
+    //std::cout<<"hello4"<<std::endl;
     //std::cout<<svtHitColl_.c_str()<<std::endl;
     ///std::cout<<svtHits_->size()<<std::endl;
     tree_->SetBranchAddress(svtHitColl_.c_str()  , &svtHits_    , &bsvtHits_    );
@@ -222,8 +224,16 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
     //tree_->SetBranchAddress("RecoEcalClusters",&recoClu_,&brecoClu_ );
     //tree_->SetBranchAddress("KalmanFullTracks",&Trk_,&bTrk_);
     tree_->SetBranchAddress("FinalStateParticles_KF",&Part_,&bPart_);
+    tree_->SetBranchAddress("SiClusters",&Clusters_,&bClusters_);
     tree_->SetBranchAddress("EventHeader",&evH_,&bevH_);
-    
+
+    /* 
+    //Making the Hit Efficiency Tree
+    TTree *HitEff_ = new TTree("hitEff","hitEff");
+    HitEff_->Branch("L1",&L1_,"L1/I");
+    //HitEff_->SetBranchAddress("L1",&L1_,&bL1_);
+    */
+
     for (unsigned int i_reg = 0; i_reg < regionSelections_.size(); i_reg++) 
     {
         std::string regname = AnaHelpers::getFileName(regionSelections_[i_reg],false);
@@ -251,17 +261,22 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
 
 
 bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
+    //std::cout<<"hello5"<<std::endl;
     Float_t TimeRef=-0.0;
     Float_t AmpRef=1000.0;
     double weight = 1.;int count1=0;int count2=0;
     long eventTime = evH_->getEventTime();
     
     //I AM DOING CLUSTER MATCHING HERE :)
-    //std::cout<<"Here is the eventTime"<<eventTime<<std::endl;
+    std::cout<<"Here is the eventTime"<<eventTime<<std::endl;
     //std::cout<<"Here is the TSBank Trigger Time"<<tsBank_->T<<std::endl;
     bool doClMatch = true;
     
-    
+    int STR = -10000;
+    int HITC = 0;
+    int HITL = 0;
+    //int MissHit = 0;
+    float otherTime = 69420.0;
     //if((doClMatch)and(not((tsBank_->prescaled.Single_3_Top==1)or(tsBank_->prescaled.Single_3_Bot==1)))){return true;}
     
     
@@ -269,28 +284,133 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
     //ONCE I DETERMINE A CLUSTER WHICH IS IN LINE WITH TRIG, I CAN USE ANY CLUSTERS CLOSE IN TIME.
     
     //std::cout<<"Trigger Time: "<<vtpBank_->singletrigs.at(0).T<<std::endl;
+    
+    
+    //std::cout<<"I got here 9B"<<std::endl;
+
     int trigPhase =  (int)((eventTime%24)/4);
+    std::cout<<"TRIGPHASE: "<<trigPhase<<std::endl;
+    std::cout<<"tphase_: "<<tphase_<<std::endl;
     if((trigPhase!=tphase_)&&(tphase_!=6)){return true;}
+    //std::cout<<"I got here 9C"<<std::endl;
+    /*doHitEff_=true;
+    if(doHitEff_){
+        for(int L = 0;L<14;L++){
+            L1_=hitEff(ievent,1);
+            HitEff_->Fill();
+        }
+        return true;
+    }*/
+    for(unsigned int i = 0; i<Clusters_->size();i++){
+        Clusters_->at(i)->getLayer();
+    }
+
     for(unsigned int i = 0; i < svtHits_->size(); i++){ 
         RawSvtHit * thisHit = svtHits_->at(i); 
         int getNum = thisHit->getFitN();//std::cout<<"I got here 10"<<std::endl;
         if(doClMatch){
             bool Continue = true;
             for(int i = 0; i<Part_->size();i++){
+                //std::cout<<"Do I break here 3"<<std::endl;
                 if(Part_->at(i)->getPDG()==22){continue;}
+                //std::cout<<"Do I break here 4"<<std::endl;
                 if(Part_->at(i)->getCluster().getEnergy()<0){continue;}
+                //std::cout<<"Do I break here 5"<<std::endl;
                 if(not((Part_->at(i)->getCluster().getTime()<=40)and(Part_->at(i)->getCluster().getTime()>=36))){continue;}
                 //std::cout<<"For each Tracker Hit I now print out Raw Hit Info: "<<std::endl;
                 for(int j = 0; j<Part_->at(i)->getTrack().getSvtHits().GetEntries();j++){
+                    //std::cout<<"Do I break here 6"<<std::endl;
                     TrackerHit * tHit = (TrackerHit*)(Part_->at(i)->getTrack().getSvtHits().At(j));
+                    double TrackTime = Part_->at(i)->getTrack().getTrackTime();
                     //std::cout<<tHit->getTime()<<std::endl;
                     for(int k = 0;k<tHit->getRawHits().GetEntries();k++){
                         RawSvtHit * rHit = (RawSvtHit*)(tHit->getRawHits().At(k));
-                        if(rHit->getT0(0)==thisHit->getT0(0)){Continue=false;}
+                        //if(rHit->getT0(0)==thisHit->getT0(0)){
+                        //STR=rHit->getStrip();
+                        int mode=0;
+                        if((rHit->getT0(0)==thisHit->getT0(0))and(mode==0)){//or(mode==2))){
+                            //This is the HIT ON TRACK Modes
+                            bool InCluster = false;
+                                int LAY = 0;//THE PURPOSE OF LAY IS TO COUNT THE NUMBER OF HITS PER LAYER
+                                //std::cout<<"DID I GET HERE B4 CLUSTERS"<<std::endl;
+                                for(int Cl = 0; Cl < Clusters_->size(); Cl++){
+                                    //std::cout<<"DO I GET HERE"<<std::endl;
+                                    for(int Clh = 0; Clh < Clusters_->at(Cl)->getRawHits().GetEntries(); Clh++){
+                                        //std::cout<<"DO I GET HERE 2"<<std::endl;
+                                        RawSvtHit * cluHit = (RawSvtHit*)(Clusters_->at(Cl)->getRawHits().At(Clh));
+                                        if((cluHit->getLayer()==thisHit->getLayer())and(cluHit->getModule()==thisHit->getModule())){
+                                            LAY++;
+                                        }
+                                        if((cluHit->getT0(0)==thisHit->getT0(0))){//and(not(Clusters_->at(Cl)->getID()==tHit->getID()))){
+                                            InCluster = true;
+                                            HITC=Clusters_->at(Cl)->getRawHits().GetEntries();
+                                            HITL=LAY;
+                                            if(Clusters_->at(Cl)->getRawHits().GetEntries()==2){
+                                                RawSvtHit * otherHit = (RawSvtHit*)(Clusters_->at(Cl)->getRawHits().At((Clh+1)%2));
+                                                otherTime = otherHit->getT0(0);
+                                            }
+                                        }
+                                        //if((mode==2)and((cluHit->getStrip()-thisHit->getStrip())*(cluHit->getStrip()-thisHit->getStrip())<=100)and(rHit->getLayer()==thisHit->getLayer())and(rHit->getModule()==thisHit->getModule())and((cluHit->getT0(0)-TrackTime)*(cluHit->getT0(0)-TrackTime)<=(thisHit->getT0(0)-TrackTime)*(thisHit->getT0(0)-TrackTime))){
+                                        //    MissHit==true;
+                                        //}
+                                    }
+                                }
+                            if(InCluster){
+                                Continue = false;
+                            }
+                        }//std::cout<<rHit->getLayer()<<std::endl;
+
+                        if((rHit->getT0(0)<=-30)and(not(rHit->getT0(0)==thisHit->getT0(0)))and(mode==1)){
+                            //This is the HIT OFF TRACK Mode
+                            //You are looking at the really early time on track hits, and specifically at other hits in the same layer and module
+                            //to see if you have evidence of a misplaced hit.
+                            
+                            if((rHit->getLayer()==thisHit->getLayer())and(rHit->getModule()==thisHit->getModule())){
+                                STR=rHit->getStrip();
+                                //THIS CONDITIONS ON IT BEING IN CLUSTERS
+                                
+                                
+                                bool InCluster = false;
+                                int LAY = 0;//THE PURPOSE OF LAY IS TO COUNT THE NUMBER OF HITS PER LAYER
+                                //std::cout<<"DID I GET HERE B4 CLUSTERS"<<std::endl;
+                                for(int Cl = 0; Cl < Clusters_->size(); Cl++){
+                                    //std::cout<<"DO I GET HERE"<<std::endl;
+                                    for(int Clh = 0; Clh < Clusters_->at(Cl)->getRawHits().GetEntries(); Clh++){
+                                        //std::cout<<"DO I GET HERE 2"<<std::endl;
+                                        RawSvtHit * cluHit = (RawSvtHit*)(Clusters_->at(Cl)->getRawHits().At(Clh));
+                                        //std::cout<<cluHit->getLayer()<<std::endl;
+                                        if((cluHit->getLayer()==thisHit->getLayer())and(cluHit->getModule()==thisHit->getModule())){
+                                            LAY++;
+                                        }
+                                        if((cluHit->getT0(0)==thisHit->getT0(0))and(not(Clusters_->at(Cl)->getID()==tHit->getID()))){
+                                            InCluster = true;
+                                            HITC=Clusters_->at(Cl)->getRawHits().GetEntries();
+                                            HITL=LAY;
+                                        }
+                                    }
+                                }
+                                if(InCluster){
+                                    Continue = false;
+                                }
+                            }
+                        }
+                        
+                        
+                        //if(rHit->getT0(0)==thisHit->getT0(0)){
+                            //Continue=false;
+                            //bool helper=true;//(Part_->at(i)->getTrack().getTrackerHitCount()>=12);
+                            //helper = (helper)and(thisHit->getChiSq(0)<.9);
+                            //helper=(helper)and(Part_->at(i)->getTrack().getChi2()<=8);
+                            //if(helper){
+                            //    Continue=false;
+                            //}
+                        //}           
                         //std::cout<<"Raw Hit T0: "<<rHit->getT0(0)<<std::endl;
                     }
+                    //std::cout<<"Do I break here 7"<<std::endl;
                     //std::cout<<" T0: "<<Part_->at(i)->getTrack().getSvtHits().At(j)->getRawHits().At(0).getT0()<<std::endl; 
                 }
+                //std::cout<<"Do I break here 8"<<std::endl;
             }
             if(Continue){
                 return true;
@@ -302,7 +422,9 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 //std::cout<<"\ngetNum:"<<getNum<<std::endl;
                 //std::cout<<"region No:"<<regions_[i_reg]<<std::endl;
 
-                //std::cout<<"Which Hit:"<<J<<std::endl;                
+                //std::cout<<"Which Hit:"<<J<<std::endl;
+                std::cout<<"I got here 10"<<std::endl;
+                
                 Float_t TimeDiff=-42069.0;
                 Float_t AmpDiff=-42069.0;
                 
@@ -312,7 +434,9 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                     TimeDiff=(thisHit->getT0(J))-(thisHit->getT0((J+1)%2));
                     AmpDiff=(thisHit->getT0(J))-(thisHit->getT0((J+1)%2)); 
                     if(!(reg_selectors_[regions_[i_reg]]->passCutLt("TimeDiff_lt",TimeDiff*TimeDiff,weight))){continue;}
-                }                
+                }
+                //std::cout<<"Did I atleast make it here?"<<std::endl;
+                
                 if(!(reg_selectors_[regions_[i_reg]]->passCutEq("getId_lt",J,weight))){continue;} 
                 if(!(reg_selectors_[regions_[i_reg]]->passCutEq("getId_gt",J,weight))){continue;}   
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("chi_lt",thisHit->getChiSq(J),weight))){continue;}
@@ -320,6 +444,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                                 
                 
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ft",(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)<((thisHit->getT0((J+1)%getNum)-TimeRef)*(thisHit->getT0((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
+                //std::cout<<"I Made it here"<<std::endl;
                 if(i_reg<regionSelections_.size()-1){
                     if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ct",(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)>((thisHit->getT0((J+1)%getNum)-TimeRef)*(thisHit->getT0((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
                 }else{
@@ -327,6 +452,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                         if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ct",(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)>((thisHit->getT0((J+1)%getNum)-TimeRef)*(thisHit->getT0((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
                     }
                 }
+                //std::cout<<"I Made it here 2"<<std::endl;
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ca",(((thisHit->getAmp(J))-AmpRef)*((thisHit->getAmp(J))-AmpRef)<((thisHit->getAmp((J+1)%getNum)-AmpRef)*(thisHit->getAmp((J+1)%getNum)-AmpRef)+.00001)),weight))){continue;}
 
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_fterr",(((thisHit->getT0err(J))-TimeRef)*((thisHit->getT0err(J))-TimeRef)<((thisHit->getT0err((J+1)%getNum)-TimeRef)*(thisHit->getT0err((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
@@ -363,7 +489,9 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 //if(!(reg_selectors_[regions_[i_reg]]->passCutEq("time_phase",trigPhase,weight))){continue;}
                 
                 bool helper = false; 
+                //std::cout<<"hello"<<std::endl;
                 if(doSample_==1){
+                    //std::cout<<"I ACTUALLY DID THIS"<<std::endl;
                     int len=*(&readout+1)-readout;
                     for(int KK=0;KK<len;KK++){
                         if(readout[KK]<200){
@@ -372,6 +500,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                     }
                 }
                 if((doSample_==1)and(helper)){
+                    //std::cout<<"I ACTUALLY DID THIS"<<std::endl; 
                     int N = evH_->getEventNumber();
                     //std::cout<<T<<std::endl;
                     //if((regions_[i_reg]=="OneFit")and(feb>=2)){continue;}
@@ -379,24 +508,45 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                     sample(thisHit,regions_[i_reg],ievent,eventTime,N); 
                 
                 }
-
-                reg_histos_[regions_[i_reg]]->FillHistograms(thisHit,weight,J,i,TimeDiff,AmpDiff);
-            }
+                reg_histos_[regions_[i_reg]]->FillHistograms(thisHit,weight,J,i,TimeDiff,AmpDiff,STR,HITC,HITL,otherTime);
+                }
             }
         }
         //std::cout<<count1<<std::endl;
         //std::cout<<count2<<std::endl;
+        std::cout<<"I got here 10"<<std::endl;
         return true;
     }
 
-    /*
-     *
-     *READS IN FROM THE LOCAL BASELINE AND TIME ARRAYS THE PULSE SHAPES AND BASELINES AND PLOTS THEM OVER THE ADC COUNTS
-     THIS ALLOWS US, WHEN ACTIVATED, TO SEE WHAT DECISIONS ARE BEING MADE BY THE FITTING ALGORITHM GIVEN SOME CUT ON OUR PULSES
-     ESTABLISHED BY THE REGION SELECTION IN PROCESS ABOVE.
-     *
-     *
-     */
+/* 
+int SvtRawDataAnaProcessor::hitEff(IEvent* ievent, int L){
+    int deno = -1;
+    for(int i = 0; i<Part_->size();i++){
+        //std::cout<<"Do I break here 3"<<std::endl;
+        if(Part_->at(i)->getPDG()==22){continue;}
+        //std::cout<<"Do I break here 4"<<std::endl;
+        if(Part_->at(i)->getCluster().getEnergy()<0){continue;}
+        //std::cout<<"Do I break here 5"<<std::endl;
+        if(not((Part_->at(i)->getCluster().getTime()<=40)and(Part_->at(i)->getCluster().getTime()>=36))){continue;}
+        //std::cout<<"For each Tracker Hit I now print out Raw Hit Info: "<<std::endl;
+        if(Part_->at(i)->getTrack().getTrackerHitCount()>12){   
+            deno = 0;
+            for(int j = 0; j<Part_->at(i)->getTrack().getSvtHits().GetEntries();j++){
+                TrackerHit * tHit = (TrackerHit*)(Part_->at(i)->getTrack().getSvtHits().At(j));
+                for(int k = 0;k<tHit->getRawHits().GetEntries();k++){
+                    RawSvtHit * rHit = (RawSvtHit*)(tHit->getRawHits().At(k));
+                    if((rHit->getLayer()==L)){
+                        deno = 1;    
+                        //I DID THE PROBE
+                    }
+               }
+            }
+        }
+    }
+    return deno;
+}
+*/
+    
 
     void SvtRawDataAnaProcessor::sample(RawSvtHit* thisHit,std::string word, IEvent* ievent,long T,int N){
         auto mod = std::to_string(thisHit->getModule());
@@ -425,6 +575,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
             BigCount+=(feb-2)*2560+hyb*640+(int)(thisHit->getStrip());
         }
         //std::cout<<"READ HERE "<<BigCount<<" "<<feb<<" "<<hyb<<" "<<(int)thisHit->getStrip()<<" "<<baseErr1_[feb][hyb][(int)thisHit->getStrip()][0]<<std::endl;
+        //std::cout<<"I GOT HERE"<<std::endl;
         int * adcs2=thisHit->getADCs(); 
         //std::cout<<regions_[i_reg]<<" "<<readout<<std::endl;
 
@@ -491,6 +642,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
         for(int K=0; K<Length;K++){
             //std::cout<<K<<std::endl;
             if((word==MatchList_[K])and(readout[K]<200)){ 
+                //std::cout<<"GOT HERE INSIDE IF"<<std::endl;
                 //gPad->vRange(0.0,3000.0,150.0,6000.0);
                 readout[K]++;
                 //auto gr = new TGraph();
@@ -592,6 +744,10 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
     void SvtRawDataAnaProcessor::finalize() {
 
         outF_->cd();
+        /*TDirectory* hitdir{nullptr};
+        hitdir = outF_->mkdir("HitEfficiency");
+        hitdir->cd();
+        HitEff_->Write(); */
         for(reg_it it = reg_histos_.begin(); it!=reg_histos_.end(); ++it){
             std::string dirName = it->first;
             (it->second)->saveHistos(outF_,dirName);
