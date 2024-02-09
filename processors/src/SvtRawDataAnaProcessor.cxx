@@ -10,7 +10,6 @@
 SvtRawDataAnaProcessor::SvtRawDataAnaProcessor(const std::string& name, Process& process) : Processor(name,process){
     mmapper_ = new ModuleMapper();
 }
-//TODO CHECK THIS DESTRUCTOR
 SvtRawDataAnaProcessor::~SvtRawDataAnaProcessor(){}
 
 
@@ -62,11 +61,6 @@ float SvtRawDataAnaProcessor::str_to_float(std::string token){
     return base;
 }
 
-//float reverseEngineerTime(float ti,IEvent* ievent){
-//    return ti-1.0;
-//}
- 
-
 float rETime(float ti,long T){
     bool correctTimeOffset = true;
     bool subtractTriggerTime = true;
@@ -75,43 +69,22 @@ float rETime(float ti,long T){
 
     bool correctChanT0 = false;
     bool correctT0Shift = false;
-    
-    //bool subtractTOF = true;
-    
-    
     bool useTimestamps = false;
     
-    //sensor=hit.getSensor();
     long OffsetTime = 35;
     long OffsetPhase = 4;
     long trigTimeOffset = 14;
-    //THIS ONE
-    //std::cout<<"Initial Time: "<<ti<<std::endl;
-    
+        
     if (correctTimeOffset) {
-        //if (debug)
-        //    System.out.println("subtracting svt time offset " + timingConstants.getOffsetTime());
         ti=ti-OffsetTime;
     }
     
-
-    //THIS ONE
     if (subtractTriggerTime) {
-        //std::cout<<T<<std::endl;
-        //std::cout<<"OffsetPhase Time is "<<((T-4*OffsetPhase)%24)/8<<std::endl;
         float tt = (float)(((T-4*OffsetPhase)%24)-trigTimeOffset);
-        //std::cout<<tt<<std::endl;
         if (!syncGood) tt = tt - 8;
-        //std::cout<<tt<<std::endl;
         if (!syncGood && (((T-4*OffsetPhase)%24)/8 < 1)) { 
             tt = tt + 24;//std::cout<<"I SHIFTED"<<std::endl;
-        }
-        //std::cout<<tt<<std::endl;
-        //else{std::cout<<"I DID NOT SHIFT"<<std::endl;}
-        //if (isMC && ((((int)T - 4 * (int)OffsetPhase) % 24)/8 == 1)) {
-        //    tt = tt + 24;
-        //} 
-        
+        }        
         ti=ti-tt;
     }
     return ti;
@@ -177,9 +150,6 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
                     }   
                 }
             }
-            //if(i<2048){
-            //std::cout<<i<<" "<<feb<<" "<<hyb<<" "<<ch<<std::endl;
-            //std::cout<<s<<std::endl;}
             for(int I=0;I<13;I++){
                 if(I>0){
                     if(i<=4096){
@@ -210,29 +180,10 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
 
 
     tree_= tree;
-    //tree->Show();
-    // init histos
-    //histos = new RawSvtHitHistos(anaName_.c_str(), mmapper_);
-    //histos->loadHistoConfig(histCfgFilename_);
-    //histos->DefineHistos();
-    //std::cout<<"hello4"<<std::endl;
-    //std::cout<<svtHitColl_.c_str()<<std::endl;
-    ///std::cout<<svtHits_->size()<<std::endl;
     tree_->SetBranchAddress(svtHitColl_.c_str()  , &svtHits_    , &bsvtHits_    );
-    //tree_->SetBranchAddress("VTPBank", &vtpBank_ , &bvtpBank_ );
-    //tree_->SetBranchAddress("TSBank", &tsBank_ , &btsBank_ );
-    //tree_->SetBranchAddress("RecoEcalClusters",&recoClu_,&brecoClu_ );
-    //tree_->SetBranchAddress("KalmanFullTracks",&Trk_,&bTrk_);
     tree_->SetBranchAddress("FinalStateParticles_KF",&Part_,&bPart_);
     tree_->SetBranchAddress("SiClusters",&Clusters_,&bClusters_);
     tree_->SetBranchAddress("EventHeader",&evH_,&bevH_);
-
-    /* 
-    //Making the Hit Efficiency Tree
-    TTree *HitEff_ = new TTree("hitEff","hitEff");
-    HitEff_->Branch("L1",&L1_,"L1/I");
-    //HitEff_->SetBranchAddress("L1",&L1_,&bL1_);
-    */
 
     for (unsigned int i_reg = 0; i_reg < regionSelections_.size(); i_reg++) 
     {
@@ -244,7 +195,6 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
 
         reg_histos_[regname] = std::make_shared<RawSvtHitHistos>(regname,mmapper_);
         reg_histos_[regname]->loadHistoConfig(histCfgFilename_);
-        //reg_histos_[regname]->doTrackComparisonPlots(false);
         reg_histos_[regname]->DefineHistos();
 
         regions_.push_back(regname);
@@ -261,82 +211,50 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
 
 
 bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
-    //std::cout<<"hello5"<<std::endl;
     Float_t TimeRef=-0.0;
     Float_t AmpRef=1000.0;
     double weight = 1.;int count1=0;int count2=0;
     long eventTime = evH_->getEventTime();
-    
-    //I AM DOING CLUSTER MATCHING HERE :)
-    std::cout<<"Here is the eventTime"<<eventTime<<std::endl;
-    //std::cout<<"Here is the TSBank Trigger Time"<<tsBank_->T<<std::endl;
-    bool doClMatch = true;
+        bool doClMatch = true;
     
     int STR = -10000;
     int HITC = 0;
     int HITL = 0;
-    //int MissHit = 0;
     float otherTime = 69420.0;
-    //if((doClMatch)and(not((tsBank_->prescaled.Single_3_Top==1)or(tsBank_->prescaled.Single_3_Bot==1)))){return true;}
     
     
     //ONLY POSITRONS, MAY USE FEE's 
     //ONCE I DETERMINE A CLUSTER WHICH IS IN LINE WITH TRIG, I CAN USE ANY CLUSTERS CLOSE IN TIME.
     
-    //std::cout<<"Trigger Time: "<<vtpBank_->singletrigs.at(0).T<<std::endl;
-    
-    
-    //std::cout<<"I got here 9B"<<std::endl;
-
     int trigPhase =  (int)((eventTime%24)/4);
-    std::cout<<"TRIGPHASE: "<<trigPhase<<std::endl;
-    std::cout<<"tphase_: "<<tphase_<<std::endl;
     if((trigPhase!=tphase_)&&(tphase_!=6)){return true;}
-    //std::cout<<"I got here 9C"<<std::endl;
-    /*doHitEff_=true;
-    if(doHitEff_){
-        for(int L = 0;L<14;L++){
-            L1_=hitEff(ievent,1);
-            HitEff_->Fill();
-        }
-        return true;
-    }*/
+    
     for(unsigned int i = 0; i<Clusters_->size();i++){
         Clusters_->at(i)->getLayer();
     }
 
     for(unsigned int i = 0; i < svtHits_->size(); i++){ 
         RawSvtHit * thisHit = svtHits_->at(i); 
-        int getNum = thisHit->getFitN();//std::cout<<"I got here 10"<<std::endl;
+        int getNum = thisHit->getFitN();
         if(doClMatch){
             bool Continue = true;
             for(int i = 0; i<Part_->size();i++){
-                //std::cout<<"Do I break here 3"<<std::endl;
                 if(Part_->at(i)->getPDG()==22){continue;}
-                //std::cout<<"Do I break here 4"<<std::endl;
                 if(Part_->at(i)->getCluster().getEnergy()<0){continue;}
-                //std::cout<<"Do I break here 5"<<std::endl;
                 if(not((Part_->at(i)->getCluster().getTime()<=40)and(Part_->at(i)->getCluster().getTime()>=36))){continue;}
-                //std::cout<<"For each Tracker Hit I now print out Raw Hit Info: "<<std::endl;
                 for(int j = 0; j<Part_->at(i)->getTrack().getSvtHits().GetEntries();j++){
                     //std::cout<<"Do I break here 6"<<std::endl;
                     TrackerHit * tHit = (TrackerHit*)(Part_->at(i)->getTrack().getSvtHits().At(j));
                     double TrackTime = Part_->at(i)->getTrack().getTrackTime();
-                    //std::cout<<tHit->getTime()<<std::endl;
                     for(int k = 0;k<tHit->getRawHits().GetEntries();k++){
                         RawSvtHit * rHit = (RawSvtHit*)(tHit->getRawHits().At(k));
-                        //if(rHit->getT0(0)==thisHit->getT0(0)){
-                        //STR=rHit->getStrip();
                         int mode=0;
                         if((rHit->getT0(0)==thisHit->getT0(0))and(mode==0)){//or(mode==2))){
                             //This is the HIT ON TRACK Modes
                             bool InCluster = false;
                                 int LAY = 0;//THE PURPOSE OF LAY IS TO COUNT THE NUMBER OF HITS PER LAYER
-                                //std::cout<<"DID I GET HERE B4 CLUSTERS"<<std::endl;
                                 for(int Cl = 0; Cl < Clusters_->size(); Cl++){
-                                    //std::cout<<"DO I GET HERE"<<std::endl;
                                     for(int Clh = 0; Clh < Clusters_->at(Cl)->getRawHits().GetEntries(); Clh++){
-                                        //std::cout<<"DO I GET HERE 2"<<std::endl;
                                         RawSvtHit * cluHit = (RawSvtHit*)(Clusters_->at(Cl)->getRawHits().At(Clh));
                                         if((cluHit->getLayer()==thisHit->getLayer())and(cluHit->getModule()==thisHit->getModule())){
                                             LAY++;
@@ -350,16 +268,13 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                                                 otherTime = otherHit->getT0(0);
                                             }
                                         }
-                                        //if((mode==2)and((cluHit->getStrip()-thisHit->getStrip())*(cluHit->getStrip()-thisHit->getStrip())<=100)and(rHit->getLayer()==thisHit->getLayer())and(rHit->getModule()==thisHit->getModule())and((cluHit->getT0(0)-TrackTime)*(cluHit->getT0(0)-TrackTime)<=(thisHit->getT0(0)-TrackTime)*(thisHit->getT0(0)-TrackTime))){
-                                        //    MissHit==true;
-                                        //}
                                     }
                                 }
                             if(InCluster){
                                 Continue = false;
                             }
-                        }//std::cout<<rHit->getLayer()<<std::endl;
-
+                        }
+                        
                         if((rHit->getT0(0)<=-30)and(not(rHit->getT0(0)==thisHit->getT0(0)))and(mode==1)){
                             //This is the HIT OFF TRACK Mode
                             //You are looking at the really early time on track hits, and specifically at other hits in the same layer and module
@@ -372,13 +287,9 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                                 
                                 bool InCluster = false;
                                 int LAY = 0;//THE PURPOSE OF LAY IS TO COUNT THE NUMBER OF HITS PER LAYER
-                                //std::cout<<"DID I GET HERE B4 CLUSTERS"<<std::endl;
                                 for(int Cl = 0; Cl < Clusters_->size(); Cl++){
-                                    //std::cout<<"DO I GET HERE"<<std::endl;
                                     for(int Clh = 0; Clh < Clusters_->at(Cl)->getRawHits().GetEntries(); Clh++){
-                                        //std::cout<<"DO I GET HERE 2"<<std::endl;
                                         RawSvtHit * cluHit = (RawSvtHit*)(Clusters_->at(Cl)->getRawHits().At(Clh));
-                                        //std::cout<<cluHit->getLayer()<<std::endl;
                                         if((cluHit->getLayer()==thisHit->getLayer())and(cluHit->getModule()==thisHit->getModule())){
                                             LAY++;
                                         }
@@ -394,37 +305,15 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                                 }
                             }
                         }
-                        
-                        
-                        //if(rHit->getT0(0)==thisHit->getT0(0)){
-                            //Continue=false;
-                            //bool helper=true;//(Part_->at(i)->getTrack().getTrackerHitCount()>=12);
-                            //helper = (helper)and(thisHit->getChiSq(0)<.9);
-                            //helper=(helper)and(Part_->at(i)->getTrack().getChi2()<=8);
-                            //if(helper){
-                            //    Continue=false;
-                            //}
-                        //}           
-                        //std::cout<<"Raw Hit T0: "<<rHit->getT0(0)<<std::endl;
                     }
-                    //std::cout<<"Do I break here 7"<<std::endl;
-                    //std::cout<<" T0: "<<Part_->at(i)->getTrack().getSvtHits().At(j)->getRawHits().At(0).getT0()<<std::endl; 
                 }
-                //std::cout<<"Do I break here 8"<<std::endl;
             }
             if(Continue){
                 return true;
             }
         }       
         for(unsigned int i_reg = 0; i_reg < regionSelections_.size(); i_reg++){
-            //std::cout<<"\n"<<std::endl;
             for(unsigned int J=0; J<getNum; J++){
-                //std::cout<<"\ngetNum:"<<getNum<<std::endl;
-                //std::cout<<"region No:"<<regions_[i_reg]<<std::endl;
-
-                //std::cout<<"Which Hit:"<<J<<std::endl;
-                std::cout<<"I got here 10"<<std::endl;
-                
                 Float_t TimeDiff=-42069.0;
                 Float_t AmpDiff=-42069.0;
                 
@@ -435,7 +324,6 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                     AmpDiff=(thisHit->getT0(J))-(thisHit->getT0((J+1)%2)); 
                     if(!(reg_selectors_[regions_[i_reg]]->passCutLt("TimeDiff_lt",TimeDiff*TimeDiff,weight))){continue;}
                 }
-                //std::cout<<"Did I atleast make it here?"<<std::endl;
                 
                 if(!(reg_selectors_[regions_[i_reg]]->passCutEq("getId_lt",J,weight))){continue;} 
                 if(!(reg_selectors_[regions_[i_reg]]->passCutEq("getId_gt",J,weight))){continue;}   
@@ -444,7 +332,6 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                                 
                 
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ft",(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)<((thisHit->getT0((J+1)%getNum)-TimeRef)*(thisHit->getT0((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
-                //std::cout<<"I Made it here"<<std::endl;
                 if(i_reg<regionSelections_.size()-1){
                     if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ct",(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)>((thisHit->getT0((J+1)%getNum)-TimeRef)*(thisHit->getT0((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
                 }else{
@@ -452,24 +339,17 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                         if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ct",(((thisHit->getT0(J))-TimeRef)*((thisHit->getT0(J))-TimeRef)>((thisHit->getT0((J+1)%getNum)-TimeRef)*(thisHit->getT0((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
                     }
                 }
-                //std::cout<<"I Made it here 2"<<std::endl;
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_ca",(((thisHit->getAmp(J))-AmpRef)*((thisHit->getAmp(J))-AmpRef)<((thisHit->getAmp((J+1)%getNum)-AmpRef)*(thisHit->getAmp((J+1)%getNum)-AmpRef)+.00001)),weight))){continue;}
 
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_fterr",(((thisHit->getT0err(J))-TimeRef)*((thisHit->getT0err(J))-TimeRef)<((thisHit->getT0err((J+1)%getNum)-TimeRef)*(thisHit->getT0err((J+1)%getNum)-TimeRef)+.00001)),weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("doing_cterr",(((thisHit->getT0err(J))-0.0)*((thisHit->getT0err(J))-0.0)>((thisHit->getT0err((J+1)%getNum)-0.0)*(thisHit->getT0err((J+1)%getNum)-0.0)+.00001)),weight))){continue;}
-
-                //if(!(std::abs((thisHit->getT0(J))-TimeRef)<std::abs(thisHit->getT0((J+1)%2)-TimeRef))){continue;}          
-                //if(!(reg_selectors_[regions_[i_reg]]->passCutEq("doing_ca",1.0,weight))){continue;}else{
-                //if(!(std::abs((thisHit->getT0(J))-TimeRef)<std::abs(thisHit->getT0((J+1)%2)-TimeRef))){continue;}          
+   
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("amp_lt",thisHit->getAmp(0),weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutGt("amp_gt",thisHit->getAmp(0),weight))){continue;}
 
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("time_lt",thisHit->getT0(0),weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutGt("time_gt",thisHit->getT0(0),weight))){continue;}
 
-                //std::cout<<(float)(thisHit->getT0((J+1)%getNum))<<std::endl;
-                //std::cout<<!(reg_selectors_[regions_[i_reg]]->passCutLt("Otime_lt",(float)(thisHit->getT0((J+1)%getNum)),weight))<<std::endl;
-                //std::cout<<!(reg_selectors_[regions_[i_reg]]->passCutGt("Otime_gt",(float)(thisHit->getT0((J+1)%getNum)),weight))<<std::endl;
                 if(!(reg_selectors_[regions_[i_reg]]->passCutLt("Otime_lt",(float)(thisHit->getT0((J+1)%getNum)),weight))){continue;}
                 if(!(reg_selectors_[regions_[i_reg]]->passCutGt("Otime_gt",(float)(thisHit->getT0((J+1)%getNum)),weight))){continue;}
 
@@ -486,12 +366,8 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 }
                 if(!(reg_selectors_[regions_[i_reg]]->passCutEq("first_max",adcs[0]-maxx,weight))){continue;}
                 
-                //if(!(reg_selectors_[regions_[i_reg]]->passCutEq("time_phase",trigPhase,weight))){continue;}
-                
                 bool helper = false; 
-                //std::cout<<"hello"<<std::endl;
                 if(doSample_==1){
-                    //std::cout<<"I ACTUALLY DID THIS"<<std::endl;
                     int len=*(&readout+1)-readout;
                     for(int KK=0;KK<len;KK++){
                         if(readout[KK]<200){
@@ -500,10 +376,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                     }
                 }
                 if((doSample_==1)and(helper)){
-                    //std::cout<<"I ACTUALLY DID THIS"<<std::endl; 
                     int N = evH_->getEventNumber();
-                    //std::cout<<T<<std::endl;
-                    //if((regions_[i_reg]=="OneFit")and(feb>=2)){continue;}
                     if((regions_[i_reg]=="CTFit")and((thisHit->getT0(J)<26.0)or(thisHit->getT0(J)>30.0))){continue;}
                     sample(thisHit,regions_[i_reg],ievent,eventTime,N); 
                 
@@ -512,41 +385,8 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                 }
             }
         }
-        //std::cout<<count1<<std::endl;
-        //std::cout<<count2<<std::endl;
-        std::cout<<"I got here 10"<<std::endl;
         return true;
-    }
-
-/* 
-int SvtRawDataAnaProcessor::hitEff(IEvent* ievent, int L){
-    int deno = -1;
-    for(int i = 0; i<Part_->size();i++){
-        //std::cout<<"Do I break here 3"<<std::endl;
-        if(Part_->at(i)->getPDG()==22){continue;}
-        //std::cout<<"Do I break here 4"<<std::endl;
-        if(Part_->at(i)->getCluster().getEnergy()<0){continue;}
-        //std::cout<<"Do I break here 5"<<std::endl;
-        if(not((Part_->at(i)->getCluster().getTime()<=40)and(Part_->at(i)->getCluster().getTime()>=36))){continue;}
-        //std::cout<<"For each Tracker Hit I now print out Raw Hit Info: "<<std::endl;
-        if(Part_->at(i)->getTrack().getTrackerHitCount()>12){   
-            deno = 0;
-            for(int j = 0; j<Part_->at(i)->getTrack().getSvtHits().GetEntries();j++){
-                TrackerHit * tHit = (TrackerHit*)(Part_->at(i)->getTrack().getSvtHits().At(j));
-                for(int k = 0;k<tHit->getRawHits().GetEntries();k++){
-                    RawSvtHit * rHit = (RawSvtHit*)(tHit->getRawHits().At(k));
-                    if((rHit->getLayer()==L)){
-                        deno = 1;    
-                        //I DID THE PROBE
-                    }
-               }
-            }
-        }
-    }
-    return deno;
-}
-*/
-    
+    }    
 
     void SvtRawDataAnaProcessor::sample(RawSvtHit* thisHit,std::string word, IEvent* ievent,long T,int N){
         auto mod = std::to_string(thisHit->getModule());
@@ -563,10 +403,7 @@ int SvtRawDataAnaProcessor::hitEff(IEvent* ievent, int L){
         if((feb>=2)and(word=="OneFit")){return;}
         if((feb<2)and(word=="CTFit")){return;}
         if(thisHit->getChiSq(0)<.85){return;}
-        
-        
-        
-        //std::cout<<"Feb "<<feb<<" ,Hyb "<<hyb<<" ,Baseline Feb<=1: "<<baseErr1_[0][0][(int)thisHit->getStrip()][0]<<" ,Baseline Feb>1: "<<baseErr1_[0][1][(int)thisHit->getStrip()][0]<<" More Baselines "<<baseErr1_[0][2][(int)thisHit->getStrip()][0]<<" ,Baseline Feb>1: "<<baseErr1_[0][3][(int)thisHit->getStrip()][0]<<std::endl;
+                
         int BigCount = 0;
         if(feb<=1){
             BigCount+=feb*2048+hyb*512+(int)(thisHit->getStrip());
@@ -574,16 +411,11 @@ int SvtRawDataAnaProcessor::hitEff(IEvent* ievent, int L){
             BigCount+=4096;
             BigCount+=(feb-2)*2560+hyb*640+(int)(thisHit->getStrip());
         }
-        //std::cout<<"READ HERE "<<BigCount<<" "<<feb<<" "<<hyb<<" "<<(int)thisHit->getStrip()<<" "<<baseErr1_[feb][hyb][(int)thisHit->getStrip()][0]<<std::endl;
-        //std::cout<<"I GOT HERE"<<std::endl;
         int * adcs2=thisHit->getADCs(); 
-        //std::cout<<regions_[i_reg]<<" "<<readout<<std::endl;
 
         TF1* fitfunc = fourPoleFitFunction("Pulse 0",0);
         TF1* fitfunc2 = fourPoleFitFunction("Pulse 1",0);
         TF1* fitfunc3 = fourPoleFitFunction("Addition",1);
-        //TF1* baseline = new TF1("base","[0]",0.0,150.0);
-        //rETime((float(i))*24.0,T)
         float TimeShift[2] = {-1*rETime(-(thisHit->getT0(0)),T),-1*rETime(-(thisHit->getT0(1)),T)};
 
         fitfunc->FixParameter(0,TimeShift[0]);
@@ -597,7 +429,6 @@ int SvtRawDataAnaProcessor::hitEff(IEvent* ievent, int L){
             fitfunc->FixParameter(1,times2_[feb-2][hyb][(int)thisHit->getStrip()][1]);
             fitfunc->FixParameter(2,times2_[feb-2][hyb][(int)thisHit->getStrip()][2]);
             fitfunc->FixParameter(4,baseErr2_[feb-2][hyb][(int)thisHit->getStrip()][1]); 
-            //baseline->FixParameter(0,baseErr2_[feb-2][hyb][(int)thisHit->getStrip()][1]);
         }
         if(thisHit->getFitN()==2){
             fitfunc2->FixParameter(0,TimeShift[1]);
@@ -634,40 +465,23 @@ int SvtRawDataAnaProcessor::hitEff(IEvent* ievent, int L){
             } 
         }
 
-        //for(int P=0;P<2;P++){for(int PP=0;PP<4;PP++){ std::cout<<"baseline: "<<baseErr1_[P][PP][(int)thisHit->getStrip()][0]<<std::endl;  }}
-
-        //std::cout<<"baseline: "<<baseErr1_[feb][hyb][(int)thisHit->getStrip()][0]<<" "<<baseErr2_[feb-2][hyb][(int)thisHit->getStrip()][0]<<std::endl;
-        //std::cout<<"type for above baseline "<<word<<std::endl;
         int Length=MatchList_.size();
         for(int K=0; K<Length;K++){
-            //std::cout<<K<<std::endl;
             if((word==MatchList_[K])and(readout[K]<200)){ 
-                //std::cout<<"GOT HERE INSIDE IF"<<std::endl;
-                //gPad->vRange(0.0,3000.0,150.0,6000.0);
                 readout[K]++;
-                //auto gr = new TGraph();
-                //auto gr2 = new TGraph();
-
                 std::string helper1="Feb: "+std::to_string(feb)+",Hyb: "+std::to_string(hyb)+",ch: "+std::to_string((int)thisHit->getStrip())+", chi_sqr value: "+std::to_string((float)thisHit->getChiSq(0));
                 const char *thing1 = helper1.data();
-                //gr2->SetPoint(0,0.,3000.);gr2->SetPoint(1,0.,6000.);gr2->SetPoint(2,150.0,6000.);
-                //gPad->DrawFrame(0.0,3000.0,150.0,6000.0);
                 TCanvas *c1 = new TCanvas("c");
                 c1->DrawFrame(0.0,3000.0,150.0,7000.0);
                 c1->SetTitle(thing1);
-                //auto gr = new TGraphErrors();
-                //gr->SetName("ADCs");
                 float times[12]; float points[12]; float errors[12]; float zeroes[12];
                 for(int i=0;i<6;i++){
-                    //std::cout<<adcs2[i]<<std::endl; 
-                    //rETime((float(i))*24.0,T)
                     zeroes[i]=0.0;
                     if(feb<=1){
                         times[i]=float(i)*24.0;//-27.0;
                         points[i]=adcs2[i]-baseErr1_[feb][hyb][(int)thisHit->getStrip()][i];
                         errors[i]=baseErr1_[feb][hyb][(int)thisHit->getStrip()][i+6];
                     }else{
-                        //std::cout<<(float(i))*24.0-27.0<<"  "<<rETime((float(i))*24.0,T)<<std::endl;
                         times[i]=float(i)*24.0;//rETime((float(i))*24.0,T);//(float(i))*24.0-27.0;
                         points[i]=adcs2[i]-baseErr2_[feb-2][hyb][(int)thisHit->getStrip()][i];
                         errors[i]=baseErr2_[feb-2][hyb][(int)thisHit->getStrip()][i+6];
@@ -681,13 +495,8 @@ int SvtRawDataAnaProcessor::hitEff(IEvent* ievent, int L){
                 gr->GetXaxis()->SetLimits(-10.0,130.);
                 gr->GetHistogram()->SetMaximum(2000.);
                 gr->GetHistogram()->SetMinimum(-500.);
-                //gr2->Draw("");
                 gr->Draw("AL*");
-                //TF1* helper1 = (TF1*)fitfunc->Clone("ff");
-
-                //baseline->SetLineColor(kBlue);
-                //baseline->Draw("same"); 
-
+                
                 fitfunc->Draw("same"); 
                 if(thisHit->getFitN()==2){
                     fitfunc2->SetLineColor(kGreen);
@@ -696,14 +505,7 @@ int SvtRawDataAnaProcessor::hitEff(IEvent* ievent, int L){
                     fitfunc3->SetTitle(thing1);
                     fitfunc3->Draw("same");
 
-
-                    //TF1 *add = new TF1("ff+gg-base",);
-                    //TF1* fitfunc3 = new TF1("ll","ff+gg+base");
-                    //TF1* h = new TF1("hh","ff+gg");
-                    //add->Draw("same");
-                    //auto ADD = new TF1();
                 }
-                //gr->Draw("same");
                 auto legend = new TLegend(0.1,0.7,.48,.9);
                 legend->AddEntry("gr","ADC counts");
                 legend->AddEntry("base","Offline Baselines");
@@ -716,22 +518,6 @@ int SvtRawDataAnaProcessor::hitEff(IEvent* ievent, int L){
                 std::string helper2=word+std::to_string(readout[K]-1)+".png";
                 const char *thing2 = helper2.data(); 
                 c1->SaveAs(thing2);
-                //gPad->Clear();
-                
-                
-                //if(helper2=="OneFit8.png"){
-                    //std::cout<<BigCount<<std::endl;
-                    //std::cout<<feb<<" "<<hyb<<" "<<(int)thisHit->getStrip()<<std::endl;
-                    //std::cout<<adcs2[0]<<" "<<adcs2[1]<<" "<<adcs2[2]<<" "<<adcs2[3]<<" "<<adcs2[4]<<" "<<adcs2[5]<<std::endl;
-                    //std::cout<<adcs2[0]-baseErr1_[feb][hyb][(int)thisHit->getStrip()][0]<<" "<<adcs2[1]-baseErr1_[feb][hyb][(int)thisHit->getStrip()][1]<<" "<<adcs2[2]-baseErr1_[feb][hyb][(int)thisHit->getStrip()][2]<<" "<<adcs2[3]-baseErr1_[feb][hyb][(int)thisHit->getStrip()][3]<<" "<<adcs2[4]-baseErr1_[feb][hyb][(int)thisHit->getStrip()][4]<<" "<<adcs2[5]-baseErr1_[feb][hyb][(int)thisHit->getStrip()][5]<<std::endl;
-                //}
-                
-                
-                //std::cout<<helper2<<std::endl;
-                //std::cout<<N<<std::endl;
-                
-
-                //std::cout<<adcs2[0]<<" "<<adcs2[1]<<" "<<adcs2[2]<<" "<<adcs2[3]<<" "<<adcs2[4]<<" "<<adcs2[5]<<" "<<thisHit->getAmp(0)<<" "<<thisHit->getT0(0)<<" "<<BigCount<<" "<<thisHit->getChiSq(0)<<std::endl;
             }
         }
     }
@@ -744,16 +530,10 @@ int SvtRawDataAnaProcessor::hitEff(IEvent* ievent, int L){
     void SvtRawDataAnaProcessor::finalize() {
 
         outF_->cd();
-        /*TDirectory* hitdir{nullptr};
-        hitdir = outF_->mkdir("HitEfficiency");
-        hitdir->cd();
-        HitEff_->Write(); */
         for(reg_it it = reg_histos_.begin(); it!=reg_histos_.end(); ++it){
             std::string dirName = it->first;
             (it->second)->saveHistos(outF_,dirName);
             outF_->cd(dirName.c_str());
-            //reg_selectors_[it->first]->getCutFlowHisto()->Scale(.5);
-            //reg_selectors_[it->first]->getCutFlowHisto()->Write();
         }
         outF_->Close();
 
