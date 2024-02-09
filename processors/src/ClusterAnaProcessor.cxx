@@ -629,7 +629,6 @@ void ClusterAnaProcessor::finalize() {
     if(doingTracks_){
         TrackPlot();
     }
-    //ClusterFit();
     return;
 }
 DECLARE_PROCESSOR(ClusterAnaProcessor);
