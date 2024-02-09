@@ -1,5 +1,5 @@
-#ifndef __RORYCLUSTERCOMPARE_ANAPROCESSOR_H__
-#define __RORYCLUSTERCOMPARE_ANAPROCESSOR_H__
+#ifndef __CLUSTERCOMPARE_ANAPROCESSOR_H__
+#define __CLUSTERCOMPARE_ANAPROCESSOR_H__
 
 //HPSTR
 #include "HpsEvent.h"
@@ -37,13 +37,13 @@
 class TTree;
 
 
-class RoryClusterCompareAnaProcessor : public Processor {
+class ClusterCompareAnaProcessor : public Processor {
 
     public:
 
-        RoryClusterCompareAnaProcessor(const std::string& name, Process& process);
+        ClusterCompareAnaProcessor(const std::string& name, Process& process);
 
-        ~RoryClusterCompareAnaProcessor();
+        ~ClusterCompareAnaProcessor();
 
         virtual bool process(IEvent* ievent);
 
@@ -56,12 +56,6 @@ class RoryClusterCompareAnaProcessor : public Processor {
         virtual void Plot3();
         
         virtual void Plot4();
-
-        //virtual void Plot5();
-
-        //virtual void Plot6();
-
-        //virtual void Plot7();
 
         virtual void TrackPlot1();
         
@@ -187,7 +181,7 @@ class RoryClusterCompareAnaProcessor : public Processor {
         std::vector<Track*> * tracks_{};
 
 
-        //std::string anaName_{"roryClusterAna"};
+        //std::string anaName_{"ClusterAna"};
         int debug_{0};
         int isMC_{0};
         float ident_{1.0};
