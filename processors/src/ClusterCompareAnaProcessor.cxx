@@ -4,7 +4,6 @@
  * @author Rory O'Dwyer and Cameron Bravo, SLAC National Accelerator Laboratory
  */     
 #include "ClusterCompareAnaProcessor.h"
-//#include "Int_t.h"
 #include <iostream>
 
 ClusterCompareAnaProcessor::ClusterCompareAnaProcessor(const std::string& name, Process& process) : Processor(name,process){
@@ -23,7 +22,6 @@ void ClusterCompareAnaProcessor::configure(const ParameterSet& parameters) {
         isMC_            = parameters.getInteger("isMC");
         doingTracks_     = (parameters.getInteger("doTrack")==1);
         pcut_            = (float)parameters.getDouble("cut");
-        //anaName_         = parameters.getString("anaName");
     }
     catch (std::runtime_error& error)
     {
@@ -35,9 +33,7 @@ void ClusterCompareAnaProcessor::configure(const ParameterSet& parameters) {
 
 void ClusterCompareAnaProcessor::initialize(TTree* tree) {
     fillDeads();
-    tree_= tree;
-    //tree_->Print();
-   
+    tree_= tree;   
     if(isMC_==1){
         layers1_=new TH1F("layers","MC Strip Width for All Clusters",12,0.0,12.0);
         layersOnTrk1_=new TH1F("layersOnTrk","MC Strip Width for Clusters on Track",12,0.0,12.0);
@@ -65,11 +61,9 @@ void ClusterCompareAnaProcessor::initialize(TTree* tree) {
         timesOnTrkNTD1_=new TH1F("TimesOnTrkNTD","MC Time of On Track Cluster Hit NTD",1000,-60.0,60.0);
         timesOffTrkNTD1_=new TH1F("TimesOffTrkNTD","MC Time of Off Cluster Hit NTD",1000,-60.0,60.0);
 
-        std::cout<<"I GET HERE 1"<<std::endl;
         tree_->SetBranchAddress("SiClusters",&Clusters_,&bClusters_);
         tree_->SetBranchAddress("SiClustersOnTrack_KF",&ClustersKF_,&bClustersKF_);
         tree_->SetBranchAddress("SVTRawTrackerHits",&svtraw_,&bsvtraw_);
-        std::cout<<"I GET HERE 2"<<std::endl;
         return;
     }
     //Instantiating the first layer
@@ -161,7 +155,6 @@ void ClusterCompareAnaProcessor::initialize(TTree* tree) {
         TrackMomentumTOutTime2_ =  new TH1F("TrackMomentumTOutTime","The Transverse Momentum of Out of Time Tracks",1000,0.0,7.0);
         TrackMomentumTAllTime2_ = new TH1F("TrackMomentumTAll","The Transverse Momentum of All Tracks",1000,0.0,7.0);
 }
-    std::cout<<"I GET HERE 1"<<std::endl;
     tree_->SetBranchAddress("SiClusters",&Clusters_,&bClusters_);
     tree_->SetBranchAddress("SiClustersOnTrack_KF",&ClustersKF_,&bClustersKF_);
     tree_->SetBranchAddress("SVTRawTrackerHits",&svtraw_,&bsvtraw_);
@@ -169,25 +162,18 @@ void ClusterCompareAnaProcessor::initialize(TTree* tree) {
     if(doingTracks_){
         tree_->SetBranchAddress("KalmanFullTracks",&tracks_,&btracks_);
     }
-    std::cout<<"I GET HERE 2"<<std::endl;
 }
 
 bool ClusterCompareAnaProcessor::process(IEvent* ievent) {
-    //std::cout<<"We have "<< ClustersKF_->size()<<" hits"<<std::endl;
-    
-    //if(ident_>1.0){std::cout<<ident_<<std::endl;}
     if(doingTracks_){
         for(int i = 0;i<tracks_->size();i++){
             Track* track = tracks_->at(i);
-            //bool general = ((layer_==-1)||(module_==-1));
-            //if(((LAYER==layer_)&&(MODULE==module_))||(general)){
-                if(track->getTrackTime()*track->getTrackTime()<100.0){
-                    if(ident_<1.5){Z0VNShare2Hist1_->Fill(track->getZ0Err(),track->getNShared());}else{Z0VNShare2Hist2_->Fill(track->getZ0Err(),track->getNShared());}
-                    if(track->getP()<pcut_){
-                        if(ident_<1.5){Z0VNShare2HistCut1_->Fill(track->getZ0Err(),track->getNShared());}else{Z0VNShare2HistCut2_->Fill(track->getZ0Err(),track->getNShared());}
-                    }
+            if(track->getTrackTime()*track->getTrackTime()<100.0){
+                if(ident_<1.5){Z0VNShare2Hist1_->Fill(track->getZ0Err(),track->getNShared());}else{Z0VNShare2Hist2_->Fill(track->getZ0Err(),track->getNShared());}
+                if(track->getP()<pcut_){
+                    if(ident_<1.5){Z0VNShare2HistCut1_->Fill(track->getZ0Err(),track->getNShared());}else{Z0VNShare2HistCut2_->Fill(track->getZ0Err(),track->getNShared());}
                 }
-            //}
+            }
         
             //Track Momentum for In and Out of time hits (All not just transverse)
             if(ident_<1.5){TrackMomentumAllTime1_->Fill(track->getP());}else{TrackMomentumAllTime2_->Fill(track->getP());}
@@ -251,12 +237,6 @@ bool ClusterCompareAnaProcessor::process(IEvent* ievent) {
         float nLayers = (float)(clu->getRawHits().GetEntries());
         float ncharges = (float)(clu->getCharge());
         float ntimes = (float)(clu->getTime());
-        //float ntimes = 0.0;
-        //for(int p = 0;p<clu->getRawHits().GetEntries();p++){
-        //    RawSvtHit * holder = (RawSvtHit*)(clu->getRawHits().At(p));
-        //    ntimes+=holder->getT0(0);
-        //}
-        //ntimes=gtimes;//%ncharges; 
         bool onTrk = false;
         bool NTD = false;
         for(unsigned int j = 0; j < ClustersKF_->size(); j++){
@@ -264,13 +244,8 @@ bool ClusterCompareAnaProcessor::process(IEvent* ievent) {
                 onTrk = true;
             }
         }
-        //std::cout<<clu->getVolume()<<std::endl;
-        //&&(seedStrip==471)
-
         std::string input = "ly"+std::to_string(LAYER+1)+"_m"+std::to_string(MODULE);
         std::string helper = mmapper_->getHwFromSw(input);
-        //std::cout<<input<<std::endl;
-        //std::cout<<helper<<std::endl;
         int feb=std::stoi(helper.substr(1,1));
         int hyb=std::stoi(helper.substr(3,1));
               
@@ -298,19 +273,18 @@ bool ClusterCompareAnaProcessor::process(IEvent* ievent) {
                 if(dist<Dist){Dist=dist;}
             }
             if(Dist<69420){
-                if(ident_<1.5){ClusDistances1_->Fill(Dist);}else{/*std::cout<<"1 "<<Dist<<std::endl;*/ClusDistances2_->Fill(Dist);}
+                if(ident_<1.5){ClusDistances1_->Fill(Dist);}else{ClusDistances2_->Fill(Dist);}
                 if(NTD){if(ident_<1.5){ClusDistancesNTD1_->Fill(Dist);}else{ClusDistancesNTD2_->Fill(Dist);}}
             }
-            //std::cout<<"HELLO"<<std::endl;
             if(ident_<1.5){layers1_->Fill(nLayers);}else{layers2_->Fill(nLayers);}
             if(ident_<1.5){charges1_->Fill(ncharges);}else{charges2_->Fill(ncharges);}
-            if(ident_<1.5){positions1_->Fill(clu->getLayer());}else{/*std::cout<<"2"<<std::endl;*/positions2_->Fill(clu->getLayer());}
+            if(ident_<1.5){positions1_->Fill(clu->getLayer());}else{positions2_->Fill(clu->getLayer());}
             if(ident_<1.5){times1_->Fill(ntimes);}else{times2_->Fill(ntimes);}
             if(onTrk){
                 if(ident_<1.5){layersOnTrk1_->Fill(nLayers);}else{layersOnTrk2_->Fill(nLayers);}
                 if(ident_<1.5){chargesOnTrk1_->Fill(ncharges);}else{chargesOnTrk2_->Fill(ncharges);}
                 if(ident_<1.5){timesOnTrk1_->Fill(ntimes);}else{timesOnTrk2_->Fill(ntimes);} 
-                if(ident_<1.5){positionsOnTrk1_->Fill(clu->getLayer());}else{positionsOnTrk2_->Fill(clu->getLayer());}//std::cout<<"3"<<std::endl;
+                if(ident_<1.5){positionsOnTrk1_->Fill(clu->getLayer());}else{positionsOnTrk2_->Fill(clu->getLayer());}
             }else{
                 if(ident_<1.5){layersOffTrk1_->Fill(nLayers);}else{layersOffTrk2_->Fill(nLayers);}
                 if(ident_<1.5){chargesOffTrk1_->Fill(ncharges);}else{chargesOffTrk2_->Fill(ncharges);}
@@ -362,8 +336,7 @@ int ClusterCompareAnaProcessor::GetStrip(int feb,int hyb,int strip){
     return BigCount;
 }
 
-void ClusterCompareAnaProcessor::Plot1(){
-    std::cout<<"I AM IN THE FINAL STEP"<<std::endl; 
+void ClusterCompareAnaProcessor::PlotClusterLayers(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
     c1->cd();
@@ -390,8 +363,6 @@ void ClusterCompareAnaProcessor::Plot1(){
 
     c1->DrawFrame(0.0,3000.0,150.0,7000.0);
     c1->SetTitle("Layers for All Clusters");
-    //std::cout<<"I AM IN THE FINAL STEP 2"<<std::endl; 
-    //std::cout<<layers_->GetEntries()<<std::endl;
     layers1_->Draw("e");
     layers2_->Draw("e same");
     auto legend1 = new TLegend(0.3,0.8,.68,.9);
@@ -423,9 +394,8 @@ void ClusterCompareAnaProcessor::Plot1(){
     return;
 }
 
-void ClusterCompareAnaProcessor::Plot2(){
+void ClusterCompareAnaProcessor::PlotClusterCharges(){
     TCanvas *c1 = new TCanvas("c");
-    //gPad->SetLogy(true);
     c1->cd();
     
     charges1_->GetXaxis()->SetTitle("Charge");
@@ -482,10 +452,8 @@ void ClusterCompareAnaProcessor::Plot2(){
     return;
 }
 
-void ClusterCompareAnaProcessor::Plot3(){
-    std::cout<<"I AM IN THE FINAL STEP"<<std::endl; 
+void ClusterCompareAnaProcessor::PlotClusterTimes(){
     TCanvas *c1 = new TCanvas("c");
-    //gPad->SetLogy(true);
     c1->cd();
     
     times1_->GetXaxis()->SetTitle("Charge");
@@ -543,10 +511,8 @@ void ClusterCompareAnaProcessor::Plot3(){
     return;
 }
 
-void ClusterCompareAnaProcessor::Plot4(){
-    std::cout<<"I AM IN THE FINAL STEP"<<std::endl; 
+void ClusterCompareAnaProcessor::PlotClusterPositions(){
     TCanvas *c1 = new TCanvas("c");
-    //gPad->SetLogy(true);
     c1->cd();
     
     positions1_->GetXaxis()->SetTitle("Position");
@@ -599,7 +565,7 @@ void ClusterCompareAnaProcessor::Plot4(){
     return;
 }
 
-void ClusterCompareAnaProcessor::TrackPlot1(){
+void ClusterCompareAnaProcessor::TrackMomenta(){
     TCanvas *c1 = new TCanvas("c");
     c1->cd();
     gPad->SetLogy(false);
@@ -651,7 +617,7 @@ void ClusterCompareAnaProcessor::TrackPlot1(){
     return;    
 }
 
-void ClusterCompareAnaProcessor::TrackPlot2(){
+void ClusterCompareAnaProcessor::TrackTransverseMomenta(){
     TCanvas *c1 = new TCanvas("c");
     c1->cd();
     gPad->SetLogy(false); 
@@ -703,15 +669,14 @@ void ClusterCompareAnaProcessor::TrackPlot2(){
 }
 
 void ClusterCompareAnaProcessor::finalize() {
-    Plot1();  
-    Plot2();
-    Plot3();
-    Plot4();
+    PlotClusterLayers();  
+    PlotClusterCharges();
+    PlotClusterTimes();
+    PlotClusterPositions();
     if(doingTracks_){
-        TrackPlot1();
-        TrackPlot2(); 
+        TrackMomenta()();
+        TrackTransverseMomenta()(); 
     }
-    //ClusterFit();
     return;
 }
 DECLARE_PROCESSOR(ClusterCompareAnaProcessor);
