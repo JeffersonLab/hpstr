@@ -10,7 +10,7 @@ base.parser.add_argument("-M", "--module", type=int, dest="module",
 base.parser.add_argument("-MC", "--MC", type=int, dest="isMC",
                   help="IS IT MC", metavar="module",default=0)
 base.parser.add_argument("-doT", "--doT", type=int, dest="doTrack",
-                  help="DO WE DO TRACK STUFF", metavar="doTrack",default=0)
+                  help="We plot the tracking based cluster performance metrics", metavar="doTrack",default=0)
 base.parser.add_argument("-cut", "--cut", type=float, dest="cut",
                   help="Momentum Cut for NShared Profile", metavar="cut",default=-1.0)
 
@@ -37,15 +37,15 @@ p.add_library("libprocessors")
 ###############################
 #          Processors         #
 ###############################
-rclu = HpstrConf.Processor('rclu','RoryClusterAnaProcessor')
-rclu.parameters["debug"] = 0
-rclu.parameters["layer"] = options.layer
-rclu.parameters["module"] = options.module
-rclu.parameters["isMC"] = options.isMC
-rclu.parameters["doTrack"] = options.doTrack
-rclu.parameters["cut"] = options.cut
+clua = HpstrConf.Processor('clua','ClusterAnaProcessor')
+clua.parameters["debug"] = 0
+clua.parameters["layer"] = options.layer
+clua.parameters["module"] = options.module
+clua.parameters["isMC"] = options.isMC
+clua.parameters["doTrack"] = options.doTrack
+clua.parameters["cut"] = options.cut
 
-sequence = [rclu]        
+sequence = [clua]        
 
 p.sequence = sequence
 
