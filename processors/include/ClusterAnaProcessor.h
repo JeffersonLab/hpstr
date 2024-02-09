@@ -1,5 +1,5 @@
-#ifndef __RORYCLUSTER_ANAPROCESSOR_H__
-#define __RORYCLUSTER_ANAPROCESSOR_H__
+#ifndef __CLUSTER_ANAPROCESSOR_H__
+#define __CLUSTER_ANAPROCESSOR_H__
 
 //HPSTR
 #include "HpsEvent.h"
@@ -37,13 +37,13 @@
 class TTree;
 
 
-class RoryClusterAnaProcessor : public Processor {
+class ClusterAnaProcessor : public Processor {
 
     public:
 
-        RoryClusterAnaProcessor(const std::string& name, Process& process);
+        ClusterAnaProcessor(const std::string& name, Process& process);
 
-        ~RoryClusterAnaProcessor();
+        ~ClusterAnaProcessor();
 
         virtual bool process(IEvent* ievent);
 
@@ -149,7 +149,7 @@ class RoryClusterAnaProcessor : public Processor {
         std::vector<Track*> * tracks_{};
 
 
-        //std::string anaName_{"roryClusterAna"};
+        //std::string anaName_{"ClusterAna"};
         int debug_{0};
         int isMC_{0};
 };
