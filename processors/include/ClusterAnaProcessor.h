@@ -48,40 +48,26 @@ class ClusterAnaProcessor : public Processor {
         virtual bool process(IEvent* ievent);
 
         virtual void initialize(TTree* tree);
-        
-        virtual void Plot1();
-        
-        virtual void Plot2();
-        
-        virtual void Plot3();
-        
-        virtual void Plot4();
 
-        virtual void Plot5();
+        virtual void PlotClusterLayers();
 
-        virtual void Plot6();
+        virtual void PlotClusterLayersNTD();
 
-        virtual void Plot7();
+        virtual void PlotClusterCharges();
+
+        virtual void PlotClusterChargesNTD();
+
+        virtual void PlotClusterPositions();
+
+        virtual void PlotClusterTimes();
+
+        virtual void PlotClusterTimesNTD();
 
         virtual void TrackPlot1();
-
-        //virtual void ClusterFit();
 
         virtual void fillDeads();
 
         virtual int GetStrip(int feb, int hyb,int strip);
-
-        //virtual void sample(RawSvtHit* thisHit, std::string word, IEvent* ievent, long t,int i);
-        
-        //virtual int hitEff(IEvent* ievent, int L);
-
-        //virtual TF1* fourPoleFitFunction(std::string word, int caser);
-
-        //virtual float str_to_float(std::string word);
-
-        //float reverseEngineerTime(float ti, long t);
-
-        //virtual int maximum(int arr[]);
         
         virtual void finalize();
 
