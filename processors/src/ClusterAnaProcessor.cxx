@@ -1,16 +1,14 @@
 /**
  * @file ClusterAnaProcessor.cxx
- * @brief AnaProcessor used fill histograms to study svt hit fitting
+ * @brief AnaProcessor used fill histograms to study cluster reconstruction algorithms and dead channels.
  * @author Rory O'Dwyer and Cameron Bravo, SLAC National Accelerator Laboratory
  */     
 #include "ClusterAnaProcessor.h"
-//#include "Int_t.h"
 #include <iostream>
 
 ClusterAnaProcessor::ClusterAnaProcessor(const std::string& name, Process& process) : Processor(name,process){
     mmapper_ = new ModuleMapper(2021);
 }
-//TODO CHECK THIS DESTRUCTOR
 ClusterAnaProcessor::~ClusterAnaProcessor(){}
 
 void ClusterAnaProcessor::configure(const ParameterSet& parameters) {
@@ -36,7 +34,6 @@ void ClusterAnaProcessor::configure(const ParameterSet& parameters) {
 void ClusterAnaProcessor::initialize(TTree* tree) {
     fillDeads();
     tree_= tree;
-    //tree_->Print();
    
     if(isMC_==1){
         layers_=new TH1F("layers","MC Strip Width for All Clusters",12,0.0,12.0);
@@ -65,11 +62,9 @@ void ClusterAnaProcessor::initialize(TTree* tree) {
         timesOnTrkNTD_=new TH1F("TimesOnTrkNTD","MC Time of On Track Cluster Hit NTD",1000,-60.0,60.0);
         timesOffTrkNTD_=new TH1F("TimesOffTrkNTD","MC Time of Off Cluster Hit NTD",1000,-60.0,60.0);
 
-        std::cout<<"I GET HERE 1"<<std::endl;
         tree_->SetBranchAddress("SiClusters",&Clusters_,&bClusters_);
         tree_->SetBranchAddress("SiClustersOnTrack_KF",&ClustersKF_,&bClustersKF_);
         tree_->SetBranchAddress("SVTRawTrackerHits",&svtraw_,&bsvtraw_);
-        std::cout<<"I GET HERE 2"<<std::endl;
         return;
     }
     layers_=new TH1F("layers","Strip Width for All Clusters",12,0.0,12.0);
@@ -105,19 +100,15 @@ void ClusterAnaProcessor::initialize(TTree* tree) {
         SharedTimes_= new TH1F("SharedTimes","The Times of Clusters Shared Between Tracks",1000,-60.0,60.0);
         UnSharedTimes_= new TH1F("UnSharedTimes","The Times of Clusters Not Shared Between Tracks",1000,-60.0,60.0); 
     }
-    std::cout<<"I GET HERE 1"<<std::endl;
     tree_->SetBranchAddress("SiClusters",&Clusters_,&bClusters_);
     tree_->SetBranchAddress("SiClustersOnTrack_KF",&ClustersKF_,&bClustersKF_);
     tree_->SetBranchAddress("SVTRawTrackerHits",&svtraw_,&bsvtraw_);
     if(doingTracks_){
         tree_->SetBranchAddress("KalmanFullTracks",&tracks_,&btracks_);
     }
-    std::cout<<"I GET HERE 2"<<std::endl;
 }
 
 bool ClusterAnaProcessor::process(IEvent* ievent) {
-    
-    //std::cout<<"We have "<< ClustersKF_->size()<<" hits"<<std::endl;
     if(doingTracks_){
         for(int i = 0;i<tracks_->size();i++){
             Track* track = tracks_->at(i);
@@ -175,12 +166,6 @@ bool ClusterAnaProcessor::process(IEvent* ievent) {
         float nLayers = (float)(clu->getRawHits().GetEntries());
         float ncharges = (float)(clu->getCharge());
         float ntimes = (float)(clu->getTime());
-        //float ntimes = 0.0;
-        //for(int p = 0;p<clu->getRawHits().GetEntries();p++){
-        //    RawSvtHit * holder = (RawSvtHit*)(clu->getRawHits().At(p));
-        //    ntimes+=holder->getT0(0);
-        //}
-        //ntimes=gtimes;//%ncharges; 
         bool onTrk = false;
         bool NTD = false;
         for(unsigned int j = 0; j < ClustersKF_->size(); j++){
@@ -188,13 +173,11 @@ bool ClusterAnaProcessor::process(IEvent* ievent) {
                 onTrk = true;
             }
         }
-        //std::cout<<clu->getVolume()<<std::endl;
-        //&&(seedStrip==471)
+
 
         std::string input = "ly"+std::to_string(LAYER+1)+"_m"+std::to_string(MODULE);
         std::string helper = mmapper_->getHwFromSw(input);
-        //std::cout<<input<<std::endl;
-        //std::cout<<helper<<std::endl;
+
         int feb=std::stoi(helper.substr(1,1));
         int hyb=std::stoi(helper.substr(3,1));
               
@@ -286,8 +269,7 @@ int ClusterAnaProcessor::GetStrip(int feb,int hyb,int strip){
     return BigCount;
 }
 
-void ClusterAnaProcessor::Plot1(){
-    std::cout<<"I AM IN THE FINAL STEP"<<std::endl; 
+void ClusterAnaProcessor::PlotClusterLayers(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
     c1->cd();
@@ -300,8 +282,6 @@ void ClusterAnaProcessor::Plot1(){
 
     c1->DrawFrame(0.0,3000.0,150.0,7000.0);
     c1->SetTitle("Layers for All Clusters");
-    //std::cout<<"I AM IN THE FINAL STEP 2"<<std::endl; 
-    //std::cout<<layers_->GetEntries()<<std::endl;
     layers_->Draw("e");
     c1->SaveAs("allClusters.png");     
     c1->Clear();
@@ -332,7 +312,7 @@ void ClusterAnaProcessor::Plot1(){
     return;
 }
 
-void ClusterAnaProcessor::Plot2(){
+void ClusterAnaProcessor::PlotClusterCharges(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
     c1->cd();
@@ -346,8 +326,6 @@ void ClusterAnaProcessor::Plot2(){
     
     c1->DrawFrame(0.0,3000.0,150.0,7000.0);
     c1->SetTitle("Charges for All Clusters");
-    //std::cout<<"I AM IN THE FINAL STEP 2"<<std::endl; 
-    //std::cout<<layers_->GetEntries()<<std::endl;
     charges_->Draw("e");
     c1->SaveAs("allClustersCharge.png");     
     c1->Clear();
@@ -377,9 +355,8 @@ void ClusterAnaProcessor::Plot2(){
     c1->Clear();
     return;
 }
-
-void ClusterAnaProcessor::Plot3(){
-    std::cout<<"I AM IN THE FINAL STEP"<<std::endl; 
+//NTD REFERS TO NEXT TO DEAD CHANNELS
+void ClusterAnaProcessor::PlotClusterLayersNTD(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
     c1->cd();
@@ -392,8 +369,6 @@ void ClusterAnaProcessor::Plot3(){
 
     c1->DrawFrame(0.0,3000.0,150.0,7000.0);
     c1->SetTitle("NTD Layers for All Clusters");
-    //std::cout<<"I AM IN THE FINAL STEP 2"<<std::endl; 
-    //std::cout<<layers_->GetEntries()<<std::endl;
     layersNTD_->Draw("e");
     c1->SaveAs("allClustersNTD.png");     
     c1->Clear();
@@ -424,7 +399,7 @@ void ClusterAnaProcessor::Plot3(){
     return;
 }
 
-void ClusterAnaProcessor::Plot4(){
+void ClusterAnaProcessor::PlotClusterChargesNTD(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
     c1->cd();
@@ -438,8 +413,6 @@ void ClusterAnaProcessor::Plot4(){
     
     c1->DrawFrame(0.0,3000.0,150.0,7000.0);
     c1->SetTitle("NTD Charges for All Clusters");
-    //std::cout<<"I AM IN THE FINAL STEP 2"<<std::endl; 
-    //std::cout<<layers_->GetEntries()<<std::endl;
     chargesNTD_->Draw("e");
     c1->SaveAs("allClustersChargeNTD.png");     
     c1->Clear();
@@ -470,7 +443,7 @@ void ClusterAnaProcessor::Plot4(){
     return;
 }
 
-void ClusterAnaProcessor::Plot5(){
+void ClusterAnaProcessor::PlotClusterPositions(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
     c1->cd();
@@ -479,8 +452,6 @@ void ClusterAnaProcessor::Plot5(){
 
     c1->DrawFrame(0.0,3000.0,150.0,7000.0);
     c1->SetTitle("Cluster Position for all Clusters");
-    //std::cout<<"I AM IN THE FINAL STEP 2"<<std::endl; 
-    //std::cout<<layers_->GetEntries()<<std::endl;
     positions_->Draw("e");
     c1->SaveAs("positions.png");     
     c1->Clear();
@@ -488,10 +459,7 @@ void ClusterAnaProcessor::Plot5(){
     positionsOnTrk_->GetXaxis()->SetTitle("Layer");
     positionsOnTrk_->GetYaxis()->SetTitle("Hits"); 
 
-    //c1->DrawFrame(0.0,3000.0,150.0,7000.0);
     c1->SetTitle("Cluster Position for NTD Clusters");
-    //std::cout<<"I AM IN THE FINAL STEP 2"<<std::endl; 
-    //std::cout<<layers_->GetEntries()<<std::endl;
     positionsOnTrk_->Draw("e");
     c1->SaveAs("positionsNTD.png");     
     c1->Clear();
@@ -513,8 +481,7 @@ void ClusterAnaProcessor::Plot5(){
     c1->Clear();
 }
 
-void ClusterAnaProcessor::Plot6(){
-    std::cout<<"I AM IN THE FINAL STEP"<<std::endl; 
+void ClusterAnaProcessor::PlotClusterTimes(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
     c1->cd();
@@ -527,8 +494,6 @@ void ClusterAnaProcessor::Plot6(){
 
     c1->DrawFrame(0.0,3000.0,150.0,7000.0);
     c1->SetTitle("Times for All Clusters");
-    //std::cout<<"I AM IN THE FINAL STEP 2"<<std::endl; 
-    //std::cout<<layers_->GetEntries()<<std::endl;
     times_->Draw();
     c1->SaveAs("alltimes.png");     
     c1->Clear();
@@ -559,8 +524,7 @@ void ClusterAnaProcessor::Plot6(){
     return;
 }
 
-void ClusterAnaProcessor::Plot7(){
-    std::cout<<"I AM IN THE FINAL STEP"<<std::endl; 
+void ClusterAnaProcessor::PlotClusterTimesNTD(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
     c1->cd();
@@ -573,8 +537,6 @@ void ClusterAnaProcessor::Plot7(){
 
     c1->DrawFrame(0.0,3000.0,150.0,7000.0);
     c1->SetTitle("Times for All Clusters");
-    //std::cout<<"I AM IN THE FINAL STEP 2"<<std::endl; 
-    //std::cout<<layers_->GetEntries()<<std::endl;
     timesNTD_->Draw("e");
     c1->SaveAs("alltimesNTD.png");     
     c1->Clear();
@@ -605,7 +567,7 @@ void ClusterAnaProcessor::Plot7(){
     return;
 }
 
-void ClusterAnaProcessor::TrackPlot1(){
+void ClusterAnaProcessor::TrackPlot(){
     TCanvas *c1 = new TCanvas("c");
     c1->cd();
     //FIRST I DO THE PROFILES OF THE NSHARED HITS PLOTS
@@ -655,21 +617,17 @@ void ClusterAnaProcessor::TrackPlot1(){
     c1->Clear();
     return;    
 }
-    
-/*void ClusterAnaProcessor::ClusterFit(){
-    return;
-}*/
 
 void ClusterAnaProcessor::finalize() {
-    Plot1(); 
-    Plot2();
-    Plot3();
-    Plot4();
-    Plot5();
-    Plot6();
-    Plot7();
+    PlotClusterLayers();
+    PlotClusterLayersNTD();
+    PlotClusterCharges();
+    PlotClusterChargesNTD();
+    PlotClusterPositions();
+    PlotClusterTimes();
+    PlotClusterTimesNTD();
     if(doingTracks_){
-        TrackPlot1();
+        TrackPlot();
     }
     //ClusterFit();
     return;
