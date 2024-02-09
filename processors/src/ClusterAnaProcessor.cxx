@@ -30,7 +30,6 @@ void ClusterAnaProcessor::configure(const ParameterSet& parameters) {
 
 }
 
-
 void ClusterAnaProcessor::initialize(TTree* tree) {
     fillDeads();
     tree_= tree;
@@ -108,19 +107,29 @@ void ClusterAnaProcessor::initialize(TTree* tree) {
     }
 }
 
+/**
+ *
+ *THIS METHOD FILLS SEVERAL HISTOGRAMS FOR EACH EVENT DIRECTED AT EVALUATING CLUSTERING PERFORMANCE. FOR OUR TRACKING
+ *VARIABLES WE PLOT Z0 VS THE NUMBER OF SHARED HITS WITH AND WITHOUT A CLUSTER CUT (WE EXPECT A GOOD RECONSTRUCTION TO HAVE
+ *HAVE A LOW NUMBER OF SHARED CLUSTERS, ESPECIALLY AROUND THE Z0 VERTEX AND THAT THIS WOULD FURTHER IMPROVE WITH HIGH P TRACKS)
+ *
+ *
+ *TO FURTHER CHARACTERIZE THE CLUSTERS WE CAPTURE BASIC INFORMATION: CLUSTER AMPLITUDE, TIME, CHARGE, and STRIP CLUSTER POSITION
+ *AND DISTANCES. WE DO THIS FOR SHARED AND UNSHARED CLUSTERS. WE PERFORM THIS FILLING ALSO BASED ON A CLUSTER BEING NTD, MEANING
+ *NEXT TO DEAD.
+ *
+ * */
+
 bool ClusterAnaProcessor::process(IEvent* ievent) {
     if(doingTracks_){
         for(int i = 0;i<tracks_->size();i++){
             Track* track = tracks_->at(i);
-            //bool general = ((layer_==-1)||(module_==-1));
-            //if(((LAYER==layer_)&&(MODULE==module_))||(general)){
-                if(track->getTrackTime()*track->getTrackTime()<100.0){
-                    Z0VNShare2Hist_->Fill(track->getZ0Err(),track->getNShared());
-                    if(track->getP()<pcut_){
-                        Z0VNShare2HistCut_->Fill(track->getZ0Err(),track->getNShared());
-                    }
+            if(track->getTrackTime()*track->getTrackTime()<100.0){
+                Z0VNShare2Hist_->Fill(track->getZ0Err(),track->getNShared());
+                if(track->getP()<pcut_){
+                    Z0VNShare2HistCut_->Fill(track->getZ0Err(),track->getNShared());
                 }
-            //}
+            }
         }
     }
     for(int i = 0; i < Clusters_->size(); i++){ 
@@ -242,6 +251,12 @@ bool ClusterAnaProcessor::process(IEvent* ievent) {
     return true;
 }
 
+/**
+ *
+ *THIS METHOD FILLS THE COLLECTION OF DEAD CHANNEL IDS GIVEN AN INPUT FILENAME. REQUIRED FOR NTD PLOTS
+ *
+ * */
+
 void ClusterAnaProcessor::fillDeads(){
     for(int i = 0;i<24576;i++){
         Deads_[i]=0.0;
@@ -258,6 +273,12 @@ void ClusterAnaProcessor::fillDeads(){
     return;
 }
 
+/**
+ *
+ *THIS METHOD GITS THE STRIP COUNT OUT OF ROUGHLY 25000 GIVEN THE FEB AND HYBRID IDS AND THE STRIP NO WRT THESE IDS
+ *
+ * */
+
 int ClusterAnaProcessor::GetStrip(int feb,int hyb,int strip){
 	int BigCount = 0;
     if(feb<=1){
@@ -268,6 +289,15 @@ int ClusterAnaProcessor::GetStrip(int feb,int hyb,int strip){
     }
     return BigCount;
 }
+
+/**
+ *
+ *THE REMAINING METHODS (UP TO TRACKPLOT) ALL PLOT STANDARD HISTOGRAMS DESCRIBED IN THE DESCRIPTION TO THE PROCESS METHOD.
+ *THEY INCLUDE STANDARD FUNCTION CALLS YOU WOULD EXPECT IN A ROOT MACRO AND AFFORD SOME MORE CONTROL THAN A HISTOMANAGER AND
+ *REGION SELECTOR COMBO.
+ *FEASIBLE FOR A LIMITED NUMBER OF COLLECTION CUTS.
+ *
+ * */
 
 void ClusterAnaProcessor::PlotClusterLayers(){
     TCanvas *c1 = new TCanvas("c");
@@ -355,7 +385,7 @@ void ClusterAnaProcessor::PlotClusterCharges(){
     c1->Clear();
     return;
 }
-//NTD REFERS TO NEXT TO DEAD CHANNELS
+
 void ClusterAnaProcessor::PlotClusterLayersNTD(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
@@ -617,6 +647,12 @@ void ClusterAnaProcessor::TrackPlot(){
     c1->Clear();
     return;    
 }
+
+/**
+ *
+ *THE FINALIZE METHOD CALLS ALL THE PLOTTING MACROS ABOVE. THEY ARE CREATED INTO PNGS INTO THE REPOSITORY THE PROCESSOR IS CALLED IN.
+ *
+ * */
 
 void ClusterAnaProcessor::finalize() {
     PlotClusterLayers();
