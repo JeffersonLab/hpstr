@@ -1,20 +1,20 @@
 /**
- * @file RoryClusterCompareAnaProcessor.cxx
+ * @file ClusterCompareAnaProcessor.cxx
  * @brief AnaProcessor used to compare two means of reconstruction directly.
  * @author Rory O'Dwyer and Cameron Bravo, SLAC National Accelerator Laboratory
  */     
-#include "RoryClusterCompareAnaProcessor.h"
+#include "ClusterCompareAnaProcessor.h"
 //#include "Int_t.h"
 #include <iostream>
 
-RoryClusterCompareAnaProcessor::RoryClusterCompareAnaProcessor(const std::string& name, Process& process) : Processor(name,process){
+ClusterCompareAnaProcessor::ClusterCompareAnaProcessor(const std::string& name, Process& process) : Processor(name,process){
     mmapper_ = new ModuleMapper(2021);
 }
 //TODO CHECK THIS DESTRUCTOR
-RoryClusterCompareAnaProcessor::~RoryClusterCompareAnaProcessor(){}
+ClusterCompareAnaProcessor::~ClusterCompareAnaProcessor(){}
 
-void RoryClusterCompareAnaProcessor::configure(const ParameterSet& parameters) {
-    std::cout << "Configuring RoryClusterCompareAnaProcessor" << std::endl;
+void ClusterCompareAnaProcessor::configure(const ParameterSet& parameters) {
+    std::cout << "Configuring ClusterCompareAnaProcessor" << std::endl;
     try
     {
         debug_           = parameters.getInteger("debug");
@@ -33,7 +33,7 @@ void RoryClusterCompareAnaProcessor::configure(const ParameterSet& parameters) {
 }
 
 
-void RoryClusterCompareAnaProcessor::initialize(TTree* tree) {
+void ClusterCompareAnaProcessor::initialize(TTree* tree) {
     fillDeads();
     tree_= tree;
     //tree_->Print();
@@ -172,7 +172,7 @@ void RoryClusterCompareAnaProcessor::initialize(TTree* tree) {
     std::cout<<"I GET HERE 2"<<std::endl;
 }
 
-bool RoryClusterCompareAnaProcessor::process(IEvent* ievent) {
+bool ClusterCompareAnaProcessor::process(IEvent* ievent) {
     //std::cout<<"We have "<< ClustersKF_->size()<<" hits"<<std::endl;
     
     //if(ident_>1.0){std::cout<<ident_<<std::endl;}
@@ -335,7 +335,7 @@ bool RoryClusterCompareAnaProcessor::process(IEvent* ievent) {
     return true;
 }
 
-void RoryClusterCompareAnaProcessor::fillDeads(){
+void ClusterCompareAnaProcessor::fillDeads(){
     for(int i = 0;i<24576;i++){
         Deads_[i]=0.0;
     }
@@ -351,7 +351,7 @@ void RoryClusterCompareAnaProcessor::fillDeads(){
     return;
 }
 
-int RoryClusterCompareAnaProcessor::GetStrip(int feb,int hyb,int strip){
+int ClusterCompareAnaProcessor::GetStrip(int feb,int hyb,int strip){
 	int BigCount = 0;
     if(feb<=1){
         BigCount+=feb*2048+hyb*512+strip;
@@ -362,7 +362,7 @@ int RoryClusterCompareAnaProcessor::GetStrip(int feb,int hyb,int strip){
     return BigCount;
 }
 
-void RoryClusterCompareAnaProcessor::Plot1(){
+void ClusterCompareAnaProcessor::Plot1(){
     std::cout<<"I AM IN THE FINAL STEP"<<std::endl; 
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
@@ -423,7 +423,7 @@ void RoryClusterCompareAnaProcessor::Plot1(){
     return;
 }
 
-void RoryClusterCompareAnaProcessor::Plot2(){
+void ClusterCompareAnaProcessor::Plot2(){
     TCanvas *c1 = new TCanvas("c");
     //gPad->SetLogy(true);
     c1->cd();
@@ -482,7 +482,7 @@ void RoryClusterCompareAnaProcessor::Plot2(){
     return;
 }
 
-void RoryClusterCompareAnaProcessor::Plot3(){
+void ClusterCompareAnaProcessor::Plot3(){
     std::cout<<"I AM IN THE FINAL STEP"<<std::endl; 
     TCanvas *c1 = new TCanvas("c");
     //gPad->SetLogy(true);
@@ -543,7 +543,7 @@ void RoryClusterCompareAnaProcessor::Plot3(){
     return;
 }
 
-void RoryClusterCompareAnaProcessor::Plot4(){
+void ClusterCompareAnaProcessor::Plot4(){
     std::cout<<"I AM IN THE FINAL STEP"<<std::endl; 
     TCanvas *c1 = new TCanvas("c");
     //gPad->SetLogy(true);
@@ -599,7 +599,7 @@ void RoryClusterCompareAnaProcessor::Plot4(){
     return;
 }
 
-void RoryClusterCompareAnaProcessor::TrackPlot1(){
+void ClusterCompareAnaProcessor::TrackPlot1(){
     TCanvas *c1 = new TCanvas("c");
     c1->cd();
     gPad->SetLogy(false);
@@ -651,7 +651,7 @@ void RoryClusterCompareAnaProcessor::TrackPlot1(){
     return;    
 }
 
-void RoryClusterCompareAnaProcessor::TrackPlot2(){
+void ClusterCompareAnaProcessor::TrackPlot2(){
     TCanvas *c1 = new TCanvas("c");
     c1->cd();
     gPad->SetLogy(false); 
@@ -702,7 +702,7 @@ void RoryClusterCompareAnaProcessor::TrackPlot2(){
     return;    
 }
 
-void RoryClusterCompareAnaProcessor::finalize() {
+void ClusterCompareAnaProcessor::finalize() {
     Plot1();  
     Plot2();
     Plot3();
@@ -714,4 +714,4 @@ void RoryClusterCompareAnaProcessor::finalize() {
     //ClusterFit();
     return;
 }
-DECLARE_PROCESSOR(RoryClusterCompareAnaProcessor);
+DECLARE_PROCESSOR(ClusterCompareAnaProcessor);
