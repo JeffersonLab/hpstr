@@ -1,6 +1,8 @@
 /**
  * @file ClusterCompareAnaProcessor.cxx
- * @brief AnaProcessor used to compare two means of reconstruction directly.
+ * @brief AnaProcessor used to compare two means of reconstruction directly. Fills histograms to study cluster reconstruction algorithms and dead channels.
+ * Does not feature a region selector or histomanager (i.e. no configurable json files), rather 
+ * for the limited featured plots allows for more specific manipulation and control.
  * @author Rory O'Dwyer and Cameron Bravo, SLAC National Accelerator Laboratory
  */     
 #include "ClusterCompareAnaProcessor.h"
