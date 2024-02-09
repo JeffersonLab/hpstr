@@ -48,6 +48,8 @@ class SvtRawDataAnaProcessor : public Processor {
         virtual void initialize(TTree* tree);
         
         virtual void sample(RawSvtHit* thisHit, std::string word, IEvent* ievent, long t,int i);
+        
+        //virtual int hitEff(IEvent* ievent, int L);
 
         virtual TF1* fourPoleFitFunction(std::string word, int caser);
 
@@ -86,15 +88,23 @@ class SvtRawDataAnaProcessor : public Processor {
         TBranch* brecoClu_{nullptr};
         TBranch* bPart_{nullptr};
         TBranch* bTrk_{nullptr};
+        TBranch* bClusters_{nullptr};
 
         TBranch* bevH_;
-
+        /*
+        TTree *HitEff_;
+        //TBranch* bL1_{nullptr};
+        int L1_;
+        bool doHitEff_{false};
+        */
         std::vector<RawSvtHit*> * svtHits_{};
         VTPData * vtpBank_;
         TSData * tsBank_;
         std::vector<CalCluster*>* recoClu_{};
         std::vector<Track*>* Trk_{};
         std::vector<Particle*>* Part_{};
+        std::vector<TrackerHit*>* Clusters_{};
+        
         //std::vector<Track> Trk_{};
         EventHeader * evH_;
 
