@@ -43,22 +43,54 @@ class SvtRawDataAnaProcessor : public Processor {
 
         ~SvtRawDataAnaProcessor();
 
+        /*
+         *
+         *RUNS OVER THE REGION SELECTORS AND CHECKS IF AN EVENT PASSES A SELECTION JSON AND FILLS A RAWSVTHITHISTO
+         IF DO SAMPLE IS ON, IT RUNS SAMPLING.
+         *
+         *
+         */
+
         virtual bool process(IEvent* ievent);
+
+        /*
+         *
+         *PROCESS INITIALIZER. READS IN THE OFFLINE BASELINES INTO LOCAL BASELINE FILES, READs in the PULSE SHAPES, and FINALLLY
+         ESTABLISHES REGIONS WHICH ARE USED ALONG WITH THE REGION SELECTOR CLASS AND CUTS IN ANALYSIS/SELECTION/SVT TO SELECT ON
+         EVENTS FOR WHICH HISTOGRAMS IN RAWSVTHISTO IS FILLED.
+         *
+         *
+         */
 
         virtual void initialize(TTree* tree);
         
         virtual void sample(RawSvtHit* thisHit, std::string word, IEvent* ievent, long t,int i);
-        
-        //virtual int hitEff(IEvent* ievent, int L);
+
+        /*
+         *
+         *FOUR POLE PULSE FUNCTION AND THE SUM OF TWO OF THEM WITH BASELINES BORROWED FROM ALIC
+         *
+         */
 
         virtual TF1* fourPoleFitFunction(std::string word, int caser);
+
+        /**
+         *
+         *THIS METHOD IS IMPLEMENTED BECAUSE C++ std:of METHOD WHICH CONVERTS STRINGS
+         *TO FLOATS IS NOT WORKING. WE NEED THIS TO READ IN OFFLINE BASELINES AND CHARACTERISTIC TIMES.
+         *
+         *
+         * */
 
         virtual float str_to_float(std::string word);
 
         float reverseEngineerTime(float ti, long t);
 
-        //virtual int maximum(int arr[]);
-        
+        /*
+         *FILLS IN HISTOGRAMS
+         *
+         */
+
         virtual void finalize();
 
         virtual void configure(const ParameterSet& parameters);
