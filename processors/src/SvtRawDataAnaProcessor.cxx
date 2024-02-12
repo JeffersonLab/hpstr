@@ -37,15 +37,6 @@ void SvtRawDataAnaProcessor::configure(const ParameterSet& parameters) {
 
 }
 
-/**
- *
- *THIS METHOD IS IMPLEMENTED BECAUSE C++ std:of METHOD WHICH CONVERTS STRINGS
- TO FLOATS IS NOT WORKING. WE NEED THIS TO READ IN OFFLINE BASELINES AND CHARACTERISTIC TIMES.
- *
- *
- * */
-
-
 float SvtRawDataAnaProcessor::str_to_float(std::string token){
     std::string top1=token.substr(0,token.find("."));
     const char *top=top1.c_str();
@@ -90,13 +81,6 @@ float rETime(float ti,long T){
     return ti;
 }
 
-
-/*
- *
- *FOUR POLE PULSE FUNCTION AND THE SUM OF TWO OF THEM WITH BASELINES BORROWED FROM ALIC
- *
- */
-
 TF1* SvtRawDataAnaProcessor::fourPoleFitFunction(std::string word, int caser){ 
     const char *helper = word.data();
     if(caser==0){
@@ -106,15 +90,6 @@ TF1* SvtRawDataAnaProcessor::fourPoleFitFunction(std::string word, int caser){
     TF1* func2 = new TF1(helper,"(TMath::Max(x-[0],0.0)/(x-[0]))*([3])*(1/ ( exp(-(3*(([1]*([2]^3))^.25))/[1]) - ( exp(-(3*(([1]*([2]^3))^.25))/[2]) * ( ((((([1]-[2])/([1]*[2]))*(3*(([1]*([2]^3))^.25)))^(0))) +  ((((([1]-[2])/([1]*[2]))*(3*(([1]*([2]^3))^.25)))^(1))) + ((((([1]-[2])/([1]*[2]))*(3*(([1]*([2]^3))^.25)))^(2))/2) ) ) )) * ( exp(-(x-[0])/[1]) - ( exp(-(x-[0])/[2]) * ( ((((([1]-[2])/([1]*[2]))*(x-[0]))^(0))) +  ((((([1]-[2])/([1]*[2]))*(x-[0]))^(1))) + ((((([1]-[2])/([1]*[2]))*(x-[0]))^(2))/2) ) ) )+(TMath::Max(x-[5],0.0)/(x-[5]))*([8])*(1/ ( exp(-(3*(([6]*([7]^3))^.25))/[6]) - ( exp(-(3*(([6]*([7]^3))^.25))/[7]) * ( ((((([6]-[7])/([6]*[7]))*(3*(([6]*([7]^3))^.25)))^(0))) +  ((((([6]-[7])/([6]*[7]))*(3*(([6]*([7]^3))^.25)))^(1))) + ((((([6]-[7])/([6]*[7]))*(3*(([6]*([7]^3))^.25)))^(2))/2) ) ) )) * ( exp(-(x-[5])/[1]) - ( exp(-(x-[5])/[2]) * ( ((((([6]-[7])/([6]*[7]))*(x-[5]))^(0))) +  ((((([6]-[7])/([6]*[7]))*(x-[5]))^(1))) + ((((([6]-[7])/([6]*[7]))*(x-[5]))^(2))/2) ) ) )  ",0.0,150.0);
     return func2;
 }
-
-/*
- *
- *PROCESS INITIALIZER. READS IN THE OFFLINE BASELINES INTO LOCAL BASELINE FILES, READs in the PULSE SHAPES, and FINALLLY
- ESTABLISHES REGIONS WHICH ARE USED ALONG WITH THE REGION SELECTOR CLASS AND CUTS IN ANALYSIS/SELECTION/SVT TO SELECT ON
- EVENTS FOR WHICH HISTOGRAMS IN RAWSVTHISTO IS FILLED.
- *
- *
- */
 
 void SvtRawDataAnaProcessor::initialize(TTree* tree) {
     if(doSample_){
@@ -201,15 +176,6 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
     }
 }
 
-/*
- *
- *RUNS OVER THE REGION SELECTORS AND CHECKS IF AN EVENT PASSES A SELECTION JSON AND FILLS A RAWSVTHITHISTO
- IF DO SAMPLE IS ON, IT RUNS SAMPLING.
- *
- *
- */
-
-
 bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
     Float_t TimeRef=-0.0;
     Float_t AmpRef=1000.0;
@@ -221,7 +187,6 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
     int hitc = 0;
     int hitl = 0;
     float otherTime = 69420.0;
-    
     
     //ONLY POSITRONS, MAY USE FEE's 
     //ONCE I DETERMINE A CLUSTER WHICH IS IN LINE WITH TRIG, I CAN USE ANY CLUSTERS CLOSE IN TIME.
@@ -520,11 +485,6 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
             }
         }
     }
-
-    /*
-     *FILLS IN HISTOGRAMS
-     *
-     */
 
     void SvtRawDataAnaProcessor::finalize() {
 
