@@ -136,13 +136,13 @@ bool ClusterAnaProcessor::process(IEvent* ievent) {
     }
     for(int i = 0; i < Clusters_->size(); i++){ 
         TrackerHit * clu = Clusters_->at(i);
-        Int_t LAYER = -1;
-        Int_t MODULE = -1;      
+        Int_t layc = -1;
+        Int_t modc = -1;      
  
         RawSvtHit * seed = (RawSvtHit*)(clu->getRawHits().At(0));
 
-        LAYER=clu->getLayer();
-        MODULE=seed->getModule();
+        layc=clu->getLayer();
+        modc=seed->getModule();
 
         if(doingTracks_){
             bool isShared = false;int increment = 0;
@@ -160,7 +160,7 @@ bool ClusterAnaProcessor::process(IEvent* ievent) {
             }
             if(increment>0){
                 bool general = ((layer_==-1)||(module_==-1));
-                if(((LAYER==layer_)&&(MODULE==module_))||(general)){
+                if(((layc==layer_)&&(modc==module_))||(general)){
                     if(isShared){
                         SharedAmplitudes_->Fill(clu->getCharge());
                         SharedTimes_->Fill(clu->getTime());
@@ -186,7 +186,7 @@ bool ClusterAnaProcessor::process(IEvent* ievent) {
         }
 
 
-        std::string input = "ly"+std::to_string(LAYER+1)+"_m"+std::to_string(MODULE);
+        std::string input = "ly"+std::to_string(layc+1)+"_m"+std::to_string(modc);
         std::string helper = mmapper_->getHwFromSw(input);
 
         int feb=std::stoi(helper.substr(1,1));
@@ -201,16 +201,16 @@ bool ClusterAnaProcessor::process(IEvent* ievent) {
             NTD=(NTD)||(Deads_[GetStrip(feb,hyb,channelR)]==1); 
         }
         bool general = ((layer_==-1)||(module_==-1));
-        if(((LAYER==layer_)&&(MODULE==module_))||(general)){
-            //NOW IS THE PART WHERE I FILL THE CLUSTER DISTANCE HISTOGRAM
+        if(((layc==layer_)&&(modc==module_))||(general)){
+            //Now is the part where I fill the cluster distance histogram.
             float Dist=69420;
             for(int p = 0; p < Clusters_->size(); p++){ 
                 if(p==i){continue;}
                 TrackerHit * clu2 = Clusters_->at(p);
                 RawSvtHit * seed2 = (RawSvtHit*)(clu2->getRawHits().At(0));
-                float LAYER2=clu->getLayer();
-                float MODULE2=seed->getModule();
-                if((not(LAYER2==LAYER))or(not(MODULE2==MODULE))){continue;}
+                float layc2=clu->getLayer();
+                float modc2=seed->getModule();
+                if((not(layc2==layc))or(not(modc2==modc))){continue;}
                 float dist = ((float)(seed2->getStrip()))-seedStrip;
                 if(dist<0){dist*=-1.0;}
                 if(dist<Dist){Dist=dist;}
@@ -219,7 +219,6 @@ bool ClusterAnaProcessor::process(IEvent* ievent) {
                 ClusDistances_->Fill(Dist);
                 if(NTD){ClusDistancesNTD_->Fill(Dist);}
             }
-            //std::cout<<"HELLO"<<std::endl;
             layers_->Fill(nLayers);
             charges_->Fill(ncharges);
             positions_->Fill(clu->getLayer());
@@ -618,8 +617,7 @@ void ClusterAnaProcessor::TrackPlot(){
     c1->SaveAs("Z0VSharedProfile.png");
     c1->Clear();
 
-    //NOW I DO THE CHARGE DISTRIBUTION FOR SHARED AND UNSHARED HITS OVERLAYED  
-    SharedAmplitudes_->SetTitle("The Charge of Clusters Shared Between Tracks");
+    //Now I do the charge distribution for shared and unshared hits overlayed.
     legend = new TLegend(0.3,0.8,.68,.9);
     SharedAmplitudes_->SetLineColor(kRed);
     SharedAmplitudes_->SetLineWidth(2.0);
@@ -633,7 +631,7 @@ void ClusterAnaProcessor::TrackPlot(){
     c1->SaveAs("SharedVUnSharedChargeDist.png");
     c1->Clear();
 
-    //NOW I DO THE TIME DISTRIBUTION FOR SHARED AND UNSHARED HITS OVERLAYED  
+    //Now I do the time distribution for shared and unshared hits overlayed.
     SharedTimes_->SetTitle("The Time of Clusters Shared Between Tracks");
     legend = new TLegend(0.3,0.8,.68,.9);
     SharedTimes_->SetLineColor(kRed);
