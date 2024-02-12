@@ -214,13 +214,13 @@ bool ClusterCompareAnaProcessor::process(IEvent* ievent) {
     }
     for(int i = 0; i < Clusters_->size(); i++){ 
         TrackerHit * clu = Clusters_->at(i);
-        Int_t LAYER = -1;
-        Int_t MODULE = -1;      
+        Int_t layc = -1;
+        Int_t modc = -1;      
  
         RawSvtHit * seed = (RawSvtHit*)(clu->getRawHits().At(0));
 
-        LAYER=clu->getLayer();
-        MODULE=seed->getModule();
+        layc=clu->getLayer();
+        modc=seed->getModule();
 
         if(doingTracks_){
             bool isShared = false;int increment = 0;
@@ -238,7 +238,7 @@ bool ClusterCompareAnaProcessor::process(IEvent* ievent) {
             }
             if(increment>0){
                 bool general = ((layer_==-1)||(module_==-1));
-                if(((LAYER==layer_)&&(MODULE==module_))||(general)){
+                if(((layc==layer_)&&(modc==module_))||(general)){
                     if(isShared){
                         if(ident_<1.5){SharedAmplitudes1_->Fill(clu->getCharge());}else{SharedAmplitudes2_->Fill(clu->getCharge());}
                         if(ident_<1.5){SharedTimes1_->Fill(clu->getTime());}else{SharedTimes2_->Fill(clu->getTime());}
@@ -262,7 +262,7 @@ bool ClusterCompareAnaProcessor::process(IEvent* ievent) {
                 onTrk = true;
             }
         }
-        std::string input = "ly"+std::to_string(LAYER+1)+"_m"+std::to_string(MODULE);
+        std::string input = "ly"+std::to_string(layc+1)+"_m"+std::to_string(modc);
         std::string helper = mmapper_->getHwFromSw(input);
         int feb=std::stoi(helper.substr(1,1));
         int hyb=std::stoi(helper.substr(3,1));
@@ -276,16 +276,16 @@ bool ClusterCompareAnaProcessor::process(IEvent* ievent) {
             NTD=(NTD)||(Deads_[GetStrip(feb,hyb,channelR)]==1); 
         }
         bool general = ((layer_==-1)||(module_==-1));
-        if(((LAYER==layer_)&&(MODULE==module_))||(general)){
+        if(((layc==layer_)&&(modc==module_))||(general)){
             //NOW IS THE PART WHERE I FILL THE CLUSTER DISTANCE HISTOGRAM
             float Dist=69420;
             for(int p = 0; p < Clusters_->size(); p++){ 
                 if(p==i){continue;}
                 TrackerHit * clu2 = Clusters_->at(p);
                 RawSvtHit * seed2 = (RawSvtHit*)(clu2->getRawHits().At(0));
-                float LAYER2=clu->getLayer();
-                float MODULE2=seed->getModule();
-                if((not(LAYER2==LAYER))or(not(MODULE2==MODULE))){continue;}
+                float layc2=clu->getLayer();
+                float modc2=seed->getModule();
+                if((not(layc2==layc))or(not(modc2==modc))){continue;}
                 float dist = ((float)(seed2->getStrip()))-seedStrip;
                 if(dist<0){dist*=-1.0;}
                 if(dist<Dist){Dist=dist;}
