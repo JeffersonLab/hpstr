@@ -49,7 +49,7 @@ sequence = [cclua]
 
 p.sequence = sequence
 
-print("THE INPUT FILE IS "+str(root_file))
+print("processors::clusterAna: The input file is: "+str(root_file))
 p.input_files = root_file
 p.output_files = [ana_file]
 
