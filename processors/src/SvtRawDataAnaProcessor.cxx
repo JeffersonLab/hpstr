@@ -252,17 +252,17 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                         if((rHit->getT0(0)==thisHit->getT0(0))and(mode==0)){//or(mode==2))){
                             //This is the HIT ON TRACK Modes
                             bool InCluster = false;
-                                int LAY = 0;//THE PURPOSE OF LAY IS TO COUNT THE NUMBER OF HITS PER LAYER
+                                int layc = 0;//THE PURPOSE OF layc IS TO COUNT THE NUMBER OF HITS PER LAYER
                                 for(int Cl = 0; Cl < Clusters_->size(); Cl++){
                                     for(int Clh = 0; Clh < Clusters_->at(Cl)->getRawHits().GetEntries(); Clh++){
                                         RawSvtHit * cluHit = (RawSvtHit*)(Clusters_->at(Cl)->getRawHits().At(Clh));
                                         if((cluHit->getLayer()==thisHit->getLayer())and(cluHit->getModule()==thisHit->getModule())){
-                                            LAY++;
+                                            layc++;
                                         }
                                         if((cluHit->getT0(0)==thisHit->getT0(0))){//and(not(Clusters_->at(Cl)->getID()==tHit->getID()))){
                                             InCluster = true;
                                             hitc=Clusters_->at(Cl)->getRawHits().GetEntries();
-                                            hitl=LAY;
+                                            hitl=layc;
                                             if(Clusters_->at(Cl)->getRawHits().GetEntries()==2){
                                                 RawSvtHit * otherHit = (RawSvtHit*)(Clusters_->at(Cl)->getRawHits().At((Clh+1)%2));
                                                 otherTime = otherHit->getT0(0);
@@ -282,20 +282,20 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                             
                             if((rHit->getLayer()==thisHit->getLayer())and(rHit->getModule()==thisHit->getModule())){
                                 stripID=rHit->getStrip();
-                                //THIS CONDITIONS ON IT BEING IN CLUSTERS
+                                //This is conditioned on it being in clusters.
                                 
                                 bool InCluster = false;
-                                int LAY = 0;//THE PURPOSE OF LAY IS TO COUNT THE NUMBER OF HITS PER LAYER
+                                int layc = 0;//THE PURPOSE OF layc IS TO COUNT THE NUMBER OF HITS PER LAYER
                                 for(int Cl = 0; Cl < Clusters_->size(); Cl++){
                                     for(int Clh = 0; Clh < Clusters_->at(Cl)->getRawHits().GetEntries(); Clh++){
                                         RawSvtHit * cluHit = (RawSvtHit*)(Clusters_->at(Cl)->getRawHits().At(Clh));
                                         if((cluHit->getLayer()==thisHit->getLayer())and(cluHit->getModule()==thisHit->getModule())){
-                                            LAY++;
+                                            layc++;
                                         }
                                         if((cluHit->getT0(0)==thisHit->getT0(0))and(not(Clusters_->at(Cl)->getID()==tHit->getID()))){
                                             InCluster = true;
                                             hitc=Clusters_->at(Cl)->getRawHits().GetEntries();
-                                            hitl=LAY;
+                                            hitl=layc;
                                         }
                                     }
                                 }
