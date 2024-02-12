@@ -11,7 +11,6 @@
 ClusterCompareAnaProcessor::ClusterCompareAnaProcessor(const std::string& name, Process& process) : Processor(name,process){
     mmapper_ = new ModuleMapper(2021);
 }
-//TODO CHECK THIS DESTRUCTOR
 ClusterCompareAnaProcessor::~ClusterCompareAnaProcessor(){}
 
 void ClusterCompareAnaProcessor::configure(const ParameterSet& parameters) {
