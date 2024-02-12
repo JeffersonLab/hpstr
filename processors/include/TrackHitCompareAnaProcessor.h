@@ -1,7 +1,7 @@
 #ifndef __TRACKHITCOMPARE_ANAPROCESSOR_H__
 #define __TRACKHITCOMPARE_ANAPROCESSOR_H__
 
-//HPSTR
+// HPSTR
 #include "HpsEvent.h"
 #include "RawSvtHit.h"
 #include "TrackerHit.h"
@@ -17,9 +17,8 @@
 #include "Track.h"
 #include "TrackerHit.h"
 #include "Collections.h"
-//#include <IMPL/TrackerHitImpl.h>"
-//ROOT
 
+// ROOT
 #include "Processor.h"
 #include "TClonesArray.h"
 #include "TBranch.h"
@@ -47,33 +46,31 @@ class TrackHitCompareAnaProcessor : public Processor {
 
         /**
          *
-         *THIS METHOD FILLS SEVERAL HISTOGRAMS FOR EACH EVENT DIRECTED AT EVALUATING CLUSTERING PERFORMANCE. FOR OUR TRACKING
-         *VARIABLES WE PLOT Z0 VS THE NUMBER OF SHARED HITS WITH AND WITHOUT A CLUSTER CUT (WE EXPECT A GOOD RECONSTRUCTION TO HAVE
-         *HAVE A LOW NUMBER OF SHARED CLUSTERS, ESPECIALLY AROUND THE Z0 VERTEX AND THAT THIS WOULD FURTHER IMPROVE WITH HIGH P TRACKS)
-         *WE ALSO DIRECTLY COMPARE THE REGULAR AND TRANSVERSE MOMENTUM DISTRIBUTIONS FOR THE TWO METHODS.
-         *
-         *TO FURTHER CHARACTERIZE THE CLUSTERS WE CAPTURE BASIC INFORMATION: CLUSTER AMPLITUDE, TIME, CHARGE, and STRIP CLUSTER POSITION
-         *AND DISTANCES. WE DO THIS FOR SHARED AND UNSHARED CLUSTERS. WE LARGELY IGNORE NTD, OR NEXT TO DEAD, ANALYSIS IN THIS PROCESSOR.
-         *
-         *THIS PROCESSOR IS UNDENIABLY EXTREMELY SIMILAR TO CLUSTERANAPROCESSOR, HAVING BEEN ITS OFFSPRING. THE MAIN DISTINCTION IS THAT
-         *THIS PROCESSOR IMPLEMENTS AN IDENTITY TRACKER (ident_) WHICH, ATM, IS IMPLEMENTED TO DETECT WHETHER AN EVENT IS IN TYPE 1 OR TYPE2
-         *ALONG WITH A SHORT MACRO WHICH ASSOCIATES TO DIFFERENTLY RECONSTRUCTED ROOT FILES A IDENTIFICATION MONICER, THIS ALLOWS FOR QUICK
-         *DIRECT COMPARISON OF TWO MEANS OF RECONSTRUCTION.
-         *
-         * */
-
+         * This method fills several histograms for each event directed at evaluating clustering performance. For our tracking
+         * variables we plot z0 vs the number of shared hits with and without a cluster cut (we expect a good reconstruction to have
+         * have a low number of shared clusters, especially around the z0 vertex and that this would further improve with high p tracks)
+         * We also directly compare the regular and transverse momentum distributions for the two methods.
+         * 
+         * To further characterize the clusters we capture basic information: cluster amplitude, time, charge, and strip cluster position
+         * and distances. We do this for shared and unshared clusters. We perform this for regular or NTD (next to dead) clusters.
+         * 
+         * This processor is undeniably extremely similar to ClusterAnaProcessor, having been its offspring. The main distinction is that
+         * this processor implements an identity tracker (ident_) which, atm, is implemented to detect whether an event is in type 1 or type 2
+         * along with a short macro which associates to differently reconstructed root files a identification monicer, this allows for quick
+         * direct comparison of two means of reconstruction.
+         * 
+         **/
         virtual bool process(IEvent* ievent);
 
         virtual void initialize(TTree* tree);
 
         /**
          *
-         *THE REMAINING METHODS (UP TO TRACKPLOT) ALL PLOT STANDARD HISTOGRAMS DESCRIBED IN THE DESCRIPTION TO THE PROCESS METHOD.
-         *THEY INCLUDE STANDARD FUNCTION CALLS YOU WOULD EXPECT IN A ROOT MACRO AND AFFORD SOME MORE CONTROL THAN A HISTOMANAGER AND
-         *REGION SELECTOR COMBO.
-         *FEASIBLE FOR A LIMITED NUMBER OF COLLECTION CUTS.
+         * The remaining methods (up to TrackPlot) all plot standard histograms described in the description to the process method.
+         * They include standard function calls you would expect in a root macro and afford some more control than a histomanager and
+         * region selector combo.
          *
-         * */
+         **/
 
         virtual void PlotClusterLayers();  
 
@@ -89,33 +86,30 @@ class TrackHitCompareAnaProcessor : public Processor {
 
         /**
          *
-         *THIS METHOD FILLS THE COLLECTION OF DEAD CHANNEL IDS GIVEN AN INPUT FILENAME. REQUIRED FOR NTD PLOTS, BUT LARGELY DISUSED IN THIS PROCESSOR AS OF YET.
+         * This method fills the collection of dead channel ids given an input filename. Required for NTD plots, but largely disused in this processor as of yet.
          *
-         * */
-
+         **/
         virtual void fillDeads();
 
         /**
          *
-         *THIS METHOD GITS THE STRIP COUNT OUT OF ROUGHLY 25000 GIVEN THE FEB AND HYBRID IDS AND THE STRIP NO WRT THESE IDS
+         * This method gets the strip count out of roughly 25000 given the feb and hybrid ids and the strip no wrt these IDs
          *
-         * */
-
+         **/
         virtual int GetStrip(int feb, int hyb,int strip);
 
         /**
          *
-         *THE FINALIZE METHOD CALLS ALL THE PLOTTING MACROS ABOVE. THEY ARE CREATED INTO PNGS INTO THE REPOSITORY THE PROCESSOR IS CALLED IN.
+         * The finalize method calls all the plotting macros above. They are created into pngs into the repository the processor is called in.
          *
-         * */
-
+         **/
         virtual void finalize();
 
         virtual void configure(const ParameterSet& parameters);
 
     private:
 
-        //Containers to hold histogrammer info
+        // Containers to hold histogrammer info
         ModuleMapper * mmapper_;
        
         TTree* tree_;
@@ -128,8 +122,7 @@ class TrackHitCompareAnaProcessor : public Processor {
         int layer_{-1};
         int module_{-1};
 
-        //FOR THE FIRST FILE
-
+        // FOR THE FIRST FILE
         TH1F* layers1_;
         TH1F* layersOnTrk1_;
         TH1F* layersOffTrk1_;
@@ -156,8 +149,7 @@ class TrackHitCompareAnaProcessor : public Processor {
         TH1F* timesOnTrkNTD1_;
         TH1F* timesOffTrkNTD1_;
 
-        //FOR THE SECOND FILE
-        
+        // FOR THE SECOND FILE
         TH1F* layers2_;
         TH1F* layersOnTrk2_;
         TH1F* layersOffTrk2_;
@@ -184,8 +176,7 @@ class TrackHitCompareAnaProcessor : public Processor {
         TH1F* timesOnTrkNTD2_;
         TH1F* timesOffTrkNTD2_;
 
-        //TRACKING RELATED VARIABLES
-
+        // TRACKING RELATED VARIABLES
         TH2F* Z0VNShare2Hist1_;
         TH2F* Z0VNShare2HistCut1_;
         TH1F* SharedAmplitudes1_;
@@ -223,8 +214,6 @@ class TrackHitCompareAnaProcessor : public Processor {
         std::vector<RawSvtHit*> * svtraw_{};
         std::vector<Track*> * tracks_{};
 
-
-        //std::string anaName_{"ClusterAna"};
         int debug_{0};
         int isMC_{0};
         float ident_{1.0};

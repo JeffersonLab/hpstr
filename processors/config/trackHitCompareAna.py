@@ -4,15 +4,15 @@ import baseConfig as base
 from baseConfig import bfield
 
 base.parser.add_argument("-L", "--layer", type=int, dest="layer",
-                  help="Layer Under Investigation", metavar="layer",default=-1)
+                  help="Layer Under Investigation", metavar="layer", default=-1)
 base.parser.add_argument("-M", "--module", type=int, dest="module",
-                  help="Module Under Investigation", metavar="module",default=-1)
+                  help="Module Under Investigation", metavar="module", default=-1)
 base.parser.add_argument("-MC", "--MC", type=int, dest="isMC",
-                  help="Is the file used generated from Monte Carlo", metavar="module",default=0)
+                  help="Is the file used generated from Monte Carlo", metavar="module", default=0)
 base.parser.add_argument("-doT", "--doT", type=int, dest="doTrack",
-                  help="we plot tracking related cluster performance metrics", metavar="doTrack",default=0)
+                  help="we plot tracking related cluster performance metrics", metavar="doTrack", default=0)
 base.parser.add_argument("-cut", "--cut", type=float, dest="cut",
-                  help="Momentum Cut for NShared Profile", metavar="cut",default=-1.0)
+                  help="Momentum Cut for NShared Profile", metavar="cut", default=-1.0)
 
 
 options = base.parser.parse_args()
@@ -37,7 +37,7 @@ p.add_library("libprocessors")
 ###############################
 #          Processors         #
 ###############################
-cclua = HpstrConf.Processor('cclua','TCompareAnaProcessor')
+cclua = HpstrConf.Processor('cclua', 'TCompareAnaProcessor')
 cclua.parameters["debug"] = 0
 cclua.parameters["layer"] = options.layer
 cclua.parameters["module"] = options.module
@@ -50,7 +50,7 @@ sequence = [cclua]
 
 p.sequence = sequence
 
-print("processors::clusterAna: The input file is: "+str(root_file))
+print("processors::clusterAna: The input file is: " + str(root_file))
 p.input_files = root_file
 p.output_files = [ana_file]
 

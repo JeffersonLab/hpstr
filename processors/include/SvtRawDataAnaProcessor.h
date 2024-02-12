@@ -1,7 +1,7 @@
 #ifndef __RAWSVTHIT_ANAPROCESSOR_H__
 #define __RAWSVTHIT_ANAPROCESSOR_H__
 
-//HPSTR
+// HPSTR
 #include "HpsEvent.h"
 #include "RawSvtHit.h"
 #include "RawSvtHitHistos.h"
@@ -16,9 +16,7 @@
 #include "Track.h"
 #include "TrackerHit.h"
 
-//#include <IMPL/TrackerHitImpl.h>"
-//ROOT
-
+// ROOT
 #include "Processor.h"
 #include "TClonesArray.h"
 #include "TBranch.h"
@@ -43,61 +41,55 @@ class SvtRawDataAnaProcessor : public Processor {
 
         ~SvtRawDataAnaProcessor();
 
-        /*
+        /**
          *
-         *RUNS OVER THE REGION SELECTORS AND CHECKS IF AN EVENT PASSES A SELECTION JSON AND FILLS A RAWSVTHITHISTO
-         IF DO SAMPLE IS ON, IT RUNS SAMPLING.
+         * Runs over the region selectors and checks if an event passes a selection json and fills a rawsvthithisto
+         * if do sample is on, it runs sampling.
          *
-         *
-         */
+         **/
 
         virtual bool process(IEvent* ievent);
 
-        /*
+        /**
          *
-         *PROCESS INITIALIZER. READS IN THE OFFLINE BASELINES INTO LOCAL BASELINE FILES, READs in the PULSE SHAPES, and FINALLLY
-         ESTABLISHES REGIONS WHICH ARE USED ALONG WITH THE REGION SELECTOR CLASS AND CUTS IN ANALYSIS/SELECTION/SVT TO SELECT ON
-         EVENTS FOR WHICH HISTOGRAMS IN RAWSVTHISTO IS FILLED.
+         * Process initializer. Reads in the offline baselines into local baseline files, reads in the pulse shapes, and finally
+         * establishes regions which are used along with the region selector class and cuts in analysis/selection/svt to select on
+         * events for which histograms in rawsvthisto is filled.
          *
-         *
-         */
-
+         **/
         virtual void initialize(TTree* tree);
         
         virtual void sample(RawSvtHit* thisHit, std::string word, IEvent* ievent, long t,int i);
 
-        /*
+        /**
          *
-         *FOUR POLE PULSE FUNCTION AND THE SUM OF TWO OF THEM WITH BASELINES BORROWED FROM ALIC
+         * Four pole pulse function and the sum of two of them with baselines borrowed from Alic
          *
-         */
-
+         **/
         virtual TF1* fourPoleFitFunction(std::string word, int caser);
 
         /**
          *
-         *THIS METHOD IS IMPLEMENTED BECAUSE C++ std:of METHOD WHICH CONVERTS STRINGS
-         *TO FLOATS IS NOT WORKING. WE NEED THIS TO READ IN OFFLINE BASELINES AND CHARACTERISTIC TIMES.
+         * This method is implemented because C++ std:of method which converts strings
+         * to floats is not working. We need this to read in offline baselines and characteristic times.
          *
-         *
-         * */
-
+         **/
         virtual float str_to_float(std::string word);
 
         float reverseEngineerTime(float ti, long t);
 
-        /*
-         *FILLS IN HISTOGRAMS
+        /**
+         * 
+         * Fills in histograms
          *
-         */
-
+         **/
         virtual void finalize();
 
         virtual void configure(const ParameterSet& parameters);
 
     private:
 
-        //Containers to hold histogrammer info
+        // Containers to hold histogrammer info
         RawSvtHitHistos* histos{nullptr};
         std::string  histCfgFilename_;
         Float_t TimeRef_;
@@ -121,14 +113,8 @@ class SvtRawDataAnaProcessor : public Processor {
         TBranch* bPart_{nullptr};
         TBranch* bTrk_{nullptr};
         TBranch* bClusters_{nullptr};
-
         TBranch* bevH_;
-        /*
-        TTree *HitEff_;
-        //TBranch* bL1_{nullptr};
-        int L1_;
-        bool doHitEff_{false};
-        */
+
         std::vector<RawSvtHit*> * svtHits_{};
         VTPData * vtpBank_;
         TSData * tsBank_;
@@ -136,8 +122,7 @@ class SvtRawDataAnaProcessor : public Processor {
         std::vector<Track*>* Trk_{};
         std::vector<Particle*>* Part_{};
         std::vector<TrackerHit*>* Clusters_{};
-        
-        //std::vector<Track> Trk_{};
+
         EventHeader * evH_;
 
         std::string anaName_{"rawSvtHitAna"};
@@ -151,7 +136,7 @@ class SvtRawDataAnaProcessor : public Processor {
         std::string timeProfiles_;
         int tphase_{6};
 
-        //Debug Level
+        // Debug Level
         int debug_{0};
 
 };
