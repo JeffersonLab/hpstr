@@ -23,6 +23,7 @@ void ClusterAnaProcessor::configure(const ParameterSet& parameters) {
         isMC_            = parameters.getInteger("isMC");
         doingTracks_     = (parameters.getInteger("doTrack")==1);
         pcut_            = (float)parameters.getDouble("cut");
+	badchann_	 = parameters.getString("badchannels");
         //anaName_         = parameters.getString("anaName");
     }
     catch (std::runtime_error& error)
@@ -243,7 +244,7 @@ void ClusterAnaProcessor::fillDeads(){
     for(int i = 0;i<24576;i++){
         Deads_[i]=0.0;
     }
-    std::string FILENAME="/sdf/group/hps/users/rodwyer1/run/cluster_study/badchannels2021.dat";
+    std::string FILENAME=badchann_;
     std::ifstream file(FILENAME.c_str());
     std::string line;
     std::getline(file,line);
