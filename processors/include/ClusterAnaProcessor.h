@@ -177,6 +177,7 @@ class ClusterAnaProcessor : public Processor {
         //std::string anaName_{"ClusterAna"};
         int debug_{0};
         int isMC_{0};
+        std::string badchann_{""};
 };
 
 #endif
