@@ -44,7 +44,7 @@ clua.parameters["module"] = options.module
 clua.parameters["isMC"] = options.isMC
 clua.parameters["doTrack"] = options.doTrack
 clua.parameters["cut"] = options.cut
-clua.parameters["badchannels"] = os.environ['HPSTR_BASE']+"/processors/dat/badchannels2021.dat"
+clua.parameters["badchannels"] = os.environ['HPSTR_BASE']+"/analysis/data/badchannels2021.dat"
 
 sequence = [clua]        
 
