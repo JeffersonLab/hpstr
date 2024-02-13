@@ -47,7 +47,6 @@ class SvtRawDataAnaProcessor : public Processor {
          * if do sample is on, it runs sampling.
          *
          **/
-
         virtual bool process(IEvent* ievent);
 
         /**
