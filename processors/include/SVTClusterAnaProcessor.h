@@ -1,5 +1,5 @@
-#ifndef __CLUSTER_ANAPROCESSOR_H__
-#define __CLUSTER_ANAPROCESSOR_H__
+#ifndef __SVTCLUSTER_ANAPROCESSOR_H__
+#define __SVTCLUSTER_ANAPROCESSOR_H__
 
 //HPSTR
 #include "HpsEvent.h"
@@ -37,13 +37,13 @@
 class TTree;
 
 
-class ClusterAnaProcessor : public Processor {
+class SvtClusterAnaProcessor : public Processor {
 
     public:
 
-        ClusterAnaProcessor(const std::string& name, Process& process);
+        SvtClusterAnaProcessor(const std::string& name, Process& process);
 
-        ~ClusterAnaProcessor();
+        ~SvtClusterAnaProcessor();
 
         /**
          *
