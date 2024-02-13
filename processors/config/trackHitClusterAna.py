@@ -37,7 +37,7 @@ p.add_library("libprocessors")
 ###############################
 #          Processors         #
 ###############################
-clua = HpstrConf.Processor('clua','ClusterAnaProcessor')
+clua = HpstrConf.Processor('clua','SVTClusterAnaProcessor')
 clua.parameters["debug"] = 0
 clua.parameters["layer"] = options.layer
 clua.parameters["module"] = options.module
