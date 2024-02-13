@@ -198,8 +198,8 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
         Clusters_->at(i)->getLayer();
     }
 
-    for(unsigned int i = 0; i < svtHits_->size(); i++){ 
-        RawSvtHit * thisHit = svtHits_->at(i); 
+    for(unsigned int I = 0; I < svtHits_->size(); I++){ 
+        RawSvtHit * thisHit = svtHits_->at(I); 
         int getNum = thisHit->getFitN();
         if(doClMatch){
             bool Continue = true;
@@ -345,7 +345,7 @@ bool SvtRawDataAnaProcessor::process(IEvent* ievent) {
                     sample(thisHit,regions_[i_reg],ievent,eventTime,N); 
                 
                 }
-                reg_histos_[regions_[i_reg]]->FillHistograms(thisHit,weight,J,i,TimeDiff,AmpDiff,stripID,hitc,hitl,otherTime);
+                reg_histos_[regions_[i_reg]]->FillHistograms(thisHit,weight,J,I,TimeDiff,AmpDiff,stripID,hitc,hitl,otherTime);
                 }
             }
         }
