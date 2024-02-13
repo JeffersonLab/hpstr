@@ -36,13 +36,13 @@
 class TTree;
 
 
-class SvtClusterAnaProcessor : public Processor {
+class SVTClusterAnaProcessor : public Processor {
 
     public:
 
-        SvtClusterAnaProcessor(const std::string& name, Process& process);
+        SVTClusterAnaProcessor(const std::string& name, Process& process);
 
-        ~SvtClusterAnaProcessor();
+        ~SVTClusterAnaProcessor();
 
         /**
          * 
