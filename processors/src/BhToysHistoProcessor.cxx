@@ -66,7 +66,7 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
                 break;
         case 3: bkg_fit_model = FitFunction::BkgModel::EXP_LEGENDRE;
                 break;
-        case 4: bkg_fit_model = FitFunction::BkgModel::GLOBAL;
+        case 4: bkg_fit_model = FitFunction::BkgModel::LAS3PLUSLAS6;
                 break;
         default: bkg_fit_model = FitFunction::BkgModel::EXP_CHEBYSHEV;
     }
@@ -79,6 +79,7 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
     bump_hunter_->setBounds(mass_spec_h->GetXaxis()->GetBinUpEdge(mass_spec_h->FindFirstBinAbove()),
             mass_spec_h->GetXaxis()->GetBinLowEdge(mass_spec_h->FindLastBinAbove()));
     if (bkg_fit_model > 3){
+        std::cout << "setting bounds to 45 to 200 MeV" << std::endl;
         bump_hunter_->setBounds(0.045,0.200);//bounds for global fit
     }
     if(debug_ > 0) bump_hunter_->enableDebug();

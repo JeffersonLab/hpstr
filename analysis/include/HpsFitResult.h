@@ -6,7 +6,7 @@
 
 #include "ChebyshevFitFunction.h"
 #include "LegendreFitFunction.h"
-
+#include "las3pluslas6_FitFunction.h"
 /**
  * @brief description
  * 
@@ -110,14 +110,14 @@ class HpsFitResult {
          * 
          * @return float The signal yield obtained from the sig+bkg fit.
          */
-        float getSignalYield() { return comp_result_->Parameter(poly_order_ + 1);  };
+        float getSignalYield() { return comp_result_->Parameter(poly_order_ );  };
 
         /**
          * @brief Get the error of the signal yield.
          * 
          * @return float The error on the signal yield.
          */
-        float getSignalYieldErr() { return comp_result_->ParError(poly_order_ + 1); }; 
+        float getSignalYieldErr() { return comp_result_->ParError(poly_order_ ); }; 
 
         /**
          * @brief Get the upper fit limit.

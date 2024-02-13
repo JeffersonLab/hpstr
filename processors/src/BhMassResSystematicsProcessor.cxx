@@ -52,6 +52,8 @@ void BhMassResSystematicsProcessor::initialize(std::string inFilename, std::stri
                 break;
         case 3: bkg_fit_model = FitFunction::BkgModel::EXP_LEGENDRE;
                 break;
+        case 4: bkg_fit_model = FitFunction::BkgModel::LAS3PLUSLAS6;
+                break;
         default: bkg_fit_model = FitFunction::BkgModel::EXP_LEGENDRE;
     }
 

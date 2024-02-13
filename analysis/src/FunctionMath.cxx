@@ -30,7 +30,7 @@ double FunctionMath::LegendreFunction(double x, double* p, int order) {
 
 double FunctionMath::las3pluslas6_Function(double x, double* p) {
 
-((TMath::Erf((x-p[1])/p[0])+1)/2 * p[2]*TMath::Power((1-x),p[3])*TMath::Exp(p[4]*log(x)))+((TMath::Erf((x-p[6])/p[5])+1)/2 * p[7]*TMath::Power((1-x),p[8])*TMath::Power(1+x,p[9]*x));
+    return p[2]*(((TMath::Erf((x-p[1])/p[0])+1)/2*TMath::Power((1-x),p[3])*TMath::Exp(p[4]*log(x)))+((TMath::Erf((x-p[6])/p[5])+1)/2*p[7]*TMath::Power((1-x),p[8])*TMath::Power(1+x,p[9]*x)));
 
 }    
 

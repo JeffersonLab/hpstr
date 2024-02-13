@@ -82,7 +82,7 @@ class FitFunction {
                 sigParm = 8;
             } else if(model_order == FitFunction::ModelOrder::GLOBAL) {
                 order = 10;
-                sigParm = 11;
+                sigParm = 10;
             }
         }
 
