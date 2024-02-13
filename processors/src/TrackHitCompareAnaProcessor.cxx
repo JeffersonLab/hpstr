@@ -1,20 +1,20 @@
 /**
- * @file ClusterCompareAnaProcessor.cxx
+ * @file TrackHitAnaProcessor.cxx
  * @brief AnaProcessor used to compare two means of reconstruction directly. Fills histograms to study cluster reconstruction algorithms and dead channels.
  * Does not feature a region selector or histomanager (i.e. no configurable json files), rather 
  * for the limited featured plots allows for more specific manipulation and control.
  * @author Rory O'Dwyer and Cameron Bravo, SLAC National Accelerator Laboratory
  */     
-#include "ClusterCompareAnaProcessor.h"
+#include "TrackHitCompareAnaProcessor.h"
 #include <iostream>
 
-ClusterCompareAnaProcessor::ClusterCompareAnaProcessor(const std::string& name, Process& process) : Processor(name,process){
+TrackHitAnaProcessor::TrackHitAnaProcessor(const std::string& name, Process& process) : Processor(name,process){
     mmapper_ = new ModuleMapper(2021);
 }
-ClusterCompareAnaProcessor::~ClusterCompareAnaProcessor(){}
+TrackHitAnaProcessor::~TrackHitAnaProcessor(){}
 
-void ClusterCompareAnaProcessor::configure(const ParameterSet& parameters) {
-    std::cout << "Configuring ClusterCompareAnaProcessor" << std::endl;
+void TrackHitAnaProcessor::configure(const ParameterSet& parameters) {
+    std::cout << "Configuring TrackHitAnaProcessor" << std::endl;
     try
     {
         debug_           = parameters.getInteger("debug");
@@ -33,7 +33,7 @@ void ClusterCompareAnaProcessor::configure(const ParameterSet& parameters) {
 }
 
 
-void ClusterCompareAnaProcessor::initialize(TTree* tree) {
+void TrackHitAnaProcessor::initialize(TTree* tree) {
     fillDeads();
     tree_= tree;   
     if(isMC_==1){
@@ -166,7 +166,7 @@ void ClusterCompareAnaProcessor::initialize(TTree* tree) {
     }
 }
 
-bool ClusterCompareAnaProcessor::process(IEvent* ievent) {
+bool TrackHitAnaProcessor::process(IEvent* ievent) {
     if(doingTracks_){
         for(int i = 0;i<tracks_->size();i++){
             Track* track = tracks_->at(i);
@@ -311,7 +311,7 @@ bool ClusterCompareAnaProcessor::process(IEvent* ievent) {
     return true;
 }
 
-void ClusterCompareAnaProcessor::fillDeads(){
+void TrackHitAnaProcessor::fillDeads(){
     for(int i = 0;i<24576;i++){
         Deads_[i]=0.0;
     }
@@ -327,7 +327,7 @@ void ClusterCompareAnaProcessor::fillDeads(){
     return;
 }
 
-int ClusterCompareAnaProcessor::GetStrip(int feb,int hyb,int strip){
+int TrackHitAnaProcessor::GetStrip(int feb,int hyb,int strip){
 	int BigCount = 0;
     if(feb<=1){
         BigCount+=feb*2048+hyb*512+strip;
@@ -338,7 +338,7 @@ int ClusterCompareAnaProcessor::GetStrip(int feb,int hyb,int strip){
     return BigCount;
 }
 
-void ClusterCompareAnaProcessor::PlotClusterLayers(){
+void TrackHitAnaProcessor::PlotClusterLayers(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
     c1->cd();
@@ -396,7 +396,7 @@ void ClusterCompareAnaProcessor::PlotClusterLayers(){
     return;
 }
 
-void ClusterCompareAnaProcessor::PlotClusterCharges(){
+void TrackHitAnaProcessor::PlotClusterCharges(){
     TCanvas *c1 = new TCanvas("c");
     c1->cd();
     
@@ -454,7 +454,7 @@ void ClusterCompareAnaProcessor::PlotClusterCharges(){
     return;
 }
 
-void ClusterCompareAnaProcessor::PlotClusterTimes(){
+void TrackHitAnaProcessor::PlotClusterTimes(){
     TCanvas *c1 = new TCanvas("c");
     c1->cd();
     
@@ -513,7 +513,7 @@ void ClusterCompareAnaProcessor::PlotClusterTimes(){
     return;
 }
 
-void ClusterCompareAnaProcessor::PlotClusterPositions(){
+void TrackHitAnaProcessor::PlotClusterPositions(){
     TCanvas *c1 = new TCanvas("c");
     c1->cd();
     
@@ -567,7 +567,7 @@ void ClusterCompareAnaProcessor::PlotClusterPositions(){
     return;
 }
 
-void ClusterCompareAnaProcessor::TrackMomenta(){
+void TrackHitAnaProcessor::TrackMomenta(){
     TCanvas *c1 = new TCanvas("c");
     c1->cd();
     gPad->SetLogy(false);
@@ -619,7 +619,7 @@ void ClusterCompareAnaProcessor::TrackMomenta(){
     return;    
 }
 
-void ClusterCompareAnaProcessor::TrackTransverseMomenta(){
+void TrackHitAnaProcessor::TrackTransverseMomenta(){
     TCanvas *c1 = new TCanvas("c");
     c1->cd();
     gPad->SetLogy(false); 
@@ -670,7 +670,7 @@ void ClusterCompareAnaProcessor::TrackTransverseMomenta(){
     return;    
 }
 
-void ClusterCompareAnaProcessor::finalize() {
+void TrackHitAnaProcessor::finalize() {
     PlotClusterLayers();  
     PlotClusterCharges();
     PlotClusterTimes();
@@ -681,4 +681,4 @@ void ClusterCompareAnaProcessor::finalize() {
     }
     return;
 }
-DECLARE_PROCESSOR(ClusterCompareAnaProcessor);
+DECLARE_PROCESSOR(TrackHitAnaProcessor);
