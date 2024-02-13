@@ -23,7 +23,7 @@ void SVTClusterAnaProcessor::configure(const ParameterSet& parameters) {
         isMC_            = parameters.getInteger("isMC");
         doingTracks_     = (parameters.getInteger("doTrack")==1);
         pcut_            = (float)parameters.getDouble("cut");
-	    badchann_	     = parameters.getString("badchannels");
+	badchann_	 = parameters.getString("badchannels");
     }
     catch (std::runtime_error& error)
     {

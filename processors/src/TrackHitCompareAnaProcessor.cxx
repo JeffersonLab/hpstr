@@ -8,12 +8,12 @@
 #include "TrackHitCompareAnaProcessor.h"
 #include <iostream>
 
-TrackHitAnaProcessor::TrackHitAnaProcessor(const std::string& name, Process& process) : Processor(name, process){
+TrackHitCompareAnaProcessor::TrackHitCompareAnaProcessor(const std::string& name, Process& process) : Processor(name, process){
     mmapper_ = new ModuleMapper(2021);
 }
-TrackHitAnaProcessor::~TrackHitAnaProcessor(){}
+TrackHitCompareAnaProcessor::~TrackHitCompareAnaProcessor(){}
 
-void TrackHitAnaProcessor::configure(const ParameterSet& parameters) {
+void TrackHitCompareAnaProcessor::configure(const ParameterSet& parameters) {
     std::cout << "Configuring TrackHitAnaProcessor" << std::endl;
     try
     {
@@ -33,7 +33,7 @@ void TrackHitAnaProcessor::configure(const ParameterSet& parameters) {
 }
 
 
-void TrackHitAnaProcessor::initialize(TTree* tree) {
+void TrackHitCompareAnaProcessor::initialize(TTree* tree) {
     fillDeads();
     tree_= tree;   
     if (isMC_ == 1){
@@ -165,7 +165,7 @@ void TrackHitAnaProcessor::initialize(TTree* tree) {
     }
 }
 
-bool TrackHitAnaProcessor::process(IEvent* ievent) {
+bool TrackHitCompareAnaProcessor::process(IEvent* ievent) {
     if (doingTracks_){
         for (int i = 0; i<tracks_->size(); i++){
             Track* track = tracks_->at(i);
@@ -406,7 +406,7 @@ bool TrackHitAnaProcessor::process(IEvent* ievent) {
     return true;
 }
 
-void TrackHitAnaProcessor::fillDeads(){
+void TrackHitCompareAnaProcessor::fillDeads(){
     for (int i = 0; i<24576; i++){
         Deads_[i]=0.0;
     }
@@ -422,7 +422,7 @@ void TrackHitAnaProcessor::fillDeads(){
     return;
 }
 
-int TrackHitAnaProcessor::GetStrip(int feb, int hyb, int strip){
+int TrackHitCompareAnaProcessor::GetStrip(int feb, int hyb, int strip){
 	int count = 0;
     if (feb <= 1){
         count += feb*2048 + hyb*512 + strip;
@@ -433,7 +433,7 @@ int TrackHitAnaProcessor::GetStrip(int feb, int hyb, int strip){
     return count;
 }
 
-void TrackHitAnaProcessor::PlotClusterLayers(){
+void TrackHitCompareAnaProcessor::PlotClusterLayers(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
     c1->cd();
@@ -491,7 +491,7 @@ void TrackHitAnaProcessor::PlotClusterLayers(){
     return;
 }
 
-void TrackHitAnaProcessor::PlotClusterCharges(){
+void TrackHitCompareAnaProcessor::PlotClusterCharges(){
     TCanvas *c1 = new TCanvas("c");
     c1->cd();
     
@@ -548,7 +548,7 @@ void TrackHitAnaProcessor::PlotClusterCharges(){
     return;
 }
 
-void TrackHitAnaProcessor::PlotClusterTimes(){
+void TrackHitCompareAnaProcessor::PlotClusterTimes(){
     TCanvas *c1 = new TCanvas("c");
     c1->cd();
     
@@ -605,7 +605,7 @@ void TrackHitAnaProcessor::PlotClusterTimes(){
     return;
 }
 
-void TrackHitAnaProcessor::PlotClusterPositions(){
+void TrackHitCompareAnaProcessor::PlotClusterPositions(){
     TCanvas *c1 = new TCanvas("c");
     c1->cd();
     
@@ -658,7 +658,7 @@ void TrackHitAnaProcessor::PlotClusterPositions(){
     return;
 }
 
-void TrackHitAnaProcessor::TrackMomenta(){
+void TrackHitCompareAnaProcessor::TrackMomenta(){
     TCanvas *c1 = new TCanvas("c");
     c1->cd();
     gPad->SetLogy(false);
@@ -710,7 +710,7 @@ void TrackHitAnaProcessor::TrackMomenta(){
     return;    
 }
 
-void TrackHitAnaProcessor::TrackTransverseMomenta(){
+void TrackHitCompareAnaProcessor::TrackTransverseMomenta(){
     TCanvas *c1 = new TCanvas("c");
     c1->cd();
     gPad->SetLogy(false); 
@@ -761,15 +761,15 @@ void TrackHitAnaProcessor::TrackTransverseMomenta(){
     return;    
 }
 
-void TrackHitAnaProcessor::finalize() {
+void TrackHitCompareAnaProcessor::finalize() {
     PlotClusterLayers();  
     PlotClusterCharges();
     PlotClusterTimes();
     PlotClusterPositions();
     if(doingTracks_){
-        TrackMomenta()();
-        TrackTransverseMomenta()(); 
+        TrackMomenta();
+        TrackTransverseMomenta(); 
     }
     return;
 }
-DECLARE_PROCESSOR(TrackHitAnaProcessor);
+DECLARE_PROCESSOR(TrackHitCompareAnaProcessor);
