@@ -1,20 +1,20 @@
 /**
- * @file ClusterAnaProcessor.cxx
+ * @file SVTClusterAnaProcessor.cxx
  * @brief AnaProcessor used fill histograms to study cluster reconstruction algorithms and dead channels.
  * Does not feature a region selector or histomanager (i.e. no configurable json files), rather 
  * for the limited featured plots allows for more specific manipulation and control.
  * @author Rory O'Dwyer and Cameron Bravo, SLAC National Accelerator Laboratory
  */     
-#include "ClusterAnaProcessor.h"
+#include "SVTClusterAnaProcessor.h"
 #include <iostream>
 
-ClusterAnaProcessor::ClusterAnaProcessor(const std::string& name, Process& process) : Processor(name,process){
+SVTClusterAnaProcessor::SVTClusterAnaProcessor(const std::string& name, Process& process) : Processor(name,process){
     mmapper_ = new ModuleMapper(2021);
 }
-ClusterAnaProcessor::~ClusterAnaProcessor(){}
+SVTClusterAnaProcessor::~SVTClusterAnaProcessor(){}
 
-void ClusterAnaProcessor::configure(const ParameterSet& parameters) {
-    std::cout << "Configuring ClusterAnaProcessor" << std::endl;
+void SVTClusterAnaProcessor::configure(const ParameterSet& parameters) {
+    std::cout << "Configuring SVTClusterAnaProcessor" << std::endl;
     try
     {
         debug_           = parameters.getInteger("debug");
@@ -33,7 +33,7 @@ void ClusterAnaProcessor::configure(const ParameterSet& parameters) {
 
 }
 
-void ClusterAnaProcessor::initialize(TTree* tree) {
+void SVTClusterAnaProcessor::initialize(TTree* tree) {
     fillDeads();
     tree_= tree;
    
@@ -110,7 +110,7 @@ void ClusterAnaProcessor::initialize(TTree* tree) {
     }
 }
 
-bool ClusterAnaProcessor::process(IEvent* ievent) {
+bool SVTClusterAnaProcessor::process(IEvent* ievent) {
     if(doingTracks_){
         for(int i = 0;i<tracks_->size();i++){
             Track* track = tracks_->at(i);
@@ -240,7 +240,7 @@ bool ClusterAnaProcessor::process(IEvent* ievent) {
     return true;
 }
 
-void ClusterAnaProcessor::fillDeads(){
+void SVTClusterAnaProcessor::fillDeads(){
     for(int i = 0;i<24576;i++){
         Deads_[i]=0.0;
     }
@@ -256,7 +256,7 @@ void ClusterAnaProcessor::fillDeads(){
     return;
 }
 
-int ClusterAnaProcessor::GetStrip(int feb,int hyb,int strip){
+int SVTClusterAnaProcessor::GetStrip(int feb,int hyb,int strip){
 	int BigCount = 0;
     if(feb<=1){
         BigCount+=feb*2048+hyb*512+strip;
@@ -267,7 +267,7 @@ int ClusterAnaProcessor::GetStrip(int feb,int hyb,int strip){
     return BigCount;
 }
 
-void ClusterAnaProcessor::PlotClusterLayers(){
+void SVTClusterAnaProcessor::PlotClusterLayers(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
     c1->cd();
@@ -310,7 +310,7 @@ void ClusterAnaProcessor::PlotClusterLayers(){
     return;
 }
 
-void ClusterAnaProcessor::PlotClusterCharges(){
+void SVTClusterAnaProcessor::PlotClusterCharges(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
     c1->cd();
@@ -354,7 +354,7 @@ void ClusterAnaProcessor::PlotClusterCharges(){
     return;
 }
 
-void ClusterAnaProcessor::PlotClusterLayersNTD(){
+void SVTClusterAnaProcessor::PlotClusterLayersNTD(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
     c1->cd();
@@ -397,7 +397,7 @@ void ClusterAnaProcessor::PlotClusterLayersNTD(){
     return;
 }
 
-void ClusterAnaProcessor::PlotClusterChargesNTD(){
+void SVTClusterAnaProcessor::PlotClusterChargesNTD(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
     c1->cd();
@@ -441,7 +441,7 @@ void ClusterAnaProcessor::PlotClusterChargesNTD(){
     return;
 }
 
-void ClusterAnaProcessor::PlotClusterPositions(){
+void SVTClusterAnaProcessor::PlotClusterPositions(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
     c1->cd();
@@ -479,7 +479,7 @@ void ClusterAnaProcessor::PlotClusterPositions(){
     c1->Clear();
 }
 
-void ClusterAnaProcessor::PlotClusterTimes(){
+void SVTClusterAnaProcessor::PlotClusterTimes(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
     c1->cd();
@@ -522,7 +522,7 @@ void ClusterAnaProcessor::PlotClusterTimes(){
     return;
 }
 
-void ClusterAnaProcessor::PlotClusterTimesNTD(){
+void SVTClusterAnaProcessor::PlotClusterTimesNTD(){
     TCanvas *c1 = new TCanvas("c");
     gPad->SetLogy(true);
     c1->cd();
@@ -565,7 +565,7 @@ void ClusterAnaProcessor::PlotClusterTimesNTD(){
     return;
 }
 
-void ClusterAnaProcessor::TrackPlot(){
+void SVTClusterAnaProcessor::TrackPlot(){
     TCanvas *c1 = new TCanvas("c");
     c1->cd();
     //FIRST I DO THE PROFILES OF THE NSHARED HITS PLOTS
@@ -615,7 +615,7 @@ void ClusterAnaProcessor::TrackPlot(){
     return;    
 }
 
-void ClusterAnaProcessor::finalize() {
+void SVTClusterAnaProcessor::finalize() {
     PlotClusterLayers();
     PlotClusterLayersNTD();
     PlotClusterCharges();
@@ -628,4 +628,4 @@ void ClusterAnaProcessor::finalize() {
     }
     return;
 }
-DECLARE_PROCESSOR(ClusterAnaProcessor);
+DECLARE_PROCESSOR(SVTClusterAnaProcessor);
