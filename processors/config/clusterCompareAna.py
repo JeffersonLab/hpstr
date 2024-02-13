@@ -44,6 +44,7 @@ cclua.parameters["module"] = options.module
 cclua.parameters["isMC"] = options.isMC
 cclua.parameters["doTrack"] = options.doTrack
 cclua.parameters["cut"] = options.cut
+cclua.parameters["badchannels"] = os.environ['HPSTR_BASE']+"/processors/dat/badchannels2021.dat"
 
 sequence = [cclua]        
 
