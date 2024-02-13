@@ -186,12 +186,12 @@ bool ClusterCompareAnaProcessor::process(IEvent* ievent) {
             }
           
             //Transverse Track Momentum for same cuts
-            if(ident_<1.5){TrackMomentumTAllTime1_->Fill(track->getP());}else{TrackMomentumTAllTime2_->Fill(track->getP());}
+            if(ident_<1.5){TrackMomentumTAllTime1_->Fill(track->getPt());}else{TrackMomentumTAllTime2_->Fill(track->getPt());}
         
             if(track->getTrackTime()*track->getTrackTime()<16.0){
-                if(ident_<1.5){TrackMomentumTInTime1_->Fill(track->getP());}else{TrackMomentumTInTime2_->Fill(track->getP());}
+                if(ident_<1.5){TrackMomentumTInTime1_->Fill(track->getPt());}else{TrackMomentumTInTime2_->Fill(track->getPt());}
             }else{
-                if(ident_<1.5){TrackMomentumTOutTime1_->Fill(track->getP());}else{TrackMomentumTOutTime2_->Fill(track->getPt());}
+                if(ident_<1.5){TrackMomentumTOutTime1_->Fill(track->getPt());}else{TrackMomentumTOutTime2_->Fill(track->getPt());}
             }
         }
     }
