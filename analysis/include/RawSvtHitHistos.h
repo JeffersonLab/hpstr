@@ -26,11 +26,12 @@ class RawSvtHitHistos : public HistoManager{
         ~RawSvtHitHistos();
 
         void DefineHistos();
-        void FillHistograms(RawSvtHit* rawSvtHit,float weight = 1.,int Ireg=0,unsigned int nhit = 0,Float_t TimeDiff = -42069.0,Float_t AmpDiff = -42069.0,int str=-10000, int hitc = 0, int hitl = 0,float otherTime = 69420.0);
-        void saveHistosSVT(TFile* outF,std::string folder);
+        void FillHistograms(RawSvtHit* rawSvtHit, float weight = 1., int Ireg = 0, unsigned int nhit = 0, Float_t TimeDiff = -42069.0, Float_t AmpDiff = -42069.0, int strip = -10000, int hitc = 0, int hitl = 0, float otherTime = 69420.0);
+        void saveHistosSVT(TFile* outF, std::string folder);
+    
     private:
 
-        int Event_number=0;
+        int Event_number = 0;
 
         int debug_ = 1;
         int adcs_[6];
