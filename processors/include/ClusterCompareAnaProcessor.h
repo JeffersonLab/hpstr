@@ -228,6 +228,7 @@ class ClusterCompareAnaProcessor : public Processor {
         int debug_{0};
         int isMC_{0};
         float ident_{1.0};
+        std::string badchann_{""};
 };
 
 #endif
