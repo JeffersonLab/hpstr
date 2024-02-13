@@ -37,7 +37,7 @@ p.add_library("libprocessors")
 ###############################
 #          Processors         #
 ###############################
-cclua = HpstrConf.Processor('cclua', 'TCompareAnaProcessor')
+cclua = HpstrConf.Processor('cclua', 'TrackHitCompareAnaProcessor')
 cclua.parameters["debug"] = 0
 cclua.parameters["layer"] = options.layer
 cclua.parameters["module"] = options.module
