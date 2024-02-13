@@ -37,13 +37,13 @@
 class TTree;
 
 
-class ClusterCompareAnaProcessor : public Processor {
+class TrackHitCompareAnaProcessor : public Processor {
 
     public:
 
-        ClusterCompareAnaProcessor(const std::string& name, Process& process);
+        TrackHitCompareAnaProcessor(const std::string& name, Process& process);
 
-        ~ClusterCompareAnaProcessor();
+        ~TrackHitCompareAnaProcessor();
 
         /**
          *
