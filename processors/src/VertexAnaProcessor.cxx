@@ -492,6 +492,11 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         _vtx_histos->Fill1DHisto("ele_track_clus_dt_h", ele_trk->getTrackTime() - corr_eleClusterTime, weight);
         _vtx_histos->Fill1DHisto("pos_track_clus_dt_h", pos_trk->getTrackTime() - corr_posClusterTime, weight);
 
+
+        //additional comparison plots 
+        _vtx_histos->Fill2DHisto("ele_track_p_v_pos_track_p_hh", pos_trk->getP(), ele_trk->getP(), weight);
+        _vtx_histos->Fill2DHisto("ele_P_v_track_time_hh", ele_trk->getTrackTime(), ele_trk->getP(), weight);
+        _vtx_histos->Fill2DHisto("pos_track_time_v_P_hh", pos_trk->getTrackTime(), pos_trk->getP(), weight);        
         passVtxPresel = true;
 
         selected_vtxs.push_back(vtx);
