@@ -22,7 +22,8 @@ class FunctionMath {
          * @return double 
          */
         static double LegendreFunction(double x, double* p, int order);
-
+        
+        //global background models
         /**
          * @brief Defines a las3pluslas6 global fit function.
          * 
@@ -31,7 +32,15 @@ class FunctionMath {
          * @return double 
          */
         static double las3pluslas6_Function(double x, double* p);
-        /**
+         /**
+         * @brief Defines a ua23nolinpluslas1 global fit function.
+         * 
+         * @param x 
+         * @param p 
+         * @return double 
+         */
+        static double ua23nolinpluslas1_Function(double x, double* p);
+        /** 
          * @brief Defines a Gaussian function for signal-fitting.
          * 
          * @param x 

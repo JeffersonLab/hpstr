@@ -7,6 +7,7 @@
 #include "ChebyshevFitFunction.h"
 #include "LegendreFitFunction.h"
 #include "las3pluslas6_FitFunction.h"
+#include "ua23nolinpluslas1_FitFunction.h"
 /**
  * @brief description
  * 

@@ -187,7 +187,9 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
     bool isChebyshev = (bkg_model_ == FitFunction::BkgModel::CHEBYSHEV || bkg_model_ == FitFunction::BkgModel::EXP_CHEBYSHEV);
     bool isExp = (bkg_model_ == FitFunction::BkgModel::EXP_CHEBYSHEV || bkg_model_ == FitFunction::BkgModel::EXP_LEGENDRE);
     bool isLegendre = (bkg_model_ == FitFunction::BkgModel::LEGENDRE|| bkg_model_ == FitFunction::BkgModel::EXP_LEGENDRE); 
-
+    
+    bool isL3L6 = (bkg_model_ == FitFunction::BkgModel::LAS3PLUSLAS6);
+    bool isUA23L1 = (bkg_model_ == FitFunction::BkgModel::UA23NOLINPLUSLAS1);    
 
     //setting poly order here 
     //if (isLegendre or isChebyshev) {
@@ -207,7 +209,7 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
     else if(bkg_model_ == FitFunction::BkgModel::LEGENDRE) { std::cout << "Legendre Polynomial" << std::endl; }
     else if(bkg_model_ == FitFunction::BkgModel::EXP_LEGENDRE) { std::cout << "Exponential Legendre Polynomial" << std::endl; }
     else if(bkg_model_ == FitFunction::BkgModel::LAS3PLUSLAS6) { std::cout << "LAS3PLUSLAS6 Global" << std::endl; }
-
+    else if(bkg_model_ == FitFunction::BkgModel::UA23NOLINPLUSLAS1) { std::cout << "UA23NOLINPLUSLAS1 Global" << std::endl; }
 
     std::cout << "    Background Order :: ";
     FitFunction::ModelOrder bkg_order_model;
@@ -220,11 +222,13 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
     } else if(poly_order_ == 5) {
         std::cout << "5" << std::endl;
         bkg_order_model = FitFunction::ModelOrder::FIFTH;
-    } else {
-        std::cout << "N/A: Global Fit" << std::endl;
-        bkg_order_model = FitFunction::ModelOrder::GLOBAL;
+    } else if (poly_order_ == 10){
+        std::cout << "10 Parameter Global Fit" << std::endl;
+        bkg_order_model = FitFunction::ModelOrder::GLOBAL_L3L6;
+    } else if (poly_order_ == 11){
+        std::cout << "11 Parameter Global Fit" << std::endl;
+        bkg_order_model = FitFunction::ModelOrder::GLOBAL_UA23L1;
     }
-
     std::cout << "    Toy Generator Order :: ";
     FitFunction::ModelOrder toy_order_model;
     if(toy_poly_order_ == 1) {
@@ -239,10 +243,16 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
     } else if(toy_poly_order_ == 7) {
         std::cout << "7" << std::endl;
         toy_order_model = FitFunction::ModelOrder::SEVENTH;
-    } else {
-        std::cout << "N/A: Global Fit" << std::endl;
-        toy_order_model = FitFunction::ModelOrder::GLOBAL;
+    } else if (poly_order_ == 10){
+        std::cout << "10 Parameter Global Fit" << std::endl;
+        toy_order_model = FitFunction::ModelOrder::GLOBAL_L3L6;
+    } else if (poly_order_ == 11){
+        std::cout << "11 Parameter Global Fit" << std::endl;
+        toy_order_model = FitFunction::ModelOrder::GLOBAL_UA23L1;
     }
+
+
+
     // If not fitting toys, start by performing a background only fit.
     if(!skip_bkg_fit) {
         // Start by performing a background only fit.  The results from this fit 
@@ -261,7 +271,7 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
             LegendreFitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::NONE, isExp);
             bkg = new TF1("bkg", bkg_func, -1, 1, poly_order_ + 1);
         }
-        else {
+        else if(isL3L6) {
             las3pluslas6_FitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::NONE, isExp);
             bkg = new TF1("bkg", bkg_func, window_start_, window_end_, poly_order_ );
 
@@ -277,6 +287,24 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
             bkg->SetParameter(7, -14701589.955451723 / 1.6087608867103269e-06);
             bkg->SetParameter(8, 117.94823473423622);
             bkg->SetParameter(9, 423.73510122988904);
+        
+        } else if(isUA23L1) {    
+            //for the ua23nolinpluslas1 global fit bkg model
+            ua23nolinpluslas1_FitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::NONE, isExp);
+            bkg = new TF1("bkg", bkg_func, window_start_, window_end_, poly_order_);
+
+            //setting parameters to equal ones found through round 2 testing
+            bkg->SetParameter(0, 129634.98200470296);
+            bkg->SetParameter(1, -12174541.73288088);
+            bkg->SetParameter(2, -1225773499.545076);//global normalization constant
+            bkg->SetParameter(3, -300.6625940555103);
+            bkg->SetParameter(4, 3204.4146073560496);
+            bkg->SetParameter(5, -13964.461541062823);
+            bkg->SetParameter(6, 0.023788450274793472);
+            bkg->SetParameter(7, 0.09466552532518363);
+            bkg->SetParameter(8, 2.7023479034248536 / -1225773499.545076);
+            bkg->SetParameter(9, 2.9879442300854024);
+            bkg->SetParameter(10, 1.9088571089322375);
         }
 
         //For the first two bkg-only models
@@ -296,23 +324,12 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         } else if(isLegendre) {
             LegendreFitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, toy_order_model, FitFunction::SignalFitModel::NONE, isExp);
             bkg_toys = new TF1("bkg_toys", bkg_toy_func, -1, 1, toy_poly_order_ + 1);
-        } else {
-            //for the global fit toy model
+        } else if(isL3L6) {
+            //for the las3pluslas6 global fit toy model
             las3pluslas6_FitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, toy_order_model, FitFunction::SignalFitModel::NONE, isExp);
             bkg_toys = new TF1("bkg_toys", bkg_toy_func, window_start_, window_end_, toy_poly_order_);
 
-           // bkg_toys->SetParameter(0, 0.02655677447001521);
-           // bkg_toys->SetParameter(1, 0.09575583442743552);
-           // bkg_toys->SetParameter(2, 1.6087608867103269e-06);
-           // bkg_toys->SetParameter(3, -12.14155381679078);
-           // bkg_toys->SetParameter(4, -9.88122176150782);
-           // bkg_toys->SetParameter(5, -0.015730267362833915);
-           // bkg_toys->SetParameter(6, 0.11327528231496534);
-           // bkg_toys->SetParameter(7, -14701589.955451723);
-           // bkg_toys->SetParameter(8, 117.94823473423622);
-           // bkg_toys->SetParameter(9, 423.73510122988904);
-        //}  //  
-
+            //setting parameters to equal ones found through round 2 testing
             bkg_toys->SetParameter(0, 0.02655677447001521);
             bkg_toys->SetParameter(1, 0.09575583442743552);
             bkg_toys->SetParameter(2, 1.6087608867103269e-06);
@@ -323,7 +340,24 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
             bkg_toys->SetParameter(7, -14701589.955451723 / 1.6087608867103269e-06);
             bkg_toys->SetParameter(8, 117.94823473423622);
             bkg_toys->SetParameter(9, 423.73510122988904);
-        }    
+        } else if(isUA23L1) {    
+            //for the ua23nolinpluslas1 global fit toy model
+            ua23nolinpluslas1_FitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, toy_order_model, FitFunction::SignalFitModel::NONE, isExp);
+            bkg_toys = new TF1("bkg_toys", bkg_toy_func, window_start_, window_end_, toy_poly_order_);
+
+            //setting parameters to equal ones found through round 2 testing
+            bkg_toys->SetParameter(0, 129634.98200470296);
+            bkg_toys->SetParameter(1, -12174541.73288088);
+            bkg_toys->SetParameter(2, -1225773499.545076);//global normalization constant
+            bkg_toys->SetParameter(3, -300.6625940555103);
+            bkg_toys->SetParameter(4, 3204.4146073560496);
+            bkg_toys->SetParameter(5, -13964.461541062823);
+            bkg_toys->SetParameter(6, 0.023788450274793472);
+            bkg_toys->SetParameter(7, 0.09466552532518363);
+            bkg_toys->SetParameter(8, 2.7023479034248536 / -1225773499.545076);
+            bkg_toys->SetParameter(9, 2.9879442300854024);
+            bkg_toys->SetParameter(10, 1.9088571089322375);
+        }
         if(isChebyshev || isLegendre) {
             bkg_toys->SetParameter(0, initNorm);
             bkg_toys->SetParName(0, "pol0");
@@ -405,7 +439,7 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         for(int parI = 0; parI < poly_order_ + 1; parI++) {
             full->SetParameter(parI, bkg->GetParameter(parI));
         }
-    } else { //global case
+    } else if(isL3L6){ //global case
         las3pluslas6_FitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);       
         full = new TF1("full", full_func, window_start_, window_end_, poly_order_ + 3);
         //signal model info    
@@ -420,24 +454,35 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         //    full->SetParName(i, Form("pol%i", i));
         }
         //
+        full->FixParameter(poly_order_ + 1, mass_hypothesis);
+        full->FixParameter(poly_order_ + 2, mass_resolution_);
+
+        for(int parI = 0; parI < poly_order_ ; parI++) {
+            //for normalization factor
+            if(parI == 2){
+                full->SetParameter(parI, bkg->GetParameter(parI));
+            }
+            else{ 
+                full->FixParameter(parI, bkg->GetParameter(parI));
+            }
+            //could insert following comment into the if else above, but removed for now
+            //std::cout << "Parameter :" << parI << ": " <<bkg->GetParameter(parI) << std::endl;
+        }
+    } else if(isUA23L1) {
+        ua23nolinpluslas1_FitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);       
+        full = new TF1("full", full_func, window_start_, window_end_, poly_order_ + 3);
+        //signal model info    
+        //full->SetParameter(0, initNorm);
+        //full->SetParName(0, "pol0");
+        full->SetParameter(poly_order_ , 0.0);
+        full->SetParName(poly_order_ , "signal norm");
+        full->SetParName(poly_order_ + 1, "mean");
+        full->SetParName(poly_order_ + 2, "sigma");
+        for(int i = 0; i < poly_order_ ; i++) {
+            full->SetParameter(i, 0);
+        //    full->SetParName(i, Form("pol%i", i));
+        }
         //
-        //
-
-
-
-
-        //full->SetParameter(0,0.02655677447001521);
-        //full->SetParameter(1, 0.09575583442743552);
-        //full->SetParameter(2,1.6087608867103269e-06);
-        //full->SetParameter(3,-12.14155381679078);
-        //full->SetParameter(4, -9.88122176150782);
-        //full->SetParameter(5,-0.015730267362833915);
-        //full->SetParameter(6,0.11327528231496534);
-        //full->SetParameter(7, -14701589.955451723);
-        //full->SetParameter(8,117.94823473423622);
-        //full->SetParameter(9,423.73510122988904);
-
-
         full->FixParameter(poly_order_ + 1, mass_hypothesis);
         full->FixParameter(poly_order_ + 2, mass_resolution_);
 
@@ -453,7 +498,7 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
             //std::cout << "Parameter :" << parI << ": " <<bkg->GetParameter(parI) << std::endl;
         }
     }    
-
+    
 
     TFitResultPtr full_result = histogram->Fit("full", "QLES+", "", window_start_, window_end_);
     fit_result->setCompFitResult(full_result);
@@ -486,6 +531,8 @@ void BumpHunter::calculatePValue(HpsFitResult* result) {
     bool isLegendre = (bkg_model_ == FitFunction::BkgModel::LEGENDRE|| bkg_model_ == FitFunction::BkgModel::EXP_LEGENDRE); 
     
     
+    bool isL3L6 = (bkg_model_ == FitFunction::BkgModel::LAS3PLUSLAS6);
+    bool isUA23L1 = (bkg_model_ == FitFunction::BkgModel::UA23NOLINPLUSLAS1);    
     
     std::cout << "[ BumpHunter ]: Calculating p-value: " << std::endl;
     double signal_yield;// = -1.0;
@@ -617,6 +664,9 @@ void BumpHunter::getUpperLimitAsymCLs(TH1* histogram, HpsFitResult* result) {
 
     bool isLegendre = (bkg_model_ == FitFunction::BkgModel::LEGENDRE|| bkg_model_ == FitFunction::BkgModel::EXP_LEGENDRE); 
 
+    bool isL3L6 = (bkg_model_ == FitFunction::BkgModel::LAS3PLUSLAS6);
+    bool isUA23L1 = (bkg_model_ == FitFunction::BkgModel::UA23NOLINPLUSLAS1);    
+    
     double initNorm = log10(integral_);
 
     // Instantiate a fit function for the appropriate polynomial order.
@@ -625,22 +675,27 @@ void BumpHunter::getUpperLimitAsymCLs(TH1* histogram, HpsFitResult* result) {
     if(poly_order_ == 1) { bkg_order_model = FitFunction::ModelOrder::FIRST; }
     else if(poly_order_ == 3) { bkg_order_model = FitFunction::ModelOrder::THIRD; }
     else if(poly_order_ == 5) { bkg_order_model = FitFunction::ModelOrder::FIFTH; }
-    else {bkg_order_model = FitFunction::ModelOrder::GLOBAL;}
 
+    else if(isL3L6) { bkg_order_model = FitFunction::ModelOrder::GLOBAL_L3L6; }
+    else if(isUA23L1) { bkg_order_model = FitFunction::ModelOrder::GLOBAL_UA23L1; }
+    
     if(isChebyshev) {
         ChebyshevFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);
         comp = new TF1("comp_ul", comp_func, -1, 1, poly_order_ + 4);
     } else if(isLegendre) {
         LegendreFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);
         comp = new TF1("comp_ul", comp_func, -1, 1, poly_order_ + 4);
-    }
-
-
-
-    else {
+    } else if(isL3L6) {
         las3pluslas6_FitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);       
         comp = new TF1("comp_ul", comp_func, window_start_, window_end_, poly_order_ + 3);
+    } else if(isUA23L1) {
+        ua23nolinpluslas1_FitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);       
+        comp = new TF1("comp_ul", comp_func, window_start_, window_end_, poly_order_ + 3);
     }
+
+
+
+
     if(isChebyshev || isLegendre){
 
         comp->SetParameter(0, initNorm);
@@ -811,27 +866,33 @@ void BumpHunter::getUpperLimitPower(TH1* histogram, HpsFitResult* result) {
     bool isLegendre = (bkg_model_ == FitFunction::BkgModel::LEGENDRE|| bkg_model_ == FitFunction::BkgModel::EXP_LEGENDRE);
     double initNorm = log10(integral_);
 
+    bool isL3L6 = (bkg_model_ == FitFunction::BkgModel::LAS3PLUSLAS6);
+    bool isUA23L1 = (bkg_model_ == FitFunction::BkgModel::UA23NOLINPLUSLAS1);    
+
     // Instantiate a fit function for the appropriate polynomial order.
     TF1* comp{nullptr};
     FitFunction::ModelOrder bkg_order_model;
     if(poly_order_ == 1) { bkg_order_model = FitFunction::ModelOrder::FIRST; }
     else if(poly_order_ == 3) { bkg_order_model = FitFunction::ModelOrder::THIRD; }
     else if(poly_order_ == 5) { bkg_order_model = FitFunction::ModelOrder::FIFTH; }
-    else { bkg_order_model = FitFunction::ModelOrder::GLOBAL; }
+    //global bkg models
+    else if(isL3L6) { bkg_order_model = FitFunction::ModelOrder::GLOBAL_L3L6; }
+    else if(isUA23L1) { bkg_order_model = FitFunction::ModelOrder::GLOBAL_UA23L1; }
 
-
+    //defining the composite function here
     if(isChebyshev) {
         ChebyshevFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);
         comp = new TF1("comp_ul", comp_func, -1, 1, poly_order_ + 4);
     } else if(isLegendre){
         LegendreFitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);
         comp = new TF1("comp_ul", comp_func, -1, 1, poly_order_ + 4);
-    } else {
+    } else if(isL3L6) {
         las3pluslas6_FitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);       
         comp = new TF1("comp_ul", comp_func, window_start_, window_end_, poly_order_ + 3);
+    } else if(isUA23L1) {
+        ua23nolinpluslas1_FitFunction comp_func(mass_hypothesis_, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);       
+        comp = new TF1("comp_ul", comp_func, window_start_, window_end_, poly_order_ + 3);
     }
-
-
 
 
     double signal_yield = -1.0;

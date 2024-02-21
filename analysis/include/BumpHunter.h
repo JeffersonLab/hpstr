@@ -41,8 +41,7 @@
 #include "ChebyshevFitFunction.h"
 #include "LegendreFitFunction.h"
 #include "las3pluslas6_FitFunction.h"
-
-
+#include "ua23nolinpluslas1_FitFunction.h"
 
 /**
  * @brief description
@@ -274,7 +273,7 @@ class BumpHunter {
         double integral_{0};
         
         /** The background fit function model to use. */
-        FitFunction::BkgModel bkg_model_{FitFunction::BkgModel::LAS3PLUSLAS6};
+        FitFunction::BkgModel bkg_model_{FitFunction::BkgModel::UA23NOLINPLUSLAS1};
 
         /**
          * Flag to specify whether the power constrained or asymptotic upper

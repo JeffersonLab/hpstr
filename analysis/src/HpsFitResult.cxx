@@ -17,9 +17,9 @@ double HpsFitResult::getFullBkgRate() {
     // Determine the type of background fit model.
     bool isChebyshev = (bkg_model_ == FitFunction::BkgModel::CHEBYSHEV || bkg_model_ == FitFunction::BkgModel::EXP_CHEBYSHEV);
     bool isExp = (bkg_model_ == FitFunction::BkgModel::EXP_CHEBYSHEV || bkg_model_ == FitFunction::BkgModel::EXP_LEGENDRE);
-    bool isGlobal = (bkg_model_ == FitFunction::BkgModel::LAS3PLUSLAS6);
-    
-    if (isGlobal){
+    bool isGlobal_L3L6 = (bkg_model_ == FitFunction::BkgModel::LAS3PLUSLAS6); 
+    bool isGlobal_UA23L1 = (bkg_model_ == FitFunction::BkgModel::UA23NOLINPLUSLAS1);
+    if (isGlobal_L3L6 || isGlobal_UA23L1){
         for(int ipar = 0; ipar < poly_order_; ipar++) {
             fitParams[ipar] = comp_result_->GetParams()[ipar];
         }
@@ -46,8 +46,11 @@ double HpsFitResult::getFullBkgRate() {
     } else if(poly_order_ == 5 && isChebyshev) {
         ChebyshevFitFunction bkg_func(mass_hypo_, window_size_, bin_width_, FitFunction::ModelOrder::FIFTH, FitFunction::SignalFitModel::NONE, isExp);
         bkgRate = bkg_func(mass, fitParams);
-    } else if(isGlobal){
-        las3pluslas6_FitFunction bkg_func(mass_hypo_, window_size_, bin_width_, FitFunction::ModelOrder::GLOBAL, FitFunction::SignalFitModel::NONE, isExp);
+    } else if(isGlobal_L3L6){
+        las3pluslas6_FitFunction bkg_func(mass_hypo_, window_size_, bin_width_, FitFunction::ModelOrder::GLOBAL_L3L6, FitFunction::SignalFitModel::NONE, isExp);
+        bkgRate = bkg_func(mass, fitParams);
+    } else if(isGlobal_UA23L1){
+        ua23nolinpluslas1_FitFunction bkg_func(mass_hypo_, window_size_, bin_width_, FitFunction::ModelOrder::GLOBAL_UA23L1, FitFunction::SignalFitModel::NONE, isExp);
         bkgRate = bkg_func(mass, fitParams);
     } else {
         LegendreFitFunction bkg_func(mass_hypo_, window_size_, bin_width_, FitFunction::ModelOrder::FIFTH, FitFunction::SignalFitModel::NONE, isExp);

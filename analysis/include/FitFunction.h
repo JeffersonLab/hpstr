@@ -30,7 +30,8 @@ class FitFunction {
             THIRD   = 1,
             FIFTH   = 2,
             SEVENTH = 3,
-            GLOBAL  = 4
+            GLOBAL_L3L6  = 4,
+            GLOBAL_UA23L1  = 5
         };
 
         /**
@@ -42,7 +43,8 @@ class FitFunction {
             EXP_CHEBYSHEV = 1,
             LEGENDRE      = 2,
             EXP_LEGENDRE  = 3,
-            LAS3PLUSLAS6  = 4    
+            LAS3PLUSLAS6  = 4,
+            UA23NOLINPLUSLAS1 = 5
         };
 
         /**
@@ -80,9 +82,12 @@ class FitFunction {
             } else if(model_order == FitFunction::ModelOrder::SEVENTH) {
                 order = 7;
                 sigParm = 8;
-            } else if(model_order == FitFunction::ModelOrder::GLOBAL) {
+            } else if(model_order == FitFunction::ModelOrder::GLOBAL_L3L6) {
                 order = 10;
                 sigParm = 10;
+            } else if(model_order == FitFunction::ModelOrder::GLOBAL_UA23L1) {
+                order = 11;
+                sigParm = 11;
             }
         }
 
