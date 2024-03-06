@@ -166,7 +166,8 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
      //TrackState Location map
      std::map<std::string, int> trackstateLocationMap_ = {
         {"", EVENT::TrackState::AtIP},
-        {"AtTarget", EVENT::TrackState::LastLocation}
+        {"AtTarget", EVENT::TrackState::LastLocation},
+        {"AtLastHit", EVENT::TrackState::AtLastHit}
      };
 
     int loc;

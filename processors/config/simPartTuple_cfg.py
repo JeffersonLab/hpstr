@@ -28,6 +28,7 @@ p.add_library("libprocessors")
 ###############################
 header = HpstrConf.Processor('header', 'EventProcessor')
 track = HpstrConf.Processor('track', 'TrackingProcessor')
+track_atlasthit = HpstrConf.Processor('track_atlasthit', 'TrackingProcessor')
 svthits = HpstrConf.Processor('svthits', 'Tracker2DHitProcessor')
 rawsvt = HpstrConf.Processor('rawsvt', 'SvtRawDataProcessor')
 mcthits = HpstrConf.Processor('mcthits', 'MCTrackerHitProcessor')
@@ -70,6 +71,16 @@ track.parameters["kinkRelCollLcio"] = ''
 track.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 track.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
+
+# Tracking at Last Hit
+track_atlasthit.parameters["debug"] = 0
+track_atlasthit.parameters["trkCollLcio"] = 'KalmanFullTracks'
+track_atlasthit.parameters["trkCollRoot"] = 'KalmanFullTracks_AtLastHit'
+track_atlasthit.parameters["kinkRelCollLcio"] = ''
+track_atlasthit.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
+track_atlasthit.parameters["trkhitCollRoot"] = 'SiClustersOnTrack_AtLastHit'
+track_atlasthit.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
+track_atlasthit.parameters["trackStateLocation"] = 'AtLastHit'
 
 # Only for detail studies
 # LT uncomment
@@ -122,7 +133,7 @@ mcpart.parameters["debug"] = 0
 mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
-sequence = [header, ecal, track, svthits, rawsvt, mcthits, mcthits_ecal, mcehits, mcpart]
+sequence = [header, ecal, track, track_atlasthit, svthits, rawsvt, mcthits, mcthits_ecal, mcehits, mcpart]
 
 p.sequence = sequence
 
