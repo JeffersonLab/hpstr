@@ -50,6 +50,7 @@ sim_part_ana.parameters["MCTrackerHitColl"] = "TrackerSimHits"
 sim_part_ana.parameters["MCTrackerHitECalColl"] = "TrackerSimHitsECal"
 sim_part_ana.parameters["MCEcalHitColl"] = "EcalSimHits"
 sim_part_ana.parameters["RecoTrackColl"] = "KalmanFullTracks"
+sim_part_ana.parameters["RecoTrackColl_AtLastHit"] = "KalmanFullTracks_AtLastHit"
 sim_part_ana.parameters["RecoTrackerClusterColl"] = "SiClustersOnTrack"
 sim_part_ana.parameters["RecoEcalClusterColl"] = "RecoEcalClusters"
 sim_part_ana.parameters["analysis"] = analysis

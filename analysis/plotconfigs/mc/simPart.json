@@ -227,14 +227,66 @@
         "bins"  : 1000,
         "minX"   : -100,
         "maxX"   : 100,
-        "xtitle" : "Sim x (at ECal) x - Track x",
+        "xtitle" : "Track x - Sim x (at ECal)",
+        "ytitle" : "Events"
+    },
+
+
+    "sim_track_atlasthit_x_diff_h" : {
+        "bins"  : 1000,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Track x (at At Last Hit) - Sim x (at At Last Hit)",
+        "ytitle" : "Events"
+    },
+    "sim_track_atlasthit_y_diff_h" : {
+        "bins"  : 1000,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Track y (at At Last Hit) - Sim y (at At Last Hit)",
+        "ytitle" : "Events"
+    },
+    "sim_track_atlasthit_z_diff_h" : {
+        "bins"  : 1000,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Track z (at At Last Hit) - Sim z (at At Last Hit)",
+        "ytitle" : "Events"
+    },
+    "sim_track_atlasthit_p_diff_h" : {
+        "bins"  : 100,
+        "minX"   : -5,
+        "maxX"   : 5,
+        "xtitle" : "Track p (at At Last Hit) - Sim p (at At Last Hit)",
+        "ytitle" : "Events"
+    },
+
+    "sim_track_atlasthit_px_diff_h" : {
+        "bins"  : 100,
+        "minX"   : -5,
+        "maxX"   : 5,
+        "xtitle" : "Track px (at At Last Hit) - Sim px (at At Last Hit)",
+        "ytitle" : "Events"
+    },
+    "sim_track_atlasthit_py_diff_h" : {
+        "bins"  : 100,
+        "minX"   : -5,
+        "maxX"   : 5,
+        "xtitle" : "Track py (at At Last Hit) - Sim py (at At Last Hit)",
+        "ytitle" : "Events"
+    },
+    "sim_track_atlasthit_pz_diff_h" : {
+        "bins"  : 100,
+        "minX"   : -5,
+        "maxX"   : 5,
+        "xtitle" : "Track pz (at At Last Hit) - Sim pz (at At Last Hit)",
         "ytitle" : "Events"
     },
     "sim_ecal_x_diff_h" : {
         "bins"  : 1000,
         "minX"   : -100,
         "maxX"   : 100,
-        "xtitle" : "Sim x (at ECal) x - Ecal x",
+        "xtitle" : "Ecal x - Sim x (at ECal) x",
         "ytitle" : "Events"
     },
     "track_phi0_simpxpz_h" : {
@@ -399,6 +451,36 @@
         "minY"   : 0,
         "maxY"   : 10,
         "xtitle" : "Track (at ECal) x - Sim x (at ECal)",
+        "ytitle" : "Ecal energy"
+    },
+    "sim_track_atlasthit_x_track_p_hh" : {
+        "binsX"  : 1000,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "binsY"  : 20,
+        "minY"   : 0,
+        "maxY"   : 10,
+        "xtitle" : "Track (at Last Hit) x - Sim x (at Last Hit)",
+        "ytitle" : "Track p"
+    },
+    "sim_track_atlasthit_x_sim_p_hh" : {
+        "binsX"  : 1000,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "binsY"  : 20,
+        "minY"   : 0,
+        "maxY"   : 10,
+        "xtitle" : "Track (at Last Hit) x - Sim x (at Last Hit)",
+        "ytitle" : "sim p"
+    },
+    "sim_track_atlasthit_x_ecal_energy_hh" : {
+        "binsX"  : 1000,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "binsY"  : 20,
+        "minY"   : 0,
+        "maxY"   : 10,
+        "xtitle" : "Track (at Last Hit) x - Sim x (at Last Hit)",
         "ytitle" : "Ecal energy"
     },
     "sim_ecal_x_track_p_hh" : {

@@ -84,6 +84,7 @@ class SimPartProcessor : public Processor {
         TBranch* bMCTrackerHitsECal_{nullptr}; //!< description
         TBranch* bMCEcalHits_{nullptr}; //!< description
         TBranch* bRecoTracks_{nullptr}; //!< description
+        TBranch* bRecoTracks_atlasthit_{nullptr}; //!< description
         TBranch* bRecoTrackerClusters_{nullptr}; //!< description
         TBranch* bRecoEcalClusters_{nullptr}; //!< description
 
@@ -92,6 +93,7 @@ class SimPartProcessor : public Processor {
         std::vector<MCTrackerHit*> * MCTrackerHitsECal_{nullptr}; //!< description
         std::vector<MCEcalHit*>    * MCEcalHits_{nullptr}; //!< description
         std::vector<Track*>   * RecoTracks_{nullptr}; //!< description
+        std::vector<Track*>   * RecoTracks_atlasthit_{nullptr}; //!< description
         std::vector<TrackerHit*> * RecoTrackerClusters_{nullptr}; //!< description
         std::vector<CalCluster*>    * RecoEcalClusters_{nullptr}; //!< description
 
@@ -101,6 +103,7 @@ class SimPartProcessor : public Processor {
         std::string MCTrackerHitECalColl_{"TrackerSimHitsECal"}; //!< description
         std::string MCEcalHitColl_{"EcalSimHits"}; //!< description
         std::string RecoTrackColl_{"KalmanFullTracks"}; //!< description
+        std::string RecoTrackColl_atlasthit_{"KalmanFullTracks_AtLastHit"}; //!< description
         std::string RecoTrackerClusterColl_{"SiClustersOnTrack"}; //!< description
         std::string RecoEcalClusterColl_{"RecoEcalClusters"}; //!< description
         std::string analysis_{"sim_part"}; //!< description
