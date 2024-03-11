@@ -355,7 +355,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
         }
         if (track_layer < last_layer)
             continue;
-        elif (track_layer == last_layer){
+        else if (track_layer == last_layer){
             if (sim_p <= mc_tracker_hit_atlasthit_max_p)
                 continue;
         }
