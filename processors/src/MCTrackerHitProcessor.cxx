@@ -78,6 +78,13 @@ bool MCTrackerHitProcessor::process(IEvent* ievent) {
         hitPos[2] = lcio_mcTracker_hit->getPosition()[2];
         mc_tracker_hit->setPosition(hitPos);
 
+        // Set the momentum of the particle for this hit
+        double hitMomentum[3];
+        hitMomentum[0] = lcio_mcTracker_hit->getMomentum()[0];
+        hitMomentum[1] = lcio_mcTracker_hit->getMomentum()[1];
+        hitMomentum[2] = lcio_mcTracker_hit->getMomentum()[2];
+        mc_tracker_hit->setMomentum(hitMomentum);
+
         // Set the energy deposit of the hit
         mc_tracker_hit->setEdep(lcio_mcTracker_hit->getEDep());
 

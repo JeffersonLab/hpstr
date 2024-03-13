@@ -331,28 +331,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
         MCTrackerHit *mc_tracker_hit_atlasthit = MCTrackerHits_->at(i);
         int track_layer = mc_tracker_hit_atlasthit->getLayer();
         int track_id = mc_tracker_hit_atlasthit->getPartID();
-        double sim_p = -99999;
-        double sim_px = -99999;
-        double sim_py = -99999;
-        double sim_pz = -99999;
-        for (int j=0; j<nParts; j++) {
-            MCParticle *part_atlasthit = MCParticles_->at(j);
-            int gen = part_atlasthit->getGenStatus();
-            if (gen != 1)
-                continue;
-            int sim_id = part_atlasthit->getID();
-            std::vector<double> momentum_V = part_atlasthit->getMomentum();
-            double px = momentum_V.at(0);
-            double py = momentum_V.at(1);
-            double pz = momentum_V.at(2);
-            if (sim_id == track_id){
-                sim_p = sqrt(px*px + py*py + pz*pz);
-                sim_px = px;
-                sim_py = py;
-                sim_pz = pz;
-                break;
-            }
-        }
+        double sim_p = mc_tracker_hit_atlasthit->getP();
         if (track_layer < last_layer)
             continue;
         else if (track_layer == last_layer){
@@ -361,9 +340,9 @@ bool SimPartProcessor::process(IEvent* ievent) {
         }
         last_layer = track_layer;
         mc_tracker_hit_atlasthit_max_p = sim_p;
-        mc_tracker_hit_atlasthit_max_p_px = sim_px;
-        mc_tracker_hit_atlasthit_max_p_py = sim_py;
-        mc_tracker_hit_atlasthit_max_p_pz = sim_pz;
+        mc_tracker_hit_atlasthit_max_p_px = mc_tracker_hit_atlasthit->getMomentum().at(0);
+        mc_tracker_hit_atlasthit_max_p_py = mc_tracker_hit_atlasthit->getMomentum().at(1);
+        mc_tracker_hit_atlasthit_max_p_pz = mc_tracker_hit_atlasthit->getMomentum().at(2);
         mc_tracker_hit_atlasthit_max_p_x = mc_tracker_hit_atlasthit->getPosition().at(0);
         mc_tracker_hit_atlasthit_max_p_y = mc_tracker_hit_atlasthit->getPosition().at(1);
         mc_tracker_hit_atlasthit_max_p_z = mc_tracker_hit_atlasthit->getPosition().at(2);
