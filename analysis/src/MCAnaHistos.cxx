@@ -36,6 +36,8 @@ void MCAnaHistos::Define2DHistos() {
 }
 
 void MCAnaHistos::FillMCParticles(std::vector<MCParticle*> *mcParts, std::string analysis, float weight) {
+    if(mcParts == nullptr)
+        std::cout << "MCPARTS IS NULL" << std::endl;
     int nParts = mcParts->size();
     Fill1DHisto("numMCparts_h", (float)nParts, weight);
     int nMuons = 0;

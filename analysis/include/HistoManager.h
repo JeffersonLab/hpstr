@@ -182,7 +182,7 @@ class HistoManager {
                      std::string xtitle, int nbinsX, float xmin, float xmax,
                      std::string ytitle, int nbinsY, float ymin, float ymax,
                      std::string ztitle, int nbinsZ, float zmin, float zmax);
-
+        
         /**
          * @brief description
          * 
@@ -256,6 +256,20 @@ class HistoManager {
          * @param weight 
          */
         void Fill2DHisto(const std::string& histoName, float valuex, float valuey, float weight=1.);
+
+
+        /**
+         * @brief description
+         * 
+         * @param histoName 
+         * @param valuex 
+         * @param valuey
+         * @param valuez
+         * @param weight 
+         */
+        void Fill3DHisto(const std::string& histoName, float valuex, float valuey, float valuez, float weight=1.);
+
+        
 
         /**
          * @brief Get histograms from input file

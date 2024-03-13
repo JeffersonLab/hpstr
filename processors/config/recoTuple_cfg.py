@@ -9,7 +9,7 @@ base.parser.add_argument("-w", "--tracking", type=str, dest="tracking",
 base.parser.add_argument("-s", "--truthHits", type=int, dest="truthHits",
                          help="Get svt truth hits: 1=yes", metavar="truthHits", default=0)
 base.parser.add_argument("-r", "--rawHits", type=int, dest="rawHits",
-        help="Keep raw svt hits: 1=yes", metavar="rawHits", default=0)
+                         help="Keep raw svt hits: 1=yes", metavar="rawHits", default=0)
 
 options = base.parser.parse_args()
 

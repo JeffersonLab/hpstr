@@ -610,6 +610,8 @@ double utils::getKalmanTrackL1Isolations(Track* track, std::vector<TrackerHit*>*
         double closest_dt = 999999.9;
         double isohit_y = 999999.9;
 
+        if ( siClusters == nullptr )
+            return isohit_dy;
         for(int j = 0; j < siClusters->size(); j++){
             TrackerHit* althit = siClusters->at(j);
             int althit_id = althit->getID();
@@ -671,34 +673,21 @@ double utils::getKalmanTrackL1Isolations(Track* track, std::vector<TrackerHit*>*
         return L1_stereo_iso;
 }
 
-void utils::get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, std::vector<TrackerHit*>* hits, int& L1L2hitCode, int& L1hitCode, int& L2hitCode){
-    //Build map of hits and the associated MC part ids for later
-    TRefArray ele_trk_hits = ele_trk->getSvtHits();
-    TRefArray pos_trk_hits = pos_trk->getSvtHits();
-    std::map<int, std::vector<int> > trueHitIDs;
-    for(int i = 0; i < hits->size(); i++)
-    {
-        TrackerHit* hit = hits->at(i);
-        trueHitIDs[hit->getID()] = hit->getMCPartIDs();
-    }
+void utils::get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, int& L1L2hitCode, int& L1hitCode, int& L2hitCode){
     //Count the number of hits per part on the ele track
     std::map<int, int> nHits4part_ele;
-    for(int i = 0; i < ele_trk_hits.GetEntries(); i++)
+    for(int i =0; i < ele_trk->getMcpHits().size(); i++)
     {
-        TrackerHit* eleHit = (TrackerHit*)ele_trk_hits.At(i);
-        for(int idI = 0; idI < trueHitIDs[eleHit->getID()].size(); idI++ )
+        int partID = ele_trk->getMcpHits().at(i).second;
+        if ( nHits4part_ele.find(partID) == nHits4part_ele.end() )
         {
-            int partID = trueHitIDs[eleHit->getID()].at(idI);
-            if ( nHits4part_ele.find(partID) == nHits4part_ele.end() )
-            {
-                // not found
-                nHits4part_ele[partID] = 1;
-            }
-            else
-            {
-                // found
-                nHits4part_ele[partID]++;
-            }
+            // not found
+            nHits4part_ele[partID] = 1;
+        }
+        else
+        {
+            // found
+            nHits4part_ele[partID]++;
         }
     }
 
@@ -716,22 +705,18 @@ void utils::get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, std::vector
 
     //Count the number of hits per part on the pos track
     std::map<int, int> nHits4part_pos;
-    for(int i = 0; i < pos_trk_hits.GetEntries(); i++)
+    for(int i =0; i < pos_trk->getMcpHits().size(); i++)
     {
-        TrackerHit* posHit = (TrackerHit*)pos_trk_hits.At(i);
-        for(int idI = 0; idI < trueHitIDs[posHit->getID()].size(); idI++ )
+        int partID = pos_trk->getMcpHits().at(i).second;
+        if ( nHits4part_pos.find(partID) == nHits4part_pos.end() )
         {
-            int partID = trueHitIDs[posHit->getID()].at(idI);
-            if ( nHits4part_pos.find(partID) == nHits4part_pos.end() )
-            {
-                // not found
-                nHits4part_pos[partID] = 1;
-            }
-            else
-            {
-                // found
-                nHits4part_pos[partID]++;
-            }
+            // not found
+            nHits4part_pos[partID] = 1;
+        }
+        else
+        {
+            // found
+            nHits4part_pos[partID]++;
         }
     }
 
@@ -756,13 +741,17 @@ void utils::get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, std::vector
     bool pos_trueStereoL1 = false;
     bool pos_trueAxialL2 = false;
     bool pos_trueStereoL2 = false;
-    if (ele_trk->isKalmanTrack()){
 
-        for(int i = 0; i < ele_trk_hits.GetEntries(); i++)
-        {
-            TrackerHit* hit = (TrackerHit*)ele_trk_hits.At(i);
-            int trackhit_layer = hit->getLayer();
-            int trackhit_volume = hit->getVolume();
+    if(ele_trk->isKalmanTrack()){
+        for(int i = 0; i < ele_trk->getMcpHits().size(); i++){
+            int mcpid = ele_trk->getMcpHits().at(i).second;
+            int layer = ele_trk->getMcpHits().at(i).first;
+            int volume = -1;
+            if(ele_trk->isTopTrack() == 1)
+                volume = 0;
+            else
+                volume = 1;
+
             bool isAxial = false;
             bool isStereo = false; 
             bool isL1 = false;
@@ -770,34 +759,28 @@ void utils::get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, std::vector
             bool isGood = false;
 
             //L1 and L2 only
-            if(trackhit_layer < 2)
+            if(layer < 2)
                 isL1 = true;
-            else if(trackhit_layer > 1 && trackhit_layer < 4)
+            else if(layer > 1 && layer < 4)
                 isL2 = true;
             else
                 continue;
 
-            if(trackhit_volume == 1){
-                if(trackhit_layer%2 == 1)
+            if(volume == 1){
+                if(layer%2 == 1)
                     isAxial = true;
                 else
                     isStereo = true;
             }
-            if(trackhit_volume == 0){
-                if(trackhit_layer%2 == 0)
+            if(volume == 0){
+                if(layer%2 == 0)
                     isAxial = true;
                 else
                     isStereo = true;
             }
-            //Check if truth hit is from truth track MCP
-            for(int idI = 0; idI < trueHitIDs[hit->getID()].size(); idI++ )
-            {
-                int partID = trueHitIDs[hit->getID()].at(idI);
-                //hit is from best track MCP
-                if(partID == maxID_ele){
-                    isGood = true;
-                }
-            }
+
+            if(mcpid == maxID_ele)
+                isGood = true;
 
             if(isGood){
                 if(isAxial){
@@ -816,14 +799,16 @@ void utils::get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, std::vector
         }
     }
 
-    //Positron
-    if (pos_trk->isKalmanTrack()){
+    if(pos_trk->isKalmanTrack()){
+        for(int i = 0; i < pos_trk->getMcpHits().size(); i++){
+            int mcpid = pos_trk->getMcpHits().at(i).second;
+            int layer = pos_trk->getMcpHits().at(i).first;
+            int volume = -1;
+            if(pos_trk->isTopTrack() == 1)
+                volume = 0;
+            else
+                volume = 1;
 
-        for(int i = 0; i < pos_trk_hits.GetEntries(); i++)
-        {
-            TrackerHit* hit = (TrackerHit*)pos_trk_hits.At(i);
-            int trackhit_layer = hit->getLayer();
-            int trackhit_volume = hit->getVolume();
             bool isAxial = false;
             bool isStereo = false; 
             bool isL1 = false;
@@ -831,34 +816,28 @@ void utils::get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, std::vector
             bool isGood = false;
 
             //L1 and L2 only
-            if(trackhit_layer < 2)
+            if(layer < 2)
                 isL1 = true;
-            else if(trackhit_layer > 1 && trackhit_layer < 4)
+            else if(layer > 1 && layer < 4)
                 isL2 = true;
             else
                 continue;
 
-            if(trackhit_volume == 1){
-                if(trackhit_layer%2 == 1)
+            if(volume == 1){
+                if(layer%2 == 1)
                     isAxial = true;
                 else
                     isStereo = true;
             }
-            if(trackhit_volume == 0){
-                if(trackhit_layer%2 == 0)
+            if(volume == 0){
+                if(layer%2 == 0)
                     isAxial = true;
                 else
                     isStereo = true;
             }
-            //Check if truth hit is from truth track MCP
-            for(int idI = 0; idI < trueHitIDs[hit->getID()].size(); idI++ )
-            {
-                int partID = trueHitIDs[hit->getID()].at(idI);
-                //hit is from best track MCP
-                if(partID == maxID_pos){
-                    isGood = true;
-                }
-            }
+
+            if(mcpid == maxID_pos)
+                isGood = true;
 
             if(isGood){
                 if(isAxial){
@@ -876,6 +855,8 @@ void utils::get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, std::vector
             }
         }
     }
+
+
     //Require both Axial and Stereo truth hits to be 'Good' hit
     if(ele_trueAxialL1 && ele_trueStereoL1) L1L2hitCode = L1L2hitCode | (0x1 << 3);           
     if(pos_trueAxialL1 && pos_trueStereoL1) L1L2hitCode = L1L2hitCode | (0x1 << 2);           
@@ -894,4 +875,48 @@ void utils::get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, std::vector
     if(ele_trueStereoL2) L2hitCode = L2hitCode | (0x1 << 2);
     if(pos_trueAxialL2) L2hitCode = L2hitCode | (0x1 << 1);
     if(pos_trueStereoL2) L2hitCode = L2hitCode | (0x1 << 0);
+}
+
+double utils::v0_projection_to_target_significance(json v0proj_fits, int run, double &vtx_proj_x, double &vtx_proj_y,
+        double &vtx_proj_x_signif, double &vtx_proj_y_signif, double vtx_x, double vtx_y, double vtx_z,
+        double vtx_px, double vtx_py, double vtx_pz){
+    //V0 Projection fit parameters are calculated externally by projecting vertices to the target z position,
+    //and then fitting the 2D distribution vtx_x vs vtx_y with a rotated 2D Gaussian.
+    //The fit parameters are defined along the rotated coordinate system.
+    //Therefore, the vertex position must be rotated into this coordinate system before calculating significance.
+    //The rotation angle corresponding to the fit is provided in the json file containing the rotated fit values.
+    
+    //Read v0 projection fits from json file
+    int closest_run;
+    for(auto entry : v0proj_fits.items()){
+        int check_run = std::stoi(entry.key());
+        if(check_run > run)
+            break;
+        else{
+            closest_run = check_run;
+        }
+    }
+    double target_pos = v0proj_fits[std::to_string(closest_run)]["target_position"];
+    double rot_mean_x = v0proj_fits[std::to_string(closest_run)]["rotated_mean_x"];
+    double rot_mean_y = v0proj_fits[std::to_string(closest_run)]["rotated_mean_y"];
+    double rot_sigma_x = v0proj_fits[std::to_string(closest_run)]["rotated_sigma_x"];
+    double rot_sigma_y = v0proj_fits[std::to_string(closest_run)]["rotated_sigma_y"];
+    double rotation_angle = (double)v0proj_fits[std::to_string(closest_run)]["rotation_angle_mrad"]/1000.0;
+
+    //project vertex to target position
+    vtx_proj_x = vtx_x - ((vtx_z - target_pos)*(vtx_px/vtx_pz));
+    vtx_proj_y = vtx_y - ((vtx_z - target_pos)*(vtx_py/vtx_pz));
+
+    //Rotate projected vertex by angle corresponding to run number
+    double rot_vtx_proj_x = vtx_proj_x*std::cos(rotation_angle) - vtx_proj_y*std::sin(rotation_angle);
+    double rot_vtx_proj_y = vtx_proj_x*std::sin(rotation_angle) + vtx_proj_y*std::cos(rotation_angle);
+
+    //Calculate significance
+    vtx_proj_x_signif = (rot_vtx_proj_x - rot_mean_x)/rot_sigma_x;
+    vtx_proj_y_signif = (rot_vtx_proj_y - rot_mean_y)/rot_sigma_y;
+
+    //
+    double significance = std::sqrt( vtx_proj_x_signif*vtx_proj_x_signif + vtx_proj_y_signif*vtx_proj_y_signif );
+
+    return significance;
 }

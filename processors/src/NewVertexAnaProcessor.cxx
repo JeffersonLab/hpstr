@@ -1,33 +1,31 @@
 /**
- *@file VertexAnaProcessor.cxx
+ *@file NewVertexAnaProcessor.cxx
  *@brief Main vertex analysis processor
  *@author PF, SLAC
  */
 
-#include "VertexAnaProcessor.h"
+#include "NewVertexAnaProcessor.h"
 #include <iostream>
 #include <fstream>
 #include <map>
 
-VertexAnaProcessor::VertexAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
+NewVertexAnaProcessor::NewVertexAnaProcessor(const std::string& name, Process& process) : Processor(name,process) {
 
 }
 
 //TODO Check this destructor
 
-VertexAnaProcessor::~VertexAnaProcessor(){}
+NewVertexAnaProcessor::~NewVertexAnaProcessor(){}
 
-void VertexAnaProcessor::configure(const ParameterSet& parameters) {
-    std::cout << "Configuring VertexAnaProcessor" <<std::endl;
+void NewVertexAnaProcessor::configure(const ParameterSet& parameters) {
+    std::cout << "Configuring NewVertexAnaProcessor" <<std::endl;
     try
     {
         debug_   = parameters.getInteger("debug",debug_);
         anaName_ = parameters.getString("anaName",anaName_);
         tsColl_  = parameters.getString("tsColl",tsColl_);
         vtxColl_ = parameters.getString("vtxColl",vtxColl_);
-        trkColl_ = parameters.getString("trkColl",trkColl_);
         hitColl_ = parameters.getString("hitColl",hitColl_);
-        ecalColl_ = parameters.getString("ecalColl",ecalColl_);
         mcColl_  = parameters.getString("mcColl",mcColl_);
         isRadPDG_ = parameters.getInteger("isRadPDG",isRadPDG_);
         makeFlatTuple_ = parameters.getInteger("makeFlatTuple",makeFlatTuple_);
@@ -59,7 +57,7 @@ void VertexAnaProcessor::configure(const ParameterSet& parameters) {
     }
 }
 
-void VertexAnaProcessor::initialize(TTree* tree) {
+void NewVertexAnaProcessor::initialize(TTree* tree) {
     tree_ = tree;
     _ah =  std::make_shared<AnaHelpers>();
 
@@ -71,7 +69,7 @@ void VertexAnaProcessor::initialize(TTree* tree) {
     _vtx_histos->loadHistoConfig(histoCfg_);
     _vtx_histos->DefineHistos();
 
-    if(!isData_ && mc_reg_on_){
+    if(!isData_){
         _mc_vtx_histos = std::make_shared<MCAnaHistos>(anaName_+"_mc_"+"vtxSelection");
         _mc_vtx_histos->loadHistoConfig(mcHistoCfg_);
         _mc_vtx_histos->DefineHistos();
@@ -112,8 +110,7 @@ void VertexAnaProcessor::initialize(TTree* tree) {
         _reg_vtx_histos[regname]->DefineHistos();
 
 
-        bool mc_reg_on_ = false;
-        if(!isData_ && mc_reg_on_){
+        if(!isData_){
             _reg_mc_vtx_histos[regname] = std::make_shared<MCAnaHistos>(anaName_+"_mc_"+regname);
             _reg_mc_vtx_histos[regname]->loadHistoConfig(mcHistoCfg_);
             _reg_mc_vtx_histos[regname]->DefineHistos();
@@ -146,6 +143,8 @@ void VertexAnaProcessor::initialize(TTree* tree) {
             _reg_tuples[regname]->addVariable("unc_vtx_proj_x_sig");
             _reg_tuples[regname]->addVariable("unc_vtx_proj_y_sig");
             _reg_tuples[regname]->addVariable("unc_vtx_proj_sig");
+            _reg_tuples[regname]->addVariable("unc_vtx_deltaZ");
+
 
             //track vars
             _reg_tuples[regname]->addVariable("unc_vtx_ele_track_p");
@@ -164,8 +163,11 @@ void VertexAnaProcessor::initialize(TTree* tree) {
             _reg_tuples[regname]->addVariable("unc_vtx_ele_track_OmegaErr");
             _reg_tuples[regname]->addVariable("unc_vtx_ele_track_L1_isolation");
             _reg_tuples[regname]->addVariable("unc_vtx_ele_track_nhits");
-            _reg_tuples[regname]->addVariable("unc_vtx_ele_track_x");
-            _reg_tuples[regname]->addVariable("unc_vtx_ele_track_y");
+            _reg_tuples[regname]->addVariable("unc_vtx_ele_track_lastlayer");
+            _reg_tuples[regname]->addVariable("unc_vtx_ele_track_si0");
+            _reg_tuples[regname]->addVariable("unc_vtx_ele_track_si1");
+            _reg_tuples[regname]->addVariable("unc_vtx_ele_track_ecal_x");
+            _reg_tuples[regname]->addVariable("unc_vtx_ele_track_ecal_y");
             _reg_tuples[regname]->addVariable("unc_vtx_ele_track_z");
             _reg_tuples[regname]->addVariable("unc_vtx_ele_track_px");
             _reg_tuples[regname]->addVariable("unc_vtx_ele_track_py");
@@ -187,8 +189,11 @@ void VertexAnaProcessor::initialize(TTree* tree) {
             _reg_tuples[regname]->addVariable("unc_vtx_pos_track_OmegaErr");
             _reg_tuples[regname]->addVariable("unc_vtx_pos_track_L1_isolation");
             _reg_tuples[regname]->addVariable("unc_vtx_pos_track_nhits");
-            _reg_tuples[regname]->addVariable("unc_vtx_pos_track_x");
-            _reg_tuples[regname]->addVariable("unc_vtx_pos_track_y");
+            _reg_tuples[regname]->addVariable("unc_vtx_pos_track_lastlayer");
+            _reg_tuples[regname]->addVariable("unc_vtx_pos_track_si0");
+            _reg_tuples[regname]->addVariable("unc_vtx_pos_track_si1");
+            _reg_tuples[regname]->addVariable("unc_vtx_pos_track_ecal_x");
+            _reg_tuples[regname]->addVariable("unc_vtx_pos_track_ecal_y");
             _reg_tuples[regname]->addVariable("unc_vtx_pos_track_z");
             _reg_tuples[regname]->addVariable("unc_vtx_pos_track_px");
             _reg_tuples[regname]->addVariable("unc_vtx_pos_track_py");
@@ -196,9 +201,11 @@ void VertexAnaProcessor::initialize(TTree* tree) {
 
             //clust vars
             _reg_tuples[regname]->addVariable("unc_vtx_ele_clust_E");
+            _reg_tuples[regname]->addVariable("unc_vtx_ele_clust_x");
             _reg_tuples[regname]->addVariable("unc_vtx_ele_clust_corr_t");
 
             _reg_tuples[regname]->addVariable("unc_vtx_pos_clust_E");
+            _reg_tuples[regname]->addVariable("unc_vtx_pos_clust_x");
             _reg_tuples[regname]->addVariable("unc_vtx_pos_clust_corr_t");
 
             if(!isData_)
@@ -234,15 +241,12 @@ void VertexAnaProcessor::initialize(TTree* tree) {
     tree_->SetBranchAddress("EventHeader", &evth_ , &bevth_);
     if (brMap_.find(tsColl_.c_str()) != brMap_.end()) tree_->SetBranchAddress(tsColl_.c_str(), &ts_ , &bts_);
     tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_ , &bvtxs_);
+    //tree_->SetBranchAddress(hitColl_.c_str(), &hits_   , &bhits_);
     if (brMap_.find(hitColl_.c_str()) != brMap_.end()) tree_->SetBranchAddress(hitColl_.c_str(), &hits_ , &bhits_);
-    tree_->SetBranchAddress(ecalColl_.c_str(), &ecal_  , &becal_);
     if(!isData_ && !mcColl_.empty()) tree_->SetBranchAddress(mcColl_.c_str() , &mcParts_, &bmcParts_);
-    //If track collection name is empty take the tracks from the particles. TODO:: change this
-    if (!trkColl_.empty())
-        tree_->SetBranchAddress(trkColl_.c_str(),&trks_, &btrks_);
 }
 
-bool VertexAnaProcessor::process(IEvent* ievent) {
+bool NewVertexAnaProcessor::process(IEvent* ievent) {
     if(debug_) {
         std:: cout << "----------------- Event " << evth_->getEventNumber() << " -----------------" << std::endl;
     }
@@ -250,6 +254,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
     double weight = 1.;
     int run_number = evth_->getRunNumber();
     int closest_run;
+    if (debug_) std::cout << "Check pbc_configs" << std::endl;
     if(!bpc_configs_.empty()){
         for(auto run : bpc_configs_.items()){
             int check_run = std::stoi(run.key());
@@ -275,6 +280,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
     double vdZ = -0.9;
     double vdEnergy = -0.9;
 
+    if (debug_) std::cout << "plot trigger info" << std::endl;
     //Plot info about which trigger bits are present in the event
     if (ts_ != nullptr)
     {
@@ -282,14 +288,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 ((int)ts_->prescaled.Single_3_Top)+((int)ts_->prescaled.Single_3_Bot),
                 ((int)ts_->prescaled.Single_2_Top)+((int)ts_->prescaled.Single_2_Bot));
     }
-    int NposTrks = 0;
-    int NeleTrks = 0;
-    for (int iT = 0; iT < trks_->size(); iT++)
-    {
-        if (trks_->at(iT)->getCharge() > 0) NposTrks++;
-        else NeleTrks++;
-    }
-    _vtx_histos->Fill2DHisto("n_tracks_hh", NeleTrks, NposTrks); 
+    if (debug_) std::cout << "plot vtx N" << std::endl;
     _vtx_histos->Fill1DHisto("n_vtx_h", vtxs_->size()); 
 
     if (mcParts_) {
@@ -309,37 +308,11 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             }
         }
 
-        if (!isData_ && mc_reg_on_) _mc_vtx_histos->FillMCParticles(mcParts_, analysis_);
+        if (!isData_) _mc_vtx_histos->FillMCParticles(mcParts_, analysis_);
     }
     //Store processed number of events
     std::vector<Vertex*> selected_vtxs;
     bool passVtxPresel = false;
-
-    // Fill some diagnostic histos
-    for ( int i_ecal = 0; i_ecal < ecal_->size(); i_ecal++ ) {
-
-        if (vtxs_->size() == 0){
-            _vtx_histos->Fill1DHisto("EecalClus_noVtxs_h",ecal_->at(i_ecal)->getEnergy());
-        } else {
-            _vtx_histos->Fill1DHisto("EecalClus_isVtxs_h",ecal_->at(i_ecal)->getEnergy());
-        }
-    }
-
-
-    if (vtxs_->size() == 0){
-        _vtx_histos->Fill1DHisto("n_ecalClus_noVtxs_h",ecal_->size());
-        _vtx_histos->Fill1DHisto("n_tracks_noVtxs_h",trks_->size());
-        for (int i_trk = 0; i_trk < trks_->size(); i_trk++ ){
-            _vtx_histos->Fill1DHisto("Ptracks_noVtxs_h",trks_->at(i_trk)->getP());
-        }
-
-    } else {
-        _vtx_histos->Fill1DHisto("n_ecalClus_isVtxs_h",ecal_->size());
-        _vtx_histos->Fill1DHisto("n_tracks_isVtxs_h",trks_->size());
-        for (int i_trk = 0; i_trk < trks_->size(); i_trk++ ){
-            _vtx_histos->Fill1DHisto("Ptracks_isVtxs_h",trks_->at(i_trk)->getP());
-        }
-    }
 
     if(debug_){
         std::cout<<"Number of vertices found in event: "<< vtxs_->size()<<std::endl;
@@ -364,23 +337,13 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
         bool foundParts = _ah->GetParticlesFromVtx(vtx,ele,pos);
         if (!foundParts) {
-            if(debug_) std::cout<<"VertexAnaProcessor::WARNING::Found vtx without ele/pos. Skip."<<std::endl;
+            if(debug_) std::cout<<"NewVertexAnaProcessor::WARNING::Found vtx without ele/pos. Skip."<<std::endl;
             continue;
         }
 
-        if (!trkColl_.empty()) {
-            bool foundTracks = _ah->MatchToGBLTracks((ele->getTrack()).getID(),(pos->getTrack()).getID(),
-                    ele_trk, pos_trk, *trks_);
-
-            if (!foundTracks) {
-                if(debug_) std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the GBLTracks collection"<<std::endl;
-                continue;
-            }
-        }
-        else {
-            ele_trk = (Track*)ele->getTrack().Clone();
-            pos_trk = (Track*)pos->getTrack().Clone();
-        }
+        if (debug_) std::cout << "got parts" << std::endl;
+        ele_trk = (Track*) ele->getTrack().Clone();
+        pos_trk = (Track*) pos->getTrack().Clone();
 
         //Beam Position Corrections
         ele_trk->applyCorrection("z0", beamPosCorrections_.at(1));
@@ -395,6 +358,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
         double ele_E = ele->getEnergy();
         double pos_E = pos->getEnergy();
+        if (debug_) std::cout << "got tracks" << std::endl;
 
         CalCluster eleClus = ele->getCluster();
         CalCluster posClus = pos->getCluster();
@@ -410,6 +374,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         //if (!vtxSelector->passCutLt("eleposTanLambaProd_lt",ele_trk->getTanLambda() * pos_trk->getTanLambda(),weight))
         //  continue;
 
+        if (debug_) std::cout << "start selection" << std::endl;
         //Ele Track Time
         if (!vtxSelector->passCutLt("eleTrkTime_lt",fabs(ele_trk->getTrackTime()),weight))
             continue;
@@ -549,6 +514,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
         if (!vtxSelector->passCutGt("minVtxMom_gt",(ele_mom+pos_mom).Mag(),weight))
             continue;
 
+        if (debug_) std::cout << "fill 1D Vertex" << std::endl;
         _vtx_histos->Fill1DVertex(vtx,
                 ele,
                 pos,
@@ -556,6 +522,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 pos_trk,
                 weight);
 
+        if (debug_) std::cout << "fill track histos" << std::endl;
         double ele_pos_dt = corr_eleClusterTime - corr_posClusterTime;
         double psum = ele_mom.Mag()+pos_mom.Mag();
 
@@ -615,8 +582,6 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
     // std::cout << "Number of selected vtxs: " << selected_vtxs.size() << std::endl;
 
     _vtx_histos->Fill1DHisto("n_vertices_h",selected_vtxs.size());
-    if (trks_)
-        _vtx_histos->Fill1DHisto("n_tracks_h",trks_->size()); 
 
 
     //not working atm
@@ -627,6 +592,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
     //TODO Bring the preselection out of this stupid loop
 
 
+    if (debug_) std::cout << "start regions" << std::endl;
     //TODO add yields. => Quite terrible way to loop.
     for (auto region : _regions ) {
 
@@ -650,6 +616,14 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
             CalCluster eleClus = ele->getCluster();
             CalCluster posClus = pos->getCluster();
+            //vtx X position
+            if (!_reg_vtx_selectors[region]->passCutLt("uncVtxX_lt",fabs(vtx->getX()),weight))
+                continue;
+
+            //vtx Y position
+            if (!_reg_vtx_selectors[region]->passCutLt("uncVtxY_lt",fabs(vtx->getY()),weight))
+                continue;
+
             //vtx Z position
             if (!_reg_vtx_selectors[region]->passCutGt("uncVtxZ_gt",vtx->getZ(),weight))
                 continue;
@@ -659,45 +633,52 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
             //Compute analysis variables here.
 
-            Track ele_trk = ele->getTrack();
-            Track pos_trk = pos->getTrack();
+            Track * ele_trk = nullptr;
+            ele_trk = (Track*) ele->getTrack().Clone();
+
+            Track * pos_trk = nullptr;
+            pos_trk = (Track*) pos->getTrack().Clone();
 
             //Beam Position Corrections
-            ele_trk.applyCorrection("z0", beamPosCorrections_.at(1));
-            pos_trk.applyCorrection("z0", beamPosCorrections_.at(1));
+            ele_trk->applyCorrection("z0", beamPosCorrections_.at(1));
+            pos_trk->applyCorrection("z0", beamPosCorrections_.at(1));
             //Track Time Corrections
-            ele_trk.applyCorrection("track_time",eleTrackTimeBias_);
-            pos_trk.applyCorrection("track_time", posTrackTimeBias_);
-
-            //Get the shared info - TODO change and improve
-
-            Track* ele_trk_gbl = nullptr;
-            Track* pos_trk_gbl = nullptr;
-
-            if (!trkColl_.empty()) {
-                bool foundTracks = _ah->MatchToGBLTracks(ele_trk.getID(),pos_trk.getID(),
-                        ele_trk_gbl, pos_trk_gbl, *trks_);
-
-                if (!foundTracks) {
-                    if (debug_)
-                        std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the "<<trkColl_ <<"collection"<<std::endl;
-                    continue;
-                }
-            }
-            else {
-
-                ele_trk_gbl = (Track*) ele_trk.Clone();
-                pos_trk_gbl = (Track*) pos_trk.Clone();
-            }
+            ele_trk->applyCorrection("track_time",eleTrackTimeBias_);
+            pos_trk->applyCorrection("track_time", posTrackTimeBias_);
 
             //Add the momenta to the tracks
-            //ele_trk_gbl->setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
-            //pos_trk_gbl->setMomentum(pos->getMomentum()[0],pos->getMomentum()[1],pos->getMomentum()[2]);
+            //ele_trk->setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
+            //pos_trk->setMomentum(pos->getMomentum()[0],pos->getMomentum()[1],pos->getMomentum()[2]);
             TVector3 recEleP(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
             TLorentzVector p_ele;
-            p_ele.SetPxPyPzE(ele_trk_gbl->getMomentum()[0],ele_trk_gbl->getMomentum()[1],ele_trk_gbl->getMomentum()[2], ele_E);
+            p_ele.SetPxPyPzE(ele_trk->getMomentum()[0],ele_trk->getMomentum()[1],ele_trk->getMomentum()[2], ele_E);
             TLorentzVector p_pos;
-            p_pos.SetPxPyPzE(pos_trk_gbl->getMomentum()[0],pos_trk_gbl->getMomentum()[1],pos_trk_gbl->getMomentum()[2], pos_E);
+            p_pos.SetPxPyPzE(pos_trk->getMomentum()[0],pos_trk->getMomentum()[1],pos_trk->getMomentum()[2], pos_E);
+
+            //Get the layers hit on each track
+            std::vector<int> ele_hit_layers = ele_trk->getHitLayers();
+            int ele_Si0 = 0;
+            int ele_Si1 = 0;
+            int ele_lastlayer = 0;
+            for(int i=0; i<ele_hit_layers.size(); i++)
+            {
+                int layer = ele_hit_layers.at(i);
+                ele_lastlayer = layer;
+                if (layer == 0) ele_Si0++;
+                if (layer == 1) ele_Si1++;
+            }
+
+            std::vector<int> pos_hit_layers = pos_trk->getHitLayers();
+            int pos_Si0 = 0;
+            int pos_Si1 = 0;
+            int pos_lastlayer = 0;
+            for(int i=0; i<pos_hit_layers.size(); i++)
+            {
+                int layer = pos_hit_layers.at(i);
+                pos_lastlayer = layer;
+                if (layer == 0) pos_Si0++;
+                if (layer == 1) pos_Si1++;
+            }
 
             //Defining these here so they are in scope elsewhere
             TVector3 trueEleP;
@@ -705,22 +686,22 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
 
             if (debug_) {
                 std::cout<<"Check on ele_Track"<<std::endl;
-                std::cout<<"Number of hits:"<<ele_trk_gbl->getTrackerHitCount()<<std::endl;
+                std::cout<<"Number of hits:"<<ele_trk->getTrackerHitCount()<<std::endl;
             }
 
             bool foundL1ele = false;
             bool foundL2ele = false;
-            _ah->InnermostLayerCheck(ele_trk_gbl, foundL1ele, foundL2ele);
+            _ah->InnermostLayerCheck(ele_trk, foundL1ele, foundL2ele);
 
 
             if (debug_) {
                 std::cout<<"Check on pos_Track"<<std::endl;
-                std::cout<<"Number of hits:"<<ele_trk_gbl->getTrackerHitCount()<<std::endl;
+                std::cout<<"Number of hits:"<<ele_trk->getTrackerHitCount()<<std::endl;
             }
             bool foundL1pos = false;
             bool foundL2pos = false;
 
-            _ah->InnermostLayerCheck(pos_trk_gbl, foundL1pos, foundL2pos);
+            _ah->InnermostLayerCheck(pos_trk, foundL1pos, foundL2pos);
 
             if (debug_) {
                 std::cout<<"Check on pos_Track"<<std::endl;
@@ -733,11 +714,11 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                     break;
             }
             //Ele Track Time
-            if (!_reg_vtx_selectors[region]->passCutLt("eleTrkTime_lt",fabs(ele_trk_gbl->getTrackTime()),weight))
+            if (!_reg_vtx_selectors[region]->passCutLt("eleTrkTime_lt",fabs(ele_trk->getTrackTime()),weight))
                 continue;
 
             //Pos Track Time
-            if (!_reg_vtx_selectors[region]->passCutLt("posTrkTime_lt",fabs(pos_trk_gbl->getTrackTime()),weight))
+            if (!_reg_vtx_selectors[region]->passCutLt("posTrkTime_lt",fabs(pos_trk->getTrackTime()),weight))
                 continue;
 
             //Ele Track-cluster match
@@ -775,38 +756,38 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 continue;
 
             //Ele Track-Cluster Time Difference
-            if (!_reg_vtx_selectors[region]->passCutLt("eleTrkCluTimeDiff_lt",fabs(ele_trk_gbl->getTrackTime() - corr_eleClusterTime),weight))
+            if (!_reg_vtx_selectors[region]->passCutLt("eleTrkCluTimeDiff_lt",fabs(ele_trk->getTrackTime() - corr_eleClusterTime),weight))
                 continue;
 
             //Pos Track-Cluster Time Difference
-            if (!_reg_vtx_selectors[region]->passCutLt("posTrkCluTimeDiff_lt",fabs(pos_trk_gbl->getTrackTime() - corr_posClusterTime),weight))
+            if (!_reg_vtx_selectors[region]->passCutLt("posTrkCluTimeDiff_lt",fabs(pos_trk->getTrackTime() - corr_posClusterTime),weight))
                 continue;
 
             TVector3 ele_mom;
-            ele_mom.SetX(ele_trk_gbl->getMomentum()[0]);
-            ele_mom.SetY(ele_trk_gbl->getMomentum()[1]);
-            ele_mom.SetZ(ele_trk_gbl->getMomentum()[2]);
+            ele_mom.SetX(ele_trk->getMomentum()[0]);
+            ele_mom.SetY(ele_trk->getMomentum()[1]);
+            ele_mom.SetZ(ele_trk->getMomentum()[2]);
 
 
             TVector3 pos_mom;
-            pos_mom.SetX(pos_trk_gbl->getMomentum()[0]);
-            pos_mom.SetY(pos_trk_gbl->getMomentum()[1]);
-            pos_mom.SetZ(pos_trk_gbl->getMomentum()[2]);
+            pos_mom.SetX(pos_trk->getMomentum()[0]);
+            pos_mom.SetY(pos_trk->getMomentum()[1]);
+            pos_mom.SetZ(pos_trk->getMomentum()[2]);
 
             //Ele Track Quality - Chi2
-            if (!_reg_vtx_selectors[region]->passCutLt("eleTrkChi2_lt",ele_trk_gbl->getChi2(),weight))
+            if (!_reg_vtx_selectors[region]->passCutLt("eleTrkChi2_lt",ele_trk->getChi2(),weight))
                 continue;
 
             //Pos Track Quality - Chi2
-            if (!_reg_vtx_selectors[region]->passCutLt("posTrkChi2_lt",pos_trk_gbl->getChi2(),weight))
+            if (!_reg_vtx_selectors[region]->passCutLt("posTrkChi2_lt",pos_trk->getChi2(),weight))
                 continue;
 
             //Ele Track Quality - Chi2Ndf
-            if (!_reg_vtx_selectors[region]->passCutLt("eleTrkChi2Ndf_lt",ele_trk_gbl->getChi2Ndf(),weight))
+            if (!_reg_vtx_selectors[region]->passCutLt("eleTrkChi2Ndf_lt",ele_trk->getChi2Ndf(),weight))
                 continue;
 
             //Pos Track Quality - Chi2Ndf
-            if (!_reg_vtx_selectors[region]->passCutLt("posTrkChi2Ndf_lt",pos_trk_gbl->getChi2Ndf(),weight))
+            if (!_reg_vtx_selectors[region]->passCutLt("posTrkChi2Ndf_lt",pos_trk->getChi2Ndf(),weight))
                 continue;
 
             //Beam Electron cut
@@ -822,8 +803,8 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 continue;
 
             //Ele nHits
-            int ele2dHits = ele_trk_gbl->getTrackerHitCount();
-            if (!ele_trk_gbl->isKalmanTrack())
+            int ele2dHits = ele_trk->getTrackerHitCount();
+            if (!ele_trk->isKalmanTrack())
                 ele2dHits*=2;
 
             if (!_reg_vtx_selectors[region]->passCutGt("eleN2Dhits_gt",ele2dHits,weight))  {
@@ -831,8 +812,8 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             }
 
             //Pos nHits
-            int pos2dHits = pos_trk_gbl->getTrackerHitCount();
-            if (!pos_trk_gbl->isKalmanTrack())
+            int pos2dHits = pos_trk->getTrackerHitCount();
+            if (!pos_trk->isKalmanTrack())
                 pos2dHits*=2;
 
             if (!_reg_vtx_selectors[region]->passCutGt("posN2Dhits_gt",pos2dHits,weight))  {
@@ -840,11 +821,11 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             }
 
             //Less than 4 shared hits for ele/pos track
-            if (!_reg_vtx_selectors[region]->passCutLt("eleNshared_lt",ele_trk_gbl->getNShared(),weight)) {
+            if (!_reg_vtx_selectors[region]->passCutLt("eleNshared_lt",ele_trk->getNShared(),weight)) {
                 continue;
             }
 
-            if (!_reg_vtx_selectors[region]->passCutLt("posNshared_lt",pos_trk_gbl->getNShared(),weight)) {
+            if (!_reg_vtx_selectors[region]->passCutLt("posNshared_lt",pos_trk->getNShared(),weight)) {
                 continue;
             }
 
@@ -900,13 +881,13 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 continue;
 
             //No shared hits requirement
-            if (!_reg_vtx_selectors[region]->passCutEq("ele_sharedL0_eq",(int)ele_trk_gbl->getSharedLy0(),weight))
+            if (!_reg_vtx_selectors[region]->passCutEq("ele_sharedL0_eq",(int)ele_trk->getSharedLy0(),weight))
                 continue;
-            if (!_reg_vtx_selectors[region]->passCutEq("pos_sharedL0_eq",(int)pos_trk_gbl->getSharedLy0(),weight))
+            if (!_reg_vtx_selectors[region]->passCutEq("pos_sharedL0_eq",(int)pos_trk->getSharedLy0(),weight))
                 continue;
-            if (!_reg_vtx_selectors[region]->passCutEq("ele_sharedL1_eq",(int)ele_trk_gbl->getSharedLy1(),weight))
+            if (!_reg_vtx_selectors[region]->passCutEq("ele_sharedL1_eq",(int)ele_trk->getSharedLy1(),weight))
                 continue;
-            if (!_reg_vtx_selectors[region]->passCutEq("pos_sharedL1_eq",(int)pos_trk_gbl->getSharedLy1(),weight))
+            if (!_reg_vtx_selectors[region]->passCutEq("pos_sharedL1_eq",(int)pos_trk->getSharedLy1(),weight))
                 continue;
 
             //Min vtx Y pos
@@ -924,40 +905,29 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             if (!_reg_vtx_selectors[region]->passCutLt("volPos_bot", p_pos.Py(), weight))
                 continue;
 
+            if (!_reg_vtx_selectors[region]->passCutLt("deltaZ_lt", std::abs((ele_trk->getZ0()/ele_trk->getTanLambda()) - (pos_trk->getZ0()/pos_trk->getTanLambda())), weight))
+                continue;
+
             //If this is MC check if MCParticle matched to the electron track is from rad or recoil
             if(!isData_)
             {
-
                 //Fill MC plots after all selections
-                if (!isData_ && mc_reg_on_) _reg_mc_vtx_histos[region]->FillMCParticles(mcParts_, analysis_);
+                _reg_mc_vtx_histos[region]->FillMCParticles(mcParts_, analysis_);
 
-                //Build map of hits and the associated MC part ids for later
-                TRefArray ele_trk_hits = ele_trk_gbl->getSvtHits();
-                TRefArray pos_trk_hits = pos_trk_gbl->getSvtHits();
-                std::map<int, std::vector<int> > trueHitIDs;
-                for(int i = 0; i < hits_->size(); i++)
-                {
-                    TrackerHit* hit = hits_->at(i);
-                    trueHitIDs[hit->getID()] = hit->getMCPartIDs();
-                }
                 //Count the number of hits per part on the ele track
                 std::map<int, int> nHits4part;
-                for(int i = 0; i < ele_trk_hits.GetEntries(); i++)
+                for(int i =0; i < ele_trk->getMcpHits().size(); i++)
                 {
-                    TrackerHit* eleHit = (TrackerHit*)ele_trk_hits.At(i);
-                    for(int idI = 0; idI < trueHitIDs[eleHit->getID()].size(); idI++ )
+                    int partID = ele_trk->getMcpHits().at(i).second;
+                    if ( nHits4part.find(partID) == nHits4part.end() )
                     {
-                        int partID = trueHitIDs[eleHit->getID()].at(idI);
-                        if ( nHits4part.find(partID) == nHits4part.end() )
-                        {
-                            // not found
-                            nHits4part[partID] = 1;
-                        }
-                        else
-                        {
-                            // found
-                            nHits4part[partID]++;
-                        }
+                        // not found
+                        nHits4part[partID] = 1;
+                    }
+                    else
+                    {
+                        // found
+                        nHits4part[partID]++;
                     }
                 }
 
@@ -1054,27 +1024,37 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             double pos_E = pos->getEnergy();
 
             //Compute analysis variables here.
-            Track ele_trk = ele->getTrack();
-            Track pos_trk = pos->getTrack();
+            Track * ele_trk = (Track*) ele->getTrack().Clone();
+            Track * pos_trk = (Track*) pos->getTrack().Clone();
             //Get the shared info - TODO change and improve
+            
+            //Track Time Corrections
+            ele_trk->applyCorrection("track_time",eleTrackTimeBias_);
+            pos_trk->applyCorrection("track_time", posTrackTimeBias_);
 
-            Track* ele_trk_gbl = nullptr;
-            Track* pos_trk_gbl = nullptr;
-
-            if (!trkColl_.empty()) {
-                bool foundTracks = _ah->MatchToGBLTracks(ele_trk.getID(),pos_trk.getID(),
-                        ele_trk_gbl, pos_trk_gbl, *trks_);
-
-                if (!foundTracks) {
-                    if (debug_)
-                        std::cout<<"VertexAnaProcessor::ERROR couldn't find ele/pos in the "<<trkColl_ <<"collection"<<std::endl;
-                    continue;
-                }
+            //Get the layers hit on each track
+            std::vector<int> ele_hit_layers = ele_trk->getHitLayers();
+            int ele_Si0 = 0;
+            int ele_Si1 = 0;
+            int ele_lastlayer = 0;
+            for(int i=0; i<ele_hit_layers.size(); i++)
+            {
+                int layer = ele_hit_layers.at(i);
+                ele_lastlayer = layer;
+                if (layer == 0) ele_Si0++;
+                if (layer == 1) ele_Si1++;
             }
-            else {
 
-                ele_trk_gbl = (Track*) ele_trk.Clone();
-                pos_trk_gbl = (Track*) pos_trk.Clone();
+            std::vector<int> pos_hit_layers = pos_trk->getHitLayers();
+            int pos_Si0 = 0;
+            int pos_Si1 = 0;
+            int pos_lastlayer = 0;
+            for(int i=0; i<pos_hit_layers.size(); i++)
+            {
+                int layer = pos_hit_layers.at(i);
+                pos_lastlayer = layer;
+                if (layer == 0) pos_Si0++;
+                if (layer == 1) pos_Si1++;
             }
 
             //Vertex Covariance
@@ -1086,13 +1066,14 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             float czy = vtx_cov.at(4);
             float czz = vtx_cov.at(5);
 
+
             //MC Truth hits in first 4 sensors
             int L1L2hitCode = 0; //hit code '1111' means truth ax+ster hits in L1_ele, L1_pos, L2_ele, L2_pos
             int L1hitCode = 0; //hit code '1111' means truth in L1_ele_ax, L1_ele_ster, L1_pos_ax, L1_pos_ster
             int L2hitCode = 0; // hit code '1111' means truth in L2_ele_ax, L2_ele_ster, L2_pos_ax, L2_pos_ster
             if(!isData_){
                 //Get hit codes. Only sure this works for 2016 KF as is.
-                utils::get2016KFMCTruthHitCodes(ele_trk_gbl, pos_trk_gbl, L1L2hitCode, L1hitCode, L2hitCode);
+                utils::get2016KFMCTruthHitCodes(ele_trk, pos_trk, L1L2hitCode, L1hitCode, L2hitCode);
                 //L1L2 truth hit selection
                 if (!_reg_vtx_selectors[region]->passCutLt("hitCode_lt",((double)L1L2hitCode)-0.5, weight)) continue;
                 if (!_reg_vtx_selectors[region]->passCutGt("hitCode_gt",((double)L1L2hitCode)+0.5, weight)) continue;
@@ -1106,50 +1087,39 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             //Only calculate isolations if both track L1 and L2 hits exist
             bool hasL1ele = false;
             bool hasL2ele = false;
-            _ah->InnermostLayerCheck(ele_trk_gbl, hasL1ele, hasL2ele);
+            _ah->InnermostLayerCheck(ele_trk, hasL1ele, hasL2ele);
 
             bool hasL1pos = false;
             bool hasL2pos = false;
-            _ah->InnermostLayerCheck(pos_trk_gbl, hasL1pos, hasL2pos);
-
-            double ele_trk_iso_L1 = 99999.9;
-            double pos_trk_iso_L1 = 99999.9;
-            if(hasL1ele && hasL2ele && hasL1pos && hasL2pos){
-                if (ele_trk_gbl->isKalmanTrack()){
-                    ele_trk_iso_L1 = utils::getKalmanTrackL1Isolations(ele_trk_gbl, hits_);
-                    pos_trk_iso_L1 = utils::getKalmanTrackL1Isolations(pos_trk_gbl, hits_);
-                }
-            }
+            _ah->InnermostLayerCheck(pos_trk, hasL1pos, hasL2pos);
 
             TVector3 ele_mom;
             //ele_mom.SetX(ele->getMomentum()[0]);
             //ele_mom.SetY(ele->getMomentum()[1]);
             //ele_mom.SetZ(ele->getMomentum()[2]);
-            ele_mom.SetX(ele_trk_gbl->getMomentum()[0]);
-            ele_mom.SetY(ele_trk_gbl->getMomentum()[1]);
-            ele_mom.SetZ(ele_trk_gbl->getMomentum()[2]);
+            ele_mom.SetX(ele_trk->getMomentum()[0]);
+            ele_mom.SetY(ele_trk->getMomentum()[1]);
+            ele_mom.SetZ(ele_trk->getMomentum()[2]);
 
 
             TVector3 pos_mom;
             //pos_mom.SetX(pos->getMomentum()[0]);
             //pos_mom.SetY(pos->getMomentum()[1]);
             //pos_mom.SetZ(pos->getMomentum()[2]);
-            pos_mom.SetX(pos_trk_gbl->getMomentum()[0]);
-            pos_mom.SetY(pos_trk_gbl->getMomentum()[1]);
-            pos_mom.SetZ(pos_trk_gbl->getMomentum()[2]);
+            pos_mom.SetX(pos_trk->getMomentum()[0]);
+            pos_mom.SetY(pos_trk->getMomentum()[1]);
+            pos_mom.SetZ(pos_trk->getMomentum()[2]);
 
             double ele_pos_dt = corr_eleClusterTime - corr_posClusterTime;
             double psum = ele_mom.Mag()+pos_mom.Mag();
 
             //Ele nHits
-            int ele2dHits = ele_trk_gbl->getTrackerHitCount();
-            if (!ele_trk_gbl->isKalmanTrack())
+            int ele2dHits = ele_trk->getTrackerHitCount();
+            if (!ele_trk->isKalmanTrack())
                 ele2dHits*=2;
 
             //pos nHits
-            int pos2dHits = pos_trk_gbl->getTrackerHitCount();
-            if (!pos_trk_gbl->isKalmanTrack())
-                pos2dHits*=2;
+            int pos2dHits = pos_trk->getTrackerHitCount();
 
             if(ts_ != nullptr)
             {
@@ -1158,31 +1128,23 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                         ((int)ts_->prescaled.Single_2_Top)+((int)ts_->prescaled.Single_2_Bot));
             }
             _reg_vtx_histos[region]->Fill1DHisto("n_vtx_h", vtxs_->size()); 
-            int NposTrks = 0;
-            int NeleTrks = 0;
-            for (int iT = 0; iT < trks_->size(); iT++)
-            {
-                if (trks_->at(iT)->getCharge() > 0) NposTrks++;
-                else NeleTrks++;
-            }
-            _reg_vtx_histos[region]->Fill2DHisto("n_tracks_hh", NeleTrks, NposTrks); 
 
             //Add the momenta to the tracks
-            //ele_trk_gbl->setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
-            //pos_trk_gbl->setMomentum(pos->getMomentum()[0],pos->getMomentum()[1],pos->getMomentum()[2]);
+            //ele_trk->setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
+            //pos_trk->setMomentum(pos->getMomentum()[0],pos->getMomentum()[1],pos->getMomentum()[2]);
             TVector3 recEleP(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
             TLorentzVector p_ele;
-            p_ele.SetPxPyPzE(ele_trk_gbl->getMomentum()[0],ele_trk_gbl->getMomentum()[1],ele_trk_gbl->getMomentum()[2], ele_E);
+            p_ele.SetPxPyPzE(ele_trk->getMomentum()[0],ele_trk->getMomentum()[1],ele_trk->getMomentum()[2], ele_E);
             TLorentzVector p_pos;
-            p_pos.SetPxPyPzE(pos_trk_gbl->getMomentum()[0],pos_trk_gbl->getMomentum()[1],pos_trk_gbl->getMomentum()[2], pos_E);
+            p_pos.SetPxPyPzE(pos_trk->getMomentum()[0],pos_trk->getMomentum()[1],pos_trk->getMomentum()[2], pos_E);
 
 
             _reg_vtx_histos[region]->Fill2DHistograms(vtx,weight);
             _reg_vtx_histos[region]->Fill1DVertex(vtx,
                     ele,
                     pos,
-                    ele_trk_gbl,
-                    pos_trk_gbl,
+                    ele_trk,
+                    pos_trk,
                     weight);
 
             _reg_vtx_histos[region]->Fill1DHisto("ele_pos_clusTimeDiff_h", (corr_eleClusterTime - corr_posClusterTime), weight);
@@ -1190,18 +1152,15 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             _reg_vtx_histos[region]->Fill1DHisto("pos_track_n2dhits_h", pos2dHits, weight);
             _reg_vtx_histos[region]->Fill1DHisto("vtx_Psum_h", p_ele.P()+p_pos.P(), weight);
             _reg_vtx_histos[region]->Fill1DHisto("vtx_Esum_h", eleClus.getEnergy()+posClus.getEnergy(), weight);
-            _reg_vtx_histos[region]->Fill2DHisto("ele_vtxZ_iso_hh", TMath::Min(ele_trk_gbl->getIsolation(0), ele_trk_gbl->getIsolation(1)), vtx->getZ(), weight);
-            _reg_vtx_histos[region]->Fill2DHisto("pos_vtxZ_iso_hh", TMath::Min(pos_trk_gbl->getIsolation(0), pos_trk_gbl->getIsolation(1)), vtx->getZ(), weight);
-            _reg_vtx_histos[region]->Fill2DTrack(ele_trk_gbl,weight,"ele_");
-            _reg_vtx_histos[region]->Fill2DTrack(pos_trk_gbl,weight,"pos_");
+            _reg_vtx_histos[region]->Fill2DHisto("ele_vtxZ_iso_hh", TMath::Min(ele_trk->getIsolation(0), ele_trk->getIsolation(1)), vtx->getZ(), weight);
+            _reg_vtx_histos[region]->Fill2DHisto("pos_vtxZ_iso_hh", TMath::Min(pos_trk->getIsolation(0), pos_trk->getIsolation(1)), vtx->getZ(), weight);
+            _reg_vtx_histos[region]->Fill2DTrack(ele_trk,weight,"ele_");
+            _reg_vtx_histos[region]->Fill2DTrack(pos_trk,weight,"pos_");
             _reg_vtx_histos[region]->Fill1DHisto("mcMass622_h",apMass);
             _reg_vtx_histos[region]->Fill1DHisto("mcZ622_h",apZ);
             _reg_vtx_histos[region]->Fill1DHisto("mcMass625_h",vdMass);
             _reg_vtx_histos[region]->Fill1DHisto("mcZ625_h",vdZ);
 
-            if (trks_) _reg_vtx_histos[region]->Fill1DHisto("n_tracks_h",trks_->size(),weight);
-            _reg_vtx_histos[region]->Fill1DHisto("vtx_track_L1_isolation_h", ele_trk_iso_L1);
-            _reg_vtx_histos[region]->Fill1DHisto("vtx_track_L1_isolation_h", pos_trk_iso_L1);
 
             //Just for the selected vertex
             if(!isData_)
@@ -1212,11 +1171,14 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             }
 
             double reconz = vtx->getZ(); 
-            double ele_trk_z0 = ele_trk_gbl->getZ0();
-            double ele_trk_z0err = ele_trk_gbl->getZ0Err();
-            double pos_trk_z0 = pos_trk_gbl->getZ0();
-            double pos_trk_z0err = pos_trk_gbl->getZ0Err();
+            double ele_trk_z0 = ele_trk->getZ0();
+            double ele_trk_z0err = ele_trk->getZ0Err();
+            double pos_trk_z0 = pos_trk->getZ0();
+            double pos_trk_z0err = pos_trk->getZ0Err();
 
+            //DeltaZ
+            double deltaZ = std::abs( (ele_trk_z0/ele_trk->getTanLambda()) - (pos_trk_z0/pos_trk->getTanLambda()) );
+            
             //Project vertex to target
             double vtx_proj_x = -999.9;
             double vtx_proj_y = -999.9;
@@ -1224,7 +1186,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             double vtx_proj_y_sig = -999.9;
             double vtx_proj_sig = -999.9;
             if(!v0ProjectionFitsCfg_.empty())
-                vtx_proj_sig = utils::v0_projection_to_target_significance(v0proj_fits_, evth_->getRunNumber(), 
+                vtx_proj_sig = utils::v0_projection_to_target_significance(v0proj_fits_, evth_->getRunNumber(),
                         vtx_proj_x, vtx_proj_y, vtx_proj_x_sig, vtx_proj_y_sig, vtx->getX(), vtx->getY(),
                         reconz, vtx->getP().X(), vtx->getP().Y(), vtx->getP().Z());
 
@@ -1236,8 +1198,9 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             _reg_vtx_histos[region]->Fill2DHisto("vtx_track_reconz_v_Z0err_hh", pos_trk_z0err, reconz);
             _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_z0_hh", ele_trk_z0, reconz);
             _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_z0_hh", pos_trk_z0, reconz);
-            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_ABSdz0tanlambda_hh", std::abs((ele_trk_z0/ele_trk_gbl->getTanLambda()) - (pos_trk_z0/pos_trk_gbl->getTanLambda())), reconz);
-            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_dz0tanlambda_hh", ((ele_trk_z0/ele_trk_gbl->getTanLambda()) - (pos_trk_z0/pos_trk_gbl->getTanLambda())), reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_ABSdz0tanlambda_hh", std::abs((ele_trk_z0/ele_trk->getTanLambda()) - (pos_trk_z0/pos_trk->getTanLambda())), reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_dz0tanlambda_hh", ((ele_trk_z0/ele_trk->getTanLambda()) - (pos_trk_z0/pos_trk->getTanLambda())), reconz);
+
             _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_cxx_hh", cxx, reconz);
             _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_cyy_hh", cyy, reconz);
             _reg_vtx_histos[region]->Fill2DHisto("recon_z_v_czz_hh", czz, reconz);
@@ -1250,38 +1213,40 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             _reg_vtx_histos[region]->Fill1DHisto("cyx_h", cyx);
             _reg_vtx_histos[region]->Fill1DHisto("czx_h", czx);
             _reg_vtx_histos[region]->Fill1DHisto("czy_h", czy);
-            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_hh", ele_trk_z0/ele_trk_gbl->getTanLambda(), reconz);
-            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_hh", pos_trk_z0/pos_trk_gbl->getTanLambda(), reconz);
-            _reg_vtx_histos[region]->Fill2DHisto("ele_clusT_v_ele_trackT_hh", ele_trk_gbl->getTrackTime(), corr_eleClusterTime, weight);
-            _reg_vtx_histos[region]->Fill2DHisto("pos_clusT_v_pos_trackT_hh", pos_trk_gbl->getTrackTime(), corr_posClusterTime, weight);
-            _reg_vtx_histos[region]->Fill2DHisto("ele_track_time_v_P_hh", ele_trk_gbl->getP(), ele_trk_gbl->getTrackTime(), weight);
-            _reg_vtx_histos[region]->Fill2DHisto("pos_track_time_v_P_hh", pos_trk_gbl->getP(), pos_trk_gbl->getTrackTime(), weight);
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_hh", ele_trk_z0/ele_trk->getTanLambda(), reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("vtx_track_recon_z_v_z0tanlambda_hh", pos_trk_z0/pos_trk->getTanLambda(), reconz);
+            _reg_vtx_histos[region]->Fill2DHisto("ele_clusT_v_ele_trackT_hh", ele_trk->getTrackTime(), corr_eleClusterTime, weight);
+            _reg_vtx_histos[region]->Fill2DHisto("pos_clusT_v_pos_trackT_hh", pos_trk->getTrackTime(), corr_posClusterTime, weight);
+            _reg_vtx_histos[region]->Fill2DHisto("ele_track_time_v_P_hh", ele_trk->getP(), ele_trk->getTrackTime(), weight);
+            _reg_vtx_histos[region]->Fill2DHisto("pos_track_time_v_P_hh", pos_trk->getP(), pos_trk->getTrackTime(), weight);
             _reg_vtx_histos[region]->Fill2DHisto("ele_pos_clusTimeDiff_v_pSum_hh",ele_mom.Mag()+pos_mom.Mag(), ele_pos_dt, weight);
-            _reg_vtx_histos[region]->Fill2DHisto("ele_cluster_energy_v_track_p_hh",ele_trk_gbl->getP(), eleClus.getEnergy(), weight);
-            _reg_vtx_histos[region]->Fill2DHisto("pos_cluster_energy_v_track_p_hh",pos_trk_gbl->getP(), posClus.getEnergy(), weight);
-            _reg_vtx_histos[region]->Fill2DHisto("ele_track_cluster_dt_v_EoverP_hh",eleClus.getEnergy()/ele_trk_gbl->getP(), ele_trk_gbl->getTrackTime() - corr_eleClusterTime, weight);
-            _reg_vtx_histos[region]->Fill2DHisto("pos_track_cluster_dt_v_EoverP_hh",posClus.getEnergy()/pos_trk_gbl->getP(), pos_trk_gbl->getTrackTime() - corr_posClusterTime, weight);
-            _reg_vtx_histos[region]->Fill2DHisto("ele_track_clus_dt_v_p_hh",ele_trk_gbl->getP(), ele_trk_gbl->getTrackTime() - corr_eleClusterTime, weight);
-            _reg_vtx_histos[region]->Fill2DHisto("pos_track_clus_dt_v_p_hh",pos_trk_gbl->getP(), pos_trk_gbl->getTrackTime() - corr_posClusterTime, weight);
-            _reg_vtx_histos[region]->Fill2DHisto("ele_z0_vs_pos_z0_hh",ele_trk_gbl->getZ0(), pos_trk_gbl->getZ0(), weight);
+            _reg_vtx_histos[region]->Fill2DHisto("ele_cluster_energy_v_track_p_hh",ele_trk->getP(), eleClus.getEnergy(), weight);
+            _reg_vtx_histos[region]->Fill2DHisto("pos_cluster_energy_v_track_p_hh",pos_trk->getP(), posClus.getEnergy(), weight);
+            _reg_vtx_histos[region]->Fill2DHisto("ele_track_cluster_dt_v_EoverP_hh",eleClus.getEnergy()/ele_trk->getP(), ele_trk->getTrackTime() - corr_eleClusterTime, weight);
+            _reg_vtx_histos[region]->Fill2DHisto("pos_track_cluster_dt_v_EoverP_hh",posClus.getEnergy()/pos_trk->getP(), pos_trk->getTrackTime() - corr_posClusterTime, weight);
+            _reg_vtx_histos[region]->Fill2DHisto("ele_track_clus_dt_v_p_hh",ele_trk->getP(), ele_trk->getTrackTime() - corr_eleClusterTime, weight);
+            _reg_vtx_histos[region]->Fill2DHisto("pos_track_clus_dt_v_p_hh",pos_trk->getP(), pos_trk->getTrackTime() - corr_posClusterTime, weight);
+            _reg_vtx_histos[region]->Fill2DHisto("ele_z0_vs_pos_z0_hh",ele_trk->getZ0(), pos_trk->getZ0(), weight);
+
             //chi2 2d plots
-            _reg_vtx_histos[region]->Fill2DHisto("ele_track_chi2ndf_v_time_hh", ele_trk_gbl->getTrackTime(), ele_trk_gbl->getChi2Ndf(), weight);
-            _reg_vtx_histos[region]->Fill2DHisto("ele_track_chi2ndf_v_p_hh", ele_trk_gbl->getP(), ele_trk_gbl->getChi2Ndf(), weight);
-            _reg_vtx_histos[region]->Fill2DHisto("ele_track_chi2ndf_v_tanlambda_hh", ele_trk_gbl->getTanLambda(), ele_trk_gbl->getChi2Ndf(), weight);
-            _reg_vtx_histos[region]->Fill2DHisto("ele_track_chi2ndf_v_n2dhits_hh", ele2dHits, ele_trk_gbl->getChi2Ndf(), weight);
+            _reg_vtx_histos[region]->Fill2DHisto("ele_track_chi2ndf_v_time_hh", ele_trk->getTrackTime(), ele_trk->getChi2Ndf(), weight);
+            _reg_vtx_histos[region]->Fill2DHisto("ele_track_chi2ndf_v_p_hh", ele_trk->getP(), ele_trk->getChi2Ndf(), weight);
+            _reg_vtx_histos[region]->Fill2DHisto("ele_track_chi2ndf_v_tanlambda_hh", ele_trk->getTanLambda(), ele_trk->getChi2Ndf(), weight);
+            _reg_vtx_histos[region]->Fill2DHisto("ele_track_chi2ndf_v_n2dhits_hh", ele2dHits, ele_trk->getChi2Ndf(), weight);
 
-            _reg_vtx_histos[region]->Fill2DHisto("pos_track_chi2ndf_v_time_hh", pos_trk_gbl->getTrackTime(), pos_trk_gbl->getChi2Ndf(), weight);
-            _reg_vtx_histos[region]->Fill2DHisto("pos_track_chi2ndf_v_p_hh", pos_trk_gbl->getP(), pos_trk_gbl->getChi2Ndf(), weight);
-            _reg_vtx_histos[region]->Fill2DHisto("pos_track_chi2ndf_v_tanlambda_hh", pos_trk_gbl->getTanLambda(), pos_trk_gbl->getChi2Ndf(), weight);
-            _reg_vtx_histos[region]->Fill2DHisto("pos_track_chi2ndf_v_n2dhits_hh", pos2dHits, pos_trk_gbl->getChi2Ndf(), weight);
+            _reg_vtx_histos[region]->Fill2DHisto("pos_track_chi2ndf_v_time_hh", pos_trk->getTrackTime(), pos_trk->getChi2Ndf(), weight);
+            _reg_vtx_histos[region]->Fill2DHisto("pos_track_chi2ndf_v_p_hh", pos_trk->getP(), pos_trk->getChi2Ndf(), weight);
+            _reg_vtx_histos[region]->Fill2DHisto("pos_track_chi2ndf_v_tanlambda_hh", pos_trk->getTanLambda(), pos_trk->getChi2Ndf(), weight);
+            _reg_vtx_histos[region]->Fill2DHisto("pos_track_chi2ndf_v_n2dhits_hh", pos2dHits, pos_trk->getChi2Ndf(), weight);
 
-            _reg_vtx_histos[region]->Fill2DHisto("ele_track_p_v_tanlambda_hh", ele_trk_gbl->getTanLambda(), ele_trk_gbl->getP(), weight);
-            _reg_vtx_histos[region]->Fill2DHisto("pos_track_p_v_tanlambda_hh", pos_trk_gbl->getTanLambda(), pos_trk_gbl->getP(), weight);
+            _reg_vtx_histos[region]->Fill2DHisto("ele_track_p_v_tanlambda_hh", ele_trk->getTanLambda(), ele_trk->getP(), weight);
+            _reg_vtx_histos[region]->Fill2DHisto("pos_track_p_v_tanlambda_hh", pos_trk->getTanLambda(), pos_trk->getP(), weight);
 
 
             //1d histos
-            _reg_vtx_histos[region]->Fill1DHisto("ele_track_clus_dt_h", ele_trk_gbl->getTrackTime() - corr_eleClusterTime, weight);
-            _reg_vtx_histos[region]->Fill1DHisto("pos_track_clus_dt_h", pos_trk_gbl->getTrackTime() - corr_posClusterTime, weight);
+            _reg_vtx_histos[region]->Fill1DHisto("ele_track_clus_dt_h", ele_trk->getTrackTime() - corr_eleClusterTime, weight);
+            _reg_vtx_histos[region]->Fill1DHisto("pos_track_clus_dt_h", pos_trk->getTrackTime() - corr_posClusterTime, weight);
+ 
 
             //TODO put this in the Vertex!
             TVector3 vtxPosSvt;
@@ -1313,74 +1278,82 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
                 _reg_tuples[region]->setVariableValue("unc_vtx_pz", vtx->getP().Z());
                 _reg_tuples[region]->setVariableValue("unc_vtx_x", vtx->getX());
                 _reg_tuples[region]->setVariableValue("unc_vtx_y", vtx->getY());
+                _reg_tuples[region]->setVariableValue("unc_vtx_proj_x", vtx_proj_x);
+                _reg_tuples[region]->setVariableValue("unc_vtx_proj_y", vtx_proj_y);
+                _reg_tuples[region]->setVariableValue("unc_vtx_proj_x_sig", vtx_proj_x_sig);
+                _reg_tuples[region]->setVariableValue("unc_vtx_proj_y_sig", vtx_proj_y_sig);
+                _reg_tuples[region]->setVariableValue("unc_vtx_proj_sig", vtx_proj_sig);
                 _reg_tuples[region]->setVariableValue("unc_vtx_ele_pos_clust_dt", corr_eleClusterTime - corr_posClusterTime);
+
                 _reg_tuples[region]->setVariableValue("unc_vtx_cxx", cxx);
                 _reg_tuples[region]->setVariableValue("unc_vtx_cyy", cyy);
                 _reg_tuples[region]->setVariableValue("unc_vtx_czz", czz);
                 _reg_tuples[region]->setVariableValue("unc_vtx_cyx", cyx);
                 _reg_tuples[region]->setVariableValue("unc_vtx_czy", czy);
                 _reg_tuples[region]->setVariableValue("unc_vtx_czx", czx);
-                _reg_tuples[region]->setVariableValue("unc_vtx_proj_x", vtx_proj_x);
-                _reg_tuples[region]->setVariableValue("unc_vtx_proj_y", vtx_proj_y);
-                _reg_tuples[region]->setVariableValue("unc_vtx_proj_x_sig", vtx_proj_x_sig);
-                _reg_tuples[region]->setVariableValue("unc_vtx_proj_y_sig", vtx_proj_y_sig);
-                _reg_tuples[region]->setVariableValue("unc_vtx_proj_sig", vtx_proj_sig);
+                _reg_tuples[region]->setVariableValue("unc_vtx_deltaZ", deltaZ);
 
                 //track vars
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_p", ele_trk_gbl->getP());
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_t", ele_trk_gbl->getTrackTime());
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_d0", ele_trk_gbl->getD0());
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_phi0", ele_trk_gbl->getPhi());
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_omega", ele_trk_gbl->getOmega());
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_tanLambda", ele_trk_gbl->getTanLambda());
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_z0", ele_trk_gbl->getZ0());
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_chi2ndf", ele_trk_gbl->getChi2Ndf());
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_clust_dt", ele_trk_gbl->getTrackTime() - corr_eleClusterTime);
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_z0Err",ele_trk_gbl->getZ0Err());
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_d0Err", ele_trk_gbl->getD0Err());
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_tanLambdaErr", ele_trk_gbl->getTanLambdaErr());
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_PhiErr", ele_trk_gbl->getPhiErr());
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_OmegaErr", ele_trk_gbl->getOmegaErr());
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_L1_isolation",ele_trk_iso_L1);
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_p", ele_trk->getP());
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_t", ele_trk->getTrackTime());
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_d0", ele_trk->getD0());
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_phi0", ele_trk->getPhi());
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_omega", ele_trk->getOmega());
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_tanLambda", ele_trk->getTanLambda());
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_z0", ele_trk->getZ0());
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_chi2ndf", ele_trk->getChi2Ndf());
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_clust_dt", ele_trk->getTrackTime() - corr_eleClusterTime);
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_z0Err",ele_trk->getZ0Err());
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_d0Err", ele_trk->getD0Err());
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_tanLambdaErr", ele_trk->getTanLambdaErr());
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_PhiErr", ele_trk->getPhiErr());
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_OmegaErr", ele_trk->getOmegaErr());
                 _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_nhits",ele2dHits);
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_lastlayer",ele_lastlayer);
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_si0",ele_Si0);
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_si1",ele_Si1);
 
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_p", pos_trk_gbl->getP());
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_t", pos_trk_gbl->getTrackTime());
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_d0", pos_trk_gbl->getD0());
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_phi0", pos_trk_gbl->getPhi());
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_omega", pos_trk_gbl->getOmega());
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_tanLambda", pos_trk_gbl->getTanLambda());
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_z0", pos_trk_gbl->getZ0());
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_chi2ndf", pos_trk_gbl->getChi2Ndf());
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_clust_dt", pos_trk_gbl->getTrackTime() - corr_posClusterTime);
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_z0Err",pos_trk_gbl->getZ0Err());
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_d0Err", pos_trk_gbl->getD0Err());
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_tanLambdaErr", pos_trk_gbl->getTanLambdaErr());
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_PhiErr", pos_trk_gbl->getPhiErr());
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_OmegaErr", pos_trk_gbl->getOmegaErr());
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_L1_isolation",pos_trk_iso_L1);
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_p", pos_trk->getP());
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_t", pos_trk->getTrackTime());
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_d0", pos_trk->getD0());
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_phi0", pos_trk->getPhi());
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_omega", pos_trk->getOmega());
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_tanLambda", pos_trk->getTanLambda());
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_z0", pos_trk->getZ0());
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_chi2ndf", pos_trk->getChi2Ndf());
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_clust_dt", pos_trk->getTrackTime() - corr_posClusterTime);
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_z0Err",pos_trk->getZ0Err());
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_d0Err", pos_trk->getD0Err());
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_tanLambdaErr", pos_trk->getTanLambdaErr());
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_PhiErr", pos_trk->getPhiErr());
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_OmegaErr", pos_trk->getOmegaErr());
                 _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_nhits",pos2dHits);
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_lastlayer",pos_lastlayer);
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_si0",pos_Si0);
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_si1",pos_Si1);
 
                 //clust vars
                 _reg_tuples[region]->setVariableValue("unc_vtx_ele_clust_E", eleClus.getEnergy());
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_clust_x", eleClus.getPosition().at(0));
                 _reg_tuples[region]->setVariableValue("unc_vtx_ele_clust_corr_t",corr_eleClusterTime);
 
                 _reg_tuples[region]->setVariableValue("unc_vtx_pos_clust_E", posClus.getEnergy());
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_clust_x", posClus.getPosition().at(0));
                 _reg_tuples[region]->setVariableValue("unc_vtx_pos_clust_corr_t",corr_posClusterTime);
                 _reg_tuples[region]->setVariableValue("run_number", evth_->getRunNumber());
 
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_x", ele_trk_gbl->getPosition().at(0));
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_y", ele_trk_gbl->getPosition().at(1));
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_z", ele_trk_gbl->getPosition().at(2));
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_x", pos_trk_gbl->getPosition().at(0));
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_y", pos_trk_gbl->getPosition().at(1));
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_z", pos_trk_gbl->getPosition().at(2));
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_px", ele_trk_gbl->getMomentum().at(0));
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_py", ele_trk_gbl->getMomentum().at(1));
-                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_pz", ele_trk_gbl->getMomentum().at(2));
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_px", pos_trk_gbl->getMomentum().at(0));
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_py", pos_trk_gbl->getMomentum().at(1));
-                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_pz", pos_trk_gbl->getMomentum().at(2));
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_ecal_x", ele_trk->getPositionAtEcal().at(0));
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_ecal_y", ele_trk->getPositionAtEcal().at(1));
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_z", ele_trk->getPosition().at(2));
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_ecal_x", pos_trk->getPositionAtEcal().at(0));
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_ecal_y", pos_trk->getPositionAtEcal().at(1));
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_z", pos_trk->getPosition().at(2));
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_px", ele_trk->getMomentum().at(0));
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_py", ele_trk->getMomentum().at(1));
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_track_pz", ele_trk->getMomentum().at(2));
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_px", pos_trk->getMomentum().at(0));
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_py", pos_trk->getMomentum().at(1));
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_track_pz", pos_trk->getMomentum().at(2));
 
                 _reg_tuples[region]->fill();
             }
@@ -1391,7 +1364,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
     return true;
 }
 
-void VertexAnaProcessor::finalize() {
+void NewVertexAnaProcessor::finalize() {
 
     //TODO clean this up a little.
     outF_->cd();
@@ -1400,7 +1373,7 @@ void VertexAnaProcessor::finalize() {
     vtxSelector->getCutFlowHisto()->Write();
 
     outF_->cd();
-    if(!isData_ && mc_reg_on_)
+    if(!isData_)
         _mc_vtx_histos->saveHistos(outF_, _mc_vtx_histos->getName());
     //delete histos;
     //histos = nullptr;
@@ -1417,7 +1390,7 @@ void VertexAnaProcessor::finalize() {
 
     }
 
-    if(!isData_ && mc_reg_on_){
+    if(!isData_){
         for (reg_mc_it it = _reg_mc_vtx_histos.begin(); it!=_reg_mc_vtx_histos.end(); ++it) {
             std::string dirName = anaName_+"_mc_"+it->first;
             (it->second)->saveHistos(outF_,dirName);
@@ -1429,4 +1402,4 @@ void VertexAnaProcessor::finalize() {
 
 }
 
-DECLARE_PROCESSOR(VertexAnaProcessor);
+DECLARE_PROCESSOR(NewVertexAnaProcessor);

@@ -95,7 +95,12 @@ class Track : public TObject {
         void setCov(const std::vector<float>& cov) {cov_ = cov;}
         
         std::vector<float> getCov() {return cov_;}
+
+        std::vector<int> getHitLayers() {return hit_layers_;}
+        void addHitLayer(int layer) {hit_layers_.push_back(layer);}
         
+        void addMcpHit(int layer, int mcpID) {mcp_hits_.push_back(std::make_pair(layer,mcpID));}
+        std::vector<std::pair<int,int>> getMcpHits() {return mcp_hits_;}
         
         double getD0Err () const {return sqrt(cov_[0]);}
         double getPhiErr () const {return sqrt(cov_[2]);}
@@ -330,6 +335,11 @@ class Track : public TObject {
         bool isBottomTrack() const { return track_volume_ ? true : false; };
 
         /**
+         * Set the number of tracker hits associated with this track.
+         */
+        void setTrackerHitCount(int nHits) { n_hits_ = nHits; };
+
+        /**
          * @return Number of tracker hits associated with this track.
          */
         int getTrackerHitCount() const { return n_hits_; };
@@ -353,7 +363,7 @@ class Track : public TObject {
     private:
 
         /** Reference to the 3D hits associated with this track. */
-        TRefArray tracker_hits_{}; 
+        TRefArray tracker_hits_{TRefArray{}};
 
         /** Reference to the reconstructed particle associated with this track. */
         TRef particle_;
@@ -372,7 +382,12 @@ class Track : public TObject {
 
         /** Cov matrix */
         std::vector<float> cov_;
-            
+
+        /** hit layers */
+        std::vector<int> hit_layers_;
+
+        /** truth mcp hits */
+        std::vector<std::pair<int,int>> mcp_hits_;
 
         /** The distance of closest approach to the reference point. */
         double d0_{-999.}; 

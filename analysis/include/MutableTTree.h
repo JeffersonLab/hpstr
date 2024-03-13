@@ -87,6 +87,10 @@ class MutableTTree {
          */
         bool variableExists(std::string variable);
 
+        virtual void addVariable(std::string variableName, double param)=0;
+
+        void addVariableToTBranch(const std::string& variableName);
+
         ~MutableTTree();
 
     protected:

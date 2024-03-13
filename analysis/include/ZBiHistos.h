@@ -123,7 +123,11 @@ class ZBiHistos : public HistoManager{
          * 
          */
         TF1* fitExponentialPlusConst(std::string histogramName, double starnt_nevents);
-
+        /**
+         * @brief description
+         * 
+         */
+        TF1* fitExponentialPlusExp(std::string histogramName, double starnt_nevents);
         /**
          * @brief description
          * 
