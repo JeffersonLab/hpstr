@@ -322,7 +322,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
             track_atlasthit_max_p_py = track_atlasthit->getMomentum().at(1);
             track_atlasthit_max_p_pz = track_atlasthit->getMomentum().at(2);
             std::vector<int> layer_list = track_atlasthit->getHitLayers();
-            track_atlasthit_last_layer = std::max_element(layer_list.begin(), layer_list.end());
+            track_atlasthit_last_layer = *(std::max_element(layer_list.begin(), layer_list.end()));
         }
     }
 
@@ -341,7 +341,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
         if (track_layer != track_atlasthit_last_layer)
             continue;
         if (mc_track_p > mc_tracker_hit_atlasthit_max_p){
-            mc_tracker_hit_atlasthit_max_p = sim_p;
+            mc_tracker_hit_atlasthit_max_p = mc_track_p;
             mc_tracker_hit_atlasthit_max_p_px = mc_tracker_hit_atlasthit->getMomentum().at(0);
             mc_tracker_hit_atlasthit_max_p_py = mc_tracker_hit_atlasthit->getMomentum().at(1);
             mc_tracker_hit_atlasthit_max_p_pz = mc_tracker_hit_atlasthit->getMomentum().at(2);
