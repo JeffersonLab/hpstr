@@ -5,6 +5,7 @@
  */     
 #include "SimPartProcessor.h"
 #include <iostream>
+#include <algorithm>
 
 SimPartProcessor::SimPartProcessor(const std::string& name, Process& process) : Processor(name,process){}
 //TODO CHECK THIS DESTRUCTOR
@@ -305,17 +306,23 @@ bool SimPartProcessor::process(IEvent* ievent) {
     double track_atlasthit_max_p_px = -99999;
     double track_atlasthit_max_p_py = -99999;
     double track_atlasthit_max_p_pz = -99999;
+    int track_atlasthit_last_layer = -99999;
+    std::vector<double> track_atlasthit_pypz_list;
+    track_atlasthit_pypz_list.clear();
     for (int i=0; i<nReco_Tracks_atlasthit; i++) {
         Track* track_atlasthit = RecoTracks_atlasthit_->at(i);
-        double p = track_atlasthit->getP();
-        if (p > track_atlasthit_max_p){
-            track_atlasthit_max_p = p;
+        double track_p = track_atlasthit->getP();
+        track_atlasthit_pypz_list.push_back(track_atlasthit->getMomentum().at(1)/track_atlasthit->getMomentum().at(2));
+        if (track_p > track_atlasthit_max_p){
+            track_atlasthit_max_p = track_p;
             track_atlasthit_max_p_x = track_atlasthit->getPosition().at(0);
             track_atlasthit_max_p_y = track_atlasthit->getPosition().at(1);
             track_atlasthit_max_p_z = track_atlasthit->getPosition().at(2);
             track_atlasthit_max_p_px = track_atlasthit->getMomentum().at(0);
             track_atlasthit_max_p_py = track_atlasthit->getMomentum().at(1);
             track_atlasthit_max_p_pz = track_atlasthit->getMomentum().at(2);
+            std::vector<int> layer_list = track_atlasthit->getHitLayers();
+            track_atlasthit_last_layer = std::max_element(layer_list.begin(), layer_list.end());
         }
     }
 
@@ -326,26 +333,22 @@ bool SimPartProcessor::process(IEvent* ievent) {
     double mc_tracker_hit_atlasthit_max_p_px = -99999;
     double mc_tracker_hit_atlasthit_max_p_py = -99999;
     double mc_tracker_hit_atlasthit_max_p_pz = -99999;
-    int last_layer = 0;
     for (int i=0; i<nSim_Tracker_hits; i++){
         MCTrackerHit *mc_tracker_hit_atlasthit = MCTrackerHits_->at(i);
         int track_layer = mc_tracker_hit_atlasthit->getLayer();
         int track_id = mc_tracker_hit_atlasthit->getPartID();
-        double sim_p = mc_tracker_hit_atlasthit->getP();
-        if (track_layer < last_layer)
+        double mc_track_p = mc_tracker_hit_atlasthit->getP();
+        if (track_layer != track_atlasthit_last_layer)
             continue;
-        else if (track_layer == last_layer){
-            if (sim_p <= mc_tracker_hit_atlasthit_max_p)
-                continue;
+        if (mc_track_p > mc_tracker_hit_atlasthit_max_p){
+            mc_tracker_hit_atlasthit_max_p = sim_p;
+            mc_tracker_hit_atlasthit_max_p_px = mc_tracker_hit_atlasthit->getMomentum().at(0);
+            mc_tracker_hit_atlasthit_max_p_py = mc_tracker_hit_atlasthit->getMomentum().at(1);
+            mc_tracker_hit_atlasthit_max_p_pz = mc_tracker_hit_atlasthit->getMomentum().at(2);
+            mc_tracker_hit_atlasthit_max_p_x = mc_tracker_hit_atlasthit->getPosition().at(0);
+            mc_tracker_hit_atlasthit_max_p_y = mc_tracker_hit_atlasthit->getPosition().at(1);
+            mc_tracker_hit_atlasthit_max_p_z = mc_tracker_hit_atlasthit->getPosition().at(2);
         }
-        last_layer = track_layer;
-        mc_tracker_hit_atlasthit_max_p = sim_p;
-        mc_tracker_hit_atlasthit_max_p_px = mc_tracker_hit_atlasthit->getMomentum().at(0);
-        mc_tracker_hit_atlasthit_max_p_py = mc_tracker_hit_atlasthit->getMomentum().at(1);
-        mc_tracker_hit_atlasthit_max_p_pz = mc_tracker_hit_atlasthit->getMomentum().at(2);
-        mc_tracker_hit_atlasthit_max_p_x = mc_tracker_hit_atlasthit->getPosition().at(0);
-        mc_tracker_hit_atlasthit_max_p_y = mc_tracker_hit_atlasthit->getPosition().at(1);
-        mc_tracker_hit_atlasthit_max_p_z = mc_tracker_hit_atlasthit->getPosition().at(2);
     }
 
     if (track_max_p != -99999 && sim_max_p != -99999)
@@ -400,7 +403,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
     // Regions
     for (auto region : regions_ ) {
         reg_selectors_[region]->getCutFlowHisto()->Fill(0.,weight);
-        if(debug_) std::cout<<"Check for region "<<region<<" Nr. of sim particles: "<<nParts<<" Nr. of tracks: "<<nReco_Tracks<<" Nr. of ECal Clusters: "<<nReco_Ecal_clusters<<" Min. Nr. of Track Hits: "<<min_n_Track_hits<<" Track Omega: "<<track_omega<<std::endl;
+        if(debug_) std::cout<<"Check for region "<<region<<" Nr. of sim particles: "<<nParts<<" Nr. of tracks: "<<nReco_Tracks<<" Nr. of ECal Clusters: "<<nReco_Ecal_clusters<<" Min. Nr. of Track Hits: "<<min_n_Track_hits<<" Track Omega: "<<track_omega<<"Track Last Layer of Hit: "<<track_atlasthit_last_layer<<std::endl;
 
         // Cuts
         if ( !reg_selectors_[region]->passCutEq("n_sim_eq", nParts, weight) ) continue;
@@ -432,6 +435,9 @@ bool SimPartProcessor::process(IEvent* ievent) {
 
         if ( !reg_selectors_[region]->passCutGt("n_track_hits_gt", min_n_Track_hits, weight) ) continue;
         if(debug_) std::cout<<"Pass Nr. of Track Hits Gt cut"<<std::endl;
+
+        if ( !reg_selectors_[region]->passCutEq("track_last_layer_eq", track_atlasthit_last_layer, weight) ) continue;
+        if(debug_) std::cout<<"Pass Track Last Layer of Hit Eq cut"<<std::endl;
 
         int track_p_fail = 0;
         for (int i=0; i<track_p_list.size(); i++){
@@ -482,6 +488,27 @@ bool SimPartProcessor::process(IEvent* ievent) {
         }
         if (sim_pypz_fail) continue;
         if(debug_) std::cout<<"Pass Sim py/pz Lt cut"<<std::endl;
+
+        int track_atlasthit_pypz_fail = 0;
+        for (int i=0; i<track_atlasthit_pypz_list.size(); i++){
+            if ( !reg_selectors_[region]->passCutGt("track_pypz_gt", track_atlasthit_pypz_list[i], weight) ){
+                track_atlasthit_pypz_fail = 1;
+                break;
+            }
+        }
+        if (track_atlasthit_pypz_fail) continue;
+        if(debug_) std::cout<<"Pass Track at Last Hit py/pz Gt cut"<<std::endl;
+
+        track_atlasthit_pypz_fail = 0;
+        for (int i=0; i<track_atlasthit_pypz_list.size(); i++){
+            if ( !reg_selectors_[region]->passCutLt("track_pypz_lt", track_atlasthit_pypz_list[i], weight) ){
+                track_atlasthit_pypz_fail = 1;
+                break;
+            }
+        }
+        if (track_atlasthit_pypz_fail) continue;
+        if(debug_) std::cout<<"Pass Track at Last Hit py/pz Lt cut"<<std::endl;
+
 
         if(debug_) std::cout<<"Pass region "<<region<<std::endl;
 

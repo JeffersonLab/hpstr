@@ -13,5 +13,15 @@
         "cut"  : 1.0,
         "id"   : 2,
         "info" : "N Ecal Clusters == 1"
+    },
+    "track_last_layer_eq"  : {
+        "cut"  : 2,
+        "id"   : 3,
+        "info" : "Track Last Layer == 2"
+    },
+    "track_pypz_gt"  : {
+        "cut"  : 0.0,
+        "id"   : 4,
+        "info" : "Track py/pz >= 0.0"
     }
 }
