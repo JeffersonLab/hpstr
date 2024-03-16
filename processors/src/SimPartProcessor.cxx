@@ -227,7 +227,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
         double pz = momentum_V.at(2);
         double p = sqrt(px*px + py*py + pz*pz);
         sim_p_list.push_back(p);
-        if (pz!=0)
+        if (pz != 0)
             sim_pypz_list.push_back(py/pz);
         else
             sim_pypz_list.push_back(0);
@@ -315,7 +315,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
     for (int i=0; i<nReco_Tracks_atlasthit; i++) {
         Track* track_atlasthit = RecoTracks_atlasthit_->at(i);
         double track_p = track_atlasthit->getP();
-        if (track_atlasthit->getMomentum().at(2)) != 0
+        if (track_atlasthit->getMomentum().at(2) != 0)
             track_atlasthit_pypz_list.push_back(track_atlasthit->getMomentum().at(1)/track_atlasthit->getMomentum().at(2));
         else
             track_atlasthit_pypz_list.push_back(0);
