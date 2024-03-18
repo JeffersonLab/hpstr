@@ -6,7 +6,7 @@ import baseConfig as base
 base.parser.add_argument("-f", "--makeFlatTuple", type=int, dest="makeFlatTuple",
                          help="Make True to make vertex ana flat tuple", metavar="makeFlatTuple", default=1)
 base.parser.add_argument("-r", "--isRadPDG", type=int, dest="isRadPDG",
-                         help="Set radiative trident PDG ID", metavar="isRadPDG", default=623)
+                         help="Set radiative trident PDG ID", metavar="isRadPDG", default=622)
 options = base.parser.parse_args()
 
 # Use the input file to set the output file name

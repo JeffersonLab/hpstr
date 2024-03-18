@@ -910,37 +910,23 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             //If this is MC check if MCParticle matched to the electron track is from rad or recoil
             if(!isData_)
             {
-
                 //Fill MC plots after all selections
-                if (!isData_) _reg_mc_vtx_histos[region]->FillMCParticles(mcParts_, analysis_);
+                _reg_mc_vtx_histos[region]->FillMCParticles(mcParts_, analysis_);
 
-                //Build map of hits and the associated MC part ids for later
-                TRefArray ele_trk_hits = ele_trk->getSvtHits();
-                TRefArray pos_trk_hits = pos_trk->getSvtHits();
-                std::map<int, std::vector<int> > trueHitIDs;
-                for(int i = 0; i < hits_->size(); i++)
-                {
-                    TrackerHit* hit = hits_->at(i);
-                    trueHitIDs[hit->getID()] = hit->getMCPartIDs();
-                }
                 //Count the number of hits per part on the ele track
                 std::map<int, int> nHits4part;
-                for(int i = 0; i < ele_trk_hits.GetEntries(); i++)
+                for(int i =0; i < ele_trk->getMcpHits().size(); i++)
                 {
-                    TrackerHit* eleHit = (TrackerHit*)ele_trk_hits.At(i);
-                    for(int idI = 0; idI < trueHitIDs[eleHit->getID()].size(); idI++ )
+                    int partID = ele_trk->getMcpHits().at(i).second;
+                    if ( nHits4part.find(partID) == nHits4part.end() )
                     {
-                        int partID = trueHitIDs[eleHit->getID()].at(idI);
-                        if ( nHits4part.find(partID) == nHits4part.end() )
-                        {
-                            // not found
-                            nHits4part[partID] = 1;
-                        }
-                        else
-                        {
-                            // found
-                            nHits4part[partID]++;
-                        }
+                        // not found
+                        nHits4part[partID] = 1;
+                    }
+                    else
+                    {
+                        // found
+                        nHits4part[partID]++;
                     }
                 }
 
@@ -1040,6 +1026,10 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             Track * ele_trk = (Track*) ele->getTrack().Clone();
             Track * pos_trk = (Track*) pos->getTrack().Clone();
             //Get the shared info - TODO change and improve
+            
+            //Track Time Corrections
+            ele_trk->applyCorrection("track_time",eleTrackTimeBias_);
+            pos_trk->applyCorrection("track_time", posTrackTimeBias_);
 
             //Get the layers hit on each track
             std::vector<int> ele_hit_layers = ele_trk->getHitLayers();
@@ -1081,7 +1071,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             int L2hitCode = 0; // hit code '1111' means truth in L2_ele_ax, L2_ele_ster, L2_pos_ax, L2_pos_ster
             if(!isData_){
                 //Get hit codes. Only sure this works for 2016 KF as is.
-                utils::get2016KFMCTruthHitCodes(ele_trk, pos_trk, hits_, L1L2hitCode, L1hitCode, L2hitCode);
+                utils::get2016KFMCTruthHitCodes(ele_trk, pos_trk, L1L2hitCode, L1hitCode, L2hitCode);
                 //L1L2 truth hit selection
                 if (!_reg_vtx_selectors[region]->passCutLt("hitCode_lt",((double)L1L2hitCode)-0.5, weight)) continue;
                 if (!_reg_vtx_selectors[region]->passCutGt("hitCode_gt",((double)L1L2hitCode)+0.5, weight)) continue;

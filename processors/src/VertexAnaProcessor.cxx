@@ -1092,7 +1092,7 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             int L2hitCode = 0; // hit code '1111' means truth in L2_ele_ax, L2_ele_ster, L2_pos_ax, L2_pos_ster
             if(!isData_){
                 //Get hit codes. Only sure this works for 2016 KF as is.
-                utils::get2016KFMCTruthHitCodes(ele_trk_gbl, pos_trk_gbl, hits_, L1L2hitCode, L1hitCode, L2hitCode);
+                utils::get2016KFMCTruthHitCodes(ele_trk_gbl, pos_trk_gbl, L1L2hitCode, L1hitCode, L2hitCode);
                 //L1L2 truth hit selection
                 if (!_reg_vtx_selectors[region]->passCutLt("hitCode_lt",((double)L1L2hitCode)-0.5, weight)) continue;
                 if (!_reg_vtx_selectors[region]->passCutGt("hitCode_gt",((double)L1L2hitCode)+0.5, weight)) continue;
