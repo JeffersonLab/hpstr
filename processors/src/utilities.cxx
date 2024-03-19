@@ -329,7 +329,7 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
                 if (loc == trackstateLocationMap_["AtCalorimeter"])
                     bfieldY = track_datum->getFloatVal(6);
                 if (loc == trackstateLocationMap_["AtLastHit"])
-                    bfieldY = track_datum->getFloatVal(8);
+                    bfieldY = track_datum->getFloatVal(7);
                 //Bfield needs factor of -1, not sure why... <-TODO investigate
                 track->setMomentum(-bfieldY);
             }
