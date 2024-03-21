@@ -25,8 +25,6 @@
 #include "EventHeader.h"
 #include "TrackHistos.h"
 
-#include "TrackSmearingTool.h"
-
 // Forward declarations
 class TTree; 
 
@@ -132,7 +130,6 @@ class TrackingAnaProcessor : public Processor {
         TH2D* psmear_vs_nHits_top_rel_hh_;
         TH2D* psmear_vs_nHits_bot_rel_hh_;
 
-        
 }; // TrackingAnaProcessor
 
 #endif // __TRACKING_ANAPROCESSOR_

@@ -188,7 +188,7 @@ namespace utils {
      * 
      * \todo extern?
      */
-    void get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, std::vector<TrackerHit*>* hits, int& L1L2hitCode, int& L1hitCode, int& L2hitCode);
+    void get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, int& L1L2hitCode, int& L1hitCode, int& L2hitCode);
 
     /**
      * @brief description

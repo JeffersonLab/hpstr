@@ -6,7 +6,7 @@ import baseConfig as base
 base.parser.add_argument("-f", "--makeFlatTuple", type=int, dest="makeFlatTuple",
                          help="Make True to make vertex ana flat tuple", metavar="makeFlatTuple", default=1)
 base.parser.add_argument("-r", "--isRadPDG", type=int, dest="isRadPDG",
-                         help="Set radiative trident PDG ID", metavar="isRadPDG", default=623)
+                         help="Set radiative trident PDG ID", metavar="isRadPDG", default=622)
 options = base.parser.parse_args()
 
 # Use the input file to set the output file name
@@ -52,7 +52,10 @@ vtxana.parameters["isRadPDG"] = options.isRadPDG
 vtxana.parameters["makeFlatTuple"] = options.makeFlatTuple
 vtxana.parameters["beamPosCfg"] = ""
 if options.isData:
-    vtxana.parameters["v0ProjectionFitsCfg"] = '/sdf/group/hps/users/alspellm/src/hpstr/analysis/data/v0_projection_2016_config.json'
+    vtxana.parameters["v0ProjectionFitsCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/v0_projection_2016_config.json'
+else:
+    vtxana.parameters["v0ProjectionFitsCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/v0_projection_2016_mc_7800_config.json'  #For tritrig and wab mc
+    #vtxana.parameters["v0ProjectionFitsCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/v0_projection_2016_mc_signal_config.json' #For signal (accidentally gen with bspt=(0,0)
 
 if options.isData:
     vtxana.parameters["eleTrackTimeBias"] = -1.5
@@ -60,6 +63,8 @@ if options.isData:
 else:
     vtxana.parameters["eleTrackTimeBias"] = -2.2 #MC
     vtxana.parameters["posTrackTimeBias"] = -2.2 #MC
+    #vtxana.parameters["eleTrackTimeBias"] = -5.5 #MC For TTs new smearing samples...due to readout bug
+    #vtxana.parameters["posTrackTimeBias"] = -5.5 #MC For TTs new smearing samples...due to readout bug
 
 
 CalTimeOffset = -999
