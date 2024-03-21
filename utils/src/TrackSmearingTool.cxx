@@ -71,5 +71,15 @@ double TrackSmearingTool::smearTrackP(const Track& track) {
   
 }
 
-
+void TrackSmearingTool::updateWithSmearP(Track& trk) {
+  double smeared_magnitude = smearTrackP(trk);
+  // updated momentum by scaling each coordinate by smeared/unsmeared
+  // this takes the direction of the unsmeared momentum and applies
+  // the smeared magnitude
+  std::vector<double> momentum = trk.getMomentum(); 
+  double unsmeared_magnitude = trk.getP();
+  for (double& coordinate : momentum)
+    coordinate *= (smeared_magnitude/unsmeared_magnitude);
+  trk.setMomentum(momentum);
+}
 

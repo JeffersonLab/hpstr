@@ -27,6 +27,7 @@ class TrackSmearingTool {
                     const std::string& tracks = "KalmanFullTracks");  
   
   double smearTrackP(const Track& trk);
+  void updateWithSmearP(Track& trk);
   
  private:
   
