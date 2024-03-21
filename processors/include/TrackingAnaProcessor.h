@@ -24,6 +24,7 @@
 #include "CalCluster.h"
 #include "EventHeader.h"
 #include "TrackHistos.h"
+#include "TrackSmearingTool.h"
 
 // Forward declarations
 class TTree; 
