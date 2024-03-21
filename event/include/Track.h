@@ -290,7 +290,7 @@ class Track : public TObject {
         
         double getP() const {return sqrt(px_*px_ + py_*py_ + pz_*pz_);};
         
-        double getPt() const {return sqrt(px_*px_ + pz_*pz_);}
+        double getPt() const {return sqrt(px_*px_ + py_*py_);}
         
         /**
          * Set the lambda kink of the given layer.
