@@ -258,7 +258,6 @@
         "xtitle" : "Track p (at At Last Hit) - Sim p (at At Last Hit)",
         "ytitle" : "Events"
     },
-
     "sim_track_atlasthit_px_diff_h" : {
         "bins"  : 100,
         "minX"   : -5,
