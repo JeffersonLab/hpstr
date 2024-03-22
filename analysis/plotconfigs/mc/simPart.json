@@ -230,8 +230,6 @@
         "xtitle" : "Track x - Sim x (at ECal)",
         "ytitle" : "Events"
     },
-
-
     "sim_track_atlasthit_x_diff_h" : {
         "bins"  : 1000,
         "minX"   : -100,
