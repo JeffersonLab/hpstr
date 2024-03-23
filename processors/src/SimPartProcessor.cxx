@@ -315,12 +315,12 @@ bool SimPartProcessor::process(IEvent* ievent) {
         track_atlasthit_pypz_list.push_back(track_atlasthit->getMomentum().at(1)/track_atlasthit->getMomentum().at(2));
         if (track_p > track_atlasthit_max_p){
             track_atlasthit_max_p = track_p;
-            track_atlasthit_max_p_x = track_atlasthit->getPosition().at(0);
-            track_atlasthit_max_p_y = track_atlasthit->getPosition().at(1);
-            track_atlasthit_max_p_z = track_atlasthit->getPosition().at(2);
-            track_atlasthit_max_p_px = track_atlasthit->getMomentum().at(2);
-            track_atlasthit_max_p_py = track_atlasthit->getMomentum().at(0);
-            track_atlasthit_max_p_pz = track_atlasthit->getMomentum().at(1);
+            track_atlasthit_max_p_x = track_atlasthit->getPosition().at(2);
+            track_atlasthit_max_p_y = track_atlasthit->getPosition().at(0);
+            track_atlasthit_max_p_z = track_atlasthit->getPosition().at(1);
+            track_atlasthit_max_p_px = track_atlasthit->getMomentum().at(0);
+            track_atlasthit_max_p_py = track_atlasthit->getMomentum().at(1);
+            track_atlasthit_max_p_pz = track_atlasthit->getMomentum().at(2);
             std::vector<int> layer_list = track_atlasthit->getHitLayers();
             track_atlasthit_last_layer = *(std::max_element(layer_list.begin(), layer_list.end()));
         }
