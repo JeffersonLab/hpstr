@@ -396,6 +396,10 @@ bool SimPartProcessor::process(IEvent* ievent) {
         histos->Fill2DHisto("sim_track_atlasthit_x_track_p_hh", (track_atlasthit_max_p_x-mc_tracker_hit_atlasthit_max_p_x), track_atlasthit_max_p, weight);
         histos->Fill2DHisto("sim_track_atlasthit_x_sim_p_hh", (track_atlasthit_max_p_x-mc_tracker_hit_atlasthit_max_p_x), mc_tracker_hit_atlasthit_max_p, weight);
         histos->Fill2DHisto("sim_track_atlasthit_x_ecal_energy_hh", (track_atlasthit_max_p_x-mc_tracker_hit_atlasthit_max_p_x), ecal_max_energy, weight);
+
+        histos->Fill2DHisto("sim_track_atlasthit_px_track_p_hh", (track_atlasthit_max_p_px-mc_tracker_hit_atlasthit_max_p_px), track_atlasthit_max_p, weight);
+        histos->Fill2DHisto("sim_track_atlasthit_px_sim_p_hh", (track_atlasthit_max_p_px-mc_tracker_hit_atlasthit_max_p_px), mc_tracker_hit_atlasthit_max_p, weight);
+        histos->Fill2DHisto("sim_track_atlasthit_px_ecal_energy_hh", (track_atlasthit_max_p_px-mc_tracker_hit_atlasthit_max_p_px), ecal_max_energy, weight);
     }
 
     tuples->fill();
@@ -590,6 +594,10 @@ bool SimPartProcessor::process(IEvent* ievent) {
             reg_histos_[region]->Fill2DHisto("sim_track_atlasthit_x_track_p_hh", (track_atlasthit_max_p_x-mc_tracker_hit_atlasthit_max_p_x), track_atlasthit_max_p, weight);
             reg_histos_[region]->Fill2DHisto("sim_track_atlasthit_x_sim_p_hh", (track_atlasthit_max_p_x-mc_tracker_hit_atlasthit_max_p_x), mc_tracker_hit_atlasthit_max_p, weight);
             reg_histos_[region]->Fill2DHisto("sim_track_atlasthit_x_ecal_energy_hh", (track_atlasthit_max_p_x-mc_tracker_hit_atlasthit_max_p_x), ecal_max_energy, weight);
+
+            reg_histos_[region]->Fill2DHisto("sim_track_atlasthit_px_track_p_hh", (track_atlasthit_max_p_px-mc_tracker_hit_atlasthit_max_p_px), track_atlasthit_max_p, weight);
+            reg_histos_[region]->Fill2DHisto("sim_track_atlasthit_px_sim_p_hh", (track_atlasthit_max_p_px-mc_tracker_hit_atlasthit_max_p_px), mc_tracker_hit_atlasthit_max_p, weight);
+            reg_histos_[region]->Fill2DHisto("sim_track_atlasthit_px_ecal_energy_hh", (track_atlasthit_max_p_px-mc_tracker_hit_atlasthit_max_p_px), ecal_max_energy, weight);
     }
         
         //reg_tuples_[region]->fill();

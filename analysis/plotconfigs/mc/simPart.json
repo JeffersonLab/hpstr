@@ -480,6 +480,36 @@
         "xtitle" : "Track (at Last Hit) x - Sim x (at Last Hit)",
         "ytitle" : "Ecal energy"
     },
+    "sim_track_atlasthit_px_track_p_hh" : {
+        "binsX"  : 1000,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "binsY"  : 20,
+        "minY"   : 0,
+        "maxY"   : 10,
+        "xtitle" : "Track (at Last Hit) px - Sim px (at Last Hit)",
+        "ytitle" : "Track p"
+    },
+    "sim_track_atlasthit_px_sim_p_hh" : {
+        "binsX"  : 1000,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "binsY"  : 20,
+        "minY"   : 0,
+        "maxY"   : 10,
+        "xtitle" : "Track (at Last Hit) px - Sim px (at Last Hit)",
+        "ytitle" : "sim p"
+    },
+    "sim_track_atlasthit_px_ecal_energy_hh" : {
+        "binsX"  : 1000,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "binsY"  : 20,
+        "minY"   : 0,
+        "maxY"   : 10,
+        "xtitle" : "Track (at Last Hit) px - Sim px (at Last Hit)",
+        "ytitle" : "Ecal energy"
+    },
     "sim_ecal_x_track_p_hh" : {
         "binsX"  : 1000,
         "minX"   : -100,
