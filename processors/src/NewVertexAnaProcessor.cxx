@@ -249,7 +249,7 @@ void NewVertexAnaProcessor::initialize(TTree* tree) {
 
     if (not pSmearingFile_.empty()) {
       // just using the same seed=42 for now
-      smearingTool_    =   std::make_shared<TrackSmearingTool>(pSmearingFile_,false);
+      smearingTool_    =   std::make_shared<TrackSmearingTool>(pSmearingFile_,true);
     }
 }
 
