@@ -232,50 +232,50 @@
     },
     "sim_track_atlasthit_x_diff_h" : {
         "bins"  : 1000,
-        "minX"   : -100,
-        "maxX"   : 100,
+        "minX"   : -20,
+        "maxX"   : 20,
         "xtitle" : "Track x (at At Last Hit) - Sim x (at At Last Hit)",
         "ytitle" : "Events"
     },
     "sim_track_atlasthit_y_diff_h" : {
         "bins"  : 1000,
-        "minX"   : -100,
-        "maxX"   : 100,
+        "minX"   : -20,
+        "maxX"   : 20,
         "xtitle" : "Track y (at At Last Hit) - Sim y (at At Last Hit)",
         "ytitle" : "Events"
     },
     "sim_track_atlasthit_z_diff_h" : {
         "bins"  : 1000,
-        "minX"   : -100,
-        "maxX"   : 100,
+        "minX"   : -20,
+        "maxX"   : 20,
         "xtitle" : "Track z (at At Last Hit) - Sim z (at At Last Hit)",
         "ytitle" : "Events"
     },
     "sim_track_atlasthit_p_diff_h" : {
         "bins"  : 100,
-        "minX"   : -5,
-        "maxX"   : 5,
+        "minX"   : -1,
+        "maxX"   : 1,
         "xtitle" : "Track p (at At Last Hit) - Sim p (at At Last Hit)",
         "ytitle" : "Events"
     },
     "sim_track_atlasthit_px_diff_h" : {
         "bins"  : 100,
-        "minX"   : -5,
-        "maxX"   : 5,
+        "minX"   : -1,
+        "maxX"   : 1,
         "xtitle" : "Track px (at At Last Hit) - Sim px (at At Last Hit)",
         "ytitle" : "Events"
     },
     "sim_track_atlasthit_py_diff_h" : {
         "bins"  : 100,
-        "minX"   : -5,
-        "maxX"   : 5,
+        "minX"   : -1,
+        "maxX"   : 1,
         "xtitle" : "Track py (at At Last Hit) - Sim py (at At Last Hit)",
         "ytitle" : "Events"
     },
     "sim_track_atlasthit_pz_diff_h" : {
         "bins"  : 100,
-        "minX"   : -5,
-        "maxX"   : 5,
+        "minX"   : -1,
+        "maxX"   : 1,
         "xtitle" : "Track pz (at At Last Hit) - Sim pz (at At Last Hit)",
         "ytitle" : "Events"
     },
@@ -452,8 +452,8 @@
     },
     "sim_track_atlasthit_x_track_p_hh" : {
         "binsX"  : 1000,
-        "minX"   : -100,
-        "maxX"   : 100,
+        "minX"   : -20,
+        "maxX"   : 20,
         "binsY"  : 20,
         "minY"   : 0,
         "maxY"   : 10,
@@ -462,8 +462,8 @@
     },
     "sim_track_atlasthit_x_sim_p_hh" : {
         "binsX"  : 1000,
-        "minX"   : -100,
-        "maxX"   : 100,
+        "minX"   : -20,
+        "maxX"   : 20,
         "binsY"  : 20,
         "minY"   : 0,
         "maxY"   : 10,
@@ -472,8 +472,8 @@
     },
     "sim_track_atlasthit_x_ecal_energy_hh" : {
         "binsX"  : 1000,
-        "minX"   : -100,
-        "maxX"   : 100,
+        "minX"   : -20,
+        "maxX"   : 20,
         "binsY"  : 20,
         "minY"   : 0,
         "maxY"   : 10,
@@ -482,8 +482,8 @@
     },
     "sim_track_atlasthit_px_track_p_hh" : {
         "binsX"  : 100,
-        "minX"   : -5,
-        "maxX"   : 5,
+        "minX"   : -1,
+        "maxX"   : 1,
         "binsY"  : 20,
         "minY"   : 0,
         "maxY"   : 10,
@@ -492,8 +492,8 @@
     },
     "sim_track_atlasthit_px_sim_p_hh" : {
         "binsX"  : 100,
-        "minX"   : -5,
-        "maxX"   : 5,
+        "minX"   : -1,
+        "maxX"   : 1,
         "binsY"  : 20,
         "minY"   : 0,
         "maxY"   : 10,
@@ -502,8 +502,8 @@
     },
     "sim_track_atlasthit_px_ecal_energy_hh" : {
         "binsX"  : 100,
-        "minX"   : -5,
-        "maxX"   : 5,
+        "minX"   : -1,
+        "maxX"   : 1,
         "binsY"  : 20,
         "minY"   : 0,
         "maxY"   : 10,
