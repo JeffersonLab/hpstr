@@ -1012,7 +1012,7 @@
         "xtitle" : "vtx E_{sum} [GeV]",
         "ytitle" : "Vertices"
     },
-    "ele_pos_InvM_h" : {
+    "vtx_smear_InvM_h" : {
         "bins" : 200,
         "minX" : 0.0,
         "maxX" : 0.2,

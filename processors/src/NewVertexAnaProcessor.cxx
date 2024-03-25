@@ -357,9 +357,13 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
         ele_trk.applyCorrection("track_time",eleTrackTimeBias_);
         pos_trk.applyCorrection("track_time", posTrackTimeBias_);
 
+        double invm_smear = 1.;
         if (smearingTool_) {
+          double unsmeared_prod = ele_trk.getP()*pos_trk.getP();
           smearingTool_->updateWithSmearP(ele_trk);
           smearingTool_->updateWithSmearP(pos_trk);
+          double smeared_prod = ele_trk.getP()*pos_trk.getP();
+          invm_smear = sqrt(smeared_prod/unsmeared_prod);
         }
 
         //Add the momenta to the tracks - do not do that
@@ -542,7 +546,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
         _vtx_histos->Fill1DHisto("pos_track_n2dhits_h", pos2dHits, weight);
         _vtx_histos->Fill1DHisto("vtx_Psum_h", p_ele.P()+p_pos.P(), weight);
         _vtx_histos->Fill1DHisto("vtx_Esum_h", ele_E + pos_E, weight);
-        _vtx_histos->Fill1DHisto("ele_pos_InvM_h", (p_ele+p_pos).M(), weight);
+        _vtx_histos->Fill1DHisto("vtx_smear_InvM_h", invm_smear*(vtx->getInvMass()), weight);
         _vtx_histos->Fill1DHisto("ele_pos_clusTimeDiff_h", (corr_eleClusterTime - corr_posClusterTime), weight);
         _vtx_histos->Fill2DHisto("ele_vtxZ_iso_hh", TMath::Min(ele_trk.getIsolation(0), ele_trk.getIsolation(1)), vtx->getZ(), weight);
         _vtx_histos->Fill2DHisto("pos_vtxZ_iso_hh", TMath::Min(pos_trk.getIsolation(0), pos_trk.getIsolation(1)), vtx->getZ(), weight);
@@ -654,9 +658,13 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             ele_trk.applyCorrection("track_time",eleTrackTimeBias_);
             pos_trk.applyCorrection("track_time", posTrackTimeBias_);
     
+            double invm_smear = 1.;
             if (smearingTool_) {
+              double unsmeared_prod = ele_trk.getP()*pos_trk.getP();
               smearingTool_->updateWithSmearP(ele_trk);
               smearingTool_->updateWithSmearP(pos_trk);
+              double smeared_prod = ele_trk.getP()*pos_trk.getP();
+              invm_smear = sqrt(smeared_prod/unsmeared_prod);
             }
 
             //Add the momenta to the tracks
@@ -1044,9 +1052,13 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             //Track Time Corrections
             ele_trk.applyCorrection("track_time",eleTrackTimeBias_);
             pos_trk.applyCorrection("track_time", posTrackTimeBias_);
+            double invm_smear = 1.;
             if (smearingTool_) {
+              double unsmeared_prod = ele_trk.getP()*pos_trk.getP();
               smearingTool_->updateWithSmearP(ele_trk);
               smearingTool_->updateWithSmearP(pos_trk);
+              double smeared_prod = ele_trk.getP()*pos_trk.getP();
+              invm_smear = sqrt(smeared_prod/unsmeared_prod);
             }
 
             //Get the layers hit on each track
@@ -1169,7 +1181,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             _reg_vtx_histos[region]->Fill1DHisto("pos_track_n2dhits_h", pos2dHits, weight);
             _reg_vtx_histos[region]->Fill1DHisto("vtx_Psum_h", p_ele.P()+p_pos.P(), weight);
             _reg_vtx_histos[region]->Fill1DHisto("vtx_Esum_h", eleClus.getEnergy()+posClus.getEnergy(), weight);
-            _reg_vtx_histos[region]->Fill1DHisto("vtx_InvM_h", (p_ele+p_pos).M(), weight);
+            _reg_vtx_histos[region]->Fill1DHisto("vtx_smear_InvM_h", invm_smear*(vtx->getInvMass()), weight);
             _reg_vtx_histos[region]->Fill2DHisto("ele_vtxZ_iso_hh", TMath::Min(ele_trk.getIsolation(0), ele_trk.getIsolation(1)), vtx->getZ(), weight);
             _reg_vtx_histos[region]->Fill2DHisto("pos_vtxZ_iso_hh", TMath::Min(pos_trk.getIsolation(0), pos_trk.getIsolation(1)), vtx->getZ(), weight);
             _reg_vtx_histos[region]->Fill2DTrack(&ele_trk,weight,"ele_");

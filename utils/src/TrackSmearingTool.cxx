@@ -43,7 +43,11 @@ double TrackSmearingTool::smearTrackP(const Track& track) {
   if (debug_)
     std::cout<<"Track nhits="<<nhits<<" bin="<<binN<<std::endl;
   
-  if (binN < 1 || binN > smearing_histo_top_->GetXaxis()->GetNbins()) {
+  if (binN < 1) {
+    std::cout<<"Track nhits="<<nhits<<" bin="<<binN;
+    binN=1;
+    std::cout<<" rounding to bin=1"<< std::endl;
+  } else if (binN > smearing_histo_top_->GetXaxis()->GetNbins()) {
     throw std::invalid_argument("Bin not found in smearing histogram");
   }
   
