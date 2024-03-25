@@ -51,6 +51,7 @@ vtxana.parameters["isData"] = options.isData
 vtxana.parameters["isRadPDG"] = options.isRadPDG
 vtxana.parameters["makeFlatTuple"] = options.makeFlatTuple
 vtxana.parameters["beamPosCfg"] = ""
+vtxana.parameters["pSmearingFile"] =  os.environ['HPSTR_BASE']+"/utils/data/smearingFile_2016_all_12112023.root"
 if options.isData:
     vtxana.parameters["v0ProjectionFitsCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/v0_projection_2016_config.json'
 else:

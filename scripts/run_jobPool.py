@@ -68,6 +68,7 @@ def launchTestsArgs(options, infilename, fileN, jobN):
            "-i", infilename,
            "-o", outfilename,
            "-t", str(options.isData),
+           "-s", str(jobN),              #Each job gets a different seed
            options.extraFlags,
            ]
     print(cmd)

@@ -65,7 +65,7 @@ include(MacroModule)
 # import macro for declaring external dependencies
 include(MacroExtDeps)
 
-set(MODULES event analysis processing processors)
+set(MODULES event utils analysis processing processors)
 
 # build each module in the list
 foreach(module ${MODULES})

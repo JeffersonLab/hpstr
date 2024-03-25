@@ -1,0 +1,262 @@
+{
+    "n_tracks_h" : {
+        "bins"   : 10,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "N_{tracks}",
+        "ytitle" : "Events"
+    },
+    "nHits_2d_h" : {
+        "bins"  : 15,
+        "minX"  : 0,
+        "maxX"  : 15,
+        "xtitle" : "N_{2Dhits}",
+        "ytitle" : "Tracks"
+    },
+    "nShared_h" : {
+        "bins" : 8,
+        "minX" : -0.5,
+        "maxX" : 7.5,
+        "xtitle" : "N_{shared}^{hits}",
+        "ytitle" : "Tracks"
+    },
+    "d0_h" : {
+        "bins" : 200,
+        "minX" : -10,
+        "maxX" : 10,
+        "xtitle" : "d_{0} [mm]",
+        "ytitle" : "Tracks"
+    },
+    "Phi_h" : {
+        "bins" : 100,
+        "minX" : -0.5,
+        "maxX" : 0.5,
+        "xtitle" : "phi_{0}",
+        "ytitle" : "Tracks"
+    },
+    "Omega_h" : {
+        "bins" : 100,
+        "minX" : -0.002,
+        "maxX" : 0.002,
+        "xtitle" : "#omega",
+        "ytitle" : "Tracks"
+    },
+    "TanLambda_h" : {
+        "bins" : 200,
+        "minX" : -0.3,
+        "maxX" : 0.3,
+        "xtitle" : "tan(#lambda)",
+        "ytitle" : "Tracks"
+    },
+    "Z0_h" : {
+        "bins" : 200,
+        "minX" : -5,
+        "maxX" : 5,
+        "xtitle" : "z_0 [mm]",
+        "ytitle" : "Tracks"
+    },
+    "time_h" : {
+        "bins" : 200,
+        "minX" : -40,
+        "maxX" : 40,
+        "xtitle" : "track time [ns]",
+        "ytitle" : "Tracks"
+    },
+    "chi2_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 100,
+        "xtitle" : "track #chi^{2}",
+        "ytitle" : "Tracks"
+    },
+    "p_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 4,
+        "xtitle" : "p_{e^{-}} [GeV]",
+        "ytitle" : "Tracks"
+    },
+    "p_vs_nHits_hh" : {
+        "binsX" : 5,
+        "minX"  : 8,
+        "maxX"  : 13,
+        "binsY" : 200,
+        "minY"  : 0,
+        "maxY"  : 4,
+        "xtitle" : "Nhits",
+        "ytitle" : "p_{e^{-}} [GeV]"
+    },
+    "p_vs_nHits_top_hh" : {
+        "binsX" : 5,
+        "minX"  : 8,
+        "maxX"  : 13,
+        "binsY" : 200,
+        "minY"  : 0,
+        "maxY"  : 4,
+        "xtitle" : "Nhits",
+        "ytitle" : "top p_{e^{-}} [GeV]"
+    },
+    "p_vs_nHits_bot_hh" : {
+        "binsX" : 5,
+        "minX"  : 8,
+        "maxX"  : 13,
+        "binsY" : 200,
+        "minY"  : 0,
+        "maxY"  : 4,
+        "xtitle" : "Nhits",
+        "ytitle" : "bot p_{e^{-}} [GeV]"
+    },
+    "p_vs_TanLambda_hh" : {
+        "binsX"  : 100,
+        "minX"   : -0.1,
+        "maxX"   : 0.1,
+        "binsY"  : 200,
+        "minY"   : 0,
+        "maxY"   : 4, 
+        "xtitle" : "tan(#lambda)",
+        "ytitle" : "p_{e^{-}} [GeV]"
+    },
+    "p_vs_Phi_hh" : {
+        "binsX"  : 100,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "binsY"  : 200,
+        "minY"   : 0,
+        "maxY"   : 4, 
+        "xtitle" : "#phi_{0}",
+        "ytitle" : "p_{e^{-}} [GeV]"
+    },
+    "p_vs_TanLambda_Phi_hhh" : {
+        "binsX"  : 100,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "binsY"  : 100,
+        "minY"   : -0.1,
+        "maxY"   : 0.1,
+        "binsZ"  : 200,
+        "minZ"   : 0,
+        "maxZ"   : 4, 
+        "xtitle" : "#phi_{0}",
+        "ytitle" : "tan(#lambda)",
+        "ztitle" : "p_{e^{-}} [GeV]"
+    },
+    "p_vs_TanLambda_nHits_hhh" : {
+        "binsX"  : 100,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "binsY"  : 5,
+        "minY"   : 8,
+        "maxY"   : 13,
+        "binsZ"  : 200,
+        "minZ"   : 0,
+        "maxZ"   : 4, 
+        "xtitle" : "#phi_{0}",
+        "ytitle" : "tan(#lambda)",
+        "ztitle" : "p_{e^{-}} [GeV]"
+    },
+    "chi2ndf_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 30,
+        "xtitle" : "track #chi^{2} / ndf",
+        "ytitle" : "Tracks"
+    },
+    "d0_vs_p_hh" : {
+        "binsX"  : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "binsY"  : 200,
+        "minY"   : -10,
+        "maxY"   : 10,
+        "xtitle" : "trk p [GeV]",
+        "ytitle" : "trk d0 [mm]"
+    },
+    "d0_vs_phi0_hh" : {
+        "binsX"  : 100,
+        "minX"   : -0.4,
+        "maxX"   : 0.4,
+        "binsY"  : 200,
+        "minY"   : -10,
+        "maxY"   : 10,
+        "xtitle" : "trk #phi_{0}",
+        "ytitle" : "trk d0 [mm]"
+    },
+    
+    "d0_vs_tanlambda_hh" : {
+        "binsX"  : 200,
+        "minX"   : -0.1,
+        "maxX"   : 0.1,
+        "binsY"  : 200,
+        "minY"   : -10,
+        "maxY"   : 10,
+        "xtitle" : "trk(#lamdba)",
+        "ytitle" : "trk d0 [mm]"
+    },
+    
+    "z0_vs_p_hh" : {
+        "binsX"  : 100,
+        "minX"   : 0,
+        "maxX"   : 4,
+        "binsY"  : 200,
+        "minY"   : -5,
+        "maxY"   : 5,
+        "xtitle" : "trk p [GeV]",
+        "ytitle" : "trk z0 [mm]"
+    },
+
+    "z0_vs_phi0_hh" : {
+        "binsX"  : 100,
+        "minX"   : -0.4,
+        "maxX"   : 0.4,
+        "binsY"  : 200,
+        "minY"   : -5,
+        "maxY"   : 5,
+        "xtitle" : "trk #phi_{0}",
+        "ytitle" : "trk z0 [mm]"
+    },
+    
+    "z0_vs_tanlambda_hh" : {
+        "binsX"  : 200,
+        "minX"   : -0.1,
+        "maxX"   : 0.1,
+        "binsY"  : 200,
+        "minY"   : -5,
+        "maxY"   : 5,
+        "xtitle" : "trk(#lamdba)",
+        "ytitle" : "trk z0 [mm]"
+    },
+    "tanlambda_vs_phi0_hh" : {
+        "binsX"  : 100,
+        "minX"   : -0.4,
+        "maxX"   : 0.4,
+        "binsY"  : 100,
+        "minY"   : -0.2,
+        "maxY"   : 0.2,
+        "xtitle" : "trk #phi_{0}",
+        "ytitle" : "trk tan(#lambda)"
+    },
+    "xpos_at_ecal_h" : {
+        "bins" : 400,
+        "minX" : -100,
+        "maxX" : 100,
+        "xtitle" : "track x pos [mm]",
+        "ytitle" : "Tracks"
+    },
+    "ypos_at_ecal_h" : {
+        "bins" : 400,
+        "minX" : -100,
+        "maxX" : 100,
+        "xtitle" : "track y pos [mm]",
+        "ytitle" : "Tracks"
+    },
+    "xypos_at_ecal_hh" : {
+        "binsX"  : 100, 
+        "minX"   : -200,
+        "maxX"   : 200,
+        "binsY"  : 100,
+        "minY"   : -200,
+        "maxY"   : 200,
+        "xtitle" : "trk ecal x [mm]",
+        "ytitle" : "trk ecal y [mm]"
+    }
+}
