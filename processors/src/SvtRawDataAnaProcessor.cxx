@@ -150,7 +150,6 @@ void SvtRawDataAnaProcessor::initialize(TTree* tree) {
         std::ifstream myfile2(timeProfiles_.data());
         std::string s;
         std::string s2;
-        std::vector<float [12]> baselines;
         for(int i=0; i<24576; i++){ 
             std::getline(myfile,s);
             std::getline(myfile2,s2);
