@@ -301,7 +301,6 @@ void HistoManager::sumw2() {
 
     for (it3d it = histos3d.begin(); it!=histos3d.end(); ++it) {
         if (!it->second){
-            std::cout<<it->first<<" Null ptr in saving.."<<std::endl;
             continue;
         }
         it->second->Sumw2();
@@ -309,7 +308,6 @@ void HistoManager::sumw2() {
 
     for (it2d it = histos2d.begin(); it!=histos2d.end(); ++it) {
         if (!(it->second)) {
-            std::cout<<it->first<<" Null ptr in saving.."<<std::endl;
             continue;
         }
         it->second->Sumw2();
@@ -317,7 +315,6 @@ void HistoManager::sumw2() {
 
     for (it1d it = histos1d.begin(); it!=histos1d.end(); ++it) {
         if (!it->second){
-            std::cout<<it->first<<" Null ptr in saving.."<<std::endl;
             continue;
         }
         it->second->Sumw2();
@@ -402,14 +399,12 @@ void HistoManager::saveHistos(TFile* outF,std::string folder) {
     }
     for (it3d it = histos3d.begin(); it!=histos3d.end(); ++it) {
         if (!it->second){
-            std::cout<<it->first<<" Null ptr in saving.."<<std::endl;
             continue;
         }
         it->second->Write();
     }
     for (it2d it = histos2d.begin(); it!=histos2d.end(); ++it) {
         if (!(it->second)) {
-            std::cout<<it->first<<" Null ptr in saving.."<<std::endl;
             continue;
         }
         it->second->Write();
@@ -417,7 +412,6 @@ void HistoManager::saveHistos(TFile* outF,std::string folder) {
 
     for (it1d it = histos1d.begin(); it!=histos1d.end(); ++it) {
         if (!it->second){
-            std::cout<<it->first<<" Null ptr in saving.."<<std::endl;
             continue;
         }
         it->second->Write();
