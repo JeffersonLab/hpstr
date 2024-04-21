@@ -215,6 +215,7 @@ void NewVertexAnaProcessor::initialize(TTree* tree) {
                 _reg_tuples[regname]->addVariable("true_vtx_z");
                 _reg_tuples[regname]->addVariable("true_vtx_mass");
                 _reg_tuples[regname]->addVariable("ap_true_vtx_z");
+                _reg_tuples[regname]->addVariable("ap_true_endpoint_z");
                 _reg_tuples[regname]->addVariable("ap_true_vtx_mass");
                 _reg_tuples[regname]->addVariable("ap_true_vtx_energy");
                 _reg_tuples[regname]->addVariable("vd_true_vtx_z");
@@ -281,6 +282,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
     //AP
     double apMass = -0.9;
     double apZ = -0.9;
+    double ap_endpoint_z = -0.9;
     double apEnergy = -0.9;
     //Simp
     double vdMass = -0.9;
@@ -306,6 +308,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
                 apMass = mcParts_->at(i)->getMass();
                 apZ = mcParts_->at(i)->getVertexPosition().at(2);
                 apEnergy = mcParts_->at(i)->getEnergy();
+                ap_endpoint_z = mcParts_->at(i)->getEndPoint().at(2);
             }
             if(mcParts_->at(i)->getPDG() == 625)
             {
@@ -617,6 +620,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
 
         float truePsum = -1;
         float trueEsum = -1;
+        MCParticle* trueEle{nullptr}, *truePos{nullptr};
 
         for ( auto vtx : selected_vtxs) {
 
@@ -968,7 +972,6 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
                 int isRadEle = -999;
                 int isRecEle = -999;
 
-
                 trueEleP.SetXYZ(-999,-999,-999);
                 truePosP.SetXYZ(-999,-999,-999);
                 if (mcParts_) {
@@ -979,19 +982,19 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
                         int momPDG = mcParts_->at(i)->getMomPDG();
                         if(mcParts_->at(i)->getPDG() == 11 && momPDG == isRadPDG_)
                         {
-                            std::vector<double> lP = mcParts_->at(i)->getMomentum();
+                            trueEle = mcParts_->at(i);
+                            std::vector<double> lP = trueEle->getMomentum();
                             trueEleP.SetXYZ(lP[0],lP[1],lP[2]);
-                            trueEleE = mcParts_->at(i)->getEnergy();
-
+                            trueEleE = trueEle->getEnergy();
                         }
                         if(mcParts_->at(i)->getPDG() == -11 && momPDG == isRadPDG_)
                         {
-                            std::vector<double> lP = mcParts_->at(i)->getMomentum();
+                            truePos = mcParts_->at(i);
+                            std::vector<double> lP = truePos->getMomentum();
                             truePosP.SetXYZ(lP[0],lP[1],lP[2]);
-                            truePosE = mcParts_->at(i)->getEnergy();
-
+                            truePosE = truePos->getEnergy();
                         }
-                        if(trueEleP.X() != -999 && truePosP.X() != -999){
+                        if(trueEle and truePos) {
                             truePsum =  trueEleP.Mag() + trueEleP.Mag();
                             trueEsum = trueEleE + truePosE;
                         }
@@ -1289,6 +1292,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             if (makeFlatTuple_){
                 if(!isData_){
                     _reg_tuples[region]->setVariableValue("ap_true_vtx_z", apZ);
+                    _reg_tuples[region]->setVariableValue("ap_true_endpoint_z", ap_endpoint_z);
                     _reg_tuples[region]->setVariableValue("ap_true_vtx_mass", apMass);
                     _reg_tuples[region]->setVariableValue("ap_true_vtx_energy", apEnergy);
                     _reg_tuples[region]->setVariableValue("vd_true_vtx_z", vdZ);
