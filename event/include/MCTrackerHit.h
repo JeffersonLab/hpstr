@@ -41,10 +41,9 @@ class MCTrackerHit : public TObject {
   
   /** @return The hit position. */
   std::vector<double> getPosition() const { return {x_, y_, z_}; };
-
   
-  void setMomentum(const double* momentum, bool rotate = false);
-  std::vector<double> getMomentum() const { return {px_, py_, pz_}; };
+  void setMomentum(const float* momentum, bool rotate = false);
+  std::vector<float> getMomentum() const { return {px_, py_, pz_}; };
 
         /** @return the global X coordinate of the hit */
         double getGlobalX() const {return x_;}
@@ -106,10 +105,10 @@ class MCTrackerHit : public TObject {
         /** The x position of the hit. */
         double z_{-999};
 
-    /** The truth momentum of the hit. Only MC */
-  double px_{-999};
-  double py_{-999};
-  double pz_{-999};
+         /** The truth momentum of the hit. Only MC */
+        float px_{-999};
+        float py_{-999};
+        float pz_{-999};
 
         /** The hit time. */
         double time_{-999};

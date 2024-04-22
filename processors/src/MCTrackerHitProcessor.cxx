@@ -71,22 +71,12 @@ bool MCTrackerHitProcessor::process(IEvent* ievent) {
         mc_tracker_hit->setLayer(decoder["layer"]);
         mc_tracker_hit->setModule(decoder["module"]);
 
-        // Set the position of the hit
-        double hitPos[3];
-        hitPos[0] = lcio_mcTracker_hit->getPosition()[0];
-        hitPos[1] = lcio_mcTracker_hit->getPosition()[1];
-        hitPos[2] = lcio_mcTracker_hit->getPosition()[2];
-        mc_tracker_hit->setPosition(hitPos);
-
-	double hitMom[3];
-	hitMom[0] = lcio_mcTracker_hit->getMomentum()[0];
-	hitMom[1] = lcio_mcTracker_hit->getMomentum()[1];
-	hitMom[2] = lcio_mcTracker_hit->getMomentum()[2];
-	mc_tracker_hit->setMomentum(hitMom);
-
+	mc_tracker_hit->setPosition(lcio_mcTracker_hit->getPosition());
+	mc_tracker_hit->setMomentum(lcio_mcTracker_hit->getMomentum());
+	
 	// Set the energy deposit of the hit
         mc_tracker_hit->setEdep(lcio_mcTracker_hit->getEDep());
-
+	
         // Set the pdg of particle generating the hit
         if(lcio_mcTracker_hit->getMCParticle()) 
             mc_tracker_hit->setPDG(lcio_mcTracker_hit->getMCParticle()->getPDG());

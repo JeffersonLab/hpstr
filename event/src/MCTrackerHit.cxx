@@ -20,7 +20,7 @@ void MCTrackerHit::Clear(Option_t* /* options */) {
     TObject::Clear(); 
 }
 
-void MCTrackerHit::setMomentum(const double* momentum, bool rotate) {
+void MCTrackerHit::setMomentum(const float* momentum, bool rotate) {
 
     //svt angle: it's already with minus sign.
     float svtAngle = 30.5e-3;
