@@ -20,6 +20,25 @@ void MCTrackerHit::Clear(Option_t* /* options */) {
     TObject::Clear(); 
 }
 
+void MCTrackerHit::setMomentum(const float* momentum, bool rotate) {
+
+    //svt angle: it's already with minus sign.
+    float svtAngle = 30.5e-3;
+    //Rotate the the input position automatically to match with the SVT tracker system
+    if (rotate)
+    {
+        //x_ = position[1];
+        py_ = momentum[2];
+        pz_ = momentum[1] * sin(svtAngle) + momentum[0]*cos(svtAngle);
+        px_ = momentum[1] * cos(svtAngle) - momentum[0]*sin(svtAngle);
+    }
+    else {
+        px_ = momentum[0]; 
+        py_ = momentum[1];
+        pz_ = momentum[2];
+    }
+}
+
 void MCTrackerHit::setPosition(const double* position, bool rotate) {
 
     //svt angle: it's already with minus sign.
