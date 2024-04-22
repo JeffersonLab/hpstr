@@ -17,6 +17,7 @@
 #include "MCAnaHistos.h"
 #include "utilities.h"
 
+#include "TrackSmearingTool.h"
 #include "FlatTupleMaker.h"
 #include "AnaHelpers.h"
 
@@ -113,6 +114,9 @@ class NewVertexAnaProcessor : public Processor {
         int isRadPDG_{622}; //!< description
         int makeFlatTuple_{0}; //!< make true in config to save flat tuple
         TTree* tree_{nullptr}; //!< description
+
+        std::string pSmearingFile_{""};
+        std::shared_ptr<TrackSmearingTool> smearingTool_;
 
         std::shared_ptr<TrackHistos> _vtx_histos; //!< description
         std::shared_ptr<MCAnaHistos> _mc_vtx_histos; //!< description
