@@ -1303,7 +1303,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
                     _reg_tuples[region]->setVariableValue("L2hitCode", float(L2hitCode));
                 }
 
-                _reg_tuples[region]->setVariableValue("unc_vtx_mass", vtx->getInvMass());
+                _reg_tuples[region]->setVariableValue("unc_vtx_mass", invm_smear*vtx->getInvMass());
                 _reg_tuples[region]->setVariableValue("unc_vtx_z"   , vtxPosSvt.Z());
                 _reg_tuples[region]->setVariableValue("unc_vtx_chi2", vtx->getChi2());
                 _reg_tuples[region]->setVariableValue("unc_vtx_psum", p_ele.P()+p_pos.P());
