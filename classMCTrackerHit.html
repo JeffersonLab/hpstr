@@ -91,6 +91,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a82b1bfd9511ae4d2112945be3b568ece"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7108e05786602c928c9b94cd53bb7782"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMCTrackerHit.html#a7108e05786602c928c9b94cd53bb7782">getPosition</a> () const</td></tr>
 <tr class="separator:a7108e05786602c928c9b94cd53bb7782"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff6c445aa8edcddc01ee91f6631020eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMCTrackerHit.html#aff6c445aa8edcddc01ee91f6631020eb">setMomentum</a> (const float *momentum, bool rotate=false)</td></tr>
+<tr class="separator:aff6c445aa8edcddc01ee91f6631020eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb1d5391d543f5a5a27fafd7db3e40b3"><td class="memItemLeft" align="right" valign="top">std::vector&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMCTrackerHit.html#aeb1d5391d543f5a5a27fafd7db3e40b3">getMomentum</a> () const</td></tr>
+<tr class="separator:aeb1d5391d543f5a5a27fafd7db3e40b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af728554d6b98ef0338fc52c1b20d844f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMCTrackerHit.html#af728554d6b98ef0338fc52c1b20d844f">getGlobalX</a> () const</td></tr>
 <tr class="separator:af728554d6b98ef0338fc52c1b20d844f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a037dbf33c23e4f394e56a71b8cb4e8ea"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMCTrackerHit.html#a037dbf33c23e4f394e56a71b8cb4e8ea">getGlobalY</a> () const</td></tr>
@@ -128,6 +132,12 @@ Private Attributes</h2></td></tr>
 <tr class="separator:ac0b55b90b5c7c4591f9de8745708f619"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba37cf6f1a87be3ea41680c1786a71a1"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMCTrackerHit.html#aba37cf6f1a87be3ea41680c1786a71a1">z_</a> {-999}</td></tr>
 <tr class="separator:aba37cf6f1a87be3ea41680c1786a71a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99d2969b5b7f7583fbf8f3d25263a406"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMCTrackerHit.html#a99d2969b5b7f7583fbf8f3d25263a406">px_</a> {-999}</td></tr>
+<tr class="separator:a99d2969b5b7f7583fbf8f3d25263a406"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff655d02458b4174c74f13822ce26900"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMCTrackerHit.html#aff655d02458b4174c74f13822ce26900">py_</a> {-999}</td></tr>
+<tr class="separator:aff655d02458b4174c74f13822ce26900"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f8c33e30eda3c19dabef1451e562788"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMCTrackerHit.html#a5f8c33e30eda3c19dabef1451e562788">pz_</a> {-999}</td></tr>
+<tr class="separator:a5f8c33e30eda3c19dabef1451e562788"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a485ef04ee9dd7bc4fd4ec59ef09be1c6"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMCTrackerHit.html#a485ef04ee9dd7bc4fd4ec59ef09be1c6">time_</a> {-999}</td></tr>
 <tr class="separator:a485ef04ee9dd7bc4fd4ec59ef09be1c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae8e2db723718d034ed2ee5c39a9c128e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMCTrackerHit.html#ae8e2db723718d034ed2ee5c39a9c128e">layer_</a> {-999}</td></tr>
@@ -263,7 +273,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>The hit energy deposit. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00072">72</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00075">75</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -291,7 +301,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>the global X coordinate of the hit </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00046">46</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00049">49</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -319,7 +329,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>the global X coordinate of the hit </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00049">49</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00052">52</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -347,7 +357,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>the global X coordinate of the hit </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00052">52</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00055">55</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -374,7 +384,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00083">83</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00086">86</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -401,7 +411,34 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00077">77</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00080">80</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+
+</div>
+</div>
+<a id="aeb1d5391d543f5a5a27fafd7db3e40b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb1d5391d543f5a5a27fafd7db3e40b3">&#9670;&nbsp;</a></span>getMomentum()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;float&gt; getMomentum </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00046">46</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -428,7 +465,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00089">89</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00092">92</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -484,7 +521,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>The hit time. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00062">62</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00065">65</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -519,7 +556,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00069">69</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00072">72</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -547,7 +584,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00080">80</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00083">83</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -575,7 +612,37 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00074">74</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00077">77</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+
+</div>
+</div>
+<a id="aff6c445aa8edcddc01ee91f6631020eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff6c445aa8edcddc01ee91f6631020eb">&#9670;&nbsp;</a></span>setMomentum()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void setMomentum </td>
+          <td>(</td>
+          <td class="paramtype">const float *&#160;</td>
+          <td class="paramname"><em>momentum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>rotate</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8cxx_source.html#l00023">23</a> of file <a class="el" href="MCTrackerHit_8cxx_source.html">MCTrackerHit.cxx</a>.</p>
 
 </div>
 </div>
@@ -603,7 +670,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00086">86</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00089">89</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -640,7 +707,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8cxx_source.html#l00023">23</a> of file <a class="el" href="MCTrackerHit_8cxx_source.html">MCTrackerHit.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8cxx_source.html#l00042">42</a> of file <a class="el" href="MCTrackerHit_8cxx_source.html">MCTrackerHit.cxx</a>.</p>
 
 </div>
 </div>
@@ -675,7 +742,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00059">59</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00062">62</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -701,7 +768,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Energy deposit of hit </p>
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00114">114</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00123">123</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -726,7 +793,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Layer (Axial + Stereo). 1-12 in 2015/2016 geometry, 1-14 in 2019 geometry </p>
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00108">108</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00117">117</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -751,7 +818,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Module </p>
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00111">111</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00120">120</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -776,7 +843,80 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>pdg id of particle that made the hit </p>
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00117">117</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00126">126</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+
+</div>
+</div>
+<a id="a99d2969b5b7f7583fbf8f3d25263a406"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99d2969b5b7f7583fbf8f3d25263a406">&#9670;&nbsp;</a></span>px_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">float px_ {-999}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>The truth momentum of the hit. Only MC </p>
+
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00109">109</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+
+</div>
+</div>
+<a id="aff655d02458b4174c74f13822ce26900"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff655d02458b4174c74f13822ce26900">&#9670;&nbsp;</a></span>py_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">float py_ {-999}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00110">110</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+
+</div>
+</div>
+<a id="a5f8c33e30eda3c19dabef1451e562788"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f8c33e30eda3c19dabef1451e562788">&#9670;&nbsp;</a></span>pz_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">float pz_ {-999}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00111">111</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -801,7 +941,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The hit time. </p>
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00105">105</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00114">114</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -826,7 +966,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The x position of the hit. </p>
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00096">96</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00100">100</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -851,7 +991,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The x position of the hit. </p>
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00099">99</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00103">103</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
 
 </div>
 </div>
@@ -876,7 +1016,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>The x position of the hit. </p>
 
-<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00102">102</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="MCTrackerHit_8h_source.html#l00106">106</a> of file <a class="el" href="MCTrackerHit_8h_source.html">MCTrackerHit.h</a>.</p>
 
 </div>
 </div>
