@@ -118,66 +118,67 @@ $(function() {
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;vtxana.parameters[<span class="stringliteral">&quot;isRadPDG&quot;</span>] = options.isRadPDG</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;vtxana.parameters[<span class="stringliteral">&quot;makeFlatTuple&quot;</span>] = options.makeFlatTuple</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;vtxana.parameters[<span class="stringliteral">&quot;beamPosCfg&quot;</span>] = <span class="stringliteral">&quot;&quot;</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keywordflow">if</span> options.isData:</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    vtxana.parameters[<span class="stringliteral">&quot;v0ProjectionFitsCfg&quot;</span>] = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&#39;/analysis/data/v0_projection_2016_config.json&#39;</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="keywordflow">else</span>:</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    vtxana.parameters[<span class="stringliteral">&quot;v0ProjectionFitsCfg&quot;</span>] = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&#39;/analysis/data/v0_projection_2016_mc_7800_config.json&#39;</span>  <span class="comment">#For tritrig and wab mc</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="comment">#vtxana.parameters[&quot;v0ProjectionFitsCfg&quot;] = os.environ[&#39;HPSTR_BASE&#39;]+&#39;/analysis/data/v0_projection_2016_mc_signal_config.json&#39; #For signal (accidentally gen with bspt=(0,0)</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keywordflow">if</span> options.isData:</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    vtxana.parameters[<span class="stringliteral">&quot;eleTrackTimeBias&quot;</span>] = -1.5</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    vtxana.parameters[<span class="stringliteral">&quot;posTrackTimeBias&quot;</span>] = -1.5</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="keywordflow">else</span>:</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    vtxana.parameters[<span class="stringliteral">&quot;eleTrackTimeBias&quot;</span>] = -2.2 <span class="comment">#MC</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    vtxana.parameters[<span class="stringliteral">&quot;posTrackTimeBias&quot;</span>] = -2.2 <span class="comment">#MC</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="comment">#vtxana.parameters[&quot;eleTrackTimeBias&quot;] = -5.5 #MC For TTs new smearing samples...due to readout bug</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="comment">#vtxana.parameters[&quot;posTrackTimeBias&quot;] = -5.5 #MC For TTs new smearing samples...due to readout bug</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;vtxana.parameters[<span class="stringliteral">&quot;pSmearingFile&quot;</span>] =  os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&quot;/utils/data/smearingFile_2016_all_12112023.root&quot;</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keywordflow">if</span> options.isData:</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    vtxana.parameters[<span class="stringliteral">&quot;v0ProjectionFitsCfg&quot;</span>] = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&#39;/analysis/data/v0_projection_2016_config.json&#39;</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="keywordflow">else</span>:</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    vtxana.parameters[<span class="stringliteral">&quot;v0ProjectionFitsCfg&quot;</span>] = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&#39;/analysis/data/v0_projection_2016_mc_7800_config.json&#39;</span>  <span class="comment">#For tritrig and wab mc</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="comment">#vtxana.parameters[&quot;v0ProjectionFitsCfg&quot;] = os.environ[&#39;HPSTR_BASE&#39;]+&#39;/analysis/data/v0_projection_2016_mc_signal_config.json&#39; #For signal (accidentally gen with bspt=(0,0)</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="keywordflow">if</span> options.isData:</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    vtxana.parameters[<span class="stringliteral">&quot;eleTrackTimeBias&quot;</span>] = -1.5</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    vtxana.parameters[<span class="stringliteral">&quot;posTrackTimeBias&quot;</span>] = -1.5</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="keywordflow">else</span>:</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    vtxana.parameters[<span class="stringliteral">&quot;eleTrackTimeBias&quot;</span>] = -2.2 <span class="comment">#MC</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    vtxana.parameters[<span class="stringliteral">&quot;posTrackTimeBias&quot;</span>] = -2.2 <span class="comment">#MC</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="comment">#vtxana.parameters[&quot;eleTrackTimeBias&quot;] = -5.5 #MC For TTs new smearing samples...due to readout bug</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="comment">#vtxana.parameters[&quot;posTrackTimeBias&quot;] = -5.5 #MC For TTs new smearing samples...due to readout bug</span></div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
-<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaSimps__2016__cfg.html#a4196b6253c33d0434a6b764061bde4c1">   70</a></span>&#160;CalTimeOffset = -999</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="keywordflow">if</span> (options.isData == 1):</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    CalTimeOffset = 56.</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    print(<span class="stringliteral">&quot;Running on data file: Setting CalTimeOffset %d&quot;</span> % CalTimeOffset)</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="keywordflow">elif</span> (options.isData == 0):</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    CalTimeOffset = 43.</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    print(<span class="stringliteral">&quot;Running on MC file: Setting CalTimeOffset %d&quot;</span> % CalTimeOffset)</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="keywordflow">else</span>:</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    print(<span class="stringliteral">&quot;Specify which type of ntuple you are running on: -t 1 [for Data] / -t 0 [for MC]&quot;</span>)</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;vtxana.parameters[<span class="stringliteral">&quot;CalTimeOffset&quot;</span>] = CalTimeOffset</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment">#Region definitions</span></div>
-<div class="line"><a name="l00084"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaSimps__2016__cfg.html#a67b272a58f3b9db7863bcebb7152345a">   84</a></span>&#160;RegionPath = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&quot;/analysis/selections/simps/&quot;</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="keywordflow">if</span> (options.year == 2016):</div>
-<div class="line"><a name="l00086"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaSimps__2016__cfg.html#ae4b80ad70f3801323ac61a54371e7daf">   86</a></span>&#160;    RegionDefinitions =  [RegionPath+<span class="stringliteral">&#39;Tight_2016_simp_reach_CR.json&#39;</span>,</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                              RegionPath+<span class="stringliteral">&#39;Tight_2016_simp_reach_SR.json&#39;</span>,</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                              RegionPath+<span class="stringliteral">&#39;Tight_nocuts.json&#39;</span>,</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                              RegionPath+<span class="stringliteral">&#39;Tight_L1L1_nvtx1.json&#39;</span>]</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    if(options.isData != 1):</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        RegionDefinitions.extend([RegionPath+<span class="stringliteral">&#39;radMatchTight_2016_simp_reach_CR.json&#39;</span>,</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;            RegionPath+<span class="stringliteral">&#39;radMatchTight_2016_simp_reach_SR.json&#39;</span>])</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    vtxana.parameters[<span class="stringliteral">&quot;regionDefinitions&quot;</span>] = RegionDefinitions</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">#MCParticleAna</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;mcana.parameters[<span class="stringliteral">&quot;debug&quot;</span>] = 0</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;mcana.parameters[<span class="stringliteral">&quot;anaName&quot;</span>] = <span class="stringliteral">&quot;mcAna&quot;</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;mcana.parameters[<span class="stringliteral">&quot;partColl&quot;</span>] = <span class="stringliteral">&quot;MCParticle&quot;</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;mcana.parameters[<span class="stringliteral">&quot;trkrHitColl&quot;</span>] = <span class="stringliteral">&quot;TrackerHits&quot;</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;mcana.parameters[<span class="stringliteral">&quot;ecalHitColl&quot;</span>] = <span class="stringliteral">&quot;EcalHits&quot;</span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;mcana.parameters[<span class="stringliteral">&quot;histCfg&quot;</span>] = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&#39;/analysis/plotconfigs/mc/basicMC.json&#39;</span></div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment"># Sequence which the processors will run.</span></div>
-<div class="line"><a name="l00105"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaSimps__2016__cfg.html#a3f9c3bf7e2cafc2c46df6d132ea658cc">  105</a></span>&#160;p.sequence = [vtxana]  <span class="comment"># ,mcana]</span></div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
-<div class="line"><a name="l00107"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaSimps__2016__cfg.html#a929d203f1b0e6375eacf16ef281732bf">  107</a></span>&#160;p.skip_events = options.skip_events</div>
-<div class="line"><a name="l00108"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaSimps__2016__cfg.html#a7e223ec063df28c77178547bd0813464">  108</a></span>&#160;p.max_events = options.nevents</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
-<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaSimps__2016__cfg.html#a27256609f574b662639e0a8cd48b8d3a">  110</a></span>&#160;p.input_files = infile</div>
-<div class="line"><a name="l00111"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaSimps__2016__cfg.html#a7882aa8b39a47102a13c2630137590d8">  111</a></span>&#160;p.output_files = [outfile]</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;p.printProcess()</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
+<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaSimps__2016__cfg.html#a4196b6253c33d0434a6b764061bde4c1">   71</a></span>&#160;CalTimeOffset = -999</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="keywordflow">if</span> (options.isData == 1):</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    CalTimeOffset = 56.</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    print(<span class="stringliteral">&quot;Running on data file: Setting CalTimeOffset %d&quot;</span> % CalTimeOffset)</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="keywordflow">elif</span> (options.isData == 0):</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    CalTimeOffset = 43.</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    print(<span class="stringliteral">&quot;Running on MC file: Setting CalTimeOffset %d&quot;</span> % CalTimeOffset)</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="keywordflow">else</span>:</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    print(<span class="stringliteral">&quot;Specify which type of ntuple you are running on: -t 1 [for Data] / -t 0 [for MC]&quot;</span>)</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;vtxana.parameters[<span class="stringliteral">&quot;CalTimeOffset&quot;</span>] = CalTimeOffset</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment">#Region definitions</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaSimps__2016__cfg.html#a67b272a58f3b9db7863bcebb7152345a">   85</a></span>&#160;RegionPath = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&quot;/analysis/selections/simps/&quot;</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="keywordflow">if</span> (options.year == 2016):</div>
+<div class="line"><a name="l00087"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaSimps__2016__cfg.html#ae4b80ad70f3801323ac61a54371e7daf">   87</a></span>&#160;    RegionDefinitions =  [RegionPath+<span class="stringliteral">&#39;Tight_2016_simp_reach_CR.json&#39;</span>,</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                              RegionPath+<span class="stringliteral">&#39;Tight_2016_simp_reach_SR.json&#39;</span>,</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                              RegionPath+<span class="stringliteral">&#39;Tight_nocuts.json&#39;</span>,</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;                              RegionPath+<span class="stringliteral">&#39;Tight_L1L1_nvtx1.json&#39;</span>]</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    if(options.isData != 1):</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        RegionDefinitions.extend([RegionPath+<span class="stringliteral">&#39;radMatchTight_2016_simp_reach_CR.json&#39;</span>,</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;            RegionPath+<span class="stringliteral">&#39;radMatchTight_2016_simp_reach_SR.json&#39;</span>])</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    vtxana.parameters[<span class="stringliteral">&quot;regionDefinitions&quot;</span>] = RegionDefinitions</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment">#MCParticleAna</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;mcana.parameters[<span class="stringliteral">&quot;debug&quot;</span>] = 0</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;mcana.parameters[<span class="stringliteral">&quot;anaName&quot;</span>] = <span class="stringliteral">&quot;mcAna&quot;</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;mcana.parameters[<span class="stringliteral">&quot;partColl&quot;</span>] = <span class="stringliteral">&quot;MCParticle&quot;</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;mcana.parameters[<span class="stringliteral">&quot;trkrHitColl&quot;</span>] = <span class="stringliteral">&quot;TrackerHits&quot;</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;mcana.parameters[<span class="stringliteral">&quot;ecalHitColl&quot;</span>] = <span class="stringliteral">&quot;EcalHits&quot;</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;mcana.parameters[<span class="stringliteral">&quot;histCfg&quot;</span>] = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&#39;/analysis/plotconfigs/mc/basicMC.json&#39;</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment"># Sequence which the processors will run.</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaSimps__2016__cfg.html#a3f9c3bf7e2cafc2c46df6d132ea658cc">  106</a></span>&#160;p.sequence = [vtxana]  <span class="comment"># ,mcana]</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
+<div class="line"><a name="l00108"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaSimps__2016__cfg.html#a929d203f1b0e6375eacf16ef281732bf">  108</a></span>&#160;p.skip_events = options.skip_events</div>
+<div class="line"><a name="l00109"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaSimps__2016__cfg.html#a7e223ec063df28c77178547bd0813464">  109</a></span>&#160;p.max_events = options.nevents</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
+<div class="line"><a name="l00111"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaSimps__2016__cfg.html#a27256609f574b662639e0a8cd48b8d3a">  111</a></span>&#160;p.input_files = infile</div>
+<div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaSimps__2016__cfg.html#a7882aa8b39a47102a13c2630137590d8">  112</a></span>&#160;p.output_files = [outfile]</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;p.printProcess()</div>
 <div class="ttc" id="aclassHpstrConf_1_1Process_html"><div class="ttname"><a href="classHpstrConf_1_1Process.html">HpstrConf.Process</a></div><div class="ttdoc">Process python class.</div><div class="ttdef"><b>Definition:</b> <a href="HpstrConf_8py_source.html#l00020">HpstrConf.py:20</a></div></div>
 <div class="ttc" id="aclassHpstrConf_1_1Processor_html"><div class="ttname"><a href="classHpstrConf_1_1Processor.html">HpstrConf.Processor</a></div><div class="ttdoc">Processor python class.</div><div class="ttdef"><b>Definition:</b> <a href="HpstrConf_8py_source.html#l00004">HpstrConf.py:4</a></div></div>
 <div class="ttc" id="anamespaceconfig_1_1anaBeamMCTuple__cfg_html_a4b99ff73a8a869319570237b5c57ab03"><div class="ttname"><a href="namespaceconfig_1_1anaBeamMCTuple__cfg.html#a4b99ff73a8a869319570237b5c57ab03">config.anaBeamMCTuple_cfg.str</a></div><div class="ttdeci">str</div><div class="ttdef"><b>Definition:</b> <a href="anaBeamMCTuple__cfg_8py_source.html#l00009">anaBeamMCTuple_cfg.py:9</a></div></div>

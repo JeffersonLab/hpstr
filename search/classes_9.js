@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['newvertexanaprocessor_1843',['NewVertexAnaProcessor',['../classNewVertexAnaProcessor.html',1,'']]]
+  ['newvertexanaprocessor_1871',['NewVertexAnaProcessor',['../classNewVertexAnaProcessor.html',1,'']]]
 ];
