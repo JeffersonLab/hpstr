@@ -78,7 +78,13 @@ bool MCTrackerHitProcessor::process(IEvent* ievent) {
         hitPos[2] = lcio_mcTracker_hit->getPosition()[2];
         mc_tracker_hit->setPosition(hitPos);
 
-        // Set the energy deposit of the hit
+	double hitMom[3];
+	hitMom[0] = lcio_mcTracker_hit->getMomentum()[0];
+	hitMom[1] = lcio_mcTracker_hit->getMomentum()[1];
+	hitMom[2] = lcio_mcTracker_hit->getMomentum()[2];
+	mc_tracker_hit->setMomentum(hitMom);
+
+	// Set the energy deposit of the hit
         mc_tracker_hit->setEdep(lcio_mcTracker_hit->getEDep());
 
         // Set the pdg of particle generating the hit
@@ -90,7 +96,7 @@ bool MCTrackerHitProcessor::process(IEvent* ievent) {
 
         //Push hit onto vector
         trackerhits_.push_back(mc_tracker_hit);
-
+	
     }
 
     return true;
