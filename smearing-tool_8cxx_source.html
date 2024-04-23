@@ -77,111 +77,113 @@ $(function() {
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;TTree.h&quot;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;TFile.h&quot;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="smearing-tool_8cxx.html#a2ef30c42cbc289d899a8be5d2d8f77d0">    8</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="smearing-tool_8cxx.html#a2ef30c42cbc289d899a8be5d2d8f77d0">usage</a>() {</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;  std::cout &lt;&lt; R<span class="stringliteral">&quot;(</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="stringliteral"> Run the smearing tool over known momentum values for testing.</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="stringliteral"></span> </div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="smearing-tool_8cxx.html#afca570a1b32bcae727c26d131941f986">   12</a></span>&#160;<span class="stringliteral">  smearing-tool {smearing_file.root} {output.root}</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;functional&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
+<div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="smearing-tool_8cxx.html#a2ef30c42cbc289d899a8be5d2d8f77d0">   10</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="smearing-tool_8cxx.html#a2ef30c42cbc289d899a8be5d2d8f77d0">usage</a>() {</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;  std::cout &lt;&lt; R<span class="stringliteral">&quot;(</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="stringliteral"> Run the smearing tool over known momentum values for testing.</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="stringliteral"></span> </div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="stringliteral"> The output.root file will contain a TTree of the input data</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="stringliteral"> and the resulting smeared momentum.</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="stringliteral">)&quot; &lt;&lt; std::flush;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="stringliteral">}</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="stringliteral"></span> </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="stringliteral"></span><span class="keywordtype">void</span> <a class="code" href="smearing-tool_8cxx.html#afca570a1b32bcae727c26d131941f986">smearing_test</a>(</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    TDirectoryFile* output_d,</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="keyword">const</span> std::string&amp; smearing_file,</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="keyword">const</span> std::string&amp; name,</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    std::function&lt;<span class="keywordtype">double</span>()&gt; unsmeared_sampler,</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keywordtype">int</span> trials = 100,</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keywordtype">int</span> min_nhits = 8,</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordtype">int</span> max_nhits = 12</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;) {</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <a class="code" href="classTrackSmearingTool.html">TrackSmearingTool</a> tst{smearing_file};</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <a class="code" href="classTrackerHit.html">TrackerHit</a> empty_hit;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <a class="code" href="classTrack.html">Track</a> <a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#adb5e2391917cad02d6ca0c5ab0a46149">track</a>;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  </div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#adb5e2391917cad02d6ca0c5ab0a46149">track</a>.setTrackParameters(</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;      0. <span class="comment">/* d0 */</span>,</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;      0. <span class="comment">/* phi0 */</span>,</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;      1. <span class="comment">/* omega */</span>,</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;      1. <span class="comment">/* tan_lambda - choosing positive (top) */</span>,</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;      0. <span class="comment">/* z0 */</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  );</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i{0}; i &lt; min_nhits-1; i++) <a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#adb5e2391917cad02d6ca0c5ab0a46149">track</a>.addHit(&amp;empty_hit);</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keywordtype">bool</span> top = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <span class="keywordtype">int</span> nhits = min_nhits;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keywordtype">double</span> unsmeared_momentum = 1.;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keywordtype">double</span> smeared_momentum = 1.;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  output_d-&gt;cd();</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  TTree data{name.c_str(), name.c_str()};</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  data.Branch(<span class="stringliteral">&quot;top&quot;</span>, &amp;top);</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  data.Branch(<span class="stringliteral">&quot;nhits&quot;</span>, &amp;nhits);</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  data.Branch(<span class="stringliteral">&quot;unsmeared_momentum&quot;</span>, &amp;unsmeared_momentum);</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  data.Branch(<span class="stringliteral">&quot;smeared_momentum&quot;</span>, &amp;smeared_momentum);</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="keywordflow">for</span> (nhits = min_nhits; nhits &lt; max_nhits+1; nhits++) {</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#adb5e2391917cad02d6ca0c5ab0a46149">track</a>.addHit(&amp;empty_hit);</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> _i{0}; _i &lt; trials; _i++) {</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;      unsmeared_momentum = unsmeared_sampler();</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;      <a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#adb5e2391917cad02d6ca0c5ab0a46149">track</a>.setMomentum(0. <span class="comment">/*px*/</span>, 0. <span class="comment">/*py*/</span>, unsmeared_momentum <span class="comment">/*pz*/</span>);</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;      tst.updateWithSmearP(<a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#adb5e2391917cad02d6ca0c5ab0a46149">track</a>);</div>
-<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="smearing-tool_8cxx.html#a0ff89c99f42ed99df9c10d280e3c0c81">   59</a></span>&#160;      smeared_momentum = <a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#adb5e2391917cad02d6ca0c5ab0a46149">track</a>.getP();</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;      data.Fill();</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    }</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  }</div>
-<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="smearing-tool_8cxx.html#a71e6ae1239d824baa59ffc7bbffe3dea">   63</a></span>&#160;  data.Write();</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;}</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="keywordtype">double</span> <a class="code" href="smearing-tool_8cxx.html#a0ff89c99f42ed99df9c10d280e3c0c81">fixed_momentum_sampler</a>() {</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  <span class="keywordflow">return</span> 1.0;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;}</div>
-<div class="line"><a name="l00069"></a><span class="lineno"><a class="line" href="smearing-tool_8cxx.html#a7e91d3f253ab85cc391060cecc8f3c84">   69</a></span>&#160; </div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keywordtype">double</span> <a class="code" href="smearing-tool_8cxx.html#a71e6ae1239d824baa59ffc7bbffe3dea">normal_momentum</a>() {</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  <span class="keyword">static</span> std::normal_distribution dist(1.0, 0.05);</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  <span class="keyword">static</span> std::mt19937 gen;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  <span class="keywordflow">return</span> dist(gen);</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;}</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="keywordtype">int</span> <a class="code" href="smearing-tool_8cxx.html#a7e91d3f253ab85cc391060cecc8f3c84">main</a>(<span class="keywordtype">int</span> <a class="code" href="namespaceconfig_1_1baseConfig.html#a87f35ac6fa80d957c59e394549aa7e15">nargs</a>, <span class="keywordtype">char</span>* argv[]) <span class="keyword">try</span> {</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="comment">/*</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">  std::cout &lt;&lt; nargs &lt;&lt; &quot; : &quot;;</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">  for (int i{0}; i &lt; nargs; i++) std::cout &lt;&lt; argv[i] &lt;&lt; &quot; &quot;;</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">  std::cout &lt;&lt; std::endl;</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">  */</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  <span class="keywordflow">if</span> (<a class="code" href="namespaceconfig_1_1baseConfig.html#a87f35ac6fa80d957c59e394549aa7e15">nargs</a> &lt; 2) {</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <a class="code" href="smearing-tool_8cxx.html#a2ef30c42cbc289d899a8be5d2d8f77d0">usage</a>();</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordflow">return</span> 1;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceconfig_1_1baseConfig.html#a87f35ac6fa80d957c59e394549aa7e15">nargs</a> &lt; 3) {</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <a class="code" href="smearing-tool_8cxx.html#a2ef30c42cbc289d899a8be5d2d8f77d0">usage</a>();</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    std::cout &lt;&lt; <span class="stringliteral">&quot;\n  ERROR: Need two files for testing.&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  }</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  std::string smearing_file{argv[1]}, output_file{argv[2]};</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  TFile output{argv[2], <span class="stringliteral">&quot;RECREATE&quot;</span>};</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <a class="code" href="smearing-tool_8cxx.html#afca570a1b32bcae727c26d131941f986">smearing_test</a>(</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;      &amp;output,</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;      smearing_file,</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;      <span class="stringliteral">&quot;fixed&quot;</span>,</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;      <a class="code" href="smearing-tool_8cxx.html#a0ff89c99f42ed99df9c10d280e3c0c81">fixed_momentum_sampler</a></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  );</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  <a class="code" href="smearing-tool_8cxx.html#afca570a1b32bcae727c26d131941f986">smearing_test</a>(</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;      &amp;output,</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;      smearing_file,</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;      <span class="stringliteral">&quot;gaussian&quot;</span>,</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;      <a class="code" href="smearing-tool_8cxx.html#a71e6ae1239d824baa59ffc7bbffe3dea">normal_momentum</a>,</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;      10000 <span class="comment">/* num trials */</span></div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  );</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  output.Write();</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  output.Close();</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;} <span class="keywordflow">catch</span> (<span class="keyword">const</span> std::runtime_error&amp; rte) {</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  std::cerr &lt;&lt; rte.what() &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  <span class="keywordflow">return</span> 127;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;}</div>
+<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="smearing-tool_8cxx.html#afca570a1b32bcae727c26d131941f986">   14</a></span>&#160;<span class="stringliteral">  smearing-tool {smearing_file.root} {output.root}</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="stringliteral"></span> </div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="stringliteral"> The output.root file will contain a TTree of the input data</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="stringliteral"> and the resulting smeared momentum.</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="stringliteral">)&quot; &lt;&lt; std::flush;</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="stringliteral">}</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="stringliteral"></span> </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="stringliteral"></span><span class="keywordtype">void</span> <a class="code" href="smearing-tool_8cxx.html#afca570a1b32bcae727c26d131941f986">smearing_test</a>(</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    TDirectoryFile* output_d,</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keyword">const</span> std::string&amp; smearing_file,</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keyword">const</span> std::string&amp; name,</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    std::function&lt;<span class="keywordtype">double</span>()&gt; unsmeared_sampler,</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordtype">int</span> trials = 100,</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordtype">int</span> min_nhits = 8,</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordtype">int</span> max_nhits = 12</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;) {</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <a class="code" href="classTrackSmearingTool.html">TrackSmearingTool</a> tst{smearing_file};</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <a class="code" href="classTrackerHit.html">TrackerHit</a> empty_hit;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <a class="code" href="classTrack.html">Track</a> <a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#adb5e2391917cad02d6ca0c5ab0a46149">track</a>;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  </div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#adb5e2391917cad02d6ca0c5ab0a46149">track</a>.setTrackParameters(</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;      0. <span class="comment">/* d0 */</span>,</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;      0. <span class="comment">/* phi0 */</span>,</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;      1. <span class="comment">/* omega */</span>,</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;      1. <span class="comment">/* tan_lambda - choosing positive (top) */</span>,</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;      0. <span class="comment">/* z0 */</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  );</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i{0}; i &lt; min_nhits-1; i++) <a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#adb5e2391917cad02d6ca0c5ab0a46149">track</a>.addHit(&amp;empty_hit);</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keywordtype">bool</span> top = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keywordtype">int</span> nhits = min_nhits;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="keywordtype">double</span> unsmeared_momentum = 1.;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="keywordtype">double</span> smeared_momentum = 1.;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  output_d-&gt;cd();</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  TTree data{name.c_str(), name.c_str()};</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  data.Branch(<span class="stringliteral">&quot;top&quot;</span>, &amp;top);</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  data.Branch(<span class="stringliteral">&quot;nhits&quot;</span>, &amp;nhits);</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  data.Branch(<span class="stringliteral">&quot;unsmeared_momentum&quot;</span>, &amp;unsmeared_momentum);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  data.Branch(<span class="stringliteral">&quot;smeared_momentum&quot;</span>, &amp;smeared_momentum);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <span class="keywordflow">for</span> (nhits = min_nhits; nhits &lt; max_nhits+1; nhits++) {</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#adb5e2391917cad02d6ca0c5ab0a46149">track</a>.addHit(&amp;empty_hit);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> _i{0}; _i &lt; trials; _i++) {</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;      unsmeared_momentum = unsmeared_sampler();</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;      <a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#adb5e2391917cad02d6ca0c5ab0a46149">track</a>.setMomentum(0. <span class="comment">/*px*/</span>, 0. <span class="comment">/*py*/</span>, unsmeared_momentum <span class="comment">/*pz*/</span>);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;      tst.updateWithSmearP(<a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#adb5e2391917cad02d6ca0c5ab0a46149">track</a>);</div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="smearing-tool_8cxx.html#a0ff89c99f42ed99df9c10d280e3c0c81">   61</a></span>&#160;      smeared_momentum = <a class="code" href="namespaceconfig_1_1kalSimpTuple__cfg.html#adb5e2391917cad02d6ca0c5ab0a46149">track</a>.getP();</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;      data.Fill();</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    }</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  }</div>
+<div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="smearing-tool_8cxx.html#a71e6ae1239d824baa59ffc7bbffe3dea">   65</a></span>&#160;  data.Write();</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;}</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="keywordtype">double</span> <a class="code" href="smearing-tool_8cxx.html#a0ff89c99f42ed99df9c10d280e3c0c81">fixed_momentum_sampler</a>() {</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  <span class="keywordflow">return</span> 1.0;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;}</div>
+<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="smearing-tool_8cxx.html#a7e91d3f253ab85cc391060cecc8f3c84">   71</a></span>&#160; </div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="keywordtype">double</span> <a class="code" href="smearing-tool_8cxx.html#a71e6ae1239d824baa59ffc7bbffe3dea">normal_momentum</a>() {</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  <span class="keyword">static</span> std::normal_distribution&lt;double&gt; dist(1.0, 0.05);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="keyword">static</span> std::mt19937 gen;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  <span class="keywordflow">return</span> dist(gen);</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;}</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="keywordtype">int</span> <a class="code" href="smearing-tool_8cxx.html#a7e91d3f253ab85cc391060cecc8f3c84">main</a>(<span class="keywordtype">int</span> <a class="code" href="namespaceconfig_1_1baseConfig.html#a87f35ac6fa80d957c59e394549aa7e15">nargs</a>, <span class="keywordtype">char</span>* argv[]) <span class="keyword">try</span> {</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  <span class="comment">/*</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">  std::cout &lt;&lt; nargs &lt;&lt; &quot; : &quot;;</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">  for (int i{0}; i &lt; nargs; i++) std::cout &lt;&lt; argv[i] &lt;&lt; &quot; &quot;;</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">  std::cout &lt;&lt; std::endl;</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment">  */</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="keywordflow">if</span> (<a class="code" href="namespaceconfig_1_1baseConfig.html#a87f35ac6fa80d957c59e394549aa7e15">nargs</a> &lt; 2) {</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <a class="code" href="smearing-tool_8cxx.html#a2ef30c42cbc289d899a8be5d2d8f77d0">usage</a>();</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordflow">return</span> 1;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="namespaceconfig_1_1baseConfig.html#a87f35ac6fa80d957c59e394549aa7e15">nargs</a> &lt; 3) {</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <a class="code" href="smearing-tool_8cxx.html#a2ef30c42cbc289d899a8be5d2d8f77d0">usage</a>();</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    std::cout &lt;&lt; <span class="stringliteral">&quot;\n  ERROR: Need two files for testing.&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  }</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  std::string smearing_file{argv[1]}, output_file{argv[2]};</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  TFile output{argv[2], <span class="stringliteral">&quot;RECREATE&quot;</span>};</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  <a class="code" href="smearing-tool_8cxx.html#afca570a1b32bcae727c26d131941f986">smearing_test</a>(</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;      &amp;output,</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;      smearing_file,</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;      <span class="stringliteral">&quot;fixed&quot;</span>,</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;      <a class="code" href="smearing-tool_8cxx.html#a0ff89c99f42ed99df9c10d280e3c0c81">fixed_momentum_sampler</a></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  );</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  <a class="code" href="smearing-tool_8cxx.html#afca570a1b32bcae727c26d131941f986">smearing_test</a>(</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;      &amp;output,</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;      smearing_file,</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;      <span class="stringliteral">&quot;gaussian&quot;</span>,</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;      <a class="code" href="smearing-tool_8cxx.html#a71e6ae1239d824baa59ffc7bbffe3dea">normal_momentum</a>,</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;      10000 <span class="comment">/* num trials */</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  );</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  output.Write();</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  output.Close();</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;} <span class="keywordflow">catch</span> (<span class="keyword">const</span> std::runtime_error&amp; rte) {</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;  std::cerr &lt;&lt; rte.what() &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  <span class="keywordflow">return</span> 127;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;}</div>
 <div class="ttc" id="aTrackSmearingTool_8h_html"><div class="ttname"><a href="TrackSmearingTool_8h.html">TrackSmearingTool.h</a></div></div>
 <div class="ttc" id="aTrack_8h_html"><div class="ttname"><a href="Track_8h.html">Track.h</a></div><div class="ttdoc">Class used to encapsulate track information.</div></div>
 <div class="ttc" id="aTrackerHit_8h_html"><div class="ttname"><a href="TrackerHit_8h.html">TrackerHit.h</a></div><div class="ttdoc">Class used to encapsulate tracker hit information.</div></div>
@@ -190,11 +192,11 @@ $(function() {
 <div class="ttc" id="aclassTrackerHit_html"><div class="ttname"><a href="classTrackerHit.html">TrackerHit</a></div><div class="ttdef"><b>Definition:</b> <a href="TrackerHit_8h_source.html#l00022">TrackerHit.h:22</a></div></div>
 <div class="ttc" id="anamespaceconfig_1_1baseConfig_html_a87f35ac6fa80d957c59e394549aa7e15"><div class="ttname"><a href="namespaceconfig_1_1baseConfig.html#a87f35ac6fa80d957c59e394549aa7e15">config.baseConfig.nargs</a></div><div class="ttdeci">nargs</div><div class="ttdef"><b>Definition:</b> <a href="baseConfig_8py_source.html#l00023">baseConfig.py:23</a></div></div>
 <div class="ttc" id="anamespaceconfig_1_1kalSimpTuple__cfg_html_adb5e2391917cad02d6ca0c5ab0a46149"><div class="ttname"><a href="namespaceconfig_1_1kalSimpTuple__cfg.html#adb5e2391917cad02d6ca0c5ab0a46149">config.kalSimpTuple_cfg.track</a></div><div class="ttdeci">track</div><div class="ttdef"><b>Definition:</b> <a href="kalSimpTuple__cfg_8py_source.html#l00040">kalSimpTuple_cfg.py:40</a></div></div>
-<div class="ttc" id="asmearing-tool_8cxx_html_a0ff89c99f42ed99df9c10d280e3c0c81"><div class="ttname"><a href="smearing-tool_8cxx.html#a0ff89c99f42ed99df9c10d280e3c0c81">fixed_momentum_sampler</a></div><div class="ttdeci">double fixed_momentum_sampler()</div><div class="ttdef"><b>Definition:</b> <a href="smearing-tool_8cxx_source.html#l00059">smearing-tool.cxx:59</a></div></div>
-<div class="ttc" id="asmearing-tool_8cxx_html_a2ef30c42cbc289d899a8be5d2d8f77d0"><div class="ttname"><a href="smearing-tool_8cxx.html#a2ef30c42cbc289d899a8be5d2d8f77d0">usage</a></div><div class="ttdeci">void usage()</div><div class="ttdef"><b>Definition:</b> <a href="smearing-tool_8cxx_source.html#l00008">smearing-tool.cxx:8</a></div></div>
-<div class="ttc" id="asmearing-tool_8cxx_html_a71e6ae1239d824baa59ffc7bbffe3dea"><div class="ttname"><a href="smearing-tool_8cxx.html#a71e6ae1239d824baa59ffc7bbffe3dea">normal_momentum</a></div><div class="ttdeci">double normal_momentum()</div><div class="ttdef"><b>Definition:</b> <a href="smearing-tool_8cxx_source.html#l00063">smearing-tool.cxx:63</a></div></div>
-<div class="ttc" id="asmearing-tool_8cxx_html_a7e91d3f253ab85cc391060cecc8f3c84"><div class="ttname"><a href="smearing-tool_8cxx.html#a7e91d3f253ab85cc391060cecc8f3c84">main</a></div><div class="ttdeci">int main(int nargs, char *argv[])</div><div class="ttdef"><b>Definition:</b> <a href="smearing-tool_8cxx_source.html#l00069">smearing-tool.cxx:69</a></div></div>
-<div class="ttc" id="asmearing-tool_8cxx_html_afca570a1b32bcae727c26d131941f986"><div class="ttname"><a href="smearing-tool_8cxx.html#afca570a1b32bcae727c26d131941f986">smearing_test</a></div><div class="ttdeci">void smearing_test(TDirectoryFile *output_d, const std::string &amp;smearing_file, const std::string &amp;name, std::function&lt; double()&gt; unsmeared_sampler, int trials=100, int min_nhits=8, int max_nhits=12)</div><div class="ttdef"><b>Definition:</b> <a href="smearing-tool_8cxx_source.html#l00012">smearing-tool.cxx:12</a></div></div>
+<div class="ttc" id="asmearing-tool_8cxx_html_a0ff89c99f42ed99df9c10d280e3c0c81"><div class="ttname"><a href="smearing-tool_8cxx.html#a0ff89c99f42ed99df9c10d280e3c0c81">fixed_momentum_sampler</a></div><div class="ttdeci">double fixed_momentum_sampler()</div><div class="ttdef"><b>Definition:</b> <a href="smearing-tool_8cxx_source.html#l00061">smearing-tool.cxx:61</a></div></div>
+<div class="ttc" id="asmearing-tool_8cxx_html_a2ef30c42cbc289d899a8be5d2d8f77d0"><div class="ttname"><a href="smearing-tool_8cxx.html#a2ef30c42cbc289d899a8be5d2d8f77d0">usage</a></div><div class="ttdeci">void usage()</div><div class="ttdef"><b>Definition:</b> <a href="smearing-tool_8cxx_source.html#l00010">smearing-tool.cxx:10</a></div></div>
+<div class="ttc" id="asmearing-tool_8cxx_html_a71e6ae1239d824baa59ffc7bbffe3dea"><div class="ttname"><a href="smearing-tool_8cxx.html#a71e6ae1239d824baa59ffc7bbffe3dea">normal_momentum</a></div><div class="ttdeci">double normal_momentum()</div><div class="ttdef"><b>Definition:</b> <a href="smearing-tool_8cxx_source.html#l00065">smearing-tool.cxx:65</a></div></div>
+<div class="ttc" id="asmearing-tool_8cxx_html_a7e91d3f253ab85cc391060cecc8f3c84"><div class="ttname"><a href="smearing-tool_8cxx.html#a7e91d3f253ab85cc391060cecc8f3c84">main</a></div><div class="ttdeci">int main(int nargs, char *argv[])</div><div class="ttdef"><b>Definition:</b> <a href="smearing-tool_8cxx_source.html#l00071">smearing-tool.cxx:71</a></div></div>
+<div class="ttc" id="asmearing-tool_8cxx_html_afca570a1b32bcae727c26d131941f986"><div class="ttname"><a href="smearing-tool_8cxx.html#afca570a1b32bcae727c26d131941f986">smearing_test</a></div><div class="ttdeci">void smearing_test(TDirectoryFile *output_d, const std::string &amp;smearing_file, const std::string &amp;name, std::function&lt; double()&gt; unsmeared_sampler, int trials=100, int min_nhits=8, int max_nhits=12)</div><div class="ttdef"><b>Definition:</b> <a href="smearing-tool_8cxx_source.html#l00014">smearing-tool.cxx:14</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
