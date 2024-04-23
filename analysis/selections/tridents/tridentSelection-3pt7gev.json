@@ -38,14 +38,14 @@
         "info"  : "#chi^{2}_{unc}<5000"
     },
     "eleMom_gt" : {
-        "cut" : 0.75,
+        "cut" : 0.4,
         "id"  : 7,
-        "info" : "p_e^{-}>0.75 [GeV]"
+        "info" : "p_e^{-}>0.4 [GeV]"
     },
     "posMom_gt" : {
-        "cut" : 0.75,
+        "cut" : 0.4,
         "id"  : 8,
-        "info" : "p_e^{+}>0.75 [GeV]"
+        "info" : "p_e^{+}>0.4 [GeV]"
     },
     "maxVtxMom_lt" : {
         "cut" : 4,
@@ -53,9 +53,9 @@
         "info" : "P_{e^{-}} +  P_{e^{+}}<4 GeV"
     },
     "minVtxMom_gt"  : { 
-        "cut"  : 1.7,
+        "cut"  : 1.6,
         "id"   : 10,
-        "info" : "P_{e^{-}} +  P_{e^{+}}>1.7 GeV"
+        "info" : "P_{e^{-}} +  P_{e^{+}}>1.6 GeV"
     },
     "eleTrkTime_lt": {
         "cut" : 15, 

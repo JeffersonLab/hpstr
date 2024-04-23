@@ -54,7 +54,10 @@ class TridentHistos : public HistoManager {
         //track_x goes for x axis, and y for y axis
         void FillTrackComparisonHistograms(Track* track_x, Track* track_y, float weight = 1.);
         void doTrackComparisonPlots(bool doplots) {doTrkCompPlots = doplots;};
-	void FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std::pair<CalCluster, Track> posOrGamma, double calTimeOffset, double trkTimeOffset,std::vector<CalCluster*>  * clusterList, double weight); 
+         //  void FillTrackClusterHistos(std::pair<CalCluster, Track*> ele, std::pair<CalCluster, Track*> posOrGamma, double calTimeOffset, double trkTimeOffset,std::vector<CalCluster*>  * clusterList, double weight); 
+        void FillTrackClusterHistos(std::pair<CalCluster, Track*> ele,
+				    std::pair<CalCluster, Track*> posOrGamma, double calTimeOffset,
+				    double trkTimeOffset,double weight); 
 	void FillWABHistos(std::pair<CalCluster*, Track*> ele, CalCluster* gamma,  double weight);
     private:
 

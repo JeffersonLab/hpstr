@@ -137,6 +137,7 @@ void TridentHistos::Fill1DVertex(Vertex* vtx,
       Fill1DTrack(ele_trk,trkTimeOffset,weight,"ele_");
     if (pos_trk)
       Fill1DTrack(pos_trk,trkTimeOffset,weight,"pos_");
+    //    std::cout<<"TridentHistos::Fill1DVertex  1d track histos filled"<<std::endl;
     std::string half="top";
     if(pos_trk->getTanLambda()<0)
       half="bot";    
@@ -145,11 +146,11 @@ void TridentHistos::Fill1DVertex(Vertex* vtx,
     if(ele_trk->getTanLambda()<0)
       half="bot";
     std::string eleTag=half+"_ele_";
-    /*
-    std::string eleLayerCode=getLayerCodeFromTrack(ele_trk);
-    std::string posLayerCode=getLayerCodeFromTrack(pos_trk);
-    std::string layerCode="pos"+eleLayerCode+"_ele"+posLayerCode+"_";
-    */
+    
+    //    std::string eleLayerCode=getLayerCodeFromTrack(ele_trk);
+    //    std::string posLayerCode=getLayerCodeFromTrack(pos_trk);
+    //    std::string layerCode="pos"+eleLayerCode+"_ele"+posLayerCode+"_";
+
     Fill1DHisto("vtx_chi2_vc_h"   ,vtx->getChi2(),weight);
     Fill1DHisto("vtx_X_vc_h"      ,vtx->getX(),weight);
     Fill1DHisto("vtx_Y_vc_h"      ,vtx->getY(),weight);
@@ -456,7 +457,8 @@ void TridentHistos::Fill1DTrack(Track* track, double trkTimeOffset,float weight,
     Fill1DHisto(layerCode+tag+"nHits_2d_tc_h" ,n_hits_2d               ,weight);
   
 
-    bool hasLayer4=false;
+	
+    /*
     for (int ihit=0; ihit<track->getTrackerHitCount();++ihit) {
       TrackerHit* hit = (TrackerHit*) track->getSvtHits().At(ihit);
       RawSvtHit* rhit=(RawSvtHit*)(hit->getRawHits()).At(0);
@@ -467,12 +469,21 @@ void TridentHistos::Fill1DTrack(Track* track, double trkTimeOffset,float weight,
         else
           hasLayer4=true;
       }
+    */
+
+    bool hasLayer4=false;
+    for (auto & layer : track->getHitLayers()) {
+      if(layer==4){
+        if(hasLayer4)
+          std::cout<<"What...I already counted layer 4!"<<std::endl;
+        else
+          hasLayer4=true;
+      }
       Fill1DHisto(trkname+"layersHit_tc_h",layer,weight);
       Fill1DHisto(tag+"layersHit_tc_h",layer,weight);
       Fill1DHisto(layerCode+trkname+"layersHit_tc_h",layer,weight);
-      Fill1DHisto(layerCode+tag+"layersHit_tc_h",layer,weight);
-
-    }
+      Fill1DHisto(layerCode+tag+"layersHit_tc_h",layer,weight);      
+    }     
    
 }
 
@@ -683,31 +694,32 @@ std::pair<CalCluster*, Track*> TridentHistos::getTrackClusterPair(Track* trk,std
  *  fill cluster/track times and other ecal stuff for both WAB and trident events
  *  mg...5/9/20 currently just do time
  */
-void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std::pair<CalCluster, Track> posOrGamma, double calTimeOffset, double trkTimeOffset,std::vector<CalCluster*>  * clusterList, double weight){
+//void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track*> ele, std::pair<CalCluster, Track*> posOrGamma, double calTimeOffset, double trkTimeOffset,std::vector<CalCluster*>  * clusterList, double weight){
+void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track*> ele, std::pair<CalCluster, Track*> posOrGamma, double calTimeOffset, double trkTimeOffset, double weight){
   CalCluster eleClu=ele.first;
-  Track eleTrk=ele.second;
+  Track* eleTrk=ele.second;
   CalCluster posClu=posOrGamma.first; 
-  Track posTrk=posOrGamma.second; //these "positrons" may be gammas
+  Track* posTrk=posOrGamma.second; //these "positrons" may be gammas
   
   std::string half="top";  
-  if(eleTrk.getTanLambda()<0)
+  if(eleTrk->getTanLambda()<0)
     half="bot";
   std::string eleTag=half+"_ele_";
 
   half="top";
-  if(posTrk.getTanLambda()<0)
+  if(posTrk->getTanLambda()<0)
     half="bot";
   std::string posTag=half+"_pos_";
 
-  /* this does not work, but maybe in new tuple???
-  std::string eleLayerCode="L"+getLayerCodeFromTrack(&eleTrk)+"_";
-  std::string posLayerCode="L"+getLayerCodeFromTrack(&posTrk)+"_";
-  */  
+  //  this does not work, but maybe in new tuple???
+    //std::string eleLayerCode="L"+getLayerCodeFromTrack(&eleTrk)+"_";
+    //std::string posLayerCode="L"+getLayerCodeFromTrack(&posTrk)+"_";
+    
 
   double ele_cluTime=eleClu.getTime()-calTimeOffset;
   double pos_cluTime=posClu.getTime()-calTimeOffset;
-  double ele_trkTime=eleTrk.getTrackTime()-trkTimeOffset;
-  double pos_trkTime=posTrk.getTrackTime()-trkTimeOffset;
+  double ele_trkTime=eleTrk->getTrackTime()-trkTimeOffset;
+  double pos_trkTime=posTrk->getTrackTime()-trkTimeOffset;
 
 
   double ele_cluX=eleClu.getPosition().at(0);
@@ -716,10 +728,10 @@ void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std
   double pos_cluY=posClu.getPosition().at(1);
 
   ////
-  double ele_trkX=eleTrk.getPositionAtEcal().at(0);
-  double ele_trkY=eleTrk.getPositionAtEcal().at(1);
-  double pos_trkX=posTrk.getPositionAtEcal().at(0);
-  double pos_trkY=posTrk.getPositionAtEcal().at(1);
+  double ele_trkX=eleTrk->getPositionAtEcal().at(0);
+  double ele_trkY=eleTrk->getPositionAtEcal().at(1);
+  double pos_trkX=posTrk->getPositionAtEcal().at(0);
+  double pos_trkY=posTrk->getPositionAtEcal().at(1);
   ////
 
   double ele_clu_trk_deltaX=ele_cluX-ele_trkX;
@@ -734,12 +746,12 @@ void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std
   Fill1DHisto("ele_clu_trk_deltaX_tc_h",ele_clu_trk_deltaX,weight);
   Fill1DHisto("ele_clu_trk_deltaY_tc_h",ele_clu_trk_deltaY,weight);
 
-  /*
-  Fill1DHisto(eleLayerCode+"ele_cl_time_tc_h", eleClu.getTime()-calTimeOffset,weight);
-  Fill1DHisto(eleLayerCode+"ele_cl_ene_tc_h",eleClu.getEnergy(),weight);
-  Fill1DHisto(eleLayerCode+"ele_clu_trk_deltaX_tc_h",ele_clu_trk_deltaX,weight);
-  Fill1DHisto(eleLayerCode+"ele_clu_trk_deltaY_tc_h",ele_clu_trk_deltaY,weight);
-  */
+  
+  Fill1DHisto(layerCode+"ele_cl_time_tc_h", eleClu.getTime()-calTimeOffset,weight);
+  Fill1DHisto(layerCode+"ele_cl_ene_tc_h",eleClu.getEnergy(),weight);
+  Fill1DHisto(layerCode+"ele_clu_trk_deltaX_tc_h",ele_clu_trk_deltaX,weight);
+  Fill1DHisto(layerCode+"ele_clu_trk_deltaY_tc_h",ele_clu_trk_deltaY,weight);
+
   Fill2DHisto("ele_clu_trk_deltaX_vs_cluX_hc_hh",ele_cluX,ele_clu_trk_deltaX,weight);
   Fill2DHisto("ele_clu_trk_deltaY_vs_cluX_hc_hh",ele_cluX,ele_clu_trk_deltaY,weight);
   Fill2DHisto("ele_cluY_vs_cluX_hc_hh",ele_cluX,ele_cluY,weight);
@@ -748,79 +760,80 @@ void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std
   Fill1DHisto(eleTag+"cl_ene_tc_h",eleClu.getEnergy(),weight);
   Fill1DHisto(eleTag+"clu_trk_deltaX_tc_h",ele_clu_trk_deltaX,weight);
   Fill1DHisto(eleTag+"clu_trk_deltaY_tc_h",ele_clu_trk_deltaY,weight);
-  /*
-  Fill1DHisto(eleLayerCode+eleTag+"cl_time_tc_h", eleClu.getTime()-calTimeOffset,weight);
-  Fill1DHisto(eleLayerCode+eleTag+"cl_ene_tc_h",eleClu.getEnergy(),weight);
-  Fill1DHisto(eleLayerCode+eleTag+"clu_trk_deltaX_tc_h",ele_clu_trk_deltaX,weight);
-  Fill1DHisto(eleLayerCode+eleTag+"clu_trk_deltaY_tc_h",ele_clu_trk_deltaY,weight);
-  */
+  
+  Fill1DHisto(layerCode+eleTag+"cl_time_tc_h", eleClu.getTime()-calTimeOffset,weight);
+  Fill1DHisto(layerCode+eleTag+"cl_ene_tc_h",eleClu.getEnergy(),weight);
+  Fill1DHisto(layerCode+eleTag+"clu_trk_deltaX_tc_h",ele_clu_trk_deltaX,weight);
+  Fill1DHisto(layerCode+eleTag+"clu_trk_deltaY_tc_h",ele_clu_trk_deltaY,weight);
+  
   Fill2DHisto(eleTag+"clu_trk_deltaX_vs_cluX_hc_hh",ele_cluX,ele_clu_trk_deltaX,weight);
   Fill2DHisto(eleTag+"clu_trk_deltaY_vs_cluX_hc_hh",ele_cluX,ele_clu_trk_deltaY,weight);
   Fill2DHisto(eleTag+"cluY_vs_cluX_hc_hh",ele_cluX,ele_cluY,weight);
 
-  double pele=sqrt(eleTrk.getMomentum()[0]*eleTrk.getMomentum()[0]+
-                   eleTrk.getMomentum()[1]*eleTrk.getMomentum()[1]+
-                   eleTrk.getMomentum()[2]*eleTrk.getMomentum()[2]);
-  Fill1DHisto("ele_cltrk_time_diff_tc_h", eleClu.getTime()-calTimeOffset-eleTrk.getTrackTime()+trkTimeOffset,weight);
+  double pele=sqrt(eleTrk->getMomentum()[0]*eleTrk->getMomentum()[0]+
+                   eleTrk->getMomentum()[1]*eleTrk->getMomentum()[1]+
+                   eleTrk->getMomentum()[2]*eleTrk->getMomentum()[2]);
+  Fill1DHisto("ele_cltrk_time_diff_tc_h", eleClu.getTime()-calTimeOffset-eleTrk->getTrackTime()+trkTimeOffset,weight);
   Fill1DHisto("ele_EOverp_tc_h",eleClu.getEnergy()/pele,weight);
   Fill2DHisto("ele_EOverp_vs_cluX_hc_hh",ele_cluX,eleClu.getEnergy()/pele,weight);
   //  if(eleClu.getEnergy()/pele<=0.02){
   //  std::cout<<"ele E/p<=0.02:  "<<eleClu.getEnergy()<<"   "<<pele<<std::endl;
-  //  std::cout<<"electron momentum::  x = "<<eleTrk.getMomentum()[0]<<"  y = "<<eleTrk.getMomentum()[1]<<"  z = "<<eleTrk.getMomentum()[2]<<std::endl;
+  //  std::cout<<"electron momentum::  x = "<<eleTrk->getMomentum()[0]<<"  y = "<<eleTrk->getMomentum()[1]<<"  z = "<<eleTrk->getMomentum()[2]<<std::endl;
   //  std::cout<<"cluster time = "<<ele_cluTime<<"  track time = "<<ele_trkTime<<std::endl;
   //}
-  /*  
-  Fill1DHisto(eleLayerCode+"ele_cltrk_time_diff_tc_h", eleClu.getTime()-calTimeOffset-eleTrk.getTrackTime()+trkTimeOffset,weight);
-  Fill1DHisto(eleLayerCode+"ele_EOverp_tc_h",eleClu.getEnergy()/pele,weight);
-  */
-  Fill1DHisto(eleTag+"cltrk_time_diff_tc_h", eleClu.getTime()-calTimeOffset-eleTrk.getTrackTime()+trkTimeOffset,weight);
+   
+  Fill1DHisto(layerCode+"ele_cltrk_time_diff_tc_h", eleClu.getTime()-calTimeOffset-eleTrk->getTrackTime()+trkTimeOffset,weight);
+  Fill1DHisto(layerCode+"ele_EOverp_tc_h",eleClu.getEnergy()/pele,weight);
+  
+  Fill1DHisto(eleTag+"cltrk_time_diff_tc_h", eleClu.getTime()-calTimeOffset-eleTrk->getTrackTime()+trkTimeOffset,weight);
   Fill1DHisto(eleTag+"EOverp_tc_h",eleClu.getEnergy()/pele,weight);
   Fill2DHisto(eleTag+"EOverp_vs_cluX_hc_hh",ele_cluX,eleClu.getEnergy()/pele,weight);
-  /*
-  Fill1DHisto(eleLayerCode+eleTag+"cltrk_time_diff_tc_h", eleClu.getTime()-calTimeOffset-eleTrk.getTrackTime()+trkTimeOffset,weight);
-  Fill1DHisto(eleLayerCode+eleTag+"EOverp_tc_h",eleClu.getEnergy()/pele,weight);
-  */
+  
+  Fill1DHisto(layerCode+eleTag+"cltrk_time_diff_tc_h", eleClu.getTime()-calTimeOffset-eleTrk->getTrackTime()+trkTimeOffset,weight);
+  Fill1DHisto(layerCode+eleTag+"EOverp_tc_h",eleClu.getEnergy()/pele,weight);
+  
   Fill1DHisto("pos_cl_time_tc_h", posClu.getTime()-calTimeOffset,weight);
   Fill1DHisto("pos_cl_ene_tc_h",posClu.getEnergy(),weight);
   Fill1DHisto("pos_clu_trk_deltaX_tc_h",pos_clu_trk_deltaX,weight);
   Fill1DHisto("pos_clu_trk_deltaY_tc_h",pos_clu_trk_deltaY,weight);
-  Fill1DHisto("pos_cltrk_time_diff_tc_h", posClu.getTime()-calTimeOffset-posTrk.getTrackTime()+trkTimeOffset,weight);
+  Fill1DHisto("pos_cltrk_time_diff_tc_h", posClu.getTime()-calTimeOffset-posTrk->getTrackTime()+trkTimeOffset,weight);
 
   Fill1DHisto(posTag+"cl_time_tc_h", posClu.getTime()-calTimeOffset,weight);
   Fill1DHisto(posTag+"cl_ene_tc_h",posClu.getEnergy(),weight);
   Fill1DHisto(posTag+"clu_trk_deltaX_tc_h",pos_clu_trk_deltaX,weight);
   Fill1DHisto(posTag+"clu_trk_deltaY_tc_h",pos_clu_trk_deltaY,weight);
-  Fill1DHisto(posTag+"cltrk_time_diff_tc_h", posClu.getTime()-calTimeOffset-posTrk.getTrackTime()+trkTimeOffset,weight);
-  /*
-  Fill1DHisto(posLayerCode+"pos_cl_time_tc_h", posClu.getTime()-calTimeOffset,weight);
-  Fill1DHisto(posLayerCode+"pos_cl_ene_tc_h",posClu.getEnergy(),weight);
-  Fill1DHisto(posLayerCode+"pos_clu_trk_deltaX_tc_h",pos_clu_trk_deltaX,weight);
-  Fill1DHisto(posLayerCode+"pos_clu_trk_deltaY_tc_h",pos_clu_trk_deltaY,weight);
-  Fill1DHisto(posLayerCode+"pos_cltrk_time_diff_tc_h", posClu.getTime()-calTimeOffset-posTrk.getTrackTime()+trkTimeOffset,weight);
+  Fill1DHisto(posTag+"cltrk_time_diff_tc_h", posClu.getTime()-calTimeOffset-posTrk->getTrackTime()+trkTimeOffset,weight);
+  
+  Fill1DHisto(layerCode+"pos_cl_time_tc_h", posClu.getTime()-calTimeOffset,weight);
+  Fill1DHisto(layerCode+"pos_cl_ene_tc_h",posClu.getEnergy(),weight);
+  Fill1DHisto(layerCode+"pos_clu_trk_deltaX_tc_h",pos_clu_trk_deltaX,weight);
+  Fill1DHisto(layerCode+"pos_clu_trk_deltaY_tc_h",pos_clu_trk_deltaY,weight);
+  Fill1DHisto(layerCode+"pos_cltrk_time_diff_tc_h", posClu.getTime()-calTimeOffset-posTrk->getTrackTime()+trkTimeOffset,weight);
 
-  Fill1DHisto(posLayerCode+posTag+"cl_time_tc_h", posClu.getTime()-calTimeOffset,weight);
-  Fill1DHisto(posLayerCode+posTag+"cl_ene_tc_h",posClu.getEnergy(),weight);
-  Fill1DHisto(posLayerCode+posTag+"clu_trk_deltaX_tc_h",pos_clu_trk_deltaX,weight);
-  Fill1DHisto(posLayerCode+posTag+"clu_trk_deltaY_tc_h",pos_clu_trk_deltaY,weight);
-  Fill1DHisto(posLayerCode+posTag+"cltrk_time_diff_tc_h", posClu.getTime()-calTimeOffset-posTrk.getTrackTime()+trkTimeOffset,weight);
-  */
-  double ppos=sqrt(posTrk.getMomentum()[0]*posTrk.getMomentum()[0]+
-		     posTrk.getMomentum()[1]*posTrk.getMomentum()[1]+
-		     posTrk.getMomentum()[2]*posTrk.getMomentum()[2]);
+  Fill1DHisto(layerCode+posTag+"cl_time_tc_h", posClu.getTime()-calTimeOffset,weight);
+  Fill1DHisto(layerCode+posTag+"cl_ene_tc_h",posClu.getEnergy(),weight);
+  Fill1DHisto(layerCode+posTag+"clu_trk_deltaX_tc_h",pos_clu_trk_deltaX,weight);
+  Fill1DHisto(layerCode+posTag+"clu_trk_deltaY_tc_h",pos_clu_trk_deltaY,weight);
+  Fill1DHisto(layerCode+posTag+"cltrk_time_diff_tc_h", posClu.getTime()-calTimeOffset-posTrk->getTrackTime()+trkTimeOffset,weight);
+ 
+  double ppos=sqrt(posTrk->getMomentum()[0]*posTrk->getMomentum()[0]+
+		     posTrk->getMomentum()[1]*posTrk->getMomentum()[1]+
+		     posTrk->getMomentum()[2]*posTrk->getMomentum()[2]);
   Fill1DHisto("pos_EOverp_tc_h",posClu.getEnergy()/ppos,weight);
-  //  Fill1DHisto(posLayerCode+"pos_EOverp_tc_h",posClu.getEnergy()/ppos,weight);
+  Fill1DHisto(layerCode+"pos_EOverp_tc_h",posClu.getEnergy()/ppos,weight);
   Fill2DHisto("pos_EOverp_vs_cluX_hc_hh",pos_cluX,posClu.getEnergy()/ppos,weight);
   Fill2DHisto("pos_cluY_vs_cluX_hc_hh",pos_cluX,pos_cluY,weight);
   Fill2DHisto("pos_clu_trk_deltaX_vs_cluX_hc_hh",pos_cluX,pos_clu_trk_deltaX,weight);
   Fill2DHisto("pos_clu_trk_deltaY_vs_cluX_hc_hh",pos_cluX,pos_clu_trk_deltaY,weight);
 
   Fill1DHisto(posTag+"EOverp_tc_h",posClu.getEnergy()/ppos,weight);
-  //  Fill1DHisto(posLayerCode+posTag+"EOverp_tc_h",posClu.getEnergy()/ppos,weight);
+  Fill1DHisto(layerCode+posTag+"EOverp_tc_h",posClu.getEnergy()/ppos,weight);
   Fill2DHisto(posTag+"EOverp_vs_cluX_hc_hh",pos_cluX,posClu.getEnergy()/ppos,weight);
   Fill2DHisto(posTag+"cluY_vs_cluX_hc_hh",pos_cluX,pos_cluY,weight);
   Fill2DHisto(posTag+"clu_trk_deltaX_vs_cluX_hc_hh",pos_cluX,pos_clu_trk_deltaX,weight);
   Fill2DHisto(posTag+"clu_trk_deltaY_vs_cluX_hc_hh",pos_cluX,pos_clu_trk_deltaY,weight);
   //find the closest cluster that makes sense
+  /*
   double minDistX=99999; 
   double minDistY=99999; 
   double minDist=99999; 
@@ -866,7 +879,9 @@ void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std
       pos_minDistCluIndex=i_clu;
     }    
   }
+  */
   //////   do new electron cluster stuff
+  /*
   bool foundOgCluster=false;
   bool foundNewCluster=false;
   bool foundSameCluster=false;
@@ -890,13 +905,15 @@ void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std
       Fill1DHisto("ele_new_clu_trk_deltaX_tc_h",new_deltaX,weight);
       Fill1DHisto("ele_new_clu_trk_deltaY_tc_h",new_deltaY,weight);
       Fill1DHisto("ele_new_EOverp_tc_h",clE/pele,weight);
+  */
       /*
-      Fill1DHisto(eleLayerCode+"ele_new_cl_time_tc_h",clTime,weight);
-      Fill1DHisto(eleLayerCode+"ele_new_cl_ene_tc_h",clE,weight);
-      Fill1DHisto(eleLayerCode+"ele_new_clu_trk_deltaX_tc_h",new_deltaX,weight);
-      Fill1DHisto(eleLayerCode+"ele_new_clu_trk_deltaY_tc_h",new_deltaY,weight);
-      Fill1DHisto(eleLayerCode+"ele_new_EOverp_tc_h",clE/pele,weight);
+      Fill1DHisto(layerCode+"ele_new_cl_time_tc_h",clTime,weight);
+      Fill1DHisto(layerCode+"ele_new_cl_ene_tc_h",clE,weight);
+      Fill1DHisto(layerCode+"ele_new_clu_trk_deltaX_tc_h",new_deltaX,weight);
+      Fill1DHisto(layerCode+"ele_new_clu_trk_deltaY_tc_h",new_deltaY,weight);
+      Fill1DHisto(layerCode+"ele_new_EOverp_tc_h",clE/pele,weight);
       */
+  /*
       Fill2DHisto("ele_new_clu_trk_deltaX_vs_cluX_hc_hh",clX,new_deltaX,weight);
       Fill2DHisto("ele_new_clu_trk_deltaY_vs_cluX_hc_hh",clX,new_deltaY,weight);      
       Fill2DHisto("ele_new_EOverp_vs_cluX_hc_hh",clX,clE/pele,weight);
@@ -907,13 +924,15 @@ void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std
       Fill1DHisto(eleTag+"new_clu_trk_deltaX_tc_h",new_deltaX,weight);
       Fill1DHisto(eleTag+"new_clu_trk_deltaY_tc_h",new_deltaY,weight);
       Fill1DHisto(eleTag+"new_EOverp_tc_h",clE/pele,weight);
+  */
       /*
-      Fill1DHisto(eleLayerCode+eleTag+"new_cl_time_tc_h",clTime,weight);
-      Fill1DHisto(eleLayerCode+eleTag+"new_cl_ene_tc_h",clE,weight);
-      Fill1DHisto(eleLayerCode+eleTag+"new_clu_trk_deltaX_tc_h",new_deltaX,weight);
-      Fill1DHisto(eleLayerCode+eleTag+"new_clu_trk_deltaY_tc_h",new_deltaY,weight);
-      Fill1DHisto(eleLayerCode+eleTag+"new_EOverp_tc_h",clE/pele,weight);
+      Fill1DHisto(layerCode+eleTag+"new_cl_time_tc_h",clTime,weight);
+      Fill1DHisto(layerCode+eleTag+"new_cl_ene_tc_h",clE,weight);
+      Fill1DHisto(layerCode+eleTag+"new_clu_trk_deltaX_tc_h",new_deltaX,weight);
+      Fill1DHisto(layerCode+eleTag+"new_clu_trk_deltaY_tc_h",new_deltaY,weight);
+      Fill1DHisto(layerCode+eleTag+"new_EOverp_tc_h",clE/pele,weight);
       */
+  /*
       Fill2DHisto(eleTag+"new_clu_trk_deltaX_vs_cluX_hc_hh",clX,new_deltaX,weight);
       Fill2DHisto(eleTag+"new_clu_trk_deltaY_vs_cluX_hc_hh",clX,new_deltaY,weight);      
       Fill2DHisto(eleTag+"new_EOverp_vs_cluX_hc_hh",clX,clE/pele,weight);
@@ -924,6 +943,8 @@ void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std
       foundSameCluster=true;
     }    
   } 
+  */
+  /*
   int clMatchCode=-666;
   if(foundSameCluster)
     clMatchCode=0;
@@ -937,10 +958,10 @@ void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std
     clMatchCode=-2; // didn't find cluster match with either old or new algorithm
   Fill1DHisto("ele_new_cluster_match_code_tc_h",clMatchCode,weight);
   Fill1DHisto(eleTag+"new_cluster_match_code_tc_h",clMatchCode,weight);
-  /*
-  Fill1DHisto(eleLayerCode+"ele_new_cluster_match_code_tc_h",clMatchCode,weight);
-  Fill1DHisto(eleLayerCode+eleTag+"new_cluster_match_code_tc_h",clMatchCode,weight);
-  */
+ 
+  Fill1DHisto(layerCode+"ele_new_cluster_match_code_tc_h",clMatchCode,weight);
+  Fill1DHisto(layerCode+eleTag+"new_cluster_match_code_tc_h",clMatchCode,weight);
+  
   
   //////   do new positron cluster stuff
   foundOgCluster=false;
@@ -966,13 +987,13 @@ void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std
       Fill1DHisto("pos_new_clu_trk_deltaX_tc_h",new_deltaX,weight);
       Fill1DHisto("pos_new_clu_trk_deltaY_tc_h",new_deltaY,weight);
       Fill1DHisto("pos_new_EOverp_tc_h",clE/ppos,weight);
-      /*
-      Fill1DHisto(posLayerCode+"pos_new_cl_time_tc_h",clTime,weight);
-      Fill1DHisto(posLayerCode+"pos_new_cl_ene_tc_h",clE,weight);
-      Fill1DHisto(posLayerCode+"pos_new_clu_trk_deltaX_tc_h",new_deltaX,weight);
-      Fill1DHisto(posLayerCode+"pos_new_clu_trk_deltaY_tc_h",new_deltaY,weight);
-      Fill1DHisto(posLayerCode+"pos_new_EOverp_tc_h",clE/ppos,weight);
-      */
+     
+      Fill1DHisto(layerCode+"pos_new_cl_time_tc_h",clTime,weight);
+      Fill1DHisto(layerCode+"pos_new_cl_ene_tc_h",clE,weight);
+      Fill1DHisto(layerCode+"pos_new_clu_trk_deltaX_tc_h",new_deltaX,weight);
+      Fill1DHisto(layerCode+"pos_new_clu_trk_deltaY_tc_h",new_deltaY,weight);
+      Fill1DHisto(layerCode+"pos_new_EOverp_tc_h",clE/ppos,weight);
+    
       Fill2DHisto("pos_new_clu_trk_deltaX_vs_cluX_hc_hh",clX,new_deltaX,weight);
       Fill2DHisto("pos_new_clu_trk_deltaY_vs_cluX_hc_hh",clX,new_deltaY,weight);
       Fill2DHisto("pos_new_EOverp_vs_cluX_hc_hh",clX,clE/ppos,weight);
@@ -983,13 +1004,13 @@ void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std
       Fill1DHisto(posTag+"new_clu_trk_deltaX_tc_h",new_deltaX,weight);
       Fill1DHisto(posTag+"new_clu_trk_deltaY_tc_h",new_deltaY,weight);
       Fill1DHisto(posTag+"new_EOverp_tc_h",clE/ppos,weight);
-      /*
-	Fill1DHisto(posLayerCode+posTag+"new_cl_time_tc_h",clTime,weight);
-      Fill1DHisto(posLayerCode+posTag+"new_cl_ene_tc_h",clE,weight);
-      Fill1DHisto(posLayerCode+posTag+"new_clu_trk_deltaX_tc_h",new_deltaX,weight);
-      Fill1DHisto(posLayerCode+posTag+"new_clu_trk_deltaY_tc_h",new_deltaY,weight);
-      Fill1DHisto(posLayerCode+posTag+"new_EOverp_tc_h",clE/ppos,weight);
-      */
+      
+	Fill1DHisto(layerCode+posTag+"new_cl_time_tc_h",clTime,weight);
+      Fill1DHisto(layerCode+posTag+"new_cl_ene_tc_h",clE,weight);
+      Fill1DHisto(layerCode+posTag+"new_clu_trk_deltaX_tc_h",new_deltaX,weight);
+      Fill1DHisto(layerCode+posTag+"new_clu_trk_deltaY_tc_h",new_deltaY,weight);
+      Fill1DHisto(layerCode+posTag+"new_EOverp_tc_h",clE/ppos,weight);
+      
       Fill2DHisto(posTag+"new_clu_trk_deltaX_vs_cluX_hc_hh",clX,new_deltaX,weight);
       Fill2DHisto(posTag+"new_clu_trk_deltaY_vs_cluX_hc_hh",clX,new_deltaY,weight);
       Fill2DHisto(posTag+"new_EOverp_vs_cluX_hc_hh",clX,clE/ppos,weight);
@@ -999,6 +1020,8 @@ void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std
       foundSameCluster=true;
     }    
   } 
+  */
+  /*
   clMatchCode=-666;
   if(foundSameCluster)
     clMatchCode=0;
@@ -1012,20 +1035,21 @@ void TridentHistos::FillTrackClusterHistos(std::pair<CalCluster, Track> ele, std
     clMatchCode=-2; // didn't find cluster match with either old or new algorithm
   Fill1DHisto("pos_new_cluster_match_code_tc_h",clMatchCode,weight);
   Fill1DHisto(posTag+"new_cluster_match_code_tc_h",clMatchCode,weight);
-  //  Fill1DHisto(posLayerCode+"pos_new_cluster_match_code_tc_h",clMatchCode,weight);
-  //  Fill1DHisto(posLayerCode+posTag+"new_cluster_match_code_tc_h",clMatchCode,weight);
-
+  //  Fill1DHisto(layerCode+"pos_new_cluster_match_code_tc_h",clMatchCode,weight);
+  //  Fill1DHisto(layerCode+posTag+"new_cluster_match_code_tc_h",clMatchCode,weight);
+  */
   Fill1DHisto("cl_time_diff_vc_h", posClu.getTime()-eleClu.getTime(),weight);    
-  Fill1DHisto("trk_time_diff_vc_h", posTrk.getTrackTime()-eleTrk.getTrackTime(),weight);    
+  Fill1DHisto("trk_time_diff_vc_h", posTrk->getTrackTime()-eleTrk->getTrackTime(),weight);    
 
   Fill1DHisto(posTag+"cl_time_diff_vc_h", posClu.getTime()-eleClu.getTime(),weight);    
-  Fill1DHisto(posTag+"trk_time_diff_vc_h", posTrk.getTrackTime()-eleTrk.getTrackTime(),weight);    
+  Fill1DHisto(posTag+"trk_time_diff_vc_h", posTrk->getTrackTime()-eleTrk->getTrackTime(),weight);    
 
 
   //  Fill1DHisto("gamma_cl_time_h", posClu.getTime()-calTimeOffset,weight);
   //Fill1DHisto("gamma_cl_ene_h",posClu.getEnergy(),weight);
-
+  
 }
+  
 /*
  *  fill  WAB specific histos
  *  already have track and cluster plots from above methods
@@ -1154,27 +1178,27 @@ std::string TridentHistos::getLayerCodeFromTrack(Track* trk){
   std::string s2="0"; 
   std::string s3="0"; 
   std::string s4="0"; 
-  for (int ihit=0; ihit<trk->getTrackerHitCount();++ihit) {
-    TrackerHit* hit = (TrackerHit*) trk->getSvtHits().At(ihit);
-    RawSvtHit* rhit=(RawSvtHit*)(hit->getRawHits()).At(0);
-    int layer=rhit->getLayer();
-    if(layer == 0 ){
-      std::cout<<"I didn't think you could have layer 0???"<<std::endl;
-    }
-    if (layer == 1 ) {
+  for (auto & layer: trk->getHitLayers()) {
+    //    TrackerHit* hit = (TrackerHit*) trk->getSvtHits().At(ihit);
+    //RawSvtHit* rhit=(RawSvtHit*)(hit->getRawHits()).At(0);
+    //int layer=rhit->getLayer();
+    //    if(layer == 0 ){
+    //std::cout<<"I didn't think you could have layer 0???"<<std::endl;
+    //}
+    if (layer == 0 ) {
       s1="1";
     }
-    if (layer == 2) {
+    if (layer == 1) {
       s2="1";
     }
-    if (layer == 3) {
+    if (layer == 2) {
       s3="1";
     }
-    if (layer == 4) {
+    if (layer == 3) {
       s4="1";
     }
   }
-
+  
   return std::string(s1+s2+s3+s4);
 
 }

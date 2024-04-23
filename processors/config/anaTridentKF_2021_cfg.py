@@ -82,7 +82,8 @@ RegionPath=os.environ['HPSTR_BASE']+"/analysis/selections/tridents/"
 #vtxana.parameters["regionDefinitions"] = [RegionPath+'Tight.json']
 #vtxana.parameters["regionDefinitions"] = ['./tridentL1L1.json','./tridentL1L2.json','./tridentL2L1.json','./tridentL2L2.json']
 #vtxana.parameters["regionDefinitions"] = ['cfgs2019/tridentAllLayerCombos.json']
-vtxana.parameters["regionDefinitions"] = [RegionPath+'/tridentAllLayerCombos.json']
+#vtxana.parameters["regionDefinitions"] = [RegionPath+'/tridentAllLayerCombos.json']
+vtxana.parameters["regionDefinitions"] = [RegionPath+'/tridentAllLayerCombos-BothClusters.json']
 #                                          RegionPath+'/tridentAllLayerCombos-NoClusters.json', 
 #                                          RegionPath+'/tridentAllLayerCombos-NoPosClust-EleClust.json', 
 #                                          RegionPath+'/tridentAllLayerCombos-PosClust-NoEleClust.json',  

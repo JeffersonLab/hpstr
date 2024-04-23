@@ -24,13 +24,13 @@ void TridentWABAnaProcessor::configure(const ParameterSet& parameters) {
     {
         debug_   = parameters.getInteger("debug");
         anaName_ = parameters.getString("anaName");
-	cluColl_ = parameters.getString("cluColl");
-	hitColl_ = parameters.getString("hitColl",hitColl_);
-	rawhitColl_ = parameters.getString("rawhitColl",rawhitColl_);
+	//cluColl_ = parameters.getString("cluColl");
+	//hitColl_ = parameters.getString("hitColl",hitColl_);
+	//	rawhitColl_ = parameters.getString("rawhitColl",rawhitColl_);
         vtxColl_ = parameters.getString("vtxColl");
-        trkColl_ = parameters.getString("trkColl");
+        //trkColl_ = parameters.getString("trkColl");
 	mcColl_  = parameters.getString("mcColl",mcColl_);
-	fspartColl_ = parameters.getString("fspartColl",fspartColl_);
+	//fspartColl_ = parameters.getString("fspartColl",fspartColl_);
 	trkSelCfg_   = parameters.getString("trkSelectionjson");
         selectionCfg_   = parameters.getString("vtxSelectionjson");
         histoCfg_ = parameters.getString("histoCfg");
@@ -105,17 +105,17 @@ void TridentWABAnaProcessor::initialize(TTree* tree) {
 
     //init Reading Tree
      tree_->SetBranchAddress(vtxColl_.c_str(), &vtxs_ , &bvtxs_);
-     tree_->SetBranchAddress(fspartColl_.c_str(), &fspart_ , &bfspart_);
+     //tree_->SetBranchAddress(fspartColl_.c_str(), &fspart_ , &bfspart_);
      tree_->SetBranchAddress("EventHeader",&evth_ , &bevth_);
-     tree_->SetBranchAddress(cluColl_.c_str(), &clus_ , &bclus_);
-     tree_->SetBranchAddress(hitColl_.c_str(), &hits_   , &bhits_);
-     tree_->SetBranchAddress(rawhitColl_.c_str(), &rawhits_   , &brawhits_);
+     //tree_->SetBranchAddress(cluColl_.c_str(), &clus_ , &bclus_);
+     //tree_->SetBranchAddress(hitColl_.c_str(), &hits_   , &bhits_);
+     //tree_->SetBranchAddress(rawhitColl_.c_str(), &rawhits_   , &brawhits_);
      tree_->SetBranchAddress("TSBank", &tsdata_   , &btsdata_);
      //If track collection name is empty take the tracks from the particles. TODO:: change this
-     if (!trkColl_.empty())
-       tree_->SetBranchAddress(trkColl_.c_str(),&trks_, &btrks_);
+     //if (!trkColl_.empty())
+     //  tree_->SetBranchAddress(trkColl_.c_str(),&trks_, &btrks_);
      if(!isData && !mcColl_.empty()) tree_->SetBranchAddress(mcColl_.c_str() , &mcParts_, &bmcParts_);
-     std::cout<<"Done with TridentWABAnaProcessor::initialization"<<std::cout; 
+     std::cout<<"Done with TridentWABAnaProcessor::initialization"<<std::endl;; 
 
 }
 
@@ -137,7 +137,7 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
         }
     }
   
-
+    /*
     int nElectrons=0;
     int nPositrons=0;
     if(trks_->size()>0){
@@ -163,7 +163,7 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
       if(clX<0)
         nEleSideClusters++;
     }
-
+    */
     std::vector<Vertex*> selected_tri;
   
     //    std::cout<<"Found "<<vtxs_->size()<<" Unconstrained Vertices"<<std::endl;
@@ -176,7 +176,8 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
         Particle* ele = nullptr;       
         Particle* pos = nullptr;
 
-        bool foundParts = _ah->GetParticlesFromVtxAndParticleList(*fspart_,vtx,ele,pos);
+	//        bool foundParts = _ah->GetParticlesFromVtxAndParticleList(*fspart_,vtx,ele,pos);
+        bool foundParts =  _ah->GetParticlesFromVtx(vtx,ele,pos);
 
 	if(debug_)	std::cout<<"Checking Particles"<<std::endl;
         if (!foundParts) {
@@ -184,8 +185,6 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
 	  continue;
         }
         
-        CalCluster ele_clu=ele->getCluster();
-        CalCluster pos_clu=pos->getCluster();
    	//        Trigger requirement - *really hate* having to do it here for each vertex.
 	if(debug_)  std::cout<<"Checking Trigger"<<std::endl;
 	if (isData) {
@@ -197,45 +196,58 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
             }
           }
 	}
-       
+	/*       
         Track ele_trk = ele->getTrack();  //wish these were still pointers to the track...why did this change? 
         Track pos_trk = pos->getTrack();
 	Track* ele_trk_from_list = _ah->GetTrackFromParticle(*trks_,ele);
 	Track* pos_trk_from_list = _ah->GetTrackFromParticle(*trks_,pos);
-        int n_hits_ele=ele_trk_from_list->getTrackerHitCount();
+	int n_hits_ele=ele_trk_from_list->getTrackerHitCount();
         int n_hits_pos=pos_trk_from_list->getTrackerHitCount();
+	*/
+	Track* ele_trk=(Track*) ele->getTrack().Clone();
+	Track* pos_trk=(Track*) pos->getTrack().Clone();
+	int n_hits_ele=ele_trk->getTrackerHitCount();
+        int n_hits_pos=pos_trk->getTrackerHitCount();
+
+
+	CalCluster ele_clu=ele->getCluster();
+	CalCluster pos_clu=pos->getCluster();
 
         TVector3 ele_mom;
-        ele_mom.SetX(ele->getMomentum()[0]);
-        ele_mom.SetY(ele->getMomentum()[1]);
-        ele_mom.SetZ(ele->getMomentum()[2]);
+        ele_mom.SetX(ele_trk->getMomentum()[0]);
+        ele_mom.SetY(ele_trk->getMomentum()[1]);
+        ele_mom.SetZ(ele_trk->getMomentum()[2]);
 
         TVector3 pos_mom;
-        pos_mom.SetX(pos->getMomentum()[0]);
-        pos_mom.SetY(pos->getMomentum()[1]);
-        pos_mom.SetZ(pos->getMomentum()[2]);
-        
+        pos_mom.SetX(pos_trk->getMomentum()[0]);
+        pos_mom.SetY(pos_trk->getMomentum()[1]);
+        pos_mom.SetZ(pos_trk->getMomentum()[2]);
+
+	
 	if(debug_)std::cout<<" Going through cuts "<<std::endl;
         if (!vtxSelector->passCutGt("eleNHits_gt",n_hits_ele,weight))
           continue;
         if (!vtxSelector->passCutGt("posNHits_gt",n_hits_pos,weight))
             continue;
-
+	if(debug_)std::cout<<" Pass nHits for each track cut"<<std::endl;
         if (!vtxSelector->passCutLt("eleMom_lt",ele_mom.Mag(),weight))
             continue;
+	if(debug_)std::cout<<" Pass electron momentum cut"<<std::endl;
 
         //Ele Track Quality
-        if (!vtxSelector->passCutLt("eleTrkChi2_lt",ele_trk.getChi2Ndf(),weight))
+        if (!vtxSelector->passCutLt("eleTrkChi2_lt",ele_trk->getChi2Ndf(),weight))
             continue;
         
         //Pos Track Quality
-        if (!vtxSelector->passCutLt("posTrkChi2_lt",pos_trk.getChi2Ndf(),weight))
+        if (!vtxSelector->passCutLt("posTrkChi2_lt",pos_trk->getChi2Ndf(),weight))
           continue;
+	if(debug_)std::cout<<" Pass chi^2 for each track"<<std::endl;
 
         //Vertex Quality
         if (!vtxSelector->passCutLt("chi2unc_lt",vtx->getChi2(),weight))
             continue;
         
+	if(debug_)std::cout<<" Pass vertex chi2 cut"<<std::endl;
 
         //Ele min momentum cut
         if (!vtxSelector->passCutGt("eleMom_gt",ele_mom.Mag(),weight))
@@ -245,6 +257,9 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
         if (!vtxSelector->passCutGt("posMom_gt",pos_mom.Mag(),weight))
             continue;
 
+	if(debug_)std::cout<<" Pass min p for each track "<<std::endl;
+
+
         //Max vtx momentum
         
         if (!vtxSelector->passCutLt("maxVtxMom_lt",(ele_mom+pos_mom).Mag(),weight))
@@ -252,6 +267,7 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
 		
         if (!vtxSelector->passCutGt("minVtxMom_gt",(ele_mom+pos_mom).Mag(),weight))
             continue;
+	if(debug_)std::cout<<" Pass vertex momentum cuts"<<std::endl;
 
 
 	double corr_eleClusterTime=666;
@@ -263,8 +279,8 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
         double corr_eleTrackTime=-666;
         double corr_posTrackTime=-666;
         
-        corr_eleTrackTime=ele_trk.getTrackTime() - trkTimeOffset_;
-        corr_posTrackTime=pos_trk.getTrackTime() - trkTimeOffset_;
+        corr_eleTrackTime=ele_trk->getTrackTime() - trkTimeOffset_;
+        corr_posTrackTime=pos_trk->getTrackTime() - trkTimeOffset_;
 
         bool hasEleCluster=corr_eleClusterTime>-300; //this is kludgy but the default time is set at -9999 ns...anything < ~ -100 ns means it was not filled...
         bool hasPosCluster=corr_posClusterTime>-300;       
@@ -276,6 +292,7 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
         if (!vtxSelector->passCutLt("posTrkTime_lt",fabs(corr_posTrackTime),weight))
           continue;
 
+	if(debug_)std::cout<<" Pass track time cuts"<<std::endl;
 	
 	//Ele Track-Cluster Time Difference
 	if(hasEleCluster)
@@ -287,31 +304,38 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
 	  if (!vtxSelector->passCutLt("posTrkCluTimeDiff_lt",fabs(corr_posTrackTime - corr_posClusterTime),weight))
 	    continue;
 
+	if(debug_)std::cout<<" Pass cluster match cuts"<<std::endl;
 
         //Ele Pos Cluster Tme Difference
 	if(hasEleCluster && hasPosCluster)
 	  if (!vtxSelector->passCutLt("eleposCluTimeDiff_lt",fabs(corr_eleClusterTime - corr_posClusterTime),weight))
 	    continue;
+
+	if(debug_)std::cout<<" Pass ele-pos cluster time difference...and that's it!"<<std::endl;
+
         _vtx_histos->Fill1DVertex(vtx,
                                   ele,
                                   pos,
-				  // &ele_trk,
-				  // &pos_trk,
-                                  ele_trk_from_list,
-                                  pos_trk_from_list,
+				  ele_trk,
+				  pos_trk,
+				  // ele_trk_from_list,
+                                  //pos_trk_from_list,
                                   trkTimeOffset_,
                                   weight);
-        
+	if(debug_)std::cout<<" Filled 1D vertex plots for vtx pre-selection "<<std::endl;		
         _vtx_histos->Fill2DHistograms(vtx,weight);
-        _vtx_histos->Fill2DTrack(ele_trk_from_list,weight,"ele_");
-        _vtx_histos->Fill2DTrack(pos_trk_from_list,weight,"pos_");
-	_vtx_histos->FillTrackClusterHistos(std::pair<CalCluster,Track>(ele_clu,ele_trk),std::pair<CalCluster,Track>(pos_clu,pos_trk),calTimeOffset_,trkTimeOffset_,clus_,weight);
+        _vtx_histos->Fill2DTrack(ele_trk,weight,"ele_");
+        _vtx_histos->Fill2DTrack(pos_trk,weight,"pos_");	
+	if(debug_)std::cout<<" Filled 2D vertex plots for vtx pre-selection "<<std::endl;		
+	_vtx_histos->FillTrackClusterHistos(std::pair<CalCluster,Track*>(ele_clu,ele_trk),std::pair<CalCluster,Track*>(pos_clu,pos_trk),calTimeOffset_,trkTimeOffset_,weight);
+	if(debug_)std::cout<<" Filled track-cluster plots pre-selection "<<std::endl;		
         selected_tri.push_back(vtx);       
         vtxSelector->clearSelector();
     }
     
     if(debug_)    std::cout<<"Found "<<selected_tri.size()<<" Selected Vertices"<<std::endl;
     _vtx_histos->Fill1DHisto("n_vertices_h",selected_tri.size()); 
+    /*
     if (trks_){
       _vtx_histos->Fill1DHisto("n_tracks_h",trks_->size(),weight); 
       _vtx_histos->Fill1DHisto("n_positrons_h",nPositrons,weight);
@@ -320,7 +344,7 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
       
     _vtx_histos->Fill1DHisto("n_pos_clusters_h",nPosSideClusters,weight);
     _vtx_histos->Fill1DHisto("n_ele_clusters_h",nEleSideClusters,weight);
-    
+    */
     //Make Plots for each region: loop on each region. Check if the region has the cut and apply it
 
     for (auto region : _regions ) {
@@ -333,16 +357,15 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
 	Vertex* vtx = cand;
 	Particle* ele = nullptr;
 	Particle* pos = nullptr;        
-        //        bool foundParts = _ah->GetParticlesFromVtx(vtx,ele,pos);
-
-        bool foundParts = _ah->GetParticlesFromVtxAndParticleList(*fspart_,vtx,ele,pos);
+	bool foundParts = _ah->GetParticlesFromVtx(vtx,ele,pos);
+	//        bool foundParts = _ah->GetParticlesFromVtxAndParticleList(*fspart_,vtx,ele,pos);
 	if(debug_)	std::cout<<"Checking Particles"<<std::endl;
         if (!foundParts) {
 	  std::cout<<"TridentWABAnaProcessor::WARNING::Found vtx without ele/pos. Skip."<<std::endl;
 	  continue;
         }        
-	Track ele_trk =  ele->getTrack();
-	Track pos_trk = pos->getTrack();
+	Track* ele_trk =(Track*)  ele->getTrack().Clone();
+	Track* pos_trk =(Track*)  pos->getTrack().Clone();
 
         CalCluster ele_clu=ele->getCluster(); 
         CalCluster pos_clu=pos->getCluster();
@@ -352,18 +375,18 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
 	double pos_E = pos->getEnergy();
 	
 	TVector3 ele_mom;
-	ele_mom.SetX(ele->getMomentum()[0]);
-	ele_mom.SetY(ele->getMomentum()[1]);
-	ele_mom.SetZ(ele->getMomentum()[2]);
+	ele_mom.SetX(ele_trk->getMomentum()[0]);
+	ele_mom.SetY(ele_trk->getMomentum()[1]);
+	ele_mom.SetZ(ele_trk->getMomentum()[2]);
 	
 	TVector3 pos_mom;
-	pos_mom.SetX(pos->getMomentum()[0]);
-	pos_mom.SetY(pos->getMomentum()[1]);
-	pos_mom.SetZ(pos->getMomentum()[2]);
+	pos_mom.SetX(pos_trk->getMomentum()[0]);
+	pos_mom.SetY(pos_trk->getMomentum()[1]);
+	pos_mom.SetZ(pos_trk->getMomentum()[2]);
 	
 	if (!_reg_vtx_selectors[region]->passCutGt("radMom_gt",(ele_mom+pos_mom).Mag()/beamE_,weight))
 	  continue;
-
+	/*
         if (!_reg_vtx_selectors[region]->passCutLt("nPosTracks_lt",nPositrons,weight))
           continue ;
         if (!_reg_vtx_selectors[region]->passCutLt("nEleTracks_lt",nElectrons,weight))
@@ -373,10 +396,10 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
           continue; 
         if (!_reg_vtx_selectors[region]->passCutEq("nEleSideClusters_eq",nEleSideClusters,weight))
           continue; 
-	
+	*/
 	if(!isData){
-	  std::pair<Track*,MCParticle*> eleMCMatch=matchToMCParticle(&ele_trk,*mcParts_);
-	  std::pair<Track*,MCParticle*> posMCMatch=matchToMCParticle(&pos_trk,*mcParts_);
+	  std::pair<Track*,MCParticle*> eleMCMatch=matchToMCParticle(ele_trk,*mcParts_);
+	  std::pair<Track*,MCParticle*> posMCMatch=matchToMCParticle(pos_trk,*mcParts_);
 	  if(!_reg_vtx_selectors[region]->passCutEq("eleMCMatched",eleMCMatch.second!=NULL,weight))
 	    continue;
 	  if(!_reg_vtx_selectors[region]->passCutEq("posMCMatched",posMCMatch.second!=NULL,weight))
@@ -409,8 +432,8 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
         double corr_eleTrackTime=-666;
         double corr_posTrackTime=-666;
         
-        corr_eleTrackTime=ele_trk.getTrackTime() - trkTimeOffset_;
-        corr_posTrackTime=pos_trk.getTrackTime() - trkTimeOffset_;
+        corr_eleTrackTime=ele_trk->getTrackTime() - trkTimeOffset_;
+        corr_posTrackTime=pos_trk->getTrackTime() - trkTimeOffset_;
 
         bool hasEleCluster=corr_eleClusterTime>-300; //this is kludgy but the default time is set at -9999 ns...anything < ~ -100 ns means it was not filled...
         bool hasPosCluster=corr_posClusterTime>-300;
@@ -422,13 +445,13 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
 	        
 	bool foundL1ele = false;
 	bool foundL2ele = false;
-	Track* ele_trk_from_list = _ah->GetTrackFromParticle(*trks_,ele);
-	Track* pos_trk_from_list = _ah->GetTrackFromParticle(*trks_,pos);
-        _ah->InnermostLayerCheck(ele_trk_from_list, foundL1ele, foundL2ele);   
+	//	Track* ele_trk_from_list = _ah->GetTrackFromParticle(*trks_,ele);
+	//	Track* pos_trk_from_list = _ah->GetTrackFromParticle(*trks_,pos);
+        _ah->InnermostLayerCheck(ele_trk, foundL1ele, foundL2ele);   
         
 	bool foundL1pos = false;
 	bool foundL2pos = false;
-        _ah->InnermostLayerCheck(pos_trk_from_list, foundL1pos, foundL2pos);  
+        _ah->InnermostLayerCheck(pos_trk, foundL1pos, foundL2pos);  
         
 	int layerCombo=-1;
 	if (foundL1pos&&foundL1ele) //L1L1
@@ -453,6 +476,7 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
 	final_tri.push_back(vtx);
 
       }// preselected vertices
+
       _reg_vtx_histos[region]->Fill1DHisto("n_vertices_h",selected_tri.size(),weight);
       _reg_vtx_histos[region]->Fill1DHisto("n_vertices_passallcuts_h",nvertPass,weight);
       
@@ -463,9 +487,9 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
       // get objects we need for this candidate....again...this is lame.  I should encapsulate this or something...
       Particle* ele = nullptr;
       Particle* pos = nullptr;        
-      _ah->GetParticlesFromVtxAndParticleList(*fspart_,vtx,ele,pos);
-      Track ele_trk = ele->getTrack();
-      Track pos_trk = pos->getTrack();
+      _ah->GetParticlesFromVtx(vtx,ele,pos);
+      Track* ele_trk = (Track*)ele->getTrack().Clone();
+      Track* pos_trk = (Track*)pos->getTrack().Clone();
       CalCluster ele_clu=ele->getCluster(); 
       CalCluster pos_clu=pos->getCluster();
 
@@ -474,22 +498,22 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
       double corr_eleClusterTime = ele_clu.getTime() - calTimeOffset_;
       double corr_posClusterTime = pos_clu.getTime() - calTimeOffset_;
       
-      double corr_eleTrackTime=ele_trk.getTrackTime() - trkTimeOffset_;
-      double corr_posTrackTime=pos_trk.getTrackTime() - trkTimeOffset_;
+      double corr_eleTrackTime=ele_trk->getTrackTime() - trkTimeOffset_;
+      double corr_posTrackTime=pos_trk->getTrackTime() - trkTimeOffset_;
       if(debug_){
         std::cout<<"***********************************"<<std::endl;
-        std::cout<<"nPositrons in event = "<<nPositrons<<std::endl;
-        std::cout<<"positron position at ecal:  x = "<<pos_trk.getPositionAtEcal().at(0)
-                 <<"; y = "<<pos_trk.getPositionAtEcal().at(1)<<"; p = "<<pos_trk.getMomentum().at(2)<<"  trk time = "<<corr_posTrackTime<<std::endl;
+        //std::cout<<"nPositrons in event = "<<nPositrons<<std::endl;
+        std::cout<<"positron position at ecal:  x = "<<pos_trk->getPositionAtEcal().at(0)
+                 <<"; y = "<<pos_trk->getPositionAtEcal().at(1)<<"; p = "<<pos_trk->getMomentum().at(2)<<"  trk time = "<<corr_posTrackTime<<std::endl;
         std::cout<<"positron Cluster:  x = "<<pos_clu.getPosition().at(0)
                  <<"; y = "<<pos_clu.getPosition().at(1)<<"; E = "<<pos_clu.getEnergy()<<std::endl;
-        std::cout<<"clus_->size() = "<<clus_->size()<<std::endl;
-        for(int k_clu=0; k_clu<clus_->size(); k_clu++){
-          CalCluster* clu=clus_->at(k_clu);
-          double corr_ClusterTime = clu->getTime() - calTimeOffset_;
-          std::cout<<"CalCluster k = "<<k_clu<<" x = "<<clu->getPosition().at(0)<<" y = "<<clu->getPosition().at(1)<<"  cluster time = "<< corr_ClusterTime<<"; E = "<<clu->getEnergy()<<std::endl;
-        }
-        
+	//        std::cout<<"clus_->size() = "<<clus_->size()<<std::endl;
+	//        for(int k_clu=0; k_clu<clus_->size(); k_clu++){
+	//CalCluster* clu=clus_->at(k_clu);
+	// double corr_ClusterTime = clu->getTime() - calTimeOffset_;
+	//std::cout<<"CalCluster k = "<<k_clu<<" x = "<<clu->getPosition().at(0)<<" y = "<<clu->getPosition().at(1)<<"  cluster time = "<< corr_ClusterTime<<"; E = "<<clu->getEnergy()<<std::endl;
+	//}
+	/*
         std::cout<<"fspart_->size() = "<<fspart_->size()<<std::endl;
         for(int j_part=0; j_part<fspart_->size();j_part++){
           Particle* part=fspart_->at(j_part);
@@ -502,39 +526,42 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
                    <<"; y = "<<trk.getPositionAtEcal().at(1)<<"; p = "<<trk.getMomentum().at(2)<<std::endl;
           std::cout<<"FSParticle cluster::  x = "<<clu.getPosition().at(0)<<" y = "<<clu.getPosition().at(1)<<"; E = "<<clu.getEnergy()<<"; clu time = "<<corr_ClusterTime<<std::endl;
         }
+	*/
 	std::cout<<"***********************************"<<std::endl;
-
+	/*
         for(int j_trk=0; j_trk<trks_->size();j_trk++){
           Track* trk=trks_->at(j_trk);
           std::cout<<"KFTrack::  charge = "<<trk->getCharge()<<";  nHits = "<<trk->getTrackerHitCount()<<"; trk time = "<<trk->getTrackTime()<<std::endl;
           std::cout<<"KFtrack::   x = "<<trk->getPositionAtEcal().at(0)
                    <<"; y = "<<trk->getPositionAtEcal().at(1)<<"; p = "<<trk->getMomentum().at(2)<<std::endl;
 	}
+	*/
         std::cout<<"***********************************"<<std::endl;
       }
       //	continue;   
       //assign the layer codes for this event
-      Track* ele_trk_from_list = _ah->GetTrackFromParticle(*trks_,ele);
-      Track* pos_trk_from_list = _ah->GetTrackFromParticle(*trks_,pos);
-      if(debug_)std::cout<<"fsp->getTrack()::  electron time = "<<ele_trk.getTrackTime()<<std::endl;
-      if(debug_)std::cout<<"from track list::  electron time = "<<ele_trk_from_list->getTrackTime()<<std::endl;
-      _reg_vtx_histos[region]->AssignLayerCode( ele_trk_from_list,pos_trk_from_list);
+      //      Track* ele_trk_from_list = _ah->GetTrackFromParticle(*trks_,ele);
+      //      Track* pos_trk_from_list = _ah->GetTrackFromParticle(*trks_,pos);
+      if(debug_)std::cout<<"fsp->getTrack()::  electron time = "<<ele_trk->getTrackTime()<<std::endl;
+      //      if(debug_)std::cout<<"from track list::  electron time = "<<ele_trk_from_list->getTrackTime()<<std::endl;
+      _reg_vtx_histos[region]->AssignLayerCode( ele_trk,pos_trk);
       _reg_vtx_histos[region]->Fill2DHistograms(vtx,weight);
       _reg_vtx_histos[region]->Fill1DVertex(vtx,
                                             ele,
                                             pos, 
-                                            //&ele_trk,
-                                            //&pos_trk,
-                                            ele_trk_from_list,
-                                            pos_trk_from_list,
+                                            ele_trk,
+                                            pos_trk,
+                                            //ele_trk_from_list,
+                                            //pos_trk_from_list,
 					    trkTimeOffset_,
                                             weight);
       
-      _reg_vtx_histos[region]->Fill2DTrack(ele_trk_from_list,weight,"ele_");
-      _reg_vtx_histos[region]->Fill2DTrack(pos_trk_from_list,weight,"pos_");
-      _reg_vtx_histos[region]->FillTrackClusterHistos(std::pair<CalCluster,Track>(ele_clu,ele_trk),std::pair<CalCluster,Track>(pos_clu,pos_trk),calTimeOffset_,trkTimeOffset_,clus_,weight);
+      _reg_vtx_histos[region]->Fill2DTrack(ele_trk,weight,"ele_");
+      _reg_vtx_histos[region]->Fill2DTrack(pos_trk,weight,"pos_");
+      //      _reg_vtx_histos[region]->FillTrackClusterHistos(std::pair<CalCluster,Track*>(ele_clu,ele_trk),std::pair<CalCluster,Track*>(pos_clu,pos_trk),calTimeOffset_,trkTimeOffset_,clus_,weight);
+      _reg_vtx_histos[region]->FillTrackClusterHistos(std::pair<CalCluster,Track*>(ele_clu,ele_trk),std::pair<CalCluster,Track*>(pos_clu,pos_trk),calTimeOffset_,trkTimeOffset_,weight);
       
-      
+      /*      
       if (trks_){
 	_reg_vtx_histos[region]->Fill1DHisto("n_tracks_h",trks_->size(),weight);
         _reg_vtx_histos[region]->Fill1DHisto("n_positrons_h",nPositrons,weight);
@@ -542,7 +569,7 @@ bool TridentWABAnaProcessor::process(IEvent* ievent) {
       }
       _reg_vtx_histos[region]->Fill1DHisto("n_pos_clusters_h",nPosSideClusters,weight);
       _reg_vtx_histos[region]->Fill1DHisto("n_ele_clusters_h",nEleSideClusters,weight);
-
+      */
       //Just for the selected vertex
       _reg_tuples[region]->setVariableValue("unc_vtx_mass", vtx->getInvMass());
       
