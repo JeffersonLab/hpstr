@@ -5,6 +5,8 @@
 #include "TTree.h"
 #include "TFile.h"
 
+#include <functional>
+
 void usage() {
   std::cout << R"(
  Run the smearing tool over known momentum values for testing.
@@ -68,7 +70,7 @@ double fixed_momentum_sampler() {
 }
 
 double normal_momentum() {
-  static std::normal_distribution dist(1.0, 0.05);
+  static std::normal_distribution<double> dist(1.0, 0.05);
   static std::mt19937 gen;
   return dist(gen);
 }
