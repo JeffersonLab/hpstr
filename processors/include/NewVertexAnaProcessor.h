@@ -18,6 +18,7 @@
 #include "utilities.h"
 
 #include "TrackSmearingTool.h"
+#include "TrackBiasingTool.h"
 #include "FlatTupleMaker.h"
 #include "AnaHelpers.h"
 
@@ -117,6 +118,8 @@ class NewVertexAnaProcessor : public Processor {
 
         std::string pSmearingFile_{""};
         std::shared_ptr<TrackSmearingTool> smearingTool_;
+        std::string pBiasingFile_{""};
+        std::shared_ptr<TrackBiasingTool> biasingTool_;
 
         std::shared_ptr<TrackHistos> _vtx_histos; //!< description
         std::shared_ptr<MCAnaHistos> _mc_vtx_histos; //!< description

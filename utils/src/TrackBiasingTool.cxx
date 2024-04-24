@@ -22,10 +22,38 @@ TrackBiasingTool::TrackBiasingTool(const std::string& biasingfile,
 
 }
 
+double TrackBiasingTool::biasTrackP(const Track& trk) {
 
-Track TrackBiasingTool::biasTrack(const Track& track) {
+  double p = trk.getP();
+  double isTop = trk.getTanLambda() > 0. ? true : false;
+  double q = trk.getCharge();
+    
+  TH1D* bias_histo_ = isTop ?  eop_h_top_ : eop_h_bot_;
+    
+  int binN = bias_histo_->GetXaxis()->FindBin(q);
+  if (debug_)
+    std::cout<<"Track charge="<<q<<" bin="<<binN<<std::endl;
   
-  Track trk;
+  double eop_bias = bias_histo_->GetBinContent(binN);
+
+  double pcorr = p * eop_bias;
   
-  return trk;
+  if (debug_)
+    std::cout<<"Original p = " << p <<" corrected p="<< pcorr <<std::endl;
+  
+  return pcorr;
+}
+
+void TrackBiasingTool::updateWithBiasP(Track& trk) {
+
+  double biased_p = biasTrackP(trk);
+  
+  std::vector<double> momentum = trk.getMomentum();
+  double unbiasedp = trk.getP();
+  
+  for (double& coordinate : momentum)
+    coordinate *= (biased_p / unbiasedp);
+
+  trk.setMomentum(momentum);
+  
 }

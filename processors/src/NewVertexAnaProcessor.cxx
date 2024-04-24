@@ -39,6 +39,7 @@ void NewVertexAnaProcessor::configure(const ParameterSet& parameters) {
         analysis_        = parameters.getString("analysis");
 
         pSmearingFile_ = parameters.getString("pSmearingFile",pSmearingFile_);
+	pBiasingFile_  = parameters.getString("pBiasingFile",pBiasingFile_);
 
         //region definitions
         regionSelections_ = parameters.getVString("regionDefinitions",regionSelections_);
@@ -251,6 +252,11 @@ void NewVertexAnaProcessor::initialize(TTree* tree) {
       // just using the same seed=42 for now
       smearingTool_    =   std::make_shared<TrackSmearingTool>(pSmearingFile_,true);
     }
+
+    if (not pBiasingFile_.empty()) {
+      biasingTool_ = std::make_shared<TrackBiasingTool>(pBiasingFile_);
+    }
+    
 }
 
 bool NewVertexAnaProcessor::process(IEvent* ievent) {
@@ -328,7 +334,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
     // Loop over vertices in event and make selections
     for ( int i_vtx = 0; i_vtx <  vtxs_->size(); i_vtx++ ) {
         vtxSelector->getCutFlowHisto()->Fill(0.,weight);
-
+	
         Vertex* vtx = vtxs_->at(i_vtx);
         Particle* ele = nullptr;
         Particle* pos = nullptr;
@@ -357,6 +363,13 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
         ele_trk.applyCorrection("track_time",eleTrackTimeBias_);
         pos_trk.applyCorrection("track_time", posTrackTimeBias_);
 
+	//Correct for the momentum bias
+	
+	if (biasingTool_) {
+	  biasingTool_->updateWithBiasP(ele_trk);
+          biasingTool_->updateWithBiasP(pos_trk);
+	}
+	
         double invm_smear = 1.;
         if (smearingTool_) {
           double unsmeared_prod = ele_trk.getP()*pos_trk.getP();
@@ -365,6 +378,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
           double smeared_prod = ele_trk.getP()*pos_trk.getP();
           invm_smear = sqrt(smeared_prod/unsmeared_prod);
         }
+			
 
         //Add the momenta to the tracks - do not do that
         //ele_trk.setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
@@ -657,7 +671,12 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             //Track Time Corrections
             ele_trk.applyCorrection("track_time",eleTrackTimeBias_);
             pos_trk.applyCorrection("track_time", posTrackTimeBias_);
-    
+
+	    if (biasingTool_) {
+	      biasingTool_->updateWithBiasP(ele_trk);
+	      biasingTool_->updateWithBiasP(pos_trk);
+	    }
+	    	    
             double invm_smear = 1.;
             if (smearingTool_) {
               double unsmeared_prod = ele_trk.getP()*pos_trk.getP();
@@ -1052,6 +1071,16 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             //Track Time Corrections
             ele_trk.applyCorrection("track_time",eleTrackTimeBias_);
             pos_trk.applyCorrection("track_time", posTrackTimeBias_);
+
+
+	    // Track Momentum bias
+
+	    if (biasingTool_) {
+	      biasingTool_->updateWithBiasP(ele_trk);
+	      biasingTool_->updateWithBiasP(pos_trk);
+	    }
+	    
+	    
             double invm_smear = 1.;
             if (smearingTool_) {
               double unsmeared_prod = ele_trk.getP()*pos_trk.getP();

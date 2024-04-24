@@ -22,3 +22,27 @@ The histogram storing the smearing terms as function of the number of hits is na
 ```
 python3.9 smearingPlots.py -i fee_2pt3_recon.root -m fee_2pt3_recon_mc.root
 ```
+
+
+
+
+
+## TrackBiasingTool
+
+The track biasing tool can be used to bias some of the track fit bias parameters or to evaluating tracking systematics
+on the analysis.
+
+### Workflow
+
+Currently the EoP average biases are stored in two histograms for top and bottom volumes separated by charge (e-/e+).
+They can be loaded in the trackBiasing tool that is designed to take in input a modifiable track and will perform the
+bias of (for the moment) the momentum.
+
+The TrackBiasingTool can be loaded in the anaProcessors and used to bias tracks that will then be used to form the flat ntuples
+or final plots.
+
+### Histograms
+
+The biasing tool for the moment needs two histograms:
+<Tracks>_eop_vs_charge_<volume>
+Where <Tracks> can be for example the "KalmanFullTracks" and <volume> can be "top" or "bot"

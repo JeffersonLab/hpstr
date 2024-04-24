@@ -23,11 +23,10 @@ class TrackBiasingTool {
   TrackBiasingTool(const std::string& biasingfile,
 		   const std::string& tracks = "KalmanFullTracks");
   
-  Track biasTrack(const Track& track);
+  double biasTrackP(const Track& track);
+  void updateWithBiasP(Track& trk);
   
 private:
-  
-  // General Normal distributions
   
   std::shared_ptr<TFile> biasingfile_;
   
