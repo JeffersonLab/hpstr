@@ -53,6 +53,9 @@ void NewVertexAnaProcessor::configure(const ParameterSet& parameters) {
         eleTrackTimeBias_ = parameters.getDouble("eleTrackTimeBias",eleTrackTimeBias_);
         posTrackTimeBias_ = parameters.getDouble("posTrackTimeBias",posTrackTimeBias_);
 
+	//bField scale factor (ONLY to correct for mistakes in ntuplizing). If < 0  is not used
+	bFieldScaleFactor_ = parameters.getDouble("bFieldScaleFactor",-1);
+	
     }
     catch (std::runtime_error& error)
     {
@@ -355,21 +358,42 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
         if (debug_) std::cout << "got parts" << std::endl;
         Track ele_trk = ele->getTrack();
         Track pos_trk = pos->getTrack();
+	
+	if (debug_) {
+	  std::cout<<"Check Ele/Pos Track momenta"<<std::endl;
+	  std::cout<<ele_trk.getP()<<" "<<pos_trk.getP()<<std::endl;
+	  std::cout<<ele_trk.getOmega()<<" "<<pos_trk.getOmega()<<std::endl;
+	}
 
-        //Beam Position Corrections
+	// Beam Position Corrections
         ele_trk.applyCorrection("z0", beamPosCorrections_.at(1));
         pos_trk.applyCorrection("z0", beamPosCorrections_.at(1));
-        //Track Time Corrections
+        // Track Time Corrections
         ele_trk.applyCorrection("track_time",eleTrackTimeBias_);
         pos_trk.applyCorrection("track_time", posTrackTimeBias_);
 
-	//Correct for the momentum bias
+	// Correct for the momentum bias
 	
 	if (biasingTool_) {
+	  
+	  // Correct for wrong track momentum - Bug Fix
+	  // In case there was mis-configuration during reco/hpstr-ntuple step, correct
+	  // the momentum magnitude here using the right bField for the data taking year
+	  
+	  if (bFieldScaleFactor_ > 0) {
+	    biasingTool_->updateWithBiasP(ele_trk,bFieldScaleFactor_);
+	    biasingTool_->updateWithBiasP(pos_trk,bFieldScaleFactor_);
+	  }
+	  
 	  biasingTool_->updateWithBiasP(ele_trk);
           biasingTool_->updateWithBiasP(pos_trk);
 	}
-	
+
+	if (debug_) {
+	  std::cout<<"Corrected Ele/Pos Track momenta"<<std::endl;
+	  std::cout<<ele_trk.getP()<<" "<<pos_trk.getP()<<std::endl;
+	}
+		
         double invm_smear = 1.;
         if (smearingTool_) {
           double unsmeared_prod = ele_trk.getP()*pos_trk.getP();
@@ -620,6 +644,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
     //TODO Clean this up => Cuts should be implemented in each region?
     //TODO Bring the preselection out of this stupid loop
 
+    
 
     if (debug_) std::cout << "start regions" << std::endl;
     //TODO add yields. => Quite terrible way to loop.
@@ -671,8 +696,15 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             //Track Time Corrections
             ele_trk.applyCorrection("track_time",eleTrackTimeBias_);
             pos_trk.applyCorrection("track_time", posTrackTimeBias_);
-
+	    
 	    if (biasingTool_) {
+
+	      //Correct the wrong Bfield first
+	      if (bFieldScaleFactor_ > 0) {
+		biasingTool_->updateWithBiasP(ele_trk,bFieldScaleFactor_);
+		biasingTool_->updateWithBiasP(pos_trk,bFieldScaleFactor_);
+	      }
+	      
 	      biasingTool_->updateWithBiasP(ele_trk);
 	      biasingTool_->updateWithBiasP(pos_trk);
 	    }
@@ -1076,6 +1108,17 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
 	    // Track Momentum bias
 
 	    if (biasingTool_) {
+
+	      // Correct for wrong track momentum - Bug Fix
+	      // In case there was mis-configuration during reco/hpstr-ntuple step, correct
+	      // the momentum magnitude here using the right bField for the data taking year
+	      
+	      if (bFieldScaleFactor_ > 0) {
+		biasingTool_->updateWithBiasP(ele_trk,bFieldScaleFactor_);
+		biasingTool_->updateWithBiasP(pos_trk,bFieldScaleFactor_);
+	      }
+	      
+	      
 	      biasingTool_->updateWithBiasP(ele_trk);
 	      biasingTool_->updateWithBiasP(pos_trk);
 	    }

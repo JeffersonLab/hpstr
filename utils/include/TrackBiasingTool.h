@@ -24,6 +24,11 @@ class TrackBiasingTool {
 		   const std::string& tracks = "KalmanFullTracks");
   
   double biasTrackP(const Track& track);
+
+  //Update the track P with a specific scale Factor
+  void updateWithBiasP(Track& trk, double scaleFactor);
+
+  //Update the track P with scale Factors according to the internal calibration plots
   void updateWithBiasP(Track& trk);
   
 private:

@@ -57,3 +57,15 @@ void TrackBiasingTool::updateWithBiasP(Track& trk) {
   trk.setMomentum(momentum);
   
 }
+
+// This will recompute the track momentum from curvature and store it in the track
+void TrackBiasingTool::updateWithBiasP(Track& trk, double scaleFactor) {
+  
+  std::vector<double> momentum = trk.getMomentum();
+  
+  for (double& coordinate : momentum)
+    coordinate *= scaleFactor ;
+  
+  trk.setMomentum(momentum);    
+  
+}

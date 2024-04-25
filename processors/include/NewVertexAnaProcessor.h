@@ -152,6 +152,8 @@ class NewVertexAnaProcessor : public Processor {
         json v0proj_fits_;//!< json object v0proj
         double eleTrackTimeBias_ = 0.0;
         double posTrackTimeBias_ = 0.0;
+
+        double bFieldScaleFactor_ = -1;
         int current_run_number_{-999}; //!< track current run number
 };
 
