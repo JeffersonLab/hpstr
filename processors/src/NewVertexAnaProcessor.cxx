@@ -333,6 +333,8 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
         if (isData_) {
             if (!vtxSelector->passCutEq("Pair1_eq",(int)evth_->isPair1Trigger(),weight))
                 break;
+            if (!vtxSelector->passCutEq("Single0_eq",(int)evth_->isSingle0Trigger(),weight))
+                break;
         }
 
         bool foundParts = _ah->GetParticlesFromVtx(vtx,ele,pos);

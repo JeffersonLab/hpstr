@@ -30,7 +30,7 @@ p.add_library("libprocessors")
 #          Processors         #
 ###############################
 vtxana = HpstrConf.Processor('vtxana', 'NewVertexAnaProcessor')
-mcana = HpstrConf.Processor('mcpartana', 'MCAnaProcessor')
+#mcana = HpstrConf.Processor('mcpartana', 'MCAnaProcessor')
 ###############################
 #   Processor Configuration   #
 ###############################
@@ -94,12 +94,12 @@ if (options.year == 2016):
     vtxana.parameters["regionDefinitions"] = RegionDefinitions
 
 #MCParticleAna
-mcana.parameters["debug"] = 0
-mcana.parameters["anaName"] = "mcAna"
-mcana.parameters["partColl"] = "MCParticle"
-mcana.parameters["trkrHitColl"] = "TrackerHits"
-mcana.parameters["ecalHitColl"] = "EcalHits"
-mcana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
+#mcana.parameters["debug"] = 0
+#mcana.parameters["anaName"] = "mcAna"
+#mcana.parameters["partColl"] = "MCParticle"
+#mcana.parameters["trkrHitColl"] = "TrackerHits"
+#mcana.parameters["ecalHitColl"] = "EcalHits"
+#mcana.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
 
 # Sequence which the processors will run.
 p.sequence = [vtxana]  # ,mcana]
