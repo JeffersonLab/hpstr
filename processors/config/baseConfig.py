@@ -22,6 +22,7 @@ parser.add_argument("-a", "--analysis", type=str, dest="analysis",
                     help="Which analysis is being run ", metavar="analysis", default="vertex")
 parser.add_argument('--infile', '-i', type=str, dest="inFilename", metavar='infiles', nargs="+",
                     help="Input files, specify on or more.")
+parser.add_argument('--seed', '-s', type=int, dest='seed',metavar='seed',default=42)
 
 
 #options = parser.parse_args()

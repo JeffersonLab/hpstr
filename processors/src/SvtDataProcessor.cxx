@@ -163,8 +163,8 @@ bool SvtDataProcessor::process(IEvent* ievent) {
                 
             // Check that the TrackData data structure is correct.  If it's
             // not, throw a runtime exception.   
-            if (track_datum->getNDouble() < 12 || track_datum->getNFloat() != 1 
-                    || track_datum->getNInt() != 1) {
+            if (track_datum->getNDouble() > 14 || track_datum->getNFloat() > 7 
+		    || track_datum->getNInt() != 1) {
                 throw std::runtime_error("[ SvtDataProcessor ]: The collection " 
                         + std::string(Collections::TRACK_DATA)
                         + " has the wrong structure.");
