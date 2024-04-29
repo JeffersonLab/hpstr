@@ -140,7 +140,10 @@ class Particle : public TObject {
         int getPDG() const { return pdg_; }; 
         
         /** @return The particle energy in GeV. */
-        double getEnergy() const { return energy_; }; 
+        double getEnergy() const { return energy_; };
+
+        /** @return The particle momentum  in GeV. */
+        double getP() const {return sqrt(px_*px_ + py_*py_ + pz_*pz_);};
         
         /** @return The invariant mass of the particle in GeV. */
         double getMass() const { return mass_; }; 
