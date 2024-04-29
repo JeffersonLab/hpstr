@@ -105,6 +105,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a9a9c5026fa63f437e3a052d0e766c917"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a38718cd3b3eaea72e89eed3915035c95"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertex.html#a38718cd3b3eaea72e89eed3915035c95">setVtxParameters</a> (const std::vector&lt; float &gt; &amp;parameters)</td></tr>
 <tr class="separator:a38718cd3b3eaea72e89eed3915035c95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1997df0f581a94145b127d86eb99a549"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertex.html#a1997df0f581a94145b127d86eb99a549">setVtxParameters</a> (const TLorentzVector &amp;p1, const TLorentzVector &amp;p2)</td></tr>
+<tr class="separator:a1997df0f581a94145b127d86eb99a549"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47dbdb7e28f800626a242366bfb887ff"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertex.html#a47dbdb7e28f800626a242366bfb887ff">setVtxParameters</a> (const TVector3 &amp;p1, const TVector3 &amp;p2, const double m)</td></tr>
+<tr class="separator:a47dbdb7e28f800626a242366bfb887ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d98a59d4453e8b71e36dff35da0ea8d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertex.html#a9d98a59d4453e8b71e36dff35da0ea8d">setType</a> (const std::string &amp;type)</td></tr>
 <tr class="separator:a9d98a59d4453e8b71e36dff35da0ea8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f000855db408e735c6bc7ac6c39289c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVertex.html#a5f000855db408e735c6bc7ac6c39289c">setID</a> (const int id)</td></tr>
@@ -203,7 +207,7 @@ Private Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00021">21</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00022">22</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a1ae26ed9ee56ee76ada81da66dd0c869"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1ae26ed9ee56ee76ada81da66dd0c869">&#9670;&nbsp;</a></span>Vertex()</h2>
@@ -344,7 +348,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the chi2 </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00095">95</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00103">103</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -372,7 +376,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Returns the covariance matrix as a simple vector of values </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00089">89</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00097">97</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -400,7 +404,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the ID </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00116">116</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00124">124</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -428,7 +432,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the invariant mass </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00119">119</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00127">127</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -456,7 +460,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the invariant mass error </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00122">122</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00130">130</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -484,7 +488,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the NDF </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00098">98</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00106">106</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -511,7 +515,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00136">136</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00144">144</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -538,7 +542,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00126">126</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00134">134</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -565,7 +569,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00127">127</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00135">135</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -592,7 +596,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00128">128</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00136">136</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -619,7 +623,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00129">129</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00137">137</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -646,7 +650,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00131">131</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00139">139</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -673,7 +677,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00132">132</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00140">140</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -700,7 +704,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00133">133</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00141">141</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -727,7 +731,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00134">134</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00142">142</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -754,7 +758,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00086">86</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00094">94</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -782,7 +786,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the position vector </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00110">110</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00118">118</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -810,7 +814,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the probability </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00092">92</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00100">100</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -838,7 +842,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the Target Constrained Sigma X </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00139">139</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00147">147</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -866,7 +870,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the Target Constrained Sigma Y </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00145">145</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00153">153</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -894,7 +898,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the Target Constrained X </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00142">142</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00150">150</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -922,7 +926,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the Target Constrained Y </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00148">148</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00156">156</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -950,7 +954,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the type </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00113">113</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00121">121</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -978,7 +982,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the X position </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00101">101</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00109">109</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1006,7 +1010,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the Y position </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00104">104</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00112">112</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1034,7 +1038,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the Z position </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00107">107</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00115">115</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1063,7 +1067,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Set the chi2 </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00044">44</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00045">45</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1113,7 +1117,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Set the ID </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00075">75</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00083">83</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1142,7 +1146,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Set the NDF </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00047">47</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00048">48</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1221,7 +1225,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Set the probability </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00084">84</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00092">92</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1250,12 +1254,12 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Set the type </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00072">72</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00080">80</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
 <a id="a38718cd3b3eaea72e89eed3915035c95"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a38718cd3b3eaea72e89eed3915035c95">&#9670;&nbsp;</a></span>setVtxParameters()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a38718cd3b3eaea72e89eed3915035c95">&#9670;&nbsp;</a></span>setVtxParameters() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1270,6 +1274,72 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p><a class="el" href="classVertex.html">Vertex</a> parameters depend on LCIO files. The available parameters are invMass, p1X, p2Y, p2X, p1Z, p2Z, p1Y, invMassError For unconstrained: V0PzErr, invMass, V0Pz, vXErr, V0Py, V0Px, V0PErr, V0TargProjY, vZErr, V0TargProjXErr, vYErr, V0TargProjYErr, invMassError, p1X, p2Y, p2X, V0P, p1Z, p1Y, p2Z, V0TargProjX, layerCode, V0PxErr, V0PyErr, </p>
+
+<p class="definition">Definition at line <a class="el" href="Vertex_8cxx_source.html#l00081">81</a> of file <a class="el" href="Vertex_8cxx_source.html">Vertex.cxx</a>.</p>
+
+</div>
+</div>
+<a id="a1997df0f581a94145b127d86eb99a549"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1997df0f581a94145b127d86eb99a549">&#9670;&nbsp;</a></span>setVtxParameters() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void setVtxParameters </td>
+          <td>(</td>
+          <td class="paramtype">const TLorentzVector &amp;&#160;</td>
+          <td class="paramname"><em>p1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const TLorentzVector &amp;&#160;</td>
+          <td class="paramname"><em>p2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="Vertex_8cxx_source.html#l00073">73</a> of file <a class="el" href="Vertex_8cxx_source.html">Vertex.cxx</a>.</p>
+
+</div>
+</div>
+<a id="a47dbdb7e28f800626a242366bfb887ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47dbdb7e28f800626a242366bfb887ff">&#9670;&nbsp;</a></span>setVtxParameters() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void setVtxParameters </td>
+          <td>(</td>
+          <td class="paramtype">const TVector3 &amp;&#160;</td>
+          <td class="paramname"><em>p1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const TVector3 &amp;&#160;</td>
+          <td class="paramname"><em>p2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>m</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="Vertex_8cxx_source.html#l00054">54</a> of file <a class="el" href="Vertex_8cxx_source.html">Vertex.cxx</a>.</p>
 
@@ -1300,7 +1370,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Set the X position </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00050">50</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00051">51</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1329,7 +1399,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Set the Y position </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00053">53</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00054">54</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1358,7 +1428,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Set the Z position </p>
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00056">56</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00057">57</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1383,7 +1453,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00154">154</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00162">162</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1407,7 +1477,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00161">161</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00169">169</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1431,7 +1501,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00163">163</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00171">171</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1455,7 +1525,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00158">158</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00166">166</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1479,7 +1549,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00159">159</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00167">167</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1503,7 +1573,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00166">166</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00174">174</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1527,7 +1597,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00155">155</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00163">163</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1551,7 +1621,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00156">156</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00164">164</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1575,7 +1645,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00156">156</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00164">164</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1599,7 +1669,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00156">156</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00164">164</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1623,7 +1693,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00167">167</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00175">175</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1647,7 +1717,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00165">165</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00173">173</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1671,7 +1741,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00156">156</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00164">164</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1695,7 +1765,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00162">162</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00170">170</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>
@@ -1719,7 +1789,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00164">164</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Vertex_8h_source.html#l00172">172</a> of file <a class="el" href="Vertex_8h_source.html">Vertex.h</a>.</p>
 
 </div>
 </div>

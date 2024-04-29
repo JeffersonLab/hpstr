@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['zbihistos_1922',['ZBiHistos',['../classZBiHistos.html',1,'']]]
+  ['zbihistos_1924',['ZBiHistos',['../classZBiHistos.html',1,'']]]
 ];

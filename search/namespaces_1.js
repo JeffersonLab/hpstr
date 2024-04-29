@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['histogramhelpers_1965',['HistogramHelpers',['../namespaceHistogramHelpers.html',1,'']]],
-  ['hpstrconf_1966',['HpstrConf',['../namespaceHpstrConf.html',1,'']]]
+  ['histogramhelpers_1967',['HistogramHelpers',['../namespaceHistogramHelpers.html',1,'']]],
+  ['hpstrconf_1968',['HpstrConf',['../namespaceHpstrConf.html',1,'']]]
 ];
