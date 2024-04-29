@@ -27,9 +27,8 @@ TrackBiasingTool::TrackBiasingTool(const std::string& biasingfile,
 double TrackBiasingTool::getCorrection(const double& p,
 				       const double tanL,
 				       const int q) {
-
-  bool isTop = tanL > 0. ? true : false;
-  TH1D* bias_histo_ = isTop ?  eop_h_top_ : eop_h_bot_;
+  
+  TH1D* bias_histo_ = (tanL > 0.) ?  eop_h_top_ : eop_h_bot_;
   int binN = bias_histo_->GetXaxis()->FindBin(q);
   
   return bias_histo_->GetBinContent(binN);
@@ -40,11 +39,10 @@ double TrackBiasingTool::getCorrection(const double& p,
 double TrackBiasingTool::biasTrackP(const Track& trk) {
 
   double p = trk.getP();
-  bool isTop = trk.getTanLambda() > 0. ? true : false;
   double q = trk.getCharge();
-    
-  TH1D* bias_histo_ = isTop ?  eop_h_top_ : eop_h_bot_;
-    
+  
+  TH1D* bias_histo_ = (trk.getTanLambda() > 0.) ?  eop_h_top_ : eop_h_bot_;
+  
   int binN = bias_histo_->GetXaxis()->FindBin(q);
   if (debug_)
     std::cout<<"Track charge="<<q<<" bin="<<binN<<std::endl;
