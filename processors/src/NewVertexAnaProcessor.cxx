@@ -47,8 +47,12 @@ void NewVertexAnaProcessor::configure(const ParameterSet& parameters) {
         //v0 projection fits
         v0ProjectionFitsCfg_ = parameters.getString("v0ProjectionFitsCfg", v0ProjectionFitsCfg_);
 
-        //beamspot positions
+        //beamspot positions 
         beamPosCfg_ = parameters.getString("beamPosCfg", beamPosCfg_);
+
+	//misc corrections (such as track time bias, z0 bias, etc)
+	//anaCorrectionsCfg_ = parameters.getSTring("anaCorrectionsCfg", anaCorrectionsCfg_);
+	
         //track time bias corrections
         eleTrackTimeBias_ = parameters.getDouble("eleTrackTimeBias",eleTrackTimeBias_);
         posTrackTimeBias_ = parameters.getDouble("posTrackTimeBias",posTrackTimeBias_);
@@ -82,6 +86,14 @@ void NewVertexAnaProcessor::initialize(TTree* tree) {
         _mc_vtx_histos->Define2DHistos();
     }
 
+    //Ana corrections to misc parameters
+    /*
+    if(!anaCorrectionsCfg_.empty()){
+        std::ifstream anac_file(anaCorrectionsCfg_);
+        anac_file >> anac_configs_;
+        anac_file.close();
+    }*/
+
     //Load Run Dependent V0 target projection fits from json
     if(!v0ProjectionFitsCfg_.empty()){
         std::ifstream v0proj_file(v0ProjectionFitsCfg_);
@@ -96,6 +108,7 @@ void NewVertexAnaProcessor::initialize(TTree* tree) {
         bpc_file >> bpc_configs_;
         bpc_file.close();
     }
+
     //    histos = new MCAnaHistos(anaName_);
     //histos->loadHistoConfig(histCfgFilename_)
     //histos->DefineHistos();
