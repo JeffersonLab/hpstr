@@ -1,6 +1,7 @@
 #include "TrackBiasingTool.h"
 #include "TFile.h"
 #include "TH1D.h"
+#include "TVector3.h"
 
 #include <stdexcept>
 
@@ -10,7 +11,7 @@ TrackBiasingTool::TrackBiasingTool(const std::string& biasingfile,
 
 
   biasingfile_ = std::make_shared<TFile>(biasingfile.c_str());
-
+  
   if (!biasingfile_)
     throw std::invalid_argument("Provided input biasing file doesn't exists");
   
@@ -22,14 +23,26 @@ TrackBiasingTool::TrackBiasingTool(const std::string& biasingfile,
 
 }
 
+
+double TrackBiasingTool::getCorrection(const double& p,
+				       const double tanL,
+				       const int q) {
+  
+  TH1D* bias_histo_ = (tanL > 0.) ?  eop_h_top_ : eop_h_bot_;
+  int binN = bias_histo_->GetXaxis()->FindBin(q);
+  
+  return bias_histo_->GetBinContent(binN);
+
+}
+  
+
 double TrackBiasingTool::biasTrackP(const Track& trk) {
 
   double p = trk.getP();
-  double isTop = trk.getTanLambda() > 0. ? true : false;
   double q = trk.getCharge();
-    
-  TH1D* bias_histo_ = isTop ?  eop_h_top_ : eop_h_bot_;
-    
+  
+  TH1D* bias_histo_ = (trk.getTanLambda() > 0.) ?  eop_h_top_ : eop_h_bot_;
+  
   int binN = bias_histo_->GetXaxis()->FindBin(q);
   if (debug_)
     std::cout<<"Track charge="<<q<<" bin="<<binN<<std::endl;
@@ -69,3 +82,29 @@ void TrackBiasingTool::updateWithBiasP(Track& trk, double scaleFactor) {
   trk.setMomentum(momentum);    
   
 }
+
+void TrackBiasingTool::updateVertexWithBiasP(Vertex* vtx) {
+
+  //Correct the vertex
+  double corr1 = getCorrection(vtx->getP1().Mag(), vtx->getP1Y(), -1); //ele
+  double corr2 = getCorrection(vtx->getP2().Mag(), vtx->getP2Y(), 1); //pos
+
+
+  TVector3 p1_corr, p2_corr;
+  double m_corr;
+
+  p1_corr.SetX(vtx->getP1X()*corr1);
+  p1_corr.SetY(vtx->getP1Y()*corr1);
+  p1_corr.SetZ(vtx->getP1Z()*corr1);
+  
+  p2_corr.SetX(vtx->getP2X()*corr2);
+  p2_corr.SetY(vtx->getP2Y()*corr2);
+  p2_corr.SetZ(vtx->getP2Z()*corr2);
+  
+  m_corr = vtx->getInvMass() * sqrt(corr1*corr2);
+  
+  vtx->setVtxParameters(p1_corr, p2_corr, m_corr);
+  
+}
+						
+

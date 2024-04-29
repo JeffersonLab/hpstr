@@ -7,14 +7,19 @@
 #include <random>
 #include <memory>
 
+
+
+
 //------------------//
 //    hpstr         //
 //------------------//
 
 #include "Track.h"
+#include "Vertex.h"
 
 class TFile;
 class TH1D;
+class TVector3;
 
 class TrackBiasingTool {
   
@@ -25,6 +30,12 @@ class TrackBiasingTool {
   
   double biasTrackP(const Track& track);
 
+  double getCorrection(const double& p,
+		       const double tanL,
+		       const int q);
+
+  void updateVertexWithBiasP(Vertex* vtx);
+   
   //Update the track P with a specific scale Factor
   void updateWithBiasP(Track& trk, double scaleFactor);
 

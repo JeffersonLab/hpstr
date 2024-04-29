@@ -15,6 +15,7 @@
 #include <TRefArray.h>
 #include <TRef.h>
 #include <TVector3.h>
+#include <TLorentzVector.h>
 
 //TODO make float/doubles accordingly.
 
@@ -68,6 +69,13 @@ class Vertex : public TObject {
          */
         void setVtxParameters(const std::vector<float>& parameters);
 
+        void setVtxParameters(const TLorentzVector& p1,
+			      const TLorentzVector& p2);
+  
+        void setVtxParameters(const TVector3& p1,
+			      const TVector3& p2,
+			      const double m) ;
+    
         /** Set the type */
         void setType(const std::string& type) {type_ = type;}
 
