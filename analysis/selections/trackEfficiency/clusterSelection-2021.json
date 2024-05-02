@@ -1,0 +1,23 @@
+{
+    "cluEne_gt":{
+	"cut" : 0.5, 
+	"id"  : 0, 
+	"info" : "Cluster Energy>0.5 GeV"
+    },
+ 
+    "cluTime_lt" : {
+        "cut" : 5,
+        "id"  : 1,
+        "info" : "Cluster Time<42 ns"
+    },
+    "cluTime_gt" : {
+        "cut" : -5,
+        "id"  : 2,
+        "info" : "ClusterTime>32 ns"
+    },
+    "cluTimeDiff_lt" :{
+	"cut" : 2.5,
+        "id"  : 3,
+	"info" : "abs(cl1Time-cl2Time)<2.5ns"	
+    }
+}

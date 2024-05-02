@@ -23,8 +23,35 @@ std::string AnaHelpers::getFileName(std::string filePath, bool withExtension)
     return "";
 }
 
-void AnaHelpers::InnermostLayerCheck(Track* trk, bool& foundL1, bool& foundL2) {
+/*  
+ *  checks if cluster is in fiducial region
+ *  this was copied from my DST code -- mg
+ */
+bool AnaHelpers::IsECalFiducial(CalCluster* clu){
+  if(clu==NULL)
+    return false;
+  bool in_fid=false; 
+  double x_edge_low = -262.74; 
+  double x_edge_high = 347.7; 
+  double y_edge_low = 33.54; 
+  double y_edge_high = 75.18; 
+        
+  double x_gap_low = -106.66; 
+  double x_gap_high = 42.17; 
+  double y_gap_high = 47.18; 
 
+  double x=clu->getPosition().at(0);
+  double y=clu->getPosition().at(1);
+  y=abs(y);
+
+  if( x>x_edge_low && x < x_edge_high && y > y_edge_low && y < y_edge_high)
+    if ( !(x > x_gap_low && x < x_gap_high && y > y_edge_low && y < y_gap_high) )
+      in_fid = true;
+    
+  return in_fid;  
+}
+
+void AnaHelpers::InnermostLayerCheck(Track* trk, bool& foundL1, bool& foundL2) {
     bool isKF = trk->isKalmanTrack();
     int innerCount = 0;
     bool hasL1 = false;
@@ -58,16 +85,33 @@ void AnaHelpers::InnermostLayerCheck(Track* trk, bool& foundL1, bool& foundL2) {
             }
         }
     }
-
-    if(isKF){
-        if (innerCount == 4) foundL1 = true;
-        if (hasL2 && hasL3) foundL2 = true;
-    }
-    else{
-        if (innerCount == 2) foundL1 = true;
-        if (hasL1) foundL2 = true;
-    }
 }
+
+double AnaHelpers::GetClusterCoplanarity(CalCluster* cl1,CalCluster* cl2){
+  double photon_nom_x=42.52; //nominal photon position
+  double radian=180.0/3.14; 
+  double cl1X=cl1->getPosition().at(0);
+  double cl1Y=cl1->getPosition().at(1);
+  double cl1Z=cl1->getPosition().at(2);
+  double cl2X=cl2->getPosition().at(0);
+  double cl2Y=cl2->getPosition().at(1);
+  double cl2Z=cl2->getPosition().at(2);
+  double cl1E=cl1->getEnergy();  
+  double cl2E=cl2->getEnergy();
+
+  double cl1_impact_angle=atan2(cl1Y,cl1X-photon_nom_x)*radian;
+  double cl2_impact_angle=atan2(cl2Y,cl2X-photon_nom_x)*radian;
+  if(cl1_impact_angle<0.)
+    cl1_impact_angle+=360.;
+  if(cl2_impact_angle<0.)
+    cl2_impact_angle+=360.;
+  if (cl1Y>0)
+    return cl2_impact_angle-cl1_impact_angle;
+  else
+    return cl1_impact_angle-cl2_impact_angle;
+}
+
+
 
 bool AnaHelpers::MatchToGBLTracks(int ele_id, int pos_id, Track* & ele_trk, Track* & pos_trk, std::vector<Track*>& trks) {
 
@@ -87,6 +131,27 @@ bool AnaHelpers::MatchToGBLTracks(int ele_id, int pos_id, Track* & ele_trk, Trac
     return foundele * foundpos;
 }
 
+Track* AnaHelpers::GetTrackFromParticle(std::vector<Track*>& trks,Particle* part){
+  int trkID=(part->getTrack()).getID();
+  for (auto trk :trks){
+    if (trkID == trk->getID()) 
+      return trk;
+  }
+  return NULL; 
+}
+
+Particle* AnaHelpers::GetParticleFromCluster(std::vector<Particle*>& parts,CalCluster* cluster){
+  CalHit* clusSeed=(CalHit*)cluster->getSeed();
+  for (auto part :parts){
+    CalCluster pClus=part->getCluster();
+    if(pClus.getNHits() == 0)
+      continue;
+    CalHit* pClusSeed=(CalHit*)pClus.getSeed();
+    if ( clusSeed== pClusSeed) 
+      return part;
+  }
+  return NULL; 
+}
 
 //TODO clean bit up 
 bool AnaHelpers::GetParticlesFromVtx(Vertex* vtx, Particle*& ele, Particle*& pos) {
@@ -121,6 +186,60 @@ bool AnaHelpers::GetParticlesFromVtx(Vertex* vtx, Particle*& ele, Particle*& pos
     if (debug_) std::cout<<"returning "<<(int) (foundele && foundpos) <<std::endl;
     return foundele && foundpos;
 }
+
+//TODO clean bit up 
+bool AnaHelpers::GetParticlesFromVtxAndParticleList(std::vector<Particle*>& parts, Vertex* vtx, Particle*& ele, Particle*& pos) {
+
+
+    bool foundele = false;
+    bool foundpos = false;
+    bool matchele=false;
+    bool matchpos=false;
+    Particle* eleTmp=nullptr;
+    Particle* posTmp=nullptr;
+    for (int ipart = 0; ipart < vtx->getParticles().GetEntries(); ++ipart) {
+
+
+        int pdg_id = ((Particle*)vtx->getParticles().At(ipart))->getPDG();
+        if (debug_) std::cout<<"In Loop "<<pdg_id<< " "<< ipart<<std::endl;
+
+        if (pdg_id == 11) {
+            eleTmp =  ((Particle*)vtx->getParticles().At(ipart));
+            foundele=true;
+            if (debug_) std::cout<<"found ele "<< (int)foundele<<std::endl;
+        }
+        else if (pdg_id == -11) {
+            posTmp = (Particle*)vtx->getParticles().At(ipart);
+            foundpos=true;
+            if  (debug_) std::cout<<"found pos "<<(int)foundpos<<std::endl;
+
+        }
+    }
+
+    if (!eleTmp || !posTmp) {
+        std::cout<<"Vertex formed without ele/pos. Skip."<<std::endl;
+        return false;
+    }
+
+    double eleEne=eleTmp->getMomentum().at(2);//this is a dumb way to match but particles don't have IDs...
+    double posEne=posTmp->getMomentum().at(2);
+
+    for (auto part :parts){     
+      
+      if (eleEne == part->getMomentum().at(2)) { 
+        matchele=true;
+        ele=part;
+     }
+      if (posEne == part->getMomentum().at(2)) {
+        matchpos=true;
+        pos=part;
+      }
+      
+    }
+    
+    return foundele && foundpos && matchpos &&matchele;
+}
+
 
 AnaHelpers::AnaHelpers() {
     rotSvt.RotateY(SVT_ANGLE);

@@ -15,9 +15,11 @@
 // HPSTR
 #include "Track.h"
 #include "TrackerHit.h"
+#include "RawSvtHit.h"
 #include "Particle.h"
 #include "Vertex.h"
-
+#include "CalCluster.h"
+#include "CalHit.h"
 /**
  * @brief brief description
  * more details
@@ -97,7 +99,14 @@ class AnaHelpers {
          */
         bool MatchToGBLTracks(int ele_id, int pos_id, Track* & ele_trk, Track* & pos_trk, std::vector<Track*>& trks);
         
+
+        bool GetParticlesFromVtxAndParticleList(std::vector<Particle*>& parts, Vertex* vtx, Particle*& ele, Particle*& pos);
+        bool IsECalFiducial(CalCluster* clu);
+        double GetClusterCoplanarity(CalCluster* cl1,CalCluster* cl2); 
+        Particle* GetParticleFromCluster(std::vector<Particle*>& parts,CalCluster* cluster);
         static std::string getFileName(std::string filePath, bool withExtension);    
+        Track* GetTrackFromParticle(std::vector<Track*>& trks,Particle* part);
+
         
     private:
         
