@@ -75,7 +75,7 @@ double TrackSmearingTool::smearTrackP(const Track& track) {
   
 }
 
-void TrackSmearingTool::updateWithSmearP(Track& trk) {
+double TrackSmearingTool::updateWithSmearP(Track& trk) {
   double smeared_magnitude = smearTrackP(trk);
   // updated momentum by scaling each coordinate by smeared/unsmeared
   // this takes the direction of the unsmeared momentum and applies
@@ -85,5 +85,23 @@ void TrackSmearingTool::updateWithSmearP(Track& trk) {
   for (double& coordinate : momentum)
     coordinate *= (smeared_magnitude/unsmeared_magnitude);
   trk.setMomentum(momentum);
+  return (smeared_magnitude/unsmeared_magnitude);
+
 }
 
+void TrackSmearingTool::updateVertexWithSmearP(Vertex* vtx, double ele_smear_factor, double pos_smear_factor) {
+	TVector3 p1_corr, p2_corr;
+	double m_corr;
+
+	p1_corr.SetX(vtx->getP1X()*ele_smear_factor);
+	p1_corr.SetY(vtx->getP1Y()*ele_smear_factor);
+	p1_corr.SetZ(vtx->getP1Z()*ele_smear_factor);
+
+	p2_corr.SetX(vtx->getP2X()*pos_smear_factor);
+	p2_corr.SetY(vtx->getP2Y()*pos_smear_factor);
+	p2_corr.SetZ(vtx->getP2Z()*pos_smear_factor);
+
+	m_corr = vtx->getInvMass() * sqrt(ele_smear_factor*pos_smear_factor);
+
+	vtx->setVtxParameters(p1_corr, p2_corr, m_corr);
+}
