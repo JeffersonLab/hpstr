@@ -65,7 +65,7 @@ bool StdhepMCParticleProcessor::process() {
                 mc_particles_.clear();
             }
              
-            std::auto_ptr<IMPL::LCEventImpl> evt( new IMPL::LCEventImpl() ) ;
+            std::unique_ptr<IMPL::LCEventImpl> evt( new IMPL::LCEventImpl() ) ;
             evt->setRunNumber(0) ;
             evt->setEventNumber(count) ;
              
