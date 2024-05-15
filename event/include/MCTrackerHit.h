@@ -37,10 +37,13 @@ class MCTrackerHit : public TObject {
          *
          * @param position The hit position.
          */
-        void setPosition(const double* position, bool rotate = false);
-
-        /** @return The hit position. */
-        std::vector<double> getPosition() const { return {x_, y_, z_}; };
+  void setPosition(const double* position, bool rotate = false);
+  
+  /** @return The hit position. */
+  std::vector<double> getPosition() const { return {x_, y_, z_}; };
+  
+  void setMomentum(const float* momentum, bool rotate = false);
+  std::vector<float> getMomentum() const { return {px_, py_, pz_}; };
 
         /** @return the global X coordinate of the hit */
         double getGlobalX() const {return x_;}

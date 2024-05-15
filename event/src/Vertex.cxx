@@ -51,6 +51,33 @@ void Vertex::setPos(const float* pos, bool rotate) {
     }  
 }
 
+void Vertex::setVtxParameters(const TVector3& p1,
+			      const TVector3& p2,
+			      const double m) {
+
+  p1_.SetX(p1.X());
+  p1_.SetY(p1.Y());
+  p1_.SetZ(p1.Z());
+
+  p2_.SetX(p2.X());
+  p2_.SetY(p2.Y());
+  p2_.SetZ(p2.Z());
+  
+  p_ = p1_ + p2_;
+  
+  invM_  = m;
+
+}
+
+
+void Vertex::setVtxParameters(const TLorentzVector& p1,
+			      const TLorentzVector& p2){
+  
+  this->setVtxParameters(p1.Vect(),p2.Vect(),(p1+p2).M());
+}
+
+
+
 void Vertex::setVtxParameters(const std::vector<float>& parameters) { 
     parameters_ = parameters;
 
