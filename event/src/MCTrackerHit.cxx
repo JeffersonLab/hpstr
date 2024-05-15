@@ -57,9 +57,3 @@ void MCTrackerHit::setPosition(const double* position, bool rotate) {
         z_ = position[2];
     }
 }
-
-void MCTrackerHit::setMomentum(const double* momentum) {
-    px_ = momentum[0]; 
-    py_ = momentum[1];
-    pz_ = momentum[2];
-}
