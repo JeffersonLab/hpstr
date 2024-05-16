@@ -37,7 +37,7 @@ p.add_library("libprocessors")
 #          Processors         #
 ###############################
 
-sim_part_ana = HpstrConf.Processor('sim_part', 'SimPartProcessor')
+sim_part_ana = HpstrConf.Processor('sim_part', 'SimPartAnaProcessor')
 
 ###############################
 #   Processor Configuration   #

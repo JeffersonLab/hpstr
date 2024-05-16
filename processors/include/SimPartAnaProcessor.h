@@ -1,5 +1,5 @@
-#ifndef __SIM_PARTPROCESSOR_H__
-#define __SIM_PARTPROCESSOR_H__
+#ifndef __SIM_PARTANAPROCESSOR_H__
+#define __SIM_PARTANAPROCESSOR_H__
 
 //HPSTR
 #include "HpsEvent.h"
@@ -28,7 +28,7 @@ class TTree;
  * @brief Insert description here.
  * more details
  */
-class SimPartProcessor : public Processor {
+class SimPartAnaProcessor : public Processor {
 
     public:
         /**
@@ -37,9 +37,9 @@ class SimPartProcessor : public Processor {
          * @param name 
          * @param process 
          */
-        SimPartProcessor(const std::string& name, Process& process);
+        SimPartAnaProcessor(const std::string& name, Process& process);
 
-        ~SimPartProcessor();
+        ~SimPartAnaProcessor();
 
         /**
          * @brief description

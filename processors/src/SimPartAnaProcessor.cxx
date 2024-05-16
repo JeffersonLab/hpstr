@@ -1,19 +1,19 @@
 /**
- * @file SimPartProcessor.cxx
- * @brief SimPartProcessor used fill histograms to check acceptance of simulated particle source
+ * @file SimPartAnaProcessor.cxx
+ * @brief SimPartAnaProcessor used fill histograms to check acceptance of simulated particle source
  * @author Abhisek Datta, University of California, Los Angeles
  */     
-#include "SimPartProcessor.h"
+#include "SimPartAnaProcessor.h"
 #include <iostream>
 #include <algorithm>
 
-SimPartProcessor::SimPartProcessor(const std::string& name, Process& process) : Processor(name,process){}
+SimPartAnaProcessor::SimPartAnaProcessor(const std::string& name, Process& process) : Processor(name,process){}
 //TODO CHECK THIS DESTRUCTOR
-SimPartProcessor::~SimPartProcessor(){}
+SimPartAnaProcessor::~SimPartAnaProcessor(){}
 
 
-void SimPartProcessor::configure(const ParameterSet& parameters) {
-    std::cout << "Configuring SimPartProcessor" << std::endl;
+void SimPartAnaProcessor::configure(const ParameterSet& parameters) {
+    std::cout << "Configuring SimPartAnaProcessor" << std::endl;
     try
     {
         debug_           = parameters.getInteger("debug");
@@ -37,7 +37,7 @@ void SimPartProcessor::configure(const ParameterSet& parameters) {
     }
 }
 
-void SimPartProcessor::initialize(TTree* tree) {
+void SimPartAnaProcessor::initialize(TTree* tree) {
     tree_= tree;
     // init histos
     histos = new SimPartHistos(anaName_);
@@ -175,7 +175,7 @@ void SimPartProcessor::initialize(TTree* tree) {
         std::cout<<"WARNING: No Reco Ecal hit collection"<<std::endl;
 }
 
-bool SimPartProcessor::process(IEvent* ievent) {
+bool SimPartAnaProcessor::process(IEvent* ievent) {
 
     double weight = 1.0;
     if (EventSelector_) EventSelector_->getCutFlowHisto()->Fill(0.,weight);
@@ -606,7 +606,7 @@ bool SimPartProcessor::process(IEvent* ievent) {
     return true;
 }
 
-void SimPartProcessor::finalize() {
+void SimPartAnaProcessor::finalize() {
 
     outF_->cd();
     histos->saveHistos(outF_, "presel");
@@ -628,4 +628,4 @@ void SimPartProcessor::finalize() {
     outF_->Close();
 }
 
-DECLARE_PROCESSOR(SimPartProcessor);
+DECLARE_PROCESSOR(SimPartAnaProcessor);
