@@ -126,13 +126,13 @@ class MCTrackerHit : public TObject {
         double z_{-999};
 
         /** The px momentum of the hit. */
-        double px_{-999}; 
+        float px_{-999}; 
 
         /** The y momentum of the hit. */
-        double py_{-999}; 
+        float py_{-999}; 
 
         /** The z momentum of the hit. */
-        double pz_{-999};
+        float pz_{-999};
 
         /** The hit time. */
         double time_{-999};
