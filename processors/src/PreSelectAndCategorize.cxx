@@ -35,39 +35,63 @@
 #include <map>
 
 
-class CutflowHist {
+class Cutflow {
   std::unique_ptr<TH1F> h_cutflow_;
-  std::map<std::string,int> cuts_;
+  std::map<std::string,std::pair<std::size_t,std::unique_ptr<TH1F>>> cuts_;
+  bool keep_;
+  std::vector<std::optional<bool>> cut_desc_;
  public:
-  CutflowHist(int max_cuts) {
+  void add(const std::string& name, int nbins, float min, float max) {
+    if (h_cutflow_) {
+      throw std::runtime_error("Cannot add more cuts after init");
+    }
+    auto h = std::make_unique<TH1F>(
+                ("nm1_"+name+"_h").c_str(),
+                (name+" N-1").c_str(),
+                nbins, min, max
+            );
+    cuts_.emplace(name, std::make_pair<std::size_t, std::unique_ptr<TH1F>>(cuts_.size(), std::move(h)));
+  }
+  void init() {
+    if (h_cutflow_) {
+      throw std::runtime_error("Cannot init twice.");
+    }
     h_cutflow_ = std::make_unique<TH1F>(
         "cutflow_h",
-        "Cutflow Histogram",
-        max_cuts,-0.5,max_cuts-0.5
+        "Cutflow",
+        cuts_.size()+1, -1.5, cuts_.size()-0.5
     );
-    h_cutflow_->Sumw2();
-    cuts_["readout"] = 0;
+    cut_desc_.resize(cuts_.size());
+  }
+  void begin_event() {
+    h_cutflow_->Fill("readout", 1.);
+    keep_ = true;
+    for (auto& d : cut_desc_) d.reset();
+  }
+  void apply(const std::string& name, bool descision) {
+    keep_ = (keep_ and descision);
+    if (keep_) h_cutflow_->Fill(name.c_str(), 1.);
+    int i_cut = cuts_.at(name).first;
+    cut_desc_[i_cut] = descision;
+  }
+  template<typename T>
+  void fill_nm1(const std::string& name, T value) {
+    bool should_fill{true};
+    for (std::size_t i_cut{0}; i_cut < cuts_.size(); i_cut++) {
+      if (i_cut != cuts_[name].first and cut_desc_[i_cut].has_value()) {
+        should_fill = (should_fill and cut_desc_[i_cut].value());
+      }
+    }
+    if (should_fill) {
+      cuts_.at(name).second->Fill(value);
+    }
+  }
+  bool keep() const {
+    return keep_;
   }
   void save() {
-    std::vector<std::string> labels(h_cutflow_->GetNbinsX(),"");
-    for (const auto& [name, ibin]: cuts_) {
-      labels[ibin] = name;
-    }
-    for (int ilabel{0}; ilabel < labels.size(); ilabel++) {
-      h_cutflow_->GetXaxis()->SetBinLabel(ilabel+1, labels[ilabel].c_str());
-    }
     h_cutflow_->Write();
-  }
-  bool should_cut(const std::string& name, bool descision) {
-    if (cuts_.find(name) == cuts_.end()) {
-      auto ibin = cuts_.size();
-      if (ibin == h_cutflow_->GetNbinsX()) {
-        throw std::runtime_error("More cuts that allowed in CutflowHist");
-      }
-      cuts_[name] = ibin;
-    }
-    if (not descision) h_cutflow_->Fill(cuts_.at(name));
-    return descision;
+    for (const auto& [_name, entry] : cuts_) entry.second->Write();
   }
 };
 
@@ -131,7 +155,7 @@ class PreSelectAndCategorize : public Processor {
   double posTrackTimeBias_{0.0};
   double calTimeOffset_{0.0};
 
-  CutflowHist h_cf_{20};
+  Cutflow cf_;
   std::shared_ptr<TrackSmearingTool> smearingTool_;
   std::shared_ptr<AnaHelpers> _ah; //!< description
 
@@ -177,6 +201,21 @@ void PreSelectAndCategorize::initialize(TTree* tree) {
   bus_.board_input<std::vector<Vertex*>>(tree, vtxColl_);
   if(!isData_ && !mcColl_.empty())
     bus_.board_input<std::vector<MCParticle*>>(tree, mcColl_);
+  
+  cf_.add("at_least_one_vertex", 10, 0.0, 10.0);
+  cf_.add("no_extra_vertices", 10, 0.0, 10.0);
+  cf_.add("clusters_within_1.45ns", 100,0.0,10.0);
+  cf_.add("electron_below_1.75GeV", 230,0.0,2.3);
+  cf_.add("vertex_chi2", 100,0.0,50.0);
+  cf_.add("ele_track_chi2ndf", 100, 0.0, 20.0);
+  cf_.add("pos_track_chi2ndf", 100, 0.0, 20.0);
+  cf_.add("ele_min_8_hits", 14, 0, 14);
+  cf_.add("pos_min_8_hits", 14, 0, 14);
+  cf_.add("ele_track_before_6ns", 120, 0.0, 24.0);
+  cf_.add("pos_track_before_6ns", 120, 0.0, 24.0);
+  cf_.add("ele_track_cluster_within_4ns", 80, 0.0, 16.0);
+  cf_.add("pos_track_cluster_within_4ns", 80, 0.0, 16.0);
+  cf_.init();
 }
 
 void PreSelectAndCategorize::setFile(TFile* out_file) {
@@ -210,14 +249,12 @@ void PreSelectAndCategorize::setFile(TFile* out_file) {
 bool PreSelectAndCategorize::process(IEvent*) {
   const auto& eh{bus_.get<EventHeader>("EventHeader")};
   int run_number = eh.getRunNumber();
-  h_cf_.should_cut("readout", false);
+  cf_.begin_event();
 
   const auto& vtxs{bus_.get<std::vector<Vertex*>>(vtxColl_)};
-  if (h_cf_.should_cut("at least one vertex", vtxs.size() < 1)) {
-    return true;
-  }
-  
-  if (h_cf_.should_cut("no extra vertices", vtxs.size() > 1)) {
+  cf_.apply("at_least_one_vertex", vtxs.size() > 0);
+  cf_.apply("no_extra_vertices", vtxs.size() < 2);
+  if (not cf_.keep()) {
     return true;
   }
   
@@ -327,91 +364,46 @@ bool PreSelectAndCategorize::process(IEvent*) {
   /**
    * Further pre-selection on vertices.
    */
-
-  if (h_cf_.should_cut(
-        "clusters within 1.45ns",
-        abs(ele.getCluster().getTime()-pos.getCluster().getTime()) > 1.45
-  )) {
-    return true;
-  }
-
-  if (h_cf_.should_cut(
-        "electron below 1.75GeV",
-        ele.getTrack().getP() > 1.75
-  )) {
-    return true;
-  }
-
-  if (h_cf_.should_cut(
-        "vertex $\\chi^2 < 20$",
-        vtx.getChi2() > 20.0
-  )) {
-    return true;
-  }
-
-  if (h_cf_.should_cut(
-        "ele track $\\chi^2/ndf < 20$",
-        ele.getTrack().getChi2Ndf() > 20.0
-  )) {
-    return true;
-  }
-
-  if (h_cf_.should_cut(
-        "pos track $\\chi^2/ndf < 20$",
-        pos.getTrack().getChi2Ndf() > 20.0
-  )) {
-    return true;
-  }
-
+  double cluster_tdiff{abs(ele.getCluster().getTime()-pos.getCluster().getTime())};
   int ele_nhits = ele.getTrack().getTrackerHitCount();
   if (not ele.getTrack().isKalmanTrack()) ele_nhits*=2;
-  if (h_cf_.should_cut(
-        "ele track has at least 7 2D hits",
-        ele_nhits < 8
-  )) {
-    return true;
-  }
-
   int pos_nhits = pos.getTrack().getTrackerHitCount();
   if (not pos.getTrack().isKalmanTrack()) pos_nhits*=2;
-  if (h_cf_.should_cut(
-        "pos track has at least 7 2D hits",
-        pos_nhits < 8
-  )) {
-    return true;
-  }
-
+  cf_.apply("clusters_within_1.45ns", cluster_tdiff < 1.45);
+  cf_.apply("electron_below_1.75GeV", ele.getTrack().getP() < 1.75);
+  cf_.apply("vertex_chi2", vtx.getChi2() < 20.0);
+  cf_.apply("ele_track_chi2ndf", ele.getTrack().getChi2Ndf() < 20.0);
+  cf_.apply("pos_track_chi2ndf", pos.getTrack().getChi2Ndf() < 20.0);
+  cf_.apply("ele_min_8_hits", ele_nhits > 7);
+  cf_.apply("pos_min_8_hits", pos_nhits > 7);
   // left timing until last since it is having the biggest effect besides
   // requiring a vertex
-  if (h_cf_.should_cut(
-        "ele track earlier than 6ns",
-        ele.getTrack().getTrackTime() > 6.0
-  )) {
+  double ele_track_cluster_tdiff{
+        abs(ele.getTrack().getTrackTime()-ele.getCluster().getTime())
+  };
+  double pos_track_cluster_tdiff{
+        abs(pos.getTrack().getTrackTime()-pos.getCluster().getTime())
+  };
+  cf_.apply("ele_track_before_6ns", ele.getTrack().getTrackTime() < 6.0);
+  cf_.apply("pos_track_before_6ns", pos.getTrack().getTrackTime() < 6.0);
+  cf_.apply("ele_track_cluster_within_4ns", ele_track_cluster_tdiff < 4.0);
+  cf_.apply("pos_track_cluster_within_4ns", pos_track_cluster_tdiff < 4.0);
+
+  cf_.fill_nm1("clusters_within_1.45ns", cluster_tdiff);
+  cf_.fill_nm1("electron_below_1.75GeV", ele.getTrack().getP());
+  cf_.fill_nm1("vertex_chi2", vtx.getChi2());
+  cf_.fill_nm1("ele_track_chi2ndf", ele.getTrack().getChi2Ndf());
+  cf_.fill_nm1("pos_track_chi2ndf", pos.getTrack().getChi2Ndf());
+  cf_.fill_nm1("ele_min_8_hits", ele_nhits);
+  cf_.fill_nm1("pos_min_8_hits", pos_nhits);
+  cf_.fill_nm1("ele_track_before_6ns", ele.getTrack().getTrackTime());
+  cf_.fill_nm1("pos_track_before_6ns", pos.getTrack().getTrackTime());
+  cf_.fill_nm1("ele_track_cluster_within_4ns", ele_track_cluster_tdiff);
+  cf_.fill_nm1("pos_track_cluster_within_4ns", pos_track_cluster_tdiff);
+
+  if (not cf_.keep()) {
     return true;
   }
-
-  if (h_cf_.should_cut(
-        "pos track earlier than 6ns",
-        pos.getTrack().getTrackTime() > 6.0
-  )) {
-    return true;
-  }
-
-  if (h_cf_.should_cut(
-        "ele track and cluster within 4ns",
-        abs(ele.getTrack().getTrackTime()-ele.getCluster().getTime()) > 4.0
-  )) {
-    return true;
-  }
-
-  if (h_cf_.should_cut(
-        "pos track and cluster within 4ns",
-        abs(pos.getTrack().getTrackTime()-pos.getCluster().getTime()) > 4.0
-  )) {
-    return true;
-  }
-  
-
   /**
    * This is where the output TTree is filled,
    * if we leave before this point, then the event will not
@@ -424,7 +416,7 @@ bool PreSelectAndCategorize::process(IEvent*) {
 void PreSelectAndCategorize::finalize() {
   outF_->cd();
   output_tree_->Write();
-  h_cf_.save();
+  cf_.save();
 }
 
 DECLARE_PROCESSOR(PreSelectAndCategorize);
