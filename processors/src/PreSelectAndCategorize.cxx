@@ -156,6 +156,7 @@ class PreSelectAndCategorize : public Processor {
   double calTimeOffset_{0.0};
 
   Cutflow cf_;
+  std::unique_ptr<TH1F> n_vertices_h_;
   std::shared_ptr<TrackSmearingTool> smearingTool_;
   std::shared_ptr<AnaHelpers> _ah; //!< description
 
@@ -204,6 +205,7 @@ void PreSelectAndCategorize::initialize(TTree* tree) {
   
   cf_.add("at_least_one_vertex", 10, 0.0, 10.0);
   cf_.add("no_extra_vertices", 10, 0.0, 10.0);
+  /* further selection on vertices
   cf_.add("clusters_within_1.45ns", 100,0.0,10.0);
   cf_.add("electron_below_1.75GeV", 230,0.0,2.3);
   cf_.add("vertex_chi2", 100,0.0,50.0);
@@ -215,7 +217,14 @@ void PreSelectAndCategorize::initialize(TTree* tree) {
   cf_.add("pos_track_before_6ns", 120, 0.0, 24.0);
   cf_.add("ele_track_cluster_within_4ns", 80, 0.0, 16.0);
   cf_.add("pos_track_cluster_within_4ns", 80, 0.0, 16.0);
+  */
   cf_.init();
+
+  n_vertices_h_ = std::make_unique<TH1F>(
+      "n_vertices_h",
+      "N Vertices in Event (no selection)",
+      10,-0.5,9.5
+  );
 }
 
 void PreSelectAndCategorize::setFile(TFile* out_file) {
@@ -252,6 +261,7 @@ bool PreSelectAndCategorize::process(IEvent*) {
   cf_.begin_event();
 
   const auto& vtxs{bus_.get<std::vector<Vertex*>>(vtxColl_)};
+  n_vertices_h_->Fill(vtxs.size());
   cf_.apply("at_least_one_vertex", vtxs.size() > 0);
   cf_.apply("no_extra_vertices", vtxs.size() < 2);
   if (not cf_.keep()) {
@@ -363,7 +373,6 @@ bool PreSelectAndCategorize::process(IEvent*) {
 
   /**
    * Further pre-selection on vertices.
-   */
   double cluster_tdiff{abs(ele.getCluster().getTime()-pos.getCluster().getTime())};
   int ele_nhits = ele.getTrack().getTrackerHitCount();
   if (not ele.getTrack().isKalmanTrack()) ele_nhits*=2;
@@ -404,6 +413,7 @@ bool PreSelectAndCategorize::process(IEvent*) {
   if (not cf_.keep()) {
     return true;
   }
+   */
   /**
    * This is where the output TTree is filled,
    * if we leave before this point, then the event will not
@@ -416,6 +426,7 @@ bool PreSelectAndCategorize::process(IEvent*) {
 void PreSelectAndCategorize::finalize() {
   outF_->cd();
   output_tree_->Write();
+  n_vertices_h_->Write();
   cf_.save();
 }
 
