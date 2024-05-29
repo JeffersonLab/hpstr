@@ -42,8 +42,8 @@ class MCParticle : public TObject {
          *
          * @return An array of references to the daughter particles associated
          *         with this particle
-         */
         TRefArray* getDaughters() const { return daughters_; }; 
+         */
 
         /**
          * Set the charge of the particle.
@@ -179,15 +179,15 @@ class MCParticle : public TObject {
         /** @return The vertex position of the particle. */
         std::vector<double> getEndPoint() const;
 
-        ClassDef(MCParticle, 1);
+        ClassDef(MCParticle, 2);
 
     private:
 
         /**
          *  An array of references to daughter particles associated with this
          *  particle
-         */  
         TRefArray* daughters_{new TRefArray{}}; 
+         */  
     
         /** The LCIO ID of this particle */
         int id_{-9999}; 

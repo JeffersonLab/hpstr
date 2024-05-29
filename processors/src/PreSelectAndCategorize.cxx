@@ -98,6 +98,9 @@ class Cutflow {
 class EventBus {
   framework::Bus bus_;
  public:
+  bool has(const std::string& name) {
+    return bus_.isOnBoard(name);
+  }
   template<typename BaggageType>
   void board_input(TTree* tree, const std::string& name) {
     if (bus_.isOnBoard(name)) {
@@ -148,9 +151,7 @@ class PreSelectAndCategorize : public Processor {
 
   std::string vtxColl_{"UnconstrainedV0Vertices_KF"};
   std::string mcColl_{"MCParticle"}; //!< description
-  int isRadPDG_{622}; //!< description
-  double beamE_{2.3}; //!< In GeV. Default is 2016 value;
-  int isData_{0}; //!< description
+  bool isData_{false};
   double eleTrackTimeBias_{0.0};
   double posTrackTimeBias_{0.0};
   double calTimeOffset_{0.0};
@@ -174,25 +175,30 @@ json json_load(const std::string& filepath) {
 }
 
 void PreSelectAndCategorize::configure(const ParameterSet& parameters) {
-  auto pSmearingFile = parameters.getString("pSmearingFile","");
+  auto pSmearingFile = parameters.getString("pSmearingFile");
   if (not pSmearingFile.empty()) {
     // just using the same seed=42 for now
+    std::cout << "Loading momentum smearing from " << pSmearingFile << std::endl;
     smearingTool_ = std::make_shared<TrackSmearingTool>(pSmearingFile,true);
   }
 
-  auto beamPosCfg = parameters.getString("beamPosCfg", "");
+  auto beamPosCfg = parameters.getString("beamPosCfg");
   if (not beamPosCfg.empty()) {
+    std::cout << "Loading beamspot corrections from " << beamPosCfg << std::endl;
     bpc_configs_ = json_load(beamPosCfg);
   }
 
-  auto v0ProjectionFitsCfg = parameters.getString("v0ProjectionFitsCfg", "");
+  auto v0ProjectionFitsCfg = parameters.getString("v0ProjectionFitsCfg");
   if (not v0ProjectionFitsCfg.empty()) {
+    std::cout << "Loading projection fits from " << v0ProjectionFitsCfg << std::endl;
     v0proj_fits_ = json_load(v0ProjectionFitsCfg);
   }
 
   eleTrackTimeBias_ = parameters.getDouble("eleTrackTimeBias");
   posTrackTimeBias_ = parameters.getDouble("posTrackTimeBias");
   calTimeOffset_ = parameters.getDouble("calTimeOffset");
+
+  isData_ = parameters.getInteger("isData") != 0;
 }
 
 void PreSelectAndCategorize::initialize(TTree* tree) {
@@ -200,7 +206,7 @@ void PreSelectAndCategorize::initialize(TTree* tree) {
   //init Reading Tree
   bus_.board_input<EventHeader>(tree, "EventHeader");
   bus_.board_input<std::vector<Vertex*>>(tree, vtxColl_);
-  if(!isData_ && !mcColl_.empty())
+  if(not isData_ and not mcColl_.empty())
     bus_.board_input<std::vector<MCParticle*>>(tree, mcColl_);
   
   cf_.add("at_least_one_vertex", 10, 0.0, 10.0);
@@ -252,6 +258,9 @@ void PreSelectAndCategorize::setFile(TFile* out_file) {
     }) {
       bus_.board_output<double>(output_tree_.get(), name);
     }
+  }
+  if (bus_.has(mcColl_)) {
+    bus_.board_output<std::vector<MCParticle>>(output_tree_.get(), "mc");
   }
 }
 
@@ -414,11 +423,25 @@ bool PreSelectAndCategorize::process(IEvent*) {
     return true;
   }
    */
+
   /**
    * This is where the output TTree is filled,
    * if we leave before this point, then the event will not
    * be kept as part of pre-selection.
+   *
+   * We wait until here to copy over the MCParticles to avoid
+   * unnecessary copying if the event is not going to be kept
+   * anyways.
    */
+  if (bus_.has(mcColl_)) {
+    const auto& mc_ptr{bus_.get<std::vector<MCParticle*>>(mcColl_)};
+    std::vector<MCParticle> mc;
+    mc.reserve(mc_ptr.size());
+    for (MCParticle* ptr : mc_ptr) {
+      mc.push_back(*ptr);
+    }
+    bus_.set("mc", mc);
+  }
   output_tree_->Fill();
   return true;
 }
