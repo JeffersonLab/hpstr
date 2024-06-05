@@ -480,8 +480,12 @@ class Bus {
         /**
          * If the branch doesn't already exist and we are allowed to make
          * one, we make a new one passing our baggage.
+         *
+         * The extra `.` character informs ROOT to fully-specify the final
+         * sub-branch names after branch splitting. This is helpful for
+         * columnar analyses like with uproot, dask, and awkward.
          */
-        branch = tree->Branch(branch_name.c_str(), baggage_, 100000, 3);
+        branch = tree->Branch((branch_name + ".").c_str(), baggage_, 100000, 3);
       }
       return branch;
     }
