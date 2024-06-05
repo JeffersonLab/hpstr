@@ -69,6 +69,9 @@ class Cutflow {
     for (auto& d : cut_desc_) d.reset();
   }
   void apply(const std::string& name, bool descision) {
+    if (cuts_.find(name) == cuts_.end()) {
+      throw std::runtime_error("Cut "+name+" not `add`ed to cutflow.");
+    }
     keep_ = (keep_ and descision);
     if (keep_) h_cutflow_->Fill(name.c_str(), 1.);
     int i_cut = cuts_.at(name).first;
@@ -209,6 +212,7 @@ void PreSelectAndCategorize::initialize(TTree* tree) {
   if(not isData_ and not mcColl_.empty())
     bus_.board_input<std::vector<MCParticle*>>(tree, mcColl_);
   
+  cf_.add("pair1trigger", 2, -0.5, 1.5);
   cf_.add("at_least_one_vertex", 10, 0.0, 10.0);
   cf_.add("no_extra_vertices", 10, 0.0, 10.0);
   /* further selection on vertices
@@ -268,6 +272,15 @@ bool PreSelectAndCategorize::process(IEvent*) {
   const auto& eh{bus_.get<EventHeader>("EventHeader")};
   int run_number = eh.getRunNumber();
   cf_.begin_event();
+
+  // re-apply trigger desicion to data sample since it contains
+  // other triggers within it
+  // MC is created with only this trigger AND the event header
+  // is not updated so we need to skip this check for MC
+  cf_.apply("pair1trigger", (not isData_ or eh.isPair1Trigger()));
+  if (not cf_.keep()) {
+    return true;
+  }
 
   const auto& vtxs{bus_.get<std::vector<Vertex*>>(vtxColl_)};
   n_vertices_h_->Fill(vtxs.size());
