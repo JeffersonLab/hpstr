@@ -170,7 +170,7 @@ class PreSelectAndCategorize : public Processor {
 
   Cutflow vertex_cf_{"vertex","reconstructed"};
   Cutflow event_cf_{"event","readout"};
-  std::unique_ptr<TH1F> n_vertices_h_;
+  std::unique_ptr<TH2F> n_vertices_h_;
   std::shared_ptr<TrackSmearingTool> smearingTool_;
   std::shared_ptr<AnaHelpers> _ah; //!< description
 
@@ -242,9 +242,10 @@ void PreSelectAndCategorize::initialize(TTree* tree) {
   event_cf_.add("no_extra_vertices", 10, 0.0, 10.0);
   event_cf_.init();
 
-  n_vertices_h_ = std::make_unique<TH1F>(
+  n_vertices_h_ = std::make_unique<TH2F>(
       "n_vertices_h",
-      "N Vertices in Event (preselected)",
+      "N Vertices in Event (readout and preselected)",
+      10,-0.5,9.5,
       10,-0.5,9.5
   );
 }
@@ -427,7 +428,7 @@ bool PreSelectAndCategorize::process(IEvent*) {
     }
   }
 
-  n_vertices_h_->Fill(preselected_vtx.size());
+  n_vertices_h_->Fill(vtxs.size(), preselected_vtx.size());
   event_cf_.apply("at_least_one_vertex", preselected_vtx.size() > 0);
   event_cf_.apply("no_extra_vertices", preselected_vtx.size() < 2);
   if (not event_cf_.keep()) {
