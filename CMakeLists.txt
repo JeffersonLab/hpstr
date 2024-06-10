@@ -49,9 +49,34 @@ message(STATUS "Python executable found at: ${Python3_EXECUTABLE}")
 message(STATUS "Python lib found at: ${Python3_LIBRARIES}")
 message(STATUS "Python include dir found at: ${Python3_INCLUDE_DIRS}")
 
+
+# find the EVIOTOOL directory
+#if (EVIOTOOL_DIR)
+#    set(EVIOTOOL_INCLUDE_DIR "${EVIOTOOL_DIR}/include")
+
+    #TEMPORARY: if MacOs EVIOTOOL standard compilation creates dynamic libs. Correct for that.
+    #    if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    #        set(EVIOTOOL_LIBRARY "${EVIOTOOL_DIR}/lib/liblcio.dylib")
+    #else()
+    #    set(EVIOTOOL_LIBRARY "${EVIOTOOL_DIR}/lib/liblcio.so")
+    #endif()
+    #
+    #if (NOT EXISTS "${EVIOTOOL_DIR}")
+    #    message(FATAL_ERROR "Unable to find EVIOTOOL library")
+    #endif()
+    #message(STATUS "EVIOTOOL dir set to: ${EVIOTOOL_DIR}")
+
+    # The following are not necessary - should clean up
+    #message(STATUS "EVIOTOOL include dir set to: ${EVIOTOOL_INCLUDE_DIR}")
+    #message(STATUS "EVIOTOOL library set to: ${EVIOTOOL_LIBRARY}")
+    #endif()
+    #find_package(EvioTool REQUIRED)
+
+
 # find the HPSEvioReader and EvioTool directory
 if (HPSEvioReader_DIR)
     set(HPSEvioReader_INCLUDE_DIR "${HPSEvioReader_DIR}/include")
+    set(EvioTool_INCLUDE_DIR "${HPSEvioReader_DIR}/include")
 
     if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(HPSEvioReader_LIBRARY "${HPSEvioReader_DIR}/lib/libHPSEvioReader.dylib")
@@ -59,19 +84,27 @@ if (HPSEvioReader_DIR)
     set(HPSEvioReader_LIBRARY "${HPSEvioReader_DIR}/lib/libHPSEvioReader.so")
     endif()	       
 
+    if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(EvioTool_LIBRARY "${HPSEvioReader_DIR}/lib/libEvioTool.dylib")
+    else()
+    set(EvioTool_LIBRARY "${HPSEvioReader_DIR}/lib/libEvioTool.so")
+    endif()
 
     if (NOT EXISTS "${HPSEvioReader_DIR}")
         message(FATAL_ERROR "Unable to find HPSEvioReader library")
     endif()
+
     message(STATUS "HPSEvioReader dir set to: ${HPSEvioReader_DIR}")
     message(STATUS "HPSEvioReader include dir set to: ${HPSEvioReader_INCLUDE_DIR}")
     message(STATUS "HPSEvioReader library set to: ${HPSEvioReader_LIBRARY}")
 endif()
 #where the following find package was recently made by Maurik.
 find_package(EvioTool CONFIG REQUIRED)
+message(STATUS "EvioTool include dir set to: ${EvioTool_INCLUDE_DIR}")
+#find_package(EvioTool REQUIRED)
 
 # this is from old evio CMakeFile, might need to remove
-get_filename_component(PYTHON_LIBRARY_DIR ${PYTHON_LIBRARIES} DIRECTORY)
+#get_filename_component(PYTHON_LIBRARY_DIR ${PYTHON_LIBRARIES} DIRECTORY)
 
 # find ROOT installation
 find_package(ROOT REQUIRED COMPONENTS Core RIO Geom Eve Gui)

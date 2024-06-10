@@ -24,7 +24,6 @@ void SvtBlFitHistoProcessor::configure(const ParameterSet& parameters) {
         deadRMS_ = parameters.getInteger("deadRMS");
         debug_ = parameters.getInteger("debug");
         year_ = parameters.getInteger("year");
-        simpleGausFit_ = parameters.getString("simpleGausFit");
     }
     catch (std::runtime_error& error)
     {
@@ -43,10 +42,8 @@ void SvtBlFitHistoProcessor::initialize(std::string inFilename, std::string outF
     flat_tuple_ = new FlatTupleMaker(outFilename.c_str(), "gaus_fit");
 
     //Initialize fit histos
-    fitHistos_ = new BlFitHistos();
+    fitHistos_ = new BlFitHistos(year_);
     fitHistos_->setDebug(debug_);
-    //To fit channels with a simple gaussian, set configurable param to true
-    fitHistos_->setSimpleGausFit(simpleGausFit_);
     std::cout << "[BlFitHistos] Loading 2D Histos" << std::endl;
     fitHistos_->loadHistoConfig(rawhitsHistCfgFilename_);
     fitHistos_->getHistosFromFile(inF_,layer_);

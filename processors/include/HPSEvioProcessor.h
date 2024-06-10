@@ -5,6 +5,7 @@
 #include "Processor.h"
 //EVIO
 #include "EvioTool/HPSEvioReader.h"
+//../../../EvioTool/install/include/EvioTool/HPSEvioReader.h
 
 //ROOT
 #include "TFile.h"

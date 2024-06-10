@@ -243,9 +243,7 @@ void BlFitHistos::fit2DHistoChannelBaselines(std::map<std::string,TH2F*> histos2
                 std::cout << hh_name << " " << cc << std::endl;
                 std::cout << "CHANNEL " << cc << std::endl;
             }
-            if (cc%100 == 0)
-                std::cout << "CHANNEL " << cc << std::endl;
-            }
+            if (cc%100 == 0) std::cout << "CHANNEL " << cc << std::endl;
 
             //get the global svt_id for channel
             int svt_id = mmapper_->getSvtIDFromHWChannel(cc, hwTag, svtIDMap);
