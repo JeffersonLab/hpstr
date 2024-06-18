@@ -230,10 +230,12 @@ void NewVertexAnaProcessor::initialize(TTree* tree) {
             //clust vars
             _reg_tuples[regname]->addVariable("unc_vtx_ele_clust_E");
             _reg_tuples[regname]->addVariable("unc_vtx_ele_clust_x");
+            _reg_tuples[regname]->addVariable("unc_vtx_ele_clust_y");
             _reg_tuples[regname]->addVariable("unc_vtx_ele_clust_corr_t");
 
             _reg_tuples[regname]->addVariable("unc_vtx_pos_clust_E");
             _reg_tuples[regname]->addVariable("unc_vtx_pos_clust_x");
+            _reg_tuples[regname]->addVariable("unc_vtx_pos_clust_y");
             _reg_tuples[regname]->addVariable("unc_vtx_pos_clust_corr_t");
 
             if(!isData_)
@@ -392,7 +394,12 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
         }
 
 
-        bool foundParts = _ah->GetParticlesFromVtx(vtx,ele,pos);
+        bool foundParts = false;
+        if(vtxColl_ == "UnconstrainedMollerVertices"){
+            foundParts = _ah->GetSameParticlesFromVtx(vtx, ele, pos);
+        }
+        else
+            foundParts = _ah->GetParticlesFromVtx(vtx,ele,pos);
         if (!foundParts) {
             if(debug_) std::cout<<"NewVertexAnaProcessor::WARNING::Found vtx without ele/pos. Skip."<<std::endl;
             continue;
@@ -443,7 +450,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
 
         double invm_smear = 1.;
         //std::cout << "[Before Preselection] ele track p before smearing: " << ele_trk.getP() << std::endl;
-        if (smearingTool_) {
+        if (smearingTool_ and !isData_) {
             double unsmeared_prod = ele_trk.getP()*pos_trk.getP();
             double ele_smf = smearingTool_->updateWithSmearP(ele_trk);
             double pos_smf = smearingTool_->updateWithSmearP(pos_trk);
@@ -716,7 +723,11 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             Particle* ele = nullptr;
             Particle* pos = nullptr;
 
-            _ah->GetParticlesFromVtx(vtx,ele,pos);
+            if(vtxColl_ == "UnconstrainedMollerVertices"){
+                _ah->GetSameParticlesFromVtx(vtx, ele, pos);
+            }
+            else
+                _ah->GetParticlesFromVtx(vtx,ele,pos);
 
             CalCluster eleClus = ele->getCluster();
             CalCluster posClus = pos->getCluster();
@@ -768,7 +779,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
 
             double invm_smear = 1.;
             //std::cout << "[Region loop Vtxs] ele track p before smearing: " << ele_trk.getP() << std::endl;
-            if (smearingTool_) {
+            if (smearingTool_ and !isData_) {
                 double unsmeared_prod = ele_trk.getP()*pos_trk.getP();
                 double ele_smf = smearingTool_->updateWithSmearP(ele_trk);
                 double pos_smf = smearingTool_->updateWithSmearP(pos_trk);
@@ -1143,7 +1154,14 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             Particle* ele = nullptr;
             Particle* pos = nullptr;
 
-            if (!vtx || !_ah->GetParticlesFromVtx(vtx,ele,pos))
+            bool foundParts = false;
+            if(vtxColl_ == "UnconstrainedMollerVertices"){
+                foundParts = _ah->GetSameParticlesFromVtx(vtx, ele, pos);
+            }
+            else
+                foundParts = _ah->GetParticlesFromVtx(vtx,ele,pos);
+
+            if (!vtx || !foundParts)
                 continue;
 
             CalCluster eleClus = ele->getCluster();
@@ -1194,7 +1212,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
 
             double invm_smear = 1.;
             //std::cout << "[Good Vtxs] ele track p before smearing: " << ele_trk.getP() << std::endl;
-            if (smearingTool_) {
+            if (smearingTool_ and !isData_) {
                 double unsmeared_prod = ele_trk.getP()*pos_trk.getP();
                 double ele_smf = smearingTool_->updateWithSmearP(ele_trk);
                 double pos_smf = smearingTool_->updateWithSmearP(pos_trk);
@@ -1508,10 +1526,12 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
                 //clust vars
                 _reg_tuples[region]->setVariableValue("unc_vtx_ele_clust_E", eleClus.getEnergy());
                 _reg_tuples[region]->setVariableValue("unc_vtx_ele_clust_x", eleClus.getPosition().at(0));
+                _reg_tuples[region]->setVariableValue("unc_vtx_ele_clust_y", eleClus.getPosition().at(1));
                 _reg_tuples[region]->setVariableValue("unc_vtx_ele_clust_corr_t",corr_eleClusterTime);
 
                 _reg_tuples[region]->setVariableValue("unc_vtx_pos_clust_E", posClus.getEnergy());
                 _reg_tuples[region]->setVariableValue("unc_vtx_pos_clust_x", posClus.getPosition().at(0));
+                _reg_tuples[region]->setVariableValue("unc_vtx_pos_clust_y", posClus.getPosition().at(1));
                 _reg_tuples[region]->setVariableValue("unc_vtx_pos_clust_corr_t",corr_posClusterTime);
                 _reg_tuples[region]->setVariableValue("run_number", evth_->getRunNumber());
 
