@@ -395,7 +395,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
 
 
         bool foundParts = false;
-        if(vtxColl_ == "UnconstrainedMollerVertices"){
+        if(vtxColl_ == "UnconstrainedMollerVertices" || vtxColl_ == "BeamspotConstrainedMollerVertices"){
             foundParts = _ah->GetSameParticlesFromVtx(vtx, ele, pos);
         }
         else
@@ -448,17 +448,12 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             std::cout<<ele_trk.getP()<<" "<<pos_trk.getP()<<std::endl;
         }
 
-        double invm_smear = 1.;
-        //std::cout << "[Before Preselection] ele track p before smearing: " << ele_trk.getP() << std::endl;
         if (smearingTool_ and !isData_) {
             double unsmeared_prod = ele_trk.getP()*pos_trk.getP();
-            double ele_smf = smearingTool_->updateWithSmearP(ele_trk);
-            double pos_smf = smearingTool_->updateWithSmearP(pos_trk);
-            double smeared_prod = ele_trk.getP()*pos_trk.getP();
-            invm_smear = sqrt(smeared_prod/unsmeared_prod);
+            double ele_smf = smearingTool_->updateWithSmearP(ele_trk, ele);
+            double pos_smf = smearingTool_->updateWithSmearP(pos_trk, pos);
             smearingTool_->updateVertexWithSmearP(vtx, ele_smf, pos_smf);
         }
-        //std::cout << "[Before Preselection] ele track p after smearing: " << ele_trk.getP() << std::endl;
 
 
         //Add the momenta to the tracks - do not do that
@@ -641,7 +636,6 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
         _vtx_histos->Fill1DHisto("pos_track_n2dhits_h", pos2dHits, weight);
         _vtx_histos->Fill1DHisto("vtx_Psum_h", p_ele.P()+p_pos.P(), weight);
         _vtx_histos->Fill1DHisto("vtx_Esum_h", ele_E + pos_E, weight);
-        _vtx_histos->Fill1DHisto("vtx_smear_InvM_h", invm_smear*(vtx->getInvMass()), weight);
         _vtx_histos->Fill1DHisto("ele_pos_clusTimeDiff_h", (corr_eleClusterTime - corr_posClusterTime), weight);
         _vtx_histos->Fill2DHisto("ele_vtxZ_iso_hh", TMath::Min(ele_trk.getIsolation(0), ele_trk.getIsolation(1)), vtx->getZ(), weight);
         _vtx_histos->Fill2DHisto("pos_vtxZ_iso_hh", TMath::Min(pos_trk.getIsolation(0), pos_trk.getIsolation(1)), vtx->getZ(), weight);
@@ -723,7 +717,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             Particle* ele = nullptr;
             Particle* pos = nullptr;
 
-            if(vtxColl_ == "UnconstrainedMollerVertices"){
+            if(vtxColl_ == "UnconstrainedMollerVertices" || vtxColl_ == "BeamspotConstrainedMollerVertices"){
                 _ah->GetSameParticlesFromVtx(vtx, ele, pos);
             }
             else
@@ -776,18 +770,6 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
                 biasingTool_->updateWithBiasP(ele_trk);
                 biasingTool_->updateWithBiasP(pos_trk);
             }
-
-            double invm_smear = 1.;
-            //std::cout << "[Region loop Vtxs] ele track p before smearing: " << ele_trk.getP() << std::endl;
-            if (smearingTool_ and !isData_) {
-                double unsmeared_prod = ele_trk.getP()*pos_trk.getP();
-                double ele_smf = smearingTool_->updateWithSmearP(ele_trk);
-                double pos_smf = smearingTool_->updateWithSmearP(pos_trk);
-                double smeared_prod = ele_trk.getP()*pos_trk.getP();
-                invm_smear = sqrt(smeared_prod/unsmeared_prod);
-                smearingTool_->updateVertexWithSmearP(vtx, ele_smf, pos_smf);
-            }
-            //std::cout << "[Region loop vtxs] ele track p after smearing: " << ele_trk.getP() << std::endl;
 
             //Add the momenta to the tracks
             //ele_trk.setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
@@ -1155,7 +1137,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             Particle* pos = nullptr;
 
             bool foundParts = false;
-            if(vtxColl_ == "UnconstrainedMollerVertices"){
+            if(vtxColl_ == "UnconstrainedMollerVertices" || vtxColl_ == "BeamspotConstrainedMollerVertices"){
                 foundParts = _ah->GetSameParticlesFromVtx(vtx, ele, pos);
             }
             else
@@ -1211,17 +1193,6 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
 
 
             double invm_smear = 1.;
-            //std::cout << "[Good Vtxs] ele track p before smearing: " << ele_trk.getP() << std::endl;
-            if (smearingTool_ and !isData_) {
-                double unsmeared_prod = ele_trk.getP()*pos_trk.getP();
-                double ele_smf = smearingTool_->updateWithSmearP(ele_trk);
-                double pos_smf = smearingTool_->updateWithSmearP(pos_trk);
-                double smeared_prod = ele_trk.getP()*pos_trk.getP();
-                invm_smear = sqrt(smeared_prod/unsmeared_prod);
-                smearingTool_->updateVertexWithSmearP(vtx, ele_smf, pos_smf);
-            }
-            //std::cout << "[Good Vtxs] ele track p after smearing: " << ele_trk.getP() << std::endl;
-
             //Get the layers hit on each track
             std::vector<int> ele_hit_layers = ele_trk.getHitLayers();
             int ele_Si0 = 0;
