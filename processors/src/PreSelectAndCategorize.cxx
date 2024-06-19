@@ -174,8 +174,19 @@ class PreSelectAndCategorize : public Processor {
   std::shared_ptr<TrackSmearingTool> smearingTool_;
   std::shared_ptr<AnaHelpers> _ah; //!< description
 
-  json bpc_configs_; //!< json object
-  json v0proj_fits_;//!< json object v0proj
+  /**
+   * Map of beamspot by run, currently not used but available I guess??
+   */
+  std::map<int,std::vector<double>> beamspot_corrections_;
+
+  /// config for projecting vertex candidates back to target
+  json v0proj_fits_;
+
+  /**
+   * Map of correction name to correction value for analysis-level
+   * corrections on tracks.
+   */
+  std::map<std::string,double> track_corrections_;
 };
 
 
@@ -198,13 +209,40 @@ void PreSelectAndCategorize::configure(const ParameterSet& parameters) {
   auto beamPosCfg = parameters.getString("beamPosCfg");
   if (not beamPosCfg.empty()) {
     std::cout << "Loading beamspot corrections from " << beamPosCfg << std::endl;
-    bpc_configs_ = json_load(beamPosCfg);
+    auto beamspot_corrections_json = json_load(beamPosCfg);
+    for (const auto& [run, entry]: beamspot_corrections_json.items()) {
+      beamspot_corrections_[std::stoi(run)] = {
+        entry["beamspot_x"],
+        entry["beamspot_y"],
+        entry["beamspot_z"]
+      };
+      /**
+       * Alic has updated to be what is shown below,
+       * but in the same update, stopped using the beamspot corrections
+       * anywhere in the analyzer
+      beamspot_corrections_[std::stoi(run)] = {
+        entry["unrotated_mean_x"],
+        entry["unrotated_mean_y"]
+      };
+       */
+    }
   }
 
   auto v0ProjectionFitsCfg = parameters.getString("v0ProjectionFitsCfg");
   if (not v0ProjectionFitsCfg.empty()) {
     std::cout << "Loading projection fits from " << v0ProjectionFitsCfg << std::endl;
     v0proj_fits_ = json_load(v0ProjectionFitsCfg);
+  }
+
+  auto trackBiasCfg = parameters.getString("trackBiasCfg");
+  if (not trackBiasCfg.empty()) {
+    std::cout << "Loading track corrections from " << trackBiasCfg << std::endl;
+    auto track_corr = json_load(trackBiasCfg);
+    std::cout << track_corr << std::endl;
+    char a; std::cin >> a;
+    for (const auto& [name, corr]: track_corr.items()) {
+      track_corrections_[name] = corr;
+    }
   }
 
   eleTrackTimeBias_ = parameters.getDouble("eleTrackTimeBias");
@@ -346,22 +384,8 @@ bool PreSelectAndCategorize::process(IEvent*) {
     Track ele_trk = ele.getTrack();
     Track pos_trk = pos.getTrack();
   
-    // deduce beam position corrections if config was passed
-    std::vector<double> beamPosCorrections = {0., 0., 0.};
-    if (not bpc_configs_.empty()) {
-      for (const auto& [run, entry] : bpc_configs_.items()) {
-        if (std::stoi(run) > eh.getRunNumber()) {
-          break;
-        }
-        beamPosCorrections = {
-          entry["beamspot_x"],
-          entry["beamspot_y"],
-          entry["beamspot_z"]
-        };
-      }
-    }
-    ele_trk.applyCorrection("z0", beamPosCorrections.at(1));
-    pos_trk.applyCorrection("z0", beamPosCorrections.at(1));
+    //ele_trk.applyCorrection("z0", beamPosCorrections.at(1));
+    //pos_trk.applyCorrection("z0", beamPosCorrections.at(1));
   
     // correct track timing bias
     ele_trk.applyCorrection("track_time", eleTrackTimeBias_);
