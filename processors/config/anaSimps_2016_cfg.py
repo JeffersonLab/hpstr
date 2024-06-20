@@ -58,14 +58,13 @@ vtxana.parameters["makeFlatTuple"] = options.makeFlatTuple
 vtxana.parameters["beamPosCfg"] = ""
 if options.isData and options.year == 2016:
     vtxana.parameters["v0ProjectionFitsCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/v0_projection_2016_config.json'
-    vtxana.parameters["trackBiasCfg"] = os.environ['HPSTR_BASE']+'/utils/data/track_bias_corrections_data_2016.json'
+    vtxana.parameters["trackBiasCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/track_bias_corrections_data_2016.json'
 elif not options.isData and options.year == 2016:
     print('Running MC')
-    vtxana.parameters["trackBiasCfg"] = os.environ['HPSTR_BASE']+'/utils/data/track_bias_corrections_tritrig_2016.json'
-    #vtxana.parameters["pSmearingFile"] = os.environ['HPSTR_BASE']+'/utils/data/smearingFile_2016_all_12112023.root'
-    #vtxana.parameters["pSmearingSeed"] = options.pSmearingSeed
-    vtxana.parameters["v0ProjectionFitsCfg"] = os.environ['HPSTR_BASE']+'/utils/data/vertex_proj_beamspot_tritrig_2016.json'  #For tritrig and wab mc
-    #vtxana.parameters["v0ProjectionFitsCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/v0_projection_2016_mc_signal_config.json' #For signal (accidentally gen with bspt=(0,0) THIS NEEDS TO CHANGE AS OF 04/29/24. New samples have different beamspots
+    vtxana.parameters["trackBiasCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/track_bias_corrections_tritrig_2016.json'
+    vtxana.parameters["pSmearingFile"] = os.environ['HPSTR_BASE']+'utils/data/fee_smearing/smearingFile_2016_all_20240620.root'
+    vtxana.parameters["pSmearingSeed"] = options.pSmearingSeed
+    vtxana.parameters["v0ProjectionFitsCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/v0_projection_2016_mc_config.json'
 
 CalTimeOffset = -999
 
@@ -89,7 +88,10 @@ if (options.year == 2016):
                               RegionPath+'Tight_L1L1_nvtx1.json']
     if(options.isData != 1):
         RegionDefinitions.extend([RegionPath+'radMatchTight_2016_simp_reach_CR.json',
-            RegionPath+'radMatchTight_2016_simp_SR_analysis.json'])
+            RegionPath+'radMatchTight_2016_simp_SR_analysis.json',
+            RegionPath+'radMatchTight_nocuts.json',
+            RegionPath+'radMatchTight_L1L1_nvtx1.json']
+        )
 
     vtxana.parameters["regionDefinitions"] = RegionDefinitions
 

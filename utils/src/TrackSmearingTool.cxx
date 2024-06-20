@@ -18,8 +18,8 @@ TrackSmearingTool::TrackSmearingTool(const std::string& smearingfile,
         throw std::invalid_argument( "Provided input smearing file does not exists");
 
     //cache the smearing histograms
-    smearing_histo_top_ = (TH1D*) smearingfile_->Get((tracks+"_p_vs_nHits_hh_smearing"+hsuffix).c_str());
-    smearing_histo_bot_ = (TH1D*) smearingfile_->Get((tracks+"_p_vs_nHits_hh_smearing"+hsuffix).c_str());
+    smearing_histo_top_ = (TH1D*) smearingfile_->Get((tracks+"_p_vs_nHits_hh_smearing"+hsuffix+"_top").c_str());
+    smearing_histo_bot_ = (TH1D*) smearingfile_->Get((tracks+"_p_vs_nHits_hh_smearing"+hsuffix+"_bot").c_str());
 
     if (!smearing_histo_top_ || !smearing_histo_bot_) 
         throw std::invalid_argument("Top and Bottom smearing histograms not found in smearing file");
