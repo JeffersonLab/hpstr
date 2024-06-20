@@ -240,7 +240,7 @@ void PreSelectAndCategorize::configure(const ParameterSet& parameters) {
     auto track_corr = json_load(trackBiasCfg);
     std::cout << track_corr << std::endl;
     char a; std::cin >> a;
-    for (const auto& [name, corr]: track_corr.items()) {
+    for (const auto& [name, corr]: track_corr["corrections"].items()) {
       track_corrections_[name] = corr;
     }
   }
@@ -383,13 +383,18 @@ bool PreSelectAndCategorize::process(IEvent*) {
   
     Track ele_trk = ele.getTrack();
     Track pos_trk = pos.getTrack();
+
+    for (const auto& [name, corr]: track_corrections_) {
+      ele_trk.applyCorrection(name, corr);
+      pos_trk.applyCorrection(name, corr);
+    }
   
     //ele_trk.applyCorrection("z0", beamPosCorrections.at(1));
     //pos_trk.applyCorrection("z0", beamPosCorrections.at(1));
   
     // correct track timing bias
-    ele_trk.applyCorrection("track_time", eleTrackTimeBias_);
-    pos_trk.applyCorrection("track_time", posTrackTimeBias_);
+    //ele_trk.applyCorrection("track_time", eleTrackTimeBias_);
+    //pos_trk.applyCorrection("track_time", posTrackTimeBias_);
   
     // smear track momentum
     double invm_smear = 1.;
