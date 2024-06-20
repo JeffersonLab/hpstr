@@ -164,8 +164,6 @@ class PreSelectAndCategorize : public Processor {
   std::string vtxColl_{"UnconstrainedV0Vertices_KF"};
   std::string mcColl_{"MCParticle"}; //!< description
   bool isData_{false};
-  double eleTrackTimeBias_{0.0};
-  double posTrackTimeBias_{0.0};
   double calTimeOffset_{0.0};
 
   Cutflow vertex_cf_{"vertex","reconstructed"};
@@ -239,14 +237,21 @@ void PreSelectAndCategorize::configure(const ParameterSet& parameters) {
     std::cout << "Loading track corrections from " << trackBiasCfg << std::endl;
     auto track_corr = json_load(trackBiasCfg);
     std::cout << track_corr << std::endl;
-    char a; std::cin >> a;
     for (const auto& [name, corr]: track_corr["corrections"].items()) {
+      // validate names of corrections, Track::applyCorrection silently ignores
+      // names that don't exactly match the names within it, so we check for
+      // misspellings once here
+      if (name != "track_z0" and name != "track_time") {
+        std::cerr << "WARNING: Unrecognized track correction "
+          << name << " : " << corr
+          << " will be skipped."
+          << std::endl;
+        continue;
+      }
       track_corrections_[name] = corr;
     }
   }
 
-  eleTrackTimeBias_ = parameters.getDouble("eleTrackTimeBias");
-  posTrackTimeBias_ = parameters.getDouble("posTrackTimeBias");
   calTimeOffset_ = parameters.getDouble("calTimeOffset");
 
   isData_ = parameters.getInteger("isData") != 0;
@@ -384,17 +389,11 @@ bool PreSelectAndCategorize::process(IEvent*) {
     Track ele_trk = ele.getTrack();
     Track pos_trk = pos.getTrack();
 
+    // apply track_z0 and track_time corrections loaded from JSON
     for (const auto& [name, corr]: track_corrections_) {
       ele_trk.applyCorrection(name, corr);
       pos_trk.applyCorrection(name, corr);
     }
-  
-    //ele_trk.applyCorrection("z0", beamPosCorrections.at(1));
-    //pos_trk.applyCorrection("z0", beamPosCorrections.at(1));
-  
-    // correct track timing bias
-    //ele_trk.applyCorrection("track_time", eleTrackTimeBias_);
-    //pos_trk.applyCorrection("track_time", posTrackTimeBias_);
   
     // smear track momentum
     double invm_smear = 1.;
