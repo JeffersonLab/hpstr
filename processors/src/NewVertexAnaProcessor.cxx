@@ -420,11 +420,6 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             ele_trk.applyCorrection(pair.first, pair.second);
             pos_trk.applyCorrection(pair.first, pair.second);
         }
-        //ele_trk.applyCorrection("z0", beamPosCorrections_.at(1));
-        //pos_trk.applyCorrection("z0", beamPosCorrections_.at(1));
-        // Track Time Corrections
-        //ele_trk.applyCorrection("track_time",eleTrackTimeBias_);
-        //pos_trk.applyCorrection("track_time", posTrackTimeBias_);
 
         // Correct for the momentum bias
 
@@ -450,11 +445,15 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
 
         if (smearingTool_ and !isData_) {
             double unsmeared_prod = ele_trk.getP()*pos_trk.getP();
-            double ele_smf = smearingTool_->updateWithSmearP(ele_trk, ele);
-            double pos_smf = smearingTool_->updateWithSmearP(pos_trk, pos);
+            double ele_smf = smearingTool_->updateWithSmearP(ele_trk);
+            double pos_smf = smearingTool_->updateWithSmearP(pos_trk);
             smearingTool_->updateVertexWithSmearP(vtx, ele_smf, pos_smf);
         }
 
+        //After all modifications to the track are made, update the memory address that the particle gets the track from
+        //with the modified track, that way changes here persist throughout this processor
+        ele->setTrack(&ele_trk);
+        pos->setTrack(&pos_trk);
 
         //Add the momenta to the tracks - do not do that
         //ele_trk.setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
@@ -745,20 +744,6 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             Track ele_trk = ele->getTrack();
             Track pos_trk = pos->getTrack();
 
-            //Apply Track Bias Corrections
-            for (const auto& pair : trackBiasCorrections_){
-                ele_trk.applyCorrection(pair.first, pair.second);
-                pos_trk.applyCorrection(pair.first, pair.second);
-            }
-
-            /*
-            //Beam Position Corrections
-            ele_trk.applyCorrection("z0", beamPosCorrections_.at(1));
-            pos_trk.applyCorrection("z0", beamPosCorrections_.at(1));
-            //Track Time Corrections
-            ele_trk.applyCorrection("track_time",eleTrackTimeBias_);
-            pos_trk.applyCorrection("track_time", posTrackTimeBias_);
-            */
             if (biasingTool_) {
 
                 //Correct the wrong Bfield first
@@ -1159,19 +1144,6 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             Track ele_trk = ele->getTrack();
             Track pos_trk = pos->getTrack();
             //Get the shared info - TODO change and improve
-            //
-            //Apply Track Bias Corrections
-            for (const auto& pair : trackBiasCorrections_){
-                ele_trk.applyCorrection(pair.first, pair.second);
-                pos_trk.applyCorrection(pair.first, pair.second);
-            }
-            /*
-            //Track Time Corrections
-            ele_trk.applyCorrection("track_time",eleTrackTimeBias_);
-            pos_trk.applyCorrection("track_time", posTrackTimeBias_);
-            ele_trk.applyCorrection("z0", beamPosCorrections_.at(1));
-            pos_trk.applyCorrection("z0", beamPosCorrections_.at(1));
-            */
 
             // Track Momentum bias
 
