@@ -102,7 +102,8 @@ void TrackSmearingTool::updateVertexWithSmearP(Vertex* vtx, double ele_smear_fac
     p2_corr.SetX(vtx->getP2X()*pos_smear_factor);
     p2_corr.SetY(vtx->getP2Y()*pos_smear_factor);
     p2_corr.SetZ(vtx->getP2Z()*pos_smear_factor);
-
+    // smear invariant mass as if it was a Moller (i.e. by sqrt(ele_smear*pos_smear))
+    // using the corrected momenta directly to ensure correctness
     m_corr = vtx->getInvMass() * sqrt((p1_corr.Mag()/p1_uncorr_p)*(p2_corr.Mag()/p2_uncorr_p));
     vtx->setVtxParameters(p1_corr, p2_corr, m_corr);
 }
