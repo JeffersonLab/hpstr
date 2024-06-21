@@ -300,10 +300,11 @@ ConfigurePython::~ConfigurePython() {
 Process* ConfigurePython::makeProcess() { 
     Process* p = new Process();
 
+    std::cout<<"WAS IT HERE THAT I BROKE 1"<<std::endl;
     for (auto lib : libraries_) {
       ProcessorFactory::instance().loadLibrary(lib);
     }
-
+    std::cout<<"WAS IT HERE THAT I BROKE 2"<<std::endl;
     for (auto proc : sequence_) {
         Processor* ep = ProcessorFactory::instance().createProcessor(proc.classname_, proc.instancename_, *p);
         if (ep == 0) {

@@ -103,6 +103,18 @@
             "minY" : -512,
             "maxY" : 512
         }, 
+     "SvtHybrids_2HitCluDiff_hh" : {
+            "prefix" : "adcC",
+            "type" : "hh",
+            "xtitle" : "T0",
+            "binsX" : 100,
+            "minX" : -120,
+            "maxX" : 100,
+            "ytitle" : "Strip Distance",
+            "binsY" : 100,
+            "minY" : -120,
+            "maxY" : 100
+        },    
     "SvtHybrids_AmChi_Sqr_hh" : {
             "prefix" : "T0",
             "type" : "hh",

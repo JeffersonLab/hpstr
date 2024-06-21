@@ -45,9 +45,11 @@ void Process::runOnRoot() {
             std::cout<<"Processing file "<<ifile<<std::endl;
             HpsEventFile* file(nullptr);
             if (!output_files_.empty()) {
+                std::cout<<"AM I RUNNING THIS PART 1"<<std::endl;
                 file = new HpsEventFile(ifile, output_files_[cfile]);
                 file->setupEvent(&event);
             }
+            std::cout<<"AM I RUNNING THIS PART 2"<<std::endl;
             for (auto module : sequence_) {
                 module->initialize(event.getTree());
                 module->setFile(file->getOutputFile());

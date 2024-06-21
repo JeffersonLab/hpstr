@@ -85,7 +85,7 @@ track.parameters["trkCollLcio"] = 'KalmanFullTracks'
 track.parameters["trkCollRoot"] = 'KalmanFullTracks'
 track.parameters["kinkRelCollLcio"] = ''
 track.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
-track.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
+track.parameters["trkhitCollRoot"] = 'SiClustersOnTrack_KF'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 
 #Only for detail studies
@@ -171,32 +171,33 @@ fsp.parameters["kinkRelCollLcio"] = ""
 fsp.parameters["trkRelCollLcio"] = "KFTrackDataRelations"
 
 
-if(options.tracking == "KF"):
-    sequence = []#header, vtx, ecal, track]                          
-    #Get KF svt truth hits
-    if(options.truthHits > 0):
-        sequence.append(svthits)
-elif(options.tracking == "GBL"):
-    sequence = []#header, vtxgbl, ecal, trackgbl]                          
-    #Get GBL svt truth hits
-    if(options.truthHits > 0):
-        sequence.append(svthitsgbl)
-elif(options.tracking == "BOTH"):
-    sequence = []#header, vtxgbl, trackgbl, vtx, ecal, track]                          
-    #Get KF and GBL svt truth hits
-    if(options.truthHits > 0):
-        sequence.append(svthits)
-        sequence.append(svthitsgbl)
-else:
-    print("ERROR::Need to specify which tracks KF, GBL, or BOTH")
 
-#Keep svt raw hits
-if(options.rawHits > 0):
-    sequence.append(rawsvt)
-#If MC, get MCParticles
-if(not options.isData):
-    sequence.append(mcpart)
-sequence.append(fsp)
+sequence = [header, track, svthits, rawsvt]                          
+#if(options.tracking == "KF"):
+#    #Get KF svt truth hits
+#    if(options.truthHits > 0):
+#        sequence.append(svthits)
+#elif(options.tracking == "GBL"):
+#    #sequence = []#header, vtxgbl, ecal, trackgbl]                          
+#    #Get GBL svt truth hits
+#    if(options.truthHits > 0):
+#        sequence.append(svthitsgbl)
+#elif(options.tracking == "BOTH"):
+#    #sequence = []#header, vtxgbl, trackgbl, vtx, ecal, track]                          
+#    #Get KF and GBL svt truth hits
+#    if(options.truthHits > 0):
+#        sequence.append(svthits)
+#        sequence.append(svthitsgbl)
+#else:
+#    print("ERROR::Need to specify which tracks KF, GBL, or BOTH")
+#
+##Keep svt raw hits
+#if(options.rawHits > 0):
+#    sequence.append(rawsvt)
+##If MC, get MCParticles
+#if(not options.isData):
+#    sequence.append(mcpart)
+#sequence.append(fsp)
 
 p.sequence = sequence
 

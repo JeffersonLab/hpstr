@@ -3,8 +3,11 @@
 HpsEventFile::HpsEventFile(const std::string ifilename, const std::string& ofilename){
   rootfile_ = new TFile(ifilename.c_str());
   //ttree_reader = new ("HPS_Event",_rootfile);
+  std::cout<<"THE NAME OF THE FILE I PASSED WAS "<<ifilename<<std::endl;
   intree_ = (TTree*)rootfile_->Get("HPS_Event");
+  std::cout<<"DID I BREAK HERE IN HPSEVENT1"<<std::endl;
   ofile_    = new TFile(ofilename.c_str(),"recreate");
+  std::cout<<"DID I BREAK HERE IN HPSEVENT2"<<std::endl;
   
 }
 

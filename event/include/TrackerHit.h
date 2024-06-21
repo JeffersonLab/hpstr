@@ -111,6 +111,8 @@ class TrackerHit : public TObject {
         /** Is a hit shared between multiple tracks. */
         bool isShared() const ;
 
+	int getNHits() { return n_rawhits_;} ;
+
         /** Add raw hit to the raw hit reference array */
         void addRawHit(TObject* rawhit) {
             ++n_rawhits_;

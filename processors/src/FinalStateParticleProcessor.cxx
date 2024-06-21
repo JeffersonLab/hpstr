@@ -129,6 +129,9 @@ bool FinalStateParticleProcessor::process(IEvent* ievent) {
         if (lc_fsp->getTracks().size()>0){
             EVENT::Track* lc_track = static_cast<EVENT::Track*>(lc_fsp->getTracks()[0]);
             Track* track = utils::buildTrack(lc_track,gbl_kink_data,track_data);
+            if (track->isKalmanTrack()){
+                hitType=1; //SiClusters
+            } 
             EVENT::TrackerHitVec lc_tracker_hits = lc_track->getTrackerHits(); 
             for (auto lc_tracker_hit : lc_tracker_hits) {
                 TrackerHit* tracker_hit = utils::buildTrackerHit(static_cast<IMPL::TrackerHitImpl*>(lc_tracker_hit),rotateHits,hitType);

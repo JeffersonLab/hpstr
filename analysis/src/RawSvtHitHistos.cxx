@@ -22,7 +22,7 @@ void RawSvtHitHistos::DefineHistos(){
     //std::cout<<"hello2"<<std::endl;
 }
 
-void RawSvtHitHistos::FillHistograms(RawSvtHit* rawSvtHit,float weight,int i,unsigned int i2,Float_t TimeDiff,Float_t AmpDiff, int STR, int HITC, int HITL) {
+void RawSvtHitHistos::FillHistograms(RawSvtHit* rawSvtHit,float weight,int i,unsigned int i2,Float_t TimeDiff,Float_t AmpDiff, int STR, int HITC, int HITL, float otherTime) {
     std::vector<std::string> hybridStrings={};
     std::string histokey;
     //std::cout<<Event_number<<std::endl;
@@ -113,6 +113,9 @@ void RawSvtHitHistos::FillHistograms(RawSvtHit* rawSvtHit,float weight,int i,uns
     histokey = swTag + "_SvtHybrids_T0Strip_hh";
     Fill2DHisto(histokey,rawSvtHit->getT0(i),rawSvtHit->getStrip()-STR,weight);
  
+    histokey = swTag + "_SvtHybrids_2HitCluDiff_hh";
+    Fill2DHisto(histokey,rawSvtHit->getT0(i),otherTime,weight);
+    
     histokey = swTag + "_SvtHybrids_AmChi_Sqr_hh";
     Fill2DHisto(histokey, rawSvtHit->getChiSq(i), rawSvtHit->getAmp(i),weight);
 

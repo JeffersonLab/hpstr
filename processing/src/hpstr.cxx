@@ -52,7 +52,8 @@ int main(int argc, char **argv) {
         std::cout << "---- [ hpstr ]: Configuration load complete  --------" << std::endl;
 
         Process* p = cfg.makeProcess();
-        int run_mode = p->getRunMode();
+	std::cout << "I MANAGED TO MAKE THE PROCESS" << std::endl;
+	int run_mode = p->getRunMode();
 
         std::cout << "---- [ hpstr ]: Process mode " << run_mode << " initialized.  --------" << std::endl;
 

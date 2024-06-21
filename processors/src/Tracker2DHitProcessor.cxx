@@ -99,9 +99,9 @@ bool Tracker2DHitProcessor::process(IEvent* ievent) {
             std::cout << "tracker hit lcio id: " << lc_tracker_hit->id() << std::endl;
 
         // Build a TrackerHit
-        TrackerHit* tracker_hit = utils::buildTrackerHit(lc_tracker_hit,true,0);
+        TrackerHit* tracker_hit = utils::buildTrackerHit(lc_tracker_hit,true,1);
         std::vector<RawSvtHit*> rawSvthits;
-        utils::addRawInfoTo3dHit(tracker_hit, lc_tracker_hit, raw_svt_hit_fits,&rawSvthits,0);
+        utils::addRawInfoTo3dHit(tracker_hit, lc_tracker_hit, raw_svt_hit_fits,&rawSvthits,1);
         for (auto rhit : rawSvthits)
             rawhits_.push_back(rhit);
 
