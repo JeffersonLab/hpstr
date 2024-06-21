@@ -62,7 +62,7 @@ if options.isData and options.year == 2016:
 elif not options.isData and options.year == 2016:
     print('Running MC')
     vtxana.parameters["trackBiasCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/track_bias_corrections_tritrig_2016.json'
-    vtxana.parameters["pSmearingFile"] = os.environ['HPSTR_BASE']+'utils/data/fee_smearing/smearingFile_2016_all_20240620.root'
+    vtxana.parameters["pSmearingFile"] = os.environ['HPSTR_BASE']+'/utils/data/fee_smearing/smearingFile_2016_all_20240620.root'
     vtxana.parameters["pSmearingSeed"] = options.pSmearingSeed
     vtxana.parameters["v0ProjectionFitsCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/v0_projection_2016_mc_config.json'
 
