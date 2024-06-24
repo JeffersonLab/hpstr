@@ -5,18 +5,38 @@
         "info" : "N Hits >= 10"
     },
     "chi2ndf_lt"  : {
-        "cut"  : 10.0,
+        "cut"  : 6.0,
         "id"   : 1,
-        "info" : "#chi^{2}/ndf <= 10.0"
+        "info" : "#chi^{2}/ndf <= 6.0"
     },
     "p_gt"  : {
-        "cut"  : 0.4,
+        "cut"  : 1.0,
         "id"   : 2,
-        "info" : "p > 0.4"
+        "info" : "p > 1.0"
     },
     "p_lt"  : {
-        "cut"  : 6.0,
+        "cut"  : 4.0,
         "id"   : 3,
-        "info" : "p < 6.0"
+        "info" : "p < 4.0"
+    },
+    "trk_ecal_lt"  : {
+        "cut"  : 50.0,
+        "id"   : 4,
+        "info" : "trk ecal x < 50 mm"
+    },
+    "trk_ecal_gt"  : {
+        "cut"  : -100.0,
+        "id"   : 5,
+        "info" : "trk ecal x > -100 mm"
+    },
+    "trk_time_gt"  : {
+        "cut"  : -20.0,
+        "id"   : 6,
+        "info" : "trk t > -20 ns"
+    },
+    "trk_time_lt"  : {
+        "cut"  : 20.0,
+        "id"   : 7,
+        "info" : "trk t < 20 ns"
     }
 }

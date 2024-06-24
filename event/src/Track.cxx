@@ -89,8 +89,8 @@ void Track::addHit(TObject* hit) {
 }
 
 void Track::applyCorrection(std::string var, double correction){
-    if(var == "z0"){
-        z0_ = z0_ - correction;
+    if(var == "track_z0"){
+        z0_ = z0_ + correction;
     }
     if(var == "track_time"){
         track_time_ = track_time_ + correction;
