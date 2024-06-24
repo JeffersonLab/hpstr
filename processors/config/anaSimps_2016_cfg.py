@@ -47,8 +47,8 @@ vtxana.parameters["hitColl"] = "SiClustersOnTrackOnPartOnUVtx"
 vtxana.parameters["analysis"] = "vertex"
 vtxana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+"/analysis/selections/simps/vertexSelection_2016_simp_preselection.json"
 #vtxana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+"/analysis/selections/simps/vertexSelection_2016_simp_nocuts.json"
-#vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/simps/vtxAnalysis_2016_simp_reach_light.json"
-vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/simps/vtxAnalysis_2016_simp_reach.json"
+vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/simps/vtxAnalysis_2016_simp_reach_light.json"
+#vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/simps/vtxAnalysis_2016_simp_reach.json"
 vtxana.parameters["mcHistoCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
 #####
 vtxana.parameters["beamE"] = base.beamE[str(options.year)]

@@ -23,14 +23,14 @@ def gaus_fit(histo, xmin, xmax, smean, swidth, snorm, nsigma=2.0, isData=False):
     #iterate over randomly fluctuated fit parameters. Keep the best resulting fit
     niters = 100
     for n in range(niters):
-        norm = params[0]*np.random.uniform(80,120)*0.01
-        mu = params[1]*np.random.uniform(80,120)*0.01
-        sigma = params[2]*np.random.uniform(80,120)*0.01
+        norm = params[0]#*np.random.uniform(80,120)*0.01
+        mu = params[1]#*np.random.uniform(80,120)*0.01
+        sigma = params[2]#*np.random.uniform(80,120)*0.01
         
         #Data has shoulders, so we can specify the xmin and xmax to do an asymmetric fit window
+        xminx = mu - nsigma*sigma
+        xmaxx = mu + nsigma*sigma
         if isData:
-            xminx = mu - nsigma*sigma
-            xmaxx = mu + nsigma*sigma
             if xminx < xmin:
                 xminx = xmin
             if xmaxx > xmax:
