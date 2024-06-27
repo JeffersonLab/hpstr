@@ -289,10 +289,10 @@ class HpsFitResult {
         double p_value_;
 
         /** Order polynomial used by the fitter. */
-        double poly_order_{0};
+        double poly_order_{10};
 
         /** Type of background fit function to use. */
-        FitFunction::BkgModel bkg_model_{FitFunction::BkgModel::EXP_CHEBYSHEV};
+        FitFunction::BkgModel bkg_model_{FitFunction::BkgModel::UA23NOLINPLUSLAS1};
 
         /** 2 sigma upper limit on the signal. */
         double upper_limit_; 

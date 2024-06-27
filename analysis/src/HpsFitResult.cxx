@@ -11,7 +11,8 @@ HpsFitResult::~HpsFitResult() { }
 
 double HpsFitResult::getFullBkgRate() {
     double bkgRate = -1.0;
-    double fitParams[6];
+    //change the following to 10/11 depending on the number of parameters global fit is using	
+    double fitParams[10];
     double mass[1];
     mass[0] = mass_hypo_;
     // Determine the type of background fit model.

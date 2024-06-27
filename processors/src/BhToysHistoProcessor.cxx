@@ -81,8 +81,9 @@ void BhToysHistoProcessor::initialize(std::string inFilename, std::string outFil
     bump_hunter_->setBounds(mass_spec_h->GetXaxis()->GetBinUpEdge(mass_spec_h->FindFirstBinAbove()),
             mass_spec_h->GetXaxis()->GetBinLowEdge(mass_spec_h->FindLastBinAbove()));
     if (bkg_fit_model > 3){
-        std::cout << "setting bounds to 45 to 200 MeV" << std::endl;
-        bump_hunter_->setBounds(0.045,0.200);//bounds for global fit
+        std::cout << "setting bounds to 45 to 200 MeV (2016) or [17, 103] MeV" << std::endl;
+        //bump_hunter_->setBounds(0.045,0.200);//bounds for global fit
+	bump_hunter_->setBounds(0.017,0.103);//bounds for 2015 global fit
     }
     if(debug_ > 0) bump_hunter_->enableDebug();
 

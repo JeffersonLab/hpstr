@@ -45,6 +45,7 @@ void BumpHunter::initialize(TH1* histogram, double &mass_hypothesis) {
     // Correct the mass to take into account the mass scale systematic
     //corr_mass_ = correctMass(mass_hypothesis);
     //corr_mass_ = mass_hypothesis;
+    
 
     // Get the mass resolution at the corrected mass 
     mass_resolution_ = getMassResolution(mass_hypothesis_);
@@ -277,17 +278,68 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
 
             //For the global bkg only model. Function= las3_plus_las6. Using the 10 parameters found on [45,200] MeV that found a pvalue of 5.8e-2 as initial parameters for fitting.
             //batch4 == normalization factor so must multiply the values of p2/pz in the p7 spot to effectively facor parameter out
-            bkg->SetParameter(0, 0.02655677447001521);
-            bkg->SetParameter(1, 0.09575583442743552);
-            bkg->SetParameter(2, 1.6087608867103269e-06);
-            bkg->SetParameter(3, -12.14155381679078);
-            bkg->SetParameter(4, -9.88122176150782);
-            bkg->SetParameter(5, -0.015730267362833915);
-            bkg->SetParameter(6, 0.11327528231496534);
-            bkg->SetParameter(7, -14701589.955451723 / 1.6087608867103269e-06);
-            bkg->SetParameter(8, 117.94823473423622);
-            bkg->SetParameter(9, 423.73510122988904);
-        
+            //in vatch15, fixing parameters found using 10% stats and leaving rest floating, following parameters found using 100% 
+	    //bkg->FixParameter(0, 0.02655677447001521);
+	    //bkg->FixParameter(1, 0.09575583442743552);
+            //bkg->SetParameter(2, 1.6087608867103269e-06);
+            //bkg->SetParameter(3, -12.14155381679078);
+            //bkg->SetParameter(4, -9.88122176150782);
+            //bkg->SetParameter(5, -0.015730267362833915);
+            //bkg->SetParameter(6, 0.11327528231496534);
+            //bkg->SetParameter(7, -14701589.955451723 / 1.6087608867103269e-06);
+            //bkg->SetParameter(8, 117.94823473423622);
+            //bkg->SetParameter(9, 423.73510122988904);
+	    //batch15
+	   
+//	    bkg->FixParameter(0, 0.029668437523186);//FIXED
+//	    bkg->FixParameter(1, 0.0922408532764407);//FIXED
+//            bkg->SetParameter(2, 1.54 * 0.0253709666560375); //didnt change for batch 15
+//           bkg->SetParameter(3, 6.48437396149796);
+//            bkg->SetParameter(4, -6.39615451477062);//fix cause param convergence in trials
+//            bkg->SetParameter(5, -0.138545315472865);//FIXED
+//            bkg->SetParameter(6, -0.0901415989807506);//FIXED 
+//            bkg->SetParameter(7, -996916.824047899 /0.00253709666560375);//changed and scaled for  batch 15, may need to change if it doesnt work well
+//            bkg->SetParameter(8, 62.1873792846988); 
+//            bkg->SetParameter(9, 205.916571373631);
+
+
+//batch 17 fix param 0,1,4 due to change in params
+	   //for chi2 prob ~0.094846 
+	    //bkg->FixParameter(0, 0.030074818877556784);//FIXED batch 15 //set otherwise
+	    //bkg->FixParameter(1, 0.0922332252618532);//FIXED
+            //bkg->SetParameter(2, 1.54 * 0.09270220202361732); //didnt change for batch 15
+            //bkg->SetParameter(3, 10.19565177187765);
+//            bkg->SetParameter(4, -5.999178486707799);//fixed for batch 16
+//            bkg->FixParameter(5, -0.03555422309280177);//FIXED batch 15
+//            bkg->FixParameter(6, -0.030448353969406552);//FIXED 
+            //bkg->SetParameter(7, -1516706.7987999977 / 0.009270220202361732);//changed and scaled for  batch 15, may need to change if it doesnt work well
+            //bkg->SetParameter(8, 12.301046515690146); 
+            //bkg->SetParameter(9, 903.1742716581055);
+
+
+
+//parameters for 2015 dataset
+            bkg->SetParameter(0,0.014814933712322965);
+            bkg->SetParameter(1, 0.04671130069437565);
+            bkg->SetParameter(2, 4.163195400663928e-05);
+            bkg->SetParameter(3, 19.946858289834015);
+            bkg->SetParameter(4, -7.121171310011385);
+            bkg->SetParameter(5, -0.015759484411453376);
+            bkg->SetParameter(6, 0.04480879026813586);
+            bkg->SetParameter(7, -6249834.189121319 / 4.163195400663928e-05);
+            bkg->SetParameter(8, 219.5505731792011);
+            bkg->SetParameter(9, 2117.5604367053106);
+
+
+
+
+
+
+
+
+
+
+
         } else if(isUA23L1) {    
             //for the ua23nolinpluslas1 global fit bkg model
             ua23nolinpluslas1_FitFunction bkg_func(mass_hypothesis, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::NONE, isExp);
@@ -330,22 +382,69 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
             bkg_toys = new TF1("bkg_toys", bkg_toy_func, window_start_, window_end_, toy_poly_order_);
 
             //setting parameters to equal ones found through round 2 testing
-            bkg_toys->SetParameter(0, 0.02655677447001521);
-            bkg_toys->SetParameter(1, 0.09575583442743552);
-            bkg_toys->SetParameter(2, 1.6087608867103269e-06);
-            bkg_toys->SetParameter(3, -12.14155381679078);
-            bkg_toys->SetParameter(4, -9.88122176150782);
-            bkg_toys->SetParameter(5, -0.015730267362833915);
-            bkg_toys->SetParameter(6, 0.11327528231496534);
-            bkg_toys->SetParameter(7, -14701589.955451723 / 1.6087608867103269e-06);
-            bkg_toys->SetParameter(8, 117.94823473423622);
-            bkg_toys->SetParameter(9, 423.73510122988904);
-        } else if(isUA23L1) {    
-            //for the ua23nolinpluslas1 global fit toy model
-            ua23nolinpluslas1_FitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, toy_order_model, FitFunction::SignalFitModel::NONE, isExp);
-            bkg_toys = new TF1("bkg_toys", bkg_toy_func, window_start_, window_end_, toy_poly_order_);
+//            bkg_toys->FixParameter(0, 0.02655677447001521);
+//            bkg_toys->FixParameter(1, 0.09575583442743552);
+//            bkg_toys->SetParameter(2, 1.6087608867103269e-06);
+//            bkg_toys->SetParameter(3, -12.14155381679078);
+//            bkg_toys->SetParameter(4, -9.88122176150782);
+//            bkg_toys->SetParameter(5, -0.015730267362833915);
+//            bkg_toys->SetParameter(6, 0.11327528231496534);
+//            bkg_toys->SetParameter(7, -14701589.955451723 / 1.6087608867103269e-06);
+//            bkg_toys->SetParameter(8, 117.94823473423622);
+//            bkg_toys->SetParameter(9, 423.73510122988904);
+	//batch15 below, batch 17 will use a mix of parameters from different tests
+//	    bkg_toys->FixParameter(0, 0.029668437523186);//FIXED
+//	    bkg_toys->FixParameter(1, 0.0922408532764407);//FIXED
+//            bkg_toys->SetParameter(2, 1.54 * 0.0253709666560375); //didnt change for batch 15
+//            bkg_toys->SetParameter(3, 6.48437396149796);
+//            bkg_toys->SetParameter(4, -6.39615451477062); //Fix because of parameter convergence maybe
+//	    bkg_toys->SetParameter(5, -0.138545315472865);//FIXED
+//            bkg_toys->SetParameter(6, -0.0901415989807506);//FIXED 
+//            bkg_toys->SetParameter(7, -996916.824047899 /0.00253709666560375);//changed and scaled for  batch 15, may need to change if it doesnt work well
+//            bkg_toys->SetParameter(8, 62.1873792846988); 
+//            bkg_toys->SetParameter(9, 205.916571373631);
+//batch 20 all but the two scaling jawns fixed cause y not
+	    //batch 16 where i am now fixing 4 /// then i am trying fix 1, 4, 6
+	    //bkg_toys->FixParameter(0, 0.030074818877556784);//
+	    //bkg_toys->FixParameter(1, 0.0922332252618532);//FIXED
+            //bkg_toys->SetParameter(2, 1.54 * 0.09270220202361732);//scaled to account for 6.5%
+            //bkg_toys->SetParameter(3, 10.19565177187765);
+            //bkg_toys->SetParameter(4, -5.999178486707799);//fixed as this param doesnt change a lot in tests
+            //bkg_toys->SetParameter(5, -0.03555422309280177);//
+            //bkg_toys->SetParameter(6, -0.030448353969406552);//FIXED 
+            //bkg_toys->SetParameter(7, -1516706.7987999977 / 0.009270220202361732);
+            //bkg_toys->SetParameter(8, 12.301046515690146); 
+            //bkg_toys->SetParameter(9, 903.1742716581055);
+//From chi2-prob ~0.0948461
+	    //bkg_toys->FixParameter(0, 0.030074818877556784);//FIXED
+	    //bkg_toys->FixParameter(1, 0.09484618731139761);//FIXED
+            //bkg_toys->SetParameter(2, 0.0009270220202361732);
+            //bkg_toys->SetParameter(3, 10.19565177187765);
+            //bkg_toys->SetParameter(4, -5.999178486707799);
+            //bkg_toys->FixParameter(5, -0.03555422309280177);//FIXED
+            //bkg_toys->FixParameter(6, -0.030448353969406552);//FIXED 
+            //bkg_toys->SetParameter(7, -1516706.7987999977 / 0.009270220202361732);
+            //bkg_toys->SetParameter(8, 12.301046515690146); 
+            //bkg_toys->SetParameter(9, 903.1742716581055);
 
-            //setting parameters to equal ones found through round 2 testing
+//for 2015 data
+
+	    bkg_toys->SetParameter(0,0.014814933712322965);
+            bkg_toys->SetParameter(1, 0.04671130069437565);
+            bkg_toys->SetParameter(2, 4.163195400663928e-05);
+            bkg_toys->SetParameter(3, 19.946858289834015);
+            bkg_toys->SetParameter(4, -7.121171310011385);
+            bkg_toys->SetParameter(5, -0.015759484411453376);
+            bkg_toys->SetParameter(6, 0.04480879026813586);
+	    bkg_toys->SetParameter(7, -6249834.189121319 / 4.163195400663928e-05); 
+            bkg_toys->SetParameter(8, 219.5505731792011);     
+            bkg_toys->SetParameter(9, 2117.5604367053106);     
+            //for the ua23nolinpluslas1 global fit toy model
+	   } else if(isUA23L1) {    
+	    ua23nolinpluslas1_FitFunction bkg_toy_func(mass_hypothesis, window_end_ - window_start_, bin_width_, toy_order_model, FitFunction::SignalFitModel::NONE, isExp);
+	    bkg_toys = new TF1("bkg_toys", bkg_toy_func, window_start_, window_end_, toy_poly_order_);
+
+            //setting parameters to those found through round 2 testing
             bkg_toys->SetParameter(0, 129634.98200470296);
             bkg_toys->SetParameter(1, -12174541.73288088);
             bkg_toys->SetParameter(2, -1225773499.545076);//global normalization constant
@@ -415,7 +514,8 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
             }
             //fixing the rest of the shape Batch4
             else {
-                full->FixParameter(parI, bkg->GetParameter(parI));
+                full->SetParameter(parI, bkg->GetParameter(parI));
+                //full->FixParameter(parI, bkg->GetParameter(parI));//used for fixing bkgshape
             }    
         }
 
@@ -457,18 +557,66 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
         full->FixParameter(poly_order_ + 1, mass_hypothesis);
         full->FixParameter(poly_order_ + 2, mass_resolution_);
 
+        //if(mass_hypothesis < 0.06){
+	//	for(int parI = 0; parI < poly_order_ ; parI++) {
+	//	    //for normalization factor
+	//	    if(parI == 2){
+	//		full->SetParameter(parI, bkg->GetParameter(parI));
+	//	    }
+	//	    //fixing falling function components 
+	//	    
+	//	    //else if(parI == 5 || parI == 8){ //|| parI == 0 || parI == 3){ // parI == 0 || parI == 5 || parI == 6){
+	//	    else if(parI == 1 ||parI == 4 || parI == 6){
+	//		full->FixParameter(parI, bkg->GetParameter(parI));
+	//	    }
+	//	    else{ 
+	//		full->SetParameter(parI, bkg->GetParameter(parI));
+	//		//full->FixParameter(parI, bkg->GetParameter(parI));//use for fixing bkgshape
+	//	    }
+	//	    //could insert following comment into the if else above, but removed for now
+	//	    //std::cout << "Parameter :" << parI << ": " <<bkg->GetParameter(parI) << std::endl;
+	//	}
+	//	}    
+        //else {
+	//	for(int parI = 0; parI < poly_order_ ; parI++) {
+	//	    //for normalization factor
+	//	    if(parI == 2){
+	//		full->SetParameter(parI, bkg->GetParameter(parI));
+	//	    }
+	//	    //fixing error function rise components 
+
+	//	    //else if(parI == 0 || parI == 3){ //|| parI == 5 || parI == 8){ // parI == 0 || parI == 5 || parI == 6){
+	//	    else if(parI == 1 || parI == 4 || parI == 6){
+	//		full->FixParameter(parI, bkg->GetParameter(parI));
+	//	    }
+	//	    else{ 
+	//		full->SetParameter(parI, bkg->GetParameter(parI));
+	//		//full->FixParameter(parI, bkg->GetParameter(parI));//use for fixing bkgshape
+	//	    }
+	//	    //could insert following comment into the if else above, but removed for now
+	//	    //std::cout << "Parameter :" << parI << ": " <<bkg->GetParameter(parI) << std::endl;
+	//	}
+	//	}	 
+
+
         for(int parI = 0; parI < poly_order_ ; parI++) {
             //for normalization factor
             if(parI == 2){
                 full->SetParameter(parI, bkg->GetParameter(parI));
+            //}
+	    //if(parI == 0 || parI == 1 || parI == 5 || parI == 6){
+            //    full->FixParameter(parI, bkg->GetParameter(parI));
             }
             else{ 
-                full->FixParameter(parI, bkg->GetParameter(parI));
-            }
-            //could insert following comment into the if else above, but removed for now
-            //std::cout << "Parameter :" << parI << ": " <<bkg->GetParameter(parI) << std::endl;
+                //full->SetParameter(parI, bkg->GetParameter(parI));
+                full->FixParameter(parI, bkg->GetParameter(parI));//use for fixing bkgshape
+            } 
         }
-    } else if(isUA23L1) {
+        
+
+    	} 
+	
+	else if(isUA23L1) {
         ua23nolinpluslas1_FitFunction full_func(mass_hypothesis, window_end_ - window_start_, bin_width_, bkg_order_model, FitFunction::SignalFitModel::GAUSSIAN, isExp);       
         full = new TF1("full", full_func, window_start_, window_end_, poly_order_ + 3);
         //signal model info    
@@ -491,23 +639,28 @@ HpsFitResult* BumpHunter::performSearch(TH1* histogram, double mass_hypothesis, 
             if(parI == 2){
                 full->SetParameter(parI, bkg->GetParameter(parI));
             }
-            else{ 
-                full->FixParameter(parI, bkg->GetParameter(parI));
+            else{
+		full->SetParameter(parI, bkg->GetParameter(parI));    
+                //full->FixParameter(parI, bkg->GetParameter(parI)); //use for fixing bkgshape
             }
             //could insert following comment into the if else above, but removed for now
             //std::cout << "Parameter :" << parI << ": " <<bkg->GetParameter(parI) << std::endl;
         }
     }    
     
-
-    TFitResultPtr full_result = histogram->Fit("full", "QLES+", "", window_start_, window_end_);
+    //in the following, remove Q when trouble shooting errors in fittin	
+    TFitResultPtr full_result = histogram->Fit("full", "LES+", "", window_start_, window_end_);
+    //TFitResultPtr full_result = histogram->Fit("full", "QLES+", "", window_start_, window_end_);
     fit_result->setCompFitResult(full_result);
 
     calculatePValue(fit_result);
     std::cout << "[ BumpHunter ]: Bkg Fit Status: " << fit_result->getBkgFitResult()->IsValid() <<  std::endl;
     std::cout << "[ BumpHunter ]: Bkg Toys Fit Status: " << fit_result->getBkgToysFitResult()->IsValid() <<  std::endl;
     std::cout << "[ BumpHunter ]: Full Fit Status: " << fit_result->getCompFitResult()->IsValid() <<  std::endl;
-    if((!skip_ul) && full_result->IsValid()) { getUpperLimit(histogram, fit_result); }
+    //TODO: add a flag such that if full_result is not valid and error matrix is not pos-def it lets us know and fits the point anyway
+    //if trouble shooting N signal upper limits comment following line and uncomment get upperlimit 
+    //if((!skip_ul) && full_result->IsValid()) { getUpperLimit(histogram, fit_result); }
+    getUpperLimit(histogram, fit_result); 
 
     // Persist the mass hypothesis used for this fit
     fit_result->setMass(mass_hypothesis_);
@@ -728,13 +881,63 @@ void BumpHunter::getUpperLimitAsymCLs(TH1* histogram, HpsFitResult* result) {
         comp->FixParameter(poly_order_ + 1, mass_hypothesis_);
         comp->FixParameter(poly_order_ + 2, mass_resolution_);
 
+
+//        if(mass_hypothesis_ < 0.06){
+//		for(int parI = 0; parI < poly_order_ ; parI++) {
+//		    //for normalization factor
+//		    if(parI == 2){
+//			comp->SetParameter(parI, result->getCompFitResult()->Parameter(parI));
+//		    }
+//		    //fixing falling function components 
+//		    //else if(parI == 5 || parI == 8){ //|| parI == 0 || parI == 3){ // parI == 0 || parI == 5 || parI == 6){
+//		
+//		    else if(parI == 1 || parI == 4 || parI == 6){
+//	    	        comp->FixParameter(parI, result->getCompFitResult()->Parameter(parI)); 
+//		    }
+//		    else{ 
+//			comp->SetParameter(parI, result->getCompFitResult()->Parameter(parI));
+//			//full->FixParameter(parI, bkg->GetParameter(parI));//use for fixing bkgshape
+//		    }
+//		    //could insert following comment into the if else above, but removed for now
+//		    //std::cout << "Parameter :" << parI << ": " <<bkg->GetParameter(parI) << std::endl;
+//		}
+//		}    
+//        else {
+//		for(int parI = 0; parI < poly_order_ ; parI++) {
+//		    //for normalization factor
+//		    if(parI == 2){
+//			comp->SetParameter(parI, result->getCompFitResult()->Parameter(parI));// bkg->GetParameter(parI));
+//		    }
+//		    //fixing error function rise components 
+//		    //else if(parI == 0 || parI == 3){ //|| parI == 5 || parI == 8){ // parI == 0 || parI == 5 || parI == 6){
+//		
+//		    else if(parI == 1 || parI == 4 || parI == 6){
+//	       	        comp->FixParameter(parI, result->getCompFitResult()->Parameter(parI));//bkg->GetParameter(parI));
+//		    }
+//		    else{ 
+//			comp->SetParameter(parI, result->getCompFitResult()->Parameter(parI));//bkg->GetParameter(parI));
+//			//full->FixParameter(parI, bkg->GetParameter(parI));//use for fixing bkgshape
+//		    }
+//		    //could insert following comment into the if else above, but removed for now
+//		    //std::cout << "Parameter :" << parI << ": " <<bkg->GetParameter(parI) << std::endl;
+//		}
+//		}	    
+//
+
+
+
         for(int parI = 0; parI < poly_order_ ; parI++) {
             //for normalization parameter 
-            if (parI == 2){
+            if (parI == 2|| parI == 7){
                 comp->SetParameter(parI, result->getCompFitResult()->Parameter(parI));
+            //}
+	    //fixing error function components
+            //if(parI == 0 || parI == 1 || parI == 5 || parI == 6) {
+            //	comp->FixParameter(parI, result->getCompFitResult()->Parameter(parI));  
             }
             else{ 
-                comp->FixParameter(parI, result->getCompFitResult()->Parameter(parI));
+		//comp->SetParameter(parI, result->getCompFitResult()->Parameter(parI));
+    		comp->FixParameter(parI, result->getCompFitResult()->Parameter(parI));//used for fixing bkgshape
             }
         }
     }   
@@ -766,8 +969,8 @@ void BumpHunter::getUpperLimitAsymCLs(TH1* histogram, HpsFitResult* result) {
     printDebug("MLE NLL: " + std::to_string(mle_nll));
     printDebug("mu=0 NLL: " + std::to_string(bkg_nll));
 
-    double mu95up = fabs(mu_hat + 1.64*sigma); //This should give us something close to start
-    //double mu95up = TMath::Sqrt(fabs(mu_hat + 1.64*sigma));//attempting sqrt first
+    //double mu95up = fabs(mu_hat + 1.64*sigma); //This should give us something close to start
+    double mu95up = 4.0 *TMath::Sqrt(fabs(mu_hat + 1.64*sigma));//using the 4 to inch it up a little bit firstattempting sqrt first
     //double mu95up = 0.5*fabs(mu_hat + 1.64*sigma);
 
 

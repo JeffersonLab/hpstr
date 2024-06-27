@@ -222,8 +222,12 @@ class BumpHunter {
          * @param res_scale 
          * @return double 
          */
-        inline double getMassResolution(double mass, double res_scale) {
-            return res_scale * (0.000379509 + (0.0416842 * mass) - (0.271364 * mass * mass) + (3.49537 * mass * mass * mass) - (11.1153 * mass * mass * mass * mass));
+        inline double getMassResolution(double mass, double res_scale) {\
+	    //2015 mass resolution (from Omar)	
+            return res_scale *(0.0532190838657*mass - 0.0000922283032152); // scaled to moller mass + sys
+	    
+	    //2016 mass resolution (from Sam/Cam)
+	    //return res_scale * (0.000379509 + (0.0416842 * mass) - (0.271364 * mass * mass) + (3.49537 * mass * mass * mass) - (11.1153 * mass * mass * mass * mass));
         }
         
         /**
@@ -264,10 +268,12 @@ class BumpHunter {
         double corr_mass_{0};
         
         /** The lower bound of the histogram. */
-        double lower_bound_{0.045};
-        
+        //double lower_bound_{0.045};//2016
+        double lower_bound_{0.017};//2015 
+
         /** The upper bound of the histogram. */
-        double upper_bound_{0.240};
+        //double upper_bound_{0.240}; //2016
+	double upper_bound_{0.102}; //2015
         
         /** The total number of events within the fit window. */
         double integral_{0};
@@ -297,10 +303,10 @@ class BumpHunter {
         double bin_width_{0.0};
         
         /** Polynomial order used to model the background. */
-        int poly_order_{0};
+        int poly_order_{11};
 
         /** Polynomial order used to model the toy fit. */
-        int toy_poly_order_{0};
+        int toy_poly_order_{11};
 
         /** The scaling factor for the mass resolution. Was 1.56 for Sebouh's, should 1.00 for Rafo's. */
         //double res_scale_{1.56};

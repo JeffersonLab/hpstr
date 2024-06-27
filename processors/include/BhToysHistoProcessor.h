@@ -127,7 +127,7 @@ class BhToysHistoProcessor : public Processor {
 
         double res_scale_{1.00}; //!< The factor by which to scale the mass resolution function.
         bool asymptotic_limit_{true}; //!< Whether to use the asymptotic upper limit or the power constrained. Defaults to asymptotic.
-        int bkg_model_{1}; //!< What background model type to use.
+        int bkg_model_{5}; //!< What background model type to use.
         int debug_{0}; //!< Debug Level
 };
 
