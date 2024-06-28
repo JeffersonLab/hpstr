@@ -237,7 +237,7 @@ void PreSelectAndCategorize::configure(const ParameterSet& parameters) {
     std::cout << "Loading track corrections from " << trackBiasCfg << std::endl;
     auto track_corr = json_load(trackBiasCfg);
     std::cout << track_corr << std::endl;
-    for (const auto& [name, corr]: track_corr["corrections"].items()) {
+    for (const auto& [name, corr]: track_corr.items()) {
       // validate names of corrections, Track::applyCorrection silently ignores
       // names that don't exactly match the names within it, so we check for
       // misspellings once here
