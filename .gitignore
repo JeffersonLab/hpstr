@@ -49,6 +49,9 @@ tramp
 .project
 .settings/
 
+# Mac files
+.DS_Store
+
 # Ignore build and install dirs
 build/
 install/

@@ -166,7 +166,8 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
      //TrackState Location map
      std::map<std::string, int> trackstateLocationMap_ = {
         {"", EVENT::TrackState::AtIP},
-        {"AtTarget", EVENT::TrackState::LastLocation}
+        {"AtTarget", EVENT::TrackState::LastLocation},
+        {"AtLastHit", EVENT::TrackState::AtLastHit}
      };
 
     int loc;
@@ -296,7 +297,7 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 
             // Check that the TrackData data structure is correct.  If it's
             // not, throw a runtime exception.   
-            if (track_datum->getNDouble() > 14 || track_datum->getNFloat() > 7 || track_datum->getNInt() != 1) {
+            if (track_datum->getNDouble() > 14 || track_datum->getNFloat() > 9 || track_datum->getNInt() != 1) {
                 throw std::runtime_error("[ TrackingProcessor ]: The collection " 
                         + std::string(Collections::TRACK_DATA)
                         + " has the wrong structure.");
@@ -327,6 +328,8 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
                 }
                 if (loc == trackstateLocationMap_["AtCalorimeter"])
                     bfieldY = track_datum->getFloatVal(6);
+                if (loc == trackstateLocationMap_["AtLastHit"])
+                    bfieldY = track_datum->getFloatVal(7);
                 //Bfield needs factor of -1, not sure why... <-TODO investigate
                 track->setMomentum(-bfieldY);
             }

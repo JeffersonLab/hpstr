@@ -37,13 +37,10 @@ class MCTrackerHit : public TObject {
          *
          * @param position The hit position.
          */
-  void setPosition(const double* position, bool rotate = false);
-  
-  /** @return The hit position. */
-  std::vector<double> getPosition() const { return {x_, y_, z_}; };
-  
-  void setMomentum(const float* momentum, bool rotate = false);
-  std::vector<float> getMomentum() const { return {px_, py_, pz_}; };
+        void setPosition(const double* position, bool rotate = false);
+        
+        /** @return The hit position. */
+        std::vector<double> getPosition() const { return {x_, y_, z_}; };
 
         /** @return the global X coordinate of the hit */
         double getGlobalX() const {return x_;}
@@ -53,6 +50,24 @@ class MCTrackerHit : public TObject {
 
         /** @return the global X coordinate of the hit */
         double getGlobalZ() const {return z_;}
+        
+        /**
+         * Set the hit momentum.
+         *
+         * @param momentum The hit momentum.
+         */
+        void setMomentum(const float* momentum, bool rotate = false);
+
+        /** @return The hit momentum. */
+        std::vector<float> getMomentum() const { return {px_, py_, pz_}; };
+
+        /**
+         * @return momentum magnitude
+         */
+        
+        double getP(){return sqrt(px_*px_ + py_*py_ + pz_*pz_);};
+        
+        double getPt() {return sqrt(px_*px_ + pz_*pz_);}
 
         /**
          * Set the hit time.
@@ -91,23 +106,32 @@ class MCTrackerHit : public TObject {
         //** @return the pdg id of particle that made the hit */
         int getPDG() const {return pdg_;};
 
-    
-  ClassDef(MCTrackerHit, 1);	
+        //** set the lcio id of particle that made the hit */
+        void setPartID(const int id) {partID_ = id;};
+
+        //** @return the lcio id of particle that made the hit */
+        int getPartID() const {return partID_;};
+
+        ClassDef(MCTrackerHit, 1);	
 
     private:
 
         /** The x position of the hit. */
         double x_{-999}; 
 
-        /** The x position of the hit. */
+        /** The y position of the hit. */
         double y_{-999}; 
 
-        /** The x position of the hit. */
+        /** The z position of the hit. */
         double z_{-999};
 
-         /** The truth momentum of the hit. Only MC */
-        float px_{-999};
-        float py_{-999};
+        /** The px momentum of the hit. */
+        float px_{-999}; 
+
+        /** The y momentum of the hit. */
+        float py_{-999}; 
+
+        /** The z momentum of the hit. */
         float pz_{-999};
 
         /** The hit time. */
@@ -124,6 +148,9 @@ class MCTrackerHit : public TObject {
 
         /** pdg id of particle that made the hit */
         int pdg_{-999};
+
+        /** lcio id of particle that made the hit */
+        int partID_{-999};
 
 }; // MCTrackerHit
 

@@ -1,0 +1,17 @@
+{
+    "n_track_gt"  : {
+        "cut"  : 1.0,
+        "id"   : 0,
+        "info" : "N Tracks >= 1"
+    },
+    "n_ecal_cluster_gt"  : {
+        "cut"  : 1.0,
+        "id"   : 1,
+        "info" : "N Ecal Clusters >= 1"
+    },
+    "sim_p_gt"  : {
+        "cut"  : 1.0,
+        "id"   : 2,
+        "info" : "Sim pT >= 1"
+    }
+}

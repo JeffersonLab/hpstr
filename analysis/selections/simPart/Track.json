@@ -1,0 +1,7 @@
+{
+    "n_track_gt"  : {
+        "cut"  : 1.0,
+        "id"   : 0,
+        "info" : "N Tracks >= 1"
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "n_track_gt"  : {
+        "cut"  : 1.0,
+        "id"   : 0,
+        "info" : "N Tracks >= 1"
+    },
+    "sim_pypz_lt"  : {
+        "cut"  : 0.0,
+        "id"   : 1,
+        "info" : "Sim py/pz <= 0.0"
+    }
+}

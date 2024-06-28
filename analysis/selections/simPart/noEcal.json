@@ -1,0 +1,7 @@
+{
+    "n_ecal_cluster_eq"  : {
+        "cut"  : 0.0,
+        "id"   : 0,
+        "info" : "N Ecal Clusters == 0"
+    }
+}

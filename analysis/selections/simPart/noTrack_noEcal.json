@@ -1,0 +1,12 @@
+{
+    "n_track_eq"  : {
+        "cut"  : 0.0,
+        "id"   : 0,
+        "info" : "N Tracks == 0"
+    },
+    "n_ecal_cluster_eq"  : {
+        "cut"  : 0.0,
+        "id"   : 1,
+        "info" : "N Ecal Clusters == 0"
+    }
+}

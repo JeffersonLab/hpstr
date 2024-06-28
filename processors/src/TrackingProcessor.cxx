@@ -206,6 +206,8 @@ bool TrackingProcessor::process(IEvent* ievent) {
             // Add a reference to the hit
             track->addHit(tracker_hit);
             hits_.push_back(tracker_hit);
+            int hitLayer = tracker_hit->getLayer();
+            track->addHitLayer(hitLayer);
             
             //Get shared Hits information
             for (int jtrack = itrack+1; jtrack < tracks->getNumberOfElements(); ++jtrack) {

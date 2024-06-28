@@ -1,0 +1,7 @@
+{
+    "n_ecal_cluster_gt"  : {
+        "cut"  : 1.0,
+        "id"   : 0,
+        "info" : "N Ecal Clusters >= 1"
+    }
+}
