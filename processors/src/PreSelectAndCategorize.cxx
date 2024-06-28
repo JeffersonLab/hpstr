@@ -304,7 +304,6 @@ void PreSelectAndCategorize::setFile(TFile* out_file) {
   );
   bus_.board_output<double>(output_tree_.get(), "weight");
   bus_.board_output<Vertex>(output_tree_.get(), "vertex");
-  bus_.board_output<double>(output_tree_.get(), "vertex_invm_smear");
   bus_.board_output<Particle>(output_tree_.get(), "ele");
   bus_.board_output<Particle>(output_tree_.get(), "pos");
   for (const auto& name : {"eleL1","eleL2","posL1","posL2"}) {
@@ -349,14 +348,14 @@ bool PreSelectAndCategorize::process(IEvent*) {
    * In this process of pre-selecting vertices, we also apply corrections
    * and momentum smearing to the underlying particle tracks and clusters.
    * These are then stored in our new copy of these objects in the resulting
-   * preselected_vtx collection (vtx, invm_smear, ele, pos).
+   * preselected_vtx collection (vtx, ele, pos).
    *
    * We need to keep the particles separately since the particles "stored"
    * within Vertex are references to the collections. We make a copy here
    * to apply corrections and do not modify the collections referenced
    * elsewhere in memory.
    */
-  std::vector<std::tuple<Vertex,double,Particle,Particle>> preselected_vtx;
+  std::vector<std::tuple<Vertex,Particle,Particle>> preselected_vtx;
   for (Vertex* vtx : vtxs) {
     // access the indiviual Vertex, electron, and positron
     // and add corrections to them before applying pre-selection
@@ -396,13 +395,10 @@ bool PreSelectAndCategorize::process(IEvent*) {
     }
   
     // smear track momentum
-    double invm_smear = 1.;
     if (smearingTool_) {
-      double unsmeared_prod = ele_trk.getP()*pos_trk.getP();
-      smearingTool_->updateWithSmearP(ele_trk);
-      smearingTool_->updateWithSmearP(pos_trk);
-      double smeared_prod = ele_trk.getP()*pos_trk.getP();
-      invm_smear = sqrt(smeared_prod/unsmeared_prod);
+      double ele_smear = smearingTool_->updateWithSmearP(ele_trk);
+      double pos_smear = smearingTool_->updateWithSmearP(pos_trk);
+      smearingTool_->updateVertexWithSmearP(vtx, ele_smear, pos_smear);
     }
   
     // put tracks back into their particles
@@ -452,7 +448,7 @@ bool PreSelectAndCategorize::process(IEvent*) {
     vertex_cf_.fill_nm1("psum_lt_2.4GeV", ele.getTrack().getP()+pos.getTrack().getP());
   
     if (vertex_cf_.keep()) {
-      preselected_vtx.emplace_back(*vtx, invm_smear, ele, pos);
+      preselected_vtx.emplace_back(*vtx, ele, pos);
     }
   }
 
@@ -465,7 +461,7 @@ bool PreSelectAndCategorize::process(IEvent*) {
   
   // correct number of vertices (i.e. only one)
   // unpack the vector of vertices into the single elements
-  auto [ vtx, invm_smear, ele, pos ] = preselected_vtx.at(0);
+  auto [ vtx, ele, pos ] = preselected_vtx.at(0);
 
   // earliest layer hit categories
   bool eleL1{false}, eleL2{false},
@@ -498,7 +494,6 @@ bool PreSelectAndCategorize::process(IEvent*) {
 
   bus_.set("weight", 1.);
   bus_.set("vertex", vtx);
-  bus_.set("vertex_invm_smear", vtx.getInvMass()*invm_smear);
   bus_.set("ele", ele);
   bus_.set("pos", pos);
 
