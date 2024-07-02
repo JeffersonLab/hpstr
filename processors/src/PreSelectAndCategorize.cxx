@@ -164,6 +164,7 @@ class PreSelectAndCategorize : public Processor {
   std::string vtxColl_{"UnconstrainedV0Vertices_KF"};
   std::string mcColl_{"MCParticle"}; //!< description
   bool isData_{false};
+  bool isSignal_{false};
   double calTimeOffset_{0.0};
 
   Cutflow vertex_cf_{"vertex","reconstructed"};
@@ -255,6 +256,7 @@ void PreSelectAndCategorize::configure(const ParameterSet& parameters) {
   calTimeOffset_ = parameters.getDouble("calTimeOffset");
 
   isData_ = parameters.getInteger("isData") != 0;
+  isSignal_ = parameters.getInteger("isSignal") != 0;
 }
 
 void PreSelectAndCategorize::initialize(TTree* tree) {
@@ -283,6 +285,10 @@ void PreSelectAndCategorize::initialize(TTree* tree) {
   event_cf_.add("pair1trigger", 2, -0.5, 1.5);
   event_cf_.add("at_least_one_vertex", 10, 0.0, 10.0);
   event_cf_.add("no_extra_vertices", 10, 0.0, 10.0);
+  if (isSignal_) {
+    event_cf_.add("at_least_one_true_vd", 3, 0.0, 2.0);
+    event_cf_.add("no_extra_true_vd", 3, 0.0, 2.0);
+  }
   event_cf_.init();
 
   n_vertices_h_ = std::make_unique<TH2F>(
@@ -318,8 +324,8 @@ void PreSelectAndCategorize::setFile(TFile* out_file) {
       bus_.board_output<double>(output_tree_.get(), name);
     }
   }
-  if (bus_.has(mcColl_)) {
-    bus_.board_output<std::vector<MCParticle>>(output_tree_.get(), "mc");
+  if (bus_.has(mcColl_) and isSignal_) {
+    bus_.board_output<MCParticle>(output_tree_.get(), "true_vd");
   }
 }
 
@@ -506,14 +512,37 @@ bool PreSelectAndCategorize::process(IEvent*) {
    * unnecessary copying if the event is not going to be kept
    * anyways.
    */
-  if (bus_.has(mcColl_)) {
+  if (bus_.has(mcColl_) and isSignal_) {
+    /**
+     * The implementation of the beam-overlay mechanism very rarely causes two
+     * signal events to occur within the same software event (or no signal event
+     * to happen at all). The complexity of handling these cases is too high and
+     * the rarity (both in simulation and expected due to small cross section)
+     * motivates just removing these events from the sample.
+     *
+     * The warnings are still printed so an estimate on the number of events being
+     * dropped can be retrieved from the logs.
+     */
     const auto& mc_ptr{bus_.get<std::vector<MCParticle*>>(mcColl_)};
-    std::vector<MCParticle> mc;
-    mc.reserve(mc_ptr.size());
+    MCParticle* vd{nullptr};
+    int n_vd{0};
     for (MCParticle* ptr : mc_ptr) {
-      mc.push_back(*ptr);
+      if (ptr->getPDG() == 625) {
+        n_vd++;
+        vd = ptr;
+      }
     }
-    bus_.set("mc", mc);
+    event_cf_.apply("at_least_one_true_vd", n_vd > 0);
+    event_cf_.apply("no_extra_true_vd", n_vd < 2);
+    if (not event_cf_.keep()) {
+      return true;
+    }
+    if (not vd) {
+      throw std::runtime_error(
+          "ERROR: Logic error: checked for VD earlier but there isn't one."
+      );
+    }
+    bus_.set("true_vd", *vd);
   }
   output_tree_->Fill();
   return true;
