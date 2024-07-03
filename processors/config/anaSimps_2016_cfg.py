@@ -43,7 +43,7 @@ vtxana.parameters["mcColl"] = "MCParticle"
 vtxana.parameters["hitColl"] = "SiClustersOnTrackOnPartOnUVtx"
 vtxana.parameters["analysis"] = "vertex"
 vtxana.parameters["vtxSelectionjson"] = os.environ['HPSTR_BASE']+"/analysis/selections/simps/vertexSelection_2016_simp_preselection.json"
-vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/simps/vtxAnalysis_2016_simp_reach_light.json"
+vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/tracking/simps/vtxAnalysis_2016_simp_reach.json"
 vtxana.parameters["mcHistoCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/mc/basicMC.json'
 #####
 vtxana.parameters["beamE"] = base.beamE[str(options.year)]
@@ -51,6 +51,7 @@ vtxana.parameters["isData"] = options.isData
 vtxana.parameters["isRadPDG"] = options.isRadPDG
 vtxana.parameters["makeFlatTuple"] = options.makeFlatTuple
 vtxana.parameters["beamPosCfg"] = ""
+vtxana.parameters["pSmearingFile"] =  os.environ['HPSTR_BASE']+"/utils/data/smearingFile_2016_all_12112023.root"
 if options.isData:
     vtxana.parameters["v0ProjectionFitsCfg"] = os.environ['HPSTR_BASE']+'/analysis/data/v0_projection_2016_config.json'
 else:
