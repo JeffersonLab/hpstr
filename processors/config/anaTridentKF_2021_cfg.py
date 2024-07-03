@@ -31,7 +31,7 @@ vtxana = HpstrConf.Processor('vtxana', 'TridentWABAnaProcessor')
 #   Processor Configuration   #
 ###############################
 #Vertex Analysis
-vtxana.parameters["debug"] = 0
+vtxana.parameters["debug"] = 1
 vtxana.parameters["anaName"] = "vtxana"
 vtxana.parameters["cluColl"] = "RecoEcalClusters"
 vtxana.parameters["trkColl"] = "KalmanFullTracks"

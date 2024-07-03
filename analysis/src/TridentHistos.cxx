@@ -7,6 +7,8 @@
 void TridentHistos::BuildAxes(){}
 
 void TridentHistos::DefineHistos(){  
+  if(debug_)
+    std::cout<<" Making layer-hit histo"<<std::endl;
   std::vector<std::string> layerTags;
   unsigned char lbits=15;
   int counter=15; 
@@ -39,6 +41,8 @@ void TridentHistos::DefineHistos(){
       std::string comboStr=half+"_"+trk;
       if(half=="")
 	comboStr=trk;
+      if(debug_)
+	std::cout<<" splitting by "<<comboStr<<std::endl;
       trkCombos.push_back(comboStr);
     }
   }  
@@ -74,6 +78,8 @@ void TridentHistos::DefineHistos(){
 	std::string l2St=*l2Iter; 
 	std::string comboStr="pos"+l1St+"_ele"+l2St+"_"+trkSt;
 	trkLayerCombos.push_back(comboStr);
+	if(debug_)
+	  std::cout<<" splitting by "<<comboStr<<std::endl;
       }
       
     }
@@ -94,6 +100,8 @@ void TridentHistos::DefineHistos(){
 	std::string comboStr="pos"+l1St+"_ele"+l2St+"_"+v0St;
 	if(v0St=="")
 	  comboStr="pos"+l1St+"_ele"+l2St;
+	if(debug_)
+	  std::cout<<" splitting by "<<comboStr<<std::endl;
 	v0LayerCombos.push_back(comboStr);
       }
     }
@@ -192,6 +200,7 @@ void TridentHistos::Fill1DVertex(Vertex* vtx,
     Fill1DHisto("vtx_py_vc_h",vtx->getP().Y());
     Fill1DHisto("vtx_pz_vc_h",vtx->getP().Z());
     Fill1DHisto("vtx_p_vc_h" ,vtx->getP().Mag());
+    Fill1DHisto("vtx_p_std_vc_h" ,vtx->getP().Mag()*(stdBeamEnergy_/eBeam_));
     
     Fill1DHisto(posTag+"vtx_sigma_X_vc_h",sqrt(vtx->getCovariance()[0]),weight);
     Fill1DHisto(posTag+"vtx_sigma_Y_vc_h",sqrt(vtx->getCovariance()[3]),weight);
@@ -202,6 +211,7 @@ void TridentHistos::Fill1DVertex(Vertex* vtx,
     Fill1DHisto(posTag+"vtx_py_vc_h",vtx->getP().Y());
     Fill1DHisto(posTag+"vtx_pz_vc_h",vtx->getP().Z());
     Fill1DHisto(posTag+"vtx_p_vc_h" ,vtx->getP().Mag());
+    Fill1DHisto(posTag+"vtx_p_std_vc_h" ,vtx->getP().Mag()*(stdBeamEnergy_/eBeam_));
 
     Fill1DHisto(layerCode+"vtx_sigma_X_vc_h",sqrt(vtx->getCovariance()[0]),weight);
     Fill1DHisto(layerCode+"vtx_sigma_Y_vc_h",sqrt(vtx->getCovariance()[3]),weight);
@@ -212,6 +222,7 @@ void TridentHistos::Fill1DVertex(Vertex* vtx,
     Fill1DHisto(layerCode+"vtx_py_vc_h",vtx->getP().Y());
     Fill1DHisto(layerCode+"vtx_pz_vc_h",vtx->getP().Z());
     Fill1DHisto(layerCode+"vtx_p_vc_h" ,vtx->getP().Mag());
+    Fill1DHisto(layerCode+"vtx_p_std_vc_h" ,vtx->getP().Mag()*(stdBeamEnergy_/eBeam_));
     
     Fill1DHisto(layerCode+posTag+"vtx_sigma_X_vc_h",sqrt(vtx->getCovariance()[0]),weight);
     Fill1DHisto(layerCode+posTag+"vtx_sigma_Y_vc_h",sqrt(vtx->getCovariance()[3]),weight);
@@ -222,6 +233,7 @@ void TridentHistos::Fill1DVertex(Vertex* vtx,
     Fill1DHisto(layerCode+posTag+"vtx_py_vc_h",vtx->getP().Y());
     Fill1DHisto(layerCode+posTag+"vtx_pz_vc_h",vtx->getP().Z());
     Fill1DHisto(layerCode+posTag+"vtx_p_vc_h" ,vtx->getP().Mag());
+    Fill1DHisto(layerCode+posTag+"vtx_p_std_vc_h" ,vtx->getP().Mag()*(stdBeamEnergy_/eBeam_));
 
     TLorentzVector p_ele;
     //p_ele.SetPxPyPzE(ele->getMomentum()[0], ele->getMomentum()[1],ele->getMomentum()[2],ele->getEnergy());
@@ -263,6 +275,7 @@ void TridentHistos::Fill1DVertex(Vertex* vtx,
     //1D histos
     Fill1DHisto("Esum_vc_h",ele->getEnergy() + pos->getEnergy(),weight);
     Fill1DHisto("Psum_vc_h",p_ele.P() + p_pos.P());
+    Fill1DHisto("Psum_std_vc_h",(p_ele.P() + p_pos.P())*(stdBeamEnergy_/eBeam_));
     Fill1DHisto("PtAsym_vc_h",pt_asym_val,weight);
     Fill1DHisto("Pmiss_vc_h",p_miss.P());
     Fill1DHisto("thetax_v0_vc_h",thetax_v0_val,weight);
@@ -274,6 +287,7 @@ void TridentHistos::Fill1DVertex(Vertex* vtx,
     //1D histos
     Fill1DHisto(posTag+"Esum_vc_h",ele->getEnergy() + pos->getEnergy(),weight);
     Fill1DHisto(posTag+"Psum_vc_h",p_ele.P() + p_pos.P());
+    Fill1DHisto(posTag+"Psum_std_vc_h",(p_ele.P() + p_pos.P())*(stdBeamEnergy_/eBeam_));
     Fill1DHisto(posTag+"PtAsym_vc_h",pt_asym_val,weight);
     Fill1DHisto(posTag+"Pmiss_vc_h",p_miss.P());
     Fill1DHisto(posTag+"thetax_v0_vc_h",thetax_v0_val,weight);
@@ -284,6 +298,7 @@ void TridentHistos::Fill1DVertex(Vertex* vtx,
   //1D histos
     Fill1DHisto(layerCode+"Esum_vc_h",ele->getEnergy() + pos->getEnergy(),weight);
     Fill1DHisto(layerCode+"Psum_vc_h",p_ele.P() + p_pos.P());
+    Fill1DHisto(layerCode+"Psum_std_vc_h",(p_ele.P() + p_pos.P())*(stdBeamEnergy_/eBeam_));
     Fill1DHisto(layerCode+"PtAsym_vc_h",pt_asym_val,weight);
     Fill1DHisto(layerCode+"Pmiss_vc_h",p_miss.P());
     Fill1DHisto(layerCode+"thetax_v0_vc_h",thetax_v0_val,weight);
@@ -295,6 +310,7 @@ void TridentHistos::Fill1DVertex(Vertex* vtx,
     //1D histos
     Fill1DHisto(layerCode+posTag+"Esum_vc_h",ele->getEnergy() + pos->getEnergy(),weight);
     Fill1DHisto(layerCode+posTag+"Psum_vc_h",p_ele.P() + p_pos.P());
+    Fill1DHisto(layerCode+posTag+"Psum_std_vc_h",(p_ele.P() + p_pos.P())*(stdBeamEnergy_/eBeam_));
     Fill1DHisto(layerCode+posTag+"PtAsym_vc_h",pt_asym_val,weight);
     Fill1DHisto(layerCode+posTag+"Pmiss_vc_h",p_miss.P());
     Fill1DHisto(layerCode+posTag+"thetax_v0_vc_h",thetax_v0_val,weight);

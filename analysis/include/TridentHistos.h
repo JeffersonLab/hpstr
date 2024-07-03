@@ -59,7 +59,8 @@ class TridentHistos : public HistoManager {
 				    std::pair<CalCluster, Track*> posOrGamma, double calTimeOffset,
 				    double trkTimeOffset,double weight); 
 	void FillWABHistos(std::pair<CalCluster*, Track*> ele, CalCluster* gamma,  double weight);
-    private:
+  void setBeamEnergy(double ebeam){eBeam_=ebeam;};
+private:
 
         // Vertices
         std::vector<std::string> vPs{"vtx_chi2", "vtx_X", "vtx_Y", "vtx_Z", "vtx_sigma_X","vtx_sigma_Y","vtx_sigma_Z","vtx_InvM","vtx_InvMErr"};
@@ -71,6 +72,8 @@ class TridentHistos : public HistoManager {
 	virtual void DefineHistosFromTemplateOnly(std::vector<std::string> histoCopyNames,
 						  std::string makeCopyJsonTag = "default=single_copy");
 	virtual void DefineOneTimeHistos();
+        double eBeam_;
+  double stdBeamEnergy_=4.5; // GeV...use this to shift PSums from different beam energies in order to compare...
 
 };
 
