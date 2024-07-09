@@ -28,9 +28,11 @@ p.add_library("libprocessors")
 ###############################
 header = HpstrConf.Processor('header', 'EventProcessor')
 track = HpstrConf.Processor('track', 'TrackingProcessor')
+track_atlasthit = HpstrConf.Processor('track_atlasthit', 'TrackingProcessor')
 svthits = HpstrConf.Processor('svthits', 'Tracker2DHitProcessor')
 rawsvt = HpstrConf.Processor('rawsvt', 'SvtRawDataProcessor')
 mcthits = HpstrConf.Processor('mcthits', 'MCTrackerHitProcessor')
+mcthits_ecal = HpstrConf.Processor('mcthits_ecal', 'MCTrackerHitProcessor')
 mcehits = HpstrConf.Processor('mcehits', 'MCEcalHitProcessor')
 ecal = HpstrConf.Processor('ecal', 'ECalDataProcessor')
 fsp = HpstrConf.Processor('fps', 'FinalStateParticleProcessor')
@@ -70,6 +72,16 @@ track.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 track.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 
+# Tracking at Last Hit
+track_atlasthit.parameters["debug"] = 0
+track_atlasthit.parameters["trkCollLcio"] = 'KalmanFullTracks'
+track_atlasthit.parameters["trkCollRoot"] = 'KalmanFullTracks_AtLastHit'
+track_atlasthit.parameters["kinkRelCollLcio"] = ''
+track_atlasthit.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
+track_atlasthit.parameters["trkhitCollRoot"] = 'SiClustersOnTrack_AtLastHit'
+track_atlasthit.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
+track_atlasthit.parameters["trackStateLocation"] = 'AtLastHit'
+
 # Only for detail studies
 # LT uncomment
 track.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack_KF'
@@ -96,6 +108,11 @@ mcthits.parameters["debug"] = 0
 mcthits.parameters["hitCollLcio"] = 'TrackerHits'
 mcthits.parameters["hitCollRoot"] = 'TrackerSimHits'
 
+#MCTrackerHits at Ecal
+mcthits_ecal.parameters["debug"] = 0
+mcthits_ecal.parameters["hitCollLcio"] = 'TrackerHitsECal'
+mcthits_ecal.parameters["hitCollRoot"] = 'TrackerSimHitsECal'
+
 #MCEcalHits
 mcehits.parameters["debug"] = 0
 mcehits.parameters["hitCollLcio"] = 'EcalHits'
@@ -116,7 +133,7 @@ mcpart.parameters["debug"] = 0
 mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
-sequence = [header, ecal, track, svthits, rawsvt, mcthits, mcehits, mcpart]
+sequence = [header, ecal, track, track_atlasthit, svthits, rawsvt, mcthits, mcthits_ecal, mcehits, mcpart]
 
 p.sequence = sequence
 

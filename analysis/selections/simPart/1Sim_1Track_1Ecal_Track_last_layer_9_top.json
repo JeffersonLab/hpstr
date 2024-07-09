@@ -1,0 +1,27 @@
+{
+    "n_sim_eq"  : {
+        "cut"  : 1,
+        "id"   : 0,
+        "info" : "N Sim Particles == 1"
+    },
+    "n_track_eq"  : {
+        "cut"  : 1.0,
+        "id"   : 1,
+        "info" : "N Tracks == 1"
+    },
+    "n_ecal_cluster_eq"  : {
+        "cut"  : 1.0,
+        "id"   : 2,
+        "info" : "N Ecal Clusters == 1"
+    },
+    "track_last_layer_eq"  : {
+        "cut"  : 9,
+        "id"   : 3,
+        "info" : "Track Last Layer == 9"
+    },
+    "track_pypz_gt"  : {
+        "cut"  : 0.0,
+        "id"   : 4,
+        "info" : "Track py/pz >= 0.0"
+    }
+}

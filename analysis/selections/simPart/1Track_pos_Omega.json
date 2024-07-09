@@ -1,0 +1,12 @@
+{
+    "n_track_eq"  : {
+        "cut"  : 1.0,
+        "id"   : 0,
+        "info" : "N Tracks == 1"
+    },
+    "track_omega_gt"  : {
+        "cut"  : 0.0,
+        "id"   : 1,
+        "info" : "N Ecal Clusters >= 0"
+    }
+}

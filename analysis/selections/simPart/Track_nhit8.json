@@ -1,0 +1,12 @@
+{
+    "n_track_gt"  : {
+        "cut"  : 1.0,
+        "id"   : 0,
+        "info" : "N Tracks >= 1"
+    },
+    "n_track_hits_gt"  : {
+        "cut"  : 8.0,
+        "id"   : 1,
+        "info" : "N Reco Track Hits >= 8"
+    }
+}

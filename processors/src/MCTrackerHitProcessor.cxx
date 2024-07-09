@@ -78,9 +78,11 @@ bool MCTrackerHitProcessor::process(IEvent* ievent) {
         mc_tracker_hit->setEdep(lcio_mcTracker_hit->getEDep());
 	
         // Set the pdg of particle generating the hit
-        if(lcio_mcTracker_hit->getMCParticle()) 
+        if(lcio_mcTracker_hit->getMCParticle()){
             mc_tracker_hit->setPDG(lcio_mcTracker_hit->getMCParticle()->getPDG());
-
+            mc_tracker_hit->setPartID(lcio_mcTracker_hit->getMCParticle()->id());
+        }
+        
         // Set the time of the hit
         mc_tracker_hit->setTime(lcio_mcTracker_hit->getTime());
 
