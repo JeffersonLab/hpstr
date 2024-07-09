@@ -117,6 +117,7 @@ void SimPartHistos::FillRecoEcalCuster(CalCluster* ecal_cluster, FlatTupleMaker*
 
     Fill1DHisto("ecal_n_hits_h", n_hits, weight);
     Fill1DHisto("ecal_energy_h", energy, weight);
+    Fill1DHisto("ecal_energy_zoom_h", energy, weight);
     Fill1DHisto("ecal_x_h", cluster_x, weight);
     Fill1DHisto("ecal_y_h", cluster_y, weight);
     Fill2DHisto("ecal_x_y_hh", cluster_x, cluster_y, weight);
