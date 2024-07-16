@@ -15,8 +15,7 @@ import argparse
 from simp_theory_equations import SimpEquations as simpeqs
 
 class SignalProcessor:
-    def __init__(self, outfilename='expected_signal_output.root', mpifpi=4*np.pi, nsigma=2.0):
-        self.outfilename = outfilename
+    def __init__(self, mpifpi=4*np.pi, nsigma=1.5):
         self.nsigma = nsigma
 
         #SIMP parameters
@@ -159,18 +158,83 @@ class SignalProcessor:
 
         return signal_array
 
-    def tight_selection(self, array, signal_mass):
-        p0 = 1.07620094e+00
-        p1 = -7.44533811e-03
-        p2 = 1.58745903e-05
+    @staticmethod
+    def get_minz0_cut():
+        coeffs = [1.07620094e+00 + 0.1, -7.44533811e-03, 1.58745903e-05]
+        return coeffs
+    
+    def minz0_sel(self,array):
+        coeffs = self.get_minz0_cut()
+        p0 = coeffs[0]
+        p1 = coeffs[1]
+        p2 = coeffs[2]
+        sel = (
+            ( array.unc_vtx_min_z0 > (p0 + p1*array.unc_vtx_mass*1000 + (p2*np.square(array.unc_vtx_mass*1000.))) )
+        )
+        return sel
+
+    def mass_sel(self,array, signal_mass):
         mass_low = signal_mass - self.nsigma*self.mass_resolution(signal_mass)
         mass_high = signal_mass + self.nsigma*self.mass_resolution(signal_mass)
-        print(f'Signal Mass Window: {mass_low} - {mass_high} MeV')
         sel = (
-            ( array.unc_vtx_min_z0 > (p0 + p1*array.unc_vtx_mass*1000 + (p2*np.square(array.unc_vtx_mass*1000.))) ) &
-            ( array.unc_vtx_mass*1000. >= {mass_low}) & (array.unc_vtx_mass*1000. <= {mass_high}) &
-            (array.unc_vtx_proj_sig < 2) & (array.unc_vtx_z > -4.3) & (array.unc_vtx_psum > 1.0) & (array.unc_vtx_psum < 1.9)
+            ( array.unc_vtx_mass*1000. >= {mass_low}) & (array.unc_vtx_mass*1000. <= {mass_high}) 
         )
+        return sel
+
+    @staticmethod
+    def psum_sel(array, case='sr'):
+        if case == 'sr':
+            sel = (
+                (array.unc_vtx_psum > 1.0) & (array.unc_vtx_psum < 1.9)
+            )
+        elif case == 'cr':
+            sel = (
+                (array.unc_vtx_psum > 1.9) & (array.unc_vtx_psum < 2.4)
+            )
+        else:
+            sel = ()
+        return sel
+
+    @staticmethod
+    def vprojsig_sel(array):
+        sel = (
+            (array.unc_vtx_proj_sig < 2)
+        )
+        return sel
+    
+    @staticmethod
+    def zcut_sel(array):
+        sel = (
+            (array.unc_vtx_z > -4.3)
+        )
+        return sel
+
+
+    def tight_selection(self, array, signal_mass, case=1):
+        coeffs = self.get_minz0_cut()
+        p0 = coeffs[0]
+        p1 = coeffs[1]
+        p2 = coeffs[2]
+        mass_low = signal_mass - self.nsigma*self.mass_resolution(signal_mass)
+        mass_high = signal_mass + self.nsigma*self.mass_resolution(signal_mass)
+
+        if case == 1: #full tight analysis selection
+            sel = (
+                ( array.unc_vtx_min_z0 > (p0 + p1*array.unc_vtx_mass*1000 + (p2*np.square(array.unc_vtx_mass*1000.))) ) &
+                ( array.unc_vtx_mass*1000. >= {mass_low}) & (array.unc_vtx_mass*1000. <= {mass_high}) &
+                (array.unc_vtx_proj_sig < 2) & (array.unc_vtx_z > -4.3) & (array.unc_vtx_psum > 1.0) & (array.unc_vtx_psum < 1.9)
+            )
+        if case == 2: #tight selection without minz0 cut
+            sel = (
+                ( array.unc_vtx_mass*1000. >= {mass_low}) & (array.unc_vtx_mass*1000. <= {mass_high}) &
+                (array.unc_vtx_proj_sig < 2) & (array.unc_vtx_z > -4.3) & (array.unc_vtx_psum > 1.0) & (array.unc_vtx_psum < 1.9)
+            )
+
+        if case == 3: #tight selection without mass and minz0 cut
+            sel = (
+                (array.unc_vtx_proj_sig < 2) & (array.unc_vtx_z > -4.3) & (array.unc_vtx_psum > 1.0) & (array.unc_vtx_psum < 1.9)
+            )
+
         return sel
 
 
@@ -190,7 +254,7 @@ if __name__ == '__main__':
 
     #Create MC signal analysis tuple processor
     print('Initialize signal processor')
-    processor = SignalProcessor(outfilename='expected_signal_output.root', mpifpi=mpifpi, nsigma=nsigma)
+    processor = SignalProcessor(mpifpi=mpifpi, nsigma=nsigma)
 
     #Set the differential radiative trident rate lookup table used to scale expected signal
     print('Load lookup table')
@@ -250,9 +314,9 @@ if __name__ == '__main__':
             expected_signal_vd_h.fill(signal_mass, logeps2_range[l], weight=total_yield)
             expected_signal_ap_h.fill(signal_mass*processor.mass_ratio_ap_to_vd, logeps2_range[l], weight=total_yield)
 
-outfile = uproot.recreate(outfilename)
-outfile['expected_signal_vd_h'] = expected_signal_vd_h
-outfile['expected_signal_ap_h'] = expected_signal_ap_h
+    outfile = uproot.recreate(outfilename)
+    outfile['expected_signal_vd_h'] = expected_signal_vd_h
+    outfile['expected_signal_ap_h'] = expected_signal_ap_h
 
 
 
