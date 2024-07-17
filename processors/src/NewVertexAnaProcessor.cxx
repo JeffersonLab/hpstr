@@ -38,6 +38,9 @@ void NewVertexAnaProcessor::configure(const ParameterSet& parameters) {
         isData_  = parameters.getInteger("isData",isData_);
         analysis_        = parameters.getString("analysis");
 
+        pSmearingFile_ = parameters.getString("pSmearingFile",pSmearingFile_);
+	pBiasingFile_  = parameters.getString("pBiasingFile",pBiasingFile_);
+
         //region definitions
         regionSelections_ = parameters.getVString("regionDefinitions",regionSelections_);
 
@@ -50,6 +53,9 @@ void NewVertexAnaProcessor::configure(const ParameterSet& parameters) {
         eleTrackTimeBias_ = parameters.getDouble("eleTrackTimeBias",eleTrackTimeBias_);
         posTrackTimeBias_ = parameters.getDouble("posTrackTimeBias",posTrackTimeBias_);
 
+	//bField scale factor (ONLY to correct for mistakes in ntuplizing). If < 0  is not used
+	bFieldScaleFactor_ = parameters.getDouble("bFieldScaleFactor",-1);
+	
     }
     catch (std::runtime_error& error)
     {
@@ -244,6 +250,16 @@ void NewVertexAnaProcessor::initialize(TTree* tree) {
     //tree_->SetBranchAddress(hitColl_.c_str(), &hits_   , &bhits_);
     if (brMap_.find(hitColl_.c_str()) != brMap_.end()) tree_->SetBranchAddress(hitColl_.c_str(), &hits_ , &bhits_);
     if(!isData_ && !mcColl_.empty()) tree_->SetBranchAddress(mcColl_.c_str() , &mcParts_, &bmcParts_);
+
+    if (not pSmearingFile_.empty()) {
+      // just using the same seed=42 for now
+      smearingTool_    =   std::make_shared<TrackSmearingTool>(pSmearingFile_,true);
+    }
+
+    if (not pBiasingFile_.empty()) {
+      biasingTool_ = std::make_shared<TrackBiasingTool>(pBiasingFile_);
+    }
+    
 }
 
 bool NewVertexAnaProcessor::process(IEvent* ievent) {
@@ -321,7 +337,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
     // Loop over vertices in event and make selections
     for ( int i_vtx = 0; i_vtx <  vtxs_->size(); i_vtx++ ) {
         vtxSelector->getCutFlowHisto()->Fill(0.,weight);
-
+	
         Vertex* vtx = vtxs_->at(i_vtx);
         Particle* ele = nullptr;
         Particle* pos = nullptr;
@@ -342,13 +358,51 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
         if (debug_) std::cout << "got parts" << std::endl;
         Track ele_trk = ele->getTrack();
         Track pos_trk = pos->getTrack();
+	
+	if (debug_) {
+	  std::cout<<"Check Ele/Pos Track momenta"<<std::endl;
+	  std::cout<<ele_trk.getP()<<" "<<pos_trk.getP()<<std::endl;
+	  std::cout<<ele_trk.getOmega()<<" "<<pos_trk.getOmega()<<std::endl;
+	}
 
-        //Beam Position Corrections
+	// Beam Position Corrections
         ele_trk.applyCorrection("z0", beamPosCorrections_.at(1));
         pos_trk.applyCorrection("z0", beamPosCorrections_.at(1));
-        //Track Time Corrections
+        // Track Time Corrections
         ele_trk.applyCorrection("track_time",eleTrackTimeBias_);
         pos_trk.applyCorrection("track_time", posTrackTimeBias_);
+
+	// Correct for the momentum bias
+	
+	if (biasingTool_) {
+	  
+	  // Correct for wrong track momentum - Bug Fix
+	  // In case there was mis-configuration during reco/hpstr-ntuple step, correct
+	  // the momentum magnitude here using the right bField for the data taking year
+	  
+	  if (bFieldScaleFactor_ > 0) {
+	    biasingTool_->updateWithBiasP(ele_trk,bFieldScaleFactor_);
+	    biasingTool_->updateWithBiasP(pos_trk,bFieldScaleFactor_);
+	  }
+	  
+	  biasingTool_->updateWithBiasP(ele_trk);
+          biasingTool_->updateWithBiasP(pos_trk);
+	}
+
+	if (debug_) {
+	  std::cout<<"Corrected Ele/Pos Track momenta"<<std::endl;
+	  std::cout<<ele_trk.getP()<<" "<<pos_trk.getP()<<std::endl;
+	}
+		
+        double invm_smear = 1.;
+        if (smearingTool_) {
+          double unsmeared_prod = ele_trk.getP()*pos_trk.getP();
+          smearingTool_->updateWithSmearP(ele_trk);
+          smearingTool_->updateWithSmearP(pos_trk);
+          double smeared_prod = ele_trk.getP()*pos_trk.getP();
+          invm_smear = sqrt(smeared_prod/unsmeared_prod);
+        }
+			
 
         //Add the momenta to the tracks - do not do that
         //ele_trk.setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
@@ -530,6 +584,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
         _vtx_histos->Fill1DHisto("pos_track_n2dhits_h", pos2dHits, weight);
         _vtx_histos->Fill1DHisto("vtx_Psum_h", p_ele.P()+p_pos.P(), weight);
         _vtx_histos->Fill1DHisto("vtx_Esum_h", ele_E + pos_E, weight);
+        _vtx_histos->Fill1DHisto("vtx_smear_InvM_h", invm_smear*(vtx->getInvMass()), weight);
         _vtx_histos->Fill1DHisto("ele_pos_clusTimeDiff_h", (corr_eleClusterTime - corr_posClusterTime), weight);
         _vtx_histos->Fill2DHisto("ele_vtxZ_iso_hh", TMath::Min(ele_trk.getIsolation(0), ele_trk.getIsolation(1)), vtx->getZ(), weight);
         _vtx_histos->Fill2DHisto("pos_vtxZ_iso_hh", TMath::Min(pos_trk.getIsolation(0), pos_trk.getIsolation(1)), vtx->getZ(), weight);
@@ -589,6 +644,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
     //TODO Clean this up => Cuts should be implemented in each region?
     //TODO Bring the preselection out of this stupid loop
 
+    
 
     if (debug_) std::cout << "start regions" << std::endl;
     //TODO add yields. => Quite terrible way to loop.
@@ -640,6 +696,27 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             //Track Time Corrections
             ele_trk.applyCorrection("track_time",eleTrackTimeBias_);
             pos_trk.applyCorrection("track_time", posTrackTimeBias_);
+	    
+	    if (biasingTool_) {
+
+	      //Correct the wrong Bfield first
+	      if (bFieldScaleFactor_ > 0) {
+		biasingTool_->updateWithBiasP(ele_trk,bFieldScaleFactor_);
+		biasingTool_->updateWithBiasP(pos_trk,bFieldScaleFactor_);
+	      }
+	      
+	      biasingTool_->updateWithBiasP(ele_trk);
+	      biasingTool_->updateWithBiasP(pos_trk);
+	    }
+	    	    
+            double invm_smear = 1.;
+            if (smearingTool_) {
+              double unsmeared_prod = ele_trk.getP()*pos_trk.getP();
+              smearingTool_->updateWithSmearP(ele_trk);
+              smearingTool_->updateWithSmearP(pos_trk);
+              double smeared_prod = ele_trk.getP()*pos_trk.getP();
+              invm_smear = sqrt(smeared_prod/unsmeared_prod);
+            }
 
             //Add the momenta to the tracks
             //ele_trk.setMomentum(ele->getMomentum()[0],ele->getMomentum()[1],ele->getMomentum()[2]);
@@ -1027,6 +1104,35 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             ele_trk.applyCorrection("track_time",eleTrackTimeBias_);
             pos_trk.applyCorrection("track_time", posTrackTimeBias_);
 
+
+	    // Track Momentum bias
+
+	    if (biasingTool_) {
+
+	      // Correct for wrong track momentum - Bug Fix
+	      // In case there was mis-configuration during reco/hpstr-ntuple step, correct
+	      // the momentum magnitude here using the right bField for the data taking year
+	      
+	      if (bFieldScaleFactor_ > 0) {
+		biasingTool_->updateWithBiasP(ele_trk,bFieldScaleFactor_);
+		biasingTool_->updateWithBiasP(pos_trk,bFieldScaleFactor_);
+	      }
+	      
+	      
+	      biasingTool_->updateWithBiasP(ele_trk);
+	      biasingTool_->updateWithBiasP(pos_trk);
+	    }
+	    
+	    
+            double invm_smear = 1.;
+            if (smearingTool_) {
+              double unsmeared_prod = ele_trk.getP()*pos_trk.getP();
+              smearingTool_->updateWithSmearP(ele_trk);
+              smearingTool_->updateWithSmearP(pos_trk);
+              double smeared_prod = ele_trk.getP()*pos_trk.getP();
+              invm_smear = sqrt(smeared_prod/unsmeared_prod);
+            }
+
             //Get the layers hit on each track
             std::vector<int> ele_hit_layers = ele_trk.getHitLayers();
             int ele_Si0 = 0;
@@ -1147,6 +1253,7 @@ bool NewVertexAnaProcessor::process(IEvent* ievent) {
             _reg_vtx_histos[region]->Fill1DHisto("pos_track_n2dhits_h", pos2dHits, weight);
             _reg_vtx_histos[region]->Fill1DHisto("vtx_Psum_h", p_ele.P()+p_pos.P(), weight);
             _reg_vtx_histos[region]->Fill1DHisto("vtx_Esum_h", eleClus.getEnergy()+posClus.getEnergy(), weight);
+            _reg_vtx_histos[region]->Fill1DHisto("vtx_smear_InvM_h", invm_smear*(vtx->getInvMass()), weight);
             _reg_vtx_histos[region]->Fill2DHisto("ele_vtxZ_iso_hh", TMath::Min(ele_trk.getIsolation(0), ele_trk.getIsolation(1)), vtx->getZ(), weight);
             _reg_vtx_histos[region]->Fill2DHisto("pos_vtxZ_iso_hh", TMath::Min(pos_trk.getIsolation(0), pos_trk.getIsolation(1)), vtx->getZ(), weight);
             _reg_vtx_histos[region]->Fill2DTrack(&ele_trk,weight,"ele_");
