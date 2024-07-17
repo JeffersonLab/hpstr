@@ -1,0 +1,17 @@
+{    
+    "nClustersCut":{
+        "cut":3,
+        "id": 0, 
+        "info": "Number of Clusters<3"
+    },
+    "cluESum":{
+        "cut":3.0,
+        "id": 1, 
+        "info": "cluESum>3.0 GeV"
+    },
+    "cluCoplan":{
+	"cut" : 10,
+        "id"  : 2,
+	"info" : "cluCoplanarity<10 degrees"
+    }
+}

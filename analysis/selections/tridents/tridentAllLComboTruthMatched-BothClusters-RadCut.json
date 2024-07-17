@@ -1,0 +1,27 @@
+{   
+    "eleMCMatched"  : {
+	"cut"  : 1, 
+	"id"   : 0, 
+	"info" : "Electron Truth Matched"
+    },
+    "posMCMatched"  : {
+	"cut"  : 1, 
+	"id"   : 1, 
+	"info" : "Positron Truth Matched"
+    },  
+    "eleClusterMatched"  : {
+	"cut"  : 1, 
+	"id"   : 2, 
+	"info" : "Electron Cluster Matched"
+    },
+    "posClusterMatched"  : {
+	"cut"  : 1, 
+	"id"   : 3, 
+	"info" : "Positron Cluster Matched"
+    },  
+    "nVtxs_eq" : {
+        "cut"  : 1,
+        "id"   : 4,
+        "info" : "N_{vtx}=1"
+    }
+}
