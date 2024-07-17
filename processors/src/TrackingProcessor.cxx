@@ -205,6 +205,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
                 std::cout<<tracker_hit->getRawHits().GetEntries()<<std::endl;
             // Add a reference to the hit
             track->addHit(tracker_hit);
+            track->addHitLayer(tracker_hit->getLayer());
             hits_.push_back(tracker_hit);
             
             //Get shared Hits information

@@ -136,6 +136,7 @@ bool TrackHitAnaProcessor::process(IEvent* ievent) {
         trkHistos_->Fill1DHisto("hitCode_h", hitCode);
         trkHistos_->Fill2DHisto("hitCode_trkType_hh", hitCode, trkType);
         trkHistos_->Fill1DTrack(track, weight, "");
+        trkHistos_->Fill2DTrack(track, weight, "");
 
         n_sel_tracks++;
 
@@ -158,10 +159,26 @@ bool TrackHitAnaProcessor::process(IEvent* ievent) {
 
             if(debug_) std::cout<<"Pass region "<<region<<std::endl;
             reg_histos_[region]->Fill1DHisto("hitCode_h", hitCode,weight);
-            if(isTop&&isPos) reg_histos_[region]->Fill1DTrack(track, weight, "topPos_");
-            if(isTop&&!isPos) reg_histos_[region]->Fill1DTrack(track, weight, "topEle_");
-            if(!isTop&&isPos) reg_histos_[region]->Fill1DTrack(track, weight, "botPos_");
-            if(!isTop&&!isPos) reg_histos_[region]->Fill1DTrack(track, weight, "botEle_");
+            if(isTop&&isPos) 
+            {
+                reg_histos_[region]->Fill1DTrack(track, weight, "topPos_");
+                reg_histos_[region]->Fill2DTrack(track, weight, "topPos_");
+            }
+            if(isTop&&!isPos) 
+            {
+                reg_histos_[region]->Fill1DTrack(track, weight, "topEle_");
+                reg_histos_[region]->Fill2DTrack(track, weight, "topEle_");
+            }
+            if(!isTop&&isPos) 
+            {
+                reg_histos_[region]->Fill1DTrack(track, weight, "botPos_");
+                reg_histos_[region]->Fill2DTrack(track, weight, "botPos_");
+            }
+            if(!isTop&&!isPos) 
+            {
+                reg_histos_[region]->Fill1DTrack(track, weight, "botEle_");
+                reg_histos_[region]->Fill2DTrack(track, weight, "botEle_");
+            }
         }
     }//Loop on tracks
 
