@@ -1,0 +1,1248 @@
+{ 
+   "clE_sum_allpos_allele_allrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Cluster Energy Sum (GeV)",
+        "ytitle" : "Events"
+    },  
+     "clNet_EY_allpos_allele_allrec_h":{
+        "bins"   : 50,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "xtitle" : "Net Cluster Energy Y (GeV)",
+        "ytitle" : "Events"
+    },
+    "clE_ele_allpos_allele_allrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Electron Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_ele_allpos_allele_allrec_h" : {
+        "bins"   : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "xtitle" : "Electron Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_ele_allpos_allele_allrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Electron Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+   "clE_pos_allpos_allele_allrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Positron Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_pos_allpos_allele_allrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 300,
+        "xtitle" : "Positron Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_pos_allpos_allele_allrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Positron Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+   "clE_rec_allpos_allele_allrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Recoil Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_rec_allpos_allele_allrec_h" : {
+        "bins"   : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "xtitle" : "Recoil Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_rec_allpos_allele_allrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Recoil Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+
+    "nTrks_foundpos_foundele_foundrec_h":{
+        "bins"   : 10,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "Number of Tracks in Event",
+        "ytitle" : "Events"
+    },
+    "nHits_ele_foundpos_foundele_foundrec_h":{
+        "bins"   : 15,
+        "minX"   : 0,
+        "maxX"   : 15,
+        "xtitle" : "Number of Hits in Electron",
+        "ytitle" : "Tracks"
+    },
+    "trkMom_ele_foundpos_foundele_foundrec_h":{
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.2,
+        "xtitle" : "Electron Track Momentum (GeV)",
+        "ytitle" : "Tracks"
+    },
+      "trkEoverP_ele_foundpos_foundele_foundrec_h":{
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 1.5,
+        "xtitle" : "Electron Track E/P",
+        "ytitle" : "Tracks"
+    },
+    "nHits_pos_foundpos_foundele_foundrec_h":{
+        "bins"   : 15,
+        "minX"   : 0,
+        "maxX"   : 15,
+        "xtitle" : "Number of Hits in Positron",
+        "ytitle" : "Tracks"
+    },
+    "trkMom_pos_foundpos_foundele_foundrec_h":{
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.2,
+        "xtitle" : "Positron Track Momentum (GeV)",
+        "ytitle" : "Tracks"
+    },
+    "trkEoverP_pos_foundpos_foundele_foundrec_h":{
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 1.5,
+        "xtitle" : "Positron Track E/P",
+        "ytitle" : "Tracks"
+    },
+     "nHits_rec_foundpos_foundele_foundrec_h":{
+        "bins"   : 15,
+        "minX"   : 0,
+        "maxX"   : 15,
+        "xtitle" : "Number of Hits in Recoil",
+        "ytitle" : "Tracks"
+    },
+    "trkMom_rec_foundpos_foundele_foundrec_h":{
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.2,
+        "xtitle" : "Recoil Track Momentum (GeV)",
+        "ytitle" : "Tracks"
+    },
+    "trkEoverP_rec_foundpos_foundele_foundrec_h":{
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 1.5,
+        "xtitle" : "Recoil Track E/P",
+        "ytitle" : "Tracks"
+    },
+
+    "clE_sum_foundpos_foundele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Cluster Energy Sum (GeV)",
+        "ytitle" : "Events"
+    },  
+   "clNet_EY_foundpos_foundele_foundrec_h":{
+        "bins"   : 50,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "xtitle" : "Net Cluster Energy Y (GeV)",
+        "ytitle" : "Events"
+    },
+    "clE_ele_foundpos_foundele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Electron Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_ele_foundpos_foundele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "xtitle" : "Electron Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_ele_foundpos_foundele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Electron Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+   "clE_pos_foundpos_foundele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Positron Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_pos_foundpos_foundele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 300,
+        "xtitle" : "Positron Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_pos_foundpos_foundele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Positron Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+   "clE_rec_foundpos_foundele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Recoil Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_rec_foundpos_foundele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "xtitle" : "Recoil Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_rec_foundpos_foundele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Recoil Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+    "clE_sum_foundpos_foundele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Cluster Energy Sum (GeV)",
+        "ytitle" : "Events"
+    },  
+    "clNet_EY_foundpos_foundele_missrec_h":{
+        "bins"   : 50,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "xtitle" : "Net Cluster Energy Y (GeV)",
+        "ytitle" : "Events"
+    },
+    "clE_ele_foundpos_foundele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Electron Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_ele_foundpos_foundele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "xtitle" : "Electron Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_ele_foundpos_foundele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Electron Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+   "clE_pos_foundpos_foundele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Positron Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_pos_foundpos_foundele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 300,
+        "xtitle" : "Positron Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_pos_foundpos_foundele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Positron Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+   "clE_rec_foundpos_foundele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Recoil Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_rec_foundpos_foundele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "xtitle" : "Recoil Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_rec_foundpos_foundele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Recoil Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+    "nTrks_foundpos_foundele_missrec_h":{
+        "bins"   : 10,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "Number of Tracks in Event",
+        "ytitle" : "Events"
+    },
+    "nHits_ele_foundpos_foundele_missrec_h":{
+        "bins"   : 15,
+        "minX"   : 0,
+        "maxX"   : 15,
+        "xtitle" : "Number of Hits in Electron",
+        "ytitle" : "Tracks"
+    },
+    "trkMom_ele_foundpos_foundele_missrec_h":{
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.2,
+        "xtitle" : "Electron Track Momentum (GeV)",
+        "ytitle" : "Tracks"
+    },
+      "trkEoverP_ele_foundpos_foundele_missrec_h":{
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 1.5,
+        "xtitle" : "Electron Track E/P",
+        "ytitle" : "Tracks"
+    },
+    "nHits_pos_foundpos_foundele_missrec_h":{
+        "bins"   : 15,
+        "minX"   : 0,
+        "maxX"   : 15,
+        "xtitle" : "Number of Hits in Positron",
+        "ytitle" : "Tracks"
+    },
+    "trkMom_pos_foundpos_foundele_missrec_h":{
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.2,
+        "xtitle" : "Positron Track Momentum (GeV)",
+        "ytitle" : "Tracks"
+    },
+    "trkEoverP_pos_foundpos_foundele_missrec_h":{
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 1.5,
+        "xtitle" : "Positron Track E/P",
+        "ytitle" : "Tracks"
+    },
+
+    "clE_sum_misspos_foundele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Cluster Energy Sum (GeV)",
+        "ytitle" : "Events"
+    },  
+     "clNet_EY_misspos_foundele_foundrec_h":{
+        "bins"   : 50,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "xtitle" : "Net Cluster Energy Y (GeV)",
+        "ytitle" : "Events"
+    },
+    "clE_ele_misspos_foundele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Electron Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_ele_misspos_foundele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "xtitle" : "Electron Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_ele_misspos_foundele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Electron Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+   "clE_pos_misspos_foundele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Positron Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_pos_misspos_foundele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 300,
+        "xtitle" : "Positron Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_pos_misspos_foundele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Positron Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+   "clE_rec_misspos_foundele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Recoil Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_rec_misspos_foundele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "xtitle" : "Recoil Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_rec_misspos_foundele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Recoil Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+    "nTrks_misspos_foundele_foundrec_h":{
+        "bins"   : 10,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "Number of Tracks in Event",
+        "ytitle" : "Events"
+    },
+    "nHits_ele_misspos_foundele_foundrec_h":{
+        "bins"   : 15,
+        "minX"   : 0,
+        "maxX"   : 15,
+        "xtitle" : "Number of Hits in Electron",
+        "ytitle" : "Tracks"
+    },
+    "trkMom_ele_misspos_foundele_foundrec_h":{
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.2,
+        "xtitle" : "Electron Track Momentum (GeV)",
+        "ytitle" : "Tracks"
+    },
+      "trkEoverP_ele_misspos_foundele_foundrec_h":{
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 1.5,
+        "xtitle" : "Electron Track E/P",
+        "ytitle" : "Tracks"
+    },   
+     "nHits_rec_misspos_foundele_foundrec_h":{
+        "bins"   : 15,
+        "minX"   : 0,
+        "maxX"   : 15,
+        "xtitle" : "Number of Hits in Recoil",
+        "ytitle" : "Tracks"
+    },
+    "trkMom_rec_misspos_foundele_foundrec_h":{
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.2,
+        "xtitle" : "Recoil Track Momentum (GeV)",
+        "ytitle" : "Tracks"
+    },
+    "trkEoverP_rec_misspos_foundele_foundrec_h":{
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 1.5,
+        "xtitle" : "Recoil Track E/P",
+        "ytitle" : "Tracks"
+    },
+    "clE_sum_foundpos_missele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Cluster Energy Sum (GeV)",
+        "ytitle" : "Events"
+    },  
+     "clNet_EY_foundpos_missele_foundrec_h":{
+        "bins"   : 50,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "xtitle" : "Net Cluster Energy Y (GeV)",
+        "ytitle" : "Events"
+    },
+    "clE_ele_foundpos_missele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Electron Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_ele_foundpos_missele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "xtitle" : "Electron Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_ele_foundpos_missele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Electron Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+   "clE_pos_foundpos_missele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Positron Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_pos_foundpos_missele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 300,
+        "xtitle" : "Positron Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_pos_foundpos_missele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Positron Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+   "clE_rec_foundpos_missele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Recoil Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_rec_foundpos_missele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "xtitle" : "Recoil Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_rec_foundpos_missele_foundrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Recoil Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+    "nTrks_foundpos_missele_foundrec_h":{
+        "bins"   : 10,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "Number of Tracks in Event",
+        "ytitle" : "Events"
+    },
+    "nHits_pos_foundpos_missele_foundrec_h":{
+        "bins"   : 15,
+        "minX"   : 0,
+        "maxX"   : 15,
+        "xtitle" : "Number of Hits in Positron",
+        "ytitle" : "Tracks"
+    },
+    "trkMom_pos_foundpos_missele_foundrec_h":{
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.2,
+        "xtitle" : "Positron Track Momentum (GeV)",
+        "ytitle" : "Tracks"
+    },
+    "trkEoverP_pos_foundpos_missele_foundrec_h":{
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 1.5,
+        "xtitle" : "Positron Track E/P",
+        "ytitle" : "Tracks"
+    },
+     "nHits_rec_foundpos_missele_foundrec_h":{
+        "bins"   : 15,
+        "minX"   : 0,
+        "maxX"   : 15,
+        "xtitle" : "Number of Hits in Recoil",
+        "ytitle" : "Tracks"
+    },
+    "trkMom_rec_foundpos_missele_foundrec_h":{
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.2,
+        "xtitle" : "Recoil Track Momentum (GeV)",
+        "ytitle" : "Tracks"
+    },
+    "trkEoverP_rec_foundpos_missele_foundrec_h":{
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 1.5,
+        "xtitle" : "Recoil Track E/P",
+        "ytitle" : "Tracks"
+    },
+    "clE_sum_foundpos_missele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Cluster Energy Sum (GeV)",
+        "ytitle" : "Events"
+    },  
+     "clNet_EY_foundpos_missele_missrec_h":{
+        "bins"   : 50,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "xtitle" : "Net Cluster Energy Y (GeV)",
+        "ytitle" : "Events"
+    },
+    "clE_ele_foundpos_missele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Electron Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_ele_foundpos_missele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "xtitle" : "Electron Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_ele_foundpos_missele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Electron Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+   "clE_pos_foundpos_missele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Positron Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_pos_foundpos_missele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 300,
+        "xtitle" : "Positron Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_pos_foundpos_missele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Positron Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+   "clE_rec_foundpos_missele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Recoil Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_rec_foundpos_missele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "xtitle" : "Recoil Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_rec_foundpos_missele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Recoil Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+      "nTrks_foundpos_missele_missrec_h":{
+        "bins"   : 10,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "Number of Tracks in Event",
+        "ytitle" : "Events"
+    },   
+    "nHits_pos_foundpos_missele_missrec_h":{
+        "bins"   : 15,
+        "minX"   : 0,
+        "maxX"   : 15,
+        "xtitle" : "Number of Hits in Positron",
+        "ytitle" : "Tracks"
+    },
+    "trkMom_pos_foundpos_missele_missrec_h":{
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.2,
+        "xtitle" : "Positron Track Momentum (GeV)",
+        "ytitle" : "Tracks"
+    },
+    "trkEoverP_pos_foundpos_missele_missrec_h":{
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 1.5,
+        "xtitle" : "Positron Track E/P",
+        "ytitle" : "Tracks"
+    },
+ 
+   "clE_sum_misspos_missele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Cluster Energy Sum (GeV)",
+        "ytitle" : "Events"
+    },  
+    "clNet_EY_misspos_missele_missrec_h":{
+        "bins"   : 50,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "xtitle" : "Net Cluster Energy Y (GeV)",
+        "ytitle" : "Events"
+    },
+    "clE_ele_misspos_missele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Electron Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_ele_misspos_missele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "xtitle" : "Electron Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_ele_misspos_missele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Electron Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+   "clE_pos_misspos_missele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Positron Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_pos_misspos_missele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 300,
+        "xtitle" : "Positron Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_pos_misspos_missele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Positron Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+   "clE_rec_misspos_missele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Recoil Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_rec_misspos_missele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "xtitle" : "Recoil Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_rec_misspos_missele_missrec_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Recoil Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+      "nTrks_misspos_missele_missrec_h":{
+        "bins"   : 10,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "Number of Tracks in Event",
+        "ytitle" : "Events"
+    },
+    "clY_vs_clE_ele_misspos_missele_missrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Electron Cluster Energy (GeV)",
+        "ytitle" : "Electron Cluster Y (mm)"
+    },
+    "clY_vs_clX_ele_misspos_missele_missrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Electron Cluster X (mm)",
+        "ytitle" : "Electron Cluster Y (mm)"
+    },
+     "clE_vs_clX_ele_misspos_missele_missrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : 0,
+        "maxY"   : 4.5,
+        "xtitle" : "Electron Cluster X (mm)",
+        "ytitle" : "Electron Cluster Energy (GeV)"
+    },
+    "clY_vs_clE_pos_misspos_missele_missrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Positron Cluster Energy (GeV)",
+        "ytitle" : "Positron Cluster Y (mm)"
+    },
+    "clY_vs_clX_pos_misspos_missele_missrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 400,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Positron Cluster X (mm)",
+        "ytitle" : "Positron Cluster Y (mm)"
+    },
+     "clE_vs_clX_pos_misspos_missele_missrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 400,
+        "binsY"  : 50,
+        "minY"   : 0,
+        "maxY"   : 4.5,
+        "xtitle" : "Positron Cluster X (mm)",
+        "ytitle" : "Positron Cluster Energy (GeV)"
+    }, 
+    "clY_vs_clE_rec_misspos_missele_missrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Recoil Cluster Energy (GeV)",
+        "ytitle" : "Recoil Cluster Y (mm)"
+    },
+    "clY_vs_clX_rec_misspos_missele_missrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Recoil Cluster X (mm)",
+        "ytitle" : "Recoil Cluster Y (mm)"
+    },
+     "clE_vs_clX_rec_misspos_missele_missrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : 0,
+        "maxY"   : 4.5,
+        "xtitle" : "Recoil Cluster X (mm)",
+        "ytitle" : "Recoil Cluster Energy (GeV)"
+    },    
+    "clY_vs_clE_ele_foundpos_foundele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Electron Cluster Energy (GeV)",
+        "ytitle" : "Electron Cluster Y (mm)"
+    },
+    "clY_vs_clX_ele_foundpos_foundele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Electron Cluster X (mm)",
+        "ytitle" : "Electron Cluster Y (mm)"
+    },
+     "clE_vs_clX_ele_foundpos_foundele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : 0,
+        "maxY"   : 4.5,
+        "xtitle" : "Electron Cluster X (mm)",
+        "ytitle" : "Electron Cluster Energy (GeV)"
+    },
+    "clY_vs_clE_pos_foundpos_foundele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Positron Cluster Energy (GeV)",
+        "ytitle" : "Positron Cluster Y (mm)"
+    },
+    "clY_vs_clX_pos_foundpos_foundele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 400,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Positron Cluster X (mm)",
+        "ytitle" : "Positron Cluster Y (mm)"
+    },
+     "clE_vs_clX_pos_foundpos_foundele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 400,
+        "binsY"  : 50,
+        "minY"   : 0,
+        "maxY"   : 4.5,
+        "xtitle" : "Positron Cluster X (mm)",
+        "ytitle" : "Positron Cluster Energy (GeV)"
+    }, 
+    "clY_vs_clE_rec_foundpos_foundele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Recoil Cluster Energy (GeV)",
+        "ytitle" : "Recoil Cluster Y (mm)"
+    },
+    "clY_vs_clX_rec_foundpos_foundele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Recoil Cluster X (mm)",
+        "ytitle" : "Recoil Cluster Y (mm)"
+    },
+     "clE_vs_clX_rec_foundpos_foundele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : 0,
+        "maxY"   : 4.5,
+        "xtitle" : "Recoil Cluster X (mm)",
+        "ytitle" : "Recoil Cluster Energy (GeV)"
+    },
+    "clY_vs_clE_ele_foundpos_foundele_missrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Electron Cluster Energy (GeV)",
+        "ytitle" : "Electron Cluster Y (mm)"
+    },
+    "clY_vs_clX_ele_foundpos_foundele_missrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Electron Cluster X (mm)",
+        "ytitle" : "Electron Cluster Y (mm)"
+    },
+     "clE_vs_clX_ele_foundpos_foundele_missrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : 0,
+        "maxY"   : 4.5,
+        "xtitle" : "Electron Cluster X (mm)",
+        "ytitle" : "Electron Cluster Energy (GeV)"
+    },
+    "clY_vs_clE_pos_foundpos_foundele_missrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Positron Cluster Energy (GeV)",
+        "ytitle" : "Positron Cluster Y (mm)"
+    },
+    "clY_vs_clX_pos_foundpos_foundele_missrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 400,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Positron Cluster X (mm)",
+        "ytitle" : "Positron Cluster Y (mm)"
+    },
+     "clE_vs_clX_pos_foundpos_foundele_missrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 400,
+        "binsY"  : 50,
+        "minY"   : 0,
+        "maxY"   : 4.5,
+        "xtitle" : "Positron Cluster X (mm)",
+        "ytitle" : "Positron Cluster Energy (GeV)"
+    }, 
+    "clY_vs_clE_rec_foundpos_foundele_missrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Recoil Cluster Energy (GeV)",
+        "ytitle" : "Recoil Cluster Y (mm)"
+    },
+    "clY_vs_clX_rec_foundpos_foundele_missrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Recoil Cluster X (mm)",
+        "ytitle" : "Recoil Cluster Y (mm)"
+    },
+     "clE_vs_clX_rec_foundpos_foundele_missrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : 0,
+        "maxY"   : 4.5,
+        "xtitle" : "Recoil Cluster X (mm)",
+        "ytitle" : "Recoil Cluster Energy (GeV)"
+    },
+    "clY_vs_clE_ele_foundpos_missele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Electron Cluster Energy (GeV)",
+        "ytitle" : "Electron Cluster Y (mm)"
+    },
+    "clY_vs_clX_ele_foundpos_missele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Electron Cluster X (mm)",
+        "ytitle" : "Electron Cluster Y (mm)"
+    },
+     "clE_vs_clX_ele_foundpos_missele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : 0,
+        "maxY"   : 4.5,
+        "xtitle" : "Electron Cluster X (mm)",
+        "ytitle" : "Electron Cluster Energy (GeV)"
+    },
+    "clY_vs_clE_pos_foundpos_missele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Positron Cluster Energy (GeV)",
+        "ytitle" : "Positron Cluster Y (mm)"
+    },
+    "clY_vs_clX_pos_foundpos_missele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 400,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Positron Cluster X (mm)",
+        "ytitle" : "Positron Cluster Y (mm)"
+    },
+     "clE_vs_clX_pos_foundpos_missele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 400,
+        "binsY"  : 50,
+        "minY"   : 0,
+        "maxY"   : 4.5,
+        "xtitle" : "Positron Cluster X (mm)",
+        "ytitle" : "Positron Cluster Energy (GeV)"
+    }, 
+    "clY_vs_clE_rec_foundpos_missele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Recoil Cluster Energy (GeV)",
+        "ytitle" : "Recoil Cluster Y (mm)"
+    },
+    "clY_vs_clX_rec_foundpos_missele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Recoil Cluster X (mm)",
+        "ytitle" : "Recoil Cluster Y (mm)"
+    },
+     "clE_vs_clX_rec_foundpos_missele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : 0,
+        "maxY"   : 4.5,
+        "xtitle" : "Recoil Cluster X (mm)",
+        "ytitle" : "Recoil Cluster Energy (GeV)"
+    }, 
+    "clY_vs_clE_ele_misspos_foundele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Electron Cluster Energy (GeV)",
+        "ytitle" : "Electron Cluster Y (mm)"
+    },
+    "clY_vs_clX_ele_misspos_foundele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Electron Cluster X (mm)",
+        "ytitle" : "Electron Cluster Y (mm)"
+    },
+     "clE_vs_clX_ele_misspos_foundele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : 0,
+        "maxY"   : 4.5,
+        "xtitle" : "Electron Cluster X (mm)",
+        "ytitle" : "Electron Cluster Energy (GeV)"
+    },
+    "clY_vs_clE_pos_misspos_foundele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Positron Cluster Energy (GeV)",
+        "ytitle" : "Positron Cluster Y (mm)"
+    },
+    "clY_vs_clX_pos_misspos_foundele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 400,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Positron Cluster X (mm)",
+        "ytitle" : "Positron Cluster Y (mm)"
+    },
+     "clE_vs_clX_pos_misspos_foundele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 400,
+        "binsY"  : 50,
+        "minY"   : 0,
+        "maxY"   : 4.5,
+        "xtitle" : "Positron Cluster X (mm)",
+        "ytitle" : "Positron Cluster Energy (GeV)"
+    }, 
+    "clY_vs_clE_rec_misspos_foundele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Recoil Cluster Energy (GeV)",
+        "ytitle" : "Recoil Cluster Y (mm)"
+    },
+    "clY_vs_clX_rec_misspos_foundele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Recoil Cluster X (mm)",
+        "ytitle" : "Recoil Cluster Y (mm)"
+    },
+    "clE_vs_clX_rec_misspos_foundele_foundrec_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : 0,
+        "maxY"   : 4.5,
+        "xtitle" : "Recoil Cluster Energy (GeV)",
+        "ytitle" : "Recoil Cluster Y (mm)"
+    }
+
+}
