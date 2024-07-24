@@ -7,6 +7,7 @@ import uproot
 import math
 import ROOT as r
 import matplotlib as mpl
+import copy
 import mplhep
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
@@ -201,6 +202,13 @@ class SignalProcessor:
             (array.unc_vtx_proj_sig < 2)
         )
         return sel
+
+    @staticmethod
+    def sameside_z0_cut(array):
+        sel = (
+            (-1.*(array.unc_vtx_ele_track_z0*array.unc_vtx_pos_track_z0) > 0)
+        )
+        return sel
     
     @staticmethod
     def zcut_sel(array):
@@ -236,6 +244,37 @@ class SignalProcessor:
             )
 
         return sel
+
+    @staticmethod
+    def readROOTHisto(infilename, histoname):
+        infile = r.TFile(f'{infilename}',"READ")
+        histo = copy.deepcopy(infile.Get(f'{histoname}'))
+        infile.Close()
+        return histo
+
+
+    @staticmethod
+    def cnvHistosToROOT(histos=[], tempname='temporary_uproot'):
+        return_histos = []
+        uproot_file = uproot.recreate(f'trash_{tempname}.root')
+        for i, histo in enumerate(histos):
+            uproot_file[f'histo_{i}'] = histo
+        uproot_file.close()
+        infile = r.TFile(f'trash_{tempname}.root',"READ")
+        for i, histo in enumerate(histos):
+            return_histos.append(copy.deepcopy(infile.Get(f'histo_{i}')))
+        infile.Close()
+        return return_histos
+
+    @staticmethod
+    def cnvHistoToROOT(histo, tempname='temporary_uproot'):
+        uproot_file = uproot.recreate(f'trash_{tempname}.root')
+        uproot_file['histogram'] = histo
+        uproot_file.close()
+        infile = r.TFile(f'trash_{tempname}.root',"READ")
+        root_hist = (copy.deepcopy(infile.Get(f'histogram')))
+        infile.Close()
+        return root_hist
 
 
 if __name__ == '__main__':
@@ -304,8 +343,14 @@ if __name__ == '__main__':
         signal = processor.load_signal(signal_path(signal_mass), signal_pre_readout_path(signal_mass), signal_mass, signal_selection)
 
         #Get Tight selection
-        tight_sel = processor.tight_selection(signal, signal_mass)
-
+        psum_sel = processor.psum_sel(signal, case='sr')
+        zcut_sel = processor.zcut_sel(signal)
+        vprojsig_sel = processor.vprojsig_sel(signal)
+        minz0_sel = processor.minz0_sel(signal)
+        masswindow_sel = processor.mass_sel(signal, signal_mass)
+        sameside_sel = processor.sameside_z0_cut(signal)
+        tight_sel = np.logical_and.reduce([psum_sel,zcut_sel, vprojsig_sel, psum_sel, minz0_sel, masswindow_sel, sameside_sel])
+        #tight_sel = processor.tight_selection(signal, signal_mass)
 
         for l, eps2 in enumerate(eps2_range):
             signal = processor.get_exp_sig_eps2(signal_mass, signal, eps2)
