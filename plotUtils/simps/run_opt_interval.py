@@ -50,6 +50,7 @@ outfilename = args.outfilename
 mpifpi = args.mpifpi
 nsigma = args.nsigma
 signal_sf = args.signal_sf
+tenpct = args.tenpct
 print(f'Search Window Size: +-', nsigma)
 
 #Initialize Signal Processor
@@ -81,8 +82,10 @@ else:
         mass_safety = 'unc_vtx_mass*1000. >= 0'
     else:
         selection = 'vtxana_Tight_2016_simp_reach_SR'
-        inv_mass_range = (135,200)
-        mass_safety = 'unc_vtx_mass*1000. > 135' #CANT LOOK BELOW THIS MASS UNTIL UNBLINDING!
+        #mass_safety = 'unc_vtx_mass*1000. > 135' #CANT LOOK BELOW THIS MASS UNTIL UNBLINDING!
+        #inv_mass_range = (135,200)
+        mass_safety = 'unc_vtx_mass*1000. > 0.0' #UNBLINDED!
+        inv_mass_range = (30, 124)
 
     for filename in sorted(os.listdir(indir)):
         if not filename.endswith('.root'):
@@ -97,36 +100,84 @@ else:
 #Set the differential radiative trident rate lookup table used to scale expected signal
 print('Load lookup table')
 cr_data = '/sdf/group/hps/user-data/alspellm/2016/data/hadd_BLPass4c_1959files.root'
+full_lumi_path = '/fs/ddn/sdf/group/hps/users/alspellm/data_storage/pass4kf/pass4kf_ana_20240513'
 preselection = "vtxana_Tight_nocuts"
 signal_mass_range = [x for x in range(20,130,1)]
-signalProcessor.set_diff_prod_lut(cr_data, preselection, signal_mass_range)
+signalProcessor.set_diff_prod_lut(cr_data, preselection, signal_mass_range, tenpct, full_lumi_path)
 
 #Initialize the range of epsilon2
 #masses = [x for x in range(50,56,2)]
 masses = [x for x in range(inv_mass_range[0], inv_mass_range[-1]+2,2)]
+#masses = [x for x in range(68,100, 2)]
 ap_masses = [round(x*signalProcessor.mass_ratio_ap_to_vd,1) for x in masses]
-eps2_range = np.logspace(-4.0,-8.0,num=100)
+eps2_range = np.logspace(-4.0,-8.0,num=1000)
 logeps2_range = np.log10(eps2_range)
 min_eps = min(np.log10(eps2_range))
 max_eps = max(np.log10(eps2_range))
 num_bins = len(eps2_range)
 
 #make histos to store results
+exclusion_conf_h = (
+    hist.Hist.new
+    .Reg(len(masses), np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
+    .Reg(len(eps2_range), min_eps,max_eps,label=r'$log10(\epsilon^2)$')
+    .Double()
+)
+exclusion_bestk_h = (
+    hist.Hist.new
+    .Reg(len(masses), np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
+    .Reg(len(eps2_range), min_eps,max_eps,label=r'$log10(\epsilon^2)$')
+    .Double()
+)
 total_yield_h = (
     hist.Hist.new
-    .Reg(len(masses), np.min(masses),np.max(masses),label='Invariant Mass [MeV]')
+    .Reg(len(masses), np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
     .Reg(len(eps2_range), min_eps,max_eps,label=r'$log10(\epsilon^2)$')
     .Double()
 )
 excluded_signal_h = (
     hist.Hist.new
-    .Reg(len(masses), np.min(masses),np.max(masses),label='Invariant Mass [MeV]')
+    .Reg(len(masses), np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
     .Reg(len(eps2_range), min_eps,max_eps,label=r'$log10(\epsilon^2)$')
     .Double()
 )
 sensitivity_h = (
     hist.Hist.new
-    .Reg(len(masses), np.min(masses),np.max(masses),label='Invariant Mass [MeV]')
+    .Reg(len(masses), np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
+    .Reg(len(eps2_range), min_eps,max_eps,label=r'$log10(\epsilon^2)$')
+    .Double()
+)
+
+ap_masses = [signalProcessor.mass_ratio_ap_to_vd*x for x in range(inv_mass_range[0], inv_mass_range[-1]+2,2)]
+total_yield_ap_h = (
+    hist.Hist.new
+    .Reg(len(ap_masses), np.min(ap_masses),np.max(ap_masses),label='A\' Invariant Mass [MeV]')
+    .Reg(len(eps2_range), min_eps,max_eps,label=r'$log10(\epsilon^2)$')
+    .Double()
+)
+excluded_signal_ap_h = (
+    hist.Hist.new
+    .Reg(len(ap_masses), np.min(ap_masses),np.max(ap_masses),label='A\' Invariant Mass [MeV]')
+    .Reg(len(eps2_range), min_eps,max_eps,label=r'$log10(\epsilon^2)$')
+    .Double()
+)
+sensitivity_ap_h = (
+    hist.Hist.new
+    .Reg(len(ap_masses), np.min(ap_masses),np.max(ap_masses),label='A\' Invariant Mass [MeV]')
+    .Reg(len(eps2_range), min_eps,max_eps,label=r'$log10(\epsilon^2)$')
+    .Double()
+)
+
+#Plot the excluded signal value right before reaching 90% confidence. Debugging purposes
+excluded_signal_minus1_h = (
+    hist.Hist.new
+    .Reg(len(masses), np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
+    .Reg(len(eps2_range), min_eps,max_eps,label=r'$log10(\epsilon^2)$')
+    .Double()
+)
+exclusion_conf_minus1_h = (
+    hist.Hist.new
+    .Reg(len(masses), np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
     .Reg(len(eps2_range), min_eps,max_eps,label=r'$log10(\epsilon^2)$')
     .Double()
 )
@@ -134,11 +185,33 @@ sensitivity_h = (
 #######################################################################################################################################
 
 #Load lookup table
-with open('interval_ntrials_10000.p', 'rb') as f:
+lookuptable_path = '/fs/ddn/sdf/group/hps/users/alspellm/mc_storage/opt_int_lookuptable_large.p'
+lookuptable_path = '/sdf/home/a/alspellm/src/hpstr/plotUtils/simps/interval_ntrials_10000.p'
+#lookuptable_path = '/fs/ddn/sdf/group/hps/users/alspellm/mc_storage/opt_int_lookuptable_max50_10ktoys.p'
+lookuptable_path = '/fs/ddn/sdf/group/hps/users/alspellm/mc_storage/opt_int_lookuptable_max25_10ktoys_0.05steps_v2.p'
+ntrials = 10000 #number of toy events thrown for each mu in lookup table
+with open(lookuptable_path, 'rb') as f:
     # Load the object from the pickle file
     lookupTable = pickle.load(f)
     
+#open output file
+outfile = uproot.recreate(f'{outfilename}.root')
+
 for signal_mass in masses:
+    #Histograms for each mass
+    confidence_level_mass_h = (
+        hist.Hist.new
+        .Reg(300, 0, 30.0,label='mu')
+        .Reg(len(eps2_range), min_eps,max_eps,label=r'$log10(\epsilon^2)$')
+        .Double()
+    )
+    best_kvalue_mass_h = (
+        hist.Hist.new
+        .Reg(300, 0, 30.0,label='mu')
+        .Reg(len(eps2_range), min_eps,max_eps,label=r'$log10(\epsilon^2)$')
+        .Double()
+    )
+
     print(f'Signal Mass {signal_mass}') 
 
     #Set signal window
@@ -149,6 +222,7 @@ for signal_mass in masses:
     zcut_sel = signalProcessor.zcut_sel(data)
     vprojsig_sel = signalProcessor.vprojsig_sel(data)
     minz0_sel = signalProcessor.minz0_sel(data)
+    sameside_sel = signalProcessor.sameside_z0_cut(data)
     masswindow_sel = signalProcessor.mass_sel(data, signal_mass)
     #Set signal/control region
     if not args.tenpct and args.highPsum:
@@ -158,8 +232,9 @@ for signal_mass in masses:
     elif args.tenpct and args.highPsum:
         psum_sel = signalProcessor.psum_sel(data, case='cr')
     else:
-        print('Error. Cannot access that region yet')
-    tight_sel = np.logical_and.reduce([zcut_sel, vprojsig_sel, psum_sel, minz0_sel, masswindow_sel])
+        psum_sel = signalProcessor.psum_sel(data, case='sr')
+        print('UNBLINDED!')
+    tight_sel = np.logical_and.reduce([zcut_sel, vprojsig_sel, sameside_sel, psum_sel, minz0_sel, masswindow_sel])
     #tight_sel = np.logical_and.reduce([zcut_sel, vprojsig_sel, psum_sel, masswindow_sel])
     data_z = data[tight_sel].unc_vtx_z
     print(data_z)
@@ -181,6 +256,7 @@ for signal_mass in masses:
     zcut_sel = signalProcessor.zcut_sel(signal)
     vprojsig_sel = signalProcessor.vprojsig_sel(signal)
     minz0_sel = signalProcessor.minz0_sel(signal)
+    sameside_sel = signalProcessor.sameside_z0_cut(signal)
     masswindow_sel = signalProcessor.mass_sel(signal, signal_mass)
     #Set signal/control region
     if not args.tenpct and args.highPsum:
@@ -190,8 +266,9 @@ for signal_mass in masses:
     elif args.tenpct and args.highPsum:
         psum_sel = signalProcessor.psum_sel(signal, case='cr')
     else:
-        print('Error. Cannot access that region yet')
-    tight_sel = np.logical_and.reduce([zcut_sel, vprojsig_sel, psum_sel, minz0_sel, masswindow_sel])
+        psum_sel = signalProcessor.psum_sel(signal, case='sr')
+        print('UNBLINDED!')
+    tight_sel = np.logical_and.reduce([zcut_sel, vprojsig_sel, sameside_sel, psum_sel, minz0_sel, masswindow_sel])
     signal = signal[tight_sel]
 
     #Loop over eps2 values and reweight the signal
@@ -238,6 +315,8 @@ for signal_mass in masses:
         k_90p = -1
         conf_90p = -1.0
         
+        previous_mu = 999999.9
+        previous_conf = -9.9
         for i,mu in enumerate(sorted(lookupTable.keys())):
             best_k = -1
             best_conf = -1.0
@@ -245,28 +324,61 @@ for signal_mass in masses:
                 if k > len(kints)-1:
                     break
                 x = np.max(kints[k])
-                conf = np.where(lookupTable[mu][k] < x)[0].size / (10000)
+                conf = np.where(lookupTable[mu][k] < x)[0].size / (ntrials)
                 if conf > best_conf:
                     best_k = k
                     best_conf = conf
-            #mu_v_eps2_hh.fill(eps2, mu, weight=best_conf)
+
+            #debug histos 
+            confidence_level_mass_h.fill(mu, np.log10(eps2), weight=best_conf)
+            best_kvalue_mass_h.fill(mu, np.log10(eps2), weight=best_k)
+
+            #if the confidence is >= 90%, this is the upper limit
             if best_conf >= 0.9:
                 mu_90p = mu
                 k_90p = best_k
                 conf_90p = best_conf
                 #print(f'90% confidence upper limit on mu={mu_90p}, when k={k_90p}')
                 #print(f'Confidence level: ', conf_90p)
+
+                #fill debug histo. Check excluded signal value right before upper limit
+                excluded_signal_minus1_h.fill(signal_mass, np.log10(eps2), weight=previous_mu)
+                exclusion_conf_minus1_h.fill(signal_mass, np.log10(eps2), weight=previous_conf)
                 break
+
+            #debug. Track values just before upper limit is reached
+            previous_mu = mu
+            previous_conf = best_conf
+
                 
         #Fill histogram results
+        exclusion_conf_h.fill(signal_mass, np.log10(eps2), weight=conf_90p)
+        exclusion_bestk_h.fill(signal_mass, np.log10(eps2), weight=k_90p)
         total_yield_h.fill(signal_mass, np.log10(eps2), weight=total_yield)
         excluded_signal_h.fill(signal_mass, np.log10(eps2), weight=mu_90p)
         sensitivity_h.fill(signal_mass, np.log10(eps2), weight=(total_yield/mu_90p))
 
-outfile = uproot.recreate(f'{outfilename}.root')
+        total_yield_ap_h.fill(signalProcessor.mass_ratio_ap_to_vd*signal_mass, np.log10(eps2), weight=total_yield)
+        excluded_signal_ap_h.fill(signalProcessor.mass_ratio_ap_to_vd*signal_mass, np.log10(eps2), weight=mu_90p)
+        sensitivity_ap_h.fill(signalProcessor.mass_ratio_ap_to_vd*signal_mass, np.log10(eps2), weight=(total_yield/mu_90p))
+
+    #save mass histograms
+    outfile[f'masses/confidence_levels_{signal_mass}_h'] = confidence_level_mass_h
+    outfile[f'masses/best_kvalues_{signal_mass}_h'] = best_kvalue_mass_h
+
 outfile['total_yield_h'] = total_yield_h
 outfile['excluded_signal_h'] = excluded_signal_h
 outfile['sensitivity_h'] = sensitivity_h
+outfile['confidence_level_h'] = exclusion_conf_h
+outfile['best_exclusion_k_h'] = exclusion_bestk_h
+
+outfile['total_yield_ap_h'] = total_yield_ap_h
+outfile['excluded_signal_ap_h'] = excluded_signal_ap_h
+outfile['sensitivity_ap_h'] = sensitivity_ap_h
+
+#save debug plots
+outfile['excluded_signal_minus1_h'] = excluded_signal_minus1_h
+outfile['exclusion_conf_minus1_h'] = exclusion_conf_minus1_h
 
 '''
 #Get sensitivity contour

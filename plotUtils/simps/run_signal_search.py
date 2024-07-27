@@ -51,14 +51,14 @@ else:
     inv_mass_range = (30,200)
     branches = ["unc_vtx_mass","unc_vtx_psum", "unc_vtx_ele_track_z0", "unc_vtx_pos_track_z0", "unc_vtx_z", "unc_vtx_proj_sig"]
     indir = '/fs/ddn/sdf/group/hps/users/alspellm/data_storage/pass4kf/pass4kf_ana_20240513'
+    mass_safety = 'unc_vtx_mass*1000. >= 0'
     #If high psum, can look at all masses
     if args.highPsum:
         selection = 'vtxana_Tight_2016_simp_reach_CR'
-        mass_safety = 'unc_vtx_mass*1000. >= 0'
     else:
         selection = 'vtxana_Tight_2016_simp_reach_SR'
-        inv_mass_range = (135,200)
-        mass_safety = 'unc_vtx_mass*1000. > 135' #CANT LOOK BELOW THIS MASS UNTIL UNBLINDING!
+        #inv_mass_range = (135,200)
+        #mass_safety = 'unc_vtx_mass*1000. > 135' #CANT LOOK BELOW THIS MASS UNTIL UNBLINDING!
 
     for filename in sorted(os.listdir(indir)):
         if not filename.endswith('.root'):
@@ -277,13 +277,14 @@ elif args.tenpct and not args.highPsum:
 elif args.tenpct and args.highPsum:
     psum_sel = signalProcessor.psum_sel(data, case='cr')
 else:
-    print('Error. Cannot access that region yet')
+    psum_sel = signalProcessor.psum_sel(data, case='sr')
 
 #get the Tight selection, without mass and minz0 cuts
 #init_sel = signalProcessor.tight_selection(data, 0.0, case=3)
 zcut_sel = signalProcessor.zcut_sel(data)
 vprojsig_sel = signalProcessor.vprojsig_sel(data)
-initial_sel = np.logical_and.reduce([zcut_sel, vprojsig_sel, psum_sel])
+sameside_sel = signalProcessor.sameside_z0_cut(data)
+initial_sel = np.logical_and.reduce([zcut_sel, vprojsig_sel, psum_sel, sameside_sel])
 print(initial_sel)
 print(np.max(data[initial_sel].unc_vtx_min_z0))
 

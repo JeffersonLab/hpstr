@@ -101,19 +101,38 @@ class SignalProcessor:
         ]
         return events
 
-    def _load_trident_differential_production_lut(self, background_file, selection, signal_mass_range, mass_window_width):
+    def _load_trident_differential_production_lut(self, background_file, selection, signal_mass_range, mass_window_width, tenpct=True, full_lumi_path=None):
         dNdm_by_mass_vd = {}
-        with uproot.open(background_file) as bkgd_f:
-            bkgd_CR = bkgd_f[f'{selection}/{selection}_tree'].arrays(
-                cut=f'( (unc_vtx_psum > {self.cr_psum_low}) & (unc_vtx_psum < {self.cr_psum_high}) )',
-                expressions=['unc_vtx_mass', 'unc_vtx_z'],
-            )
-            for mass_vd in signal_mass_range:
-                window_half_width = mass_window_width * self.mass_resolution(mass_vd) / 2
-                dNdm_by_mass_vd[mass_vd] = ak.sum(
-                    (bkgd_CR.unc_vtx_mass * 1000 > self.mass_ratio_ap_to_vd * (mass_vd - window_half_width)) &
-                    (bkgd_CR.unc_vtx_mass * 1000 < self.mass_ratio_ap_to_vd * (mass_vd + window_half_width))
-                ) / (2 * window_half_width * self.mass_ratio_ap_to_vd)
+        bkgd_CR = ak.Array([])
+
+        if tenpct:
+            with uproot.open(background_file) as bkgd_f:
+                bkgd_CR = bkgd_f[f'{selection}/{selection}_tree'].arrays(
+                    cut=f'( (unc_vtx_psum > {self.cr_psum_low}) & (unc_vtx_psum < {self.cr_psum_high}) )',
+                    expressions=['unc_vtx_mass', 'unc_vtx_z'],
+                )
+        else:
+            for filename in sorted(os.listdir(full_lumi_path)):
+                if not filename.endswith('.root'):
+                    continue
+                run = filename.split('_')[4]
+                print('Loading Run ', run)
+
+
+                background_file = os.path.join(full_lumi_path,filename)
+                with uproot.open(background_file) as bkgd_f:
+                    bkgd_CR_per_run = bkgd_f[f'{selection}/{selection}_tree'].arrays(
+                        cut=f'( (unc_vtx_psum > {self.cr_psum_low}) & (unc_vtx_psum < {self.cr_psum_high}) )',
+                        expressions=['unc_vtx_mass', 'unc_vtx_z'],
+                    )
+                    bkgd_CR = ak.concatenate([bkgd_CR, bkgd_CR_per_run])
+
+        for mass_vd in signal_mass_range:
+            window_half_width = mass_window_width * self.mass_resolution(mass_vd) / 2.
+            dNdm_by_mass_vd[mass_vd] = ak.sum(
+                (bkgd_CR.unc_vtx_mass * 1000 > self.mass_ratio_ap_to_vd * (mass_vd - window_half_width)) &
+                (bkgd_CR.unc_vtx_mass * 1000 < self.mass_ratio_ap_to_vd * (mass_vd + window_half_width))
+            ) / (2 * window_half_width * self.mass_ratio_ap_to_vd)
         return dNdm_by_mass_vd
 
     def trident_differential_production(self, mass_vd):
@@ -123,9 +142,9 @@ class SignalProcessor:
 
     #Use the reconstructed data in the high psum region to scale the differential radiative trident production rate
     #This scales the A' production rate, therefore the expected signal
-    def set_diff_prod_lut(self,infile, preselection, signal_mass_range):
+    def set_diff_prod_lut(self,infile, preselection, signal_mass_range, tenpct=True, full_lumi_path=None):
         #Initialize the lookup table to calculate the expected signal scale factor
-        self.trident_differential_production = self._load_trident_differential_production_lut(infile, preselection, signal_mass_range, self.nsigma)
+        self.trident_differential_production = self._load_trident_differential_production_lut(infile, preselection, signal_mass_range, 2.0*self.nsigma, tenpct=tenpct, full_lumi_path=full_lumi_path)
 
     def total_signal_production_per_epsilon2(self, signal_mass):
         mass_ap = self.mass_ratio_ap_to_vd*signal_mass
@@ -282,13 +301,16 @@ if __name__ == '__main__':
     parser.add_argument('--outfilename', type=str, default='expected_signal_output.root')
     parser.add_argument('--mpifpi', type=float, default=4*np.pi)
     parser.add_argument('--signal_sf', type=float, default=1.0)
-    parser.add_argument('--nsigma', type=float, default=2.0)
+    parser.add_argument('--nsigma', type=float, default=1.5)
+    parser.add_argument('--tenpct', type=int, default=0)
     args = parser.parse_args()
 
     mpifpi = args.mpifpi
     nsigma = args.nsigma
     signal_sf = args.signal_sf
     outfilename = args.outfilename
+    tenpct = args.tenpct
+
 
 
     #Create MC signal analysis tuple processor
@@ -298,15 +320,16 @@ if __name__ == '__main__':
     #Set the differential radiative trident rate lookup table used to scale expected signal
     print('Load lookup table')
     cr_data = '/sdf/group/hps/user-data/alspellm/2016/data/hadd_BLPass4c_1959files.root'
+    full_lumi_path = '/fs/ddn/sdf/group/hps/users/alspellm/data_storage/pass4kf/pass4kf_ana_20240513'
     preselection = "vtxana_Tight_nocuts"
     signal_mass_range = [x for x in range(30,130,1)]
-    processor.set_diff_prod_lut(cr_data, preselection, signal_mass_range)
-
+    processor.set_diff_prod_lut(cr_data, preselection, signal_mass_range, tenpct, full_lumi_path)
 
     #Initialize the range of epsilon2
     masses = [x for x in range(30,124,2)]
+    masses = [x for x in range(50,70,2)]
     ap_masses = [round(x*processor.mass_ratio_ap_to_vd,1) for x in masses]
-    eps2_range = np.logspace(-4.0,-8.0,num=100)
+    eps2_range = np.logspace(-4.0,-8.0,num=40)
     logeps2_range = np.log10(eps2_range)
     min_eps = min(np.log10(eps2_range))
     max_eps = max(np.log10(eps2_range))
