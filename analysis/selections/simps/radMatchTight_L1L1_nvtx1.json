@@ -1,0 +1,17 @@
+{
+    "L1Requirement_eq": {
+        "cut": 1,
+        "id": 0,
+        "info": "L1L1"
+    },
+     "isRadEle_eq" : {
+        "cut"  : 1,
+        "id"   : 1,
+        "info" : "isRadEle"
+    },
+    "nVtxs_eq": {
+        "cut": 1,
+        "id": 2,
+        "info": "N_{vtx}=1"
+    }
+}

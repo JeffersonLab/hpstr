@@ -34,7 +34,7 @@ anaTrks.parameters["selectionjson"] = os.environ['HPSTR_BASE']+'/analysis/select
 anaTrks.parameters["isData"] = options.isData
 
 #SmearingClosureTest
-anaTrks.parameters["pSmearingFile"] =  os.environ['HPSTR_BASE']+"/utils/data/smearingFile_2016_all_12112023.root"
+anaTrks.parameters["pSmearingFile"] =  os.environ['HPSTR_BASE']+"/utils/data/smearingFile_2016_all_20240620.root"
 
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/feeSmearing/"
 anaTrks.parameters["regionDefinitions"] = []

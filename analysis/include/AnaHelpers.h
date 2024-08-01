@@ -83,6 +83,17 @@ class AnaHelpers {
          * @return false 
          */
         bool GetParticlesFromVtx(Vertex* vtx, Particle*& ele, Particle*& pos);
+
+        /**
+         * @brief Get the Particles From Vtx object
+         * 
+         * @param vtx 
+         * @param ele1 
+         * @param ele2
+         * @return true 
+         * @return false 
+         */
+        bool GetSameParticlesFromVtx(Vertex* vtx, Particle*& ele1, Particle*& ele2);
         
         /**
          * @brief brief description
