@@ -30,6 +30,7 @@ class SignalProcessor:
         self.mass_resolution = self.polynomial(.75739851, 0.031621002, 5.2949672e-05)
         self.radiative_fraction = self.polynomial(0.10541434, -0.0011737697, 7.4487930e-06, -1.6766332e-08)
         self.radiative_acceptance = self.polynomial(-0.48922505, 0.073733061, -0.0043873158, 0.00013455495, -2.3630535e-06, 2.5402516e-08, -1.7090900e-10, 7.0355585e-13, -1.6215982e-15, 1.6032317e-18)
+        self.psum_reweighting = self.polynomial(0.094272950, 0.87334446, -0.19641796) #GeV argument
         self.cr_psum_low = 1.9
         self.cr_psum_high = 2.4
         self.sr_psum_low = 1.0
@@ -84,6 +85,9 @@ class SignalProcessor:
                 )
         events['vd_true_gamma'] = events.vd_true_vtx_energy * 1000 / mass_vd
         events['unc_vtx_min_z0'] = np.minimum(abs(events.unc_vtx_ele_track_z0), abs(events.unc_vtx_pos_track_z0))
+        events['psum_reweight'] = self.psum_reweighting(events.unc_vtx_psum)
+        events['psum_reweight'] = ak.where(events['psum_reweight'] > 1., 1., events['psum_reweight'])
+
 
         not_rebinned_pre_readout_z_h = self.load_pre_readout_signal_z_distribution(pre_readout_filepath)
 
@@ -174,7 +178,7 @@ class SignalProcessor:
         )
         # the weight for a single event is the chance of that decay (z and gamma from either Vd)
         # multiplied by probability the event was from that z-bin in the original sample
-        signal_array['reweighted_accxEff'] = combined_decay_weight*signal_array.event_weight_by_uniform_z
+        signal_array['reweighted_accxEff'] = combined_decay_weight*signal_array.event_weight_by_uniform_z*signal_array.psum_reweight
 
         return signal_array
 
