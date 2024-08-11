@@ -31,6 +31,7 @@ class SignalProcessor:
         self.radiative_fraction = self.polynomial(0.10541434, -0.0011737697, 7.4487930e-06, -1.6766332e-08)
         self.radiative_acceptance = self.polynomial(-0.48922505, 0.073733061, -0.0043873158, 0.00013455495, -2.3630535e-06, 2.5402516e-08, -1.7090900e-10, 7.0355585e-13, -1.6215982e-15, 1.6032317e-18)
         self.psum_reweighting = self.polynomial(0.094272950, 0.87334446, -0.19641796) #GeV argument
+        self.minz0_cut_poly = self.polynomial(1.07620094e+00 + 0.1, -7.44533811e-03, 1.58745903e-05)
         self.cr_psum_low = 1.9
         self.cr_psum_high = 2.4
         self.sr_psum_low = 1.0
@@ -54,7 +55,10 @@ class SignalProcessor:
                 cut=cut_expression,
                 expressions=expressions
             )
-            events['unc_vtx_min_z0'] = np.minimum(abs(events.unc_vtx_ele_track_z0), abs(events.unc_vtx_pos_track_z0))
+            try:
+                events['unc_vtx_min_z0'] = np.minimum(abs(events.unc_vtx_ele_track_z0), abs(events.unc_vtx_pos_track_z0))
+            except:
+                pass
             return events
 
     @staticmethod
@@ -357,7 +361,8 @@ if __name__ == '__main__':
     for signal_mass in masses:
 
         #Load MC Signal
-        indir = '/sdf/group/hps/user-data/alspellm/2016/simp_mc/pass4b/beam/smeared'
+        #indir = '/sdf/group/hps/user-data/alspellm/2016/simp_mc/pass4b/beam/smeared'
+        indir = '/sdf/group/hps/user-data/alspellm/2016/simp_mc/pass4b/beam/smeared_fixbeamspot'
         signal_pre_readout_path = lambda mass: f'/sdf/group/hps/user-data/alspellm/2016/simp_mc/pass4b/nobeam/mass_{mass}_simp_2pt3_slic_hadd_ana.root'
         signal_path = lambda mass: f'{indir}/mass_{mass}_hadd-simp-beam_ana_smeared_corr.root'
         signal_selection = 'vtxana_radMatchTight_2016_simp_SR_analysis'

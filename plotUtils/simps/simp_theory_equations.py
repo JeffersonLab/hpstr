@@ -1,9 +1,10 @@
 import math
 import ROOT as r
+import numpy as np
 class SimpEquations:
 
     def __init__(self, year = 2016, alpha_dark = 0.01, mass_ratio_Ap_to_Vd = 1.66, mass_ratio_Ap_to_Pid = 3.0, 
-        ratio_mPi_to_fPi = 12.566, lepton_mass = 0.511):
+            ratio_mPi_to_fPi = 12.566, lepton_mass = 0.511):
         self.year = year
         self.alpha_dark = alpha_dark
         self.mass_ratio_Ap_to_Vd = mass_ratio_Ap_to_Vd
@@ -23,8 +24,8 @@ class SimpEquations:
     @staticmethod
     def rate_2pi(m_Ap, m_pi, m_V, alpha_dark):
         coeff = (2.0 * alpha_dark / 3.0) * m_Ap
-        pow1 = math.pow((1 - (4 * m_pi * m_pi / (m_Ap * m_Ap))), 3 / 2.0)
-        pow2 = math.pow(((m_V * m_V) / ((m_Ap * m_Ap) - (m_V * m_V))), 2)
+        pow1 = np.power((1 - (4 * m_pi * m_pi / (m_Ap * m_Ap))), 3 / 2.0)
+        pow2 = np.power(((m_V * m_V) / ((m_Ap * m_Ap) - (m_V * m_V))), 2)
         return coeff * pow1 * pow2
 
     @staticmethod
@@ -32,59 +33,85 @@ class SimpEquations:
         x = m_pi / m_Ap
         y = m_V / m_Ap
         Tv = 3.0/4.0
-        coeff = alpha_dark * Tv / (192.0 * math.pow(math.pi, 4))
-        return coeff * math.pow((m_Ap / m_pi), 2) * math.pow(m_V / m_pi, 2) * math.pow((m_pi / f_pi), 4) * m_Ap * math.pow(SimpEquations.Beta(x, y), 3 / 2.0)
+        coeff = alpha_dark * Tv / (192.0 * np.power(math.pi, 4))
+        return coeff * np.power((m_Ap / m_pi), 2) * np.power(m_V / m_pi, 2) * np.power((m_pi / f_pi), 4) * m_Ap * np.power(SimpEquations.Beta(x, y), 3 / 2.0)
 
     def rate_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi):
         x = m_pi / m_Ap
         y = m_V / m_Ap
         Tv = 3.0/2.0
-        coeff = alpha_dark * Tv / (192.0 * math.pow(math.pi, 4))
-        return coeff * math.pow((m_Ap / m_pi), 2) * math.pow(m_V / m_pi, 2) * math.pow((m_pi / f_pi), 4) * m_Ap * math.pow(SimpEquations.Beta(x, y), 3 / 2.0)
+        coeff = alpha_dark * Tv / (192.0 * np.power(math.pi, 4))
+        return coeff * np.power((m_Ap / m_pi), 2) * np.power(m_V / m_pi, 2) * np.power((m_pi / f_pi), 4) * m_Ap * np.power(SimpEquations.Beta(x, y), 3 / 2.0)
 
     def rate_Vcharged_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi):
         x = m_pi / m_Ap
         y = m_V / m_Ap
         Tv = 18.0 - ((3.0/2.0)+(3.0/4.0))
-        coeff = alpha_dark * Tv / (192.0 * math.pow(math.pi, 4))
-        return coeff * math.pow((m_Ap / m_pi), 2) * math.pow(m_V / m_pi, 2) * math.pow((m_pi / f_pi), 4) * m_Ap * math.pow(SimpEquations.Beta(x, y), 3 / 2.0)
+        coeff = alpha_dark * Tv / (192.0 * np.power(math.pi, 4))
+        return coeff * np.power((m_Ap / m_pi), 2) * np.power(m_V / m_pi, 2) * np.power((m_pi / f_pi), 4) * m_Ap * np.power(SimpEquations.Beta(x, y), 3 / 2.0)
 
     @staticmethod
     def br_2pi(m_Ap, m_pi, m_V, alpha_dark, f_pi):
-        total_rate = SimpEquations.rate_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +SimpEquations.rate_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + SimpEquations.rate_Vcharged_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + SimpEquations.rate_2pi(m_Ap, m_pi, m_V, alpha_dark)
-        if m_Ap > 2.0*m_V:
-            total_rate = total_rate + SimpEquations.rate_2V(m_Ap, m_V, alpha_dark)
-        return SimpEquations.rate_2pi(m_Ap, m_pi, m_V, alpha_dark)/total_rate
+        total_rate = (SimpEquations.rate_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + 
+                SimpEquations.rate_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + 
+                SimpEquations.rate_Vcharged_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + 
+                SimpEquations.rate_2pi(m_Ap, m_pi, m_V, alpha_dark))
+
+        # Add the rate_2V contribution element-wise where m_Ap > 2.0 * m_V
+        total_rate += np.where(m_Ap > 2.0 * m_V, SimpEquations.rate_2V(m_Ap, m_V, alpha_dark), 0.0)
+
+        return SimpEquations.rate_2pi(m_Ap, m_pi, m_V, alpha_dark) / total_rate
 
     @staticmethod
     def br_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi):
-        total_rate = SimpEquations.rate_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +SimpEquations.rate_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + SimpEquations.rate_Vcharged_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + SimpEquations.rate_2pi(m_Ap, m_pi, m_V, alpha_dark)
-        if m_Ap > 2.0*m_V:
-            total_rate = total_rate + SimpEquations.rate_2V(m_Ap, m_V, alpha_dark)
+        total_rate = (SimpEquations.rate_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + 
+                SimpEquations.rate_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + 
+                SimpEquations.rate_Vcharged_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + 
+                SimpEquations.rate_2pi(m_Ap, m_pi, m_V, alpha_dark))
+
+        # Add the rate_2V contribution element-wise where m_Ap > 2.0 * m_V
+        total_rate += np.where(m_Ap > 2.0 * m_V, SimpEquations.rate_2V(m_Ap, m_V, alpha_dark), 0.0)
+
         return SimpEquations.rate_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) / total_rate
 
     @staticmethod
     def br_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi):
-        total_rate = SimpEquations.rate_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +SimpEquations.rate_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + SimpEquations.rate_Vcharged_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + SimpEquations.rate_2pi(m_Ap, m_pi, m_V, alpha_dark)
-        if m_Ap > 2.0*m_V:
-            total_rate = total_rate + SimpEquations.rate_2V(m_Ap, m_V, alpha_dark)
+        total_rate = (SimpEquations.rate_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + 
+                SimpEquations.rate_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + 
+                SimpEquations.rate_Vcharged_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + 
+                SimpEquations.rate_2pi(m_Ap, m_pi, m_V, alpha_dark))
+
+        # Add the rate_2V contribution element-wise where m_Ap > 2.0 * m_V
+        total_rate += np.where(m_Ap > 2.0 * m_V, SimpEquations.rate_2V(m_Ap, m_V, alpha_dark), 0.0)
+
         return SimpEquations.rate_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) / total_rate
 
     @staticmethod
     def br_Vcharged_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi):
-        total_rate = SimpEquations.rate_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +SimpEquations.rate_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + SimpEquations.rate_Vcharged_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + SimpEquations.rate_2pi(m_Ap, m_pi, m_V, alpha_dark)
-        if m_Ap > 2.0*m_V:
-            total_rate = total_rate + SimpEquations.rate_2V(m_Ap, m_V, alpha_dark)
+        total_rate = (SimpEquations.rate_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + 
+                SimpEquations.rate_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + 
+                SimpEquations.rate_Vcharged_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + 
+                SimpEquations.rate_2pi(m_Ap, m_pi, m_V, alpha_dark))
+
+        # Add the rate_2V contribution element-wise where m_Ap > 2.0 * m_V
+        total_rate += np.where(m_Ap > 2.0 * m_V, SimpEquations.rate_2V(m_Ap, m_V, alpha_dark), 0.0)
+
         return SimpEquations.rate_Vcharged_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) / total_rate
 
     @staticmethod
     def br_2V(m_Ap, m_pi, m_V, alpha_dark, f_pi):
-        total_rate = SimpEquations.rate_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) +SimpEquations.rate_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + SimpEquations.rate_Vcharged_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + SimpEquations.rate_2pi(m_Ap, m_pi, m_V, alpha_dark)
-        if m_Ap > 2.0*m_V:
-            total_rate = total_rate + SimpEquations.rate_2V(m_Ap, m_V, alpha_dark)
-        if 2 * m_V >= m_Ap:
-            return 0.0
-        return SimpEquations.rate_2V(m_Ap, m_V, alpha_dark) / total_rate
+        total_rate = (SimpEquations.rate_Vrho_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + 
+                SimpEquations.rate_Vphi_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + 
+                SimpEquations.rate_Vcharged_pi(m_Ap, m_pi, m_V, alpha_dark, f_pi) + 
+                SimpEquations.rate_2pi(m_Ap, m_pi, m_V, alpha_dark))
+
+        # Calculate the rate_2V contribution only where m_Ap > 2.0 * m_V and add it to total_rate
+        total_rate += np.where(m_Ap > 2.0 * m_V, SimpEquations.rate_2V(m_Ap, m_V, alpha_dark), 0.0)
+
+        # Return 0.0 where 2 * m_V >= m_Ap
+        rate_2V_contrib = np.where((2.0 * m_V >= m_Ap) | (m_Ap <= 2.9 * m_V), 0.0, SimpEquations.rate_2V(m_Ap, m_V, alpha_dark))
+
+        return rate_2V_contrib / total_rate
 
     @staticmethod
     def Tv(rho, phi):
@@ -97,7 +124,7 @@ class SimpEquations:
 
     @staticmethod
     def Beta(x, y):
-        return (1 + math.pow(y, 2) - math.pow(x, 2) - 2 * y) * (1 + math.pow(y, 2) - math.pow(x, 2) + 2 * y)
+        return (1 + np.power(y, 2) - np.power(x, 2) - 2 * y) * (1 + np.power(y, 2) - np.power(x, 2) + 2 * y)
 
     @staticmethod
     def rate_2V(m_Ap, m_V, alpha_dark):
@@ -108,7 +135,7 @@ class SimpEquations:
     def f(r):
         # Define your function f(r) here
         # Example: return some_expression
-        pass
+        return -1.
 
     @staticmethod
     def rate_2l(m_Ap, m_pi, m_V, eps, alpha_dark, f_pi, m_l, rho):
@@ -142,4 +169,4 @@ class SimpEquations:
         return apProduction
 
 
-    
+
