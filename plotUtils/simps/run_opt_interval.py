@@ -119,31 +119,31 @@ num_bins = len(eps2_range)
 #make histos to store results
 exclusion_conf_h = (
     hist.Hist.new
-    .Reg(len(masses), np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
+    .Reg(len(masses)-1, np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
     .Reg(len(eps2_range), min_eps,max_eps,label=r'$log10(\epsilon^2)$')
     .Double()
 )
 exclusion_bestk_h = (
     hist.Hist.new
-    .Reg(len(masses), np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
+    .Reg(len(masses)-1, np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
     .Reg(len(eps2_range), min_eps,max_eps,label=r'$log10(\epsilon^2)$')
     .Double()
 )
 total_yield_h = (
     hist.Hist.new
-    .Reg(len(masses), np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
+    .Reg(len(masses)-1, np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
     .Reg(len(eps2_range), min_eps,max_eps,label=r'$log10(\epsilon^2)$')
     .Double()
 )
 excluded_signal_h = (
     hist.Hist.new
-    .Reg(len(masses), np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
+    .Reg(len(masses)-1, np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
     .Reg(len(eps2_range), min_eps,max_eps,label=r'$log10(\epsilon^2)$')
     .Double()
 )
 sensitivity_h = (
     hist.Hist.new
-    .Reg(len(masses), np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
+    .Reg(len(masses)-1, np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
     .Reg(len(eps2_range), min_eps,max_eps,label=r'$log10(\epsilon^2)$')
     .Double()
 )
@@ -171,13 +171,13 @@ sensitivity_ap_h = (
 #Plot the excluded signal value right before reaching 90% confidence. Debugging purposes
 excluded_signal_minus1_h = (
     hist.Hist.new
-    .Reg(len(masses), np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
+    .Reg(len(masses)-1, np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
     .Reg(len(eps2_range), min_eps,max_eps,label=r'$log10(\epsilon^2)$')
     .Double()
 )
 exclusion_conf_minus1_h = (
     hist.Hist.new
-    .Reg(len(masses), np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
+    .Reg(len(masses)-1, np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
     .Reg(len(eps2_range), min_eps,max_eps,label=r'$log10(\epsilon^2)$')
     .Double()
 )

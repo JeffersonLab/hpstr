@@ -6,12 +6,12 @@ from hist import Hist
 import uproot
 import math
 import ROOT as r
-import matplotlib as mpl
+#import matplotlib as mpl
 import copy
-import mplhep
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
-mpl.style.use(mplhep.style.ROOT)
+#import mplhep
+#import matplotlib.pyplot as plt
+#from matplotlib.backends.backend_pdf import PdfPages
+#mpl.style.use(mplhep.style.ROOT)
 import argparse
 from simp_theory_equations import SimpEquations as simpeqs
 
@@ -39,6 +39,9 @@ class SignalProcessor:
         ###
         self.trident_differential_production = None
 
+
+    def set_radiative_acceptance(self, *coefficients):
+        self.radiative_acceptance = self.polynomial(*coefficients)
 
     @staticmethod
     def polynomial(*coefficients):
@@ -175,10 +178,13 @@ class SignalProcessor:
 
         rho_decay_weight = (np.exp((self.target_pos - signal_array.vd_true_vtx_z) / rho_gctau) / rho_gctau)
         phi_decay_weight = (np.exp((self.target_pos - signal_array.vd_true_vtx_z) / phi_gctau) / phi_gctau)
+        signal_array['reweighted_accxEff_rho'] = simpeqs.br_Vrho_pi(mass_ap, mass_pid, signal_mass, self.alpha_dark, fpid)*rho_decay_weight*signal_array.event_weight_by_uniform_z*signal_array.psum_reweight
+        print(simpeqs.br_Vrho_pi(mass_ap, mass_pid, signal_mass, self.alpha_dark, fpid))
+        signal_array['reweighted_accxEff_phi'] = simpeqs.br_Vphi_pi(mass_ap, mass_pid, signal_mass, self.alpha_dark, fpid)*phi_decay_weight*signal_array.event_weight_by_uniform_z*signal_array.psum_reweight
         
         combined_decay_weight = (
-            rho_decay_weight * simpeqs.br_Vrho_pi(mass_ap, mass_pid, signal_mass, self.alpha_dark, fpid)
-            + phi_decay_weight * simpeqs.br_Vphi_pi(mass_ap, mass_pid, signal_mass, self.alpha_dark, fpid)
+            (rho_decay_weight * simpeqs.br_Vrho_pi(mass_ap, mass_pid, signal_mass, self.alpha_dark, fpid))
+            + (phi_decay_weight * simpeqs.br_Vphi_pi(mass_ap, mass_pid, signal_mass, self.alpha_dark, fpid))
         )
         # the weight for a single event is the chance of that decay (z and gamma from either Vd)
         # multiplied by probability the event was from that z-bin in the original sample
@@ -240,7 +246,7 @@ class SignalProcessor:
     @staticmethod
     def zcut_sel(array):
         sel = (
-            (array.unc_vtx_z > -4.3)
+            (array.unc_vtx_z > -4.8)
         )
         return sel
 
@@ -303,6 +309,50 @@ class SignalProcessor:
         infile.Close()
         return root_hist
 
+    def systematic_uncertainties(self):
+        #using a +- 1.5 sigma search window with all cuts frozen to 2016 displaced simp dissertation (Alic)
+        self.radacc_targetz_nominal = self.polynomial(0.24083419, -0.017612076, 0.00037553660, -1.0223921e-06, -3.8793240e-08,
+                4.2199609e-10, -1.6641414e-12, 2.3433278e-15)
+        self.radacc_targetz_Mpt5 = self.polynomial(0.22477846, -0.015984559, 0.00030943435, 3.6182165e-07, -5.4820194e-08,
+                5.2531952e-10, -2.0102027e-12, 2.8109430e-15)
+        self.radacc_targetz_Ppt5 = self.polynomial( 0.22779999, -0.016020742, 0.00029960205, 7.6823260e-07, -6.0956281e-08,
+                5.6914810e-10, -2.1602258e-12, 3.0094146e-15)
+        self.simp_targetz = self.polynomial(-1.38077250e+00, 8.00749424e-02, -9.78327706e-04, 5.13294008e-06, -9.77393492e-09)
+        self.mass_unc = 0.043
+        self.radfrac = 0.07
+
+    def evaluate_polynomials(self, mass):
+        nominal_values = self.radacc_targetz_nominal(mass)
+        Mpt5_values = self.radacc_targetz_Mpt5(mass)
+        Ppt5_values = self.radacc_targetz_Ppt5(mass)
+        simp_values = self.simp_targetz(mass)
+
+        return nominal_values, Mpt5_values, Ppt5_values, simp_values, self.mass_unc, self.radfrac
+
+    @staticmethod
+    def inject_signal_mc(signal, data, nevents=100):
+        #Find the maximum signal weight
+        max_weight = np.max(signal.expected_signal_weight)
+        events_thrown = 0
+        thrown_mask = []
+        #sample signal until requested nevents thrown
+        while events_thrown < nevents:
+            #Randomly select a signal event
+            rint = np.random.randint(0,len(signal.expected_signal_weight)-1)
+            random_event = signal[rint]
+            #Randomly sample the weight distribution. If the sampled weight < event weight, throw the event
+            rweight = np.random.uniform(0, max_weight)
+            if rweight < random_event.expected_signal_weight:
+                events_thrown += 1
+                thrown_mask.append(rint)
+
+        thrown_events = signal[thrown_mask]
+        thrown_events['weight'] = 1.0
+
+        #combine mass and min z0 into array and inject into data
+        injected_data = ak.concatenate([data, thrown_events])
+        return injected_data, thrown_events
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process some inputs.')
@@ -334,9 +384,14 @@ if __name__ == '__main__':
     processor.set_diff_prod_lut(cr_data, preselection, signal_mass_range, tenpct, full_lumi_path)
 
     #Initialize the range of epsilon2
-    masses = [x for x in range(30,124,2)]
-    masses = [x for x in range(50,70,2)]
-    ap_masses = [round(x*processor.mass_ratio_ap_to_vd,1) for x in masses]
+    mass_max = 50
+    mass_min = 30
+    mass_step = 2
+    ap_step = round(mass_step*processor.mass_ratio_ap_to_vd,1)
+    masses = np.array([x for x in range(mass_min, mass_max+mass_step, mass_step)])
+    ap_masses = np.array([round(x*processor.mass_ratio_ap_to_vd,1) for x in masses])
+    print(masses)
+    print(ap_masses)
     eps2_range = np.logspace(-4.0,-8.0,num=40)
     logeps2_range = np.log10(eps2_range)
     min_eps = min(np.log10(eps2_range))
@@ -346,17 +401,16 @@ if __name__ == '__main__':
     #Define all histograms
     expected_signal_vd_h = (
         hist.Hist.new
-        .Reg(len(masses), np.min(masses), np.max(masses), label='Vd Invariant Mass [MeV]')
+        .Reg(len(masses), np.min(masses), np.max(masses)+mass_step, label='Vd Invariant Mass [MeV]')
         .Reg(num_bins, min_eps, max_eps,label=f'$log_{10}(\epsilon^2)$')
         .Double()
     )
     expected_signal_ap_h = (
         hist.Hist.new
-        .Reg(len(ap_masses), np.min(ap_masses), np.max(ap_masses), label='A\' Invariant Mass [MeV]')
+        .Reg(len(ap_masses), np.min(ap_masses), np.max(ap_masses)+ap_step, label='A\' Invariant Mass [MeV]')
         .Reg(num_bins, min_eps, max_eps,label=f'$log_{10}(\epsilon^2)$')
         .Double()
     )
-
 
     for signal_mass in masses:
 

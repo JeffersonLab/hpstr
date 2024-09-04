@@ -48,7 +48,7 @@ else:
     outfilename = f'{outfilename}_100pct'
     #Load 100% data
     print('Loading 100% Data')
-    inv_mass_range = (30,200)
+    inv_mass_range = (30,124)
     branches = ["unc_vtx_mass","unc_vtx_psum", "unc_vtx_ele_track_z0", "unc_vtx_pos_track_z0", "unc_vtx_z", "unc_vtx_proj_sig"]
     indir = '/fs/ddn/sdf/group/hps/users/alspellm/data_storage/pass4kf/pass4kf_ana_20240513'
     mass_safety = 'unc_vtx_mass*1000. >= 0'
