@@ -326,6 +326,7 @@ void PreSelectAndCategorize::setFile(TFile* out_file) {
   }
   if (bus_.has(mcColl_) and isSignal_) {
     bus_.board_output<MCParticle>(output_tree_.get(), "true_vd");
+    bus_.board_output<bool>(output_tree_.get(), "isRadEle");
   }
 }
 
@@ -514,6 +515,25 @@ bool PreSelectAndCategorize::process(IEvent*) {
    */
   if (bus_.has(mcColl_) and isSignal_) {
     /**
+     * Before we loop through the MCParticles we go through the
+     * the hits on the electron track in this vertex and find out
+     * which MCParticle has the most hits on the track.
+     */
+    std::map<int, int> count_per_particle_id;
+    for (const auto& [layer_id, particle_id] : ele_trk.getMcpHits()) {
+      if (count_per_particle_id.find(particle_id) == count_per_particle_id.end()) {
+        count_per_particle_id[particle_id] = 0;
+      }
+      count_per_particle_id[particle_id]++;
+    }
+    int truth_ele_id{-1}, max_nhits{0};
+    for (const auto& [particle_id, count] : count_per_particle_id) {
+      if (count > max_nhits) {
+        truth_ele_id = particle_id;
+        max_nhits = count;
+      }
+    }
+    /**
      * The implementation of the beam-overlay mechanism very rarely causes two
      * signal events to occur within the same software event (or no signal event
      * to happen at all). The complexity of handling these cases is too high and
@@ -526,10 +546,13 @@ bool PreSelectAndCategorize::process(IEvent*) {
     const auto& mc_ptr{bus_.get<std::vector<MCParticle*>>(mcColl_)};
     MCParticle* vd{nullptr};
     int n_vd{0};
+    bool ele_is_rad_ele{false};
     for (MCParticle* ptr : mc_ptr) {
       if (ptr->getPDG() == 625) {
         n_vd++;
         vd = ptr;
+      } else if (ptr->getID() == truth_ele_id) {
+        ele_is_rad_ele = (ptr->getMomPDG() == 625);
       }
     }
     event_cf_.apply("at_least_one_true_vd", n_vd > 0);
@@ -543,6 +566,7 @@ bool PreSelectAndCategorize::process(IEvent*) {
       );
     }
     bus_.set("true_vd", *vd);
+    bus_.set("isRadEle", ele_is_rad_ele);
   }
   output_tree_->Fill();
   return true;
