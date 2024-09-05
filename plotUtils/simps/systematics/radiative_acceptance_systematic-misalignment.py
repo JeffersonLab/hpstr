@@ -1,9 +1,10 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[27]:
-
-
+#!/usr/bin/python3
+#==================================================================================================================================
+# Description: Compares the radiative acceptance between nominal and misaligned HPS detector versions
+# Author: Alic Spellman
+# Date: 09/05/2024
+# Script to load MC samples, plot and compute misalignment systematics for 2016 simp L1L1 analysis
+# Calculates both radiative trident acceptance and signal acceptance
 import os
 import awkward as ak
 import numpy as np
@@ -12,190 +13,73 @@ from hist import Hist
 import uproot
 import ROOT as r
 import copy
-
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-import mplhep
 import matplotlib.gridspec as gridspec
-
 import sys
-sys.path.append('/sdf/group/hps/user-data/alspellm/2016/plotting')
-import hps_plot_utils as utils
-
-get_ipython().run_line_magic('matplotlib', 'inline')
-mpl.style.use(mplhep.style.ROOT)
 import math
-import pickle
 
-sys.path.append('/sdf/home/a/alspellm/src/hpstr_v62208/plotUtils/simps')
+#simp tools defined in hpstr
+hpstr_base = os.getenv('HPSTR_BASE')
+sys.path.append(f'{hpstr_base}/plotUtils/simps')
 import simp_signal_2016
-from simp_theory_equations import SimpEquations as simpeqs
-import copy
-# Set global font sizes
-plt.rcParams.update({'font.size': 40,           # Font size for text
-                     'axes.titlesize': 40,      # Font size for titles
-                     'axes.labelsize': 40,      # Font size for axis labels
-                     'xtick.labelsize': 40,     # Font size for x-axis tick labels
-                     'ytick.labelsize': 40,     # Font size for y-axis tick labels
-                     'lines.linewidth':3.0,
-                     'legend.fontsize': 40})    # Font size for legend
-plt.rcParams['font.family'] = 'DejaVu Sans' 
 
-def cnv_tgraph_to_np(tgraph):
-    # Number of points in the TGraph
-    npoints = tgraph.GetN()
-    
-    # Retrieve X and Y values
-    xvals = np.array([tgraph.GetX()[i] for i in range(npoints)])
-    yvals = np.array([tgraph.GetY()[i] for i in range(npoints)])
-    
-    # Errors are not directly available in TGraph; setting them to zero
-    errors = np.zeros(npoints)
-    
-    # Handle fit function if it exists
-    x_fit = None
-    y_fit = None
-    if len(tgraph.GetListOfFunctions()) > 0:
-        fitfunc = tgraph.GetListOfFunctions()[0]
-        x_fit = np.linspace(fitfunc.GetXmin(), fitfunc.GetXmax(), 100)  # 100 points for the fit
-        y_fit = np.array([fitfunc.Eval(x) for x in x_fit])
-    
-    return (xvals, yvals, errors), (x_fit, y_fit)
+#======================================================================================================================================
+#INITIALIZATION
+#=======================================================================================================================================
+# Set plotting parameters for matplotlib
+plt.rcParams.update({'font.size': 40, 'axes.titlesize': 40, 'axes.labelsize': 40, 'xtick.labelsize': 40, 'ytick.labelsize': 40, 'lines.linewidth': 3.0, 'legend.fontsize': 40})
+plt.rcParams['font.family'] = 'DejaVu Sans'
 
-def cnv_root_to_np(histo):
-    nbins = histo.GetNbinsX()
-    xvals = np.array([histo.GetBinCenter(x+1) for x in range(nbins+1)])
-    yvals = np.array([histo.GetBinContent(x+1) for x in range(nbins+1)])
-    errors = np.array([histo.GetBinError(x+1) for x in range(nbins+1)])
-    underflow = histo.GetBinContent(0)
-    overflow = histo.GetBinContent(nbins+1)
+#parse input arguments
+import argparse
+parser = argparse.ArgumentParser(description='')
+parser.add_argument('--outdir', type=str, default='./search_results')
+parser.add_argument('--mpifpi', type=float, default=4.*np.pi)
 
-    #add over/underflow
-    xvals = np.insert(xvals, 0, xvals[0]-histo.GetBinWidth(1))
-    yvals = np.insert(yvals, 0, underflow) 
-    xvals = np.append(xvals, xvals[-1]+histo.GetBinWidth(1))
-    yvals = np.append(yvals, overflow) 
-    errors = np.insert(errors, 0, 0.0)
-    errors = np.append(errors, 0.0) 
+args = parser.parse_args()
+outdir = args.outdir
 
-    #get fit function if it exist
-    x_fit = None
-    y_fit = None
-    if len(histo.GetListOfFunctions()) > 0:
-        fitfunc = histo.GetListOfFunctions()[0]
-        x_fit = np.linspace(fitfunc.GetXmin(), fitfunc.GetXmax(), int((fitfunc.GetXmax()-fitfunc.GetXmin())/histo.GetBinWidth(1)))
-        y_fit = np.array([fitfunc.Eval(x) for x in x_fit])
+#=======================================================================================================================================
+# LOAD DATA: Initialize signal processor and load radiative trident MC samples
+#=======================================================================================================================================
+search_window = 1.5 
+signalProcessor = simp_signal_2016.SignalProcessor(args.mpifpi, search_window)
 
-    return (xvals, yvals, errors), (x_fit, y_fit)
-    
-def fit_plot_with_poly(plot, tgraph=False, specify_n=None, set_xrange=False, xrange=(0.0, 1.0)):
-    polys = []
-    chi2s = []
-    fstats = []
-    fit_resultults = []
-    
-    if tgraph:
-        npoints = plot.GetN()
-    else:
-        npoints = 0
-        nBins = plot.GetNbinsX()
-        for ibin in range(nBins):
-            if plot.GetBinContent(ibin) > 0:
-                npoints += 1
-            pass
-    
-        
-    if not specify_n:
-        for n in range(12):
-            fitfunc = r.TF1(f'pol{n}',f'pol{n}')
-            fitfunc.SetLineColor(r.kRed)
-            if set_xrange:
-                fitfunc.SetRange(xrange[0], xrange[1])
-                fit_result = plot.Fit(fitfunc,"RSQ")
-            else:
-                fit_result = plot.Fit(fitfunc,"SQ")
-            fitfunc.SetLineColor(r.kRed)
-            fitfunc.SetMarkerSize(0.0)
-            chi2s.append(fit_result.Chi2())
-            polys.append(n)
-            fit_resultults.append(fit_result)
-
-            #Perform fstat test to see how much fit improves with additional order (why does this work?)
-            if n > 0:
-                fstats.append( (chi2s[n-1]-chi2s[n])*(npoints-n-1)/(chi2s[n]))
-            else:
-                fstats.append(0.0)
-        
-        print(fstats)
-        return None, None
-    else:
-        fitfunc = r.TF1(f'pol{specify_n}',f'pol{specify_n}')
-        fitfunc.SetLineColor(r.kRed)
-        fitfunc.SetLineWidth(5)
-        if set_xrange:
-            fitfunc.SetRange(xrange[0], xrange[1])
-            fit_result = plot.Fit(fitfunc,"RSQ")
-        else:
-            fit_result = plot.Fit(fitfunc,"SQ")
-        #params = np.round(fit_result.Parameters(),4)
-        #errors = np.round(fit_result.Errors(),4)
-        params = fit_result.Parameters()
-        errors = fit_result.Errors()
-        #return fit_result
-        return params, errors
-
-def polynomial(*coefficients):
-    def _implementation(x):
-        return sum([
-            coefficient * x**power
-            for power, coefficient in enumerate(coefficients)
-        ])
-    return _implementation
-
-
-# In[3]:
-
-
-signalProcessor = simp_signal_2016.SignalProcessor(np.pi*4., 1.5)
-#V0 Projection Significance Data vs MC efficiency
-
+##Load MC samples for nominal and misaligned detectors
 samples = {}
 mcsamples = {}
 branches = ["unc_vtx_mass", "unc_vtx_psum"]
 
-#LOAD NOMINAL
-#rad
+#Load reconstructed and selected radiative events for nominal detector
 infile = '/sdf/group/hps/user-data/alspellm/2016/systematics/radacc/misalignments/hadd_2kfiles_rad_nobeam_nominal_recon_ana.root'
 selection = 'vtxana_radMatchTight_nocuts' #USE RADMATCHTIGHT!
 samples['nominal'] = signalProcessor.load_data(infile, selection, cut_expression='((unc_vtx_psum > 1.9) & (unc_vtx_psum < 2.4) )', expressions=branches)
-#mc ana
+
+#Load generated events (mc ana) for nominal detector
 infile = '/sdf/group/hps/user-data/alspellm/2016/systematics/radacc/misalignments/hadd_2kfiles_rad_nobeam_nominal_mc_ana.root'
 slicfile = r.TFile(infile, "READ")
 mcsamples['nominal'] = copy.deepcopy(slicfile.Get('mcAna/mcAna_mc622Mass_h'))
 slicfile.Close()
 
-#LOAD MISALIGNED
-#rad
+#Load reconstructed and selected radiative events for misaligned detector
 infile = '/sdf/group/hps/user-data/alspellm/2016/systematics/radacc/misalignments/hadd_2kfiles_rad_nobeam_misalignments_1_recon_ana.root'
 selection = 'vtxana_radMatchTight_nocuts' #USE RADMATCHTIGHT!
 samples['misaligned_v1'] = signalProcessor.load_data(infile, selection, cut_expression='((unc_vtx_psum > 1.9) & (unc_vtx_psum < 2.4) )', expressions=branches)
-#mc ana
+
+#Load generated events (mc ana) for misaligned detector
 infile = '/sdf/group/hps/user-data/alspellm/2016/systematics/radacc/misalignments/hadd_2kfiles_rad_nobeam_misalignments_1_mc_ana.root'
 slicfile = r.TFile(infile, "READ")
 mcsamples['misaligned_v1'] = copy.deepcopy(slicfile.Get('mcAna/mcAna_mc622Mass_h'))
 slicfile.Close()
 
+#output file to store systematic results
+outfile = uproot.recreate(f'{outdir}/radacc_misalignment_systematic_results.root')
 
-# In[4]:
-
-
-outfile = uproot.recreate('radacc_misalignment_systematic_results.root')
-
-
-# In[26]:
-
-
-#plot radiative peak
+#=======================================================================================================================================
+# CHECK RADIATIVE PEAK: Ensure that the radiative peaks for misaligned and nominal are commensurate.
+# Peak will be off if overly-misaligned
+#=======================================================================================================================================
 psum_h = (
     hist.Hist.new
     .StrCategory(list(samples.keys()), name='samples')
@@ -206,24 +90,15 @@ colors=['black', 'darkred']
 fig, ax = plt.subplots(figsize=(25,15))
 for i,(sname, sample) in enumerate(samples.items()):
     psum_h.fill(sname, sample.unc_vtx_psum)
-    #xvals = psum_h[sname,:].axes[0].centers
-    #yvals = psum_h[sname,:].values()
-    #plt.plot(xvals, yvals, color=colors[i],marker='o', markersize=20, mew=3, linestyle='',label=sname)
 psum_h.plot(color=['black','darkred'], linewidth=3.0)
 plt.legend()
 plt.ylabel('Events')
-plt.savefig('radiative_peak_misaligned.png')
+plt.savefig(f'{outdir}/radiative_peak_misaligned.png')
 
-
-# In[ ]:
-
-
-
-
-
-# In[102]:
-
-
+#=======================================================================================================================================
+# RADIATIVE ACCEPTANCE HISTOGRAMS: Initialize invariant mass histograms, rebin, and convert them to ROOT histograms
+#=======================================================================================================================================
+#invariant mass histogram binning must match mc ana invariant mass to take ratio
 nbinsx = mcsamples['nominal'].GetNbinsX()
 first_bin = mcsamples['nominal'].GetBinLowEdge(1)
 last_bin = nbinsx*mcsamples['nominal'].GetBinWidth(1)
@@ -234,17 +109,13 @@ invmass_h = (
     .Double()
 )
 
-#Fill without weights, so that histos can be converted to ROOT and retain statistical uncertainty
+#Fill mc components without weights and convert to ROOT, rebin
 invmass_histos = {}
 for sname, sample in samples.items():
     invmass_h.fill(sname, sample.unc_vtx_mass*1000.)
     invmass_histos[sname] = signalProcessor.cnvHistoToROOT(invmass_h[sname,:])
     invmass_histos[sname].Rebin(2)
     mcsamples[sname].Rebin(2)
-
-
-# In[103]:
-
 
 def nonUniBinning(histo, start, size):
     edges_a = np.arange(histo.GetBinLowEdge(1),start+histo.GetBinWidth(1),histo.GetBinWidth(1)) 
@@ -259,47 +130,71 @@ def nonUniBinning(histo, start, size):
         histo_rebinned.SetBinContent(new_bin, histo_rebinned.GetBinContent(new_bin)+content)
         histo_rebinned.SetBinError(new_bin, np.sqrt(histo_rebinned.GetBinError(new_bin)**2 + error**2))
     return histo_rebinned
-#nonUniBinning(invmass_histos['nominal'], 150, 5)
+
+#enable non-uniform binning
 for sname, sample in samples.items():
     invmass_histos[sname] = nonUniBinning(invmass_histos[sname], 150, 4)
     mcsamples[sname] = nonUniBinning(mcsamples[sname], 150, 4)
     outfile[f'recon_{sname}'] = invmass_histos[sname]
     outfile[f'mc_{sname}'] = mcsamples[sname]
 
+#=======================================================================================================================================
+# RADIATIVE ACCEPTANCE: Compute and plot the radiative acceptance for nominal and misaligned
+#=======================================================================================================================================
 
-# In[110]:
-
-
-#calculate radiative acceptance
 fits = {}
 colors = ['#d62728', '#bcbd22', '#2ca02c', '#17becf', '#1f77b4', '#9467bd', '#7f7f7f']
 colors = ['black', 'darkred', 'darkblue', 'darkgreen', 'darkorange']
+
+#Figure to plot radiative acceptance and systematic uncertainty
 fig, ax = plt.subplots(2,1,figsize=(20,20))
 plt.subplot(2,1,1)
 plt.xlabel('Invariant Mass [MeV]')
 plt.ylabel('Radiative Acceptance')
 plt.ylim(0.0, .15)
 plt.xlim(20.0,206.0)
+
+#Calculate radiative acceptance as ratio of recon+sel/generated for each detector
+#these are root histograms. 
 for i,(sname, histo) in enumerate(invmass_histos.items()):
+
+    #divide recon+sel by generated
     ratio = invmass_histos[sname].Clone()
     ratio.Divide(mcsamples[sname])
-    fitparams, _ = fit_plot_with_poly(ratio, specify_n=7, set_xrange=True, xrange=(30.0, 220.0))
+
+    #fit radiative acceptance
+    fitparams, _ = signalProcessor.fit_plot_with_poly(ratio, specify_n=7, set_xrange=True, xrange=(30.0, 220.0)) 
     outfile[f'rad_acc_{sname}'] = ratio
     print(sname,fitparams)
-    #fit_plot_with_poly(ratio, set_xrange=True, xrange=(30.0, 220.0))
+
+    #convert root histograms to numpy data for convenient plotting using mpl
     (xvals, yvals, errors), (x_fit, y_fit) = cnv_root_to_np(ratio)
     fits[sname] = (x_fit, y_fit)
+
+    #plot
     plt.errorbar(xvals, yvals, yerr=errors, linestyle='', marker='o', color=colors[i], label=sname)
     plt.plot(x_fit, y_fit, linewidth=3.0, color=colors[i])
+
 plt.legend(fontsize=20)
 #plot the real radiative acceptance (includes beam)
 #radacc_off = polynomial(-0.48922505, 0.073733061, -0.0043873158, 0.00013455495, -2.3630535e-06, 2.5402516e-08, -1.7090900e-10, 7.0355585e-13, -1.6215982e-15, 1.6032317e-18)
 #plt.plot(xvals, radacc_off(xvals), label='rad+beam', marker='o', color='blue')
 
+#=======================================================================================================================================
+# CALCULATE SYSTEMATIC UNCERTAINTY: Using the ratio of the nominal and misaligned radiative acceptance functions
+# If the radiative acceptance increases with misalignment, that represents a decrease in expected signal (no systematic)
+# If the radiative acceptance decreases with misalignment, that will boost expected signal and must be accounted for.
+#=======================================================================================================================================
 
+#this is a subfigure of the figure above
 plt.subplot(2,1,2)
+
+#calculate ratio of the two radiative acceptance fits
+#if ratio < 1.0, apply systematic to expected signal
 fit_ratio = fits['misaligned_v1'][1]/fits['nominal'][1]
 xvalues = fits['nominal'][0]
+
+#plot the ratio
 plt.plot(xvalues, fit_ratio, color='black', marker = '+', mew=5)
 plt.axhline(y=1.0, linestyle='--', color='black')
 plt.axhline(y=0.8, linestyle='--', color='black')
@@ -307,73 +202,62 @@ plt.xlim(20.0,206.)
 plt.ylim(0.6,1.1)
 plt.xlabel('A\' Invariant Mass [MeV]')
 plt.ylabel('Systematic Uncertainty')
-
-plt.savefig('radiative_acceptance_misalignment.png')
-
-
-# In[105]:
+plt.savefig(f'{outdir}/radiative_acceptance_misalignment.png')
 
 
+#fit the systematic uncertainty results and save the fit
 sys_gr = r.TGraph(len(xvalues), xvalues, fit_ratio)
-print(xvalues)
-params_sys, errors_sys = fit_plot_with_poly(sys_gr, tgraph=True, specify_n = 9, set_xrange=True, xrange=(50.0, 220.0))
-print(params_sys)
-(xvals, yvals, errors), (x_fit, y_fit) = cnv_tgraph_to_np(sys_gr)
+params_sys, errors_sys = signalProcessor.fit_plot_with_poly(sys_gr, tgraph=True, specify_n = 9, set_xrange=True, xrange=(50.0, 220.0))
+(xvals, yvals, errors), (x_fit, y_fit) = signalProcessor.cnv_tgraph_to_np(sys_gr)
 fig, ax = plt.subplots(figsize=(20,10))
 plt.plot(xvals, yvals, marker='+', mew=3, markersize=10, color='darkblue')
 plt.plot(x_fit, y_fit, linewidth=3.0, color='red')
-test = polynomial(-8.7913353, 0.61710096, -0.014554635, 0.00011685881, 1.3328346e-06, -4.2065138e-08, 4.6959958e-10, -2.9405730e-12, 1.0885979e-14, -2.2317805e-17, 1.9584455e-20)
 outfile['misalignment_systematic'] = sys_gr
 
-
-# In[29]:
-
-
-#Signal misalignment using the nominal no-beam radiative acceptance
+#=======================================================================================================================================
+# SIGNAL MISALIGNMENT: calculate using the radiative acceptance fits from above. 
+# 1. Use nominal signal (NO BEAM) and the nominal radiative acceptance (NO BEAM) to calculate expected signal.
+# 2. Use misaligned signal (NO BEAM) and the misaligned radiative acceptance (NO BEAM) to calculate expected signal.
+# 3. Calculate ratio between nominal and misaligned expected signal rates.
+# *I've already done steps 1 and 2 externally, and am loading the results below.
+#=======================================================================================================================================
+#Load expected signal using nominal detector and nominal radiative acceptance (NO BEAM)
 infile = '/sdf/group/hps/user-data/alspellm/2016/systematics/simp_radacc_misalignment_v1/simp_systematic_nominal.root'
 with uproot.open(infile) as f:
     nominal_h = f['expected_signal_ap_h'].to_hist()
 
+#Load expected signal using misaligned detector and misaligned radiative acceptance (NO BEAM)
 infile = '/sdf/group/hps/user-data/alspellm/2016/systematics/simp_radacc_misalignment_v1/simp_systematic_misaligned.root'
 with uproot.open(infile) as f:
     misaligned_h = f['expected_signal_ap_h'].to_hist()
-    ratio_h = f['expected_signal_ap_h'].to_hist().reset()
+    exp_sig_ratio_h = f['expected_signal_ap_h'].to_hist().reset() #make copy to use as ratio plot
 outfile['expected_signal_nominal'] = nominal_h
 outfile['expected_signal_misaligned'] = misaligned_h
 
-nominal_h.plot()
-plt.show()
-misaligned_h.plot()
-plt.show()
-
-#take ratio of densities, misaligned to nominal
-ratio = misaligned_h.values()/nominal_h.values()
-# Find where nominal_h values are less than 1.0
-mask = nominal_h.values() < 1.0
-# Set corresponding ratio values to 0
-ratio[mask] = 0
-
-xbins = ratio_h.axes[0].centers
-ybins = ratio_h.axes[1].centers
+# Calculate expected signal ratio between nominal and misaligned
+ratio = nominal_h.values()/misaligned_h.values()
+xbins = exp_sig_ratio_h.axes[0].centers
+ybins = exp_sig_ratio_h.axes[1].centers
 xgrid, ygrid = np.meshgrid(xbins, ybins, indexing='ij')
-ratio_h.reset()
-ratio_h.fill(xgrid.flatten(), ygrid.flatten(), weight=ratio.flatten())
-outfile['signal_systematic_ratio'] = ratio_h
+exp_sig_ratio_h.fill(xgrid.flatten(), ygrid.flatten(), weight=ratio.flatten())
+outfile['signal_systematic_ratio'] = exp_sig_ratio_h
 
+#Plot ratio in 2d
 fig, ax = plt.subplots(figsize=(25,15))
-ratio_h.plot(cmin=np.min(ratio.flatten()[ratio.flatten()>0.0]), cmax=np.max(ratio.flatten()))
-plt.savefig('simp_radacc_misaligned_v1.png')
+exp_sig_ratio_h.plot(cmin=np.min(ratio.flatten()[ratio.flatten()>0.0]), cmax=np.max(ratio.flatten()))
+plt.savefig(f'{outdir}/simp_radacc_misaligned_v1.png')
 
+#=======================================================================================================================================
+# CALCULATE SYSTEMATIC UNCERTAINTY: Using the 2d expected signal plot of nominal/misaligned, decide how to get systematic.
+#=======================================================================================================================================
 
-# In[66]:
-
-
-#Combine radiative acceptance and signal systematics
-#For each A' invariant mass, take the largest value, since this is in the numerator and reduces the expected signal rate
+#Foddr each A' invariant mass, take the largest value, since this is in the numerator and reduces the expected signal rate
+# The systematic uncertainty on the signal acceptance resulting from detector misaligned is calculated as a function of A' mass.
+# For each mass, take the maximum ratio across the relevant range of epsilon^2 to be the uncertainty. 
 sigsys_y = []
 sigsys_x = []
-for xbin,mass in enumerate(ratio_h.axes[0].centers):
-    sigsys = np.max(ratio_h.values()[xbin])
+for xbin,mass in enumerate(exp_sig_ratio_h.axes[0].centers):
+    sigsys = np.max(exp_sig_ratio_h.values()[xbin])
     if sigsys == 0.0:
         continue
     sigsys_x.append(mass)
@@ -381,17 +265,12 @@ for xbin,mass in enumerate(ratio_h.axes[0].centers):
 
 sigsys_gr = r.TGraph(len(sigsys_x), np.array(sigsys_x), np.array(sigsys_y))
 params_sigsys, errors_sigsys = fit_plot_with_poly(sigsys_gr, tgraph=True, specify_n = 5, set_xrange=True, xrange=(sigsys_x[0], sigsys_x[-1]))
-#params_sigsys, errors_sigsys = fit_plot_with_poly(sigsys_gr, tgraph=True, set_xrange=True, xrange=(sigsys_x[0], sigsys_x[-1]))
 print(params_sigsys)
 (sigsys_x, sigsys_y, sigsys_errors), (sigsys_xfit, sigsys_yfit) = cnv_tgraph_to_np(sigsys_gr)
 plt.plot(sigsys_x, sigsys_y)
 plt.plot(sigsys_xfit, sigsys_yfit)
-#Looks like we should just choose the overall maximum...
 sigsys_final = np.max(sigsys_yfit)
 print(f'Signal misalignment acceptance systematic: {sigsys_final}')
-
-
-# In[93]:
 
 
 #Combine the signal and radiative acceptance systematics
@@ -401,10 +280,4 @@ masses = np.array([float(x) for x in range(60,230,1)])
 misalignmentsys = sigsys_final/radsys_fitpoly(masses)
 fig, ax = plt.subplots(figsize=(25,15))
 plt.plot(masses, misalignmentsys, marker='+', markersize=10, mew=3, color='black')
-
-
-# In[ ]:
-
-
-
 
