@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 import os
 import awkward as ak
 import numpy as np
@@ -34,12 +34,11 @@ parser.add_argument('--outdir', type=str, default='./search_results')
 parser.add_argument('--mpifpi', type=float, default=4.*np.pi)
 
 args = parser.parse_args()
+outdir = args.outdir
 ########################################################################################################################################
 
-#Input file should be output of run_signal_search.py
-infile_signal_search = args.infile_signal_search
 #Grab search results (exp bkg, obs, local pvalues)
-with uproot.open(infile) as f:
+with uproot.open(args.infile_signal_search) as f:
     expected_bkg = f['expected_background'].values()
     expected_bkg_errlow = f['expected_background'].errors('low')[1]
     expected_bkg_errhigh = f['expected_background'].errors('high')[1]
@@ -50,7 +49,7 @@ with uproot.open(infile) as f:
     
 #Calculate the "Look-Elsewhere Effect" correction. Total search window mass range divided by avg mass resolution
 search_window = 1.5 #used in final analysis
-signalProcessor = simp_signal_2016.SignalProcessor(args.mpifpi., search_window)
+signalProcessor = simp_signal_2016.SignalProcessor(args.mpifpi, search_window)
 masses = expected_bkg[0]
 masses = masses[np.where(masses <= 124.0)[0]] #I restricted search for signal to 124 MeV
 avg_resolution = np.average( np.array([signalProcessor.mass_resolution(x) for x in masses]) )

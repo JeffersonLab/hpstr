@@ -1,9 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
+#!/usr/bin/python3
 import os
 import awkward as ak
 import numpy as np
@@ -12,121 +7,37 @@ from hist import Hist
 import uproot
 import ROOT as r
 import copy
-
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import mplhep
 import matplotlib.gridspec as gridspec
-
 import sys
-sys.path.append('/sdf/group/hps/user-data/alspellm/2016/plotting')
-import hps_plot_utils as utils
-
-get_ipython().run_line_magic('matplotlib', 'inline')
-mpl.style.use(mplhep.style.ROOT)
 import math
-import pickle
 
-sys.path.append('/sdf/home/a/alspellm/src/hpstr_v62208/plotUtils/simps')
+hpstr_base = os.getenv('HPSTR_BASE')
+sys.path.append(f'{hpstr_base}/plotUtils/simps')
 import simp_signal_2016
-from simp_theory_equations import SimpEquations as simpeqs
-import copy
-# Set global font sizes
-plt.rcParams.update({'font.size': 50,           # Font size for text
-                     'axes.titlesize': 50,      # Font size for titles
-                     'axes.labelsize': 50,      # Font size for axis labels
-                     'xtick.labelsize': 50,     # Font size for x-axis tick labels
-                     'ytick.labelsize': 50,     # Font size for y-axis tick labels
-                     'lines.linewidth':4.0,
-                     'legend.fontsize': 50})    # Font size for legend
-plt.rcParams['font.family'] = 'DejaVu Sans' 
 
-def cnv_root_to_np(histo):
-    nbins = histo.GetNbinsX()
-    xvals = np.array([histo.GetBinCenter(x+1) for x in range(nbins+1)])
-    yvals = np.array([histo.GetBinContent(x+1) for x in range(nbins+1)])
-    errors = np.array([histo.GetBinError(x+1) for x in range(nbins+1)])
-    underflow = histo.GetBinContent(0)
-    overflow = histo.GetBinContent(nbins+1)
+#format mpl plots
+plt.rcParams.update({'font.size': 40,           # Font size for text
+                     'axes.titlesize': 40,      # Font size for titles
+                     'axes.labelsize': 40,      # Font size for axis labels
+                     'xtick.labelsize': 40,     # Font size for x-axis tick labels
+                     'ytick.labelsize': 40,     # Font size for y-axis tick labels
+                     'lines.linewidth':3.0,
+                     'legend.fontsize': 40})    # Font size for legend
+plt.rcParams['font.family'] = 'DejaVu Sans'
 
-    #add over/underflow
-    xvals = np.insert(xvals, 0, xvals[0]-histo.GetBinWidth(1))
-    yvals = np.insert(yvals, 0, underflow) 
-    xvals = np.append(xvals, xvals[-1]+histo.GetBinWidth(1))
-    yvals = np.append(yvals, overflow) 
-    errors = np.insert(errors, 0, 0.0)
-    errors = np.append(errors, 0.0) 
+import argparse
+parser = argparse.ArgumentParser(description='')
+parser.add_argument('--outdir', type=str, default='./search_results')
+parser.add_argument('--mpifpi', type=float, default=4.*np.pi)
 
-    #get fit function if it exist
-    x_fit = None
-    y_fit = None
-    if len(histo.GetListOfFunctions()) > 0:
-        fitfunc = histo.GetListOfFunctions()[0]
-        x_fit = np.linspace(fitfunc.GetXmin(), fitfunc.GetXmax(), int((fitfunc.GetXmax()-fitfunc.GetXmin())/histo.GetBinWidth(1)))
-        y_fit = np.array([fitfunc.Eval(x) for x in x_fit])
-
-    return (xvals, yvals, errors), (x_fit, y_fit)
-    
-def fit_plot_with_poly(plot, tgraph=False, specify_n=None, set_xrange=False, xrange=(0.0, 1.0)):
-    polys = []
-    chi2s = []
-    fstats = []
-    fit_resultults = []
-    
-    if tgraph:
-        npoints = plot.GetN()
-    else:
-        npoints = 0
-        nBins = plot.GetNbinsX()
-        for ibin in range(nBins):
-            if plot.GetBinContent(ibin) > 0:
-                npoints += 1
-            pass
-    
-        
-    if not specify_n:
-        for n in range(11):
-            fitfunc = r.TF1(f'pol{n}',f'pol{n}')
-            fitfunc.SetLineColor(r.kRed)
-            if set_xrange:
-                fitfunc.SetRange(xrange[0], xrange[1])
-                fit_result = plot.Fit(fitfunc,"RSQ")
-            else:
-                fit_result = plot.Fit(fitfunc,"SQ")
-            fitfunc.SetLineColor(r.kRed)
-            fitfunc.SetMarkerSize(0.0)
-            chi2s.append(fit_result.Chi2())
-            polys.append(n)
-            fit_resultults.append(fit_result)
-
-            #Perform fstat test to see how much fit improves with additional order (why does this work?)
-            if n > 0:
-                fstats.append( (chi2s[n-1]-chi2s[n])*(npoints-n-1)/(chi2s[n]))
-            else:
-                fstats.append(0.0)
-        
-        print(fstats)
-        return None, None
-    else:
-        fitfunc = r.TF1(f'pol{specify_n}',f'pol{specify_n}')
-        fitfunc.SetLineColor(r.kRed)
-        fitfunc.SetLineWidth(5)
-        if set_xrange:
-            fitfunc.SetRange(xrange[0], xrange[1])
-            fit_result = plot.Fit(fitfunc,"RSQ")
-        else:
-            fit_result = plot.Fit(fitfunc,"SQ")
-        params = fit_result.Parameters()
-        errors = fit_result.Errors()
-        #return fit_result
-        return params, errors
-
-
-# In[2]:
-
-
-signalProcessor = simp_signal_2016.SignalProcessor(np.pi*4., 1.5)
-#V0 Projection Significance Data vs MC efficiency
+args = parser.parse_args()
+outdir = args.outdir
+################################################################################################################################
+search_window = 1.5
+signalProcessor = simp_signal_2016.SignalProcessor(args.mpifpi, search_window)
 
 samples = {}
 mcsamples = {}
@@ -135,14 +46,13 @@ branches = ["unc_vtx_mass"]
 #LOAD NOMINAL RAD + BEAM
 #rad+beam
 infile = '/sdf/group/hps/user-data/alspellm/2016/rad_mc/pass4b/rad_beam/rad-beam-hadd-10kfiles-ana-smeared-corr.root'
-selection = 'vtxana_radMatchTight_nocuts' #USE RADMATCHTIGHT!
+selection = 'vtxana_radMatchTight_nocuts'
 samples['nominal_beam'] = signalProcessor.load_data(infile, selection, cut_expression='((unc_vtx_psum > 1.9) & (unc_vtx_psum < 2.4) )', expressions=branches)
 #mc ana
 infile = '/sdf/group/hps/user-data/alspellm/2016/rad_mc/pass4b/rad_nobeam/rad_nobeam_slic_hadd10ktuples_ana.root'
 slicfile = r.TFile(infile, "READ")
 mcsamples['nominal_beam'] = copy.deepcopy(slicfile.Get('mcAna/mcAna_mc622Mass_h'))
 slicfile.Close()
-
 
 #LOAD NOMINAL RAD + BEAM Mpt5
 #rad+beam
@@ -166,28 +76,8 @@ slicfile = r.TFile(infile, "READ")
 mcsamples['targetz_Ppt5_beam'] = copy.deepcopy(slicfile.Get('mcAna/mcAna_mc622Mass_h'))
 slicfile.Close()
 
-'''
-#LOAD NOMINAL RAD NO BEAM
-infile = '/sdf/group/hps/user-data/alspellm/2016/systematics/radacc/hadd_1999files_rad_nobeam_nominal_recon_ana.root'
-selection = 'vtxana_radMatchTight_nocuts' #USE RADMATCHTIGHT!
-samples['nominal_nobeam'] = signalProcessor.load_data(infile, selection, cut_expression='((unc_vtx_psum > 1.9) & (unc_vtx_psum < 2.4) )', expressions=branches)
-#mc ana
-infile = '/sdf/group/hps/user-data/alspellm/2016/systematics/radacc/hadd_2kfiles_rad_nobeam_nominal_mc_ana.root'
-slicfile = r.TFile(infile, "READ")
-mcsamples['nominal_nobeam'] = copy.deepcopy(slicfile.Get('mcAna/mcAna_mc622Mass_h'))
-slicfile.Close()
-'''
 
-
-# In[ ]:
-
-
-
-
-
-# In[42]:
-
-
+#init invariant mass plot
 nbinsx = mcsamples['nominal_beam'].GetNbinsX()
 first_bin = mcsamples['nominal_beam'].GetBinLowEdge(1)
 last_bin = nbinsx*mcsamples['nominal_beam'].GetBinWidth(1)
@@ -205,10 +95,6 @@ for sname, sample in samples.items():
     invmass_histos[sname] = signalProcessor.cnvHistoToROOT(invmass_h[sname,:])
     invmass_histos[sname].Rebin(2)
     mcsamples[sname].Rebin(2)
-
-
-# In[43]:
-
 
 def nonUniBinning(histo, start, size):
     edges_a = np.arange(histo.GetBinLowEdge(1),start+histo.GetBinWidth(1),histo.GetBinWidth(1)) 
@@ -229,9 +115,6 @@ def nonUniBinning(histo, start, size):
 #    mcsamples[sname] = nonUniBinning(mcsamples[sname], 150, 4)
 
 
-# In[45]:
-
-
 #calculate radiative acceptance
 fits = {}
 colors = ['#d62728', '#bcbd22', '#2ca02c', '#17becf', '#1f77b4', '#9467bd', '#7f7f7f']
@@ -244,9 +127,9 @@ labels = ['Nominal (-4.3 mm)', '-4.8 mm', '-3.8 mm']
 for i,(sname, histo) in enumerate(invmass_histos.items()):
     ratio = invmass_histos[sname].Clone()
     ratio.Divide(mcsamples[sname])
-    fit_params,_ = fit_plot_with_poly(ratio, specify_n=7, set_xrange=True, xrange=(30.0, 220.0))
+    fit_params,_ = signalProcessor.fit_plot_with_poly(ratio, specify_n=7, set_xrange=True, xrange=(30.0, 220.0))
     print(sname, fit_params)
-    (xvals, yvals, errors), (x_fit, y_fit) = cnv_root_to_np(ratio)
+    (xvals, yvals, errors), (x_fit, y_fit) = signalProcessor.cnv_root_to_np(ratio)
     plt.errorbar(xvals, yvals, yerr=errors, linestyle='', marker='o', color=colors[i], label=labels[i])
     plt.plot(x_fit, y_fit, linewidth=3.0, color=colors[i])
     fits[sname] = (x_fit, y_fit)
@@ -269,16 +152,4 @@ plt.xlabel('A\' Invariant Mass [MeV]')
 plt.ylabel('Ratio')
 plt.legend()
 
-plt.savefig('radiative_acceptance_target_deltaz.png')
-
-    #c = r.TCanvas('f{sname}', 'f{sname}', 2000, 1000)
-    #c.cd()
-    #ratio.Draw()
-    #c.Draw()
-
-
-# In[ ]:
-
-
-
-
+plt.savefig(f'{outdir}/radiative_acceptance_target_deltaz.png')
