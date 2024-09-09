@@ -12,7 +12,9 @@ from simp_theory_equations import SimpEquations as simpeqs
 import copy
 import pickle
 
-#############################################################################################
+#=======================================================================================================================================
+# FUNCTIONS
+#=======================================================================================================================================
 def kLargestIntervals(list_of_energies, spectrumCDF = lambda x: x):
     """
     Returns a list of the sizes of the K-largest intervals in that run according to the energy spectrum (given as a CDF).
@@ -34,7 +36,15 @@ def kLargestIntervals(list_of_energies, spectrumCDF = lambda x: x):
 
         answer[interval_size] = np.max(gap_sizes)
     return answer
-###########################################################################################   
+#=======================================================================================================================================
+# INITIALIZE
+#=======================================================================================================================================
+# --outfilename: Specify output file name.
+# --tenpct: If True run OIM on 10% data (or single hpstr vertex ana output tuple).
+# --highPsum: If True, run OIM in high Psum (CR).
+# --mpifpi: Ratio of dark pion mass to dark pion decay constant (benchmarks are 3 and 4pi).
+# --signal_sf: Scale the signal.
+# --nsigma: Size of the signal invariant mass search window (+-nsigma)
 
 import argparse
 parser = argparse.ArgumentParser(description='Process some inputs.')
@@ -53,14 +63,16 @@ signal_sf = args.signal_sf
 tenpct = args.tenpct
 print(f'Search Window Size: +-', nsigma)
 
+#=======================================================================================================================================
+# LOAD DATA
+#=======================================================================================================================================
 #Initialize Signal Processor
 signalProcessor = simp_signal_2016.SignalProcessor(mpifpi=mpifpi, nsigma=nsigma)
 
-#Load Data
 data = ak.Array([])
 if args.tenpct:
+    # If tenpct True, run OIM on 10% data (or a single file)
     outfilename = f'{outfilename}_10pct'
-    #Load 10% data signal region
     inv_mass_range = (30,124)
     print('Loading 10% Data')
     branches = ["unc_vtx_mass","unc_vtx_psum", "unc_vtx_ele_track_z0", "unc_vtx_pos_track_z0", "unc_vtx_z", "unc_vtx_proj_sig"]
@@ -70,23 +82,26 @@ if args.tenpct:
     data['weight'] = 1.0
 
 else:
+    # Run OIM on 100% data (multiple files in a single directory)
     outfilename = f'{outfilename}_100pct'
-    #Load 100% data
     print('Loading 100% Data')
     inv_mass_range = (30,200)
     branches = ["unc_vtx_mass","unc_vtx_psum", "unc_vtx_ele_track_z0", "unc_vtx_pos_track_z0", "unc_vtx_z", "unc_vtx_proj_sig"]
     indir = '/fs/ddn/sdf/group/hps/users/alspellm/data_storage/pass4kf/pass4kf_ana_20240513'
-    #If high psum, can look at all masses
+
+    # If highPsum is True, can look at all masses
     if args.highPsum:
         selection = 'vtxana_Tight_2016_simp_reach_CR'
         mass_safety = 'unc_vtx_mass*1000. >= 0'
+
+    # If highPsum is False, can only look at 10% data before unblinding
     else:
         selection = 'vtxana_Tight_2016_simp_reach_SR'
         #mass_safety = 'unc_vtx_mass*1000. > 135' #CANT LOOK BELOW THIS MASS UNTIL UNBLINDING!
-        #inv_mass_range = (135,200)
         mass_safety = 'unc_vtx_mass*1000. > 0.0' #UNBLINDED!
         inv_mass_range = (30, 124)
 
+    # Loop over all input files and combine into single data array
     for filename in sorted(os.listdir(indir)):
         if not filename.endswith('.root'):
             continue
@@ -97,18 +112,19 @@ else:
     data['weight'] = 1.0
 
 
-#Set the differential radiative trident rate lookup table used to scale expected signal
+# Load the differential radiative trident rate lokup table. This scales the expected signal to the data
 print('Load lookup table')
-cr_data = '/sdf/group/hps/user-data/alspellm/2016/data/hadd_BLPass4c_1959files.root'
-full_lumi_path = '/fs/ddn/sdf/group/hps/users/alspellm/data_storage/pass4kf/pass4kf_ana_20240513'
+cr_data = '/sdf/group/hps/user-data/alspellm/2016/data/hadd_BLPass4c_1959files.root' # If using 10% data.
+full_lumi_path = '/fs/ddn/sdf/group/hps/users/alspellm/data_storage/pass4kf/pass4kf_ana_20240513' # If using 100% data.
 preselection = "vtxana_Tight_nocuts"
 signal_mass_range = [x for x in range(20,130,1)]
 signalProcessor.set_diff_prod_lut(cr_data, preselection, signal_mass_range, tenpct, full_lumi_path)
 
-#Initialize the range of epsilon2
-#masses = [x for x in range(50,56,2)]
+#=======================================================================================================================================
+# INITIALIZE HISTOGRAMS
+#=======================================================================================================================================
+
 masses = [x for x in range(inv_mass_range[0], inv_mass_range[-1]+2,2)]
-#masses = [x for x in range(68,100, 2)]
 ap_masses = [round(x*signalProcessor.mass_ratio_ap_to_vd,1) for x in masses]
 eps2_range = np.logspace(-4.0,-8.0,num=1000)
 logeps2_range = np.log10(eps2_range)
@@ -116,7 +132,6 @@ min_eps = min(np.log10(eps2_range))
 max_eps = max(np.log10(eps2_range))
 num_bins = len(eps2_range)
 
-#make histos to store results
 exclusion_conf_h = (
     hist.Hist.new
     .Reg(len(masses)-1, np.min(masses),np.max(masses),label='v_{D} Invariant Mass [MeV]')
@@ -182,23 +197,25 @@ exclusion_conf_minus1_h = (
     .Double()
 )
 
-#######################################################################################################################################
+#=======================================================================================================================================
+# RUN OPTIMUM INTERVAL METHOD
+#=======================================================================================================================================
 
-#Load lookup table
-lookuptable_path = '/fs/ddn/sdf/group/hps/users/alspellm/mc_storage/opt_int_lookuptable_large.p'
-lookuptable_path = '/sdf/home/a/alspellm/src/hpstr/plotUtils/simps/interval_ntrials_10000.p'
-#lookuptable_path = '/fs/ddn/sdf/group/hps/users/alspellm/mc_storage/opt_int_lookuptable_max50_10ktoys.p'
+# Load OIM lookup table generated using cmax.py
 lookuptable_path = '/fs/ddn/sdf/group/hps/users/alspellm/mc_storage/opt_int_lookuptable_max25_10ktoys_0.05steps_v2.p'
-ntrials = 10000 #number of toy events thrown for each mu in lookup table
+
+# Number of toy events thrown for each mu in the loaded lookup table
+ntrials = 10000 # This value is defined in cmax.py when the lookup table is generated. It MUST MATCH the value used. 
 with open(lookuptable_path, 'rb') as f:
-    # Load the object from the pickle file
     lookupTable = pickle.load(f)
     
-#open output file
+# Open an output file to store the results
 outfile = uproot.recreate(f'{outfilename}.root')
 
+# Run OIM for each MC generated signal mass (30-124 @ 2 MeV intervals)
 for signal_mass in masses:
-    #Histograms for each mass
+
+    # Initialize histograms
     confidence_level_mass_h = (
         hist.Hist.new
         .Reg(300, 0, 30.0,label='mu')
@@ -214,17 +231,18 @@ for signal_mass in masses:
 
     print(f'Signal Mass {signal_mass}') 
 
-    #Set signal window
+    # Define the invariant mass search window boundaries based on the search window size
     mass_low = signal_mass - signalProcessor.mass_resolution(signal_mass)*nsigma
     mass_high = signal_mass + signalProcessor.mass_resolution(signal_mass)*nsigma
 
-    #Build the selection for data
-    zcut_sel = signalProcessor.zcut_sel(data)
-    vprojsig_sel = signalProcessor.vprojsig_sel(data)
-    minz0_sel = signalProcessor.minz0_sel(data)
-    sameside_sel = signalProcessor.sameside_z0_cut(data)
-    masswindow_sel = signalProcessor.mass_sel(data, signal_mass)
-    #Set signal/control region
+    # Build the final selection used in the signal search and apply to the data
+    zcut_sel = signalProcessor.zcut_sel(data) # zcut on target position at -4.3 mm.
+    vprojsig_sel = signalProcessor.vprojsig_sel(data) # Require target projected vertex significance < 2.0
+    minz0_sel = signalProcessor.minz0_sel(data) # Cut on minimum track vertical impact parameter z0 (aka y0)
+    sameside_sel = signalProcessor.sameside_z0_cut(data) # Cut events where both tracks have same side z0
+    masswindow_sel = signalProcessor.mass_sel(data, signal_mass) # Define search window mass boundaries
+
+    # Set the Psum selection
     if not args.tenpct and args.highPsum:
         psum_sel = signalProcessor.psum_sel(data, case='cr')
     elif args.tenpct and not args.highPsum:
@@ -233,33 +251,39 @@ for signal_mass in masses:
         psum_sel = signalProcessor.psum_sel(data, case='cr')
     else:
         psum_sel = signalProcessor.psum_sel(data, case='sr')
-        print('UNBLINDED!')
+
+    # Combine the selections and apply to data
     tight_sel = np.logical_and.reduce([zcut_sel, vprojsig_sel, sameside_sel, psum_sel, minz0_sel, masswindow_sel])
-    #tight_sel = np.logical_and.reduce([zcut_sel, vprojsig_sel, psum_sel, masswindow_sel])
     data_z = data[tight_sel].unc_vtx_z
-    print(data_z)
         
-    #Load MC Signal
-    #indir = '/sdf/group/hps/user-data/alspellm/2016/simp_mc/pass4b/beam/smeared'
+    #==================================================================================================================================
+    # LOAD MC SIGNAL
+    #==================================================================================================================================
+
     indir = '/sdf/group/hps/user-data/alspellm/2016/simp_mc/pass4b/beam/smeared_fixbeamspot'
+
+    # hpstr MC ana processor output file that stores the pre-readout MC signal truth information
     signal_pre_readout_path = lambda mass: f'/sdf/group/hps/user-data/alspellm/2016/simp_mc/pass4b/nobeam/mass_{mass}_simp_2pt3_slic_hadd_ana.root'
+    # hpstr vertex ana processor output tuple
     signal_path = lambda mass: f'{indir}/mass_{mass}_hadd-simp-beam_ana_smeared_corr.root'
     signal_selection = 'vtxana_radMatchTight_2016_simp_SR_analysis'
 
-    #Get the total signal yield as a function of eps2
+    # Calculate the total A' production rate per epsilon^2
     total_yield_per_epsilon2 = signalProcessor.total_signal_production_per_epsilon2(signal_mass)
     print('Total Yield Per eps2: ', total_yield_per_epsilon2)
 
+    # Load signal before tight selection
     print('Load Signal ', signal_path(signal_mass))
     signal = signalProcessor.load_signal(signal_path(signal_mass), signal_pre_readout_path(signal_mass), signal_mass, signal_selection)
 
-    #Build the selection for signal
+    # Build final selection for signal
     zcut_sel = signalProcessor.zcut_sel(signal)
     vprojsig_sel = signalProcessor.vprojsig_sel(signal)
     minz0_sel = signalProcessor.minz0_sel(signal)
     sameside_sel = signalProcessor.sameside_z0_cut(signal)
     masswindow_sel = signalProcessor.mass_sel(signal, signal_mass)
-    #Set signal/control region
+
+    # Set the Psum selection
     if not args.tenpct and args.highPsum:
         psum_sel = signalProcessor.psum_sel(signal, case='cr')
     elif args.tenpct and not args.highPsum:
@@ -269,11 +293,14 @@ for signal_mass in masses:
     else:
         psum_sel = signalProcessor.psum_sel(signal, case='sr')
         print('UNBLINDED!')
+
+    # Combine the selections and apply to MC signal
     tight_sel = np.logical_and.reduce([zcut_sel, vprojsig_sel, sameside_sel, psum_sel, minz0_sel, masswindow_sel])
     signal = signal[tight_sel]
 
-    #Loop over eps2 values and reweight the signal
-    print('Looping over eps2')
+    #==================================================================================================================================
+    # CALCULATE UPPER LIMIT ON SIGNAL: As function of epsilon^2
+    #==================================================================================================================================
     for i, eps2 in enumerate(eps2_range): 
         signal = signalProcessor.get_exp_sig_eps2(signal_mass, signal, eps2)
         total_yield = ak.sum(signal['reweighted_accxEff'])*total_yield_per_epsilon2*eps2
@@ -281,7 +308,8 @@ for signal_mass in masses:
             print(f'eps2 = {eps2}')
             print(total_yield)
         
-        #Make signal efficiency in recon z
+        # Signal acceptance*efficiency*dark_vector_probability in reconstructed vertex z.
+        # This represents the shape of the signal in 1D.
         exp_sig_eff_z = (
             hist.Hist.new
             .Reg(140, -40.0,100.0,label=r'Recon z [mm]')
@@ -289,70 +317,74 @@ for signal_mass in masses:
         )
         exp_sig_eff_z.fill(signal.unc_vtx_z, weight=signal.reweighted_accxEff*total_yield_per_epsilon2*eps2)
         
-        #Convert the data to a uniform distribution in recon z, according to the expected signal distribution
+        # Convert the remaining events in data to a normalized uniform distribution in reconstructed vertex z according to signal shape.
         data_uniform_z = (
             hist.Hist.new
             .Reg(101, -0.005,1.005,label=r'Recon z [mm]')
             .Double()
         )
         
+        # Initialize an array to store the new data events that are transformed according to the signal shape.
+        # Add endpoints to the new uniform data array, 0 in front, and 1.0 and the end. 
         dataArray = np.zeros(len(data_z)+2)
         dataArray[0] = 0.0
         for k in range (0, len(data_z)):
             thisX = data_z[k]
-            dataArray[k+1] = total_yield -  exp_sig_eff_z[hist.loc(thisX)::sum]
+            dataArray[k+1] = total_yield -  exp_sig_eff_z[hist.loc(thisX)::sum] #transformation
             
         dataArray[len(data_z)+1] = total_yield
-        dataArray = dataArray/total_yield
+        dataArray = dataArray/total_yield # normalize distribution based on total signal rate
         dataArray = np.nan_to_num(dataArray, nan=1.0)
         dataArray[0] = 0.0
         dataArray.sort()
         data_uniform_z.fill(dataArray)
         
+        # Calculate maximum gaps with k events allowed between events
         kints = kLargestIntervals(dataArray)
         
-        #Loop through lookup table to find confidence level 
+        # Loop through the lookup table to find what upper limit on the signal rate results in 90% confidence
         mu_90p = 99999.9
         k_90p = -1
         conf_90p = -1.0
         
         previous_mu = 999999.9
         previous_conf = -9.9
+        # Loop over values of mu (mean expected signal rate)
         for i,mu in enumerate(sorted(lookupTable.keys())):
             best_k = -1
-            best_conf = -1.0
+            best_conf = -1.0 # Store best confidence level across all values of k
+
+            # Loop over all values of k (k events allowed in gap between data events)
             for k in sorted(lookupTable[mu].keys()):
                 if k > len(kints)-1:
                     break
                 x = np.max(kints[k])
-                conf = np.where(lookupTable[mu][k] < x)[0].size / (ntrials)
+                conf = np.where(lookupTable[mu][k] < x)[0].size / (ntrials) # Confidence level for this mu and k
                 if conf > best_conf:
                     best_k = k
                     best_conf = conf
 
-            #debug histos 
+            # Debug histos 
             confidence_level_mass_h.fill(mu, np.log10(eps2), weight=best_conf)
             best_kvalue_mass_h.fill(mu, np.log10(eps2), weight=best_k)
 
-            #if the confidence is >= 90%, this is the upper limit
+            # If the condience level is >= 90%, this value of mu is the upper limit
             if best_conf >= 0.9:
                 mu_90p = mu
                 k_90p = best_k
                 conf_90p = best_conf
-                #print(f'90% confidence upper limit on mu={mu_90p}, when k={k_90p}')
-                #print(f'Confidence level: ', conf_90p)
 
-                #fill debug histo. Check excluded signal value right before upper limit
+                # Fill debug histos
                 excluded_signal_minus1_h.fill(signal_mass, np.log10(eps2), weight=previous_mu)
                 exclusion_conf_minus1_h.fill(signal_mass, np.log10(eps2), weight=previous_conf)
                 break
 
-            #debug. Track values just before upper limit is reached
+            # More debug
             previous_mu = mu
             previous_conf = best_conf
 
                 
-        #Fill histogram results
+        # Fill OIM results in histograms
         exclusion_conf_h.fill(signal_mass, np.log10(eps2), weight=conf_90p)
         exclusion_bestk_h.fill(signal_mass, np.log10(eps2), weight=k_90p)
         total_yield_h.fill(signal_mass, np.log10(eps2), weight=total_yield)
@@ -363,10 +395,11 @@ for signal_mass in masses:
         excluded_signal_ap_h.fill(signalProcessor.mass_ratio_ap_to_vd*signal_mass, np.log10(eps2), weight=mu_90p)
         sensitivity_ap_h.fill(signalProcessor.mass_ratio_ap_to_vd*signal_mass, np.log10(eps2), weight=(total_yield/mu_90p))
 
-    #save mass histograms
+    # Save mass dependent histograms
     outfile[f'masses/confidence_levels_{signal_mass}_h'] = confidence_level_mass_h
     outfile[f'masses/best_kvalues_{signal_mass}_h'] = best_kvalue_mass_h
 
+# Save results across all masses
 outfile['total_yield_h'] = total_yield_h
 outfile['excluded_signal_h'] = excluded_signal_h
 outfile['sensitivity_h'] = sensitivity_h
@@ -377,7 +410,7 @@ outfile['total_yield_ap_h'] = total_yield_ap_h
 outfile['excluded_signal_ap_h'] = excluded_signal_ap_h
 outfile['sensitivity_ap_h'] = sensitivity_ap_h
 
-#save debug plots
+# Save debug plots
 outfile['excluded_signal_minus1_h'] = excluded_signal_minus1_h
 outfile['exclusion_conf_minus1_h'] = exclusion_conf_minus1_h
 

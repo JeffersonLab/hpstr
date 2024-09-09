@@ -196,11 +196,6 @@ def run_abcd_method(data, signal_mass):
         minz0_coeffs = signalProcessor.get_minz0_cut()
         min_z0_cut = signalProcessor.polynomial(minz0_coeffs[0],minz0_coeffs[1],minz0_coeffs[2])(signal_mass)
 
-
-        #Determine the min z0 cut floor. The ratio of potential signal to background in region C should be so small
-        #as to be negligible, or else the expected background in region F will be overestimated due to signal contamination in C, 
-        #and our ability to make a discovery will be dramatically reduced.
-
         # Define the minimum z0 floor used to count events in regions B, C, and D.
         # This floor is defined so that the background estimate is weighted towards the tails of the minimum z0 distributions rather
         # than the core of the distribution. However, the tails cannot be so small that signal contamination is an issue in C. 

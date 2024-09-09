@@ -814,35 +814,30 @@ if __name__ == '__main__':
     outfilename = args.outfilename
     tenpct = args.tenpct
 
-
-    #Create MC signal analysis tuple processor
-    print('Initialize signal processor')
+    # Initialize signal processor
     processor = SignalProcessor(mpifpi=mpifpi, nsigma=nsigma)
 
-    #Set the differential radiative trident rate lookup table used to scale expected signal
-    print('Load lookup table')
+    # Load either 10% data or 100% data, use the CR reconstructed bkg rate to scale the expected signal rate
     cr_data = '/sdf/group/hps/user-data/alspellm/2016/data/hadd_BLPass4c_1959files.root'
     full_lumi_path = '/fs/ddn/sdf/group/hps/users/alspellm/data_storage/pass4kf/pass4kf_ana_20240513'
     preselection = "vtxana_Tight_nocuts"
     signal_mass_range = [x for x in range(30,130,1)]
     processor.set_diff_prod_lut(cr_data, preselection, signal_mass_range, tenpct, full_lumi_path)
 
-    #Initialize the range of epsilon2
-    mass_max = 50
+    # Initialize the mass and epsilon^2 range for the expected signal calculation
+    mass_max = 124
     mass_min = 30
-    mass_step = 2
+    mass_step = 2 # MC signal files were generated at 2 MeV increments 
     ap_step = round(mass_step*processor.mass_ratio_ap_to_vd,1)
     masses = np.array([x for x in range(mass_min, mass_max+mass_step, mass_step)])
     ap_masses = np.array([round(x*processor.mass_ratio_ap_to_vd,1) for x in masses])
-    print(masses)
-    print(ap_masses)
     eps2_range = np.logspace(-4.0,-8.0,num=40)
     logeps2_range = np.log10(eps2_range)
     min_eps = min(np.log10(eps2_range))
     max_eps = max(np.log10(eps2_range))
     num_bins = len(eps2_range)
 
-    #Define all histograms
+    # Initialize the histograms used to store the expected signal. One for Vd mass, one for Ap mass. 
     expected_signal_vd_h = (
         hist.Hist.new
         .Reg(len(masses), np.min(masses), np.max(masses)+mass_step, label='Vd Invariant Mass [MeV]')
@@ -856,6 +851,7 @@ if __name__ == '__main__':
         .Double()
     )
 
+    # Calculate expected signal for each MC generated mass
     for signal_mass in masses:
 
         #Load MC Signal
@@ -877,14 +873,15 @@ if __name__ == '__main__':
         vprojsig_sel = processor.vprojsig_sel(signal)
         minz0_sel = processor.minz0_sel(signal)
         masswindow_sel = processor.mass_sel(signal, signal_mass)
-        sameside_sel = processor.sameside_z0_cut(signal)
+        #sameside_sel = processor.sameside_z0_cut(signal)
+
         # Combine selections
-        tight_sel = np.logical_and.reduce([psum_sel,zcut_sel, vprojsig_sel, psum_sel, minz0_sel, masswindow_sel, sameside_sel])
+        #tight_sel = np.logical_and.reduce([psum_sel,zcut_sel, vprojsig_sel, psum_sel, minz0_sel, masswindow_sel, sameside_sel])
+        tight_sel = np.logical_and.reduce([psum_sel,zcut_sel, vprojsig_sel, psum_sel, minz0_sel, masswindow_sel])
 
         for l, eps2 in enumerate(eps2_range):
             signal = processor.get_exp_sig_eps2(signal_mass, signal, eps2)
             total_yield = signal_sf*ak.sum(signal['reweighted_accxEff'][tight_sel])*total_yield_per_epsilon2*eps2
-            #print('Total Yield: ', total_yield)
             expected_signal_vd_h.fill(signal_mass, logeps2_range[l], weight=total_yield)
             expected_signal_ap_h.fill(signal_mass*processor.mass_ratio_ap_to_vd, logeps2_range[l], weight=total_yield)
 
