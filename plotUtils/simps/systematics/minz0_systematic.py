@@ -1,4 +1,7 @@
 #!/usr/bin/python3
+#=======================================================================================================================================
+# Description: Calculates the systematic uncertainty associated with the minimum z0 (aka y0) cut. 
+# Systematics calculated using MC signal generated at 4 MeV intervals
 import os
 import awkward as ak
 import numpy as np
@@ -14,20 +17,19 @@ import matplotlib.gridspec as gridspec
 import sys
 import math
 
+# SIMP tools defined in hpstr
 hpstr_base = os.getenv('HPSTR_BASE')
 sys.path.append(f'{hpstr_base}/plotUtils/simps')
 import simp_signal_2016
 
-#format mpl plots
-plt.rcParams.update({'font.size': 40,           # Font size for text
-                     'axes.titlesize': 40,      # Font size for titles
-                     'axes.labelsize': 40,      # Font size for axis labels
-                     'xtick.labelsize': 40,     # Font size for x-axis tick labels
-                     'ytick.labelsize': 40,     # Font size for y-axis tick labels
-                     'lines.linewidth':3.0,
-                     'legend.fontsize': 40})    # Font size for legend
-plt.rcParams['font.family'] = 'DejaVu Sans' 
+#=======================================================================================================================================
+# INITIALIZATION
+#=======================================================================================================================================
+# Set plotting parameters for matplotlib
+plt.rcParams.update({'font.size': 40, 'axes.titlesize': 40, 'axes.labelsize': 40, 'xtick.labelsize': 40, 'ytick.labelsize': 40, 'lines.linewidth': 3.0, 'legend.fontsize': 40})
+plt.rcParams['font.family'] = 'DejaVu Sans'
 
+# parse input arguments
 import argparse
 parser = argparse.ArgumentParser(description='')
 parser.add_argument('--outdir', type=str, default='./search_results')
@@ -35,7 +37,10 @@ parser.add_argument('--mpifpi', type=float, default=4.*np.pi)
 
 args = parser.parse_args()
 outdir = args.outdir
-################################################################################################################################
+
+#=======================================================================================================================================
+# FUNCTIONS
+#=======================================================================================================================================
 def get_rand(x=False):
     if x:
         return np.random.uniform(80,120)*0.01
@@ -135,47 +140,52 @@ def cnv_root_to_np(histo):
         y_fit = np.array([fitfunc.Eval(x) for x in x_fit])
 
     return (xvals, yvals, errors), (x_fit, y_fit)
+#=======================================================================================================================================
+# LOAD DATA
+#=======================================================================================================================================
 
-###################################################################################################################################
-
-#Load signal processor
+# Initialize signal processor
 search_window = 1.5 #used in final search
 signalProcessor = simp_signal_2016.SignalProcessor(args.mpifpi, search_window)
 
-#Read in data, MC, and signal
+# Load data, MC background, and signal
 samples = {}
 branches = ["unc_vtx_ele_track_z0","unc_vtx_pos_track_z0"]
 
-#Read 10% Data 
+# Load 10% Data
 infile = '/sdf/group/hps/user-data/alspellm/2016/data/hadd_BLPass4c_1959files.root'
 selection = 'vtxana_Tight_L1L1_nvtx1'
 samples['data'] = signalProcessor.load_data(infile,selection, expressions=branches, cut_expression='((unc_vtx_psum > 1.0) & (unc_vtx_psum < 1.9) )')
 samples['data']['weight'] = 1.0 #Assign weight of 10 to scale up to full lumi
 
-#Load MC background
+# Load MC background
 lumi = 10.7*.1 #pb-1
 mc_scale = {'data' : 1.0,
             'tritrig' : 1.416e9*lumi/(50000*10000),
             'wab' : 0.1985e12*lumi/(100000*10000)}
 
-#tritrig
+# Load MC tritrig
 infile = '/sdf/group/hps/user-data/alspellm/2016/tritrig_mc/pass4b/hadded_tritrig-beam-10kfiles-ana-smeared-corr_beamspotfix.root'
 samples['tritrig'] = signalProcessor.load_data(infile, selection, cut_expression='((unc_vtx_psum > 1.0) & (unc_vtx_psum < 1.9) )', expressions=branches)
 samples['tritrig']['weight'] = mc_scale['tritrig'] 
 
-#wab
+# Load MC wab
 infile = '/sdf/group/hps/user-data/alspellm/2016/wab_mc/pass4b/hadded_wab-beam-10kfiles-ana-smeared-corr_beamspotfix.root'
 samples['wab'] = signalProcessor.load_data(infile, selection, cut_expression='((unc_vtx_psum > 1.0) & (unc_vtx_psum < 1.9) )', expressions=branches)
 samples['wab']['weight'] = mc_scale['wab'] 
 
-#After smearing factor has been calculated, set to true to compare z0 distributions with smeared MC background
+#=======================================================================================================================================
+# Check smearing after the fact
+#=======================================================================================================================================
+
+# After the smearing factor has been calculated, set to True to compare data and smeared MC background
 smear = True
 if smear:
-    mc_sigma = 0.1251
-    data_sigma = 0.1348
+    mc_sigma = 0.1251 # Calculated in this script
+    data_sigma = 0.1348 # Calculated in this script
     smearF = np.sqrt(data_sigma**2 - mc_sigma**2)
     
-    #smear tritrig
+    # Smear MC tritrig
     rel_smear = np.random.normal(0.0, 1.0, len(samples['tritrig'].unc_vtx_min_z0))
     smearfactors = rel_smear*smearF
     samples['tritrig']['unc_vtx_ele_track_z0'] = smearfactors + samples['tritrig']['unc_vtx_ele_track_z0'] 
@@ -183,7 +193,7 @@ if smear:
     smearfactors = rel_smear*smearF
     samples['tritrig']['unc_vtx_pos_track_z0'] = smearfactors + samples['tritrig']['unc_vtx_pos_track_z0'] 
     
-    #smear wab
+    # Smear MC wab
     rel_smear = np.random.normal(0.0, 1.0, len(samples['wab'].unc_vtx_min_z0))
     smearfactors = rel_smear*smearF
     samples['wab']['unc_vtx_ele_track_z0'] = smearfactors + samples['wab']['unc_vtx_ele_track_z0'] 
@@ -191,8 +201,11 @@ if smear:
     smearfactors = rel_smear*smearF
     samples['wab']['unc_vtx_pos_track_z0'] = smearfactors + samples['wab']['unc_vtx_pos_track_z0'] 
 
+#=======================================================================================================================================
+# Calculate z0 width in data and MC background
+#=======================================================================================================================================
 
-#Plot z0 for data and MC backgrounds
+# Initialize z0 histograms
 z0_h = (
     hist.Hist.new
     .StrCategory(list(samples.keys()), name='samples')
@@ -200,23 +213,26 @@ z0_h = (
     .Double()
 )
 
-#Fill without weights, so that histos can be converted to ROOT and retain statistical uncertainty
+# Fill without weights, so that histos can be converted to ROOT and retain statistical uncertainty
 z0_histos = {}
 for sname, sample in samples.items():
-    z0_h.fill(sname, sample.unc_vtx_ele_track_z0)#, weight=sample.weight/ak.sum(sample.weight))
-    z0_h.fill(sname, sample.unc_vtx_pos_track_z0)#, weight=sample.weight/ak.sum(sample.weight))
-    z0_histos[sname] = signalProcessor.cnvHistoToROOT(z0_h[sname,:])
+    z0_h.fill(sname, sample.unc_vtx_ele_track_z0)
+    z0_h.fill(sname, sample.unc_vtx_pos_track_z0)
+    z0_histos[sname] = signalProcessor.cnvHistoToROOT(z0_h[sname,:]) # Convert hist histogram to ROOT
     z0_histos[sname].Scale(mc_scale[sname])
 
-#Scale Tritrig and WAB and combine with proper errors
+# Scale Tritrig and WAB and combine with proper errors
 z0_histos['tritrig_wab'] = z0_histos['tritrig'].Clone()
 z0_histos['tritrig_wab'].Add(z0_histos['wab'])
-#Normalize
+
+# Normalize histograms
 for sname, sample in z0_histos.items():
     print(z0_histos[sname].Integral(0,-1))
     z0_histos[sname].Scale(1./z0_histos[sname].Integral(0,-1))
 
-#Make plots of data vs MC background
+# Plot data and MC background z0 distributions
+# Fit each with Gaussian to determine z0 width
+# MC width narrower than data. Smear MC background to match data
 fig, ax = plt.subplots(2,1, figsize=(25,30))
 #Data
 plt.subplot(2,1,1)
@@ -241,27 +257,30 @@ plt.legend()
 plt.ylim(0.0, 0.03)
 plt.savefig(f'{outdir}/impact_parameter_data_v_mc_smeared_{smear}.png')
 
-#######################################################################################################################################
+#smearing factors calculated from comparing data and MC bkg z0 widths
+mc_sigma = 0.1251
+data_sigma = 0.1348
+smearF = np.sqrt(data_sigma**2 - mc_sigma**2)
 
-#Smear the signal using ratio of data and MC widths
+#=======================================================================================================================================
+# Smear MC signal and calculate change in signal efficiency
+#=======================================================================================================================================
+
 sysvals = []
 masses = []
+# Directory containing MC signal hpstr vertex ana processor tuples
 indir = '/sdf/group/hps/user-data/alspellm/2016/simp_mc/pass4b/beam/smeared_fixbeamspot'
 for mass in range(30,120,4):
     masses.append(mass)
+    # MC signal hpstr MC ana processor (truth vertex z information)
     signal_pre_readout_path = lambda mass: f'/sdf/group/hps/user-data/alspellm/2016/simp_mc/pass4b/nobeam/mass_{mass}_simp_2pt3_slic_hadd_ana.root'
     signal_path = lambda mass: f'{indir}/mass_{mass}_hadd-simp-beam_ana_smeared_corr.root'
     signal_selection = 'vtxana_radMatchTight_2016_simp_SR_analysis'
     signal = signalProcessor.load_signal(signal_path(signal_mass), signal_pre_readout_path(signal_mass), signal_mass, signal_selection)
     signal['weight']=1.0
-    psum_sel = signalProcessor.psum_sel(signal, case='sr')
+    psum_sel = signalProcessor.psum_sel(signal, case='sr') #Psum signal region selection
     
-    #smearing factors calculated from comparing data and MC bkg z0 widths
-    mc_sigma = 0.1251
-    data_sigma = 0.1348
-    smearF = np.sqrt(data_sigma**2 - mc_sigma**2)
-    
-    #smear signal minz0 
+    # Smear electron and positron track z0
     rel_smear = np.random.normal(0.0, 1.0, len(signal.unc_vtx_min_z0))
     smearfactors = rel_smear*smearF
     signal['unc_vtx_ele_track_z0_smeared'] = smearfactors + signal['unc_vtx_ele_track_z0']
@@ -270,7 +289,7 @@ for mass in range(30,120,4):
     smearfactors = rel_smear*smearF
     signal['unc_vtx_pos_track_z0_smeared'] = smearfactors + signal['unc_vtx_pos_track_z0']
     
-    #calculate smeared minz0
+    # Calculate smeared minz0
     signal['unc_vtx_min_z0_smeared'] = np.minimum(abs(signal['unc_vtx_ele_track_z0_smeared']), abs(signal['unc_vtx_pos_track_z0_smeared']))
     
     #Calculate change in efficiency

@@ -1,4 +1,18 @@
 #!/usr/bin/python3
+"""
+This script runs the optimum interval method to calculate a 90% confidence upper limit on the SIMP signal rate as a function of
+mass and epsilon.
+
+Load in the data (in the form of the flat tuple output by the hpstr vertex analysis processor) and apply all selection criteria.
+    *The vertex ana processor applies Preselection, and a few Tight cuts, but you need apply all remaining tight cuts.
+Load in the MC signal (for each generated mass), and apply all selection criteria.
+
+The reconstructed vertex z distribution of the remaining data events is transformed into a normalized uniform distribution according
+to the expected MC signal shape in reconstructed vertex z. Since this shape is a function of epsilon^2, upper limit depends on both
+mass and epsilon^2.
+
+Calculating the upper limit here requires an external lookuptable that is generated using cmax.py.
+"""
 import os
 import awkward as ak
 import numpy as np

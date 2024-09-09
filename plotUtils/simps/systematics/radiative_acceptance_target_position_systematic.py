@@ -1,4 +1,9 @@
 #!/usr/bin/python3
+#=======================================================================================================================================
+# Description: Calculates systematic uncertainty associated with target position uncertainty (0.5 mm)
+# related to radiative trident acceptance.
+# MC radiative tridents+beam at nominal, -0.5 mm, and +0.5 mm
+
 import os
 import awkward as ak
 import numpy as np
@@ -14,20 +19,19 @@ import matplotlib.gridspec as gridspec
 import sys
 import math
 
+# SIMP tools in hpstr
 hpstr_base = os.getenv('HPSTR_BASE')
 sys.path.append(f'{hpstr_base}/plotUtils/simps')
 import simp_signal_2016
 
-#format mpl plots
-plt.rcParams.update({'font.size': 40,           # Font size for text
-                     'axes.titlesize': 40,      # Font size for titles
-                     'axes.labelsize': 40,      # Font size for axis labels
-                     'xtick.labelsize': 40,     # Font size for x-axis tick labels
-                     'ytick.labelsize': 40,     # Font size for y-axis tick labels
-                     'lines.linewidth':3.0,
-                     'legend.fontsize': 40})    # Font size for legend
+#======================================================================================================================================
+#INITIALIZATION
+#=======================================================================================================================================
+# Set plotting parameters for matplotlib
+plt.rcParams.update({'font.size': 40, 'axes.titlesize': 40, 'axes.labelsize': 40, 'xtick.labelsize': 40, 'ytick.labelsize': 40, 'lines.linewidth': 3.0, 'legend.fontsize': 40})
 plt.rcParams['font.family'] = 'DejaVu Sans'
 
+#parse input arguments
 import argparse
 parser = argparse.ArgumentParser(description='')
 parser.add_argument('--outdir', type=str, default='./search_results')
@@ -35,16 +39,21 @@ parser.add_argument('--mpifpi', type=float, default=4.*np.pi)
 
 args = parser.parse_args()
 outdir = args.outdir
-################################################################################################################################
+
+#=======================================================================================================================================
+# LOAD MC RADIATIVE TRIDENTS FOR EACH TARGET POSITION
+#=======================================================================================================================================
+
+# Invariant mass search window size
 search_window = 1.5
+# Initialize signal processor that contains everything needed to calculate expected signal
 signalProcessor = simp_signal_2016.SignalProcessor(args.mpifpi, search_window)
 
 samples = {}
 mcsamples = {}
 branches = ["unc_vtx_mass"]
 
-#LOAD NOMINAL RAD + BEAM
-#rad+beam
+# Load nominal radiative tridents + beam MC
 infile = '/sdf/group/hps/user-data/alspellm/2016/rad_mc/pass4b/rad_beam/rad-beam-hadd-10kfiles-ana-smeared-corr.root'
 selection = 'vtxana_radMatchTight_nocuts'
 samples['nominal_beam'] = signalProcessor.load_data(infile, selection, cut_expression='((unc_vtx_psum > 1.9) & (unc_vtx_psum < 2.4) )', expressions=branches)
@@ -54,30 +63,31 @@ slicfile = r.TFile(infile, "READ")
 mcsamples['nominal_beam'] = copy.deepcopy(slicfile.Get('mcAna/mcAna_mc622Mass_h'))
 slicfile.Close()
 
-#LOAD NOMINAL RAD + BEAM Mpt5
-#rad+beam
+# Load nominal-0.5 mm radiative tridents + beam MC
 infile = '/sdf/group/hps/user-data/alspellm/2016/systematics/radacc/hadd_1937files_rad_beam_targetz_Mpt5_recon_ana.root'
 selection = 'vtxana_radMatchTight_nocuts' #USE RADMATCHTIGHT!
 samples['targetz_Mpt5_beam'] = signalProcessor.load_data(infile, selection, cut_expression='((unc_vtx_psum > 1.9) & (unc_vtx_psum < 2.4) )', expressions=branches)
-#mc ana
+# Load radiative trident mc ana (generated rate)
 infile = '/sdf/group/hps/user-data/alspellm/2016/systematics/radacc/hadd_1937files_rad_beam_targetz_Mpt5_mc_ana.root'
 slicfile = r.TFile(infile, "READ")
 mcsamples['targetz_Mpt5_beam'] = copy.deepcopy(slicfile.Get('mcAna/mcAna_mc622Mass_h'))
 slicfile.Close()
 
-#LOAD NOMINAL RAD + BEAM Ppt5
-#rad+beam
+# Load nominal-0.5 mm radiative tridents + beam MC
 infile = '/sdf/group/hps/user-data/alspellm/2016/systematics/radacc/hadd_1937files_rad_beam_targetz_Ppt5_recon_ana.root'
 selection = 'vtxana_radMatchTight_nocuts' #USE RADMATCHTIGHT!
 samples['targetz_Ppt5_beam'] = signalProcessor.load_data(infile, selection, cut_expression='((unc_vtx_psum > 1.9) & (unc_vtx_psum < 2.4) )', expressions=branches)
-#mc ana
+# Load radiative trident mc ana (generated rate)
 infile = '/sdf/group/hps/user-data/alspellm/2016/systematics/radacc/hadd_1937files_rad_beam_targetz_Ppt5_mc_ana.root'
 slicfile = r.TFile(infile, "READ")
 mcsamples['targetz_Ppt5_beam'] = copy.deepcopy(slicfile.Get('mcAna/mcAna_mc622Mass_h'))
 slicfile.Close()
 
+#=======================================================================================================================================
+# CALCULATE RADIATIVE TRIDENT ACCEPTANCE
+#=======================================================================================================================================
 
-#init invariant mass plot
+# Initialize histogram used to calculate radiative trident acceptance
 nbinsx = mcsamples['nominal_beam'].GetNbinsX()
 first_bin = mcsamples['nominal_beam'].GetBinLowEdge(1)
 last_bin = nbinsx*mcsamples['nominal_beam'].GetBinWidth(1)
@@ -88,7 +98,7 @@ invmass_h = (
     .Double()
 )
 
-#Fill without weights, so that histos can be converted to ROOT and retain statistical uncertainty
+# Fill without weights, so that histos can be converted to ROOT and retain statistical uncertainty
 invmass_histos = {}
 for sname, sample in samples.items():
     invmass_h.fill(sname, sample.unc_vtx_mass*1000.)
@@ -115,7 +125,7 @@ def nonUniBinning(histo, start, size):
 #    mcsamples[sname] = nonUniBinning(mcsamples[sname], 150, 4)
 
 
-#calculate radiative acceptance
+# Calculate radiative trident acceptance for each case (nominal, -0.5 mm, +0.5 mm)
 fits = {}
 colors = ['#d62728', '#bcbd22', '#2ca02c', '#17becf', '#1f77b4', '#9467bd', '#7f7f7f']
 colors = ['black', 'darkred', 'darkblue', 'darkgreen', 'darkorange']
@@ -125,8 +135,10 @@ plt.xlabel('A\' Invariant Mass [MeV]')
 plt.ylabel('Radiative Acceptance')
 labels = ['Nominal (-4.3 mm)', '-4.8 mm', '-3.8 mm']
 for i,(sname, histo) in enumerate(invmass_histos.items()):
-    ratio = invmass_histos[sname].Clone()
-    ratio.Divide(mcsamples[sname])
+    ratio = invmass_histos[sname].Clone()  
+    ratio.Divide(mcsamples[sname]) # radiative trident acceptance
+
+    # Fit the radiative trident acceptance ratio with a polynomial fit function
     fit_params,_ = signalProcessor.fit_plot_with_poly(ratio, specify_n=7, set_xrange=True, xrange=(30.0, 220.0))
     print(sname, fit_params)
     (xvals, yvals, errors), (x_fit, y_fit) = signalProcessor.cnv_root_to_np(ratio)
