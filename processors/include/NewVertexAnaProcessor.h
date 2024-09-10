@@ -117,6 +117,7 @@ class NewVertexAnaProcessor : public Processor {
         TTree* tree_{nullptr}; //!< description
 
         std::string pSmearingFile_{""};
+	int pSmearingSeed_{42};
         std::shared_ptr<TrackSmearingTool> smearingTool_;
         std::string pBiasingFile_{""};
         std::shared_ptr<TrackBiasingTool> biasingTool_;
@@ -150,6 +151,9 @@ class NewVertexAnaProcessor : public Processor {
         std::vector<double> beamPosCorrections_ = {0.0,0.0,0.0}; //!< holds beam position corrections
         std::string v0ProjectionFitsCfg_{""};//!< json file w run dependent v0 projection fits
         json v0proj_fits_;//!< json object v0proj
+	std::string trackBiasCfg_{""}; //!< json containing track bias corrections
+	json tbc_configs_; //<! json object
+	std::map<std::string, double> trackBiasCorrections_;
         double eleTrackTimeBias_ = 0.0;
         double posTrackTimeBias_ = 0.0;
 

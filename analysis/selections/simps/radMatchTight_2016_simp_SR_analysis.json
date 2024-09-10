@@ -1,0 +1,27 @@
+{
+    "L1Requirement_eq" : {
+        "cut"  : 1,
+        "id"   : 0,
+        "info" : "L1L1"
+    },
+    "pSum_lt" : {
+        "cut"   : 1.9,
+        "id"    : 1,
+        "info"  : "P_{e^{-}} + P_{e^{+}} < 1.9 [GeV]"
+    },
+    "pSum_gt"  : {
+        "cut"  : 0.4,
+        "id"   : 2,
+        "info" : "P_{e^{-}} + P_{e^{+}} > 0.4 GeV"
+    },
+    "isRadEle_eq" : {
+        "cut"  : 1,
+        "id"   : 3,
+        "info" : "isRadEle"
+    },
+    "nVtxs_eq" : {
+        "cut"  : 1,
+        "id"   : 4,
+        "info" : "N_{vtx}=1"
+    }
+}
