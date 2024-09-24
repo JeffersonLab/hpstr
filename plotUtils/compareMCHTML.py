@@ -26,23 +26,18 @@ parser.add_argument("-o", "--outDir", dest="outDirectory", #output directory -->
                     help="Output directory.", metavar="outDirectory", default="output/") #default to output/ means that
 #unlike the last one default=None this default to output actually have the power to function without -o or --outDir
 
-print("test")
 options = parser.parse_args()
 inFile = options.inFilename
 outbase = options.outDirectory
-
-#print(inFile)
-#PRINT>>
 
 #reading input file 
 if inFile: #only if 'inFile' is provided
     f = open(inFile)
     data = json.load(f)
-    #extract 'input_files', 'legends', and 'selection' from the JSON data
+    scaling_factors = data['scaling_factors']
     inFileList = data['input_files']
     legends = data['legends']
     selection = data['selection']
-    scaling_factors = data['scaling_factors']
 
 #set the plotting style using the utility function 
 utils.SetStyle()
@@ -69,15 +64,24 @@ for sel in selection:
         os.makedirs(outdir)
 
     #set ROOT to batch mode
-    r.gROOT.SetBatch(1)
-    #initialize a list to store input ROOT files 
+    TH1list = []
+    TH2list = []
+    for i, histo in enumerate(TH1list):
+        if i < len(scaling_factors):
+            scale = scaling_factors[i]
+            if isinstance(histo, r.TH1):
+                histo.Scale(scale)
+            else:
+                print(f"Warning: Object at index {i} is not a histogram. Type: {type(histo)}")
+        r.gROOT.SetBatch(1)
+        #initialize a list to store input ROOT files 
     inputFiles = []
-
-    # load root input files in inFileList
-    for ifile in inFileList:
-        print("Loading file " + ifile)
+        # load root input files in inFileList
+    for ifileVal in inFileList:
+        
+        print("Loading file " + ifileVal)
         #open the ROOT file
-        inf = r.TFile(ifile)
+        inf = r.TFile(ifileVal)
         #add the root file to the inputList created earlier 
         inputFiles.append(inf)
 
@@ -87,23 +91,18 @@ for sel in selection:
 
     # get list of plots and directories in root file
     keynames = []
-    if i < len(scaling_factors):
-        scale = scaling_factors[i]
-        histo.Scale(scale)
     for key in inputFiles[0].GetListOfKeys(): # go through the list of keys in the first ROOT file 
         keyname = key.GetName() #get what names? 
+        
         if inputFiles[0].Get(keyname).InheritsFrom("TH1"): #check if the key is a 1D histogram 
             TH1list = [] 
             c = r.TCanvas() #create a new canvas
-            # add histograms from each inputFiles to the TH1list
-            additionalText = []  
+            # add histograms from each inputFiles to the TH1list 
             print("inputFiles 2: " + str(len(inputFiles)))
             for inf in inputFiles: 
-                TH1list.append(inf.Get(keyname))
-                additionalText.append(str(inf))            
+                TH1list.append(inf.Get(keyname))        
             #generate and append the plot to canvs
-            canvs.append(utils.MakePlot(keyname,outdir,TH1list,legends,".png",additionalText=[keyname],LogY=False,RatioType="Sequential",Normalise=False))
-
+            canvs.append(utils.MakeHistPlot(keyname,outdir,TH1list,legends,".png",LogY=False,Normalise=True, scaling_factors=scaling_factors))
         #check the diagram and make sure it is a 2D histogram 
         elif inputFiles[0].Get(keyname).InheritsFrom("TH2"):
             TH2list = []
@@ -120,8 +119,8 @@ for sel in selection:
                 xtitle.append(histo.GetXaxis().GetTitle())
                 ytitle.append(histo.GetYaxis().GetTitle())
                 name.append(keyname + '_' + legends[i])
-            canvs.append(utils.Make2DPlots(keyname,outdir,TH2list,xtitle,ytitle,additionalText=[keyname])) #generate and save the 2D plot             
-            canvs.append(utils.MakePlot(keyname,outdir,TH1list,legends,".png",additionalText=[keyname],LogY=False,RatioType="Sequential",Normalise=False))
+            
+            canvs.append(utils.Make2DPlots(keyname,outdir,TH2list,xtitle,ytitle)) #generate and save the 2D plot             
 
         # if we reach the else statement that meajsthe key is a directory then we will need to process sub-keys WHY SUB-KEYS?
         else:
@@ -132,13 +131,12 @@ for sel in selection:
                     c = r.TCanvas()
                     for inf in inputFiles:
                         TH1list.append(inf.Get(keyname).Get(subkeyname))
-                    canvs.append(utils.MakePlot(subkeyname,outdir,TH1list,legends,".png",additionalText=[subkeyname],LogY=False,RatioType="Sequential",Normalise=False))
+                    canvs.append(utils.MakeHistPlot(subkeyname,outdir,TH1list,legends,".png",LogY=False,Normalise=True, scaling_factors=scaling_factors))
 
                 elif inputFiles[0].Get(keyname).Get(subkeyname).InheritsFrom("TH2"):
                     TH2list = []
                     xtitle = []
                     ytitle = []
-                    name = []
                     c = r.TCanvas()
                     for i in range(0, len(inputFiles)):
                         inf = inputFiles[i]
@@ -146,8 +144,7 @@ for sel in selection:
                         TH2list.append(histo)
                         xtitle.append(histo.GetXaxis().GetTitle())
                         ytitle.append(histo.GetYaxis().GetTitle())
-                        name.append(subkeyname + '_' + legends[i])
-                    canvs.append(utils.Make2DPlots(subkeyname,outdir,TH2list,xtitle,ytitle,additionalText=[subkeyname]))
+                    canvs.append(utils.Make2DPlots(subkeyname,outdir,TH2list,xtitle,ytitle))
 
 
     utils.makeHTML(outdir,'test ('+sel+')', selection)
@@ -156,3 +153,5 @@ for sel in selection:
     for canv in canvs:
         if canv != None: canv.Write()
     outF.Close()
+
+
