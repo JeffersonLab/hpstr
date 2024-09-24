@@ -30,7 +30,6 @@ parser.add_option("-l", "--Legends", dest="Legends", metavar="Legends", default=
 parser.add_option("-d", "--debug", dest="debug", action="store_true", help="Debug flag", metavar="debug", default=False)
 
 
-#(config,sys.argv[1:]) = parser.parse_args(sys.argv[1:])
 
 
 #Get a plot from a directory+file name
@@ -93,7 +92,7 @@ def InsertText(runNumber="", texts=[], line=0.87, xoffset=0.18, Hps=True, Colors
     text = r.TLatex()
     text.SetNDC()
     text.SetTextFont(42)
-    text.SetTextSize(0.05)
+    text.SetTextSize(0.03)
     text.SetTextColor(r.kBlack)
     if (Hps):
         text.DrawLatex(xoffset, line, '#bf{#it{HPS}} Internal')
@@ -102,7 +101,6 @@ def InsertText(runNumber="", texts=[], line=0.87, xoffset=0.18, Hps=True, Colors
         if "MC" in runNumber:
             text.DrawLatex(xoffset, line, "MC Simulation")
         else:
-            #text.DrawLatex(xoffset,line,"Run "+runNumber)
             text.DrawLatex(xoffset, line, runNumber)
     for iText in range(len(texts)):
         if texts[iText]:
@@ -127,7 +125,6 @@ def SetStyle():
     hpsStyle.SetPadColor(icol)
     hpsStyle.SetCanvasColor(icol)
     hpsStyle.SetStatColor(icol)
-#hpsStyle.SetFillColor(icol)
 
 # set the paper & margin sizes
     hpsStyle.SetPaperSize(20, 26)
@@ -163,19 +160,15 @@ def SetStyle():
 
 
 #use bold lines and markers
-    #hpsStyle.SetMarkerStyle(20)
     hpsStyle.SetMarkerSize(1.0)
     hpsStyle.SetHistLineWidth(3)
     hpsStyle.SetLineStyleString(2, "[12 12]")  # postscript dashes
 
 #get rid of X error bars and y error bar caps
-#hpsStyle.SetErrorX(0.001)
 
 #do not display any of the standard histogram decorations
     hpsStyle.SetOptTitle(0)
-#hpsStyle.SetOptStat(1111)
     hpsStyle.SetOptStat(0)
-#hpsStyle.SetOptFit(1111)
     hpsStyle.SetOptFit(0)
 
 # put tick marks on top and RHS of plots
@@ -184,8 +177,7 @@ def SetStyle():
 
     r.gROOT.SetStyle("Plain")
 
-#gStyle.SetPadTickX(1)
-#gStyle.SetPadTickY(1)
+
     r.gROOT.SetStyle("HPS")
     r.gROOT.ForceStyle()
     r.gStyle.SetOptTitle(0)
@@ -243,7 +235,6 @@ def MakeRadFrac(name, outdir, histos, legends, oFext, xtitle="", ytitle="", ymin
     histoStack = r.THStack(name+"_sh", "")
 
     for ih in range(len(histos)):
-
         if (Normalise):
             if (histos[ih].Integral() == 0):
                 return None
@@ -279,12 +270,9 @@ def MakeRadFrac(name, outdir, histos, legends, oFext, xtitle="", ytitle="", ymin
         InsertText("", plotsProperties, 0.8, 0.6, False)
 
     if len(legends) > 0:
-        #print "building legend"
-        #upperY=0.6
         upperY = 0.76
         linesep = 0.07
         lowerY = upperY - len(legends) * linesep
-        #minX = 0.51
         minX = 0.75
         maxX = minX+0.15
         leg = r.TLegend(minX, upperY, maxX, lowerY)
@@ -292,7 +280,6 @@ def MakeRadFrac(name, outdir, histos, legends, oFext, xtitle="", ytitle="", ymin
         leg.SetFillColor(0)
         leg.SetTextSize(0.04)
         for i_leg in range(len(legends)):
-            #print "Adding Entry",i_leg, legends[i_leg]
             leg.AddEntry(histos[i_leg], legends[i_leg], "lpf")
             pass
         leg.Draw()
@@ -332,8 +319,6 @@ def MakeRadFrac(name, outdir, histos, legends, oFext, xtitle="", ytitle="", ymin
             fitCon = fitResult.GetParams()[0]
 
     print("nPoints: {}".format(nPoints))
-    #for polyO in range(1,10):
-    #    print "Order: %i    chi2: %f    f-stat: %f"%(polyO, chi2s[polyO], fstats[polyO-1])
     fitResult = numerator.Fit('pol5', "ES")
     fitFunc = numerator.GetListOfFunctions().FindObject("pol5")
     fitFunc.SetLineColor(colors[3])
@@ -413,7 +398,6 @@ def MakePlot(name, outdir, histos, legends, oFext, xtitle="", ytitle="", ymin=0,
             histos[ih].Rebin(RebinFactor)
 
         if doFit:
-            #histo = histos[ih].Clone()
             fit_funcs.append(TF1("fit_func"+str(ih), "gaus", -2.5, 2.5))
             print(len(fit_funcs))
             bad_fit = histos[ih].Fit(fit_funcs[ih], "RQN")
@@ -433,8 +417,6 @@ def MakePlot(name, outdir, histos, legends, oFext, xtitle="", ytitle="", ymin=0,
             if (Xmin != -999 and Xmax != -999):
                 histos[ih].GetXaxis().SetRangeUser(Xmin, Xmax)
             if noErrors:
-                #histos[ih].GetXaxis().SetTextSize(0.045)
-                #histos[ih].GetYaxis().SetTextSize(0.045)
                 histos[ih].Draw()
 
             else:
@@ -458,14 +440,11 @@ def MakePlot(name, outdir, histos, legends, oFext, xtitle="", ytitle="", ymin=0,
         InsertText("", plotsProperties, 0.8, 0.6, False, True)
 
     if len(legends) > 0:
-        #print "building legend"
-        #upperY=0.6
         upperY = linevalue + 0.1
-        linesep = 0.07
+        linesep = 0
         lowerY = upperY - len(legends) * linesep
-        #minX = 0.51
         minX = 0.75
-        maxX = minX+0.15
+        maxX = minX+0.25
         leg = r.TLegend(minX, upperY, maxX, lowerY)
         leg.SetBorderSize(0)
         leg.SetFillColor(0)
@@ -495,12 +474,7 @@ def MakePlot(name, outdir, histos, legends, oFext, xtitle="", ytitle="", ymin=0,
     if (RatioType == "Sequential"):
 
         for ih in range(1, len(histos)):
-            #ForRatio=None
-            #if type(histos[ih]) is TProfile:
-            #    ForRatio = histos[ih].ProjectionX("ForRatio"+str(ih)+histos[ih].GetName())
-            #else:
             ForRatio = histos[ih].Clone("ForRatio"+str(ih)+histos[ih].GetName())
-
             ForRatio.SetMaximum(100.)
             ForRatio.Divide(reference)
             ForRatio.DrawCopy("pe same")
@@ -511,12 +485,6 @@ def MakePlot(name, outdir, histos, legends, oFext, xtitle="", ytitle="", ymin=0,
         for ih in range(1, len(histos), 2):
 
             numerator = histos[ih].Clone("numerator")
-            #if isinstance(histos[ih],TProfile):
-
-            #    numerator=histos[ih].ProjectionX("numerator")
-
-            #else:
-
             numerator.SetMaximum(100.)
             numerator.Divide(histos[ih-1])
             numerator.DrawCopy("pe same")
@@ -528,7 +496,6 @@ def MakePlot(name, outdir, histos, legends, oFext, xtitle="", ytitle="", ymin=0,
         numerator.Add(histos[ih-1], -1)
         numerator.SetMaximum(100.)
         numerator.Divide(histos[ih-1])
-
         numerator.DrawCopy("hist p same")
 
     line = r.TLine()
@@ -541,49 +508,51 @@ def MakePlot(name, outdir, histos, legends, oFext, xtitle="", ytitle="", ymin=0,
     can.SaveAs(outdir+"/"+name+oFext)
     return deepcopy(can)
 
-def MakeHistPlot(name, outdir, histos, legends, oFext, xtitle="", ytitle="", ymin=0, ymax=1, noErrors=False, RebinFactor=0, runNumber="", additionalText=[], RatioType="Alternate", LogX=False, LogY=False, RatioMin=0.25, RatioMax=1.75, WriteMean=False, Normalise=False, doFit=False, drawOptions="hist", Xmin=-999, Xmax=-999):
-    hs = r.THStack("hs", "Stacked 1D histograms")
-
+def MakeHistPlot(name, outdir, histos, legends, oFext, xtitle="", ytitle="", ymin=0, ymax=1, noErrors=False, RebinFactor=0, runNumber="", additionalText=[], RatioType="Alternate", LogX=False, LogY=False, RatioMin=0.25, RatioMax=1.75, WriteMean=False, Normalise=False, doFit=False, drawOptions="hist", Xmin=-999, Xmax=-999, selectionScale="selection factor", scaling_factors=[]):
+    
     if not os.path.exists(outdir):
         os.mkdir(outdir)
 
     #Make 1D plots only
     if "_hh" in name:
+        
         return None
 
-    can = r.TCanvas(name, name, 1200, 800)
-    can.SetMargin(0, 0, 0, 0)
-    top = r.TPad("top", "top", 0, 0.42, 1, 1)
-    if LogX:
-        top.SetLogx(1)
-        bot.SetLogx(1)
-    if LogY:
-        top.SetLogy(1)
+    r.gStyle.SetTitleYOffset(0.8)
+    r.gStyle.SetTitleXOffset(0.8)
+    r.gROOT.ForceStyle(True)
 
-    bot = r.TPad("bot", "bot", 0, 0, 1, 0.38)
+    can = r.TCanvas(name, name, 3000, 2000)
+    can.SetMargin(0, 0, 0, 0)
+    # can.SetLogy(True)
 
     #----------Histogram------------#
+    if xtitle:
+        xaxis_title = xtitle
+    else:
+        xaxis_title = histos[0].GetXaxis().GetTitle()
+        print(xaxis_title)
+    histos[0].GetXaxis().SetTitleSize(0.01)
+    histos[0].GetXaxis().SetNdivisions(300)
+    histo_name = "Stacked 1D histograms;" + xaxis_title + ";a.u."
 
-    top.Draw()
-    top.SetBottomMargin(0)
-    top.SetTopMargin(r.gStyle.GetPadTopMargin()*topScale)
-    bot.Draw()
-    bot.SetTopMargin(0)
-    bot.SetBottomMargin(0.4)
-    top.cd()
+    hs = r.THStack("hs", histo_name)
     plotsProperties = []
     Ymax = -999
     for ih in range(len(histos)):
         if Ymax < histos[ih].GetMaximum()*1.9:
             Ymax = histos[ih].GetMaximum()*1.9
-
+    
     for ih in range(len(histos)):
         
         if (Normalise):
 
             if (histos[ih].Integral() == 0):
                 return None
-            histos[ih].Scale(1./histos[ih].Integral())
+            if len(scaling_factors) == len(histos):
+                histos[ih].Scale(scaling_factors[ih]/histos[ih].Integral())
+            else:
+                histos[ih].Scale(1./histos[ih].Integral())
             if LogY:
                 histos[ih].GetYaxis().SetRangeUser(0.00001, histos[ih].GetMaximum()*15000)
             else:
@@ -594,104 +563,77 @@ def MakeHistPlot(name, outdir, histos, legends, oFext, xtitle="", ytitle="", ymi
                 histos[ih].GetYaxis().SetRangeUser(0.00001, histos[ih].GetMaximum()*15000)
             else:
                 histos[ih].GetYaxis().SetRangeUser(0, Ymax)
+        # Set the X and Y axis label sizes
+        histos[ih].GetXaxis().SetLabelSize(0.04) 
+        histos[ih].GetYaxis().SetLabelSize(0.001)
 
         histos[ih].SetMarkerColor(colors[ih])
         histos[ih].SetMarkerStyle(markers[ih])
         histos[ih].SetLineColor(colors[ih])
-        histos[ih].GetXaxis().CenterTitle()
-        histos[ih].GetYaxis().CenterTitle()
-
-        hs.add(histos[ih])
+        if ih != 0:
+            hs.Add(histos[ih])
 
         if RebinFactor > 0:
             histos[ih].Rebin(RebinFactor)
 
-    linevalue = InsertText(runNumber, additionalText, 0.85, xoffset=0.25)
-    if (WriteMean):
-        InsertText("", plotsProperties, 0.8, 0.6, False, True)
+    ratioPlot = r.TRatioPlot(hs, histos[0])
+    ratioPlot.GetXaxis().SetLabelSize(0.01)
+    ratioPlot.Draw()
+    line = r.TLine(50.e3, 1, 200.e3, 1)
+    line.SetLineColor(r.kBlack)
+    line.SetLineWidth(2)
+
+    ratioPlot.SetSeparationMargin(0)
+    ratioPlot.SetSplitFraction(0.35)
+    
+    ratioHistY = ratioPlot.GetLowerRefYaxis()  # Get the Y-axis of the lower pad (ratio plot)
+    ratioHistY.SetRangeUser(0.5, 1.5)
+    # ratioHistY.SetNdivisions(0)
+    ratioHistY.SetTitle("MC/data")
+    ratioHistY.SetTitleOffset(0.85)
+    ratioHistY.SetLabelSize(0.02)
+    ratioHistY.SetTitleSize(0.04)
+
+    ratioHistYup = ratioPlot.GetUpperRefYaxis()  # Get the Y-axis of the upper pad (ratio plot)
+    ratioHistYup.SetTitle("a.u.")
+    ratioHistYup.SetTitleOffset(0.85)
+    # ratioHistYup.SetNdivisions(0)
+    ratioHistYup.SetLabelSize(0.02)
+    ratioHistYup.SetTitleSize(0.04)
+    ratioPlot.GetLowerRefXaxis().SetLabelSize(0.02)
+    ratioPlot.GetLowerRefXaxis().SetTitleSize(0.04)
+    can.SetBottomMargin(10)  # Increase bottom margin
+    
+    ratioPlot.SetSplitFraction(0.3)  # Adjust split fraction for better lower plot visibility
+   
+    can.Update()            # Update the canvas
+    can.RedrawAxis()        # Redraw axis to ensure title is shown
+
+    latex = r.TLatex()
+    latex.SetNDC()
+    latex.SetTextSize(0.03)
+    latex.DrawText(0.15 ,0.9 , name)
+
+    linevalue = InsertText(runNumber, additionalText, 0.9, xoffset=0.7)
+   
 
     if len(legends) > 0:
-        #print "building legend"
-        #upperY=0.6
-        upperY = linevalue + 0.1
-        linesep = 0.07
-        lowerY = upperY - len(legends) * linesep
-        #minX = 0.51
-        minX = 0.75
-        maxX = minX+0.15
+        
+        upperY = linevalue - 0.02
+        lowerY = upperY - 0.1
+        minX = 0.7
+        maxX = minX+0.1
         leg = r.TLegend(minX, upperY, maxX, lowerY)
         leg.SetBorderSize(0)
-        leg.SetFillColor(0)
-        leg.SetTextSize(0.04)
+        leg.SetFillColor(4000)
+        leg.SetTextSize(0.025)
         for i_leg in range(len(legends)):
-            #print "Adding Entry",i_leg, legends[i_leg]
             leg.AddEntry(histos[i_leg], legends[i_leg], "lpf")
             pass
         leg.Draw()
         pass
-     #-------------Ratio---------------------#
-
-    bot.cd()
-    reference = histos[0].Clone("reference")
-    reference.GetXaxis().SetLabelSize(0.1)
-    reference.GetXaxis().SetTitleSize(0.1)
-    reference.GetYaxis().SetTitle("Ratio")
-    reference.GetYaxis().SetTitleSize(0.1)
-    reference.GetYaxis().SetLabelSize(0.1)
-    reference.GetYaxis().SetTitleOffset(reference.GetYaxis().GetTitleOffset()*0.7)
-    reference.GetYaxis().SetRangeUser(RatioMin, RatioMax)
-    reference.GetYaxis().SetNdivisions(508)
-    reference.GetYaxis().SetDecimals(True)
-    reference.Draw("axis")
-
-    if (RatioType == "Sequential"):
-
-        for ih in range(1, len(histos)):
-            #ForRatio=None
-            #if type(histos[ih]) is TProfile:
-            #    ForRatio = histos[ih].ProjectionX("ForRatio"+str(ih)+histos[ih].GetName())
-            #else:
-            ForRatio = histos[ih].Clone("ForRatio"+str(ih)+histos[ih].GetName())
-
-            ForRatio.SetMaximum(100.)
-            ForRatio.Divide(reference)
-            ForRatio.DrawCopy("pe same")
-
-    elif (RatioType == "Alternate"):
-
-        print("in alternate ratio")
-        for ih in range(1, len(histos), 2):
-
-            numerator = histos[ih].Clone("numerator")
-            #if isinstance(histos[ih],TProfile):
-
-            #    numerator=histos[ih].ProjectionX("numerator")
-
-            #else:
-
-            numerator.SetMaximum(100.)
-            numerator.Divide(histos[ih-1])
-            numerator.DrawCopy("pe same")
-
-    elif (RatioType == "Alternate2"):
-        print("in Alternate (h1 - h2) / h2")
-
-        numerator = histos[ih].Clone("numerator")
-        numerator.Add(histos[ih-1], -1)
-        numerator.SetMaximum(100.)
-        numerator.Divide(histos[ih-1])
-
-        numerator.DrawCopy("hist p same")
-
-    line = r.TLine()
-    line.SetLineStyle(r.kDashed)
-    if (Xmin != -999 and Xmax != -999):
-        line.DrawLine(Xmin, 1, Xmax, 1)
-    else:
-        line.DrawLine(reference.GetXaxis().GetXmin(), 1, reference.GetXaxis().GetXmax(), 1)
 
     can.SaveAs(outdir+"/"+name+oFext)
-    hs.draw
     return deepcopy(can)
 
 
@@ -704,7 +646,6 @@ def DivideHistos(h1, h2):
 
 
 def Make1Dplots(name, outdir, histos, colors, markers, legends, oFext, xtitle="", ytitle="", ymin=0, ymax=1, noErrors=False, RebinFactor=0, runNumber="", additionalText=[], LogY=False, WriteMean=False, multiLeg=False):
-
     if not os.path.exists(outdir):
         os.mkdir(outdir)
 
@@ -728,7 +669,6 @@ def Make1Dplots(name, outdir, histos, colors, markers, legends, oFext, xtitle=""
         histos[ih].GetYaxis().CenterTitle()
         if ("pT" in name or "pt" in name):
             histos[ih].GetXaxis().SetRangeUser(1., 20.)
-        #histos[ih].SetMarkerSize(0.5)
         if RebinFactor > 0:
             histos[ih].Rebin(RebinFactor)
 
@@ -752,7 +692,6 @@ def Make1Dplots(name, outdir, histos, colors, markers, legends, oFext, xtitle=""
     InsertText(runNumber, additionalText, 0.4, xoffset=0.5)
 
     if len(legends) > 0:
-        #print "building legend"
         upperY = 0.6
         linesep = 0.10
         lowerY = upperY - len(legends) * linesep
@@ -786,8 +725,6 @@ def Make1Dplots(name, outdir, histos, colors, markers, legends, oFext, xtitle=""
             else:
                 print("Adding Entry {} {} #epsilon: {} ".format(i_leg, legends[i_leg], str(round(means[i_leg], 2))))
 
-            #leg.AddEntry(histos[i_leg],"#splitline{"+legends[i_leg] + "}{Average=" + str(round(means[i_leg]*100.,3))+"#pm"+str(round(meansErr[i_leg]*100,3))+"%}" ,"lpf")
-            #leg.AddEntry(histos[i_leg],legends[i_leg] + " Average=" + str(round(means[i_leg]*100.,3))+"#pm"+str(round(meansErr[i_leg]*100,3))+"%" ,"lpf")
             if not multiLeg:
                 leg.AddEntry(histos[i_leg], legends[i_leg] + " Avg=" + str(round(means[i_leg]*100., 3))+"#pm"+str(round(meansErr[i_leg]*100, 3))+"%", "lpf")
             else:
@@ -795,7 +732,6 @@ def Make1Dplots(name, outdir, histos, colors, markers, legends, oFext, xtitle=""
 
             leg.Draw()
 
-    #BuildLegend(legends,can,histos,0.55,0.9,0.8,0.75)
 
     can.SetBottomMargin(0.18)
     can.SetLeftMargin(0.15)
@@ -831,7 +767,6 @@ def Make2DPlots(name, outdir, histolist, xtitle, ytitle, ztitle="", text="", zmi
         can = r.TCanvas()
         can.SetRightMargin(0)
 
-        #histolist[ih].GetZaxis().SetRangeUser(zmin,zmax)
         histolist[ih].GetXaxis().SetTitle(xtitle[ih])
         histolist[ih].GetXaxis().SetTitleSize(
             histolist[ih].GetXaxis().GetTitleSize()*0.3)
@@ -851,14 +786,9 @@ def Make2DPlots(name, outdir, histolist, xtitle, ytitle, ztitle="", text="", zmi
         histolist[ih].Draw("colz")
 
         InsertText(text, "", xoffset=0)
-
-        #print "saving..."
-        #if (len(legends) == len(histolist)):
         can.SaveAs(outdir+"/"+name[ih]+oFext)
         canvs.append(can)
     return deepcopy(canvs)
-    #else:
-    #    print "ERROR: Not enough names for all the histos"
 
 
 def Profile2DPlot(name, outdir, histolist, axis="X", xtitle="", ytitle="", ztitle="", runNumber="", legends=[], zmin="", zmax=""):
