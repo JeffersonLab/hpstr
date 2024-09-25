@@ -14,12 +14,9 @@ parser.add_argument("-i", "--inFile", dest="inFilename",
 parser.add_argument("-o", "--outDir", dest="outDirectory",
                     help="Output directory.", metavar="outDirectory", default="output/")
 
-print("test")
 options = parser.parse_args()
 inFile = options.inFilename
 outbase = options.outDirectory
-
-print(inFile)
 
 if inFile:
     f = open(inFile)
