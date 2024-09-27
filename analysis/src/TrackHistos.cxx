@@ -496,6 +496,3 @@ void TrackHistos::FillResidualHistograms(Track* track, int ly, double res, doubl
     Fill2DHisto("u_res_ly_"+lyr+"_"+vol+"_vsp_hh",trk_mom,res);
 
 }
-
-
-

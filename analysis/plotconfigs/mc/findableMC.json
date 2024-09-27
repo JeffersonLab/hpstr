@@ -1,0 +1,314 @@
+{
+    "numMCparts_h" : {
+        "bins"   : 60,
+        "minX"   : -0.5,
+        "maxX"   : 59.5,
+        "xtitle" : "Number of Sim Particles",
+        "ytitle" : "Events"
+    },
+    "mc622Mass_h" : {
+        "bins" : 450,
+        "minX" : 0,
+        "maxX" : 450.0,
+        "xtitle" : "Mass of PDGID=622 Particle [MeV]",
+        "ytitle" : "Sim Particles / 1 MeV"
+    },
+    "mc622Z_h" : {
+        "bins" : 400,
+        "minX" : -50.0,
+        "maxX" : 150.0,
+        "xtitle" : "Z Position of PDGID=622 Particle [mm]",
+        "ytitle" : "Sim Particles / 0.5 mm"
+    },
+    "MCpartsEnergy_h" : {
+        "bins" : 450,
+        "minX" : 0,
+        "maxX" : 4.5,
+        "xtitle" : "Energy of Sim Particle [GeV]",
+        "ytitle" : "Sim Particles / 10 MeV"
+    },
+    "MCpartsEnergyLow_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 200,
+        "xtitle" : "Energy of Sim Particle [MeV]",
+        "ytitle" : "Sim Particles / 1 MeV"
+    },
+    "numMuons_h" : {
+        "bins" : 10,
+        "minX" : -0.5,
+        "maxX" : 9.5,
+        "xtitle" : "Number of Sim Muons",
+        "ytitle" : "Events"
+    },
+    "minMuonE_h" : {
+        "bins" : 450,
+        "minX" : 0,
+        "maxX" : 4.5,
+        "xtitle" : "Energy [GeV]",
+        "ytitle" : "Sim Particles / 10 MeV"
+    },
+    "minMuonEhigh_h" : {
+        "bins" : 3000,
+        "minX" : 2.2,
+        "maxX" : 2.5,
+        "xtitle" : "Energy [GeV]",
+        "ytitle" : "Sim Particles / 100 keV"
+    },
+    "numMCTrkrHit_h" : {
+        "bins" : 30,
+        "minX" : -0.5,
+        "maxX" : 29.5,
+        "xtitle" : "Number of Sim Tracker Hits",
+        "ytitle" : "Events"
+    },
+    "mcTrkrHitEdep_h" : {
+        "bins" : 80,
+        "minX" : 0,
+        "maxX" : 8,
+        "xtitle" : "Tracker Hit Energy [MeV]",
+        "ytitle" : "Sim Particles / 100 keV"
+    },
+    "mcTrkrHitPdgId_h" : {
+        "bins" : 101,
+        "minX" : -50.5,
+        "maxX" : 50.5,
+        "xtitle" : "PDG ID",
+        "ytitle" : "Sim Particles"
+    },
+    "numMCEcalHit_h" : {
+        "bins" : 60,
+        "minX" : -0.5,
+        "maxX" : 59.5,
+        "xtitle" : "Number of Sim Ecal Hits",
+        "ytitle" : "Events"
+    },
+    "mcEcalHitEnergy_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 400,
+        "xtitle" : "Ecal Hit Energy [MeV]",
+        "ytitle" : "Sim Particles / 2 MeV"
+    }, 
+    "eleRad_px_h": {
+	"bins" : 50,
+        "minX" : -0.25,
+        "maxX" : 0.25,
+        "xtitle" : "Radiative Electron px(Gev)",
+	"ytitle" : "Events"
+    },
+    "eleRec_px_h": {
+	"bins" : 50,
+        "minX" : -0.25,
+        "maxX" : 0.25,
+        "xtitle" : "Recoil Electron px (GeV)",
+	"ytitle" : "Events"
+    },
+    "ele_px_h": {
+	"bins" : 50,
+        "minX" : -0.25,
+        "maxX" : 0.25,
+        "xtitle" : "All Electron px (GeV)",
+	"ytitle" : "Electrons"
+    },
+    "pos_px_h": {
+	"bins" : 50,
+        "minX" : -0.25,
+        "maxX" : 0.25,
+        "xtitle" : "Positrong px (GeV)",
+	"ytitle" : "Events"
+    },
+  "eleRad_py_h": {
+	"bins" : 50,
+        "minX" : -0.2,
+        "maxX" : 0.2,
+        "xtitle" : "Radiative Electron py (Gev)",
+	"ytitle" : "Events"
+    },
+    "eleRec_py_h": {
+	"bins" : 50,
+        "minX" : -0.2,
+        "maxX" : 0.2,
+        "xtitle" : "Recoil Electron py (GeV)",
+	"ytitle" : "Events"
+    },
+    "ele_py_h": {
+	"bins" : 50,
+        "minX" : -0.2,
+        "maxX" : 0.2,
+        "xtitle" : "All Electron py (GeV)",
+	"ytitle" : "Events"
+    },
+    "pos_py_h": {
+	"bins" : 50,
+        "minX" : -0.2,
+        "maxX" : 0.2,
+        "xtitle" : "Positron py (GeV)",
+	"ytitle" : "Events"
+    },
+  "eleRad_pz_h": {
+	"bins" : 50,
+        "minX" : 0,
+        "maxX" : 5,
+        "xtitle" : "Radiative Electron pz (Gev)",
+	"ytitle" : "Events"
+    },
+    "eleRec_pz_h": {
+	"bins" : 50,
+        "minX" : 0,
+        "maxX" : 5,
+        "xtitle" : "Recoil Electron pz (GeV)",
+	"ytitle" : "Events"
+    },
+    "ele_pz_h": {
+	"bins" : 50,
+        "minX" : 0,
+        "maxX" : 5,
+        "xtitle" : "All Electron pz (GeV)",
+	"ytitle" : "Electrons"
+    },
+    "pos_pz_h": {
+	"bins" : 50,
+        "minX" : 0,
+        "maxX" : 5,
+        "xtitle" : "Positron pz (GeV)",
+	"ytitle" : "Events"
+    },
+    "eleRad_p_h": {
+	"bins" : 50,
+        "minX" : 0,
+        "maxX" : 5,
+        "xtitle" : "Radiative Electron p (Gev)",
+	"ytitle" : "Events"
+    },
+    "eleRec_p_h": {
+	"bins" : 50,
+        "minX" : 0,
+        "maxX" : 5,
+        "xtitle" : "Recoil Electron p (GeV)",
+	"ytitle" : "Events"
+    },
+    "ele_p_h": {
+	"bins" : 50,
+        "minX" : 0,
+        "maxX" : 5,
+        "xtitle" : "All Electron p (GeV)",
+	"ytitle" : "Events"
+    },
+    "pos_p_h": {
+	"bins" : 50,
+        "minX" : 0,
+        "maxX" : 5,
+        "xtitle" : "Positron p (GeV)",
+	"ytitle" : "Events"
+    },
+    "eleRad_thetax_h": {
+	"bins" : 50,
+        "minX" : -0.15,
+        "maxX" : 0.15,
+        "xtitle" : "Radiative Electron thetax (Gev)",
+	"ytitle" : "Events"
+    },
+    "eleRec_thetax_h": {
+	"bins" : 50,
+        "minX" : -0.15,
+        "maxX" : 0.15,
+        "xtitle" : "Recoil Electron thetax (GeV)",
+	"ytitle" : "Events"	
+    },
+    "ele_thetax_h": {
+	"bins" : 50,
+        "minX" : -0.15,
+        "maxX" : 0.15,
+        "xtitle" : "All Electron thetax (GeV)",
+	"ytitle" : "Events"
+    },
+    "pos_thetax_h": {
+	"bins" : 50,
+        "minX" : -0.15,
+        "maxX" : 0.15,
+        "xtitle" : "Positron thetax (GeV)",
+	"ytitle" : "Events"
+    },
+
+    
+ "eleRad_thetay_h": {
+	"bins" : 50,
+        "minX" : -0.15,
+        "maxX" : 0.15,
+        "xtitle" : "Radiative Electron thetay (GeV)",
+	"ytitle" : "Events"
+    },
+    "eleRec_thetay_h": {
+	"bins" : 50,
+        "minX" : -0.15,
+        "maxX" : 0.15,
+        "xtitle" : "Recoil Electron thetay (GeV)",
+	"ytitle" : "Events"
+    },
+    "ele_thetay_h": {
+	"bins" : 50,
+        "minX" : -0.15,
+        "maxX" : 0.15,
+        "xtitle" : "All Electron thetay (GeV)",
+	"ytitle" :"Events"
+    },
+    "pos_thetay_h": {
+	"bins" : 50,
+        "minX" : -0.15,
+        "maxX" : 0.15,
+        "xtitle" : "Positron thetay (GeV)",
+	"ytitle" :"Events"
+    },
+
+    "pair_pxV0_h":{	
+	"bins" : 50,
+        "minX" : -0.25,
+        "maxX" : 0.25,
+        "xtitle" : "Pair px (GeV)",
+	"ytitle" :"Events"
+    },
+     "pair_pyV0_h":{	
+	"bins" : 50,
+        "minX" : -0.2,
+        "maxX" : 0.2,
+        "xtitle" : "Pair py (GeV)",
+	"ytitle" :"Events"
+    },
+    "pair_pzV0_h":{	
+	"bins" : 50,
+        "minX" : 0,
+        "maxX" : 5,
+        "xtitle" : "Pair pz (GeV)",
+	"ytitle" :"Events"
+    }, 
+     "pair_pV0_h":{	
+	"bins" : 50,
+        "minX" : 0.0,
+        "maxX" : 5,
+        "xtitle" : "Pair p (GeV)",
+	"ytitle" :"Events"
+    },
+    "pair_thetaxV0_h": {
+	"bins" : 50,
+        "minX" : -0.15,
+        "maxX" : 0.15,
+        "xtitle" : "Pair thetax (radian)",
+	"ytitle" :"Events"
+    },
+
+    "pair_thetayV0_h": {
+	"bins" : 50,
+        "minX" : -0.15,
+        "maxX" : 0.15,
+        "xtitle" : "Pair thetay (radian)",
+	"ytitle" :"Events"
+    }, 
+    "pair_mass_h": {
+	"bins" : 50, 
+	"minX" : 0, 
+	"maxX" : 0.35,
+	"xtitle" : "Pair invariant mass (GeV)",
+	"ytitle" : "Events" 
+    }
+}

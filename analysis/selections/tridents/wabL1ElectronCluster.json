@@ -1,0 +1,23 @@
+{   
+    "LayerRequirement" : {
+        "cut"  : 1,
+        "id"   : 0,
+        "info" : "L1{e^{-}}=1"
+    },  
+
+   "eleClusterMatched":  {
+        "cut" : 1,
+        "id"  : 1,
+        "info" : "Electron Cluster Match"
+    }, 
+    "elegamCluTimeDiff_lt": {
+	"cut": 10,
+	"id" : 2,
+	"info": "gamma cluster time<10 (ns)"
+    } , 
+    "elegamCluTimeDiff_lt": {
+	"cut": 10,
+	"id" : 3,
+	"info": "electron-gamma cluster time<10 (ns)"
+    }    
+}
