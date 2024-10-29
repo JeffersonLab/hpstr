@@ -87,6 +87,38 @@ bool AnaHelpers::MatchToGBLTracks(int ele_id, int pos_id, Track* & ele_trk, Trac
     return foundele * foundpos;
 }
 
+//Use this to get two electrons
+bool AnaHelpers::GetSameParticlesFromVtx(Vertex* vtx, Particle*& ele1, Particle*& ele2) {
+
+
+    bool foundele1 = false;
+    bool foundele2 = false;
+
+    for (int ipart = 0; ipart < vtx->getParticles().GetEntries(); ++ipart) {
+
+
+        int pdg_id = ((Particle*)vtx->getParticles().At(ipart))->getPDG();
+        if (debug_) std::cout<<"In Loop "<<pdg_id<< " "<< ipart<<std::endl;
+
+        if (pdg_id == 11) {
+            if(!foundele1){
+                ele1 =  ((Particle*)vtx->getParticles().At(ipart));
+                foundele1=true;
+            }
+            else{
+                ele2 =  ((Particle*)vtx->getParticles().At(ipart));
+                foundele2=true;
+            }
+        }
+    }
+
+    if (!ele1 || !ele2) {
+        std::cout<<"Vertex formed without ele/ele. Skip."<<std::endl;
+        return false;
+    }
+    if (debug_) std::cout<<"returning "<<(int) (foundele1 && foundele2) <<std::endl;
+    return foundele1 && foundele2;
+}
 
 //TODO clean bit up 
 bool AnaHelpers::GetParticlesFromVtx(Vertex* vtx, Particle*& ele, Particle*& pos) {
