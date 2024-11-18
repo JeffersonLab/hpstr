@@ -278,7 +278,7 @@ void PreSelectAndCategorize::initialize(TTree* tree) {
   vertex_cf_.add("ele_min_8_hits", 14, 0, 14);
   vertex_cf_.add("pos_min_8_hits", 14, 0, 14);
   vertex_cf_.add("vertex_chi2", 100,0.0,50.0);
-  vertex_cf_.add("psum_lt_2.4GeV", 300, 0.0, 3.0);
+  vertex_cf_.add("vtx_max_p_2.4GeV", 300, 0.0, 3.0);
   vertex_cf_.init();
   
   /* event selection after vertex selection */
@@ -450,10 +450,8 @@ bool PreSelectAndCategorize::process(IEvent*) {
     vertex_cf_.apply("ele_min_8_hits", ele_nhits > 7);
     vertex_cf_.apply("pos_min_8_hits", pos_nhits > 7);
     vertex_cf_.apply("vertex_chi2", vtx->getChi2() < 20.0);
-    // should be vector sum rather than scalar sum
-    double psum = ele.getTrack().getP()+pos.getTrack().getP();
     double vtxmaxp = vec_sum_mag(ele.getTrack().getMomentum(), pos.getTrack().getMomentum());
-    vertex_cf_.apply("psum_lt_2.4GeV", vtxmaxp < 2.4);
+    vertex_cf_.apply("vtx_max_p_2.4GeV", vtxmaxp < 2.4);
   
     vertex_cf_.fill_nm1("abs_ele_track_before_6ns", abs(ele.getTrack().getTrackTime()));
     vertex_cf_.fill_nm1("abs_pos_track_before_6ns", abs(pos.getTrack().getTrackTime()));
@@ -466,7 +464,7 @@ bool PreSelectAndCategorize::process(IEvent*) {
     vertex_cf_.fill_nm1("ele_min_8_hits", ele_nhits);
     vertex_cf_.fill_nm1("pos_min_8_hits", pos_nhits);
     vertex_cf_.fill_nm1("vertex_chi2", vtx->getChi2());
-    vertex_cf_.fill_nm1("psum_lt_2.4GeV", ele.getTrack().getP()+pos.getTrack().getP());
+    vertex_cf_.fill_nm1("vtx_max_p_2.4GeV", vtxmaxp);
   
     if (vertex_cf_.keep()) {
       preselected_vtx.emplace_back(*vtx, ele, pos);
