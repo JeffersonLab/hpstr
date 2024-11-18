@@ -439,19 +439,19 @@ bool PreSelectAndCategorize::process(IEvent*) {
     };
 
     vertex_cf_.begin_event();
-    vertex_cf_.apply("abs_ele_track_before_6ns", abs(ele.getTrack().getTrackTime()) < 6.0);
-    vertex_cf_.apply("abs_pos_track_before_6ns", abs(pos.getTrack().getTrackTime()) < 6.0);
-    vertex_cf_.apply("clusters_within_1.45ns", cluster_tdiff < 1.45);
-    vertex_cf_.apply("ele_track_cluster_within_4ns", ele_track_cluster_tdiff < 4.0);
-    vertex_cf_.apply("pos_track_cluster_within_4ns", pos_track_cluster_tdiff < 4.0);
-    vertex_cf_.apply("ele_track_chi2ndf", ele.getTrack().getChi2Ndf() < 20.0);
-    vertex_cf_.apply("pos_track_chi2ndf", pos.getTrack().getChi2Ndf() < 20.0);
-    vertex_cf_.apply("electron_below_1.75GeV", ele.getTrack().getP() < 1.75);
-    vertex_cf_.apply("ele_min_8_hits", ele_nhits > 7);
-    vertex_cf_.apply("pos_min_8_hits", pos_nhits > 7);
-    vertex_cf_.apply("vertex_chi2", vtx->getChi2() < 20.0);
+    vertex_cf_.apply("abs_ele_track_before_6ns", abs(ele.getTrack().getTrackTime()) <= 6.0);
+    vertex_cf_.apply("abs_pos_track_before_6ns", abs(pos.getTrack().getTrackTime()) <= 6.0);
+    vertex_cf_.apply("clusters_within_1.45ns", cluster_tdiff <= 1.45);
+    vertex_cf_.apply("ele_track_cluster_within_4ns", ele_track_cluster_tdiff <= 4.0);
+    vertex_cf_.apply("pos_track_cluster_within_4ns", pos_track_cluster_tdiff <= 4.0);
+    vertex_cf_.apply("ele_track_chi2ndf", ele.getTrack().getChi2Ndf() <= 20.0);
+    vertex_cf_.apply("pos_track_chi2ndf", pos.getTrack().getChi2Ndf() <= 20.0);
+    vertex_cf_.apply("electron_below_1.75GeV", ele.getTrack().getP() <= 1.75);
+    vertex_cf_.apply("ele_min_8_hits", ele_nhits >= 7);
+    vertex_cf_.apply("pos_min_8_hits", pos_nhits >= 7);
+    vertex_cf_.apply("vertex_chi2", vtx->getChi2() <= 20.0);
     double vtxmaxp = vec_sum_mag(ele.getTrack().getMomentum(), pos.getTrack().getMomentum());
-    vertex_cf_.apply("vtx_max_p_2.4GeV", vtxmaxp < 2.4);
+    vertex_cf_.apply("vtx_max_p_2.4GeV", vtxmaxp <= 2.4);
   
     vertex_cf_.fill_nm1("abs_ele_track_before_6ns", abs(ele.getTrack().getTrackTime()));
     vertex_cf_.fill_nm1("abs_pos_track_before_6ns", abs(pos.getTrack().getTrackTime()));
