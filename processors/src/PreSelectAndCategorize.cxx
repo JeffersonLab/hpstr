@@ -330,6 +330,17 @@ void PreSelectAndCategorize::setFile(TFile* out_file) {
   }
 }
 
+double vec_sum_mag(const std::vector<double>& lhs, const std::vector<double>& rhs) {
+  if (lhs.size() != rhs.size()) {
+    throw std::runtime_error("vec_sum_mag got vectors of different lengths.");
+  }
+  double mag2{0.0};
+  for (std::size_t i{0}; i < lhs.size(); i++) {
+    mag2 += lhs.at(i)*lhs.at(i)+rhs.at(i)*rhs.at(i);
+  }
+  return sqrt(mag2);
+}
+
 bool PreSelectAndCategorize::process(IEvent*) {
   const auto& eh{bus_.get<EventHeader>("EventHeader")};
   int run_number = eh.getRunNumber();
@@ -439,7 +450,10 @@ bool PreSelectAndCategorize::process(IEvent*) {
     vertex_cf_.apply("ele_min_8_hits", ele_nhits > 7);
     vertex_cf_.apply("pos_min_8_hits", pos_nhits > 7);
     vertex_cf_.apply("vertex_chi2", vtx->getChi2() < 20.0);
-    vertex_cf_.apply("psum_lt_2.4GeV", ele.getTrack().getP()+pos.getTrack().getP() < 2.4);
+    // should be vector sum rather than scalar sum
+    double psum = ele.getTrack().getP()+pos.getTrack().getP();
+    double vtxmaxp = vec_sum_mag(ele.getTrack().getMomentum(), pos.getTrack().getMomentum());
+    vertex_cf_.apply("psum_lt_2.4GeV", vtxmaxp < 2.4);
   
     vertex_cf_.fill_nm1("abs_ele_track_before_6ns", abs(ele.getTrack().getTrackTime()));
     vertex_cf_.fill_nm1("abs_pos_track_before_6ns", abs(pos.getTrack().getTrackTime()));
