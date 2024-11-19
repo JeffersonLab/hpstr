@@ -312,6 +312,7 @@ void PreSelectAndCategorize::setFile(TFile* out_file) {
   bus_.board_output<Vertex>(output_tree_.get(), "vertex");
   bus_.board_output<Particle>(output_tree_.get(), "ele");
   bus_.board_output<Particle>(output_tree_.get(), "pos");
+  bus_.board_output<double>(output_tree_.get(), "psum");
   for (const auto& name : {"eleL1","eleL2","posL1","posL2"}) {
     bus_.board_output<bool>(output_tree_.get(), name);
   }
@@ -492,6 +493,18 @@ bool PreSelectAndCategorize::process(IEvent*) {
   bus_.set("eleL2", eleL2);
   bus_.set("posL1", posL1);
   bus_.set("posL2", posL2);
+
+  TVector3 ele_mom(
+      ele_trk.getMomentum()[0],
+      ele_trk.getMomentum()[1],
+      ele_trk.getMomentum()[2]
+  );
+  TVector3 pos_mom(
+      pos_trk.getMomentum()[0],
+      pos_trk.getMomentum()[1],
+      pos_trk.getMomentum()[2]
+  );
+  bus_.set("psum", ele_mom.Mag()+pos_mom.Mag());
 
   // calculate target projection and its significance
   if (not v0proj_fits_.empty()) {
