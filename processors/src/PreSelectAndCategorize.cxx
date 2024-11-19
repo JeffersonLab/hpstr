@@ -330,17 +330,6 @@ void PreSelectAndCategorize::setFile(TFile* out_file) {
   }
 }
 
-double vec_sum_mag(const std::vector<double>& lhs, const std::vector<double>& rhs) {
-  if (lhs.size() != rhs.size()) {
-    throw std::runtime_error("vec_sum_mag got vectors of different lengths.");
-  }
-  double mag2{0.0};
-  for (std::size_t i{0}; i < lhs.size(); i++) {
-    mag2 += lhs.at(i)*lhs.at(i)+rhs.at(i)*rhs.at(i);
-  }
-  return sqrt(mag2);
-}
-
 bool PreSelectAndCategorize::process(IEvent*) {
   const auto& eh{bus_.get<EventHeader>("EventHeader")};
   int run_number = eh.getRunNumber();
@@ -437,6 +426,17 @@ bool PreSelectAndCategorize::process(IEvent*) {
     double pos_track_cluster_tdiff{
           abs(pos.getTrack().getTrackTime()-pos.getCluster().getTime())
     };
+    TVector3 ele_mom(
+        ele.getTrack().getMomentum()[0],
+        ele.getTrack().getMomentum()[1],
+        ele.getTrack().getMomentum()[2]
+    );
+    TVector3 pos_mom(
+        pos.getTrack().getMomentum()[0],
+        pos.getTrack().getMomentum()[1],
+        pos.getTrack().getMomentum()[2]
+    );
+
 
     vertex_cf_.begin_event();
     vertex_cf_.apply("abs_ele_track_before_6ns", abs(ele.getTrack().getTrackTime()) <= 6.0);
@@ -450,7 +450,7 @@ bool PreSelectAndCategorize::process(IEvent*) {
     vertex_cf_.apply("ele_min_8_hits", ele_nhits >= 7);
     vertex_cf_.apply("pos_min_8_hits", pos_nhits >= 7);
     vertex_cf_.apply("vertex_chi2", vtx->getChi2() <= 20.0);
-    double vtxmaxp = vec_sum_mag(ele.getTrack().getMomentum(), pos.getTrack().getMomentum());
+    double vtxmaxp = (ele_mom+pos_mom).Mag();
     vertex_cf_.apply("vtx_max_p_2.4GeV", vtxmaxp <= 2.4);
   
     vertex_cf_.fill_nm1("abs_ele_track_before_6ns", abs(ele.getTrack().getTrackTime()));
