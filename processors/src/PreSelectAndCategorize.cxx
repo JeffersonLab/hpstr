@@ -49,7 +49,7 @@ class Cutflow {
       throw std::runtime_error("Cannot add more cuts after init");
     }
     auto h = std::make_unique<TH1F>(
-                ("nm1_"+name+"_h").c_str(),
+                (name_+"_nm1_"+name+"_h").c_str(),
                 (name+" N-1").c_str(),
                 nbins, min, max
             );
@@ -134,6 +134,18 @@ class EventBus {
     }
   }
   template<typename BaggageType>
+  void board_output(std::vector<TTree*> trees, const std::string& name) {
+    if (bus_.isOnBoard(name)) {
+      throw std::runtime_error(name+" is already on board the bus.");
+    }
+    bus_.board<BaggageType>(name);
+    for (TTree* tree: trees) {
+      if (bus_.attach(tree, name, true) == 0) {
+        throw std::runtime_error("Unable to create branch "+name+" in output TTree.");
+      }
+    }
+  }
+  template<typename BaggageType>
   const BaggageType& get(const std::string& name) {
     return bus_.get<BaggageType>(name);
   }
@@ -159,7 +171,8 @@ class PreSelectAndCategorize : public Processor {
   virtual void finalize() final;
  private:
   EventBus bus_;
-  std::unique_ptr<TTree> output_tree_;
+  std::vector<std::string> rec_cat_names_{"l1l1","l1l2"};
+  std::map<std::string, std::unique_ptr<TTree>> output_trees_;
 
   std::string vtxColl_{"UnconstrainedV0Vertices_KF"};
   std::string mcColl_{"MCParticle"}; //!< description
@@ -168,8 +181,8 @@ class PreSelectAndCategorize : public Processor {
   double calTimeOffset_{0.0};
 
   Cutflow vertex_cf_{"vertex","reconstructed"};
-  Cutflow event_cf_{"event","readout"};
-  std::unique_ptr<TH2F> n_vertices_h_;
+  std::map<std::string, Cutflow> event_cf_;
+  std::map<std::string, std::unique_ptr<TH1F>> n_vertices_h_;
   std::shared_ptr<TrackSmearingTool> smearingTool_;
   std::shared_ptr<AnaHelpers> _ah; //!< description
 
@@ -282,39 +295,55 @@ void PreSelectAndCategorize::initialize(TTree* tree) {
   vertex_cf_.init();
   
   /* event selection after vertex selection */
-  event_cf_.add("pair1trigger", 2, -0.5, 1.5);
-  event_cf_.add("at_least_one_vertex", 10, 0.0, 10.0);
-  event_cf_.add("no_extra_vertices", 10, 0.0, 10.0);
-  if (isSignal_) {
-    event_cf_.add("at_least_one_true_vd", 3, 0.0, 2.0);
-    event_cf_.add("no_extra_true_vd", 3, 0.0, 2.0);
+  for (const auto& rcname: rec_cat_names_) {
+    auto [it, inserted] = event_cf_.emplace(
+        std::piecewise_construct,
+        std::forward_as_tuple(rcname),
+        std::forward_as_tuple(rcname+"_event","readout")
+    );
+    event_cf_.at(rcname).add("pair1trigger", 2, -0.5, 1.5);
+    event_cf_.at(rcname).add("at_least_one_"+rcname+"_vertex", 10, 0.0, 10.0);
+    event_cf_.at(rcname).add("no_extra_"+rcname+"_vertices", 10, 0.0, 10.0);
+    if (isSignal_) {
+      event_cf_.at(rcname).add("at_least_one_true_vd", 3, 0.0, 2.0);
+      event_cf_.at(rcname).add("no_extra_true_vd", 3, 0.0, 2.0);
+    }
+    event_cf_.at(rcname).init();
   }
-  event_cf_.init();
 
-  n_vertices_h_ = std::make_unique<TH2F>(
-      "n_vertices_h",
-      "N Vertices in Event (readout and preselected)",
-      10,-0.5,9.5,
-      10,-0.5,9.5
-  );
+  std::vector<std::string> count_names{"readout","preselected","l1l1","l1l2"};
+  for (const auto& cn : count_names) {
+    n_vertices_h_[cn] = std::make_unique<TH1F>(
+        ("n_"+cn+"_vertices_h").c_str(),
+        ("N "+cn+" Vertices in Event").c_str(),
+        10,-0.5,9.5
+    );
+  }
 }
 
 void PreSelectAndCategorize::setFile(TFile* out_file) {
   Processor::setFile(out_file);
   // create output TTree in output file
-  output_tree_ = std::make_unique<TTree>(
-      "preselection",
-      "PreSelected and Categorized Vertices",
-      99,
-      out_file
-  );
-  bus_.board_output<double>(output_tree_.get(), "weight");
-  bus_.board_output<Vertex>(output_tree_.get(), "vertex");
-  bus_.board_output<Particle>(output_tree_.get(), "ele");
-  bus_.board_output<Particle>(output_tree_.get(), "pos");
-  bus_.board_output<double>(output_tree_.get(), "psum");
+  std::vector<TTree*> tree_handles;
+  tree_handles.reserve(2);
+  for (const auto& rc: rec_cat_names_) {
+    output_trees_.emplace(
+        rc,
+        std::make_unique<TTree>(
+          (rc+"_preselection").c_str(),
+          (rc+" PreSelected and Categorized Vertices").c_str(),
+          99,
+          out_file
+        )
+    );
+    tree_handles.push_back(output_trees_[rc].get());
+  }
+  bus_.board_output<double>(tree_handles, "weight");
+  bus_.board_output<Vertex>(tree_handles, "vertex");
+  bus_.board_output<Particle>(tree_handles, "ele");
+  bus_.board_output<Particle>(tree_handles, "pos");
   for (const auto& name : {"eleL1","eleL2","posL1","posL2"}) {
-    bus_.board_output<bool>(output_tree_.get(), name);
+    bus_.board_output<bool>(tree_handles, name);
   }
   if (not v0proj_fits_.empty()) {
     for (const auto& name : {
@@ -322,27 +351,55 @@ void PreSelectAndCategorize::setFile(TFile* out_file) {
         "vtx_proj_x", "vtx_proj_x_sig",
         "vtx_proj_y", "vtx_proj_y_sig" 
     }) {
-      bus_.board_output<double>(output_tree_.get(), name);
+      bus_.board_output<double>(tree_handles, name);
     }
   }
   if (bus_.has(mcColl_) and isSignal_) {
-    bus_.board_output<MCParticle>(output_tree_.get(), "true_vd");
-    bus_.board_output<bool>(output_tree_.get(), "isRadEle");
+    bus_.board_output<MCParticle>(tree_handles, "true_vd");
+    bus_.board_output<bool>(tree_handles, "isRadEle");
   }
 }
+
+class RecoCategory {
+  bool eleL1;
+  bool eleL2;
+  bool posL1;
+  bool posL2;
+ public:
+  RecoCategory(std::shared_ptr<AnaHelpers> ah, Track ele, Track pos) {
+    ah->InnermostLayerCheck(&ele, this->eleL1, this->eleL2);
+    ah->InnermostLayerCheck(&pos, this->posL1, this->posL2);
+  }
+  bool l1l1() const {
+    return eleL1 and posL1;
+  }
+  bool l1l2() const {
+    //return (not l1l1()) and (eleL1 and posL2) or (eleL2 and posL1);
+    return (not l1l1()) and (eleL1 or posL1);
+  }
+  void set(EventBus& bus) const {
+    bus.set("eleL1", eleL1);
+    bus.set("eleL2", eleL2);
+    bus.set("posL1", posL1);
+    bus.set("posL2", posL2);
+  }
+};
 
 bool PreSelectAndCategorize::process(IEvent*) {
   const auto& eh{bus_.get<EventHeader>("EventHeader")};
   int run_number = eh.getRunNumber();
 
-  event_cf_.begin_event();
+  bool pair1trigger = (not isData_ or eh.isPair1Trigger());
+  for (auto& [rcname, cf]: event_cf_) {
+    cf.begin_event();
+    // re-apply trigger desicion to data sample since it contains
+    // other triggers within it
+    // MC is created with only this trigger AND the event header
+    // is not updated so we need to skip this check for MC
+    cf.apply("pair1trigger", pair1trigger);
+  }
 
-  // re-apply trigger desicion to data sample since it contains
-  // other triggers within it
-  // MC is created with only this trigger AND the event header
-  // is not updated so we need to skip this check for MC
-  event_cf_.apply("pair1trigger", (not isData_ or eh.isPair1Trigger()));
-  if (not event_cf_.keep()) {
+  if (not pair1trigger) {
     // we leave BEFORE filling the vertex counting histogram
     // so that the vertex count histogram is relative to this trigger
     // and does not include other triggers
@@ -363,7 +420,7 @@ bool PreSelectAndCategorize::process(IEvent*) {
    * to apply corrections and do not modify the collections referenced
    * elsewhere in memory.
    */
-  std::vector<std::tuple<Vertex,Particle,Particle>> preselected_vtx;
+  std::map<std::string, std::vector<std::tuple<Vertex,Particle,Particle,RecoCategory>>> preselected_vtx;
   for (Vertex* vtx : vtxs) {
     // access the indiviual Vertex, electron, and positron
     // and add corrections to them before applying pre-selection
@@ -468,141 +525,149 @@ bool PreSelectAndCategorize::process(IEvent*) {
     vertex_cf_.fill_nm1("vtx_max_p_2.4GeV", vtxmaxp);
   
     if (vertex_cf_.keep()) {
-      preselected_vtx.emplace_back(*vtx, ele, pos);
+      RecoCategory rc(_ah, ele.getTrack(), pos.getTrack());
+      std::string name{"other"};
+      if (rc.l1l1()) {
+        name = "l1l1";
+      } else if (rc.l1l2()) {
+        name = "l1l2";
+      }
+      preselected_vtx[name].emplace_back(*vtx, ele, pos, rc);
     }
   }
 
-  n_vertices_h_->Fill(vtxs.size(), preselected_vtx.size());
-  event_cf_.apply("at_least_one_vertex", preselected_vtx.size() > 0);
-  event_cf_.apply("no_extra_vertices", preselected_vtx.size() < 2);
-  if (not event_cf_.keep()) {
-    return true;
+  std::size_t n_preselected{0};
+  for (const auto& [rcname, vertices]: preselected_vtx) {
+    n_preselected += vertices.size();
   }
+
+  n_vertices_h_["readout"]->Fill(vtxs.size());
+  n_vertices_h_["preselected"]->Fill(n_preselected);
+  n_vertices_h_["l1l1"]->Fill(preselected_vtx["l1l1"].size());
+  n_vertices_h_["l1l2"]->Fill(preselected_vtx["l1l2"].size());
+
+  for (auto& [rcname, tree] : output_trees_) {
+    auto& vertices{preselected_vtx[rcname]};
+    event_cf_.at(rcname).apply("at_least_one_"+rcname+"_vertex", vertices.size() > 0);
+    event_cf_.at(rcname).apply("no_extra_"+rcname+"_vertices", vertices.size() < 2);
+    if (not event_cf_.at(rcname).keep()) {
+      // drop event and do not fill output tree for this reco category
+      continue;
+    }
   
-  // correct number of vertices (i.e. only one)
-  // unpack the vector of vertices into the single elements
-  auto [ vtx, ele, pos ] = preselected_vtx.at(0);
-
-  // earliest layer hit categories
-  bool eleL1{false}, eleL2{false},
-       posL1{false}, posL2{false};
-  Track ele_trk{ele.getTrack()}, pos_trk{pos.getTrack()};
-  _ah->InnermostLayerCheck(&ele_trk, eleL1, eleL2);
-  _ah->InnermostLayerCheck(&pos_trk, posL1, posL2);
-  bus_.set("eleL1", eleL1);
-  bus_.set("eleL2", eleL2);
-  bus_.set("posL1", posL1);
-  bus_.set("posL2", posL2);
-
-  TVector3 ele_mom(
-      ele_trk.getMomentum()[0],
-      ele_trk.getMomentum()[1],
-      ele_trk.getMomentum()[2]
-  );
-  TVector3 pos_mom(
-      pos_trk.getMomentum()[0],
-      pos_trk.getMomentum()[1],
-      pos_trk.getMomentum()[2]
-  );
-  bus_.set("psum", ele_mom.Mag()+pos_mom.Mag());
-
-  // calculate target projection and its significance
-  if (not v0proj_fits_.empty()) {
-    double vtx_proj_x{-1.0}, vtx_proj_y{-1.0},
-           vtx_proj_x_sig{-1.0}, vtx_proj_y_sig{-1.0},
-           vtx_proj_sig{-1.0};
-    vtx_proj_sig = utils::v0_projection_to_target_significance(
-        v0proj_fits_, eh.getRunNumber(),
-        vtx_proj_x, vtx_proj_y, vtx_proj_x_sig, vtx_proj_y_sig,
-        vtx.getX(), vtx.getY(), vtx.getZ(),
-        vtx.getP().X(), vtx.getP().Y(), vtx.getP().Z()
-    );
-    bus_.set("vtx_proj_sig", vtx_proj_sig);
-    bus_.set("vtx_proj_x", vtx_proj_x);
-    bus_.set("vtx_proj_x_sig", vtx_proj_x_sig);
-    bus_.set("vtx_proj_y", vtx_proj_y);
-    bus_.set("vtx_proj_y_sig", vtx_proj_y_sig);
-  }
-
-  bus_.set("weight", 1.);
-  bus_.set("vertex", vtx);
-  bus_.set("ele", ele);
-  bus_.set("pos", pos);
-
-  /**
-   * This is where the output TTree is filled,
-   * if we leave before this point, then the event will not
-   * be kept as part of pre-selection.
-   *
-   * We wait until here to copy over the MCParticles to avoid
-   * unnecessary copying if the event is not going to be kept
-   * anyways.
-   */
-  if (bus_.has(mcColl_) and isSignal_) {
-    /**
-     * Before we loop through the MCParticles we go through the
-     * the hits on the electron track in this vertex and find out
-     * which MCParticle has the most hits on the track.
-     */
-    std::map<int, int> count_per_particle_id;
-    for (const auto& [layer_id, particle_id] : ele_trk.getMcpHits()) {
-      if (count_per_particle_id.find(particle_id) == count_per_particle_id.end()) {
-        count_per_particle_id[particle_id] = 0;
-      }
-      count_per_particle_id[particle_id]++;
-    }
-    int truth_ele_id{-1}, max_nhits{0};
-    for (const auto& [particle_id, count] : count_per_particle_id) {
-      if (count > max_nhits) {
-        truth_ele_id = particle_id;
-        max_nhits = count;
-      }
-    }
-    /**
-     * The implementation of the beam-overlay mechanism very rarely causes two
-     * signal events to occur within the same software event (or no signal event
-     * to happen at all). The complexity of handling these cases is too high and
-     * the rarity (both in simulation and expected due to small cross section)
-     * motivates just removing these events from the sample.
-     *
-     * The warnings are still printed so an estimate on the number of events being
-     * dropped can be retrieved from the logs.
-     */
-    const auto& mc_ptr{bus_.get<std::vector<MCParticle*>>(mcColl_)};
-    MCParticle* vd{nullptr};
-    int n_vd{0};
-    bool ele_is_rad_ele{false};
-    for (MCParticle* ptr : mc_ptr) {
-      if (ptr->getPDG() == 625) {
-        n_vd++;
-        vd = ptr;
-      } else if (ptr->getID() == truth_ele_id) {
-        ele_is_rad_ele = (ptr->getMomPDG() == 625);
-      }
-    }
-    event_cf_.apply("at_least_one_true_vd", n_vd > 0);
-    event_cf_.apply("no_extra_true_vd", n_vd < 2);
-    if (not event_cf_.keep()) {
-      return true;
-    }
-    if (not vd) {
-      throw std::runtime_error(
-          "ERROR: Logic error: checked for VD earlier but there isn't one."
+    // correct number of vertices (i.e. only one)
+    // unpack the vector of vertices into the single elements
+    auto [ vtx, ele, pos, rc ] = vertices.at(0);
+    
+    // copy reco-category booleans into output bus
+    rc.set(bus_);
+  
+    // calculate target projection and its significance
+    if (not v0proj_fits_.empty()) {
+      double vtx_proj_x{-1.0}, vtx_proj_y{-1.0},
+             vtx_proj_x_sig{-1.0}, vtx_proj_y_sig{-1.0},
+             vtx_proj_sig{-1.0};
+      vtx_proj_sig = utils::v0_projection_to_target_significance(
+          v0proj_fits_, eh.getRunNumber(),
+          vtx_proj_x, vtx_proj_y, vtx_proj_x_sig, vtx_proj_y_sig,
+          vtx.getX(), vtx.getY(), vtx.getZ(),
+          vtx.getP().X(), vtx.getP().Y(), vtx.getP().Z()
       );
+      bus_.set("vtx_proj_sig", vtx_proj_sig);
+      bus_.set("vtx_proj_x", vtx_proj_x);
+      bus_.set("vtx_proj_x_sig", vtx_proj_x_sig);
+      bus_.set("vtx_proj_y", vtx_proj_y);
+      bus_.set("vtx_proj_y_sig", vtx_proj_y_sig);
     }
-    bus_.set("true_vd", *vd);
-    bus_.set("isRadEle", ele_is_rad_ele);
-  }
-  output_tree_->Fill();
+  
+    bus_.set("weight", 1.);
+    bus_.set("vertex", vtx);
+    bus_.set("ele", ele);
+    bus_.set("pos", pos);
+
+    /**
+     * This is where the output TTree is filled,
+     * if we leave before this point, then the event will not
+     * be kept as part of pre-selection.
+     *
+     * We wait until here to copy over the MCParticles to avoid
+     * unnecessary copying if the event is not going to be kept
+     * anyways.
+     */
+    if (bus_.has(mcColl_) and isSignal_) {
+      /**
+       * Before we loop through the MCParticles we go through the
+       * the hits on the electron track in this vertex and find out
+       * which MCParticle has the most hits on the track.
+       */
+      std::map<int, int> count_per_particle_id;
+      for (const auto& [layer_id, particle_id] : ele.getTrack().getMcpHits()) {
+        if (count_per_particle_id.find(particle_id) == count_per_particle_id.end()) {
+          count_per_particle_id[particle_id] = 0;
+        }
+        count_per_particle_id[particle_id]++;
+      }
+      int truth_ele_id{-1}, max_nhits{0};
+      for (const auto& [particle_id, count] : count_per_particle_id) {
+        if (count > max_nhits) {
+          truth_ele_id = particle_id;
+          max_nhits = count;
+        }
+      }
+      /**
+       * The implementation of the beam-overlay mechanism very rarely causes two
+       * signal events to occur within the same software event (or no signal event
+       * to happen at all). The complexity of handling these cases is too high and
+       * the rarity (both in simulation and expected due to small cross section)
+       * motivates just removing these events from the sample.
+       *
+       * The removal of these events are still counted within the signal cutflow
+       * so they can be confirmed to have a small impact.
+       */
+      const auto& mc_ptr{bus_.get<std::vector<MCParticle*>>(mcColl_)};
+      MCParticle* vd{nullptr};
+      int n_vd{0};
+      bool ele_is_rad_ele{false};
+      for (MCParticle* ptr : mc_ptr) {
+        if (ptr->getPDG() == 625) {
+          n_vd++;
+          vd = ptr;
+        } else if (ptr->getID() == truth_ele_id) {
+          ele_is_rad_ele = (ptr->getMomPDG() == 625);
+        }
+      }
+      event_cf_.at(rcname).apply("at_least_one_true_vd", n_vd > 0);
+      event_cf_.at(rcname).apply("no_extra_true_vd", n_vd < 2);
+      if (not event_cf_.at(rcname).keep()) {
+        continue;
+      }
+      if (not vd) {
+        throw std::runtime_error(
+            "ERROR: Logic error: checked for VD earlier but there isn't one."
+        );
+      }
+      bus_.set("true_vd", *vd);
+      bus_.set("isRadEle", ele_is_rad_ele);
+    } // if signal, get more truth information
+
+    tree->Fill();
+  } // loop over reco categories
+
   return true;
 }
 
 void PreSelectAndCategorize::finalize() {
   outF_->cd();
-  output_tree_->Write();
-  n_vertices_h_->Write();
+  for (auto& [rcname, tree]: output_trees_) {
+    tree->Write();
+  }
+  for (auto& [_name, h]: n_vertices_h_) {
+    h->Write();
+  }
   vertex_cf_.save();
-  event_cf_.save();
+  for (auto& [rcname, cf]: event_cf_) {
+    cf.save();
+  }
 }
 
 DECLARE_PROCESSOR(PreSelectAndCategorize);
