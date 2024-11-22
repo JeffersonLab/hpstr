@@ -218,7 +218,9 @@ void PreSelectAndCategorize::configure(const ParameterSet& parameters) {
       /**
        * Alic has updated to be what is shown below,
        * but in the same update, stopped using the beamspot corrections
-       * anywhere in the analyzer
+       * anywhere in the analyzer.
+       * The only JSON data file in hpstr on his branch with these keys
+       * is the v0 projection fits config for the simulation samples.
       beamspot_corrections_[std::stoi(run)] = {
         entry["unrotated_mean_x"],
         entry["unrotated_mean_y"]
@@ -400,6 +402,33 @@ bool PreSelectAndCategorize::process(IEvent*) {
     for (const auto& [name, corr]: track_corrections_) {
       ele_trk.applyCorrection(name, corr);
       pos_trk.applyCorrection(name, corr);
+    }
+
+    if (not beamspot_corrections_.empty()) {
+      /**
+       * When the user provides a set of beamspot corrections,
+       * we apply them to the tracks in a vertex shifting the
+       * track_z0 by the beamspot y.
+       * (Same direction just different coordinate names.)
+       *
+       * This is separate from the track_corrections_ because,
+       * for real data, the beamspot_corrections_ change run-by-run
+       * while for simulation samples, they do not.
+       */
+      auto bsit = beamspot_corrections_.find(eh.getRunNumber());
+      if (bsit == beamspot_corrections_.end()) {
+        // the current run number is not in the provided set of beamspots
+        // I don't think this should be the case, so I'm throwing an exception.
+        // We could also just pick the closest run number which is what
+        // the V0 projection fit code does.
+        throw std::runtime_error("The run number "+std::to_string(eh.getRunNumber())
+            +" is not in the loaded set of beamspot corrections.");
+      }
+      // assume iterator bsit is pointing to an element of beamspot_corrections_
+      // for the current run number.
+      double bs_y = bsit->second.at(1);
+      ele_trk.applyCorrection("track_z0", bs_y);
+      pos_trk.applyCorrection("track_z0", bs_y);
     }
   
     // smear track momentum
