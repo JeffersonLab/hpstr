@@ -414,6 +414,12 @@ bool PreSelectAndCategorize::process(IEvent*) {
        * This is separate from the track_corrections_ because,
        * for real data, the beamspot_corrections_ change run-by-run
        * while for simulation samples, they do not.
+       *
+       * In the samples inherited from Alic and the L1L1 analysis,
+       * these beamspot corrections were applied earlier in the
+       * chain for data and so do not need to be re-applied at this level;
+       * however, I am leaving this code here since it was helpful to
+       * confirm this.
        */
       auto bsit = beamspot_corrections_.find(eh.getRunNumber());
       if (bsit == beamspot_corrections_.end()) {
@@ -426,7 +432,8 @@ bool PreSelectAndCategorize::process(IEvent*) {
       }
       // assume iterator bsit is pointing to an element of beamspot_corrections_
       // for the current run number.
-      double bs_y = bsit->second.at(1);
+      // correction is the negative of the beamspot position to remove its shift
+      double bs_y = -1*bsit->second.at(1);
       ele_trk.applyCorrection("track_z0", bs_y);
       pos_trk.applyCorrection("track_z0", bs_y);
     }
