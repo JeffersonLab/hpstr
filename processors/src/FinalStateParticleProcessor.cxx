@@ -148,6 +148,7 @@ bool FinalStateParticleProcessor::process(IEvent* ievent) {
                 // loop on j>i tracks
             }
             fsp->setTrack(track);
+            delete track;	    
         }   
          
         if (debug_ > 0) std::cout << "FinalStateParticleProcessor: Add Particle" << std::endl;

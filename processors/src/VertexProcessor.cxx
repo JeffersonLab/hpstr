@@ -195,11 +195,15 @@ bool VertexProcessor::process(IEvent* ievent) {
 
                     track->addHitLayer(hitLayer);
                     hits_.push_back(tracker_hit);
-                    rawSvthitsOn3d.clear();
+                    for (std::vector<RawSvtHit *>::iterator it = rawSvthitsOn3d.begin(); it != rawSvthitsOn3d.end(); ++it) {
+                      delete *it;
+                    }
+                    rawSvthitsOn3d.clear();		    
                     // loop on j>i tracks
                 }
                 track->setTrackerHitCount(nHits);
                 part->setTrack(track);
+		delete track;
             }
             //=============================================
             if (debug_ > 0) std::cout << "VertexProcessor: Add particle" << std::endl;
