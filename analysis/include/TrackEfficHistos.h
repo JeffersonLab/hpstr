@@ -35,9 +35,16 @@ class TrackEfficHistos : public HistoManager {
 				float weight); 
     std::pair<CalCluster*, Track*> getClusterTrackPair(CalCluster* cluster,std::vector<Track*>& tracks, float weight=1.0);
     void FillEffPlots(Particle* ele, 	Particle* pos,  float weight=1.0);
-  private:
-    std::shared_ptr<AnaHelpers> _ah ;
-    // Vertices
+  void SetCalTimeOffset(double offset){
+    std::cout<<"setting TrackEfficHistos::timeOffset_ = "<<offset<<std::endl;
+    timeOffset_ = offset;
+  };
+
+  
+private:
+  std::shared_ptr<AnaHelpers> _ah ;
+  double timeOffset_{0.0}; 
+  // Vertices
     //        std::vector<std::string> vPs{"vtx_chi2", "vtx_X", "vtx_Y", "vtx_Z", "vtx_sigma_X","vtx_sigma_Y","vtx_sigma_Z","vtx_InvM","vtx_InvMErr"};
     
     //bool doTrkCompPlots{false};

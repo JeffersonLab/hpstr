@@ -22,9 +22,9 @@ void TrackEfficiencyProcessor::configure(const ParameterSet& parameters) {
     {
         debug_   = parameters.getInteger("debug");
         anaName_ = parameters.getString("anaName");
-        cluColl_ = parameters.getString("cluColl");
+	//        cluColl_ = parameters.getString("cluColl");
         fspartColl_ = parameters.getString("fspartColl");
-        trkColl_ = parameters.getString("trkColl");
+	//        trkColl_ = parameters.getString("trkColl");
 	//	trkSelCfg_   = parameters.getString("trkSelectionjson");
         cluSelCfg_   = parameters.getString("cluSelectionjson");
         cluHistoCfg_ = parameters.getString("cluHistoCfg");
@@ -60,6 +60,8 @@ void TrackEfficiencyProcessor::initialize(TTree* tree) {
     std::cout<<"Setting up cluster selection"<<std::endl;
     _trkeff_histos = std::make_shared<TrackEfficHistos>("clusterSelection",_ah);
     _trkeff_histos->loadHistoConfig(cluHistoCfg_);
+    std::cout<<"Setting cal time offset in histograms to "<<timeOffset_<<std::endl;
+    _trkeff_histos->SetCalTimeOffset(timeOffset_);
     _trkeff_histos->DefineHistos();
     
     
@@ -90,17 +92,19 @@ void TrackEfficiencyProcessor::initialize(TTree* tree) {
        _reg_three_prong_trkeff_histos[regname] = std::make_shared<ThreeProngHistos>(regname);
        _reg_three_prong_trkeff_histos[regname]->loadHistoConfig(thrProngCfg_);
        _reg_three_prong_trkeff_histos[regname]->DefineHistos();
+       _reg_three_prong_trkeff_histos[regname]->setBeamEnergy(beamE_);
        
        _three_prong_regions.push_back(regname);
      }
     
      
      //init Reading Tree
-     tree_->SetBranchAddress(cluColl_.c_str(), &clus_ , &bclus_);
      tree_->SetBranchAddress(fspartColl_.c_str(), &fspart_ , &bfspart_);
      tree_->SetBranchAddress("EventHeader",&evth_ , &bevth_);
     
-     //If track collection name is empty take the tracks from the particles. TODO:: change this
+     //If track and/or cluster collection name is empty take the tracks from the particles.
+     if (!cluColl_.empty())
+       tree_->SetBranchAddress(cluColl_.c_str(),&clus_, &bclus_);
      if (!trkColl_.empty())
        tree_->SetBranchAddress(trkColl_.c_str(),&trks_, &btrks_);
 }
@@ -116,23 +120,23 @@ bool TrackEfficiencyProcessor::process(IEvent* ievent) {
     std::vector<Particle*> goodEleSide;
     std::vector<Particle*> goodPosSide;
     std::vector<Particle*> goodAll;
-    int nClustersAll=clus_->size();
-    _trkeff_histos->Fill1DHisto("nClusters_all_h",clus_->size());
 
 
     //    std::cout<<"Number of final state particles = "<<fspart_->size()<<std::endl;
     // std::cout<<"Number of clusters = "<<clus_->size()<<std::endl;
-    int n_pass_trig_time=0;
-    
+    int n_pass_clus_time=0;
+    int n_clusters_event=0;
     for(int i_part=0;i_part<fspart_->size();i_part++){
       Particle* part=fspart_->at(i_part);
       CalCluster cluster=part->getCluster();
       //std::cout<<"Number of hits in cluster = "<<cluster.getNHits()<<std::endl;
-      //if(cluster.getNHits()==0)
-      //   continue; //this means there was no cluster in this particle
+      if(cluster.getNHits()>0)
+	n_clusters_event++;
 
-      //std::cout<<"passed the cluster nhits...so there is a cluster with hits..."<<std::endl;
-      //these cuts with cut out "clusters" that just have the initialization values...still not sure why we don't use pointers. 
+      // loose cuts on the cluster energy and time...
+      //  these will also select only those particles with clusters
+      //  unmatched clusters are ok, no unmatched tracks though
+      //      std::cout<<"cluster time = "<<cluster.getTime()<<"; offset is "<<timeOffset_<<std::endl;
       if (!cluSelector->passCutGt("cluEne_gt",cluster.getEnergy(),weight))
 	continue;
       if (!cluSelector->passCutLt("cluTime_lt",cluster.getTime()-timeOffset_,weight))
@@ -151,10 +155,11 @@ bool TrackEfficiencyProcessor::process(IEvent* ievent) {
       } else {
 	goodEleSide.push_back(part);
       }      
-      n_pass_trig_time++;
+      n_pass_clus_time++;
       _trkeff_histos->FillPreSelectionPlots(&cluster,weight); 
       
     }
+    _trkeff_histos->Fill1DHisto("nClusters_all_h",n_clusters_event);
 
     /*
     for (int i_clu=0;i_clu<clus_->size(); i_clu++){
@@ -183,7 +188,7 @@ bool TrackEfficiencyProcessor::process(IEvent* ievent) {
       _trkeff_histos->FillPreSelectionPlots(cluster,weight);      
     }
     */
-    _trkeff_histos->Fill1DHisto("nClusters_pass_trig_time_h",n_pass_trig_time);
+    _trkeff_histos->Fill1DHisto("nClusters_pass_trig_time_h",n_pass_clus_time);
 
     //cluster pair candidates
     std::vector<TridentCand> triPairs;
@@ -277,9 +282,7 @@ bool TrackEfficiencyProcessor::process(IEvent* ievent) {
             foundExistingPronger=true; 
           //          std::cout<<"found an exising pronger...."<<std::endl;
         }
-        if(!foundExistingPronger){
-          
-          
+        if(!foundExistingPronger){                    
           ThreeProngCand this3Pronger={partEle,partPos,partRec};
           if(cluRecEne>cluEleEne)//flip the order so highest energy "electron" is labeled "ele" and lowest is "recoil"
             this3Pronger={partRec,partPos,partEle};
@@ -304,9 +307,9 @@ bool TrackEfficiencyProcessor::process(IEvent* ievent) {
 	bool isFiducialPositron=_ah->IsECalFiducial(&positron);
         double clusterESum=electron.getEnergy()+positron.getEnergy();        
 
-        if (!_reg_trkeff_selectors[region]->passCutLt("nClustersCut",nClustersAll,weight))
+        if (!_reg_trkeff_selectors[region]->passCutLt("nClustersCut",n_clusters_event,weight))
           continue;
-        if (!_reg_trkeff_selectors[region]->passCutLt("nClustersTrigTimeCut",n_pass_trig_time,weight))
+        if (!_reg_trkeff_selectors[region]->passCutLt("nClustersTrigTimeCut",n_pass_clus_time,weight))
           continue;
         if (!_reg_trkeff_selectors[region]->passCutGt("cluESum",clusterESum,weight))
           continue;
@@ -346,9 +349,9 @@ bool TrackEfficiencyProcessor::process(IEvent* ievent) {
         double clusterESum=electron.getEnergy()+positron.getEnergy()+recoil.getEnergy();        
         std::cout<<"three pronger eSum = "<<clusterESum<<std::endl;
 
-        if (!_reg_three_prong_trkeff_selectors[region]->passCutLt("nClustersCut",nClustersAll,weight))
+        if (!_reg_three_prong_trkeff_selectors[region]->passCutLt("nClustersCut",n_clusters_event,weight))
           continue;
-        if (!_reg_three_prong_trkeff_selectors[region]->passCutLt("nClustersTrigTimeCut",n_pass_trig_time,weight))
+        if (!_reg_three_prong_trkeff_selectors[region]->passCutLt("nClustersTrigTimeCut",n_pass_clus_time,weight))
           continue;
         if (!_reg_three_prong_trkeff_selectors[region]->passCutGt("cluESum",clusterESum,weight))
           continue;

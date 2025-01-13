@@ -27,12 +27,12 @@ class ThreeProngHistos : public HistoManager {
     
 
     void BuildAxes(){};
-    
+  void setBeamEnergy(double beamEnergy){eBeam=beamEnergy;};
     void FillThreeProngPlots(Particle* ele, 	Particle* pos,  Particle* rec,float weight=1.0);
  private:
     // Vertices
     //        std::vector<std::string> vPs{"vtx_chi2", "vtx_X", "vtx_Y", "vtx_Z", "vtx_sigma_X","vtx_sigma_Y","vtx_sigma_Z","vtx_InvM","vtx_InvMErr"};
-    
+  double eBeam{3.74};
     //bool doTrkCompPlots{false};
     
 };

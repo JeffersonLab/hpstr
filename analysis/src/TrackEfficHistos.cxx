@@ -160,7 +160,8 @@ void TrackEfficHistos::FillPreSelectionPlots(CalCluster* clu,
 
     
   //  std::cout<<"FillPreSelectionPlots::filling plots"<<std::endl;
-  Fill1DHisto("clTime_preselect_h",clu->getTime(),weight);
+  Fill1DHisto("clTime_preselect_h",clu->getTime()-timeOffset_,weight);
+  //  Fill1DHisto("clTime_preselect_h",clu->getTime(),weight);
   Fill1DHisto("clE_preselect_h",clu->getEnergy(),weight);
   Fill1DHisto("clX_preselect_h",clu->getPosition().at(0),weight);
   Fill1DHisto("clY_preselect_h",clu->getPosition().at(1),weight);
@@ -189,8 +190,10 @@ void TrackEfficHistos::FillPairSelectionPlots(CalCluster* eleClu, CalCluster* po
   double clTimeDiff=eleClu->getTime()-posClu->getTime();
   double eSum=eleClu->getEnergy()+posClu->getEnergy();
 
-  Fill1DHisto("clTime_ele_allpairs_h",eleClu->getTime(),weight);
-  Fill1DHisto("clTime_pos_allpairs_h",posClu->getTime(),weight);
+  Fill1DHisto("clTime_ele_allpairs_h",eleClu->getTime()-timeOffset_,weight);
+  Fill1DHisto("clTime_pos_allpairs_h",posClu->getTime()-timeOffset_,weight);
+  //Fill1DHisto("clTime_ele_allpairs_h",eleClu->getTime(),weight);
+  //Fill1DHisto("clTime_pos_allpairs_h",posClu->getTime(),weight);
   Fill1DHisto("clTime_eleMinusPos_allpairs_h",clTimeDiff,weight);
 
 }

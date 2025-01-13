@@ -450,7 +450,7 @@
         "xtitle" : "Electron Track Momentum (GeV)",
         "ytitle" : "Tracks"
     },
-      "trkEoverP_ele_misspos_foundele_foundrec_h":{
+    "trkEoverP_ele_misspos_foundele_foundrec_h":{
         "bins"   : 50,
         "minX"   : 0,
         "maxX"   : 1.5,
@@ -794,6 +794,92 @@
         "xtitle" : "Number of Tracks in Event",
         "ytitle" : "Events"
     },
+
+    "trkP_sum_foundpos_foundele_foundrec_h":{
+	"bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.2,
+        "xtitle" : "3-Prong Track Momentum Sum (GeV)",
+        "ytitle" : "Tracks"
+    },
+    "trkPX_sum_foundpos_foundele_foundrec_h":{
+	"bins"   : 50,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "xtitle" : "3-Prong Track X-Momentum Sum (GeV)",
+        "ytitle" : "Tracks"
+    },
+   "trkPY_sum_foundpos_foundele_foundrec_h":{
+	"bins"   : 50,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "xtitle" : "3-Prong Track Y-Momentum Sum (GeV)",
+        "ytitle" : "Tracks"
+    },  
+    "trkP_miss_foundpos_foundele_missrec_h":{
+	"bins"   : 50,
+        "minX"   : -0.5,
+        "maxX"   : 4.2,
+        "xtitle" : "3-Prong Track Missing Momentum (GeV)",
+        "ytitle" : "Tracks"
+    },
+    
+    "trkP_miss_foundpos_missele_foundrec_h":{
+	"bins"   : 50,
+        "minX"   : -0.5,
+        "maxX"   : 4.2,
+        "xtitle" : "3-Prong Track Missing Momentum (GeV)",
+        "ytitle" : "Tracks"
+    },
+    "trkP_miss_misspos_foundele_foundrec_h":{
+	"bins"   : 50,
+        "minX"   : -0.5,
+        "maxX"   : 4.2,
+        "xtitle" : "3-Prong Track Missing Momentum (GeV)",
+        "ytitle" : "Tracks"
+    },
+    "trkPX_miss_foundpos_missele_foundrec_h":{
+	"bins"   : 50,
+        "minX"   : -0.4,
+        "maxX"   : 0.4,
+        "xtitle" : "3-Prong Track Missing X-Momentum  (GeV)",
+        "ytitle" : "Tracks"
+    },
+    "trkPX_miss_foundpos_foundele_missrec_h":{
+	"bins"   : 50,
+        "minX"   : -0.4,
+        "maxX"   : 0.4,
+        "xtitle" : "3-Prong Track Missing X-Momentum  (GeV)",
+        "ytitle" : "Tracks"
+    },
+    "trkPX_miss_misspos_foundele_foundrec_h":{
+	"bins"   : 50,
+        "minX"   : -0.4,
+        "maxX"   : 1.0,
+        "xtitle" : "3-Prong Track Missing X-Momentum  (GeV)",
+        "ytitle" : "Tracks"
+    },
+   "trkPY_miss_foundpos_missele_foundrec_h":{
+	"bins"   : 50,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "xtitle" : "3-Prong Track Missing Y-Momentum  (GeV)",
+        "ytitle" : "Tracks"
+   },
+    "trkPY_miss_foundpos_foundele_missrec_h":{
+	"bins"   : 50,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "xtitle" : "3-Prong Track Missing Y-Momentum  (GeV)",
+        "ytitle" : "Tracks"
+    },
+    "trkPY_miss_misspos_foundele_foundrec_h":{
+	"bins"   : 50,
+        "minX"   : -0.2,
+        "maxX"   : 0.2,
+        "xtitle" : "3-Prong Track Missing Y-Momentum  (GeV)",
+        "ytitle" : "Tracks"
+    },    
     "clY_vs_clE_ele_misspos_missele_missrec_hh" : {
         "binsX"  : 50,
         "minX"   : 0,
@@ -1243,6 +1329,16 @@
         "maxY"   : 4.5,
         "xtitle" : "Recoil Cluster Energy (GeV)",
         "ytitle" : "Recoil Cluster Y (mm)"
+    },
+    "clE_sum_vs_trkP_sum_foundpos_foundele_foundrec_hh":{
+	"binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 50,
+        "minY"   : 0,
+        "maxY"   : 4.5,
+        "xtitle" : "3-Prong Track Momentum Sum (GeV)",
+        "ytitle" : "3-Prong Cluster Energy Sum (GeV)"
     }
 
 }

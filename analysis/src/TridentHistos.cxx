@@ -234,7 +234,6 @@ void TridentHistos::Fill1DVertex(Vertex* vtx,
     Fill1DHisto(layerCode+posTag+"vtx_pz_vc_h",vtx->getP().Z());
     Fill1DHisto(layerCode+posTag+"vtx_p_vc_h" ,vtx->getP().Mag());
     Fill1DHisto(layerCode+posTag+"vtx_p_std_vc_h" ,vtx->getP().Mag()*(stdBeamEnergy_/eBeam_));
-
     TLorentzVector p_ele;
     //p_ele.SetPxPyPzE(ele->getMomentum()[0], ele->getMomentum()[1],ele->getMomentum()[2],ele->getEnergy());
     p_ele.SetPxPyPzE(ele_trk->getMomentum()[0],ele_trk->getMomentum()[1],ele_trk->getMomentum()[2],ele->getEnergy());

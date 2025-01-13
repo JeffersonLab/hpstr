@@ -68,21 +68,37 @@ void ThreeProngHistos::FillThreeProngPlots(Particle* ele,
   double recX=recClu.getPosition().at(0);
   double recY=recClu.getPosition().at(1);
   double recZ=recClu.getPosition().at(2);
-  double esum=eleE+posE+recE; 
-  double eleTrkMom=eleTrk.getMomentum()[2];
-  double posTrkMom=posTrk.getMomentum()[2];
-  double recTrkMom=recTrk.getMomentum()[2];
+  double esum=eleE+posE+recE;
+  //track momentum
+  TVector3 eleP(eleTrk.getMomentum()[0],eleTrk.getMomentum()[1],eleTrk.getMomentum()[2]);
+  TVector3 posP(posTrk.getMomentum()[0],posTrk.getMomentum()[1],posTrk.getMomentum()[2]);
+  TVector3 recP(recTrk.getMomentum()[0],recTrk.getMomentum()[1],recTrk.getMomentum()[2]);
+
+  double eleTrkMom=eleP.Mag();
+  double posTrkMom=posP.Mag();
+  double recTrkMom=recP.Mag();
+  if(eleTrkMom>666)
+    eleP.SetXYZ(0,0,0);
+  if(posTrkMom>666)
+    posP.SetXYZ(0,0,0);
+  if(recTrkMom>666)
+    recP.SetXYZ(0,0,0);
+  
+  TVector3 sumP=eleP+posP+recP;
+  
+  double pSum=sumP.Mag();
+  double pYSum=sumP.Py();
+  double pXSum=sumP.Px();
+  std::cout<<"p Sum = "<<pSum<<"; E beam = "<<eBeam<<std::endl;
  //roughly the amount of "energy in E"...true for photons, approximation for charged tracks
   double eleClYEne=sin(atan2(eleY,eleZ))*eleE; 
   double posClYEne=sin(atan2(posY,posZ))*posE; 
   double recClYEne=sin(atan2(recY,recZ))*recE; 
   double netClYEne=posClYEne+eleClYEne+recClYEne; 
   bool electronsSameHalf=false;
-  if(eleY*recY)
+  if(eleY*recY>0)
     electronsSameHalf=true;
 
-
-  std::string threeProngDir="/threeProngers/";
 
   Fill1DHisto("clE_sum_allpos_allele_allrec_h",esum);
   Fill1DHisto("clNet_EY_allpos_allele_allrec_h",netClYEne);
@@ -129,6 +145,12 @@ void ThreeProngHistos::FillThreeProngPlots(Particle* ele,
     Fill1DHisto("trkMom_rec_foundpos_foundele_foundrec_h",recTrkMom,weight);
     Fill1DHisto("trkEoverP_rec_foundpos_foundele_foundrec_h",recE/recTrkMom,weight);
 
+    Fill1DHisto("trkP_sum_foundpos_foundele_foundrec_h",pSum);
+    Fill1DHisto("trkPX_sum_foundpos_foundele_foundrec_h",pXSum);
+    Fill1DHisto("trkPY_sum_foundpos_foundele_foundrec_h",pYSum);
+
+    Fill2DHisto("clE_sum_vs_trkP_sum_foundpos_foundele_foundrec_hh",pSum,esum);
+            
   }
   if(!hasRecoilTrack&&hasPositronTrack&&hasElectronTrack){
     Fill1DHisto("clE_sum_foundpos_foundele_missrec_h",esum);
@@ -159,7 +181,11 @@ void ThreeProngHistos::FillThreeProngPlots(Particle* ele,
     Fill1DHisto("trkEoverP_ele_foundpos_foundele_missrec_h",eleE/eleTrkMom,weight);
     Fill1DHisto("nHits_pos_foundpos_foundele_missrec_h",posTrkNHits,weight);
     Fill1DHisto("trkMom_pos_foundpos_foundele_missrec_h",posTrkMom,weight);
-    Fill1DHisto("trkEoverP_pos_foundpos_foundele_missrec_h",posE/posTrkMom,weight);  
+    Fill1DHisto("trkEoverP_pos_foundpos_foundele_missrec_h",posE/posTrkMom,weight);
+
+    Fill1DHisto("trkP_miss_foundpos_foundele_missrec_h",eBeam-pSum,weight); //this should be recoil p
+    Fill1DHisto("trkPX_miss_foundpos_foundele_missrec_h",-pXSum,weight); //I think I need to rotate
+    Fill1DHisto("trkPY_miss_foundpos_foundele_missrec_h",-pYSum,weight); //this should be -ive recoil pY
   }
   if(hasRecoilTrack&&!hasPositronTrack&&hasElectronTrack){
     Fill1DHisto("clE_sum_misspos_foundele_foundrec_h",esum);
@@ -192,6 +218,9 @@ void ThreeProngHistos::FillThreeProngPlots(Particle* ele,
     Fill1DHisto("trkMom_rec_misspos_foundele_foundrec_h",recTrkMom,weight);
     Fill1DHisto("trkEoverP_rec_misspos_foundele_foundrec_h",recE/recTrkMom,weight);
 
+    Fill1DHisto("trkP_miss_misspos_foundele_foundrec_h",eBeam-pSum,weight); //this should be recoil p
+    Fill1DHisto("trkPX_miss_misspos_foundele_foundrec_h",-pXSum,weight); //I think I need to rotate
+    Fill1DHisto("trkPY_miss_misspos_foundele_foundrec_h",-pYSum,weight); //this should be -ive recoil pY
   }
   if(hasRecoilTrack&&hasPositronTrack&&!hasElectronTrack){
     Fill1DHisto("clE_sum_foundpos_missele_foundrec_h",esum);
@@ -223,6 +252,11 @@ void ThreeProngHistos::FillThreeProngPlots(Particle* ele,
     Fill1DHisto("nHits_rec_foundpos_missele_foundrec_h",recTrkNHits,weight);
     Fill1DHisto("trkMom_rec_foundpos_missele_foundrec_h",recTrkMom,weight);
     Fill1DHisto("trkEoverP_rec_foundpos_missele_foundrec_h",recE/recTrkMom,weight);
+
+    Fill1DHisto("trkP_miss_foundpos_missele_foundrec_h",eBeam-pSum,weight); //this should be recoil p
+    Fill1DHisto("trkPX_miss_foundpos_missele_foundrec_h",-pXSum,weight); //I think I need to rotate
+    Fill1DHisto("trkPY_miss_foundpos_missele_foundrec_h",-pYSum,weight); //this should be -ive recoil pY
+
 
   }
  if(!hasRecoilTrack&&hasPositronTrack&&!hasElectronTrack){

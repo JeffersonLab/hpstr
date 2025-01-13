@@ -8,12 +8,12 @@
     "cluTime_lt" : {
         "cut" : 5,
         "id"  : 1,
-        "info" : "Cluster Time<42 ns"
+        "info" : "Cluster Time - offset < 5 ns"
     },
     "cluTime_gt" : {
         "cut" : -5,
         "id"  : 2,
-        "info" : "ClusterTime>32 ns"
+        "info" : "Cluster Time - offset > 5 ns"
     },
     "cluTimeDiff_lt" :{
 	"cut" : 2.5,

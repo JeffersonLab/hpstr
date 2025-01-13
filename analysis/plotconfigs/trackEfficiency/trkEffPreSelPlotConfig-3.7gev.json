@@ -127,31 +127,31 @@
 
     "clTime_ele_allpairs_h":{
 	"bins"   : 60,
-        "minX"   : 30,
-        "maxX"   : 60,
+        "minX"   : -10,
+        "maxX"   : 10,
         "xtitle" : "Electron Cluster Time (ns)",
         "ytitle" : "Events"
     },
   "clTime_pos_allpairs_h":{
 	"bins"   : 60,
-        "minX"   : 30,
-        "maxX"   : 60,
+        "minX"   : -10,
+        "maxX"   : 10,
         "xtitle" : "Positron Cluster Time (ns)",
         "ytitle" : "Events"
     },
 
       "clTime_eleMinusPos_allpairs_h":{
 	"bins"   : 50,
-        "minX"   : -20,
-        "maxX"   : 20,
+        "minX"   : -10,
+        "maxX"   : 10,
         "xtitle" : "Electron-Positron Cluster Time (ns)",
         "ytitle" : "Events"
     },
 
     "clTime_preselect_h":{
 	"bins"   : 60,
-        "minX"   : 30,
-        "maxX"   : 60,
+        "minX"   : -10,
+        "maxX"   : 10,
         "xtitle" : "Preselection Cluster Time (ns)",
         "ytitle" : "Events"
     },
