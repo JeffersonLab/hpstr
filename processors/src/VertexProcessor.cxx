@@ -29,6 +29,7 @@ void VertexProcessor::configure(const ParameterSet& parameters) {
         trkhitCollRoot_    = parameters.getString("trkhitCollRoot",trkhitCollRoot_);
         rawhitCollRoot_    = parameters.getString("rawhitCollRoot",rawhitCollRoot_);
         mcPartRelLcio_     = parameters.getString("mcPartRelLcio", mcPartRelLcio_);
+        useTrackerHits_    = parameters.getInteger("useTrackerHits",useTrackerHits_);
         bfield_            = parameters.getDouble("bfield",bfield_);
     }
     catch (std::runtime_error& error)
@@ -134,8 +135,6 @@ bool VertexProcessor::process(IEvent* ievent) {
 
     }
 
-    bool m_useTrackerHits = false;
-
     if (debug_ > 0) std::cout << "VertexProcessor: Converting Verteces" << std::endl;
     for (int ivtx = 0 ; ivtx < lc_vtxs->getNumberOfElements(); ++ivtx) 
     {
@@ -159,13 +158,17 @@ bool VertexProcessor::process(IEvent* ievent) {
                 if (bfield_ > 0.0) track->setMomentum(bfield_);
                 if (track->isKalmanTrack()) hitType = 1; //SiClusters
 
-                if(!m_useTrackerHits){
+                if(!useTrackerHits_){
                     auto hitPattern = lc_track->getSubdetectorHitNumbers();
                     for( int h=0; h<hitPattern.size(); h++){
                         if( hitPattern[h]>0 ){
                             track->addHitLayer(h+1);
                             nHits++;
                         }
+                    }
+                    if(nHits==0){
+                        std::cout << "[VertexProcessor::process] WARNING Track with no hits -- likely getSubdetectorHitNumbers isn't filled!" << std::endl;
+                        std::cout << "[VertexProcessor::process] WARNING If hit collections are saved, you may want to turn on useTrackerHits" << std::endl;
                     }
                     track->setTrackerHitCount(nHits);
                 } 

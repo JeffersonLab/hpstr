@@ -6,7 +6,7 @@ from baseConfig import bfield
 
 base.parser.add_argument("-w", "--tracking", type=str, dest="tracking",
                          help="Which tracking to use to make plots", metavar="tracking", default="KF")
-base.parser.add_argument("-s", "--truthHits", type=int, dest="truthHits",
+base.parser.add_argument("-sh", "--truthHits", type=int, dest="truthHits",
                          help="Get svt truth hits: 1=yes", metavar="truthHits", default=0)
 base.parser.add_argument("-r", "--rawHits", type=int, dest="rawHits",
                          help="Keep raw svt hits: 1=yes", metavar="rawHits", default=0)
@@ -36,7 +36,6 @@ p.add_library("libprocessors")
 header = HpstrConf.Processor('header', 'EventProcessor')
 track = HpstrConf.Processor('track', 'TrackingProcessor')
 trackgbl = HpstrConf.Processor('trackgbl', 'TrackingProcessor')
-trackrefitgbl = HpstrConf.Processor('trackrefitgbl', 'TrackingProcessor')
 svthits = HpstrConf.Processor('svthitskf', 'Tracker2DHitProcessor')
 svthitsgbl = HpstrConf.Processor('svthitsgbl', 'Tracker3DHitProcessor')
 rawsvt = HpstrConf.Processor('rawsvt', 'SvtRawDataProcessor')
@@ -75,6 +74,7 @@ svthits.parameters["hitCollRoot"] = 'RotatedHelicalTrackHits'
 
 # Tracking
 track.parameters["debug"] = 0
+track.parameters["useTrackerHits"] = 0
 track.parameters["trkCollLcio"] = 'KalmanFullTracks'
 track.parameters["trkCollRoot"] = 'KalmanFullTracks'
 track.parameters["kinkRelCollLcio"] = ''
@@ -82,10 +82,10 @@ track.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 track.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 track.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack_KF'
-
 track.parameters["bfield"] = bfield[str(options.year)]
 
 trackgbl.parameters["debug"] = 0
+trackgbl.parameters["useTrackerHits"] = 0
 trackgbl.parameters["trkCollLcio"] = 'GBLTracks'
 trackgbl.parameters["trkCollRoot"] = 'GBLTracks'
 trackgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
@@ -108,6 +108,7 @@ ecal.parameters["clusCollRoot"] = "RecoEcalClusters"
 
 # Vertex
 vtx.parameters["debug"] = 0
+vtx.parameters["useTrackerHits"] = 0
 vtx.parameters["vtxCollLcio"] = 'UnconstrainedV0Vertices_KF'
 vtx.parameters["vtxCollRoot"] = 'UnconstrainedV0Vertices_KF'
 vtx.parameters["partCollRoot"] = 'ParticlesOnUVertices_KF'
@@ -115,6 +116,7 @@ vtx.parameters["kinkRelCollLcio"] = ''
 vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
 cvtx.parameters["debug"] = 0
+cvtx.parameters["useTrackerHits"] = 0
 cvtx.parameters["vtxCollLcio"] = 'TargetConstrainedV0Vertices_KF'
 cvtx.parameters["vtxCollRoot"] = 'TargetConstrainedV0Vertices_KF'
 cvtx.parameters["partCollRoot"] = 'ParticlesOnCVertices_KF'
@@ -123,6 +125,7 @@ cvtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
 
 vtxgbl.parameters["debug"] = 0
+vtxgbl.parameters["useTrackerHits"] = 0
 vtxgbl.parameters["vtxCollLcio"] = 'UnconstrainedV0Vertices'
 vtxgbl.parameters["vtxCollRoot"] = 'UnconstrainedV0Vertices'
 vtxgbl.parameters["partCollRoot"] = 'ParticlesOnUVertices'
@@ -130,6 +133,7 @@ vtxgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
 vtxgbl.parameters["trkRelCollLcio"] = 'TrackDataRelations'
 
 cvtxgbl.parameters["debug"] = 0
+cvtxgbl.parameters["useTrackerHits"] = 0
 cvtxgbl.parameters["vtxCollLcio"] = 'TargetConstrainedV0Vertices'
 cvtxgbl.parameters["vtxCollRoot"] = 'TargetConstrainedV0Vertices'
 cvtxgbl.parameters["partCollRoot"] = 'ParticlesOnCVertices'
@@ -158,7 +162,6 @@ else:
     fsp.parameters["hitFitsCollLcio"] = ""
 
 # Sequence which the processors will run.
-
 if (options.tracking == "KF"):
     print("KF")
     sequence = [header, vtx, cvtx, ecal, track]

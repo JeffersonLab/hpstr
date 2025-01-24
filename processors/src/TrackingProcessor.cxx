@@ -24,8 +24,9 @@ void TrackingProcessor::configure(const ParameterSet& parameters) {
         rawhitCollRoot_          = parameters.getString("rawhitCollRoot", rawhitCollRoot_);
         truthTracksCollLcio_     = parameters.getString("truthTrackCollLcio",truthTracksCollLcio_);
         truthTracksCollRoot_     = parameters.getString("truthTrackCollRoot",truthTracksCollRoot_);
-        bfield_                  = parameters.getDouble("bfield",bfield_);
         trackStateLocation_      = parameters.getString("trackStateLocation",trackStateLocation_);
+        useTrackerHits_          = parameters.getInteger("useTrackerHits",useTrackerHits_);
+        bfield_                  = parameters.getDouble("bfield",bfield_);
         
         //Residual plotting is done in this processor for the moment.
         doResiduals_             = parameters.getInteger("doResiduals",doResiduals_);
@@ -137,8 +138,6 @@ bool TrackingProcessor::process(IEvent* ievent) {
     std::map <int, bool> SharedHitsLy0;
     std::map <int, bool> SharedHitsLy1;
 
-    bool m_useTrackerHits = false;
-    
     for (int itrack = 0; itrack < tracks->getNumberOfElements();++itrack) {
         SharedHits[itrack]   = {};
         SharedHitsLy0[itrack] = false;
@@ -182,7 +181,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
 
         int nHits = 0;
 
-	if(!m_useTrackerHits){
+	if(!useTrackerHits_){
 	    auto hitPattern = lc_track->getSubdetectorHitNumbers();
 	    for( int h=0; h<hitPattern.size(); h++){
 		if( hitPattern[h]>0 ){
@@ -190,6 +189,10 @@ bool TrackingProcessor::process(IEvent* ievent) {
 		    nHits++;
 		}
 	    }
+            if(nHits==0){
+              std::cout << "[TrackingProcessor::process] WARNING Track with no hits -- likely getSubdetectorHitNumbers isn't filled!" << std::endl;
+              std::cout << "[TrackingProcessor::process] WARNING If hit collections are saved, you may want to turn on useTrackerHits" << std::endl;
+            }
 	    track->setTrackerHitCount(nHits);
 	}
 	else{
