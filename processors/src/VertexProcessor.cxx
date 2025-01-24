@@ -221,7 +221,7 @@ bool VertexProcessor::process(IEvent* ievent) {
                 part->setTrack(track);
 
             }
-            //=============================================
+            // =========================================
             if (debug_ > 0) std::cout << "VertexProcessor: Add particle" << std::endl;
             parts_.push_back(part);
             vtx->addParticle(part);
