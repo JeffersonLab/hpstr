@@ -100,7 +100,7 @@ class VertexProcessor : public Processor {
 
         double bfield_{-1.}; //!< magnetic field
 
-        int useTrackerHits_{0}; //!< Load hit collections, otherwise get from getSubdetectorHitNumbers
+        int useTrackerHits_{1}; //!< Load hit collections, otherwise get from getSubdetectorHitNumbers
 
         int debug_{0}; //!< Debug Level
 
