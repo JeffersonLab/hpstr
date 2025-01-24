@@ -218,7 +218,8 @@ bool VertexProcessor::process(IEvent* ievent) {
 
                 } // !useTrackerHits
 
-                part->setTrack(track);
+                part->setTrack(track); 
+                delete track;
 
             }
             // =========================================
