@@ -133,7 +133,7 @@ vtxgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
 vtxgbl.parameters["trkRelCollLcio"] = 'TrackDataRelations'
 
 cvtxgbl.parameters["debug"] = 0
-cvtxgbl.parameters["useTrackerHits"] = 0
+cvtxgbl.parameters["useTrackerHits"] = 1
 cvtxgbl.parameters["vtxCollLcio"] = 'TargetConstrainedV0Vertices'
 cvtxgbl.parameters["vtxCollRoot"] = 'TargetConstrainedV0Vertices'
 cvtxgbl.parameters["partCollRoot"] = 'ParticlesOnCVertices'
