@@ -74,7 +74,7 @@ svthits.parameters["hitCollRoot"] = 'RotatedHelicalTrackHits'
 
 # Tracking
 track.parameters["debug"] = 0
-track.parameters["useTrackerHits"] = 0
+track.parameters["useTrackerHits"] = 1
 track.parameters["trkCollLcio"] = 'KalmanFullTracks'
 track.parameters["trkCollRoot"] = 'KalmanFullTracks'
 track.parameters["kinkRelCollLcio"] = ''
@@ -85,7 +85,7 @@ track.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack_KF'
 track.parameters["bfield"] = bfield[str(options.year)]
 
 trackgbl.parameters["debug"] = 0
-trackgbl.parameters["useTrackerHits"] = 0
+trackgbl.parameters["useTrackerHits"] = 1
 trackgbl.parameters["trkCollLcio"] = 'GBLTracks'
 trackgbl.parameters["trkCollRoot"] = 'GBLTracks'
 trackgbl.parameters["kinkRelCollLcio"] = 'GBLKinkDataRelations'
@@ -108,7 +108,7 @@ ecal.parameters["clusCollRoot"] = "RecoEcalClusters"
 
 # Vertex
 vtx.parameters["debug"] = 0
-vtx.parameters["useTrackerHits"] = 0
+vtx.parameters["useTrackerHits"] = 1
 vtx.parameters["vtxCollLcio"] = 'UnconstrainedV0Vertices_KF'
 vtx.parameters["vtxCollRoot"] = 'UnconstrainedV0Vertices_KF'
 vtx.parameters["partCollRoot"] = 'ParticlesOnUVertices_KF'
@@ -116,7 +116,7 @@ vtx.parameters["kinkRelCollLcio"] = ''
 vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
 cvtx.parameters["debug"] = 0
-cvtx.parameters["useTrackerHits"] = 0
+cvtx.parameters["useTrackerHits"] = 1
 cvtx.parameters["vtxCollLcio"] = 'TargetConstrainedV0Vertices_KF'
 cvtx.parameters["vtxCollRoot"] = 'TargetConstrainedV0Vertices_KF'
 cvtx.parameters["partCollRoot"] = 'ParticlesOnCVertices_KF'
@@ -125,7 +125,7 @@ cvtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 
 
 vtxgbl.parameters["debug"] = 0
-vtxgbl.parameters["useTrackerHits"] = 0
+vtxgbl.parameters["useTrackerHits"] = 1
 vtxgbl.parameters["vtxCollLcio"] = 'UnconstrainedV0Vertices'
 vtxgbl.parameters["vtxCollRoot"] = 'UnconstrainedV0Vertices'
 vtxgbl.parameters["partCollRoot"] = 'ParticlesOnUVertices'
