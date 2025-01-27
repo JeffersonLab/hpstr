@@ -24,8 +24,9 @@ void TrackingProcessor::configure(const ParameterSet& parameters) {
         rawhitCollRoot_          = parameters.getString("rawhitCollRoot", rawhitCollRoot_);
         truthTracksCollLcio_     = parameters.getString("truthTrackCollLcio",truthTracksCollLcio_);
         truthTracksCollRoot_     = parameters.getString("truthTrackCollRoot",truthTracksCollRoot_);
-        bfield_                  = parameters.getDouble("bfield",bfield_);
         trackStateLocation_      = parameters.getString("trackStateLocation",trackStateLocation_);
+        useTrackerHits_          = parameters.getInteger("useTrackerHits",useTrackerHits_);
+        bfield_                  = parameters.getDouble("bfield",bfield_);
         
         //Residual plotting is done in this processor for the moment.
         doResiduals_             = parameters.getInteger("doResiduals",doResiduals_);
@@ -136,7 +137,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
     //TODO: can we do better? (innermost)
     std::map <int, bool> SharedHitsLy0;
     std::map <int, bool> SharedHitsLy1;
-    
+
     for (int itrack = 0; itrack < tracks->getNumberOfElements();++itrack) {
         SharedHits[itrack]   = {};
         SharedHitsLy0[itrack] = false;
@@ -177,66 +178,85 @@ bool TrackingProcessor::process(IEvent* ievent) {
         if (bfield_>0)
             track->setMomentum(bfield_);
 	
-        // Get the collection of hits associated with a LCIO Track
-        EVENT::TrackerHitVec lc_tracker_hits = lc_track->getTrackerHits();
 
-        //  Iterate through the collection of 3D hits (TrackerHit objects)
-        //  associated with a track, find the corresponding hits in the HPS
-        //  event and add references to the track
-        bool rotateHits = true;
-        int hitType = 0;
-        if (track->isKalmanTrack())
-            hitType=1; //SiClusters
-        
-        for (auto lc_tracker_hit : lc_tracker_hits) {
-            
-            TrackerHit* tracker_hit = utils::buildTrackerHit(static_cast<IMPL::TrackerHitImpl*>(lc_tracker_hit),rotateHits,hitType);
-            
-            std::vector<RawSvtHit*> rawSvthitsOn3d;
-            utils::addRawInfoTo3dHit(tracker_hit,static_cast<IMPL::TrackerHitImpl*>(lc_tracker_hit),
-                                     raw_svt_hit_fits,&rawSvthitsOn3d,hitType);
-            
-            for (auto rhit : rawSvthitsOn3d)
-                rawhits_.push_back(rhit);
+        int nHits = 0;
 
-            rawSvthitsOn3d.clear();
+	if(!useTrackerHits_){
+	    auto hitPattern = lc_track->getSubdetectorHitNumbers();
+	    for( int h=0; h<hitPattern.size(); h++){
+		if( hitPattern[h]>0 ){
+		    track->addHitLayer(h+1);
+		    nHits++;
+		}
+	    }
+            if(nHits==0){
+              std::cout << "[TrackingProcessor::process] WARNING Track with no hits -- likely getSubdetectorHitNumbers isn't filled!" << std::endl;
+              std::cout << "[TrackingProcessor::process] WARNING If hit collections are saved, you may want to turn on useTrackerHits" << std::endl;
+            }
+	    track->setTrackerHitCount(nHits);
+	}
+	else{
 
-            if (debug_)
-                std::cout<<tracker_hit->getRawHits().GetEntries()<<std::endl;
-            // Add a reference to the hit
-            track->addHit(tracker_hit);
-            track->addHitLayer(tracker_hit->getLayer());
-            hits_.push_back(tracker_hit);
-            
-            //Get shared Hits information
-            for (int jtrack = itrack+1; jtrack < tracks->getNumberOfElements(); ++jtrack) {
-                
-                EVENT::Track* j_lc_track = static_cast<EVENT::Track*>(tracks->getElementAt(jtrack));
-                if (utils::isUsedByTrack(tracker_hit,j_lc_track)) {
-                    //The hit is not already in the shared list
-                    if (std::find(SharedHits[itrack].begin(), SharedHits[itrack].end(),tracker_hit->getID()) == SharedHits[itrack].end()) {
-                        SharedHits[itrack].push_back(tracker_hit->getID());
-                        if (tracker_hit->getLayer() == 0 )
-                            SharedHitsLy0[itrack] = true;
-                        if (tracker_hit->getLayer() == 1 ) 
-                            SharedHitsLy1[itrack] = true;
-                    }
-                    if (std::find(SharedHits[jtrack].begin(), SharedHits[jtrack].end(),tracker_hit->getID()) == SharedHits[jtrack].end()) {
-                        SharedHits[jtrack].push_back(tracker_hit->getID());
-                        if (tracker_hit->getLayer() == 0 ) 
-                            SharedHitsLy0[jtrack] = true;
-                        if (tracker_hit->getLayer() == 1 ) 
-                            SharedHitsLy1[jtrack] = true;
-                    }
-                } // found shared hit
-            } // loop on j>i tracks
-        }//tracker hits
-        
-        track->setNShared(SharedHits[itrack].size());
-        track->setSharedLy0(SharedHitsLy0[itrack]);
-        track->setSharedLy1(SharedHitsLy1[itrack]);
-        
+	    // Get the collection of hits associated with a LCIO Track
+	    EVENT::TrackerHitVec lc_tracker_hits = lc_track->getTrackerHits();
 
+	    //  Iterate through the collection of 3D hits (TrackerHit objects)
+	    //  associated with a track, find the corresponding hits in the HPS
+	    //  event and add references to the track
+	    bool rotateHits = true;
+            int hitType = 0;
+	    if (track->isKalmanTrack())
+		hitType=1; //SiClusters
+	    
+	    for (auto lc_tracker_hit : lc_tracker_hits) {
+		
+		TrackerHit* tracker_hit = utils::buildTrackerHit(static_cast<IMPL::TrackerHitImpl*>(lc_tracker_hit),rotateHits,hitType);
+		
+		std::vector<RawSvtHit*> rawSvthitsOn3d;
+		utils::addRawInfoTo3dHit(tracker_hit,static_cast<IMPL::TrackerHitImpl*>(lc_tracker_hit),
+					 raw_svt_hit_fits,&rawSvthitsOn3d,hitType);
+		
+		for (auto rhit : rawSvthitsOn3d)
+		    rawhits_.push_back(rhit);
+
+		rawSvthitsOn3d.clear();
+
+		if (debug_)
+		    std::cout<<tracker_hit->getRawHits().GetEntries()<<std::endl;
+		// Add a reference to the hit
+		track->addHit(tracker_hit);
+		track->addHitLayer(tracker_hit->getLayer());
+		hits_.push_back(tracker_hit);
+		
+		//Get shared Hits information
+		for (int jtrack = itrack+1; jtrack < tracks->getNumberOfElements(); ++jtrack) {
+		    
+		    EVENT::Track* j_lc_track = static_cast<EVENT::Track*>(tracks->getElementAt(jtrack));
+		    if (utils::isUsedByTrack(tracker_hit,j_lc_track)) {
+			//The hit is not already in the shared list
+			if (std::find(SharedHits[itrack].begin(), SharedHits[itrack].end(),tracker_hit->getID()) == SharedHits[itrack].end()) {
+			    SharedHits[itrack].push_back(tracker_hit->getID());
+			    if (tracker_hit->getLayer() == 0 )
+				SharedHitsLy0[itrack] = true;
+			    if (tracker_hit->getLayer() == 1 ) 
+				SharedHitsLy1[itrack] = true;
+			}
+			if (std::find(SharedHits[jtrack].begin(), SharedHits[jtrack].end(),tracker_hit->getID()) == SharedHits[jtrack].end()) {
+			    SharedHits[jtrack].push_back(tracker_hit->getID());
+			    if (tracker_hit->getLayer() == 0 ) 
+				SharedHitsLy0[jtrack] = true;
+			    if (tracker_hit->getLayer() == 1 ) 
+				SharedHitsLy1[jtrack] = true;
+			}
+		    } // found shared hit
+		} // loop on j>i tracks
+	    }//tracker hits
+	    
+	    track->setNShared(SharedHits[itrack].size());
+	    track->setSharedLy0(SharedHitsLy0[itrack]);
+	    track->setSharedLy1(SharedHitsLy1[itrack]);
+        }
+	    
         //Get the truth tracks relations:
         
         // Get the collection of LCRelations between GBL kink data and track data variables 
