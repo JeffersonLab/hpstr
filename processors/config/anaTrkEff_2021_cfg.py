@@ -1,10 +1,10 @@
 import HpstrConf
 import sys
 import os
-import baseConfig
+import baseConfig as base
 
 #(options,args) = baseConfig.parser.parse_args()
-options = baseConfig.parser.parse_args()
+options = base.parser.parse_args()
 
 # Use the input file to set the output file name
 infile = options.inFilename
@@ -16,7 +16,8 @@ print('Output file: %s' % outfile)
 p = HpstrConf.Process()
 
 p.run_mode = 1
-#p.max_events = 1000
+p.skip_events = options.skip_events
+p.max_events = options.nevents
 
 # Library containing processors
 p.add_library("libprocessors")
@@ -42,9 +43,8 @@ vtxana.parameters["cluSelectionjson"] = os.environ['HPSTR_BASE']+'/analysis/sele
 vtxana.parameters["histoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/trackEfficiency/trkEffPlotConfig-3.7gev.json"
 vtxana.parameters["thrProngCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/trackEfficiency/threeProngPlotConfig-3.7gev.json"
 vtxana.parameters["cluHistoCfg"] = os.environ['HPSTR_BASE']+"/analysis/plotconfigs/trackEfficiency/trkEffPreSelPlotConfig-3.7gev.json"
-vtxana.parameters["beamE"] = 3.7
-#vtxana.parameters["isData"] = options.isData
-vtxana.parameters["isData"] = 1
+vtxana.parameters["beamE"] = base.beamE[str(options.year)]
+vtxana.parameters["isData"] = options.isData
 CalTimeOffset=-999
 
 if (options.isData==1):
