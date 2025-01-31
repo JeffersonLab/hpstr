@@ -1,16 +1,21 @@
 #include "HpsEventFile.h"
 
-HpsEventFile::HpsEventFile(const std::string ifilename, const std::string& ofilename){
-  std::cout << "[HpsEventFile] Opening input ROOT file: " << ifilename << std::endl;
-  rootfile_ = new TFile(ifilename.c_str(),"READ");
-  intree_ = (TTree*)rootfile_->Get("HPS_Event");
-  std::string _ofilename = "output_" + ifilename;
-  std::cout << "[HpsEventFile] Creating output ROOT file: " << _ofilename  << std::endl;  
-  ofile_    = new TFile(_ofilename.c_str(),"recreate");
-  
+HpsEventFile::HpsEventFile() : 
+	rootfile_(0),
+        intree_(0),
+        ofile_(0)
+{
 }
 
-HpsEventFile::~HpsEventFile() {}
+HpsEventFile::HpsEventFile(const std::string ifilename, const std::string& ofilename){
+  rootfile_ = new TFile(ifilename.c_str(),"READ");
+  intree_ = (TTree*)rootfile_->Get("HPS_Event");
+  ofile_    = new TFile(ofilename.c_str(),"recreate");
+}
+
+HpsEventFile::~HpsEventFile() 
+{
+}
 
 void HpsEventFile::setupEvent(IEvent* ievent) {
   event_      = static_cast<HpsEvent*>(ievent);
@@ -23,6 +28,7 @@ void HpsEventFile::setupEvent(IEvent* ievent) {
   entry_      = 0;
 }
 
+
 void HpsEventFile::changeInputFile(const std::string ifilename)
 {
 
@@ -33,6 +39,15 @@ void HpsEventFile::changeInputFile(const std::string ifilename)
 
   rootfile_ = new TFile(ifilename.c_str(),"READ");  
   intree_ = (TTree*)rootfile_->Get("HPS_Event");
+}
+
+void HpsEventFile::changeOutputFile(const std::string ofilename)
+{
+  if( ofile_ ){
+    ofile_->cd();
+    ofile_->Close();
+  }
+  ofile_ = new TFile(ofilename.c_str(),"recreate");
 }
 
 void HpsEventFile::close() {

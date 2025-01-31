@@ -40,22 +40,18 @@ void Process::runOnRoot() {
         int n_events_processed = 0;
         HpsEvent event;
         int cfile =0 ;
+
+        HpsEventFile* file = new HpsEventFile();
+        file->changeOutputFile("output.root");
+
         for (auto ifile : input_files_) {
             std::cout << "[Process::runOnRoot] Processing file: "<< ifile << std::endl;
 
             // Event counter PER file
             TH1D * event_h = new TH1D("event_h","Number of Events Processed;;Events", 21, -10.5, 10.5);
 
-            // TODO: move this outside the loop 
-            // Introduce changeFile for HpsEventFile
-            //
-            HpsEventFile* file(nullptr);
-            if (!output_files_.empty()) {
-                file = new HpsEventFile(ifile, output_files_[cfile]);
-                file->setupEvent(&event);
-            }
-
-            //file->changeInputFile(ifile);
+            file->changeInputFile(ifile);
+            file->setupEvent(&event);
 
             for (auto module : sequence_) {
                 module->initialize(event.getTree());
@@ -85,18 +81,21 @@ void Process::runOnRoot() {
                 module->finalize();
             }
 
+            std::cout << "[Process::runOnRoot] Processed  "<< n_events_processed << " events from input file" << std::endl;
+
 	    // Reset event counter
 	    n_events_processed = 0;
 
-            // TODO Check all these destructors
             if (file) {
-                file->close();
-                delete file;
-                file = nullptr;
                 delete event_h;
                 event_h = nullptr;
             }
+
         } // Loop over input files
+        
+        file->close();
+        delete file;
+
     } catch (std::exception& e) {
         std::cerr<<"Error:"<<e.what()<<std::endl;
     }
