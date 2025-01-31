@@ -1,10 +1,12 @@
 #include "HpsEventFile.h"
 
 HpsEventFile::HpsEventFile(const std::string ifilename, const std::string& ofilename){
-  rootfile_ = new TFile(ifilename.c_str());
-  //ttree_reader = new ("HPS_Event",_rootfile);
+  std::cout << "[HpsEventFile] Opening input ROOT file: " << ifilename << std::endl;
+  rootfile_ = new TFile(ifilename.c_str(),"READ");
   intree_ = (TTree*)rootfile_->Get("HPS_Event");
-  ofile_    = new TFile(ofilename.c_str(),"recreate");
+  std::string _ofilename = "output_" + ifilename;
+  std::cout << "[HpsEventFile] Creating output ROOT file: " << _ofilename  << std::endl;  
+  ofile_    = new TFile(_ofilename.c_str(),"recreate");
   
 }
 
