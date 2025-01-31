@@ -89,7 +89,7 @@ void ThreeProngHistos::FillThreeProngPlots(Particle* ele,
   double pSum=sumP.Mag();
   double pYSum=sumP.Py();
   double pXSum=sumP.Px();
-  std::cout<<"p Sum = "<<pSum<<"; E beam = "<<eBeam<<std::endl;
+  //std::cout<<"p Sum = "<<pSum<<"; E beam = "<<eBeam<<std::endl;
  //roughly the amount of "energy in E"...true for photons, approximation for charged tracks
   double eleClYEne=sin(atan2(eleY,eleZ))*eleE; 
   double posClYEne=sin(atan2(posY,posZ))*posE; 
