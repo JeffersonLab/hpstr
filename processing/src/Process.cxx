@@ -39,15 +39,19 @@ void Process::runOnRoot() {
     try {
         int n_events_processed = 0;
         HpsEvent event;
-        TH1D * event_h = new TH1D("event_h","Number of Events Processed;;Events", 21, -10.5, 10.5);
         int cfile =0 ;
         for (auto ifile : input_files_) {
-            std::cout<<"Processing file "<<ifile<<std::endl;
+            std::cout << "[Process::runOnRoot] Processing file: "<< ifile << std::endl;
+
+            // Event counter PER file
+            TH1D * event_h = new TH1D("event_h","Number of Events Processed;;Events", 21, -10.5, 10.5);
+
             HpsEventFile* file(nullptr);
             if (!output_files_.empty()) {
                 file = new HpsEventFile(ifile, output_files_[cfile]);
                 file->setupEvent(&event);
             }
+
             for (auto module : sequence_) {
                 module->initialize(event.getTree());
                 module->setFile(file->getOutputFile());
@@ -75,6 +79,10 @@ void Process::runOnRoot() {
                 //TODO:Change the finalize method
                 module->finalize();
             }
+
+	    // Reset event counter
+	    n_events_processed = 0;
+
             // TODO Check all these destructors
             if (file) {
                 file->close();
@@ -83,7 +91,7 @@ void Process::runOnRoot() {
                 delete event_h;
                 event_h = nullptr;
             }
-        }
+        } // Loop over input files
     } catch (std::exception& e) {
         std::cerr<<"Error:"<<e.what()<<std::endl;
     }
@@ -107,7 +115,6 @@ void Process::run() {
 
             std::cout << "---- [ hpstr ][ Process ]: Processing file " 
                 << ifile << std::endl;
-
 
             //TODO:: Change the order here.
 
