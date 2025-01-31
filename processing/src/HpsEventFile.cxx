@@ -23,6 +23,18 @@ void HpsEventFile::setupEvent(IEvent* ievent) {
   entry_      = 0;
 }
 
+void HpsEventFile::changeInputFile(const std::string ifilename)
+{
+
+  if( rootfile_ ){
+    rootfile_->cd();
+    rootfile_->Close();
+  }
+
+  rootfile_ = new TFile(ifilename.c_str(),"READ");  
+  intree_ = (TTree*)rootfile_->Get("HPS_Event");
+}
+
 void HpsEventFile::close() {
   rootfile_->cd();
   rootfile_->Close();

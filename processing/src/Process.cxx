@@ -46,11 +46,16 @@ void Process::runOnRoot() {
             // Event counter PER file
             TH1D * event_h = new TH1D("event_h","Number of Events Processed;;Events", 21, -10.5, 10.5);
 
+            // TODO: move this outside the loop 
+            // Introduce changeFile for HpsEventFile
+            //
             HpsEventFile* file(nullptr);
             if (!output_files_.empty()) {
                 file = new HpsEventFile(ifile, output_files_[cfile]);
                 file->setupEvent(&event);
             }
+
+            //file->changeInputFile(ifile);
 
             for (auto module : sequence_) {
                 module->initialize(event.getTree());

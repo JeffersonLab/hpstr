@@ -42,6 +42,13 @@ class HpsEventFile : public IEventFile {
 
         /**
          * @brief description
+         *
+         * @param ifilename
+         */
+         void changeInputFile(const std::string ifilename);
+
+        /**
+         * @brief description
          * 
          */
         void resetOutputFileDir() { ofile_->cd();}
