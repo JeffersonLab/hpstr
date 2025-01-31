@@ -14,6 +14,9 @@
 class HpsEventFile : public IEventFile {
 
     public:
+
+        HpsEventFile();
+
         /**
          * @brief Constructor
          * 
@@ -46,6 +49,7 @@ class HpsEventFile : public IEventFile {
          * @param ifilename
          */
          void changeInputFile(const std::string ifilename);
+         void changeOutputFile(const std::string ofilename);
 
         /**
          * @brief description
