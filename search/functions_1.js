@@ -44,5 +44,6 @@ var searchData=
   ['addvector_41',['addVector',['../classFlatTupleMaker.html#a32c0bc3072362d4fb4c15e5432e47dd4',1,'FlatTupleMaker']]],
   ['anahelpers_42',['AnaHelpers',['../classAnaHelpers.html#a36472fb9fabb806ac0d2d7cbff1c5eee',1,'AnaHelpers']]],
   ['applycorrection_43',['applyCorrection',['../classTrack.html#af280c8b9c4b898587bd23877390c49e0',1,'Track']]],
-  ['apv25roxtalkanaprocessor_44',['Apv25RoXtalkAnaProcessor',['../classApv25RoXtalkAnaProcessor.html#ae07def2db88fcfa7956a1432c2368538',1,'Apv25RoXtalkAnaProcessor']]]
+  ['apv25roxtalkanaprocessor_44',['Apv25RoXtalkAnaProcessor',['../classApv25RoXtalkAnaProcessor.html#ae07def2db88fcfa7956a1432c2368538',1,'Apv25RoXtalkAnaProcessor']]],
+  ['assignlayercode_45',['AssignLayerCode',['../classTridentHistos.html#adb9d4e24bc7ef8bb53cc2afaeefd1b6f',1,'TridentHistos']]]
 ];

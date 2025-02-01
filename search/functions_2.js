@@ -13,7 +13,7 @@ var searchData=
   ['br_5fvphi_5fpi_10',['br_Vphi_pi',['../classSimpEquations.html#a93fdb1bc8489f9a77e6617478e343393',1,'SimpEquations']]],
   ['br_5fvrho_5fpi_11',['br_Vrho_pi',['../classSimpEquations.html#a7acaa086730cb51afd2214919249662f',1,'SimpEquations']]],
   ['buildapvchannelmap_12',['buildApvChannelMap',['../classModuleMapper.html#afda3474d4449108d05d301a5cc0ca08c',1,'ModuleMapper']]],
-  ['buildaxes_13',['BuildAxes',['../classTrackHistos.html#a8b76ba87f6ac7ecb57b1a8ae1d9bc475',1,'TrackHistos']]],
+  ['buildaxes_13',['buildaxes',['../classThreeProngHistos.html#a8b76ba87f6ac7ecb57b1a8ae1d9bc475',1,'ThreeProngHistos::BuildAxes()'],['../classTrackEfficHistos.html#a8b76ba87f6ac7ecb57b1a8ae1d9bc475',1,'TrackEfficHistos::BuildAxes()'],['../classTrackHistos.html#a8b76ba87f6ac7ecb57b1a8ae1d9bc475',1,'TrackHistos::BuildAxes()'],['../classTridentHistos.html#a8b76ba87f6ac7ecb57b1a8ae1d9bc475',1,'TridentHistos::BuildAxes()']]],
   ['buildcalcluster_14',['buildCalCluster',['../namespaceutils.html#a2d01ad798936250108f868400e1e3051',1,'utils']]],
   ['buildchannelsvtidmap_15',['buildChannelSvtIDMap',['../classModuleMapper.html#ac38816992997c272b3ea6fd19915063d',1,'ModuleMapper']]],
   ['buildparticle_16',['buildParticle',['../namespaceutils.html#a7f0793ae3975d895fb1306504c017110',1,'utils']]],

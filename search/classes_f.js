@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['zbihistos_0',['ZBiHistos',['../classZBiHistos.html',1,'']]]
+  ['wabcand_0',['WABCand',['../structTridentWABAnaProcessor_1_1WABCand.html',1,'TridentWABAnaProcessor']]]
 ];
