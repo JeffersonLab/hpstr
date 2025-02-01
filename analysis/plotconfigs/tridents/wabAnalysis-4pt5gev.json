@@ -1,0 +1,216 @@
+{
+    "n_tracks_h" : {
+        "bins"   : 10,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "N_{tracks}",
+        "ytitle" : "Events"
+    },
+    "ele_strategy_h" : {
+        "bins" : 6,
+        "minX" : -0.5,
+        "maxX" : 5.5,
+        "xtitle" : "Strategy",
+        "ytitle" : "Tracks",
+        "labels" : ["s345","s456","s123c4","s123c5","Match","GBL"]
+    },
+    "ele_type_h" : {
+        "bins" : 65,
+        "minX" : -0.5,
+        "maxX" : 64.5,
+        "xtitle" : "Type",
+        "ytitle" : "Tracks"
+    },
+    "ele_nShared_h" : {
+        "bins" : 8,
+        "minX" : -0.5,
+        "maxX" : 7.5,
+        "xtitle" : "N_{shared}^{hits}",
+        "ytitle" : "Tracks"
+    },
+    "ele_sharingHits_h" : {
+        "bins" : 6,
+        "minX" : -0.5,
+        "maxX" : 5.5,
+        "xtitle" : "sharing hits",
+        "ytitle" : "Tracks",
+        "labels" : ["All Tracks","nShared = 0","SharedLy0","SharedLy1","SharedLy0AndLy1","SharedOthers"]
+    },
+    "ele_d0_h" : {
+        "bins" : 200,
+        "minX" : -3,
+        "maxX" : 3,
+        "xtitle" : "d_{0} [mm]",
+        "ytitle" : "Tracks"
+    },
+    "ele_Phi_h" : {
+        "bins" : 100,
+        "minX" : -0.2,
+        "maxX" : 0.2,
+        "xtitle" : "phi_{0}",
+        "ytitle" : "Tracks"
+    },
+    "ele_Omega_h" : {
+        "bins" : 100,
+        "minX" : -0.001,
+        "maxX" : 0.001,
+        "xtitle" : "#omega",
+        "ytitle" : "Tracks"
+    },
+    "ele_TanLambda_h" : {
+        "bins" : 200,
+        "minX" : -0.1,
+        "maxX" : 0.1,
+        "xtitle" : "tan(#lambda)",
+        "ytitle" : "Tracks"
+    },
+    "ele_Z0_h" : {
+        "bins" : 200,
+        "minX" : -2,
+        "maxX" : 2,
+        "xtitle" : "z_0 [mm]",
+        "ytitle" : "Tracks"
+    },
+    "ele_time_h" : {
+        "bins" : 200,
+        "minX" : -25,
+        "maxX" : 25,
+        "xtitle" : "track time [ns]",
+        "ytitle" : "Tracks"
+    },
+    "ele_chi2_h" : {
+        "bins" : 250,
+        "minX" : 0,
+        "maxX" : 250,
+        "xtitle" : "track #chi^{2}",
+        "ytitle" : "Tracks"
+    },
+    
+    "ele_p_h" : {
+        "bins" : 100,
+        "minX" : 0,
+        "maxX" : 4.8,
+        "xtitle" : "p_{e^{-}} [GeV]",
+        "ytitle" : "Tracks"
+    },
+    
+    "ele_tanlambda_vs_phi0_hh" : {
+        "binsX"  : 100,
+        "minX"   : -0.3,
+        "maxX"   : 0.3,
+        "binsY"  : 100,
+        "minY"   : -0.1,
+        "maxY"   : 0.1,
+        "xtitle" : "trk #phi_{0}",
+        "ytitle" : "trk tan(#lambda)"
+    },
+    
+    "ele_d0_vs_p_hh" : {
+        "binsX"  : 100,
+        "minX"   : 0,
+        "maxX"   : 4.8,
+        "binsY"  : 200,
+        "minY"   : -3,
+        "maxY"   : 3,
+        "xtitle" : "p_{e^{-}} [GeV]",
+        "ytitle" : "trk d0 [mm]"
+    },
+
+    "ele_d0_vs_phi0_hh" : {
+        "binsX"  : 100,
+        "minX"   : -0.3,
+        "maxX"   : 0.3,
+        "binsY"  : 200,
+        "minY"   : -3,
+        "maxY"   : 3,
+        "xtitle" : "trk #phi_{0}",
+        "ytitle" : "trk d0 [mm]"
+    },
+    
+    "ele_d0_vs_tanlambda_hh" : {
+        "binsX"  : 200,
+        "minX"   : -0.1,
+        "maxX"   : 0.1,
+        "binsY"  : 200,
+        "minY"   : -3,
+        "maxY"   : 3,
+        "xtitle" : "trk(#lamdba)",
+        "ytitle" : "trk d0 [mm]"
+    },
+    
+    "ele_z0_vs_p_hh" : {
+        "binsX"  : 100,
+        "minX"   : 0,
+        "maxX"   : 4.8,
+        "binsY"  : 100,
+        "minY"   : -2,
+        "maxY"   : 2,
+        "xtitle" : "p_{e^{-}} [GeV]",
+        "ytitle" : "trk z0 [mm]"
+    },
+
+    "ele_z0_vs_phi0_hh" : {
+        "binsX"  : 100,
+        "minX"   : -0.3,
+        "maxX"   : 0.3,
+        "binsY"  : 100,
+        "minY"   : -2,
+        "maxY"   : 2,
+        "xtitle" : "trk #phi_{0}",
+        "ytitle" : "trk z0 [mm]"
+    },
+    
+    "ele_z0_vs_tanlambda_hh" : {
+        "binsX"  : 200,
+        "minX"   : -0.1,
+        "maxX"   : 0.1,
+        "binsY"  : 100,
+        "minY"   : -2,
+        "maxY"   : 2,
+        "xtitle" : "trk(#lamdba)",
+        "ytitle" : "trk z0 [mm]"
+    },
+    "ele_cl_time_h" : {
+	"bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "electron cluster time (ns)",
+        "ytitle" : "Clusters"
+    },
+    "ele_cltrk_time_diff_h" : {
+	"bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "electron cluster-track time (ns)",
+        "ytitle" : "Tracks"
+    },
+
+    "gamma_cl_time_h" : {
+	"bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "gamma cluster time (ns)",
+        "ytitle" : "Clusters"
+    },    
+   "cl_time_diff_h" : {
+	"bins" : 100,
+        "minX" : -50,
+        "maxX" : 50,
+        "xtitle" : "gamma-electron cluster time (ns)",
+        "ytitle" : "Tracks"
+    },
+     "esum_h" : {
+	"bins" : 100,
+        "minX" : 0,
+        "maxX" : 5.0,
+        "xtitle" : "energy sum (GeV)",
+        "ytitle" : "Events"
+     },
+    "psum_h" : {
+	"bins" : 100,
+        "minX" : 0,
+        "maxX" : 5.0,
+        "xtitle" : "energy+momentum sum (GeV)",
+        "ytitle" : "Events"
+    } 
+}

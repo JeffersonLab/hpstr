@@ -1,0 +1,47 @@
+{
+    "Singles2_eq" : {
+	"cut" : 1, 
+	"id" : 0, 
+	"info":  "Singles2 Trigger"
+    },
+    "eleMom_lt" : {
+        "cut" : 3.5,
+        "id"  : 1,
+        "info" : "p e^{-}<3.5GeV"
+    },
+    "eleTrkChi2_lt" : {
+        "cut"  : 250,
+        "id"   : 2,
+        "info" : "e^{-} Track #chi^{2}<250"
+    },
+    "posTrkChi2_lt" : {
+        "cut"  : 250,
+        "id"   : 3,
+        "info" : "e^{+} Track #chi^{2}<250"
+    },
+    "chi2unc_lt" : {
+        "cut"   : 5000,
+        "id"    : 4,
+        "info"  : "#chi^{2}_{unc}<5000"
+    },
+    "eleMom_gt" : {
+        "cut" : 0.5,
+        "id"  : 5,
+        "info" : "p_e^{-}>0.5 [GeV]"
+    },
+    "posMom_gt" : {
+        "cut" : 0.5,
+        "id"  : 6,
+        "info" : "p_e^{+}>0.5 [GeV]"
+    },
+    "maxVtxMom_lt" : {
+        "cut" : 6,
+        "id"  : 7,
+        "info" : "p_{vtx}<6 [GeV]"
+    },
+    "minVtxMom_gt"  : { 
+        "cut"  : 2.0,
+        "id"   : 8,
+        "info" : "P_{e^{-}} +  P_{e^{+}}>2.0*Ebeam"
+    }  
+}

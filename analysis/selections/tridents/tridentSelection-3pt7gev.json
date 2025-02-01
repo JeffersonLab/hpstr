@@ -1,0 +1,85 @@
+{
+    "Singles2or3_eq" : {
+	"cut" : 1, 
+	"id" : 0, 
+	"info":  "Singles Trigger"
+    },
+    "eleNHits_gt" : {
+        "cut" : 9, 
+        "id" : 1, 
+        "info": "Ele NHits > 9" 
+    },
+    
+    "posNHits_gt" : {
+        "cut" : 9, 
+        "id" : 2, 
+        "info": "Pos NHits > 9" 
+    },
+    
+
+    "eleMom_lt" : {
+        "cut" : 3.0,
+        "id"  : 3,
+        "info" : "p e^{-}<3.0GeV"
+    },
+    "eleTrkChi2_lt" : {
+        "cut"  : 250,
+        "id"   : 4,
+        "info" : "e^{-} Track #chi^{2}<250"
+    },
+    "posTrkChi2_lt" : {
+        "cut"  : 250,
+        "id"   : 5,
+        "info" : "e^{+} Track #chi^{2}<250"
+    },
+    "chi2unc_lt" : {
+        "cut"   : 5000,
+        "id"    : 6,
+        "info"  : "#chi^{2}_{unc}<5000"
+    },
+    "eleMom_gt" : {
+        "cut" : 0.4,
+        "id"  : 7,
+        "info" : "p_e^{-}>0.4 [GeV]"
+    },
+    "posMom_gt" : {
+        "cut" : 0.4,
+        "id"  : 8,
+        "info" : "p_e^{+}>0.4 [GeV]"
+    },
+    "maxVtxMom_lt" : {
+        "cut" : 4,
+        "id"  : 9,
+        "info" : "P_{e^{-}} +  P_{e^{+}}<4 GeV"
+    },
+    "minVtxMom_gt"  : { 
+        "cut"  : 1.6,
+        "id"   : 10,
+        "info" : "P_{e^{-}} +  P_{e^{+}}>1.6 GeV"
+    },
+    "eleTrkTime_lt": {
+        "cut" : 15, 
+        "id"  : 11, 
+        "info" : "electron |trk time - mean|<15 ns"
+    },
+    "posTrkTime_lt": {
+        "cut" : 15, 
+        "id"  : 12, 
+        "info" : "positron |trk time - mean|<15 ns"
+    },
+    "eleTrkCluTimeDiff_lt":{
+        "cut" : 10, 
+        "id"  : 12, 
+        "info": "electron |trk time - clu time|<10 ns"
+    }, 
+    "posTrkCluTimeDiff_lt":{
+        "cut" : 10, 
+        "id"  : 13, 
+        "info": "positron |trk time - clu time|<10 ns"
+    },    
+    "eleposCluTimeDiff_lt": {
+        "cut" : 5, 
+        "id"  : 14, 
+        "info": "electron - positron |clu time|<5 ns"
+    }   
+}

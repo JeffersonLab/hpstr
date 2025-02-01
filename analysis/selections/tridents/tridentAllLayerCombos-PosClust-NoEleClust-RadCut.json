@@ -1,0 +1,24 @@
+{   
+     "radMom_gt" : {
+        "cut" : 0.8,
+        "id"  : 0,
+        "info": "Radiative Cut pVtx > 0.8*eBeam"
+    },
+
+    "posClusterMatched" : {
+        "cut" : 1, 
+        "id"  : 1,
+        "info": "Positron Cluster Match"
+    },
+   "eleClusterMatched" : {
+        "cut" : 0,
+        "id"  : 2,
+        "info": "Electron Not Cluster Match"
+    },
+
+    "nVtxs_eq" : {
+        "cut"  : 1,
+        "id"   : 3,
+        "info" : "N_{vtx}=1"
+    }
+}

@@ -1,0 +1,29 @@
+{
+  
+    "nClustersTrigTimeCut":{
+        "cut":3,
+        "id": 0, 
+        "info": "Number of In-Trig-Time Clusters<3"
+    },
+     "cluESumLt":{
+       "cut":4.7,
+       "id": 1, 
+       "info": "cluESum<4.7 GeV"
+   },
+    "cluFiducialElectron" : {
+        "cut" : 1,
+        "id"  : 2,
+        "info" : "Electron ClusterFiducial==1"
+    },  
+    "cluFiducialPositron" : {
+        "cut" : 1,
+        "id"  : 3,
+        "info" : "Positron ClusterFiducial==1"
+    },   
+
+  "cluCoplan":{
+	"cut" : 10,
+        "id"  : 4,
+	"info" : "cluCoplanarity<10 degrees"
+    }
+}

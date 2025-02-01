@@ -1,0 +1,17 @@
+{ 
+    "posClusterMatched" : {
+	"cut" : 1, 
+	"id"  : 0,
+	"info": "Positron Cluster Match"
+    },
+    "LayerRequirement" : {
+        "cut"  : 4,
+        "id"   : 1,
+        "info" : "L1{e^{+}}=1 and L1{e^{-}}=1"
+    },	
+    "nVtxs_eq" : {
+        "cut"  : 1,
+        "id"   : 2,
+        "info" : "N_{vtx}=1"
+    }    
+}

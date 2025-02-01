@@ -1,0 +1,22 @@
+{ 
+    "eleClusterMatched" : {
+	"cut" : 0, 
+	"id"  : 0,
+	"info": "No Electron Cluster Match"
+    },
+    "posClusterMatched" : {
+	"cut" : 1, 
+	"id"  : 1,
+	"info": "Positron Cluster Match"
+    },
+    "LayerRequirement" : {
+        "cut"  : 4,
+        "id"   : 2,
+        "info" : "L1{e^{+}}=1 and L1{e^{-}}=1"
+    },	
+    "nVtxs_eq" : {
+        "cut"  : 1,
+        "id"   : 3,
+        "info" : "N_{vtx}=1"
+    }    
+}

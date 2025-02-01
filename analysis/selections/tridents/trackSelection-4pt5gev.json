@@ -1,0 +1,7 @@
+{
+    "trkMom_gt" : {
+        "cut" : 0.25,
+        "id"  : 0,
+        "info" : "p(trk)>0.25GeV"
+    }  
+}

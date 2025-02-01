@@ -1,0 +1,23 @@
+{       
+    "nPosSideClusters_eq" :  {
+        "cut"  : 1,
+        "id"   : 0,
+        "info" : "Positron Side Clusters N =1"
+    },
+    "posClusterMatched" : {
+        "cut" : 0,
+        "id"  : 1,
+        "info": "No Positron Cluster Match"
+    },
+    "eleClusterMatched" : {
+        "cut" : 1,
+        "id"  : 2,
+        "info": "Electron  Cluster Match"
+    },
+
+    "nVtxs_eq" : {
+        "cut"  : 1,
+        "id"   : 3,
+        "info" : "N_{vtx}=1"
+    }
+}

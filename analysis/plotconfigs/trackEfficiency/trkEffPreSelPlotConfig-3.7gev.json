@@ -1,0 +1,280 @@
+{
+    "nClusters_all_h" : {
+        "bins"   : 20,
+        "minX"   : 0,
+        "maxX"   : 20,
+        "xtitle" : "Number of Clusters:  No Cuts",
+        "ytitle" : "Events"
+    },
+    "nClusters_pass_trig_time_h" : {
+        "bins"   : 20,
+        "minX"   : 0,
+        "maxX"   : 20,
+        "xtitle" : "Number of Clusters:  Trigger Time",
+        "ytitle" : "Events"
+    },
+    "nClusterPairs_pass_bunch_time_h" : {
+        "bins"   : 10,
+        "minX"   : 0,
+        "maxX"   : 10,
+        "xtitle" : "Number of Cluster Pairs:  Bunch Time",
+        "ytitle" : "Events"
+    },
+    "clE_ele_allpairs_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Electron Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+    "clX_ele_allpairs_h" : {
+        "bins"   : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "xtitle" : "Electron Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_ele_allpairs_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Electron Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_vs_clE_ele_allpairs_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Electron Cluster Energy (GeV)",
+        "ytitle" : "Electron Cluster Y (mm)"
+    },
+    "clY_vs_clX_ele_allpairs_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Electron Cluster X (mm)",
+        "ytitle" : "Electron Cluster Y (mm)"
+    },
+     "clE_vs_clX_ele_allpairs_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 0,
+        "binsY"  : 50,
+        "minY"   : 0,
+        "maxY"   : 4.5,
+        "xtitle" : "Electron Cluster X (mm)",
+        "ytitle" : "Electron Cluster Energy (GeV)"
+    },
+
+    "clE_pos_allpairs_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Positron Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+  "clX_pos_allpairs_h" : {
+        "bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 400,
+        "xtitle" : "Positron Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+  "clY_pos_allpairs_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Positron Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+    
+  "clY_vs_clE_pos_allpairs_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Positron Cluster Energy (GeV)",
+        "ytitle" : "Positron Cluster Y (mm)"
+    },
+    "clY_vs_clX_pos_allpairs_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 400,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Positron Cluster X (mm)",
+        "ytitle" : "Positron Cluster Y (mm)"
+    },
+     "clE_vs_clX_pos_allpairs_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 400,
+        "binsY"  : 50,
+        "minY"   : 0,
+        "maxY"   : 4.5,
+        "xtitle" : "Positron Cluster X (mm)",
+        "ytitle" : "Positron Cluster Energy (GeV)"
+    },
+
+    "clTime_ele_allpairs_h":{
+	"bins"   : 60,
+        "minX"   : -10,
+        "maxX"   : 10,
+        "xtitle" : "Electron Cluster Time (ns)",
+        "ytitle" : "Events"
+    },
+  "clTime_pos_allpairs_h":{
+	"bins"   : 60,
+        "minX"   : -10,
+        "maxX"   : 10,
+        "xtitle" : "Positron Cluster Time (ns)",
+        "ytitle" : "Events"
+    },
+
+      "clTime_eleMinusPos_allpairs_h":{
+	"bins"   : 50,
+        "minX"   : -10,
+        "maxX"   : 10,
+        "xtitle" : "Electron-Positron Cluster Time (ns)",
+        "ytitle" : "Events"
+    },
+
+    "clTime_preselect_h":{
+	"bins"   : 60,
+        "minX"   : -10,
+        "maxX"   : 10,
+        "xtitle" : "Preselection Cluster Time (ns)",
+        "ytitle" : "Events"
+    },
+
+      "clE_preselect_h":{
+	"bins"   : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "xtitle" : "Preslection Cluster Energy (GeV)",
+        "ytitle" : "Events"
+    },
+
+  
+    "clX_preselect_h" : {
+        "bins"   : 50,
+        "minX"   : -300,
+        "maxX"   : 400,
+        "xtitle" : "Preselection Cluster X (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_preselect_h" : {
+        "bins"   : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Preselection Cluster Y (mm)",
+        "ytitle" : "Events"
+    },
+    "clY_vs_clE_preselect_hh" : {
+        "binsX"  : 50,
+        "minX"   : 0,
+        "maxX"   : 4.5,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Preselection Cluster Energy (GeV)",
+        "ytitle" : "Preselection Cluster Y (mm)"
+    },
+    "clY_vs_clX_preselect_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 400,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Preselection Cluster X (mm)",
+        "ytitle" : "Preselection Cluster Y (mm)"
+    },
+  "clE_vs_clX_preselect_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 400,
+        "binsY"  : 50,
+        "minY"   : 0,
+        "maxY"   : 4.5,
+        "xtitle" : "Preselection Cluster X (mm)",
+        "ytitle" : "Preselection Cluster Energy (GeV)"
+    },
+
+    "trkClDeltaXvsX_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 400,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Cluster X (mm)",
+        "ytitle" : "delta(Cluster X - Track X)(mm)"
+    },
+   
+    "trkClDeltaXvsY_hh" : {
+        "binsX"  : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "binsY"  : 50,
+        "minY"   : -100,
+        "maxY"   : 100,
+        "xtitle" : "Cluster Y (mm)",
+        "ytitle" : "delta(Cluster X - Track X)(mm)"
+    },
+
+    "trkClDeltaYvsX_hh" : {
+        "binsX"  : 50,
+        "minX"   : -300,
+        "maxX"   : 400,
+        "binsY"  : 50,
+        "minY"   : -20,
+        "maxY"   : 20,
+        "xtitle" : "Cluster X (mm)",
+        "ytitle" : "delta(Cluster Y - Track Y)(mm)"
+    },
+
+    "trkClDeltaYvsY_hh" : {
+        "binsX"  : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "binsY"  : 50,
+        "minY"   : -20,
+        "maxY"   : 20,
+        "xtitle" : "Cluster Y (mm)",
+        "ytitle" : "delta(Cluster Y - Track Y)(mm)"
+    },
+    "trkClMinDelta_h" : {
+        "bins"  : 50,
+        "minX"   : 0,
+        "maxX"   : 100,
+        "xtitle" : "Min Delta Cluster - Track (mm)",
+        "ytitle" : "Events"
+    },
+
+  "trkClDeltaX_h" : {
+        "bins"  : 50,
+        "minX"   : -100,
+        "maxX"   : 100,
+        "xtitle" : "Delta ClusterX - TrackX (mm)",
+        "ytitle" : "Events"
+    },
+
+    "trkClDeltaY_h" : {
+        "bins"  : 50,
+        "minX"   : -20,
+        "maxX"   : 20,
+        "xtitle" : "Min Delta ClusterY - TrackY (mm)",
+        "ytitle" : "Events"
+    }
+
+}

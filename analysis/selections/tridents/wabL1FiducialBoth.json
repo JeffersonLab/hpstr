@@ -1,0 +1,17 @@
+{   
+    "LayerRequirement" : {
+        "cut"  : 1,
+        "id"   : 0,
+        "info" : "L1{e^{-}}=1"
+    },  
+   "cluFiducialElectron" : {
+        "cut" : 1,
+        "id"  : 1,
+        "info" : "Electron ClusterFiducial==1"
+    },
+    "cluFiducialGamma" : {
+        "cut" : 1,
+        "id"  : 2,
+        "info" : "Gamma ClusterFiducial==1"
+    }
+}

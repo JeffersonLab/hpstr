@@ -1,0 +1,17 @@
+{
+   "cluFiducialElectron" : {
+        "cut" : 1,
+        "id"  : 0,
+        "info" : "Electron ClusterFiducial==1"
+    },  
+    "cluFiducialPositron" : {
+        "cut" : 1,
+        "id"  : 1,
+        "info" : "Positron ClusterFiducial==1"
+    },   
+  "cluCoplan":{
+	"cut" : 10,
+        "id"  : 2,
+	"info" : "cluCoplanarity<10 degrees"
+    }
+}

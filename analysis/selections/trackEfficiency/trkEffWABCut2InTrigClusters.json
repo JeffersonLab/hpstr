@@ -1,0 +1,22 @@
+{    
+    "nClustersTrigTimeCut":{
+        "cut":3,
+        "id": 0, 
+        "info": "Number of In-Trig-Time Clusters<3"
+    },
+    "cluESum":{
+        "cut":3.0,
+        "id": 1, 
+        "info": "cluESum>3.0 GeV"
+    },
+    "cluESumLt":{
+        "cut":4.2,
+        "id": 1, 
+        "info": "cluESum<4.2 GeV"
+    },
+    "cluCoplan":{
+	"cut" : 10,
+        "id"  : 2,
+	"info" : "cluCoplanarity<10 degrees"
+    }
+}

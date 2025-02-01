@@ -1,0 +1,17 @@
+{    
+    "nClustersTrigTimeCut":{
+        "cut":4,
+        "id": 0, 
+        "info": "Number of In-Trig-Time Clusters<4"
+    },
+    "cluESum":{
+        "cut":2.5,
+        "id": 1, 
+        "info": "cluESum>2.5 GeV"
+    },
+    "cluESumLt":{
+        "cut":5.0,
+        "id": 2, 
+        "info": "cluESum<5.0 GeV"
+    }
+}

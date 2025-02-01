@@ -1,0 +1,23 @@
+{
+   "cluESum":{
+       "cut":3.0,
+       "id": 0, 
+       "info": "cluESum>3.0 GeV"
+   },
+    "cluFiducialElectron" : {
+        "cut" : 1,
+        "id"  : 1,
+        "info" : "Electron ClusterFiducial==1"
+    },  
+    "cluFiducialPositron" : {
+        "cut" : 1,
+        "id"  : 2,
+        "info" : "Positron ClusterFiducial==1"
+    },   
+
+  "cluCoplan":{
+	"cut" : 10,
+        "id"  : 3,
+	"info" : "cluCoplanarity<10 degrees"
+    }
+}

@@ -69,7 +69,9 @@ class MCAnaHistos : public HistoManager {
          * @param weight 
          */
         void FillMCEcalHits(std::vector<MCEcalHit*> *mcEcalHits, float weight = 1.);
-
+	void FillAllFindableTracks(MCParticle* eleRad,MCParticle* eleRec, MCParticle* pos, double weight);
+	void FillMCParticleHistos(MCParticle* mcpart, std::string label, double weight);
+	void FillMCPairHistos(MCParticle* ele,MCParticle* pos,std::string label, double weight);
 };
 
 #endif //MCANAHISTOS_H
