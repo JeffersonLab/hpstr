@@ -47,9 +47,11 @@ void Process::runOnRoot() {
         int cfile = 0;
 
         for (auto ifile : input_files_) {
+
             std::cout << "[Process::runOnRoot] Processing file: "<< ifile << std::endl;
 
-            std::string ofile = std::to_string(cfile) + "_output.root";
+            // Output file path
+            std::string ofile = "output_" + std::to_string(cfile) + ".root";
             if(nIn==nOut){
               ofile = output_files_[cfile];
             } 
@@ -57,7 +59,7 @@ void Process::runOnRoot() {
               ofile = output_files_[0];
             }
             if(output_files_.size()==1){
-              ofile = std::to_string(cfile) + "_" +output_files_[0];
+              ofile = "output_" + std::to_string(cfile) + "_" +output_files_[0];
             }
 
             HpsEventFile* file = new HpsEventFile(ifile,ofile);
@@ -72,7 +74,7 @@ void Process::runOnRoot() {
 
             while (file->nextEvent() && (event_limit_ < 0 || (n_events_processed < event_limit_))) {
 
-                if (n_events_processed%1 == 0)
+                if (n_events_processed%1000 == 0)
                     std::cout<<"Event: "<<n_events_processed<<std::endl;
 
                 //In this way if the processing fails (like an event doesn't pass the selection, the other modules aren't run on that event)
