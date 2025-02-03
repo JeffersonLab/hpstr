@@ -11,9 +11,9 @@
 #include "HpsEventFile.h"
 #include "TH1.h"
 
-Process::Process() {}
+#include <string.h>
 
-//TODO Fix this better
+Process::Process() {}
 
 void Process::runOnHisto() {
     try {
@@ -36,69 +36,76 @@ void Process::runOnHisto() {
 } //Process::runOnHisto
 
 void Process::runOnRoot() {
+
     try {
         int n_events_processed = 0;
         HpsEvent event;
-        int cfile =0 ;
 
-        HpsEventFile* file = new HpsEventFile();
-        file->changeOutputFile("output.root");
+        int nIn  = input_files_.size();
+        int nOut = output_files_.size();
+
+        int cfile = 0;
 
         for (auto ifile : input_files_) {
             std::cout << "[Process::runOnRoot] Processing file: "<< ifile << std::endl;
 
-            // Event counter PER file
-            TH1D * event_h = new TH1D("event_h","Number of Events Processed;;Events", 21, -10.5, 10.5);
+            std::string ofile = std::to_string(cfile) + "_output.root";
+            if(nIn==nOut){
+              ofile = output_files_[cfile];
+            } 
+            else if(nOut==1){
+              ofile = output_files_[0];
+            }
+            if(output_files_.size()==1){
+              ofile = std::to_string(cfile) + "_" +output_files_[0];
+            }
 
-            file->changeInputFile(ifile);
+            HpsEventFile* file = new HpsEventFile(ifile,ofile);
             file->setupEvent(&event);
+
+            TH1D *event_h = new TH1D("event_h","Number of Events Processed;;Events", 21, -10.5, 10.5);
 
             for (auto module : sequence_) {
                 module->initialize(event.getTree());
                 module->setFile(file->getOutputFile());
             }
+
             while (file->nextEvent() && (event_limit_ < 0 || (n_events_processed < event_limit_))) {
-                if (n_events_processed%1000 == 0)
-                    std::cout<<"Event:"<<n_events_processed<<std::endl;
+
+                if (n_events_processed%1 == 0)
+                    std::cout<<"Event: "<<n_events_processed<<std::endl;
 
                 //In this way if the processing fails (like an event doesn't pass the selection, the other modules aren't run on that event)
                 for (auto module : sequence_) {
                     module->process(&event);
                 }
-                //event.Clear();
                 event_h->Fill(0.0);
                 ++n_events_processed;
             }
-            //Pass to next file
-            ++cfile;
-            // Finalize all modules
 
-            //Select the output file for storing the results of the processors.
+            // Finalize all modules
             file->resetOutputFileDir();
             event_h->Write();
             for (auto module : sequence_) {
-                //TODO:Change the finalize method
                 module->finalize();
             }
 
             std::cout << "[Process::runOnRoot] Processed  "<< n_events_processed << " events from input file" << std::endl;
 
+            file->close();
+            delete file;
+
 	    // Reset event counter
 	    n_events_processed = 0;
 
-            if (file) {
-                delete event_h;
-                event_h = nullptr;
-            }
+            cfile++;
 
         } // Loop over input files
         
-        file->close();
-        delete file;
-
     } catch (std::exception& e) {
         std::cerr<<"Error:"<<e.what()<<std::endl;
     }
+
 }
 
 void Process::run() {
