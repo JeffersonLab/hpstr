@@ -35,6 +35,9 @@ void HpsEventFile::changeInputFile(const std::string ifilename)
   if( rootfile_ ){
     rootfile_->cd();
     rootfile_->Close();
+
+    delete intree_;
+    delete rootfile_;
   }
 
   rootfile_ = new TFile(ifilename.c_str(),"READ");  
@@ -48,6 +51,7 @@ void HpsEventFile::changeOutputFile(const std::string ofilename)
     ofile_->Close();
   }
   ofile_ = new TFile(ofilename.c_str(),"recreate");
+  ofile_->cd();
 }
 
 void HpsEventFile::close() {
