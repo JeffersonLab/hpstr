@@ -127,6 +127,8 @@ class TrackingProcessor : public Processor {
 
         double bfield_{-1.}; //!< magnetic field
 
+	int useTrackerHits_{-1}; //!< Load hit collections, otherwise get from getSubdetectorHitNumbers
+
 }; // Tracking Processor
 
 #endif // __TRACKING_PROCESSOR_H__
