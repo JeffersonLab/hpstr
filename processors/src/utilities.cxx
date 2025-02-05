@@ -245,19 +245,6 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
         track->setPositionAtEcal(position_at_ecal); 
     }
 
-    /*if (kf_resid_data) {
-        std::shared_ptr<UTIL::LCRelationNavigator> kf_resid_data_nav = std::make_shared<UTIL::LCRelationNavigator>(kf_resid_data);
-        EVENT::LCObjectVec kf_resid_data_list 
-            = kf_resid_data_nav->getRelatedFromObjects(lc_track);
-        if (kf_resid_data_list.size() == 1) {
-            IMPL::LCGenericObjectImpl* kf_resid_datum 
-                = static_cast<IMPL::LCGenericObjectImpl*>(kf_resid_data_list.at(0));
-            for (int ikink = 0; ikink < kf_resid_datum->getNDouble(); ++ikink) { 
-                track->setLambdaKink(ikink, kf_resid_datum->getFloatVal(ikink));
-            }
-        }    
-    }*/
-
     if (gbl_kink_data) {
         // Instantiate an LCRelation navigator which will allow faster access 
         // to GBLKinkData object
