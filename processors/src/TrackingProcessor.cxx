@@ -24,9 +24,9 @@ void TrackingProcessor::configure(const ParameterSet& parameters) {
         rawhitCollRoot_          = parameters.getString("rawhitCollRoot", rawhitCollRoot_);
         truthTracksCollLcio_     = parameters.getString("truthTrackCollLcio",truthTracksCollLcio_);
         truthTracksCollRoot_     = parameters.getString("truthTrackCollRoot",truthTracksCollRoot_);
-        bfield_                  = parameters.getDouble("bfield",bfield_);
         trackStateLocation_      = parameters.getString("trackStateLocation",trackStateLocation_);
-        
+        useTrackerHits_          = parameters.getInteger("useTrackerHits",useTrackerHits_);	    
+	bfield_                  = parameters.getDouble("bfield",bfield_);
         //Residual plotting is done in this processor for the moment.
         doResiduals_             = parameters.getInteger("doResiduals",doResiduals_);
         trackResDataLcio_        = parameters.getString("trackResDataLcio",trackResDataLcio_);
@@ -57,13 +57,13 @@ void TrackingProcessor::initialize(TTree* tree) {
 
 
     //Residual plotting
-    /*if (doResiduals_) {
+    if (doResiduals_) {
         trkResHistos_ = new TrackHistos(trkCollLcio_);
         trkResHistos_->debugMode(debug_);
         trkResHistos_->loadHistoConfig(resCfgFilename_);
         trkResHistos_->doTrackComparisonPlots(false);
         trkResHistos_->DefineHistos();
-    }*/
+    }
     
 }
 
@@ -137,8 +137,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
     std::map <int, std::vector<int> > SharedHits;
     //TODO: can we do better? (innermost)
     std::map <int, bool> SharedHitsLy0;
-    std::map <int, bool> SharedHitsLy1;
-    
+    std::map <int, bool> SharedHitsLy1;  
     for (int itrack = 0; itrack < tracks->getNumberOfElements();++itrack) {
         SharedHits[itrack]   = {};
         SharedHitsLy0[itrack] = false;
@@ -301,7 +300,6 @@ bool TrackingProcessor::process(IEvent* ievent) {
             {
                 std::cout<<e.what()<<std::endl;
             }
-            std::cout<<"I made it here"<<std::endl; 
             if ((trackRes_data_rel)and(trackXKink_data_rel)and(trackZKink_data_rel)) {
                 std::shared_ptr<UTIL::LCRelationNavigator> trackRes_data_nav = std::make_shared<UTIL::LCRelationNavigator>(trackRes_data_rel);
                 std::shared_ptr<UTIL::LCRelationNavigator> trackXKink_data_nav = std::make_shared<UTIL::LCRelationNavigator>(trackXKink_data_rel);
@@ -309,11 +307,9 @@ bool TrackingProcessor::process(IEvent* ievent) {
                 EVENT::LCObjectVec trackRes_data_vec = trackRes_data_nav->getRelatedFromObjects(lc_track);
                 EVENT::LCObjectVec trackXKink_data_vec = trackXKink_data_nav->getRelatedFromObjects(lc_track);
                 EVENT::LCObjectVec trackZKink_data_vec = trackZKink_data_nav->getRelatedFromObjects(lc_track);
-		std::cout<<"DID I GET HERE"<<std::endl;
 		IMPL::LCGenericObjectImpl* trackRes_data = static_cast<IMPL::LCGenericObjectImpl*>(trackRes_data_vec.at(0)); 
 		IMPL::LCGenericObjectImpl* trackXKink_data = static_cast<IMPL::LCGenericObjectImpl*>(trackXKink_data_vec.at(0)); 
 		IMPL::LCGenericObjectImpl* trackZKink_data = static_cast<IMPL::LCGenericObjectImpl*>(trackZKink_data_vec.at(0)); 
-		std::cout<<"DID I GET HERE 2"<<std::endl;
                 /*
                   //Some of the residuals do not get saved because sigma is negative. Will be fixed.
                 if (track->getTrackerHitCount() != trackRes_data->getNDouble()) {
@@ -321,7 +317,6 @@ bool TrackingProcessor::process(IEvent* ievent) {
                     std::cout<<"Hits::"<<track->getTrackerHitCount()<<" Residuals:"<<trackRes_data->getNDouble()<<std::endl;
                 }
                 */
-               	//std::cout<<trackRes_data->getNInt()<<std::endl; 
                 //Last int is the volume
                 for (int i_res = 0; i_res < trackRes_data->getNInt()-1;i_res++) {
                     //std::cout<<"Residual ly " << trackRes_data->getIntVal(i_res)<<" res="<< trackRes_data->getDoubleVal(i_res)<<" sigma="<<trackRes_data->getFloatVal(i_res)<<std::endl;
@@ -330,25 +325,19 @@ bool TrackingProcessor::process(IEvent* ievent) {
                     double sigma = trackRes_data->getFloatVal(i_res);
                     track->setTrackResid(ly,res);
 		}
-		std::cout<<"DID I GET HERE 3"<<std::endl;
 		for (int i_res = 0; i_res < trackXKink_data->getNInt()-1;i_res++) {
                     int ly = trackXKink_data->getIntVal(i_res);
                     double Xkink = trackXKink_data->getDoubleVal(i_res);
                     double sigma = trackXKink_data->getFloatVal(i_res);
                     track->setLambdaKink(ly,Xkink);
 		}
-		std::cout<<"DID I GET HERE 4"<<std::endl;
-		std::cout<<trackZKink_data->getNInt()<<std::endl;
 		for (int i_res = 0; i_res < trackZKink_data->getNInt()-1;i_res++) {
-		    std::cout<<i_res<<std::endl;
                     int ly = trackZKink_data->getIntVal(i_res);
                     double Zkink = trackZKink_data->getDoubleVal(i_res);
                     double sigma = trackZKink_data->getFloatVal(i_res);
 		    track->setPhiKink(ly,Zkink);
 		}
-		std::cout<<"DID I GET HERE 5"<<std::endl;
-		    //std::cout<<res<<std::endl;
-		    //trkResHistos_->FillResidualHistograms(track,ly,res,sigma);
+		trkResHistos_->FillResidualHistograms(track,ly,res,sigma);
             }//trackResData exists
         }//doResiduals
         tracks_.push_back(track);
@@ -367,13 +356,12 @@ bool TrackingProcessor::process(IEvent* ievent) {
 }
 
 void TrackingProcessor::finalize() { 
-
-    /*if (doResiduals_) {
+    if (doResiduals_) {
         TFile* outfile = new TFile(resoutname_.c_str(),"RECREATE");
         trkResHistos_->saveHistos(outfile,trkCollLcio_);
         if (trkResHistos_) delete trkResHistos_;
         trkResHistos_=nullptr;
-    }*/
+    }
 }
 
 DECLARE_PROCESSOR(TrackingProcessor); 
