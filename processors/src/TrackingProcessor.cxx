@@ -180,7 +180,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
             track->setMomentum(bfield_);
 	
         // Get the collection of hits associated with a LCIO Track
-        EVENT::TrackerHitVec lc_tracker_hits = lc_track->getTrackerHits();
+        
 	int nHits = 0;
 
 	if(!useTrackerHits_){
@@ -201,6 +201,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
         //  Iterate through the collection of 3D hits (TrackerHit objects)
         //  associated with a track, find the corresponding hits in the HPS
         //  event and add references to the track
+	EVENT::TrackerHitVec lc_tracker_hits = lc_track->getTrackerHits();
         bool rotateHits = true;
         int hitType = 0;
         if (track->isKalmanTrack())
