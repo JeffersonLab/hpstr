@@ -29,7 +29,8 @@ void TrackingProcessor::configure(const ParameterSet& parameters) {
 	bfield_                  = parameters.getDouble("bfield",bfield_);
         //Residual plotting is done in this processor for the moment.
         doResiduals_             = parameters.getInteger("doResiduals",doResiduals_);
-        trackResDataLcio_        = parameters.getString("trackResDataLcio",trackResDataLcio_);
+        doHistograms_		 = parameters.getInteger("doHistograms",doHistograms_);
+	trackResDataLcio_        = parameters.getString("trackResDataLcio",trackResDataLcio_);
         trackXKinkDataLcio_	 = parameters.getString("trackXKinkDataLcio",trackXKinkDataLcio_);
 	trackZKinkDataLcio_	 = parameters.getString("trackZKinkDataLcio",trackZKinkDataLcio_);
 	resCfgFilename_          = parameters.getString("resPlots",resCfgFilename_);
@@ -57,7 +58,7 @@ void TrackingProcessor::initialize(TTree* tree) {
 
 
     //Residual plotting
-    if (doResiduals_) {
+    if (doResiduals_ and doHistograms_) {
         trkResHistos_ = new TrackHistos(trkCollLcio_);
         trkResHistos_->debugMode(debug_);
         trkResHistos_->loadHistoConfig(resCfgFilename_);
@@ -339,7 +340,8 @@ bool TrackingProcessor::process(IEvent* ievent) {
                     int ly = trackRes_data->getIntVal(i_res);
                     double res = trackRes_data->getDoubleVal(i_res);
                     double sigma = trackRes_data->getFloatVal(i_res);
-                    track->setTrackResid(ly,res);
+                    track->setTrackResid(ly,res);	
+		    if(doHistograms_){trkResHistos_->FillResidualHistograms(track,ly,res,sigma);}
 		}
 		for (int i_res = 0; i_res < trackXKink_data->getNInt()-1;i_res++) {
                     int ly = trackXKink_data->getIntVal(i_res);
@@ -353,7 +355,6 @@ bool TrackingProcessor::process(IEvent* ievent) {
                     double sigma = trackZKink_data->getFloatVal(i_res);
 		    track->setPhiKink(ly,Zkink);
 		}
-		trkResHistos_->FillResidualHistograms(track,ly,res,sigma);
             }//trackResData exists
         }//doResiduals
         tracks_.push_back(track);
@@ -372,7 +373,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
 }
 
 void TrackingProcessor::finalize() { 
-    if (doResiduals_) {
+    if (doResiduals_ and doHistograms_) {
         TFile* outfile = new TFile(resoutname_.c_str(),"RECREATE");
         trkResHistos_->saveHistos(outfile,trkCollLcio_);
         if (trkResHistos_) delete trkResHistos_;
