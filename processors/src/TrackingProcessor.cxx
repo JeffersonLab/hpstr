@@ -180,7 +180,23 @@ bool TrackingProcessor::process(IEvent* ievent) {
 	
         // Get the collection of hits associated with a LCIO Track
         EVENT::TrackerHitVec lc_tracker_hits = lc_track->getTrackerHits();
+	int nHits = 0;
 
+	if(!useTrackerHits_){
+	    auto hitPattern = lc_track->getSubdetectorHitNumbers();
+	    for( int h=0; h<hitPattern.size(); h++){
+		if( hitPattern[h]>0 ){
+		    track->addHitLayer(h+1);
+		    nHits++;
+		}
+	    }
+            if(nHits==0){
+              std::cout << "[TrackingProcessor::process] WARNING Track with no hits -- likely getSubdetectorHitNumbers isn't filled!" << std::endl;
+              std::cout << "[TrackingProcessor::process] WARNING If hit collections are saved, you may want to turn on useTrackerHits" << std::endl;
+            }
+	    track->setTrackerHitCount(nHits);
+	}
+	else{
         //  Iterate through the collection of 3D hits (TrackerHit objects)
         //  associated with a track, find the corresponding hits in the HPS
         //  event and add references to the track
@@ -232,7 +248,7 @@ bool TrackingProcessor::process(IEvent* ievent) {
                 } // found shared hit
             } // loop on j>i tracks
         }//tracker hits
-        
+	}
         track->setNShared(SharedHits[itrack].size());
         track->setSharedLy0(SharedHitsLy0[itrack]);
         track->setSharedLy1(SharedHitsLy1[itrack]);
