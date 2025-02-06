@@ -104,7 +104,20 @@ class NTupplizer : public Processor {
 	TH1F* Tracks_;
 	TH1F* Track_Lambda[12][14];	
 	TH1F* Track_Phi[12][14];	
-
+	TH1F* Track_D0[12];
+	TH1F* Track_PHI[12];
+	TH1F* Track_OMEGA[12];
+	TH1F* Track_TANLAMBDA[12];
+	TH1F* Track_Z0[12];
+	TH1F* Track_CHI2[12];
+	TH1F* Track_NDF[12];
+	TH1F* Track_TIME[12];
+	TH1F* Track_POSX[12];
+	TH1F* Track_POSY[12];
+	TH1F* Track_POSZ[12];
+	TH1F* Track_MOMX[12];
+	TH1F* Track_MOMY[12];
+	TH1F* Track_MOMZ[12];
 
 	std::ofstream csvFile_{nullptr};
 	int outPutCsv_{1};
