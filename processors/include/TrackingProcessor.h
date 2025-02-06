@@ -117,6 +117,7 @@ class TrackingProcessor : public Processor {
         int debug_{false}; //!< Debug Level
         
         int doResiduals_{0}; //!< do Residuals
+	int doHistograms_{0};
         std::string trackResDataLcio_{""}; //!< description 
 	std::string trackXKinkDataLcio_{""};
 	std::string trackZKinkDataLcio_{""};
@@ -127,7 +128,7 @@ class TrackingProcessor : public Processor {
 
         double bfield_{-1.}; //!< magnetic field
 
-        int useTrackerHits_{1}; //!< Load hit collections, otherwise get from getSubdetectorHitNumbers 
+	int useTrackerHits_{1};//!< Load hit collections, otherwise get from getSubdetectorHitNumbsrs 
 
 }; // Tracking Processor
 
