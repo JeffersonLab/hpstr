@@ -39,6 +39,20 @@ void NTupplizer::initialize(TTree* tree) {
 			for(int j = 0; j<14;j++){
 				csvFile_<<",track_"+std::to_string(i)+"_lay_"+std::to_string(j)+"_lambkink";
 				csvFile_<<",track_"+std::to_string(i)+"_lay_"+std::to_string(j)+"_phikink";
+				csvFile_<<",track_"+std::to_string(i)+"_d0";
+				csvFile_<<",track_"+std::to_string(i)+"_phi0";
+				csvFile_<<",track_"+std::to_string(i)+"_omega";
+				csvFile_<<",track_"+std::to_string(i)+"_tanlambda";
+				csvFile_<<",tracl_"+std::to_string(i)+"_z0";
+				csvFile_<<",tracl_"+std::to_string(i)+"_chi2";
+				csvFile_<<",tracl_"+std::to_string(i)+"_ndf";
+				csvFile_<<",tracl_"+std::to_string(i)+"_time";
+				csvFile_<<",tracl_"+std::to_string(i)+"_x";
+				csvFile_<<",tracl_"+std::to_string(i)+"_y";
+				csvFile_<<",tracl_"+std::to_string(i)+"_z";
+				csvFile_<<",tracl_"+std::to_string(i)+"_px";
+				csvFile_<<",tracl_"+std::to_string(i)+"_py";
+				csvFile_<<",tracl_"+std::to_string(i)+"_pz";
 			}
 		}
 		csvFile_<<"\n";
@@ -58,6 +72,20 @@ void NTupplizer::initialize(TTree* tree) {
 			Track_Lambda[i][j]=new TH1F(title1.c_str(),"Tracks",100,-1.0,1.0);
 			Track_Phi[i][j]=new TH1F(title2.c_str(),"Tracks",100,-1.0,1.0);
 		}
+		Track_D0[i]=new TH1F();
+		Track_PHI[i]=new TH1F();
+		Track_OMEGA[i]=new TH1F();
+		Track_TANLAMBDA[i]=new TH1F();
+		Track_Z0[i]=new TH1F();
+		Track_CHI2[i]=new TH1F();
+		Track_NDF[i]=new TH1F();
+		Track_TIME[i]=new TH1F();
+		Track_POSX[i]=new TH1F();
+		Track_POSY[i]=new TH1F();
+		Track_POSZ[i]=new TH1F();
+		Track_MOMX[i]=new TH1F();
+		Track_MOMY[i]=new TH1F();
+		Track_MOMZ[i]=new TH1F();
 	}	
 	return;
 }
@@ -80,16 +108,65 @@ bool NTupplizer::process(IEvent* ievent) {
 			for(int j=0;j<14;j++){
 				helper+=","+std::to_string(track->getLambdaKink(j));
 				helper+=","+std::to_string(track->getPhiKink(j));
+
 				Track_Lambda[itrack][j]->Fill(track->getLambdaKink(j));	
 				Track_Phi[itrack][j]->Fill(track->getPhiKink(j));	
 			}
+			helper+=","+std::to_string(track->getD0());
+			helper+=","+std::to_string(track->getPhi());
+			helper+=","+std::to_string(track->getOmega());
+			helper+=","+std::to_string(track->getTanLambda());
+			helper+=","+std::to_string(track->getZ0());
+			helper+=","+std::to_string(track->getChi2());
+			helper+=","+std::to_string(track->getNdf());
+			helper+=","+std::to_string(track->getTrackTime());
+			std::vector<double> position=track->getPosition();
+			helper+=","+std::to_string(position[0]);
+			helper+=","+std::to_string(position[1]);
+			helper+=","+std::to_string(position[2]);
+			std::vector<double> momentum=track->getMomentum();
+			helper+=","+std::to_string(momentum[0]);
+			helper+=","+std::to_string(momentum[1]);
+			helper+=","+std::to_string(momentum[2]);
+
+			Track_D0[itrack]->Fill(track->getD0());
+			Track_PHI[itrack]->Fill(track->getPhi());
+			Track_OMEGA[itrack]->Fill(track->getOmega());
+			Track_TANLAMBDA[itrack]->Fill(track->getTanLambda());
+			Track_Z0[itrack]->Fill(track->getZ0());
+			Track_CHI2[itrack]->Fill(track->getChi2());
+			Track_NDF[itrack]->Fill(track->getNdf());
+			Track_TIME[itrack]->Fill(track->getTrackTime());
+			Track_POSX[itrack]->Fill(position[0]);
+			Track_POSY[itrack]->Fill(position[1]);
+			Track_POSZ[itrack]->Fill(position[2]);
+			Track_MOMX[itrack]->Fill(momentum[0]);
+			Track_MOMY[itrack]->Fill(momentum[1]);
+			Track_MOMZ[itrack]->Fill(momentum[2]);
 		}else{
-			for(int j=0;j<14;j++){
-				helper+=","+std::to_string(-1000.0);
+			for(int j=0;j<14;j++){	
 				helper+=","+std::to_string(-1000.0);
 				Track_Lambda[itrack][j]->Fill(-1000.0);	
-				Track_Phi[itrack][j]->Fill(-1000.0);	
-			}	
+				Track_Phi[itrack][j]->Fill(-1000.0);
+			}
+			//HERE 14 IS THE NUMBER OF VARIABLES THAT ARE BLANK AND ARENT THE KINKS
+			for(int I=0;I<14;I++){
+				helper+=","+std::to_string(-1000.0);
+			}
+			Track_D0[itrack]->Fill(-1000.0);
+			Track_PHI[itrack]->Fill(-1000.0);
+			Track_OMEGA[itrack]->Fill(-1000.0);
+			Track_TANLAMBDA[itrack]->Fill(-1000.0);
+			Track_Z0[itrack]->Fill(-1000.0);
+			Track_CHI2[itrack]->Fill(-1000.0);
+			Track_NDF[itrack]->Fill(-1000.0);
+			Track_TIME[itrack]->Fill(-1000.0);
+			Track_POSX[itrack]->Fill(-1000.0);
+			Track_POSY[itrack]->Fill(-1000.0);
+			Track_POSZ[itrack]->Fill(-1000.0);
+			Track_MOMX[itrack]->Fill(-1000.0);
+			Track_MOMY[itrack]->Fill(-1000.0);
+			Track_MOMZ[itrack]->Fill(-1000.0);
 		}		
 	}
 	helper+="\n";
@@ -128,6 +205,20 @@ void NTupplizer::WriteRoot() {
 				Track_Lambda[i][j]->Write();
 				Track_Phi[i][j]->Write();
 			}
+			Track_D0[i]->Write();
+			Track_PHI[i]->Write();
+			Track_OMEGA[i]->Write();
+			Track_TANLAMBDA[i]->Write();
+			Track_Z0[i]->Write();
+			Track_CHI2[i]->Write();
+			Track_NDF[i]->Write();
+			Track_TIME[i]->Write();
+			Track_POSX[i]->Write();
+			Track_POSY[i]->Write();
+			Track_POSZ[i]->Write();
+			Track_MOMX[i]->Write();
+			Track_MOMY[i]->Write();
+			Track_MOMZ[i]->Write();
 		}
 		outputFile->Close();
 	}
