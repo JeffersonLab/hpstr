@@ -18,9 +18,10 @@ var searchData=
   ['fspart_5f_15',['fspart_',['../classTridentWABAnaProcessor.html#ad70e4a8fc02c32ce98597cc0fd472399',1,'TridentWABAnaProcessor::fspart_'],['../classTridentAnaProcessor.html#ad70e4a8fc02c32ce98597cc0fd472399',1,'TridentAnaProcessor::fspart_'],['../classTrackEfficiencyProcessor.html#ad70e4a8fc02c32ce98597cc0fd472399',1,'TrackEfficiencyProcessor::fspart_']]],
   ['fspartcoll_5f_16',['fspartcoll_',['../classTridentWABAnaProcessor.html#a6f533ddee2985efc373be73fad6f8847',1,'TridentWABAnaProcessor::fspartColl_'],['../classTridentAnaProcessor.html#a6f533ddee2985efc373be73fad6f8847',1,'TridentAnaProcessor::fspartColl_'],['../classTrackEfficiencyProcessor.html#a6f533ddee2985efc373be73fad6f8847',1,'TrackEfficiencyProcessor::fspartColl_']]],
   ['fspcolllcio_5f_17',['fspCollLcio_',['../classFinalStateParticleProcessor.html#aac912b95a36669792c314347ed63d545',1,'FinalStateParticleProcessor']]],
-  ['fspcollroot_5f_18',['fspCollRoot_',['../classFinalStateParticleProcessor.html#a0c1cefc4caf81dcafa2aa85fdeb30b8e',1,'FinalStateParticleProcessor']]],
-  ['fsps_5f_19',['fsps_',['../classFinalStateParticleProcessor.html#aa73ad54e67d599b4d3c6b87a049047f3',1,'FinalStateParticleProcessor']]],
-  ['function_5ffile_5f_20',['function_file_',['../classBhMassResSystematicsProcessor.html#a1e5b98ad38607f088ad8662a14a891a7',1,'BhMassResSystematicsProcessor']]],
-  ['function_5fname_5f_21',['function_name_',['../classBhMassResSystematicsProcessor.html#af13e8b9cba0e21289466882f456905a1',1,'BhMassResSystematicsProcessor']]],
-  ['functions_5f_22',['functions_',['../classMutableTTree.html#af47b71ddca84f91a54d63949251a5f53',1,'MutableTTree']]]
+  ['fspcollname_5f_18',['fspCollName_',['../classNTupplizer.html#a54a02143e84e781e31e6a5c88d62baff',1,'NTupplizer']]],
+  ['fspcollroot_5f_19',['fspCollRoot_',['../classFinalStateParticleProcessor.html#a0c1cefc4caf81dcafa2aa85fdeb30b8e',1,'FinalStateParticleProcessor']]],
+  ['fsps_5f_20',['fsps_',['../classNTupplizer.html#a49d681510410ab9c5488059d4e1a744f',1,'NTupplizer::fsps_'],['../classFinalStateParticleProcessor.html#aa73ad54e67d599b4d3c6b87a049047f3',1,'FinalStateParticleProcessor::fsps_']]],
+  ['function_5ffile_5f_21',['function_file_',['../classBhMassResSystematicsProcessor.html#a1e5b98ad38607f088ad8662a14a891a7',1,'BhMassResSystematicsProcessor']]],
+  ['function_5fname_5f_22',['function_name_',['../classBhMassResSystematicsProcessor.html#af13e8b9cba0e21289466882f456905a1',1,'BhMassResSystematicsProcessor']]],
+  ['functions_5f_23',['functions_',['../classMutableTTree.html#af47b71ddca84f91a54d63949251a5f53',1,'MutableTTree']]]
 ];
