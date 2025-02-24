@@ -299,40 +299,43 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span> </div>
 <div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>            track-&gt;addHitLayer(hitLayer);</div>
 <div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>            <a class="code hl_variable" href="classVertexProcessor.html#a85a0416b17d2d9a674b52dd52ac27949">hits_</a>.push_back(tracker_hit);</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>                    rawSvthitsOn3d.clear();</div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span> </div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>                    } <span class="comment">// Loop over hits on track</span></div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span> </div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>                    track-&gt;setTrackerHitCount(nHits);</div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span> </div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>                } <span class="comment">// !useTrackerHits</span></div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span> </div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>                part-&gt;<a class="code hl_function" href="classParticle.html#aa2dd28c594c2b4ff2fc590c053067a47">setTrack</a>(track); </div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>                <span class="keyword">delete</span> track;</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>                        <span class="keywordflow">for</span> (std::vector&lt;RawSvtHit *&gt;::iterator it = rawSvthitsOn3d.begin(); it != rawSvthitsOn3d.end(); ++it) {</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>                          <span class="keyword">delete</span> *it;</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>                        }</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>                        rawSvthitsOn3d.clear(); </div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span> </div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>                    } <span class="comment">// Loop over hits on track</span></div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span> </div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>                    track-&gt;setTrackerHitCount(nHits);</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span> </div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>                } <span class="comment">// !useTrackerHits</span></div>
 <div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span> </div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>            }</div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>            <span class="comment">// =========================================</span></div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>            <span class="keywordflow">if</span> (<a class="code hl_variable" href="classVertexProcessor.html#a174d7e034f9a94c6d3d7300d72ba4d1d">debug_</a> &gt; 0) std::cout &lt;&lt; <span class="stringliteral">&quot;VertexProcessor: Add particle&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>            <a class="code hl_variable" href="classVertexProcessor.html#a903e32f172e95f40f9f66f785e2d2f62">parts_</a>.push_back(part);</div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>            vtx-&gt;addParticle(part);</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>        }</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span> </div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="classVertexProcessor.html#a174d7e034f9a94c6d3d7300d72ba4d1d">debug_</a> &gt; 0) std::cout &lt;&lt; <span class="stringliteral">&quot;VertexProcessor: Add Vertex&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>        <a class="code hl_variable" href="classVertexProcessor.html#a79a8a5b691d72c6554de22ba951f2bad">vtxs_</a>.push_back(vtx);</div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>    }</div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span> </div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>    <span class="keywordflow">if</span>(hasMCParts) <span class="keyword">delete</span> mcPartRel_nav;</div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="classVertexProcessor.html#a174d7e034f9a94c6d3d7300d72ba4d1d">debug_</a> &gt; 0) std::cout &lt;&lt; <span class="stringliteral">&quot;VertexProcessor: End process&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>}</div>
-</div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span> </div>
-<div class="foldopen" id="foldopen00240" data-start="{" data-end="}">
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno"><a class="line" href="classVertexProcessor.html#a32d626626eee0bc4ade146973f6abb1c">  240</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classVertexProcessor.html#a32d626626eee0bc4ade146973f6abb1c">VertexProcessor::finalize</a>() { </div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>                part-&gt;<a class="code hl_function" href="classParticle.html#aa2dd28c594c2b4ff2fc590c053067a47">setTrack</a>(track); </div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>                <span class="keyword">delete</span> track;</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span> </div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>            }</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>            <span class="comment">// =========================================</span></div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>            <span class="keywordflow">if</span> (<a class="code hl_variable" href="classVertexProcessor.html#a174d7e034f9a94c6d3d7300d72ba4d1d">debug_</a> &gt; 0) std::cout &lt;&lt; <span class="stringliteral">&quot;VertexProcessor: Add particle&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>            <a class="code hl_variable" href="classVertexProcessor.html#a903e32f172e95f40f9f66f785e2d2f62">parts_</a>.push_back(part);</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>            vtx-&gt;addParticle(part);</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>        }</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span> </div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="classVertexProcessor.html#a174d7e034f9a94c6d3d7300d72ba4d1d">debug_</a> &gt; 0) std::cout &lt;&lt; <span class="stringliteral">&quot;VertexProcessor: Add Vertex&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>        <a class="code hl_variable" href="classVertexProcessor.html#a79a8a5b691d72c6554de22ba951f2bad">vtxs_</a>.push_back(vtx);</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>    }</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span> </div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>    <span class="keywordflow">if</span>(hasMCParts) <span class="keyword">delete</span> mcPartRel_nav;</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="classVertexProcessor.html#a174d7e034f9a94c6d3d7300d72ba4d1d">debug_</a> &gt; 0) std::cout &lt;&lt; <span class="stringliteral">&quot;VertexProcessor: End process&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>}</div>
 </div>
 <div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span> </div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno"><a class="line" href="VertexProcessor_8cxx.html#a34de902eddbd011c4924a3380b2cbe7f">  243</a></span><a class="code hl_define" href="Processor_8h.html#a35f18fdbd2158411a7de1ff6a8a79ac5">DECLARE_PROCESSOR</a>(<a class="code hl_class" href="classVertexProcessor.html">VertexProcessor</a>); </div>
+<div class="foldopen" id="foldopen00243" data-start="{" data-end="}">
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno"><a class="line" href="classVertexProcessor.html#a32d626626eee0bc4ade146973f6abb1c">  243</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="classVertexProcessor.html#a32d626626eee0bc4ade146973f6abb1c">VertexProcessor::finalize</a>() { </div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>}</div>
+</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span> </div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno"><a class="line" href="VertexProcessor_8cxx.html#a34de902eddbd011c4924a3380b2cbe7f">  246</a></span><a class="code hl_define" href="Processor_8h.html#a35f18fdbd2158411a7de1ff6a8a79ac5">DECLARE_PROCESSOR</a>(<a class="code hl_class" href="classVertexProcessor.html">VertexProcessor</a>); </div>
 <div class="ttc" id="aProcessor_8h_html_a35f18fdbd2158411a7de1ff6a8a79ac5"><div class="ttname"><a href="Processor_8h.html#a35f18fdbd2158411a7de1ff6a8a79ac5">DECLARE_PROCESSOR</a></div><div class="ttdeci">#define DECLARE_PROCESSOR(CLASS)</div><div class="ttdoc">Macro which allows the framework to construct a producer given its name during configuration.</div><div class="ttdef"><b>Definition</b> <a href="Processor_8h_source.html#l00139">Processor.h:139</a></div></div>
 <div class="ttc" id="aVertexProcessor_8h_html"><div class="ttname"><a href="VertexProcessor_8h.html">VertexProcessor.h</a></div><div class="ttdoc">Class used to convert LCIO Vertex collections into ROOT collections.</div></div>
 <div class="ttc" id="aclassEvent_html"><div class="ttname"><a href="classEvent.html">Event</a></div><div class="ttdef"><b>Definition</b> <a href="Event_8h_source.html#l00035">Event.h:35</a></div></div>
@@ -357,7 +360,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassVertexProcessor_html_a21dfd06817cc880a2dd026644152c09b"><div class="ttname"><a href="classVertexProcessor.html#a21dfd06817cc880a2dd026644152c09b">VertexProcessor::bfield_</a></div><div class="ttdeci">double bfield_</div><div class="ttdoc">magnetic field</div><div class="ttdef"><b>Definition</b> <a href="VertexProcessor_8h_source.html#l00101">VertexProcessor.h:101</a></div></div>
 <div class="ttc" id="aclassVertexProcessor_html_a23e49b66f544b820bd55beffa91f5dbb"><div class="ttname"><a href="classVertexProcessor.html#a23e49b66f544b820bd55beffa91f5dbb">VertexProcessor::useTrackerHits_</a></div><div class="ttdeci">int useTrackerHits_</div><div class="ttdoc">Load hit collections, otherwise get from getSubdetectorHitNumbers.</div><div class="ttdef"><b>Definition</b> <a href="VertexProcessor_8h_source.html#l00103">VertexProcessor.h:103</a></div></div>
 <div class="ttc" id="aclassVertexProcessor_html_a28936b5e7dad5cac4572c2e47464519e"><div class="ttname"><a href="classVertexProcessor.html#a28936b5e7dad5cac4572c2e47464519e">VertexProcessor::configure</a></div><div class="ttdeci">virtual void configure(const ParameterSet &amp;parameters)</div><div class="ttdoc">Callback for the Processor to configure itself from the given set of parameters.</div><div class="ttdef"><b>Definition</b> <a href="VertexProcessor_8cxx_source.html#l00016">VertexProcessor.cxx:16</a></div></div>
-<div class="ttc" id="aclassVertexProcessor_html_a32d626626eee0bc4ade146973f6abb1c"><div class="ttname"><a href="classVertexProcessor.html#a32d626626eee0bc4ade146973f6abb1c">VertexProcessor::finalize</a></div><div class="ttdeci">virtual void finalize()</div><div class="ttdoc">Callback for the Processor to take any necessary action when the processing of events finishes.</div><div class="ttdef"><b>Definition</b> <a href="VertexProcessor_8cxx_source.html#l00240">VertexProcessor.cxx:240</a></div></div>
+<div class="ttc" id="aclassVertexProcessor_html_a32d626626eee0bc4ade146973f6abb1c"><div class="ttname"><a href="classVertexProcessor.html#a32d626626eee0bc4ade146973f6abb1c">VertexProcessor::finalize</a></div><div class="ttdeci">virtual void finalize()</div><div class="ttdoc">Callback for the Processor to take any necessary action when the processing of events finishes.</div><div class="ttdef"><b>Definition</b> <a href="VertexProcessor_8cxx_source.html#l00243">VertexProcessor.cxx:243</a></div></div>
 <div class="ttc" id="aclassVertexProcessor_html_a4c88c2e0a2a6510211fbc4155ba12fd4"><div class="ttname"><a href="classVertexProcessor.html#a4c88c2e0a2a6510211fbc4155ba12fd4">VertexProcessor::initialize</a></div><div class="ttdeci">virtual void initialize(TTree *tree)</div><div class="ttdoc">Callback for the Processor to take any necessary action when the processing of events starts.</div><div class="ttdef"><b>Definition</b> <a href="VertexProcessor_8cxx_source.html#l00041">VertexProcessor.cxx:41</a></div></div>
 <div class="ttc" id="aclassVertexProcessor_html_a5216eefd347c2cdbb66b31f640c7efb3"><div class="ttname"><a href="classVertexProcessor.html#a5216eefd347c2cdbb66b31f640c7efb3">VertexProcessor::hitFitsCollLcio_</a></div><div class="ttdeci">std::string hitFitsCollLcio_</div><div class="ttdef"><b>Definition</b> <a href="VertexProcessor_8h_source.html#l00097">VertexProcessor.h:97</a></div></div>
 <div class="ttc" id="aclassVertexProcessor_html_a6fccd8c73f342ab88b9fdd47892b08a0"><div class="ttname"><a href="classVertexProcessor.html#a6fccd8c73f342ab88b9fdd47892b08a0">VertexProcessor::rawhits_</a></div><div class="ttdeci">std::vector&lt; RawSvtHit * &gt; rawhits_</div><div class="ttdef"><b>Definition</b> <a href="VertexProcessor_8h_source.html#l00088">VertexProcessor.h:88</a></div></div>
