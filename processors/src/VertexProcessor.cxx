@@ -162,7 +162,7 @@ bool VertexProcessor::process(IEvent* ievent) {
                     auto hitPattern = lc_track->getSubdetectorHitNumbers();
                     for( int h=0; h<hitPattern.size(); h++){
                         if( hitPattern[h]>0 ){
-                            track->addHitLayer(h+1);
+                            track->addHitLayer(h);
                             nHits++;
                         }
                     }
