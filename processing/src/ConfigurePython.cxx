@@ -313,11 +313,15 @@ Process* ConfigurePython::makeProcess() {
         p->addToSequence(ep);    
     }
         
+    std::cout << "[ConfigurePython::makeProcess] Listing INPUT files: " << std::endl;
     for (auto file : input_files_) {
+	std::cout << " ---> " << file << std::endl;
         p->addFileToProcess(file);
     }
 
+    std::cout << "[ConfigurePython::makeProcess] Listing OUTPUT files: " << std::endl;
     for (auto file : output_files_) { 
+        std::cout << " ---> " << file << std::endl;	    
         p->addOutputFileName(file); 
     }
 

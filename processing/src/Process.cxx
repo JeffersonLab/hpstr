@@ -11,9 +11,9 @@
 #include "HpsEventFile.h"
 #include "TH1.h"
 
-Process::Process() {}
+#include <string.h>
 
-//TODO Fix this better
+Process::Process() {}
 
 void Process::runOnHisto() {
     try {
@@ -36,57 +36,78 @@ void Process::runOnHisto() {
 } //Process::runOnHisto
 
 void Process::runOnRoot() {
+
     try {
         int n_events_processed = 0;
         HpsEvent event;
-        TH1D * event_h = new TH1D("event_h","Number of Events Processed;;Events", 21, -10.5, 10.5);
-        int cfile =0 ;
+
+        int nIn  = input_files_.size();
+        int nOut = output_files_.size();
+
+        int cfile = 0;
+
         for (auto ifile : input_files_) {
-            std::cout<<"Processing file "<<ifile<<std::endl;
-            HpsEventFile* file(nullptr);
-            if (!output_files_.empty()) {
-                file = new HpsEventFile(ifile, output_files_[cfile]);
-                file->setupEvent(&event);
+
+            std::cout << "[Process::runOnRoot] Processing file: "<< ifile << std::endl;
+
+            // Output file path
+            std::string ofile = "output_" + std::to_string(cfile) + ".root";
+            if(nIn==nOut){
+              ofile = output_files_[cfile];
+            } 
+            else if(nOut==1){
+              ofile = output_files_[0];
             }
+            if(output_files_.size()==1){
+              ofile = "output_" + std::to_string(cfile) + "_" +output_files_[0];
+            }
+
+            HpsEventFile* file = new HpsEventFile(ifile,ofile);
+            file->setupEvent(&event);
+
+            TH1D *event_h = new TH1D("event_h","Number of Events Processed;;Events", 21, -10.5, 10.5);
+
             for (auto module : sequence_) {
                 module->initialize(event.getTree());
                 module->setFile(file->getOutputFile());
             }
+
             while (file->nextEvent() && (event_limit_ < 0 || (n_events_processed < event_limit_))) {
+
                 if (n_events_processed%1000 == 0)
-                    std::cout<<"Event:"<<n_events_processed<<std::endl;
+                    std::cout<<"Event: "<<n_events_processed<<std::endl;
 
                 //In this way if the processing fails (like an event doesn't pass the selection, the other modules aren't run on that event)
                 for (auto module : sequence_) {
                     module->process(&event);
                 }
-                //event.Clear();
                 event_h->Fill(0.0);
                 ++n_events_processed;
             }
-            //Pass to next file
-            ++cfile;
-            // Finalize all modules
 
-            //Select the output file for storing the results of the processors.
+            // Finalize all modules
             file->resetOutputFileDir();
             event_h->Write();
             for (auto module : sequence_) {
-                //TODO:Change the finalize method
                 module->finalize();
             }
-            // TODO Check all these destructors
-            if (file) {
-                file->close();
-                delete file;
-                file = nullptr;
-                delete event_h;
-                event_h = nullptr;
-            }
-        }
+
+            std::cout << "[Process::runOnRoot] Processed  "<< n_events_processed << " events from input file" << std::endl;
+
+            file->close();
+            delete file;
+
+	    // Reset event counter
+	    n_events_processed = 0;
+
+            cfile++;
+
+        } // Loop over input files
+        
     } catch (std::exception& e) {
         std::cerr<<"Error:"<<e.what()<<std::endl;
     }
+
 }
 
 void Process::run() {
@@ -107,7 +128,6 @@ void Process::run() {
 
             std::cout << "---- [ hpstr ][ Process ]: Processing file " 
                 << ifile << std::endl;
-
 
             //TODO:: Change the order here.
 
