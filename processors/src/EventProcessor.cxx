@@ -28,7 +28,8 @@ void EventProcessor::configure(const ParameterSet& parameters) {
         vtpCollRoot_   = parameters.getString("vtpCollRoot", vtpCollRoot_ );
         tsCollLcio_  = parameters.getString("tsCollLcio", tsCollLcio_);
         tsCollRoot_  = parameters.getString("tsCollRoot", tsCollRoot_);
-        
+        year_        = parameters.getInteger("year", year_);
+
         //For single events debugging pass a txt list of <runN> <evtN> to only select specific events
         run_evt_list_ = parameters.getString("debugSingleEvents",run_evt_list_);
     }
@@ -40,10 +41,10 @@ void EventProcessor::configure(const ParameterSet& parameters) {
 
 void EventProcessor::initialize(TTree* tree) {
     header_ = new EventHeader();
-    vtpData = new VTPData();
+    if (vtpCollLcio_ != "") vtpData = new VTPData();
     tsData = new TSData();
     tree->Branch(headCollRoot_.c_str(), &header_);
-    tree->Branch(vtpCollRoot_.c_str(), &vtpData);
+    if (vtpCollLcio_ != "") tree->Branch(vtpCollRoot_.c_str(), &vtpData);
     tree->Branch(tsCollRoot_.c_str(),  &tsData);
     
     //Cache everything in a map
@@ -112,38 +113,50 @@ bool EventProcessor::process(IEvent* ievent) {
     // Set the SVT event header state
     header_->setSvtEventHeaderState(lc_event->getParameters().getIntVal("svt_event_header_good"));
 
-    // First try to read "new/2019" trigger format, if not available assume it is "old/2016"
-    try { 
-        EVENT::LCCollection* vtp_data 
-            = static_cast<EVENT::LCCollection*>(event->getLCCollection(vtpCollLcio_.c_str()));
+    if (year_ >= 2019) {
+	if (vtpCollLcio_ != "") {
+	    try {
+            EVENT::LCCollection* vtp_data
+                = static_cast<EVENT::LCCollection*>(event->getLCCollection(vtpCollLcio_.c_str()));
 
-        EVENT::LCGenericObject* vtp_datum 
-            = static_cast<EVENT::LCGenericObject*>(vtp_data->getElementAt(0));
+            
+	    EVENT::LCGenericObject* vtp_datum
+                = static_cast<EVENT::LCGenericObject*>(vtp_data->getElementAt(0));
 
-        EVENT::LCCollection* ts_data 
-            = static_cast<EVENT::LCCollection*>(event->getLCCollection(tsCollLcio_.c_str()));
+	    parseVTPData(vtp_datum);
+	    }
+	    catch (EVENT::DataNotAvailableException e) {
+	        std::cout << "EventProcessor::process: 2019/2021 VTP trigger collection requested but missing!" << std::endl;
+                return false;
+            }
+	}
+	try {
+	    EVENT::LCCollection* ts_data
+                = static_cast<EVENT::LCCollection*>(event->getLCCollection(tsCollLcio_.c_str()));
 
-        EVENT::LCGenericObject* ts_datum 
-            = static_cast<EVENT::LCGenericObject*>(ts_data->getElementAt(0));
+            EVENT::LCGenericObject* ts_datum
+                = static_cast<EVENT::LCGenericObject*>(ts_data->getElementAt(0));    
 
-        parseVTPData(vtp_datum);
-        parseTSData(ts_datum);
-
-    } 
-    catch(EVENT::DataNotAvailableException e) 
-    {
+	    parseTSData(ts_datum);
+	}
+	catch (EVENT::DataNotAvailableException e) {
+	    std::cout << "EventProcessor::process: 2019/2021 TSBank trigger collection is missing!" << std::endl;
+	    return false;
+	}
+    }
+    else if (year_ == 2016 or year_ == 2015) {
         // Get old version of trigger data
-        EVENT::LCCollection* trigger_data 
+        EVENT::LCCollection* trigger_data
             = static_cast<EVENT::LCCollection*>(event->getLCCollection(trigCollLcio_.c_str()));
 
-        for (int itrigger = 0; itrigger < trigger_data->getNumberOfElements(); ++itrigger) { 
+        for (int itrigger = 0; itrigger < trigger_data->getNumberOfElements(); ++itrigger) {
 
-            EVENT::LCGenericObject* trigger_datum 
+            EVENT::LCGenericObject* trigger_datum
                 = static_cast<EVENT::LCGenericObject*>(trigger_data->getElementAt(itrigger));
 
-            if (trigger_datum->getIntVal(0) == 0xe10a) { 
+            if (trigger_datum->getIntVal(0) == 0xe10a) {
 
-                TriggerData* tdata = new TriggerData(trigger_datum); 
+                TriggerData* tdata = new TriggerData(trigger_datum);
                 header_->setSingle0Trigger(static_cast<int>(tdata->isSingle0Trigger()));
                 header_->setSingle1Trigger(static_cast<int>(tdata->isSingle1Trigger()));
                 header_->setPair0Trigger(static_cast<int>(tdata->isPair0Trigger()));
@@ -153,9 +166,10 @@ bool EventProcessor::process(IEvent* ievent) {
                 delete tdata;
                 break;
             }
-        }
+        }	
     }
 
+    
     try { 
         // Get the LCIO GenericObject collection containing the RF times
         EVENT::LCCollection* rf_hits 
