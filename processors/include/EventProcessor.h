@@ -99,8 +99,8 @@ class EventProcessor : public Processor {
 
         /** Containers for vtp data */
         VTPData* vtpData{nullptr};
-        std::string vtpCollLcio_{"VTPBank"}; //!< description
-        std::string vtpCollRoot_{"VTPBank"}; //!< description
+        std::string vtpCollLcio_{""}; //!< description
+        std::string vtpCollRoot_{""}; //!< description
 
         /** Containers for ts data */
         TSData* tsData{nullptr};
@@ -117,6 +117,7 @@ class EventProcessor : public Processor {
         std::map<int,std::vector<int >> run_evts_map_; //!< description
 
         int debug_{0}; //!< Debug Level
+	int year_{2021};
 
 }; // EventProcessor
 
