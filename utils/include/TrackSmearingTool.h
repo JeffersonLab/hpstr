@@ -12,6 +12,8 @@
 //------------------//
 
 #include "Track.h"
+#include "Vertex.h"
+#include "Particle.h"
 
 class TFile;
 class TH1D;
@@ -27,7 +29,8 @@ class TrackSmearingTool {
                     const std::string& tracks = "KalmanFullTracks");  
   
   double smearTrackP(const Track& trk);
-  void updateWithSmearP(Track& trk);
+  double updateWithSmearP(Track& trk);
+  void updateVertexWithSmearP(Vertex* vtx, double ele_smear_factor, double pos_smear_factor);
   
  private:
   
