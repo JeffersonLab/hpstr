@@ -78,7 +78,23 @@ class TSData : public TObject {
         void Clear(){
             TObject::Clear();
         };
+        
+        bool isSingleTrigger() const {
+            bool single0 = (prescaled.Single_0_Bot == 1 || prescaled.Single_0_Top == 1);
+            bool single1 = (prescaled.Single_1_Bot == 1 || prescaled.Single_1_Top == 1);
+            bool single2 = (prescaled.Single_2_Bot == 1 || prescaled.Single_2_Top == 1);
+            bool single3 = (prescaled.Single_3_Bot == 1 || prescaled.Single_3_Top == 1);
+            return (single0 || single1 || single2 || single3);
+        };
 
+        bool const isSingle2Trigger() const {
+            return (prescaled.Single_2_Bot == 1 || prescaled.Single_2_Top == 1);
+        };
+
+        bool const isSingle3Trigger() const {
+            return (prescaled.Single_3_Bot == 1 || prescaled.Single_3_Top == 1);
+        };
+        
         ClassDef(TSData, 1);
 
 };

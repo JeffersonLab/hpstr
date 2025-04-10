@@ -201,6 +201,14 @@ class PreselectAndCategorize : public Processor {
             mcColl_ = mc_coll;
         }
 
+        json preselect_json_load(const std::string& filepath) {
+            json obj;
+            std::ifstream file{filepath};
+            file >> obj;
+            file.close();
+            return obj;
+        }        
+
     private:
         EventBus bus_;
         std::unique_ptr<TTree> output_tree_;
