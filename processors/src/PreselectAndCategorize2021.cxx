@@ -1,28 +1,19 @@
 /*
-* @file PreselectAndCategorizeSimp2016.cxx
-* @author Tom Eichlersmith
-* @date Dec 2024
+* @file PreselectAndCategorize2021.cxx
 * @author Sarah Gaiser
 * @date Apr 2025
 */
 
-#include "PreselectAndCategorizeSimp2016.h"
+#include "PreselectAndCategorize2021.h"
 
-// json json_load(const std::string& filepath) {
-//     json obj;
-//     std::ifstream file{filepath};
-//     file >> obj;
-//     file.close();
-//     return obj;
-// }
 
-void PreselectAndCategorizeSimp2016::configure(const ParameterSet& parameters) {
+void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     auto pSmearingFile = parameters.getString("pSmearingFile");
 
     if (not pSmearingFile.empty()) {
         // just using the same seed=42 for now
         std::cout << "Loading momentum smearing from " << pSmearingFile << std::endl;
-        smearingTool_ = std::make_shared<TrackSmearingTool>(pSmearingFile,true);
+        smearingTool_ = std::make_shared<TrackSmearingTool>(pSmearingFile, true);
     }
 
     auto beamPosCfg = parameters.getString("beamPosCfg");
@@ -30,22 +21,11 @@ void PreselectAndCategorizeSimp2016::configure(const ParameterSet& parameters) {
         std::cout << "Loading beamspot corrections from " << beamPosCfg << std::endl;
         auto beamspot_corrections_json = preselect_json_load(beamPosCfg);
         for (const auto& [run, entry]: beamspot_corrections_json.items()) {
-        beamspot_corrections_[std::stoi(run)] = {
-            entry["beamspot_x"],
-            entry["beamspot_y"],
-            entry["beamspot_z"]
-        };
-        /**
-        * Alic has updated to be what is shown below,
-        * but in the same update, stopped using the beamspot corrections
-        * anywhere in the analyzer.
-        * The only JSON data file in hpstr on his branch with these keys
-        * is the v0 projection fits config for the simulation samples.
-        beamspot_corrections_[std::stoi(run)] = {
-            entry["unrotated_mean_x"],
-            entry["unrotated_mean_y"]
-        };
-        */
+            beamspot_corrections_[std::stoi(run)] = {
+                entry["beamspot_x"],
+                entry["beamspot_y"],
+                entry["beamspot_z"]
+            };
         }
     }
 
@@ -82,49 +62,50 @@ void PreselectAndCategorizeSimp2016::configure(const ParameterSet& parameters) {
 }
 
 
-void PreselectAndCategorizeSimp2016::initialize(TTree* tree) {
+void PreselectAndCategorize2021::initialize(TTree* tree) {
     _ah =  std::make_shared<AnaHelpers>();
 
     //init Reading Tree
     bus_.board_input<EventHeader>(tree, "EventHeader");
+    bus_.board_input<TSData>(tree, "TSBank");
     bus_.board_input<std::vector<Vertex*>>(tree, vtxColl_);
     if (not isData_ and not mcColl_.empty())
         bus_.board_input<std::vector<MCParticle*>>(tree, mcColl_);
     
     /* pre-selection on vertices */
-    vertex_cf_.add("abs_ele_track_before_6ns", 120, 0.0, 24.0);
-    vertex_cf_.add("abs_pos_track_before_6ns", 120, 0.0, 24.0);
-    vertex_cf_.add("clusters_within_1.45ns", 100,0.0,10.0);
-    vertex_cf_.add("ele_track_cluster_within_4ns", 80, 0.0, 16.0);
-    vertex_cf_.add("pos_track_cluster_within_4ns", 80, 0.0, 16.0);
-    vertex_cf_.add("ele_track_chi2ndf", 100, 0.0, 20.0);
-    vertex_cf_.add("pos_track_chi2ndf", 100, 0.0, 20.0);
-    vertex_cf_.add("electron_below_1.75GeV", 230,0.0,2.3);
-    vertex_cf_.add("ele_min_8_hits", 14, 0, 14);
-    vertex_cf_.add("pos_min_8_hits", 14, 0, 14);
-    vertex_cf_.add("vertex_chi2", 100,0.0,50.0);
-    vertex_cf_.add("vtx_max_p_2.4GeV", 300, 0.0, 3.0);
+    vertex_cf_.add("positron_clusterE_above_0pt2GeV", 100, 0, 4.0);
+    vertex_cf_.add("ele_track_cluster_within_6pt9ns", 100, 0.0, 10.0);
+    vertex_cf_.add("pos_track_cluster_within_6pt0ns", 100, 0.0, 10.0);
+    vertex_cf_.add("ele_track_chi2ndf", 100, 0.0, 30.0);
+    vertex_cf_.add("pos_track_chi2ndf", 100, 0.0, 30.0);
+    vertex_cf_.add("electron_below_2pt9GeV", 100, 0.0, 4.0);
+    vertex_cf_.add("electron_above_0pt4GeV", 100, 0.0, 4.0);
+    vertex_cf_.add("positron_above_0pt4GeV", 100, 0.0, 4.0);
+    vertex_cf_.add("ele_min_9_hits", 14, 0, 14);
+    vertex_cf_.add("pos_min_9_hits", 14, 0, 14);
+    vertex_cf_.add("vertex_chi2", 100, 0.0, 30.0);
+    vertex_cf_.add("vtx_max_p_4pt0GeV", 100, 0.0, 4.0);
     vertex_cf_.init();
     
     /* event selection after vertex selection */
-    event_cf_.add("pair1trigger", 2, -0.5, 1.5);
+    event_cf_.add("single_trigger", 2, -0.5, 1.5);
     event_cf_.add("at_least_one_vertex", 10, 0.0, 10.0);
     event_cf_.add("no_extra_vertices", 10, 0.0, 10.0);
-    if (isSignal_) {
-        event_cf_.add("at_least_one_true_vd", 3, 0.0, 2.0);
-        event_cf_.add("no_extra_true_vd", 3, 0.0, 2.0);
-    }
+    // if (isSignal_) {
+    //     event_cf_.add("at_least_one_true_vd", 3, 0.0, 2.0);
+    //     event_cf_.add("no_extra_true_vd", 3, 0.0, 2.0);
+    // }
     event_cf_.init();
 
     n_vertices_h_ = std::make_unique<TH2F>(
         "n_vertices_h",
         "N Vertices in Event (readout and preselected)",
-        10,-0.5,9.5,
-        10,-0.5,9.5
+        10, -0.5, 9.5,
+        10, -0.5, 9.5
     );
 }
 
-void PreselectAndCategorizeSimp2016::setFile(TFile* out_file) {
+void PreselectAndCategorize2021::setFile(TFile* out_file) {
     Processor::setFile(out_file);
     
     // create output TTree in output file
@@ -149,12 +130,13 @@ void PreselectAndCategorizeSimp2016::setFile(TFile* out_file) {
     }
 
     if (bus_.has(mcColl_) and isSignal_) {
-        bus_.board_output<MCParticle>(output_tree_.get(), "true_vd");
+        // bus_.board_output<MCParticle>(output_tree_.get(), "true_vd");
         bus_.board_output<bool>(output_tree_.get(), "isRadEle");
     }
 }
 
-bool PreselectAndCategorizeSimp2016::process(IEvent*) {
+bool PreselectAndCategorize2021::process(IEvent*) {
+    const auto& tsbank{bus_.get<TSData>("TSBank")};
     const auto& eh{bus_.get<EventHeader>("EventHeader")};
     int run_number = eh.getRunNumber();
 
@@ -164,7 +146,7 @@ bool PreselectAndCategorizeSimp2016::process(IEvent*) {
     // other triggers within it
     // MC is created with only this trigger AND the event header
     // is not updated so we need to skip this check for MC
-    event_cf_.apply("pair1trigger", (not isData_ or eh.isPair1Trigger()));
+    event_cf_.apply("single_trigger", (tsbank.isSingle2Trigger() or tsbank.isSingle3Trigger()));
     if (not event_cf_.keep()) {
         // we leave BEFORE filling the vertex counting histogram
         // so that the vertex count histogram is relative to this trigger
@@ -248,7 +230,7 @@ bool PreselectAndCategorizeSimp2016::process(IEvent*) {
                 // I don't think this should be the case, so I'm throwing an exception.
                 // We could also just pick the closest run number which is what
                 // the V0 projection fit code does.
-                throw std::runtime_error("The run number "+std::to_string(eh.getRunNumber())
+                throw std::runtime_error("The run number " + std::to_string(eh.getRunNumber())
                     +" is not in the loaded set of beamspot corrections.");
             }
             // assume iterator bsit is pointing to an element of beamspot_corrections_
@@ -272,14 +254,13 @@ bool PreselectAndCategorizeSimp2016::process(IEvent*) {
         pos.setTrack(&pos_trk);
 
         // corrections have been applied, now onto pre-selecting
-        double cluster_tdiff{abs(ele.getCluster().getTime() - pos.getCluster().getTime())};
         int ele_nhits = ele.getTrack().getTrackerHitCount();
         if (not ele.getTrack().isKalmanTrack()) ele_nhits*=2;
         int pos_nhits = pos.getTrack().getTrackerHitCount();
         if (not pos.getTrack().isKalmanTrack()) pos_nhits*=2;
         
         double ele_track_cluster_tdiff{
-            abs(ele.getTrack().getTrackTime()-ele.getCluster().getTime())
+            abs(ele.getTrack().getTrackTime()-pos.getCluster().getTime())
         };
         double pos_track_cluster_tdiff{
             abs(pos.getTrack().getTrackTime()-pos.getCluster().getTime())
@@ -297,32 +278,32 @@ bool PreselectAndCategorizeSimp2016::process(IEvent*) {
         );
 
         vertex_cf_.begin_event();
-        vertex_cf_.apply("abs_ele_track_before_6ns", abs(ele.getTrack().getTrackTime()) <= 6.0);
-        vertex_cf_.apply("abs_pos_track_before_6ns", abs(pos.getTrack().getTrackTime()) <= 6.0);
-        vertex_cf_.apply("clusters_within_1.45ns", cluster_tdiff <= 1.45);
-        vertex_cf_.apply("ele_track_cluster_within_4ns", ele_track_cluster_tdiff <= 4.0);
-        vertex_cf_.apply("pos_track_cluster_within_4ns", pos_track_cluster_tdiff <= 4.0);
+        vertex_cf_.apply("positron_clusterE_above_0pt2GeV", pos.getCluster().getEnergy() >= 0.2);
+        vertex_cf_.apply("ele_track_cluster_within_6pt9ns", ele_track_cluster_tdiff <= 6.9);
+        vertex_cf_.apply("pos_track_cluster_within_6pt0ns", pos_track_cluster_tdiff <= 6.0);
         vertex_cf_.apply("ele_track_chi2ndf", ele.getTrack().getChi2Ndf() <= 20.0);
         vertex_cf_.apply("pos_track_chi2ndf", pos.getTrack().getChi2Ndf() <= 20.0);
-        vertex_cf_.apply("electron_below_1.75GeV", ele.getTrack().getP() <= 1.75);
-        vertex_cf_.apply("ele_min_8_hits", ele_nhits >= 7);
-        vertex_cf_.apply("pos_min_8_hits", pos_nhits >= 7);
+        vertex_cf_.apply("electron_below_2pt9GeV", ele.getTrack().getP() <= 2.9);
+        vertex_cf_.apply("electron_above_0pt4GeV", ele.getTrack().getP() >= 0.4);
+        vertex_cf_.apply("positron_above_0pt4GeV", pos.getTrack().getP() >= 0.4);
+        vertex_cf_.apply("ele_min_9_hits", ele_nhits >= 9);
+        vertex_cf_.apply("pos_min_9_hits", pos_nhits >= 9);
         vertex_cf_.apply("vertex_chi2", vtx->getChi2() <= 20.0);
-        double vtxmaxp = (ele_mom+pos_mom).Mag();
-        vertex_cf_.apply("vtx_max_p_2.4GeV", vtxmaxp <= 2.4);
-    
-        vertex_cf_.fill_nm1("abs_ele_track_before_6ns", abs(ele.getTrack().getTrackTime()));
-        vertex_cf_.fill_nm1("abs_pos_track_before_6ns", abs(pos.getTrack().getTrackTime()));
-        vertex_cf_.fill_nm1("clusters_within_1.45ns", cluster_tdiff);
-        vertex_cf_.fill_nm1("ele_track_cluster_within_4ns", ele_track_cluster_tdiff);
-        vertex_cf_.fill_nm1("pos_track_cluster_within_4ns", pos_track_cluster_tdiff);
+        double vtxmaxp = ele_mom.Mag() + pos_mom.Mag();
+        vertex_cf_.apply("vtx_max_p_4pt0GeV", vtxmaxp <= 4.0);
+        
+        vertex_cf_.fill_nm1("positron_clusterE_above_0pt2GeV", pos.getCluster().getEnergy());
+        vertex_cf_.fill_nm1("ele_track_cluster_within_6pt9ns", ele_track_cluster_tdiff);
+        vertex_cf_.fill_nm1("pos_track_cluster_within_6pt0ns", pos_track_cluster_tdiff);
         vertex_cf_.fill_nm1("ele_track_chi2ndf", ele.getTrack().getChi2Ndf());
         vertex_cf_.fill_nm1("pos_track_chi2ndf", pos.getTrack().getChi2Ndf());
-        vertex_cf_.fill_nm1("electron_below_1.75GeV", ele.getTrack().getP());
-        vertex_cf_.fill_nm1("ele_min_8_hits", ele_nhits);
-        vertex_cf_.fill_nm1("pos_min_8_hits", pos_nhits);
+        vertex_cf_.fill_nm1("electron_below_2pt9GeV", ele.getTrack().getP());
+        vertex_cf_.fill_nm1("electron_above_0pt4GeV", ele.getTrack().getP());
+        vertex_cf_.fill_nm1("positron_above_0pt4GeV", pos.getTrack().getP());
+        vertex_cf_.fill_nm1("ele_min_9_hits", ele_nhits);
+        vertex_cf_.fill_nm1("pos_min_9_hits", pos_nhits);
         vertex_cf_.fill_nm1("vertex_chi2", vtx->getChi2());
-        vertex_cf_.fill_nm1("vtx_max_p_2.4GeV", vtxmaxp);
+        vertex_cf_.fill_nm1("vtx_max_p_4pt0GeV", vtxmaxp);
     
         if (vertex_cf_.keep()) {
             preselected_vtx.emplace_back(*vtx, ele, pos);
@@ -438,8 +419,8 @@ bool PreselectAndCategorizeSimp2016::process(IEvent*) {
                 ele_is_rad_ele = (ptr->getMomPDG() == 625);
             }
         }
-        event_cf_.apply("at_least_one_true_vd", n_vd > 0);
-        event_cf_.apply("no_extra_true_vd", n_vd < 2);
+        // event_cf_.apply("at_least_one_true_vd", n_vd > 0);
+        // event_cf_.apply("no_extra_true_vd", n_vd < 2);
         if (not event_cf_.keep()) {
             return true;
         }
@@ -455,7 +436,7 @@ bool PreselectAndCategorizeSimp2016::process(IEvent*) {
     return true;
 }
 
-void PreselectAndCategorizeSimp2016::finalize() {
+void PreselectAndCategorize2021::finalize() {
     outF_->cd();
     output_tree_->Write();
     n_vertices_h_->Write();
@@ -463,4 +444,4 @@ void PreselectAndCategorizeSimp2016::finalize() {
     event_cf_.save();
 }
 
-DECLARE_PROCESSOR(PreselectAndCategorizeSimp2016);
+DECLARE_PROCESSOR(PreselectAndCategorize2021);
