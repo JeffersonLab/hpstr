@@ -68,6 +68,8 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
     //init Reading Tree
     bus_.board_input<EventHeader>(tree, "EventHeader");
     bus_.board_input<TSData>(tree, "TSBank");
+    if (not trkColl_.empty())
+        bus_.board_input<std::vector<Track*>>(tree, trkColl_);
     bus_.board_input<std::vector<Vertex*>>(tree, vtxColl_);
     if (not isData_ and not mcColl_.empty())
         bus_.board_input<std::vector<MCParticle*>>(tree, mcColl_);
@@ -146,15 +148,16 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     // other triggers within it
     // MC is created with only this trigger AND the event header
     // is not updated so we need to skip this check for MC
-    event_cf_.apply("single_trigger", (tsbank.isSingle2Trigger() or tsbank.isSingle3Trigger()));
-    if (not event_cf_.keep()) {
-        // we leave BEFORE filling the vertex counting histogram
-        // so that the vertex count histogram is relative to this trigger
-        // and does not include other triggers
-        return true;
-    }
+    // event_cf_.apply("single_trigger", (tsbank.isSingle2Trigger() or tsbank.isSingle3Trigger()));
+    // if (not event_cf_.keep()) {
+    //     // we leave BEFORE filling the vertex counting histogram
+    //     // so that the vertex count histogram is relative to this trigger
+    //     // and does not include other triggers
+    //     return true;
+    // }
 
     const auto& vtxs{bus_.get<std::vector<Vertex*>>(vtxColl_)};
+    auto trks{bus_.get<std::vector<Track*>>(trkColl_)};
     /**
     * pre-selection on vertices defining "quality" vertices
     *
@@ -197,9 +200,23 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     
         ele.setCluster(&ele_clu);
         pos.setCluster(&pos_clu);
-    
-        Track ele_trk = ele.getTrack();
-        Track pos_trk = pos.getTrack();
+
+        Track ele_trk;
+        Track pos_trk;
+        Track* ele_trk_ptr;
+        Track* pos_trk_ptr;
+        if (not trkColl_.empty()) {
+            bool foundTracks = _ah->MatchToGBLTracks(ele.getTrack().getID(), pos.getTrack().getID(), ele_trk_ptr, pos_trk_ptr, trks);
+            if (not foundTracks) {
+                std::cout << "PreselectAndCategorize2021::ERROR: couldn't find tracks" << std::endl;
+                continue;
+            }
+            ele_trk = *ele_trk_ptr;
+            pos_trk = *pos_trk_ptr;
+        } else {
+            ele_trk = ele.getTrack();
+            pos_trk = pos.getTrack();
+        }    
 
         // apply track_z0 and track_time corrections loaded from JSON
         for (const auto& [name, corr]: track_corrections_) {
