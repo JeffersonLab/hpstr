@@ -291,7 +291,17 @@ class Track : public TObject {
         double getP() const {return sqrt(px_*px_ + py_*py_ + pz_*pz_);};
         
         double getPt() const {return sqrt(px_*px_ + py_*py_);}
+
+	/**
+         * Get the track residual of the given layer.
+         *
+         * @param layer The SVT layer of interest.
+         * @return The track residual value of the given layer.
+         */
+        void setTrackResid(const int layer, const double track_resid) { track_residuals_[layer]=track_resid; }
+        double getTrackResid(const int layer) const { return track_residuals_[layer]; }
         
+
         /**
          * Set the lambda kink of the given layer.
          *
@@ -386,7 +396,7 @@ class Track : public TObject {
         /** hit layers */
         std::vector<int> hit_layers_;
 
-        /** truth mcp hits */
+	/** truth mcp hits */
         std::vector<std::pair<int,int>> mcp_hits_;
 
         /** The distance of closest approach to the reference point. */
@@ -445,6 +455,9 @@ class Track : public TObject {
 
         /** The z position track. */ 
         double z_{-999.};
+
+	/** Array used to store track residuals. */
+	double track_residuals_[14];
 
         /** Array used to store the lambda kinks for each of the sensor layers. */
         double lambda_kinks_[14];  
