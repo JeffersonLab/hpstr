@@ -29,6 +29,7 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
 
         std::string vtxColl_{"UnconstrainedV0Vertices_KF"};
         std::string mcColl_{"MCParticle"}; //!< description
+        std::string trkColl_{"KalmanFullTracks"};
         bool isData_{false};
         bool isSignal_{false};
         double calTimeOffset_{0.0};
