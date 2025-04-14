@@ -1,0 +1,58 @@
+{
+    "14185": {
+        "target_position": 0.0,
+        "rotated_mean_x": 0.38047113234197794,
+        "rotated_mean_y": 0.0006980816315111491,
+        "rotated_sigma_x": 0.3197403883590405,
+        "rotated_sigma_y": 0.05346457368650659,
+        "rotation_angle_mrad": -0.0058837681251914
+    },
+    "14211": {
+        "target_position": 0.0,
+        "rotated_mean_x": 0.38047113234197794,
+        "rotated_mean_y": 0.0006980816315111491,
+        "rotated_sigma_x": 0.3197403883590405,
+        "rotated_sigma_y": 0.05346457368650659,
+        "rotation_angle_mrad": -0.0058837681251914
+    },
+    "14346": {
+        "target_position": 0.0,
+        "rotated_mean_x": 0.07966586708283753,
+        "rotated_mean_y": 0.014667175718260492,
+        "rotated_sigma_x": 0.33998122223376565,
+        "rotated_sigma_y": 0.06669540035997236,
+        "rotation_angle_mrad": -0.00414787040245701
+    },
+    "14487": {
+        "target_position": 0.0,
+        "rotated_mean_x": 0.47581728113757427,
+        "rotated_mean_y": 0.0911011164849904,
+        "rotated_sigma_x": 0.3058318607680396,
+        "rotated_sigma_y": 0.05604804526455041,
+        "rotation_angle_mrad": -0.014663328513983854
+    },
+    "14550": {
+        "target_position": 0.0,
+        "rotated_mean_x": 0.45430696274425125,
+        "rotated_mean_y": 0.07437053811246144,
+        "rotated_sigma_x": 0.34572005988265236,
+        "rotated_sigma_y": 0.06457434546879623,
+        "rotation_angle_mrad": -0.01754850224669363
+    },
+    "14611": {
+        "target_position": 0.0,
+        "rotated_mean_x": 0.5649010826880603,
+        "rotated_mean_y": 0.05085746923570063,
+        "rotated_sigma_x": 0.36868490166859896,
+        "rotated_sigma_y": 0.06330464554412121,
+        "rotation_angle_mrad": -0.028814782608539768
+    },
+    "14714": {
+        "target_position": 0.0,
+        "rotated_mean_x": 0.37673850514833795,
+        "rotated_mean_y": 0.041575126948604935,
+        "rotated_sigma_x": 0.33619038324176415,
+        "rotated_sigma_y": 0.06453166248713828,
+        "rotation_angle_mrad": -0.023864936498453036
+    }
+}

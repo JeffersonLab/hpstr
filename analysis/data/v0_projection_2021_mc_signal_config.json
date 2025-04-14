@@ -1,0 +1,10 @@
+{
+    "14700": {
+        "target_position": 0.0,
+        "rotated_mean_x": 0.0028302821504759728,
+        "rotated_mean_y": 0.001748608631568854,
+        "rotated_sigma_x": 0.24203356238046786,
+        "rotated_sigma_y": 0.027696486838228607,
+        "rotation_angle_mrad": -0.0054614780123878595
+    }
+}
