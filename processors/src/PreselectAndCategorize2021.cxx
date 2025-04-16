@@ -58,7 +58,8 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
 
     calTimeOffset_ = parameters.getDouble("calTimeOffset");
     isData_ = parameters.getInteger("isData") != 0;
-    isSignal_ = parameters.getInteger("isSignal") != 0;
+    isSimpSignal_ = parameters.getInteger("isSimpSignal") != 0;
+    isApSignal_ = parameters.getInteger("isApSignal") != 0;
 }
 
 
@@ -93,10 +94,10 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
     event_cf_.add("single_trigger", 2, -0.5, 1.5);
     event_cf_.add("at_least_one_vertex", 10, 0.0, 10.0);
     event_cf_.add("no_extra_vertices", 10, 0.0, 10.0);
-    // if (isSignal_) {
-    //     event_cf_.add("at_least_one_true_vd", 3, 0.0, 2.0);
-    //     event_cf_.add("no_extra_true_vd", 3, 0.0, 2.0);
-    // }
+    if (isSimpSignal_) {
+        event_cf_.add("at_least_one_true_vd", 3, 0.0, 2.0);
+        event_cf_.add("no_extra_true_vd", 3, 0.0, 2.0);
+    }
     event_cf_.init();
 
     n_vertices_h_ = std::make_unique<TH2F>(
@@ -131,8 +132,10 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
         }
     }
 
-    if (bus_.has(mcColl_) and isSignal_) {
-        // bus_.board_output<MCParticle>(output_tree_.get(), "true_vd");
+    if (bus_.has(mcColl_) and (isSimpSignal_ or isApSignal_)) {
+        if (isSimpSignal_) {
+            bus_.board_output<MCParticle>(output_tree_.get(), "true_vd");
+        }
         bus_.board_output<bool>(output_tree_.get(), "isRadEle");
     }
 }
