@@ -1,0 +1,17 @@
+{
+    "posClusE_gt": {
+        "cut" : 0.2,
+        "id"  : 0,
+        "info" : "E_{e^{+}, cluster} > 0.2 GeV"
+    },
+    "eleMom_lt" : {
+        "cut" : 2.9,
+        "id"  : 1,
+        "info" : "p_{e^{-}} < 2.9 GeV"
+    },
+    "maxVtxMom_lt" : {
+        "cut" : 4.0,
+        "id"  : 2,
+        "info" : "p_{vtx} < 4.0 GeV"
+    }
+}

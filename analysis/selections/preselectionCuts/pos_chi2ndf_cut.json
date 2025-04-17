@@ -1,0 +1,7 @@
+{
+    "posTrkChi2Ndf_lt" : {
+        "cut"  : 20,
+        "id"   : 0,
+        "info" : "e^{+} Track #chi^{2}/ndf < 20"
+    }
+}

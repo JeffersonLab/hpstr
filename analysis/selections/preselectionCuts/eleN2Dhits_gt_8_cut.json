@@ -1,0 +1,7 @@
+{
+    "eleN2Dhits_gt" : {
+        "cut"  : 8,
+        "id"   : 0,
+        "info" : "e^{-} track n2d hits  >= 8"
+    }
+}

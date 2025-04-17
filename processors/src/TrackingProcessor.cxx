@@ -172,13 +172,21 @@ bool TrackingProcessor::process(IEvent* ievent) {
         }
 
         // Add a track to the event
+	//	std::cout<<"Tracking Processor:: building this track!"<<std::endl;
         Track* track = utils::buildTrack(lc_track,trackStateLocation_, gbl_kink_data,track_data);
         
         //Override the momentum of the track if the bfield_ > 0
-        if (bfield_>0)
-            track->setMomentum(bfield_);
 	
+        if (bfield_>0){
+	  //	  std::cout<<"Tracking Processor::  has bfield_ >0 ("<<bfield_<<")...overwriting momentum"<<std::endl;
+	  track->setMomentum(bfield_);
+	}
+	/*
 
+	std::cout<<"Tracking Processor::Track momentum = ("<<track->getMomentum()[0]<<","<<
+	  track->getMomentum()[1]<<","<<track->getMomentum()[2]<<")"<<std::endl;
+	std::cout<<"Tracking Processor:: Should be done setting momentum"<<std::endl;
+	*/
         int nHits = 0;
 
 	if(!useTrackerHits_){

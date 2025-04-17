@@ -107,7 +107,7 @@ ecal.parameters["clusCollLcio"] = "EcalClustersCorr"
 ecal.parameters["clusCollRoot"] = "RecoEcalClusters"
 
 # Vertex
-vtx.parameters["debug"] = 0
+vtx.parameters["debug"] = 1
 vtx.parameters["useTrackerHits"] = 1
 vtx.parameters["vtxCollLcio"] = 'UnconstrainedV0Vertices_KF'
 vtx.parameters["vtxCollRoot"] = 'UnconstrainedV0Vertices_KF'

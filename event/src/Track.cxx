@@ -5,7 +5,7 @@
  */
 
 #include "Track.h"
-
+#include <iostream>
 ClassImp(Track)
 
 Track::Track()
@@ -67,6 +67,8 @@ void Track::setMomentum(double bfield) {
     py_ = pt*tan_lambda_;
     px_ = pt*sin(phi0_);
     pz_ = pt*cos(phi0_);
+    //    std::cout<<"In Track.cxx::setMomentum  resetting track 3-mom using bfield:: ("<<px_<<","<<
+      //       py_<<","<<pz_<<")"<<std::endl;
     //pterr_ = pow(1./omega,2)*sqrt(cov_[5])*bfield*mom_param;
 }
 

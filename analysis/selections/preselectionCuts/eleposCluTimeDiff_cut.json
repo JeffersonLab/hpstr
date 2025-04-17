@@ -1,0 +1,7 @@
+{
+    "eleposCluTimeDiff_lt" : {
+        "cut"   : 4,
+        "id"    : 0,
+        "info"  : "#Delta(e^{-},e^{+}) < 4 ns"
+    }
+}

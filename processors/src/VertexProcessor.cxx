@@ -151,11 +151,13 @@ bool VertexProcessor::process(IEvent* ievent) {
         {
             if (debug_ > 0) std::cout << "VertexProcessor: Build particle" << std::endl;
             Particle * part = utils::buildParticle(lc_part,trackStateLocation_, gbl_kink_data, track_data);
+            if (debug_ > 0) std::cout << "VertexProcessor: Check tracks" << std::endl;
             if (lc_part->getTracks().size()>0){
                 EVENT::Track* lc_track = static_cast<EVENT::Track*>(lc_part->getTracks()[0]);
+		if (debug_ > 0) std::cout << "VertexProcessor:  Build Track" << std::endl;
                 Track* track = utils::buildTrack(lc_track,trackStateLocation_,gbl_kink_data,track_data);
                 int nHits = 0;
-                if (bfield_ > 0.0) track->setMomentum(bfield_);
+		//                if (bfield_ > 0.0) track->setMomentum(bfield_);
                 if (track->isKalmanTrack()) hitType = 1; //SiClusters
 
                 if(!useTrackerHits_){
@@ -175,6 +177,8 @@ bool VertexProcessor::process(IEvent* ievent) {
                 else{
 		    EVENT::TrackerHitVec lc_tracker_hits = lc_track->getTrackerHits();
 		    for (auto lc_tracker_hit : lc_tracker_hits) {
+        	        if (debug_ > 0) std::cout << "VertexProcessor: build tracker hits" << std::endl;
+
 			TrackerHit* tracker_hit = utils::buildTrackerHit(static_cast<IMPL::TrackerHitImpl*>(lc_tracker_hit),rotateHits,hitType);
 			std::vector<RawSvtHit*> rawSvthitsOn3d;
 			utils::addRawInfoTo3dHit(tracker_hit,static_cast<IMPL::TrackerHitImpl*>(lc_tracker_hit),

@@ -168,7 +168,8 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
         {"", EVENT::TrackState::AtIP},
         {"AtTarget", EVENT::TrackState::LastLocation}
      };
-
+     //     std::cout<<"TrackingProcessor:: building track at location = "<< trackstate_location<<std::endl;
+     
     int loc;
     auto it = trackstateLocationMap_.find(trackstate_location);
     if (it != trackstateLocationMap_.end()){
@@ -311,15 +312,20 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
             track->setTrackTime(track_datum->getFloatVal(0));
 
             // Set the Track momentum
-            if (track_datum->getNFloat()>3)
+            if (track_datum->getNFloat()>3){
+	      //	      std::cout<<"utilities::buildTrack  Setting track 3-mom from the track data :: ("<<track_datum->getFloatVal(1)<<","<<
+	      //		track_datum->getFloatVal(2)<<","<<track_datum->getFloatVal(3)<<")"<<std::endl;
+		
               track->setMomentum(track_datum->getFloatVal(1),track_datum->getFloatVal(2),track_datum->getFloatVal(3));
-
+	    }
             // Set the volume (top/bottom) in which the SvtTrack resides
             track->setTrackVolume(track_datum->getIntVal(0));
 
             // Set the BfieldY for track state
+	    
             double bfieldY = -999.9;
-            if(track_datum->getNFloat() > 4){
+            if(1==0){
+	      //            if(track_datum->getNFloat() > 4){
                 if (loc == trackstateLocationMap_[""])
                     bfieldY = track_datum->getFloatVal(4);
                 if (loc == trackstateLocationMap_["AtTarget"]){
@@ -328,11 +334,13 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
                 if (loc == trackstateLocationMap_["AtCalorimeter"])
                     bfieldY = track_datum->getFloatVal(6);
                 //Bfield needs factor of -1, not sure why... <-TODO investigate
+		//		std::cout<<"utilities::buildTrack setting mometum with TrackData-supplied bfield = "<<bfieldY<<std::endl;
                 track->setMomentum(-bfieldY);
-            }
+	    }
+	    
         }
-
     } //add track data  
+    //    std::cout<<"Done with utils.buildTrack()"<<std::endl;
 
     return track;
 }
