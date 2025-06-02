@@ -26,7 +26,7 @@ void TrackingProcessor::configure(const ParameterSet& parameters) {
         truthTracksCollRoot_     = parameters.getString("truthTrackCollRoot",truthTracksCollRoot_);
         trackStateLocation_      = parameters.getString("trackStateLocation",trackStateLocation_);
         useTrackerHits_          = parameters.getInteger("useTrackerHits",useTrackerHits_);
-        bfield_                  = parameters.getDouble("bfield",bfield_);
+        bfield_                  = parameters.getDouble("bfield",bfield_);//this will overwrite the momentum; only use for pre-v3 slcio
         
         //Residual plotting is done in this processor for the moment.
         doResiduals_             = parameters.getInteger("doResiduals",doResiduals_);
@@ -131,7 +131,6 @@ bool TrackingProcessor::process(IEvent* ievent) {
         return false;
     }
     
-
     //Initialize map of shared hits
     std::map <int, std::vector<int> > SharedHits;
     //TODO: can we do better? (innermost)
@@ -175,8 +174,8 @@ bool TrackingProcessor::process(IEvent* ievent) {
         Track* track = utils::buildTrack(lc_track,trackStateLocation_, gbl_kink_data,track_data);
         
         //Override the momentum of the track if the bfield_ > 0
-        if (bfield_>0)
-            track->setMomentum(bfield_);
+	if (bfield_>0)
+	  track->setMomentum(bfield_);  //this will overwrite the momentum; only use for pre-v3 slcio
 	
 
         int nHits = 0;
@@ -288,8 +287,8 @@ bool TrackingProcessor::process(IEvent* ievent) {
                 EVENT::Track* lc_truth_track = static_cast<EVENT::Track*> (lc_truth_tracks.at(0));
                 Track* truth_track = utils::buildTrack(lc_truth_track,trackStateLocation_,nullptr,nullptr);
                 track->setTruthLink(truth_track);
-                if (bfield_>0)
-                    truth_track->setMomentum(bfield_);
+		if (bfield_>0)
+		  truth_track->setMomentum(bfield_);//this will overwrite the momentum; only use for pre-v3 slcio
                 //truth tracks phi needs to be corrected
                 if (truth_track->getPhi() > TMath::Pi())
                     truth_track->setPhi(truth_track->getPhi() - (TMath::Pi()) * 2.);

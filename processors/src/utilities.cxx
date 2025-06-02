@@ -44,9 +44,7 @@ Vertex* utils::buildVertex(EVENT::Vertex* lc_vertex) {
 
     //TODO Rotate the covariance matrix!
     vertex->setCovariance   ((std::vector<float>)lc_vertex->getCovMatrix());
-    //std::cout<<lc_vertex->getVertexParameterNames[0]<<std::endl;
     vertex->setType         (lc_vertex->getAlgorithmType());
-
     vertex->setPos          (lc_vertex->getPosition(),false);
 
 
@@ -174,8 +172,9 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
     //public final static int AtVertex = 6;
     //public final static int LastLocation = AtVertex;
 
-     //TrackState Location map
-     std::map<std::string, int> trackstateLocationMap_ =
+     //TrackState Location maps
+    //V30 is the current version, so just get numbers from LCIO
+     std::map<std::string, int> trackstateLocationMapV30_ =
        {  {"",EVENT::TrackState::AtPerigee},
 	  {"AtPerigee",EVENT::TrackState::AtPerigee},
 	  {"AtIP",EVENT::TrackState::AtIP}, 
@@ -186,17 +185,17 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 	  {"AtVertex",EVENT::TrackState::AtVertex},
 	  {"LastLocation",EVENT::TrackState::LastLocation}	  
        };
-     
-    int loc;
-    auto it = trackstateLocationMap_.find(trackstate_location);
-    if (it != trackstateLocationMap_.end()){
-        loc = it->second;
-    }
-    else{
-        std::cout << "[utilities]::ERROR Track State Location " << trackstate_location << " Doesn't Exist!" << std::endl;
-        std::cout << "Check map in utilities::buildTrack for defined locations" << std::endl;
-        return nullptr;
-    }
+      //V23 is the old map, so put  numbers in by hand
+     std::map<std::string, int> trackstateLocationMapV23_ =
+       {  {"",EVENT::TrackState::AtIP},
+	  {"AtIP",1}, 
+	  {"AtFirstHit",2},
+	  {"AtLastHit",3},
+	  {"AtCalorimeter",4},
+	  {"AtVertex",5},
+	  {"LastLocation",5}
+       };
+  
 
     Track* track = new Track();
 
@@ -213,11 +212,29 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
         // Set the track covariance matrix
     //        track->setCov(static_cast<std::vector<float> > (lc_track->getCovMatrix()));
     //}
-
+    //use getBLocal to check if it's V23 or V30
+    //V30 will have sensible BField
+    double bTmp = lc_track->getTrackState(1)->getBLocal(); 
+    std::map<std::string, int> trackstateLocationMap_; 
+    if(abs(bTmp)<10.0)
+      trackstateLocationMap_=trackstateLocationMapV30_;
+    else
+      trackstateLocationMap_=trackstateLocationMapV23_;
+    
+    int loc;
+    auto it = trackstateLocationMap_.find(trackstate_location);
+    if (it != trackstateLocationMap_.end()){
+        loc = it->second;
+    }
+    else{
+        std::cout << "[utilities]::ERROR Track State Location " << trackstate_location << " Doesn't Exist!" << std::endl;
+        std::cout << "Check map in utilities::buildTrack for defined locations" << std::endl;
+        return nullptr;
+    }
     //If other TrackState specified, get track params from track state
     //    else {
     // If track state doesn't exist, no track returned
-    const EVENT::TrackState* ts = lc_track->getTrackState(loc);
+    const EVENT::TrackState* ts = lc_track->getTrackState(loc);    
     if (ts == nullptr){
       return nullptr;
     }
@@ -235,10 +252,9 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
     };
     
     track->setCov(static_cast<std::vector<float> > (ts->getCovMatrix()));
-    
     track->setPosition(position);
-    double bLocal = ts->getBLocal(); //get the local b-field for the track state
-    std::cout<<"got local bfield from track state = "<<bLocal<<std::endl;
+
+    double bLocal = lc_track->getTrackState(loc)->getBLocal(); 
     if(abs(bLocal)<10.0) //  check if it has non-default value (which should be 666)...this fails for pre-v3 lcio.  see below
       track->setMomentum(bLocal); 
 
@@ -257,7 +273,7 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
     // Set the position of the extrapolated track at the ECal face.  The
     // extrapolation uses the full 3D field map.
     const EVENT::TrackState* track_state 
-        = lc_track->getTrackState(EVENT::TrackState::AtCalorimeter); 
+        = lc_track->getTrackState(trackstateLocationMap_["AtCalorimeter"]); 
 
     if (track_state) {
         double position_at_ecal[3] = { 
