@@ -44,9 +44,7 @@ Vertex* utils::buildVertex(EVENT::Vertex* lc_vertex) {
 
     //TODO Rotate the covariance matrix!
     vertex->setCovariance   ((std::vector<float>)lc_vertex->getCovMatrix());
-    //std::cout<<lc_vertex->getVertexParameterNames[0]<<std::endl;
     vertex->setType         (lc_vertex->getAlgorithmType());
-
     vertex->setPos          (lc_vertex->getPosition(),false);
 
 
@@ -163,12 +161,66 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
     if (!lc_track)
         return nullptr;
 
-     //TrackState Location map
-     std::map<std::string, int> trackstateLocationMap_ = {
-        {"", EVENT::TrackState::AtIP},
-        {"AtTarget", EVENT::TrackState::LastLocation}
-     };
 
+    //		      public final static int AtOther = 0;  // Any location other than the ones defined below. 
+    //public final static int AtPerigee = 1;  //track state at perigee, which is what the track finder returns
+    //public final static int AtIP = 2;  // this is at the target
+    //public final static int AtTarget = 2;  // this is at the target
+    //public final static int AtFirstHit = 3;
+    //public final static int AtLastHit = 4;
+    //public final static int AtCalorimeter = 5;
+    //public final static int AtVertex = 6;
+    //public final static int LastLocation = AtVertex;
+
+     //TrackState Location maps
+    //V30 is the current version, so just get numbers from LCIO
+     std::map<std::string, int> trackstateLocationMapV30_ =
+       {  {"",EVENT::TrackState::AtPerigee},
+	  {"AtPerigee",EVENT::TrackState::AtPerigee},
+	  {"AtIP",EVENT::TrackState::AtIP}, 
+	  {"AtTarget",EVENT::TrackState::AtTarget},
+	  {"AtFirstHit",EVENT::TrackState::AtFirstHit},
+	  {"AtLastHit",EVENT::TrackState::AtLastHit},
+	  {"AtCalorimeter",EVENT::TrackState::AtCalorimeter},
+	  {"AtVertex",EVENT::TrackState::AtVertex},
+	  {"LastLocation",EVENT::TrackState::LastLocation}	  
+       };
+      //V23 is the old map, so put  numbers in by hand
+     std::map<std::string, int> trackstateLocationMapV23_ =
+       {  {"",EVENT::TrackState::AtIP},
+	  {"AtIP",1}, 
+	  {"AtFirstHit",2},
+	  {"AtLastHit",3},
+	  {"AtCalorimeter",4},
+	  {"AtVertex",5},
+	  {"LastLocation",5}
+       };
+  
+
+    Track* track = new Track();
+
+
+    //If using track AtPerigee or unset, get params from lc_track
+    //    if (loc == trackstateLocationMap_[""]){
+        // Set the track parameters
+    //track->setTrackParameters(lc_track->getD0(), 
+    //            lc_track->getPhi(), 
+    //            lc_track->getOmega(), 
+    //            lc_track->getTanLambda(), 
+    //            lc_track->getZ0());
+
+        // Set the track covariance matrix
+    //        track->setCov(static_cast<std::vector<float> > (lc_track->getCovMatrix()));
+    //}
+    //use getBLocal to check if it's V23 or V30
+    //V30 will have sensible BField
+    double bTmp = lc_track->getTrackState(1)->getBLocal(); 
+    std::map<std::string, int> trackstateLocationMap_; 
+    if(abs(bTmp)<10.0)
+      trackstateLocationMap_=trackstateLocationMapV30_;
+    else
+      trackstateLocationMap_=trackstateLocationMapV23_;
+    
     int loc;
     auto it = trackstateLocationMap_.find(trackstate_location);
     if (it != trackstateLocationMap_.end()){
@@ -179,45 +231,32 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
         std::cout << "Check map in utilities::buildTrack for defined locations" << std::endl;
         return nullptr;
     }
-
-    Track* track = new Track();
-    //If using track AtIP, get params from lc_track
-    if (loc == trackstateLocationMap_[""]){
-        // Set the track parameters
-        track->setTrackParameters(lc_track->getD0(), 
-                lc_track->getPhi(), 
-                lc_track->getOmega(), 
-                lc_track->getTanLambda(), 
-                lc_track->getZ0());
-
-        // Set the track covariance matrix
-        track->setCov(static_cast<std::vector<float> > (lc_track->getCovMatrix()));
-    }
-
     //If other TrackState specified, get track params from track state
-    else {
-        // If track state doesn't exist, no track returned
-        const EVENT::TrackState* ts = lc_track->getTrackState(loc);
-        if (ts == nullptr){
-            return nullptr;
-        }
-        // Set the track parameters using trackstate
-        track->setTrackParameters(ts->getD0(), 
-                ts->getPhi(), 
-                ts->getOmega(), 
-                ts->getTanLambda(), 
-                ts->getZ0());
-
-        double position[3] = {
-            ts->getReferencePoint()[1],  
-            ts->getReferencePoint()[2],  
-            ts->getReferencePoint()[0]
-        };
-
-        track->setCov(static_cast<std::vector<float> > (ts->getCovMatrix()));
-
-        track->setPosition(position);
+    //    else {
+    // If track state doesn't exist, no track returned
+    const EVENT::TrackState* ts = lc_track->getTrackState(loc);    
+    if (ts == nullptr){
+      return nullptr;
     }
+    // Set the track parameters using trackstate
+    track->setTrackParameters(ts->getD0(), 
+			      ts->getPhi(), 
+			      ts->getOmega(), 
+			      ts->getTanLambda(), 
+			      ts->getZ0());
+    
+    double position[3] = {
+			  ts->getReferencePoint()[1],  
+			  ts->getReferencePoint()[2],  
+			  ts->getReferencePoint()[0]
+    };
+    
+    track->setCov(static_cast<std::vector<float> > (ts->getCovMatrix()));
+    track->setPosition(position);
+
+    double bLocal = lc_track->getTrackState(loc)->getBLocal(); 
+    if(abs(bLocal)<10.0) //  check if it has non-default value (which should be 666)...this fails for pre-v3 lcio.  see below
+      track->setMomentum(bLocal); 
 
     // Set the track id
     track->setID(lc_track->id());
@@ -234,7 +273,7 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
     // Set the position of the extrapolated track at the ECal face.  The
     // extrapolation uses the full 3D field map.
     const EVENT::TrackState* track_state 
-        = lc_track->getTrackState(EVENT::TrackState::AtCalorimeter); 
+        = lc_track->getTrackState(trackstateLocationMap_["AtCalorimeter"]); 
 
     if (track_state) {
         double position_at_ecal[3] = { 
@@ -311,25 +350,30 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
             track->setTrackTime(track_datum->getFloatVal(0));
 
             // Set the Track momentum
-            if (track_datum->getNFloat()>3)
+	    // mg comment this out
+	    //	    if(abs(bLocal)<10.0) //  check if it has non-default value (which should be 666)
+		  
+	    if (track_datum->getNFloat()>3 && abs(bLocal)>10.0) //bfield is not set in track state so get from track data...
               track->setMomentum(track_datum->getFloatVal(1),track_datum->getFloatVal(2),track_datum->getFloatVal(3));
 
             // Set the volume (top/bottom) in which the SvtTrack resides
             track->setTrackVolume(track_datum->getIntVal(0));
 
             // Set the BfieldY for track state
-            double bfieldY = -999.9;
-            if(track_datum->getNFloat() > 4){
+	    // mg comment this out
+	    if( abs(bLocal)>10.0){ //bfield is not set in track state so get from track data...pre-v3 lcio
+	      double bfieldY = -999.9;
+	      if(track_datum->getNFloat() > 4){
                 if (loc == trackstateLocationMap_[""])
-                    bfieldY = track_datum->getFloatVal(4);
+		  bfieldY = track_datum->getFloatVal(4);
                 if (loc == trackstateLocationMap_["AtTarget"]){
-                    bfieldY = track_datum->getFloatVal(5);
-                }
+		  bfieldY = track_datum->getFloatVal(5);
+		}
                 if (loc == trackstateLocationMap_["AtCalorimeter"])
-                    bfieldY = track_datum->getFloatVal(6);
-                //Bfield needs factor of -1, not sure why... <-TODO investigate
+		  bfieldY = track_datum->getFloatVal(6);
                 track->setMomentum(-bfieldY);
-            }
+	      }
+	    }
         }
 
     } //add track data  

@@ -26,7 +26,7 @@ void FinalStateParticleProcessor::configure(const ParameterSet& parameters) {
         hitFitsCollLcio_   = parameters.getString("hitFitsCollLcio", hitFitsCollLcio_);    
         trkhitCollRoot_    = parameters.getString("trkhitCollRoot",trkhitCollRoot_);
         rawhitCollRoot_    = parameters.getString("rawhitCollRoot",rawhitCollRoot_);
-        bfield_            = parameters.getDouble("bfield",bfield_);
+        bfield_            = parameters.getDouble("bfield",bfield_);  //this will overwrite the momentum; only use for pre-v3 slcio
     }
     catch (std::runtime_error& error)
     {
@@ -130,7 +130,7 @@ bool FinalStateParticleProcessor::process(IEvent* ievent) {
         if (lc_fsp->getTracks().size()>0){
             EVENT::Track* lc_track = static_cast<EVENT::Track*>(lc_fsp->getTracks()[0]);
             Track* track = utils::buildTrack(lc_track,"",gbl_kink_data,track_data);
-            if (bfield_ > 0.0) track->setMomentum(bfield_);
+	    if (bfield_ > 0.0) track->setMomentum(bfield_);  //this will overwrite the momentum; only use for pre-v3 slcio
             if (track->isKalmanTrack()) hitType = 1; //SiClusters
             EVENT::TrackerHitVec lc_tracker_hits = lc_track->getTrackerHits(); 
             for (auto lc_tracker_hit : lc_tracker_hits) {
