@@ -10,7 +10,7 @@ var searchData=
   ['variablehistcfgfilename_5f_7',['variableHistCfgFilename_',['../classSimpZBiOptimizationProcessor.html#a15bf37530b47266a0fb5550fb2c88e4e',1,'SimpZBiOptimizationProcessor']]],
   ['variables_8',['variables',['../classFlatTupleMaker.html#a7ea73c077fef37346c25a61f12890402',1,'FlatTupleMaker::variables'],['../classClusterHistos.html#ad2638a7b833933b2fdcafa9d75a737bc',1,'ClusterHistos::variables']]],
   ['vectors_9',['vectors',['../classFlatTupleMaker.html#a57789b5188e8799e8904492668a086d1',1,'FlatTupleMaker']]],
-  ['vertex_10',['vertex',['../classVertex.html',1,'Vertex'],['../classVertex.html#a1ae26ed9ee56ee76ada81da66dd0c869',1,'Vertex::Vertex()'],['../structTridentWABAnaProcessor_1_1TridentCand.html#a6228f668f54bdbbb9cb601022c948027',1,'TridentWABAnaProcessor::TridentCand::vertex']]],
+  ['vertex_10',['vertex',['../classVertex.html',1,'Vertex'],['../structTridentWABAnaProcessor_1_1TridentCand.html#a6228f668f54bdbbb9cb601022c948027',1,'TridentWABAnaProcessor::TridentCand::vertex'],['../classVertex.html#a1ae26ed9ee56ee76ada81da66dd0c869',1,'Vertex::Vertex()']]],
   ['vertex_2ecxx_11',['Vertex.cxx',['../Vertex_8cxx.html',1,'']]],
   ['vertex_2eh_12',['Vertex.h',['../Vertex_8h.html',1,'']]],
   ['vertexanaprocessor_13',['vertexanaprocessor',['../classVertexAnaProcessor.html',1,'VertexAnaProcessor'],['../classVertexAnaProcessor.html#a57f3be230aa19e196aa1af2c4c8858ed',1,'VertexAnaProcessor::VertexAnaProcessor()']]],

@@ -17,7 +17,7 @@ var searchData=
   ['ecaldataprocessor_2ecxx_14',['ECalDataProcessor.cxx',['../ECalDataProcessor_8cxx.html',1,'']]],
   ['ecaldataprocessor_2eh_15',['ECalDataProcessor.h',['../ECalDataProcessor_8h.html',1,'']]],
   ['ecalhitcoll_5f_16',['ecalhitcoll_',['../classRecoHitAnaProcessor.html#a12d8f1dfeec47390a23376f12d3a799c',1,'RecoHitAnaProcessor::ecalHitColl_'],['../classMCAnaProcessor.html#a12d8f1dfeec47390a23376f12d3a799c',1,'MCAnaProcessor::ecalHitColl_']]],
-  ['ecalhits_5f_17',['ecalhits_',['../classMCEcalHitProcessor.html#a6dd8ec4e3121d7826a3bf02beb0f6e7d',1,'MCEcalHitProcessor::ecalhits_'],['../classRecoHitAnaProcessor.html#a514c2ae4bd10c3b194221677df5c91e5',1,'RecoHitAnaProcessor::ecalHits_']]],
+  ['ecalhits_5f_17',['ecalhits_',['../classRecoHitAnaProcessor.html#a514c2ae4bd10c3b194221677df5c91e5',1,'RecoHitAnaProcessor::ecalHits_'],['../classMCEcalHitProcessor.html#a6dd8ec4e3121d7826a3bf02beb0f6e7d',1,'MCEcalHitProcessor::ecalhits_']]],
   ['ecluscollname_5f_18',['eclusCollName_',['../classNTupplizer.html#a7fe76eb11afd976f8b140bae5a6190bf',1,'NTupplizer']]],
   ['eclusters_5f_19',['eclusters_',['../classNTupplizer.html#ac859ee0ac1ff360067af29bd7d636c8b',1,'NTupplizer']]],
   ['edep_5f_20',['edep_',['../classMCTrackerHit.html#a4981e5c33c7ff9f333cb1ff1fb002355',1,'MCTrackerHit']]],
