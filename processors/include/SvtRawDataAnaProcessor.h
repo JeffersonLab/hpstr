@@ -1,7 +1,7 @@
 #ifndef __RAWSVTHIT_ANAPROCESSOR_H__
 #define __RAWSVTHIT_ANAPROCESSOR_H__
 
-//HPSTR
+// HPSTR
 #include "HpsEvent.h"
 #include "RawSvtHit.h"
 #include "RawSvtHitHistos.h"
@@ -16,9 +16,7 @@
 #include "Track.h"
 #include "TrackerHit.h"
 
-//#include <IMPL/TrackerHitImpl.h>"
-//ROOT
-
+// ROOT
 #include "Processor.h"
 #include "TClonesArray.h"
 #include "TBranch.h"
@@ -43,27 +41,54 @@ class SvtRawDataAnaProcessor : public Processor {
 
         ~SvtRawDataAnaProcessor();
 
+        /**
+         *
+         * Runs over the region selectors and checks if an event passes a selection json and fills a rawsvthithisto
+         * if do sample is on, it runs sampling.
+         *
+         **/
         virtual bool process(IEvent* ievent);
 
+        /**
+         *
+         * Process initializer. Reads in the offline baselines into local baseline files, reads in the pulse shapes, and finally
+         * establishes regions which are used along with the region selector class and cuts in analysis/selection/svt to select on
+         * events for which histograms in rawsvthisto is filled.
+         *
+         **/
         virtual void initialize(TTree* tree);
         
         virtual void sample(RawSvtHit* thisHit, std::string word, IEvent* ievent, long t,int i);
 
+        /**
+         *
+         * Four pole pulse function and the sum of two of them with baselines borrowed from Alic
+         *
+         **/
         virtual TF1* fourPoleFitFunction(std::string word, int caser);
 
+        /**
+         *
+         * This method is implemented because C++ std:of method which converts strings
+         * to floats is not working. We need this to read in offline baselines and characteristic times.
+         *
+         **/
         virtual float str_to_float(std::string word);
 
         float reverseEngineerTime(float ti, long t);
 
-        //virtual int maximum(int arr[]);
-        
+        /**
+         * 
+         * Fills in histograms
+         *
+         **/
         virtual void finalize();
 
         virtual void configure(const ParameterSet& parameters);
 
     private:
 
-        //Containers to hold histogrammer info
+        // Containers to hold histogrammer info
         RawSvtHitHistos* histos{nullptr};
         std::string  histCfgFilename_;
         Float_t TimeRef_;
@@ -86,7 +111,7 @@ class SvtRawDataAnaProcessor : public Processor {
         TBranch* brecoClu_{nullptr};
         TBranch* bPart_{nullptr};
         TBranch* bTrk_{nullptr};
-
+        TBranch* bClusters_{nullptr};
         TBranch* bevH_;
 
         std::vector<RawSvtHit*> * svtHits_{};
@@ -95,7 +120,8 @@ class SvtRawDataAnaProcessor : public Processor {
         std::vector<CalCluster*>* recoClu_{};
         std::vector<Track*>* Trk_{};
         std::vector<Particle*>* Part_{};
-        //std::vector<Track> Trk_{};
+        std::vector<TrackerHit*>* Clusters_{};
+
         EventHeader * evH_;
 
         std::string anaName_{"rawSvtHitAna"};
@@ -109,7 +135,7 @@ class SvtRawDataAnaProcessor : public Processor {
         std::string timeProfiles_;
         int tphase_{6};
 
-        //Debug Level
+        // Debug Level
         int debug_{0};
 
 };
