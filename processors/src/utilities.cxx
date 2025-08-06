@@ -13,6 +13,30 @@
    }
 
 */
+//TrackState Location maps
+//these are global to this file
+//V30 is the current version, so just get numbers from LCIO
+std::map<std::string, int> trackstateLocationMapV30_ =
+  {  {"",EVENT::TrackState::AtPerigee},
+     {"AtPerigee",EVENT::TrackState::AtPerigee},
+     {"AtIP",EVENT::TrackState::AtIP}, 
+     {"AtTarget",EVENT::TrackState::AtTarget},
+     {"AtFirstHit",EVENT::TrackState::AtFirstHit},
+     {"AtLastHit",EVENT::TrackState::AtLastHit},
+     {"AtCalorimeter",EVENT::TrackState::AtCalorimeter},
+     {"AtVertex",EVENT::TrackState::AtVertex},
+     {"LastLocation",EVENT::TrackState::LastLocation}	  
+  };
+//V23 is the old map, so put  numbers in by hand
+std::map<std::string, int> trackstateLocationMapV23_ =
+  {  {"",EVENT::TrackState::AtIP},
+     {"AtIP",1}, 
+     {"AtFirstHit",2},
+     {"AtLastHit",3},
+     {"AtCalorimeter",4},
+     {"AtVertex",5},
+     {"LastLocation",5}
+  };
 
 
 bool utils::hasCollection(EVENT::LCEvent* lc_event,const std::string& collection) {
@@ -159,59 +183,11 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
         EVENT::LCCollection* track_data) {
 
     if (!lc_track)
-        return nullptr;
+        return nullptr; 
 
-
-    //		      public final static int AtOther = 0;  // Any location other than the ones defined below. 
-    //public final static int AtPerigee = 1;  //track state at perigee, which is what the track finder returns
-    //public final static int AtIP = 2;  // this is at the target
-    //public final static int AtTarget = 2;  // this is at the target
-    //public final static int AtFirstHit = 3;
-    //public final static int AtLastHit = 4;
-    //public final static int AtCalorimeter = 5;
-    //public final static int AtVertex = 6;
-    //public final static int LastLocation = AtVertex;
-
-     //TrackState Location maps
-    //V30 is the current version, so just get numbers from LCIO
-     std::map<std::string, int> trackstateLocationMapV30_ =
-       {  {"",EVENT::TrackState::AtPerigee},
-	  {"AtPerigee",EVENT::TrackState::AtPerigee},
-	  {"AtIP",EVENT::TrackState::AtIP}, 
-	  {"AtTarget",EVENT::TrackState::AtTarget},
-	  {"AtFirstHit",EVENT::TrackState::AtFirstHit},
-	  {"AtLastHit",EVENT::TrackState::AtLastHit},
-	  {"AtCalorimeter",EVENT::TrackState::AtCalorimeter},
-	  {"AtVertex",EVENT::TrackState::AtVertex},
-	  {"LastLocation",EVENT::TrackState::LastLocation}	  
-       };
-      //V23 is the old map, so put  numbers in by hand
-     std::map<std::string, int> trackstateLocationMapV23_ =
-       {  {"",EVENT::TrackState::AtIP},
-	  {"AtIP",1}, 
-	  {"AtFirstHit",2},
-	  {"AtLastHit",3},
-	  {"AtCalorimeter",4},
-	  {"AtVertex",5},
-	  {"LastLocation",5}
-       };
-  
 
     Track* track = new Track();
 
-
-    //If using track AtPerigee or unset, get params from lc_track
-    //    if (loc == trackstateLocationMap_[""]){
-        // Set the track parameters
-    //track->setTrackParameters(lc_track->getD0(), 
-    //            lc_track->getPhi(), 
-    //            lc_track->getOmega(), 
-    //            lc_track->getTanLambda(), 
-    //            lc_track->getZ0());
-
-        // Set the track covariance matrix
-    //        track->setCov(static_cast<std::vector<float> > (lc_track->getCovMatrix()));
-    //}
     //use getBLocal to check if it's V23 or V30
     //V30 will have sensible BField
     double bTmp = lc_track->getTrackState(1)->getBLocal(); 
@@ -348,20 +324,16 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 
             // Set the SvtTrack time
             track->setTrackTime(track_datum->getFloatVal(0));
-
+	    // Set the volume (top/bottom) in which the SvtTrack resides
+            track->setTrackVolume(track_datum->getIntVal(0));
+	    
             // Set the Track momentum
-	    // mg comment this out
-	    //	    if(abs(bLocal)<10.0) //  check if it has non-default value (which should be 666)
 		  
 	    if (track_datum->getNFloat()>3 && abs(bLocal)>10.0) //bfield is not set in track state so get from track data...
               track->setMomentum(track_datum->getFloatVal(1),track_datum->getFloatVal(2),track_datum->getFloatVal(3));
 
-            // Set the volume (top/bottom) in which the SvtTrack resides
-            track->setTrackVolume(track_datum->getIntVal(0));
-
             // Set the BfieldY for track state
-	    // mg comment this out
-	    if( abs(bLocal)>10.0){ //bfield is not set in track state so get from track data...pre-v3 lcio
+	    if( abs(bLocal)>10.0){ //bfield is not set in track state so get bfield from track data and recalculate...pre-v3 lcio
 	      double bfieldY = -999.9;
 	      if(track_datum->getNFloat() > 4){
                 if (loc == trackstateLocationMap_[""])
@@ -378,6 +350,19 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 
     } //add track data  
 
+    //add track states to track
+    //should make this a option    
+    for(auto ts_lcio: lc_track->getTrackStates()){
+      // for now, just include AtTarget 
+      if(ts_lcio->getLocation()==trackstateLocationMap_["AtTarget"]){
+	Track::TrackState trk_state = makeTrackState(ts_lcio);
+	printTrackState(trk_state);
+	track->addTrackState(trk_state);
+      }
+    }
+
+
+    
     return track;
 }
 
@@ -962,4 +947,46 @@ double utils::v0_projection_to_target_significance(json v0proj_fits, int run, do
     double significance = std::sqrt( vtx_proj_x_signif*vtx_proj_x_signif + vtx_proj_y_signif*vtx_proj_y_signif );
 
     return significance;
+}
+
+
+Track::TrackState utils::makeTrackState(EVENT::TrackState* ts_lcio){
+  Track::TrackState ts;
+  ts.location=ts_lcio->getLocation();
+  ts.d0=ts_lcio->getD0();
+  ts.phi0=ts_lcio->getPhi();
+  ts.omega=ts_lcio->getOmega();
+  ts.tanLambda=ts_lcio->getTanLambda();
+  ts.z0=ts_lcio->getZ0();
+  // in lcio reference is stored at float*
+  // convert here to an std::array
+  // ts.ref = ts_lcio->getReferencePoint();
+  //std::copy(ts_lcio->getReferencePoint(), ts_lcio->getReferencePoint()+3,ts.ref.begin()); 
+  const float* refTrk= ts_lcio->getReferencePoint();  
+  std::array<float,3> refGbl={refTrk[1],refTrk[2],refTrk[0]};
+  ts.ref=refGbl;
+  ts.cov = ts_lcio->getCovMatrix();
+  ts.blocal = ts_lcio->getBLocal();
+  float* momentum=calculateMomentum(ts.blocal,ts.omega,ts.phi0,ts.tanLambda); 
+  std::copy(momentum, momentum+3, ts.momentum.begin());
+  return ts; 
+}
+
+
+float* utils::calculateMomentum(double bfield,double omega_, double phi0_, double tan_lambda_) {    
+    float mom_param = 2.99792458e-04;
+    float pt = fabs(1. / omega_) * bfield * mom_param;
+    float py_ = pt*tan_lambda_;
+    float px_ = pt*sin(phi0_);
+    float pz_ = pt*cos(phi0_);
+    return new float[]{px_,py_,pz_}; 
+    //pterr_ = pow(1./omega,2)*sqrt(cov_[5])*bfield*mom_param;
+}
+
+void utils::printTrackState(Track::TrackState ts){
+
+  std::cout<<"######### track state with location = "<<ts.location<<"  ##########"<<std::endl;
+  std::cout<<"    momentum = ("<<ts.momentum[0]<<", "<<ts.momentum[1]<<", "<<ts.momentum[2]<<")"<<std::endl;
+  std::cout<<"    reference = ("<<ts.ref[0]<<", "<<ts.ref[1]<<", "<<ts.ref[2]<<")"<<std::endl;
+
 }

@@ -198,6 +198,24 @@ namespace utils {
     double v0_projection_to_target_significance(json v0proj_fits, int run, double &vtx_proj_x, double &vtx_proj_y,
             double &vtx_proj_x_signif, double &vtx_proj_y_signif, double vtx_x, double vtx_y, double vtx_z, 
             double vtx_px, double vtx_py, double vtx_pz);
+
+
+  Track::TrackState makeTrackState(EVENT::TrackState* ts_lcsio); 
+  float* calculateMomentum(double bfield,double omega_, double phi0_, double tan_lambda_); 
+  void printTrackState(Track::TrackState ts);
+
+  //  TrackState locations defined in hps-lcio
+
+  //public final static int AtOther = 0;  // Any location other than the ones defined below. 
+  //public final static int AtPerigee = 1;  //track state at perigee, which is what the track finder returns
+  //public final static int AtIP = 2;  // this is at the target
+  //public final static int AtTarget = 2;  // this is at the target
+  //public final static int AtFirstHit = 3;
+  //public final static int AtLastHit = 4;
+  //public final static int AtCalorimeter = 5;
+  //public final static int AtVertex = 6;
+  //public final static int LastLocation = AtVertex;
+
 }
 
 #endif //UTILITIES

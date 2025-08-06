@@ -39,6 +39,25 @@ class Track : public TObject {
         /** Destructor */
         ~Track();
 
+        struct TrackState{
+	  //for most track states, d0/z0 will be 0
+	  //the reference will be intersection
+	  //of the track at that location
+	  int location=-1; 
+	  double d0=-666; 
+	  double phi0=-666; 
+	  double omega=-666; 
+	  double tanLambda=-666; 
+	  double z0=-666; 
+	  /** Cov matrix at track state location*/    
+	  std::vector<float> cov;
+	  std::array<float,3> ref={-666,-666,-666}; 
+	  std::array<float,3> momentum={-666,-666,-666}; 
+	  double blocal=-666;
+	  
+	  std::vector<double> getTrackStateParameters() { return { d0, phi0, omega, tanLambda, z0 }; };
+	};
+  
         /** Reset the Track object */ 
         void Clear(Option_t *option="");
 
@@ -355,7 +374,8 @@ class Track : public TObject {
         bool getSharedLy0() const {return SharedLy0_;};
         bool getSharedLy1() const {return SharedLy1_;};
 
-
+  void addTrackState(Track::TrackState ts){trk_states_.push_back(ts);};
+  
         //TODO doc
 
         void Print (Option_t *option="") const;
@@ -477,6 +497,8 @@ class Track : public TObject {
         
         /** Reference to MC Particle. */
         TRef mcp_link_;
+
+        std::vector<Track::TrackState> trk_states_;
         
         ClassDef(Track, 1);
 }; // Track
