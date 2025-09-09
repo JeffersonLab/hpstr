@@ -78,14 +78,15 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
     /* pre-selection on vertices */
     vertex_cf_.add("positron_clusterE_above_0pt2GeV", 100, 0, 4.0);
     vertex_cf_.add("ele_track_cluster_within_6pt9ns", 100, 0.0, 10.0);
-    vertex_cf_.add("pos_track_cluster_within_6pt0ns", 100, 0.0, 10.0);
+    vertex_cf_.add("pos_track_cluster_within_5pt2ns", 100, 0.0, 10.0);
+    vertex_cf_.add("ele_pos_track_within_9pt0ns", 100, 0.0, 10.0);
     vertex_cf_.add("ele_track_chi2ndf", 100, 0.0, 30.0);
     vertex_cf_.add("pos_track_chi2ndf", 100, 0.0, 30.0);
     vertex_cf_.add("electron_below_2pt9GeV", 100, 0.0, 4.0);
     vertex_cf_.add("electron_above_0pt4GeV", 100, 0.0, 4.0);
     vertex_cf_.add("positron_above_0pt4GeV", 100, 0.0, 4.0);
-    vertex_cf_.add("ele_min_9_hits", 14, 0, 14);
-    vertex_cf_.add("pos_min_9_hits", 14, 0, 14);
+    vertex_cf_.add("ele_min_10_hits", 14, 0, 14);
+    vertex_cf_.add("pos_min_10_hits", 14, 0, 14);
     vertex_cf_.add("vertex_chi2", 100, 0.0, 30.0);
     vertex_cf_.add("vtx_max_p_4pt0GeV", 100, 0.0, 4.0);
     vertex_cf_.init();
@@ -300,28 +301,30 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         vertex_cf_.begin_event();
         vertex_cf_.apply("positron_clusterE_above_0pt2GeV", pos.getCluster().getEnergy() >= 0.2);
         vertex_cf_.apply("ele_track_cluster_within_6pt9ns", ele_track_cluster_tdiff <= 6.9);
-        vertex_cf_.apply("pos_track_cluster_within_6pt0ns", pos_track_cluster_tdiff <= 6.0);
+        vertex_cf_.apply("pos_track_cluster_within_5pt2ns", pos_track_cluster_tdiff <= 5.2);
+        vertex_cf_.apply("ele_pos_track_within_9pt0ns", abs(ele.getTrack().getTrackTime() - pos.getTrack().getTrackTime()) <= 9.0);
         vertex_cf_.apply("ele_track_chi2ndf", ele.getTrack().getChi2Ndf() <= 20.0);
         vertex_cf_.apply("pos_track_chi2ndf", pos.getTrack().getChi2Ndf() <= 20.0);
         vertex_cf_.apply("electron_below_2pt9GeV", ele.getTrack().getP() <= 2.9);
         vertex_cf_.apply("electron_above_0pt4GeV", ele.getTrack().getP() >= 0.4);
         vertex_cf_.apply("positron_above_0pt4GeV", pos.getTrack().getP() >= 0.4);
-        vertex_cf_.apply("ele_min_9_hits", ele_nhits >= 9);
-        vertex_cf_.apply("pos_min_9_hits", pos_nhits >= 9);
+        vertex_cf_.apply("ele_min_10_hits", ele_nhits >= 10);
+        vertex_cf_.apply("pos_min_10_hits", pos_nhits >= 10);
         vertex_cf_.apply("vertex_chi2", vtx->getChi2() <= 20.0);
         double vtxmaxp = ele_mom.Mag() + pos_mom.Mag();
         vertex_cf_.apply("vtx_max_p_4pt0GeV", vtxmaxp <= 4.0);
         
         vertex_cf_.fill_nm1("positron_clusterE_above_0pt2GeV", pos.getCluster().getEnergy());
         vertex_cf_.fill_nm1("ele_track_cluster_within_6pt9ns", ele_track_cluster_tdiff);
-        vertex_cf_.fill_nm1("pos_track_cluster_within_6pt0ns", pos_track_cluster_tdiff);
+        vertex_cf_.fill_nm1("pos_track_cluster_within_5pt2ns", pos_track_cluster_tdiff);
+        vertex_cf_.fill_nm1("ele_pos_track_within_9pt0ns", abs(ele.getTrack().getTrackTime() - pos.getTrack().getTrackTime()));
         vertex_cf_.fill_nm1("ele_track_chi2ndf", ele.getTrack().getChi2Ndf());
         vertex_cf_.fill_nm1("pos_track_chi2ndf", pos.getTrack().getChi2Ndf());
         vertex_cf_.fill_nm1("electron_below_2pt9GeV", ele.getTrack().getP());
         vertex_cf_.fill_nm1("electron_above_0pt4GeV", ele.getTrack().getP());
         vertex_cf_.fill_nm1("positron_above_0pt4GeV", pos.getTrack().getP());
-        vertex_cf_.fill_nm1("ele_min_9_hits", ele_nhits);
-        vertex_cf_.fill_nm1("pos_min_9_hits", pos_nhits);
+        vertex_cf_.fill_nm1("ele_min_10_hits", ele_nhits);
+        vertex_cf_.fill_nm1("pos_min_10_hits", pos_nhits);
         vertex_cf_.fill_nm1("vertex_chi2", vtx->getChi2());
         vertex_cf_.fill_nm1("vtx_max_p_4pt0GeV", vtxmaxp);
     
