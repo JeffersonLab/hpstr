@@ -229,7 +229,7 @@ class PreselectAndCategorize : public Processor {
             return isData_;
         }
 
-    private:
+    protected:
         EventBus bus_;
         std::unique_ptr<TTree> output_tree_;
 

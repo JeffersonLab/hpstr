@@ -60,6 +60,7 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     isData_ = parameters.getInteger("isData") != 0;
     isSimpSignal_ = parameters.getInteger("isSimpSignal") != 0;
     isApSignal_ = parameters.getInteger("isApSignal") != 0;
+    if (isSimpSignal_ || isApSignal_) isSignal_ = true;
 }
 
 
@@ -76,10 +77,11 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
         bus_.board_input<std::vector<MCParticle*>>(tree, mcColl_);
     
     /* pre-selection on vertices */
+    // vertex_cf_.add("single_trigger", 2, -0.5, 1.5);
     vertex_cf_.add("positron_clusterE_above_0pt2GeV", 100, 0, 4.0);
-    vertex_cf_.add("ele_track_cluster_within_6pt9ns", 100, 0.0, 10.0);
-    vertex_cf_.add("pos_track_cluster_within_5pt2ns", 100, 0.0, 10.0);
-    vertex_cf_.add("ele_pos_track_within_9pt0ns", 100, 0.0, 10.0);
+    vertex_cf_.add("ele_track_cluster_within_9pt8ns", 200, 0.0, 20.0);
+    vertex_cf_.add("pos_track_cluster_within_7pt2ns", 200, 0.0, 20.0);
+    vertex_cf_.add("ele_pos_track_within_14pt1ns", 200, 0.0, 20.0);
     vertex_cf_.add("ele_track_chi2ndf", 100, 0.0, 30.0);
     vertex_cf_.add("pos_track_chi2ndf", 100, 0.0, 30.0);
     vertex_cf_.add("electron_below_2pt9GeV", 100, 0.0, 4.0);
@@ -93,9 +95,9 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
     std::vector<std::string> labels_vertex_cf = {
         "reconstructed",
         "E_{e^{+}} > 0.2 GeV",
-        "|t_{trk, e^{-}} - t_{clu, e^{+}}| < 6.9 ns",
-        "|t_{trk, e^{+}} - t_{clu, e^{+}}| < 5.2 ns",
-        "|t_{trk, e^{-}} - t_{trk, e^{+}}| < 9.0 ns",
+        "|t_{trk, e^{-}} - t_{clu, e^{+}}| < 9.8 ns",
+        "|t_{trk, e^{+}} - t_{clu, e^{+}}| < 7.2 ns",
+        "|t_{trk, e^{-}} - t_{trk, e^{+}}| < 14.1 ns",
         "e^{-} #chi^{2}/ndf < 20",
         "e^{+} #chi^{2}/ndf < 20",
         "p_{e^{-}} < 2.9 GeV",
@@ -119,7 +121,7 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
     event_cf_.init();
     std::vector<std::string> labels_event_cf = {
         "readout",
-        "single2 or single3 trigger",
+        "single3 trigger",
         "N_{vtx} >= 1",
         "N_{vtx} < 2"
     };
@@ -157,7 +159,7 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
         }
     }
 
-    if (bus_.has(mcColl_) and (isSimpSignal_ or isApSignal_)) {
+    if (bus_.has(mcColl_) and isSignal_) {
         if (isSimpSignal_) {
             bus_.board_output<MCParticle>(output_tree_.get(), "true_vd");
         }
@@ -176,13 +178,14 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     // other triggers within it
     // MC is created with only this trigger AND the event header
     // is not updated so we need to skip this check for MC
-    // event_cf_.apply("single_trigger", (tsbank.isSingle2Trigger() or tsbank.isSingle3Trigger()));
-    // if (not event_cf_.keep()) {
-    //     // we leave BEFORE filling the vertex counting histogram
-    //     // so that the vertex count histogram is relative to this trigger
-    //     // and does not include other triggers
-    //     return true;
-    // }
+    event_cf_.apply("single_trigger", (tsbank.isSingle3Trigger()));
+    event_cf_.fill_nm1("single_trigger", (tsbank.isSingle3Trigger()) ? 1 : 0);
+    if (not event_cf_.keep()) {
+        // we leave BEFORE filling the vertex counting histogram
+        // so that the vertex count histogram is relative to this trigger
+        // and does not include other triggers
+        return true;
+    }
 
     const auto& vtxs{bus_.get<std::vector<Vertex*>>(vtxColl_)};
     auto trks{bus_.get<std::vector<Track*>>(trkColl_)};
@@ -324,9 +327,9 @@ bool PreselectAndCategorize2021::process(IEvent*) {
 
         vertex_cf_.begin_event();
         vertex_cf_.apply("positron_clusterE_above_0pt2GeV", pos.getCluster().getEnergy() >= 0.2);
-        vertex_cf_.apply("ele_track_cluster_within_6pt9ns", ele_track_cluster_tdiff <= 6.9);
-        vertex_cf_.apply("pos_track_cluster_within_5pt2ns", pos_track_cluster_tdiff <= 5.2);
-        vertex_cf_.apply("ele_pos_track_within_9pt0ns", abs(ele.getTrack().getTrackTime() - pos.getTrack().getTrackTime()) <= 9.0);
+        vertex_cf_.apply("ele_track_cluster_within_9pt8ns", ele_track_cluster_tdiff <= 9.8);
+        vertex_cf_.apply("pos_track_cluster_within_7pt2ns", pos_track_cluster_tdiff <= 7.2);
+        vertex_cf_.apply("ele_pos_track_within_14pt1ns", abs(ele.getTrack().getTrackTime() - pos.getTrack().getTrackTime()) <= 14.1);
         vertex_cf_.apply("ele_track_chi2ndf", ele.getTrack().getChi2Ndf() <= 20.0);
         vertex_cf_.apply("pos_track_chi2ndf", pos.getTrack().getChi2Ndf() <= 20.0);
         vertex_cf_.apply("electron_below_2pt9GeV", ele.getTrack().getP() <= 2.9);
@@ -339,9 +342,9 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         vertex_cf_.apply("vtx_max_p_4pt0GeV", vtxmaxp <= 4.0);
         
         vertex_cf_.fill_nm1("positron_clusterE_above_0pt2GeV", pos.getCluster().getEnergy());
-        vertex_cf_.fill_nm1("ele_track_cluster_within_6pt9ns", ele_track_cluster_tdiff);
-        vertex_cf_.fill_nm1("pos_track_cluster_within_5pt2ns", pos_track_cluster_tdiff);
-        vertex_cf_.fill_nm1("ele_pos_track_within_9pt0ns", abs(ele.getTrack().getTrackTime() - pos.getTrack().getTrackTime()));
+        vertex_cf_.fill_nm1("ele_track_cluster_within_9pt8ns", ele_track_cluster_tdiff);
+        vertex_cf_.fill_nm1("pos_track_cluster_within_7pt2ns", pos_track_cluster_tdiff);
+        vertex_cf_.fill_nm1("ele_pos_track_within_14pt1ns", abs(ele.getTrack().getTrackTime() - pos.getTrack().getTrackTime()));
         vertex_cf_.fill_nm1("ele_track_chi2ndf", ele.getTrack().getChi2Ndf());
         vertex_cf_.fill_nm1("pos_track_chi2ndf", pos.getTrack().getChi2Ndf());
         vertex_cf_.fill_nm1("electron_below_2pt9GeV", ele.getTrack().getP());
@@ -360,6 +363,9 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     n_vertices_h_->Fill(vtxs.size(), preselected_vtx.size());
     event_cf_.apply("at_least_one_vertex", preselected_vtx.size() > 0);
     event_cf_.apply("no_extra_vertices", preselected_vtx.size() < 2);
+
+    event_cf_.fill_nm1("at_least_one_vertex", preselected_vtx.size());
+    event_cf_.fill_nm1("no_extra_vertices", preselected_vtx.size());
     if (not event_cf_.keep()) {
         return true;
     }
@@ -424,7 +430,7 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     * unnecessary copying if the event is not going to be kept
     * anyways.
     */
-    if (bus_.has(mcColl_) and getIsSignal()) {
+    if (bus_.has(mcColl_) and isSignal_) {
         /**
         * Before we loop through the MCParticles we go through the
         * the hits on the electron track in this vertex and find out
