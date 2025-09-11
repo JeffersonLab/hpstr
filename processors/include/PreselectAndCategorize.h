@@ -38,6 +38,7 @@
 #include "TBranch.h"
 #include "TVector3.h"
 #include "TLorentzVector.h"
+#include "TAxis.h"
 
 // C++ 
 #include <memory>
@@ -58,9 +59,13 @@
 class Cutflow {
     
     public:
-        Cutflow(const std::string& name, const std::string& nocut_name)
-            : name_{name}, nocut_name_{nocut_name} {}
+        Cutflow(const std::string& name, const std::string& nocut_name):
+            name_{name}, nocut_name_{nocut_name} {}
 
+        void set_label_names(const std::vector<std::string>& label_names) {
+            label_names_ = label_names;
+        }
+        
         void add(const std::string& name, int nbins, float min, float max) {
             if (h_cutflow_) {
                 throw std::runtime_error("Cannot add more cuts after init");
@@ -81,7 +86,7 @@ class Cutflow {
             
             h_cutflow_ = std::make_unique<TH1F>(
                 (name_ + "_cutflow_h").c_str(),
-                (name_ + "Cutflow").c_str(),
+                (name_ + " cutflow;;N_{events}").c_str(),
                 cuts_.size()+1, -1.5, cuts_.size()-0.5
             );
             
@@ -125,6 +130,12 @@ class Cutflow {
         }
 
         void save() {
+            // if label names not set or size mismatch, just skip setting labels
+            for (int i = 0; i < h_cutflow_->GetNbinsX(); ++i) {
+                if (label_names_.size() == (std::size_t)h_cutflow_->GetNbinsX()) {
+                    h_cutflow_->GetXaxis()->SetBinLabel(i+1, label_names_.at(i).c_str());
+                }
+            }
             h_cutflow_->Write();
             for (const auto& [_name, entry] : cuts_) entry.second->Write();
         }
@@ -135,6 +146,7 @@ class Cutflow {
         std::map<std::string,std::pair<std::size_t,std::unique_ptr<TH1F>>> cuts_;
         bool keep_;
         std::vector<std::optional<bool>> cut_desc_;
+        std::vector<std::string> label_names_;
 };
 
 class EventBus {
@@ -207,7 +219,15 @@ class PreselectAndCategorize : public Processor {
             file >> obj;
             file.close();
             return obj;
-        }        
+        }      
+        
+        bool getIsSignal() const {
+            return isSignal_;
+        }
+
+        bool getIsData() const {
+            return isData_;
+        }
 
     private:
         EventBus bus_;

@@ -32,7 +32,7 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
         std::string trkColl_{"KalmanFullTracks"};
         bool isData_{false};
         bool isSimpSignal_{false};
-        bool isApSignal{false};
+        bool isApSignal_{false};
         double calTimeOffset_{0.0};
 
         Cutflow vertex_cf_{"vertex", "reconstructed"};

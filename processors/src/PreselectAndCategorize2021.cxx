@@ -1,6 +1,6 @@
 /*
 * @file PreselectAndCategorize2021.cxx
-* @author Sarah Gaiser
+* @author Sarah Gaiser adapting Tom Eichlersmith's PreselectAndCategorize
 * @date Apr 2025
 */
 
@@ -90,7 +90,24 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
     vertex_cf_.add("vertex_chi2", 100, 0.0, 30.0);
     vertex_cf_.add("vtx_max_p_4pt0GeV", 100, 0.0, 4.0);
     vertex_cf_.init();
-    
+    std::vector<std::string> labels_vertex_cf = {
+        "reconstructed",
+        "E_{e^{+}} > 0.2 GeV",
+        "|t_{trk, e^{-}} - t_{clu, e^{+}}| < 6.9 ns",
+        "|t_{trk, e^{+}} - t_{clu, e^{+}}| < 5.2 ns",
+        "|t_{trk, e^{-}} - t_{trk, e^{+}}| < 9.0 ns",
+        "e^{-} #chi^{2}/ndf < 20",
+        "e^{+} #chi^{2}/ndf < 20",
+        "p_{e^{-}} < 2.9 GeV",
+        "p_{e^{-}} > 0.4 GeV",
+        "p_{e^{+}} > 0.4 GeV",
+        "N_{2D hits, e^{-}} #geq 10",
+        "N_{2D hits, e^{+}} #geq 10",
+        "#chi^{2}_{vtx} < 20",
+        "p_{vtx} < 4.0 GeV"
+    };
+    vertex_cf_.set_label_names(labels_vertex_cf);
+
     /* event selection after vertex selection */
     event_cf_.add("single_trigger", 2, -0.5, 1.5);
     event_cf_.add("at_least_one_vertex", 10, 0.0, 10.0);
@@ -100,10 +117,17 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
         event_cf_.add("no_extra_true_vd", 3, 0.0, 2.0);
     }
     event_cf_.init();
+    std::vector<std::string> labels_event_cf = {
+        "readout",
+        "single2 or single3 trigger",
+        "N_{vtx} >= 1",
+        "N_{vtx} < 2"
+    };
+    event_cf_.set_label_names(labels_event_cf);
 
     n_vertices_h_ = std::make_unique<TH2F>(
         "n_vertices_h",
-        "N Vertices in Event (readout and preselected)",
+        "N Vertices in Event; N_{vtx}^{readout}; N_{vtx}^{preselected}",
         10, -0.5, 9.5,
         10, -0.5, 9.5
     );
@@ -400,7 +424,7 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     * unnecessary copying if the event is not going to be kept
     * anyways.
     */
-    if (bus_.has(mcColl_) and isSignal_) {
+    if (bus_.has(mcColl_) and getIsSignal()) {
         /**
         * Before we loop through the MCParticles we go through the
         * the hits on the electron track in this vertex and find out
