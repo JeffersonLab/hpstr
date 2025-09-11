@@ -198,6 +198,9 @@ namespace utils {
     double v0_projection_to_target_significance(json v0proj_fits, int run, double &vtx_proj_x, double &vtx_proj_y,
             double &vtx_proj_x_signif, double &vtx_proj_y_signif, double vtx_x, double vtx_y, double vtx_z, 
             double vtx_px, double vtx_py, double vtx_pz);
+
+    double v0_projection_to_target_significance(json v0proj_fits, int run, double &vtx_proj_x, double &vtx_proj_y,
+            double &vtx_proj_x_signif, double &vtx_proj_y_signif, Vertex* vtx);
 }
 
 #endif //UTILITIES

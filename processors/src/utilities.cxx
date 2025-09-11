@@ -963,3 +963,55 @@ double utils::v0_projection_to_target_significance(json v0proj_fits, int run, do
 
     return significance;
 }
+
+double utils::v0_projection_to_target_significance(json v0proj_fits, int run, double &vtx_proj_x, double &vtx_proj_y,
+        double &vtx_proj_x_signif, double &vtx_proj_y_signif, Vertex* vtx){
+    //V0 Projection fit parameters are calculated externally by projecting vertices to the target z position,
+    //and then fitting the 2D distribution vtx_x vs vtx_y with a rotated 2D Gaussian.
+    //The fit parameters are defined along the rotated coordinate system.
+    //Therefore, the vertex position must be rotated into this coordinate system before calculating significance.
+    //The rotation angle corresponding to the fit is provided in the json file containing the rotated fit values.
+    
+    //Read v0 projection fits from json file
+    int closest_run;
+    for(auto entry : v0proj_fits.items()){
+        int check_run = std::stoi(entry.key());
+        if(check_run > run)
+            break;
+        else{
+            closest_run = check_run;
+        }
+    }
+    double target_pos = v0proj_fits[std::to_string(closest_run)]["target_position"];
+    double rot_mean_x = v0proj_fits[std::to_string(closest_run)]["rotated_mean_x"];
+    double rot_mean_y = v0proj_fits[std::to_string(closest_run)]["rotated_mean_y"];
+    double rot_sigma_x = v0proj_fits[std::to_string(closest_run)]["rotated_sigma_x"];
+    double rot_sigma_y = v0proj_fits[std::to_string(closest_run)]["rotated_sigma_y"];
+    double rotation_angle = (double)v0proj_fits[std::to_string(closest_run)]["rotation_angle_mrad"]/1000.0;
+
+    // get target constrained vertex position
+    double vtx_tgt_x = vtx->getTgtConstrX();
+    double vtx_tgt_x_err = vtx->getTgtConstrSigmaX();
+    double vtx_tgt_y = vtx->getTgtConstrY();
+    double vtx_tgt_y_err = vtx->getTgtConstrSigmaY();
+
+    //Rotate beamspot by angle corresponding to run number
+    double mean_x = rot_mean_x * std::cos(-rotation_angle) - rot_mean_y * std::sin(-rotation_angle);
+    double mean_y = rot_mean_x * std::sin(-rotation_angle) + rot_mean_y * std::cos(-rotation_angle);
+    double sigma_x = rot_sigma_x * std::cos(-rotation_angle) - rot_sigma_y * std::sin(-rotation_angle);
+    double sigma_y = rot_sigma_x * std::sin(-rotation_angle) + rot_sigma_y * std::cos(-rotation_angle);
+
+    vtx_proj_x = vtx_tgt_x;
+    vtx_proj_y = vtx_tgt_y;
+    //Calculate significance
+    // vtx_proj_x_signif = (vtx_tgt_x - mean_x)/sigma_x;
+    // vtx_proj_y_signif = (vtx_tgt_y - mean_y)/sigma_y;
+
+    vtx_proj_x_signif = (vtx_tgt_x - mean_x)/std::sqrt(sigma_x*sigma_x + vtx_tgt_x_err*vtx_tgt_x_err);
+    vtx_proj_y_signif = (vtx_tgt_y - mean_y)/std::sqrt(sigma_y*sigma_y + vtx_tgt_y_err*vtx_tgt_y_err);
+
+    //
+    double significance = std::sqrt( vtx_proj_x_signif*vtx_proj_x_signif + vtx_proj_y_signif*vtx_proj_y_signif );
+
+    return significance;
+}

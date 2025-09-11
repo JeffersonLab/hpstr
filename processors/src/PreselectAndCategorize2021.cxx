@@ -402,12 +402,8 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         double vtx_proj_x_sig{-1.0}, vtx_proj_y_sig{-1.0};
         double vtx_proj_sig{-1.0};
 
-        vtx_proj_sig = utils::v0_projection_to_target_significance(
-            v0proj_fits_, eh.getRunNumber(),
-            vtx_proj_x, vtx_proj_y, vtx_proj_x_sig, vtx_proj_y_sig,
-            vtx.getX(), vtx.getY(), vtx.getZ(),
-            vtx.getP().X(), vtx.getP().Y(), vtx.getP().Z()
-        );
+        vtx_proj_sig = utils::v0_projection_to_target_significance(v0proj_fits_, eh.getRunNumber(),
+            vtx_proj_x, vtx_proj_y, vtx_proj_x_sig, vtx_proj_y_sig, &vtx);
 
         bus_.set("vtx_proj_sig", vtx_proj_sig);
         bus_.set("vtx_proj_x", vtx_proj_x);
