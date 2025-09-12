@@ -63,6 +63,23 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     if (isSimpSignal_ || isApSignal_) isSignal_ = true;
 }
 
+std::vector<double> PreselectAndCategorize2021::determine_time_cuts(bool isData, int runNumber) {
+    std::vector<double> time_cuts;
+
+    if (isData) {
+        // Apply data-specific time cuts
+        // time_cuts = {6.9, 5.2, 9.0}; // default values
+        time_cuts = {7.11, 5.3, 9.5}; // early runs
+        if (runNumber >= 14566) {  // bias voltage increased after this run, better time resolution
+            time_cuts = {6.7, 5.0, 8.8}; // later runs
+        }
+    } else {
+        // Apply MC-specific time cuts
+        time_cuts = {9.8, 7.2, 14.1};  // MC with track time smearing
+    }
+
+    return time_cuts;
+}
 
 void PreselectAndCategorize2021::initialize(TTree* tree) {
     _ah =  std::make_shared<AnaHelpers>();
@@ -78,10 +95,11 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
     
     /* pre-selection on vertices */
     // vertex_cf_.add("single_trigger", 2, -0.5, 1.5);
+    time_cuts_ = determine_time_cuts(isData_, bus_.get<EventHeader>("EventHeader").getRunNumber());
     vertex_cf_.add("positron_clusterE_above_0pt2GeV", 100, 0, 4.0);
-    vertex_cf_.add("ele_track_cluster_within_9pt8ns", 200, 0.0, 20.0);
-    vertex_cf_.add("pos_track_cluster_within_7pt2ns", 200, 0.0, 20.0);
-    vertex_cf_.add("ele_pos_track_within_14pt1ns", 200, 0.0, 20.0);
+    vertex_cf_.add("ele_track_cluster", 200, 0.0, 20.0);
+    vertex_cf_.add("pos_track_cluster", 200, 0.0, 20.0);
+    vertex_cf_.add("ele_pos_track", 200, 0.0, 20.0);
     vertex_cf_.add("ele_track_chi2ndf", 100, 0.0, 30.0);
     vertex_cf_.add("pos_track_chi2ndf", 100, 0.0, 30.0);
     vertex_cf_.add("electron_below_2pt9GeV", 100, 0.0, 4.0);
@@ -92,12 +110,17 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
     vertex_cf_.add("vertex_chi2", 100, 0.0, 30.0);
     vertex_cf_.add("vtx_max_p_4pt0GeV", 100, 0.0, 4.0);
     vertex_cf_.init();
+
+    std::stringstream ele_trk_clu_cut, pos_trk_clu_cut, ele_pos_trk_cut;
+    ele_trk_clu_cut << "|t_{trk, e^{-}} - t_{clu, e^{+}}| < " << time_cuts_[0] << " ns";
+    pos_trk_clu_cut << "|t_{trk, e^{+}} - t_{clu, e^{+}}| < " << time_cuts_[1] << " ns";
+    ele_pos_trk_cut << "|t_{trk, e^{-}} - t_{trk, e^{+}}| < " << time_cuts_[2] << " ns";
     std::vector<std::string> labels_vertex_cf = {
         "reconstructed",
         "E_{e^{+}} > 0.2 GeV",
-        "|t_{trk, e^{-}} - t_{clu, e^{+}}| < 9.8 ns",
-        "|t_{trk, e^{+}} - t_{clu, e^{+}}| < 7.2 ns",
-        "|t_{trk, e^{-}} - t_{trk, e^{+}}| < 14.1 ns",
+        ele_trk_clu_cut.str(),
+        pos_trk_clu_cut.str(),
+        ele_pos_trk_cut.str(),
         "e^{-} #chi^{2}/ndf < 20",
         "e^{+} #chi^{2}/ndf < 20",
         "p_{e^{-}} < 2.9 GeV",
@@ -327,9 +350,9 @@ bool PreselectAndCategorize2021::process(IEvent*) {
 
         vertex_cf_.begin_event();
         vertex_cf_.apply("positron_clusterE_above_0pt2GeV", pos.getCluster().getEnergy() >= 0.2);
-        vertex_cf_.apply("ele_track_cluster_within_9pt8ns", ele_track_cluster_tdiff <= 9.8);
-        vertex_cf_.apply("pos_track_cluster_within_7pt2ns", pos_track_cluster_tdiff <= 7.2);
-        vertex_cf_.apply("ele_pos_track_within_14pt1ns", abs(ele.getTrack().getTrackTime() - pos.getTrack().getTrackTime()) <= 14.1);
+        vertex_cf_.apply("ele_track_cluster", ele_track_cluster_tdiff <= time_cuts_[0]);
+        vertex_cf_.apply("pos_track_cluster", pos_track_cluster_tdiff <= time_cuts_[1]);
+        vertex_cf_.apply("ele_pos_track", abs(ele.getTrack().getTrackTime() - pos.getTrack().getTrackTime()) <= time_cuts_[2]);
         vertex_cf_.apply("ele_track_chi2ndf", ele.getTrack().getChi2Ndf() <= 20.0);
         vertex_cf_.apply("pos_track_chi2ndf", pos.getTrack().getChi2Ndf() <= 20.0);
         vertex_cf_.apply("electron_below_2pt9GeV", ele.getTrack().getP() <= 2.9);
@@ -342,9 +365,9 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         vertex_cf_.apply("vtx_max_p_4pt0GeV", vtxmaxp <= 4.0);
         
         vertex_cf_.fill_nm1("positron_clusterE_above_0pt2GeV", pos.getCluster().getEnergy());
-        vertex_cf_.fill_nm1("ele_track_cluster_within_9pt8ns", ele_track_cluster_tdiff);
-        vertex_cf_.fill_nm1("pos_track_cluster_within_7pt2ns", pos_track_cluster_tdiff);
-        vertex_cf_.fill_nm1("ele_pos_track_within_14pt1ns", abs(ele.getTrack().getTrackTime() - pos.getTrack().getTrackTime()));
+        vertex_cf_.fill_nm1("ele_track_cluster", ele_track_cluster_tdiff);
+        vertex_cf_.fill_nm1("pos_track_cluster", pos_track_cluster_tdiff);
+        vertex_cf_.fill_nm1("ele_pos_track", abs(ele.getTrack().getTrackTime() - pos.getTrack().getTrackTime()));
         vertex_cf_.fill_nm1("ele_track_chi2ndf", ele.getTrack().getChi2Ndf());
         vertex_cf_.fill_nm1("pos_track_chi2ndf", pos.getTrack().getChi2Ndf());
         vertex_cf_.fill_nm1("electron_below_2pt9GeV", ele.getTrack().getP());

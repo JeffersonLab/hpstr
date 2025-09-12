@@ -10,6 +10,8 @@
 #include "PreselectAndCategorize.h"
 #include "TrackSmearingTool.h"
 #include "TSData.h"
+#include <string>
+#include <sstream>
 
 
 class PreselectAndCategorize2021 : public PreselectAndCategorize {
@@ -27,6 +29,8 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
         std::string trkColl_{"KalmanFullTracks"};
         bool isSimpSignal_{false};
         bool isApSignal_{false};
+        std::vector<double> determine_time_cuts(bool isData, int runNumber);
+        std::vector<double> time_cuts_{6.9, 5.2, 9.0};
 };
 
 #endif //__PRESELECT_AND_CATEGORIZE_2021_H__
