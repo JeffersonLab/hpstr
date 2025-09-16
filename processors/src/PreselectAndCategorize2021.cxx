@@ -75,7 +75,8 @@ std::vector<double> PreselectAndCategorize2021::determine_time_cuts(bool isData,
         }
     } else {
         // Apply MC-specific time cuts
-        time_cuts = {9.8, 7.2, 14.1};  // MC with track time smearing
+        // time_cuts = {9.8, 7.2, 14.1};  // MC with track time smearing
+        time_cuts = {3.0, 3.0, 4.2};  // MC without track time smearing
     }
 
     return time_cuts;
@@ -89,6 +90,8 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
     bus_.board_input<TSData>(tree, "TSBank");
     if (not trkColl_.empty())
         bus_.board_input<std::vector<Track*>>(tree, trkColl_);
+    if (not hitColl_.empty())
+        bus_.board_input<std::vector<TrackerHit*>>(tree, hitColl_);
     bus_.board_input<std::vector<Vertex*>>(tree, vtxColl_);
     if (not isData_ and not mcColl_.empty())
         bus_.board_input<std::vector<MCParticle*>>(tree, mcColl_);
@@ -141,6 +144,10 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
         event_cf_.add("at_least_one_true_vd", 3, 0.0, 2.0);
         event_cf_.add("no_extra_true_vd", 3, 0.0, 2.0);
     }
+    if (isApSignal_) {
+        event_cf_.add("at_least_one_true_ap", 3, 0.0, 2.0);
+        event_cf_.add("no_extra_true_ap", 3, 0.0, 2.0);
+    }
     event_cf_.init();
     std::vector<std::string> labels_event_cf = {
         "readout",
@@ -174,10 +181,10 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
     for (const auto& name : {"eleL1", "eleL2", "posL1", "posL2"}) {
         bus_.board_output<bool>(output_tree_.get(), name);
     }
-
+    
     if (not v0proj_fits_.empty()) {
         for (const auto& name : {"vtx_proj_sig", "vtx_proj_x", "vtx_proj_x_sig",
-                                 "vtx_proj_y", "vtx_proj_y_sig"}) {
+                                 "vtx_proj_y", "vtx_proj_y_sig", "ele_L1_iso", "pos_L1_iso"}) {
             bus_.board_output<double>(output_tree_.get(), name);
         }
     }
@@ -185,6 +192,9 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
     if (bus_.has(mcColl_) and isSignal_) {
         if (isSimpSignal_) {
             bus_.board_output<MCParticle>(output_tree_.get(), "true_vd");
+        }
+        if (isApSignal_) {
+            bus_.board_output<MCParticle>(output_tree_.get(), "true_ap");
         }
         bus_.board_output<bool>(output_tree_.get(), "isRadEle");
     }
@@ -211,7 +221,8 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     }
 
     const auto& vtxs{bus_.get<std::vector<Vertex*>>(vtxColl_)};
-    auto trks{bus_.get<std::vector<Track*>>(trkColl_)};
+    // auto trks{bus_.get<std::vector<Track*>>(trkColl_)};
+    auto hits{bus_.get<std::vector<TrackerHit*>>(hitColl_)};
     /**
     * pre-selection on vertices defining "quality" vertices
     *
@@ -257,20 +268,20 @@ bool PreselectAndCategorize2021::process(IEvent*) {
 
         Track ele_trk;
         Track pos_trk;
-        Track* ele_trk_ptr;
-        Track* pos_trk_ptr;
-        if (not trkColl_.empty()) {
-            bool foundTracks = _ah->MatchToGBLTracks(ele.getTrack().getID(), pos.getTrack().getID(), ele_trk_ptr, pos_trk_ptr, trks);
-            if (not foundTracks) {
-                std::cout << "PreselectAndCategorize2021::ERROR: couldn't find tracks" << std::endl;
-                continue;
-            }
-            ele_trk = *ele_trk_ptr;
-            pos_trk = *pos_trk_ptr;
-        } else {
-            ele_trk = ele.getTrack();
-            pos_trk = pos.getTrack();
-        }    
+        // Track* ele_trk_ptr;
+        // Track* pos_trk_ptr;
+        // if (not trkColl_.empty()) {
+        //     bool foundTracks = _ah->MatchToGBLTracks(ele.getTrack().getID(), pos.getTrack().getID(), ele_trk_ptr, pos_trk_ptr, trks);
+        //     if (not foundTracks) {
+        //         std::cout << "PreselectAndCategorize2021::ERROR: couldn't find tracks" << std::endl;
+        //         continue;
+        //     }
+        //     ele_trk = *ele_trk_ptr;
+        //     pos_trk = *pos_trk_ptr;
+        // } else {
+        ele_trk = ele.getTrack();
+        pos_trk = pos.getTrack();
+        // }    
 
         // apply track_z0 and track_time corrections loaded from JSON
         for (const auto& [name, corr]: track_corrections_) {
@@ -400,12 +411,30 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     // earliest layer hit categories
     bool eleL1{false}, eleL2{false}, posL1{false}, posL2{false};
     Track ele_trk{ele.getTrack()}, pos_trk{pos.getTrack()};
-    _ah->InnermostLayerCheck(&ele_trk, eleL1, eleL2);
-    _ah->InnermostLayerCheck(&pos_trk, posL1, posL2);
+    // _ah->InnermostLayerCheck(&ele_trk, eleL1, eleL2);
+    // _ah->InnermostLayerCheck(&pos_trk, posL1, posL2);
+    auto ele_layers = _ah->GetTrackHitLayers(&ele_trk);
+    auto pos_layers = _ah->GetTrackHitLayers(&pos_trk);
+
+    if (ele_layers.at(0) == 1 && ele_layers.at(1) == 1) eleL1 = true;
+    if (ele_layers.at(2) == 1 && ele_layers.at(3) == 1) eleL2 = true;
+    if (pos_layers.at(0) == 1 && pos_layers.at(1) == 1) posL1 = true;
+    if (pos_layers.at(2) == 1 && pos_layers.at(3) == 1) posL2 = true;
+
     bus_.set("eleL1", eleL1);
     bus_.set("eleL2", eleL2);
     bus_.set("posL1", posL1);
     bus_.set("posL2", posL2);
+
+    double ele_L1_iso{9999.0}, pos_L1_iso{9999.0};
+    if(eleL1 && eleL2 && posL1 && posL2){
+        if (ele_trk.isKalmanTrack()){
+            ele_L1_iso = utils::getKalmanTrackL1Isolations(&ele_trk, &hits);
+            pos_L1_iso = utils::getKalmanTrackL1Isolations(&pos_trk, &hits);
+        }
+    }
+    bus_.set("ele_L1_iso", ele_L1_iso);
+    bus_.set("pos_L1_iso", pos_L1_iso);
 
     TVector3 ele_mom(
         ele_trk.getMomentum()[0],
@@ -481,27 +510,54 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         */
         const auto& mc_ptr{bus_.get<std::vector<MCParticle*>>(mcColl_)};
         MCParticle* vd{nullptr};
+        MCParticle* ap{nullptr};
         int n_vd{0};
+        int n_ap{0};
         bool ele_is_rad_ele{false};
         for (MCParticle* ptr : mc_ptr) {
-            if (ptr->getPDG() == 625) {
-                n_vd++;
-                vd = ptr;
-            } else if (ptr->getID() == truth_ele_id) {
-                ele_is_rad_ele = (ptr->getMomPDG() == 625);
+            if (isSimpSignal_) {
+                if (ptr->getPDG() == 625) {
+                    n_vd++;
+                    vd = ptr;
+                } else if (ptr->getID() == truth_ele_id) {
+                    ele_is_rad_ele = (ptr->getMomPDG() == 625);
+                }
+            } else if (isApSignal_) {
+                if (ptr->getPDG() == 622) {
+                    n_ap++;
+                    ap = ptr;
+                } else if (ptr->getID() == truth_ele_id) {
+                    ele_is_rad_ele = (ptr->getMomPDG() == 622);
+                }
             }
         }
-        // event_cf_.apply("at_least_one_true_vd", n_vd > 0);
-        // event_cf_.apply("no_extra_true_vd", n_vd < 2);
-        if (not event_cf_.keep()) {
-            return true;
+        
+        if (isSimpSignal_) {
+            event_cf_.apply("at_least_one_true_vd", n_vd > 0);
+            event_cf_.apply("no_extra_true_vd", n_vd < 2);
+            if (not event_cf_.keep()) {
+                return true;
+            }
+            if (not vd) {
+                throw std::runtime_error(
+                    "ERROR: Logic error: checked for VD earlier but there isn't one."
+                );
+            }
+            bus_.set("true_vd", *vd);
+        } else if (isApSignal_) {
+            event_cf_.apply("at_least_one_true_ap", n_ap > 0);
+            event_cf_.apply("no_extra_true_ap", n_ap < 2);
+            if (not event_cf_.keep()) {
+                return true;
+            }
+            if (not ap) {
+                throw std::runtime_error(
+                    "ERROR: Logic error: checked for AP earlier but there isn't one."
+                );
+            }
+            bus_.set("true_ap", *ap);
         }
-        if (not vd) {
-            throw std::runtime_error(
-                "ERROR: Logic error: checked for VD earlier but there isn't one."
-            );
-        }
-        bus_.set("true_vd", *vd);
+        
         bus_.set("isRadEle", ele_is_rad_ele);
     }
     output_tree_->Fill();

@@ -74,6 +74,8 @@ class AnaHelpers {
          * @param foundL2 
          */
         void InnermostLayerCheck(Track* trk, bool& foundL1, bool& foundL2);
+
+        std::vector<int> GetTrackHitLayers(Track* trk);
         
         /**
          * @brief Get the Particles From Vtx object

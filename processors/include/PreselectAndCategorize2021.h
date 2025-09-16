@@ -27,6 +27,7 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
 
     private:
         std::string trkColl_{"KalmanFullTracks"};
+        std::string hitColl_{"SiClustersOnTrack"};
         bool isSimpSignal_{false};
         bool isApSignal_{false};
         std::vector<double> determine_time_cuts(bool isData, int runNumber);

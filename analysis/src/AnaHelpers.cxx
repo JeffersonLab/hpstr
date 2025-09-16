@@ -87,6 +87,15 @@ void AnaHelpers::InnermostLayerCheck(Track* trk, bool& foundL1, bool& foundL2) {
     }
 }
 
+std::vector<int> AnaHelpers::GetTrackHitLayers(Track* trk) {
+    std::vector<int> layer_code = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    for (int ihit=0; ihit<trk->getHitLayers().size();ihit++) {
+        int layer = trk->getHitLayers().at(ihit);
+        layer_code.at(layer) = 1;
+    }
+    return layer_code;
+}
+
 double AnaHelpers::GetClusterCoplanarity(CalCluster* cl1,CalCluster* cl2){
   double photon_nom_x=42.52; //nominal photon position
   double radian=180.0/3.14; 
