@@ -12,6 +12,8 @@
 #include "TSData.h"
 #include <string>
 #include <sstream>
+#include "TMath.h"
+#include "Math/Vector4D.h"
 
 
 class PreselectAndCategorize2021 : public PreselectAndCategorize {

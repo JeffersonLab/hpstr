@@ -189,14 +189,17 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
         }
     }
 
-    if (bus_.has(mcColl_) and isSignal_) {
+    if (bus_.has(mcColl_)) {
         if (isSimpSignal_) {
             bus_.board_output<MCParticle>(output_tree_.get(), "true_vd");
         }
         if (isApSignal_) {
             bus_.board_output<MCParticle>(output_tree_.get(), "true_ap");
         }
+
         bus_.board_output<bool>(output_tree_.get(), "isRadEle");
+        bus_.board_output<double>(output_tree_.get(), "true_vertex_invM");
+        bus_.board_output<double>(output_tree_.get(), "true_vertex_psum");
     }
 }
 
@@ -411,8 +414,6 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     // earliest layer hit categories
     bool eleL1{false}, eleL2{false}, posL1{false}, posL2{false};
     Track ele_trk{ele.getTrack()}, pos_trk{pos.getTrack()};
-    // _ah->InnermostLayerCheck(&ele_trk, eleL1, eleL2);
-    // _ah->InnermostLayerCheck(&pos_trk, posL1, posL2);
     auto ele_layers = _ah->GetTrackHitLayers(&ele_trk);
     auto pos_layers = _ah->GetTrackHitLayers(&pos_trk);
 
@@ -478,7 +479,7 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     * unnecessary copying if the event is not going to be kept
     * anyways.
     */
-    if (bus_.has(mcColl_) and isSignal_) {
+    if (bus_.has(mcColl_)) {
         /**
         * Before we loop through the MCParticles we go through the
         * the hits on the electron track in this vertex and find out
@@ -511,16 +512,27 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         const auto& mc_ptr{bus_.get<std::vector<MCParticle*>>(mcColl_)};
         MCParticle* vd{nullptr};
         MCParticle* ap{nullptr};
+        ROOT::Math::PxPyPzEVector trueEleP;
+        ROOT::Math::PxPyPzEVector truePosP;
+
         int n_vd{0};
         int n_ap{0};
         bool ele_is_rad_ele{false};
         for (MCParticle* ptr : mc_ptr) {
+            std::vector<double> lP = ptr->getMomentum();
             if (isSimpSignal_) {
                 if (ptr->getPDG() == 625) {
                     n_vd++;
                     vd = ptr;
                 } else if (ptr->getID() == truth_ele_id) {
                     ele_is_rad_ele = (ptr->getMomPDG() == 625);
+                    trueEleP = ROOT::Math::PxPyPzEVector(
+                        lP.at(0), lP.at(1), lP.at(2), ptr->getEnergy()
+                    );
+                } else if (ptr->getPDG() == -11 && ptr->getMomPDG() == 625) {
+                    truePosP = ROOT::Math::PxPyPzEVector(
+                        lP.at(0), lP.at(1), lP.at(2), ptr->getEnergy()
+                    );
                 }
             } else if (isApSignal_) {
                 if (ptr->getPDG() == 622) {
@@ -528,7 +540,29 @@ bool PreselectAndCategorize2021::process(IEvent*) {
                     ap = ptr;
                 } else if (ptr->getID() == truth_ele_id) {
                     ele_is_rad_ele = (ptr->getMomPDG() == 622);
+                    trueEleP = ROOT::Math::PxPyPzEVector(
+                        lP.at(0), lP.at(1), lP.at(2), ptr->getEnergy()
+                    );
+                } else if (ptr->getPDG() == -11 && ptr->getMomPDG() == 622) {
+                    truePosP = ROOT::Math::PxPyPzEVector(
+                        lP.at(0), lP.at(1), lP.at(2), ptr->getEnergy()
+                    );
                 }
+            }
+            else {
+                if (ptr->getID() == truth_ele_id) {
+                    ele_is_rad_ele = (ptr->getMomPDG() == 623);
+                }
+                if (ptr->getPDG() == 11 && ptr->getMomPDG() == 623) {
+                    trueEleP = ROOT::Math::PxPyPzEVector(
+                        lP.at(0), lP.at(1), lP.at(2), ptr->getEnergy()
+                    );
+                }
+                else if (ptr->getPDG() == -11 && ptr->getMomPDG() == 623) {
+                    truePosP = ROOT::Math::PxPyPzEVector(
+                        lP.at(0), lP.at(1), lP.at(2), ptr->getEnergy()
+                    );
+                }   
             }
         }
         
@@ -557,7 +591,11 @@ bool PreselectAndCategorize2021::process(IEvent*) {
             }
             bus_.set("true_ap", *ap);
         }
-        
+        if (trueEleP.P() > 0 and truePosP.P() > 0) {
+            bus_.set("true_vertex_invM", (trueEleP + truePosP).M());
+            bus_.set("true_vertex_psum", trueEleP.P() + truePosP.P());
+        }
+
         bus_.set("isRadEle", ele_is_rad_ele);
     }
     output_tree_->Fill();
