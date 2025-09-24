@@ -52,3 +52,7 @@ tramp
 # Ignore build and install dirs
 build/
 install/
+
+.DS_Store
+.vscode/
+build2/
