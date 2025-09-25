@@ -395,7 +395,7 @@ void HistoManager::loadHistoConfig(const std::string histoConfigFile) {
 void HistoManager::saveHistos(TFile* outF,std::string folder) {
     if (outF) outF->cd();
     TDirectory* dir{nullptr};
-    std::cout<<folder.c_str()<<std::endl;
+    
     if (!folder.empty()) {
         dir = outF->mkdir(folder.c_str());
         dir->cd();
