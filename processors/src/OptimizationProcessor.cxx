@@ -1,27 +1,28 @@
-#include "OptimizationProcessor.h"
-#include <string>
-#include <cstdlib>
-#include <iostream>
-#include <fstream>
+/**
+ * @file OptimizationProcessor.cxx
+ * @author Sarah Gaiser, based on ZBiProcessor by Alic Spellman
+ * @brief Processor to optimize cuts based on ZBi significance calculation.
+ */
 
-OptimizationProcessor::OptimizationProcessor(const std::string &name, Process &process)
-    : Processor(name, process)
-{
-}
+#include "OptimizationProcessor.h"
+
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <string>
+
+OptimizationProcessor::OptimizationProcessor(const std::string& name, Process& process) : Processor(name, process) {}
 
 OptimizationProcessor::~OptimizationProcessor() {}
 
-void OptimizationProcessor::configure(const ParameterSet &parameters)
-{
-    try
-    {
+void OptimizationProcessor::configure(const ParameterSet& parameters) {
+    try {
         // Basic config
         debug_ = parameters.getInteger("debug", debug_);
         year_ = parameters.getInteger("year", year_);
         cuts_cfgFile_ = parameters.getString("cuts_cfgFile", cuts_cfgFile_);
         outFileName_ = parameters.getString("outFileName", outFileName_);
         cutVariables_ = parameters.getVString("cutVariables", cutVariables_);
-        eq_cfgFile_ = parameters.getString("eq_cfgFile", eq_cfgFile_);
 
         // Background
         bkgVtxAnaFilename_ = parameters.getString("bkgVtxAnaFilename", bkgVtxAnaFilename_);
@@ -29,35 +30,24 @@ void OptimizationProcessor::configure(const ParameterSet &parameters)
         background_sf_ = parameters.getDouble("background_sf", background_sf_);
 
         // MC Signal
-        variableHistCfgFilename_ =
-            parameters.getString("variableHistCfgFilename", variableHistCfgFilename_);
-        signalVtxAnaFilename_ =
-            parameters.getString("signalVtxAnaFilename", signalVtxAnaFilename_);
-        signalVtxAnaTreename_ =
-            parameters.getString("signalVtxAnaTreename", signalVtxAnaTreename_);
-        signalMCAnaFilename_ =
-            parameters.getString("signalMCAnaFilename", signalMCAnaFilename_);
-        signal_pdgid_ =
-            parameters.getString("signal_pdgid", signal_pdgid_);
+        variableHistCfgFilename_ = parameters.getString("variableHistCfgFilename", variableHistCfgFilename_);
+        signalVtxAnaFilename_ = parameters.getString("signalVtxAnaFilename", signalVtxAnaFilename_);
+        signalVtxAnaTreename_ = parameters.getString("signalVtxAnaTreename", signalVtxAnaTreename_);
+        signalMCAnaFilename_ = parameters.getString("signalMCAnaFilename", signalMCAnaFilename_);
+        signal_pdgid_ = parameters.getString("signal_pdgid", signal_pdgid_);
         signal_sf_ = parameters.getDouble("signal_sf", signal_sf_);
         signal_mass_ = parameters.getDouble("signal_mass", signal_mass_);
         mass_window_nsigma_ = parameters.getDouble("mass_window_nsigma", mass_window_nsigma_);
 
-        // Expected Signal Calculation
-        radFrac_ = parameters.getDouble("radFrac", radFrac_);
-
         // New Variables //
         new_variables_ = parameters.getVString("add_new_variables", new_variables_);
         new_variable_params_ = parameters.getVDouble("new_variable_params", new_variable_params_);
-    }
-    catch (std::runtime_error &error)
-    {
+    } catch (std::runtime_error& error) {
         std::cout << error.what() << std::endl;
     }
 }
 
-void OptimizationProcessor::initialize(std::string inFilename, std::string outFilename)
-{
+void OptimizationProcessor::initialize(std::string inFilename, std::string outFilename) {
     std::cout << "[OptimizationProcessor] Initialize " << inFilename << std::endl;
     // create output file
     outFile_ = new TFile(outFilename.c_str(), "RECREATE");
@@ -121,18 +111,15 @@ void OptimizationProcessor::initialize(std::string inFilename, std::string outFi
     bkgHistos_->writeHistos(outFile_, "initial_background");
 }
 
-bool OptimizationProcessor::process()
-{
+bool OptimizationProcessor::process() {
     std::cout << "[OptimizationProcessor]::process()" << std::endl;
     return true;
 }
 
-void OptimizationProcessor::finalize()
-{
+void OptimizationProcessor::finalize() {
     std::cout << "[OptimizationProcessor]::finalize()" << std::endl;
 
-    if (debug_)
-    {
+    if (debug_) {
         std::cout << "FINAL LIST OF PERSISTENT CUTS " << std::endl;
         persistentCutsSelector_->printCuts();
     }
@@ -140,12 +127,10 @@ void OptimizationProcessor::finalize()
     processorHistos_->saveHistos(outFile_);
     testCutHistos_->writeGraphs(outFile_, "testCutGraphs");
     outFile_->Close();
-    if (signalVtxAnaFile_)
-        signalVtxAnaFile_->Close();
+    if (signalVtxAnaFile_) signalVtxAnaFile_->Close();
 }
 
-double OptimizationProcessor::calculateZBi(double n_on, double n_off, double tau)
-{
+double OptimizationProcessor::calculateZBi(double n_on, double n_off, double tau) {
     double P_Bi = TMath::BetaIncomplete(1. / (1. + tau), n_on, n_off + 1);
     std::cout << "P_Bi: " << P_Bi << std::endl;
     double Z_Bi = std::pow(2, 0.5) * TMath::ErfInverse(1 - 2 * P_Bi);
@@ -153,26 +138,20 @@ double OptimizationProcessor::calculateZBi(double n_on, double n_off, double tau
     return Z_Bi;
 }
 
-void OptimizationProcessor::writeTH1F(TFile *outF, std::string folder, TH1F *h)
-{
-    if (outF)
-        outF->cd();
-    TDirectory *dir{nullptr};
-    if (!folder.empty())
-    {
+void OptimizationProcessor::writeTH1F(TFile* outF, std::string folder, TH1F* h) {
+    if (outF) outF->cd();
+    TDirectory* dir{nullptr};
+    if (!folder.empty()) {
         dir = outF->mkdir(folder.c_str(), "", true);
         dir->cd();
     }
     h->Write();
 }
 
-void OptimizationProcessor::writeGraph(TFile *outF, std::string folder, TGraph *g)
-{
-    if (outF)
-        outF->cd();
-    TDirectory *dir{nullptr};
-    if (!folder.empty())
-    {
+void OptimizationProcessor::writeGraph(TFile* outF, std::string folder, TGraph* g) {
+    if (outF) outF->cd();
+    TDirectory* dir{nullptr};
+    if (!folder.empty()) {
         dir = outF->mkdir(folder.c_str(), "", true);
         dir->cd();
     }
