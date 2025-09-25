@@ -42,6 +42,9 @@ void OptimizationProcessor::configure(const ParameterSet& parameters) {
         // New Variables //
         new_variables_ = parameters.getVString("add_new_variables", new_variables_);
         new_variable_params_ = parameters.getVDouble("new_variable_params", new_variable_params_);
+
+        max_iteration_ = parameters.getInteger("max_iteration", max_iteration_);
+        step_size_ = parameters.getDouble("step_size", step_size_);
     } catch (std::runtime_error& error) {
         std::cout << error.what() << std::endl;
     }

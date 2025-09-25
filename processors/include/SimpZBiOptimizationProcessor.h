@@ -68,27 +68,12 @@ class SimpZBiOptimizationProcessor : public OptimizationProcessor {
     /**
      *@brief description
      */
-    double calculateZBi(double n_on, double n_off, double tau);
-
-    /**
-     *@brief description
-     */
     bool failPersistentCuts(SimpAnaTTree* MTT);
 
     /**
      *@brief description
      */
     bool failTestCut(std::string cutname, SimpAnaTTree* MTT);
-
-    /**
-     *@brief description
-     */
-    void writeGraph(TFile* outF, std::string folder, TGraph* g);
-
-    /**
-     *@brief description
-     */
-    void writeTH1F(TFile* outF, std::string folder, TH1F* h);
 
     /**
      *@brief description

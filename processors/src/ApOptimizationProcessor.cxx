@@ -1,31 +1,26 @@
-#include "SimpZBiOptimizationProcessor.h"
+#include "ApOptimizationProcessor.h"
 
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>
 
-SimpZBiOptimizationProcessor::SimpZBiOptimizationProcessor(const std::string& name, Process& process)
+ApOptimizationProcessor::ApOptimizationProcessor(const std::string& name, Process& process)
     : OptimizationProcessor(name, process) {
-    std::cout << "[SimpZBiOptimizationProcessor] Constructor()" << std::endl;
+    std::cout << "[ApOptimizationProcessor] Constructor()" << std::endl;
 }
 
-SimpZBiOptimizationProcessor::~SimpZBiOptimizationProcessor() {}
+ApOptimizationProcessor::~ApOptimizationProcessor() {}
 
-void SimpZBiOptimizationProcessor::configure(const ParameterSet& parameters) {
-    std::cout << "[SimpZBiOptimizationProcessor] configure()" << std::endl;
+void ApOptimizationProcessor::configure(const ParameterSet& parameters) {
+    std::cout << "[ApOptimizationProcessor] configure()" << std::endl;
     try {
         // Basic config
         debug_ = parameters.getInteger("debug", debug_);
-        max_iteration_ = parameters.getInteger("max_iteration", max_iteration_);
         year_ = parameters.getInteger("year", year_);
         cuts_cfgFile_ = parameters.getString("cuts_cfgFile", cuts_cfgFile_);
         outFileName_ = parameters.getString("outFileName", outFileName_);
         cutVariables_ = parameters.getVString("cutVariables", cutVariables_);
-        min_ztail_events_ = parameters.getDouble("ztail_events", min_ztail_events_);
-        scan_zcut_ = parameters.getInteger("scan_zcut", scan_zcut_);
-        step_size_ = parameters.getDouble("step_size", step_size_);
-        eq_cfgFile_ = parameters.getString("eq_cfgFile", eq_cfgFile_);
 
         // Background
         bkgVtxAnaFilename_ = parameters.getString("bkgVtxAnaFilename", bkgVtxAnaFilename_);
@@ -36,201 +31,56 @@ void SimpZBiOptimizationProcessor::configure(const ParameterSet& parameters) {
         variableHistCfgFilename_ = parameters.getString("variableHistCfgFilename", variableHistCfgFilename_);
         signalVtxAnaFilename_ = parameters.getString("signalVtxAnaFilename", signalVtxAnaFilename_);
         signalVtxAnaTreename_ = parameters.getString("signalVtxAnaTreename", signalVtxAnaTreename_);
-        signalVtxMCSelection_ = parameters.getString("signalVtxMCSelection", signalVtxMCSelection_);
         signalMCAnaFilename_ = parameters.getString("signalMCAnaFilename", signalMCAnaFilename_);
         signal_pdgid_ = parameters.getString("signal_pdgid", signal_pdgid_);
         signal_sf_ = parameters.getDouble("signal_sf", signal_sf_);
         signal_mass_ = parameters.getDouble("signal_mass", signal_mass_);
         mass_window_nsigma_ = parameters.getDouble("mass_window_nsigma", mass_window_nsigma_);
-        logEps2_ = parameters.getDouble("logEps2", logEps2_);
+        signalVtxMCSelection_ = parameters.getString("signalVtxMCSelection", signalVtxMCSelection_);
 
-        // Expected Signal Calculation
-        radFrac_ = parameters.getDouble("radFrac", radFrac_);
-        radAcc_ = parameters.getDouble("radAcc", radAcc_);
-        bkgControlRegionFilename_ = parameters.getString("bkgControlRegionFilename", bkgControlRegionFilename_);
-        bkgControlRegionTreename_ = parameters.getString("bkgControlRegionTreename", bkgControlRegionTreename_);
-        dNdm_sf_ = parameters.getDouble("dNdm_sf", dNdm_sf_);
-
-        // New Variables //
+        // New Variables
         new_variables_ = parameters.getVString("add_new_variables", new_variables_);
         new_variable_params_ = parameters.getVDouble("new_variable_params", new_variable_params_);
 
+        // Optimization config
+        max_iteration_ = parameters.getInteger("max_iteration", max_iteration_);
+        step_size_ = parameters.getDouble("step_size", step_size_);
+        min_ztail_events_ = parameters.getDouble("ztail_events", min_ztail_events_);
+        scan_zcut_ = parameters.getInteger("scan_zcut", scan_zcut_);
+
+        // Expected Signal Calculation
+        radFrac_ = parameters.getDouble("radFrac", radFrac_);
+        eq_cfgFile_ = parameters.getString("eq_cfgFile", eq_cfgFile_);
     } catch (std::runtime_error& error) {
         std::cout << error.what() << std::endl;
     }
 }
 
 // USE JSON FILE TO LOAD IN NEW VARIABLES AND VARIABLE CONFIGURATIONS
-void SimpZBiOptimizationProcessor::addNewVariables(SimpAnaTTree* MTT, std::string variable, double param) {
-    std::cout << "[SimpZBiOptimizationProcessor]::addNewVariable " << variable << " with param " << param << std::endl;
-    if (variable == "unc_vtx_ele_zalpha") MTT->addVariable_unc_vtx_ele_zalpha(param);
-    if (variable == "unc_vtx_pos_zalpha") MTT->addVariable_unc_vtx_pos_zalpha(param);
+void ApOptimizationProcessor::addNewVariables(TTree* tree, std::string variable, double param) {
+    std::cout << "[ApOptimizationProcessor]::addNewVariable " << variable << " with param " << param << std::endl;
 
-    if (variable == "unc_vtx_zalpha_max") MTT->addVariable_unc_vtx_zalpha_max(param);
-    if (variable == "unc_vtx_zalpha_min") MTT->addVariable_unc_vtx_zalpha_min(param);
-
-    if (variable == "unc_vtx_ele_iso_z0err") MTT->addVariable_unc_vtx_ele_iso_z0err();
-    if (variable == "unc_vtx_pos_iso_z0err") MTT->addVariable_unc_vtx_pos_iso_z0err();
-
-    if (variable == "unc_vtx_ele_z0_z0err") MTT->addVariable_unc_vtx_ele_z0_z0err();
-    if (variable == "unc_vtx_pos_z0_z0err") MTT->addVariable_unc_vtx_pos_z0_z0err();
-
-    if (variable == "unc_vtx_ele_isolation_cut") MTT->addVariable_unc_vtx_ele_isolation_cut();
-    if (variable == "unc_vtx_pos_isolation_cut") MTT->addVariable_unc_vtx_pos_isolation_cut();
-
-    if (variable == "unc_vtx_ele_z0tanlambda") MTT->addVariable_unc_vtx_ele_z0tanlambda();
-    if (variable == "unc_vtx_pos_z0tanlambda") MTT->addVariable_unc_vtx_pos_z0tanlambda();
-
-    if (variable == "unc_vtx_ele_z0tanlambda_right") MTT->addVariable_unc_vtx_ele_z0tanlambda_right(param);
-    if (variable == "unc_vtx_pos_z0tanlambda_right") MTT->addVariable_unc_vtx_pos_z0tanlambda_right(param);
-
-    if (variable == "unc_vtx_ele_z0tanlambda_left") MTT->addVariable_unc_vtx_ele_z0tanlambda_left(param);
-    if (variable == "unc_vtx_pos_z0tanlambda_left") MTT->addVariable_unc_vtx_pos_z0tanlambda_left(param);
-
-    if (variable == "unc_vtx_abs_delta_z0tanlambda") MTT->addVariable_unc_vtx_abs_delta_z0tanlambda();
-
-    // if(variable == "unc_vtx_proj_significance")
-    //     MTT->addVariable_unc_vtx_proj_significance();
-
-    // else
-    //     std::cout << "[SimpZBiOptimization]::ERROR::NEW VARIABLE " << variable << " IS NOT DEFINED IN
-    //     SimpAnaTTree.cxx"
-    //         <<std::endl;
+    tree->Branch(variable.c_str(), &param, (variable + "/D").c_str());
 }
 
-void SimpZBiOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos> histos, SimpAnaTTree* MTT) {
-    // histos->Fill histograms for each variable defined in tree
-    std::vector<std::string> variables = MTT->getAllVariables();
-    for (std::vector<std::string>::iterator it = variables.begin(); it != variables.end(); it++) {
-        std::string var = *it;
-        histos->Fill1DHisto(var + "_h", MTT->getValue(var));
-    }
-
-    // Impact Parameter
-    histos->Fill2DHisto("z0_v_recon_z_hh", MTT->getValue("unc_vtx_z"), MTT->getValue("unc_vtx_ele_track_z0"));
-    histos->Fill2DHisto("z0_v_recon_z_hh", MTT->getValue("unc_vtx_z"), MTT->getValue("unc_vtx_pos_track_z0"));
-
-    // Inv mass
-    histos->Fill2DHisto("vtx_InvM_vtx_z_hh", MTT->getValue("unc_vtx_mass") * 1000.0, MTT->getValue("unc_vtx_z"));
-    // track z0
-    histos->Fill2DHisto("ele_track_z0_v_pos_track_z0_hh", MTT->getValue("unc_vtx_ele_track_z0"),
-                        MTT->getValue("unc_vtx_pos_track_z0"));
-
-    // Zalpha
-    if (MTT->variableExists("unc_vtx_ele_zalpha")) {
-        histos->Fill2DHisto("z0_v_unc_vtx_zalpha_hh", MTT->getValue("unc_vtx_ele_zalpha"),
-                            MTT->getValue("unc_vtx_ele_track_z0"));
-    }
-    if (MTT->variableExists("unc_vtx_pos_zalpha")) {
-        histos->Fill2DHisto("z0_v_unc_vtx_zalpha_hh", MTT->getValue("unc_vtx_pos_zalpha"),
-                            MTT->getValue("unc_vtx_pos_track_z0"));
-    }
-    if (MTT->variableExists("unc_vtx_zalpha_max")) {
-        histos->Fill2DHisto("recon_z_v_unc_vtx_zalpha_max_hh", MTT->getValue("unc_vtx_zalpha_max"),
-                            MTT->getValue("unc_vtx_z"));
-    }
-
-    // v0 projection
-    if (MTT->variableExists("unc_vtx_proj_x")) {
-        histos->Fill2DHisto("unc_vtx_proj_x_v_unc_vtx_proj_y_hh", MTT->getValue("unc_vtx_proj_x"),
-                            MTT->getValue("unc_vtx_proj_y"));
-    }
-    if (MTT->variableExists("unc_vtx_proj_x_sig")) {
-        histos->Fill2DHisto("unc_vtx_proj_x_y_significance_hh", MTT->getValue("unc_vtx_proj_x_sig"),
-                            MTT->getValue("unc_vtx_proj_y_sig"));
-    }
-    if (MTT->variableExists("unc_vtx_proj_sig")) {
-        histos->Fill2DHisto("recon_z_v_proj_sig_hh", MTT->getValue("unc_vtx_proj_sig"), MTT->getValue("unc_vtx_z"));
-    }
-
-    // Vertex Errors
-    if (MTT->variableExists("unc_vtx_cxx")) {
-        histos->Fill2DHisto("recon_z_v_cxx_hh", MTT->getValue("unc_vtx_cxx"), MTT->getValue("unc_vtx_z"));
-        histos->Fill2DHisto("recon_z_v_cyy_hh", MTT->getValue("unc_vtx_cyy"), MTT->getValue("unc_vtx_z"));
-        histos->Fill2DHisto("recon_z_v_czz_hh", MTT->getValue("unc_vtx_czz"), MTT->getValue("unc_vtx_z"));
-        histos->Fill2DHisto("recon_z_v_czx_hh", MTT->getValue("unc_vtx_czx"), MTT->getValue("unc_vtx_z"));
-        histos->Fill2DHisto("recon_z_v_czy_hh", MTT->getValue("unc_vtx_czy"), MTT->getValue("unc_vtx_z"));
-        histos->Fill2DHisto("recon_z_v_cyx_hh", MTT->getValue("unc_vtx_cyx"), MTT->getValue("unc_vtx_z"));
-    }
-    // Z0TanLambda
-    histos->Fill2DHisto("recon_z_v_z0tanlambda_hh",
-                        MTT->getValue("unc_vtx_ele_track_z0") / MTT->getValue("unc_vtx_ele_track_tanLambda"),
-                        MTT->getValue("unc_vtx_z"));
-    histos->Fill2DHisto("recon_z_v_z0tanlambda_hh",
-                        MTT->getValue("unc_vtx_pos_track_z0") / MTT->getValue("unc_vtx_pos_track_tanLambda"),
-                        MTT->getValue("unc_vtx_z"));
-    if (MTT->variableExists("unc_vtx_deltaZ")) {
-        histos->Fill2DHisto("recon_z_v_unc_vtx_deltaZ_hh", MTT->getValue("unc_vtx_deltaZ"), MTT->getValue("unc_vtx_z"));
-    }
-    // z0 error
-    histos->Fill2DHisto("recon_z_v_Z0err_hh", MTT->getValue("unc_vtx_ele_track_z0Err"), MTT->getValue("unc_vtx_z"));
-    histos->Fill2DHisto("recon_z_v_Z0err_hh", MTT->getValue("unc_vtx_pos_track_z0Err"), MTT->getValue("unc_vtx_z"));
-    // track time
-    histos->Fill2DHisto("recon_z_v_track_t_hh", MTT->getValue("unc_vtx_ele_track_t"), MTT->getValue("unc_vtx_z"));
-    histos->Fill2DHisto("recon_z_v_track_t_hh", MTT->getValue("unc_vtx_pos_track_t"), MTT->getValue("unc_vtx_z"));
-
-    // Track parameters
-    histos->Fill2DHisto("recon_z_v_ele_track_d0_hh", MTT->getValue("unc_vtx_ele_track_d0"), MTT->getValue("unc_vtx_z"));
-    histos->Fill2DHisto("recon_z_v_pos_track_d0_hh", MTT->getValue("unc_vtx_pos_track_d0"), MTT->getValue("unc_vtx_z"));
-    histos->Fill2DHisto("recon_z_v_ele_track_phi0_hh", MTT->getValue("unc_vtx_ele_track_phi0"),
-                        MTT->getValue("unc_vtx_z"));
-    histos->Fill2DHisto("recon_z_v_pos_track_phi0_hh", MTT->getValue("unc_vtx_pos_track_phi0"),
-                        MTT->getValue("unc_vtx_z"));
-    histos->Fill2DHisto("recon_z_v_ele_track_px_hh", MTT->getValue("unc_vtx_ele_track_px"), MTT->getValue("unc_vtx_z"));
-    histos->Fill2DHisto("recon_z_v_pos_track_px_hh", MTT->getValue("unc_vtx_pos_track_px"), MTT->getValue("unc_vtx_z"));
-    histos->Fill2DHisto("recon_z_v_ele_track_py_hh", MTT->getValue("unc_vtx_ele_track_py"), MTT->getValue("unc_vtx_z"));
-    histos->Fill2DHisto("recon_z_v_pos_track_py_hh", MTT->getValue("unc_vtx_pos_track_py"), MTT->getValue("unc_vtx_z"));
-    histos->Fill2DHisto("recon_z_v_ele_track_pz_hh", MTT->getValue("unc_vtx_ele_track_pz"), MTT->getValue("unc_vtx_z"));
-    histos->Fill2DHisto("recon_z_v_pos_track_pz_hh", MTT->getValue("unc_vtx_pos_track_pz"), MTT->getValue("unc_vtx_z"));
-    histos->Fill2DHisto("recon_z_v_ele_track_nhits_hh", MTT->getValue("unc_vtx_ele_track_nhits"),
-                        MTT->getValue("unc_vtx_z"));
-    histos->Fill2DHisto("recon_z_v_pos_track_nhits_hh", MTT->getValue("unc_vtx_pos_track_nhits"),
-                        MTT->getValue("unc_vtx_z"));
-
-    // track params vs params
-    histos->Fill2DHisto("ele_tanlambda_vs_phi0_hh", MTT->getValue("unc_vtx_ele_track_phi0"),
-                        MTT->getValue("unc_vtx_ele_track_tanLambda"));
-    histos->Fill2DHisto("pos_tanlambda_vs_phi0_hh", MTT->getValue("unc_vtx_pos_track_phi0"),
-                        MTT->getValue("unc_vtx_pos_track_tanLambda"));
-    histos->Fill2DHisto("ele_cluster_energy_v_track_p_hh", MTT->getValue("unc_vtx_ele_track_p"),
-                        MTT->getValue("unc_vtx_ele_clust_E"));
-    histos->Fill2DHisto("pos_cluster_energy_v_track_p_hh", MTT->getValue("unc_vtx_pos_track_p"),
-                        MTT->getValue("unc_vtx_pos_clust_E"));
-    histos->Fill2DHisto("ele_z0_vs_tanlambda_hh", MTT->getValue("unc_vtx_ele_track_tanLambda"),
-                        MTT->getValue("unc_vtx_ele_track_z0"));
-    histos->Fill2DHisto("pos_z0_vs_tanlambda_hh", MTT->getValue("unc_vtx_pos_track_tanLambda"),
-                        MTT->getValue("unc_vtx_pos_track_z0"));
+void ApOptimizationProcessor::fillEventHistograms(std::shared_ptr<ZBiHistos> histos, TTree* tree) {
+    // need to fill the following histograms
+    // z0_v_recon_z_hh, vtx_InvM_vtx_z_hh, ele_track_z0_v_pos_track_z0_hh, z0_v_unc_vtx_zalpha_hh,
+    // recon_z_v_unc_vtx_zalpha_max_hh, unc_vtx_proj_x_v_unc_vtx_proj_y_hh, unc_vtx_proj_x_y_significance_hh,
+    // recon_z_v_proj_sig_hh, recon_z_v_cxx_hh, recon_z_v_cyy_hh, recon_z_v_czz_hh, recon_z_v_czx_hh, recon_z_v_czy_hh,
+    // recon_z_v_cyx_hh, recon_z_v_z0tanlambda_hh, recon_z_v_unc_vtx_deltaZ_hh, recon_z_v_Z0err_hh,
+    // recon_z_v_track_t_hh, recon_z_v_ele_track_d0_hh, recon_z_v_pos_track_d0_hh, recon_z_v_ele_track_phi0_hh,
+    // recon_z_v_pos_track_phi0_hh, recon_z_v_ele_track_px_hh, recon_z_v_pos_track_px_hh, recon_z_v_ele_track_py_hh,
+    // recon_z_v_pos_track_py_hh, recon_z_v_ele_track_pz_hh, recon_z_v_pos_track_pz_hh, recon_z_v_ele_track_nhits_hh,
+    // recon_z_v_pos_track_nhits_hh, ele_tanlambda_vs_phi0_hh, pos_tanlambda_vs_phi0_hh,
+    // ele_cluster_energy_v_track_p_hh, pos_cluster_energy_v_track_p_hh, ele_z0_vs_tanlambda_hh, pos_z0_vs_tanlambda_hh
 }
 
-double SimpZBiOptimizationProcessor::countControlRegionBackgroundRate(std::string inFilename, std::string tree_name,
-                                                                      double m_Ap, double Mbin, double dNdm_sf) {
-    double dNdm = 0.0;
-    TFile inFile(inFilename.c_str(), "READ");
-    TTree* tree = (TTree*)inFile.Get((tree_name + "/" + tree_name + "_tree").c_str());
-    double mass;
-    std::cout << "Counting: Ap mass is " << m_Ap << std::endl;
-    tree->SetBranchAddress("unc_vtx_mass", &mass);
-    std::cout << "N entries: " << tree->GetEntries() << std::endl;
-    for (int e = 0; e < tree->GetEntries(); e++) {
-        tree->GetEntry(e);
-        if (mass * 1000.0 > m_Ap + (Mbin / 2)) continue;
-        if (mass * 1000.0 < m_Ap - (Mbin / 2)) continue;
-        dNdm = dNdm + 1.0;
-    }
-    dNdm = dNdm / Mbin;
-    dNdm = dNdm * dNdm_sf;
-    std::cout << "Background Rate in CR: " << dNdm << std::endl;
-    inFile.Close();
+void ApOptimizationProcessor::initialize(std::string inFilename, std::string outFilename) {
+    std::cout << "[ApOptimizationProcessor] Initialize " << inFilename << std::endl;
 
-    return dNdm;
-}
-
-void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::string outFilename) {
-    std::cout << "[SimpZBiOptimizationProcessor] Initialize " << inFilename << std::endl;
-
-    // Load Simp Equations
-    simpEqs_ = new SimpEquations(year_, eq_cfgFile_);
-    massResolution_ = simpEqs_->massResolution(signal_mass_);
+    // TODO: write equation to find mass resolution at signal mass
+    massResolution_ = 1.0;
 
     // Define Mass window
     lowMass_ = signal_mass_ - mass_window_nsigma_ * massResolution_ / 2.0;
@@ -241,54 +91,29 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
     std::cout << "[SimpZBiOptimization]::Output File: " << outFileName_.c_str() << std::endl;
     outFile_ = new TFile(outFileName_.c_str(), "RECREATE");
 
-    // Get the signal pretrigger simulated vertex z distribution
-    std::cout << "[SimpZBiOptimization]::Getting MC Signal pre-trigger vertex z distribution from file "
-              << signalMCAnaFilename_ << std::endl;
-    getSignalMCAnaVtxZ_h(signalMCAnaFilename_, signal_pdgid_);
-    outFile_->cd();
-    signalSimZ_h_->Write();
+    // TODO: Get the signal pretrigger simulated vertex z distribution
 
     // Read signal ana vertex tuple, and convert to mutable tuple
     std::cout << "[SimpZBiOptimization]::Reading Signal AnaVertex Tuple from file " << signalVtxAnaFilename_.c_str()
               << std::endl;
     TFile* signalVtxAnaFile = new TFile(signalVtxAnaFilename_.c_str(), "READ");
-    signalMTT_ =
-        new SimpAnaTTree(signalVtxAnaFile, (signalVtxAnaTreename_ + "/" + signalVtxAnaTreename_ + "_tree").c_str());
-    signalMTT_->defineMassWindow(lowMass_, highMass_);
-
-    // Get Simp Mean Truth Energy
-    std::cout << "Get Mean Truth Energy" << std::endl;
-    TH1F* signalEnergy_h = (TH1F*)signalVtxAnaFile->Get(
-        (signalVtxMCSelection_ + "/" + signalVtxMCSelection_ + "_mc" + signal_pdgid_ + "Energy_h").c_str());
-    std::cout << "Got the histo " << std::endl;
-    if (signalEnergy_h == nullptr) std::cout << "HISTO IS NULL" << std::endl;
-    E_Vd_ = (double)signalEnergy_h->GetMean();
-    std::cout << "Mean Energy is " << E_Vd_ << std::endl;
+    signal_tree_ = (TTree*)signalVtxAnaFile->Get(signalVtxAnaTreename_.c_str());
 
     // Read background ana vertex tuple, and convert to mutable tuple
     std::cout << "[SimpZBiOptimization]::Reading Background AnaVertex Tuple from file " << signalVtxAnaFilename_.c_str()
               << std::endl;
     TFile* bkgVtxAnaFile = new TFile(bkgVtxAnaFilename_.c_str(), "READ");
-    bkgMTT_ = new SimpAnaTTree(bkgVtxAnaFile, (bkgVtxAnaTreename_ + "/" + bkgVtxAnaTreename_ + "_tree").c_str());
-    bkgMTT_->defineMassWindow(lowMass_, highMass_);
+    bkg_tree_ = (TTree*)bkgVtxAnaFile->Get(bkgVtxAnaTreename_.c_str());
 
-    // Add new variables, as defined in SimpAnaTTree.cxx, from the processor configuration script
+    // Add new variables from the processor configuration script
+    // TODO: change this such that input trees have all needed variables
     for (std::vector<std::string>::iterator it = new_variables_.begin(); it != new_variables_.end(); it++) {
         int param_idx = std::distance(new_variables_.begin(), it);
         std::cout << "[SimpZBiOptimization]::Attempting to add new variable " << *it << " with parameter "
                   << new_variable_params_.at(param_idx) << std::endl;
-        // signalMTT_->addVariable(*it, new_variable_params_.at(param_idx));
-        // bkgMTT_->addVariable(*it, new_variable_params_.at(param_idx));
-        addNewVariables(signalMTT_, *it, new_variable_params_.at(param_idx));
-        addNewVariables(bkgMTT_, *it, new_variable_params_.at(param_idx));
+        addNewVariables(signal_tree_, *it, new_variable_params_.at(param_idx));
+        addNewVariables(bkg_tree_, *it, new_variable_params_.at(param_idx));
     }
-
-    // Finalize Initialization of New Mutable Tuples
-    std::cout << "[SimpZBiOptimization]::Finalizing Initialization of New Mutable Tuples" << std::endl;
-    signalMTT_->shiftVariable("unc_vtx_ele_track_z0", -0.07);
-    signalMTT_->shiftVariable("unc_vtx_pos_track_z0", -0.07);
-    signalMTT_->Fill();
-    bkgMTT_->Fill();
 
     // Initialize Persistent Cut Selector. These cuts are applied to all events.
     // Persistent Cut values are updated each iteration with the value of the best performing Test Cut in
@@ -349,22 +174,19 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
 
     // Fill Initial Signal histograms
     std::cout << "[SimpZBiOptimization]::Filling initial signal histograms" << std::endl;
-    for (int e = 0; e < signalMTT_->GetEntries(); e++) {
-        signalMTT_->GetEntry(e);
-        fillEventHistograms(signalHistos_, signalMTT_);
+    for (int e = 0; e < signal_tree_->GetEntries(); e++) {
+        signal_tree_->GetEntry(e);
+        fillEventHistograms(signalHistos_, signal_tree_);
     }
 
     std::cout << "[SimpZBiOptimization]::Filling initial background histograms" << std::endl;
     // Fill Initial Background Histograms
-    for (int e = 0; e < bkgMTT_->GetEntries(); e++) {
-        bkgMTT_->GetEntry(e);
-        fillEventHistograms(bkgHistos_, bkgMTT_);
+    for (int e = 0; e < bkg_tree_->GetEntries(); e++) {
+        bkg_tree_->GetEntry(e);
+        fillEventHistograms(bkgHistos_, bkg_tree_);
     }
 
     // Count background rate in the Control Region (used to calculate total A' Rate)
-    double m_Ap = simpEqs_->getAprimeMassFromVectorMass(signal_mass_);
-    dNdm_ =
-        countControlRegionBackgroundRate(bkgControlRegionFilename_, bkgControlRegionTreename_, m_Ap, 30.0, dNdm_sf_);
 
     // Write initial variable histograms for signal and background
     std::cout << "[SimpZBiOptimization]::Writing Initial Histograms" << std::endl;
@@ -372,8 +194,8 @@ void SimpZBiOptimizationProcessor::initialize(std::string inFilename, std::strin
     bkgHistos_->writeHistos(outFile_, "initial_background");
 }
 
-bool SimpZBiOptimizationProcessor::process() {
-    std::cout << "[SimpZBiOptimizationProcessor]::process()" << std::endl;
+bool ApOptimizationProcessor::process() {
+    std::cout << "[ApOptimizationProcessor]::process()" << std::endl;
 
     // step_size defines n% of signal distribution to cut in a given variable
     std::cout << "step_size_ " << step_size_ << std::endl;
@@ -410,14 +232,14 @@ bool SimpZBiOptimizationProcessor::process() {
         }
 
         // Fill signal variable distributions
-        for (int e = 0; e < signalMTT_->GetEntries(); e++) {
-            signalMTT_->GetEntry(e);
+        for (int e = 0; e < signal_tree_->GetEntries(); e++) {
+            signal_tree_->GetEntry(e);
 
             // Apply current set of persistent cuts to all events
-            if (failPersistentCuts(signalMTT_)) continue;
+            if (failPersistentCuts(signal_tree_)) continue;
 
             // Fill Signal variable distributions
-            fillEventHistograms(signalHistos_, signalMTT_);
+            fillEventHistograms(signalHistos_, signal_tree_);
         }
         if (iteration == max_iteration_) {
             // Write iteration histos
@@ -457,13 +279,15 @@ bool SimpZBiOptimizationProcessor::process() {
 
         // Fill Background Histograms corresponding to each Test Cut
         if (debug_) std::cout << "Filling Background Variables for each Test Cut" << std::endl;
-        for (int e = 0; e < bkgMTT_->GetEntries(); e++) {
-            bkgMTT_->GetEntry(e);
+        double unc_vtx_z_bkg;
+        bkg_tree_->SetBranchAddress("unc_vtx_z", &unc_vtx_z_bkg);
+        for (int e = 0; e < bkg_tree_->GetEntries(); e++) {
+            bkg_tree_->GetEntry(e);
 
             // Apply persistent cuts
-            if (failPersistentCuts(bkgMTT_)) continue;
+            if (failPersistentCuts(bkg_tree_)) continue;
 
-            fillEventHistograms(bkgHistos_, bkgMTT_);
+            fillEventHistograms(bkgHistos_, bkg_tree_);
 
             // Loop over each Test Cut
             for (cut_iter_ it = testCutsPtr_->begin(); it != testCutsPtr_->end(); it++) {
@@ -471,33 +295,34 @@ bool SimpZBiOptimizationProcessor::process() {
                 std::string cutvar = testCutsSelector_->getCutVar(cutname);
 
                 // apply Test Cut
-                if (failTestCut(cutname, bkgMTT_)) continue;
+                if (failTestCut(cutname, bkg_tree_)) continue;
 
                 // If event passes Test Cut, fill vertex z distribution.
                 // This distribution is used to build the Background Model corresponding to each Test Cut
-                testCutHistos_->Fill1DHisto("background_zVtx_" + cutname + "_h", bkgMTT_->getValue("unc_vtx_z"),
-                                            background_sf_);
+                testCutHistos_->Fill1DHisto("background_zVtx_" + cutname + "_h", unc_vtx_z_bkg, background_sf_);
             }
         }
 
         // For each Test Cut, build relationship between Signal truth z_vtx, and reconstructed z_vtx
         // This is used to get the truth Signal Selection Efficiency F(z), given a Zcut in reconstructed z_vtx
         if (debug_) std::cout << "Build Signal truth z vs recon z" << std::endl;
-        for (int e = 0; e < signalMTT_->GetEntries(); e++) {
-            signalMTT_->GetEntry(e);
+        double unc_vtx_z_sig, true_vtx_z_sig;
+        signal_tree_->SetBranchAddress("unc_vtx_z", &unc_vtx_z_sig);
+        signal_tree_->SetBranchAddress("true_vtx_z", &true_vtx_z_sig);
+        for (int e = 0; e < signal_tree_->GetEntries(); e++) {
+            signal_tree_->GetEntry(e);
 
             // Apply persistent cuts
-            if (failPersistentCuts(signalMTT_)) continue;
+            if (failPersistentCuts(signal_tree_)) continue;
 
             // Loop over each Test Cut and plot unc_vtx_z vs true_vtx_z
             for (cut_iter_ it = testCutsPtr_->begin(); it != testCutsPtr_->end(); it++) {
                 std::string cutname = it->first;
                 std::string cutvar = testCutsSelector_->getCutVar(cutname);
-                double cutvalue = testCutsSelector_->getCut(cutname);
-                // Apply Test Cut
-                if (!testCutsSelector_->passCutGTorLT(cutname, signalMTT_->getValue(cutvar))) continue;
-                testCutHistos_->Fill2DHisto("unc_vtx_z_vs_true_vtx_z_" + cutname + "_hh",
-                                            signalMTT_->getValue("unc_vtx_z"), signalMTT_->getValue("vd_true_vtx_z"),
+
+                if (failTestCut(cutname, signal_tree_)) continue;
+
+                testCutHistos_->Fill2DHisto("unc_vtx_z_vs_true_vtx_z_" + cutname + "_hh", unc_vtx_z_sig, true_vtx_z_sig,
                                             1.0);
             }
         }
@@ -619,17 +444,8 @@ bool SimpZBiOptimizationProcessor::process() {
 
             // Convert the truth vertex z distribution beyond Zcut into the appropriately binned Selection.
             // Binning must match Signal pre-trigger distribution, in order to take Efficiency between them.
-            TH1F* signalSelNoZ_h =
-                (TH1F*)signalSimZ_h_->Clone(("testCutHistos_signal_SelNoZ_" + cutname + "_h").c_str());
-            for (int i = 0; i < 201; i++) {
-                signalSelNoZ_h->SetBinContent(i, true_vtx_NoZ_h->GetBinContent(i));
-            }
-            TEfficiency* effCalcNoZ_h = new TEfficiency(*signalSelNoZ_h, *signalSimZ_h_);
 
             outFile_->cd(("testCuts_pct_sig_cut_" + std::to_string(cutSignal)).c_str());
-            signalSelNoZ_h->Write();
-            effCalcNoZ_h->Write();
-            delete effCalcNoZ_h;
 
             // Scan Zcut position and calculate ZBi
             double best_scan_zbi = -999.9;
@@ -649,30 +465,26 @@ bool SimpZBiOptimizationProcessor::process() {
 
                 // Convert the truth vertex z distribution beyond Zcut into the appropriately binned Selection.
                 // Binning must match Signal pre-trigger distribution, in order to take Efficiency between them.
-                TH1F* signalSelZ_h =
-                    (TH1F*)signalSimZ_h_->Clone(("testCutHistos_signal_SelZ_" + cutname + "_h").c_str());
-                for (int i = 0; i < 201; i++) {
-                    signalSelZ_h->SetBinContent(i, true_vtx_z_h->GetBinContent(i));
-                }
 
                 // Get Signal Selection Efficiency, as a function of truth vertex Z, F(z)
                 // if(debug_) std::cout << "Get Signal Selection Efficiency" << std::endl;
-                TEfficiency* effCalc_h = new TEfficiency(*signalSelZ_h, *signalSimZ_h_);
                 // if(zcut == min_zcut){
                 //     outFile_->cd(("testCuts_pct_sig_cut_"+std::to_string(cutSignal)).c_str());
                 //     effCalc_h->Write();
                 // }
 
-                double eps2 = std::pow(10, logEps2_);
-                double eps = std::sqrt(eps2);
+                // double eps2 = std::pow(10, logEps2_);
+                // double eps = std::sqrt(eps2);
 
                 // Calculate expected signal for Neutral Dark Vector "rho"
-                double nSigRho = simpEqs_->expectedSignalCalculation(signal_mass_, eps, true, E_Vd_, effCalc_h, dNdm_,
-                                                                     radFrac_, radAcc_, -4.3, zcut);
+                // double nSigRho = simpEqs_->expectedSignalCalculation(signal_mass_, eps, true, E_Vd_, effCalc_h,
+                // dNdm_,
+                //                                                      radFrac_, radAcc_, -4.3, zcut);
 
                 // Calculate expected signal for Neutral Dark Vector "rho"
-                double nSigPhi = simpEqs_->expectedSignalCalculation(signal_mass_, eps, false, E_Vd_, effCalc_h, dNdm_,
-                                                                     radFrac_, radAcc_, -4.3, zcut);
+                // double nSigPhi = simpEqs_->expectedSignalCalculation(signal_mass_, eps, false, E_Vd_, effCalc_h,
+                // dNdm_,
+                //                                                      radFrac_, radAcc_, -4.3, zcut);
 
                 /*
                 //Calculate expected signal for Neutral Dark Vector "rho"
@@ -684,7 +496,7 @@ bool SimpZBiOptimizationProcessor::process() {
                         eps, false, true, E_Vd_, effCalc_h, -4.3, zcut);
 
                 */
-                double Nsig = nSigRho + nSigPhi;
+                // double Nsig = nSigRho + nSigPhi;
 
                 // if(debug_){
                 //     std::cout << "nSigRho: " << nSigRho << std::endl;
@@ -692,23 +504,22 @@ bool SimpZBiOptimizationProcessor::process() {
                 //     std::cout << "Nsig: " << Nsig << std::endl;
                 // }
 
-                Nsig = Nsig * signal_sf_;
+                // Nsig = Nsig * signal_sf_;
                 // if(debug_) std::cout << "Nsig after scale factor: " << Nsig << std::endl;
 
                 // CLEAR POINTERS
-                delete effCalc_h;
+                // delete effCalc_h;
 
                 // Round Nsig, Nbkg, and then ZBi later
-                Nsig = round(Nsig);
-                Nbkg = round(Nbkg);
+                // Nsig = round(Nsig);
+                // Nbkg = round(Nbkg);
 
                 // Calculate ZBi for this Test Cut using this zcut value
-                double n_on = Nsig + Nbkg;
-                double tau = 1.0;
-                double n_off = Nbkg;
-                double ZBi = calculateZBi(n_on, n_off, tau);
-                std::cout << "ZBi before rounding: " << ZBi << std::endl;
-                ZBi = round(ZBi);
+                // double n_on = Nsig + Nbkg;
+                // double tau = 1.0;
+                // double n_off = Nbkg;
+                // double ZBi = calculateZBi(n_on, n_off, tau);
+                // std::cout << "ZBi before rounding: " << ZBi << std::endl;
 
                 /*
                 std::cout << "[SimpZBiOptimization]::Iteration Results:" << std::endl;
@@ -721,22 +532,22 @@ bool SimpZBiOptimizationProcessor::process() {
                 */
 
                 // Update Test Cut with best scan values
-                if (ZBi > best_scan_zbi) {
-                    best_scan_zbi = ZBi;
-                    best_scan_zcut = zcut;
-                    best_scan_nsig = Nsig;
-                    best_scan_nbkg = Nbkg;
-                }
+                // if (ZBi > best_scan_zbi) {
+                //     best_scan_zbi = ZBi;
+                //     best_scan_zcut = zcut;
+                //     best_scan_nsig = Nsig;
+                //     best_scan_nbkg = Nbkg;
+                // }
 
                 // Fill TGraphs
-                zcutscan_zbi_g->SetPoint(zcutscan_zbi_g->GetN(), zcut, ZBi);
-                zcutscan_nbkg_g->SetPoint(zcutscan_nbkg_g->GetN(), zcut, Nbkg);
-                zcutscan_nsig_g->SetPoint(zcutscan_nsig_g->GetN(), zcut, Nsig);
-                nbkg_zbi_g->SetPoint(nbkg_zbi_g->GetN(), Nbkg, ZBi);
-                nsig_zbi_g->SetPoint(nsig_zbi_g->GetN(), Nsig, ZBi);
+                // zcutscan_zbi_g->SetPoint(zcutscan_zbi_g->GetN(), zcut, ZBi);
+                // zcutscan_nbkg_g->SetPoint(zcutscan_nbkg_g->GetN(), zcut, Nbkg);
+                // zcutscan_nsig_g->SetPoint(zcutscan_nsig_g->GetN(), zcut, Nsig);
+                // nbkg_zbi_g->SetPoint(nbkg_zbi_g->GetN(), Nbkg, ZBi);
+                // nsig_zbi_g->SetPoint(nsig_zbi_g->GetN(), Nsig, ZBi);
 
-                nsig_zcut_hh->Fill(zcut, Nsig, ZBi);
-                nbkg_zcut_hh->Fill(zcut, Nbkg, ZBi);
+                // nsig_zcut_hh->Fill(zcut, Nsig, ZBi);
+                // nbkg_zcut_hh->Fill(zcut, Nbkg, ZBi);
             }
 
             // Write graph of zcut vs zbi for the Test Cut
@@ -812,8 +623,8 @@ bool SimpZBiOptimizationProcessor::process() {
     }
 }
 
-void SimpZBiOptimizationProcessor::finalize() {
-    std::cout << "[SimpZBiOptimizationProcessor] finalize()" << std::endl;
+void ApOptimizationProcessor::finalize() {
+    std::cout << "[ApOptimizationProcessor] finalize()" << std::endl;
 
     if (debug_) {
         std::cout << "FINAL LIST OF PERSISTENT CUTS " << std::endl;
@@ -824,14 +635,16 @@ void SimpZBiOptimizationProcessor::finalize() {
     testCutHistos_->writeGraphs(outFile_, "");
 }
 
-bool SimpZBiOptimizationProcessor::failPersistentCuts(SimpAnaTTree* MTT) {
+bool ApOptimizationProcessor::failPersistentCuts(TTree* tree) {
     bool failCuts = false;
     for (cut_iter_ it = persistentCutsPtr_->begin(); it != persistentCutsPtr_->end(); it++) {
         std::string cutname = it->first;
         std::string cutvar = persistentCutsSelector_->getCutVar(cutname);
         // If no value inside the tuple exists for this cut, do not apply the cut.
-        if (!MTT->variableExists(cutvar)) continue;
-        if (!persistentCutsSelector_->passCutGTorLT(cutname, MTT->getValue(cutvar))) {
+        double var;
+        tree->SetBranchAddress(cutvar.c_str(), &var);
+        if (!tree->GetBranch(cutvar.c_str())) continue;
+        if (!persistentCutsSelector_->passCutGTorLT(cutname, var)) {
             failCuts = true;
             break;
         }
@@ -840,33 +653,17 @@ bool SimpZBiOptimizationProcessor::failPersistentCuts(SimpAnaTTree* MTT) {
     return failCuts;
 }
 
-bool SimpZBiOptimizationProcessor::failTestCut(std::string cutname, SimpAnaTTree* MTT) {
+bool ApOptimizationProcessor::failTestCut(std::string cutname, TTree* tree) {
     std::string cutvar = testCutsSelector_->getCutVar(cutname);
     double cutvalue = testCutsSelector_->getCut(cutname);
     // If cut variable is not found in the list of tuples, do not apply cut
-    if (!MTT->variableExists(cutvar)) return false;
-    if (!testCutsSelector_->passCutGTorLT(cutname, MTT->getValue(cutvar)))
+    double var;
+    tree->SetBranchAddress(cutvar.c_str(), &var);
+    if (!tree->GetBranch(cutvar.c_str())) return false;
+    if (!testCutsSelector_->passCutGTorLT(cutname, var))
         return true;
     else
         return false;
 }
 
-void SimpZBiOptimizationProcessor::getSignalMCAnaVtxZ_h(std::string signalMCAnaFilename, std::string signal_pdgid) {
-    // Read pre-trigger Signal MCAna vertex z distribution
-    signalSimZ_h_ = new TH1F("signal_SimZ_h_", "signal_SimZ;true z_{vtx} [mm];events", 200, -50.3, 149.7);
-    TFile* signalMCAnaFile = new TFile(signalMCAnaFilename_.c_str(), "READ");
-    TH1F* mcAnaSimZ_h = (TH1F*)signalMCAnaFile->Get(("mcAna/mcAna_mc" + signal_pdgid + "Z_h").c_str());
-    for (int i = 0; i < 201; i++) {
-        signalSimZ_h_->SetBinContent(i, mcAnaSimZ_h->GetBinContent(i));
-    }
-    signalMCAnaFile->Close();
-    delete signalMCAnaFile;
-}
-
-double SimpZBiOptimizationProcessor::round(double var) {
-    // float value = (int)(var * 100 + .5);
-    // return (double)value / 100;
-    return var;
-}
-
-DECLARE_PROCESSOR(SimpZBiOptimizationProcessor);
+DECLARE_PROCESSOR(ApOptimizationProcessor);
