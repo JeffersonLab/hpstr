@@ -415,10 +415,15 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     double ele_L1_iso_significance{9999.0}, pos_L1_iso_significance{9999.0};
 
     if (eleL1 && eleL2 && posL1 && posL2) {
-        int sign_ele_py = (ele_trk.getMomentum()[1] > 0) - (ele_trk.getMomentum()[0] < 0);
-        ele_L1_iso_significance = (2 * ele_L1_iso + sign_ele_py * ele_trk.getZ0()) / ele_trk.getZ0Err();
-        int sign_pos_py = (pos_trk.getMomentum()[1] > 0) - (pos_trk.getMomentum()[0] < 0);
-        pos_L1_iso_significance = (2 * pos_L1_iso + sign_pos_py * pos_trk.getZ0()) / pos_trk.getZ0Err();
+        if (ele_L1_iso < 9999.0) {
+            ele_L1_iso_significance =
+                (2 * ele_L1_iso + TMath::Sign(1, ele_trk.getMomentum()[1]) * ele_trk.getZ0()) / ele_trk.getZ0Err();
+        }
+
+        if (pos_L1_iso < 9999.0) {
+            pos_L1_iso_significance =
+                (2 * pos_L1_iso + TMath::Sign(1, pos_trk.getMomentum()[1]) * pos_trk.getZ0()) / pos_trk.getZ0Err();
+        }
     }
     bus_.set("ele_L1_iso_significance", ele_L1_iso_significance);
     bus_.set("pos_L1_iso_significance", pos_L1_iso_significance);
