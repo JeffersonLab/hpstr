@@ -414,11 +414,12 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     // isolation significance
     double ele_L1_iso_significance{9999.0}, pos_L1_iso_significance{9999.0};
 
-    int sign_ele_py = (ele_trk.getMomentum()[1] > 0) - (ele_trk.getMomentum()[0] < 0);
-    ele_L1_iso_significance = (2 * ele_L1_iso + sign_ele_py * ele_trk.getZ0()) / ele_trk.getZ0Err();
-    int sign_pos_py = (pos_trk.getMomentum()[1] > 0) - (pos_trk.getMomentum()[0] < 0);
-    pos_L1_iso_significance = (2 * pos_L1_iso + sign_pos_py * pos_trk.getZ0()) / pos_trk.getZ0Err();
-
+    if (eleL1 && eleL2 && posL1 && posL2) {
+        int sign_ele_py = (ele_trk.getMomentum()[1] > 0) - (ele_trk.getMomentum()[0] < 0);
+        ele_L1_iso_significance = (2 * ele_L1_iso + sign_ele_py * ele_trk.getZ0()) / ele_trk.getZ0Err();
+        int sign_pos_py = (pos_trk.getMomentum()[1] > 0) - (pos_trk.getMomentum()[0] < 0);
+        pos_L1_iso_significance = (2 * pos_L1_iso + sign_pos_py * pos_trk.getZ0()) / pos_trk.getZ0Err();
+    }
     bus_.set("ele_L1_iso_significance", ele_L1_iso_significance);
     bus_.set("pos_L1_iso_significance", pos_L1_iso_significance);
 
@@ -445,7 +446,7 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     // vertical impact parameters
     double min_y0{9999.0}, max_y0err{-1.0};
 
-    ele_trk.getZ0() < pos_trk.getZ0() ? min_y0 = ele_trk.getZ0() : min_y0 = pos_trk.getZ0();
+    abs(ele_trk.getZ0()) < abs(pos_trk.getZ0()) ? min_y0 = ele_trk.getZ0() : min_y0 = pos_trk.getZ0();
     ele_trk.getZ0Err() > pos_trk.getZ0Err() ? max_y0err = ele_trk.getZ0Err() : max_y0err = pos_trk.getZ0Err();
 
     bus_.set("min_y0", min_y0);
