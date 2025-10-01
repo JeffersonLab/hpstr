@@ -2,14 +2,18 @@
 #define __APOPTIMIZATION_ANAPROCESSOR_H__
 
 // HPSTR
-#include "IterativeCutSelector.h"
 #include "OptimizationProcessor.h"
 #include "Processor.h"
 #include "SimpEquations.h"
+#include "TreeCutSelector.h"
+#include "Vertex.h"
 #include "ZBiHistos.h"
 
 // ROOT
 #include "TBranch.h"
+// #include "TDataFrame.h"
+#include <ROOT/RDataFrame.hxx>
+
 #include "TEfficiency.h"
 #include "TF1.h"
 #include "TFile.h"
@@ -24,6 +28,7 @@
 // C++
 #include <memory>
 
+using namespace ROOT;
 /**
  *@brief Cutflow optimization tool for A'
  */
@@ -82,7 +87,12 @@ class ApOptimizationProcessor : public OptimizationProcessor {
     /**
      *@brief description
      */
-    void fillEventHistograms(std::shared_ptr<ZBiHistos> histos, TTree* tree);
+    void fillEventHistograms(std::shared_ptr<ZBiHistos> histos, RDataFrame df, bool isBkg = false);
+
+    void configureGraphs(TGraph* zcutscan_zbi_g, TGraph* zcutscan_nsig_g, TGraph* zcutscan_nbkg_g, TGraph* nbkg_zbi_g,
+                         TGraph* nsig_zbi_g, std::string cutname);
+
+    RDF::RInterface<Detail::RDF::RLoopManager, void> prepareDF(RDataFrame df);
 
   private:
     //  Configuration parameters
@@ -105,6 +115,19 @@ class ApOptimizationProcessor : public OptimizationProcessor {
     // Total A' Rate terms
     double radFrac_ = 0.0;        //<! radiative fraction (rad/(tritrig+wab))
     std::string eq_cfgFile_{""};  //<! equations config file
+
+    typedef std::map<std::string, std::pair<std::pair<double, double>, int>>::iterator
+        range_cut_iter_;  //<! iterator for range cuts
+
+    TreeCutSelector* testCutsSelector_{nullptr};        //<! cuts to be optimized
+    TreeCutSelector* persistentCutsSelector_{nullptr};  //<! cuts that are always applied
+    std::map<std::string, std::pair<std::pair<double, double>, int>> persistentCutsLog_;  //<! description
+
+    std::map<std::string, std::pair<std::pair<double, double>, int>>* persistentCutsPtr_{nullptr};
+    std::map<std::string, std::pair<std::pair<double, double>, int>>* testCutsPtr_{nullptr};
+
+    std::map<std::string, TH1F*> testVarPDFs_;         //<! PDFs for test variables
+    std::map<std::string, double*> testVarQuantiles_;  //<! quantiles for test variables
 };
 
 #endif

@@ -1,7 +1,9 @@
 {
-    "unc_vtx_proj_sig_lt": {
-        "cut" : 9999999999.0,
-        "id" : 1,
-        "info": "vertex target projection significance < "
+    "vtx_proj_sig": {
+        "cut": 123,
+        "min": -999.9,
+        "max": 10,
+        "id": 1,
+        "info": "N_{#sigma, vtx} < "
     }
 }

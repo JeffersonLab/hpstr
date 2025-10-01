@@ -66,7 +66,7 @@ p.libraries.append("libprocessors.dylib")  # use .so for linux
 ################################
 
 # Initialize processor
-zbi = HpstrConf.Processor('zbi', 'OptimizationProcessor')
+zbi = HpstrConf.Processor('zbi', 'ApOptimizationProcessor')
 
 # Configure basic settings
 zbi.parameters['max_iteration'] = 25

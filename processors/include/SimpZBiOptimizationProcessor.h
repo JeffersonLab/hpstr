@@ -136,6 +136,10 @@ class SimpZBiOptimizationProcessor : public OptimizationProcessor {
     double dNdm_sf_ = 1.0;
     std::string bkgControlRegionFilename_{""};
     std::string bkgControlRegionTreename_{""};
+
+    // Cuts
+    IterativeCutSelector* testCutsSelector_{nullptr};        //<! cuts to be optimized
+    IterativeCutSelector* persistentCutsSelector_{nullptr};  //<! cuts that are always
 };
 
 #endif

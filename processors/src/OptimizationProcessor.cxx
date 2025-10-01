@@ -68,20 +68,13 @@ void OptimizationProcessor::initialize(std::string inFilename, std::string outFi
     // Persistent Cut values are updated each iteration with the value of the best performing Test Cut in
     // that iteration.
     std::cout << "[OptimizationProcessor]::Initializing Set of Persistent Cuts" << std::endl;
-    persistentCutsSelector_ = new IterativeCutSelector("persistentCuts", cuts_cfgFile_);
+    persistentCutsSelector_ = new BaseSelector("persistentCuts", cuts_cfgFile_);
     persistentCutsSelector_->LoadSelection();
-    persistentCutsPtr_ = persistentCutsSelector_->getPointerToCuts();
-    std::cout << "Persistent Cuts: " << std::endl;
-    persistentCutsSelector_->printCuts();
 
     // Initialize Test Cuts
     std::cout << "[OptimizationProcessor]::Initializing Set of Test Cuts" << std::endl;
-    testCutsSelector_ = new IterativeCutSelector("testCuts", cuts_cfgFile_);
+    testCutsSelector_ = new BaseSelector("testCuts", cuts_cfgFile_);
     testCutsSelector_->LoadSelection();
-    testCutsPtr_ = testCutsSelector_->getPointerToCuts();
-    testCutsSelector_->filterCuts(cutVariables_);
-    std::cout << "Test Cuts: " << std::endl;
-    testCutsSelector_->printCuts();
 
     // Initialize signal histograms
     std::cout << "[OptimizationProcessor]::Initializing Signal Variable Histograms" << std::endl;
@@ -121,11 +114,6 @@ bool OptimizationProcessor::process() {
 
 void OptimizationProcessor::finalize() {
     std::cout << "[OptimizationProcessor]::finalize()" << std::endl;
-
-    if (debug_) {
-        std::cout << "FINAL LIST OF PERSISTENT CUTS " << std::endl;
-        persistentCutsSelector_->printCuts();
-    }
 
     processorHistos_->saveHistos(outFile_);
     testCutHistos_->writeGraphs(outFile_, "testCutGraphs");

@@ -2,7 +2,7 @@
 #define __OPTIMIZATION_ANAPROCESSOR_H__
 
 // HPSTR
-#include "IterativeCutSelector.h"
+#include "BaseSelector.h"
 #include "Processor.h"
 #include "ZBiHistos.h"
 
@@ -78,7 +78,7 @@ class OptimizationProcessor : public Processor {
     void writeTH1F(TFile* outF, std::string folder, TH1F* h);
 
   protected:
-    typedef std::map<std::string, std::pair<double, int>>::iterator cut_iter_;  //<! iterator for IterativeCutSelector
+    typedef std::map<std::string, std::pair<double, int>>::iterator cut_iter_;  //<! iterator for BaseCutSelector
 
     // Configuration parameters
     int debug_{0};     //<! debug level
@@ -121,9 +121,9 @@ class OptimizationProcessor : public Processor {
     std::shared_ptr<ZBiHistos> processorHistos_;  //<! description
 
     // Cuts
-    IterativeCutSelector* testCutsSelector_{nullptr};                   //<! cuts to be optimized
+    BaseSelector* testCutsSelector_{nullptr};                           //<! cuts to be optimized
     std::map<std::string, std::pair<double, int>>* testCutsPtr_;        //<! pointer to test cut
-    IterativeCutSelector* persistentCutsSelector_{nullptr};             //<! cuts that are always applied
+    BaseSelector* persistentCutsSelector_{nullptr};                     //<! cuts that are always applied
     std::map<std::string, std::pair<double, int>>* persistentCutsPtr_;  //<! pointer to persistent cut
 
     double step_size_ = 0.01;  //<! Cut step_size% of signal with each iteration
