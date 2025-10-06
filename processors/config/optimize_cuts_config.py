@@ -18,7 +18,7 @@ base.parser.add_argument("-m", "--step_size", type=float, dest="step_size",
                          help="Cut % of signal with each iteration", metavar="step_size", default=0.01)
 
 base.parser.add_argument("-e", "--eps", type=float, dest="eps",
-                         help="strength of effective coupling epsilon", metavar="eps", default=1e-4)
+                         help="strength of effective coupling epsilon", metavar="eps", default=-4)
 
 options = base.parser.parse_args()
 
@@ -69,7 +69,7 @@ p.libraries.append("libprocessors.dylib")  # use .so for linux
 zbi = HpstrConf.Processor('zbi', 'ApOptimizationProcessor')
 
 # Configure basic settings
-zbi.parameters['max_iteration'] = 25
+zbi.parameters['max_iteration'] = 10
 zbi.parameters['year'] = 2021
 zbi.parameters['debug'] = 0
 zbi.parameters['outFileName'] = options.outFilename
@@ -102,13 +102,15 @@ zbi.parameters['background_sf'] = 10.0
 
 # Configure Signal
 zbi.parameters['signal_sf'] = 1.0
-zbi.parameters['signal_mass'] = options.mass
+zbi.parameters['signal_mass'] = options.mass * 1e-3  # in GeV
 zbi.parameters['mass_window_nsigma'] = 2.
 zbi.parameters['signalVtxAnaFilename'] = '/Users/schababi/Desktop/data/pass_v8/signal_subsets/ap_pulser_{}MeV_hadd10files.root'.format(
     int(options.mass))
 zbi.parameters['signalVtxAnaTreename'] = 'preselection'
+# pre-trigger signal MC analysis file
 zbi.parameters['signalMCAnaFilename'] = '/Users/schababi/Desktop/data/pass_v8/MC_truth/ap{}_3pt74_MC_truth_40_stdhep_files.root'.format(
     int(options.mass))
+zbi.parameters['signalMCAnaTreename'] = 'tree'
 zbi.parameters['signal_pdgid'] = '623'
 zbi.parameters['eps'] = options.eps
 

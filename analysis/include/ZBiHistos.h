@@ -22,6 +22,8 @@
 #include "TKey.h"
 #include "TRandom3.h"
 
+using namespace ROOT;
+
 /**
  * @brief description
  *

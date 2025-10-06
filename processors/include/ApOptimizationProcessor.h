@@ -3,6 +3,7 @@
 
 // HPSTR
 #include "OptimizationProcessor.h"
+#include "Particle.h"
 #include "Processor.h"
 #include "SimpEquations.h"
 #include "TreeCutSelector.h"
@@ -13,6 +14,7 @@
 #include "TBranch.h"
 // #include "TDataFrame.h"
 #include <ROOT/RDataFrame.hxx>
+#include <ROOT/RSnapshotOptions.hxx>
 
 #include "TEfficiency.h"
 #include "TF1.h"
@@ -87,12 +89,32 @@ class ApOptimizationProcessor : public OptimizationProcessor {
     /**
      *@brief description
      */
-    void fillEventHistograms(std::shared_ptr<ZBiHistos> histos, RDataFrame df, bool isBkg = false);
+    void fillEventHistograms(std::shared_ptr<ZBiHistos> histos, RDF::RInterface<Detail::RDF::RLoopManager, void> df,
+                             bool isBkg = false);
 
     void configureGraphs(TGraph* zcutscan_zbi_g, TGraph* zcutscan_nsig_g, TGraph* zcutscan_nbkg_g, TGraph* nbkg_zbi_g,
                          TGraph* nsig_zbi_g, std::string cutname);
 
     RDF::RInterface<Detail::RDF::RLoopManager, void> prepareDF(RDataFrame df);
+
+    std::vector<std::string> getListOfVariables(json histo_cfg, bool isBkg = false);
+
+    RDF::RInterface<Detail::RDF::RJittedFilter, void> applyFilter(RDF::RInterface<Detail::RDF::RLoopManager, void> df,
+                                                                  std::string filter, std::string filter_name = "") {
+        return df.Filter(filter, filter_name);
+    };
+
+    RDF::RInterface<Detail::RDF::RJittedFilter, void> applyFilter(RDF::RInterface<Detail::RDF::RJittedFilter, void> df,
+                                                                  std::string filter, std::string filter_name = "") {
+        return df.Filter(filter, filter_name);
+    };
+
+    double computeTruthSignalShape(double z, double ztarget, double EAp);
+    double computePromptYield(TH1D* h_mass_data_rad_cuts, double bin_width);
+    double computeDisplacedYield(TH1D* h_mass_data_rad_cuts, TH1D* h_chi_eff, double ztarget, double EAp,
+                                 double bin_width);
+
+    std::vector<double> fitZBkgTail(RDF::RResultPtr<TH1D> h_bkg_vtxz, std::string fitname, bool doGausAndTail = false);
 
   private:
     //  Configuration parameters
@@ -104,8 +126,9 @@ class ApOptimizationProcessor : public OptimizationProcessor {
     std::map<std::string, double> initialIntegrals_;  //<! description
 
     // Signal config
-    std::string signalVtxMCSelection_{""};  //<! description
-    TTree* signal_tree_{nullptr};           //<! description
+    std::string signalVtxMCSelection_{""};     //<! description
+    TTree* signal_tree_{nullptr};              //<! description
+    TTree* signal_pretrig_sim_tree_{nullptr};  //<! description
 
     // Background config
     std::string tritrigFilename_{""};               //<! description
@@ -113,7 +136,7 @@ class ApOptimizationProcessor : public OptimizationProcessor {
     TTree* bkg_tree_{nullptr};                      //<! description
 
     // Total A' Rate terms
-    double radFrac_ = 0.0;        //<! radiative fraction (rad/(tritrig+wab))
+    double radFrac_ = 0.05;       //<! radiative fraction (rad/(tritrig+wab))
     std::string eq_cfgFile_{""};  //<! equations config file
 
     typedef std::map<std::string, std::pair<std::pair<double, double>, int>>::iterator
@@ -128,6 +151,12 @@ class ApOptimizationProcessor : public OptimizationProcessor {
 
     std::map<std::string, TH1F*> testVarPDFs_;         //<! PDFs for test variables
     std::map<std::string, double*> testVarQuantiles_;  //<! quantiles for test variables
+
+    RDF::RSnapshotOptions opts_ = RDF::RSnapshotOptions();  //<! snapshot options
+
+    TH1D* h_pretrig_signal_vtxz_;
+    TH1D* h_signal_vtxz_rad_;
+    TF1* f_xi_eff_;
 };
 
 #endif

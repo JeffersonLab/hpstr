@@ -59,7 +59,14 @@ void TreeCutSelector::makeCutFlowHisto() {
     }
 }
 
-std::string TreeCutSelector::getCutVar(std::string cutname) { return cutname; }
+std::string TreeCutSelector::getCutVar(std::string cutname, bool forTree) {
+    std::string var = "";
+    if (forTree)
+        var = _h_selections.at(cutname).at("var");
+    else
+        var = cutname;
+    return var;
+}
 
 std::string TreeCutSelector::getCutString(std::string cutname) {
     std::string cutstring = "";

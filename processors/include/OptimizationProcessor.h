@@ -84,10 +84,9 @@ class OptimizationProcessor : public Processor {
     int debug_{0};     //<! debug level
     int year_ = 2021;  //<! year
 
-    std::string cuts_cfgFile_{""};      //<! configuration file for cuts
-    std::string outFileName_{""};       //<! output file name
-    TFile* outFile_{nullptr};           //<! output file pointer
-    TFile* signalVtxAnaFile_{nullptr};  //<! signal vertex analysis file pointer
+    std::string cuts_cfgFile_{""};  //<! configuration file for cuts
+    std::string outFileName_{""};   //<! output file name
+    TFile* outFile_{nullptr};       //<! output file pointer
 
     std::vector<std::string> cutVariables_;    //<! list of cut variables
     std::vector<std::string> new_variables_;   //<! list of new variables
@@ -97,14 +96,18 @@ class OptimizationProcessor : public Processor {
     // Background config
     std::string bkgVtxAnaFilename_{""};  //<! description
     std::string bkgVtxAnaTreename_{""};  //<! description
+    TFile* bkgVtxAnaFile_{nullptr};      //<! background vertex analysis file pointer
     double background_sf_;               //<! background scale factor
 
     // Signal config
     std::string signalVtxAnaFilename_{""};  //<! description
     std::string signalVtxAnaTreename_{""};  //<! description
+    TFile* signalVtxAnaFile_{nullptr};      //<! signal vertex analysis file pointer
     double signal_sf_ = 1.0;                //<! signal scale factor
 
     std::string signalMCAnaFilename_{""};  //<! pre-trigger signal MC analysis file
+    std::string signalMCAnaTreename_{""};  //<! pre-trigger signal MC analysis tree name
+    TFile* signalMCAnaFile_{nullptr};      //<! pre-trigger signal MC
     std::string signal_pdgid_{""};         //<! PDG ID of signal particle
 
     double signal_mass_;         //<! signal mass in GeV
