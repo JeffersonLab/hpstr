@@ -3,7 +3,7 @@ import baseConfig as base
 import os
 
 base.parser.add_argument("-mass", "--mass", type=float, dest="mass",
-                         help="Enter signal mass value", metavar="mass", default=80.0)
+                         help="Enter signal mass value", metavar="mass", default=120.0)
 
 base.parser.add_argument("-cut_variables", "--cut_variables", type=str, dest="cut_variables",
                          help="Specifcy cut variables to test", default=[], nargs='+')
@@ -98,13 +98,15 @@ chooseIterativeCutVariables(zbi, ["unc_vtx_proj_sig"])
 # Configure Background
 zbi.parameters['bkgVtxAnaFilename'] = '/Users/schababi/Desktop/data/pass_v8/hps_014269_hadd_20files_ana.root'
 zbi.parameters['bkgVtxAnaTreename'] = 'preselection'
-zbi.parameters['background_sf'] = 10.0
+zbi.parameters['background_sf'] = 1.0
 
 # Configure Signal
-zbi.parameters['signal_sf'] = 1.0
+zbi.parameters['signal_sf'] = 1e6
 zbi.parameters['signal_mass'] = options.mass * 1e-3  # in GeV
 zbi.parameters['mass_window_nsigma'] = 2.
-zbi.parameters['signalVtxAnaFilename'] = '/Users/schababi/Desktop/data/pass_v8/signal_subsets/ap_pulser_{}MeV_hadd10files.root'.format(
+zbi.parameters['signalVtxSubsetAnaFilename'] = '/Users/schababi/Desktop/data/pass_v8/signal_subsets/ap_pulser_{}MeV_hadd10files.root'.format(
+    int(options.mass))
+zbi.parameters['signalVtxAnaFilename'] = '/Users/schababi/Desktop/data/pass_v8/ap_pulser_{}MeV_hadd_250files_ana.root'.format(
     int(options.mass))
 zbi.parameters['signalVtxAnaTreename'] = 'preselection'
 # pre-trigger signal MC analysis file
@@ -115,6 +117,8 @@ zbi.parameters['signal_pdgid'] = '623'
 zbi.parameters['eps'] = options.eps
 
 zbi.parameters['radFrac'] = radiativeFraction(options.mass)
+zbi.parameters['hit_category'] = 'l1l1'
+zbi.parameters['ztarget'] = -0.5  # in mm
 
 # Sequence which the processors will run.
 p.sequence = [zbi]

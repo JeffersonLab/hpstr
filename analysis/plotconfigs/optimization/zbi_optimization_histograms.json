@@ -206,5 +206,13 @@
         "xtitle": "N_{2D hits, pos}",
         "ytitle": "N_{events}/a.u.",
         "var": "pos_nhits"
+    },
+    "ele_L1_iso_significance_h": {
+        "bins": 550,
+        "minX": -50.0,
+        "maxX": 500.0,
+        "xtitle": "L1iso",
+        "ytitle": "N_{events}/a.u.",
+        "var": "ele_L1_iso_significance"
     }
 }

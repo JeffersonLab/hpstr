@@ -22,6 +22,14 @@ void ZBiHistos::addHisto1d(TH1* histo) {
     histos1d[m_name + "_" + histo->GetName()] = histo;
 }
 
+void ZBiHistos::addGraph(TGraph* graph) {
+    if (!graph) {
+        std::cout << "Error: trying to add nullptr graph!" << std::endl;
+        return;
+    }
+    graphs_[m_name + "_" + graph->GetName()] = graph;
+}
+
 void ZBiHistos::addHisto2d(std::string histoname, std::string xtitle, int nbinsX, float xmin, float xmax,
                            std::string ytitle, int nbinsY, float ymin, float ymax) {
     histos2d[m_name + "_" + histoname] =
@@ -111,8 +119,6 @@ void ZBiHistos::defineZBiCutflowProcessorHistograms() {
     addHisto1d("best_test_cut_nsig_h", "pct_sig_cut", 1000, -0.5, 99.5);
     addHisto1d("best_test_cut_nbkg_h", "pct_sig_cut", 1000, -0.5, 99.5);
     addHisto1d("best_test_cut_id_h", "pct_sig_cut", 1000, -0.5, 99.5);
-
-    // addHisto1d("bkg_z_0_h", "recon_z [mm]", 200, -50.0, 150.0);
 }
 
 void ZBiHistos::set2DHistoYlabel(std::string histoName, int ybin, std::string ylabel) {

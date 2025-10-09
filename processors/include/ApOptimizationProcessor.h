@@ -74,21 +74,6 @@ class ApOptimizationProcessor : public OptimizationProcessor {
     /**
      *@brief description
      */
-    bool failPersistentCuts(TTree* tree);
-
-    /**
-     *@brief description
-     */
-    bool failTestCut(std::string cutname, TTree* tree);
-
-    /**
-     *@brief description
-     */
-    void addNewVariables(TTree* tree, std::string variable, double param);
-
-    /**
-     *@brief description
-     */
     void fillEventHistograms(std::shared_ptr<ZBiHistos> histos, RDF::RInterface<Detail::RDF::RLoopManager, void> df,
                              bool isBkg = false);
 
@@ -109,12 +94,20 @@ class ApOptimizationProcessor : public OptimizationProcessor {
         return df.Filter(filter, filter_name);
     };
 
-    double computeTruthSignalShape(double z, double ztarget, double EAp);
+    double computeTruthSignalShape(double z, double EAp);
     double computePromptYield(TH1D* h_mass_data_rad_cuts, double bin_width);
-    double computeDisplacedYield(TH1D* h_mass_data_rad_cuts, TH1D* h_chi_eff, double ztarget, double EAp,
-                                 double bin_width);
+    double computeDisplacedYield(TH1D* h_mass_data_rad_cuts, TH1D* h_chi_eff, double EAp, double bin_width);
 
     std::vector<double> fitZBkgTail(RDF::RResultPtr<TH1D> h_bkg_vtxz, std::string fitname, bool doGausAndTail = false);
+
+    double* getQuantileArray(std::pair<double, double> range, int nquantiles);
+
+    double* getBinsAndLimits(json histo_cfg, std::string varname);
+
+    // Get mass resolution in GeV
+    double getMassResolution(double mass);
+
+    std::string getHitCategoryCut();
 
   private:
     //  Configuration parameters
@@ -126,9 +119,10 @@ class ApOptimizationProcessor : public OptimizationProcessor {
     std::map<std::string, double> initialIntegrals_;  //<! description
 
     // Signal config
-    std::string signalVtxMCSelection_{""};     //<! description
-    TTree* signal_tree_{nullptr};              //<! description
-    TTree* signal_pretrig_sim_tree_{nullptr};  //<! description
+    std::string signalVtxSubsetAnaFilename_{""};  //<! description
+    std::string signalVtxMCSelection_{""};        //<! description
+    TTree* signal_tree_{nullptr};                 //<! description
+    TTree* signal_pretrig_sim_tree_{nullptr};     //<! description
 
     // Background config
     std::string tritrigFilename_{""};               //<! description
@@ -138,6 +132,8 @@ class ApOptimizationProcessor : public OptimizationProcessor {
     // Total A' Rate terms
     double radFrac_ = 0.05;       //<! radiative fraction (rad/(tritrig+wab))
     std::string eq_cfgFile_{""};  //<! equations config file
+
+    double ztarget_ = -0.5;  //<! target position in mm
 
     typedef std::map<std::string, std::pair<std::pair<double, double>, int>>::iterator
         range_cut_iter_;  //<! iterator for range cuts
@@ -156,7 +152,12 @@ class ApOptimizationProcessor : public OptimizationProcessor {
 
     TH1D* h_pretrig_signal_vtxz_;
     TH1D* h_signal_vtxz_rad_;
+    // TH1D* h_signal_mass_;
+    // TH1F* h_xi_eff_;
     TF1* f_xi_eff_;
+
+    std::string hit_category_{""};
+    std::string massWindow_{""};
 };
 
 #endif

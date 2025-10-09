@@ -123,9 +123,9 @@ void OptimizationProcessor::finalize() {
 
 double OptimizationProcessor::calculateZBi(double n_on, double n_off, double tau) {
     double P_Bi = TMath::BetaIncomplete(1. / (1. + tau), n_on, n_off + 1);
-    std::cout << "P_Bi: " << P_Bi << std::endl;
+    // std::cout << "P_Bi: " << P_Bi << std::endl;
     double Z_Bi = std::pow(2, 0.5) * TMath::ErfInverse(1 - 2 * P_Bi);
-    std::cout << "Z_Bi: " << Z_Bi << std::endl;
+    // std::cout << "Z_Bi: " << Z_Bi << std::endl;
     return Z_Bi;
 }
 

@@ -75,6 +75,8 @@ class ZBiHistos : public HistoManager {
 
     void addHisto1d(TH1* histo);
 
+    void addGraph(TGraph* graph);
+
     /**
      * @brief description
      *
@@ -165,6 +167,15 @@ class ZBiHistos : public HistoManager {
     void addHistoFromDF(ROOT::RDF::RResultPtr<TH1D> df_histo);
 
     json getConfig() { return _h_configs; };
+
+    TGraph* getGraph(std::string graphname) {
+        if (graphs_.find(m_name + "_" + graphname) != graphs_.end()) {
+            return graphs_[m_name + "_" + graphname];
+        } else {
+            std::cout << "Error: could not find graph " << m_name + "_" + graphname << std::endl;
+            return nullptr;
+        }
+    };
 
   private:
     std::map<std::string, TGraph*> graphs_;  //!< hold graphs

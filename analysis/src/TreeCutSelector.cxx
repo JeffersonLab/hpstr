@@ -61,10 +61,11 @@ void TreeCutSelector::makeCutFlowHisto() {
 
 std::string TreeCutSelector::getCutVar(std::string cutname, bool forTree) {
     std::string var = "";
-    if (forTree)
+    if (forTree) {
         var = _h_selections.at(cutname).at("var");
-    else
+    } else {
         var = cutname;
+    }
     return var;
 }
 
