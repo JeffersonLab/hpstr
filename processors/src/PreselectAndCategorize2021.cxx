@@ -454,7 +454,7 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     abs(ele_trk.getZ0()) < abs(pos_trk.getZ0()) ? min_y0 = ele_trk.getZ0() : min_y0 = pos_trk.getZ0();
     ele_trk.getZ0Err() > pos_trk.getZ0Err() ? max_y0err = ele_trk.getZ0Err() : max_y0err = pos_trk.getZ0Err();
 
-    bus_.set("min_y0", min_y0);
+    bus_.set("min_y0", abs(min_y0));
     bus_.set("max_y0err", max_y0err);
 
     // set vertex object and tracks

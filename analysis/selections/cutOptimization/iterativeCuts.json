@@ -2,7 +2,7 @@
     "vtx_proj_sig": {
         "cut": 123,
         "min": -9999.9,
-        "max": 900,
+        "max": 7,
         "id": 1,
         "info": "N_{#sigma, vtx} < ",
         "var": "vtx_proj_sig"

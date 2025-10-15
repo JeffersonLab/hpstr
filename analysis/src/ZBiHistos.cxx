@@ -22,7 +22,7 @@ void ZBiHistos::addHisto1d(TH1* histo) {
     histos1d[m_name + "_" + histo->GetName()] = histo;
 }
 
-void ZBiHistos::addGraph(TGraph* graph) {
+void ZBiHistos::addGraph(TGraphErrors* graph) {
     if (!graph) {
         std::cout << "Error: trying to add nullptr graph!" << std::endl;
         return;
@@ -34,6 +34,14 @@ void ZBiHistos::addHisto2d(std::string histoname, std::string xtitle, int nbinsX
                            std::string ytitle, int nbinsY, float ymin, float ymax) {
     histos2d[m_name + "_" + histoname] =
         plot2D(m_name + "_" + histoname, xtitle, nbinsX, xmin, xmax, ytitle, nbinsY, ymin, ymax);
+}
+
+void ZBiHistos::addHisto2d(TH2* histo) {
+    if (!histo) {
+        std::cout << "Error: trying to add nullptr histogram!" << std::endl;
+        return;
+    }
+    histos2d[m_name + "_" + histo->GetName()] = histo;
 }
 
 void ZBiHistos::resetHistograms1d() {
@@ -1204,7 +1212,7 @@ void ZBiHistos::writeGraphs(TFile* outF, std::string folder) {
         dir = outF->mkdir(folder.c_str(), "", true);
         dir->cd();
     }
-    for (std::map<std::string, TGraph*>::iterator it = graphs_.begin(); it != graphs_.end(); ++it) {
+    for (std::map<std::string, TGraphErrors*>::iterator it = graphs_.begin(); it != graphs_.end(); ++it) {
         if (!it->second) {
             std::cout << it->first << " Null ptr in saving.." << std::endl;
             continue;
@@ -1259,6 +1267,10 @@ void ZBiHistos::writeHistosFromDF(TFile* outF, std::string folder) {
     for (int i = 0; i < df_histos_.size(); i++) {
         df_histos_[i]->Write();
     }
+
+    for (int i = 0; i < df_histos2d_.size(); i++) {
+        df_histos2d_[i]->Write();
+    }
 }
 
 TH1* ZBiHistos::getPDF(std::string histoname) {
@@ -1274,3 +1286,26 @@ TH1* ZBiHistos::getPDF(std::string histoname) {
 }
 
 void ZBiHistos::addHistoFromDF(ROOT::RDF::RResultPtr<TH1D> df_histo) { df_histos_.push_back(df_histo); }
+
+TGraphErrors* ZBiHistos::configureGraph(std::string name, std::string xlabel, std::string ylabel) {
+    TGraphErrors* graph = new TGraphErrors();
+    graph->SetName(name.c_str());
+    if (xlabel.empty()) {
+        if (name.find("vtx_proj_sig") != std::string::npos) {
+            xlabel = "N_{#sigma_{xy}}";
+        } else if (name.find("iso_significance") != std::string::npos) {
+            xlabel = "R_{iso}";
+        } else if (name.find("z0") != std::string::npos || name.find("y0") != std::string::npos) {
+            xlabel = "iteration";
+        } else {
+            xlabel = "cut value";
+        }
+    }
+    graph->SetTitle((";" + xlabel + ";" + ylabel).c_str());
+    graph->SetMarkerStyle(8);
+    graph->SetMarkerSize(0.5);
+    graph->SetMarkerColor(kGreen + 2);
+    return graph;
+}
+
+void ZBiHistos::addHistoFromDF(ROOT::RDF::RResultPtr<TH2D> df_histo) { df_histos2d_.push_back(df_histo); }

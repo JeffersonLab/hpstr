@@ -69,7 +69,7 @@ p.libraries.append("libprocessors.dylib")  # use .so for linux
 zbi = HpstrConf.Processor('zbi', 'ApOptimizationProcessor')
 
 # Configure basic settings
-zbi.parameters['max_iteration'] = 10
+zbi.parameters['max_iteration'] = 20
 zbi.parameters['year'] = 2021
 zbi.parameters['debug'] = 0
 zbi.parameters['outFileName'] = options.outFilename
@@ -98,10 +98,10 @@ chooseIterativeCutVariables(zbi, ["unc_vtx_proj_sig"])
 # Configure Background
 zbi.parameters['bkgVtxAnaFilename'] = '/Users/schababi/Desktop/data/pass_v8/hps_014269_hadd_20files_ana.root'
 zbi.parameters['bkgVtxAnaTreename'] = 'preselection'
-zbi.parameters['background_sf'] = 1.0
+zbi.parameters['background_sf'] = 1.
 
 # Configure Signal
-zbi.parameters['signal_sf'] = 1e6
+zbi.parameters['signal_sf'] = 1e5
 zbi.parameters['signal_mass'] = options.mass * 1e-3  # in GeV
 zbi.parameters['mass_window_nsigma'] = 2.
 zbi.parameters['signalVtxSubsetAnaFilename'] = '/Users/schababi/Desktop/data/pass_v8/signal_subsets/ap_pulser_{}MeV_hadd10files.root'.format(
@@ -119,6 +119,7 @@ zbi.parameters['eps'] = options.eps
 zbi.parameters['radFrac'] = radiativeFraction(options.mass)
 zbi.parameters['hit_category'] = 'l1l1'
 zbi.parameters['ztarget'] = -0.5  # in mm
+zbi.parameters['psum_cut'] = 3.0  # in GeV
 
 # Sequence which the processors will run.
 p.sequence = [zbi]

@@ -52,6 +52,7 @@ void ApOptimizationProcessor::configure(const ParameterSet& parameters) {
         eq_cfgFile_ = parameters.getString("eq_cfgFile", eq_cfgFile_);
         hit_category_ = parameters.getString("hit_category", hit_category_);
         ztarget_ = parameters.getDouble("ztarget", ztarget_);
+        psum_cut_ = parameters.getDouble("psum_cut", psum_cut_);
     } catch (std::runtime_error& error) {
         std::cout << error.what() << std::endl;
     }
@@ -125,6 +126,10 @@ void ApOptimizationProcessor::initialize(std::string inFilename, std::string out
     testCutHistos_ = std::make_shared<ZBiHistos>("testCutHistos");
     testCutHistos_->debugMode(debug_);
 
+    // Initialize processor histograms that summarize iterative results
+    std::cout << "[SimpZBiOptimization]::Initializing Iterative Result Histograms" << std::endl;
+    processorHistos_ = std::make_shared<ZBiHistos>("zbi_processor");
+
     // Add Test Cut Analysis Histograms necessary for calculating background and signal
     std::cout << "[SimpZBiOptimization]::Initializing Test Cut Analysis Histograms" << std::endl;
     for (range_cut_iter_ it = testCutsPtr_->begin(); it != testCutsPtr_->end(); it++) {
@@ -135,15 +140,48 @@ void ApOptimizationProcessor::initialize(std::string inFilename, std::string out
         double* bins_and_limits = getBinsAndLimits(cut_cfg, name);
         std::string drawstring = var + ">>" + name + "_pdf_h(" + std::to_string((int)bins_and_limits[0]) + "," +
                                  std::to_string(bins_and_limits[1]) + "," + std::to_string(bins_and_limits[2]) + ")";
-        delete[] bins_and_limits;
-
-        signal_tree_->Draw(drawstring.c_str(), ("psum > 3.0 && eleL1 && posL1 && " + massWindow_).c_str());
+        signal_tree_->Draw(
+            drawstring.c_str(),
+            ("psum > " + std::to_string(psum_cut_) + " && " + getHitCategoryCut() + " && " + massWindow_).c_str());
         TH1F* sig_h = (TH1F*)gDirectory->Get((name + "_pdf_h").c_str());
         testCutHistos_->addHisto1d(sig_h);
+
+        delete[] bins_and_limits;
+
         testVarPDFs_[name] = (TH1F*)testCutHistos_->getPDF(name + "_pdf_h");
+
+        bool forward = testCutsSelector_->getCutRange(name).first < -999 ? false : true;
+        testVarCDFs_[name] = (TH1F*)testVarPDFs_[name]->GetCumulative(forward);
+
+        TGraphErrors* g_zbi = processorHistos_->configureGraph(("g_zbi_vs_" + name).c_str(), "", "Z_{Bi}");
+        processorHistos_->addGraph(g_zbi);
+
+        TGraphErrors* g_nsig = processorHistos_->configureGraph(("g_nsig_vs_" + name).c_str(), "", "N_{sig}");
+        processorHistos_->addGraph(g_nsig);
+
+        TGraphErrors* g_nbkg = processorHistos_->configureGraph(("g_nbkg_vs_" + name).c_str(), "", "N_{bkg}");
+        processorHistos_->addGraph(g_nbkg);
+
+        TGraphErrors* g_zcut = processorHistos_->configureGraph(("g_zcut_vs_" + name).c_str(), "", "z_{cut}/mm");
+        processorHistos_->addGraph(g_zcut);
+
+        TGraphErrors* g_cut_frac =
+            processorHistos_->configureGraph(("g_cut_frac_vs_" + name).c_str(), "", "N_{sig}^{cut}/N_{sig}^{original}");
+        processorHistos_->addGraph(g_cut_frac);
+
+        if (name == "pos_z0" || name == "ele_z0" || name == "min_y0") {
+            TGraphErrors* g_zoffset =
+                processorHistos_->configureGraph(("g_zoffset_vs_" + name).c_str(), "", "z_{offset}/mm");
+            processorHistos_->addGraph(g_zoffset);
+
+            TGraphErrors* g_alpha = processorHistos_->configureGraph(("g_alpha_vs_" + name).c_str(), "", "#alpha");
+            processorHistos_->addGraph(g_alpha);
+        }
     }
 
-    signal_tree_->Draw("vertex.invM_ >> h_signal_mass(200, 0, 0.2)", "psum > 3.0 && eleL1 && posL1");
+    signal_tree_->Draw(
+        "vertex.invM_ >> h_signal_mass(200, 0, 0.2)",
+        ("psum > " + std::to_string(psum_cut_) + " && " + getHitCategoryCut() + " && " + massWindow_).c_str());
     TH1D* h_signal_mass = (TH1D*)gDirectory->Get("h_signal_mass");
     testCutHistos_->addHisto1d(h_signal_mass);
 
@@ -153,7 +191,7 @@ void ApOptimizationProcessor::initialize(std::string inFilename, std::string out
     h_pretrig_signal_vtxz_->Sumw2();
 
     signal_subset_tree->Draw("true_ap.vtx_z_ >> h_signal_vtxz_rad_(200, -50, 150)",
-                             ("psum > 3.0 && " + massWindow_).c_str());
+                             ("psum > " + std::to_string(psum_cut_) + " && " + massWindow_).c_str());
     h_signal_vtxz_rad_ = (TH1D*)gDirectory->Get("h_signal_vtxz_rad_");
     h_signal_vtxz_rad_->SetTitle(";vtx_z [mm];Events/0.5mm");
     h_signal_vtxz_rad_->Sumw2();
@@ -165,7 +203,8 @@ void ApOptimizationProcessor::initialize(std::string inFilename, std::string out
     signalHistos_->addHisto1d(h_pretrig_signal_vtxz_);
     signalHistos_->addHisto1d(h_xi_eff);
 
-    bkg_tree_->Draw("vertex.getZ() >> h_data_vtxz_rad(200, -50, 150)", ("psum > 3.0 && " + massWindow_).c_str());
+    bkg_tree_->Draw("vertex.getZ() >> h_data_vtxz_rad(200, -50, 150)",
+                    ("psum > " + std::to_string(psum_cut_) + " && " + massWindow_).c_str());
     auto h_data_vtxz_rad_ = (TH1D*)gDirectory->Get("h_data_vtxz_rad");
     h_data_vtxz_rad_->SetTitle(";vtx_z [mm];Events/0.5mm");
 
@@ -177,40 +216,6 @@ void ApOptimizationProcessor::initialize(std::string inFilename, std::string out
     double xi_eff_0 = f_xi_eff_->Eval(ztarget_);
     f_xi_eff_->SetParameters(f_xi_eff_->GetParameter(0) - log(xi_eff_0), f_xi_eff_->GetParameter(1),
                              f_xi_eff_->GetParameter(2));
-
-    // Initialize processor histograms that summarize iterative results
-    std::cout << "[SimpZBiOptimization]::Initializing Iterative Result Histograms" << std::endl;
-    processorHistos_ = std::make_shared<ZBiHistos>("zbi_processor");
-    TGraph* g_zbi_vs_vtx_proj_cut = new TGraph();
-    g_zbi_vs_vtx_proj_cut->SetName("g_zbi_vs_vtx_proj_cut");
-    g_zbi_vs_vtx_proj_cut->SetTitle(";N_{#sigma_{xy}};Z_{Bi}");
-    g_zbi_vs_vtx_proj_cut->SetMarkerStyle(8);
-    g_zbi_vs_vtx_proj_cut->SetMarkerSize(0.5);
-    processorHistos_->addGraph(g_zbi_vs_vtx_proj_cut);
-
-    TGraph* g_nsig_vs_vtx_proj_cut = new TGraph();
-    g_nsig_vs_vtx_proj_cut->SetName("g_nsig_vs_vtx_proj_cut");
-    g_nsig_vs_vtx_proj_cut->SetTitle(";N_{#sigma_{xy}};N_{sig}");
-    g_nsig_vs_vtx_proj_cut->SetMarkerStyle(8);
-    g_nsig_vs_vtx_proj_cut->SetMarkerSize(0.5);
-    g_nsig_vs_vtx_proj_cut->SetMarkerColor(kBlue);
-    processorHistos_->addGraph(g_nsig_vs_vtx_proj_cut);
-
-    TGraph* g_nbkg_vs_vtx_proj_cut = new TGraph();
-    g_nbkg_vs_vtx_proj_cut->SetName("g_nbkg_vs_vtx_proj_cut");
-    g_nbkg_vs_vtx_proj_cut->SetTitle(";N_{#sigma_{xy}};N_{bkg}");
-    g_nbkg_vs_vtx_proj_cut->SetMarkerStyle(8);
-    g_nbkg_vs_vtx_proj_cut->SetMarkerSize(0.5);
-    g_nbkg_vs_vtx_proj_cut->SetMarkerColor(kRed);
-    processorHistos_->addGraph(g_nbkg_vs_vtx_proj_cut);
-
-    TGraph* g_zcut_vs_vtx_proj_cut = new TGraph();
-    g_zcut_vs_vtx_proj_cut->SetName("g_zcut_vs_vtx_proj_cut");
-    g_zcut_vs_vtx_proj_cut->SetTitle(";N_{#sigma_{xy}};z_{cut} [mm]");
-    g_zcut_vs_vtx_proj_cut->SetMarkerStyle(8);
-    g_zcut_vs_vtx_proj_cut->SetMarkerSize(0.5);
-    g_zcut_vs_vtx_proj_cut->SetMarkerColor(kGreen + 2);
-    processorHistos_->addGraph(g_zcut_vs_vtx_proj_cut);
 }
 
 bool ApOptimizationProcessor::process() {
@@ -230,37 +235,24 @@ bool ApOptimizationProcessor::process() {
     std::vector<std::string> bkgVars = getListOfVariables(bkgHistos_->getConfig(), true);
     df_bkg_mod_.Snapshot("trees/background", outFileName_, bkgVars, opts_);
 
-    // Initialize output file
-    std::cout << "[SimpZBiOptimization]::Output File: " << outFileName_.c_str() << std::endl;
-    outFile_ = new TFile(outFileName_.c_str(), "UPDATE");
-
     // define fraction of radiative selected signal to simulated signal
-    RDF::RInterface<Detail::RDF::RJittedFilter, void> df_signal_ = applyFilter(df_signal_mod_, "psum > 3.0", "radCut");
-    RDF::RInterface<Detail::RDF::RJittedFilter, void> df_bkg_ = applyFilter(df_bkg_mod_, "psum > 3.0", "radCut");
+    RDF::RInterface<Detail::RDF::RJittedFilter, void> df_signal_ =
+        applyFilter(df_signal_mod_, "psum > " + std::to_string(psum_cut_), "radCut");
+    RDF::RInterface<Detail::RDF::RJittedFilter, void> df_bkg_ =
+        applyFilter(df_bkg_mod_, "psum > " + std::to_string(psum_cut_), "radCut");
 
     RDF::RResultPtr<TH1D> h_data_mass_rad_selected =
         df_bkg_.Histo1D({"h_data_mass_rad_selected", ";mass [GeV];Events/0.5GeV", 100, 0, 0.4}, "vertex.invM_");
 
     h_data_mass_rad_selected->Sumw2();
     TH1D* h_data_mass_rad_ = (TH1D*)h_data_mass_rad_selected->Clone("h_data_mass_rad_");
-
-    if (outFile_)
-        outFile_->cd();
-    else {
-        std::cout << "Error: output file not found!" << std::endl;
-        return false;
-    }
-    TDirectory* eff_dir{nullptr};
-    std::string eff_folder = "selection_efficiency";
-    if (!eff_folder.empty()) {
-        eff_dir = outFile_->mkdir(eff_folder.c_str(), "", true);
-        eff_dir->cd();
-    }
-
-    h_data_mass_rad_selected->Write();
+    testCutHistos_->addHisto1d(h_data_mass_rad_);
 
     df_signal_ = applyFilter(df_signal_, massWindow_, "massWindow");
     df_bkg_ = applyFilter(df_bkg_, massWindow_, "massWindow");
+
+    df_signal_ = applyFilter(df_signal_, getHitCategoryCut(), getHitCategoryCut());
+    df_bkg_ = applyFilter(df_bkg_, getHitCategoryCut(), getHitCategoryCut());
 
     // Step_size defines n% of signal distribution to cut in a given variable
     double cutFraction = step_size_;
@@ -272,123 +264,189 @@ bool ApOptimizationProcessor::process() {
     std::map<std::string, std::vector<RDF::RResultPtr<TH1D>>> sig_hists;
     std::map<std::string, std::vector<RDF::RResultPtr<TH1D>>> bkg_hists;
 
+    std::map<std::string, std::vector<RDF::RInterface<Detail::RDF::RJittedFilter, void>>> df_signal_cut;
+    std::map<std::string, std::vector<RDF::RInterface<Detail::RDF::RJittedFilter, void>>> df_bkg_cut;
+
+    std::map<std::string, double> bestCuts;
+
     for (range_cut_iter_ it = testCutsPtr_->begin(); it != testCutsPtr_->end(); it++) {
         if (debug_) std::cout << "Getting quantiles for Test Cut variable " << it->first << std::endl;
         std::string cutname = it->first;
+        // if (cutname == "ele_L1_iso_significance" || cutname == "pos_L1_iso_significance") {
+        //     // these variables have been changed from iso to Riso in the cuts file, so skip them here
+        //     continue;
+        // }
         std::string cutvar = testCutsSelector_->getCutVar(cutname);
         if (debug_) std::cout << "Test Cut variable: " << cutvar << std::endl;
-        // Get cutvalue that corresponds to cutting n% of signal distribution in cutvar from PDF
-        TH1F* pdf = testVarPDFs_[cutname];
-        if (!pdf) {
-            std::cout << "Error: could not find PDF for Test Cut variable " << cutvar << std::endl;
+
+        TH1F* cdf = testVarCDFs_[cutname];
+        if (!cdf) {
+            std::cout << "Error: could not find CDF for Test Cut variable " << cutvar << std::endl;
             continue;
         }
-        double* quantiles = getQuantileArray(testCutsSelector_->getCutRange(cutname), n_quantiles_);
 
-        if (debug_) {
-            std::cout << "Quantiles: ";
-            for (int i = 0; i < n_quantiles_; i++) {
-                std::cout << quantiles[i] << " ";
-            }
-            std::cout << std::endl;
-        }
-        double* quantile_pos = new double[n_quantiles_];
-        pdf->GetQuantiles(n_quantiles_, quantile_pos, quantiles);
+        // quantiles of un-cut distribution
+        // TH1F* pdf = testVarPDFs_[cutname];
+        // double* quantiles = getQuantileArray(testCutsSelector_->getCutRange(cutname), n_quantiles_);
+        // double* quantile_pos = new double[n_quantiles_];
+        // pdf->GetQuantiles(n_quantiles_, quantile_pos, quantiles);
+        // testVarQuantiles_[cutname] = quantile_pos;
 
-        testVarQuantiles_[cutname] = quantile_pos;
-
-        // // Prepare storage for signal and background histograms for this Test Cut
+        // Prepare storage for signal and background histograms for this Test Cut
         std::vector<RDF::RResultPtr<TH1D>> sig_h;
         std::vector<RDF::RResultPtr<TH1D>> bkg_h;
 
         sig_hists.insert(std::make_pair(cutname, sig_h));
         bkg_hists.insert(std::make_pair(cutname, bkg_h));
-    }
 
-    for (int iteration = 0; iteration < max_iteration_; iteration++) {
-        double cutSignal = (double)iteration * step_size_;
+        df_signal_cut[cutname].push_back(df_signal_);
+        df_bkg_cut[cutname].push_back(df_bkg_);
 
-        RDF::RInterface<Detail::RDF::RJittedFilter, void> df_signal_temp =
-            applyFilter(df_signal_, getHitCategoryCut(), hit_category_);
-        RDF::RInterface<Detail::RDF::RJittedFilter, void> df_bkg_temp =
-            applyFilter(df_bkg_, getHitCategoryCut(), hit_category_);
-
-        // At the start of each iteration, apply persistent cuts and save cut values
+        // Apply persistent cuts and save cut values (all cuts except the one being tested)
         for (range_cut_iter_ it = persistentCutsPtr_->begin(); it != persistentCutsPtr_->end(); it++) {
-            std::string cutname = it->first;
-            persistentCutsLog_[cutname] = std::make_pair(persistentCutsSelector_->getCutRange(cutname), iteration);
-            std::string cutvar = persistentCutsSelector_->getCutVar(cutname);
-            std::string filter = "";
-            if (persistentCutsSelector_->getCutRange(cutname).first < -999.) {
-                filter = cutvar + " < " + std::to_string(persistentCutsSelector_->getCutRange(cutname).second);
+            std::string persistent_cut = it->first;
+            if (persistent_cut != cutname) {
+                std::string cutvar_persistent = persistentCutsSelector_->getCutVar(persistent_cut);
+                if (persistent_cut == "pos_z0" || persistent_cut == "ele_z0" || persistent_cut == "min_y0") {
+                    double zoffset = persistentCutsSelector_->getCutRange(persistent_cut).first;  // mm
+                    double alpha = persistentCutsSelector_->getCutRange(persistent_cut).second;   // rad
+                    std::string filter = "vertex_z * " + std::to_string(alpha) + " - abs(" + cutvar_persistent +
+                                         ") < " + std::to_string(alpha) + " * " + std::to_string(zoffset);
 
-            } else if (persistentCutsSelector_->getCutRange(cutname).second > 999.) {
-                filter = cutvar + " > " + std::to_string(persistentCutsSelector_->getCutRange(cutname).first);
+                    df_signal_cut[cutname].back() =
+                        applyFilter(df_signal_cut[cutname].back(), filter, persistent_cut + "_persistent");
+                    df_bkg_cut[cutname].back() =
+                        applyFilter(df_bkg_cut[cutname].back(), filter, persistent_cut + "_persistent");
+                } else {
+                    std::string filter = "";
+                    if (persistentCutsSelector_->getCutRange(persistent_cut).first < -999.) {
+                        filter = cutvar_persistent + " < " +
+                                 std::to_string(persistentCutsSelector_->getCutRange(persistent_cut).second);
+
+                    } else if (persistentCutsSelector_->getCutRange(persistent_cut).second > 999.) {
+                        filter = cutvar_persistent + " > " +
+                                 std::to_string(persistentCutsSelector_->getCutRange(persistent_cut).first);
+                    }
+
+                    // applying persistent cuts on top of radiative, massWindow and hit category cuts
+                    df_signal_cut[cutname].back() =
+                        applyFilter(df_signal_cut[cutname].back(), filter, persistent_cut + "_persistent");
+                    df_bkg_cut[cutname].back() =
+                        applyFilter(df_bkg_cut[cutname].back(), filter, persistent_cut + "_persistent");
+                }
             }
-
-            df_signal_temp = applyFilter(df_signal_temp, filter, cutname + "_persistent");
-            df_bkg_temp = applyFilter(df_bkg_temp, filter, cutname + "_persistent");
         }
 
-        if (debug_) {
-            std::cout << "Applied Persistent Cuts" << std::endl;
-            auto filter_names = df_bkg_temp.GetFilterNames();
-            for (auto name : filter_names) {
-                std::cout << "Applied filter: " << name << std::endl;
+        std::cout << "Applying persistent cuts complete. Getting quantiles for Test Cut variable " << cutname
+                  << std::endl;
+
+        // Get cutvalue that corresponds to cutting n% of signal distribution in cutvar
+        if (cutname == "pos_z0" || cutname == "ele_z0" || cutname == "min_y0") {
+            auto pdf_signal_cut =
+                df_signal_cut[cutname].back().Histo2D({("h_pdf2d_signal_cut_" + cutname).c_str(),
+                                                       ";z_{vtx}/mm;y_{0}/mm;N_{events}/a.u.", 120, -5, 25, 200, 0, 2},
+                                                      "vertex_z", "abs_" + cutvar);
+
+            testZoffsetAlpha_[cutname] = getZoffsetAlpha(pdf_signal_cut, n_quantiles_, 10);
+
+            std::cout << "Quantiles for Test Cut variable " << cutname << ": ";
+            for (int i = 0; i < n_quantiles_; i++) {
+                std::cout << "zoffset " << testZoffsetAlpha_[cutname][i].first << " alpha "
+                          << testZoffsetAlpha_[cutname][i].second << std::endl;
             }
+            std::cout << "done" << std::endl;
+        } else {
+            json cut_cfg = signalHistos_->getConfig();
+            double* bins_and_limits = getBinsAndLimits(cut_cfg, cutname);
+
+            auto pdf_signal_cut =
+                df_signal_cut[cutname].back().Histo1D({("h_pdf_signal_cut_" + cutname).c_str(), ";x;y",
+                                                       (int)bins_and_limits[0], bins_and_limits[1], bins_and_limits[2]},
+                                                      cutvar);
+
+            delete[] bins_and_limits;
+
+            // quantiles of cut distribution
+            double* quantile_pos = new double[n_quantiles_];
+            double* quantiles = getQuantileArray(testCutsSelector_->getCutRange(cutname), n_quantiles_);
+            pdf_signal_cut->GetQuantiles(n_quantiles_, quantile_pos, quantiles);
+            testVarQuantiles_[cutname] = quantile_pos;
+
+            std::cout << "Quantiles for Test Cut variable " << cutname << ": ";
+            for (int i = 0; i < n_quantiles_; i++) {
+                std::cout << testVarQuantiles_[cutname][i] << " ";
+            }
+            std::cout << std::endl;
         }
 
-        // Loop over each Test Cut. Cut n% of signal distribution in Test Cut variable
-        if (debug_) std::cout << "Looping over Signal Test Cuts" << std::endl;
+        double best_ZBi = -99;
+        double best_cutval;
 
-        std::map<std::string, std::vector<RDF::RInterface<Detail::RDF::RJittedFilter, void>>> df_sig_cut_applied;
-        std::map<std::string, std::vector<RDF::RInterface<Detail::RDF::RJittedFilter, void>>> df_bkg_cut_applied;
-
-        for (range_cut_iter_ it = testCutsPtr_->begin(); it != testCutsPtr_->end(); it++) {
-            std::string cutname = it->first;
-            std::string cutvar = testCutsSelector_->getCutVar(cutname);
-
-            double cutvalue = testVarQuantiles_[cutname][iteration];
-
+        for (int iteration = 0; iteration < max_iteration_; iteration++) {
+            double cutvalue;
             std::string filter = "";
-            if (testCutsSelector_->getCutRange(cutname).first < -999.) {
-                testCutsSelector_->setCutValue(cutname, std::make_pair(-9999.9, cutvalue));
-                filter = cutvar + " < " + std::to_string(testCutsSelector_->getCutRange(cutname).second);
-            } else if (testCutsSelector_->getCutRange(cutname).second > 999.) {
-                testCutsSelector_->setCutValue(cutname, std::make_pair(cutvalue, 9999.9));
-                filter = cutvar + " > " + std::to_string(testCutsSelector_->getCutRange(cutname).first);
+
+            double cutSignal = (double)iteration * step_size_;
+            if (cutname == "pos_z0" || cutname == "ele_z0" || cutname == "min_y0") {
+                double zoffset = testZoffsetAlpha_[cutname][iteration].first;  // mm
+                double alpha = testZoffsetAlpha_[cutname][iteration].second;   // rad
+
+                std::string filter = "vertex_z * " + std::to_string(alpha) + " - abs(" + cutvar + ") < " +
+                                     std::to_string(alpha) + " * " + std::to_string(zoffset);
+
+                cutvalue = zoffset;  // for storing the best cut
+
+                // applying test cut on top of persistent cuts
+                df_signal_cut[cutname].push_back(
+                    applyFilter(df_signal_cut[cutname].front(), filter,
+                                cutname + "_" + std::to_string(zoffset) + "_" + std::to_string(alpha)));
+                df_bkg_cut[cutname].push_back(
+                    applyFilter(df_bkg_cut[cutname].front(), filter,
+                                cutname + "_" + std::to_string(zoffset) + "_" + std::to_string(alpha)));
+            } else {
+                cutvalue = testVarQuantiles_[cutname][iteration];
+
+                if (testCutsSelector_->getCutRange(cutname).first < -999.) {
+                    testCutsSelector_->setCutValue(cutname, std::make_pair(-9999.9, cutvalue));
+                    filter = cutvar + " < " + std::to_string(testCutsSelector_->getCutRange(cutname).second);
+                } else if (testCutsSelector_->getCutRange(cutname).second > 999.) {
+                    testCutsSelector_->setCutValue(cutname, std::make_pair(cutvalue, 9999.9));
+                    filter = cutvar + " > " + std::to_string(testCutsSelector_->getCutRange(cutname).first);
+                }
+                // applying test cut on top of persistent cuts
+                df_signal_cut[cutname].push_back(
+                    applyFilter(df_signal_cut[cutname].front(), filter, cutname + "_" + std::to_string(iteration)));
+                df_bkg_cut[cutname].push_back(
+                    applyFilter(df_bkg_cut[cutname].front(), filter, cutname + "_" + std::to_string(iteration)));
             }
 
-            if (debug_) {
-                std::cout << "Test Cut " << cutname << " " << filter << " cuts " << cutSignal
-                          << "% of signal distribution in this variable " << std::endl;
-            }
+            // Saving 2D histograms of z0 vs vtx z
+            // Histo2D({"histName", "histTitle", binsx, minx, maxx, binsy, miny, maxy}, "myValueX", "myValueY");
+            auto h_signal_2d = df_signal_cut[cutname].back().Histo2D(
+                {("h_2d_signal_" + cutname + std::to_string(iteration)).c_str(), ";z_{vtx}/mm;y0min/mm;N_{events}/a.u.",
+                 120u, -5, 25, 200u, 0, 2},
+                "vertex_z", "min_y0");
+            TH2D* h2d =
+                (TH2D*)h_signal_2d->Clone(("h_zvtx_y0min_signal_" + cutname + std::to_string(iteration)).c_str());
+            testCutHistos_->addHisto2d(h2d);
 
-            df_sig_cut_applied[cutname].push_back(applyFilter(df_signal_temp, filter));
-            df_bkg_cut_applied[cutname].push_back(applyFilter(df_bkg_temp, filter));
+            auto h_bkg_2d =
+                df_bkg_cut[cutname].back().Histo2D({("h_2d_bkg_" + cutname + std::to_string(iteration)).c_str(),
+                                                    ";z_{vtx}/mm;y0min/mm;N_{events}/a.u.", 120u, -5, 25, 200u, 0, 2},
+                                                   "vertex_z", "min_y0");
+            TH2D* h2d_bkg = (TH2D*)h_bkg_2d->Clone(("h_zvtx_y0min_bkg_" + cutname + std::to_string(iteration)).c_str());
+            testCutHistos_->addHisto2d(h2d_bkg);
 
             // Only booking the operations here, to minimize looping over entries
             // {hname, ";" + xtitle + ";" + ytitle, bins, minX, maxX}, var)
-            sig_hists.at(cutname).push_back(df_sig_cut_applied[cutname].back().Histo1D(
+            sig_hists.at(cutname).push_back(df_signal_cut[cutname].back().Histo1D(
                 {("h_zvtx_signal_" + cutname + "_" + std::to_string(iteration)).c_str(), ";z_{vtx}/mm;N_{events}/a.u.",
                  200, -50.0, 150.0},
                 "vertex_z"));
-            bkg_hists.at(cutname).push_back(df_bkg_cut_applied[cutname].back().Histo1D(
+            bkg_hists.at(cutname).push_back(df_bkg_cut[cutname].back().Histo1D(
                 {("h_zvtx_background_" + cutname + "_" + std::to_string(iteration)).c_str(),
                  ";z_{vtx}/mm;N_{events}/a.u.", 200, -50.0, 150.0},
                 "vertex_z"));
-        }
-
-        double best_zbi = -9999.9;
-        double best_zcut = -9999.9;
-        double best_nsig = -9999.9;
-        double best_nbkg = -9999.9;
-        std::string best_cutname = "";
-
-        std::vector<RDF::RResultPtr<ULong64_t>> Nsig_vec;
-        std::vector<RDF::RResultPtr<ULong64_t>> Nbkg_vec;
-        for (range_cut_iter_ it = testCutsPtr_->begin(); it != testCutsPtr_->end(); it++) {
-            std::string cutname = it->first;
 
             bkg_hists.at(cutname).at(iteration)->Sumw2();
             std::string fitname = cutname + "_" + std::to_string(iteration);
@@ -401,10 +459,10 @@ bool ApOptimizationProcessor::process() {
 
             if (debug_) std::cout << "z cut for " << cutname << " " << z_cut << std::endl;
 
-            auto all_cuts_sig = applyFilter(df_sig_cut_applied[cutname].at(0), "vertex_z > " + std::to_string(z_cut),
-                                            cutname + "_zcut");
-            auto all_cuts_bkg = applyFilter(df_bkg_cut_applied[cutname].at(0), "vertex_z > " + std::to_string(z_cut),
-                                            cutname + "_zcut");
+            auto all_cuts_sig = applyFilter(df_signal_cut[cutname].at(iteration + 1),
+                                            "vertex_z > " + std::to_string(z_cut), cutname + "_zcut");
+            auto all_cuts_bkg = applyFilter(df_bkg_cut[cutname].at(iteration + 1),
+                                            "vertex_z > " + std::to_string(z_cut), cutname + "_zcut");
 
             auto zsig =
                 all_cuts_sig.Histo1D({("h_zvtx_signal_" + cutname + "_all_cuts_" + std::to_string(iteration)).c_str(),
@@ -415,14 +473,11 @@ bool ApOptimizationProcessor::process() {
                  ";z_{vtx}/mm;N_{events}/a.u.", 200, -50.0, 150.0},
                 "vertex_z");
 
-            // Also save true z vtx for signal after all cuts applied
+            // Also save z vtx for signal after all cuts applied
             sig_hists.at(cutname).push_back(
                 all_cuts_sig.Histo1D({("h_zvtx_signal_" + cutname + "_zcut_" + std::to_string(iteration)).c_str(),
-                                      ";z_{true}/mm;N_{events}/a.u.", 200, -50.0, 150.0},
-                                     "true_ap.vtx_z_"));
-
-            Nsig_vec.push_back(df_sig_cut_applied[cutname].back().Count());
-            Nbkg_vec.push_back(df_bkg_cut_applied[cutname].back().Count());
+                                      ";z_{vtx}/mm;N_{events}/a.u.", 200, -50.0, 150.0},
+                                     "vertex_z"));
 
             zsig->Sumw2();
             TH1D* h_chi_eff = (TH1D*)zsig->Clone(("h_chi_eff_" + cutname + "_" + std::to_string(iteration)).c_str());
@@ -430,8 +485,6 @@ bool ApOptimizationProcessor::process() {
 
             double Nsig = computeDisplacedYield(h_data_mass_rad_, h_chi_eff, 0.8 * 3.74, 0.5);
 
-            // std::cout << "Expected Displaced Signal for Test Cut " << cutname << " at iteration " << iteration
-            //           << " (cutting " << cutSignal * 100 << "% of signal in this variable): " << Nsig << std::endl;
             double Nbkg = 0.0;
             if (zbkg->Integral() > 10) {
                 zbkg->Fit("expo", "QRS", "", z_cut, zbkg->GetXaxis()->GetXmax());
@@ -459,74 +512,71 @@ bool ApOptimizationProcessor::process() {
             double n_off = Nbkg;
             double ZBi = calculateZBi(n_on, n_off, tau);
 
-            double cutvalue = testVarQuantiles_[cutname][iteration];
+            if (ZBi > best_ZBi) {
+                best_ZBi = ZBi;
+                best_cutval = cutvalue;
+            }
 
             if (iteration > 0) {
-                processorHistos_->getGraph("g_nsig_vs_vtx_proj_cut")->AddPoint(cutvalue, Nsig);
-                processorHistos_->getGraph("g_nbkg_vs_vtx_proj_cut")->AddPoint(cutvalue, Nbkg);
-                processorHistos_->getGraph("g_zcut_vs_vtx_proj_cut")->AddPoint(cutvalue, z_cut);
-                processorHistos_->getGraph("g_zbi_vs_vtx_proj_cut")->AddPoint(cutvalue, ZBi);
-            }
+                if (cutname == "pos_z0" || cutname == "ele_z0" || cutname == "min_y0") {
+                    double zoffset = testZoffsetAlpha_[cutname][iteration].first;  // mm
+                    double alpha = testZoffsetAlpha_[cutname][iteration].second;   // rad
 
-            // Update Test Cut with best scan values
-            if (ZBi > best_zbi) {
-                best_zbi = ZBi;
-                best_nsig = Nsig;
-                best_nbkg = Nbkg;
-                best_zcut = z_cut;
-                best_cutname = cutname;
+                    processorHistos_->getGraph("g_nsig_vs_" + cutname)->AddPoint(iteration, Nsig);
+                    processorHistos_->getGraph("g_nbkg_vs_" + cutname)->AddPoint(iteration, Nbkg);
+                    processorHistos_->getGraph("g_zcut_vs_" + cutname)->AddPoint(iteration, z_cut);
+                    processorHistos_->getGraph("g_zbi_vs_" + cutname)->AddPoint(iteration, ZBi);
+                    processorHistos_->getGraph("g_cut_frac_vs_" + cutname)
+                        ->AddPoint(iteration, cutFraction * iteration);
+                    processorHistos_->getGraph("g_zoffset_vs_" + cutname)->AddPoint(iteration, zoffset);
+                    processorHistos_->getGraph("g_alpha_vs_" + cutname)->AddPoint(iteration, alpha);
+                } else {
+                    processorHistos_->getGraph("g_nsig_vs_" + cutname)->AddPoint(cutvalue, Nsig);
+                    processorHistos_->getGraph("g_nbkg_vs_" + cutname)->AddPoint(cutvalue, Nbkg);
+                    processorHistos_->getGraph("g_zcut_vs_" + cutname)->AddPoint(cutvalue, z_cut);
+                    processorHistos_->getGraph("g_zbi_vs_" + cutname)->AddPoint(cutvalue, ZBi);
+                    processorHistos_->getGraph("g_cut_frac_vs_" + cutname)
+                        ->AddPoint(cutvalue, cdf->GetBinContent(cdf->FindBin(cutvalue)));
+                }
             }
         }
-        if (debug_) {
-            std::cout << "Best ZBi after cutting " << cutSignal * 100
-                      << "% of signal in a Test Cut variable: " << best_zbi << std::endl;
-            std::cout << "Corresponding Nsig: " << best_nsig << " Nbkg: " << best_nbkg << std::endl;
-            std::cout << "Best Test Cut: " << best_cutname << " with zcut: " << best_zcut << std::endl;
-        }
+        bestCuts.insert(std::make_pair(cutname, best_cutval));
+    }
 
-        // Save best Test Cut to Persistent Cuts
-        if (best_zbi > 0.0) {
-            std::string best_cutvar = testCutsSelector_->getCutVar(best_cutname);
-            double best_cutvalue;
-            if (testCutsSelector_->getCutRange(best_cutname).first < -999.) {
-                best_cutvalue = testCutsSelector_->getCutRange(best_cutname).second;
-                persistentCutsSelector_->setCutValue(best_cutname, std::make_pair(-9999.9, best_cutvalue));
-            } else if (testCutsSelector_->getCutRange(best_cutname).second > 999.) {
-                best_cutvalue = testCutsSelector_->getCutRange(best_cutname).first;
-                persistentCutsSelector_->setCutValue(best_cutname, std::make_pair(best_cutvalue, 9999.9));
-            }
-            std::cout << "Adding Test Cut " << best_cutname << " to Persistent Cuts with cut value " << best_cutvalue
-                      << std::endl;
-        } else {
-            std::cout << "No Test Cut found that improves ZBi. Ending optimization." << std::endl;
-            break;
+    // for (auto const& pair : bestCuts) {
+    //     std::string cutname = pair.first;
+    //     double cutval = pair.second;
+    //     std::cout << "Updating persistent cuts with best cut for " << cutname << ": " << cutval << std::endl;
+    //     if (persistentCutsSelector_->getCutRange(cutname).first < -999.) {
+    //         persistentCutsSelector_->setCutValue(cutname, std::make_pair(-9999.9, cutval));
+    //     } else {
+    //         persistentCutsSelector_->setCutValue(cutname, std::make_pair(cutval, 9999.9));
+    //     }
+    // }
+
+    // save sig_hists, bkg_hists to outfile_
+    outFile_ = TFile::Open(outFileName_.c_str(), "UPDATE");
+    outFile_->cd();
+    TDirectory* dir{nullptr};
+    std::string folder = "output_hists";
+    if (!folder.empty()) {
+        dir = outFile_->mkdir(folder.c_str(), "", true);
+        dir->cd();
+    }
+    for (range_cut_iter_ it = testCutsPtr_->begin(); it != testCutsPtr_->end(); it++) {
+        std::string cutname = it->first;
+        for (int i = 0; i < sig_hists.at(cutname).size(); i++) {
+            sig_hists.at(cutname)[i]->Write();
+        }
+        for (int i = 0; i < bkg_hists.at(cutname).size(); i++) {
+            bkg_hists.at(cutname)[i]->Write();
         }
     }
+    outFile_->Close();
 
     // std::cout << "Original number of signal events: " << *og_counts_sig << std::endl;
     // std::cout << "Original number of background events: " << *og_counts_bkg << std::endl;
-    // outFile_ = new TFile(outFileName_.c_str(), "UPDATE");
-    // if (outFile_)
-    //     outFile_->cd();
-    // else {
-    //     std::cout << "Error: output file not found!" << std::endl;
-    //     return false;
-    // }
-    // TDirectory* dir{nullptr};
-    // std::string folder = "test_hists";
-    // if (!folder.empty()) {
-    //     dir = outFile_->mkdir(folder.c_str(), "", true);
-    //     dir->cd();
-    // }
-    // for (range_cut_iter_ it = testCutsPtr_->begin(); it != testCutsPtr_->end(); it++) {
-    //     std::string cutname = it->first;
-    //     for (int i = 0; i < sig_hists.at(cutname).size(); i++) {
-    //         sig_hists.at(cutname)[i]->Write();
-    //     }
-    //     for (int i = 0; i < bkg_hists.at(cutname).size(); i++) {
-    //         bkg_hists.at(cutname)[i]->Write();
-    //     }
-    // }
+
     std::cout << df_signal_mod_.GetNRuns() << std::endl;
 
     return true;
@@ -540,8 +590,13 @@ void ApOptimizationProcessor::finalize() {
         persistentCutsSelector_->printCuts();
     }
 
-    processorHistos_->saveHistos(outFile_);
-    processorHistos_->writeGraphs(outFile_, "processorHistos");
+    // Initialize output file
+    std::cout << "[SimpZBiOptimization]::Output File: " << outFileName_.c_str() << std::endl;
+    outFile_ = new TFile(outFileName_.c_str(), "UPDATE");
+
+    processorHistos_->saveHistos(outFile_, "processorHistos");
+    processorHistos_->writeGraphs(outFile_, "processorGraphs");
+    processorHistos_->writeHistosFromDF(outFile_, "processorHistos");
     testCutHistos_->saveHistos(outFile_, "testCutHistos");
     signalHistos_->saveHistos(outFile_, "signal");
     bkgHistos_->saveHistos(outFile_, "background");
@@ -571,6 +626,9 @@ RDF::RInterface<Detail::RDF::RLoopManager, void> ApOptimizationProcessor::prepar
             .Define("pos_phi0", [](const Particle& pos) { return pos.getTrack().getPhi(); }, {"pos."})
             .Define("ele_z0", [](const Particle& ele) { return ele.getTrack().getZ0(); }, {"ele."})
             .Define("pos_z0", [](const Particle& pos) { return pos.getTrack().getZ0(); }, {"pos."})
+            .Define("abs_ele_z0", [](const Particle& ele) { return std::abs(ele.getTrack().getZ0()); }, {"ele."})
+            .Define("abs_pos_z0", [](const Particle& pos) { return std::abs(pos.getTrack().getZ0()); }, {"pos."})
+            .Define("abs_min_y0", [](const double min_y0) { return std::abs(min_y0); }, {"min_y0"})
             .Define("ele_nhits", [](const Particle& ele) { return ele.getTrack().getSvtHits().GetEntries(); }, {"ele."})
             .Define("pos_nhits", [](const Particle& pos) { return pos.getTrack().getSvtHits().GetEntries(); },
                     {"pos."});
@@ -757,8 +815,12 @@ std::vector<double> ApOptimizationProcessor::fitZBkgTail(RDF::RResultPtr<TH1D> h
     }
 }
 
-double* ApOptimizationProcessor::getQuantileArray(std::pair<double, double> range, int n_quantiles) {
+double* ApOptimizationProcessor::getQuantileArray(std::pair<double, double> range, int n_quantiles,
+                                                  double original_cut) {
     double* quantiles = new double[n_quantiles];
+    if (original_cut > -999.) {
+        // figure out how to best vary around original cut
+    }
     if (range.first < -999.) {
         for (int i = 0; i < n_quantiles; i++) {
             quantiles[i] = 1 - step_size_ * i;

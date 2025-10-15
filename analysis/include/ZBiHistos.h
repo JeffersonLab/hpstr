@@ -16,7 +16,7 @@
 #include "TFile.h"
 #include "TFitResult.h"
 #include "TFitResultPtr.h"
-#include "TGraph.h"
+#include "TGraphErrors.h"
 #include "TH1.h"
 #include "TH1F.h"
 #include "TKey.h"
@@ -75,7 +75,7 @@ class ZBiHistos : public HistoManager {
 
     void addHisto1d(TH1* histo);
 
-    void addGraph(TGraph* graph);
+    void addGraph(TGraphErrors* graph);
 
     /**
      * @brief description
@@ -84,6 +84,7 @@ class ZBiHistos : public HistoManager {
     void addHisto2d(std::string histoname, std::string xtitle, int nbinsX, float xmin, float xmax, std::string ytitle,
                     int nbinsY, float ymin, float ymax);
 
+    void addHisto2d(TH2* histo);
     /**
      * @brief description
      *
@@ -166,9 +167,11 @@ class ZBiHistos : public HistoManager {
 
     void addHistoFromDF(ROOT::RDF::RResultPtr<TH1D> df_histo);
 
+    void addHistoFromDF(ROOT::RDF::RResultPtr<TH2D> df_histo);
+
     json getConfig() { return _h_configs; };
 
-    TGraph* getGraph(std::string graphname) {
+    TGraphErrors* getGraph(std::string graphname) {
         if (graphs_.find(m_name + "_" + graphname) != graphs_.end()) {
             return graphs_[m_name + "_" + graphname];
         } else {
@@ -177,9 +180,12 @@ class ZBiHistos : public HistoManager {
         }
     };
 
+    TGraphErrors* configureGraph(std::string name, std::string xlabel, std::string ylabel);
+
   private:
-    std::map<std::string, TGraph*> graphs_;  //!< hold graphs
+    std::map<std::string, TGraphErrors*> graphs_;  //!< hold graphs
     std::vector<ROOT::RDF::RResultPtr<TH1D>> df_histos_;
+    std::vector<ROOT::RDF::RResultPtr<TH2D>> df_histos2d_;
 };
 
 #endif
