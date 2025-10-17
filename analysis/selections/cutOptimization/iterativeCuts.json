@@ -2,9 +2,33 @@
     "vtx_proj_sig": {
         "cut": 123,
         "min": -9999.9,
-        "max": 7,
+        "max": 3.9,
         "id": 1,
         "info": "N_{#sigma, vtx} < ",
         "var": "vtx_proj_sig"
+    },
+    "min_y0": {
+        "cut": 123,
+        "min": 0.083,
+        "max": 0.021,
+        "id": 2,
+        "info": "z_{vtx} - z_{offset} - y0/#alpha < 0",
+        "var": "min_y0"
+    },
+    "ele_L1_iso_significance": {
+        "cut": 123,
+        "min": 41.7,
+        "max": 9999.9,
+        "id": 3,
+        "info": "R_{iso} > ",
+        "var": "ele_L1_iso_significance"
+    },
+    "pos_L1_iso_significance": {
+        "cut": 123,
+        "min": 42.7,
+        "max": 9999.9,
+        "id": 4,
+        "info": "R_{iso} > ",
+        "var": "pos_L1_iso_significance"
     }
 }

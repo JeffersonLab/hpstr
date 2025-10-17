@@ -86,3 +86,28 @@ std::string TreeCutSelector::getCutString(std::string cutname) {
 
     return cutstring;
 }
+
+void TreeCutSelector::filterCuts(std::vector<std::string> cut_variable_list) {
+    // Loop over Test Cuts loaded in from json configuration
+    // for(std::map<std::string, std::pair<double,int>>::iterator it = cuts_ptr->begin(); it != cuts_ptr->end(); it++){
+    for (std::map<std::string, std::pair<std::pair<double, double>, int>>::iterator it = getPointerToCuts()->begin();
+         it != getPointerToCuts()->end();) {
+        std::string cutname = it->first;
+        bool found = false;
+
+        // Confirm that cut variable is in list of configurable cut variables
+        for (std::vector<std::string>::iterator iit = cut_variable_list.begin(); iit != cut_variable_list.end();
+             iit++) {
+            if ((std::string)*iit == cutname) {
+                found = true;
+                break;
+            }
+        }
+
+        // If Test Cut Variable does not exist, remove the Test Cut from the list of cuts
+        if (!found) {
+            it = getPointerToCuts()->erase(it);
+        } else
+            ++it;
+    }
+}

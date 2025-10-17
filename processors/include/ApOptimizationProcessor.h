@@ -101,7 +101,7 @@ class ApOptimizationProcessor : public OptimizationProcessor {
 
     std::vector<double> fitZBkgTail(RDF::RResultPtr<TH1D> h_bkg_vtxz, std::string fitname, bool doGausAndTail = false);
 
-    double* getQuantileArray(std::pair<double, double> range, int nquantiles, double original_cut = -999.9);
+    double* getQuantileArray(std::pair<double, double> range, int nquantiles, double initial_cut_frac = -999.9);
 
     double* getBinsAndLimits(json histo_cfg, std::string varname);
 
@@ -111,48 +111,7 @@ class ApOptimizationProcessor : public OptimizationProcessor {
     std::string getHitCategoryCut();
 
     std::vector<std::pair<double, double>> getZoffsetAlpha(RDF::RResultPtr<TH2D> h_y0_vs_z, int n_quantiles,
-                                                           int nbins = 10) {
-        double* quantiles = getQuantileArray(std::make_pair(0, 9999.9), n_quantiles);
-        std::vector<std::pair<double, double>> zoffset_alpha;
-        processorHistos_->addHistoFromDF(h_y0_vs_z);
-        for (int q = 0; q < n_quantiles; q++) {
-            TGraphErrors* g_y0_vs_z =
-                processorHistos_->configureGraph(("g_y0_vs_z_q" + std::to_string(q)).c_str(), "z_{vtx}/mm", "y_{0}/mm");
-            processorHistos_->addGraph(g_y0_vs_z);
-        }
-        std::cout << int(h_y0_vs_z->GetNbinsX() / nbins) << std::endl;
-        for (int i = 1; i <= int(h_y0_vs_z->GetNbinsX() / nbins); i++) {
-            std::cout << nbins * i << ", " << nbins * (i + 1) << std::endl;
-            auto h_proj =
-                h_y0_vs_z->ProjectionY(("h_y0_vs_z_py_" + std::to_string(i)).c_str(), nbins * i, nbins * (i + 1));
-            processorHistos_->addHisto1d(h_proj);
-            if (h_proj->GetEntries() < 50) continue;
-            double* quantile_pos = new double[n_quantiles];
-            h_proj->GetQuantiles(n_quantiles, quantile_pos, quantiles);
-            for (int q = 0; q < n_quantiles; q++) {
-                processorHistos_->getGraph(("g_y0_vs_z_q" + std::to_string(q)).c_str())
-                    ->AddPoint((double)((TAxis*)h_y0_vs_z->GetXaxis())->GetBinCenter(int(nbins * (i + 0.5))),
-                               quantile_pos[q]);
-                double error = 0.;
-                // if (h_proj->GetEntries() > 0) error = 10. / sqrt(h_proj->GetEntries());
-                processorHistos_->getGraph(("g_y0_vs_z_q" + std::to_string(q)).c_str())->SetPointError(q, 0.0, error);
-            }
-        }
-        for (int q = 0; q < n_quantiles; q++) {
-            if (q == 0) {
-                zoffset_alpha.push_back(std::make_pair(0.0, 0.0));
-                continue;
-            }
-            TF1* f1 = new TF1(("f1_y0_vs_z_q" + std::to_string(q)).c_str(), "[0] + [1]*x", -0.5, 15);
-            processorHistos_->getGraph(("g_y0_vs_z_q" + std::to_string(q)).c_str())->Fit(f1, "QRS");
-
-            double zoffset = -f1->GetParameter(0) / f1->GetParameter(1);
-            zoffset_alpha.push_back(std::make_pair(zoffset, f1->GetParameter(1)));
-            std::cout << "Quantile " << q << " : zoffset = " << zoffset << " alpha = " << f1->GetParameter(1)
-                      << std::endl;
-        }
-        return zoffset_alpha;
-    }
+                                                           int nbins = 10);
 
   private:
     //  Configuration parameters
@@ -160,7 +119,8 @@ class ApOptimizationProcessor : public OptimizationProcessor {
 
     std::string variableHistCfgFilename_{""};         //<! histogram config file
     bool scan_zcut_ = false;                          //<! use zBi to optimize zcut
-    double min_ztail_events_ = 0.5;                   //<! number of events (from fit) past zcut
+    double min_ztail_events_ = 1;                     //<! number of events (from fit) past zcut
+    double start_ztail_events_ = 20.0;                //<! starting number of events (from fit) past zcut
     std::map<std::string, double> initialIntegrals_;  //<! description
 
     // Signal config

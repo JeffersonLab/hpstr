@@ -9,7 +9,7 @@ base.parser.add_argument("-cut_variables", "--cut_variables", type=str, dest="cu
                          help="Specifcy cut variables to test", default=[], nargs='+')
 
 base.parser.add_argument("-b", "--ztail_nevents", type=float, dest="ztail_nevents",
-                         help="Define Zcut based on n background events in background fit", metavar="ztail_nevents", default=0.5)
+                         help="Define Zcut based on n background events in background fit", metavar="ztail_nevents", default=1)
 
 base.parser.add_argument("-z", "--scan_zcut", type=int, dest="scan_zcut",
                          help="Choose best ZBi using Zcut Scan (1=yes, 0 = No)", metavar="scan_zcut", default=0)
@@ -52,7 +52,7 @@ def chooseIterativeCutVariables(zbi, cut_variables=[], new_variables=[], variabl
     zbi.parameters['new_variable_params'] = variable_params
 
 
-in_file = '/Users/schababi/Desktop/data/pass_v8/hps_014269_hadd_20files_ana.root'
+in_file = '/Users/schababi/Desktop/data/pass_v8beta/hps_014269_hadd_20files_ana.root'
 out_file = options.outFilename
 
 p.run_mode = 2
@@ -78,7 +78,8 @@ zbi.parameters['scan_zcut'] = options.scan_zcut
 # Specify %variable in signal to cut with each iteration
 zbi.parameters['step_size'] = options.step_size
 # 0.5 is the minimum allowed. ZBi calc breaks if 0.0
-zbi.parameters['ztail_nevents'] = options.ztail_nevents
+zbi.parameters['min_ztail_events'] = 0.5
+zbi.parameters['start_ztail_events'] = 20.0
 
 hpstr_analysis_base = os.environ['HPSTR_BASE'] + '/analysis/'
 hpstr_selection_base = hpstr_analysis_base + 'selections/'
@@ -93,10 +94,10 @@ zbi.parameters['eq_cfgFile'] = hpstr_selection_base + 'simps/simp_parameters.jso
 # Choose initial set of cuts
 zbi.parameters['cuts_cfgFile'] = hpstr_selection_base + 'cutOptimization/iterativeCuts.json'
 # Choose cut variables to tighten iteratively. Must be present in json file above^
-chooseIterativeCutVariables(zbi, ["unc_vtx_proj_sig"])
+chooseIterativeCutVariables(zbi, ["min_y0"])
 
 # Configure Background
-zbi.parameters['bkgVtxAnaFilename'] = '/Users/schababi/Desktop/data/pass_v8/hps_014269_hadd_20files_ana.root'
+zbi.parameters['bkgVtxAnaFilename'] = '/Users/schababi/Desktop/data/pass_v8beta/hps_014269_hadd_20files_ana.root'
 zbi.parameters['bkgVtxAnaTreename'] = 'preselection'
 zbi.parameters['background_sf'] = 1.
 
@@ -104,13 +105,13 @@ zbi.parameters['background_sf'] = 1.
 zbi.parameters['signal_sf'] = 1e5
 zbi.parameters['signal_mass'] = options.mass * 1e-3  # in GeV
 zbi.parameters['mass_window_nsigma'] = 2.
-zbi.parameters['signalVtxSubsetAnaFilename'] = '/Users/schababi/Desktop/data/pass_v8/signal_subsets/ap_pulser_{}MeV_hadd10files.root'.format(
+zbi.parameters['signalVtxSubsetAnaFilename'] = '/Users/schababi/Desktop/data/pass_v8beta/signal_subsets/ap_pulser_{}MeV_hadd10files.root'.format(
     int(options.mass))
-zbi.parameters['signalVtxAnaFilename'] = '/Users/schababi/Desktop/data/pass_v8/ap_pulser_{}MeV_hadd_250files_ana.root'.format(
+zbi.parameters['signalVtxAnaFilename'] = '/Users/schababi/Desktop/data/pass_v8beta/ap_pulser_{}MeV_hadd_250files_ana.root'.format(
     int(options.mass))
 zbi.parameters['signalVtxAnaTreename'] = 'preselection'
 # pre-trigger signal MC analysis file
-zbi.parameters['signalMCAnaFilename'] = '/Users/schababi/Desktop/data/pass_v8/MC_truth/ap{}_3pt74_MC_truth_40_stdhep_files.root'.format(
+zbi.parameters['signalMCAnaFilename'] = '/Users/schababi/Desktop/data/pass_v8beta/MC_truth/ap{}_3pt74_MC_truth_40_stdhep_files.root'.format(
     int(options.mass))
 zbi.parameters['signalMCAnaTreename'] = 'tree'
 zbi.parameters['signal_pdgid'] = '623'

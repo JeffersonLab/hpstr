@@ -2,14 +2,14 @@
     "vtx_proj_sig": {
         "cut": 123,
         "min": -9999.9,
-        "max": 15,
+        "max": 4.5,
         "id": 1,
         "info": "N_{#sigma, vtx} < ",
         "var": "vtx_proj_sig"
     },
     "ele_L1_iso_significance": {
         "cut": 123,
-        "min": 15,
+        "min": 10,
         "max": 9999.9,
         "id": 2,
         "info": "R_{iso} > ",
@@ -17,7 +17,7 @@
     },
     "pos_L1_iso_significance": {
         "cut": 123,
-        "min": 3,
+        "min": 10,
         "max": 9999.9,
         "id": 3,
         "info": "R_{iso} > ",

@@ -58,6 +58,8 @@ class TreeCutSelector : public BaseSelector {
             return false;
     }
 
+    void filterCuts(std::vector<std::string> cut_variable_list);
+
   protected:
     typedef std::map<std::string, std::pair<std::pair<double, double>, int>>::iterator range_cut_it;  //!< description
     std::map<std::string, std::pair<std::pair<double, double>, int>> range_cuts;
