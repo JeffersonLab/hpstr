@@ -49,11 +49,16 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
         }
     }
 
+    auto vtxColl = parameters.getString("vtxCollection");
+    if (not vtxColl.empty() ){
+        std::cout << "Setting vertex collection to : " << vtxColl << std::endl;
+        setVtxColl(vtxColl);
+    }
+
     calTimeOffset_ = parameters.getDouble("calTimeOffset");
     isData_ = parameters.getInteger("isData") != 0;
     isSimpSignal_ = parameters.getInteger("isSimpSignal") != 0;
     isApSignal_ = parameters.getInteger("isApSignal") != 0;
-    doTCValues_ = parameters.getInteger("doTCValues") != 0;
     if (isSimpSignal_ || isApSignal_) isSignal_ = true;
 }
 
@@ -85,7 +90,6 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
     if (not trkColl_.empty()) bus_.board_input<std::vector<Track*>>(tree, trkColl_);
     // if (not hitColl_.empty()) bus_.board_input<std::vector<TrackerHit*>>(tree, hitColl_);
     bus_.board_input<std::vector<Vertex*>>(tree, vtxColl_);
-    bus_.board_input<std::vector<Vertex*>>(tree, vtxCollTC_);
     if (not isData_ and not mcColl_.empty()) bus_.board_input<std::vector<MCParticle*>>(tree, mcColl_);
 
     /* pre-selection on vertices */
@@ -174,11 +178,6 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
         bus_.board_output<double>(output_tree_.get(), name);
     }
 
-    if (doTCValues_) {
-        bus_.board_output<double>(output_tree_.get(), "tc_psum");
-        bus_.board_output<float>(output_tree_.get(), "tc_invM");
-    }
-
     if (bus_.has(mcColl_)) {
         if (isSimpSignal_) {
             bus_.board_output<MCParticle>(output_tree_.get(), "true_vd");
@@ -214,7 +213,6 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     }
 
     const auto& vtxs{bus_.get<std::vector<Vertex*>>(vtxColl_)};
-    const auto& TC_vtxs{bus_.get<std::vector<Vertex*>>(vtxCollTC_)};
     /**
      * pre-selection on vertices defining "quality" vertices
      *
@@ -230,7 +228,6 @@ bool PreselectAndCategorize2021::process(IEvent*) {
      */
     std::vector<std::tuple<Vertex, Particle, Particle>> preselected_vtx;
     int ivtx = 0;
-    int tc_ivtx_passed = -1;
 
     for (Vertex* vtx : vtxs) {
         // access the indiviual Vertex, electron, and positron
@@ -270,38 +267,23 @@ bool PreselectAndCategorize2021::process(IEvent*) {
             pos_trk.applyCorrection(name, corr);
         }
 
-        if (not beamspot_corrections_.empty()) {
-            /**
-             * When the user provides a set of beamspot corrections,
-             * we apply them to the tracks in a vertex shifting the
-             * track_z0 by the beamspot y.
-             * (Same direction just different coordinate names.)
-             *
-             * This is separate from the track_corrections_ because,
-             * for real data, the beamspot_corrections_ change run-by-run
-             * while for simulation samples, they do not.
-             *
-             * In the samples inherited from Alic and the L1L1 analysis,
-             * these beamspot corrections were applied earlier in the
-             * chain for data and so do not need to be re-applied at this level;
-             * however, I am leaving this code here since it was helpful to
-             * confirm this.
-             */
-            auto bsit = beamspot_corrections_.find(eh.getRunNumber());
-            if (bsit == beamspot_corrections_.end()) {
-                // the current run number is not in the provided set of beamspots
-                // I don't think this should be the case, so I'm throwing an exception.
-                // We could also just pick the closest run number which is what
-                // the V0 projection fit code does.
-                throw std::runtime_error("The run number " + std::to_string(eh.getRunNumber()) +
-                                         " is not in the loaded set of beamspot corrections.");
+        if (not v0proj_fits_.empty()) {
+            int run = eh.getRunNumber();
+            int closest_run;
+            for(auto entry : v0proj_fits_.items()){
+                int check_run = std::stoi(entry.key());
+                if(check_run > run)
+                    break;
+                else{
+                    closest_run = check_run;
+                }
             }
-            // assume iterator bsit is pointing to an element of beamspot_corrections_
-            // for the current run number.
-            // correction is the negative of the beamspot position to remove its shift
-            double bs_y = -1 * bsit->second.at(1);
-            ele_trk.applyCorrection("track_z0", bs_y);
-            pos_trk.applyCorrection("track_z0", bs_y);
+            double elez0Mean = v0proj_fits_[std::to_string(closest_run)]["elez0_mean"];
+            double posz0Mean = v0proj_fits_[std::to_string(closest_run)]["posz0_mean"];
+
+            ele_trk.applyCorrection("z0", elez0Mean);
+            pos_trk.applyCorrection("z0", posz0Mean);
+
         }
 
         // smear track momentum
@@ -364,7 +346,6 @@ bool PreselectAndCategorize2021::process(IEvent*) {
 
         if (vertex_cf_.keep()) {
             preselected_vtx.emplace_back(*vtx, ele, pos);
-            tc_ivtx_passed = ivtx;
         }
         ivtx++;
     }
@@ -476,33 +457,6 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     bus_.set("ele", ele);
     bus_.set("pos", pos);
 
-    // target constrained vertex
-    if (doTCValues_) {
-        int i_ele{-1}, i_pos{-1};
-        for (int ipart = 0; ipart < TC_vtxs.at(tc_ivtx_passed)->getParticles().GetEntries(); ++ipart) {
-            int pdg_id = ((Particle*)TC_vtxs.at(tc_ivtx_passed)->getParticles().At(ipart))->getPDG();
-            if (pdg_id == 11) {
-                i_ele = ipart;
-            } else if (pdg_id == -11) {
-                i_pos = ipart;
-            }
-        }
-        if (i_ele < 0 or i_pos < 0) {
-            throw std::runtime_error("Vertex formed without either an electron or positron!");
-        }
-
-        Particle tc_ele = *dynamic_cast<Particle*>(TC_vtxs.at(tc_ivtx_passed)->getParticles().At(i_ele));
-        Particle tc_pos = *dynamic_cast<Particle*>(TC_vtxs.at(tc_ivtx_passed)->getParticles().At(i_pos));
-
-        TVector3 tc_ele_mom(tc_ele.getMomentum()[0], tc_ele.getMomentum()[1], tc_ele.getMomentum()[2]);
-        TVector3 tc_pos_mom(tc_pos.getMomentum()[0], tc_pos.getMomentum()[1], tc_pos.getMomentum()[2]);
-        TVector3 tc_psum = tc_ele_mom + tc_pos_mom;
-        bus_.set("tc_psum", tc_psum.Mag());
-
-        bus_.set("tc_invM", TC_vtxs.at(tc_ivtx_passed)->getInvMass());
-        //bus_.set("tc_psum", 0.0);
-        //bus_.set("tc_invM", 0.0);
-    }
     /**
      * This is where the output TTree is filled,
      * if we leave before this point, then the event will not
