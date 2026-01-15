@@ -238,13 +238,28 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
     if (ts == nullptr){
       return nullptr;
     }
+
+    //  If the track state is AtTarget, replace the d0 & z0
+    //  with their reference positions in global x & y.  
+    //  We do this because the reference for ts@target
+    //  is defined as where the track intersects with the target
+    //  plane; so d0 & z0 == 0.  This is a bit of a kludge to make
+    //  it simpler for analysts.  
+    //  NOTE that these will not be strictly correct perigee parameters   
+    double tsD0 = ts->getD0();
+    double tsZ0 = ts->getZ0();    
+    if(loc==EVENT::TrackState::AtTarget){
+      tsD0=ts->getReferencePoint()[1];
+      tsZ0=ts->getReferencePoint()[2];      
+    }
+        
     // Set the track parameters using trackstate
-    track->setTrackParameters(ts->getD0(), 
+    track->setTrackParameters(tsD0, 
 			      ts->getPhi(), 
 			      ts->getOmega(), 
 			      ts->getTanLambda(), 
-			      ts->getZ0());
-    
+			      tsZ0);
+
     double position[3] = {
 			  ts->getReferencePoint()[1],  
 			  ts->getReferencePoint()[2],  

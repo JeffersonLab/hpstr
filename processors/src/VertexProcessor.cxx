@@ -209,6 +209,7 @@ bool VertexProcessor::process(IEvent* ievent) {
 			} // Loop over raw tracker hits
 
 			track->addHitLayer(hitLayer);
+            track->addHit(tracker_hit);
 			hits_.push_back(tracker_hit);
                         for (std::vector<RawSvtHit *>::iterator it = rawSvthitsOn3d.begin(); it != rawSvthitsOn3d.end(); ++it) {
                           delete *it;
