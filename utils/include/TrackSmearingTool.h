@@ -45,7 +45,7 @@ class TrackSmearingTool {
   TH1D* smearing_histo_bot_;
   
   // debug
-  bool debug_{false};
+  bool debug_{true};
   bool relSmearing_{false};
   
 };
