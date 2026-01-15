@@ -102,40 +102,40 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
       
       std::cout<<"Smearing Tool Seed "<<seed_<<std::endl;
       smearingTool_    =   std::make_shared<TrackSmearingTool>(pSmearingFile_,false,seed_);
-      smearingToolRel_ =   std::make_shared<TrackSmearingTool>(pSmearingFile_,true, seed_);
+      //smearingToolRel_ =   std::make_shared<TrackSmearingTool>(pSmearingFile_,true, seed_);
       
       psmear_h_     =   new TH1D("psmear_h",
-                                 "psmear_h",200,0,4);
+                                 "psmear_h",200,0,6);
 
       psmear_vs_nHits_hh_ =  new TH2D("psmear_vs_nHits_hh",
                                       "psmear_vs_nHits_hh",
                                       5,8,13,
-                                      200,0,4);
+                                      200,0,6);
       psmear_vs_nHits_top_hh_ =  new TH2D("psmear_vs_nHits_top_hh",
                                           "psmear_vs_nHits_top_hh",
                                           5,8,13,
-                                          200,0,4);
+                                          200,0,6);
       psmear_vs_nHits_bot_hh_ =  new TH2D("psmear_vs_nHits_bot_hh",
                                           "psmear_vs_nHits_bot_hh",
                                           5,8,13,
-                                          200,0,4);
+                                          200,0,6);
 
 
       psmear_rel_h_     =   new TH1D("psmear_rel_h",
-                                     "psmear_rel_h",200,0,4);
+                                     "psmear_rel_h",200,0,6);
       
       psmear_vs_nHits_rel_hh_ =  new TH2D("psmear_vs_nHits_rel_hh",
                                           "psmear_vs_nHits_rel_hh",
                                           5,8,13,
-                                          200,0,4);
+                                          200,0,6);
       psmear_vs_nHits_top_rel_hh_ =  new TH2D("psmear_vs_nHits_top_rel_hh",
                                               "psmear_vs_nHits_top_rel_hh",
                                               5,8,13,
-                                              200,0,4);
+                                              200,0,6);
       psmear_vs_nHits_bot_rel_hh_ =  new TH2D("psmear_vs_nHits_bot_rel_hh",
                                               "psmear_vs_nHits_bot_rel_hh",
                                               5,8,13,
-                                              200,0,4);
+                                              200,0,6);
       
     }
       
@@ -151,8 +151,8 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
     
     //Trigger requirements - Singles 0 and 1. 
     //TODO use cutFlow 
-    if (isData_ && (!evth_->isSingle0Trigger() && !evth_->isSingle1Trigger()))
-      return true; //true is correct?
+    //if (isData_ && (!evth_->isSingle0Trigger() && !evth_->isSingle1Trigger()))
+    //  return true; //true is correct?
 
     //Ask for 1 cluster p > 1.2 GeV with time [40,70]
     //TODO Use Cutflow
@@ -164,14 +164,14 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
       minTime = 30;
       maxTime = 50;
     }
-        
     //if (ecal_->size() <= 2)
     //  return true;
     
     bool foundFeeCluster = false;
     
     for (unsigned int iclu = 0; iclu < ecal_->size(); iclu++) {
-      if (ecal_->at(iclu)->getEnergy() > 1.5)
+//      if (ecal_->at(iclu)->getEnergy() > 1.5)
+      if (ecal_->at(iclu)->getEnergy() > 2.5)
         foundFeeCluster = true;
       break;
     }
@@ -202,6 +202,14 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
         trk_mom.SetY(track->getMomentum()[1]);
         trk_mom.SetZ(track->getMomentum()[2]);
 
+        auto hits = track->getHitLayers();
+
+        int nHitsInnerLayers=0;
+        for(auto& hit : hits){
+          if( hit<4 ) nHitsInnerLayers++;
+        }
+
+        if( nHitsInnerLayers<4 ) continue;
         
         //Track Selection
         if (trkSelector_ && !trkSelector_->passCutGt("n_hits_gt",n2dhits_onTrack,weight))
@@ -248,6 +256,9 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
         
         trkHistos_->Fill1DHistograms(track);
         trkHistos_->Fill2DTrack(track);
+
+        //auto pos = track->getPosition();
+        //std::cout << "X: " << pos[0]  << " Y : " << pos[1] << " Z: " << pos[2] << std::endl;
         
         if (truthHistos_) {
             truthHistos_->Fill1DHistograms(truth_track);
@@ -298,7 +309,7 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
           
           
           double psmear     = smearingTool_->smearTrackP(*track);
-          double psmear_rel = smearingToolRel_->smearTrackP(*track);
+          double psmear_rel = psmear; //smearingToolRel_->smearTrackP(*track);
           
           double nhits  = track->getTrackerHitCount();
           double isTop  = track->getTanLambda() > 0 ? true : false;
