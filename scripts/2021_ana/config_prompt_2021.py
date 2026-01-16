@@ -46,7 +46,7 @@ preselect.parameters["vtxCollection"] = "TargetConstrainedV0Vertices_KF"
 preselect.parameters["v0ProjectionFitsCfg"] = file_in_hpstr(
         'analysis/data/v0_projection_2021_v9_config.json'
         if options.isData else
-        'analysis/data/v0_projection_2021_mc_signal_config.json'
+        'analysis/data/v0_projection_2021_v9_mc_14272_config.json'
 )
 preselect.parameters['trackBiasCfg'] = ""
 #preselect.parameters['trackBiasCfg'] = file_in_hpstr(

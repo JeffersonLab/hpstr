@@ -1,0 +1,13 @@
+{
+    "14272": {
+        "elez0_mean": -0.019335,
+        "posz0_mean": -0.0156567,
+        "rotated_mean_x": -0.0004892290692943924,
+        "rotated_mean_x_err": 0.0008827862330719344,
+        "rotated_mean_y": 0.0030101771769065477,
+        "rotated_sigma_x": 0.27459360287880974,
+        "rotated_sigma_y": 0.035846845042795346,
+        "rotation_angle_mrad": -0.004379384001850573,
+        "target_position": -1.1
+    }
+}
