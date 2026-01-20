@@ -121,7 +121,10 @@ class TrackingAnaProcessor : public Processor {
         std::shared_ptr<TrackSmearingTool> smearingTool_;
         std::shared_ptr<TrackSmearingTool> smearingToolRel_;
         std::string pSmearingFile_{""};
+        std::string smearingCfgFile_{""};
         TH1D* psmear_h_;
+        TH1D* psmear_top_h_;
+        TH1D* psmear_bot_h_;
         TH2D* psmear_vs_nHits_hh_;
         TH2D* psmear_vs_nHits_top_hh_;
         TH2D* psmear_vs_nHits_bot_hh_;
@@ -130,6 +133,11 @@ class TrackingAnaProcessor : public Processor {
         TH2D* psmear_vs_nHits_rel_hh_;
         TH2D* psmear_vs_nHits_top_rel_hh_;
         TH2D* psmear_vs_nHits_bot_rel_hh_;
+
+        // z0 smearing validation histograms
+        TH1D* z0smear_h_;
+        TH1D* z0smear_top_h_;
+        TH1D* z0smear_bot_h_;
 
 }; // TrackingAnaProcessor
 

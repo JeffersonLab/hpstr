@@ -33,7 +33,8 @@ anaTrks.parameters["selectionjson"] = os.environ['HPSTR_BASE']+'/analysis/select
 anaTrks.parameters["isData"] = options.isData
 
 #SmearingClosureTest
-anaTrks.parameters["pSmearingFile"] =  "/sdf/data/hps/users/mgignac/software/smearing/hpstr/plotUtils/TrackSmearing_beam8um.root"
+#anaTrks.parameters["pSmearingFile"] =  "/sdf/data/hps/users/mgignac/software/smearing/hpstr/plotUtils/TrackSmearing_beam8um.root"
+anaTrks.parameters["smearingCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/smearing/trackSmearing_2021.json"
 
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/feeSmearing/"
 anaTrks.parameters["regionDefinitions"] = []

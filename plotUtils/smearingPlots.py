@@ -2,6 +2,7 @@ from ROOT import TFile, TH1F, TH2F
 from math import sqrt
 import sys
 import os
+import json
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from optparse import OptionParser
@@ -78,14 +79,15 @@ class plotFitter:
         
         mu_data    = datafit.GetParameter(1)
         sigma_data = datafit.GetParameter(2)
+        print(hname)
 
-        print("DATA: ",mu_data,sigma_data)
+        print(">>>> DATA: ",mu_data,sigma_data)
 
         sigma_data = sigma_data * self.testFactor
         
         mu_mc      = mcfit.GetParameter(1)
         sigma_mc   = mcfit.GetParameter(2)
-        print("MC: ",mu_mc,sigma_mc)
+        print(">>>> MC: ",mu_mc,sigma_mc)
         
         st,sigmast = self.smearing_term(sigma_data,sigma_mc)
 
@@ -248,8 +250,8 @@ def main():
                       help="Output root file", default="TrackSmearing.root")
 
     parser.add_option("-r","--regions", type="string", dest="regions",help="Comma separated list of regions. If using \"all\" then loop on all the regions in the file", default="all")
-
-    
+    parser.add_option("-j","--jsonfile",type="string",dest="jsonfile",
+                      help="Output JSON file for smearing config", default="trackSmearing.json")
 
     (options,args) = parser.parse_args()
     
@@ -272,20 +274,45 @@ def main():
     
     
     pf = plotFitter(dataFile, mcFile, outFile, regions)
-    
-    smearing_term = pf.fit1D("KalmanFullTracks/KalmanFullTracks_p_h")
-    smearing_term = pf.fit1D("KalmanFullTracks/KalmanFullTracks_Z0_h")
-    
-            
+
+    # Fit momentum distributions
+    pSmearing_inclusive = pf.fit1D("KalmanFullTracks/KalmanFullTracks_p_h")
+    pSmearing_top = pf.fit1D("KalmanFullTracks/KalmanFullTracks_p_top_h")
+    pSmearing_bot = pf.fit1D("KalmanFullTracks/KalmanFullTracks_p_bot_h")
+
+    # Fit z0 distributions
+    z0Smearing_inclusive = pf.fit1D("KalmanFullTracks/KalmanFullTracks_Z0_h")
+    z0Smearing_top = pf.fit1D("KalmanFullTracks/KalmanFullTracks_top_track_z0_h")
+    z0Smearing_bot = pf.fit1D("KalmanFullTracks/KalmanFullTracks_bot_track_z0_h")
+
+    # Write smearing config to JSON file for TrackSmearingTool
+    smearingConfig = {
+        "pSmearing": {
+            "inclusive": pSmearing_inclusive,
+            "top": pSmearing_top,
+            "bot": pSmearing_bot
+        },
+        "z0Smearing": {
+            "inclusive": z0Smearing_inclusive,
+            "top": z0Smearing_top,
+            "bot": z0Smearing_bot
+        },
+        "relSmearing": False
+    }
+
+    with open(options.jsonfile, 'w') as jsonFile:
+        json.dump(smearingConfig, jsonFile, indent=4)
+    print(f"Smearing config written to: {options.jsonfile}")
+
     #pf.fit2D("KalmanFullTracks/KalmanFullTracks_p_vs_TanLambda_hh")
     #pf.fit2D("KalmanFullTracks/KalmanFullTracks_p_vs_Phi_hh")
     #pf.fit2D("KalmanFullTracks/KalmanFullTracks_p_vs_nHits_hh")
     #pf.fit2D("KalmanFullTracks/KalmanFullTracks_p_vs_nHits_top_hh")
     #pf.fit2D("KalmanFullTracks/KalmanFullTracks_p_vs_nHits_bot_hh")
     #pf.fit3D("KalmanFullTracks/KalmanFullTracks_p_vs_TanLambda_Phi_hhh")
-    
+
     pf.writeHistoMap()
-    
+
     pf.outFile.Close()
 
 if __name__=="__main__":
