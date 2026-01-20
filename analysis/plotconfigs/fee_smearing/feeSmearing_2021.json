@@ -104,6 +104,20 @@
         "xtitle" : "p_{e^{-}} [GeV]",
         "ytitle" : "Tracks"
     },
+    "p_top_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 6,
+        "xtitle" : "p_{e^{-}} [GeV]",
+        "ytitle" : "Tracks (top)"
+    },
+    "p_bot_h" : {
+        "bins" : 200,
+        "minX" : 0,
+        "maxX" : 6,
+        "xtitle" : "p_{e^{-}} [GeV]",
+        "ytitle" : "Tracks (bottom)"
+    },
     "p_vs_nHits_hh" : {
         "binsX" : 7,
         "minX"  : 8,

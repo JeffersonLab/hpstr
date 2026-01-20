@@ -87,6 +87,7 @@ track.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 track.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack_KF'
 track.parameters["trackStateLocation"]='AtTarget'
+
 if(options.useBField):
     track.parameters["bfield"] = bfield[str(options.year)]
 

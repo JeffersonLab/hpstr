@@ -256,11 +256,14 @@ void TrackHistos::Fill1DTrack(Track* track, float weight, const std::string& trk
     Fill1DHisto(trkname+"zpos_at_ecal_h",track->getPositionAtEcal().at(2) ,weight);
 
     //Top vs Bot
-    if(track->getTanLambda() > 0.0)
+    if(track->getTanLambda() > 0.0){
         Fill1DHisto(trkname+"top_track_z0_h", track->getZ0(), weight);
-    else
+        Fill1DHisto(trkname+"p_top_h"       ,track->getP()  , weight);
+    }
+    else{
         Fill1DHisto(trkname+"bot_track_z0_h", track->getZ0(), weight);
-
+        Fill1DHisto(trkname+"p_bot_h"       ,track->getP()  , weight);
+    }
     //Track param errors
     Fill1DHisto(trkname+"d0_err_h"       ,track->getD0Err()          ,weight);
     Fill1DHisto(trkname+"Phi_err_h"      ,track->getPhiErr()         ,weight);
