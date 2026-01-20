@@ -1,4 +1,4 @@
-from ROOT import *
+from ROOT import TF1, TCanvas, TH2D
 from array import array
 
 def MakeFit(histoGram, fitType, markerColor,fitrange=[-2e5,2e5],sigmarange=2):

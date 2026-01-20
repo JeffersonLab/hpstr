@@ -1,6 +1,8 @@
-from ROOT import *
+from ROOT import TFile, TH1F, TH2F
+from math import sqrt
 import sys
-sys.path.append("/sdf/data/hps/users/mgignac/software/smearing/hpstr/plotUtils/")
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from optparse import OptionParser
 import iterativeFitting as itf
@@ -271,14 +273,15 @@ def main():
     
     pf = plotFitter(dataFile, mcFile, outFile, regions)
     
-    #smearing_term = pf.fit1D("KalmanFullTracks/KalmanFullTracks_p_h")
+    smearing_term = pf.fit1D("KalmanFullTracks/KalmanFullTracks_p_h")
+    smearing_term = pf.fit1D("KalmanFullTracks/KalmanFullTracks_Z0_h")
     
             
     #pf.fit2D("KalmanFullTracks/KalmanFullTracks_p_vs_TanLambda_hh")
     #pf.fit2D("KalmanFullTracks/KalmanFullTracks_p_vs_Phi_hh")
-    pf.fit2D("KalmanFullTracks/KalmanFullTracks_p_vs_nHits_hh")
-    pf.fit2D("KalmanFullTracks/KalmanFullTracks_p_vs_nHits_top_hh")
-    pf.fit2D("KalmanFullTracks/KalmanFullTracks_p_vs_nHits_bot_hh")
+    #pf.fit2D("KalmanFullTracks/KalmanFullTracks_p_vs_nHits_hh")
+    #pf.fit2D("KalmanFullTracks/KalmanFullTracks_p_vs_nHits_top_hh")
+    #pf.fit2D("KalmanFullTracks/KalmanFullTracks_p_vs_nHits_bot_hh")
     #pf.fit3D("KalmanFullTracks/KalmanFullTracks_p_vs_TanLambda_Phi_hhh")
     
     pf.writeHistoMap()
