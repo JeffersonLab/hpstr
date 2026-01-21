@@ -1,4 +1,4 @@
-from ROOT import *
+from ROOT import TF1, TCanvas, TH2D
 from array import array
 
 def MakeFit(histoGram, fitType, markerColor,fitrange=[-2e5,2e5],sigmarange=2):
@@ -17,7 +17,7 @@ def MakeFit(histoGram, fitType, markerColor,fitrange=[-2e5,2e5],sigmarange=2):
     return fit
 
 
-def ProfileYwithIterativeGaussFit(hist, mu_graph, sigma_graph, num_bins,fitrange=[-2e5,2e5],error_scaling=1.):
+def ProfileYwithIterativeGaussFit(hist, mu_graph, sigma_graph, num_bins,fitrange=[-2e5,2e5],error_scaling=1.,name=''):
     
     if (num_bins < 1):
         return 
@@ -75,7 +75,7 @@ def ProfileYwithIterativeGaussFit(hist, mu_graph, sigma_graph, num_bins,fitrange
             c.cd()
             current_proj.Draw("p")
             fit.Draw("same")
-            c.SaveAs(current_proj.GetName() + ".pdf")
+            c.SaveAs(current_proj.GetName() + "_" + name + ".png")
         
         
         if (sigma > max_sigma or max_sigma == 0):
