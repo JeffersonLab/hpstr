@@ -65,7 +65,7 @@ var searchData=
   ['getglobaly_62',['getglobaly',['../classMCEcalHit.html#a037dbf33c23e4f394e56a71b8cb4e8ea',1,'MCEcalHit::getGlobalY()'],['../classTrackerHit.html#a037dbf33c23e4f394e56a71b8cb4e8ea',1,'TrackerHit::getGlobalY()'],['../classMCTrackerHit.html#a037dbf33c23e4f394e56a71b8cb4e8ea',1,'MCTrackerHit::getGlobalY() const']]],
   ['getglobalz_63',['getglobalz',['../classMCTrackerHit.html#a740175ec4578befac356d2102625d303',1,'MCTrackerHit::getGlobalZ()'],['../classMCEcalHit.html#a740175ec4578befac356d2102625d303',1,'MCEcalHit::getGlobalZ()'],['../classTrackerHit.html#a740175ec4578befac356d2102625d303',1,'TrackerHit::getGlobalZ()']]],
   ['getgoodnessofpid_64',['getGoodnessOfPID',['../classParticle.html#ace6fc5d266a6826a3c79ce799ed1469e',1,'Particle']]],
-  ['gethistosfromfile_65',['gethistosfromfile',['../classBlFitHistos.html#a52d940937dee537e69c27ebbc7f12d5d',1,'BlFitHistos::getHistosFromFile()'],['../classHistoManager.html#a1d6a53e655bd418c172f199a9509b9f4',1,'HistoManager::GetHistosFromFile()']]],
+  ['gethistosfromfile_65',['gethistosfromfile',['../classHistoManager.html#a1d6a53e655bd418c172f199a9509b9f4',1,'HistoManager::GetHistosFromFile()'],['../classBlFitHistos.html#a52d940937dee537e69c27ebbc7f12d5d',1,'BlFitHistos::getHistosFromFile()']]],
   ['gethitlayers_66',['getHitLayers',['../classTrack.html#a39af95d014a02a0919fe92a85cf0700e',1,'Track']]],
   ['gethits_67',['gethits',['../classCalCluster.html#aa41550d2d788f1c643c53cda8303aa7d',1,'CalCluster::getHits()'],['../classHodoCluster.html#abec0c49c4dab7f82a82f4d5332f6f084',1,'HodoCluster::getHits()']]],
   ['gethole_68',['getHole',['../classHodoHit.html#a291aef64bc781c98b80ca3c0949d885d',1,'HodoHit']]],

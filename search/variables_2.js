@@ -57,7 +57,7 @@ var searchData=
   ['bpart_5f_54',['bPart_',['../classSvtRawDataAnaProcessor.html#aff99bb2a8da72637f084bd78ccf74fc6',1,'SvtRawDataAnaProcessor']]],
   ['bpc_5fconfigs_5f_55',['bpc_configs_',['../classVertexAnaProcessor.html#a123f02f50a802d6efd5ae6a513f56e97',1,'VertexAnaProcessor::bpc_configs_'],['../classNewVertexAnaProcessor.html#a123f02f50a802d6efd5ae6a513f56e97',1,'NewVertexAnaProcessor::bpc_configs_']]],
   ['branches_5f_56',['branches_',['../classEvent.html#a441c38d4c63172fd7c2dfd0034ec77b1',1,'Event']]],
-  ['brawhits_5f_57',['brawhits_',['../classTridentWABAnaProcessor.html#a37893577b2928663db561d4eedc18db4',1,'TridentWABAnaProcessor::brawhits_'],['../classApv25RoXtalkAnaProcessor.html#a726d7ac2c36419f7665ec2d01a139b90',1,'Apv25RoXtalkAnaProcessor::brawHits_']]],
+  ['brawhits_5f_57',['brawhits_',['../classApv25RoXtalkAnaProcessor.html#a726d7ac2c36419f7665ec2d01a139b90',1,'Apv25RoXtalkAnaProcessor::brawHits_'],['../classTridentWABAnaProcessor.html#a37893577b2928663db561d4eedc18db4',1,'TridentWABAnaProcessor::brawhits_']]],
   ['brawsvthits_5f_58',['brawSvtHits_',['../classSvtBl2DAnaProcessor.html#ad638a7e9382cb1d5bf22c4868c6813a8',1,'SvtBl2DAnaProcessor']]],
   ['brecoclu_5f_59',['brecoClu_',['../classSvtRawDataAnaProcessor.html#a68f5705e3bb1ce33fae89b4bdcf667f7',1,'SvtRawDataAnaProcessor']]],
   ['brmap_5f_60',['brmap_',['../classVertexAnaProcessor.html#ab52fa1e5a21f93ed163a6fbb997da21e',1,'VertexAnaProcessor::brMap_'],['../classNewVertexAnaProcessor.html#ab52fa1e5a21f93ed163a6fbb997da21e',1,'NewVertexAnaProcessor::brMap_']]],

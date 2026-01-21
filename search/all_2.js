@@ -83,7 +83,7 @@ var searchData=
   ['br_5fvphi_5fpi_80',['br_Vphi_pi',['../classSimpEquations.html#a93fdb1bc8489f9a77e6617478e343393',1,'SimpEquations']]],
   ['br_5fvrho_5fpi_81',['br_Vrho_pi',['../classSimpEquations.html#a7acaa086730cb51afd2214919249662f',1,'SimpEquations']]],
   ['branches_5f_82',['branches_',['../classEvent.html#a441c38d4c63172fd7c2dfd0034ec77b1',1,'Event']]],
-  ['brawhits_5f_83',['brawhits_',['../classTridentWABAnaProcessor.html#a37893577b2928663db561d4eedc18db4',1,'TridentWABAnaProcessor::brawhits_'],['../classApv25RoXtalkAnaProcessor.html#a726d7ac2c36419f7665ec2d01a139b90',1,'Apv25RoXtalkAnaProcessor::brawHits_']]],
+  ['brawhits_5f_83',['brawhits_',['../classApv25RoXtalkAnaProcessor.html#a726d7ac2c36419f7665ec2d01a139b90',1,'Apv25RoXtalkAnaProcessor::brawHits_'],['../classTridentWABAnaProcessor.html#a37893577b2928663db561d4eedc18db4',1,'TridentWABAnaProcessor::brawhits_']]],
   ['brawsvthits_5f_84',['brawSvtHits_',['../classSvtBl2DAnaProcessor.html#ad638a7e9382cb1d5bf22c4868c6813a8',1,'SvtBl2DAnaProcessor']]],
   ['brecoclu_5f_85',['brecoClu_',['../classSvtRawDataAnaProcessor.html#a68f5705e3bb1ce33fae89b4bdcf667f7',1,'SvtRawDataAnaProcessor']]],
   ['brmap_5f_86',['brmap_',['../classNewVertexAnaProcessor.html#ab52fa1e5a21f93ed163a6fbb997da21e',1,'NewVertexAnaProcessor::brMap_'],['../classVertexAnaProcessor.html#ab52fa1e5a21f93ed163a6fbb997da21e',1,'VertexAnaProcessor::brMap_']]],

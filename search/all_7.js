@@ -2,7 +2,7 @@ var searchData=
 [
   ['gamma_0',['gamma',['../classSimpEquations.html#a9c1d8bacba9286e025f9a567d376df49',1,'SimpEquations']]],
   ['gaussexptails_5ff_1',['GaussExpTails_f',['../namespaceHistogramHelpers.html#af5e7ea391529a3ec63decc5523bcd34a',1,'HistogramHelpers']]],
-  ['gaussian_2',['gaussian',['../classFitFunction.html#a65336e70d753bb21bb743a20613f4fd7afca8f51c9117fbb492a2184e9df9e412',1,'FitFunction::GAUSSIAN'],['../classFunctionMath.html#af1efcb2fd3b549de775a2e3df1570f93',1,'FunctionMath::Gaussian()']]],
+  ['gaussian_2',['gaussian',['../classFunctionMath.html#af1efcb2fd3b549de775a2e3df1570f93',1,'FunctionMath::Gaussian()'],['../classFitFunction.html#a65336e70d753bb21bb743a20613f4fd7afca8f51c9117fbb492a2184e9df9e412',1,'FitFunction::GAUSSIAN']]],
   ['gbl_3',['GBL',['../namespaceTRACKINFO.html#acec5c5ebb9b44e944def1ed14528d34ca64ac9f6cd35c35eabc36afa3dbcf6bf6',1,'TRACKINFO']]],
   ['gbl_5ftracks_4',['GBL_TRACKS',['../namespaceCollections.html#a3fe28416324ba7aea8e8eea751994f09',1,'Collections']]],
   ['gen_5f_5',['gen_',['../classMCParticle.html#a4bddd88583a5b76910aa2951c7b814b1',1,'MCParticle']]],
@@ -69,7 +69,7 @@ var searchData=
   ['getglobaly_66',['getglobaly',['../classTrackerHit.html#a037dbf33c23e4f394e56a71b8cb4e8ea',1,'TrackerHit::getGlobalY()'],['../classMCEcalHit.html#a037dbf33c23e4f394e56a71b8cb4e8ea',1,'MCEcalHit::getGlobalY()'],['../classMCTrackerHit.html#a037dbf33c23e4f394e56a71b8cb4e8ea',1,'MCTrackerHit::getGlobalY()']]],
   ['getglobalz_67',['getglobalz',['../classTrackerHit.html#a740175ec4578befac356d2102625d303',1,'TrackerHit::getGlobalZ()'],['../classMCTrackerHit.html#a740175ec4578befac356d2102625d303',1,'MCTrackerHit::getGlobalZ()'],['../classMCEcalHit.html#a740175ec4578befac356d2102625d303',1,'MCEcalHit::getGlobalZ()']]],
   ['getgoodnessofpid_68',['getGoodnessOfPID',['../classParticle.html#ace6fc5d266a6826a3c79ce799ed1469e',1,'Particle']]],
-  ['gethistosfromfile_69',['gethistosfromfile',['../classHistoManager.html#a1d6a53e655bd418c172f199a9509b9f4',1,'HistoManager::GetHistosFromFile()'],['../classBlFitHistos.html#a52d940937dee537e69c27ebbc7f12d5d',1,'BlFitHistos::getHistosFromFile()']]],
+  ['gethistosfromfile_69',['gethistosfromfile',['../classBlFitHistos.html#a52d940937dee537e69c27ebbc7f12d5d',1,'BlFitHistos::getHistosFromFile()'],['../classHistoManager.html#a1d6a53e655bd418c172f199a9509b9f4',1,'HistoManager::GetHistosFromFile()']]],
   ['gethitlayers_70',['getHitLayers',['../classTrack.html#a39af95d014a02a0919fe92a85cf0700e',1,'Track']]],
   ['gethits_71',['gethits',['../classHodoCluster.html#abec0c49c4dab7f82a82f4d5332f6f084',1,'HodoCluster::getHits()'],['../classCalCluster.html#aa41550d2d788f1c643c53cda8303aa7d',1,'CalCluster::getHits()']]],
   ['gethole_72',['getHole',['../classHodoHit.html#a291aef64bc781c98b80ca3c0949d885d',1,'HodoHit']]],

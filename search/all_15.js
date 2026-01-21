@@ -8,11 +8,14 @@ var searchData=
   ['updatevertexwithbiasp_5',['updateVertexWithBiasP',['../classTrackBiasingTool.html#aa9611194679de352f7eb8b2c61bc55b5',1,'TrackBiasingTool']]],
   ['updatewithbiasp_6',['updatewithbiasp',['../classTrackBiasingTool.html#aa4fb28285c5141fb393c06685fe7712d',1,'TrackBiasingTool::updateWithBiasP(Track &amp;trk, double scaleFactor)'],['../classTrackBiasingTool.html#aa305e938f40284b5e0ca391c0cc4ecb7',1,'TrackBiasingTool::updateWithBiasP(Track &amp;trk)']]],
   ['updatewithsmearp_7',['updateWithSmearP',['../classTrackSmearingTool.html#afe5bab368583599fa6d732773ee1005a',1,'TrackSmearingTool']]],
-  ['upper_5fbound_5f_8',['upper_bound_',['../classBumpHunter.html#ad238d7648d7f332843b306a23231c5f0',1,'BumpHunter']]],
-  ['upper_5flimit_5f_9',['upper_limit_',['../classHpsFitResult.html#a8dde89795870620273808294c26abce8',1,'HpsFitResult']]],
-  ['usage_10',['usage',['../index.html#use',1,'Usage'],['../smearing-tool_8cxx.html#a2ef30c42cbc289d899a8be5d2d8f77d0',1,'usage():&#160;smearing-tool.cxx']]],
-  ['usetrackerhits_5f_11',['usetrackerhits_',['../classVertexProcessor.html#a23e49b66f544b820bd55beffa91f5dbb',1,'VertexProcessor::useTrackerHits_'],['../classTrackingProcessor.html#a23e49b66f544b820bd55beffa91f5dbb',1,'TrackingProcessor::useTrackerHits_']]],
-  ['utilities_2ecxx_12',['utilities.cxx',['../utilities_8cxx.html',1,'']]],
-  ['utilities_2eh_13',['utilities.h',['../utilities_8h.html',1,'']]],
-  ['utils_14',['utils',['../namespaceutils.html',1,'']]]
+  ['updatewithsmearz0_8',['updateWithSmearZ0',['../classTrackSmearingTool.html#a3f136880c45ec796106d05fe77a9712b',1,'TrackSmearingTool']]],
+  ['upper_5fbound_5f_9',['upper_bound_',['../classBumpHunter.html#ad238d7648d7f332843b306a23231c5f0',1,'BumpHunter']]],
+  ['upper_5flimit_5f_10',['upper_limit_',['../classHpsFitResult.html#a8dde89795870620273808294c26abce8',1,'HpsFitResult']]],
+  ['usage_11',['usage',['../index.html#use',1,'Usage'],['../smearing-tool_8cxx.html#a2ef30c42cbc289d899a8be5d2d8f77d0',1,'usage():&#160;smearing-tool.cxx']]],
+  ['usefixedsmearing_5f_12',['useFixedSmearing_',['../classTrackSmearingTool.html#a0ba5a39cf160b46842ff7c0fff3d6d02',1,'TrackSmearingTool']]],
+  ['useseparatetopbot_5f_13',['useSeparateTopBot_',['../classTrackSmearingTool.html#a0fd8ff7d0e6fe4f041e60bb16476122d',1,'TrackSmearingTool']]],
+  ['usetrackerhits_5f_14',['usetrackerhits_',['../classTrackingProcessor.html#a23e49b66f544b820bd55beffa91f5dbb',1,'TrackingProcessor::useTrackerHits_'],['../classVertexProcessor.html#a23e49b66f544b820bd55beffa91f5dbb',1,'VertexProcessor::useTrackerHits_']]],
+  ['utilities_2ecxx_15',['utilities.cxx',['../utilities_8cxx.html',1,'']]],
+  ['utilities_2eh_16',['utilities.h',['../utilities_8h.html',1,'']]],
+  ['utils_17',['utils',['../namespaceutils.html',1,'']]]
 ];

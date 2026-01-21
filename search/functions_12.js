@@ -6,5 +6,6 @@ var searchData=
   ['updatevertexwithbiasp_3',['updateVertexWithBiasP',['../classTrackBiasingTool.html#aa9611194679de352f7eb8b2c61bc55b5',1,'TrackBiasingTool']]],
   ['updatewithbiasp_4',['updatewithbiasp',['../classTrackBiasingTool.html#aa4fb28285c5141fb393c06685fe7712d',1,'TrackBiasingTool::updateWithBiasP(Track &amp;trk, double scaleFactor)'],['../classTrackBiasingTool.html#aa305e938f40284b5e0ca391c0cc4ecb7',1,'TrackBiasingTool::updateWithBiasP(Track &amp;trk)']]],
   ['updatewithsmearp_5',['updateWithSmearP',['../classTrackSmearingTool.html#afe5bab368583599fa6d732773ee1005a',1,'TrackSmearingTool']]],
-  ['usage_6',['usage',['../smearing-tool_8cxx.html#a2ef30c42cbc289d899a8be5d2d8f77d0',1,'smearing-tool.cxx']]]
+  ['updatewithsmearz0_6',['updateWithSmearZ0',['../classTrackSmearingTool.html#a3f136880c45ec796106d05fe77a9712b',1,'TrackSmearingTool']]],
+  ['usage_7',['usage',['../smearing-tool_8cxx.html#a2ef30c42cbc289d899a8be5d2d8f77d0',1,'smearing-tool.cxx']]]
 ];
