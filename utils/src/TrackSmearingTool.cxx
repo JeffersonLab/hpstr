@@ -33,12 +33,6 @@ TrackSmearingTool::TrackSmearingTool(const std::string& smearingfile,
     useFixedSmearing_ = true;
     useSeparateTopBot_ = true;
 
-    // setup random engine
-    if (debug_)
-      std::cout<<"Setting up random engine with seed "<<seed<<std::endl;
-    generator_ = std::make_shared<std::default_random_engine>(seed);
-    normal_ = std::make_shared<std::normal_distribution<double>>(0., 1.);
-
     if (debug_) {
       std::cout<<"Using JSON smearing config: "<<smearingfile<<std::endl;
       std::cout<<"  pSmearing top: "<<pSmearingValueTop_<<" bot: "<<pSmearingValueBot_<<std::endl;
@@ -62,13 +56,14 @@ TrackSmearingTool::TrackSmearingTool(const std::string& smearingfile,
     if (!smearing_histo_top_ || !smearing_histo_bot_)
       throw std::invalid_argument("Top and Bottom smearing histograms not found in smearing file");
 
-    //setup random engine
-    if (debug_)
-      std::cout<<"Setting up random engine with seed "<<seed<<std::endl;
-    generator_ = std::make_shared<std::default_random_engine>(seed);
+   }
 
-    normal_ = std::make_shared<std::normal_distribution<double>>(0.,1.);
-  }
+  //setup random engine
+  if (debug_)
+    std::cout<<"Setting up random engine with seed "<<seed<<std::endl;
+  generator_ = std::make_shared<std::default_random_engine>(seed);
+
+  normal_ = std::make_shared<std::normal_distribution<double>>(0.,1.);
 
 }
 
