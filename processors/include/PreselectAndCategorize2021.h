@@ -29,8 +29,12 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
   private:
     std::string trkColl_{"KalmanFullTracks"};
     // std::string hitColl_{"SiClustersOnTrack"};
+    int smearingSeed_{42};  // configurable seed (default 42 for backward compat)
+    bool doSmearing_{true};  // master switch for track smearing
+    double smearingFactor_{1.0};  // factor to multiply smearing parameters by
     bool isSimpSignal_{false};
     bool isApSignal_{false};
+    bool debug_{false};  // debug output for smearing validation
     std::vector<double> determine_time_cuts(bool isData, int runNumber);
     std::vector<double> time_cuts_{6.9, 5.2, 9.0};
 };

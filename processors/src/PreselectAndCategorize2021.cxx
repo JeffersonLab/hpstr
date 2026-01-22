@@ -7,12 +7,28 @@
 #include "PreselectAndCategorize2021.h"
 
 void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
+    // Support both parameter names (smearingCfg takes precedence)
     auto pSmearingFile = parameters.getString("pSmearingFile");
+    auto smearingCfgFile = parameters.getString("smearingCfg", "");
 
-    if (not pSmearingFile.empty()) {
-        // just using the same seed=42 for now
-        std::cout << "Loading momentum smearing from " << pSmearingFile << std::endl;
-        smearingTool_ = std::make_shared<TrackSmearingTool>(pSmearingFile, true);
+    // Configurable seed
+    smearingSeed_ = parameters.getInteger("smearingSeed", smearingSeed_);
+
+    // Master switch for smearing (default true for backward compatibility)
+    doSmearing_ = parameters.getInteger("doSmearing", 1) != 0;
+
+    // Factor to multiply smearing parameters by (default 1.0)
+    smearingFactor_ = parameters.getDouble("smearingFactor", 1.0);
+
+    std::string smearingFile = !smearingCfgFile.empty() ? smearingCfgFile : pSmearingFile;
+
+    if (doSmearing_ and not smearingFile.empty()) {
+        std::cout << "Loading smearing config from " << smearingFile << std::endl;
+        std::cout << "Using smearing seed: " << smearingSeed_ << std::endl;
+        std::cout << "Using smearing factor: " << smearingFactor_ << std::endl;
+        smearingTool_ = std::make_shared<TrackSmearingTool>(smearingFile, true, smearingSeed_, "KalmanFullTracks", smearingFactor_);
+    } else if (not doSmearing_) {
+        std::cout << "Track smearing disabled via doSmearing flag" << std::endl;
     }
 
     auto beamPosCfg = parameters.getString("beamPosCfg");
@@ -60,6 +76,7 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     isSimpSignal_ = parameters.getInteger("isSimpSignal") != 0;
     isApSignal_ = parameters.getInteger("isApSignal") != 0;
     if (isSimpSignal_ || isApSignal_) isSignal_ = true;
+
 }
 
 std::vector<double> PreselectAndCategorize2021::determine_time_cuts(bool isData, int runNumber) {
@@ -151,6 +168,10 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
     bus_.board_output<Particle>(output_tree_.get(), "ele");
     bus_.board_output<Particle>(output_tree_.get(), "pos");
     bus_.board_output<double>(output_tree_.get(), "psum");
+    bus_.board_output<double>(output_tree_.get(), "psum_vtx");
+    bus_.board_output<double>(output_tree_.get(), "psum_scalar");
+    bus_.board_output<double>(output_tree_.get(), "ele_p_smear_ratio");
+    bus_.board_output<double>(output_tree_.get(), "pos_p_smear_ratio");
 
     /***************************************
      * adding specific cut variables       *
@@ -286,12 +307,21 @@ bool PreselectAndCategorize2021::process(IEvent*) {
 
         }
 
-        // smear track momentum
+        // Apply track smearing (z0 and momentum)
+        double ele_p_smear_ratio = 1.0;
+        double pos_p_smear_ratio = 1.0;
         if (smearingTool_) {
-            double ele_smear = smearingTool_->updateWithSmearP(ele_trk);
-            double pos_smear = smearingTool_->updateWithSmearP(pos_trk);
-            smearingTool_->updateVertexWithSmearP(vtx, ele_smear, pos_smear);
+            // Apply z0 smearing first
+            smearingTool_->updateWithSmearZ0(ele_trk);
+            smearingTool_->updateWithSmearZ0(pos_trk);
+
+            // Apply momentum smearing
+            ele_p_smear_ratio = smearingTool_->updateWithSmearP(ele_trk);
+            pos_p_smear_ratio = smearingTool_->updateWithSmearP(pos_trk);
+            smearingTool_->updateVertexWithSmearP(vtx, ele_p_smear_ratio, pos_p_smear_ratio);
         }
+        bus_.set("ele_p_smear_ratio", ele_p_smear_ratio);
+        bus_.set("pos_p_smear_ratio", pos_p_smear_ratio);
 
         // put tracks back into their particles
         // with their new data
@@ -414,7 +444,22 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     TVector3 ele_mom(ele_trk.getMomentum()[0], ele_trk.getMomentum()[1], ele_trk.getMomentum()[2]);
     TVector3 pos_mom(pos_trk.getMomentum()[0], pos_trk.getMomentum()[1], pos_trk.getMomentum()[2]);
     TVector3 psum = ele_mom + pos_mom;
+
+    if (debug_) {
+        std::cout << "Preselection psum calculation:" << std::endl;
+        std::cout << "  Electron: px=" << ele_mom.X() << " py=" << ele_mom.Y() << " pz=" << ele_mom.Z() << " |p|=" << ele_mom.Mag() << std::endl;
+        std::cout << "  Positron: px=" << pos_mom.X() << " py=" << pos_mom.Y() << " pz=" << pos_mom.Z() << " |p|=" << pos_mom.Mag() << std::endl;
+        std::cout << "  Psum:     px=" << psum.X() << " py=" << psum.Y() << " pz=" << psum.Z() << " |psum|=" << psum.Mag() << std::endl;
+    }
+
     bus_.set("psum", psum.Mag());
+    bus_.set("psum_scalar", ele_mom.Mag() + pos_mom.Mag());
+
+    // Compute psum from vertex P1/P2 for comparison
+    TVector3 vtx_ele_mom(vtx.getP1X(), vtx.getP1Y(), vtx.getP1Z());
+    TVector3 vtx_pos_mom(vtx.getP2X(), vtx.getP2Y(), vtx.getP2Z());
+    TVector3 psum_vtx = vtx_ele_mom + vtx_pos_mom;
+    bus_.set("psum_vtx", psum_vtx.Mag());
 
     // calculate target projection and its significance
     if (not v0proj_fits_.empty()) {
