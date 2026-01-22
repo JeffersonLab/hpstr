@@ -28,7 +28,7 @@ class plotFitter:
             self.hmap[hname].Write()
         
 
-    def smearing_term(self, sigma_data, sigma_mc, sigma_dataerr=0., sigma_mcerr=0.):
+    def smearing_term(self, mu_data, sigma_data, mu_mc, sigma_mc, sigma_dataerr=0., sigma_mcerr=0.):
         
         st = -1.
         sigma_a = sigma_data
@@ -38,7 +38,8 @@ class plotFitter:
             print("WARNING: DATA resolution is LESS than MC...")
             return (0.,0.)
         
-        st = sqrt(sigma_data*sigma_data - sigma_mc*sigma_mc)
+        #st = sqrt(sigma_data*sigma_data - sigma_mc*sigma_mc)
+        st = sqrt( (sigma_data*sigma_data)/(mu_data*mu_data) - (sigma_mc*sigma_mc)/(mu_mc*mu_mc))
 
         if (st < 1e-6):
             return (0.,0.)
@@ -89,7 +90,7 @@ class plotFitter:
         sigma_mc   = mcfit.GetParameter(2)
         print(">>>> MC: ",mu_mc,sigma_mc)
         
-        st,sigmast = self.smearing_term(sigma_data,sigma_mc)
+        st,sigmast = self.smearing_term(mu_data,sigma_data,mu_mc,sigma_mc)
 
         self.hmap[hname+"_smearing"] = TH1F(hname+"_smearing",
                                             hname+"_smearing",
@@ -281,9 +282,9 @@ def main():
     pSmearing_bot = pf.fit1D("KalmanFullTracks/KalmanFullTracks_p_bot_h")
 
     # Fit z0 distributions
-    z0Smearing_inclusive = pf.fit1D("KalmanFullTracks/KalmanFullTracks_Z0_h")
-    z0Smearing_top = pf.fit1D("KalmanFullTracks/KalmanFullTracks_top_track_z0_h")
-    z0Smearing_bot = pf.fit1D("KalmanFullTracks/KalmanFullTracks_bot_track_z0_h")
+    #z0Smearing_inclusive = pf.fit1D("KalmanFullTracks/KalmanFullTracks_Z0_h")
+    #z0Smearing_top = pf.fit1D("KalmanFullTracks/KalmanFullTracks_top_track_z0_h")
+    #z0Smearing_bot = pf.fit1D("KalmanFullTracks/KalmanFullTracks_bot_track_z0_h")
 
     # Write smearing config to JSON file for TrackSmearingTool
     smearingConfig = {
@@ -292,11 +293,11 @@ def main():
             "top": pSmearing_top,
             "bot": pSmearing_bot
         },
-        "z0Smearing": {
-            "inclusive": z0Smearing_inclusive,
-            "top": z0Smearing_top,
-            "bot": z0Smearing_bot
-        },
+    #    "z0Smearing": {
+    #        "inclusive": z0Smearing_inclusive,
+    #        "top": z0Smearing_top,
+    #        "bot": z0Smearing_bot
+    #    },
         "relSmearing": False
     }
 
