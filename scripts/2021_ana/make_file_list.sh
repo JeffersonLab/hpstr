@@ -24,31 +24,48 @@ shopt -s nullglob
 
 file_count=0
 
-for dir in "${INPUT_DATA_DIR}"/hps_*; do
-  # Check if we've reached the limit
-  if [ "${max_files}" -gt 0 ] && [ "${file_count}" -ge "${max_files}" ]; then
-    break
-  fi
+# Check if run-number subdirectories exist (hps_* pattern)
+run_dirs=("${INPUT_DATA_DIR}"/hps_*)
 
-  # Use parameter expansion instead of spawning cut
-  base=${dir##*/}
-  runnum=${base#hps_}
+if [ ${#run_dirs[@]} -gt 0 ] && [ -d "${run_dirs[0]}" ]; then
+  # Structured directory: hps_* subdirectories with run-specific files
+  for dir in "${run_dirs[@]}"; do
+    # Check if we've reached the limit
+    if [ "${max_files}" -gt 0 ] && [ "${file_count}" -ge "${max_files}" ]; then
+      break
+    fi
 
-  # Collect files into array (avoids double glob evaluation)
-  files=("$dir/merged_hps_${runnum}_"*.root)
+    # Use parameter expansion instead of spawning cut
+    base=${dir##*/}
+    runnum=${base#hps_}
 
-  # Check if any files matched (nullglob makes array empty if no match)
-  if [ ${#files[@]} -gt 0 ]; then
-    for f in "${files[@]}"; do
-      # Check limit before adding each file
-      if [ "${max_files}" -gt 0 ] && [ "${file_count}" -ge "${max_files}" ]; then
-        break
-      fi
-      printf '%s\n' "$f" >> "${FILE_LIST}"
-      ((++file_count))
-    done
-  fi
-done
+    # Collect files into array (avoids double glob evaluation)
+    files=("$dir/merged_hps_${runnum}_"*.root)
+
+    # Check if any files matched (nullglob makes array empty if no match)
+    if [ ${#files[@]} -gt 0 ]; then
+      for f in "${files[@]}"; do
+        # Check limit before adding each file
+        if [ "${max_files}" -gt 0 ] && [ "${file_count}" -ge "${max_files}" ]; then
+          break
+        fi
+        printf '%s\n' "$f" >> "${FILE_LIST}"
+        ((++file_count))
+      done
+    fi
+  done
+else
+  # Flat directory: ROOT files directly in INPUT_DATA_DIR
+  files=("${INPUT_DATA_DIR}"/*.root)
+
+  for f in "${files[@]}"; do
+    if [ "${max_files}" -gt 0 ] && [ "${file_count}" -ge "${max_files}" ]; then
+      break
+    fi
+    printf '%s\n' "$f" >> "${FILE_LIST}"
+    ((++file_count))
+  done
+fi
 
 echo "Generated ${FILE_LIST} with ${file_count} files"
 
