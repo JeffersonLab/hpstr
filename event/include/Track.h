@@ -90,6 +90,7 @@ class Track : public TObject {
         double getOmega    () const {return omega_;}
         double getTanLambda() const {return tan_lambda_;}
         double getZ0       () const {return z0_;}
+        void   setZ0       (const double z0) {z0_ = z0;}
         
         /** Set the covariance matrix **/
         void setCov(const std::vector<float>& cov) {cov_ = cov;}

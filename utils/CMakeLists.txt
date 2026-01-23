@@ -1,7 +1,7 @@
 
 # Declare processors module
-module( 
+module(
     NAME utils
-    DEPENDENCIES event
+    DEPENDENCIES event analysis
     EXTERNAL_DEPENDENCIES ROOT
 )

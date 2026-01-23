@@ -1,0 +1,14 @@
+{
+    "pSmearing": {
+        "inclusive": 0.040733421451332553,
+        "top": 0.05067486490300599,
+        "bot": 0.03516718766796909
+    },
+    "z0Smearing": {
+        "inclusive": 0.0489615408651479,
+        "top": 0.049285536755409885,
+        "bot": 0.04589554481673371
+    },
+    "relSmearingP": true,
+    "relSmearingZ0": false
+}

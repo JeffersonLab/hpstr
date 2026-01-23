@@ -28,6 +28,7 @@ void TrackingAnaProcessor::configure(const ParameterSet& parameters) {
         
         //Momentum smearing closure test
         pSmearingFile_            = parameters.getString("pSmearingFile",pSmearingFile_);
+        smearingCfgFile_          = parameters.getString("smearingCfg",smearingCfgFile_);
         
     }
     catch (std::runtime_error& error)
@@ -98,45 +99,56 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
     
 
     //Momentum smearing closure test
-    if (!pSmearingFile_.empty()) {
-      
+    // Determine which smearing file to use (smearingCfg takes precedence)
+    std::string smearingFile = !smearingCfgFile_.empty() ? smearingCfgFile_ : pSmearingFile_;
+
+    if (!smearingFile.empty()) {
       std::cout<<"Smearing Tool Seed "<<seed_<<std::endl;
-      smearingTool_    =   std::make_shared<TrackSmearingTool>(pSmearingFile_,false,seed_);
-      smearingToolRel_ =   std::make_shared<TrackSmearingTool>(pSmearingFile_,true, seed_);
-      
+      std::cout<<"Using smearing file: "<<smearingFile<<std::endl;
+      smearingTool_ = std::make_shared<TrackSmearingTool>(smearingFile, false, seed_);
+
       psmear_h_     =   new TH1D("psmear_h",
-                                 "psmear_h",200,0,4);
+                                 "psmear_h",200,2,6);
+      psmear_top_h_ =   new TH1D("psmear_top_h",
+                                 "psmear_top_h",200,2,6);
+      psmear_bot_h_ =   new TH1D("psmear_bot_h",
+                                 "psmear_bot_h",200,2,6);
 
       psmear_vs_nHits_hh_ =  new TH2D("psmear_vs_nHits_hh",
                                       "psmear_vs_nHits_hh",
                                       5,8,13,
-                                      200,0,4);
+                                      200,0,6);
       psmear_vs_nHits_top_hh_ =  new TH2D("psmear_vs_nHits_top_hh",
                                           "psmear_vs_nHits_top_hh",
                                           5,8,13,
-                                          200,0,4);
+                                          200,0,6);
       psmear_vs_nHits_bot_hh_ =  new TH2D("psmear_vs_nHits_bot_hh",
                                           "psmear_vs_nHits_bot_hh",
                                           5,8,13,
-                                          200,0,4);
+                                          200,0,6);
 
 
       psmear_rel_h_     =   new TH1D("psmear_rel_h",
-                                     "psmear_rel_h",200,0,4);
-      
+                                     "psmear_rel_h",200,0,6);
+
       psmear_vs_nHits_rel_hh_ =  new TH2D("psmear_vs_nHits_rel_hh",
                                           "psmear_vs_nHits_rel_hh",
                                           5,8,13,
-                                          200,0,4);
+                                          200,0,6);
       psmear_vs_nHits_top_rel_hh_ =  new TH2D("psmear_vs_nHits_top_rel_hh",
                                               "psmear_vs_nHits_top_rel_hh",
                                               5,8,13,
-                                              200,0,4);
+                                              200,0,6);
       psmear_vs_nHits_bot_rel_hh_ =  new TH2D("psmear_vs_nHits_bot_rel_hh",
                                               "psmear_vs_nHits_bot_rel_hh",
                                               5,8,13,
-                                              200,0,4);
-      
+                                              200,0,6);
+
+      // z0 smearing validation histograms (binning matches Z0_h from feeSmearing_2021.json)
+      z0smear_h_     = new TH1D("z0smear_h", "z0smear_h", 100, -0.5, 0.5);
+      z0smear_top_h_ = new TH1D("z0smear_top_h", "z0smear_top_h", 100, -0.5, 0.5);
+      z0smear_bot_h_ = new TH1D("z0smear_bot_h", "z0smear_bot_h", 100, -0.5, 0.5);
+
     }
       
     
@@ -151,8 +163,8 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
     
     //Trigger requirements - Singles 0 and 1. 
     //TODO use cutFlow 
-    if (isData_ && (!evth_->isSingle0Trigger() && !evth_->isSingle1Trigger()))
-      return true; //true is correct?
+    //if (isData_ && (!evth_->isSingle0Trigger() && !evth_->isSingle1Trigger()))
+    //  return true; //true is correct?
 
     //Ask for 1 cluster p > 1.2 GeV with time [40,70]
     //TODO Use Cutflow
@@ -164,14 +176,14 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
       minTime = 30;
       maxTime = 50;
     }
-        
     //if (ecal_->size() <= 2)
     //  return true;
     
     bool foundFeeCluster = false;
     
     for (unsigned int iclu = 0; iclu < ecal_->size(); iclu++) {
-      if (ecal_->at(iclu)->getEnergy() > 1.5)
+//      if (ecal_->at(iclu)->getEnergy() > 1.5)
+      if (ecal_->at(iclu)->getEnergy() > 2.5)
         foundFeeCluster = true;
       break;
     }
@@ -202,6 +214,14 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
         trk_mom.SetY(track->getMomentum()[1]);
         trk_mom.SetZ(track->getMomentum()[2]);
 
+        auto hits = track->getHitLayers();
+
+        int nHitsInnerLayers=0;
+        for(auto& hit : hits){
+          if( hit<4 ) nHitsInnerLayers++;
+        }
+
+        if( nHitsInnerLayers<4 ) continue;
         
         //Track Selection
         if (trkSelector_ && !trkSelector_->passCutGt("n_hits_gt",n2dhits_onTrack,weight))
@@ -248,6 +268,9 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
         
         trkHistos_->Fill1DHistograms(track);
         trkHistos_->Fill2DTrack(track);
+
+        //auto pos = track->getPosition();
+        //std::cout << "X: " << pos[0]  << " Y : " << pos[1] << " Z: " << pos[2] << std::endl;
         
         if (truthHistos_) {
             truthHistos_->Fill1DHistograms(truth_track);
@@ -290,41 +313,48 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
         
 
         //pSmearing closure Test
-        if (!isData_ && !pSmearingFile_.empty()) {
+        // For MC: apply smearing; for data: use raw values
+        if (!pSmearingFile_.empty() || !smearingCfgFile_.empty()) {
 
-
-          //Check that I get a gaussian as expected
-          double p_base      = 1.;
-          
-          
-          double psmear     = smearingTool_->smearTrackP(*track);
-          double psmear_rel = smearingToolRel_->smearTrackP(*track);
-          
           double nhits  = track->getTrackerHitCount();
-          double isTop  = track->getTanLambda() > 0 ? true : false;
-          
-          psmear_h_->Fill(psmear);
-          psmear_vs_nHits_hh_->Fill(nhits,psmear);
-          
+          bool isTop  = track->getTanLambda() > 0;
+
+          // For MC apply smearing, for data use raw values
+          double pval = isData_ ? track->getP() : smearingTool_->smearTrackP(*track);
+          double z0val = isData_ ? track->getZ0() : smearingTool_->smearTrackZ0(*track);
+
+          psmear_h_->Fill(pval);
+          psmear_vs_nHits_hh_->Fill(nhits, pval);
+
           if (isTop) {
-            psmear_vs_nHits_top_hh_->Fill(nhits,psmear);
+            psmear_top_h_->Fill(pval);
+            psmear_vs_nHits_top_hh_->Fill(nhits, pval);
           }
           else {
-            psmear_vs_nHits_bot_hh_->Fill(nhits,psmear);
+            psmear_bot_h_->Fill(pval);
+            psmear_vs_nHits_bot_hh_->Fill(nhits, pval);
           }
 
+          psmear_rel_h_->Fill(pval);
+          psmear_vs_nHits_rel_hh_->Fill(nhits, pval);
 
-          psmear_rel_h_->Fill(psmear_rel);
-          psmear_vs_nHits_rel_hh_->Fill(nhits,psmear_rel);
-          
           if (isTop) {
-            psmear_vs_nHits_top_rel_hh_->Fill(nhits,psmear_rel);
+            psmear_vs_nHits_top_rel_hh_->Fill(nhits, pval);
           }
           else {
-            psmear_vs_nHits_bot_rel_hh_->Fill(nhits,psmear_rel);
+            psmear_vs_nHits_bot_rel_hh_->Fill(nhits, pval);
           }
-          
-        } // closer test
+
+          // z0 smearing validation
+          z0smear_h_->Fill(z0val);
+          if (isTop) {
+            z0smear_top_h_->Fill(z0val);
+          }
+          else {
+            z0smear_bot_h_->Fill(z0val);
+          }
+
+        } // smearing validation
         
     }//Loop on tracks
     
@@ -354,14 +384,18 @@ void TrackingAnaProcessor::finalize() {
       reg_selectors_[it->first]->getCutFlowHisto()->Write();
     }
     
-    if (!pSmearingFile_.empty()) {
+    if (!pSmearingFile_.empty() || !smearingCfgFile_.empty()) {
       outF_->cd(trkCollName_.c_str());
       psmear_h_->Write();
+      psmear_top_h_->Write();
+      psmear_bot_h_->Write();
 
       psmear_vs_nHits_hh_->Write();
       psmear_vs_nHits_top_hh_->Write();
       psmear_vs_nHits_bot_hh_->Write();
       delete psmear_h_;
+      delete psmear_top_h_;
+      delete psmear_bot_h_;
       delete psmear_vs_nHits_hh_;
       delete psmear_vs_nHits_top_hh_;
       delete psmear_vs_nHits_bot_hh_;
@@ -374,7 +408,15 @@ void TrackingAnaProcessor::finalize() {
       delete psmear_vs_nHits_rel_hh_;
       delete psmear_vs_nHits_top_rel_hh_;
       delete psmear_vs_nHits_bot_rel_hh_;
-            
+
+      // z0 smearing validation histograms
+      z0smear_h_->Write();
+      z0smear_top_h_->Write();
+      z0smear_bot_h_->Write();
+      delete z0smear_h_;
+      delete z0smear_top_h_;
+      delete z0smear_bot_h_;
+
     }
         
     //trkHistos_->Clear();

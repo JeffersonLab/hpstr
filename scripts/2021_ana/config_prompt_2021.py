@@ -7,6 +7,14 @@ base.parser.add_argument(
         '--sample', choices=['data','sim_bkgd','ap_signal', 'simp_signal'],
         help='Signal which type of sample this is', required=True
 )
+base.parser.add_argument(
+        '--smearing', dest='smearing', action='store_true',
+        help='Enable track smearing (disabled by default)'
+)
+base.parser.add_argument(
+        '--no-smearing', dest='noSmearing', action='store_true',
+        help='Explicitly disable track smearing'
+)
 
 options = base.parser.parse_args()
 
@@ -63,6 +71,10 @@ preselect.parameters['trackBiasCfg'] = ""
 
 preselect.parameters['calTimeOffset'] = 37.3
 #preselect.parameters['calTimeOffset'] = 37.3 if options.isData else 24.
+
+preselect.parameters["smearingCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/smearing/trackSmearing_2021.json"
+preselect.parameters["doSmearing"] = 1 if (options.smearing and not options.noSmearing and options.sample != 'data') else 0
+preselect.parameters["smearingFactor"] = 1.0
 
 p.sequence = [preselect]
 

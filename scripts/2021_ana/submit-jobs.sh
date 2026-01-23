@@ -1,10 +1,14 @@
 #!/bin/bash
-# Submit individual SLURM jobs for each file in the list
+# Submit individual SLURM jobs for each file in the list(s)
 #
-# Usage: ./submit-jobs.sh --sample <sample_type> [file.list] [-- extra_hpstr_args...]
+# Usage: ./submit-jobs.sh --sample <sample_type> [file.list ...] [-- extra_hpstr_args...]
 #   --sample - required, one of: data, sim_bkgd, ap_signal, simp_signal
-#   file.list - optional, path to file list (defaults to FILE_LIST from config.sh)
+#   file.list - optional, path(s) to file list(s) (supports wildcards, defaults to FILE_LIST from config.sh)
 #   -- extra_hpstr_args - optional, additional arguments to pass to hpstr
+#
+# Examples:
+#   ./submit-jobs.sh --sample data my_files_*.list
+#   ./submit-jobs.sh --sample sim_bkgd list1.list list2.list list3.list
 #
 # Environment variables:
 #   PRESELECT_SUBDIR - if set, output goes to OUTPUT_DIR/PRESELECT_SUBDIR
@@ -16,9 +20,9 @@ set -o nounset
 VALID_SAMPLES=("data" "sim_bkgd" "ap_signal" "simp_signal")
 
 usage() {
-  echo "Usage: $0 --sample <sample_type> [file.list] [-- extra_hpstr_args...]"
+  echo "Usage: $0 --sample <sample_type> [file.list ...] [-- extra_hpstr_args...]"
   echo "  --sample: required, one of: ${VALID_SAMPLES[*]}"
-  echo "  file.list: optional, path to file list (defaults to FILE_LIST from config.sh)"
+  echo "  file.list: optional, path(s) to file list(s) - supports wildcards (defaults to FILE_LIST from config.sh)"
   echo "  -- extra_hpstr_args: optional, additional arguments to pass to hpstr"
   exit 1
 }
@@ -28,7 +32,7 @@ SUBMIT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SUBMIT_DIR}/config.sh"
 
 # Parse arguments
-file_list="${FILE_LIST}"
+file_lists=()
 extra_args=()
 sample=""
 
@@ -48,11 +52,16 @@ while [[ $# -gt 0 ]]; do
       break
       ;;
     *)
-      file_list="$1"
+      file_lists+=("$1")
       shift
       ;;
   esac
 done
+
+# Use default if no file lists provided
+if [[ ${#file_lists[@]} -eq 0 ]]; then
+  file_lists=("${FILE_LIST}")
+fi
 
 # Validate --sample is provided
 if [[ -z "${sample}" ]]; then
@@ -77,36 +86,47 @@ fi
 # Ensure log directory exists
 mkdir -p "${LOG_DIR}"
 
-# Check file list exists
-if [[ ! -f "${file_list}" ]]; then
-  echo "ERROR: File list not found: ${file_list}"
-  exit 1
-fi
+# Verify all file lists exist before submitting any jobs
+for file_list in "${file_lists[@]}"; do
+  if [[ ! -f "${file_list}" ]]; then
+    echo "ERROR: File list not found: ${file_list}"
+    exit 1
+  fi
+done
 
-# Count files
-num_files=$(wc -l < "${file_list}")
-echo "Submitting ${num_files} individual jobs from ${file_list}"
+# Count total files across all lists
+total_files=0
+for file_list in "${file_lists[@]}"; do
+  count=$(wc -l < "${file_list}")
+  total_files=$((total_files + count))
+done
+
+echo "Submitting jobs from ${#file_lists[@]} file list(s): ${file_lists[*]}"
+echo "Total files: ${total_files}"
 echo "Sample type: ${sample}"
 
-# Submit one job per file
+# Submit one job per file from each file list
 job_count=0
-while IFS= read -r input_file; do
-  # Skip empty lines
-  [[ -z "${input_file}" ]] && continue
+for file_list in "${file_lists[@]}"; do
+  echo "Processing: ${file_list}"
+  while IFS= read -r input_file; do
+    # Skip empty lines
+    [[ -z "${input_file}" ]] && continue
 
-  # Submit individual job
-  sbatch \
-    --partition="${SLURM_PARTITION}" \
-    --account="${SLURM_ACCOUNT}" \
-    --output="${LOG_DIR}/job_%j.log" \
-    --error="${LOG_DIR}/job_%j.log" \
-    "${SUBMIT_DIR}/batch-script.sh" \
-    "${SUBMIT_DIR}" \
-    "${input_file}" \
-    --sample "${sample}" \
-    "${extra_args[@]+"${extra_args[@]}"}"
+    # Submit individual job
+    sbatch \
+      --partition="${SLURM_PARTITION}" \
+      --account="${SLURM_ACCOUNT}" \
+      --output="${LOG_DIR}/job_%j.log" \
+      --error="${LOG_DIR}/job_%j.log" \
+      "${SUBMIT_DIR}/batch-script.sh" \
+      "${SUBMIT_DIR}" \
+      "${input_file}" \
+      --sample "${sample}" \
+      "${extra_args[@]+"${extra_args[@]}"}"
 
-  ((++job_count))
-done < "${file_list}"
+    ((++job_count))
+  done < "${file_list}"
+done
 
 echo "Submitted ${job_count} jobs"

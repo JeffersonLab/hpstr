@@ -25,8 +25,22 @@ source "${SUBMIT_DIR}/config.sh"
 
 input_file="${2}"
 
-# Use OUTPUT_DIR from config, with optional PRESELECT_SUBDIR
-out_dir="${OUTPUT_DIR}${PRESELECT_SUBDIR:+/${PRESELECT_SUBDIR}}"
+# Extract mass point from input path (e.g., ap140MeV from /path/ap140MeV/...)
+# This pattern matches ap followed by digits followed by MeV
+mass_point=""
+if [[ "${input_file}" =~ (ap[0-9]+MeV) ]]; then
+  mass_point="${BASH_REMATCH[1]}"
+  echo "Detected mass point: ${mass_point}"
+fi
+
+# Use OUTPUT_DIR from config, with optional PRESELECT_SUBDIR and mass point
+out_dir="${OUTPUT_DIR}"
+if [[ -n "${PRESELECT_SUBDIR:-}" ]]; then
+  out_dir="${out_dir}/${PRESELECT_SUBDIR}"
+fi
+if [[ -n "${mass_point}" ]]; then
+  out_dir="${out_dir}/${mass_point}"
+fi
 mkdir -p "${out_dir}"
 
 # trusting the filenames from the different batches to not clash
