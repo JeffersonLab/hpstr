@@ -15,7 +15,7 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     smearingSeed_ = parameters.getInteger("smearingSeed", smearingSeed_);
 
     // Master switch for smearing (default true for backward compatibility)
-    doSmearing_ = parameters.getInteger("doSmearing", 1) != 0;
+    doSmearing_ = parameters.getInteger("doSmearing", 0) != 0;
 
     // Factor to multiply smearing parameters by (default 1.0)
     smearingFactor_ = parameters.getDouble("smearingFactor", 1.0);
