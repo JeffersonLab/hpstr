@@ -26,7 +26,9 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
         std::cout << "Loading smearing config from " << smearingFile << std::endl;
         std::cout << "Using smearing seed: " << smearingSeed_ << std::endl;
         std::cout << "Using smearing factor: " << smearingFactor_ << std::endl;
-        smearingTool_ = std::make_shared<TrackSmearingTool>(smearingFile, true, smearingSeed_, "KalmanFullTracks", smearingFactor_);
+        // relSmearingP=true (relative), relSmearingZ0=false (absolute) - these are defaults for ROOT files;
+        // JSON files will override with their own relSmearingP/relSmearingZ0 values
+        smearingTool_ = std::make_shared<TrackSmearingTool>(smearingFile, true, false, smearingSeed_, "KalmanFullTracks", smearingFactor_);
     } else if (not doSmearing_) {
         std::cout << "Track smearing disabled via doSmearing flag" << std::endl;
     }

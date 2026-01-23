@@ -13,7 +13,8 @@ static bool endsWith(const std::string& str, const std::string& suffix) {
 }
 
 TrackSmearingTool::TrackSmearingTool(const std::string& smearingfile,
-                                     const bool relSmearing,
+                                     const bool relSmearingP,
+                                     const bool relSmearingZ0,
                                      const int seed,
                                      const std::string& tracks,
                                      const double smearingFactor){
@@ -34,7 +35,25 @@ TrackSmearingTool::TrackSmearingTool(const std::string& smearingfile,
     pSmearingValueBot_ = cfg["pSmearing"]["bot"].get<double>() * smearingFactor_;
     z0SmearingValueTop_ = cfg["z0Smearing"]["top"].get<double>() * smearingFactor_;
     z0SmearingValueBot_ = cfg["z0Smearing"]["bot"].get<double>() * smearingFactor_;
-    relSmearing_ = cfg.value("relSmearing", false);
+
+    // Support separate relSmearing for p and z0, with backwards compatibility
+    // If relSmearingP/relSmearingZ0 are present, use them; otherwise fall back to relSmearing
+    if (cfg.contains("relSmearingP")) {
+      relSmearingP_ = cfg["relSmearingP"].get<bool>();
+    } else if (cfg.contains("relSmearing")) {
+      relSmearingP_ = cfg["relSmearing"].get<bool>();
+    } else {
+      relSmearingP_ = false;
+    }
+
+    if (cfg.contains("relSmearingZ0")) {
+      relSmearingZ0_ = cfg["relSmearingZ0"].get<bool>();
+    } else if (cfg.contains("relSmearing")) {
+      relSmearingZ0_ = cfg["relSmearing"].get<bool>();
+    } else {
+      relSmearingZ0_ = false;
+    }
+
     useFixedSmearing_ = true;
     useSeparateTopBot_ = true;
 
@@ -43,13 +62,14 @@ TrackSmearingTool::TrackSmearingTool(const std::string& smearingfile,
       std::cout<<"  smearingFactor: "<<smearingFactor_<<std::endl;
       std::cout<<"  pSmearing top: "<<pSmearingValueTop_<<" bot: "<<pSmearingValueBot_<<std::endl;
       std::cout<<"  z0Smearing top: "<<z0SmearingValueTop_<<" bot: "<<z0SmearingValueBot_<<std::endl;
-      std::cout<<"  relSmearing: "<<relSmearing_<<std::endl;
+      std::cout<<"  relSmearingP: "<<relSmearingP_<<" relSmearingZ0: "<<relSmearingZ0_<<std::endl;
     }
 
   } else {
     // ROOT file with smearing histograms
-    relSmearing_ = relSmearing;
-    std::string hsuffix = relSmearing_ ? "_rel" : "";
+    relSmearingP_ = relSmearingP;
+    relSmearingZ0_ = relSmearingZ0;
+    std::string hsuffix = relSmearingP_ ? "_rel" : "";
     smearingfile_ = std::make_shared<TFile>(smearingfile.c_str());
 
     if (!smearingfile_)
@@ -75,12 +95,14 @@ TrackSmearingTool::TrackSmearingTool(const std::string& smearingfile,
 
 TrackSmearingTool::TrackSmearingTool(const double pSmearingValue,
                                      const double z0SmearingValue,
-                                     const bool relSmearing,
+                                     const bool relSmearingP,
+                                     const bool relSmearingZ0,
                                      const int seed,
                                      const double smearingFactor) {
 
   smearingFactor_ = smearingFactor;
-  relSmearing_ = relSmearing;
+  relSmearingP_ = relSmearingP;
+  relSmearingZ0_ = relSmearingZ0;
   pSmearingValue_ = pSmearingValue * smearingFactor_;
   z0SmearingValue_ = z0SmearingValue * smearingFactor_;
   useFixedSmearing_ = true;
@@ -96,6 +118,7 @@ TrackSmearingTool::TrackSmearingTool(const double pSmearingValue,
     std::cout<<"Using smearing factor: "<<smearingFactor_<<std::endl;
     std::cout<<"Using fixed p smearing value: "<<pSmearingValue_<<std::endl;
     std::cout<<"Using fixed z0 smearing value: "<<z0SmearingValue_<<std::endl;
+    std::cout<<"Using relSmearingP: "<<relSmearingP_<<" relSmearingZ0: "<<relSmearingZ0_<<std::endl;
   }
 
 }
@@ -107,7 +130,7 @@ double TrackSmearingTool::smearTrackP(const double p) {
 
   double psmear = 0.;
 
-  if (relSmearing_)
+  if (relSmearingP_)
     psmear = p + sp*p;
   else
     psmear = p + sp;
@@ -133,7 +156,7 @@ double TrackSmearingTool::smearTrackP(const Track& track) {
     double sp = rel_smear * smearingValue;
 
     double psmear = 0.;
-    if (relSmearing_)
+    if (relSmearingP_)
       psmear = p + sp * p;
     else
       psmear = p + sp;
@@ -153,10 +176,10 @@ double TrackSmearingTool::smearTrackP(const Track& track) {
   double nhits = track.getTrackerHitCount();
   bool   isTop = track.getTanLambda() > 0. ? true : false;
   int    binN  = smearing_histo_top_->FindBin(nhits);
-  
+
   if (debug_)
     std::cout<<"Track nhits="<<nhits<<" bin="<<binN<<std::endl;
-  
+
   if (binN < 1) {
     if (debug_)
       std::cout<<"Track nhits="<<nhits<<" bin="<<binN<<" rounding to bin=1"<< std::endl;
@@ -164,7 +187,7 @@ double TrackSmearingTool::smearTrackP(const Track& track) {
   } else if (binN > smearing_histo_top_->GetXaxis()->GetNbins()) {
     throw std::invalid_argument("Bin not found in smearing histogram");
   }
-  
+
   double rel_smear = (*normal_)(*generator_);
   double  sp = 0.;
 
@@ -172,21 +195,21 @@ double TrackSmearingTool::smearTrackP(const Track& track) {
     sp = rel_smear * smearing_histo_top_->GetBinContent(binN) * smearingFactor_;
   else
     sp = rel_smear * smearing_histo_bot_->GetBinContent(binN) * smearingFactor_;
-  
+
   double psmear = 0.;
 
-  if (relSmearing_)
+  if (relSmearingP_)
     psmear = p + sp*p;
   else
     psmear = p + sp;
-  
-  
+
+
   if (debug_) {
     std::cout<<"Track isTop: "<<isTop<<" nHits: "<<nhits<<" p: "<<p<<" deltaP=" << sp<<" p'="<<psmear<<std::endl;
   }
-  
+
   return psmear;
-  
+
 }
 
 double TrackSmearingTool::updateWithSmearP(Track& trk) {
@@ -260,7 +283,7 @@ double TrackSmearingTool::smearTrackZ0(const double z0) {
 
   double z0smear = 0.;
 
-  if (relSmearing_)
+  if (relSmearingZ0_)
     z0smear = z0 + sz0*z0;
   else
     z0smear = z0 + sz0;
@@ -286,7 +309,7 @@ double TrackSmearingTool::smearTrackZ0(const Track& track) {
     double sz0 = rel_smear * smearingValue;
 
     double z0smear = 0.;
-    if (relSmearing_)
+    if (relSmearingZ0_)
       z0smear = z0 + sz0 * z0;
     else
       z0smear = z0 + sz0;

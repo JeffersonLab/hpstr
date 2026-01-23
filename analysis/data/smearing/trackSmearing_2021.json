@@ -9,5 +9,6 @@
         "top": 0.049285536755409885,
         "bot": 0.04589554481673371
     },
-    "relSmearing": true 
+    "relSmearingP": true,
+    "relSmearingZ0": false
 }

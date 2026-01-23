@@ -36,17 +36,21 @@ class TrackSmearingTool {
   // - .json files: JSON config with top/bot values
   // The seed needs to be set accordingly for each instance / job of the smearing tool
   // The smearingFactor multiplies all smearing parameters (default 1.0)
+  // relSmearingP/relSmearingZ0 control whether smearing is relative (multiplicative) or absolute (additive)
   TrackSmearingTool(const std::string& smearingfile,
-                    const bool relSmearing = true,
+                    const bool relSmearingP = true,
+                    const bool relSmearingZ0 = false,
                     const int seed = 42,
                     const std::string& tracks = "KalmanFullTracks",
                     const double smearingFactor = 1.0);
 
   // Constructor with fixed smearing values (no histogram lookup)
   // The smearingFactor multiplies all smearing parameters (default 1.0)
+  // relSmearingP/relSmearingZ0 control whether smearing is relative (multiplicative) or absolute (additive)
   TrackSmearingTool(const double pSmearingValue,
                     const double z0SmearingValue,
-                    const bool relSmearing = true,
+                    const bool relSmearingP = true,
+                    const bool relSmearingZ0 = false,
                     const int seed = 42,
                     const double smearingFactor = 1.0);
 
@@ -101,7 +105,8 @@ class TrackSmearingTool {
 
   // debug
   bool debug_{false};
-  bool relSmearing_{false};
+  bool relSmearingP_{false};
+  bool relSmearingZ0_{false};
 
   // factor to multiply all smearing parameters by
   double smearingFactor_{1.0};
