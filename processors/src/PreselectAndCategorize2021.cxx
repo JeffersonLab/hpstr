@@ -20,6 +20,9 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     // Factor to multiply smearing parameters by (default 1.0)
     smearingFactor_ = parameters.getDouble("smearingFactor", 1.0);
 
+    // Debug output flag
+    debug_ = parameters.getInteger("debug", 0) != 0;
+
     std::string smearingFile = !smearingCfgFile.empty() ? smearingCfgFile : pSmearingFile;
 
     if (doSmearing_ and not smearingFile.empty()) {
@@ -95,6 +98,7 @@ std::vector<double> PreselectAndCategorize2021::determine_time_cuts(bool isData,
         // Apply MC-specific time cuts
         // time_cuts = {9.8, 7.2, 14.1};  // MC with track time smearing
         time_cuts = {3.0, 3.0, 4.2};  // MC without track time smearing
+        //time_cuts = {40.0, 40.0, 40.0};  // MC without track time smearing
     }
 
     return time_cuts;
@@ -335,6 +339,14 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         if (not ele.getTrack().isKalmanTrack()) ele_nhits *= 2;
         int pos_nhits = pos.getTrack().getTrackerHitCount();
         if (not pos.getTrack().isKalmanTrack()) pos_nhits *= 2;
+
+        if (debug_) {
+            std::cout << "Tracker hit counts (vertex " << ivtx << "):" << std::endl;
+            std::cout << "  Electron: TrackerHitCount=" << ele.getTrack().getTrackerHitCount()
+                      << ", nhits (after scaling)=" << ele_nhits << std::endl;
+            std::cout << "  Positron: TrackerHitCount=" << pos.getTrack().getTrackerHitCount()
+                      << ", nhits (after scaling)=" << pos_nhits << std::endl;
+        }
 
         TVector3 ele_mom(ele.getTrack().getMomentum()[0], ele.getTrack().getMomentum()[1],
                          ele.getTrack().getMomentum()[2]);

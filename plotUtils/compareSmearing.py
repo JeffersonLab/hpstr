@@ -7,6 +7,11 @@ Optionally include unsmeared MC for comparison.
 Usage:
     python compareSmearing.py -d data.root -m smeared_mc.root -o output_dir
     python compareSmearing.py -d data.root -m smeared_mc.root -u unsmeared_mc.root -o output_dir
+    python compareSmearing.py -d data.root -m smeared_mc.root -u unsmeared_mc.root --fit -o output_dir
+
+Options:
+    --fit           Perform Gaussian fits to histograms and display results
+    --fit-falloff   Fraction of max bin for fit range boundary (default: 0.4)
 """
 
 import os
@@ -62,8 +67,98 @@ def normalize_hist(hist):
         hist.Scale(1.0 / hist.Integral())
 
 
-def make_comparison_plot(data_hist, mc_hist, title, xtitle, outname, unsmeared_hist=None, normalize=True):
-    """Create comparison plot between data, smeared MC, and optionally unsmeared MC."""
+def fit_gaussian(hist, color, falloff_fraction=0.4):
+    """
+    Fit a Gaussian to a histogram using auto-detected range.
+
+    The fit range is determined by finding the maximum bin and then
+    searching outward on each side until the bin content falls to
+    a specified fraction of the maximum.
+
+    Args:
+        hist: ROOT histogram to fit
+        color: Color for the fit function
+        falloff_fraction: Fraction of max bin content to use as range boundary (default: 0.4)
+
+    Returns:
+        Tuple of (fit_function, mean, mean_err, sigma, sigma_err) or None if fit fails
+    """
+    if not hist or hist.GetEntries() < 10:
+        return None
+
+    # Find the maximum bin
+    max_bin = hist.GetMaximumBin()
+    max_val = hist.GetBinContent(max_bin)
+    threshold = falloff_fraction * max_val
+
+    # Search left from max bin until we fall below threshold
+    left_bin = max_bin
+    for i in range(max_bin - 1, 0, -1):
+        if hist.GetBinContent(i) < threshold:
+            left_bin = i
+            break
+    else:
+        left_bin = 1  # Reached the first bin
+
+    # Search right from max bin until we fall below threshold
+    n_bins = hist.GetNbinsX()
+    right_bin = max_bin
+    for i in range(max_bin + 1, n_bins + 1):
+        if hist.GetBinContent(i) < threshold:
+            right_bin = i
+            break
+    else:
+        right_bin = n_bins  # Reached the last bin
+
+    # Convert bins to x values for fit range
+    fit_min = hist.GetBinLowEdge(left_bin)
+    fit_max = hist.GetBinLowEdge(right_bin) + hist.GetBinWidth(right_bin)
+
+    # Create Gaussian fit function
+    fit_name = f"gaus_{hist.GetName()}"
+    gaus = ROOT.TF1(fit_name, "gaus", fit_min, fit_max)
+    gaus.SetLineColor(color)
+    gaus.SetLineWidth(2)
+    gaus.SetLineStyle(1)
+
+    # Set initial parameters from histogram statistics
+    mean = hist.GetMean()
+    rms = hist.GetRMS()
+    gaus.SetParameter(0, hist.GetMaximum())  # Amplitude
+    gaus.SetParameter(1, mean)                # Mean
+    gaus.SetParameter(2, rms)                 # Sigma
+
+    # Perform fit (Q = quiet, R = use function range, S = return result)
+    fit_result = hist.Fit(gaus, "QRS")
+
+    if fit_result.Status() != 0:
+        print(f"WARNING: Fit failed for {hist.GetName()}")
+        return None
+
+    # Extract fit parameters
+    fit_mean = gaus.GetParameter(1)
+    fit_mean_err = gaus.GetParError(1)
+    fit_sigma = gaus.GetParameter(2)
+    fit_sigma_err = gaus.GetParError(2)
+
+    return (gaus, fit_mean, fit_mean_err, fit_sigma, fit_sigma_err)
+
+
+def make_comparison_plot(data_hist, mc_hist, title, xtitle, outname, unsmeared_hist=None, normalize=True, do_fit=False, fit_falloff=0.4):
+    """
+    Create comparison plot between data, smeared MC, and optionally unsmeared MC.
+
+    Args:
+        data_hist: Data histogram
+        mc_hist: Smeared MC histogram
+        title: Plot title
+        xtitle: X-axis title
+        outname: Output filename
+        unsmeared_hist: Optional unsmeared MC histogram
+        normalize: Whether to normalize histograms to unit area
+        do_fit: Whether to perform Gaussian fits and display results
+        fit_falloff: Fraction of max for fit range boundary (default: 0.4)
+    """
     if not data_hist or not mc_hist:
         print(f"WARNING: Cannot make plot {outname}, missing histogram")
         return
@@ -106,6 +201,25 @@ def make_comparison_plot(data_hist, mc_hist, title, xtitle, outname, unsmeared_h
     if h_unsmeared:
         h_unsmeared.Draw("PE SAME")
 
+    # Perform Gaussian fits if requested
+    fit_results = {}
+    if do_fit:
+        fit_data = fit_gaussian(h_data, ROOT.kBlack, fit_falloff)
+        fit_mc = fit_gaussian(h_mc, ROOT.kRed, fit_falloff)
+        fit_unsmeared = None
+        if h_unsmeared:
+            fit_unsmeared = fit_gaussian(h_unsmeared, ROOT.kBlue, fit_falloff)
+
+        if fit_data:
+            fit_results['data'] = fit_data
+            fit_data[0].Draw("SAME")
+        if fit_mc:
+            fit_results['mc'] = fit_mc
+            fit_mc[0].Draw("SAME")
+        if fit_unsmeared:
+            fit_results['unsmeared'] = fit_unsmeared
+            fit_unsmeared[0].Draw("SAME")
+
     # Legend
     leg_y2 = 0.88
     leg_y1 = 0.70 if h_unsmeared else 0.75
@@ -125,6 +239,34 @@ def make_comparison_plot(data_hist, mc_hist, title, xtitle, outname, unsmeared_h
     latex.SetTextSize(0.045)
     latex.DrawLatex(0.12, 0.93, title)
 
+    # Draw fit results on canvas
+    if do_fit and fit_results:
+        latex.SetTextSize(0.035)
+        y_pos = 0.85
+
+        if 'data' in fit_results:
+            _, mean, mean_err, sigma, sigma_err = fit_results['data']
+            latex.SetTextColor(ROOT.kBlack)
+            latex.DrawLatex(0.15, y_pos, f"Data: #mu = {mean:.4f} #pm {mean_err:.4f}")
+            y_pos -= 0.05
+            latex.DrawLatex(0.15, y_pos, f"         #sigma = {sigma:.4f} #pm {sigma_err:.4f}")
+            y_pos -= 0.06
+
+        if 'mc' in fit_results:
+            _, mean, mean_err, sigma, sigma_err = fit_results['mc']
+            latex.SetTextColor(ROOT.kRed)
+            latex.DrawLatex(0.15, y_pos, f"Smeared: #mu = {mean:.4f} #pm {mean_err:.4f}")
+            y_pos -= 0.05
+            latex.DrawLatex(0.15, y_pos, f"              #sigma = {sigma:.4f} #pm {sigma_err:.4f}")
+            y_pos -= 0.06
+
+        if 'unsmeared' in fit_results:
+            _, mean, mean_err, sigma, sigma_err = fit_results['unsmeared']
+            latex.SetTextColor(ROOT.kBlue)
+            latex.DrawLatex(0.15, y_pos, f"Unsmeared: #mu = {mean:.4f} #pm {mean_err:.4f}")
+            y_pos -= 0.05
+            latex.DrawLatex(0.15, y_pos, f"                  #sigma = {sigma:.4f} #pm {sigma_err:.4f}")
+
     can.SaveAs(outname)
     print(f"Saved: {outname}")
 
@@ -143,6 +285,10 @@ def main():
                       help="Track collection name", default="KalmanFullTracks")
     parser.add_option("-f", "--format", type="string", dest="fmt",
                       help="Output format (png, pdf)", default="png")
+    parser.add_option("--fit", action="store_true", dest="do_fit",
+                      help="Perform Gaussian fits and display results", default=False)
+    parser.add_option("--fit-falloff", type="float", dest="fit_falloff",
+                      help="Fraction of max bin for fit range boundary (default: 0.4)", default=0.4)
 
     (options, args) = parser.parse_args()
 
@@ -195,7 +341,8 @@ def main():
         h_mc = get_hist(mcFile, full_hname)
         h_unsmeared = get_hist(unsmearedFile, full_hname) if unsmearedFile else None
         outpath = os.path.join(options.outdir, f"{outname}.{fmt}")
-        make_comparison_plot(h_data, h_mc, title, xtitle, outpath, h_unsmeared)
+        make_comparison_plot(h_data, h_mc, title, xtitle, outpath, h_unsmeared,
+                             do_fit=options.do_fit, fit_falloff=options.fit_falloff)
 
     # Make z0 plots
     print("\n=== z0 Comparisons ===")
@@ -205,7 +352,8 @@ def main():
         h_mc = get_hist(mcFile, full_hname)
         h_unsmeared = get_hist(unsmearedFile, full_hname) if unsmearedFile else None
         outpath = os.path.join(options.outdir, f"{outname}.{fmt}")
-        make_comparison_plot(h_data, h_mc, title, xtitle, outpath, h_unsmeared)
+        make_comparison_plot(h_data, h_mc, title, xtitle, outpath, h_unsmeared,
+                             do_fit=options.do_fit, fit_falloff=options.fit_falloff)
 
     # Close files
     dataFile.Close()
