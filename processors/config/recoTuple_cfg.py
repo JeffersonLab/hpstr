@@ -88,6 +88,10 @@ track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 track.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack_KF'
 track.parameters["trackStateLocation"]='AtTarget'
 
+if (not options.isData):
+    track.parameters["truthTrackCollLcio"] = 'KalmanFullTracksToMCParticleRelations'
+    track.parameters["truthTrackCollRoot"] = 'Truth_KalmanTracks'
+
 if(options.useBField):
     track.parameters["bfield"] = bfield[str(options.year)]
 
