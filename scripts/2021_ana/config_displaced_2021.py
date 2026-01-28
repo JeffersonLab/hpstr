@@ -50,6 +50,7 @@ preselect.parameters["isSimpSignal"] = 1 if ('simp' in options.sample) else 0
 preselect.parameters["isApSignal"] = 1 if ('ap' in options.sample) else 0
 preselect.parameters["beamPosCfg"] = "" # has already been done for these samples
 preselect.parameters["pSmearingFile"] = ""
+preselect.parameters["debug"] = 0 
 preselect.parameters["vtxCollection"] = "UnconstrainedV0Vertices_KF"
 preselect.parameters["v0ProjectionFitsCfg"] = file_in_hpstr(
         'analysis/data/v0_projection_2021_v9_config.json'

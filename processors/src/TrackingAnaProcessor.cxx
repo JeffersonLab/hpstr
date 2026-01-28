@@ -29,7 +29,13 @@ void TrackingAnaProcessor::configure(const ParameterSet& parameters) {
         //Momentum smearing closure test
         pSmearingFile_            = parameters.getString("pSmearingFile",pSmearingFile_);
         smearingCfgFile_          = parameters.getString("smearingCfg",smearingCfgFile_);
-        
+
+        // Master switch for smearing (default false for backward compatibility)
+        doSmearing_ = parameters.getInteger("doSmearing", 0) != 0;
+
+        // Factor to multiply smearing parameters by (default 1.0)
+        smearingFactor_ = parameters.getDouble("smearingFactor", 1.0);
+
     }
     catch (std::runtime_error& error)
     {
@@ -103,9 +109,13 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
     std::string smearingFile = !smearingCfgFile_.empty() ? smearingCfgFile_ : pSmearingFile_;
 
     if (!smearingFile.empty()) {
+      std::cout<<"Loading smearing config from "<<smearingFile<<std::endl;
       std::cout<<"Smearing Tool Seed "<<seed_<<std::endl;
-      std::cout<<"Using smearing file: "<<smearingFile<<std::endl;
-      smearingTool_ = std::make_shared<TrackSmearingTool>(smearingFile, false, seed_);
+      std::cout<<"Using smearing factor: "<<smearingFactor_<<std::endl;
+      std::cout<<"doSmearing: "<<(doSmearing_ ? "true" : "false")<<std::endl;
+      // Match PreselectAndCategorize2021: relSmearingP=true (relative), relSmearingZ0=false (absolute)
+      // JSON files will override with their own relSmearingP/relSmearingZ0 values
+      smearingTool_ = std::make_shared<TrackSmearingTool>(smearingFile, true, false, seed_, trkCollName_, smearingFactor_);
 
       psmear_h_     =   new TH1D("psmear_h",
                                  "psmear_h",200,2,6);
@@ -314,14 +324,14 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
 
         //pSmearing closure Test
         // For MC: apply smearing; for data: use raw values
-        if (!pSmearingFile_.empty() || !smearingCfgFile_.empty()) {
+        if (smearingTool_) {
 
           double nhits  = track->getTrackerHitCount();
           bool isTop  = track->getTanLambda() > 0;
 
-          // For MC apply smearing, for data use raw values
-          double pval = isData_ ? track->getP() : smearingTool_->smearTrackP(*track);
-          double z0val = isData_ ? track->getZ0() : smearingTool_->smearTrackZ0(*track);
+          // For MC apply smearing (if doSmearing_ is set), for data use raw values
+          double pval = (isData_ || !doSmearing_) ? track->getP() : smearingTool_->smearTrackP(*track);
+          double z0val = (isData_ || !doSmearing_) ? track->getZ0() : smearingTool_->smearTrackZ0(*track);
 
           psmear_h_->Fill(pval);
           psmear_vs_nHits_hh_->Fill(nhits, pval);
@@ -384,7 +394,7 @@ void TrackingAnaProcessor::finalize() {
       reg_selectors_[it->first]->getCutFlowHisto()->Write();
     }
     
-    if (!pSmearingFile_.empty() || !smearingCfgFile_.empty()) {
+    if (smearingTool_) {
       outF_->cd(trkCollName_.c_str());
       psmear_h_->Write();
       psmear_top_h_->Write();

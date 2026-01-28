@@ -116,12 +116,14 @@ class TrackingAnaProcessor : public Processor {
         int debug_{0}; //!< debug level
         int seed_{0};  //!< seed
         float time_offset_{0}; //! time offset
-        
+
         //Momentum smearing closure test
         std::shared_ptr<TrackSmearingTool> smearingTool_;
         std::shared_ptr<TrackSmearingTool> smearingToolRel_;
         std::string pSmearingFile_{""};
         std::string smearingCfgFile_{""};
+        bool doSmearing_{false};  //!< Master switch for smearing
+        double smearingFactor_{1.0};  //!< Factor to multiply smearing parameters by
         TH1D* psmear_h_;
         TH1D* psmear_top_h_;
         TH1D* psmear_bot_h_;
