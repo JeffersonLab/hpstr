@@ -89,16 +89,11 @@ std::vector<double> PreselectAndCategorize2021::determine_time_cuts(bool isData,
 
     if (isData) {
         // Apply data-specific time cuts
-        time_cuts = {5.7, 4.91, 7.75};  // default values
-        // time_cuts = {7.11, 5.3, 9.5};     // early runs
-        // if (runNumber >= 14566) {         // bias voltage increased after this run, better time resolution
-        //     time_cuts = {6.7, 5.0, 8.8};  // later runs
-        // }
+        time_cuts = {6.0, 5.1, 7.8}; // v9 values 
     } else {
         // Apply MC-specific time cuts
-        // time_cuts = {9.8, 7.2, 14.1};  // MC with track time smearing
-        time_cuts = {3.0, 3.0, 4.2};  // MC without track time smearing
-        //time_cuts = {40.0, 40.0, 40.0};  // MC without track time smearing
+        time_cuts = {6.0, 5.7, 9.2};  // MC with track time smearing
+        // time_cuts = {3.0, 3.0, 4.2};  // MC without track time smearing
     }
 
     return time_cuts;
