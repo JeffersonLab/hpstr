@@ -879,11 +879,11 @@ double utils::v0_projection_to_target_significance(json v0proj_fits, int run, do
     double rotation_angle =
         (double)v0proj_fits[std::to_string(closest_run)]["rotation_angle_mrad"] / 1000.0;  // convert mrad to rad
 
-    // get target projected vertex position (function name is a bit of a misnomer)
-    double vtx_tgt_x = vtx->getTgtConstrX();
-    double vtx_tgt_x_err = vtx->getTgtConstrSigmaX();
-    double vtx_tgt_y = vtx->getTgtConstrY();
-    double vtx_tgt_y_err = vtx->getTgtConstrSigmaY();
+    // get target projected vertex position 
+    double vtx_tgt_x = vtx->getTgtProjX();
+    double vtx_tgt_x_err = vtx->getTgtProjSigmaX();
+    double vtx_tgt_y = vtx->getTgtProjY();
+    double vtx_tgt_y_err = vtx->getTgtProjSigmaY();
 
     vtx_proj_x = vtx_tgt_x;
     vtx_proj_y = vtx_tgt_y;
