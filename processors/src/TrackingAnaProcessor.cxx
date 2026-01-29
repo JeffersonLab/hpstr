@@ -36,6 +36,9 @@ void TrackingAnaProcessor::configure(const ParameterSet& parameters) {
         // Factor to multiply smearing parameters by (default 1.0)
         smearingFactor_ = parameters.getDouble("smearingFactor", 1.0);
 
+        // Require truth match for smearing (default false)
+        requireTruthMatch_ = parameters.getInteger("requireTruthMatch", 0) != 0;
+
     }
     catch (std::runtime_error& error)
     {
@@ -116,6 +119,8 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
       // Match PreselectAndCategorize2021: relSmearingP=true (relative), relSmearingZ0=false (absolute)
       // JSON files will override with their own relSmearingP/relSmearingZ0 values
       smearingTool_ = std::make_shared<TrackSmearingTool>(smearingFile, true, false, seed_, trkCollName_, smearingFactor_);
+      smearingTool_->setRequireTruthMatch(requireTruthMatch_);
+      std::cout<<"Require truth match for smearing: "<<(requireTruthMatch_ ? "true" : "false")<<std::endl;
 
       psmear_h_     =   new TH1D("psmear_h",
                                  "psmear_h",200,2,6);

@@ -23,15 +23,20 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     // Debug output flag
     debug_ = parameters.getInteger("debug", 0) != 0;
 
+    // Require truth match for smearing (default false)
+    requireTruthMatch_ = parameters.getInteger("requireTruthMatch", 0) != 0;
+
     std::string smearingFile = !smearingCfgFile.empty() ? smearingCfgFile : pSmearingFile;
 
     if (doSmearing_ and not smearingFile.empty()) {
         std::cout << "Loading smearing config from " << smearingFile << std::endl;
         std::cout << "Using smearing seed: " << smearingSeed_ << std::endl;
         std::cout << "Using smearing factor: " << smearingFactor_ << std::endl;
+        std::cout << "Require truth match for smearing: " << (requireTruthMatch_ ? "true" : "false") << std::endl;
         // relSmearingP=true (relative), relSmearingZ0=false (absolute) - these are defaults for ROOT files;
         // JSON files will override with their own relSmearingP/relSmearingZ0 values
         smearingTool_ = std::make_shared<TrackSmearingTool>(smearingFile, true, false, smearingSeed_, "KalmanFullTracks", smearingFactor_);
+        smearingTool_->setRequireTruthMatch(requireTruthMatch_);
     } else if (not doSmearing_) {
         std::cout << "Track smearing disabled via doSmearing flag" << std::endl;
     }
@@ -317,6 +322,10 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         double ele_p_smear_ratio = 1.0;
         double pos_p_smear_ratio = 1.0;
         if (smearingTool_) {
+            // Set MC particles for truth matching (if available and required)
+            if (requireTruthMatch_ && bus_.has(mcColl_)) {
+                smearingTool_->setMCParticles(&bus_.get<std::vector<MCParticle*>>(mcColl_));
+            }
             // Apply z0 smearing first
             smearingTool_->updateWithSmearZ0(ele_trk);
             smearingTool_->updateWithSmearZ0(pos_trk);

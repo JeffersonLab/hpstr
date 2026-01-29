@@ -104,7 +104,7 @@ class TrackSmearingTool {
   bool useSeparateTopBot_{false};
 
   // debug
-  bool debug_{false};
+  bool debug_{true};
   bool relSmearingP_{false};
   bool relSmearingZ0_{false};
 

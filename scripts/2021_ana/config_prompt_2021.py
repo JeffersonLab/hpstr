@@ -75,6 +75,7 @@ preselect.parameters['calTimeOffset'] = 37.3
 preselect.parameters["smearingCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/smearing/trackSmearing_2021.json"
 preselect.parameters["doSmearing"] = 1 if (options.smearing and not options.noSmearing and options.sample != 'data') else 0
 preselect.parameters["smearingFactor"] = 1.0
+preselect.parameters["requireTruthMatch"] = 1
 
 p.sequence = [preselect]
 

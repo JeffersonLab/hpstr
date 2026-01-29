@@ -124,6 +124,7 @@ class TrackingAnaProcessor : public Processor {
         std::string smearingCfgFile_{""};
         bool doSmearing_{false};  //!< Master switch for smearing
         double smearingFactor_{1.0};  //!< Factor to multiply smearing parameters by
+        bool requireTruthMatch_{false};  //!< Require truth match for smearing
         TH1D* psmear_h_;
         TH1D* psmear_top_h_;
         TH1D* psmear_bot_h_;

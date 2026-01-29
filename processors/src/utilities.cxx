@@ -158,8 +158,9 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
         EVENT::LCCollection* gbl_kink_data,
         EVENT::LCCollection* track_data) {
 
-    if (!lc_track)
+    if (!lc_track) {
         return nullptr;
+    }
 
 
     //		      public final static int AtOther = 0;  // Any location other than the ones defined below. 
@@ -214,13 +215,33 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
     //}
     //use getBLocal to check if it's V23 or V30
     //V30 will have sensible BField
-    double bTmp = lc_track->getTrackState(1)->getBLocal(); 
-    std::map<std::string, int> trackstateLocationMap_; 
+
+    // Defensive check: try to access track states safely
+    const EVENT::TrackStateVec* trackStatesPtr = nullptr;
+    try {
+        trackStatesPtr = &(lc_track->getTrackStates());
+    } catch (...) {
+        delete track;
+        return nullptr;
+    }
+
+    if (!trackStatesPtr || trackStatesPtr->size() < 2) {
+        delete track;
+        return nullptr;
+    }
+
+    const EVENT::TrackState* ts1 = trackStatesPtr->at(1);
+    if (!ts1) {
+        delete track;
+        return nullptr;
+    }
+    double bTmp = ts1->getBLocal();
+    std::map<std::string, int> trackstateLocationMap_;
     if(abs(bTmp)<10.0)
       trackstateLocationMap_=trackstateLocationMapV30_;
     else
       trackstateLocationMap_=trackstateLocationMapV23_;
-    
+
     int loc;
     auto it = trackstateLocationMap_.find(trackstate_location);
     if (it != trackstateLocationMap_.end()){
@@ -229,101 +250,104 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
     else{
         std::cout << "[utilities]::ERROR Track State Location " << trackstate_location << " Doesn't Exist!" << std::endl;
         std::cout << "Check map in utilities::buildTrack for defined locations" << std::endl;
+        delete track;
         return nullptr;
     }
     //If other TrackState specified, get track params from track state
     //    else {
     // If track state doesn't exist, no track returned
-    const EVENT::TrackState* ts = lc_track->getTrackState(loc);    
+    const EVENT::TrackState* ts = lc_track->getTrackState(loc);
     if (ts == nullptr){
+      delete track;
       return nullptr;
     }
 
     //  If the track state is AtTarget, replace the d0 & z0
-    //  with their reference positions in global x & y.  
+    //  with their reference positions in global x & y.
     //  We do this because the reference for ts@target
     //  is defined as where the track intersects with the target
     //  plane; so d0 & z0 == 0.  This is a bit of a kludge to make
-    //  it simpler for analysts.  
-    //  NOTE that these will not be strictly correct perigee parameters   
+    //  it simpler for analysts.
+    //  NOTE that these will not be strictly correct perigee parameters
     double tsD0 = ts->getD0();
-    double tsZ0 = ts->getZ0();    
+    double tsZ0 = ts->getZ0();
     if(loc==EVENT::TrackState::AtTarget){
       tsD0=ts->getReferencePoint()[1];
-      tsZ0=ts->getReferencePoint()[2];      
+      tsZ0=ts->getReferencePoint()[2];
     }
-        
+
     // Set the track parameters using trackstate
-    track->setTrackParameters(tsD0, 
-			      ts->getPhi(), 
-			      ts->getOmega(), 
-			      ts->getTanLambda(), 
+    track->setTrackParameters(tsD0,
+			      ts->getPhi(),
+			      ts->getOmega(),
+			      ts->getTanLambda(),
 			      tsZ0);
 
+    const float* refPoint = ts->getReferencePoint();
     double position[3] = {
-			  ts->getReferencePoint()[1],  
-			  ts->getReferencePoint()[2],  
-			  ts->getReferencePoint()[0]
+			  refPoint[1],
+			  refPoint[2],
+			  refPoint[0]
     };
-    
+
     track->setCov(static_cast<std::vector<float> > (ts->getCovMatrix()));
     track->setPosition(position);
 
-    double bLocal = lc_track->getTrackState(loc)->getBLocal(); 
+    double bLocal = lc_track->getTrackState(loc)->getBLocal();
     if(abs(bLocal)<10.0) //  check if it has non-default value (which should be 666)...this fails for pre-v3 lcio.  see below
-      track->setMomentum(bLocal); 
+      track->setMomentum(bLocal);
 
     // Set the track id
     track->setID(lc_track->id());
 
     // Set the track type
-    track->setType(lc_track->getType()); 
+    track->setType(lc_track->getType());
 
     // Set the track fit chi^2
     track->setChi2(lc_track->getChi2());
 
-    // Set the track ndf 
+    // Set the track ndf
     track->setNdf(lc_track->getNdf());
-    
+
     // Set the position of the extrapolated track at the ECal face.  The
     // extrapolation uses the full 3D field map.
-    const EVENT::TrackState* track_state 
-        = lc_track->getTrackState(trackstateLocationMap_["AtCalorimeter"]); 
+    const EVENT::TrackState* track_state
+        = lc_track->getTrackState(trackstateLocationMap_["AtCalorimeter"]);
 
     if (track_state) {
-        double position_at_ecal[3] = { 
-            track_state->getReferencePoint()[1],  
-            track_state->getReferencePoint()[2],  
+        double position_at_ecal[3] = {
+            track_state->getReferencePoint()[1],
+            track_state->getReferencePoint()[2],
             track_state->getReferencePoint()[0]
         };
-        track->setPositionAtEcal(position_at_ecal); 
+        track->setPositionAtEcal(position_at_ecal);
     }
 
     if (gbl_kink_data) {
-        // Instantiate an LCRelation navigator which will allow faster access 
+        // Instantiate an LCRelation navigator which will allow faster access
         // to GBLKinkData object
         std::shared_ptr<UTIL::LCRelationNavigator> gbl_kink_data_nav = std::make_shared<UTIL::LCRelationNavigator>(gbl_kink_data);
 
         // Get the list of GBLKinkData associated with the LCIO Track
-        EVENT::LCObjectVec gbl_kink_data_list 
+        EVENT::LCObjectVec gbl_kink_data_list
             = gbl_kink_data_nav->getRelatedFromObjects(lc_track);
 
-        // The container of GBLKinkData objects should only contain a 
+        // The container of GBLKinkData objects should only contain a
         // single object. If not, throw an exception
         if (gbl_kink_data_list.size() == 1) {
 
             /*
-               std::cout<<"[ Utilities ]: The collection " 
+               std::cout<<"[ Utilities ]: The collection "
                + std::string(Collections::KINK_DATA)
-               + " has the wrong data structure for this track"<<std::endl; 
+               + " has the wrong data structure for this track"<<std::endl;
                */
 
             // Get the list GBLKinkData GenericObject associated with the LCIO Track
-            IMPL::LCGenericObjectImpl* gbl_kink_datum 
+            IMPL::LCGenericObjectImpl* gbl_kink_datum
                 = static_cast<IMPL::LCGenericObjectImpl*>(gbl_kink_data_list.at(0));
 
             // Set the lambda and phi kink values
-            for (int ikink = 0; ikink < gbl_kink_datum->getNDouble(); ++ikink) { 
+            for (int ikink = 0; ikink < gbl_kink_datum->getNDouble(); ++ikink) {
                 track->setLambdaKink(ikink, gbl_kink_datum->getFloatVal(ikink));
                 track->setPhiKink(ikink, gbl_kink_datum->getDoubleVal(ikink));
             }
@@ -332,10 +356,10 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 
     } // add gbl kink data
 
-    if (track_data) { 
+    if (track_data) {
 
         // Instantiate an LCRelation navigator which will allow faster access
-        // to TrackData objects  
+        // to TrackData objects
         std::shared_ptr<UTIL::LCRelationNavigator> track_data_nav = std::make_shared<UTIL::LCRelationNavigator>(track_data);
 
         // Get the list of TrackData associated with the LCIO Track
@@ -343,21 +367,21 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 
         // The container of TrackData objects should only contain a single
         //  object.  If not, throw an exception.
-        if (track_data_list.size() == 1) { 
+        if (track_data_list.size() == 1) {
 
             // Get the TrackData GenericObject associated with the LCIO Track
             IMPL::LCGenericObjectImpl* track_datum = static_cast<IMPL::LCGenericObjectImpl*>(track_data_list.at(0));
 
             // Check that the TrackData data structure is correct.  If it's
-            // not, throw a runtime exception.   
+            // not, throw a runtime exception.
             if (track_datum->getNDouble() > 14 || track_datum->getNFloat() > 8 || track_datum->getNInt() != 1) {
-                throw std::runtime_error("[ TrackingProcessor ]: The collection " 
+                throw std::runtime_error("[ TrackingProcessor ]: The collection "
                         + std::string(Collections::TRACK_DATA)
                         + " has the wrong structure.");
             }
 
             // Set the SvtTrack isolation values
-            for (int iso_index = 0; iso_index < track_datum->getNDouble(); ++iso_index) { 
+            for (int iso_index = 0; iso_index < track_datum->getNDouble(); ++iso_index) {
                 track->setIsolation(iso_index, track_datum->getDoubleVal(iso_index));
             }
 
@@ -367,9 +391,10 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
             // Set the Track momentum
 	    // mg comment this out
 	    //	    if(abs(bLocal)<10.0) //  check if it has non-default value (which should be 666)
-		  
-	    if (track_datum->getNFloat()>3 && abs(bLocal)>10.0) //bfield is not set in track state so get from track data...
+
+	    if (track_datum->getNFloat()>3 && abs(bLocal)>10.0) { //bfield is not set in track state so get from track data...
               track->setMomentum(track_datum->getFloatVal(1),track_datum->getFloatVal(2),track_datum->getFloatVal(3));
+            }
 
             // Set the volume (top/bottom) in which the SvtTrack resides
             track->setTrackVolume(track_datum->getIntVal(0));
@@ -391,7 +416,7 @@ Track* utils::buildTrack(EVENT::Track* lc_track,
 	    }
         }
 
-    } //add track data  
+    } //add track data
 
     return track;
 }

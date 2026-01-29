@@ -32,6 +32,7 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
     int smearingSeed_{42};  // configurable seed (default 42 for backward compat)
     bool doSmearing_{true};  // master switch for track smearing
     double smearingFactor_{1.0};  // factor to multiply smearing parameters by
+    bool requireTruthMatch_{false};  // require truth match for smearing
     bool isSimpSignal_{false};
     bool isApSignal_{false};
     bool debug_{false};  // debug output for smearing validation
