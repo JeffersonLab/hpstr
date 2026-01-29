@@ -90,7 +90,7 @@ track.parameters["trackStateLocation"]='AtTarget'
 
 if (not options.isData):
     track.parameters["truthTrackCollLcio"] = 'KalmanFullTracksToMCParticleRelations'
-    track.parameters["truthTrackCollRoot"] = 'Truth_KalmanTracks'
+    track.parameters["truthTrackCollRoot"] = 'KalmanFullTracksTruth'
 
 if(options.useBField):
     track.parameters["bfield"] = bfield[str(options.year)]
@@ -126,6 +126,7 @@ vtx.parameters["vtxCollRoot"] = 'UnconstrainedV0Vertices_KF'
 vtx.parameters["partCollRoot"] = 'ParticlesOnUVertices_KF'
 vtx.parameters["kinkRelCollLcio"] = ''
 vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
+vtx.parameters["mcPartRelLcio"] = 'SVTTrueHitRelations'
 
 cvtx.parameters["debug"] = 0
 cvtx.parameters["useTrackerHits"] = 1
