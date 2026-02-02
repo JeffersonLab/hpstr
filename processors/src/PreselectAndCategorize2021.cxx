@@ -35,7 +35,8 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
         std::cout << "Require truth match for smearing: " << (requireTruthMatch_ ? "true" : "false") << std::endl;
         // relSmearingP=true (relative), relSmearingZ0=false (absolute) - these are defaults for ROOT files;
         // JSON files will override with their own relSmearingP/relSmearingZ0 values
-        smearingTool_ = std::make_shared<TrackSmearingTool>(smearingFile, true, false, smearingSeed_, "KalmanFullTracks", smearingFactor_);
+        smearingTool_ = std::make_shared<TrackSmearingTool>(smearingFile, true, false, smearingSeed_,
+                                                            "KalmanFullTracks", smearingFactor_);
         smearingTool_->setRequireTruthMatch(requireTruthMatch_);
     } else if (not doSmearing_) {
         std::cout << "Track smearing disabled via doSmearing flag" << std::endl;
@@ -76,7 +77,7 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     }
 
     auto vtxColl = parameters.getString("vtxCollection");
-    if (not vtxColl.empty() ){
+    if (not vtxColl.empty()) {
         std::cout << "Setting vertex collection to : " << vtxColl << std::endl;
         setVtxColl(vtxColl);
     }
@@ -86,7 +87,6 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     isSimpSignal_ = parameters.getInteger("isSimpSignal") != 0;
     isApSignal_ = parameters.getInteger("isApSignal") != 0;
     if (isSimpSignal_ || isApSignal_) isSignal_ = true;
-
 }
 
 std::vector<double> PreselectAndCategorize2021::determine_time_cuts(bool isData, int runNumber) {
@@ -94,16 +94,11 @@ std::vector<double> PreselectAndCategorize2021::determine_time_cuts(bool isData,
 
     if (isData) {
         // Apply data-specific time cuts
-        time_cuts = {5.7, 4.91, 7.75};  // default values
-        // time_cuts = {7.11, 5.3, 9.5};     // early runs
-        // if (runNumber >= 14566) {         // bias voltage increased after this run, better time resolution
-        //     time_cuts = {6.7, 5.0, 8.8};  // later runs
-        // }
+        time_cuts = {6.0, 5.1, 7.8};  // v9 values
     } else {
         // Apply MC-specific time cuts
-        // time_cuts = {9.8, 7.2, 14.1};  // MC with track time smearing
-        time_cuts = {3.0, 3.0, 4.2};  // MC without track time smearing
-        //time_cuts = {40.0, 40.0, 40.0};  // MC without track time smearing
+        time_cuts = {6.0, 5.7, 9.2};  // MC with track time smearing
+        // time_cuts = {3.0, 3.0, 4.2};  // MC without track time smearing
     }
 
     return time_cuts;
@@ -179,12 +174,13 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
     bus_.board_output<Particle>(output_tree_.get(), "ele");
     bus_.board_output<Particle>(output_tree_.get(), "pos");
     bus_.board_output<double>(output_tree_.get(), "psum");
-    bus_.board_output<double>(output_tree_.get(), "psum_vtx");
     bus_.board_output<double>(output_tree_.get(), "psum_scalar");
     bus_.board_output<double>(output_tree_.get(), "ele_p_smear_ratio");
     bus_.board_output<double>(output_tree_.get(), "pos_p_smear_ratio");
     bus_.board_output<bool>(output_tree_.get(), "ele_has_truth_link");
     bus_.board_output<bool>(output_tree_.get(), "pos_has_truth_link");
+    bus_.board_output<TVector3>(output_tree_.get(), "ele_track_p");
+    bus_.board_output<TVector3>(output_tree_.get(), "pos_track_p");
 
     /***************************************
      * adding specific cut variables       *
@@ -295,6 +291,21 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         Track ele_trk = ele.getTrack();
         Track pos_trk = pos.getTrack();
 
+        bus_.set("ele_track_p", TVector3(ele_trk.getMomentum()[0], ele_trk.getMomentum()[1], ele_trk.getMomentum()[2]));
+        bus_.set("pos_track_p", TVector3(pos_trk.getMomentum()[0], pos_trk.getMomentum()[1], pos_trk.getMomentum()[2]));
+
+        // replace particle track momenta with vertex-fitted momenta
+        bool is_top_ele = ele_trk.getTanLambda() > 0;
+        if (is_top_ele) {
+            if (vtx->getP1Y() > 0) {
+                ele_trk.setMomentum(vtx->getP1X(), vtx->getP1Y(), vtx->getP1Z());
+                pos_trk.setMomentum(vtx->getP2X(), vtx->getP2Y(), vtx->getP2Z());
+            } else {
+                ele_trk.setMomentum(vtx->getP2X(), vtx->getP2Y(), vtx->getP2Z());
+                pos_trk.setMomentum(vtx->getP1X(), vtx->getP1Y(), vtx->getP1Z());
+            }
+        }
+
         // apply track_z0 and track_time corrections loaded from JSON
         for (const auto& [name, corr] : track_corrections_) {
             ele_trk.applyCorrection(name, corr);
@@ -304,11 +315,11 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         if (not v0proj_fits_.empty()) {
             int run = eh.getRunNumber();
             int closest_run;
-            for(auto entry : v0proj_fits_.items()){
+            for (auto entry : v0proj_fits_.items()) {
                 int check_run = std::stoi(entry.key());
-                if(check_run > run)
+                if (check_run > run)
                     break;
-                else{
+                else {
                     closest_run = check_run;
                 }
             }
@@ -317,7 +328,6 @@ bool PreselectAndCategorize2021::process(IEvent*) {
 
             ele_trk.applyCorrection("z0", elez0Mean);
             pos_trk.applyCorrection("z0", posz0Mean);
-
         }
 
         // Apply track smearing (z0 and momentum)
@@ -479,19 +489,16 @@ bool PreselectAndCategorize2021::process(IEvent*) {
 
     if (debug_) {
         std::cout << "Preselection psum calculation:" << std::endl;
-        std::cout << "  Electron: px=" << ele_mom.X() << " py=" << ele_mom.Y() << " pz=" << ele_mom.Z() << " |p|=" << ele_mom.Mag() << std::endl;
-        std::cout << "  Positron: px=" << pos_mom.X() << " py=" << pos_mom.Y() << " pz=" << pos_mom.Z() << " |p|=" << pos_mom.Mag() << std::endl;
-        std::cout << "  Psum:     px=" << psum.X() << " py=" << psum.Y() << " pz=" << psum.Z() << " |psum|=" << psum.Mag() << std::endl;
+        std::cout << "  Electron: px=" << ele_mom.X() << " py=" << ele_mom.Y() << " pz=" << ele_mom.Z()
+                  << " |p|=" << ele_mom.Mag() << std::endl;
+        std::cout << "  Positron: px=" << pos_mom.X() << " py=" << pos_mom.Y() << " pz=" << pos_mom.Z()
+                  << " |p|=" << pos_mom.Mag() << std::endl;
+        std::cout << "  Psum:     px=" << psum.X() << " py=" << psum.Y() << " pz=" << psum.Z()
+                  << " |psum|=" << psum.Mag() << std::endl;
     }
 
     bus_.set("psum", psum.Mag());
     bus_.set("psum_scalar", ele_mom.Mag() + pos_mom.Mag());
-
-    // Compute psum from vertex P1/P2 for comparison
-    TVector3 vtx_ele_mom(vtx.getP1X(), vtx.getP1Y(), vtx.getP1Z());
-    TVector3 vtx_pos_mom(vtx.getP2X(), vtx.getP2Y(), vtx.getP2Z());
-    TVector3 psum_vtx = vtx_ele_mom + vtx_pos_mom;
-    bus_.set("psum_vtx", psum_vtx.Mag());
 
     // calculate target projection and its significance
     if (not v0proj_fits_.empty()) {

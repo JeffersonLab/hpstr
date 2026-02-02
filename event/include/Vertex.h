@@ -143,17 +143,17 @@ class Vertex : public TObject {
 
         TVector3 getP        () const {return p_;}
         
-        /** Get the Target Constrained Sigma X */
-        double getTgtConstrSigmaX() const {return parameters_[9];}
+        /** Get the Target Projected Sigma X */
+        double getTgtProjSigmaX() const {return parameters_[9];}
         
-        /** Get the Target Constrained X */
-        double getTgtConstrX() const {return parameters_[7];}
+        /** Get the Target Projected X */
+        double getTgtProjX() const {return parameters_[20];}
         
-        /** Get the Target Constrained Sigma Y */
-        double getTgtConstrSigmaY() const {return parameters_[11];}
+        /** Get the Target Projected Sigma Y */
+        double getTgtProjSigmaY() const {return parameters_[11];}
         
-        /** Get the Target Constrained Y */
-        double getTgtConstrY() const {return parameters_[20];}
+        /** Get the Target Projected Y */
+        double getTgtProjY() const {return parameters_[7];}
         
         ClassDef(Vertex,1);
 
