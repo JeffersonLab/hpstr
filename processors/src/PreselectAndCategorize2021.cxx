@@ -183,6 +183,8 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
     bus_.board_output<double>(output_tree_.get(), "psum_scalar");
     bus_.board_output<double>(output_tree_.get(), "ele_p_smear_ratio");
     bus_.board_output<double>(output_tree_.get(), "pos_p_smear_ratio");
+    bus_.board_output<bool>(output_tree_.get(), "ele_has_truth_link");
+    bus_.board_output<bool>(output_tree_.get(), "pos_has_truth_link");
 
     /***************************************
      * adding specific cut variables       *
@@ -321,10 +323,15 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         // Apply track smearing (z0 and momentum)
         double ele_p_smear_ratio = 1.0;
         double pos_p_smear_ratio = 1.0;
+        bool ele_has_truth_link = false;
+        bool pos_has_truth_link = false;
         if (smearingTool_) {
-            // Set MC particles for truth matching (if available and required)
-            if (requireTruthMatch_ && bus_.has(mcColl_)) {
+            // Set MC particles for truth matching (if available)
+            if (bus_.has(mcColl_)) {
                 smearingTool_->setMCParticles(&bus_.get<std::vector<MCParticle*>>(mcColl_));
+                // Check for truth links
+                ele_has_truth_link = smearingTool_->hasTruthMatch(ele_trk);
+                pos_has_truth_link = smearingTool_->hasTruthMatch(pos_trk);
             }
             // Apply z0 smearing first
             smearingTool_->updateWithSmearZ0(ele_trk);
@@ -337,6 +344,8 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         }
         bus_.set("ele_p_smear_ratio", ele_p_smear_ratio);
         bus_.set("pos_p_smear_ratio", pos_p_smear_ratio);
+        bus_.set("ele_has_truth_link", ele_has_truth_link);
+        bus_.set("pos_has_truth_link", pos_has_truth_link);
 
         // put tracks back into their particles
         // with their new data
