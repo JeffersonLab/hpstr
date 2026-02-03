@@ -39,6 +39,8 @@ anaTrks.parameters["smearingCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/sme
 # Use --smearing flag to enable or set doSmearing=1 here
 anaTrks.parameters["doSmearing"] = 0 if options.isData else 1
 anaTrks.parameters["smearingFactor"] = 1.0
+# Use omega (curvature) smearing instead of p smearing (default false)
+anaTrks.parameters["smearOmega"] = 0
 
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/feeSmearing/"
 anaTrks.parameters["regionDefinitions"] = []

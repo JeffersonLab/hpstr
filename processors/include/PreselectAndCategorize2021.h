@@ -15,6 +15,7 @@
 #include "TMath.h"
 #include "TSData.h"
 #include "TrackSmearingTool.h"
+#include "TruthMatchingUtils.h"
 
 class PreselectAndCategorize2021 : public PreselectAndCategorize {
   public:

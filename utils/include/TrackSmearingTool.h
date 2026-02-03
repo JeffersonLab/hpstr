@@ -59,6 +59,11 @@ class TrackSmearingTool {
   double updateWithSmearP(Track& trk);
   void updateVertexWithSmearP(Vertex* vtx, double ele_smear_factor, double pos_smear_factor);
 
+  // Omega (curvature) smearing - alternative to momentum smearing
+  // Smears omega directly, then recalculates momentum from smeared omega
+  // Returns the scale factor applied to momentum (smeared_p / original_p)
+  double updateWithSmearOmega(Track& trk, double bfield = 0.52);
+
   double smearTrackZ0(const Track& trk);
   double smearTrackZ0(const double z0);
   void updateWithSmearZ0(Track& trk);
@@ -102,6 +107,11 @@ class TrackSmearingTool {
   double z0SmearingValueTop_{0.};
   double z0SmearingValueBot_{0.};
   bool useSeparateTopBot_{false};
+
+  // Omega (curvature) smearing values
+  double omegaSmearingValueTop_{0.};
+  double omegaSmearingValueBot_{0.};
+  bool smearOmega_{false};  // If true, use omega smearing instead of p smearing
 
   // debug
   bool debug_{false};

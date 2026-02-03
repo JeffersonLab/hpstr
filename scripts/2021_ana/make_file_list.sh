@@ -6,7 +6,8 @@
 #   --all-masses - generate separate lists for each mass point found
 #   max_files - optional, limit the number of files in the list (for testing)
 #
-# When processing a directory with mass point subdirs (ap*MeV), use --mass or --all-masses.
+# INPUT_DATA_DIR can contain wildcards (e.g., ap*MeV) in the path.
+# When using --all-masses with a wildcard path, generates separate lists for each match.
 # Without these flags, behaves as before (single flat list).
 
 set -o errexit
@@ -42,6 +43,13 @@ done
 mkdir -p "${DATA_LISTS_DIR}"
 
 shopt -s nullglob
+
+# Function to extract mass point from a path (finds ap*MeV pattern)
+extract_mass_point() {
+  local path="$1"
+  # Extract the mass point directory name from the path
+  echo "$path" | grep -oE 'ap[0-9]+MeV' | head -1
+}
 
 # Function to generate file list for a given directory
 generate_list_for_dir() {
@@ -95,35 +103,93 @@ generate_list_for_dir() {
   echo "Generated ${output_list} with ${count} files"
 }
 
-# Check for mass point directories (ap*MeV pattern)
-mass_dirs=("${INPUT_DATA_DIR}"/ap*MeV)
+# Check if INPUT_DATA_DIR contains a wildcard pattern
+if [[ "${INPUT_DATA_DIR}" == *'*'* ]]; then
+  # Expand the wildcard to get all matching directories
+  expanded_dirs=(${INPUT_DATA_DIR})
 
-if [[ "${all_masses}" == "true" ]]; then
-  # Generate separate list for each mass point
-  if [ ${#mass_dirs[@]} -eq 0 ] || [ ! -d "${mass_dirs[0]}" ]; then
-    echo "ERROR: No mass point directories (ap*MeV) found in ${INPUT_DATA_DIR}"
-    exit 1
+  if [[ "${all_masses}" == "true" ]]; then
+    # Generate separate list for each expanded directory
+    if [ ${#expanded_dirs[@]} -eq 0 ]; then
+      echo "ERROR: No directories found matching pattern: ${INPUT_DATA_DIR}"
+      exit 1
+    fi
+
+    for data_dir in "${expanded_dirs[@]}"; do
+      [[ -d "${data_dir}" ]] || continue
+      mp=$(extract_mass_point "${data_dir}")
+      if [[ -z "${mp}" ]]; then
+        echo "WARNING: Could not extract mass point from ${data_dir}, skipping"
+        continue
+      fi
+      output_list="${DATA_LISTS_DIR}/${mp}.list"
+      generate_list_for_dir "${data_dir}" "${output_list}" "${max_files}"
+    done
+
+  elif [[ -n "${mass_point}" ]]; then
+    # Find the specific mass point from expanded dirs
+    found=false
+    for data_dir in "${expanded_dirs[@]}"; do
+      mp=$(extract_mass_point "${data_dir}")
+      if [[ "${mp}" == "${mass_point}" ]]; then
+        output_list="${DATA_LISTS_DIR}/${mass_point}.list"
+        generate_list_for_dir "${data_dir}" "${output_list}" "${max_files}"
+        found=true
+        break
+      fi
+    done
+    if [[ "${found}" == "false" ]]; then
+      echo "ERROR: Mass point ${mass_point} not found in expanded paths"
+      exit 1
+    fi
+
+  else
+    # Default: generate combined list from all expanded directories
+    output_list="${FILE_LIST}"
+    > "${output_list}"
+    total_count=0
+    for data_dir in "${expanded_dirs[@]}"; do
+      [[ -d "${data_dir}" ]] || continue
+      temp_list=$(mktemp)
+      generate_list_for_dir "${data_dir}" "${temp_list}" "${max_files}"
+      cat "${temp_list}" >> "${output_list}"
+      rm -f "${temp_list}"
+    done
+    echo "Generated combined ${output_list}"
   fi
-
-  for mass_dir in "${mass_dirs[@]}"; do
-    [[ -d "${mass_dir}" ]] || continue
-    mp=$(basename "${mass_dir}")
-    output_list="${DATA_LISTS_DIR}/${mp}.list"
-    generate_list_for_dir "${mass_dir}" "${output_list}" "${max_files}"
-  done
-
-elif [[ -n "${mass_point}" ]]; then
-  # Generate list for specific mass point
-  mass_dir="${INPUT_DATA_DIR}/${mass_point}"
-  if [[ ! -d "${mass_dir}" ]]; then
-    echo "ERROR: Mass point directory not found: ${mass_dir}"
-    exit 1
-  fi
-  output_list="${DATA_LISTS_DIR}/${mass_point}.list"
-  generate_list_for_dir "${mass_dir}" "${output_list}" "${max_files}"
 
 else
-  # Default behavior: single flat list (original behavior)
-  generate_list_for_dir "${INPUT_DATA_DIR}" "${FILE_LIST}" "${max_files}"
+  # No wildcard in INPUT_DATA_DIR - use original logic
+  # Check for mass point directories (ap*MeV pattern) as subdirectories
+  mass_dirs=("${INPUT_DATA_DIR}"/ap*MeV)
+
+  if [[ "${all_masses}" == "true" ]]; then
+    # Generate separate list for each mass point
+    if [ ${#mass_dirs[@]} -eq 0 ] || [ ! -d "${mass_dirs[0]}" ]; then
+      echo "ERROR: No mass point directories (ap*MeV) found in ${INPUT_DATA_DIR}"
+      exit 1
+    fi
+
+    for mass_dir in "${mass_dirs[@]}"; do
+      [[ -d "${mass_dir}" ]] || continue
+      mp=$(basename "${mass_dir}")
+      output_list="${DATA_LISTS_DIR}/${mp}.list"
+      generate_list_for_dir "${mass_dir}" "${output_list}" "${max_files}"
+    done
+
+  elif [[ -n "${mass_point}" ]]; then
+    # Generate list for specific mass point
+    mass_dir="${INPUT_DATA_DIR}/${mass_point}"
+    if [[ ! -d "${mass_dir}" ]]; then
+      echo "ERROR: Mass point directory not found: ${mass_dir}"
+      exit 1
+    fi
+    output_list="${DATA_LISTS_DIR}/${mass_point}.list"
+    generate_list_for_dir "${mass_dir}" "${output_list}" "${max_files}"
+
+  else
+    # Default behavior: single flat list (original behavior)
+    generate_list_for_dir "${INPUT_DATA_DIR}" "${FILE_LIST}" "${max_files}"
+  fi
 fi
 

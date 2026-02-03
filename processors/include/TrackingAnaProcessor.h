@@ -125,6 +125,7 @@ class TrackingAnaProcessor : public Processor {
         bool doSmearing_{false};  //!< Master switch for smearing
         double smearingFactor_{1.0};  //!< Factor to multiply smearing parameters by
         bool requireTruthMatch_{false};  //!< Require truth match for smearing
+        bool smearOmega_{false};  //!< Use omega (curvature) smearing instead of p smearing
         TH1D* psmear_h_;
         TH1D* psmear_top_h_;
         TH1D* psmear_bot_h_;
@@ -141,6 +142,15 @@ class TrackingAnaProcessor : public Processor {
         TH1D* z0smear_h_;
         TH1D* z0smear_top_h_;
         TH1D* z0smear_bot_h_;
+
+        // omega smearing validation histograms
+        TH1D* omega_h_;           // unsmeared omega
+        TH1D* omega_top_h_;
+        TH1D* omega_bot_h_;
+        TH1D* omegasmear_h_;      // smeared omega (when omega smearing enabled)
+        TH1D* omegasmear_top_h_;
+        TH1D* omegasmear_bot_h_;
+        TH2D* omega_vs_p_hh_;     // omega vs momentum
 
 }; // TrackingAnaProcessor
 

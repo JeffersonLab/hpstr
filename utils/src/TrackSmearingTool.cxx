@@ -1,4 +1,5 @@
 #include "TrackSmearingTool.h"
+#include "TruthMatchingUtils.h"
 #include "TFile.h"
 #include "TH1D.h"
 
@@ -54,6 +55,17 @@ TrackSmearingTool::TrackSmearingTool(const std::string& smearingfile,
       relSmearingZ0_ = false;
     }
 
+    // Parse omega smearing parameters (optional)
+    if (cfg.contains("omegaSmearing")) {
+      omegaSmearingValueTop_ = cfg["omegaSmearing"]["top"].get<double>() * smearingFactor_;
+      omegaSmearingValueBot_ = cfg["omegaSmearing"]["bot"].get<double>() * smearingFactor_;
+    }
+
+    // Parse smearOmega flag (optional, default false)
+    if (cfg.contains("smearOmega")) {
+      smearOmega_ = cfg["smearOmega"].get<bool>();
+    }
+
     useFixedSmearing_ = true;
     useSeparateTopBot_ = true;
 
@@ -62,7 +74,9 @@ TrackSmearingTool::TrackSmearingTool(const std::string& smearingfile,
       std::cout<<"  smearingFactor: "<<smearingFactor_<<std::endl;
       std::cout<<"  pSmearing top: "<<pSmearingValueTop_<<" bot: "<<pSmearingValueBot_<<std::endl;
       std::cout<<"  z0Smearing top: "<<z0SmearingValueTop_<<" bot: "<<z0SmearingValueBot_<<std::endl;
+      std::cout<<"  omegaSmearing top: "<<omegaSmearingValueTop_<<" bot: "<<omegaSmearingValueBot_<<std::endl;
       std::cout<<"  relSmearingP: "<<relSmearingP_<<" relSmearingZ0: "<<relSmearingZ0_<<std::endl;
+      std::cout<<"  smearOmega: "<<smearOmega_<<std::endl;
     }
 
   } else {
@@ -338,89 +352,60 @@ void TrackSmearingTool::updateWithSmearZ0(Track& trk) {
   trk.setZ0(smeared_z0);
 }
 
+double TrackSmearingTool::updateWithSmearOmega(Track& trk, double bfield) {
+  // If truth matching is required and track doesn't have a truth match, skip smearing
+  if (requireTruthMatch_ && !hasTruthMatch(trk)) {
+    if (debug_) {
+      std::cout << "TrackSmearingTool: Skipping omega smearing - no truth match" << std::endl;
+    }
+    return 1.0;  // No smearing applied
+  }
+
+  // Store original momentum for scale factor calculation
+  double original_p = trk.getP();
+
+  // Get current omega (curvature)
+  double omega = trk.getOmega();
+
+  // Determine smearing value based on top/bottom
+  bool isTop = trk.getTanLambda() > 0.;
+  double smearingValue = isTop ? omegaSmearingValueTop_ : omegaSmearingValueBot_;
+
+  // Generate Gaussian random and apply relative smearing to omega
+  double rel_smear = (*normal_)(*generator_);
+  double omega_smeared = omega * (1 + rel_smear * smearingValue);
+
+  // Recalculate momentum from smeared omega
+  // pt = |1/omega| * B * c, where c = 2.99792458e-04 GeV/(T*mm)
+  double mom_param = 2.99792458e-04;
+  double pt = fabs(1. / omega_smeared) * bfield * mom_param;
+
+  // Calculate momentum components preserving track direction
+  double px = pt * sin(trk.getPhi());
+  double pz = pt * cos(trk.getPhi());
+  double py = pt * trk.getTanLambda();
+
+  // Update track momentum
+  trk.setMomentum(px, py, pz);
+
+  if (debug_) {
+    std::cout << "TrackSmearingTool::updateWithSmearOmega:" << std::endl;
+    std::cout << "  isTop: " << isTop << " smearingValue: " << smearingValue << std::endl;
+    std::cout << "  omega: " << omega << " rel_smear: " << rel_smear << " omega': " << omega_smeared << std::endl;
+    std::cout << "  original_p: " << original_p << " smeared_p: " << trk.getP() << std::endl;
+  }
+
+  return trk.getP() / original_p;  // Return scale factor
+}
+
 void TrackSmearingTool::setMCParticles(const std::vector<MCParticle*>* mc_particles) {
   mcParticles_ = mc_particles;
 }
 
 bool TrackSmearingTool::hasTruthMatch(Track& trk) {
-  int pdg = getTruthPDG(trk);
-  return (std::abs(pdg) == 11);
+  return utils::hasTruthMatch(trk, mcParticles_, debug_);
 }
 
 int TrackSmearingTool::getTruthPDG(Track& trk) {
-  if (!mcParticles_ || mcParticles_->empty()) {
-    if (debug_) {
-      std::cout << "TrackSmearingTool::getTruthPDG: No MC particles available" << std::endl;
-    }
-    return 0;
-  }
-
-  // Try two methods to find the MC particle ID with the most hits on this track:
-  // Method 1: Use getMcpHits() from Track (populated by VertexProcessor)
-  // Method 2: Use getSvtHits() and getMCPartIDs() from TrackerHits
-
-  std::map<int, int> count_per_particle_id;
-
-  // Method 1: Try getMcpHits() first
-  auto mcp_hits = trk.getMcpHits();
-  if (debug_) {
-    std::cout << "TrackSmearingTool::getTruthPDG: Method 1 - track has " << mcp_hits.size() << " MCP hits" << std::endl;
-  }
-
-  for (const auto& [layer_id, particle_id] : mcp_hits) {
-    count_per_particle_id[particle_id]++;
-  }
-
-  // Method 2: If no MCP hits, try getting MC info from TrackerHits via getSvtHits()
-  if (count_per_particle_id.empty()) {
-    TRefArray svt_hits = trk.getSvtHits();
-    if (debug_) {
-      std::cout << "TrackSmearingTool::getTruthPDG: Method 2 - track has " << svt_hits.GetEntries() << " SVT hits" << std::endl;
-    }
-
-    for (int i = 0; i < svt_hits.GetEntries(); i++) {
-      TrackerHit* hit = static_cast<TrackerHit*>(svt_hits.At(i));
-      if (hit) {
-        std::vector<int> mc_part_ids = hit->getMCPartIDs();
-        for (int part_id : mc_part_ids) {
-          count_per_particle_id[part_id]++;
-        }
-      }
-    }
-  }
-
-  if (debug_) {
-    std::cout << "TrackSmearingTool::getTruthPDG: found " << count_per_particle_id.size() << " unique particle IDs" << std::endl;
-  }
-
-  // Find particle with most hits
-  int truth_id{-1}, max_nhits{0};
-  for (const auto& [particle_id, count] : count_per_particle_id) {
-    if (count > max_nhits) {
-      truth_id = particle_id;
-      max_nhits = count;
-    }
-  }
-
-  if (truth_id < 0) {
-    if (debug_) {
-      std::cout << "TrackSmearingTool::getTruthPDG: No hits found, returning 0" << std::endl;
-    }
-    return 0;
-  }
-
-  // Find the MC particle with this ID and return its PDG
-  for (MCParticle* ptr : *mcParticles_) {
-    if (ptr->getID() == truth_id) {
-      if (debug_) {
-        std::cout << "TrackSmearingTool::getTruthPDG: Match found, PDG=" << ptr->getPDG() << std::endl;
-      }
-      return ptr->getPDG();
-    }
-  }
-
-  if (debug_) {
-    std::cout << "TrackSmearingTool::getTruthPDG: No MC particle found with ID " << truth_id << std::endl;
-  }
-  return 0;
+  return utils::getTruthPDG(trk, mcParticles_, debug_);
 }

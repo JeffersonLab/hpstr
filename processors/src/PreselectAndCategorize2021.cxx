@@ -335,13 +335,20 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         double pos_p_smear_ratio = 1.0;
         bool ele_has_truth_link = false;
         bool pos_has_truth_link = false;
+
+        // Check for truth links using utility function (independent of smearing)
+        const std::vector<MCParticle*>* mcParticles = nullptr;
+        if (bus_.has(mcColl_)) {
+            mcParticles = &bus_.get<std::vector<MCParticle*>>(mcColl_);
+            ele_has_truth_link = utils::hasTruthMatch(ele_trk, mcParticles, debug_);
+            pos_has_truth_link = utils::hasTruthMatch(pos_trk, mcParticles, debug_);
+        }
+
+        // Apply smearing if tool is configured
         if (smearingTool_) {
-            // Set MC particles for truth matching (if available)
-            if (bus_.has(mcColl_)) {
-                smearingTool_->setMCParticles(&bus_.get<std::vector<MCParticle*>>(mcColl_));
-                // Check for truth links
-                ele_has_truth_link = smearingTool_->hasTruthMatch(ele_trk);
-                pos_has_truth_link = smearingTool_->hasTruthMatch(pos_trk);
+            // Set MC particles for smearing tool (needed for requireTruthMatch option)
+            if (mcParticles) {
+                smearingTool_->setMCParticles(mcParticles);
             }
             // Apply z0 smearing first
             smearingTool_->updateWithSmearZ0(ele_trk);

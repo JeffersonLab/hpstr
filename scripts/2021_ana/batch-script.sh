@@ -48,7 +48,12 @@ filename="$(basename "${input_file}")"
 output_file="${out_dir}/${filename}"
 
 shift 2
-if ! hpstr "${HPSTR_CONFIG}" -i "${input_file}" -o "${output_file}" ${@}; then
+
+# Generate unique smearing seed from SLURM job ID
+smearing_seed="${SLURM_JOB_ID:-$RANDOM}"
+echo "Using smearing seed: ${smearing_seed}"
+
+if ! hpstr "${HPSTR_CONFIG}" -i "${input_file}" -o "${output_file}" --seed "${smearing_seed}" ${@}; then
   echo "ERROR: hpstr preselect exited with non-zero error status."
   rm -f "${output_file}"
 fi

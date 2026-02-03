@@ -13,16 +13,21 @@ SLURM_ACCOUNT="hps"
 YEAR="2021"
 
 # Input data paths
-INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/ap_pulser/pass5_v9-merged/"
+#INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/ap_pulser/pass5_v9-merged/"
 
+# DATA INPUTS:
 #INPUT_DATA_DIR="/sdf/data/hps/physics2021/data/recon/pass5_v9/merged"
-#INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/tritrig_pulser/pass5_v9/HPS_Run2021Pass1_v9_14272_hitSmearKill-merged/"
-#INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/wab_pulser/pass5_v9/HPS_Run2021Pass1_v9_14272_hitSmearKill-merged/"
+
+# MC INPUTS:
+#INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/wab_pulser/pass5_v9/HPS_Run2021Pass1_v9_14272_hitSmearKill-reprocessed-merged/"
+#INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/tritrig_pulser/pass5_v9/HPS_Run2021Pass1_v9_14272_hitSmearKill-reprocessed-merged/"
+#INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/ap_pulser/pass5_v9/ap*MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill-reprocess-merged/"
+#INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/simp_pulser_new/pass5_v9/HPS_Run2021Pass1_v9_14272/simp*MeV-merged"
 
 # Output configuration
 #OUTPUT_DIR="/sdf/data/hps/physics2021/preselection/tritrig-no-smeared/"
 #OUTPUT_DIR="/sdf/data/hps/physics2021/preselection/wab-no-smeared/"
-OUTPUT_DIR="/sdf/data/hps/physics2021/preselection/Ap-no-time-no-smeared/"
+OUTPUT_DIR="/sdf/data/hps/physics2021/preselection/ap_pusler_nosmeared/"
 
 # File list configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

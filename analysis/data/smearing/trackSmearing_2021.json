@@ -9,6 +9,11 @@
         "top": 0.049285536755409885,
         "bot": 0.04589554481673371
     },
+    "omegaSmearing": {
+        "top": 0.05,
+        "bot": 0.035
+    },
     "relSmearingP": true,
-    "relSmearingZ0": false
+    "relSmearingZ0": false,
+    "smearOmega": false
 }
