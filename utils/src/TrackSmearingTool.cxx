@@ -247,19 +247,19 @@ double TrackSmearingTool::updateWithSmearP(Track& trk) {
   return (smeared_magnitude/unsmeared_magnitude);
 }
 
-void TrackSmearingTool::updateVertexWithSmearP(Vertex* vtx, double ele_smear_factor, double pos_smear_factor) {
+void TrackSmearingTool::updateVertexWithSmearP(Vertex* vtx, double p1_smear_factor, double p2_smear_factor) {
     TVector3 p1_corr, p2_corr;
 
     if (debug_) {
-        double ele_px = vtx->getP1X(), ele_py = vtx->getP1Y(), ele_pz = vtx->getP1Z();
-        double pos_px = vtx->getP2X(), pos_py = vtx->getP2Y(), pos_pz = vtx->getP2Z();
-        double ele_p = sqrt(ele_px*ele_px + ele_py*ele_py + ele_pz*ele_pz);
-        double pos_p = sqrt(pos_px*pos_px + pos_py*pos_py + pos_pz*pos_pz);
-        double psum_px = ele_px + pos_px, psum_py = ele_py + pos_py, psum_pz = ele_pz + pos_pz;
+        double p1_px = vtx->getP1X(), p1_py = vtx->getP1Y(), p1_pz = vtx->getP1Z();
+        double p2_px = vtx->getP2X(), p2_py = vtx->getP2Y(), p2_pz = vtx->getP2Z();
+        double p1_p = sqrt(p1_px*p1_px + p1_py*p1_py + p1_pz*p1_pz);
+        double p2_p = sqrt(p2_px*p2_px + p2_py*p2_py + p2_pz*p2_pz);
+        double psum_px = p1_px + p2_px, psum_py = p1_py + p2_py, psum_pz = p1_pz + p2_pz;
         double psum = sqrt(psum_px*psum_px + psum_py*psum_py + psum_pz*psum_pz);
         std::cout << "Before smearing:" << std::endl;
-        std::cout << "  Electron: px=" << ele_px << " py=" << ele_py << " pz=" << ele_pz << " |p|=" << ele_p << std::endl;
-        std::cout << "  Positron: px=" << pos_px << " py=" << pos_py << " pz=" << pos_pz << " |p|=" << pos_p << std::endl;
+        std::cout << "  P1: px=" << p1_px << " py=" << p1_py << " pz=" << p1_pz << " |p|=" << p1_p << std::endl;
+        std::cout << "  P2: px=" << p2_px << " py=" << p2_py << " pz=" << p2_pz << " |p|=" << p2_p << std::endl;
         std::cout << "  Psum:     px=" << psum_px << " py=" << psum_py << " pz=" << psum_pz << " |psum|=" << psum << std::endl;
     }
 
@@ -267,26 +267,26 @@ void TrackSmearingTool::updateVertexWithSmearP(Vertex* vtx, double ele_smear_fac
     // We don't know whether p1 or p2 is the electron
     // TODO: Introduce matching between the electron Track (not in this function), and p1/p2 to determine which is which
     // This is most easily done by comparing the py values of p1/2_corr and the track, since they should be in different regions of the detector (top/bottom)
-    p1_corr.SetX(vtx->getP1X()*ele_smear_factor);
-    p1_corr.SetY(vtx->getP1Y()*ele_smear_factor);
-    p1_corr.SetZ(vtx->getP1Z()*ele_smear_factor);
+    p1_corr.SetX(vtx->getP1X()*p1_smear_factor);
+    p1_corr.SetY(vtx->getP1Y()*p1_smear_factor);
+    p1_corr.SetZ(vtx->getP1Z()*p1_smear_factor);
 
-    p2_corr.SetX(vtx->getP2X()*pos_smear_factor);
-    p2_corr.SetY(vtx->getP2Y()*pos_smear_factor);
-    p2_corr.SetZ(vtx->getP2Z()*pos_smear_factor);
+    p2_corr.SetX(vtx->getP2X()*p2_smear_factor);
+    p2_corr.SetY(vtx->getP2Y()*p2_smear_factor);
+    p2_corr.SetZ(vtx->getP2Z()*p2_smear_factor);
 
     if (debug_) {
-        double ele_p_corr = p1_corr.Mag();
-        double pos_p_corr = p2_corr.Mag();
+        double p1_p_corr = p1_corr.Mag();
+        double p2_p_corr = p2_corr.Mag();
         TVector3 psum_corr = p1_corr + p2_corr;
-        std::cout << "After smearing (ele_factor=" << ele_smear_factor << ", pos_factor=" << pos_smear_factor << "):" << std::endl;
-        std::cout << "  Electron: px=" << p1_corr.X() << " py=" << p1_corr.Y() << " pz=" << p1_corr.Z() << " |p|=" << ele_p_corr << std::endl;
-        std::cout << "  Positron: px=" << p2_corr.X() << " py=" << p2_corr.Y() << " pz=" << p2_corr.Z() << " |p|=" << pos_p_corr << std::endl;
+        std::cout << "After smearing (p1_factor=" << p1_smear_factor << ", p2_factor=" << p2_smear_factor << "):" << std::endl;
+        std::cout << "  P1: px=" << p1_corr.X() << " py=" << p1_corr.Y() << " pz=" << p1_corr.Z() << " |p|=" << p1_p_corr << std::endl;
+        std::cout << "  P2: px=" << p2_corr.X() << " py=" << p2_corr.Y() << " pz=" << p2_corr.Z() << " |p|=" << p2_p_corr << std::endl;
         std::cout << "  Psum:     px=" << psum_corr.X() << " py=" << psum_corr.Y() << " pz=" << psum_corr.Z() << " |psum|=" << psum_corr.Mag() << std::endl;
     }
 
-    // smear invariant mass by sqrt(ele_smear*pos_smear)
-    double m_corr = vtx->getInvMass() * sqrt(ele_smear_factor * pos_smear_factor);
+    // smear invariant mass by sqrt(p1_smear*p2_smear)
+    double m_corr = vtx->getInvMass() * sqrt(p1_smear_factor * p2_smear_factor);
     vtx->setVtxParameters(p1_corr, p2_corr, m_corr);
 }
 

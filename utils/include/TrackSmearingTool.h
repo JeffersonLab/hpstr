@@ -57,7 +57,7 @@ class TrackSmearingTool {
   double smearTrackP(const Track& trk);
   double smearTrackP(const double p);
   double updateWithSmearP(Track& trk);
-  void updateVertexWithSmearP(Vertex* vtx, double ele_smear_factor, double pos_smear_factor);
+  void updateVertexWithSmearP(Vertex* vtx, double p1_smear_factor, double p2_smear_factor);
 
   // Omega (curvature) smearing - alternative to momentum smearing
   // Smears omega directly, then recalculates momentum from smeared omega
