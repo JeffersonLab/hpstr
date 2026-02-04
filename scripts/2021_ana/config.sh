@@ -1,6 +1,9 @@
 #!/bin/bash
 # Central configuration for 2021 analysis job submission
 # Source this file in other scripts: source config.sh
+#
+# This file contains SYSTEM-LEVEL settings only.
+# Job-specific parameters are defined in job_params.sh
 
 # User configuration
 USER_NAME="${USER:-$(whoami)}"
@@ -12,32 +15,27 @@ SLURM_ACCOUNT="hps"
 # Year for processing
 YEAR="2021"
 
-# Input data paths
-#INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/ap_pulser/pass5_v9-merged/"
-
-# DATA INPUTS:
-#INPUT_DATA_DIR="/sdf/data/hps/physics2021/data/recon/pass5_v9/merged"
-
-# MC INPUTS:
-#INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/wab_pulser/pass5_v9/HPS_Run2021Pass1_v9_14272_hitSmearKill-reprocessed-merged/"
-#INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/tritrig_pulser/pass5_v9/HPS_Run2021Pass1_v9_14272_hitSmearKill-reprocessed-merged/"
-#INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/ap_pulser/pass5_v9/ap*MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill-reprocess-merged/"
-#INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/simp_pulser_new/pass5_v9/HPS_Run2021Pass1_v9_14272/simp*MeV-merged"
-
-# Output configuration
-#OUTPUT_DIR="/sdf/data/hps/physics2021/preselection/tritrig-no-smeared/"
-#OUTPUT_DIR="/sdf/data/hps/physics2021/preselection/wab-no-smeared/"
-OUTPUT_DIR="/sdf/data/hps/physics2021/preselection/ap_pusler_nosmeared/"
-
-# File list configuration
+# Script directory (where this config lives)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-#DATA_LISTS_DIR="${SCRIPT_DIR}/data_lists/pass5"
-DATA_LISTS_DIR="${SCRIPT_DIR}/mc_lists/pass5"
-FILE_LIST="${DATA_LISTS_DIR}/wab.list"
 
 # Log directory
 LOG_DIR="${SCRIPT_DIR}/log"
 
-# hpstr configuration file
-HPSTR_CONFIG="config_displaced_2021.py"
-#HPSTR_CONFIG="config_prompt_2021.py"
+# Base paths for job_params.sh (can be overridden before sourcing job_params.sh)
+BASE_OUTPUT_DIR="/sdf/data/hps/physics2021/preselection/v1/"
+MC_LISTS_DIR="${SCRIPT_DIR}/mc_lists/pass5"
+DATA_LISTS_DIR="${SCRIPT_DIR}/data_lists/pass5"
+
+# ============================================================================
+# LEGACY SUPPORT - These are kept for make_file_list.sh and manual usage
+# ============================================================================
+
+# Input data paths (uncomment one for make_file_list.sh)
+#INPUT_DATA_DIR="/sdf/data/hps/physics2021/data/recon/pass5_v9/merged"
+#INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/wab_pulser/pass5_v9/HPS_Run2021Pass1_v9_14272_hitSmearKill-reprocessed-merged/"
+#INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/tritrig_pulser/pass5_v9/HPS_Run2021Pass1_v9_14272_hitSmearKill-reprocessed-merged/"
+#INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/ap_pulser/pass5_v9/ap*MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill-reprocess-merged/"
+INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/simp_pulser_new/pass5_v9/HPS_Run2021Pass1_v9_14272/simp*MeV-merged"
+
+# Default hpstr config (used by batch-script.sh if not overridden)
+HPSTR_CONFIG="${HPSTR_CONFIG:-config_displaced_2021.py}"
