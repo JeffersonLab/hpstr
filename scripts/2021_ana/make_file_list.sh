@@ -2,11 +2,12 @@
 # Generate file lists from input data directory
 #
 # Usage: ./make_file_list.sh [--mass <mass_point>] [--all-masses] [max_files]
-#   --mass <mass_point> - generate list for specific mass point (e.g., ap140MeV)
+#   --mass <mass_point> - generate list for specific mass point (e.g., ap140MeV, simp50MeV)
 #   --all-masses - generate separate lists for each mass point found
 #   max_files - optional, limit the number of files in the list (for testing)
 #
-# INPUT_DATA_DIR can contain wildcards (e.g., ap*MeV) in the path.
+# INPUT_DATA_DIR can contain wildcards (e.g., ap*MeV or simp*MeV) in the path.
+# Supports both A' (ap*MeV) and SIMP (simp*MeV, simp*MeV-merged) mass point patterns.
 # When using --all-masses with a wildcard path, generates separate lists for each match.
 # Without these flags, behaves as before (single flat list).
 
@@ -44,11 +45,12 @@ mkdir -p "${DATA_LISTS_DIR}"
 
 shopt -s nullglob
 
-# Function to extract mass point from a path (finds ap*MeV pattern)
+# Function to extract mass point from a path (finds ap*MeV or simp*MeV patterns)
 extract_mass_point() {
   local path="$1"
   # Extract the mass point directory name from the path
-  echo "$path" | grep -oE 'ap[0-9]+MeV' | head -1
+  # Supports: ap40MeV, simp50MeV, simp50MeV-merged, etc.
+  echo "$path" | grep -oE '(ap|simp)[0-9]+MeV(-merged)?' | head -1
 }
 
 # Function to generate file list for a given directory
@@ -160,13 +162,20 @@ if [[ "${INPUT_DATA_DIR}" == *'*'* ]]; then
 
 else
   # No wildcard in INPUT_DATA_DIR - use original logic
-  # Check for mass point directories (ap*MeV pattern) as subdirectories
-  mass_dirs=("${INPUT_DATA_DIR}"/ap*MeV)
+  # Check for mass point directories (ap*MeV or simp*MeV patterns) as subdirectories
+  mass_dirs=("${INPUT_DATA_DIR}"/ap*MeV "${INPUT_DATA_DIR}"/simp*MeV*)
+
+  # Filter to only existing directories
+  valid_mass_dirs=()
+  for d in "${mass_dirs[@]}"; do
+    [[ -d "$d" ]] && valid_mass_dirs+=("$d")
+  done
+  mass_dirs=("${valid_mass_dirs[@]}")
 
   if [[ "${all_masses}" == "true" ]]; then
     # Generate separate list for each mass point
-    if [ ${#mass_dirs[@]} -eq 0 ] || [ ! -d "${mass_dirs[0]}" ]; then
-      echo "ERROR: No mass point directories (ap*MeV) found in ${INPUT_DATA_DIR}"
+    if [ ${#mass_dirs[@]} -eq 0 ]; then
+      echo "ERROR: No mass point directories (ap*MeV or simp*MeV) found in ${INPUT_DATA_DIR}"
       exit 1
     fi
 

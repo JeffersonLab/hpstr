@@ -22,7 +22,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOG_DIR="${SCRIPT_DIR}/log"
 
 # Base paths for job_params.sh (can be overridden before sourcing job_params.sh)
-BASE_OUTPUT_DIR="/sdf/data/hps/physics2021/preselection/v1/"
+BASE_OUTPUT_DIR="/sdf/data/hps/physics2021/preselection/v2/"
 MC_LISTS_DIR="${SCRIPT_DIR}/mc_lists/pass5"
 DATA_LISTS_DIR="${SCRIPT_DIR}/data_lists/pass5"
 
@@ -35,7 +35,8 @@ DATA_LISTS_DIR="${SCRIPT_DIR}/data_lists/pass5"
 #INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/wab_pulser/pass5_v9/HPS_Run2021Pass1_v9_14272_hitSmearKill-reprocessed-merged/"
 #INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/tritrig_pulser/pass5_v9/HPS_Run2021Pass1_v9_14272_hitSmearKill-reprocessed-merged/"
 #INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/ap_pulser/pass5_v9/ap*MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill-reprocess-merged/"
-INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/simp_pulser_new/pass5_v9/HPS_Run2021Pass1_v9_14272/simp*MeV-merged"
+#INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/simp_pulser_new/pass5_v9/HPS_Run2021Pass1_v9_14272/simp*MeV-merged"
+INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/rad_pulser/pass5_v9/HPS_Run2021Pass1_v9_14272_hitSmearKill-reprocessed-merged/"
 
 # Default hpstr config (used by batch-script.sh if not overridden)
 HPSTR_CONFIG="${HPSTR_CONFIG:-config_displaced_2021.py}"

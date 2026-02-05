@@ -227,6 +227,8 @@ if [[ "${all_mode}" == "true" ]]; then
     echo "DRY RUN TOTAL: would submit ${total_submitted} jobs across ${#all_jobs[@]} job definitions"
   else
     echo "TOTAL: Submitted ${total_submitted} jobs across ${#all_jobs[@]} job definitions"
+    # Link summary.json from MC input dirs to output dirs
+    "${SUBMIT_DIR}/copy_summary.sh" --all
   fi
   exit 0
 fi
@@ -363,3 +365,8 @@ for file_list in "${file_lists[@]}"; do
 done
 
 echo "Submitted ${job_count} jobs"
+
+# Link summary.json from MC input dir to output dir
+if [[ -n "${job_name}" ]]; then
+  "${SUBMIT_DIR}/copy_summary.sh" --job "${job_name}"
+fi
