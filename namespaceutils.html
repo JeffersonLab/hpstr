@@ -125,6 +125,14 @@ Functions</h2></td></tr>
 <tr class="memitem:aa54b8be934579198d0bcfed387562ee0" id="r_aa54b8be934579198d0bcfed387562ee0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceutils.html#aa54b8be934579198d0bcfed387562ee0">v0_projection_to_target_significance</a> (<a class="el" href="BaseSelector_8h.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> v0proj_fits, int run, double &amp;vtx_proj_x, double &amp;vtx_proj_y, double &amp;vtx_proj_x_signif, double &amp;vtx_proj_y_signif, double vtx_x, double vtx_y, double vtx_z, double vtx_px, double vtx_py, double vtx_pz)</td></tr>
 <tr class="memdesc:aa54b8be934579198d0bcfed387562ee0"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <br /></td></tr>
 <tr class="separator:aa54b8be934579198d0bcfed387562ee0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5e30070b97ad0441ad23e507de39c29" id="r_af5e30070b97ad0441ad23e507de39c29"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceutils.html#af5e30070b97ad0441ad23e507de39c29">v0_projection_to_target_significance</a> (<a class="el" href="BaseSelector_8h.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> v0proj_fits, int run, double &amp;vtx_proj_x, double &amp;vtx_proj_y, double &amp;vtx_proj_x_signif, double &amp;vtx_proj_y_signif, <a class="el" href="classVertex.html">Vertex</a> *vtx)</td></tr>
+<tr class="separator:af5e30070b97ad0441ad23e507de39c29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc59f2c9266725bcf0bf8461f641176d" id="r_adc59f2c9266725bcf0bf8461f641176d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceutils.html#adc59f2c9266725bcf0bf8461f641176d">getTruthPDG</a> (<a class="el" href="classTrack.html">Track</a> &amp;trk, const std::vector&lt; <a class="el" href="classMCParticle.html">MCParticle</a> * &gt; *mcParticles, bool debug=false)</td></tr>
+<tr class="memdesc:adc59f2c9266725bcf0bf8461f641176d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the PDG code of the truth particle best matching this track.  <br /></td></tr>
+<tr class="separator:adc59f2c9266725bcf0bf8461f641176d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5452f868c7ab5f46a58b884dd391245f" id="r_a5452f868c7ab5f46a58b884dd391245f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceutils.html#a5452f868c7ab5f46a58b884dd391245f">hasTruthMatch</a> (<a class="el" href="classTrack.html">Track</a> &amp;trk, const std::vector&lt; <a class="el" href="classMCParticle.html">MCParticle</a> * &gt; *mcParticles, bool debug=false)</td></tr>
+<tr class="memdesc:a5452f868c7ab5f46a58b884dd391245f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if a track has a truth-matched electron/positron.  <br /></td></tr>
+<tr class="separator:a5452f868c7ab5f46a58b884dd391245f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a0d15b32d30266551f22e870e6613f109" name="a0d15b32d30266551f22e870e6613f109"></a>
@@ -192,7 +200,7 @@ Functions</h2></td></tr>
 <dd>
 false </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00499">499</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00454">454</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
 
 </div>
 </div>
@@ -221,7 +229,7 @@ false </dd></dl>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>CalCluster* </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00105">105</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00092">92</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
 
 </div>
 </div>
@@ -274,7 +282,7 @@ false </dd></dl>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Particle* </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00054">54</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00047">47</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
 
 </div>
 </div>
@@ -304,7 +312,7 @@ false </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00399">399</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00371">371</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
 
 </div>
 </div>
@@ -357,7 +365,7 @@ false </dd></dl>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Track* </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00156">156</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00135">135</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
 
 </div>
 </div>
@@ -404,7 +412,7 @@ false </dd></dl>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>TrackerHit* </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00465">465</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00424">424</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
 
 </div>
 </div>
@@ -433,7 +441,7 @@ false </dd></dl>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Vertex* </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00031">31</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00027">27</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
 
 </div>
 </div>
@@ -553,7 +561,7 @@ false </dd></dl>
 <p>description </p>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000015">Todo:</a></b></dt><dd>extern? </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00734">734</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00660">660</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
 
 </div>
 </div>
@@ -586,7 +594,7 @@ false </dd></dl>
 <p>description </p>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000014">Todo:</a></b></dt><dd>extern? </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00625">625</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00565">565</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
 
 </div>
 </div>
@@ -635,7 +643,66 @@ false </dd></dl>
 <dd>
 false </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00600">600</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00542">542</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
+
+</div>
+</div>
+<a id="adc59f2c9266725bcf0bf8461f641176d" name="adc59f2c9266725bcf0bf8461f641176d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc59f2c9266725bcf0bf8461f641176d">&#9670;&#160;</a></span>getTruthPDG()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int getTruthPDG </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classTrack.html">Track</a> &amp;&#160;</td>
+          <td class="paramname"><em>trk</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="classMCParticle.html">MCParticle</a> * &gt; *&#160;</td>
+          <td class="paramname"><em>mcParticles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>debug</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the PDG code of the truth particle best matching this track. </p>
+<p>Finds the MC particle with the most hits on the track using two methods:</p><ol type="1">
+<li>getMcpHits() from <a class="el" href="classTrack.html">Track</a> (populated by <a class="el" href="classVertexProcessor.html" title="Insert description here. more details.">VertexProcessor</a>)</li>
+<li>getSvtHits() and getMCPartIDs() from TrackerHits (fallback)</li>
+</ol>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">trk</td><td>The track to match </td></tr>
+    <tr><td class="paramname">mcParticles</td><td>Pointer to the MC particle collection </td></tr>
+    <tr><td class="paramname">debug</td><td>Enable debug output </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>PDG code of best-matching particle, or 0 if no match found </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="TruthMatchingUtils_8h_source.html#l00027">27</a> of file <a class="el" href="TruthMatchingUtils_8h_source.html">TruthMatchingUtils.h</a>.</p>
 
 </div>
 </div>
@@ -681,6 +748,61 @@ false </dd></dl>
 
 </div>
 </div>
+<a id="a5452f868c7ab5f46a58b884dd391245f" name="a5452f868c7ab5f46a58b884dd391245f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5452f868c7ab5f46a58b884dd391245f">&#9670;&#160;</a></span>hasTruthMatch()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool hasTruthMatch </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classTrack.html">Track</a> &amp;&#160;</td>
+          <td class="paramname"><em>trk</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="classMCParticle.html">MCParticle</a> * &gt; *&#160;</td>
+          <td class="paramname"><em>mcParticles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>debug</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check if a track has a truth-matched electron/positron. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">trk</td><td>The track to check </td></tr>
+    <tr><td class="paramname">mcParticles</td><td>Pointer to the MC particle collection </td></tr>
+    <tr><td class="paramname">debug</td><td>Enable debug output </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if track matches an electron or positron (abs(PDG) == 11) </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="TruthMatchingUtils_8h_source.html#l00113">113</a> of file <a class="el" href="TruthMatchingUtils_8h_source.html">TruthMatchingUtils.h</a>.</p>
+
+</div>
+</div>
 <a id="ac358ecc5a6e709ba4b0923fb312283d4" name="ac358ecc5a6e709ba4b0923fb312283d4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac358ecc5a6e709ba4b0923fb312283d4">&#9670;&#160;</a></span>IsSameTrack()</h2>
 
@@ -719,7 +841,7 @@ false </dd></dl>
 <dd>
 false </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00141">141</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00125">125</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
 
 </div>
 </div>
@@ -761,7 +883,7 @@ false </dd></dl>
 <dd>
 false </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00574">574</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00523">523</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
 
 </div>
 </div>
@@ -803,12 +925,12 @@ false </dd></dl>
 <dd>
 false </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00587">587</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00533">533</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
 
 </div>
 </div>
 <a id="aa54b8be934579198d0bcfed387562ee0" name="aa54b8be934579198d0bcfed387562ee0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa54b8be934579198d0bcfed387562ee0">&#9670;&#160;</a></span>v0_projection_to_target_significance()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aa54b8be934579198d0bcfed387562ee0">&#9670;&#160;</a></span>v0_projection_to_target_significance() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -896,7 +1018,67 @@ false </dd></dl>
 <p>description </p>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000016">Todo:</a></b></dt><dd>extern? </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00938">938</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00840">840</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
+
+</div>
+</div>
+<a id="af5e30070b97ad0441ad23e507de39c29" name="af5e30070b97ad0441ad23e507de39c29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5e30070b97ad0441ad23e507de39c29">&#9670;&#160;</a></span>v0_projection_to_target_significance() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double v0_projection_to_target_significance </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="BaseSelector_8h.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a>&#160;</td>
+          <td class="paramname"><em>v0proj_fits</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>run</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>vtx_proj_x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>vtx_proj_y</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>vtx_proj_x_signif</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>vtx_proj_y_signif</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classVertex.html">Vertex</a> *&#160;</td>
+          <td class="paramname"><em>vtx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="utilities_8cxx_source.html#l00884">884</a> of file <a class="el" href="utilities_8cxx_source.html">utilities.cxx</a>.</p>
 
 </div>
 </div>

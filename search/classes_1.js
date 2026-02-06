@@ -6,5 +6,6 @@ var searchData=
   ['bhtoyshistoprocessor_3',['BhToysHistoProcessor',['../classBhToysHistoProcessor.html',1,'']]],
   ['blfithistos_4',['BlFitHistos',['../classBlFitHistos.html',1,'']]],
   ['btail_5',['bTail',['../structVTPData_1_1bTail.html',1,'VTPData']]],
-  ['bumphunter_6',['BumpHunter',['../classBumpHunter.html',1,'']]]
+  ['bumphunter_6',['BumpHunter',['../classBumpHunter.html',1,'']]],
+  ['bus_7',['Bus',['../classframework_1_1Bus.html',1,'framework']]]
 ];

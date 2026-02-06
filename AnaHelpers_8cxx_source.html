@@ -178,224 +178,236 @@ $(document).ready(function() { init_codefold(0); });
 </div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
 <div class="foldopen" id="foldopen00090" data-start="{" data-end="}">
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#ad0ce98f1c5093a616444569a1b8d7a15">   90</a></span><span class="keywordtype">double</span> <a class="code hl_function" href="classAnaHelpers.html#ad0ce98f1c5093a616444569a1b8d7a15">AnaHelpers::GetClusterCoplanarity</a>(<a class="code hl_class" href="classCalCluster.html">CalCluster</a>* cl1,<a class="code hl_class" href="classCalCluster.html">CalCluster</a>* cl2){</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>  <span class="keywordtype">double</span> photon_nom_x=42.52; <span class="comment">//nominal photon position</span></div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>  <span class="keywordtype">double</span> radian=180.0/3.14; </div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>  <span class="keywordtype">double</span> cl1X=cl1-&gt;<a class="code hl_function" href="classCalCluster.html#a90de9fef142974ca7123e447e2527f05">getPosition</a>().at(0);</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>  <span class="keywordtype">double</span> cl1Y=cl1-&gt;<a class="code hl_function" href="classCalCluster.html#a90de9fef142974ca7123e447e2527f05">getPosition</a>().at(1);</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>  <span class="keywordtype">double</span> cl1Z=cl1-&gt;<a class="code hl_function" href="classCalCluster.html#a90de9fef142974ca7123e447e2527f05">getPosition</a>().at(2);</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>  <span class="keywordtype">double</span> cl2X=cl2-&gt;<a class="code hl_function" href="classCalCluster.html#a90de9fef142974ca7123e447e2527f05">getPosition</a>().at(0);</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>  <span class="keywordtype">double</span> cl2Y=cl2-&gt;<a class="code hl_function" href="classCalCluster.html#a90de9fef142974ca7123e447e2527f05">getPosition</a>().at(1);</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>  <span class="keywordtype">double</span> cl2Z=cl2-&gt;<a class="code hl_function" href="classCalCluster.html#a90de9fef142974ca7123e447e2527f05">getPosition</a>().at(2);</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>  <span class="keywordtype">double</span> cl1E=cl1-&gt;<a class="code hl_function" href="classCalCluster.html#a5a4d737018dabc54f3e1974aeb87359c">getEnergy</a>();  </div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>  <span class="keywordtype">double</span> cl2E=cl2-&gt;<a class="code hl_function" href="classCalCluster.html#a5a4d737018dabc54f3e1974aeb87359c">getEnergy</a>();</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span> </div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>  <span class="keywordtype">double</span> cl1_impact_angle=atan2(cl1Y,cl1X-photon_nom_x)*radian;</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>  <span class="keywordtype">double</span> cl2_impact_angle=atan2(cl2Y,cl2X-photon_nom_x)*radian;</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>  <span class="keywordflow">if</span>(cl1_impact_angle&lt;0.)</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    cl1_impact_angle+=360.;</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>  <span class="keywordflow">if</span>(cl2_impact_angle&lt;0.)</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    cl2_impact_angle+=360.;</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>  <span class="keywordflow">if</span> (cl1Y&gt;0)</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    <span class="keywordflow">return</span> cl2_impact_angle-cl1_impact_angle;</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>  <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <span class="keywordflow">return</span> cl1_impact_angle-cl2_impact_angle;</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>}</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#a8a660fd531585cc87c0f96d2e1074b52">   90</a></span>std::vector&lt;int&gt; <a class="code hl_function" href="classAnaHelpers.html#a8a660fd531585cc87c0f96d2e1074b52">AnaHelpers::GetTrackHitLayers</a>(<a class="code hl_class" href="classTrack.html">Track</a>* trk) {</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    std::vector&lt;int&gt; layer_code = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> ihit=0; ihit&lt;trk-&gt;<a class="code hl_function" href="classTrack.html#a39af95d014a02a0919fe92a85cf0700e">getHitLayers</a>().size();ihit++) {</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        <span class="keywordtype">int</span> layer = trk-&gt;<a class="code hl_function" href="classTrack.html#a39af95d014a02a0919fe92a85cf0700e">getHitLayers</a>().at(ihit);</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        layer_code.at(layer) = 1;</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    }</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    <span class="keywordflow">return</span> layer_code;</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>}</div>
 </div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span> </div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span> </div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span> </div>
-<div class="foldopen" id="foldopen00116" data-start="{" data-end="}">
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#a93f5958d3eee3da25d4c96ee0ba27729">  116</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="classAnaHelpers.html#a93f5958d3eee3da25d4c96ee0ba27729">AnaHelpers::MatchToGBLTracks</a>(<span class="keywordtype">int</span> ele_id, <span class="keywordtype">int</span> pos_id, <a class="code hl_class" href="classTrack.html">Track</a>* &amp; ele_trk, <a class="code hl_class" href="classTrack.html">Track</a>* &amp; pos_trk, std::vector&lt;Track*&gt;&amp; trks) {</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span> </div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    <span class="keywordtype">bool</span> foundele = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>    <span class="keywordtype">bool</span> foundpos = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span> </div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span> trk : trks) {</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>        <span class="keywordflow">if</span> (ele_id == trk-&gt;getID())  {</div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>            ele_trk = trk;</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>            foundele = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        }</div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>        <span class="keywordflow">if</span> (pos_id == trk-&gt;getID()) {</div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>            pos_trk = trk;</div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>            foundpos = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>        }</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>    }</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>    <span class="keywordflow">return</span> foundele * foundpos;</div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>}</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
+<div class="foldopen" id="foldopen00099" data-start="{" data-end="}">
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#ad0ce98f1c5093a616444569a1b8d7a15">   99</a></span><span class="keywordtype">double</span> <a class="code hl_function" href="classAnaHelpers.html#ad0ce98f1c5093a616444569a1b8d7a15">AnaHelpers::GetClusterCoplanarity</a>(<a class="code hl_class" href="classCalCluster.html">CalCluster</a>* cl1,<a class="code hl_class" href="classCalCluster.html">CalCluster</a>* cl2){</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>  <span class="keywordtype">double</span> photon_nom_x=42.52; <span class="comment">//nominal photon position</span></div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>  <span class="keywordtype">double</span> radian=180.0/3.14; </div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>  <span class="keywordtype">double</span> cl1X=cl1-&gt;<a class="code hl_function" href="classCalCluster.html#a90de9fef142974ca7123e447e2527f05">getPosition</a>().at(0);</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>  <span class="keywordtype">double</span> cl1Y=cl1-&gt;<a class="code hl_function" href="classCalCluster.html#a90de9fef142974ca7123e447e2527f05">getPosition</a>().at(1);</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>  <span class="keywordtype">double</span> cl1Z=cl1-&gt;<a class="code hl_function" href="classCalCluster.html#a90de9fef142974ca7123e447e2527f05">getPosition</a>().at(2);</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>  <span class="keywordtype">double</span> cl2X=cl2-&gt;<a class="code hl_function" href="classCalCluster.html#a90de9fef142974ca7123e447e2527f05">getPosition</a>().at(0);</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>  <span class="keywordtype">double</span> cl2Y=cl2-&gt;<a class="code hl_function" href="classCalCluster.html#a90de9fef142974ca7123e447e2527f05">getPosition</a>().at(1);</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>  <span class="keywordtype">double</span> cl2Z=cl2-&gt;<a class="code hl_function" href="classCalCluster.html#a90de9fef142974ca7123e447e2527f05">getPosition</a>().at(2);</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>  <span class="keywordtype">double</span> cl1E=cl1-&gt;<a class="code hl_function" href="classCalCluster.html#a5a4d737018dabc54f3e1974aeb87359c">getEnergy</a>();  </div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>  <span class="keywordtype">double</span> cl2E=cl2-&gt;<a class="code hl_function" href="classCalCluster.html#a5a4d737018dabc54f3e1974aeb87359c">getEnergy</a>();</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>  <span class="keywordtype">double</span> cl1_impact_angle=atan2(cl1Y,cl1X-photon_nom_x)*radian;</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>  <span class="keywordtype">double</span> cl2_impact_angle=atan2(cl2Y,cl2X-photon_nom_x)*radian;</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>  <span class="keywordflow">if</span>(cl1_impact_angle&lt;0.)</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    cl1_impact_angle+=360.;</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>  <span class="keywordflow">if</span>(cl2_impact_angle&lt;0.)</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    cl2_impact_angle+=360.;</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>  <span class="keywordflow">if</span> (cl1Y&gt;0)</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    <span class="keywordflow">return</span> cl2_impact_angle-cl1_impact_angle;</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>  <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>    <span class="keywordflow">return</span> cl1_impact_angle-cl2_impact_angle;</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>}</div>
 </div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span> </div>
-<div class="foldopen" id="foldopen00134" data-start="{" data-end="}">
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#af32670badf61206038627a09efcf9306">  134</a></span><a class="code hl_class" href="classTrack.html">Track</a>* <a class="code hl_function" href="classAnaHelpers.html#af32670badf61206038627a09efcf9306">AnaHelpers::GetTrackFromParticle</a>(std::vector&lt;Track*&gt;&amp; trks,<a class="code hl_class" href="classParticle.html">Particle</a>* part){</div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>  <span class="keywordtype">int</span> trkID=(part-&gt;<a class="code hl_function" href="classParticle.html#a182dcd4ae447f8686da15c6c642be909">getTrack</a>()).getID();</div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> trk :trks){</div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>    <span class="keywordflow">if</span> (trkID == trk-&gt;getID()) </div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>      <span class="keywordflow">return</span> trk;</div>
-<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>  }</div>
-<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>  <span class="keywordflow">return</span> NULL; </div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span> </div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
+<div class="foldopen" id="foldopen00125" data-start="{" data-end="}">
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#a93f5958d3eee3da25d4c96ee0ba27729">  125</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="classAnaHelpers.html#a93f5958d3eee3da25d4c96ee0ba27729">AnaHelpers::MatchToGBLTracks</a>(<span class="keywordtype">int</span> ele_id, <span class="keywordtype">int</span> pos_id, <a class="code hl_class" href="classTrack.html">Track</a>* &amp; ele_trk, <a class="code hl_class" href="classTrack.html">Track</a>* &amp; pos_trk, std::vector&lt;Track*&gt;&amp; trks) {</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span> </div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>    <span class="keywordtype">bool</span> foundele = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    <span class="keywordtype">bool</span> foundpos = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span> </div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span> trk : trks) {</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>        <span class="keywordflow">if</span> (ele_id == trk-&gt;getID())  {</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>            ele_trk = trk;</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>            foundele = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>        }</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>        <span class="keywordflow">if</span> (pos_id == trk-&gt;getID()) {</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>            pos_trk = trk;</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>            foundpos = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>        }</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>    }</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>    <span class="keywordflow">return</span> foundele * foundpos;</div>
 <div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>}</div>
 </div>
 <div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span> </div>
 <div class="foldopen" id="foldopen00143" data-start="{" data-end="}">
-<div class="line"><a id="l00143" name="l00143"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#a8e5c44ba7d9691c97a22b7a558033e21">  143</a></span><a class="code hl_class" href="classParticle.html">Particle</a>* <a class="code hl_function" href="classAnaHelpers.html#a8e5c44ba7d9691c97a22b7a558033e21">AnaHelpers::GetParticleFromCluster</a>(std::vector&lt;Particle*&gt;&amp; parts,<a class="code hl_class" href="classCalCluster.html">CalCluster</a>* cluster){</div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>  <a class="code hl_class" href="classCalHit.html">CalHit</a>* clusSeed=(<a class="code hl_class" href="classCalHit.html">CalHit</a>*)cluster-&gt;<a class="code hl_function" href="classCalCluster.html#a26e2181c5e39e42f6830209f803df7a5">getSeed</a>();</div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> part :parts){</div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>    <a class="code hl_class" href="classCalCluster.html">CalCluster</a> pClus=part-&gt;getCluster();</div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>    <span class="keywordflow">if</span>(pClus.<a class="code hl_function" href="classCalCluster.html#adbc8dafd9612c1376c949c88ebdb16a3">getNHits</a>() == 0)</div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>      <span class="keywordflow">continue</span>;</div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>    <a class="code hl_class" href="classCalHit.html">CalHit</a>* pClusSeed=(<a class="code hl_class" href="classCalHit.html">CalHit</a>*)pClus.<a class="code hl_function" href="classCalCluster.html#a26e2181c5e39e42f6830209f803df7a5">getSeed</a>();</div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>    <span class="keywordflow">if</span> ( clusSeed== pClusSeed) </div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>      <span class="keywordflow">return</span> part;</div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>  }</div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>  <span class="keywordflow">return</span> NULL; </div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>}</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#af32670badf61206038627a09efcf9306">  143</a></span><a class="code hl_class" href="classTrack.html">Track</a>* <a class="code hl_function" href="classAnaHelpers.html#af32670badf61206038627a09efcf9306">AnaHelpers::GetTrackFromParticle</a>(std::vector&lt;Track*&gt;&amp; trks,<a class="code hl_class" href="classParticle.html">Particle</a>* part){</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>  <span class="keywordtype">int</span> trkID=(part-&gt;<a class="code hl_function" href="classParticle.html#a182dcd4ae447f8686da15c6c642be909">getTrack</a>()).getID();</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> trk :trks){</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>    <span class="keywordflow">if</span> (trkID == trk-&gt;getID()) </div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>      <span class="keywordflow">return</span> trk;</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>  }</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>  <span class="keywordflow">return</span> NULL; </div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>}</div>
 </div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span> </div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span><span class="comment">//TODO clean bit up </span></div>
-<div class="foldopen" id="foldopen00157" data-start="{" data-end="}">
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#af213299f294c6deada0650563e6898fc">  157</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="classAnaHelpers.html#af213299f294c6deada0650563e6898fc">AnaHelpers::GetParticlesFromVtx</a>(<a class="code hl_class" href="classVertex.html">Vertex</a>* vtx, <a class="code hl_class" href="classParticle.html">Particle</a>*&amp; ele, <a class="code hl_class" href="classParticle.html">Particle</a>*&amp; pos) {</div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span> </div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span> </div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    <span class="keywordtype">bool</span> foundele = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    <span class="keywordtype">bool</span> foundpos = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span> </div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> ipart = 0; ipart &lt; vtx-&gt;getParticles().GetEntries(); ++ipart) {</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span> </div>
+<div class="foldopen" id="foldopen00152" data-start="{" data-end="}">
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#a8e5c44ba7d9691c97a22b7a558033e21">  152</a></span><a class="code hl_class" href="classParticle.html">Particle</a>* <a class="code hl_function" href="classAnaHelpers.html#a8e5c44ba7d9691c97a22b7a558033e21">AnaHelpers::GetParticleFromCluster</a>(std::vector&lt;Particle*&gt;&amp; parts,<a class="code hl_class" href="classCalCluster.html">CalCluster</a>* cluster){</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>  <a class="code hl_class" href="classCalHit.html">CalHit</a>* clusSeed=(<a class="code hl_class" href="classCalHit.html">CalHit</a>*)cluster-&gt;<a class="code hl_function" href="classCalCluster.html#a26e2181c5e39e42f6830209f803df7a5">getSeed</a>();</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> part :parts){</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>    <a class="code hl_class" href="classCalCluster.html">CalCluster</a> pClus=part-&gt;getCluster();</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>    <span class="keywordflow">if</span>(pClus.<a class="code hl_function" href="classCalCluster.html#adbc8dafd9612c1376c949c88ebdb16a3">getNHits</a>() == 0)</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>      <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>    <a class="code hl_class" href="classCalHit.html">CalHit</a>* pClusSeed=(<a class="code hl_class" href="classCalHit.html">CalHit</a>*)pClus.<a class="code hl_function" href="classCalCluster.html#a26e2181c5e39e42f6830209f803df7a5">getSeed</a>();</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>    <span class="keywordflow">if</span> ( clusSeed== pClusSeed) </div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>      <span class="keywordflow">return</span> part;</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>  }</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>  <span class="keywordflow">return</span> NULL; </div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>}</div>
+</div>
 <div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span> </div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span> </div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>        <span class="keywordtype">int</span> pdg_id = ((<a class="code hl_class" href="classParticle.html">Particle</a>*)vtx-&gt;getParticles().At(ipart))-&gt;getPDG();</div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;In Loop &quot;</span>&lt;&lt;pdg_id&lt;&lt; <span class="stringliteral">&quot; &quot;</span>&lt;&lt; ipart&lt;&lt;std::endl;</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span><span class="comment">//TODO clean bit up </span></div>
+<div class="foldopen" id="foldopen00166" data-start="{" data-end="}">
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#af213299f294c6deada0650563e6898fc">  166</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="classAnaHelpers.html#af213299f294c6deada0650563e6898fc">AnaHelpers::GetParticlesFromVtx</a>(<a class="code hl_class" href="classVertex.html">Vertex</a>* vtx, <a class="code hl_class" href="classParticle.html">Particle</a>*&amp; ele, <a class="code hl_class" href="classParticle.html">Particle</a>*&amp; pos) {</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span> </div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>        <span class="keywordflow">if</span> (pdg_id == 11) {</div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>            ele =  ((<a class="code hl_class" href="classParticle.html">Particle</a>*)vtx-&gt;getParticles().At(ipart));</div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>            foundele=<span class="keyword">true</span>;</div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>            <span class="keywordflow">if</span> (<a class="code hl_variable" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;found ele &quot;</span>&lt;&lt; (int)foundele&lt;&lt;std::endl;</div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>        }</div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (pdg_id == -11) {</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>            pos = (<a class="code hl_class" href="classParticle.html">Particle</a>*)vtx-&gt;getParticles().At(ipart);</div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>            foundpos=<span class="keyword">true</span>;</div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>            <span class="keywordflow">if</span>  (<a class="code hl_variable" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;found pos &quot;</span>&lt;&lt;(int)foundpos&lt;&lt;std::endl;</div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span> </div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>        }</div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>    }</div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span> </div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>    <span class="keywordflow">if</span> (!ele || !pos) {</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>        std::cout&lt;&lt;<span class="stringliteral">&quot;Vertex formed without ele/pos. Skip.&quot;</span>&lt;&lt;std::endl;</div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>    }</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;returning &quot;</span>&lt;&lt;(int) (foundele &amp;&amp; foundpos) &lt;&lt;std::endl;</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>    <span class="keywordflow">return</span> foundele &amp;&amp; foundpos;</div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>}</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    <span class="keywordtype">bool</span> foundele = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>    <span class="keywordtype">bool</span> foundpos = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span> </div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> ipart = 0; ipart &lt; vtx-&gt;getParticles().GetEntries(); ++ipart) {</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span> </div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span> </div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>        <span class="keywordtype">int</span> pdg_id = ((<a class="code hl_class" href="classParticle.html">Particle</a>*)vtx-&gt;getParticles().At(ipart))-&gt;getPDG();</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;In Loop &quot;</span>&lt;&lt;pdg_id&lt;&lt; <span class="stringliteral">&quot; &quot;</span>&lt;&lt; ipart&lt;&lt;std::endl;</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span> </div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>        <span class="keywordflow">if</span> (pdg_id == 11) {</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>            ele =  ((<a class="code hl_class" href="classParticle.html">Particle</a>*)vtx-&gt;getParticles().At(ipart));</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>            foundele=<span class="keyword">true</span>;</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>            <span class="keywordflow">if</span> (<a class="code hl_variable" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;found ele &quot;</span>&lt;&lt; (int)foundele&lt;&lt;std::endl;</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>        }</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (pdg_id == -11) {</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>            pos = (<a class="code hl_class" href="classParticle.html">Particle</a>*)vtx-&gt;getParticles().At(ipart);</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>            foundpos=<span class="keyword">true</span>;</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>            <span class="keywordflow">if</span>  (<a class="code hl_variable" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;found pos &quot;</span>&lt;&lt;(int)foundpos&lt;&lt;std::endl;</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span> </div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>        }</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>    }</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span> </div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>    <span class="keywordflow">if</span> (!ele || !pos) {</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>        std::cout&lt;&lt;<span class="stringliteral">&quot;Vertex formed without ele/pos. Skip.&quot;</span>&lt;&lt;std::endl;</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>    }</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;returning &quot;</span>&lt;&lt;(int) (foundele &amp;&amp; foundpos) &lt;&lt;std::endl;</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>    <span class="keywordflow">return</span> foundele &amp;&amp; foundpos;</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>}</div>
 </div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span> </div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span><span class="comment">//TODO clean bit up </span></div>
-<div class="foldopen" id="foldopen00191" data-start="{" data-end="}">
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#ab6681168580c075028a522e2a1690a22">  191</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="classAnaHelpers.html#ab6681168580c075028a522e2a1690a22">AnaHelpers::GetParticlesFromVtxAndParticleList</a>(std::vector&lt;Particle*&gt;&amp; parts, <a class="code hl_class" href="classVertex.html">Vertex</a>* vtx, <a class="code hl_class" href="classParticle.html">Particle</a>*&amp; ele, <a class="code hl_class" href="classParticle.html">Particle</a>*&amp; pos) {</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span> </div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span> </div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>    <span class="keywordtype">bool</span> foundele = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>    <span class="keywordtype">bool</span> foundpos = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>    <span class="keywordtype">bool</span> matchele=<span class="keyword">false</span>;</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>    <span class="keywordtype">bool</span> matchpos=<span class="keyword">false</span>;</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>    <a class="code hl_class" href="classParticle.html">Particle</a>* eleTmp=<span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>    <a class="code hl_class" href="classParticle.html">Particle</a>* posTmp=<span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> ipart = 0; ipart &lt; vtx-&gt;getParticles().GetEntries(); ++ipart) {</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span> </div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span><span class="comment">//TODO clean bit up </span></div>
+<div class="foldopen" id="foldopen00200" data-start="{" data-end="}">
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#ab6681168580c075028a522e2a1690a22">  200</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="classAnaHelpers.html#ab6681168580c075028a522e2a1690a22">AnaHelpers::GetParticlesFromVtxAndParticleList</a>(std::vector&lt;Particle*&gt;&amp; parts, <a class="code hl_class" href="classVertex.html">Vertex</a>* vtx, <a class="code hl_class" href="classParticle.html">Particle</a>*&amp; ele, <a class="code hl_class" href="classParticle.html">Particle</a>*&amp; pos) {</div>
 <div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span> </div>
 <div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span> </div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>        <span class="keywordtype">int</span> pdg_id = ((<a class="code hl_class" href="classParticle.html">Particle</a>*)vtx-&gt;getParticles().At(ipart))-&gt;getPDG();</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;In Loop &quot;</span>&lt;&lt;pdg_id&lt;&lt; <span class="stringliteral">&quot; &quot;</span>&lt;&lt; ipart&lt;&lt;std::endl;</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span> </div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>        <span class="keywordflow">if</span> (pdg_id == 11) {</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>            eleTmp =  ((<a class="code hl_class" href="classParticle.html">Particle</a>*)vtx-&gt;getParticles().At(ipart));</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>            foundele=<span class="keyword">true</span>;</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>            <span class="keywordflow">if</span> (<a class="code hl_variable" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;found ele &quot;</span>&lt;&lt; (int)foundele&lt;&lt;std::endl;</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>        }</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (pdg_id == -11) {</div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>            posTmp = (<a class="code hl_class" href="classParticle.html">Particle</a>*)vtx-&gt;getParticles().At(ipart);</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>            foundpos=<span class="keyword">true</span>;</div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>            <span class="keywordflow">if</span>  (<a class="code hl_variable" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;found pos &quot;</span>&lt;&lt;(int)foundpos&lt;&lt;std::endl;</div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span> </div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>        }</div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>    }</div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span> </div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>    <span class="keywordflow">if</span> (!eleTmp || !posTmp) {</div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>        std::cout&lt;&lt;<span class="stringliteral">&quot;Vertex formed without ele/pos. Skip.&quot;</span>&lt;&lt;std::endl;</div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>    }</div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span> </div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>    <span class="keywordtype">double</span> eleEne=eleTmp-&gt;<a class="code hl_function" href="classParticle.html#a192b0ddfd4cd65a3e0e91dac652085dd">getMomentum</a>().at(2);<span class="comment">//this is a dumb way to match but particles don&#39;t have IDs...</span></div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>    <span class="keywordtype">double</span> posEne=posTmp-&gt;<a class="code hl_function" href="classParticle.html#a192b0ddfd4cd65a3e0e91dac652085dd">getMomentum</a>().at(2);</div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span> </div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span> part :parts){     </div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>      </div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>      <span class="keywordflow">if</span> (eleEne == part-&gt;getMomentum().at(2)) { </div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>        matchele=<span class="keyword">true</span>;</div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>        ele=part;</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>     }</div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>      <span class="keywordflow">if</span> (posEne == part-&gt;getMomentum().at(2)) {</div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>        matchpos=<span class="keyword">true</span>;</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>        pos=part;</div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>      }</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>    <span class="keywordtype">bool</span> foundele = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>    <span class="keywordtype">bool</span> foundpos = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>    <span class="keywordtype">bool</span> matchele=<span class="keyword">false</span>;</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    <span class="keywordtype">bool</span> matchpos=<span class="keyword">false</span>;</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>    <a class="code hl_class" href="classParticle.html">Particle</a>* eleTmp=<span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    <a class="code hl_class" href="classParticle.html">Particle</a>* posTmp=<span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> ipart = 0; ipart &lt; vtx-&gt;getParticles().GetEntries(); ++ipart) {</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span> </div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span> </div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>        <span class="keywordtype">int</span> pdg_id = ((<a class="code hl_class" href="classParticle.html">Particle</a>*)vtx-&gt;getParticles().At(ipart))-&gt;getPDG();</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;In Loop &quot;</span>&lt;&lt;pdg_id&lt;&lt; <span class="stringliteral">&quot; &quot;</span>&lt;&lt; ipart&lt;&lt;std::endl;</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span> </div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>        <span class="keywordflow">if</span> (pdg_id == 11) {</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>            eleTmp =  ((<a class="code hl_class" href="classParticle.html">Particle</a>*)vtx-&gt;getParticles().At(ipart));</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>            foundele=<span class="keyword">true</span>;</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>            <span class="keywordflow">if</span> (<a class="code hl_variable" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;found ele &quot;</span>&lt;&lt; (int)foundele&lt;&lt;std::endl;</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>        }</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (pdg_id == -11) {</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>            posTmp = (<a class="code hl_class" href="classParticle.html">Particle</a>*)vtx-&gt;getParticles().At(ipart);</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>            foundpos=<span class="keyword">true</span>;</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>            <span class="keywordflow">if</span>  (<a class="code hl_variable" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a>) std::cout&lt;&lt;<span class="stringliteral">&quot;found pos &quot;</span>&lt;&lt;(int)foundpos&lt;&lt;std::endl;</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span> </div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>        }</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>    }</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span> </div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>    <span class="keywordflow">if</span> (!eleTmp || !posTmp) {</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>        std::cout&lt;&lt;<span class="stringliteral">&quot;Vertex formed without ele/pos. Skip.&quot;</span>&lt;&lt;std::endl;</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>    }</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span> </div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>    <span class="keywordtype">double</span> eleEne=eleTmp-&gt;<a class="code hl_function" href="classParticle.html#a192b0ddfd4cd65a3e0e91dac652085dd">getMomentum</a>().at(2);<span class="comment">//this is a dumb way to match but particles don&#39;t have IDs...</span></div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>    <span class="keywordtype">double</span> posEne=posTmp-&gt;<a class="code hl_function" href="classParticle.html#a192b0ddfd4cd65a3e0e91dac652085dd">getMomentum</a>().at(2);</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span> </div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span> part :parts){     </div>
 <div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>      </div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>    }</div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>    </div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>    <span class="keywordflow">return</span> foundele &amp;&amp; foundpos &amp;&amp; matchpos &amp;&amp;matchele;</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>}</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>      <span class="keywordflow">if</span> (eleEne == part-&gt;getMomentum().at(2)) { </div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>        matchele=<span class="keyword">true</span>;</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>        ele=part;</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>     }</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>      <span class="keywordflow">if</span> (posEne == part-&gt;getMomentum().at(2)) {</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>        matchpos=<span class="keyword">true</span>;</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>        pos=part;</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>      }</div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>      </div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>    }</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>    </div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>    <span class="keywordflow">return</span> foundele &amp;&amp; foundpos &amp;&amp; matchpos &amp;&amp;matchele;</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>}</div>
 </div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span> </div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span> </div>
-<div class="foldopen" id="foldopen00244" data-start="{" data-end="}">
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#a36472fb9fabb806ac0d2d7cbff1c5eee">  244</a></span><a class="code hl_function" href="classAnaHelpers.html#a36472fb9fabb806ac0d2d7cbff1c5eee">AnaHelpers::AnaHelpers</a>() {</div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>    <a class="code hl_variable" href="classAnaHelpers.html#a2a5a6a06f1ef8c305a704d4e64b70919">rotSvt</a>.RotateY(<a class="code hl_variable" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span> </div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>    <a class="code hl_variable" href="classAnaHelpers.html#a76c415c6fad993408769670d049a5685">rotSvt_sym</a> =  <span class="keyword">new</span> TMatrixDSym(3);</div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span> </div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>    (*rotSvt_sym)(0,0) = cos(<a class="code hl_variable" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>    (*rotSvt_sym)(0,1) = 0.;</div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>    (*rotSvt_sym)(0,2) = sin(<a class="code hl_variable" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span> </div>
 <div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span> </div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>    (*rotSvt_sym)(1,0) = 0.;</div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>    (*rotSvt_sym)(1,1) = 1.;</div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>    (*rotSvt_sym)(1,2) = 0.;</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span> </div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>    (*rotSvt_sym)(1,0) = -sin(<a class="code hl_variable" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>    (*rotSvt_sym)(1,1) = 0.;</div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>    (*rotSvt_sym)(1,2) = cos(<a class="code hl_variable" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span> </div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>    <a class="code hl_variable" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a> = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span> </div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>}</div>
+<div class="foldopen" id="foldopen00253" data-start="{" data-end="}">
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#a36472fb9fabb806ac0d2d7cbff1c5eee">  253</a></span><a class="code hl_function" href="classAnaHelpers.html#a36472fb9fabb806ac0d2d7cbff1c5eee">AnaHelpers::AnaHelpers</a>() {</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>    <a class="code hl_variable" href="classAnaHelpers.html#a2a5a6a06f1ef8c305a704d4e64b70919">rotSvt</a>.RotateY(<a class="code hl_variable" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span> </div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>    <a class="code hl_variable" href="classAnaHelpers.html#a76c415c6fad993408769670d049a5685">rotSvt_sym</a> =  <span class="keyword">new</span> TMatrixDSym(3);</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span> </div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>    (*rotSvt_sym)(0,0) = cos(<a class="code hl_variable" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>    (*rotSvt_sym)(0,1) = 0.;</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>    (*rotSvt_sym)(0,2) = sin(<a class="code hl_variable" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span> </div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>    (*rotSvt_sym)(1,0) = 0.;</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>    (*rotSvt_sym)(1,1) = 1.;</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>    (*rotSvt_sym)(1,2) = 0.;</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span> </div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>    (*rotSvt_sym)(1,0) = -sin(<a class="code hl_variable" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>    (*rotSvt_sym)(1,1) = 0.;</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>    (*rotSvt_sym)(1,2) = cos(<a class="code hl_variable" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span> </div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>    <a class="code hl_variable" href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span> </div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>}</div>
 </div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span> </div>
-<div class="foldopen" id="foldopen00265" data-start="{" data-end="}">
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#aaa09d9f9e38b8f1fd1499bf6db19e8ff">  265</a></span>TVector3 <a class="code hl_function" href="classAnaHelpers.html#aaa09d9f9e38b8f1fd1499bf6db19e8ff">AnaHelpers::rotateToSvtFrame</a>(TVector3 v) {</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span> </div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>    v.RotateY(<a class="code hl_variable" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>    <span class="keywordflow">return</span> v;   </div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>}</div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span> </div>
+<div class="foldopen" id="foldopen00274" data-start="{" data-end="}">
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#aaa09d9f9e38b8f1fd1499bf6db19e8ff">  274</a></span>TVector3 <a class="code hl_function" href="classAnaHelpers.html#aaa09d9f9e38b8f1fd1499bf6db19e8ff">AnaHelpers::rotateToSvtFrame</a>(TVector3 v) {</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span> </div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>    v.RotateY(<a class="code hl_variable" href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">SVT_ANGLE</a>);</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>    <span class="keywordflow">return</span> v;   </div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>}</div>
 </div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span> </div>
-<div class="foldopen" id="foldopen00271" data-start="{" data-end="}">
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#a8b180d5d5c36c12778a7e8fc4c06b561">  271</a></span>TVector3 <a class="code hl_function" href="classAnaHelpers.html#a8b180d5d5c36c12778a7e8fc4c06b561">AnaHelpers::rotationToSvtFrame</a>(<span class="keyword">const</span> TVector3&amp;  v) {</div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="classAnaHelpers.html#a2a5a6a06f1ef8c305a704d4e64b70919">rotSvt</a>*v;</div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>}</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span> </div>
+<div class="foldopen" id="foldopen00280" data-start="{" data-end="}">
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno"><a class="line" href="classAnaHelpers.html#a8b180d5d5c36c12778a7e8fc4c06b561">  280</a></span>TVector3 <a class="code hl_function" href="classAnaHelpers.html#a8b180d5d5c36c12778a7e8fc4c06b561">AnaHelpers::rotationToSvtFrame</a>(<span class="keyword">const</span> TVector3&amp;  v) {</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="classAnaHelpers.html#a2a5a6a06f1ef8c305a704d4e64b70919">rotSvt</a>*v;</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>}</div>
 </div>
 <div class="ttc" id="aAnaHelpers_8h_html"><div class="ttname"><a href="AnaHelpers_8h.html">AnaHelpers.h</a></div><div class="ttdoc">Helper class for hipster analysis.</div></div>
-<div class="ttc" id="aclassAnaHelpers_html_a2a5a6a06f1ef8c305a704d4e64b70919"><div class="ttname"><a href="classAnaHelpers.html#a2a5a6a06f1ef8c305a704d4e64b70919">AnaHelpers::rotSvt</a></div><div class="ttdeci">TRotation rotSvt</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8h_source.html#l00114">AnaHelpers.h:114</a></div></div>
+<div class="ttc" id="aclassAnaHelpers_html_a2a5a6a06f1ef8c305a704d4e64b70919"><div class="ttname"><a href="classAnaHelpers.html#a2a5a6a06f1ef8c305a704d4e64b70919">AnaHelpers::rotSvt</a></div><div class="ttdeci">TRotation rotSvt</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8h_source.html#l00116">AnaHelpers.h:116</a></div></div>
 <div class="ttc" id="aclassAnaHelpers_html_a2f0982918af5f77fb5ae4537b2e67bb5"><div class="ttname"><a href="classAnaHelpers.html#a2f0982918af5f77fb5ae4537b2e67bb5">AnaHelpers::InnermostLayerCheck</a></div><div class="ttdeci">void InnermostLayerCheck(Track *trk, bool &amp;foundL1, bool &amp;foundL2)</div><div class="ttdoc">Checks if a track has a 3d hit on innermost layer and second innermost layer.</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00054">AnaHelpers.cxx:54</a></div></div>
-<div class="ttc" id="aclassAnaHelpers_html_a36472fb9fabb806ac0d2d7cbff1c5eee"><div class="ttname"><a href="classAnaHelpers.html#a36472fb9fabb806ac0d2d7cbff1c5eee">AnaHelpers::AnaHelpers</a></div><div class="ttdeci">AnaHelpers()</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00244">AnaHelpers.cxx:244</a></div></div>
-<div class="ttc" id="aclassAnaHelpers_html_a76c415c6fad993408769670d049a5685"><div class="ttname"><a href="classAnaHelpers.html#a76c415c6fad993408769670d049a5685">AnaHelpers::rotSvt_sym</a></div><div class="ttdeci">TMatrixDSym * rotSvt_sym</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8h_source.html#l00115">AnaHelpers.h:115</a></div></div>
-<div class="ttc" id="aclassAnaHelpers_html_a8b180d5d5c36c12778a7e8fc4c06b561"><div class="ttname"><a href="classAnaHelpers.html#a8b180d5d5c36c12778a7e8fc4c06b561">AnaHelpers::rotationToSvtFrame</a></div><div class="ttdeci">TVector3 rotationToSvtFrame(const TVector3 &amp;v)</div><div class="ttdoc">Rotate a vector from HPS to SVT Frame via TRotation.</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00271">AnaHelpers.cxx:271</a></div></div>
-<div class="ttc" id="aclassAnaHelpers_html_a8e5c44ba7d9691c97a22b7a558033e21"><div class="ttname"><a href="classAnaHelpers.html#a8e5c44ba7d9691c97a22b7a558033e21">AnaHelpers::GetParticleFromCluster</a></div><div class="ttdeci">Particle * GetParticleFromCluster(std::vector&lt; Particle * &gt; &amp;parts, CalCluster *cluster)</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00143">AnaHelpers.cxx:143</a></div></div>
-<div class="ttc" id="aclassAnaHelpers_html_a93f5958d3eee3da25d4c96ee0ba27729"><div class="ttname"><a href="classAnaHelpers.html#a93f5958d3eee3da25d4c96ee0ba27729">AnaHelpers::MatchToGBLTracks</a></div><div class="ttdeci">bool MatchToGBLTracks(int ele_id, int pos_id, Track *&amp;ele_trk, Track *&amp;pos_trk, std::vector&lt; Track * &gt; &amp;trks)</div><div class="ttdoc">brief description</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00116">AnaHelpers.cxx:116</a></div></div>
+<div class="ttc" id="aclassAnaHelpers_html_a36472fb9fabb806ac0d2d7cbff1c5eee"><div class="ttname"><a href="classAnaHelpers.html#a36472fb9fabb806ac0d2d7cbff1c5eee">AnaHelpers::AnaHelpers</a></div><div class="ttdeci">AnaHelpers()</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00253">AnaHelpers.cxx:253</a></div></div>
+<div class="ttc" id="aclassAnaHelpers_html_a76c415c6fad993408769670d049a5685"><div class="ttname"><a href="classAnaHelpers.html#a76c415c6fad993408769670d049a5685">AnaHelpers::rotSvt_sym</a></div><div class="ttdeci">TMatrixDSym * rotSvt_sym</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8h_source.html#l00117">AnaHelpers.h:117</a></div></div>
+<div class="ttc" id="aclassAnaHelpers_html_a8a660fd531585cc87c0f96d2e1074b52"><div class="ttname"><a href="classAnaHelpers.html#a8a660fd531585cc87c0f96d2e1074b52">AnaHelpers::GetTrackHitLayers</a></div><div class="ttdeci">std::vector&lt; int &gt; GetTrackHitLayers(Track *trk)</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00090">AnaHelpers.cxx:90</a></div></div>
+<div class="ttc" id="aclassAnaHelpers_html_a8b180d5d5c36c12778a7e8fc4c06b561"><div class="ttname"><a href="classAnaHelpers.html#a8b180d5d5c36c12778a7e8fc4c06b561">AnaHelpers::rotationToSvtFrame</a></div><div class="ttdeci">TVector3 rotationToSvtFrame(const TVector3 &amp;v)</div><div class="ttdoc">Rotate a vector from HPS to SVT Frame via TRotation.</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00280">AnaHelpers.cxx:280</a></div></div>
+<div class="ttc" id="aclassAnaHelpers_html_a8e5c44ba7d9691c97a22b7a558033e21"><div class="ttname"><a href="classAnaHelpers.html#a8e5c44ba7d9691c97a22b7a558033e21">AnaHelpers::GetParticleFromCluster</a></div><div class="ttdeci">Particle * GetParticleFromCluster(std::vector&lt; Particle * &gt; &amp;parts, CalCluster *cluster)</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00152">AnaHelpers.cxx:152</a></div></div>
+<div class="ttc" id="aclassAnaHelpers_html_a93f5958d3eee3da25d4c96ee0ba27729"><div class="ttname"><a href="classAnaHelpers.html#a93f5958d3eee3da25d4c96ee0ba27729">AnaHelpers::MatchToGBLTracks</a></div><div class="ttdeci">bool MatchToGBLTracks(int ele_id, int pos_id, Track *&amp;ele_trk, Track *&amp;pos_trk, std::vector&lt; Track * &gt; &amp;trks)</div><div class="ttdoc">brief description</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00125">AnaHelpers.cxx:125</a></div></div>
 <div class="ttc" id="aclassAnaHelpers_html_a99cba69d197ec821e4c38bbf1e2d8e61"><div class="ttname"><a href="classAnaHelpers.html#a99cba69d197ec821e4c38bbf1e2d8e61">AnaHelpers::IsECalFiducial</a></div><div class="ttdeci">bool IsECalFiducial(CalCluster *clu)</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00030">AnaHelpers.cxx:30</a></div></div>
-<div class="ttc" id="aclassAnaHelpers_html_aa1c2fa69eb035555a23b36f17592a039"><div class="ttname"><a href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">AnaHelpers::SVT_ANGLE</a></div><div class="ttdeci">const double SVT_ANGLE</div><div class="ttdoc">Angle between SVT system and HPS coordinates.</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8h_source.html#l00113">AnaHelpers.h:113</a></div></div>
-<div class="ttc" id="aclassAnaHelpers_html_aaa09d9f9e38b8f1fd1499bf6db19e8ff"><div class="ttname"><a href="classAnaHelpers.html#aaa09d9f9e38b8f1fd1499bf6db19e8ff">AnaHelpers::rotateToSvtFrame</a></div><div class="ttdeci">TVector3 rotateToSvtFrame(TVector3 v)</div><div class="ttdoc">Rotate a vector from HPS to SVT Frame (i.e. for position/momentum rotation)</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00265">AnaHelpers.cxx:265</a></div></div>
-<div class="ttc" id="aclassAnaHelpers_html_ab6681168580c075028a522e2a1690a22"><div class="ttname"><a href="classAnaHelpers.html#ab6681168580c075028a522e2a1690a22">AnaHelpers::GetParticlesFromVtxAndParticleList</a></div><div class="ttdeci">bool GetParticlesFromVtxAndParticleList(std::vector&lt; Particle * &gt; &amp;parts, Vertex *vtx, Particle *&amp;ele, Particle *&amp;pos)</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00191">AnaHelpers.cxx:191</a></div></div>
-<div class="ttc" id="aclassAnaHelpers_html_ad0ce98f1c5093a616444569a1b8d7a15"><div class="ttname"><a href="classAnaHelpers.html#ad0ce98f1c5093a616444569a1b8d7a15">AnaHelpers::GetClusterCoplanarity</a></div><div class="ttdeci">double GetClusterCoplanarity(CalCluster *cl1, CalCluster *cl2)</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00090">AnaHelpers.cxx:90</a></div></div>
+<div class="ttc" id="aclassAnaHelpers_html_aa1c2fa69eb035555a23b36f17592a039"><div class="ttname"><a href="classAnaHelpers.html#aa1c2fa69eb035555a23b36f17592a039">AnaHelpers::SVT_ANGLE</a></div><div class="ttdeci">const double SVT_ANGLE</div><div class="ttdoc">Angle between SVT system and HPS coordinates.</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8h_source.html#l00115">AnaHelpers.h:115</a></div></div>
+<div class="ttc" id="aclassAnaHelpers_html_aaa09d9f9e38b8f1fd1499bf6db19e8ff"><div class="ttname"><a href="classAnaHelpers.html#aaa09d9f9e38b8f1fd1499bf6db19e8ff">AnaHelpers::rotateToSvtFrame</a></div><div class="ttdeci">TVector3 rotateToSvtFrame(TVector3 v)</div><div class="ttdoc">Rotate a vector from HPS to SVT Frame (i.e. for position/momentum rotation)</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00274">AnaHelpers.cxx:274</a></div></div>
+<div class="ttc" id="aclassAnaHelpers_html_ab6681168580c075028a522e2a1690a22"><div class="ttname"><a href="classAnaHelpers.html#ab6681168580c075028a522e2a1690a22">AnaHelpers::GetParticlesFromVtxAndParticleList</a></div><div class="ttdeci">bool GetParticlesFromVtxAndParticleList(std::vector&lt; Particle * &gt; &amp;parts, Vertex *vtx, Particle *&amp;ele, Particle *&amp;pos)</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00200">AnaHelpers.cxx:200</a></div></div>
+<div class="ttc" id="aclassAnaHelpers_html_ad0ce98f1c5093a616444569a1b8d7a15"><div class="ttname"><a href="classAnaHelpers.html#ad0ce98f1c5093a616444569a1b8d7a15">AnaHelpers::GetClusterCoplanarity</a></div><div class="ttdeci">double GetClusterCoplanarity(CalCluster *cl1, CalCluster *cl2)</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00099">AnaHelpers.cxx:99</a></div></div>
 <div class="ttc" id="aclassAnaHelpers_html_ad2e16c52eb34eb9851bd01e93c355aff"><div class="ttname"><a href="classAnaHelpers.html#ad2e16c52eb34eb9851bd01e93c355aff">AnaHelpers::getFileName</a></div><div class="ttdeci">static std::string getFileName(std::string filePath, bool withExtension)</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00005">AnaHelpers.cxx:5</a></div></div>
-<div class="ttc" id="aclassAnaHelpers_html_af213299f294c6deada0650563e6898fc"><div class="ttname"><a href="classAnaHelpers.html#af213299f294c6deada0650563e6898fc">AnaHelpers::GetParticlesFromVtx</a></div><div class="ttdeci">bool GetParticlesFromVtx(Vertex *vtx, Particle *&amp;ele, Particle *&amp;pos)</div><div class="ttdoc">Get the Particles From Vtx object.</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00157">AnaHelpers.cxx:157</a></div></div>
-<div class="ttc" id="aclassAnaHelpers_html_af32670badf61206038627a09efcf9306"><div class="ttname"><a href="classAnaHelpers.html#af32670badf61206038627a09efcf9306">AnaHelpers::GetTrackFromParticle</a></div><div class="ttdeci">Track * GetTrackFromParticle(std::vector&lt; Track * &gt; &amp;trks, Particle *part)</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00134">AnaHelpers.cxx:134</a></div></div>
-<div class="ttc" id="aclassAnaHelpers_html_afa3f4fa08a8a3b675e2dab06e29412a1"><div class="ttname"><a href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">AnaHelpers::debug_</a></div><div class="ttdeci">bool debug_</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8h_source.html#l00116">AnaHelpers.h:116</a></div></div>
+<div class="ttc" id="aclassAnaHelpers_html_af213299f294c6deada0650563e6898fc"><div class="ttname"><a href="classAnaHelpers.html#af213299f294c6deada0650563e6898fc">AnaHelpers::GetParticlesFromVtx</a></div><div class="ttdeci">bool GetParticlesFromVtx(Vertex *vtx, Particle *&amp;ele, Particle *&amp;pos)</div><div class="ttdoc">Get the Particles From Vtx object.</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00166">AnaHelpers.cxx:166</a></div></div>
+<div class="ttc" id="aclassAnaHelpers_html_af32670badf61206038627a09efcf9306"><div class="ttname"><a href="classAnaHelpers.html#af32670badf61206038627a09efcf9306">AnaHelpers::GetTrackFromParticle</a></div><div class="ttdeci">Track * GetTrackFromParticle(std::vector&lt; Track * &gt; &amp;trks, Particle *part)</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8cxx_source.html#l00143">AnaHelpers.cxx:143</a></div></div>
+<div class="ttc" id="aclassAnaHelpers_html_afa3f4fa08a8a3b675e2dab06e29412a1"><div class="ttname"><a href="classAnaHelpers.html#afa3f4fa08a8a3b675e2dab06e29412a1">AnaHelpers::debug_</a></div><div class="ttdeci">bool debug_</div><div class="ttdoc">description</div><div class="ttdef"><b>Definition</b> <a href="AnaHelpers_8h_source.html#l00118">AnaHelpers.h:118</a></div></div>
 <div class="ttc" id="aclassCalCluster_html"><div class="ttname"><a href="classCalCluster.html">CalCluster</a></div><div class="ttdef"><b>Definition</b> <a href="CalCluster_8h_source.html#l00023">CalCluster.h:23</a></div></div>
 <div class="ttc" id="aclassCalCluster_html_a26e2181c5e39e42f6830209f803df7a5"><div class="ttname"><a href="classCalCluster.html#a26e2181c5e39e42f6830209f803df7a5">CalCluster::getSeed</a></div><div class="ttdeci">TObject * getSeed() const</div><div class="ttdef"><b>Definition</b> <a href="CalCluster_8h_source.html#l00093">CalCluster.h:93</a></div></div>
 <div class="ttc" id="aclassCalCluster_html_a5a4d737018dabc54f3e1974aeb87359c"><div class="ttname"><a href="classCalCluster.html#a5a4d737018dabc54f3e1974aeb87359c">CalCluster::getEnergy</a></div><div class="ttdeci">double getEnergy() const</div><div class="ttdef"><b>Definition</b> <a href="CalCluster_8h_source.html#l00073">CalCluster.h:73</a></div></div>

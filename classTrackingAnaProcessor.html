@@ -205,6 +205,18 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a8aeefe0088288135e948375fa5becec5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13da931eaea5abdbad264c9ebd177e1e" id="r_a13da931eaea5abdbad264c9ebd177e1e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackingAnaProcessor.html#a13da931eaea5abdbad264c9ebd177e1e">smearingCfgFile_</a> {&quot;&quot;}</td></tr>
 <tr class="separator:a13da931eaea5abdbad264c9ebd177e1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47734371f11c7b7e3c401b3d50cb0b16" id="r_a47734371f11c7b7e3c401b3d50cb0b16"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackingAnaProcessor.html#a47734371f11c7b7e3c401b3d50cb0b16">doSmearing_</a> {false}</td></tr>
+<tr class="memdesc:a47734371f11c7b7e3c401b3d50cb0b16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Master switch for smearing.  <br /></td></tr>
+<tr class="separator:a47734371f11c7b7e3c401b3d50cb0b16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a451818003568f7cea73b9e35b5a54e9b" id="r_a451818003568f7cea73b9e35b5a54e9b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackingAnaProcessor.html#a451818003568f7cea73b9e35b5a54e9b">smearingFactor_</a> {1.0}</td></tr>
+<tr class="memdesc:a451818003568f7cea73b9e35b5a54e9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factor to multiply smearing parameters by.  <br /></td></tr>
+<tr class="separator:a451818003568f7cea73b9e35b5a54e9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c3a60f5f376b38488dbb03eac5266de" id="r_a2c3a60f5f376b38488dbb03eac5266de"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackingAnaProcessor.html#a2c3a60f5f376b38488dbb03eac5266de">requireTruthMatch_</a> {false}</td></tr>
+<tr class="memdesc:a2c3a60f5f376b38488dbb03eac5266de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Require truth match for smearing.  <br /></td></tr>
+<tr class="separator:a2c3a60f5f376b38488dbb03eac5266de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02d0496205ad98daeb28f03ce85888bb" id="r_a02d0496205ad98daeb28f03ce85888bb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackingAnaProcessor.html#a02d0496205ad98daeb28f03ce85888bb">smearOmega_</a> {false}</td></tr>
+<tr class="memdesc:a02d0496205ad98daeb28f03ce85888bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use omega (curvature) smearing instead of p smearing.  <br /></td></tr>
+<tr class="separator:a02d0496205ad98daeb28f03ce85888bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6946a4586e9d45f32c2cde7507df1708" id="r_a6946a4586e9d45f32c2cde7507df1708"><td class="memItemLeft" align="right" valign="top">TH1D *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackingAnaProcessor.html#a6946a4586e9d45f32c2cde7507df1708">psmear_h_</a></td></tr>
 <tr class="separator:a6946a4586e9d45f32c2cde7507df1708"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13602eea9fe399e9de851fb56ca62b70" id="r_a13602eea9fe399e9de851fb56ca62b70"><td class="memItemLeft" align="right" valign="top">TH1D *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackingAnaProcessor.html#a13602eea9fe399e9de851fb56ca62b70">psmear_top_h_</a></td></tr>
@@ -231,6 +243,20 @@ Private Attributes</h2></td></tr>
 <tr class="separator:ab3a967305688b579d23507bc70028704"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9f35a02f145df86209ffceed52b92f2" id="r_af9f35a02f145df86209ffceed52b92f2"><td class="memItemLeft" align="right" valign="top">TH1D *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackingAnaProcessor.html#af9f35a02f145df86209ffceed52b92f2">z0smear_bot_h_</a></td></tr>
 <tr class="separator:af9f35a02f145df86209ffceed52b92f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae453553ca50476e17e7d79e010c873e3" id="r_ae453553ca50476e17e7d79e010c873e3"><td class="memItemLeft" align="right" valign="top">TH1D *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackingAnaProcessor.html#ae453553ca50476e17e7d79e010c873e3">omega_h_</a></td></tr>
+<tr class="separator:ae453553ca50476e17e7d79e010c873e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a58b9c371261f17b201bc1744ad477505" id="r_a58b9c371261f17b201bc1744ad477505"><td class="memItemLeft" align="right" valign="top">TH1D *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackingAnaProcessor.html#a58b9c371261f17b201bc1744ad477505">omega_top_h_</a></td></tr>
+<tr class="separator:a58b9c371261f17b201bc1744ad477505"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91904f3c3f828dca0c49a216d2350149" id="r_a91904f3c3f828dca0c49a216d2350149"><td class="memItemLeft" align="right" valign="top">TH1D *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackingAnaProcessor.html#a91904f3c3f828dca0c49a216d2350149">omega_bot_h_</a></td></tr>
+<tr class="separator:a91904f3c3f828dca0c49a216d2350149"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ea3ec9abdd25ec3c376935c4031e237" id="r_a5ea3ec9abdd25ec3c376935c4031e237"><td class="memItemLeft" align="right" valign="top">TH1D *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackingAnaProcessor.html#a5ea3ec9abdd25ec3c376935c4031e237">omegasmear_h_</a></td></tr>
+<tr class="separator:a5ea3ec9abdd25ec3c376935c4031e237"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf8479a1d68de3d6728cd45d67ba9ac5" id="r_abf8479a1d68de3d6728cd45d67ba9ac5"><td class="memItemLeft" align="right" valign="top">TH1D *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackingAnaProcessor.html#abf8479a1d68de3d6728cd45d67ba9ac5">omegasmear_top_h_</a></td></tr>
+<tr class="separator:abf8479a1d68de3d6728cd45d67ba9ac5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e7b22f45024540019c1d26341fa56db" id="r_a7e7b22f45024540019c1d26341fa56db"><td class="memItemLeft" align="right" valign="top">TH1D *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackingAnaProcessor.html#a7e7b22f45024540019c1d26341fa56db">omegasmear_bot_h_</a></td></tr>
+<tr class="separator:a7e7b22f45024540019c1d26341fa56db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80b93c766b5b3d41406554e4c54bb661" id="r_a80b93c766b5b3d41406554e4c54bb661"><td class="memItemLeft" align="right" valign="top">TH2D *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTrackingAnaProcessor.html#a80b93c766b5b3d41406554e4c54bb661">omega_vs_p_hh_</a></td></tr>
+<tr class="separator:a80b93c766b5b3d41406554e4c54bb661"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -403,7 +429,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classProcessor.html#a5882b5eaf11f8b1561d5bb4ecdc217c3">Processor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8cxx_source.html#l00366">366</a> of file <a class="el" href="TrackingAnaProcessor_8cxx_source.html">TrackingAnaProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8cxx_source.html#l00428">428</a> of file <a class="el" href="TrackingAnaProcessor_8cxx_source.html">TrackingAnaProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -441,7 +467,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classProcessor.html#ac35b4d4ae3c704c4f9764e8cbbb3a790">Processor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8cxx_source.html#l00043">43</a> of file <a class="el" href="TrackingAnaProcessor_8cxx_source.html">TrackingAnaProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8cxx_source.html#l00055">55</a> of file <a class="el" href="TrackingAnaProcessor_8cxx_source.html">TrackingAnaProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -479,7 +505,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classProcessor.html#a1ed21b6d43e34aa191677e80ecf2fd78">Processor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8cxx_source.html#l00157">157</a> of file <a class="el" href="TrackingAnaProcessor_8cxx_source.html">TrackingAnaProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8cxx_source.html#l00185">185</a> of file <a class="el" href="TrackingAnaProcessor_8cxx_source.html">TrackingAnaProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -584,6 +610,32 @@ Additional Inherited Members</h2></td></tr>
 <p>debug level </p>
 
 <p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00116">116</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+
+</div>
+</div>
+<a id="a47734371f11c7b7e3c401b3d50cb0b16" name="a47734371f11c7b7e3c401b3d50cb0b16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47734371f11c7b7e3c401b3d50cb0b16">&#9670;&#160;</a></span>doSmearing_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool doSmearing_ {false}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Master switch for smearing. </p>
+
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00125">125</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -737,6 +789,174 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
+<a id="a91904f3c3f828dca0c49a216d2350149" name="a91904f3c3f828dca0c49a216d2350149"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91904f3c3f828dca0c49a216d2350149">&#9670;&#160;</a></span>omega_bot_h_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">TH1D* omega_bot_h_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00149">149</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+
+</div>
+</div>
+<a id="ae453553ca50476e17e7d79e010c873e3" name="ae453553ca50476e17e7d79e010c873e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae453553ca50476e17e7d79e010c873e3">&#9670;&#160;</a></span>omega_h_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">TH1D* omega_h_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00147">147</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+
+</div>
+</div>
+<a id="a58b9c371261f17b201bc1744ad477505" name="a58b9c371261f17b201bc1744ad477505"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a58b9c371261f17b201bc1744ad477505">&#9670;&#160;</a></span>omega_top_h_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">TH1D* omega_top_h_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00148">148</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+
+</div>
+</div>
+<a id="a80b93c766b5b3d41406554e4c54bb661" name="a80b93c766b5b3d41406554e4c54bb661"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80b93c766b5b3d41406554e4c54bb661">&#9670;&#160;</a></span>omega_vs_p_hh_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">TH2D* omega_vs_p_hh_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00153">153</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+
+</div>
+</div>
+<a id="a7e7b22f45024540019c1d26341fa56db" name="a7e7b22f45024540019c1d26341fa56db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e7b22f45024540019c1d26341fa56db">&#9670;&#160;</a></span>omegasmear_bot_h_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">TH1D* omegasmear_bot_h_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00152">152</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+
+</div>
+</div>
+<a id="a5ea3ec9abdd25ec3c376935c4031e237" name="a5ea3ec9abdd25ec3c376935c4031e237"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ea3ec9abdd25ec3c376935c4031e237">&#9670;&#160;</a></span>omegasmear_h_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">TH1D* omegasmear_h_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00150">150</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+
+</div>
+</div>
+<a id="abf8479a1d68de3d6728cd45d67ba9ac5" name="abf8479a1d68de3d6728cd45d67ba9ac5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf8479a1d68de3d6728cd45d67ba9ac5">&#9670;&#160;</a></span>omegasmear_top_h_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">TH1D* omegasmear_top_h_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00151">151</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+
+</div>
+</div>
 <a id="a2c97a007b7915701f97220507b08c6a0" name="a2c97a007b7915701f97220507b08c6a0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2c97a007b7915701f97220507b08c6a0">&#9670;&#160;</a></span>psmear_bot_h_</h2>
 
@@ -757,7 +977,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00127">127</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00131">131</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -781,7 +1001,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00125">125</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00129">129</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -805,7 +1025,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00132">132</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00136">136</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -829,7 +1049,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00126">126</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00130">130</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -853,7 +1073,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00130">130</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00134">134</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -877,7 +1097,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00135">135</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00139">139</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -901,7 +1121,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00128">128</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00132">132</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -925,7 +1145,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00133">133</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00137">137</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -949,7 +1169,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00129">129</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00133">133</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -973,7 +1193,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00134">134</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00138">138</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1103,6 +1323,32 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
+<a id="a2c3a60f5f376b38488dbb03eac5266de" name="a2c3a60f5f376b38488dbb03eac5266de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c3a60f5f376b38488dbb03eac5266de">&#9670;&#160;</a></span>requireTruthMatch_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool requireTruthMatch_ {false}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Require truth match for smearing. </p>
+
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00127">127</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+
+</div>
+</div>
 <a id="a54f8fb78b63ac6bbdb9c4aac933f87fb" name="a54f8fb78b63ac6bbdb9c4aac933f87fb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a54f8fb78b63ac6bbdb9c4aac933f87fb">&#9670;&#160;</a></span>seed_</h2>
 
@@ -1177,6 +1423,32 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
+<a id="a451818003568f7cea73b9e35b5a54e9b" name="a451818003568f7cea73b9e35b5a54e9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a451818003568f7cea73b9e35b5a54e9b">&#9670;&#160;</a></span>smearingFactor_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double smearingFactor_ {1.0}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Factor to multiply smearing parameters by. </p>
+
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00126">126</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+
+</div>
+</div>
 <a id="a041ddb16f98b1021f8c73fea4f919ad0" name="a041ddb16f98b1021f8c73fea4f919ad0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a041ddb16f98b1021f8c73fea4f919ad0">&#9670;&#160;</a></span>smearingTool_</h2>
 
@@ -1224,6 +1496,32 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00122">122</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+
+</div>
+</div>
+<a id="a02d0496205ad98daeb28f03ce85888bb" name="a02d0496205ad98daeb28f03ce85888bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02d0496205ad98daeb28f03ce85888bb">&#9670;&#160;</a></span>smearOmega_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool smearOmega_ {false}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Use omega (curvature) smearing instead of p smearing. </p>
+
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00128">128</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1426,7 +1724,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00140">140</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00144">144</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1450,7 +1748,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00138">138</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00142">142</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1474,7 +1772,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00139">139</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="TrackingAnaProcessor_8h_source.html#l00143">143</a> of file <a class="el" href="TrackingAnaProcessor_8h_source.html">TrackingAnaProcessor.h</a>.</p>
 
 </div>
 </div>

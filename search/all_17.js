@@ -9,11 +9,11 @@ var searchData=
   ['window_5fstart_5f_6',['window_start_',['../classBumpHunter.html#a458fd9d0004cf6e713274816d870ad79',1,'BumpHunter']]],
   ['window_5fuse_5fres_5fscale_5f_7',['window_use_res_scale_',['../classBumpHunter.html#acd40c1b855c9349b42b71fa452f71bae',1,'BumpHunter']]],
   ['wordcount_8',['wordCount',['../structTSData_1_1tsHeader.html#adf624993a8d4462995749fd68a22eaff',1,'TSData::tsHeader']]],
-  ['writegraph_9',['writeGraph',['../classSimpZBiOptimizationProcessor.html#aaec7b91c34866d747994e7d3bcf65b0c',1,'SimpZBiOptimizationProcessor']]],
+  ['writegraph_9',['writeGraph',['../classOptimizationProcessor.html#aaec7b91c34866d747994e7d3bcf65b0c',1,'OptimizationProcessor']]],
   ['writegraphs_10',['writeGraphs',['../classZBiHistos.html#a31e96c43beeb92b552c51709df157e01',1,'ZBiHistos']]],
   ['writehistos_11',['writeHistos',['../classZBiHistos.html#af8dbd13254ec00b8604bbfe26e79d79f',1,'ZBiHistos']]],
   ['writeresults_12',['writeResults',['../classBumpHunter.html#acfc2583d61a3bf3305bd8ff119b0b0c1',1,'BumpHunter']]],
   ['writeroot_13',['WriteRoot',['../classNTupplizer.html#a540b0767a7dcfae48e70168e967f9f70',1,'NTupplizer']]],
-  ['writeth1f_14',['writeTH1F',['../classSimpZBiOptimizationProcessor.html#a82c0722e46c2db9b92f0a76f6a32c26e',1,'SimpZBiOptimizationProcessor']]],
+  ['writeth1f_14',['writeTH1F',['../classOptimizationProcessor.html#a82c0722e46c2db9b92f0a76f6a32c26e',1,'OptimizationProcessor']]],
   ['writetree_15',['writeTree',['../classFlatTupleMaker.html#a348efc14d9fec5901a6c60752142dd00',1,'FlatTupleMaker']]]
 ];

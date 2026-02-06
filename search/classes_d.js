@@ -1,25 +1,8 @@
 var searchData=
 [
-  ['threeprongcand_0',['ThreeProngCand',['../structTrackEfficiencyProcessor_1_1ThreeProngCand.html',1,'TrackEfficiencyProcessor']]],
-  ['threepronghistos_1',['ThreeProngHistos',['../classThreeProngHistos.html',1,'']]],
-  ['track_2',['Track',['../classTrack.html',1,'']]],
-  ['trackbiasingtool_3',['TrackBiasingTool',['../classTrackBiasingTool.html',1,'']]],
-  ['trackeffichistos_4',['TrackEfficHistos',['../classTrackEfficHistos.html',1,'']]],
-  ['trackefficiencyprocessor_5',['TrackEfficiencyProcessor',['../classTrackEfficiencyProcessor.html',1,'']]],
-  ['tracker2dhitprocessor_6',['Tracker2DHitProcessor',['../classTracker2DHitProcessor.html',1,'']]],
-  ['tracker3dhitprocessor_7',['Tracker3DHitProcessor',['../classTracker3DHitProcessor.html',1,'']]],
-  ['trackerhit_8',['TrackerHit',['../classTrackerHit.html',1,'']]],
-  ['trackhistos_9',['TrackHistos',['../classTrackHistos.html',1,'']]],
-  ['trackhitanaprocessor_10',['TrackHitAnaProcessor',['../classTrackHitAnaProcessor.html',1,'']]],
-  ['trackinganaprocessor_11',['TrackingAnaProcessor',['../classTrackingAnaProcessor.html',1,'']]],
-  ['trackingprocessor_12',['TrackingProcessor',['../classTrackingProcessor.html',1,'']]],
-  ['tracksmearingtool_13',['TrackSmearingTool',['../classTrackSmearingTool.html',1,'']]],
-  ['tridentanaprocessor_14',['TridentAnaProcessor',['../classTridentAnaProcessor.html',1,'']]],
-  ['tridentcand_15',['tridentcand',['../structTrackEfficiencyProcessor_1_1TridentCand.html',1,'TrackEfficiencyProcessor::TridentCand'],['../structTridentWABAnaProcessor_1_1TridentCand.html',1,'TridentWABAnaProcessor::TridentCand']]],
-  ['tridenthistos_16',['TridentHistos',['../classTridentHistos.html',1,'']]],
-  ['tridentwabanaprocessor_17',['TridentWABAnaProcessor',['../classTridentWABAnaProcessor.html',1,'']]],
-  ['triggerdata_18',['TriggerData',['../classTriggerData.html',1,'']]],
-  ['tsbits_19',['tsBits',['../structTSData_1_1tsBits.html',1,'TSData']]],
-  ['tsdata_20',['TSData',['../classTSData.html',1,'']]],
-  ['tsheader_21',['tsHeader',['../structTSData_1_1tsHeader.html',1,'TSData']]]
+  ['rawsvthit_0',['RawSvtHit',['../classRawSvtHit.html',1,'']]],
+  ['rawsvthithistos_1',['RawSvtHitHistos',['../classRawSvtHitHistos.html',1,'']]],
+  ['recohitanahistos_2',['RecoHitAnaHistos',['../classRecoHitAnaHistos.html',1,'']]],
+  ['recohitanaprocessor_3',['RecoHitAnaProcessor',['../classRecoHitAnaProcessor.html',1,'']]],
+  ['refittedtracksprocessor_4',['RefittedTracksProcessor',['../classRefittedTracksProcessor.html',1,'']]]
 ];

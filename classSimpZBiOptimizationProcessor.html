@@ -72,14 +72,13 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pri-types">Private Types</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classSimpZBiOptimizationProcessor-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">SimpZBiOptimizationProcessor Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Cutflow optimization tool for SIMPS.  
+<p><a class="el" href="classCutflow.html">Cutflow</a> optimization tool for SIMPS.  
  <a href="classSimpZBiOptimizationProcessor.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>&gt;</code></p>
@@ -89,6 +88,7 @@ Inheritance diagram for SimpZBiOptimizationProcessor:</div>
  <div class="center">
   <img src="classSimpZBiOptimizationProcessor.png" usemap="#SimpZBiOptimizationProcessor_map" alt=""/>
   <map id="SimpZBiOptimizationProcessor_map" name="SimpZBiOptimizationProcessor_map">
+<area href="classOptimizationProcessor.html" title="Cutflow optimization tool." alt="OptimizationProcessor" shape="rect" coords="0,56,185,80"/>
 <area href="classProcessor.html" title="Base class for all event processing components." alt="Processor" shape="rect" coords="0,0,185,24"/>
   </map>
 </div></div>
@@ -117,21 +117,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a94540e3f2addf6fb83cff5204c75dc52" id="r_a94540e3f2addf6fb83cff5204c75dc52"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a94540e3f2addf6fb83cff5204c75dc52">initialize</a> (std::string inFilename, std::string outFilename)</td></tr>
 <tr class="memdesc:a94540e3f2addf6fb83cff5204c75dc52"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <br /></td></tr>
 <tr class="separator:a94540e3f2addf6fb83cff5204c75dc52"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1021f48239f7a78d10cbbc118336e0ab" id="r_a1021f48239f7a78d10cbbc118336e0ab"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a1021f48239f7a78d10cbbc118336e0ab">calculateZBi</a> (double n_on, double n_off, double tau)</td></tr>
-<tr class="memdesc:a1021f48239f7a78d10cbbc118336e0ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <br /></td></tr>
-<tr class="separator:a1021f48239f7a78d10cbbc118336e0ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7961dcc96c87a199626f34142123d268" id="r_a7961dcc96c87a199626f34142123d268"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a7961dcc96c87a199626f34142123d268">failPersistentCuts</a> (<a class="el" href="classSimpAnaTTree.html">SimpAnaTTree</a> *MTT)</td></tr>
 <tr class="memdesc:a7961dcc96c87a199626f34142123d268"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <br /></td></tr>
 <tr class="separator:a7961dcc96c87a199626f34142123d268"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e5b59fcbe59cc43c06ddac3c5834ab8" id="r_a2e5b59fcbe59cc43c06ddac3c5834ab8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a2e5b59fcbe59cc43c06ddac3c5834ab8">failTestCut</a> (std::string cutname, <a class="el" href="classSimpAnaTTree.html">SimpAnaTTree</a> *MTT)</td></tr>
 <tr class="memdesc:a2e5b59fcbe59cc43c06ddac3c5834ab8"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <br /></td></tr>
 <tr class="separator:a2e5b59fcbe59cc43c06ddac3c5834ab8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaec7b91c34866d747994e7d3bcf65b0c" id="r_aaec7b91c34866d747994e7d3bcf65b0c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#aaec7b91c34866d747994e7d3bcf65b0c">writeGraph</a> (TFile *outF, std::string folder, TGraph *g)</td></tr>
-<tr class="memdesc:aaec7b91c34866d747994e7d3bcf65b0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <br /></td></tr>
-<tr class="separator:aaec7b91c34866d747994e7d3bcf65b0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82c0722e46c2db9b92f0a76f6a32c26e" id="r_a82c0722e46c2db9b92f0a76f6a32c26e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a82c0722e46c2db9b92f0a76f6a32c26e">writeTH1F</a> (TFile *outF, std::string folder, TH1F *h)</td></tr>
-<tr class="memdesc:a82c0722e46c2db9b92f0a76f6a32c26e"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <br /></td></tr>
-<tr class="separator:a82c0722e46c2db9b92f0a76f6a32c26e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a56143e92286edc69212b9d152046c69f" id="r_a56143e92286edc69212b9d152046c69f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a56143e92286edc69212b9d152046c69f">round</a> (double var)</td></tr>
 <tr class="memdesc:a56143e92286edc69212b9d152046c69f"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <br /></td></tr>
 <tr class="separator:a56143e92286edc69212b9d152046c69f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -147,6 +138,20 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a222ffe169dde2cbf566830b296adc5ab" id="r_a222ffe169dde2cbf566830b296adc5ab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a222ffe169dde2cbf566830b296adc5ab">fillEventHistograms</a> (std::shared_ptr&lt; <a class="el" href="classZBiHistos.html">ZBiHistos</a> &gt; histos, <a class="el" href="classSimpAnaTTree.html">SimpAnaTTree</a> *MTT)</td></tr>
 <tr class="memdesc:a222ffe169dde2cbf566830b296adc5ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <br /></td></tr>
 <tr class="separator:a222ffe169dde2cbf566830b296adc5ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classOptimizationProcessor"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classOptimizationProcessor')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classOptimizationProcessor.html">OptimizationProcessor</a></td></tr>
+<tr class="memitem:a72b02098725245df9f31a49583838d5e inherit pub_methods_classOptimizationProcessor" id="r_a72b02098725245df9f31a49583838d5e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a72b02098725245df9f31a49583838d5e">OptimizationProcessor</a> (const std::string &amp;name, <a class="el" href="classProcess.html">Process</a> &amp;<a class="el" href="classOptimizationProcessor.html#ae9efdc539556d7d2dd25a9f5f7fff559">process</a>)</td></tr>
+<tr class="separator:a72b02098725245df9f31a49583838d5e inherit pub_methods_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4bf890658ce4795fce3e77a68f2139ab inherit pub_methods_classOptimizationProcessor" id="r_a4bf890658ce4795fce3e77a68f2139ab"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a4bf890658ce4795fce3e77a68f2139ab">~OptimizationProcessor</a> ()</td></tr>
+<tr class="separator:a4bf890658ce4795fce3e77a68f2139ab inherit pub_methods_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1021f48239f7a78d10cbbc118336e0ab inherit pub_methods_classOptimizationProcessor" id="r_a1021f48239f7a78d10cbbc118336e0ab"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a1021f48239f7a78d10cbbc118336e0ab">calculateZBi</a> (double n_on, double n_off, double tau)</td></tr>
+<tr class="memdesc:a1021f48239f7a78d10cbbc118336e0ab inherit pub_methods_classOptimizationProcessor"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <br /></td></tr>
+<tr class="separator:a1021f48239f7a78d10cbbc118336e0ab inherit pub_methods_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaec7b91c34866d747994e7d3bcf65b0c inherit pub_methods_classOptimizationProcessor" id="r_aaec7b91c34866d747994e7d3bcf65b0c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#aaec7b91c34866d747994e7d3bcf65b0c">writeGraph</a> (TFile *outF, std::string folder, TGraph *g)</td></tr>
+<tr class="memdesc:aaec7b91c34866d747994e7d3bcf65b0c inherit pub_methods_classOptimizationProcessor"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <br /></td></tr>
+<tr class="separator:aaec7b91c34866d747994e7d3bcf65b0c inherit pub_methods_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82c0722e46c2db9b92f0a76f6a32c26e inherit pub_methods_classOptimizationProcessor" id="r_a82c0722e46c2db9b92f0a76f6a32c26e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a82c0722e46c2db9b92f0a76f6a32c26e">writeTH1F</a> (TFile *outF, std::string folder, TH1F *h)</td></tr>
+<tr class="memdesc:a82c0722e46c2db9b92f0a76f6a32c26e inherit pub_methods_classOptimizationProcessor"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <br /></td></tr>
+<tr class="separator:a82c0722e46c2db9b92f0a76f6a32c26e inherit pub_methods_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classProcessor"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classProcessor')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classProcessor.html">Processor</a></td></tr>
 <tr class="memitem:a6ec73bdbbc15f1e9e66aae6185283093 inherit pub_methods_classProcessor" id="r_a6ec73bdbbc15f1e9e66aae6185283093"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classProcessor.html#a6ec73bdbbc15f1e9e66aae6185283093">Processor</a> (const std::string &amp;name, <a class="el" href="classProcess.html">Process</a> &amp;<a class="el" href="classProcessor.html#a7017ddc30577ae1cdf3941090fe9f4b4">process</a>)</td></tr>
 <tr class="memdesc:a6ec73bdbbc15f1e9e66aae6185283093 inherit pub_methods_classProcessor"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class constructor.  <br /></td></tr>
@@ -157,102 +162,42 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:afc1d6045849356ad995040859cf9e427 inherit pub_methods_classProcessor"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set output TFile for AnaProcessors.  <br /></td></tr>
 <tr class="separator:afc1d6045849356ad995040859cf9e427 inherit pub_methods_classProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-types" name="pri-types"></a>
-Private Types</h2></td></tr>
-<tr class="memitem:a27342eab63ff597de30cdba971fd7fc4" id="r_a27342eab63ff597de30cdba971fd7fc4"><td class="memItemLeft" align="right" valign="top">typedef std::map&lt; std::string, std::pair&lt; double, int &gt; &gt;::iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a27342eab63ff597de30cdba971fd7fc4">cut_iter_</a></td></tr>
-<tr class="separator:a27342eab63ff597de30cdba971fd7fc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a174d7e034f9a94c6d3d7300d72ba4d1d" id="r_a174d7e034f9a94c6d3d7300d72ba4d1d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a174d7e034f9a94c6d3d7300d72ba4d1d">debug_</a> {0}</td></tr>
-<tr class="memdesc:a174d7e034f9a94c6d3d7300d72ba4d1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">//&lt;! description  <br /></td></tr>
-<tr class="separator:a174d7e034f9a94c6d3d7300d72ba4d1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82a5ab7d19b7efc405000d51884d1e42" id="r_a82a5ab7d19b7efc405000d51884d1e42"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a82a5ab7d19b7efc405000d51884d1e42">year_</a> = 2016</td></tr>
 <tr class="separator:a82a5ab7d19b7efc405000d51884d1e42"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa248deec58b67ef14faaa8087971e5f1" id="r_aa248deec58b67ef14faaa8087971e5f1"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#aa248deec58b67ef14faaa8087971e5f1">cuts_cfgFile_</a> {&quot;&quot;}</td></tr>
-<tr class="separator:aa248deec58b67ef14faaa8087971e5f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5bf2d69e69ecf1823e89035105473dc4" id="r_a5bf2d69e69ecf1823e89035105473dc4"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a5bf2d69e69ecf1823e89035105473dc4">outFileName_</a> {&quot;zbi_out.root&quot;}</td></tr>
 <tr class="separator:a5bf2d69e69ecf1823e89035105473dc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a321310250a061890cdbf7c6d908b9255" id="r_a321310250a061890cdbf7c6d908b9255"><td class="memItemLeft" align="right" valign="top">TFile *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a321310250a061890cdbf7c6d908b9255">outFile_</a> {nullptr}</td></tr>
-<tr class="separator:a321310250a061890cdbf7c6d908b9255"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a32090166ec7f47f8e0d14ade88428e98" id="r_a32090166ec7f47f8e0d14ade88428e98"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a32090166ec7f47f8e0d14ade88428e98">cutVariables_</a></td></tr>
-<tr class="separator:a32090166ec7f47f8e0d14ade88428e98"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3878c7905bab66dc93e8b7fb78ce82d1" id="r_a3878c7905bab66dc93e8b7fb78ce82d1"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a3878c7905bab66dc93e8b7fb78ce82d1">new_variables_</a></td></tr>
-<tr class="separator:a3878c7905bab66dc93e8b7fb78ce82d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a179ff262182aa5a0e2dd800a8f5b1252" id="r_a179ff262182aa5a0e2dd800a8f5b1252"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a179ff262182aa5a0e2dd800a8f5b1252">new_variable_params_</a></td></tr>
-<tr class="separator:a179ff262182aa5a0e2dd800a8f5b1252"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a506b1e98594ce7268efc8551dd54dd61" id="r_a506b1e98594ce7268efc8551dd54dd61"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a506b1e98594ce7268efc8551dd54dd61">eq_cfgFile_</a> {&quot;&quot;}</td></tr>
 <tr class="separator:a506b1e98594ce7268efc8551dd54dd61"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae87886ccab8983b4838ee892fa4c210b" id="r_ae87886ccab8983b4838ee892fa4c210b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#ae87886ccab8983b4838ee892fa4c210b">scan_zcut_</a> = false</td></tr>
-<tr class="separator:ae87886ccab8983b4838ee892fa4c210b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb1b8473d77d4172c13e742844431f64" id="r_adb1b8473d77d4172c13e742844431f64"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#adb1b8473d77d4172c13e742844431f64">step_size_</a> = 0.01</td></tr>
-<tr class="separator:adb1b8473d77d4172c13e742844431f64"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac6922f4d6dc9a356c2d0debea6bbd3ac" id="r_ac6922f4d6dc9a356c2d0debea6bbd3ac"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#ac6922f4d6dc9a356c2d0debea6bbd3ac">max_iteration_</a> = 75</td></tr>
-<tr class="separator:ac6922f4d6dc9a356c2d0debea6bbd3ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8a64f94c00543cfde1e12e264da2fe0" id="r_ad8a64f94c00543cfde1e12e264da2fe0"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#ad8a64f94c00543cfde1e12e264da2fe0">bkgVtxAnaFilename_</a> {&quot;&quot;}</td></tr>
-<tr class="separator:ad8a64f94c00543cfde1e12e264da2fe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e954bf07ab1dac5ff7249cebb094545" id="r_a5e954bf07ab1dac5ff7249cebb094545"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a5e954bf07ab1dac5ff7249cebb094545">bkgVtxAnaTreename_</a> {&quot;&quot;}</td></tr>
-<tr class="separator:a5e954bf07ab1dac5ff7249cebb094545"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a40fb1b0197c5518558d2267c54079ef0" id="r_a40fb1b0197c5518558d2267c54079ef0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classSimpAnaTTree.html">SimpAnaTTree</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a40fb1b0197c5518558d2267c54079ef0">bkgMTT_</a> {nullptr}</td></tr>
-<tr class="separator:a40fb1b0197c5518558d2267c54079ef0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5a708fd4312459a5d0742422759f4fa" id="r_ab5a708fd4312459a5d0742422759f4fa"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#ab5a708fd4312459a5d0742422759f4fa">min_ztail_events_</a> = 0.5</td></tr>
-<tr class="separator:ab5a708fd4312459a5d0742422759f4fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8079093abe734825b55fcd9dc4dae32a" id="r_a8079093abe734825b55fcd9dc4dae32a"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a8079093abe734825b55fcd9dc4dae32a">background_sf_</a></td></tr>
-<tr class="separator:a8079093abe734825b55fcd9dc4dae32a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a15bf37530b47266a0fb5550fb2c88e4e" id="r_a15bf37530b47266a0fb5550fb2c88e4e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a15bf37530b47266a0fb5550fb2c88e4e">variableHistCfgFilename_</a> {&quot;&quot;}</td></tr>
 <tr class="separator:a15bf37530b47266a0fb5550fb2c88e4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a29d28b4ccc338b9704942daaebcd6a" id="r_a1a29d28b4ccc338b9704942daaebcd6a"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a1a29d28b4ccc338b9704942daaebcd6a">signalVtxAnaFilename_</a> {&quot;&quot;}</td></tr>
-<tr class="separator:a1a29d28b4ccc338b9704942daaebcd6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a436b3ef210248ba342a89f10c9aa8b85" id="r_a436b3ef210248ba342a89f10c9aa8b85"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a436b3ef210248ba342a89f10c9aa8b85">signalVtxAnaTreename_</a> {&quot;&quot;}</td></tr>
-<tr class="separator:a436b3ef210248ba342a89f10c9aa8b85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae87886ccab8983b4838ee892fa4c210b" id="r_ae87886ccab8983b4838ee892fa4c210b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#ae87886ccab8983b4838ee892fa4c210b">scan_zcut_</a> = false</td></tr>
+<tr class="separator:ae87886ccab8983b4838ee892fa4c210b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5a708fd4312459a5d0742422759f4fa" id="r_ab5a708fd4312459a5d0742422759f4fa"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#ab5a708fd4312459a5d0742422759f4fa">min_ztail_events_</a> = 0.5</td></tr>
+<tr class="separator:ab5a708fd4312459a5d0742422759f4fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb4fee126a35ab542cb8210914b28385" id="r_aeb4fee126a35ab542cb8210914b28385"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#aeb4fee126a35ab542cb8210914b28385">initialIntegrals_</a></td></tr>
+<tr class="separator:aeb4fee126a35ab542cb8210914b28385"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a171c1df7d8feb12db465a1fc755cc614" id="r_a171c1df7d8feb12db465a1fc755cc614"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a171c1df7d8feb12db465a1fc755cc614">signalVtxMCSelection_</a> {&quot;&quot;}</td></tr>
 <tr class="separator:a171c1df7d8feb12db465a1fc755cc614"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae93f9b7cf124010367eeb7c94fa507c8" id="r_ae93f9b7cf124010367eeb7c94fa507c8"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#ae93f9b7cf124010367eeb7c94fa507c8">signalMCAnaFilename_</a> {&quot;&quot;}</td></tr>
-<tr class="separator:ae93f9b7cf124010367eeb7c94fa507c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ace5518f052257b18d5fa89e271d18d0f" id="r_ace5518f052257b18d5fa89e271d18d0f"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#ace5518f052257b18d5fa89e271d18d0f">signal_pdgid_</a> {&quot;&quot;}</td></tr>
-<tr class="separator:ace5518f052257b18d5fa89e271d18d0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adefbf2faf781dbb0f77a9170b1dc353b" id="r_adefbf2faf781dbb0f77a9170b1dc353b"><td class="memItemLeft" align="right" valign="top">TH1F *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#adefbf2faf781dbb0f77a9170b1dc353b">signalSimZ_h_</a> {nullptr}</td></tr>
 <tr class="separator:adefbf2faf781dbb0f77a9170b1dc353b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeaa62a153d6926128114519c9346ac97" id="r_aeaa62a153d6926128114519c9346ac97"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classSimpAnaTTree.html">SimpAnaTTree</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#aeaa62a153d6926128114519c9346ac97">signalMTT_</a> {nullptr}</td></tr>
 <tr class="separator:aeaa62a153d6926128114519c9346ac97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af8cf29d3d98b60a30ad1441665e1d22e" id="r_af8cf29d3d98b60a30ad1441665e1d22e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#af8cf29d3d98b60a30ad1441665e1d22e">signal_sf_</a> = 1.0</td></tr>
-<tr class="separator:af8cf29d3d98b60a30ad1441665e1d22e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a436e1589148888d95fb9a2d1b34d09f3" id="r_a436e1589148888d95fb9a2d1b34d09f3"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a436e1589148888d95fb9a2d1b34d09f3">signal_mass_</a></td></tr>
-<tr class="separator:a436e1589148888d95fb9a2d1b34d09f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1185bf9f80b6a16684fad9dec253bb97" id="r_a1185bf9f80b6a16684fad9dec253bb97"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a1185bf9f80b6a16684fad9dec253bb97">logEps2_</a></td></tr>
 <tr class="separator:a1185bf9f80b6a16684fad9dec253bb97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5ebedab715596f9cc1529bab0b9209e" id="r_aa5ebedab715596f9cc1529bab0b9209e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#aa5ebedab715596f9cc1529bab0b9209e">massResolution_</a></td></tr>
-<tr class="separator:aa5ebedab715596f9cc1529bab0b9209e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab23bbfae6194a28cace72f874a461d92" id="r_ab23bbfae6194a28cace72f874a461d92"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#ab23bbfae6194a28cace72f874a461d92">mass_window_nsigma_</a></td></tr>
-<tr class="separator:ab23bbfae6194a28cace72f874a461d92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e062316cf8cec8f26c814782870a67d" id="r_a0e062316cf8cec8f26c814782870a67d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a0e062316cf8cec8f26c814782870a67d">E_Vd_</a> = 1.35</td></tr>
 <tr class="separator:a0e062316cf8cec8f26c814782870a67d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac652ff2b7c1d4d08fdd703da91396f0a" id="r_ac652ff2b7c1d4d08fdd703da91396f0a"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classZBiHistos.html">ZBiHistos</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#ac652ff2b7c1d4d08fdd703da91396f0a">signalHistos_</a></td></tr>
-<tr class="separator:ac652ff2b7c1d4d08fdd703da91396f0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ce8ae610e17bd2b6a31b6b20867c863" id="r_a1ce8ae610e17bd2b6a31b6b20867c863"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classZBiHistos.html">ZBiHistos</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a1ce8ae610e17bd2b6a31b6b20867c863">bkgHistos_</a></td></tr>
-<tr class="separator:a1ce8ae610e17bd2b6a31b6b20867c863"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac76d1c6b5fe07d0972a978dc423dfccb" id="r_ac76d1c6b5fe07d0972a978dc423dfccb"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classZBiHistos.html">ZBiHistos</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#ac76d1c6b5fe07d0972a978dc423dfccb">testCutHistos_</a></td></tr>
-<tr class="separator:ac76d1c6b5fe07d0972a978dc423dfccb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc94c70e45327cc430d6c61491953cf5" id="r_abc94c70e45327cc430d6c61491953cf5"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classZBiHistos.html">ZBiHistos</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#abc94c70e45327cc430d6c61491953cf5">processorHistos_</a></td></tr>
-<tr class="separator:abc94c70e45327cc430d6c61491953cf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac713bd14fb00c4d79599ff8e0f4788d9" id="r_ac713bd14fb00c4d79599ff8e0f4788d9"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#ac713bd14fb00c4d79599ff8e0f4788d9">initialIntegrals_</a></td></tr>
-<tr class="separator:ac713bd14fb00c4d79599ff8e0f4788d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9b9a8ab8e0a2f2f0333c1e73167f348" id="r_af9b9a8ab8e0a2f2f0333c1e73167f348"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classIterativeCutSelector.html">IterativeCutSelector</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#af9b9a8ab8e0a2f2f0333c1e73167f348">testCutsSelector_</a> {nullptr}</td></tr>
-<tr class="separator:af9b9a8ab8e0a2f2f0333c1e73167f348"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3175da1cd774b5d136e5b4c9810db75" id="r_ab3175da1cd774b5d136e5b4c9810db75"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, std::pair&lt; double, int &gt; &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#ab3175da1cd774b5d136e5b4c9810db75">testCutsPtr_</a></td></tr>
-<tr class="separator:ab3175da1cd774b5d136e5b4c9810db75"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a01f0a33e01feb4d97a76445fefde494a" id="r_a01f0a33e01feb4d97a76445fefde494a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classIterativeCutSelector.html">IterativeCutSelector</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a01f0a33e01feb4d97a76445fefde494a">persistentCutsSelector_</a> {nullptr}</td></tr>
-<tr class="separator:a01f0a33e01feb4d97a76445fefde494a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf243bc1d985e33c2c3ed6aa6f2b575b" id="r_abf243bc1d985e33c2c3ed6aa6f2b575b"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, std::pair&lt; double, int &gt; &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#abf243bc1d985e33c2c3ed6aa6f2b575b">persistentCutsPtr_</a></td></tr>
-<tr class="separator:abf243bc1d985e33c2c3ed6aa6f2b575b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a175feae4604c9487ab809b019b97edd3" id="r_a175feae4604c9487ab809b019b97edd3"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a175feae4604c9487ab809b019b97edd3">tritrigFilename_</a> {&quot;&quot;}</td></tr>
-<tr class="separator:a175feae4604c9487ab809b019b97edd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8b998179dd2055317454064ca75490c" id="r_ad8b998179dd2055317454064ca75490c"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, double * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#ad8b998179dd2055317454064ca75490c">tritrig_tuple_</a></td></tr>
-<tr class="separator:ad8b998179dd2055317454064ca75490c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a572170795eea9c3704292c0ad4026558" id="r_a572170795eea9c3704292c0ad4026558"><td class="memItemLeft" align="right" valign="top">TTree *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a572170795eea9c3704292c0ad4026558">tritrigTree_</a> {nullptr}</td></tr>
-<tr class="separator:a572170795eea9c3704292c0ad4026558"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5f8f268208e6faa808723fa680f5a7f" id="r_ad5f8f268208e6faa808723fa680f5a7f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classSimpEquations.html">SimpEquations</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#ad5f8f268208e6faa808723fa680f5a7f">simpEqs_</a> {nullptr}</td></tr>
 <tr class="separator:ad5f8f268208e6faa808723fa680f5a7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40fb1b0197c5518558d2267c54079ef0" id="r_a40fb1b0197c5518558d2267c54079ef0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classSimpAnaTTree.html">SimpAnaTTree</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a40fb1b0197c5518558d2267c54079ef0">bkgMTT_</a> {nullptr}</td></tr>
+<tr class="separator:a40fb1b0197c5518558d2267c54079ef0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a175feae4604c9487ab809b019b97edd3" id="r_a175feae4604c9487ab809b019b97edd3"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a175feae4604c9487ab809b019b97edd3">tritrigFilename_</a> {&quot;&quot;}</td></tr>
+<tr class="separator:a175feae4604c9487ab809b019b97edd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95749d6c9c15a2a72191798f192a876e" id="r_a95749d6c9c15a2a72191798f192a876e"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, double * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a95749d6c9c15a2a72191798f192a876e">tritrig_tuple_</a></td></tr>
+<tr class="separator:a95749d6c9c15a2a72191798f192a876e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a572170795eea9c3704292c0ad4026558" id="r_a572170795eea9c3704292c0ad4026558"><td class="memItemLeft" align="right" valign="top">TTree *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a572170795eea9c3704292c0ad4026558">tritrigTree_</a> {nullptr}</td></tr>
+<tr class="separator:a572170795eea9c3704292c0ad4026558"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5ccc69ab0b3fe24b4bcc920c703fbc2" id="r_aa5ccc69ab0b3fe24b4bcc920c703fbc2"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#aa5ccc69ab0b3fe24b4bcc920c703fbc2">radFrac_</a> = 0.0</td></tr>
 <tr class="separator:aa5ccc69ab0b3fe24b4bcc920c703fbc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9784b8ec5cfe672496b1ef31973cfbad" id="r_a9784b8ec5cfe672496b1ef31973cfbad"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a9784b8ec5cfe672496b1ef31973cfbad">radAcc_</a> = 0.0</td></tr>
@@ -265,10 +210,10 @@ Private Attributes</h2></td></tr>
 <tr class="separator:abbd9e048651de8fcd4020e5d03504fa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee57f0c2237e29a1579d7b8bef83a083" id="r_aee57f0c2237e29a1579d7b8bef83a083"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#aee57f0c2237e29a1579d7b8bef83a083">bkgControlRegionTreename_</a> {&quot;&quot;}</td></tr>
 <tr class="separator:aee57f0c2237e29a1579d7b8bef83a083"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc82ce333c65afb1a08e72cf329a3ad3" id="r_adc82ce333c65afb1a08e72cf329a3ad3"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#adc82ce333c65afb1a08e72cf329a3ad3">highMass_</a></td></tr>
-<tr class="separator:adc82ce333c65afb1a08e72cf329a3ad3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad6b8b2cbeed86c3fa2425467a2eef5fa" id="r_ad6b8b2cbeed86c3fa2425467a2eef5fa"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#ad6b8b2cbeed86c3fa2425467a2eef5fa">lowMass_</a></td></tr>
-<tr class="separator:ad6b8b2cbeed86c3fa2425467a2eef5fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9b9a8ab8e0a2f2f0333c1e73167f348" id="r_af9b9a8ab8e0a2f2f0333c1e73167f348"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classIterativeCutSelector.html">IterativeCutSelector</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#af9b9a8ab8e0a2f2f0333c1e73167f348">testCutsSelector_</a> {nullptr}</td></tr>
+<tr class="separator:af9b9a8ab8e0a2f2f0333c1e73167f348"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01f0a33e01feb4d97a76445fefde494a" id="r_a01f0a33e01feb4d97a76445fefde494a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classIterativeCutSelector.html">IterativeCutSelector</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimpZBiOptimizationProcessor.html#a01f0a33e01feb4d97a76445fefde494a">persistentCutsSelector_</a> {nullptr}</td></tr>
+<tr class="separator:a01f0a33e01feb4d97a76445fefde494a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -276,6 +221,84 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:a51c1298ba3ab80bb3fdbd058feb5a162 inherit pub_static_methods_classProcessor" id="r_a51c1298ba3ab80bb3fdbd058feb5a162"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classProcessor.html#a51c1298ba3ab80bb3fdbd058feb5a162">declare</a> (const std::string &amp;classname, <a class="el" href="Processor_8h.html#a5092ede989a7d109ce5e2ab07f03b24f">ProcessorMaker</a> *)</td></tr>
 <tr class="memdesc:a51c1298ba3ab80bb3fdbd058feb5a162 inherit pub_static_methods_classProcessor"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function which is part of the <a class="el" href="classProcessorFactory.html">ProcessorFactory</a> machinery.  <br /></td></tr>
 <tr class="separator:a51c1298ba3ab80bb3fdbd058feb5a162 inherit pub_static_methods_classProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_types_classOptimizationProcessor"><td colspan="2" onclick="javascript:toggleInherit('pro_types_classOptimizationProcessor')"><img src="closed.png" alt="-"/>&#160;Protected Types inherited from <a class="el" href="classOptimizationProcessor.html">OptimizationProcessor</a></td></tr>
+<tr class="memitem:a27342eab63ff597de30cdba971fd7fc4 inherit pro_types_classOptimizationProcessor" id="r_a27342eab63ff597de30cdba971fd7fc4"><td class="memItemLeft" align="right" valign="top">typedef std::map&lt; std::string, std::pair&lt; double, int &gt; &gt;::iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a27342eab63ff597de30cdba971fd7fc4">cut_iter_</a></td></tr>
+<tr class="separator:a27342eab63ff597de30cdba971fd7fc4 inherit pro_types_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_attribs_classOptimizationProcessor"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classOptimizationProcessor')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classOptimizationProcessor.html">OptimizationProcessor</a></td></tr>
+<tr class="memitem:a174d7e034f9a94c6d3d7300d72ba4d1d inherit pro_attribs_classOptimizationProcessor" id="r_a174d7e034f9a94c6d3d7300d72ba4d1d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a174d7e034f9a94c6d3d7300d72ba4d1d">debug_</a> {0}</td></tr>
+<tr class="separator:a174d7e034f9a94c6d3d7300d72ba4d1d inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82a5ab7d19b7efc405000d51884d1e42 inherit pro_attribs_classOptimizationProcessor" id="r_a82a5ab7d19b7efc405000d51884d1e42"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a82a5ab7d19b7efc405000d51884d1e42">year_</a> = 2021</td></tr>
+<tr class="separator:a82a5ab7d19b7efc405000d51884d1e42 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa248deec58b67ef14faaa8087971e5f1 inherit pro_attribs_classOptimizationProcessor" id="r_aa248deec58b67ef14faaa8087971e5f1"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#aa248deec58b67ef14faaa8087971e5f1">cuts_cfgFile_</a> {&quot;&quot;}</td></tr>
+<tr class="separator:aa248deec58b67ef14faaa8087971e5f1 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5bf2d69e69ecf1823e89035105473dc4 inherit pro_attribs_classOptimizationProcessor" id="r_a5bf2d69e69ecf1823e89035105473dc4"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a5bf2d69e69ecf1823e89035105473dc4">outFileName_</a> {&quot;&quot;}</td></tr>
+<tr class="separator:a5bf2d69e69ecf1823e89035105473dc4 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a321310250a061890cdbf7c6d908b9255 inherit pro_attribs_classOptimizationProcessor" id="r_a321310250a061890cdbf7c6d908b9255"><td class="memItemLeft" align="right" valign="top">TFile *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a321310250a061890cdbf7c6d908b9255">outFile_</a> {nullptr}</td></tr>
+<tr class="separator:a321310250a061890cdbf7c6d908b9255 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32090166ec7f47f8e0d14ade88428e98 inherit pro_attribs_classOptimizationProcessor" id="r_a32090166ec7f47f8e0d14ade88428e98"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a32090166ec7f47f8e0d14ade88428e98">cutVariables_</a></td></tr>
+<tr class="separator:a32090166ec7f47f8e0d14ade88428e98 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3878c7905bab66dc93e8b7fb78ce82d1 inherit pro_attribs_classOptimizationProcessor" id="r_a3878c7905bab66dc93e8b7fb78ce82d1"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a3878c7905bab66dc93e8b7fb78ce82d1">new_variables_</a></td></tr>
+<tr class="separator:a3878c7905bab66dc93e8b7fb78ce82d1 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a179ff262182aa5a0e2dd800a8f5b1252 inherit pro_attribs_classOptimizationProcessor" id="r_a179ff262182aa5a0e2dd800a8f5b1252"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a179ff262182aa5a0e2dd800a8f5b1252">new_variable_params_</a></td></tr>
+<tr class="separator:a179ff262182aa5a0e2dd800a8f5b1252 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15bf37530b47266a0fb5550fb2c88e4e inherit pro_attribs_classOptimizationProcessor" id="r_a15bf37530b47266a0fb5550fb2c88e4e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a15bf37530b47266a0fb5550fb2c88e4e">variableHistCfgFilename_</a> {&quot;&quot;}</td></tr>
+<tr class="separator:a15bf37530b47266a0fb5550fb2c88e4e inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8a64f94c00543cfde1e12e264da2fe0 inherit pro_attribs_classOptimizationProcessor" id="r_ad8a64f94c00543cfde1e12e264da2fe0"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#ad8a64f94c00543cfde1e12e264da2fe0">bkgVtxAnaFilename_</a> {&quot;&quot;}</td></tr>
+<tr class="separator:ad8a64f94c00543cfde1e12e264da2fe0 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e954bf07ab1dac5ff7249cebb094545 inherit pro_attribs_classOptimizationProcessor" id="r_a5e954bf07ab1dac5ff7249cebb094545"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a5e954bf07ab1dac5ff7249cebb094545">bkgVtxAnaTreename_</a> {&quot;&quot;}</td></tr>
+<tr class="separator:a5e954bf07ab1dac5ff7249cebb094545 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a118df766d1f01d7cadece1d16054441d inherit pro_attribs_classOptimizationProcessor" id="r_a118df766d1f01d7cadece1d16054441d"><td class="memItemLeft" align="right" valign="top">TFile *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a118df766d1f01d7cadece1d16054441d">bkgVtxAnaFile_</a> {nullptr}</td></tr>
+<tr class="separator:a118df766d1f01d7cadece1d16054441d inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8079093abe734825b55fcd9dc4dae32a inherit pro_attribs_classOptimizationProcessor" id="r_a8079093abe734825b55fcd9dc4dae32a"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a8079093abe734825b55fcd9dc4dae32a">background_sf_</a></td></tr>
+<tr class="separator:a8079093abe734825b55fcd9dc4dae32a inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a29d28b4ccc338b9704942daaebcd6a inherit pro_attribs_classOptimizationProcessor" id="r_a1a29d28b4ccc338b9704942daaebcd6a"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a1a29d28b4ccc338b9704942daaebcd6a">signalVtxAnaFilename_</a> {&quot;&quot;}</td></tr>
+<tr class="separator:a1a29d28b4ccc338b9704942daaebcd6a inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a436b3ef210248ba342a89f10c9aa8b85 inherit pro_attribs_classOptimizationProcessor" id="r_a436b3ef210248ba342a89f10c9aa8b85"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a436b3ef210248ba342a89f10c9aa8b85">signalVtxAnaTreename_</a> {&quot;&quot;}</td></tr>
+<tr class="separator:a436b3ef210248ba342a89f10c9aa8b85 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9bb053d56a87ac34c63310e98944332 inherit pro_attribs_classOptimizationProcessor" id="r_ab9bb053d56a87ac34c63310e98944332"><td class="memItemLeft" align="right" valign="top">TFile *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#ab9bb053d56a87ac34c63310e98944332">signalVtxAnaFile_</a> {nullptr}</td></tr>
+<tr class="separator:ab9bb053d56a87ac34c63310e98944332 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8cf29d3d98b60a30ad1441665e1d22e inherit pro_attribs_classOptimizationProcessor" id="r_af8cf29d3d98b60a30ad1441665e1d22e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#af8cf29d3d98b60a30ad1441665e1d22e">signal_sf_</a> = 1.0</td></tr>
+<tr class="separator:af8cf29d3d98b60a30ad1441665e1d22e inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae93f9b7cf124010367eeb7c94fa507c8 inherit pro_attribs_classOptimizationProcessor" id="r_ae93f9b7cf124010367eeb7c94fa507c8"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#ae93f9b7cf124010367eeb7c94fa507c8">signalMCAnaFilename_</a> {&quot;&quot;}</td></tr>
+<tr class="separator:ae93f9b7cf124010367eeb7c94fa507c8 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b1bcd2d6fcbca96fec8ae9ace517cda inherit pro_attribs_classOptimizationProcessor" id="r_a6b1bcd2d6fcbca96fec8ae9ace517cda"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a6b1bcd2d6fcbca96fec8ae9ace517cda">signalMCAnaTreename_</a> {&quot;&quot;}</td></tr>
+<tr class="separator:a6b1bcd2d6fcbca96fec8ae9ace517cda inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b0955e1d028473cd3fa63ad4273c48f inherit pro_attribs_classOptimizationProcessor" id="r_a5b0955e1d028473cd3fa63ad4273c48f"><td class="memItemLeft" align="right" valign="top">TFile *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a5b0955e1d028473cd3fa63ad4273c48f">signalMCAnaFile_</a> {nullptr}</td></tr>
+<tr class="separator:a5b0955e1d028473cd3fa63ad4273c48f inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace5518f052257b18d5fa89e271d18d0f inherit pro_attribs_classOptimizationProcessor" id="r_ace5518f052257b18d5fa89e271d18d0f"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#ace5518f052257b18d5fa89e271d18d0f">signal_pdgid_</a> {&quot;&quot;}</td></tr>
+<tr class="separator:ace5518f052257b18d5fa89e271d18d0f inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a436e1589148888d95fb9a2d1b34d09f3 inherit pro_attribs_classOptimizationProcessor" id="r_a436e1589148888d95fb9a2d1b34d09f3"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a436e1589148888d95fb9a2d1b34d09f3">signal_mass_</a></td></tr>
+<tr class="separator:a436e1589148888d95fb9a2d1b34d09f3 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92918be88430888e3a2879fe331cc98c inherit pro_attribs_classOptimizationProcessor" id="r_a92918be88430888e3a2879fe331cc98c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a92918be88430888e3a2879fe331cc98c">eps_</a></td></tr>
+<tr class="separator:a92918be88430888e3a2879fe331cc98c inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5ebedab715596f9cc1529bab0b9209e inherit pro_attribs_classOptimizationProcessor" id="r_aa5ebedab715596f9cc1529bab0b9209e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#aa5ebedab715596f9cc1529bab0b9209e">massResolution_</a></td></tr>
+<tr class="separator:aa5ebedab715596f9cc1529bab0b9209e inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab23bbfae6194a28cace72f874a461d92 inherit pro_attribs_classOptimizationProcessor" id="r_ab23bbfae6194a28cace72f874a461d92"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#ab23bbfae6194a28cace72f874a461d92">mass_window_nsigma_</a></td></tr>
+<tr class="separator:ab23bbfae6194a28cace72f874a461d92 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6b8b2cbeed86c3fa2425467a2eef5fa inherit pro_attribs_classOptimizationProcessor" id="r_ad6b8b2cbeed86c3fa2425467a2eef5fa"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#ad6b8b2cbeed86c3fa2425467a2eef5fa">lowMass_</a></td></tr>
+<tr class="separator:ad6b8b2cbeed86c3fa2425467a2eef5fa inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc82ce333c65afb1a08e72cf329a3ad3 inherit pro_attribs_classOptimizationProcessor" id="r_adc82ce333c65afb1a08e72cf329a3ad3"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#adc82ce333c65afb1a08e72cf329a3ad3">highMass_</a></td></tr>
+<tr class="separator:adc82ce333c65afb1a08e72cf329a3ad3 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac652ff2b7c1d4d08fdd703da91396f0a inherit pro_attribs_classOptimizationProcessor" id="r_ac652ff2b7c1d4d08fdd703da91396f0a"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classZBiHistos.html">ZBiHistos</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#ac652ff2b7c1d4d08fdd703da91396f0a">signalHistos_</a></td></tr>
+<tr class="separator:ac652ff2b7c1d4d08fdd703da91396f0a inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ce8ae610e17bd2b6a31b6b20867c863 inherit pro_attribs_classOptimizationProcessor" id="r_a1ce8ae610e17bd2b6a31b6b20867c863"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classZBiHistos.html">ZBiHistos</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a1ce8ae610e17bd2b6a31b6b20867c863">bkgHistos_</a></td></tr>
+<tr class="separator:a1ce8ae610e17bd2b6a31b6b20867c863 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac76d1c6b5fe07d0972a978dc423dfccb inherit pro_attribs_classOptimizationProcessor" id="r_ac76d1c6b5fe07d0972a978dc423dfccb"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classZBiHistos.html">ZBiHistos</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#ac76d1c6b5fe07d0972a978dc423dfccb">testCutHistos_</a></td></tr>
+<tr class="separator:ac76d1c6b5fe07d0972a978dc423dfccb inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc94c70e45327cc430d6c61491953cf5 inherit pro_attribs_classOptimizationProcessor" id="r_abc94c70e45327cc430d6c61491953cf5"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classZBiHistos.html">ZBiHistos</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#abc94c70e45327cc430d6c61491953cf5">processorHistos_</a></td></tr>
+<tr class="separator:abc94c70e45327cc430d6c61491953cf5 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25fbd6ee9532cf3193d06fed9c3b85a9 inherit pro_attribs_classOptimizationProcessor" id="r_a25fbd6ee9532cf3193d06fed9c3b85a9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classBaseSelector.html">BaseSelector</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a25fbd6ee9532cf3193d06fed9c3b85a9">testCutsSelector_</a> {nullptr}</td></tr>
+<tr class="separator:a25fbd6ee9532cf3193d06fed9c3b85a9 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4dc81eca85354ccb856945b56e70489 inherit pro_attribs_classOptimizationProcessor" id="r_af4dc81eca85354ccb856945b56e70489"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, std::pair&lt; double, int &gt; &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#af4dc81eca85354ccb856945b56e70489">testCutsPtr_</a></td></tr>
+<tr class="separator:af4dc81eca85354ccb856945b56e70489 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a53be2143b4d4ad306e29cfbae7046a77 inherit pro_attribs_classOptimizationProcessor" id="r_a53be2143b4d4ad306e29cfbae7046a77"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classBaseSelector.html">BaseSelector</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a53be2143b4d4ad306e29cfbae7046a77">persistentCutsSelector_</a> {nullptr}</td></tr>
+<tr class="separator:a53be2143b4d4ad306e29cfbae7046a77 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61d74d6c202ccccdb0ac1d235772719f inherit pro_attribs_classOptimizationProcessor" id="r_a61d74d6c202ccccdb0ac1d235772719f"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, std::pair&lt; double, int &gt; &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#a61d74d6c202ccccdb0ac1d235772719f">persistentCutsPtr_</a></td></tr>
+<tr class="separator:a61d74d6c202ccccdb0ac1d235772719f inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb1b8473d77d4172c13e742844431f64 inherit pro_attribs_classOptimizationProcessor" id="r_adb1b8473d77d4172c13e742844431f64"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#adb1b8473d77d4172c13e742844431f64">step_size_</a> = 0.01</td></tr>
+<tr class="separator:adb1b8473d77d4172c13e742844431f64 inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6922f4d6dc9a356c2d0debea6bbd3ac inherit pro_attribs_classOptimizationProcessor" id="r_ac6922f4d6dc9a356c2d0debea6bbd3ac"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classOptimizationProcessor.html#ac6922f4d6dc9a356c2d0debea6bbd3ac">max_iteration_</a> = 75</td></tr>
+<tr class="separator:ac6922f4d6dc9a356c2d0debea6bbd3ac inherit pro_attribs_classOptimizationProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classProcessor"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classProcessor')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classProcessor.html">Processor</a></td></tr>
 <tr class="memitem:aff7d9b2691dcc128b3c67ed04cbbbe25 inherit pro_attribs_classProcessor" id="r_aff7d9b2691dcc128b3c67ed04cbbbe25"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classProcess.html">Process</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classProcessor.html#aff7d9b2691dcc128b3c67ed04cbbbe25">process_</a></td></tr>
 <tr class="separator:aff7d9b2691dcc128b3c67ed04cbbbe25 inherit pro_attribs_classProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -285,35 +308,10 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a4d739cc5d335052eb9f5b2ca559b81d1 inherit pro_attribs_classProcessor"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Cutflow optimization tool for SIMPS. </p>
+<div class="textblock"><p><a class="el" href="classCutflow.html">Cutflow</a> optimization tool for SIMPS. </p>
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00031">31</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-</div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a27342eab63ff597de30cdba971fd7fc4" name="a27342eab63ff597de30cdba971fd7fc4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a27342eab63ff597de30cdba971fd7fc4">&#9670;&#160;</a></span>cut_iter_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef std::map&lt;std::string,std::pair&lt;double,int&gt;&gt;::iterator <a class="el" href="classSimpZBiOptimizationProcessor.html#a27342eab63ff597de30cdba971fd7fc4">cut_iter_</a></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00166">166</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00032">32</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ad6d310aa59d62027cf6d383fe87cf5f9" name="ad6d310aa59d62027cf6d383fe87cf5f9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad6d310aa59d62027cf6d383fe87cf5f9">&#9670;&#160;</a></span>SimpZBiOptimizationProcessor()</h2>
 
@@ -340,7 +338,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00007">7</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00008">8</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -359,7 +357,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00012">12</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00013">13</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -398,45 +396,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00072">72</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
-
-</div>
-</div>
-<a id="a1021f48239f7a78d10cbbc118336e0ab" name="a1021f48239f7a78d10cbbc118336e0ab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1021f48239f7a78d10cbbc118336e0ab">&#9670;&#160;</a></span>calculateZBi()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double calculateZBi </td>
-          <td>(</td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>n_on</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>n_off</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>tau</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>description </p>
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00855">855</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00064">64</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -466,9 +426,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p>Reimplemented from <a class="el" href="classProcessor.html#a5aababad5df4ebb1cee987b8b93d6481">Processor</a>.</p>
+<p>Reimplemented from <a class="el" href="classOptimizationProcessor.html#a28936b5e7dad5cac4572c2e47464519e">OptimizationProcessor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00014">14</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00015">15</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -518,7 +478,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00229">229</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00205">205</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -540,7 +500,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00863">863</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00827">827</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -572,7 +532,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00880">880</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00843">843</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -604,7 +564,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00126">126</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00101">101</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -633,9 +593,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p>Implements <a class="el" href="classProcessor.html#a5882b5eaf11f8b1561d5bb4ecdc217c3">Processor</a>.</p>
+<p>Reimplemented from <a class="el" href="classOptimizationProcessor.html#a32d626626eee0bc4ade146973f6abb1c">OptimizationProcessor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00843">843</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00815">815</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -667,7 +627,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00893">893</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00854">854</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -707,9 +667,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p>Reimplemented from <a class="el" href="classProcessor.html#af4f33390f18af07f4bb2d04645bb7f96">Processor</a>.</p>
+<p>Reimplemented from <a class="el" href="classOptimizationProcessor.html#a94540e3f2addf6fb83cff5204c75dc52">OptimizationProcessor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00252">252</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00228">228</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -739,9 +699,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p>Implements <a class="el" href="classProcessor.html#ac35b4d4ae3c704c4f9764e8cbbb3a790">Processor</a>.</p>
+<p>Reimplemented from <a class="el" href="classOptimizationProcessor.html#a302363129fdcaea35ea923d7a674f196">OptimizationProcessor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00047">47</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00046">46</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -770,9 +730,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p>Reimplemented from <a class="el" href="classProcessor.html#a7017ddc30577ae1cdf3941090fe9f4b4">Processor</a>.</p>
+<p>Reimplemented from <a class="el" href="classOptimizationProcessor.html#af268a62c13246b74b5428a296cdf714a">OptimizationProcessor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00398">398</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00375">375</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -802,9 +762,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p>Implements <a class="el" href="classProcessor.html#a1ed21b6d43e34aa191677e80ecf2fd78">Processor</a>.</p>
+<p>Reimplemented from <a class="el" href="classOptimizationProcessor.html#ae9efdc539556d7d2dd25a9f5f7fff559">OptimizationProcessor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00052">52</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00051">51</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -826,111 +786,11 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00928">928</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
-
-</div>
-</div>
-<a id="aaec7b91c34866d747994e7d3bcf65b0c" name="aaec7b91c34866d747994e7d3bcf65b0c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaec7b91c34866d747994e7d3bcf65b0c">&#9670;&#160;</a></span>writeGraph()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void writeGraph </td>
-          <td>(</td>
-          <td class="paramtype">TFile *&#160;</td>
-          <td class="paramname"><em>outF</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>folder</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">TGraph *&#160;</td>
-          <td class="paramname"><em>g</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>description </p>
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00917">917</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
-
-</div>
-</div>
-<a id="a82c0722e46c2db9b92f0a76f6a32c26e" name="a82c0722e46c2db9b92f0a76f6a32c26e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a82c0722e46c2db9b92f0a76f6a32c26e">&#9670;&#160;</a></span>writeTH1F()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void writeTH1F </td>
-          <td>(</td>
-          <td class="paramtype">TFile *&#160;</td>
-          <td class="paramname"><em>outF</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>folder</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">TH1F *&#160;</td>
-          <td class="paramname"><em>h</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>description </p>
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00906">906</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html#l00866">866</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8cxx_source.html">SimpZBiOptimizationProcessor.cxx</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a8079093abe734825b55fcd9dc4dae32a" name="a8079093abe734825b55fcd9dc4dae32a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8079093abe734825b55fcd9dc4dae32a">&#9670;&#160;</a></span>background_sf_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double background_sf_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00141">141</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
 <a id="abbd9e048651de8fcd4020e5d03504fa5" name="abbd9e048651de8fcd4020e5d03504fa5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abbd9e048651de8fcd4020e5d03504fa5">&#9670;&#160;</a></span>bkgControlRegionFilename_</h2>
 
@@ -951,7 +811,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00188">188</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00137">137</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -975,31 +835,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00189">189</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="a1ce8ae610e17bd2b6a31b6b20867c863" name="a1ce8ae610e17bd2b6a31b6b20867c863"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1ce8ae610e17bd2b6a31b6b20867c863">&#9670;&#160;</a></span>bkgHistos_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classZBiHistos.html">ZBiHistos</a>&gt; bkgHistos_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00161">161</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00138">138</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1023,129 +859,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00139">139</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="ad8a64f94c00543cfde1e12e264da2fe0" name="ad8a64f94c00543cfde1e12e264da2fe0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad8a64f94c00543cfde1e12e264da2fe0">&#9670;&#160;</a></span>bkgVtxAnaFilename_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string bkgVtxAnaFilename_ {&quot;&quot;}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00137">137</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="a5e954bf07ab1dac5ff7249cebb094545" name="a5e954bf07ab1dac5ff7249cebb094545"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5e954bf07ab1dac5ff7249cebb094545">&#9670;&#160;</a></span>bkgVtxAnaTreename_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string bkgVtxAnaTreename_ {&quot;&quot;}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00138">138</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="aa248deec58b67ef14faaa8087971e5f1" name="aa248deec58b67ef14faaa8087971e5f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa248deec58b67ef14faaa8087971e5f1">&#9670;&#160;</a></span>cuts_cfgFile_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string cuts_cfgFile_ {&quot;&quot;}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00125">125</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="a32090166ec7f47f8e0d14ade88428e98" name="a32090166ec7f47f8e0d14ade88428e98"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a32090166ec7f47f8e0d14ade88428e98">&#9670;&#160;</a></span>cutVariables_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;std::string&gt; cutVariables_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00128">128</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="a174d7e034f9a94c6d3d7300d72ba4d1d" name="a174d7e034f9a94c6d3d7300d72ba4d1d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a174d7e034f9a94c6d3d7300d72ba4d1d">&#9670;&#160;</a></span>debug_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int debug_ {0}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>//&lt;! description </p>
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00123">123</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00127">127</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1169,7 +883,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00186">186</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00135">135</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1193,7 +907,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00187">187</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00136">136</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1217,7 +931,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00157">157</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00121">121</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1241,12 +955,12 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00131">131</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00109">109</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
-<a id="adc82ce333c65afb1a08e72cf329a3ad3" name="adc82ce333c65afb1a08e72cf329a3ad3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adc82ce333c65afb1a08e72cf329a3ad3">&#9670;&#160;</a></span>highMass_</h2>
+<a id="aeb4fee126a35ab542cb8210914b28385" name="aeb4fee126a35ab542cb8210914b28385"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb4fee126a35ab542cb8210914b28385">&#9670;&#160;</a></span>initialIntegrals_</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1255,7 +969,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double highMass_</td>
+          <td class="memname">std::map&lt;std::string, double&gt; initialIntegrals_</td>
         </tr>
       </table>
   </td>
@@ -1265,31 +979,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00192">192</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="ac713bd14fb00c4d79599ff8e0f4788d9" name="ac713bd14fb00c4d79599ff8e0f4788d9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac713bd14fb00c4d79599ff8e0f4788d9">&#9670;&#160;</a></span>initialIntegrals_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::map&lt;std::string,double&gt; initialIntegrals_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00167">167</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00113">113</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1313,103 +1003,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00154">154</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="ad6b8b2cbeed86c3fa2425467a2eef5fa" name="ad6b8b2cbeed86c3fa2425467a2eef5fa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad6b8b2cbeed86c3fa2425467a2eef5fa">&#9670;&#160;</a></span>lowMass_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double lowMass_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00193">193</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="ab23bbfae6194a28cace72f874a461d92" name="ab23bbfae6194a28cace72f874a461d92"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab23bbfae6194a28cace72f874a461d92">&#9670;&#160;</a></span>mass_window_nsigma_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double mass_window_nsigma_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00156">156</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="aa5ebedab715596f9cc1529bab0b9209e" name="aa5ebedab715596f9cc1529bab0b9209e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa5ebedab715596f9cc1529bab0b9209e">&#9670;&#160;</a></span>massResolution_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double massResolution_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00155">155</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="ac6922f4d6dc9a356c2d0debea6bbd3ac" name="ac6922f4d6dc9a356c2d0debea6bbd3ac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac6922f4d6dc9a356c2d0debea6bbd3ac">&#9670;&#160;</a></span>max_iteration_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int max_iteration_ = 75</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00134">134</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00120">120</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1433,79 +1027,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00140">140</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="a179ff262182aa5a0e2dd800a8f5b1252" name="a179ff262182aa5a0e2dd800a8f5b1252"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a179ff262182aa5a0e2dd800a8f5b1252">&#9670;&#160;</a></span>new_variable_params_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;double&gt; new_variable_params_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00130">130</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="a3878c7905bab66dc93e8b7fb78ce82d1" name="a3878c7905bab66dc93e8b7fb78ce82d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3878c7905bab66dc93e8b7fb78ce82d1">&#9670;&#160;</a></span>new_variables_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;std::string&gt; new_variables_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00129">129</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="a321310250a061890cdbf7c6d908b9255" name="a321310250a061890cdbf7c6d908b9255"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a321310250a061890cdbf7c6d908b9255">&#9670;&#160;</a></span>outFile_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">TFile* outFile_ {nullptr}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00127">127</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00112">112</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1529,31 +1051,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00126">126</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="abf243bc1d985e33c2c3ed6aa6f2b575b" name="abf243bc1d985e33c2c3ed6aa6f2b575b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abf243bc1d985e33c2c3ed6aa6f2b575b">&#9670;&#160;</a></span>persistentCutsPtr_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::map&lt;std::string, std::pair&lt;double,int&gt; &gt;* persistentCutsPtr_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00173">173</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00107">107</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1577,31 +1075,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00172">172</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="abc94c70e45327cc430d6c61491953cf5" name="abc94c70e45327cc430d6c61491953cf5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abc94c70e45327cc430d6c61491953cf5">&#9670;&#160;</a></span>processorHistos_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classZBiHistos.html">ZBiHistos</a>&gt; processorHistos_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00163">163</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00142">142</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1625,7 +1099,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00185">185</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00134">134</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1649,7 +1123,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00184">184</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00133">133</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1673,127 +1147,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00132">132</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="a436e1589148888d95fb9a2d1b34d09f3" name="a436e1589148888d95fb9a2d1b34d09f3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a436e1589148888d95fb9a2d1b34d09f3">&#9670;&#160;</a></span>signal_mass_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double signal_mass_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00153">153</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="ace5518f052257b18d5fa89e271d18d0f" name="ace5518f052257b18d5fa89e271d18d0f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ace5518f052257b18d5fa89e271d18d0f">&#9670;&#160;</a></span>signal_pdgid_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string signal_pdgid_ {&quot;&quot;}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00149">149</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="af8cf29d3d98b60a30ad1441665e1d22e" name="af8cf29d3d98b60a30ad1441665e1d22e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af8cf29d3d98b60a30ad1441665e1d22e">&#9670;&#160;</a></span>signal_sf_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double signal_sf_ = 1.0</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00152">152</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="ac652ff2b7c1d4d08fdd703da91396f0a" name="ac652ff2b7c1d4d08fdd703da91396f0a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac652ff2b7c1d4d08fdd703da91396f0a">&#9670;&#160;</a></span>signalHistos_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classZBiHistos.html">ZBiHistos</a>&gt; signalHistos_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00160">160</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="ae93f9b7cf124010367eeb7c94fa507c8" name="ae93f9b7cf124010367eeb7c94fa507c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae93f9b7cf124010367eeb7c94fa507c8">&#9670;&#160;</a></span>signalMCAnaFilename_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string signalMCAnaFilename_ {&quot;&quot;}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00148">148</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00111">111</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1817,7 +1171,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00151">151</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00118">118</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1841,55 +1195,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00150">150</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="a1a29d28b4ccc338b9704942daaebcd6a" name="a1a29d28b4ccc338b9704942daaebcd6a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1a29d28b4ccc338b9704942daaebcd6a">&#9670;&#160;</a></span>signalVtxAnaFilename_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string signalVtxAnaFilename_ {&quot;&quot;}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00145">145</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="a436b3ef210248ba342a89f10c9aa8b85" name="a436b3ef210248ba342a89f10c9aa8b85"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a436b3ef210248ba342a89f10c9aa8b85">&#9670;&#160;</a></span>signalVtxAnaTreename_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string signalVtxAnaTreename_ {&quot;&quot;}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00146">146</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00117">117</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1913,7 +1219,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00147">147</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00116">116</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1937,79 +1243,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00181">181</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="adb1b8473d77d4172c13e742844431f64" name="adb1b8473d77d4172c13e742844431f64"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adb1b8473d77d4172c13e742844431f64">&#9670;&#160;</a></span>step_size_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double step_size_ = 0.01</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00133">133</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="ac76d1c6b5fe07d0972a978dc423dfccb" name="ac76d1c6b5fe07d0972a978dc423dfccb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac76d1c6b5fe07d0972a978dc423dfccb">&#9670;&#160;</a></span>testCutHistos_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classZBiHistos.html">ZBiHistos</a>&gt; testCutHistos_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00162">162</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="ab3175da1cd774b5d136e5b4c9810db75" name="ab3175da1cd774b5d136e5b4c9810db75"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3175da1cd774b5d136e5b4c9810db75">&#9670;&#160;</a></span>testCutsPtr_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::map&lt;std::string, std::pair&lt;double,int&gt; &gt;* testCutsPtr_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00171">171</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00124">124</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2033,12 +1267,12 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00170">170</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00141">141</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
-<a id="ad8b998179dd2055317454064ca75490c" name="ad8b998179dd2055317454064ca75490c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad8b998179dd2055317454064ca75490c">&#9670;&#160;</a></span>tritrig_tuple_</h2>
+<a id="a95749d6c9c15a2a72191798f192a876e" name="a95749d6c9c15a2a72191798f192a876e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95749d6c9c15a2a72191798f192a876e">&#9670;&#160;</a></span>tritrig_tuple_</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2047,7 +1281,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;std::string,double*&gt; tritrig_tuple_</td>
+          <td class="memname">std::map&lt;std::string, double*&gt; tritrig_tuple_</td>
         </tr>
       </table>
   </td>
@@ -2057,7 +1291,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00177">177</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00129">129</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2081,7 +1315,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00176">176</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00128">128</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2105,7 +1339,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00178">178</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00130">130</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2129,7 +1363,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00144">144</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00110">110</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2153,7 +1387,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00124">124</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html#l00106">106</a> of file <a class="el" href="SimpZBiOptimizationProcessor_8h_source.html">SimpZBiOptimizationProcessor.h</a>.</p>
 
 </div>
 </div>

@@ -13,5 +13,6 @@ var searchData=
   ['blfithistos_2ecxx_10',['BlFitHistos.cxx',['../BlFitHistos_8cxx.html',1,'']]],
   ['blfithistos_2eh_11',['BlFitHistos.h',['../BlFitHistos_8h.html',1,'']]],
   ['bumphunter_2ecxx_12',['BumpHunter.cxx',['../BumpHunter_8cxx.html',1,'']]],
-  ['bumphunter_2eh_13',['BumpHunter.h',['../BumpHunter_8h.html',1,'']]]
+  ['bumphunter_2eh_13',['BumpHunter.h',['../BumpHunter_8h.html',1,'']]],
+  ['bus_2eh_14',['Bus.h',['../Bus_8h.html',1,'']]]
 ];

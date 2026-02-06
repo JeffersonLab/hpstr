@@ -1,10 +1,10 @@
 var searchData=
 [
-  ['writegraph_0',['writeGraph',['../classSimpZBiOptimizationProcessor.html#aaec7b91c34866d747994e7d3bcf65b0c',1,'SimpZBiOptimizationProcessor']]],
-  ['writegraphs_1',['writeGraphs',['../classZBiHistos.html#a31e96c43beeb92b552c51709df157e01',1,'ZBiHistos']]],
-  ['writehistos_2',['writeHistos',['../classZBiHistos.html#af8dbd13254ec00b8604bbfe26e79d79f',1,'ZBiHistos']]],
-  ['writeresults_3',['writeResults',['../classBumpHunter.html#acfc2583d61a3bf3305bd8ff119b0b0c1',1,'BumpHunter']]],
-  ['writeroot_4',['WriteRoot',['../classNTupplizer.html#a540b0767a7dcfae48e70168e967f9f70',1,'NTupplizer']]],
-  ['writeth1f_5',['writeTH1F',['../classSimpZBiOptimizationProcessor.html#a82c0722e46c2db9b92f0a76f6a32c26e',1,'SimpZBiOptimizationProcessor']]],
-  ['writetree_6',['writeTree',['../classFlatTupleMaker.html#a348efc14d9fec5901a6c60752142dd00',1,'FlatTupleMaker']]]
+  ['v0_5fprojection_5fto_5ftarget_5fsignificance_0',['v0_projection_to_target_significance',['../namespaceutils.html#aa54b8be934579198d0bcfed387562ee0',1,'utils::v0_projection_to_target_significance(json v0proj_fits, int run, double &amp;vtx_proj_x, double &amp;vtx_proj_y, double &amp;vtx_proj_x_signif, double &amp;vtx_proj_y_signif, double vtx_x, double vtx_y, double vtx_z, double vtx_px, double vtx_py, double vtx_pz)'],['../namespaceutils.html#af5e30070b97ad0441ad23e507de39c29',1,'utils::v0_projection_to_target_significance(json v0proj_fits, int run, double &amp;vtx_proj_x, double &amp;vtx_proj_y, double &amp;vtx_proj_x_signif, double &amp;vtx_proj_y_signif, Vertex *vtx)']]],
+  ['variableexists_1',['variableExists',['../classMutableTTree.html#ad4c39a1f92a6ddf05d1fb65bc7a43443',1,'MutableTTree']]],
+  ['vertex_2',['Vertex',['../classVertex.html#a1ae26ed9ee56ee76ada81da66dd0c869',1,'Vertex']]],
+  ['vertexanaprocessor_3',['VertexAnaProcessor',['../classVertexAnaProcessor.html#a57f3be230aa19e196aa1af2c4c8858ed',1,'VertexAnaProcessor']]],
+  ['vertexprocessor_4',['VertexProcessor',['../classVertexProcessor.html#af9b2eb31ef1deaf820ace54bfc0203b4',1,'VertexProcessor']]],
+  ['vtpdata_5',['VTPData',['../classVTPData.html#a31aaad7f513a33c599b5920224bdc8d6',1,'VTPData']]],
+  ['vtxhistoprocessor_6',['VtxHistoProcessor',['../classVtxHistoProcessor.html#a189981b43e9e0fef3ea400e59ce2a33e',1,'VtxHistoProcessor']]]
 ];
