@@ -29,7 +29,19 @@ void TrackingAnaProcessor::configure(const ParameterSet& parameters) {
         //Momentum smearing closure test
         pSmearingFile_            = parameters.getString("pSmearingFile",pSmearingFile_);
         smearingCfgFile_          = parameters.getString("smearingCfg",smearingCfgFile_);
-        
+
+        // Master switch for smearing (default false for backward compatibility)
+        doSmearing_ = parameters.getInteger("doSmearing", 0) != 0;
+
+        // Factor to multiply smearing parameters by (default 1.0)
+        smearingFactor_ = parameters.getDouble("smearingFactor", 1.0);
+
+        // Require truth match for smearing (default false)
+        requireTruthMatch_ = parameters.getInteger("requireTruthMatch", 0) != 0;
+
+        // Use omega (curvature) smearing instead of p smearing (default false)
+        smearOmega_ = parameters.getInteger("smearOmega", 0) != 0;
+
     }
     catch (std::runtime_error& error)
     {
@@ -103,9 +115,16 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
     std::string smearingFile = !smearingCfgFile_.empty() ? smearingCfgFile_ : pSmearingFile_;
 
     if (!smearingFile.empty()) {
+      std::cout<<"Loading smearing config from "<<smearingFile<<std::endl;
       std::cout<<"Smearing Tool Seed "<<seed_<<std::endl;
-      std::cout<<"Using smearing file: "<<smearingFile<<std::endl;
-      smearingTool_ = std::make_shared<TrackSmearingTool>(smearingFile, false, seed_);
+      std::cout<<"Using smearing factor: "<<smearingFactor_<<std::endl;
+      std::cout<<"doSmearing: "<<(doSmearing_ ? "true" : "false")<<std::endl;
+      std::cout<<"smearOmega: "<<(smearOmega_ ? "true" : "false")<<std::endl;
+      // Match PreselectAndCategorize2021: relSmearingP=true (relative), relSmearingZ0=false (absolute)
+      // JSON files will override with their own relSmearingP/relSmearingZ0 values
+      smearingTool_ = std::make_shared<TrackSmearingTool>(smearingFile, true, false, seed_, trkCollName_, smearingFactor_);
+      smearingTool_->setRequireTruthMatch(requireTruthMatch_);
+      std::cout<<"Require truth match for smearing: "<<(requireTruthMatch_ ? "true" : "false")<<std::endl;
 
       psmear_h_     =   new TH1D("psmear_h",
                                  "psmear_h",200,2,6);
@@ -148,6 +167,15 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
       z0smear_h_     = new TH1D("z0smear_h", "z0smear_h", 100, -0.5, 0.5);
       z0smear_top_h_ = new TH1D("z0smear_top_h", "z0smear_top_h", 100, -0.5, 0.5);
       z0smear_bot_h_ = new TH1D("z0smear_bot_h", "z0smear_bot_h", 100, -0.5, 0.5);
+
+      // omega smearing validation histograms
+      omega_h_           = new TH1D("omega_h", "omega_h", 100, -0.00015, 0.00015);
+      omega_top_h_       = new TH1D("omega_top_h", "omega_top_h", 100, -0.00015, 0.00015);
+      omega_bot_h_       = new TH1D("omega_bot_h", "omega_bot_h", 100, -0.00015, 0.00015);
+      omegasmear_h_      = new TH1D("omegasmear_h", "omegasmear_h", 100, -0.00015, 0.00015);
+      omegasmear_top_h_  = new TH1D("omegasmear_top_h", "omegasmear_top_h", 100, -0.00015, 0.00015);
+      omegasmear_bot_h_  = new TH1D("omegasmear_bot_h", "omegasmear_bot_h", 100, -0.00015, 0.00015);
+      omega_vs_p_hh_     = new TH2D("omega_vs_p_hh", "omega_vs_p_hh", 100, 1.0, 4.5, 100, -0.00015, 0.00015);
 
     }
       
@@ -314,14 +342,35 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
 
         //pSmearing closure Test
         // For MC: apply smearing; for data: use raw values
-        if (!pSmearingFile_.empty() || !smearingCfgFile_.empty()) {
+        if (smearingTool_) {
 
           double nhits  = track->getTrackerHitCount();
           bool isTop  = track->getTanLambda() > 0;
 
-          // For MC apply smearing, for data use raw values
-          double pval = isData_ ? track->getP() : smearingTool_->smearTrackP(*track);
-          double z0val = isData_ ? track->getZ0() : smearingTool_->smearTrackZ0(*track);
+          // Get unsmeared omega for validation histograms
+          double omega_unsmeared = track->getOmega();
+          double omega_smeared = omega_unsmeared;  // Default to unsmeared
+
+          // For MC apply smearing (if doSmearing_ is set), for data use raw values
+          double pval;
+          if (isData_ || !doSmearing_) {
+            pval = track->getP();
+          } else if (smearOmega_) {
+            // Use omega (curvature) smearing - need to work on a copy to not modify original
+            Track trk_copy = *track;
+            smearingTool_->updateWithSmearOmega(trk_copy);
+            pval = trk_copy.getP();
+            // Calculate smeared omega from the smeared pt
+            // pt = |1/omega| * B * c => omega = sign(omega) * B * c / pt
+            double pt_smeared = sqrt(trk_copy.getMomentum()[0]*trk_copy.getMomentum()[0] +
+                                     trk_copy.getMomentum()[2]*trk_copy.getMomentum()[2]);
+            double bfield = 0.52;
+            double mom_param = 2.99792458e-04;
+            omega_smeared = (omega_unsmeared > 0 ? 1.0 : -1.0) * bfield * mom_param / pt_smeared;
+          } else {
+            pval = smearingTool_->smearTrackP(*track);
+          }
+          double z0val = (isData_ || !doSmearing_) ? track->getZ0() : smearingTool_->smearTrackZ0(*track);
 
           psmear_h_->Fill(pval);
           psmear_vs_nHits_hh_->Fill(nhits, pval);
@@ -354,6 +403,19 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
             z0smear_bot_h_->Fill(z0val);
           }
 
+          // omega smearing validation
+          omega_h_->Fill(omega_unsmeared);
+          omegasmear_h_->Fill(omega_smeared);
+          omega_vs_p_hh_->Fill(track->getP(), omega_unsmeared);
+          if (isTop) {
+            omega_top_h_->Fill(omega_unsmeared);
+            omegasmear_top_h_->Fill(omega_smeared);
+          }
+          else {
+            omega_bot_h_->Fill(omega_unsmeared);
+            omegasmear_bot_h_->Fill(omega_smeared);
+          }
+
         } // smearing validation
         
     }//Loop on tracks
@@ -384,7 +446,7 @@ void TrackingAnaProcessor::finalize() {
       reg_selectors_[it->first]->getCutFlowHisto()->Write();
     }
     
-    if (!pSmearingFile_.empty() || !smearingCfgFile_.empty()) {
+    if (smearingTool_) {
       outF_->cd(trkCollName_.c_str());
       psmear_h_->Write();
       psmear_top_h_->Write();
@@ -416,6 +478,22 @@ void TrackingAnaProcessor::finalize() {
       delete z0smear_h_;
       delete z0smear_top_h_;
       delete z0smear_bot_h_;
+
+      // omega smearing validation histograms
+      omega_h_->Write();
+      omega_top_h_->Write();
+      omega_bot_h_->Write();
+      omegasmear_h_->Write();
+      omegasmear_top_h_->Write();
+      omegasmear_bot_h_->Write();
+      omega_vs_p_hh_->Write();
+      delete omega_h_;
+      delete omega_top_h_;
+      delete omega_bot_h_;
+      delete omegasmear_h_;
+      delete omegasmear_top_h_;
+      delete omegasmear_bot_h_;
+      delete omega_vs_p_hh_;
 
     }
         

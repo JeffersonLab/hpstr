@@ -172,7 +172,11 @@ bool TrackingProcessor::process(IEvent* ievent) {
 
         // Add a track to the event
         Track* track = utils::buildTrack(lc_track,trackStateLocation_, gbl_kink_data,track_data);
-        
+
+        if (!track) {
+            continue;
+        }
+
         //Override the momentum of the track if the bfield_ > 0
 	if (bfield_>0)
 	  track->setMomentum(bfield_);  //this will overwrite the momentum; only use for pre-v3 slcio
@@ -281,18 +285,26 @@ bool TrackingProcessor::process(IEvent* ievent) {
             //Get the truth_track associated with the lcio_track
             EVENT::LCObjectVec lc_truth_tracks = truth_tracks_nav->getRelatedToObjects(lc_track);
             if (lc_truth_tracks.size() < 1) {
-                std::cout<<"Track with id "<<lc_track->id()<< " doesn't have a truth matched track "<<std::endl;
+                // No truth matched track for this track - skip silently
             }
             else {
                 EVENT::Track* lc_truth_track = static_cast<EVENT::Track*> (lc_truth_tracks.at(0));
+                if (!lc_truth_track) {
+                    tracks_.push_back(track);
+                    continue;
+                }
                 Track* truth_track = utils::buildTrack(lc_truth_track,trackStateLocation_,nullptr,nullptr);
+                if (!truth_track) {
+                    tracks_.push_back(track);
+                    continue;
+                }
                 track->setTruthLink(truth_track);
 		if (bfield_>0)
 		  truth_track->setMomentum(bfield_);//this will overwrite the momentum; only use for pre-v3 slcio
                 //truth tracks phi needs to be corrected
                 if (truth_track->getPhi() > TMath::Pi())
                     truth_track->setPhi(truth_track->getPhi() - (TMath::Pi()) * 2.);
-                
+
                 truthTracks_.push_back(truth_track);
             }
             

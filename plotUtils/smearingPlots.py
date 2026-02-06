@@ -28,33 +28,62 @@ class plotFitter:
             self.hmap[hname].Write()
         
 
-    def smearing_term(self, sigma_data, sigma_mc, sigma_dataerr=0., sigma_mcerr=0.):
-        
+    def smearing_term(self, mu_data, sigma_data, mu_mc, sigma_mc, sigma_dataerr=0., sigma_mcerr=0.):
+        """Calculate relative smearing term: sqrt((sigma_data/mu_data)^2 - (sigma_mc/mu_mc)^2)"""
+
         st = -1.
         sigma_a = sigma_data
         sigma_b = sigma_mc
-        
+
         if (sigma_data < sigma_mc):
             print("WARNING: DATA resolution is LESS than MC...")
             return (0.,0.)
-        
-        st = sqrt(sigma_data*sigma_data - sigma_mc*sigma_mc)
+
+        #st = sqrt(sigma_data*sigma_data - sigma_mc*sigma_mc)
+        st = sqrt( (sigma_data*sigma_data)/(mu_data*mu_data) - (sigma_mc*sigma_mc)/(mu_mc*mu_mc))
 
         if (st < 1e-6):
             return (0.,0.)
-        
+
         dstdsd = sigma_data / st
         dstdsmc = -sigma_mc / st
 
         sstsd2  = dstdsd*dstdsd*sigma_dataerr*sigma_dataerr
         sstsmc2 = dstdsmc*dstdsmc*sigma_mcerr*sigma_mcerr
-        
+
         sigmast = sqrt(sstsd2 + sstsmc2)
 
         #Use 1% for errors very small. For testing purposes.
         if (sigmast < 1e-6):
             sigmast = st * 0.01
-            
+
+        return st,sigmast
+
+    def smearing_term_absolute(self, sigma_data, sigma_mc, sigma_dataerr=0., sigma_mcerr=0.):
+        """Calculate absolute smearing term: sqrt(sigma_data^2 - sigma_mc^2)"""
+
+        if (sigma_data < sigma_mc):
+            print("WARNING: DATA resolution is LESS than MC...")
+            return (0.,0.)
+
+        st = sqrt(sigma_data*sigma_data - sigma_mc*sigma_mc)
+
+        if (st < 1e-12):
+            return (0.,0.)
+
+        # Error propagation: d(st)/d(sigma_data) = sigma_data/st, d(st)/d(sigma_mc) = -sigma_mc/st
+        dstdsd = sigma_data / st
+        dstdsmc = -sigma_mc / st
+
+        sstsd2  = dstdsd*dstdsd*sigma_dataerr*sigma_dataerr
+        sstsmc2 = dstdsmc*dstdsmc*sigma_mcerr*sigma_mcerr
+
+        sigmast = sqrt(sstsd2 + sstsmc2)
+
+        #Use 1% for errors very small. For testing purposes.
+        if (sigmast < 1e-12):
+            sigmast = st * 0.01
+
         return st,sigmast
 
     def fit1D(self,hname):
@@ -65,18 +94,18 @@ class plotFitter:
             print("ERROR::",hname," not found in ", self.dataFile)
         if not hmc:
             print("ERROR::",hname," not found in ", self.mcFile)
-            
+
 
         #Perform the gaussian recursive fit and extract mean and sigma
-        
+
         datafit = itf.singleGausIterative(hdata,
                                           self.sigmaRange,
                                           self.rangeFit)
-        
+
         mcfit = itf.singleGausIterative(hmc,
                                         self.sigmaRange,
                                         self.rangeFit)
-        
+
         mu_data    = datafit.GetParameter(1)
         sigma_data = datafit.GetParameter(2)
         print(hname)
@@ -84,12 +113,12 @@ class plotFitter:
         print(">>>> DATA: ",mu_data,sigma_data)
 
         sigma_data = sigma_data * self.testFactor
-        
+
         mu_mc      = mcfit.GetParameter(1)
         sigma_mc   = mcfit.GetParameter(2)
         print(">>>> MC: ",mu_mc,sigma_mc)
-        
-        st,sigmast = self.smearing_term(sigma_data,sigma_mc)
+
+        st,sigmast = self.smearing_term(mu_data,sigma_data,mu_mc,sigma_mc)
 
         self.hmap[hname+"_smearing"] = TH1F(hname+"_smearing",
                                             hname+"_smearing",
@@ -97,7 +126,57 @@ class plotFitter:
 
         self.hmap[hname+"_smearing"].SetBinContent(1,st)
         self.hmap[hname+"_smearing"].SetBinError(1,sigmast)
-        
+
+        return st
+
+    def fit1D_absolute(self, hname, fitrange=None):
+        """Fit 1D histogram and extract absolute smearing term (not relative to mean)."""
+
+        hdata = self.dataFile.Get(hname)
+        hmc   = self.mcFile.Get(hname)
+        if not hdata:
+            print("ERROR::",hname," not found in ", self.dataFile)
+            return 0.
+        if not hmc:
+            print("ERROR::",hname," not found in ", self.mcFile)
+            return 0.
+
+        # Use provided fit range or default
+        fit_range = fitrange if fitrange else self.rangeFit
+
+        #Perform the gaussian recursive fit and extract mean and sigma
+        datafit = itf.singleGausIterative(hdata,
+                                          self.sigmaRange,
+                                          fit_range)
+
+        mcfit = itf.singleGausIterative(hmc,
+                                        self.sigmaRange,
+                                        fit_range)
+
+        mu_data    = datafit.GetParameter(1)
+        sigma_data = datafit.GetParameter(2)
+        sigma_data_err = datafit.GetParError(2)
+        print(hname)
+        print(">>>> DATA: mu=",mu_data," sigma=",sigma_data)
+
+        sigma_data = sigma_data * self.testFactor
+
+        mu_mc      = mcfit.GetParameter(1)
+        sigma_mc   = mcfit.GetParameter(2)
+        sigma_mc_err = mcfit.GetParError(2)
+        print(">>>> MC: mu=",mu_mc," sigma=",sigma_mc)
+
+        # Use absolute smearing term (not relative)
+        st,sigmast = self.smearing_term_absolute(sigma_data, sigma_mc, sigma_data_err, sigma_mc_err)
+        print(">>>> Absolute smearing: ",st," +/- ",sigmast)
+
+        self.hmap[hname+"_smearing_abs"] = TH1F(hname+"_smearing_abs",
+                                                hname+"_smearing_abs",
+                                                1,0,1)
+
+        self.hmap[hname+"_smearing_abs"].SetBinContent(1,st)
+        self.hmap[hname+"_smearing_abs"].SetBinError(1,sigmast)
+
         return st
     
 
@@ -275,15 +354,23 @@ def main():
     
     pf = plotFitter(dataFile, mcFile, outFile, regions)
 
-    # Fit momentum distributions
+    # Fit momentum distributions (relative smearing)
     pSmearing_inclusive = pf.fit1D("KalmanFullTracks/KalmanFullTracks_p_h")
     pSmearing_top = pf.fit1D("KalmanFullTracks/KalmanFullTracks_p_top_h")
     pSmearing_bot = pf.fit1D("KalmanFullTracks/KalmanFullTracks_p_bot_h")
 
     # Fit z0 distributions
-    z0Smearing_inclusive = pf.fit1D("KalmanFullTracks/KalmanFullTracks_Z0_h")
-    z0Smearing_top = pf.fit1D("KalmanFullTracks/KalmanFullTracks_top_track_z0_h")
-    z0Smearing_bot = pf.fit1D("KalmanFullTracks/KalmanFullTracks_bot_track_z0_h")
+    #z0Smearing_inclusive = pf.fit1D("KalmanFullTracks/KalmanFullTracks_Z0_h")
+    #z0Smearing_top = pf.fit1D("KalmanFullTracks/KalmanFullTracks_top_track_z0_h")
+    #z0Smearing_bot = pf.fit1D("KalmanFullTracks/KalmanFullTracks_bot_track_z0_h")
+
+    # Fit omega distributions (absolute smearing)
+    # Omega range is roughly [-0.00015, 0.00015] for FEE tracks
+    # These histograms are created by TrackingAnaProcessor and stored in the track collection directory
+    omega_fitrange = [-0.00015, 0.00015]
+    omegaSmearing_inclusive = pf.fit1D_absolute("KalmanFullTracks/omega_h", omega_fitrange)
+    omegaSmearing_top = pf.fit1D_absolute("KalmanFullTracks/omega_top_h", omega_fitrange)
+    omegaSmearing_bot = pf.fit1D_absolute("KalmanFullTracks/omega_bot_h", omega_fitrange)
 
     # Write smearing config to JSON file for TrackSmearingTool
     smearingConfig = {
@@ -292,12 +379,19 @@ def main():
             "top": pSmearing_top,
             "bot": pSmearing_bot
         },
-        "z0Smearing": {
-            "inclusive": z0Smearing_inclusive,
-            "top": z0Smearing_top,
-            "bot": z0Smearing_bot
+    #    "z0Smearing": {
+    #        "inclusive": z0Smearing_inclusive,
+    #        "top": z0Smearing_top,
+    #        "bot": z0Smearing_bot
+    #    },
+        "omegaSmearing": {
+            "inclusive": omegaSmearing_inclusive,
+            "top": omegaSmearing_top,
+            "bot": omegaSmearing_bot
         },
-        "relSmearing": False
+        "relSmearingP": True,
+        "relSmearingZ0": False,
+        "smearOmega": False
     }
 
     with open(options.jsonfile, 'w') as jsonFile:

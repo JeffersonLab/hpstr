@@ -19,6 +19,10 @@ using json = nlohmann::json;
 //------------------//
 
 #include "Track.h"
+#include "Vertex.h"
+#include "Particle.h"
+#include "MCParticle.h"
+#include "TrackerHit.h"
 
 class TFile;
 class TH1D;
@@ -31,26 +35,53 @@ class TrackSmearingTool {
   // - .root files: histogram-based smearing
   // - .json files: JSON config with top/bot values
   // The seed needs to be set accordingly for each instance / job of the smearing tool
+  // The smearingFactor multiplies all smearing parameters (default 1.0)
+  // relSmearingP/relSmearingZ0 control whether smearing is relative (multiplicative) or absolute (additive)
   TrackSmearingTool(const std::string& smearingfile,
-                    const bool relSmearing = true,
+                    const bool relSmearingP = true,
+                    const bool relSmearingZ0 = false,
                     const int seed = 42,
-                    const std::string& tracks = "KalmanFullTracks");
+                    const std::string& tracks = "KalmanFullTracks",
+                    const double smearingFactor = 1.0);
 
   // Constructor with fixed smearing values (no histogram lookup)
+  // The smearingFactor multiplies all smearing parameters (default 1.0)
+  // relSmearingP/relSmearingZ0 control whether smearing is relative (multiplicative) or absolute (additive)
   TrackSmearingTool(const double pSmearingValue,
                     const double z0SmearingValue,
-                    const bool relSmearing = true,
-                    const int seed = 42);
+                    const bool relSmearingP = true,
+                    const bool relSmearingZ0 = false,
+                    const int seed = 42,
+                    const double smearingFactor = 1.0);
 
   double smearTrackP(const Track& trk);
   double smearTrackP(const double p);
-  void updateWithSmearP(Track& trk);
+  double updateWithSmearP(Track& trk);
+  void updateVertexWithSmearP(Vertex* vtx, double p1_smear_factor, double p2_smear_factor);
+
+  // Omega (curvature) smearing - alternative to momentum smearing
+  // Smears omega directly, then recalculates momentum from smeared omega
+  // Returns the scale factor applied to momentum (smeared_p / original_p)
+  double updateWithSmearOmega(Track& trk, double bfield = 0.52);
 
   double smearTrackZ0(const Track& trk);
   double smearTrackZ0(const double z0);
   void updateWithSmearZ0(Track& trk);
-  
+
+  // Truth matching support
+  // Set the MC particles collection for truth matching (call once per event)
+  void setMCParticles(const std::vector<MCParticle*>* mc_particles);
+
+  // Enable/disable truth matching requirement (only smear tracks with truth match)
+  void setRequireTruthMatch(bool require) { requireTruthMatch_ = require; }
+
+  // Check if a track has a truth-matched electron/positron (abs(PDG) == 11)
+  // Returns true if matched, false if no match or MC info unavailable
+  bool hasTruthMatch(Track& trk);
+
  private:
+  // Get the PDG code of the truth particle best matching this track
+  int getTruthPDG(Track& trk);
   
   //Random engine
   std::shared_ptr<std::default_random_engine> generator_;
@@ -77,8 +108,21 @@ class TrackSmearingTool {
   double z0SmearingValueBot_{0.};
   bool useSeparateTopBot_{false};
 
+  // Omega (curvature) smearing values
+  double omegaSmearingValueTop_{0.};
+  double omegaSmearingValueBot_{0.};
+  bool smearOmega_{false};  // If true, use omega smearing instead of p smearing
+
   // debug
-  bool debug_{true};
-  bool relSmearing_{false};
-  
+  bool debug_{false};
+  bool relSmearingP_{false};
+  bool relSmearingZ0_{false};
+
+  // factor to multiply all smearing parameters by
+  double smearingFactor_{1.0};
+
+  // Truth matching
+  const std::vector<MCParticle*>* mcParticles_{nullptr};
+  bool requireTruthMatch_{false};
+
 };
