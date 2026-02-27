@@ -16,17 +16,17 @@
         "var": "true_ap.mass_"
     },
     "vtx_z_h": {
-        "bins": 200,
-        "minX": -50.0,
-        "maxX": 150.0,
+        "bins": 400,
+        "minX": -10.0,
+        "maxX": 140.0,
         "xtitle": "z_{vtx}/mm",
         "ytitle": "N_{events}/a.u.",
         "var": "vertex_z"
     },
     "true_vtx_z_h": {
-        "bins": 200,
-        "minX": -50.0,
-        "maxX": 150.0,
+        "bins": 400,
+        "minX": -10.0,
+        "maxX": 140.0,
         "xtitle": "z_{truth}/mm",
         "ytitle": "N_{events}/a.u.",
         "var": "true_ap.vtx_z_"
@@ -136,9 +136,9 @@
         "var": "ele_tanLambda"
     },
     "ele_track_z0_h": {
-        "bins": 500,
-        "minX": -5,
-        "maxX": 5,
+        "bins": 400,
+        "minX": -2,
+        "maxX": 2,
         "xtitle": "y0_{ele}/mm",
         "ytitle": "N_{events}/a.u.",
         "var": "ele_z0"
@@ -184,9 +184,9 @@
         "var": "pos_tanLambda"
     },
     "pos_track_z0_h": {
-        "bins": 500,
-        "minX": -5,
-        "maxX": 5,
+        "bins": 400,
+        "minX": -2,
+        "maxX": 2,
         "xtitle": "y0_{pos}/mm",
         "ytitle": "N_{events}/a.u.",
         "var": "pos_z0"
@@ -222,5 +222,13 @@
         "xtitle": "R_{iso, pos}",
         "ytitle": "N_{events}/a.u.",
         "var": "pos_L1_iso_significance"
+    },
+    "min_y0_h": {
+        "bins": 200,
+        "minX": 0,
+        "maxX": 2,
+        "xtitle": "y0_{min}/mm",
+        "ytitle": "N_{events}/a.u.",
+        "var": "min_y0"
     }
 }
