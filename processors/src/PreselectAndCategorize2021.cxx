@@ -26,6 +26,13 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     // Require truth match for smearing (default false)
     requireTruthMatch_ = parameters.getInteger("requireTruthMatch", 0) != 0;
 
+    // Use omega (curvature) smearing instead of p smearing (default false)
+    smearOmega_ = parameters.getInteger("smearOmega", 0) != 0;
+
+    // Explicit smearing lookup variable: "flat", "nHits", "tanLambda", "phi0"
+    // Empty string (default) accepts whatever the JSON specifies
+    smearingVariable_ = parameters.getString("smearingVariable", "");
+
     std::string smearingFile = !smearingCfgFile.empty() ? smearingCfgFile : pSmearingFile;
 
     if (doSmearing_ and not smearingFile.empty()) {
@@ -33,11 +40,15 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
         std::cout << "Using smearing seed: " << smearingSeed_ << std::endl;
         std::cout << "Using smearing factor: " << smearingFactor_ << std::endl;
         std::cout << "Require truth match for smearing: " << (requireTruthMatch_ ? "true" : "false") << std::endl;
+        std::cout << "Using omega smearing: " << (smearOmega_ ? "true" : "false") << std::endl;
+        std::cout << "Using smearing variable: " << (smearingVariable_.empty() ? "(JSON default)" : smearingVariable_) << std::endl;
         // relSmearingP=true (relative), relSmearingZ0=false (absolute) - these are defaults for ROOT files;
         // JSON files will override with their own relSmearingP/relSmearingZ0 values
         smearingTool_ = std::make_shared<TrackSmearingTool>(smearingFile, true, false, smearingSeed_,
                                                             "KalmanFullTracks", smearingFactor_);
+        smearingTool_->setForcedVariable(smearingVariable_);
         smearingTool_->setRequireTruthMatch(requireTruthMatch_);
+        smearingTool_->printConfig();
     } else if (not doSmearing_) {
         std::cout << "Track smearing disabled via doSmearing flag" << std::endl;
     }
@@ -84,6 +95,10 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
 
     calTimeOffset_ = parameters.getDouble("calTimeOffset");
     isData_ = parameters.getInteger("isData") != 0;
+    if (smearingTool_) {
+        smearingTool_->setIsData(isData_);
+        smearingTool_->setApplyMeanCorr(isData_);
+    }
     isSimpSignal_ = parameters.getInteger("isSimpSignal") != 0;
     isApSignal_ = parameters.getInteger("isApSignal") != 0;
     if (isSimpSignal_ || isApSignal_) isSignal_ = true;
@@ -175,6 +190,7 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
     bus_.board_output<Particle>(output_tree_.get(), "pos");
     bus_.board_output<double>(output_tree_.get(), "psum");
     bus_.board_output<double>(output_tree_.get(), "psum_scalar");
+    bus_.board_output<double>(output_tree_.get(), "epem_opening_angle");
     bus_.board_output<double>(output_tree_.get(), "ele_p_smear_ratio");
     bus_.board_output<double>(output_tree_.get(), "pos_p_smear_ratio");
     bus_.board_output<bool>(output_tree_.get(), "ele_has_truth_link");
@@ -186,8 +202,22 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
      * adding specific cut variables       *
      ***************************************/
 
-    // hit categories
-    for (const auto& name : {"eleL1", "eleL2", "posL1", "posL2", "single2", "single3"}) {
+    // hit categories (layer has both axial+stereo)
+    for (const auto& name : {"eleL1", "eleL2", "eleL3", "eleL4", "posL1", "posL2", "posL3", "posL4", "single2", "single3"}) {
+        bus_.board_output<bool>(output_tree_.get(), name);
+    }
+
+    // top/bottom track flags
+    for (const auto& name : {"ele_isTop", "pos_isTop"}) {
+        bus_.board_output<bool>(output_tree_.get(), name);
+    }
+
+    // per-layer axial/stereo hit flags
+    for (const auto& name : {
+            "eleL1_axial", "eleL1_stereo", "eleL2_axial", "eleL2_stereo",
+            "eleL3_axial", "eleL3_stereo", "eleL4_axial", "eleL4_stereo",
+            "posL1_axial", "posL1_stereo", "posL2_axial", "posL2_stereo",
+            "posL3_axial", "posL3_stereo", "posL4_axial", "posL4_stereo"}) {
         bus_.board_output<bool>(output_tree_.get(), name);
     }
 
@@ -216,6 +246,10 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
             bus_.board_output<MCParticle>(output_tree_.get(), "true_ap");
         }
 
+        if (isApSignal_) {
+            bus_.board_output<double>(output_tree_.get(), "true_decay_len");
+            bus_.board_output<double>(output_tree_.get(), "true_ap_betagamma");
+        }
         bus_.board_output<bool>(output_tree_.get(), "isRadEle");
         bus_.board_output<double>(output_tree_.get(), "true_vertex_invM");
         bus_.board_output<double>(output_tree_.get(), "true_vertex_psum");
@@ -354,9 +388,14 @@ bool PreselectAndCategorize2021::process(IEvent*) {
             smearingTool_->updateWithSmearZ0(ele_trk);
             smearingTool_->updateWithSmearZ0(pos_trk);
 
-            // Apply momentum smearing
-            ele_p_smear_ratio = smearingTool_->updateWithSmearP(ele_trk);
-            pos_p_smear_ratio = smearingTool_->updateWithSmearP(pos_trk);
+            // Apply momentum smearing (omega or p)
+            if (smearOmega_) {
+                ele_p_smear_ratio = smearingTool_->updateWithSmearOmega(ele_trk);
+                pos_p_smear_ratio = smearingTool_->updateWithSmearOmega(pos_trk);
+            } else {
+                ele_p_smear_ratio = smearingTool_->updateWithSmearP(ele_trk);
+                pos_p_smear_ratio = smearingTool_->updateWithSmearP(pos_trk);
+            }
             smearingTool_->updateVertexWithSmearP(vtx, ele_p_smear_ratio, pos_p_smear_ratio);
         }
         bus_.set("ele_p_smear_ratio", ele_p_smear_ratio);
@@ -450,20 +489,52 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     auto [vtx, ele, pos] = preselected_vtx.at(0);
 
     // earliest layer hit categories
-    bool eleL1{false}, eleL2{false}, posL1{false}, posL2{false};
+    bool eleL1{false}, eleL2{false}, eleL3{false}, eleL4{false};
+    bool posL1{false}, posL2{false}, posL3{false}, posL4{false};
     Track ele_trk{ele.getTrack()}, pos_trk{pos.getTrack()};
     auto ele_layers = _ah->GetTrackHitLayers(&ele_trk);
     auto pos_layers = _ah->GetTrackHitLayers(&pos_trk);
 
     if (ele_layers.at(0) == 1 && ele_layers.at(1) == 1) eleL1 = true;
     if (ele_layers.at(2) == 1 && ele_layers.at(3) == 1) eleL2 = true;
+    if (ele_layers.at(4) == 1 && ele_layers.at(5) == 1) eleL3 = true;
+    if (ele_layers.at(6) == 1 && ele_layers.at(7) == 1) eleL4 = true;
     if (pos_layers.at(0) == 1 && pos_layers.at(1) == 1) posL1 = true;
     if (pos_layers.at(2) == 1 && pos_layers.at(3) == 1) posL2 = true;
+    if (pos_layers.at(4) == 1 && pos_layers.at(5) == 1) posL3 = true;
+    if (pos_layers.at(6) == 1 && pos_layers.at(7) == 1) posL4 = true;
 
     bus_.set("eleL1", eleL1);
     bus_.set("eleL2", eleL2);
+    bus_.set("eleL3", eleL3);
+    bus_.set("eleL4", eleL4);
     bus_.set("posL1", posL1);
     bus_.set("posL2", posL2);
+    bus_.set("posL3", posL3);
+    bus_.set("posL4", posL4);
+
+    // top/bottom identification
+    bool ele_isTop = ele_trk.getTanLambda() > 0;
+    bool pos_isTop = pos_trk.getTanLambda() > 0;
+    bus_.set("ele_isTop", ele_isTop);
+    bus_.set("pos_isTop", pos_isTop);
+
+    // Per-layer axial/stereo hit flags
+    // From sensor_locations.txt z-positions:
+    //   Top:    even index (0,2,4,6) = axial,  odd index (1,3,5,7) = stereo
+    //   Bottom: even index (0,2,4,6) = stereo, odd index (1,3,5,7) = axial
+    auto setLayerHits = [&](const std::vector<int>& layers, bool isTop, const std::string& prefix) {
+        for (int iL = 0; iL < 4; iL++) {
+            int idx_even = 2 * iL;
+            int idx_odd  = 2 * iL + 1;
+            bool hit_axial  = isTop ? (layers.at(idx_even) == 1) : (layers.at(idx_odd) == 1);
+            bool hit_stereo = isTop ? (layers.at(idx_odd) == 1)  : (layers.at(idx_even) == 1);
+            bus_.set(prefix + "L" + std::to_string(iL + 1) + "_axial",  hit_axial);
+            bus_.set(prefix + "L" + std::to_string(iL + 1) + "_stereo", hit_stereo);
+        }
+    };
+    setLayerHits(ele_layers, ele_isTop, "ele");
+    setLayerHits(pos_layers, pos_isTop, "pos");
 
     double ele_L1_iso{9999.0}, pos_L1_iso{9999.0};
     if (eleL1 && eleL2 && posL1 && posL2) {
@@ -506,6 +577,7 @@ bool PreselectAndCategorize2021::process(IEvent*) {
 
     bus_.set("psum", psum.Mag());
     bus_.set("psum_scalar", ele_mom.Mag() + pos_mom.Mag());
+    bus_.set("epem_opening_angle", ele_mom.Angle(pos_mom));
 
     // calculate target projection and its significance
     if (not v0proj_fits_.empty()) {
@@ -650,6 +722,18 @@ bool PreselectAndCategorize2021::process(IEvent*) {
                 throw std::runtime_error("ERROR: Logic error: checked for AP earlier but there isn't one.");
             }
             bus_.set("true_ap", *ap);
+
+            // Compute lab-frame decay distance and Lorentz boost for lifetime reweighting
+            std::vector<double> vtxPos = ap->getVertexPosition();
+            std::vector<double> endPos = ap->getEndPoint();
+            double dx = endPos[0] - vtxPos[0];
+            double dy = endPos[1] - vtxPos[1];
+            double dz = endPos[2] - vtxPos[2];
+            bus_.set("true_decay_len", std::sqrt(dx*dx + dy*dy + dz*dz));
+
+            std::vector<double> apMom = ap->getMomentum();
+            double ap_p = std::sqrt(apMom[0]*apMom[0] + apMom[1]*apMom[1] + apMom[2]*apMom[2]);
+            bus_.set("true_ap_betagamma", ap_p / ap->getMass());
         }
         if (trueEleP.P() > 0 and truePosP.P() > 0) {
             bus_.set("true_vertex_invM", (trueEleP + truePosP).M());

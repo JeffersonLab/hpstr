@@ -34,6 +34,8 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
     bool doSmearing_{true};  // master switch for track smearing
     double smearingFactor_{1.0};  // factor to multiply smearing parameters by
     bool requireTruthMatch_{false};  // require truth match for smearing
+    bool smearOmega_{false};  // use omega (curvature) smearing instead of p smearing
+    std::string smearingVariable_{""};  // "flat", "nHits", "tanLambda", "phi0"; "" = JSON default
     bool isSimpSignal_{false};
     bool isApSignal_{false};
     bool debug_{false};  // debug output for smearing validation
