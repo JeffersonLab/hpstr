@@ -7,6 +7,11 @@
 #include <random>
 #include <memory>
 #include <fstream>
+#include <algorithm>
+#include <cmath>
+#include <map>
+#include <string>
+#include <vector>
 
 //------------------//
 //     JSON         //
@@ -74,6 +79,30 @@ class TrackSmearingTool {
 
   // Enable/disable truth matching requirement (only smear tracks with truth match)
   void setRequireTruthMatch(bool require) { requireTruthMatch_ = require; }
+  void setDebug(bool debug) { debug_ = debug; }
+
+  // Declare whether this instance is processing data (true) or MC (false).
+  // - MC mode (default): applies Gaussian smearing only.
+  // - Data mode: applies mean correction only (shifts data mean toward MC mean);
+  //   no Gaussian smearing is applied.  Requires mean values in the JSON and
+  //   setApplyMeanCorr(true).
+  void setIsData(bool isData) { isData_ = isData; }
+
+  // Enable the mean correction.  Has no effect in MC mode.
+  // For relative smearing (p): scale factor mu_mc/mu_data applied to data.
+  // For absolute smearing (z0, omega): additive shift mu_mc - mu_data.
+  void setApplyMeanCorr(bool apply) { applyMeanCorr_ = apply; }
+
+  // Print a full human-readable summary of the loaded configuration.
+  // Call this after all setters (setIsData, setForcedVariable, …) are done.
+  void printConfig() const;
+
+  // Explicitly select which smearing parameterization to use.
+  // "flat"      -> use scalar top/bot values, disable binned lookup
+  // "nHits", "tanLambda", "phi0" -> require binned lookup with that variable;
+  //               throws if the JSON does not contain a matching binned section.
+  // ""          -> use whatever the JSON provides (default, not recommended)
+  void setForcedVariable(const std::string& var);
 
   // Check if a track has a truth-matched electron/positron (abs(PDG) == 11)
   // Returns true if matched, false if no match or MC info unavailable
@@ -82,6 +111,14 @@ class TrackSmearingTool {
  private:
   // Get the PDG code of the truth particle best matching this track
   int getTruthPDG(Track& trk);
+
+  // Binned smearing lookup helpers
+  // Returns the smearing value for the given x using linear bin lookup
+  double lookupBinnedValue(const std::vector<double>& edges,
+                           const std::vector<double>& values,
+                           double x) const;
+  // Returns the lookup variable value from the track (tanLambda or phi0)
+  double getLookupValue(const Track& track) const;
   
   //Random engine
   std::shared_ptr<std::default_random_engine> generator_;
@@ -112,6 +149,36 @@ class TrackSmearingTool {
   double omegaSmearingValueTop_{0.};
   double omegaSmearingValueBot_{0.};
   bool smearOmega_{false};  // If true, use omega smearing instead of p smearing
+
+  // Binned smearing lookup tables (from hpsplot tool JSON).
+  // Each map key is a variable name (e.g. "tanLambda", "phi0", "nHits").
+  // Keys come from JSON entries named {section}_binned_{varname}.
+  struct BinnedParam {
+    std::vector<double> edgesTop, edgesBot;
+    std::vector<double> valTop,   valBot;    // sigma values; empty for z0 (mean-only)
+    std::vector<double> muDatTop, muDatBot;  // mean corrections
+    std::vector<double> muMcTop,  muMcBot;
+  };
+  std::string binnedLookupVariable_{"tanLambda"};  // active variable; set by setForcedVariable
+  std::map<std::string, BinnedParam> pBinned_;
+  std::map<std::string, BinnedParam> omegaBinned_;
+  std::map<std::string, BinnedParam> z0Binned_;
+
+  // Mean corrections (from mu_data / mu_mc in the tool JSON)
+  // Scalar — from 1D fits for top/bot regions
+  double pMeanDataTop_{0.},     pMeanMcTop_{0.};
+  double pMeanDataBot_{0.},     pMeanMcBot_{0.};
+  double z0MeanDataTop_{0.},    z0MeanMcTop_{0.};
+  double z0MeanDataBot_{0.},    z0MeanMcBot_{0.};
+  double omegaMeanDataTop_{0.}, omegaMeanMcTop_{0.};
+  double omegaMeanDataBot_{0.}, omegaMeanMcBot_{0.};
+  bool hasMeanCorrP_{false};
+  bool hasMeanCorrZ0_{false};
+  bool hasMeanCorrOmega_{false};
+  bool applyMeanCorr_{false};
+  bool isData_{false};
+
+  std::string smearingFile_{""};  // path stored for printConfig()
 
   // debug
   bool debug_{false};

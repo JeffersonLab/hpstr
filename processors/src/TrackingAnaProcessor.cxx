@@ -1,7 +1,6 @@
 #include "TrackingAnaProcessor.h"
 #include <iomanip>
 #include "utilities.h"
-#include "AnaHelpers.h"
 
 TrackingAnaProcessor::TrackingAnaProcessor(const std::string& name, Process& process)
     : Processor(name, process) { 
@@ -42,6 +41,10 @@ void TrackingAnaProcessor::configure(const ParameterSet& parameters) {
         // Use omega (curvature) smearing instead of p smearing (default false)
         smearOmega_ = parameters.getInteger("smearOmega", 0) != 0;
 
+        // Explicit smearing lookup variable: "flat", "nHits", "tanLambda", "phi0"
+        // Empty string (default) accepts whatever the JSON specifies
+        smearingVariable_ = parameters.getString("smearingVariable", "");
+
     }
     catch (std::runtime_error& error)
     {
@@ -52,8 +55,24 @@ void TrackingAnaProcessor::configure(const ParameterSet& parameters) {
       time_offset_ = 5.;
 }
 
+void TrackingAnaProcessor::setFile(TFile* outFile) {
+    Processor::setFile(outFile);
+    output_tree_ = std::make_unique<TTree>("tracks", "Selected Tracks", 99, outFile);
+    output_tree_->Branch("track.",         &track_out_,         100000, 3);
+    output_tree_->Branch("track_smeared.", &track_smeared_out_, 100000, 3);
+    output_tree_->Branch("p_smear_ratio",  &p_smear_ratio_out_);
+    output_tree_->Branch("L1_axial",  &L1_axial_out_);
+    output_tree_->Branch("L1_stereo", &L1_stereo_out_);
+    output_tree_->Branch("L2_axial",  &L2_axial_out_);
+    output_tree_->Branch("L2_stereo", &L2_stereo_out_);
+    output_tree_->Branch("L3_axial",  &L3_axial_out_);
+    output_tree_->Branch("L3_stereo", &L3_stereo_out_);
+}
+
 void TrackingAnaProcessor::initialize(TTree* tree) {
-  
+
+    ah_ = std::make_shared<AnaHelpers>();
+
     //Init histos
     trkHistos_ = new TrackHistos(trkCollName_);
     trkHistos_->loadHistoConfig(histCfgFilename_);
@@ -123,8 +142,12 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
       // Match PreselectAndCategorize2021: relSmearingP=true (relative), relSmearingZ0=false (absolute)
       // JSON files will override with their own relSmearingP/relSmearingZ0 values
       smearingTool_ = std::make_shared<TrackSmearingTool>(smearingFile, true, false, seed_, trkCollName_, smearingFactor_);
+      smearingTool_->setIsData(isData_);
+      smearingTool_->setApplyMeanCorr(isData_);
+      smearingTool_->setDebug(debug_ > 0);
+      smearingTool_->setForcedVariable(smearingVariable_);
       smearingTool_->setRequireTruthMatch(requireTruthMatch_);
-      std::cout<<"Require truth match for smearing: "<<(requireTruthMatch_ ? "true" : "false")<<std::endl;
+      smearingTool_->printConfig();
 
       psmear_h_     =   new TH1D("psmear_h",
                                  "psmear_h",200,2,6);
@@ -176,6 +199,21 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
       omegasmear_top_h_  = new TH1D("omegasmear_top_h", "omegasmear_top_h", 100, -0.00015, 0.00015);
       omegasmear_bot_h_  = new TH1D("omegasmear_bot_h", "omegasmear_bot_h", 100, -0.00015, 0.00015);
       omega_vs_p_hh_     = new TH2D("omega_vs_p_hh", "omega_vs_p_hh", 100, 1.0, 4.5, 100, -0.00015, 0.00015);
+
+      // omega vs tanLambda and phi0 (unsmeared and smeared)
+      omega_vs_tanL_hh_          = new TH2D("omega_vs_tanL_hh",          "omega_vs_tanL_hh",          80, -0.08, 0.08, 100, -0.00015, 0.00015);
+      omega_vs_tanL_top_hh_      = new TH2D("omega_vs_tanL_top_hh",      "omega_vs_tanL_top_hh",      40,  0.00, 0.08, 100, -0.00015, 0.00015);
+      omega_vs_tanL_bot_hh_      = new TH2D("omega_vs_tanL_bot_hh",      "omega_vs_tanL_bot_hh",      40, -0.08, 0.00, 100, -0.00015, 0.00015);
+      omegasmear_vs_tanL_hh_     = new TH2D("omegasmear_vs_tanL_hh",     "omegasmear_vs_tanL_hh",     80, -0.08, 0.08, 100, -0.00015, 0.00015);
+      omegasmear_vs_tanL_top_hh_ = new TH2D("omegasmear_vs_tanL_top_hh", "omegasmear_vs_tanL_top_hh", 40,  0.00, 0.08, 100, -0.00015, 0.00015);
+      omegasmear_vs_tanL_bot_hh_ = new TH2D("omegasmear_vs_tanL_bot_hh", "omegasmear_vs_tanL_bot_hh", 40, -0.08, 0.00, 100, -0.00015, 0.00015);
+
+      omega_vs_phi0_hh_          = new TH2D("omega_vs_phi0_hh",          "omega_vs_phi0_hh",          80, -0.2, 0.2, 100, -0.00015, 0.00015);
+      omega_vs_phi0_top_hh_      = new TH2D("omega_vs_phi0_top_hh",      "omega_vs_phi0_top_hh",      80, -0.2, 0.2, 100, -0.00015, 0.00015);
+      omega_vs_phi0_bot_hh_      = new TH2D("omega_vs_phi0_bot_hh",      "omega_vs_phi0_bot_hh",      80, -0.2, 0.2, 100, -0.00015, 0.00015);
+      omegasmear_vs_phi0_hh_     = new TH2D("omegasmear_vs_phi0_hh",     "omegasmear_vs_phi0_hh",     80, -0.2, 0.2, 100, -0.00015, 0.00015);
+      omegasmear_vs_phi0_top_hh_ = new TH2D("omegasmear_vs_phi0_top_hh", "omegasmear_vs_phi0_top_hh", 80, -0.2, 0.2, 100, -0.00015, 0.00015);
+      omegasmear_vs_phi0_bot_hh_ = new TH2D("omegasmear_vs_phi0_bot_hh", "omegasmear_vs_phi0_bot_hh", 80, -0.2, 0.2, 100, -0.00015, 0.00015);
 
     }
       
@@ -242,15 +280,19 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
         trk_mom.SetY(track->getMomentum()[1]);
         trk_mom.SetZ(track->getMomentum()[2]);
 
-        auto hits = track->getHitLayers();
+        // Decode per-sensor hit layer vector and determine top/bottom
+        bool isTop = track->getTanLambda() > 0;
+        auto layers = ah_->GetTrackHitLayers(track);
+        // Convention from sensor_locations.txt:
+        //   Top:    even sensor index = axial,  odd = stereo
+        //   Bottom: even sensor index = stereo, odd = axial
+        bool L1_axial  = isTop ? (layers.at(0) == 1) : (layers.at(1) == 1);
+        bool L1_stereo = isTop ? (layers.at(1) == 1) : (layers.at(0) == 1);
+        bool L2_axial  = isTop ? (layers.at(2) == 1) : (layers.at(3) == 1);
+        bool L2_stereo = isTop ? (layers.at(3) == 1) : (layers.at(2) == 1);
+        bool L3_axial  = isTop ? (layers.at(4) == 1) : (layers.at(5) == 1);
+        bool L3_stereo = isTop ? (layers.at(5) == 1) : (layers.at(4) == 1);
 
-        int nHitsInnerLayers=0;
-        for(auto& hit : hits){
-          if( hit<4 ) nHitsInnerLayers++;
-        }
-
-        if( nHitsInnerLayers<4 ) continue;
-        
         //Track Selection
         if (trkSelector_ && !trkSelector_->passCutGt("n_hits_gt",n2dhits_onTrack,weight))
             continue;
@@ -340,37 +382,31 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
         
         
 
-        //pSmearing closure Test
-        // For MC: apply smearing; for data: use raw values
+        // Track-level quantities for output tree and smearing histograms.
+        // trk_smeared starts as a copy of the original; update* methods modify it in-place.
+        Track  trk_smeared     = *track;
+        double omega_unsmeared = track->getOmega();
+        double omega_smeared   = omega_unsmeared;
+        double p_smear_ratio   = 1.0;
+
         if (smearingTool_) {
 
-          double nhits  = track->getTrackerHitCount();
-          bool isTop  = track->getTanLambda() > 0;
+          double nhits = track->getTrackerHitCount();
 
-          // Get unsmeared omega for validation histograms
-          double omega_unsmeared = track->getOmega();
-          double omega_smeared = omega_unsmeared;  // Default to unsmeared
-
-          // For MC apply smearing (if doSmearing_ is set), for data use raw values
-          double pval;
-          if (isData_ || !doSmearing_) {
-            pval = track->getP();
-          } else if (smearOmega_) {
-            // Use omega (curvature) smearing - need to work on a copy to not modify original
-            Track trk_copy = *track;
-            smearingTool_->updateWithSmearOmega(trk_copy);
-            pval = trk_copy.getP();
-            // Calculate smeared omega from the smeared pt
-            // pt = |1/omega| * B * c => omega = sign(omega) * B * c / pt
-            double pt_smeared = sqrt(trk_copy.getMomentum()[0]*trk_copy.getMomentum()[0] +
-                                     trk_copy.getMomentum()[2]*trk_copy.getMomentum()[2]);
-            double bfield = 0.52;
-            double mom_param = 2.99792458e-04;
-            omega_smeared = (omega_unsmeared > 0 ? 1.0 : -1.0) * bfield * mom_param / pt_smeared;
-          } else {
-            pval = smearingTool_->smearTrackP(*track);
+          if (doSmearing_) {
+            if (smearOmega_) {
+              double scale  = smearingTool_->updateWithSmearOmega(trk_smeared);
+              // scale = |omega/omega_smeared| = |p_smeared/p_original|
+              omega_smeared = omega_unsmeared / scale;
+              p_smear_ratio = scale;
+            } else {
+              p_smear_ratio = smearingTool_->updateWithSmearP(trk_smeared);
+            }
+            smearingTool_->updateWithSmearZ0(trk_smeared);
           }
-          double z0val = (isData_ || !doSmearing_) ? track->getZ0() : smearingTool_->smearTrackZ0(*track);
+
+          double pval  = trk_smeared.getP();
+          double z0val = trk_smeared.getZ0();
 
           psmear_h_->Fill(pval);
           psmear_vs_nHits_hh_->Fill(nhits, pval);
@@ -404,20 +440,50 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
           }
 
           // omega smearing validation
+          double tanL = track->getTanLambda();
+          double phi0 = track->getPhi();
+
           omega_h_->Fill(omega_unsmeared);
           omegasmear_h_->Fill(omega_smeared);
           omega_vs_p_hh_->Fill(track->getP(), omega_unsmeared);
+          omega_vs_tanL_hh_->Fill(tanL, omega_unsmeared);
+          omega_vs_phi0_hh_->Fill(phi0, omega_unsmeared);
+          omegasmear_vs_tanL_hh_->Fill(tanL, omega_smeared);
+          omegasmear_vs_phi0_hh_->Fill(phi0, omega_smeared);
+
           if (isTop) {
             omega_top_h_->Fill(omega_unsmeared);
             omegasmear_top_h_->Fill(omega_smeared);
+            omega_vs_tanL_top_hh_->Fill(tanL, omega_unsmeared);
+            omega_vs_phi0_top_hh_->Fill(phi0, omega_unsmeared);
+            omegasmear_vs_tanL_top_hh_->Fill(tanL, omega_smeared);
+            omegasmear_vs_phi0_top_hh_->Fill(phi0, omega_smeared);
           }
           else {
             omega_bot_h_->Fill(omega_unsmeared);
             omegasmear_bot_h_->Fill(omega_smeared);
+            omega_vs_tanL_bot_hh_->Fill(tanL, omega_unsmeared);
+            omega_vs_phi0_bot_hh_->Fill(phi0, omega_unsmeared);
+            omegasmear_vs_tanL_bot_hh_->Fill(tanL, omega_smeared);
+            omegasmear_vs_phi0_bot_hh_->Fill(phi0, omega_smeared);
           }
 
         } // smearing validation
-        
+
+        // Fill output tree (one entry per selected track)
+        if (output_tree_) {
+          track_out_         = *track;       // original, unsmeared
+          track_smeared_out_ = trk_smeared;  // smeared (same as original if doSmearing_=false)
+          p_smear_ratio_out_ = p_smear_ratio;
+          L1_axial_out_      = L1_axial;
+          L1_stereo_out_     = L1_stereo;
+          L2_axial_out_      = L2_axial;
+          L2_stereo_out_     = L2_stereo;
+          L3_axial_out_      = L3_axial;
+          L3_stereo_out_     = L3_stereo;
+          output_tree_->Fill();
+        }
+
     }//Loop on tracks
     
     trkHistos_->Fill1DHisto("n_tracks_h",n_sel_tracks);
@@ -425,7 +491,12 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
     return true;
 }
 
-void TrackingAnaProcessor::finalize() { 
+void TrackingAnaProcessor::finalize() {
+
+    if (output_tree_) {
+        outF_->cd();
+        output_tree_->Write();
+    }
 
     trkHistos_->saveHistos(outF_,trkCollName_);
     delete trkHistos_;
@@ -487,6 +558,19 @@ void TrackingAnaProcessor::finalize() {
       omegasmear_top_h_->Write();
       omegasmear_bot_h_->Write();
       omega_vs_p_hh_->Write();
+      omega_vs_tanL_hh_->Write();
+      omega_vs_tanL_top_hh_->Write();
+      omega_vs_tanL_bot_hh_->Write();
+      omegasmear_vs_tanL_hh_->Write();
+      omegasmear_vs_tanL_top_hh_->Write();
+      omegasmear_vs_tanL_bot_hh_->Write();
+      omega_vs_phi0_hh_->Write();
+      omega_vs_phi0_top_hh_->Write();
+      omega_vs_phi0_bot_hh_->Write();
+      omegasmear_vs_phi0_hh_->Write();
+      omegasmear_vs_phi0_top_hh_->Write();
+      omegasmear_vs_phi0_bot_hh_->Write();
+
       delete omega_h_;
       delete omega_top_h_;
       delete omega_bot_h_;
@@ -494,6 +578,18 @@ void TrackingAnaProcessor::finalize() {
       delete omegasmear_top_h_;
       delete omegasmear_bot_h_;
       delete omega_vs_p_hh_;
+      delete omega_vs_tanL_hh_;
+      delete omega_vs_tanL_top_hh_;
+      delete omega_vs_tanL_bot_hh_;
+      delete omegasmear_vs_tanL_hh_;
+      delete omegasmear_vs_tanL_top_hh_;
+      delete omegasmear_vs_tanL_bot_hh_;
+      delete omega_vs_phi0_hh_;
+      delete omega_vs_phi0_top_hh_;
+      delete omega_vs_phi0_bot_hh_;
+      delete omegasmear_vs_phi0_hh_;
+      delete omegasmear_vs_phi0_top_hh_;
+      delete omegasmear_vs_phi0_bot_hh_;
 
     }
         

@@ -11,8 +11,10 @@
 //   ROOT   //
 //----------//
 #include "TClonesArray.h"
+#include "TFile.h"
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TTree.h"
 
 //-----------//
 //   hpstr   //
@@ -25,9 +27,7 @@
 #include "EventHeader.h"
 #include "TrackHistos.h"
 #include "TrackSmearingTool.h"
-
-// Forward declarations
-class TTree; 
+#include "AnaHelpers.h"
 
 /**
  * @brief Insert description here.
@@ -75,6 +75,11 @@ class TrackingAnaProcessor : public Processor {
          *        action when the processing of events finishes.
          */
         virtual void finalize();
+
+        /**
+         * @brief Set output TFile and create the output TTree.
+         */
+        virtual void setFile(TFile* outFile);
 
     private: 
 
@@ -126,6 +131,23 @@ class TrackingAnaProcessor : public Processor {
         double smearingFactor_{1.0};  //!< Factor to multiply smearing parameters by
         bool requireTruthMatch_{false};  //!< Require truth match for smearing
         bool smearOmega_{false};  //!< Use omega (curvature) smearing instead of p smearing
+        std::string smearingVariable_{""};  //!< "flat", "nHits", "tanLambda", "phi0" — explicit lookup; "" = JSON default
+
+        // AnaHelpers for decoding per-sensor hit layers
+        std::shared_ptr<AnaHelpers> ah_{nullptr};
+
+        // Output TTree
+        std::unique_ptr<TTree> output_tree_{nullptr};
+        Track  track_out_;               //!< original (unsmeared) track
+        Track  track_smeared_out_;       //!< smeared track (identical to track_out_ if no smearing)
+        double p_smear_ratio_out_{1.0}; //!< smeared_p / original_p (1 if no smearing)
+        // per-layer axial/stereo hit flags (L1-L3)
+        bool L1_axial_out_{false};
+        bool L1_stereo_out_{false};
+        bool L2_axial_out_{false};
+        bool L2_stereo_out_{false};
+        bool L3_axial_out_{false};
+        bool L3_stereo_out_{false};
         TH1D* psmear_h_;
         TH1D* psmear_top_h_;
         TH1D* psmear_bot_h_;
@@ -151,6 +173,21 @@ class TrackingAnaProcessor : public Processor {
         TH1D* omegasmear_top_h_;
         TH1D* omegasmear_bot_h_;
         TH2D* omega_vs_p_hh_;     // omega vs momentum
+
+        // omega vs track parameters (unsmeared and smeared)
+        TH2D* omega_vs_tanL_hh_;
+        TH2D* omega_vs_tanL_top_hh_;
+        TH2D* omega_vs_tanL_bot_hh_;
+        TH2D* omegasmear_vs_tanL_hh_;
+        TH2D* omegasmear_vs_tanL_top_hh_;
+        TH2D* omegasmear_vs_tanL_bot_hh_;
+
+        TH2D* omega_vs_phi0_hh_;
+        TH2D* omega_vs_phi0_top_hh_;
+        TH2D* omega_vs_phi0_bot_hh_;
+        TH2D* omegasmear_vs_phi0_hh_;
+        TH2D* omegasmear_vs_phi0_top_hh_;
+        TH2D* omegasmear_vs_phi0_bot_hh_;
 
 }; // TrackingAnaProcessor
 

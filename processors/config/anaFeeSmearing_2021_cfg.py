@@ -33,14 +33,13 @@ anaTrks.parameters["selectionjson"] = os.environ['HPSTR_BASE']+'/analysis/select
 anaTrks.parameters["isData"] = options.isData
 
 #SmearingClosureTest
-#anaTrks.parameters["pSmearingFile"] =  "/sdf/data/hps/users/mgignac/software/smearing/hpstr/plotUtils/TrackSmearing_beam8um.root"
-anaTrks.parameters["smearingCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/smearing/trackSmearing_2021.json"
-# Smearing is disabled by default for data, enabled for MC
-# Use --smearing flag to enable or set doSmearing=1 here
-anaTrks.parameters["doSmearing"] = 0 if options.isData else 1
+anaTrks.parameters["smearingCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/smearing/tool_smearing.json"
+anaTrks.parameters["doSmearing"] = 1 #0 if options.isData else 1
 anaTrks.parameters["smearingFactor"] = 1.0
-# Use omega (curvature) smearing instead of p smearing (default false)
-anaTrks.parameters["smearOmega"] = 0
+anaTrks.parameters["smearOmega"] = 1
+#anaTrks.parameters["smearingVariable"] = "tanLambda"
+anaTrks.parameters["smearingVariable"] = "phi0"
+#anaTrks.parameters["smearingVariable"] = "flat"
 
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/feeSmearing/"
 anaTrks.parameters["regionDefinitions"] = []
