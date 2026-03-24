@@ -16,6 +16,7 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
 
     // Master switch for smearing (default true for backward compatibility)
     doSmearing_ = parameters.getInteger("doSmearing", 0) != 0;
+    doV0ProjZ0_ = parameters.getInteger("doV0ProjZ0", 1) != 0;
 
     // Factor to multiply smearing parameters by (default 1.0)
     smearingFactor_ = parameters.getDouble("smearingFactor", 1.0);
@@ -197,6 +198,8 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
     bus_.board_output<bool>(output_tree_.get(), "pos_has_truth_link");
     bus_.board_output<TVector3>(output_tree_.get(), "ele_track_p");
     bus_.board_output<TVector3>(output_tree_.get(), "pos_track_p");
+    bus_.board_output<TVector3>(output_tree_.get(), "ele_truth_p");
+    bus_.board_output<TVector3>(output_tree_.get(), "pos_truth_p");
 
     /***************************************
      * adding specific cut variables       *
@@ -325,8 +328,41 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         Track ele_trk = ele.getTrack();
         Track pos_trk = pos.getTrack();
 
-        bus_.set("ele_track_p", TVector3(ele_trk.getMomentum()[0], ele_trk.getMomentum()[1], ele_trk.getMomentum()[2]));
-        bus_.set("pos_track_p", TVector3(pos_trk.getMomentum()[0], pos_trk.getMomentum()[1], pos_trk.getMomentum()[2]));
+        // HACK: VertexProcessor may have used a different track state location,
+        // giving wrong helix parameters (z0 in particular). Match to the
+        // KalmanFullTracks collection by LCIO element ID (set by buildTrack
+        // from lc_track->id(), identical for both processors) and overwrite
+        // z0 from the correctly-built track.
+        if (bus_.has(trkColl_)) {
+            const auto& full_tracks = bus_.get<std::vector<Track*>>(trkColl_);
+            auto overwrite_z0 = [&](Track& trk, const std::string& label) {
+                int target_id = trk.getID();
+                if (debug_)
+                    std::cout << "[PreselectAndCategorize2021] z0 match (" << label << "):"
+                              << "  id=" << target_id
+                              << "  z0_before=" << trk.getZ0()
+                              << "  omega=" << trk.getOmega() << std::endl;
+                for (Track* t : full_tracks) {
+                    if (t->getID() == target_id) {
+                        double z0_before = trk.getZ0();
+                        trk.setZ0(t->getZ0());
+                        if (debug_)
+                            std::cout << "[PreselectAndCategorize2021] z0 match (" << label << "):"
+                                      << "  MATCHED id=" << target_id
+                                      << "  z0_after=" << trk.getZ0()
+                                      << "  delta_z0=" << (trk.getZ0() - z0_before) << std::endl;
+                        return;
+                    }
+                }
+                std::cout << "[PreselectAndCategorize2021] WARNING: no KalmanFullTrack match "
+                          << "for " << label << " track ID=" << target_id << std::endl;
+            };
+            overwrite_z0(ele_trk, "ele");
+            overwrite_z0(pos_trk, "pos");
+        } else if (debug_) {
+            std::cout << "[PreselectAndCategorize2021] z0 match: track collection '"
+                      << trkColl_ << "' not found in bus, skipping z0 override." << std::endl;
+        }
 
         // replace particle track momenta with vertex-fitted momenta
         bool is_top_ele = ele_trk.getTanLambda() > 0;
@@ -360,8 +396,10 @@ bool PreselectAndCategorize2021::process(IEvent*) {
             double elez0Mean = v0proj_fits_[std::to_string(closest_run)]["elez0_mean"];
             double posz0Mean = v0proj_fits_[std::to_string(closest_run)]["posz0_mean"];
 
-            ele_trk.applyCorrection("z0", elez0Mean);
-            pos_trk.applyCorrection("z0", posz0Mean);
+            if (doV0ProjZ0_) {
+                ele_trk.applyCorrection("z0", elez0Mean);
+                pos_trk.applyCorrection("z0", posz0Mean);
+            }
         }
 
         // Apply track smearing (z0 and momentum)
@@ -398,6 +436,8 @@ bool PreselectAndCategorize2021::process(IEvent*) {
             }
             smearingTool_->updateVertexWithSmearP(vtx, ele_p_smear_ratio, pos_p_smear_ratio);
         }
+        bus_.set("ele_track_p", TVector3(ele_trk.getMomentum()[0], ele_trk.getMomentum()[1], ele_trk.getMomentum()[2]));
+        bus_.set("pos_track_p", TVector3(pos_trk.getMomentum()[0], pos_trk.getMomentum()[1], pos_trk.getMomentum()[2]));
         bus_.set("ele_p_smear_ratio", ele_p_smear_ratio);
         bus_.set("pos_p_smear_ratio", pos_p_smear_ratio);
         bus_.set("ele_has_truth_link", ele_has_truth_link);
@@ -629,6 +669,8 @@ bool PreselectAndCategorize2021::process(IEvent*) {
      * unnecessary copying if the event is not going to be kept
      * anyways.
      */
+    bus_.set("ele_truth_p", TVector3(0., 0., 0.));
+    bus_.set("pos_truth_p", TVector3(0., 0., 0.));
     if (bus_.has(mcColl_)) {
         /**
          * Before we loop through the MCParticles we go through the
@@ -701,6 +743,9 @@ bool PreselectAndCategorize2021::process(IEvent*) {
                 }
             }
         }
+
+        bus_.set("ele_truth_p", TVector3(trueEleP.Px(), trueEleP.Py(), trueEleP.Pz()));
+        bus_.set("pos_truth_p", TVector3(truePosP.Px(), truePosP.Py(), truePosP.Pz()));
 
         if (isSimpSignal_) {
             event_cf_.apply("at_least_one_true_vd", n_vd > 0);

@@ -130,6 +130,11 @@ bool VertexProcessor::process(IEvent* ievent) {
             Particle* part = utils::buildParticle(lc_part, trackStateLocation_, gbl_kink_data, track_data);
             if (lc_part->getTracks().size() > 0) {
                 EVENT::Track* lc_track = static_cast<EVENT::Track*>(lc_part->getTracks()[0]);
+                if (debug_ > 0)
+                    std::cout << "[VertexProcessor] calling buildTrack: vtx=" << ivtx
+                              << " trackStateLocation=" << trackStateLocation_
+                              << " has_gbl_kink=" << (gbl_kink_data ? "yes" : "no")
+                              << " has_track_data=" << (track_data ? "yes" : "no") << std::endl;
                 Track* track = utils::buildTrack(lc_track, trackStateLocation_, gbl_kink_data, track_data);
                 int nHits = 0;
                 if (bfield_ > 0.0) track->setMomentum(bfield_);

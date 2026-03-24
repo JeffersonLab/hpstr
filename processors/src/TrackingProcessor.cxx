@@ -171,6 +171,10 @@ bool TrackingProcessor::process(IEvent* ievent) {
         }
 
         // Add a track to the event
+        if (debug_ > 0)
+            std::cout << "[TrackingProcessor] calling buildTrack (reco): trackStateLocation=" << trackStateLocation_
+                      << " has_gbl_kink=" << (gbl_kink_data ? "yes" : "no")
+                      << " has_track_data=" << (track_data ? "yes" : "no") << std::endl;
         Track* track = utils::buildTrack(lc_track,trackStateLocation_, gbl_kink_data,track_data);
 
         if (!track) {
@@ -293,6 +297,8 @@ bool TrackingProcessor::process(IEvent* ievent) {
                     tracks_.push_back(track);
                     continue;
                 }
+                if (debug_ > 0)
+                    std::cout << "[TrackingProcessor] calling buildTrack (truth): trackStateLocation=" << trackStateLocation_ << std::endl;
                 Track* truth_track = utils::buildTrack(lc_truth_track,trackStateLocation_,nullptr,nullptr);
                 if (!truth_track) {
                     tracks_.push_back(track);

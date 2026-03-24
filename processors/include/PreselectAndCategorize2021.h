@@ -32,6 +32,7 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
     // std::string hitColl_{"SiClustersOnTrack"};
     int smearingSeed_{42};  // configurable seed (default 42 for backward compat)
     bool doSmearing_{true};  // master switch for track smearing
+    bool doV0ProjZ0_{true};  // apply z0 mean corrections from v0ProjectionFitsCfg
     double smearingFactor_{1.0};  // factor to multiply smearing parameters by
     bool requireTruthMatch_{false};  // require truth match for smearing
     bool smearOmega_{false};  // use omega (curvature) smearing instead of p smearing
