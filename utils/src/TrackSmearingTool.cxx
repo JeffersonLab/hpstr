@@ -684,6 +684,7 @@ double TrackSmearingTool::updateWithSmearOmega(Track& trk, double /*bfield*/) {
     std::vector<double> momentum = trk.getMomentum();
     for (double& coord : momentum) coord *= scale;
     trk.setMomentum(momentum);
+    trk.setOmega(omega_corr);
     if (debug_)
       std::cout<<"Data omega corr: isTop="<<isTop<<" omega="<<omega<<" mu_data="<<mu_data<<" mu_mc="<<mu_mc<<" omega'="<<omega_corr<<std::endl;
     return std::fabs(scale);
@@ -703,6 +704,7 @@ double TrackSmearingTool::updateWithSmearOmega(Track& trk, double /*bfield*/) {
   for (double& coord : momentum)
     coord *= scale;
   trk.setMomentum(momentum);
+  trk.setOmega(omega_smeared);
 
   if (debug_) {
     double original_p = trk.getP() / fabs(scale);

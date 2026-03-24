@@ -22,7 +22,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOG_DIR="${SCRIPT_DIR}/log"
 
 # Base paths for job_params.sh (can be overridden before sourcing job_params.sh)
-BASE_OUTPUT_DIR="/sdf/data/hps/physics2021/preselection/v5/"
+BASE_OUTPUT_DIR="/sdf/data/hps/physics2021/preselection/v7/"
 MC_LISTS_DIR="${SCRIPT_DIR}/mc_lists/pass5"
 DATA_LISTS_DIR="${SCRIPT_DIR}/data_lists/pass5"
 

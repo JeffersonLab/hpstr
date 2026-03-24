@@ -50,7 +50,7 @@ preselect.parameters["isSimpSignal"] = 1 if ('simp' in options.sample) else 0
 preselect.parameters["isApSignal"] = 1 if ('ap' in options.sample) else 0
 preselect.parameters["beamPosCfg"] = "" # has already been done for these samples
 preselect.parameters["pSmearingFile"] = ""
-preselect.parameters["debug"] = 0 
+preselect.parameters["debug"] = 1 
 preselect.parameters["vtxCollection"] = "UnconstrainedV0Vertices_KF"
 preselect.parameters["v0ProjectionFitsCfg"] = file_in_hpstr(
         'analysis/data/v0_projection_2021_v9_config.json'
@@ -74,7 +74,8 @@ preselect.parameters['calTimeOffset'] = 37.3
 #preselect.parameters['calTimeOffset'] = 37.3 if options.isData else 24.
 
 preselect.parameters["smearOmega"] = 1
-preselect.parameters["smearingVariable"] = "phi0"
+preselect.parameters["smearingVariable"] = "tanLambda"
+preselect.parameters["doV0ProjZ0"] = 0
 preselect.parameters["smearingCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/smearing/tool_smearing.json"
 preselect.parameters["doSmearing"] = 1 if (options.smearing and not options.noSmearing and options.sample != 'data') else 0
 preselect.parameters["smearingFactor"] = 1.0

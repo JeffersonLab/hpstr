@@ -22,17 +22,23 @@ declare -A JOB_EXTRA_ARGS      # Extra arguments to pass to hpstr
 # DATA JOBS
 # ============================================================================
 
-JOB_FILE_LISTS["data"]="${DATA_LISTS_DIR}/subset_files.list"
+JOB_FILE_LISTS["data"]="${DATA_LISTS_DIR}/data_1pc.txt"
 JOB_SAMPLE["data"]="data"
-JOB_OUTPUT_DIR["data"]="${BASE_OUTPUT_DIR}/data"
+JOB_OUTPUT_DIR["data"]="${BASE_OUTPUT_DIR}/data_1pc"
 JOB_HPSTR_CONFIG["data"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["data"]=""
 
-#JOB_FILE_LISTS["data_prompt"]="${DATA_LISTS_DIR}/subset_files.list"
-#JOB_SAMPLE["data_prompt"]="data"
-#JOB_OUTPUT_DIR["data_prompt"]="${BASE_OUTPUT_DIR}/data_prompt"
-#JOB_HPSTR_CONFIG["data_prompt"]="config_prompt_2021.py"
-#JOB_EXTRA_ARGS["data_prompt"]=""
+JOB_FILE_LISTS["data_5pc"]="${DATA_LISTS_DIR}/data_5pc.txt"
+JOB_SAMPLE["data_5pc"]="data"
+JOB_OUTPUT_DIR["data_5pc"]="${BASE_OUTPUT_DIR}/data_5pc"
+JOB_HPSTR_CONFIG["data_5pc"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["data_5pc"]=""
+
+JOB_FILE_LISTS["data_prompt"]="${DATA_LISTS_DIR}/data_1pc.txt"
+JOB_SAMPLE["data_prompt"]="data"
+JOB_OUTPUT_DIR["data_prompt"]="${BASE_OUTPUT_DIR}/data_1pc_tc"
+JOB_HPSTR_CONFIG["data_prompt"]="config_prompt_2021.py"
+JOB_EXTRA_ARGS["data_prompt"]=""
 
 # ============================================================================
 # BACKGROUND MC JOBS
@@ -102,6 +108,19 @@ JOB_SAMPLE["ap_signal_smeared"]="ap_signal"
 JOB_OUTPUT_DIR["ap_signal_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_smeared"
 JOB_HPSTR_CONFIG["ap_signal_smeared"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["ap_signal_smeared"]="--smearing"
+
+# All A' mass points combined
+JOB_FILE_LISTS["ap_signal_tc"]="${MC_LISTS_DIR}/ap*.list"
+JOB_SAMPLE["ap_signal_tc"]="ap_signal"
+JOB_OUTPUT_DIR["ap_signal_tc"]="${BASE_OUTPUT_DIR}/ap_signal_tc"
+JOB_HPSTR_CONFIG["ap_signal_tc"]="config_prompt_2021.py"
+JOB_EXTRA_ARGS["ap_signal_tc"]=""
+
+JOB_FILE_LISTS["ap_signal_tc_smeared"]="${MC_LISTS_DIR}/ap*.list"
+JOB_SAMPLE["ap_signal_tc_smeared"]="ap_signal"
+JOB_OUTPUT_DIR["ap_signal_tc_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_tc_smeared"
+JOB_HPSTR_CONFIG["ap_signal_tc_smeared"]="config_prompt_2021.py"
+JOB_EXTRA_ARGS["ap_signal_tc_smeared"]="--smearing"
 
 # ============================================================================
 # SIMP SIGNAL MC JOBS
