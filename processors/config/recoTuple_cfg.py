@@ -127,6 +127,7 @@ vtx.parameters["partCollRoot"] = 'ParticlesOnUVertices_KF'
 vtx.parameters["kinkRelCollLcio"] = ''
 vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 vtx.parameters["mcPartRelLcio"] = 'SVTTrueHitRelations'
+vtx.parameters["trackStateLocation"] = 'AtTarget'
 
 cvtx.parameters["debug"] = 0
 cvtx.parameters["useTrackerHits"] = 1
