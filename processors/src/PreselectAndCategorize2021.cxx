@@ -16,13 +16,16 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
 
     // Master switch for smearing (default true for backward compatibility)
     doSmearing_ = parameters.getInteger("doSmearing", 0) != 0;
-    doV0ProjZ0_ = parameters.getInteger("doV0ProjZ0", 1) != 0;
+    doZ0Corrections_ = parameters.getInteger("doZ0Corrections", 1) != 0;
 
     // Factor to multiply smearing parameters by (default 1.0)
     smearingFactor_ = parameters.getDouble("smearingFactor", 1.0);
 
     // Debug output flag
     debug_ = parameters.getInteger("debug", 0) != 0;
+
+    // Disable all vertex-level preselection cuts (default: cuts enabled)
+    disablePreselection_ = parameters.getInteger("disablePreselection", 0) != 0;
 
     // Require truth match for smearing (default false)
     requireTruthMatch_ = parameters.getInteger("requireTruthMatch", 0) != 0;
@@ -103,6 +106,17 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     isSimpSignal_ = parameters.getInteger("isSimpSignal") != 0;
     isApSignal_ = parameters.getInteger("isApSignal") != 0;
     if (isSimpSignal_ || isApSignal_) isSignal_ = true;
+
+    // Load z0 calibration: use data or MC JSON depending on isData_
+    auto z0CalibFile = isData_
+        ? parameters.getString("z0CalibCfg", "")
+        : parameters.getString("z0CalibMcCfg", "");
+    if (not z0CalibFile.empty()) {
+        if (not biasingTool_)
+            biasingTool_ = std::make_shared<TrackBiasingTool>("", "KalmanFullTracks");
+        biasingTool_->loadZ0Calibration(z0CalibFile);
+        biasingTool_->setDebug(debug_);
+    }
 }
 
 std::vector<double> PreselectAndCategorize2021::determine_time_cuts(bool isData, int runNumber) {
@@ -198,6 +212,8 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
     bus_.board_output<bool>(output_tree_.get(), "pos_has_truth_link");
     bus_.board_output<TVector3>(output_tree_.get(), "ele_track_p");
     bus_.board_output<TVector3>(output_tree_.get(), "pos_track_p");
+    bus_.board_output<TVector3>(output_tree_.get(), "ele_track_p_prefit");
+    bus_.board_output<TVector3>(output_tree_.get(), "pos_track_p_prefit");
     bus_.board_output<TVector3>(output_tree_.get(), "ele_truth_p");
     bus_.board_output<TVector3>(output_tree_.get(), "pos_truth_p");
 
@@ -207,6 +223,11 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
 
     // hit categories (layer has both axial+stereo)
     for (const auto& name : {"eleL1", "eleL2", "eleL3", "eleL4", "posL1", "posL2", "posL3", "posL4", "single2", "single3"}) {
+        bus_.board_output<bool>(output_tree_.get(), name);
+    }
+
+    // vertex layer category flags (outward hit requirement enforced)
+    for (const auto& name : {"isL1L1", "isL2L2", "isL3L3", "isL1L2", "isL2L3"}) {
         bus_.board_output<bool>(output_tree_.get(), name);
     }
 
@@ -237,7 +258,7 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
     }
 
     // vertical impact parameter
-    for (const auto& name : {"min_y0", "max_y0err"}) {
+    for (const auto& name : {"min_y0", "max_y0err", "min_y0_vtx", "min_y0_vtx_proj", "vtx_y_at_zero", "delta_y0_vtx_proj"}) {
         bus_.board_output<double>(output_tree_.get(), name);
     }
 
@@ -263,6 +284,7 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     const auto& tsbank{bus_.get<TSData>("TSBank")};
     const auto& eh{bus_.get<EventHeader>("EventHeader")};
     int run_number = eh.getRunNumber();
+    if (biasingTool_) biasingTool_->setRun(run_number);
 
     event_cf_.begin_event();
 
@@ -328,41 +350,9 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         Track ele_trk = ele.getTrack();
         Track pos_trk = pos.getTrack();
 
-        // HACK: VertexProcessor may have used a different track state location,
-        // giving wrong helix parameters (z0 in particular). Match to the
-        // KalmanFullTracks collection by LCIO element ID (set by buildTrack
-        // from lc_track->id(), identical for both processors) and overwrite
-        // z0 from the correctly-built track.
-        if (bus_.has(trkColl_)) {
-            const auto& full_tracks = bus_.get<std::vector<Track*>>(trkColl_);
-            auto overwrite_z0 = [&](Track& trk, const std::string& label) {
-                int target_id = trk.getID();
-                if (debug_)
-                    std::cout << "[PreselectAndCategorize2021] z0 match (" << label << "):"
-                              << "  id=" << target_id
-                              << "  z0_before=" << trk.getZ0()
-                              << "  omega=" << trk.getOmega() << std::endl;
-                for (Track* t : full_tracks) {
-                    if (t->getID() == target_id) {
-                        double z0_before = trk.getZ0();
-                        trk.setZ0(t->getZ0());
-                        if (debug_)
-                            std::cout << "[PreselectAndCategorize2021] z0 match (" << label << "):"
-                                      << "  MATCHED id=" << target_id
-                                      << "  z0_after=" << trk.getZ0()
-                                      << "  delta_z0=" << (trk.getZ0() - z0_before) << std::endl;
-                        return;
-                    }
-                }
-                std::cout << "[PreselectAndCategorize2021] WARNING: no KalmanFullTrack match "
-                          << "for " << label << " track ID=" << target_id << std::endl;
-            };
-            overwrite_z0(ele_trk, "ele");
-            overwrite_z0(pos_trk, "pos");
-        } else if (debug_) {
-            std::cout << "[PreselectAndCategorize2021] z0 match: track collection '"
-                      << trkColl_ << "' not found in bus, skipping z0 override." << std::endl;
-        }
+        // snapshot pre-vertex-fit track momenta before they are overwritten
+        TVector3 ele_p_prefit(ele_trk.getMomentum()[0], ele_trk.getMomentum()[1], ele_trk.getMomentum()[2]);
+        TVector3 pos_p_prefit(pos_trk.getMomentum()[0], pos_trk.getMomentum()[1], pos_trk.getMomentum()[2]);
 
         // replace particle track momenta with vertex-fitted momenta
         bool is_top_ele = ele_trk.getTanLambda() > 0;
@@ -396,10 +386,16 @@ bool PreselectAndCategorize2021::process(IEvent*) {
             double elez0Mean = v0proj_fits_[std::to_string(closest_run)]["elez0_mean"];
             double posz0Mean = v0proj_fits_[std::to_string(closest_run)]["posz0_mean"];
 
-            if (doV0ProjZ0_) {
+            if (doZ0Corrections_) {
                 ele_trk.applyCorrection("z0", elez0Mean);
                 pos_trk.applyCorrection("z0", posz0Mean);
             }
+        }
+
+        // Apply linear z0 calibration: z0 -= slope*tanL + intercept
+        if (biasingTool_) {
+            biasingTool_->updateWithCalibrateZ0(ele_trk);
+            biasingTool_->updateWithCalibrateZ0(pos_trk);
         }
 
         // Apply track smearing (z0 and momentum)
@@ -422,9 +418,11 @@ bool PreselectAndCategorize2021::process(IEvent*) {
             if (mcParticles) {
                 smearingTool_->setMCParticles(mcParticles);
             }
-            // Apply z0 smearing first
-            smearingTool_->updateWithSmearZ0(ele_trk);
-            smearingTool_->updateWithSmearZ0(pos_trk);
+            // Apply z0 smearing first (if z0 corrections are enabled)
+            if (doZ0Corrections_) {
+                smearingTool_->updateWithSmearZ0(ele_trk);
+                smearingTool_->updateWithSmearZ0(pos_trk);
+            }
 
             // Apply momentum smearing (omega or p)
             if (smearOmega_) {
@@ -438,6 +436,8 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         }
         bus_.set("ele_track_p", TVector3(ele_trk.getMomentum()[0], ele_trk.getMomentum()[1], ele_trk.getMomentum()[2]));
         bus_.set("pos_track_p", TVector3(pos_trk.getMomentum()[0], pos_trk.getMomentum()[1], pos_trk.getMomentum()[2]));
+        bus_.set("ele_track_p_prefit", ele_p_prefit);
+        bus_.set("pos_track_p_prefit", pos_p_prefit);
         bus_.set("ele_p_smear_ratio", ele_p_smear_ratio);
         bus_.set("pos_p_smear_ratio", pos_p_smear_ratio);
         bus_.set("ele_has_truth_link", ele_has_truth_link);
@@ -502,15 +502,15 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         vertex_cf_.fill_nm1("vertex_chi2", vtx->getChi2());
         vertex_cf_.fill_nm1("vtx_max_p_4pt0GeV", vtxmaxp);
 
-        if (vertex_cf_.keep()) {
+        if (disablePreselection_ || vertex_cf_.keep()) {
             preselected_vtx.emplace_back(*vtx, ele, pos);
         }
         ivtx++;
     }
 
     n_vertices_h_->Fill(vtxs.size(), preselected_vtx.size());
-    event_cf_.apply("at_least_one_vertex", preselected_vtx.size() >= 1);
-    event_cf_.apply("no_extra_vertices", preselected_vtx.size() < 2);
+    event_cf_.apply("at_least_one_vertex", disablePreselection_ || preselected_vtx.size() >= 1);
+    event_cf_.apply("no_extra_vertices", disablePreselection_ || preselected_vtx.size() < 2);
 
     event_cf_.fill_nm1("at_least_one_vertex", preselected_vtx.size());
     event_cf_.fill_nm1("no_extra_vertices", preselected_vtx.size());
@@ -526,6 +526,8 @@ bool PreselectAndCategorize2021::process(IEvent*) {
 
     // correct number of vertices (i.e. only one)
     // unpack the vector of vertices into the single elements
+    // Guard against empty collection (can occur when disablePreselection=true bypasses at_least_one_vertex)
+    if (preselected_vtx.empty()) return true;
     auto [vtx, ele, pos] = preselected_vtx.at(0);
 
     // earliest layer hit categories
@@ -552,6 +554,20 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     bus_.set("posL2", posL2);
     bus_.set("posL3", posL3);
     bus_.set("posL4", posL4);
+
+    // vertex layer category flags (outward hit requirement: LN track requires L[N..3] hits and no L[1..N-1])
+    bool ele_L1 = eleL1 && eleL2 && eleL3;
+    bool ele_L2 = !eleL1 && eleL2 && eleL3;
+    bool ele_L3 = !eleL1 && !eleL2 && eleL3;
+    bool pos_L1 = posL1 && posL2 && posL3;
+    bool pos_L2 = !posL1 && posL2 && posL3;
+    bool pos_L3 = !posL1 && !posL2 && posL3;
+
+    bus_.set("isL1L1", ele_L1 && pos_L1);
+    bus_.set("isL2L2", ele_L2 && pos_L2);
+    bus_.set("isL3L3", ele_L3 && pos_L3);
+    bus_.set("isL1L2", (ele_L1 && pos_L2) || (pos_L1 && ele_L2));
+    bus_.set("isL2L3", (ele_L2 && pos_L3) || (pos_L2 && ele_L3));
 
     // top/bottom identification
     bool ele_isTop = ele_trk.getTanLambda() > 0;
@@ -651,8 +667,27 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         max_y0err = pos_trk.getZ0Err();
     }
 
+    // min z0 distance to vertex y directly
+    double vtx_y = vtx.getY();
+    double min_y0_vtx = std::min(fabs(ele_trk.getZ0() - vtx_y), fabs(pos_trk.getZ0() - vtx_y));
+
+    // min z0 distance to vertex y projected back to z=0 along vertex momentum
+    // solve z(t)=0: t = -vtx_z / vtx_pz, then y_proj = vtx_y + py*t
+    TVector3 vtx_mom = vtx.getP();
+    double vtx_y_at_zero = (vtx_mom.Z() != 0.0)
+        ? vtx_y - (vtx_mom.Y() / vtx_mom.Z()) * vtx.getZ()
+        : vtx_y;
+    double ele_y0_proj = fabs(ele_trk.getZ0() - vtx_y_at_zero);
+    double pos_y0_proj = fabs(pos_trk.getZ0() - vtx_y_at_zero);
+    double min_y0_vtx_proj  = std::min(ele_y0_proj, pos_y0_proj);
+    double delta_y0_vtx_proj = ele_y0_proj - pos_y0_proj;
+
     bus_.set("min_y0", min_y0);
     bus_.set("max_y0err", max_y0err);
+    bus_.set("min_y0_vtx", min_y0_vtx);
+    bus_.set("min_y0_vtx_proj", min_y0_vtx_proj);
+    bus_.set("vtx_y_at_zero", vtx_y_at_zero);
+    bus_.set("delta_y0_vtx_proj", delta_y0_vtx_proj);
 
     // set vertex object and tracks
     bus_.set("weight", 1.);

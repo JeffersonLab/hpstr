@@ -14,6 +14,7 @@
 #include "PreselectAndCategorize.h"
 #include "TMath.h"
 #include "TSData.h"
+#include "TrackBiasingTool.h"
 #include "TrackSmearingTool.h"
 #include "TruthMatchingUtils.h"
 
@@ -31,8 +32,8 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
     std::string trkColl_{"KalmanFullTracks"};
     // std::string hitColl_{"SiClustersOnTrack"};
     int smearingSeed_{42};  // configurable seed (default 42 for backward compat)
-    bool doSmearing_{true};  // master switch for track smearing
-    bool doV0ProjZ0_{true};  // apply z0 mean corrections from v0ProjectionFitsCfg
+    bool doSmearing_{true};      // master switch for track smearing
+    bool doZ0Corrections_{true}; // if false, skip all z0 corrections (v0proj mean shift, z0 smearing)
     double smearingFactor_{1.0};  // factor to multiply smearing parameters by
     bool requireTruthMatch_{false};  // require truth match for smearing
     bool smearOmega_{false};  // use omega (curvature) smearing instead of p smearing
@@ -40,6 +41,8 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
     bool isSimpSignal_{false};
     bool isApSignal_{false};
     bool debug_{false};  // debug output for smearing validation
+    bool disablePreselection_{false};  // if true, skip all vertex-level cuts
+    std::shared_ptr<TrackBiasingTool> biasingTool_{nullptr};
     std::vector<double> determine_time_cuts(bool isData, int runNumber);
     std::vector<double> time_cuts_{6.9, 5.2, 9.0};
 };
