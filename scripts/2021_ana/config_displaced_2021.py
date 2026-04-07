@@ -5,7 +5,7 @@ import baseConfig as base
 
 base.parser.add_argument(
         '--sample', choices=['data','sim_bkgd','ap_signal', 'simp_signal'],
-        help='Signal which type of sample this is', required=True
+        help='Signal which type of sample this is', required=False
 )
 base.parser.add_argument(
         '--smearing', dest='smearing', action='store_true',
@@ -38,8 +38,8 @@ def file_in_hpstr(relpath):
         raise ValueError(f'{fullpath} does not exist!')
     return fullpath
 
-if options.isData and not options.sample == 'data':
-    raise ValueError('If running on data, sample must be "data"')
+if options.isData:
+    options.sample = 'data'
 if not options.isData and options.sample == 'data':
     raise ValueError('If running on MC, sample cannot be "data", use "sim_bkgd", "ap_signal" or "simp_signal" instead')
 
@@ -50,7 +50,8 @@ preselect.parameters["isSimpSignal"] = 1 if ('simp' in options.sample) else 0
 preselect.parameters["isApSignal"] = 1 if ('ap' in options.sample) else 0
 preselect.parameters["beamPosCfg"] = "" # has already been done for these samples
 preselect.parameters["pSmearingFile"] = ""
-preselect.parameters["debug"] = 1 
+preselect.parameters["debug"] = 0 
+#preselect.parameters["disablePreselection"] = 1
 preselect.parameters["vtxCollection"] = "UnconstrainedV0Vertices_KF"
 preselect.parameters["v0ProjectionFitsCfg"] = file_in_hpstr(
         'analysis/data/v0_projection_2021_v9_config.json'
@@ -73,6 +74,9 @@ preselect.parameters['trackBiasCfg'] = ""
 preselect.parameters['calTimeOffset'] = 37.3
 #preselect.parameters['calTimeOffset'] = 37.3 if options.isData else 24.
 
+preselect.parameters["doZ0Corrections"] = 0
+preselect.parameters["z0CalibCfg"] = file_in_hpstr('analysis/data/smearing/z0_calib_2021.json')
+preselect.parameters["z0CalibMcCfg"] = file_in_hpstr('analysis/data/smearing/z0_calib_2021_mc.json')
 preselect.parameters["smearOmega"] = 1
 preselect.parameters["smearingVariable"] = "tanLambda"
 preselect.parameters["doV0ProjZ0"] = 0
