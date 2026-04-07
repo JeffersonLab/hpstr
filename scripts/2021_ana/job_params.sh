@@ -22,9 +22,15 @@ declare -A JOB_EXTRA_ARGS      # Extra arguments to pass to hpstr
 # DATA JOBS
 # ============================================================================
 
+JOB_FILE_LISTS["data_small"]="${DATA_LISTS_DIR}/nopresmall.txt"
+JOB_SAMPLE["data_small"]="data"
+JOB_OUTPUT_DIR["data_small"]="${BASE_OUTPUT_DIR}/data_small_nopre"
+JOB_HPSTR_CONFIG["data_small"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["data_small"]=""
+
 JOB_FILE_LISTS["data"]="${DATA_LISTS_DIR}/data_1pc.txt"
 JOB_SAMPLE["data"]="data"
-JOB_OUTPUT_DIR["data"]="${BASE_OUTPUT_DIR}/data_1pc"
+JOB_OUTPUT_DIR["data"]="${BASE_OUTPUT_DIR}/data_1pc_z0_calb_run_by_run"
 JOB_HPSTR_CONFIG["data"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["data"]=""
 
@@ -50,9 +56,15 @@ JOB_OUTPUT_DIR["wab"]="${BASE_OUTPUT_DIR}/wab"
 JOB_HPSTR_CONFIG["wab"]="config_displaced_2021.py" #/sdf/data/hps/users/mgignac/software/2021-ana/hpstr/processors/config/anaTrkEff_2021_cfg.py"
 JOB_EXTRA_ARGS["wab"]=""
 
+JOB_FILE_LISTS["wab_14596"]="${MC_LISTS_DIR}/wab_hit_kill.list"
+JOB_SAMPLE["wab_14596"]="sim_bkgd"
+JOB_OUTPUT_DIR["wab_14596"]="${BASE_OUTPUT_DIR}/wab_smeared_hitkill_14596"
+JOB_HPSTR_CONFIG["wab_14596"]="config_displaced_2021.py" #/sdf/data/hps/users/mgignac/software/2021-ana/hpstr/processors/config/anaTrkEff_2021_cfg.py"
+JOB_EXTRA_ARGS["wab_14596"]="--smearing"
+
 JOB_FILE_LISTS["wab_smeared"]="${MC_LISTS_DIR}/wab.list"
 JOB_SAMPLE["wab_smeared"]="sim_bkgd"
-JOB_OUTPUT_DIR["wab_smeared"]="${BASE_OUTPUT_DIR}/wab_smeared"
+JOB_OUTPUT_DIR["wab_smeared"]="${BASE_OUTPUT_DIR}/wab_nopre_smeared"
 JOB_HPSTR_CONFIG["wab_smeared"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["wab_smeared"]="--smearing"
 
@@ -64,15 +76,15 @@ JOB_EXTRA_ARGS["tritrig"]=""
 
 JOB_FILE_LISTS["tritrig_smeared"]="${MC_LISTS_DIR}/tritrig.list"
 JOB_SAMPLE["tritrig_smeared"]="sim_bkgd"
-JOB_OUTPUT_DIR["tritrig_smeared"]="${BASE_OUTPUT_DIR}/tritrig_smeared"
+JOB_OUTPUT_DIR["tritrig_smeared"]="${BASE_OUTPUT_DIR}/tritrig_nopre_smeared"
 JOB_HPSTR_CONFIG["tritrig_smeared"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["tritrig_smeared"]="--smearing"
 
-JOB_FILE_LISTS["tritrig_14596"]="${MC_LISTS_DIR}/tritrig_14596.list"
+JOB_FILE_LISTS["tritrig_14596"]="${MC_LISTS_DIR}/tritrig_hit_kill.list" #tritrig_14596.list"
 JOB_SAMPLE["tritrig_14596"]="sim_bkgd"
-JOB_OUTPUT_DIR["tritrig_14596"]="${BASE_OUTPUT_DIR}/tritrig_14159"
+JOB_OUTPUT_DIR["tritrig_14596"]="${BASE_OUTPUT_DIR}/tritrig_smeared_hitkill_14596"
 JOB_HPSTR_CONFIG["tritrig_14596"]="config_displaced_2021.py" 
-JOB_EXTRA_ARGS["tritrig_14596"]=""
+JOB_EXTRA_ARGS["tritrig_14596"]="--smearing"
 
 JOB_FILE_LISTS["tritrig_noHit"]="${MC_LISTS_DIR}/tritrig_14272_noHit.list"
 JOB_SAMPLE["tritrig_noHit"]="sim_bkgd"
@@ -88,7 +100,7 @@ JOB_EXTRA_ARGS["rad"]=""
 
 JOB_FILE_LISTS["rad_smeared"]="${MC_LISTS_DIR}/rad.list"
 JOB_SAMPLE["rad_smeared"]="sim_bkgd"
-JOB_OUTPUT_DIR["rad_smeared"]="${BASE_OUTPUT_DIR}/rad_smeared"
+JOB_OUTPUT_DIR["rad_smeared"]="${BASE_OUTPUT_DIR}/rad_smeared_complete"
 JOB_HPSTR_CONFIG["rad_smeared"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["rad_smeared"]="--smearing"
 
@@ -105,7 +117,7 @@ JOB_EXTRA_ARGS["ap_signal"]=""
 
 JOB_FILE_LISTS["ap_signal_smeared"]="${MC_LISTS_DIR}/ap*.list"
 JOB_SAMPLE["ap_signal_smeared"]="ap_signal"
-JOB_OUTPUT_DIR["ap_signal_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_smeared"
+JOB_OUTPUT_DIR["ap_signal_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_nopre_smeared"
 JOB_HPSTR_CONFIG["ap_signal_smeared"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["ap_signal_smeared"]="--smearing"
 
