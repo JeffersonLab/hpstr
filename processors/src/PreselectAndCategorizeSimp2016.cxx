@@ -7,6 +7,7 @@
 */
 
 #include "PreselectAndCategorizeSimp2016.h"
+#include <cmath>
 
 // json json_load(const std::string& filepath) {
 //     json obj;
@@ -272,17 +273,17 @@ bool PreselectAndCategorizeSimp2016::process(IEvent*) {
         pos.setTrack(&pos_trk);
 
         // corrections have been applied, now onto pre-selecting
-        double cluster_tdiff{abs(ele.getCluster().getTime() - pos.getCluster().getTime())};
+        double cluster_tdiff{std::fabs(ele.getCluster().getTime() - pos.getCluster().getTime())};
         int ele_nhits = ele.getTrack().getTrackerHitCount();
         if (not ele.getTrack().isKalmanTrack()) ele_nhits*=2;
         int pos_nhits = pos.getTrack().getTrackerHitCount();
         if (not pos.getTrack().isKalmanTrack()) pos_nhits*=2;
-        
+
         double ele_track_cluster_tdiff{
-            abs(ele.getTrack().getTrackTime()-ele.getCluster().getTime())
+            std::fabs(ele.getTrack().getTrackTime()-ele.getCluster().getTime())
         };
         double pos_track_cluster_tdiff{
-            abs(pos.getTrack().getTrackTime()-pos.getCluster().getTime())
+            std::fabs(pos.getTrack().getTrackTime()-pos.getCluster().getTime())
         };
         
         TVector3 ele_mom(
@@ -368,9 +369,11 @@ bool PreselectAndCategorizeSimp2016::process(IEvent*) {
         double vtx_proj_x_sig{-1.0}, vtx_proj_y_sig{-1.0};
         double vtx_proj_sig{-1.0};
 
+        double vtx_proj_x_centered_dummy, vtx_proj_y_centered_dummy;
         vtx_proj_sig = utils::v0_projection_to_target_significance(
             v0proj_fits_, eh.getRunNumber(),
             vtx_proj_x, vtx_proj_y, vtx_proj_x_sig, vtx_proj_y_sig,
+            vtx_proj_x_centered_dummy, vtx_proj_y_centered_dummy,
             vtx.getX(), vtx.getY(), vtx.getZ(),
             vtx.getP().X(), vtx.getP().Y(), vtx.getP().Z()
         );

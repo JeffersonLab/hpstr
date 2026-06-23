@@ -3,10 +3,10 @@
 #include "utilities.h"
 
 TrackingAnaProcessor::TrackingAnaProcessor(const std::string& name, Process& process)
-    : Processor(name, process) { 
+    : Processor(name, process) {
     }
 
-TrackingAnaProcessor::~TrackingAnaProcessor() { 
+TrackingAnaProcessor::~TrackingAnaProcessor() {
 }
 
 void TrackingAnaProcessor::configure(const ParameterSet& parameters) {
@@ -20,11 +20,11 @@ void TrackingAnaProcessor::configure(const ParameterSet& parameters) {
         histCfgFilename_      = parameters.getString("histCfg",histCfgFilename_);
         doTruth_              = (bool) parameters.getInteger("doTruth",doTruth_);
         truthHistCfgFilename_ = parameters.getString("truthHistCfg",truthHistCfgFilename_);
-        selectionCfg_         = parameters.getString("selectionjson",selectionCfg_); 
+        selectionCfg_         = parameters.getString("selectionjson",selectionCfg_);
         isData_               = parameters.getInteger("isData",isData_);
         ecalCollName_         = parameters.getString("ecalCollName",ecalCollName_);
         regionSelections_     = parameters.getVString("regionDefinitions",regionSelections_);
-        
+
         //Momentum smearing closure test
         pSmearingFile_            = parameters.getString("pSmearingFile",pSmearingFile_);
         smearingCfgFile_          = parameters.getString("smearingCfg",smearingCfgFile_);
@@ -44,6 +44,14 @@ void TrackingAnaProcessor::configure(const ParameterSet& parameters) {
         // Explicit smearing lookup variable: "flat", "nHits", "tanLambda", "phi0"
         // Empty string (default) accepts whatever the JSON specifies
         smearingVariable_ = parameters.getString("smearingVariable", "");
+        scaleCorrVariable_ = parameters.getString("scaleCorrVariable", "");
+
+        feeClusterEnergyMin_ = parameters.getDouble("feeClusterEnergyMin", feeClusterEnergyMin_);
+        clusterTimeMin_      = parameters.getDouble("clusterTimeMin",      clusterTimeMin_);
+        clusterTimeMax_      = parameters.getDouble("clusterTimeMax",      clusterTimeMax_);
+        clusterTimeMinMC_    = parameters.getDouble("clusterTimeMinMC",    clusterTimeMinMC_);
+        clusterTimeMaxMC_    = parameters.getDouble("clusterTimeMaxMC",    clusterTimeMaxMC_);
+        mcTimeOffset_        = parameters.getDouble("mcTimeOffset",        mcTimeOffset_);
 
     }
     catch (std::runtime_error& error)
@@ -52,7 +60,7 @@ void TrackingAnaProcessor::configure(const ParameterSet& parameters) {
     }
 
     if (!isData_)
-      time_offset_ = 5.;
+      time_offset_ = mcTimeOffset_;
 }
 
 void TrackingAnaProcessor::setFile(TFile* outFile) {
@@ -80,13 +88,13 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
     trkHistos_->DefineHistos();
     // Init tree
     tree->SetBranchAddress(trkCollName_.c_str(), &tracks_, &btracks_);
-    
+
     if (!selectionCfg_.empty()) {
         trkSelector_ = std::make_shared<BaseSelector>(name_+"_trkSelector",selectionCfg_);
         trkSelector_->setDebug(debug_);
         trkSelector_->LoadSelection();
     }
-    
+
     if (doTruth_) {
       truthHistos_ = new TrackHistos(trkCollName_+"_truthComparison");
         truthHistos_->loadHistoConfig(histCfgFilename_);
@@ -94,40 +102,40 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
         truthHistos_->loadHistoConfig(truthHistCfgFilename_);
         truthHistos_->DefineHistos();
         truthHistos_->doTrackComparisonPlots(false);
-        
+
         //tree->SetBranchAddress(truthCollName_.c_str(),&truth_tracks_,&btruth_tracks_);
     }
 
     // Setup track selections plots
     for (unsigned int i_reg = 0;
-         i_reg < regionSelections_.size(); 
+         i_reg < regionSelections_.size();
          i_reg++) {
       std::string regname = AnaHelpers::getFileName(regionSelections_[i_reg],false);
       std::cout<< "Setting up region "<< regname<<std::endl;
-      
+
       reg_selectors_[regname] = std::make_shared<BaseSelector>(regname, regionSelections_[i_reg]);
       reg_selectors_[regname]->setDebug(false);
       reg_selectors_[regname]->LoadSelection();
-      
+
       reg_histos_[regname] = std::make_shared<TrackHistos>(regname);
       reg_histos_[regname]->loadHistoConfig(histCfgFilename_);
       reg_histos_[regname]->doTrackComparisonPlots(false);
       reg_histos_[regname]->DefineTrkHitHistos();
-      
-      regions_.push_back(regname);
-      
-    }
-      
 
-    
-    
+      regions_.push_back(regname);
+
+    }
+
+
+
+
     //Get event header information for trigger
     tree->SetBranchAddress("EventHeader", &evth_ , &bevth_);
-    
+
     //Get cluster information for FEEs
-    if (!ecalCollName_.empty()) 
+    if (!ecalCollName_.empty())
       tree->SetBranchAddress(ecalCollName_.c_str(),&ecal_, &becal_);
-    
+
 
     //Momentum smearing closure test
     // Determine which smearing file to use (smearingCfg takes precedence)
@@ -146,6 +154,8 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
       smearingTool_->setApplyMeanCorr(isData_);
       smearingTool_->setDebug(debug_ > 0);
       smearingTool_->setForcedVariable(smearingVariable_);
+      if (!scaleCorrVariable_.empty())
+        smearingTool_->setScaleCorrVariable(scaleCorrVariable_);
       smearingTool_->setRequireTruthMatch(requireTruthMatch_);
       smearingTool_->printConfig();
 
@@ -216,61 +226,70 @@ void TrackingAnaProcessor::initialize(TTree* tree) {
       omegasmear_vs_phi0_bot_hh_ = new TH2D("omegasmear_vs_phi0_bot_hh", "omegasmear_vs_phi0_bot_hh", 80, -0.2, 0.2, 100, -0.00015, 0.00015);
 
     }
-      
-    
+
+
 }
 
 bool TrackingAnaProcessor::process(IEvent* ievent) {
-  
+
     double weight = 1.;
     // Loop over all the LCIO Tracks and add them to the HPS event.
     int n_sel_tracks = 0;
-    
-    
-    //Trigger requirements - Singles 0 and 1. 
-    //TODO use cutFlow 
+
+
+    //Trigger requirements - Singles 0 and 1.
+    //TODO use cutFlow
     //if (isData_ && (!evth_->isSingle0Trigger() && !evth_->isSingle1Trigger()))
     //  return true; //true is correct?
 
     //Ask for 1 cluster p > 1.2 GeV with time [40,70]
     //TODO Use Cutflow
-    
-    double minTime = 40;
-    double maxTime = 70;
-    
-    if (!isData_) {
-      minTime = 30;
-      maxTime = 50;
-    }
-    //if (ecal_->size() <= 2)
-    //  return true;
-    
-    bool foundFeeCluster = false;
-    
-    for (unsigned int iclu = 0; iclu < ecal_->size(); iclu++) {
-//      if (ecal_->at(iclu)->getEnergy() > 1.5)
-      if (ecal_->at(iclu)->getEnergy() > 2.5)
-        foundFeeCluster = true;
-      break;
-    }
-    
-    if (!foundFeeCluster)
-      return true;
-    
-    bool clusterInTime = true;
-    
-    for (unsigned int iclu = 0; iclu < ecal_->size(); iclu++) { 
-      if (ecal_->at(iclu)->getTime() < 40 || ecal_->at(iclu)->getTime() > 70)
-        clusterInTime = false;
+
+    double minTime = isData_ ? clusterTimeMin_ : clusterTimeMinMC_;
+    double maxTime = isData_ ? clusterTimeMax_ : clusterTimeMaxMC_;
+
+    if (debug_ > 0) {
+        std::cout << "[TrackingAna] --- new event  isData=" << isData_
+                  << "  feeEnergyMin=" << feeClusterEnergyMin_
+                  << "  timeWindow=[" << minTime << "," << maxTime << "]"
+                  << "  nClusters=" << ecal_->size() << std::endl;
+        for (unsigned int iclu = 0; iclu < ecal_->size(); iclu++) {
+            std::cout << "  cluster[" << iclu << "]"
+                      << "  E=" << ecal_->at(iclu)->getEnergy()
+                      << "  t=" << ecal_->at(iclu)->getTime() << std::endl;
+        }
     }
 
-    if (!clusterInTime)
+    bool foundFeeCluster = false;
+    for (unsigned int iclu = 0; iclu < ecal_->size(); iclu++) {
+      if (ecal_->at(iclu)->getEnergy() > feeClusterEnergyMin_) {
+        foundFeeCluster = true;
+        break;
+      }
+    }
+    if (!foundFeeCluster) {
+      if (debug_ > 0) std::cout << "[TrackingAna] FAIL: no cluster with E > " << feeClusterEnergyMin_ << std::endl;
       return true;
-        
+    }
+
+    // Require at least one cluster within the time window
+    bool clusterInTime = false;
+    for (unsigned int iclu = 0; iclu < ecal_->size(); iclu++) {
+      double t = ecal_->at(iclu)->getTime();
+      if (t >= minTime && t <= maxTime) {
+        clusterInTime = true;
+        break;
+      }
+    }
+    if (!clusterInTime) {
+      if (debug_ > 0) std::cout << "[TrackingAna] FAIL: no cluster in time window [" << minTime << "," << maxTime << "]" << std::endl;
+      return true;
+    }
+
     for (int itrack = 0; itrack < tracks_->size(); ++itrack) {
-        
+
         if (trkSelector_) trkSelector_->getCutFlowHisto()->Fill(0.,weight);
-        
+
         // Get a track
         Track* track = tracks_->at(itrack);
         int n2dhits_onTrack = !track->isKalmanTrack() ? track->getTrackerHitCount() * 2 : track->getTrackerHitCount();
@@ -293,41 +312,70 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
         bool L3_axial  = isTop ? (layers.at(4) == 1) : (layers.at(5) == 1);
         bool L3_stereo = isTop ? (layers.at(5) == 1) : (layers.at(4) == 1);
 
+        if (debug_ > 0) {
+            std::cout << "[TrackingAna]  track[" << itrack << "]"
+                      << "  nHits=" << n2dhits_onTrack
+                      << "  chi2ndf=" << track->getChi2Ndf()
+                      << "  p=" << trk_mom.Mag()
+                      << "  tanL=" << track->getTanLambda()
+                      << "  ecalX=" << track->getPositionAtEcal()[0]
+                      << "  trkTime=" << track->getTrackTime()
+                      << "  trkTime-offset=" << track->getTrackTime() - time_offset_
+                      << std::endl;
+        }
+
         //Track Selection
-        if (trkSelector_ && !trkSelector_->passCutGt("n_hits_gt",n2dhits_onTrack,weight))
+        if (trkSelector_ && !trkSelector_->passCutGt("n_hits_gt",n2dhits_onTrack,weight)) {
+            if (debug_ > 0) std::cout << "[TrackingAna]   FAIL n_hits_gt: " << n2dhits_onTrack << std::endl;
             continue;
+        }
 
-        if (trkSelector_ && !trkSelector_->passCutLt("chi2ndf_lt",track->getChi2Ndf(),weight))
-          continue;
-        
-        if (trkSelector_ && !trkSelector_->passCutGt("p_gt",trk_mom.Mag(),weight))
-          continue;
+        if (trkSelector_ && !trkSelector_->passCutLt("chi2ndf_lt",track->getChi2Ndf(),weight)) {
+            if (debug_ > 0) std::cout << "[TrackingAna]   FAIL chi2ndf_lt: " << track->getChi2Ndf() << std::endl;
+            continue;
+        }
 
-        if (trkSelector_ && !trkSelector_->passCutLt("p_lt",trk_mom.Mag(),weight))
-          continue;
-        
-        if (trkSelector_ && !trkSelector_->passCutLt("trk_ecal_lt",track->getPositionAtEcal()[0],weight))
-          continue;
-        
-        
-        if (trkSelector_ && !trkSelector_->passCutGt("trk_ecal_gt",track->getPositionAtEcal()[0],weight))
-          continue;
-        
-        if (trkSelector_ && !trkSelector_->passCutGt("trk_time_gt",track->getTrackTime()-time_offset_,weight))
-          continue;
-        
-        if (trkSelector_ && !trkSelector_->passCutLt("trk_time_lt",track->getTrackTime()-time_offset_,weight))
-          continue;
-        
+        if (trkSelector_ && !trkSelector_->passCutGt("p_gt",trk_mom.Mag(),weight)) {
+            if (debug_ > 0) std::cout << "[TrackingAna]   FAIL p_gt: " << trk_mom.Mag() << std::endl;
+            continue;
+        }
+
+        if (trkSelector_ && !trkSelector_->passCutLt("p_lt",trk_mom.Mag(),weight)) {
+            if (debug_ > 0) std::cout << "[TrackingAna]   FAIL p_lt: " << trk_mom.Mag() << std::endl;
+            continue;
+        }
+
+        if (trkSelector_ && !trkSelector_->passCutLt("trk_ecal_lt",track->getPositionAtEcal()[0],weight)) {
+            if (debug_ > 0) std::cout << "[TrackingAna]   FAIL trk_ecal_lt: " << track->getPositionAtEcal()[0] << std::endl;
+            continue;
+        }
+
+        if (trkSelector_ && !trkSelector_->passCutGt("trk_ecal_gt",track->getPositionAtEcal()[0],weight)) {
+            if (debug_ > 0) std::cout << "[TrackingAna]   FAIL trk_ecal_gt: " << track->getPositionAtEcal()[0] << std::endl;
+            continue;
+        }
+
+        if (trkSelector_ && !trkSelector_->passCutGt("trk_time_gt",track->getTrackTime()-time_offset_,weight)) {
+            if (debug_ > 0) std::cout << "[TrackingAna]   FAIL trk_time_gt: " << track->getTrackTime() - time_offset_ << std::endl;
+            continue;
+        }
+
+        if (trkSelector_ && !trkSelector_->passCutLt("trk_time_lt",track->getTrackTime()-time_offset_,weight)) {
+            if (debug_ > 0) std::cout << "[TrackingAna]   FAIL trk_time_lt: " << track->getTrackTime() - time_offset_ << std::endl;
+            continue;
+        }
+
+        if (debug_ > 0) std::cout << "[TrackingAna]   PASS all cuts" << std::endl;
+
         Track* truth_track = nullptr;
-        
+
         //Get the truth track
-        if (doTruth_) { 
+        if (doTruth_) {
             truth_track = (Track*) track->getTruthLink().GetObject();
             if (!truth_track)
                 std::cout<<"Warnings::TrackingAnaProcessor::Requested Truth track but couldn't find it in the ntuple"<<std::endl;
         }
-        
+
         if(debug_ > 0)
         {
             std::cout<<"========================================="<<std::endl;
@@ -335,37 +383,37 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
             std::cout<<"Track params:           "<<std::endl;
             track->Print();
         }
-        
+
         trkHistos_->Fill1DHistograms(track);
         trkHistos_->Fill2DTrack(track);
 
         //auto pos = track->getPosition();
         //std::cout << "X: " << pos[0]  << " Y : " << pos[1] << " Z: " << pos[2] << std::endl;
-        
+
         if (truthHistos_) {
             truthHistos_->Fill1DHistograms(truth_track);
             truthHistos_->Fill2DTrack(track);
             truthHistos_->Fill1DTrackTruth(track, truth_track);
         }
-        
+
         n_sel_tracks++;
 
-        
+
 
         //Fill histograms for FEE smearing analysis
         trkHistos_->Fill2DHisto("xypos_at_ecal_hh",
                                 track->getPositionAtEcal()[0],
                                 track->getPositionAtEcal()[1]);
-        
+
         trkHistos_->Fill3DHisto("p_vs_TanLambda_Phi_hhh",
                                 track->getPhi(),
                                 track->getTanLambda(),
                                 track->getP());
-        
+
         trkHistos_->Fill2DHisto("p_vs_nHits_hh",
                                 track->getTrackerHitCount(),
                                 track->getP());
-        
+
         if (track->getTanLambda() > 0 )
           trkHistos_->Fill2DHisto("p_vs_nHits_top_hh",
                                   track->getTrackerHitCount(),
@@ -374,13 +422,13 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
           trkHistos_->Fill2DHisto("p_vs_nHits_bot_hh",
                                   track->getTrackerHitCount(),
                                   track->getP());
-        
+
         trkHistos_->Fill3DHisto("p_vs_TanLambda_nHits_hhh",
                                 track->getTanLambda(),
                                 track->getTrackerHitCount(),
                                 track->getP());
-        
-        
+
+
 
         // Track-level quantities for output tree and smearing histograms.
         // trk_smeared starts as a copy of the original; update* methods modify it in-place.
@@ -485,9 +533,9 @@ bool TrackingAnaProcessor::process(IEvent* ievent) {
         }
 
     }//Loop on tracks
-    
+
     trkHistos_->Fill1DHisto("n_tracks_h",n_sel_tracks);
-    
+
     return true;
 }
 
@@ -516,7 +564,7 @@ void TrackingAnaProcessor::finalize() {
       outF_->cd(dirName.c_str());
       reg_selectors_[it->first]->getCutFlowHisto()->Write();
     }
-    
+
     if (smearingTool_) {
       outF_->cd(trkCollName_.c_str());
       psmear_h_->Write();
@@ -592,8 +640,8 @@ void TrackingAnaProcessor::finalize() {
       delete omegasmear_vs_phi0_bot_hh_;
 
     }
-        
+
     //trkHistos_->Clear();
 }
 
-DECLARE_PROCESSOR(TrackingAnaProcessor); 
+DECLARE_PROCESSOR(TrackingAnaProcessor);

@@ -838,9 +838,10 @@ void utils::get2016KFMCTruthHitCodes(Track* ele_trk, Track* pos_trk, int& L1L2hi
 }
 
 double utils::v0_projection_to_target_significance(json v0proj_fits, int run, double& vtx_proj_x, double& vtx_proj_y,
-                                                   double& vtx_proj_x_signif, double& vtx_proj_y_signif, double vtx_x,
-                                                   double vtx_y, double vtx_z, double vtx_px, double vtx_py,
-                                                   double vtx_pz) {
+                                                   double& vtx_proj_x_signif, double& vtx_proj_y_signif,
+                                                   double& vtx_proj_x_centered, double& vtx_proj_y_centered,
+                                                   double vtx_x, double vtx_y, double vtx_z, double vtx_px,
+                                                   double vtx_py, double vtx_pz, bool debug) {
     // V0 Projection fit parameters are calculated externally by projecting vertices to the target z position,
     // and then fitting the 2D distribution vtx_x vs vtx_y with a rotated 2D Gaussian.
     // The fit parameters are defined along the rotated coordinate system.
@@ -864,25 +865,73 @@ double utils::v0_projection_to_target_significance(json v0proj_fits, int run, do
     double rot_sigma_y = v0proj_fits[std::to_string(closest_run)]["rotated_sigma_y"];
     double rotation_angle = (double)v0proj_fits[std::to_string(closest_run)]["rotation_angle_mrad"] / 1000.0;
 
+    if (debug) {
+        std::cout << "[v0proj debug] run=" << run << " -> closest_run=" << closest_run << std::endl;
+        std::cout << "[v0proj debug] calibration constants:"
+                  << " target_pos=" << target_pos
+                  << " rot_mean_x=" << rot_mean_x
+                  << " rot_mean_y=" << rot_mean_y
+                  << " rot_sigma_x=" << rot_sigma_x
+                  << " rot_sigma_y=" << rot_sigma_y
+                  << " rotation_angle_mrad=" << rotation_angle * 1000.0
+                  << " rotation_angle_rad=" << rotation_angle << std::endl;
+        std::cout << "[v0proj debug] input vertex:"
+                  << " vtx_x=" << vtx_x
+                  << " vtx_y=" << vtx_y
+                  << " vtx_z=" << vtx_z
+                  << " vtx_px=" << vtx_px
+                  << " vtx_py=" << vtx_py
+                  << " vtx_pz=" << vtx_pz << std::endl;
+    }
+
     // project vertex to target position
     vtx_proj_x = vtx_x - ((vtx_z - target_pos) * (vtx_px / vtx_pz));
     vtx_proj_y = vtx_y - ((vtx_z - target_pos) * (vtx_py / vtx_pz));
+
+    if (debug) {
+        std::cout << "[v0proj debug] projection:"
+                  << " dz=(vtx_z - target_pos)=" << (vtx_z - target_pos)
+                  << " dx_correction=" << ((vtx_z - target_pos) * (vtx_px / vtx_pz))
+                  << " dy_correction=" << ((vtx_z - target_pos) * (vtx_py / vtx_pz))
+                  << " vtx_proj_x=" << vtx_proj_x
+                  << " vtx_proj_y=" << vtx_proj_y << std::endl;
+    }
 
     // Rotate projected vertex by angle corresponding to run number
     double rot_vtx_proj_x = vtx_proj_x * std::cos(rotation_angle) - vtx_proj_y * std::sin(rotation_angle);
     double rot_vtx_proj_y = vtx_proj_x * std::sin(rotation_angle) + vtx_proj_y * std::cos(rotation_angle);
 
-    // Calculate significance
-    vtx_proj_x_signif = (rot_vtx_proj_x - rot_mean_x) / rot_sigma_x;
-    vtx_proj_y_signif = (rot_vtx_proj_y - rot_mean_y) / rot_sigma_y;
+    if (debug) {
+        std::cout << "[v0proj debug] after rotation:"
+                  << " rot_vtx_proj_x=" << rot_vtx_proj_x
+                  << " rot_vtx_proj_y=" << rot_vtx_proj_y << std::endl;
+    }
+
+    // Calculate mean-subtracted rotated components and significance
+    vtx_proj_x_centered = rot_vtx_proj_x - rot_mean_x;
+    vtx_proj_y_centered = rot_vtx_proj_y - rot_mean_y;
+    vtx_proj_x_signif = vtx_proj_x_centered / rot_sigma_x;
+    vtx_proj_y_signif = vtx_proj_y_centered / rot_sigma_y;
 
     double significance = std::sqrt(vtx_proj_x_signif * vtx_proj_x_signif + vtx_proj_y_signif * vtx_proj_y_signif);
+
+    if (debug) {
+        std::cout << "[v0proj debug] significance:"
+                  << " vtx_proj_x_centered=" << vtx_proj_x_centered
+                  << " vtx_proj_y_centered=" << vtx_proj_y_centered
+                  << " vtx_proj_x_signif=" << vtx_proj_x_signif
+                  << " vtx_proj_y_signif=" << vtx_proj_y_signif
+                  << " significance=" << significance << std::endl;
+    }
 
     return significance;
 }
 
 double utils::v0_projection_to_target_significance(json v0proj_fits, int run, double& vtx_proj_x, double& vtx_proj_y,
-                                                   double& vtx_proj_x_signif, double& vtx_proj_y_signif, Vertex* vtx) {
+                                                   double& vtx_proj_x_signif, double& vtx_proj_y_signif, Vertex* vtx,
+                                                   double& vtx_proj_x_err, double& vtx_proj_y_err,
+                                                   double& vtx_proj_x_centered, double& vtx_proj_y_centered,
+                                                   bool debug) {
     // Read v0 projection fits from json file
     int closest_run;
     for (auto entry : v0proj_fits.items()) {
@@ -901,7 +950,7 @@ double utils::v0_projection_to_target_significance(json v0proj_fits, int run, do
     double rotation_angle =
         (double)v0proj_fits[std::to_string(closest_run)]["rotation_angle_mrad"] / 1000.0;  // convert mrad to rad
 
-    // get target projected vertex position 
+    // get target projected vertex position
     double vtx_tgt_x = vtx->getTgtProjX();
     double vtx_tgt_x_err = vtx->getTgtProjSigmaX();
     double vtx_tgt_y = vtx->getTgtProjY();
@@ -909,18 +958,89 @@ double utils::v0_projection_to_target_significance(json v0proj_fits, int run, do
 
     vtx_proj_x = vtx_tgt_x;
     vtx_proj_y = vtx_tgt_y;
+    vtx_proj_x_err = vtx_tgt_x_err;
+    vtx_proj_y_err = vtx_tgt_y_err;
+
+    if (debug) {
+        std::cout << "[v0proj debug] run=" << run << " -> closest_run=" << closest_run << std::endl;
+        std::cout << "[v0proj debug] calibration constants:"
+                  << " target_pos=" << target_pos
+                  << " rot_mean_x=" << rot_mean_x
+                  << " rot_mean_y=" << rot_mean_y
+                  << " rot_sigma_x=" << rot_sigma_x
+                  << " rot_sigma_y=" << rot_sigma_y
+                  << " rotation_angle_mrad=" << rotation_angle * 1000.0
+                  << " rotation_angle_rad=" << rotation_angle << std::endl;
+        std::cout << "[v0proj debug] vertex tgt projection (from Vertex object):"
+                  << " vtx_tgt_x=" << vtx_tgt_x
+                  << " vtx_tgt_x_err=" << vtx_tgt_x_err
+                  << " vtx_tgt_y=" << vtx_tgt_y
+                  << " vtx_tgt_y_err=" << vtx_tgt_y_err << std::endl;
+    }
 
     // Rotate projected vertex by angle corresponding to run number
     double rot_vtx_proj_x = vtx_proj_x * std::cos(rotation_angle) - vtx_proj_y * std::sin(rotation_angle);
     double rot_vtx_proj_y = vtx_proj_x * std::sin(rotation_angle) + vtx_proj_y * std::cos(rotation_angle);
 
-    // Calculate significance
-    vtx_proj_x_signif =
-        (rot_vtx_proj_x - rot_mean_x) / std::sqrt(rot_sigma_x * rot_sigma_x + vtx_tgt_x_err * vtx_tgt_x_err);
-    vtx_proj_y_signif =
-        (rot_vtx_proj_y - rot_mean_y) / std::sqrt(rot_sigma_y * rot_sigma_y + vtx_tgt_y_err * vtx_tgt_y_err);
+    if (debug) {
+        std::cout << "[v0proj debug] after rotation:"
+                  << " rot_vtx_proj_x=" << rot_vtx_proj_x
+                  << " rot_vtx_proj_y=" << rot_vtx_proj_y << std::endl;
+    }
+
+    // Calculate mean-subtracted rotated components and significance
+    // (sigma includes vertex position error added in quadrature)
+    double sigma_x = std::sqrt(rot_sigma_x * rot_sigma_x + vtx_tgt_x_err * vtx_tgt_x_err);
+    double sigma_y = std::sqrt(rot_sigma_y * rot_sigma_y + vtx_tgt_y_err * vtx_tgt_y_err);
+    vtx_proj_x_centered = rot_vtx_proj_x - rot_mean_x;
+    vtx_proj_y_centered = rot_vtx_proj_y - rot_mean_y;
+    vtx_proj_x_signif = vtx_proj_x_centered / sigma_x;
+    vtx_proj_y_signif = vtx_proj_y_centered / sigma_y;
 
     double significance = std::sqrt(vtx_proj_x_signif * vtx_proj_x_signif + vtx_proj_y_signif * vtx_proj_y_signif);
 
+    if (debug) {
+        std::cout << "[v0proj debug] significance:"
+                  << " sigma_x(combined)=" << sigma_x
+                  << " sigma_y(combined)=" << sigma_y
+                  << " vtx_proj_x_centered=" << vtx_proj_x_centered
+                  << " vtx_proj_y_centered=" << vtx_proj_y_centered
+                  << " vtx_proj_x_signif=" << vtx_proj_x_signif
+                  << " vtx_proj_y_signif=" << vtx_proj_y_signif
+                  << " significance=" << significance << std::endl;
+    }
+
     return significance;
+}
+
+void utils::debug_target_projection(double target_pos, Vertex* vtx) {
+    // LCIO-stored values
+    double lcio_x     = vtx->getTgtProjX();
+    double lcio_x_err = vtx->getTgtProjSigmaX();
+    double lcio_y     = vtx->getTgtProjY();
+    double lcio_y_err = vtx->getTgtProjSigmaY();
+
+    // Manually project: walk from vtx position along momentum to target_pos in z
+    TVector3 p = vtx->getP();
+    double vtx_x = vtx->getX();
+    double vtx_y = vtx->getY();
+    double vtx_z = vtx->getZ();
+    double dz = vtx_z - target_pos;
+    double manual_x = vtx_x - dz * (p.X() / p.Z());
+    double manual_y = vtx_y - dz * (p.Y() / p.Z());
+
+    std::cout << "[tgt_proj_debug]"
+              << " target_pos=" << target_pos
+              << " vtx_z=" << vtx_z
+              << " dz=" << dz << std::endl;
+    std::cout << "[tgt_proj_debug] LCIO   : x=" << lcio_x
+              << " x_err=" << lcio_x_err
+              << " y=" << lcio_y
+              << " y_err=" << lcio_y_err << std::endl;
+    std::cout << "[tgt_proj_debug] manual : x=" << manual_x
+              << " y=" << manual_y
+              << " (px/pz=" << p.X()/p.Z()
+              << " py/pz=" << p.Y()/p.Z() << ")" << std::endl;
+    std::cout << "[tgt_proj_debug] delta  : dx=" << (manual_x - lcio_x)
+              << " dy=" << (manual_y - lcio_y) << std::endl;
 }

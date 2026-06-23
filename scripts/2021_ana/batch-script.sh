@@ -93,8 +93,10 @@ if [[ -n "${mass_point}" ]]; then
 fi
 mkdir -p "${out_dir}"
 
-# trusting the filenames from the different batches to not clash
 filename="$(basename "${input_file}")"
+if [[ "${input_file}" =~ (merge-batch-[0-9]+) ]]; then
+  filename="${filename%.root}_${BASH_REMATCH[1]}.root"
+fi
 output_file="${out_dir}/${filename}"
 
 shift 2

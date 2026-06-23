@@ -33,31 +33,31 @@
  * @brief Insert description here.
  * more details
  */
-class TrackingAnaProcessor : public Processor { 
+class TrackingAnaProcessor : public Processor {
 
     public:
         /**
-         * @brief Class constructor. 
+         * @brief Class constructor.
          *
          * @param name Name for this instance of the class.
          * @param process The Process class associated with Processor, provided
          *                by the processing framework.
          */
-        TrackingAnaProcessor(const std::string& name, Process& process); 
+        TrackingAnaProcessor(const std::string& name, Process& process);
 
         /** Destructor */
-        ~TrackingAnaProcessor(); 
+        ~TrackingAnaProcessor();
 
         /**
          * @brief Configure the Ana Processor
-         * 
+         *
          * @param parameters The configuration parameters
          */
         virtual void configure(const ParameterSet& parameters);
 
         /**
          * @brief Process the event and put new data products into it.
-         * 
+         *
          * @param ievent The Event to process.
          */
         virtual bool process(IEvent* ievent);
@@ -65,7 +65,7 @@ class TrackingAnaProcessor : public Processor {
         /**
          * @brief Callback for the Processor to take any necessary
          *        action when the processing of events starts.
-         * 
+         *
          * @param tree
          */
         virtual void initialize(TTree* tree);
@@ -81,22 +81,22 @@ class TrackingAnaProcessor : public Processor {
          */
         virtual void setFile(TFile* outFile);
 
-    private: 
+    private:
 
         /** Container to hold all Track objects. */
         std::vector<Track*>* tracks_{};
         TBranch* btracks_{nullptr}; //!< description
-        
+
         /** Event header branch. */
         TBranch* bevth_{nullptr}; //!
-        
+
         /** Clusters */
         TBranch* becal_{nullptr}; //!
-        
+
         // Event Header
         EventHeader* evth_{nullptr}; //!
-        std::vector<CalCluster*>* ecal_{}; //!< 
-        
+        std::vector<CalCluster*>* ecal_{}; //!<
+
         std::string trkCollName_; //!< Track Collection name
         std::string ecalCollName_{"RecoEcalClusters"}; //!< Cluster Collection name
 
@@ -107,20 +107,26 @@ class TrackingAnaProcessor : public Processor {
         std::map<std::string, std::shared_ptr<BaseSelector>> reg_selectors_; //!< description
         std::map<std::string, std::shared_ptr<TrackHistos>> reg_histos_; //!< description
         typedef std::map<std::string, std::shared_ptr<TrackHistos>>::iterator reg_it; //!< description
-        
+
         // Containers to hold histogrammer info
         std::string histCfgFilename_; //!< description
         std::string truthHistCfgFilename_; //!< description
         TrackHistos* trkHistos_{nullptr}; //!< description
         TrackHistos* truthHistos_{nullptr}; //!< description
-        
+
         std::vector<std::string> regions_; //!
-        
+
         bool doTruth_{false}; //!< description
         int isData_{1}; //! is data
         int debug_{0}; //!< debug level
         int seed_{0};  //!< seed
         float time_offset_{0}; //! time offset
+        double feeClusterEnergyMin_{2.5};  //!< minimum cluster energy for FEE selection
+        double clusterTimeMin_{40.0};      //!< minimum cluster time (data)
+        double clusterTimeMax_{70.0};      //!< maximum cluster time (data)
+        double clusterTimeMinMC_{40.0};    //!< minimum cluster time (MC)
+        double clusterTimeMaxMC_{70.0};    //!< maximum cluster time (MC)
+        double mcTimeOffset_{5.0};         //!< time offset applied to MC tracks
 
         //Momentum smearing closure test
         std::shared_ptr<TrackSmearingTool> smearingTool_;
@@ -132,6 +138,7 @@ class TrackingAnaProcessor : public Processor {
         bool requireTruthMatch_{false};  //!< Require truth match for smearing
         bool smearOmega_{false};  //!< Use omega (curvature) smearing instead of p smearing
         std::string smearingVariable_{""};  //!< "flat", "nHits", "tanLambda", "phi0" — explicit lookup; "" = JSON default
+        std::string scaleCorrVariable_{""};  //!< if set, omega data-mode scale uses pBinned_ means
 
         // AnaHelpers for decoding per-sensor hit layers
         std::shared_ptr<AnaHelpers> ah_{nullptr};
@@ -154,7 +161,7 @@ class TrackingAnaProcessor : public Processor {
         TH2D* psmear_vs_nHits_hh_;
         TH2D* psmear_vs_nHits_top_hh_;
         TH2D* psmear_vs_nHits_bot_hh_;
-        
+
         TH1D* psmear_rel_h_;
         TH2D* psmear_vs_nHits_rel_hh_;
         TH2D* psmear_vs_nHits_top_rel_hh_;

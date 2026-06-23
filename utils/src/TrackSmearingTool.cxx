@@ -241,6 +241,25 @@ void TrackSmearingTool::setForcedVariable(const std::string& var) {
   std::cout << "TrackSmearingTool: using binned smearing, variable='" << var << "'." << std::endl;
 }
 
+void TrackSmearingTool::setScaleCorrVariable(const std::string& var) {
+  if (var.empty()) {
+    scaleCorrVariable_ = "";
+    std::cout << "TrackSmearingTool: scaleCorrVariable cleared — "
+              << "omega data-mode scale correction uses omegaSmearing_binned_"
+              << binnedLookupVariable_ << " means (default)." << std::endl;
+    return;
+  }
+  if (!pBinned_.count(var))
+    throw std::invalid_argument(
+        "TrackSmearingTool: scaleCorrVariable='" + var +
+        "' not found in pSmearing_binned tables. Check JSON contains pSmearing_binned_" + var);
+  scaleCorrVariable_ = var;
+  std::cout << "TrackSmearingTool: *** scale correction override active ***\n"
+            << "  resolution sigma  : omegaSmearing_binned_" << binnedLookupVariable_ << "\n"
+            << "  scale correction  : pSmearing_binned_" << scaleCorrVariable_
+            << " (p-space, mu_mc/mu_data)" << std::endl;
+}
+
 static void printBinTable(const std::string& varName,
                           const std::vector<double>& edgesT,
                           const std::vector<double>& sigT,
@@ -288,6 +307,14 @@ void TrackSmearingTool::printConfig() const {
   std::cout << "  relSmearingP:   " << (relSmearingP_  ? "relative" : "absolute")
             << "   relSmearingZ0: "  << (relSmearingZ0_ ? "relative" : "absolute") << "\n";
   std::cout << "  smearOmega:     " << (smearOmega_ ? "true" : "false") << "\n";
+  std::cout << "  binnedLookupVar:" << binnedLookupVariable_ << "\n";
+  if (!scaleCorrVariable_.empty()) {
+    std::cout << "  *** scaleCorrVariable: pSmearing_binned_" << scaleCorrVariable_
+              << " (p-space means for omega scale correction in data mode) ***\n";
+  } else {
+    std::cout << "  scaleCorrVariable: (none — omega-space means from omegaSmearing_binned_"
+              << binnedLookupVariable_ << ")\n";
+  }
 
   // p smearing
   std::cout << "\n  [p smearing]  (" << (relSmearingP_ ? "relative" : "absolute") << ")\n";
@@ -464,8 +491,8 @@ double TrackSmearingTool::smearTrackP(const Track& track) {
 }
 
 double TrackSmearingTool::updateWithSmearP(Track& trk) {
-  // If truth matching is required and track doesn't have a truth match, skip smearing
-  if (requireTruthMatch_ && !hasTruthMatch(trk)) {
+  // Truth matching only applies to MC — on data there are no MC particles to match against
+  if (!isData_ && requireTruthMatch_ && !hasTruthMatch(trk)) {
     if (debug_) {
       std::cout << "TrackSmearingTool: Skipping momentum smearing - no truth match" << std::endl;
     }
@@ -621,8 +648,8 @@ double TrackSmearingTool::smearTrackZ0(const Track& track) {
 }
 
 void TrackSmearingTool::updateWithSmearZ0(Track& trk) {
-  // If truth matching is required and track doesn't have a truth match, skip smearing
-  if (requireTruthMatch_ && !hasTruthMatch(trk)) {
+  // Truth matching only applies to MC — on data there are no MC particles to match against
+  if (!isData_ && requireTruthMatch_ && !hasTruthMatch(trk)) {
     if (debug_) {
       std::cout << "TrackSmearingTool: Skipping z0 smearing - no truth match" << std::endl;
     }
@@ -634,8 +661,8 @@ void TrackSmearingTool::updateWithSmearZ0(Track& trk) {
 }
 
 double TrackSmearingTool::updateWithSmearOmega(Track& trk, double /*bfield*/) {
-  // If truth matching is required and track doesn't have a truth match, skip smearing
-  if (requireTruthMatch_ && !hasTruthMatch(trk)) {
+  // Truth matching only applies to MC — on data there are no MC particles to match against
+  if (!isData_ && requireTruthMatch_ && !hasTruthMatch(trk)) {
     if (debug_) {
       std::cout << "TrackSmearingTool: Skipping omega smearing - no truth match" << std::endl;
     }
@@ -659,13 +686,59 @@ double TrackSmearingTool::updateWithSmearOmega(Track& trk, double /*bfield*/) {
 
   // --- Data mode: apply mean correction only, no Gaussian smearing ---
   if (isData_) {
-    if (!applyMeanCorr_) return 1.0;
+    double lv = getLookupValue(trk);
+
+    // --- Path A: p-space scale correction from pSmearing_binned_{scaleCorrVariable_} ---
+    if (!scaleCorrVariable_.empty() && pBinned_.count(scaleCorrVariable_)) {
+      const auto& bp = pBinned_.at(scaleCorrVariable_);
+      if (!bp.muDatTop.empty()) {
+        double mu_data_p = isTop ? lookupBinnedValue(bp.edgesTop, bp.muDatTop, lv)
+                                 : lookupBinnedValue(bp.edgesBot, bp.muDatBot, lv);
+        double mu_mc_p   = isTop ? lookupBinnedValue(bp.edgesTop, bp.muMcTop,  lv)
+                                 : lookupBinnedValue(bp.edgesBot, bp.muMcBot,  lv);
+        if (mu_data_p > 0. && mu_mc_p > 0.) {
+          // p_corr = p * (mu_mc_p / mu_data_p)  [p-space scale]
+          // omega ~ 1/p  =>  omega_corr = omega * (mu_data_p / mu_mc_p)
+          double p_scale = mu_mc_p / mu_data_p;
+          double omega_corr = omega / p_scale;
+          double p_before = trk.getP();
+          std::vector<double> momentum = trk.getMomentum();
+          for (double& coord : momentum) coord *= p_scale;
+          trk.setMomentum(momentum);
+          trk.setOmega(omega_corr);
+          double p_after = trk.getP();
+          if (debug_)
+            std::cout << "[TrackSmearingTool] Data omega scale (PATH A — p-space): "
+                      << "paramVar=pSmearing_binned_" << scaleCorrVariable_
+                      << "  isTop=" << isTop << "  lv(tanL)=" << lv
+                      << "  mu_data_p=" << mu_data_p << "  mu_mc_p=" << mu_mc_p
+                      << "  p_scale=" << p_scale
+                      << "  |p|: " << p_before << " -> " << p_after
+                      << "  omega: " << omega << " -> " << omega_corr << std::endl;
+          return std::fabs(p_scale);
+        }
+        // Bin has zero means — no correction available for this track
+        if (debug_)
+          std::cout << "[TrackSmearingTool] Data omega scale (PATH A): "
+                    << "pSmearing_binned_" << scaleCorrVariable_
+                    << " has zero means at lv=" << lv << " isTop=" << isTop
+                    << " — skipping scale correction for this track." << std::endl;
+        return 1.0;
+      }
+    }
+
+    // --- Path B (default): omega-space mean correction from omegaSmearing_binned_{binnedLookupVariable_} ---
+    if (!applyMeanCorr_) {
+      if (debug_)
+        std::cout << "[TrackSmearingTool] Data omega scale (PATH B — omega-space): "
+                  << "applyMeanCorr=false — no correction applied." << std::endl;
+      return 1.0;
+    }
     double mu_data = 0., mu_mc = 0.;
     bool hasMu = false;
     if (omegaBinned_.count(binnedLookupVariable_)) {
       const auto& bp = omegaBinned_.at(binnedLookupVariable_);
       if (!bp.muDatTop.empty()) {
-        double lv = getLookupValue(trk);
         mu_data = isTop ? lookupBinnedValue(bp.edgesTop, bp.muDatTop, lv)
                         : lookupBinnedValue(bp.edgesBot, bp.muDatBot, lv);
         mu_mc   = isTop ? lookupBinnedValue(bp.edgesTop, bp.muMcTop,  lv)
@@ -678,7 +751,6 @@ double TrackSmearingTool::updateWithSmearOmega(Track& trk, double /*bfield*/) {
       mu_data = isTop ? omegaMeanDataTop_ : omegaMeanDataBot_;
       mu_mc   = isTop ? omegaMeanMcTop_   : omegaMeanMcBot_;
     }
-    // Shift data omega toward MC mean, then rescale momentum
     double omega_corr = omega + (mu_mc - mu_data);
     double scale = (omega_corr != 0.) ? omega / omega_corr : 1.0;
     std::vector<double> momentum = trk.getMomentum();
@@ -686,7 +758,11 @@ double TrackSmearingTool::updateWithSmearOmega(Track& trk, double /*bfield*/) {
     trk.setMomentum(momentum);
     trk.setOmega(omega_corr);
     if (debug_)
-      std::cout<<"Data omega corr: isTop="<<isTop<<" omega="<<omega<<" mu_data="<<mu_data<<" mu_mc="<<mu_mc<<" omega'="<<omega_corr<<std::endl;
+      std::cout << "[TrackSmearingTool] Data omega scale (PATH B — omega-space): "
+                << "paramVar=omegaSmearing_binned_" << binnedLookupVariable_
+                << "  isTop=" << isTop << "  lv=" << lv
+                << "  mu_data=" << mu_data << "  mu_mc=" << mu_mc
+                << "  omega=" << omega << "  omega'=" << omega_corr << std::endl;
     return std::fabs(scale);
   }
 

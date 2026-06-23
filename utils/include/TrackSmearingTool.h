@@ -104,6 +104,13 @@ class TrackSmearingTool {
   // ""          -> use whatever the JSON provides (default, not recommended)
   void setForcedVariable(const std::string& var);
 
+  // Override the parameterization used for scale (mean) corrections in data mode.
+  // When set to a variable name (e.g. "tanLambda"), the data-mode omega smearing
+  // derives the scale factor from pSmearing_binned_{var} mu_data/mu_mc values,
+  // applying a p-space multiplicative correction rather than an additive omega shift.
+  // By default (empty string) the scale correction comes from omegaSmearing_binned_{binnedLookupVariable_}.
+  void setScaleCorrVariable(const std::string& var);
+
   // Check if a track has a truth-matched electron/positron (abs(PDG) == 11)
   // Returns true if matched, false if no match or MC info unavailable
   bool hasTruthMatch(Track& trk);
@@ -160,6 +167,7 @@ class TrackSmearingTool {
     std::vector<double> muMcTop,  muMcBot;
   };
   std::string binnedLookupVariable_{"tanLambda"};  // active variable; set by setForcedVariable
+  std::string scaleCorrVariable_{""};  // if set, omega data-mode scale uses pBinned_ means
   std::map<std::string, BinnedParam> pBinned_;
   std::map<std::string, BinnedParam> omegaBinned_;
   std::map<std::string, BinnedParam> z0Binned_;

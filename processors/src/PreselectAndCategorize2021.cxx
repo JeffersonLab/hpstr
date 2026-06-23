@@ -26,6 +26,14 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
 
     // Disable all vertex-level preselection cuts (default: cuts enabled)
     disablePreselection_ = parameters.getInteger("disablePreselection", 0) != 0;
+    disableTimingCuts_   = parameters.getInteger("disableTimingCuts", 0) != 0;
+
+    // Minimum number of 2D tracker hits required for each track (default 10)
+    minHits_ = parameters.getInteger("minHits", minHits_);
+
+    // Beam parameters used to infer the recoil-electron direction
+    beamE_ = parameters.getDouble("beamE", beamE_);
+    thetaBeamMrad_ = parameters.getDouble("thetaBeamMrad", thetaBeamMrad_);
 
     // Require truth match for smearing (default false)
     requireTruthMatch_ = parameters.getInteger("requireTruthMatch", 0) != 0;
@@ -37,9 +45,14 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     // Empty string (default) accepts whatever the JSON specifies
     smearingVariable_ = parameters.getString("smearingVariable", "");
 
+    // If set, omega data-mode scale correction uses pSmearing_binned_{scaleCorrVariable_} means
+    // rather than omegaSmearing_binned_{smearingVariable_} means
+    scaleCorrVariable_ = parameters.getString("scaleCorrVariable", "");
+    applyMeanCorr_     = parameters.getInteger("applyMeanCorr", 0) != 0;
+
     std::string smearingFile = !smearingCfgFile.empty() ? smearingCfgFile : pSmearingFile;
 
-    if (doSmearing_ and not smearingFile.empty()) {
+    if (not smearingFile.empty()) {
         std::cout << "Loading smearing config from " << smearingFile << std::endl;
         std::cout << "Using smearing seed: " << smearingSeed_ << std::endl;
         std::cout << "Using smearing factor: " << smearingFactor_ << std::endl;
@@ -52,9 +65,12 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
                                                             "KalmanFullTracks", smearingFactor_);
         smearingTool_->setForcedVariable(smearingVariable_);
         smearingTool_->setRequireTruthMatch(requireTruthMatch_);
+        smearingTool_->setDebug(debug_);
         smearingTool_->printConfig();
-    } else if (not doSmearing_) {
-        std::cout << "Track smearing disabled via doSmearing flag" << std::endl;
+    }
+    if (not doSmearing_) {
+        std::cout << "Gaussian track smearing disabled via doSmearing=0 "
+                  << "(data-mode scale corrections still apply if smearingCfg is set)" << std::endl;
     }
 
     auto beamPosCfg = parameters.getString("beamPosCfg");
@@ -101,11 +117,14 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     isData_ = parameters.getInteger("isData") != 0;
     if (smearingTool_) {
         smearingTool_->setIsData(isData_);
-        smearingTool_->setApplyMeanCorr(isData_);
+        smearingTool_->setApplyMeanCorr(applyMeanCorr_);
+        if (!scaleCorrVariable_.empty())
+            smearingTool_->setScaleCorrVariable(scaleCorrVariable_);
     }
     isSimpSignal_ = parameters.getInteger("isSimpSignal") != 0;
     isApSignal_ = parameters.getInteger("isApSignal") != 0;
     if (isSimpSignal_ || isApSignal_) isSignal_ = true;
+    apPDG_ = parameters.getInteger("apPDG", 622);
 
     // Load z0 calibration: use data or MC JSON depending on isData_
     auto z0CalibFile = isData_
@@ -134,6 +153,31 @@ std::vector<double> PreselectAndCategorize2021::determine_time_cuts(bool isData,
     return time_cuts;
 }
 
+double PreselectAndCategorize2021::calculate_theta_R(const TVector3& ele_mom, const TVector3& pos_mom) const {
+    // Beam 4-momentum (assume m_e ~ 0 for the beam)
+    double theta_beam = thetaBeamMrad_ / 1000.0;  // convert to radians
+    double beam_px = beamE_ * std::sin(theta_beam);
+    double beam_py = 0.0;
+    double beam_pz = beamE_ * std::cos(theta_beam);
+
+    // Inferred recoil 3-momentum from momentum conservation
+    double recoil_px = beam_px - ele_mom.X() - pos_mom.X();
+    double recoil_py = beam_py - ele_mom.Y() - pos_mom.Y();
+    double recoil_pz = beam_pz - ele_mom.Z() - pos_mom.Z();
+
+    TVector3 recoil_mom(recoil_px, recoil_py, recoil_pz);
+    double p_recoil_mag = recoil_mom.Mag();
+    if (p_recoil_mag <= 0.0) return -9999.0;
+
+    // Beam direction (unit vector)
+    TVector3 beam_dir(std::sin(theta_beam), 0.0, std::cos(theta_beam));
+
+    // Angle between recoil and beam directions, in mrad
+    double cos_theta = recoil_mom.Dot(beam_dir) / p_recoil_mag;
+    cos_theta = std::max(-1.0, std::min(1.0, cos_theta));
+    return std::acos(cos_theta) * 1000.0;
+}
+
 void PreselectAndCategorize2021::initialize(TTree* tree) {
     _ah = std::make_shared<AnaHelpers>();
 
@@ -143,6 +187,7 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
     if (not trkColl_.empty()) bus_.board_input<std::vector<Track*>>(tree, trkColl_);
     // if (not hitColl_.empty()) bus_.board_input<std::vector<TrackerHit*>>(tree, hitColl_);
     bus_.board_input<std::vector<Vertex*>>(tree, vtxColl_);
+    bus_.board_input<std::vector<CalCluster*>>(tree, "RecoEcalClusters");
     if (not isData_ and not mcColl_.empty()) bus_.board_input<std::vector<MCParticle*>>(tree, mcColl_);
 
     /* pre-selection on vertices */
@@ -157,8 +202,8 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
     vertex_cf_.add("electron_below_2pt9GeV", 100, 0.0, 4.0);
     vertex_cf_.add("electron_above_0pt4GeV", 100, 0.0, 4.0);
     vertex_cf_.add("positron_above_0pt4GeV", 100, 0.0, 4.0);
-    vertex_cf_.add("ele_min_10_hits", 14, 0, 14);
-    vertex_cf_.add("pos_min_10_hits", 14, 0, 14);
+    vertex_cf_.add("ele_min_hits", 14, 0, 14);
+    vertex_cf_.add("pos_min_hits", 14, 0, 14);
     vertex_cf_.add("vertex_chi2", 100, 0.0, 30.0);
     vertex_cf_.add("vtx_max_p_4pt0GeV", 100, 0.0, 4.0);
     vertex_cf_.init();
@@ -170,7 +215,8 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
     std::vector<std::string> labels_vertex_cf = {
         "reconstructed",       "E_{e^{+}} > 0.2 GeV",     ele_trk_clu_cut.str(),        pos_trk_clu_cut.str(),
         ele_pos_trk_cut.str(), "e^{-} #chi^{2}/ndf < 20", "e^{+} #chi^{2}/ndf < 20",    "p_{e^{-}} < 2.9 GeV",
-        "p_{e^{-}} > 0.4 GeV", "p_{e^{+}} > 0.4 GeV",     "N_{2D hits, e^{-}} #geq 10", "N_{2D hits, e^{+}} #geq 10",
+        "p_{e^{-}} > 0.4 GeV", "p_{e^{+}} > 0.4 GeV",
+        "N_{2D hits, e^{-}} #geq " + std::to_string(minHits_), "N_{2D hits, e^{+}} #geq " + std::to_string(minHits_),
         "#chi^{2}_{vtx} < 20", "p_{vtx} < 4.0 GeV"};
     vertex_cf_.set_label_names(labels_vertex_cf);
 
@@ -206,8 +252,11 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
     bus_.board_output<double>(output_tree_.get(), "psum");
     bus_.board_output<double>(output_tree_.get(), "psum_scalar");
     bus_.board_output<double>(output_tree_.get(), "epem_opening_angle");
+    bus_.board_output<double>(output_tree_.get(), "recoil_theta");
     bus_.board_output<double>(output_tree_.get(), "ele_p_smear_ratio");
     bus_.board_output<double>(output_tree_.get(), "pos_p_smear_ratio");
+    bus_.board_output<double>(output_tree_.get(), "pos_cl_min_dr");
+    bus_.board_output<double>(output_tree_.get(), "pos_cl_min_dr_t");
     bus_.board_output<bool>(output_tree_.get(), "ele_has_truth_link");
     bus_.board_output<bool>(output_tree_.get(), "pos_has_truth_link");
     bus_.board_output<TVector3>(output_tree_.get(), "ele_track_p");
@@ -247,30 +296,34 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
 
     // vertex projection to target
     if (not v0proj_fits_.empty()) {
-        for (const auto& name : {"vtx_proj_sig", "vtx_proj_x", "vtx_proj_x_sig", "vtx_proj_y", "vtx_proj_y_sig"}) {
+        for (const auto& name : {"vtx_proj_sig", "vtx_proj_x", "vtx_proj_x_sig", "vtx_proj_y", "vtx_proj_y_sig",
+                                  "vtx_proj_x_centered", "vtx_proj_y_centered",
+                                  "vtx_proj_sig_lcio", "vtx_proj_x_lcio", "vtx_proj_x_sig_lcio",
+                                  "vtx_proj_y_lcio", "vtx_proj_y_sig_lcio",
+                                  "vtx_proj_x_err_lcio", "vtx_proj_y_err_lcio",
+                                  "vtx_proj_x_centered_lcio", "vtx_proj_y_centered_lcio"}) {
             bus_.board_output<double>(output_tree_.get(), name);
         }
     }
 
     // isolation cut
-    for (const auto& name : {"ele_L1_iso", "pos_L1_iso", "ele_L1_iso_significance", "pos_L1_iso_significance"}) {
+    for (const auto& name : {"ele_L1_iso", "pos_L1_iso", "ele_L1_iso_significance", "pos_L1_iso_significance",
+                              "ele_L1_iso_significance_raw", "pos_L1_iso_significance_raw"}) {
         bus_.board_output<double>(output_tree_.get(), name);
     }
 
     // vertical impact parameter
-    for (const auto& name : {"min_y0", "max_y0err", "min_y0_vtx", "min_y0_vtx_proj", "vtx_y_at_zero", "delta_y0_vtx_proj"}) {
+    for (const auto& name : {"min_y0", "max_y0err", "min_y0err", "ele_y0err", "pos_y0err", "min_y0_vtx", "min_y0_vtx_proj", "vtx_y_at_zero", "delta_y0_vtx_proj"}) {
         bus_.board_output<double>(output_tree_.get(), name);
     }
 
     if (bus_.has(mcColl_)) {
         if (isSimpSignal_) {
             bus_.board_output<MCParticle>(output_tree_.get(), "true_vd");
+            bus_.board_output<double>(output_tree_.get(), "true_vd_betagamma");
         }
         if (isApSignal_) {
             bus_.board_output<MCParticle>(output_tree_.get(), "true_ap");
-        }
-
-        if (isApSignal_) {
             bus_.board_output<double>(output_tree_.get(), "true_decay_len");
             bus_.board_output<double>(output_tree_.get(), "true_ap_betagamma");
         }
@@ -301,6 +354,8 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         return true;
     }
 
+    const auto& allClusters{bus_.get<std::vector<CalCluster*>>("RecoEcalClusters")};
+
     const auto& vtxs{bus_.get<std::vector<Vertex*>>(vtxColl_)};
     /**
      * pre-selection on vertices defining "quality" vertices
@@ -315,7 +370,7 @@ bool PreselectAndCategorize2021::process(IEvent*) {
      * to apply corrections and do not modify the collections referenced
      * elsewhere in memory.
      */
-    std::vector<std::tuple<Vertex, Particle, Particle>> preselected_vtx;
+    std::vector<std::tuple<Vertex, Particle, Particle, double, double>> preselected_vtx;
     int ivtx = 0;
 
     for (Vertex* vtx : vtxs) {
@@ -349,6 +404,10 @@ bool PreselectAndCategorize2021::process(IEvent*) {
 
         Track ele_trk = ele.getTrack();
         Track pos_trk = pos.getTrack();
+
+        // cache z0 before any corrections (used to recompute isolation significance)
+        double ele_z0_raw = ele_trk.getZ0();
+        double pos_z0_raw = pos_trk.getZ0();
 
         // snapshot pre-vertex-fit track momenta before they are overwritten
         TVector3 ele_p_prefit(ele_trk.getMomentum()[0], ele_trk.getMomentum()[1], ele_trk.getMomentum()[2]);
@@ -412,27 +471,47 @@ bool PreselectAndCategorize2021::process(IEvent*) {
             pos_has_truth_link = utils::hasTruthMatch(pos_trk, mcParticles, debug_);
         }
 
-        // Apply smearing if tool is configured
+        // Apply smearing/corrections if tool is configured.
+        // doSmearing_ gates Gaussian smearing (MC only). On data, scale corrections
+        // always apply when the tool is loaded — the tool never adds Gaussian noise in data mode.
         if (smearingTool_) {
             // Set MC particles for smearing tool (needed for requireTruthMatch option)
             if (mcParticles) {
                 smearingTool_->setMCParticles(mcParticles);
             }
-            // Apply z0 smearing first (if z0 corrections are enabled)
-            if (doZ0Corrections_) {
-                smearingTool_->updateWithSmearZ0(ele_trk);
-                smearingTool_->updateWithSmearZ0(pos_trk);
-            }
+            if (doSmearing_ || isData_) {
+                double ele_p_before = ele_trk.getP();
+                double pos_p_before = pos_trk.getP();
+                double psum_before  = ele_p_before + pos_p_before;
 
-            // Apply momentum smearing (omega or p)
-            if (smearOmega_) {
-                ele_p_smear_ratio = smearingTool_->updateWithSmearOmega(ele_trk);
-                pos_p_smear_ratio = smearingTool_->updateWithSmearOmega(pos_trk);
-            } else {
-                ele_p_smear_ratio = smearingTool_->updateWithSmearP(ele_trk);
-                pos_p_smear_ratio = smearingTool_->updateWithSmearP(pos_trk);
+                // Apply z0 smearing first (if z0 corrections are enabled)
+                if (doZ0Corrections_) {
+                    smearingTool_->updateWithSmearZ0(ele_trk);
+                    smearingTool_->updateWithSmearZ0(pos_trk);
+                }
+
+                // Apply momentum smearing (omega or p)
+                if (smearOmega_) {
+                    ele_p_smear_ratio = smearingTool_->updateWithSmearOmega(ele_trk);
+                    pos_p_smear_ratio = smearingTool_->updateWithSmearOmega(pos_trk);
+                } else {
+                    ele_p_smear_ratio = smearingTool_->updateWithSmearP(ele_trk);
+                    pos_p_smear_ratio = smearingTool_->updateWithSmearP(pos_trk);
+                }
+                smearingTool_->updateVertexWithSmearP(vtx, ele_p_smear_ratio, pos_p_smear_ratio);
+
+                if (debug_) {
+                    double ele_p_after = ele_trk.getP();
+                    double pos_p_after = pos_trk.getP();
+                    double psum_after  = ele_p_after + pos_p_after;
+                    std::cout << "[ScaleCorr] ele |p|: " << ele_p_before << " -> " << ele_p_after
+                              << "  ratio=" << ele_p_smear_ratio << std::endl;
+                    std::cout << "[ScaleCorr] pos |p|: " << pos_p_before << " -> " << pos_p_after
+                              << "  ratio=" << pos_p_smear_ratio << std::endl;
+                    std::cout << "[ScaleCorr] psum:    " << psum_before << " -> " << psum_after
+                              << "  delta=" << (psum_after - psum_before) << std::endl;
+                }
             }
-            smearingTool_->updateVertexWithSmearP(vtx, ele_p_smear_ratio, pos_p_smear_ratio);
         }
         bus_.set("ele_track_p", TVector3(ele_trk.getMomentum()[0], ele_trk.getMomentum()[1], ele_trk.getMomentum()[2]));
         bus_.set("pos_track_p", TVector3(pos_trk.getMomentum()[0], pos_trk.getMomentum()[1], pos_trk.getMomentum()[2]));
@@ -470,20 +549,46 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         TVector3 psum = ele_mom + pos_mom;
 
         vertex_cf_.begin_event();
-        vertex_cf_.apply("positron_clusterE_above_0pt2GeV", pos.getCluster().getEnergy() >= 0.2);
+        {
+            const auto& posCl = pos.getCluster();
+            double posClE = posCl.getEnergy();
+            bool posClCut = posClE >= 0.2;
+
+            double pos_cl_min_dr = -9999.0;
+            double pos_cl_min_dr_t = -9999.0;
+            if (posClE < -9000.0) {
+                auto posAtEcal = pos_trk.getPositionAtEcal();
+                double min_dr = 9999.0;
+                for (const auto* cl : allClusters) {
+                    auto clPos = cl->getPosition();
+                    double dx = clPos[0] - posAtEcal[0];
+                    double dy = clPos[1] - posAtEcal[1];
+                    double dr = std::sqrt(dx*dx + dy*dy);
+                    if (dr < min_dr) {
+                        min_dr = dr;
+                        pos_cl_min_dr_t = cl->getTime() - calTimeOffset_;
+                    }
+                }
+                pos_cl_min_dr = min_dr;
+            }
+            bus_.set("pos_cl_min_dr", pos_cl_min_dr);
+            bus_.set("pos_cl_min_dr_t", pos_cl_min_dr_t);
+
+            vertex_cf_.apply("positron_clusterE_above_0pt2GeV", posClCut);
+        }
         vertex_cf_.apply("ele_track_cluster",
-                         fabs(ele.getTrack().getTrackTime() - pos.getCluster().getTime()) <= time_cuts_[0]);
+                         disableTimingCuts_ || fabs(ele.getTrack().getTrackTime() - pos.getCluster().getTime()) <= time_cuts_[0]);
         vertex_cf_.apply("pos_track_cluster",
-                         fabs(pos.getTrack().getTrackTime() - pos.getCluster().getTime()) <= time_cuts_[1]);
+                         disableTimingCuts_ || fabs(pos.getTrack().getTrackTime() - pos.getCluster().getTime()) <= time_cuts_[1]);
         vertex_cf_.apply("ele_pos_track",
-                         fabs(ele.getTrack().getTrackTime() - pos.getTrack().getTrackTime()) <= time_cuts_[2]);
+                         disableTimingCuts_ || fabs(ele.getTrack().getTrackTime() - pos.getTrack().getTrackTime()) <= time_cuts_[2]);
         vertex_cf_.apply("ele_track_chi2ndf", ele.getTrack().getChi2Ndf() <= 20.0);
         vertex_cf_.apply("pos_track_chi2ndf", pos.getTrack().getChi2Ndf() <= 20.0);
         vertex_cf_.apply("electron_below_2pt9GeV", ele.getTrack().getP() <= 2.9);
         vertex_cf_.apply("electron_above_0pt4GeV", ele.getTrack().getP() >= 0.4);
         vertex_cf_.apply("positron_above_0pt4GeV", pos.getTrack().getP() >= 0.4);
-        vertex_cf_.apply("ele_min_10_hits", ele_nhits >= 10);
-        vertex_cf_.apply("pos_min_10_hits", pos_nhits >= 10);
+        vertex_cf_.apply("ele_min_hits", ele_nhits >= minHits_);
+        vertex_cf_.apply("pos_min_hits", pos_nhits >= minHits_);
         vertex_cf_.apply("vertex_chi2", vtx->getChi2() <= 20.0);
         double vtxmaxp = ele_mom.Mag() + pos_mom.Mag();
         vertex_cf_.apply("vtx_max_p_4pt0GeV", psum.Mag() <= 4.0);
@@ -497,13 +602,13 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         vertex_cf_.fill_nm1("electron_below_2pt9GeV", ele.getTrack().getP());
         vertex_cf_.fill_nm1("electron_above_0pt4GeV", ele.getTrack().getP());
         vertex_cf_.fill_nm1("positron_above_0pt4GeV", pos.getTrack().getP());
-        vertex_cf_.fill_nm1("ele_min_10_hits", ele_nhits);
-        vertex_cf_.fill_nm1("pos_min_10_hits", pos_nhits);
+        vertex_cf_.fill_nm1("ele_min_hits", ele_nhits);
+        vertex_cf_.fill_nm1("pos_min_hits", pos_nhits);
         vertex_cf_.fill_nm1("vertex_chi2", vtx->getChi2());
         vertex_cf_.fill_nm1("vtx_max_p_4pt0GeV", vtxmaxp);
 
         if (disablePreselection_ || vertex_cf_.keep()) {
-            preselected_vtx.emplace_back(*vtx, ele, pos);
+            preselected_vtx.emplace_back(*vtx, ele, pos, ele_z0_raw, pos_z0_raw);
         }
         ivtx++;
     }
@@ -528,7 +633,7 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     // unpack the vector of vertices into the single elements
     // Guard against empty collection (can occur when disablePreselection=true bypasses at_least_one_vertex)
     if (preselected_vtx.empty()) return true;
-    auto [vtx, ele, pos] = preselected_vtx.at(0);
+    auto [vtx, ele, pos, ele_z0_raw, pos_z0_raw] = preselected_vtx.at(0);
 
     // earliest layer hit categories
     bool eleL1{false}, eleL2{false}, eleL3{false}, eleL4{false};
@@ -603,19 +708,87 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     // isolation significance
     double ele_L1_iso_significance{9999.0}, pos_L1_iso_significance{9999.0};
 
+    if (debug_) {
+        std::cout << "[iso_sig debug] eleL1=" << eleL1 << " eleL2=" << eleL2
+                  << " posL1=" << posL1 << " posL2=" << posL2 << std::endl;
+        std::cout << "[iso_sig debug] ele_L1_iso=" << ele_L1_iso
+                  << " pos_L1_iso=" << pos_L1_iso << std::endl;
+    }
+
     if (eleL1 && eleL2 && posL1 && posL2) {
         if (ele_L1_iso < 9999.0) {
-            ele_L1_iso_significance =
-                (2 * ele_L1_iso + TMath::Sign(1, ele_trk.getMomentum()[1]) * ele_trk.getZ0()) / ele_trk.getZ0Err();
+            double ele_py_sign = TMath::Sign(1, ele_trk.getMomentum()[1]);
+            double ele_z0 = ele_trk.getZ0();
+            double ele_z0err = ele_trk.getZ0Err();
+            ele_L1_iso_significance = (2 * ele_L1_iso + ele_py_sign * ele_z0) / ele_z0err;
+            if (debug_) {
+                std::cout << "[iso_sig debug] ele: iso=" << ele_L1_iso
+                          << " py_sign=" << ele_py_sign
+                          << " z0=" << ele_z0
+                          << " z0err=" << ele_z0err
+                          << " numerator=(2*iso + sign*z0)=" << (2 * ele_L1_iso + ele_py_sign * ele_z0)
+                          << " significance=" << ele_L1_iso_significance << std::endl;
+            }
+        } else if (debug_) {
+            std::cout << "[iso_sig debug] ele: iso=9999 (no L1 hit), significance not calculated" << std::endl;
         }
 
         if (pos_L1_iso < 9999.0) {
-            pos_L1_iso_significance =
-                (2 * pos_L1_iso + TMath::Sign(1, pos_trk.getMomentum()[1]) * pos_trk.getZ0()) / pos_trk.getZ0Err();
+            double pos_py_sign = TMath::Sign(1, pos_trk.getMomentum()[1]);
+            double pos_z0 = pos_trk.getZ0();
+            double pos_z0err = pos_trk.getZ0Err();
+            pos_L1_iso_significance = (2 * pos_L1_iso + pos_py_sign * pos_z0) / pos_z0err;
+            if (debug_) {
+                std::cout << "[iso_sig debug] pos: iso=" << pos_L1_iso
+                          << " py_sign=" << pos_py_sign
+                          << " z0=" << pos_z0
+                          << " z0err=" << pos_z0err
+                          << " numerator=(2*iso + sign*z0)=" << (2 * pos_L1_iso + pos_py_sign * pos_z0)
+                          << " significance=" << pos_L1_iso_significance << std::endl;
+            }
+        } else if (debug_) {
+            std::cout << "[iso_sig debug] pos: iso=9999 (no L1 hit), significance not calculated" << std::endl;
         }
+    } else if (debug_) {
+        std::cout << "[iso_sig debug] L1L2 hit requirement not met, significance left at 9999" << std::endl;
     }
     bus_.set("ele_L1_iso_significance", ele_L1_iso_significance);
     bus_.set("pos_L1_iso_significance", pos_L1_iso_significance);
+
+    // Recompute isolation significance using raw (pre-correction) z0
+    double ele_L1_iso_significance_raw{9999.0}, pos_L1_iso_significance_raw{9999.0};
+    if (debug_) {
+        std::cout << "[iso_sig debug] raw z0: ele_z0_raw=" << ele_z0_raw
+                  << " pos_z0_raw=" << pos_z0_raw << std::endl;
+    }
+    if (eleL1 && eleL2 && posL1 && posL2) {
+        if (ele_L1_iso < 9999.0) {
+            double ele_py_sign = TMath::Sign(1, ele_trk.getMomentum()[1]);
+            ele_L1_iso_significance_raw = (2 * ele_L1_iso + ele_py_sign * ele_z0_raw) / ele_trk.getZ0Err();
+            if (debug_) {
+                std::cout << "[iso_sig debug] ele raw: iso=" << ele_L1_iso
+                          << " py_sign=" << ele_py_sign
+                          << " z0_raw=" << ele_z0_raw
+                          << " z0err=" << ele_trk.getZ0Err()
+                          << " numerator=" << (2 * ele_L1_iso + ele_py_sign * ele_z0_raw)
+                          << " significance_raw=" << ele_L1_iso_significance_raw << std::endl;
+            }
+        }
+        if (pos_L1_iso < 9999.0) {
+            double pos_py_sign = TMath::Sign(1, pos_trk.getMomentum()[1]);
+            pos_L1_iso_significance_raw = (2 * pos_L1_iso + pos_py_sign * pos_z0_raw) / pos_trk.getZ0Err();
+            if (debug_) {
+                std::cout << "[iso_sig debug] pos raw: iso=" << pos_L1_iso
+                          << " py_sign=" << pos_py_sign
+                          << " z0_raw=" << pos_z0_raw
+                          << " z0err=" << pos_trk.getZ0Err()
+                          << " numerator=" << (2 * pos_L1_iso + pos_py_sign * pos_z0_raw)
+                          << " significance_raw=" << pos_L1_iso_significance_raw << std::endl;
+            }
+        }
+    }
+    bus_.set("ele_L1_iso_significance_raw", ele_L1_iso_significance_raw);
+    bus_.set("pos_L1_iso_significance_raw", pos_L1_iso_significance_raw);
 
     TVector3 ele_mom(ele_trk.getMomentum()[0], ele_trk.getMomentum()[1], ele_trk.getMomentum()[2]);
     TVector3 pos_mom(pos_trk.getMomentum()[0], pos_trk.getMomentum()[1], pos_trk.getMomentum()[2]);
@@ -634,25 +807,57 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     bus_.set("psum", psum.Mag());
     bus_.set("psum_scalar", ele_mom.Mag() + pos_mom.Mag());
     bus_.set("epem_opening_angle", ele_mom.Angle(pos_mom));
+    bus_.set("recoil_theta", calculate_theta_R(ele_mom, pos_mom));
 
     // calculate target projection and its significance
     if (not v0proj_fits_.empty()) {
         double vtx_proj_x{-1.0}, vtx_proj_y{-1.0};
         double vtx_proj_x_sig{-1.0}, vtx_proj_y_sig{-1.0};
+        double vtx_proj_x_centered{-999.0}, vtx_proj_y_centered{-999.0};
         double vtx_proj_sig{-1.0};
 
+        TVector3 vtx_p = vtx.getP();
         vtx_proj_sig = utils::v0_projection_to_target_significance(v0proj_fits_, eh.getRunNumber(), vtx_proj_x,
-                                                                   vtx_proj_y, vtx_proj_x_sig, vtx_proj_y_sig, &vtx);
+                                                                   vtx_proj_y, vtx_proj_x_sig, vtx_proj_y_sig,
+                                                                   vtx_proj_x_centered, vtx_proj_y_centered,
+                                                                   vtx.getX(), vtx.getY(), vtx.getZ(),
+                                                                   vtx_p.X(), vtx_p.Y(), vtx_p.Z(),
+                                                                   debug_);
+
+        //utils::debug_target_projection(-1.1, &vtx);
 
         bus_.set("vtx_proj_sig", vtx_proj_sig);
         bus_.set("vtx_proj_x", vtx_proj_x);
         bus_.set("vtx_proj_x_sig", vtx_proj_x_sig);
         bus_.set("vtx_proj_y", vtx_proj_y);
         bus_.set("vtx_proj_y_sig", vtx_proj_y_sig);
+        bus_.set("vtx_proj_x_centered", vtx_proj_x_centered);
+        bus_.set("vtx_proj_y_centered", vtx_proj_y_centered);
+
+        double vtx_proj_x_lcio{-1.0}, vtx_proj_y_lcio{-1.0};
+        double vtx_proj_x_sig_lcio{-1.0}, vtx_proj_y_sig_lcio{-1.0};
+        double vtx_proj_x_err_lcio{-1.0}, vtx_proj_y_err_lcio{-1.0};
+        double vtx_proj_x_centered_lcio{-999.0}, vtx_proj_y_centered_lcio{-999.0};
+        double vtx_proj_sig_lcio = utils::v0_projection_to_target_significance(
+                v0proj_fits_, eh.getRunNumber(),
+                vtx_proj_x_lcio, vtx_proj_y_lcio,
+                vtx_proj_x_sig_lcio, vtx_proj_y_sig_lcio,
+                &vtx, vtx_proj_x_err_lcio, vtx_proj_y_err_lcio,
+                vtx_proj_x_centered_lcio, vtx_proj_y_centered_lcio, debug_);
+
+        bus_.set("vtx_proj_sig_lcio", vtx_proj_sig_lcio);
+        bus_.set("vtx_proj_x_lcio", vtx_proj_x_lcio);
+        bus_.set("vtx_proj_x_sig_lcio", vtx_proj_x_sig_lcio);
+        bus_.set("vtx_proj_y_lcio", vtx_proj_y_lcio);
+        bus_.set("vtx_proj_y_sig_lcio", vtx_proj_y_sig_lcio);
+        bus_.set("vtx_proj_x_err_lcio", vtx_proj_x_err_lcio);
+        bus_.set("vtx_proj_y_err_lcio", vtx_proj_y_err_lcio);
+        bus_.set("vtx_proj_x_centered_lcio", vtx_proj_x_centered_lcio);
+        bus_.set("vtx_proj_y_centered_lcio", vtx_proj_y_centered_lcio);
     }
 
     // vertical impact parameters
-    double min_y0{9999.0}, max_y0err{-1.0};
+    double min_y0{9999.0}, max_y0err{-1.0}, min_y0err{-1.0};
 
     if (fabs(ele_trk.getZ0()) < fabs(pos_trk.getZ0())) {
         min_y0 = ele_trk.getZ0();
@@ -661,11 +866,8 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     }
     min_y0 = fabs(min_y0);
 
-    if (ele_trk.getZ0Err() > pos_trk.getZ0Err()) {
-        max_y0err = ele_trk.getZ0Err();
-    } else {
-        max_y0err = pos_trk.getZ0Err();
-    }
+    max_y0err = std::max(ele_trk.getZ0Err(), pos_trk.getZ0Err());
+    min_y0err = std::min(ele_trk.getZ0Err(), pos_trk.getZ0Err());
 
     // min z0 distance to vertex y directly
     double vtx_y = vtx.getY();
@@ -684,6 +886,9 @@ bool PreselectAndCategorize2021::process(IEvent*) {
 
     bus_.set("min_y0", min_y0);
     bus_.set("max_y0err", max_y0err);
+    bus_.set("min_y0err", min_y0err);
+    bus_.set("ele_y0err", ele_trk.getZ0Err());
+    bus_.set("pos_y0err", pos_trk.getZ0Err());
     bus_.set("min_y0_vtx", min_y0_vtx);
     bus_.set("min_y0_vtx_proj", min_y0_vtx_proj);
     bus_.set("vtx_y_at_zero", vtx_y_at_zero);
@@ -758,13 +963,13 @@ bool PreselectAndCategorize2021::process(IEvent*) {
                     truePosP = ROOT::Math::PxPyPzEVector(lP.at(0), lP.at(1), lP.at(2), ptr->getEnergy());
                 }
             } else if (isApSignal_) {
-                if (ptr->getPDG() == 622) {
+                if (ptr->getPDG() == apPDG_) {
                     n_ap++;
                     ap = ptr;
                 } else if (ptr->getID() == truth_ele_id) {
-                    ele_is_rad_ele = (ptr->getMomPDG() == 622);
+                    ele_is_rad_ele = (ptr->getMomPDG() == apPDG_);
                     trueEleP = ROOT::Math::PxPyPzEVector(lP.at(0), lP.at(1), lP.at(2), ptr->getEnergy());
-                } else if (ptr->getPDG() == -11 && ptr->getMomPDG() == 622) {
+                } else if (ptr->getPDG() == -11 && ptr->getMomPDG() == apPDG_) {
                     truePosP = ROOT::Math::PxPyPzEVector(lP.at(0), lP.at(1), lP.at(2), ptr->getEnergy());
                 }
             } else {
@@ -777,6 +982,17 @@ bool PreselectAndCategorize2021::process(IEvent*) {
                     truePosP = ROOT::Math::PxPyPzEVector(lP.at(0), lP.at(1), lP.at(2), ptr->getEnergy());
                 }
             }
+        }
+
+        if (debug_) {
+            std::cout << "[AP debug] MCParticle PDGs in event (run=" << run_number << "):" << std::endl;
+            for (MCParticle* ptr : mc_ptr) {
+                std::cout << "  PDG=" << ptr->getPDG()
+                          << "  momPDG=" << ptr->getMomPDG()
+                          << "  id=" << ptr->getID()
+                          << "  p=" << ptr->getMomentum()[2] << std::endl;
+            }
+            std::cout << "[AP debug] searching for apPDG=" << apPDG_ << "  n_ap=" << n_ap << "  ap=" << (ap ? "found" : "null") << std::endl;
         }
 
         bus_.set("ele_truth_p", TVector3(trueEleP.Px(), trueEleP.Py(), trueEleP.Pz()));
@@ -792,6 +1008,11 @@ bool PreselectAndCategorize2021::process(IEvent*) {
                 throw std::runtime_error("ERROR: Logic error: checked for VD earlier but there isn't one.");
             }
             bus_.set("true_vd", *vd);
+
+            std::vector<double> vdMom = vd->getMomentum();
+            double vd_p = std::sqrt(vdMom[0]*vdMom[0] + vdMom[1]*vdMom[1] + vdMom[2]*vdMom[2]);
+            bus_.set("true_vd_betagamma", vd_p / vd->getMass());
+
         } else if (isApSignal_) {
             event_cf_.apply("at_least_one_true_ap", n_ap > 0);
             event_cf_.apply("no_extra_true_ap", n_ap < 2);
