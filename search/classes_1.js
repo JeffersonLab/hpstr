@@ -4,8 +4,9 @@ var searchData=
   ['bheader_1',['bHeader',['../structVTPData_1_1bHeader.html',1,'VTPData']]],
   ['bhmassressystematicsprocessor_2',['BhMassResSystematicsProcessor',['../classBhMassResSystematicsProcessor.html',1,'']]],
   ['bhtoyshistoprocessor_3',['BhToysHistoProcessor',['../classBhToysHistoProcessor.html',1,'']]],
-  ['blfithistos_4',['BlFitHistos',['../classBlFitHistos.html',1,'']]],
-  ['btail_5',['bTail',['../structVTPData_1_1bTail.html',1,'VTPData']]],
-  ['bumphunter_6',['BumpHunter',['../classBumpHunter.html',1,'']]],
-  ['bus_7',['Bus',['../classframework_1_1Bus.html',1,'framework']]]
+  ['binnedparam_4',['BinnedParam',['../structTrackSmearingTool_1_1BinnedParam.html',1,'TrackSmearingTool']]],
+  ['blfithistos_5',['BlFitHistos',['../classBlFitHistos.html',1,'']]],
+  ['btail_6',['bTail',['../structVTPData_1_1bTail.html',1,'VTPData']]],
+  ['bumphunter_7',['BumpHunter',['../classBumpHunter.html',1,'']]],
+  ['bus_8',['Bus',['../classframework_1_1Bus.html',1,'framework']]]
 ];
