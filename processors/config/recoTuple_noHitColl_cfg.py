@@ -10,6 +10,10 @@ base.parser.add_argument("-sh", "--truthHits", type=int, dest="truthHits",
                          help="Get svt truth hits: 1=yes", metavar="truthHits", default=0)
 base.parser.add_argument("-r", "--rawHits", type=int, dest="rawHits",
                          help="Keep raw svt hits: 1=yes", metavar="rawHits", default=0)
+base.parser.add_argument("-b", "--useBField", type=int, dest="useBField",
+                         help='Use the bField at center of SVT for momentum calculation? 1=yes',
+                         metavar="useBField", default=0)
+
 
 options = base.parser.parse_args()
 
@@ -82,7 +86,14 @@ track.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 track.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 track.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack_KF'
-track.parameters["bfield"] = bfield[str(options.year)]
+track.parameters["trackStateLocation"]='AtTarget'
+
+if (not options.isData):
+    track.parameters["truthTrackCollLcio"] = 'KalmanFullTracksToMCParticleRelations'
+    track.parameters["truthTrackCollRoot"] = 'KalmanFullTracksTruth'
+
+if(options.useBField):
+    track.parameters["bfield"] = bfield[str(options.year)]
 
 trackgbl.parameters["debug"] = 0
 trackgbl.parameters["useTrackerHits"] = 0
@@ -93,7 +104,8 @@ trackgbl.parameters["trkRelCollLcio"] = 'TrackDataRelations'
 trackgbl.parameters["trkhitCollRoot"] = 'RotatedHelicalOnTrackHits'
 trackgbl.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 trackgbl.parameters["rawhitCollRoot"] = ''#'SVTRawHitsOnTrack'
-trackgbl.parameters["bfield"] = bfield[str(options.year)]
+if(options.useBField):
+    trackgbl.parameters["bfield"] = bfield[str(options.year)]
 
 # if (not options.isData):
 #    trackgbl.parameters["truthTrackCollLcio"] = 'GBLTracksToTruthTrackRelations'
@@ -114,6 +126,8 @@ vtx.parameters["vtxCollRoot"] = 'UnconstrainedV0Vertices_KF'
 vtx.parameters["partCollRoot"] = 'ParticlesOnUVertices_KF'
 vtx.parameters["kinkRelCollLcio"] = ''
 vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
+vtx.parameters["mcPartRelLcio"] = 'SVTTrueHitRelations'
+vtx.parameters["trackStateLocation"] = 'AtTarget'
 
 cvtx.parameters["debug"] = 0
 cvtx.parameters["useTrackerHits"] = 0
@@ -146,8 +160,8 @@ mcpart.parameters["mcPartCollLcio"] = 'MCParticle'
 mcpart.parameters["mcPartCollRoot"] = 'MCParticle'
 
 #FinalStateParticleProcessor
-fsp.parameters["debug"] = 0 
-fsp.parameters["fspCollLcio"] = "FinalStateParticles_KF" 
+fsp.parameters["debug"] = 0
+fsp.parameters["fspCollLcio"] = "FinalStateParticles_KF"
 fsp.parameters["fspCollRoot"] = "FinalStateParticles_KF"
 fsp.parameters["kinkRelCollLcio"] = ""
 fsp.parameters["trkRelCollLcio"] = "KFTrackDataRelations"

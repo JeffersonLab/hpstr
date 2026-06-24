@@ -1,0 +1,9 @@
+/sdf/data/hps/physics2021/data/recon/pass5_v9/merged/merge-batch-1//hps_014231/merged_hps_014231_job31.root
+/sdf/data/hps/physics2021/data/recon/pass5_v9/merged/merge-batch-1//hps_014231/merged_hps_014231_job30.root
+/sdf/data/hps/physics2021/data/recon/pass5_v9/merged/merge-batch-1//hps_014231/merged_hps_014231_job29.root
+/sdf/data/hps/physics2021/data/recon/pass5_v9/merged/merge-batch-1//hps_014567/merged_hps_014567_job352.root
+/sdf/data/hps/physics2021/data/recon/pass5_v9/merged/merge-batch-1//hps_014567/merged_hps_014567_job350.root
+/sdf/data/hps/physics2021/data/recon/pass5_v9/merged/merge-batch-1//hps_014567/merged_hps_014567_job351.root
+/sdf/data/hps/physics2021/data/recon/pass5_v9/merged/merge-batch-1//hps_014707/merged_hps_014707_job449.root
+/sdf/data/hps/physics2021/data/recon/pass5_v9/merged/merge-batch-1//hps_014707/merged_hps_014707_job447.root
+/sdf/data/hps/physics2021/data/recon/pass5_v9/merged/merge-batch-1//hps_014707/merged_hps_014707_job448.root

@@ -1,5 +1,5 @@
-#ifndef __TRACKING_ANAPROCESSOR_H__
-#define __TRACKING_ANAPROCESSOR_H__
+#ifndef __FEE_ANAPROCESSOR_H__
+#define __FEE_ANAPROCESSOR_H__
 
 //-----------------//
 //   C++  StdLib   //
@@ -22,6 +22,7 @@
 #include "Processor.h"
 #include "BaseSelector.h"
 #include "Track.h"
+#include "Particle.h"
 #include "Event.h"
 #include "CalCluster.h"
 #include "EventHeader.h"
@@ -30,10 +31,15 @@
 #include "AnaHelpers.h"
 
 /**
- * @brief Insert description here.
- * more details
+ * @brief Select Full Energy Electron (FEE) events for the momentum-smearing calibration.
+ *
+ * Unlike TrackingAnaProcessor (which loops over a bare Track collection), this processor
+ * loops over the FinalStateParticles, where each Track is already associated to its ECal
+ * cluster at the LCIO stage. An FEE candidate is an electron (charge < 0) whose associated
+ * cluster looks like a full-energy electron (energy / time / E-over-p), passing the usual
+ * track-quality cuts.
  */
-class TrackingAnaProcessor : public Processor {
+class FeeAnaProcessor : public Processor {
 
     public:
         /**
@@ -43,10 +49,10 @@ class TrackingAnaProcessor : public Processor {
          * @param process The Process class associated with Processor, provided
          *                by the processing framework.
          */
-        TrackingAnaProcessor(const std::string& name, Process& process);
+        FeeAnaProcessor(const std::string& name, Process& process);
 
         /** Destructor */
-        ~TrackingAnaProcessor();
+        ~FeeAnaProcessor();
 
         /**
          * @brief Configure the Ana Processor
@@ -83,22 +89,18 @@ class TrackingAnaProcessor : public Processor {
 
     private:
 
-        /** Container to hold all Track objects. */
-        std::vector<Track*>* tracks_{};
-        TBranch* btracks_{nullptr}; //!< description
+        /** Container to hold all FinalStateParticle objects (track + associated cluster). */
+        std::vector<Particle*>* fsps_{};
+        TBranch* bfsps_{nullptr}; //!< description
 
         /** Event header branch. */
         TBranch* bevth_{nullptr}; //!
 
-        /** Clusters */
-        TBranch* becal_{nullptr}; //!
-
         // Event Header
         EventHeader* evth_{nullptr}; //!
-        std::vector<CalCluster*>* ecal_{}; //!<
 
-        std::string trkCollName_; //!< Track Collection name
-        std::string ecalCollName_{"RecoEcalClusters"}; //!< Cluster Collection name
+        std::string trkCollName_; //!< Track Collection name (histo/smearing naming)
+        std::string fspCollName_{"FinalStateParticles_KF"}; //!< FinalStateParticle collection name
 
         // Track Selector configuration
         std::string selectionCfg_;
@@ -121,12 +123,22 @@ class TrackingAnaProcessor : public Processor {
         int debug_{0}; //!< debug level
         int seed_{0};  //!< seed
         float time_offset_{0}; //! time offset
-        double feeClusterEnergyMin_{2.5};  //!< minimum cluster energy for FEE selection
-        double clusterTimeMin_{40.0};      //!< minimum cluster time (data)
-        double clusterTimeMax_{70.0};      //!< maximum cluster time (data)
-        double clusterTimeMinMC_{40.0};    //!< minimum cluster time (MC)
-        double clusterTimeMaxMC_{70.0};    //!< maximum cluster time (MC)
+
+        // FEE selection
+        double feeClusterEnergyMin_{2.5};  //!< minimum energy of the associated FEE cluster
+        // Cluster-time window is applied to the OFFSET-CORRECTED time
+        // (cluster.getTime() - calTimeOffset), which is centered near 0.
+        double clusterTimeMin_{-6.0};      //!< minimum corrected cluster time (data)
+        double clusterTimeMax_{ 6.0};      //!< maximum corrected cluster time (data)
+        double clusterTimeMinMC_{-6.0};    //!< minimum corrected cluster time (MC)
+        double clusterTimeMaxMC_{ 6.0};    //!< maximum corrected cluster time (MC)
+        double calTimeOffset_{0.0};        //!< cluster-time offset subtracted before the cut (data)
+        double calTimeOffsetMC_{0.0};      //!< cluster-time offset subtracted before the cut (MC)
         double mcTimeOffset_{5.0};         //!< time offset applied to MC tracks
+        bool   requireElectron_{true};     //!< require the FSP to be an electron (charge < 0)
+        bool   requireCluster_{true};      //!< require an associated FEE cluster passing E/time/(E/p)
+        double eopMin_{0.0};               //!< minimum cluster-energy / track-momentum (E/p)
+        double eopMax_{99.0};              //!< maximum cluster-energy / track-momentum (E/p)
 
         //Momentum smearing closure test
         std::shared_ptr<TrackSmearingTool> smearingTool_;
@@ -148,6 +160,10 @@ class TrackingAnaProcessor : public Processor {
         Track  track_out_;               //!< original (unsmeared) track
         Track  track_smeared_out_;       //!< smeared track (identical to track_out_ if no smearing)
         double p_smear_ratio_out_{1.0}; //!< smeared_p / original_p (1 if no smearing)
+        // associated FEE cluster (from the FinalStateParticle)
+        double clu_E_out_{-9999.0};      //!< associated cluster energy
+        double clu_time_out_{-9999.0};   //!< associated cluster time
+        double eop_out_{-1.0};           //!< associated cluster E / track p
         // per-layer axial/stereo hit flags (L1-L3)
         bool L1_axial_out_{false};
         bool L1_stereo_out_{false};
@@ -196,6 +212,6 @@ class TrackingAnaProcessor : public Processor {
         TH2D* omegasmear_vs_phi0_top_hh_;
         TH2D* omegasmear_vs_phi0_bot_hh_;
 
-}; // TrackingAnaProcessor
+}; // FeeAnaProcessor
 
-#endif // __TRACKING_ANAPROCESSOR_
+#endif // __FEE_ANAPROCESSOR_H__

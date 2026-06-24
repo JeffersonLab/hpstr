@@ -73,7 +73,7 @@ class ApOptimizationProcessor : public OptimizationProcessor {
     // nbkg_zbi_g,
     //                      TGraph* nsig_zbi_g, std::string cutname);
 
-    void determineSignalVertexEfficiencyXi(TTree* signal_subset_tree);
+    void determineSignalVertexEfficiencyXi();
     double computeTruthSignalShape(double z, double EAp);
     double computePromptYield();
     double computeDisplacedYield(TH1* h_chi_eff, double EAp);
@@ -104,7 +104,7 @@ class ApOptimizationProcessor : public OptimizationProcessor {
     double fixed_zcut_ = -1.0;                 //<! fixed zcut value in mm
 
     // Signal config
-    std::string signalVtxSubsetAnaFilename_{""};  //<! description
+    // std::string signalVtxSubsetAnaFilename_{""};  //<! description
     std::string signalVtxMCSelection_{""};        //<! description
     TTree* signal_tree_{nullptr};                 //<! description
     TTree* signal_pretrig_sim_tree_{nullptr};     //<! description
@@ -137,7 +137,7 @@ class ApOptimizationProcessor : public OptimizationProcessor {
         testZoffsetAlpha_;  //<! zoffset and alpha for z0 cut, key is cutname, sorted by quantile
 
     TH1D* h_pretrig_signal_vtxz_;
-    TH1D* h_signal_vtxz_rad_subset_;
+    // TH1D* h_signal_vtxz_rad_subset_;
     TH1D* h_signal_vtxz_rad_;
     TH1D* h_data_mass_rad_;
     // TH1D* h_signal_mass_;
@@ -148,11 +148,12 @@ class ApOptimizationProcessor : public OptimizationProcessor {
     std::string massWindow_{""};
     std::string initialCuts_{""};
 
-    double zbins_[3]{400., -50., 150.};
+    double zbins_[3]{400., -10., 140.};
     std::string zbin_str_ =
         "(" + std::to_string((int)zbins_[0]) + "," + std::to_string(zbins_[1]) + "," + std::to_string(zbins_[2]) + ")";
     double z_bin_width_ = (zbins_[2] - zbins_[1]) / zbins_[0];
-    double massbins_[3]{200., 0., 0.4};
+    int n_zbins_bundled_ = 10;
+    double massbins_[3]{400., 0., 0.4};
     double mass_bin_width_ = (massbins_[2] - massbins_[1]) / massbins_[0];
 };
 

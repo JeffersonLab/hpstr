@@ -32,16 +32,20 @@ anaTrks.parameters["trkCollName"] = 'KalmanFullTracks'
 # are already associated at the LCIO stage (no manual track-cluster matching).
 anaTrks.parameters["fspCollName"] = 'FinalStateParticles_KF'
 anaTrks.parameters["histCfg"] = os.environ['HPSTR_BASE']+'/analysis/plotconfigs/fee_smearing/feeSmearing_2021.json'
-anaTrks.parameters["selectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/trackHit/trackHitAna.json'
+anaTrks.parameters["selectionjson"] = os.environ['HPSTR_BASE']+'/analysis/selections/trackHit/trackHitAna_1p92.json'
 anaTrks.parameters["isData"] = options.isData
 
 # FEE (Full Energy Electron) selection
 anaTrks.parameters["requireElectron"] = 1     # track charge < 0
 anaTrks.parameters["requireCluster"]  = 1     # require an associated full-energy cluster
-anaTrks.parameters["feeClusterEnergyMin"] = 2.5  # ~0.68 * 3.7 GeV beam
-# E/p window (off by default: [0, 99]); tighten once the ECal energy scale is calibrated
-anaTrks.parameters["eopMin"] = 0.0
-anaTrks.parameters["eopMax"] = 99.0
+# 1.92 GeV beam energy cuts
+# FEE cluster energy: ~65% of beam energy (3.74 GeV used 2.5 GeV)
+anaTrks.parameters["feeClusterEnergyMin"] = 1.2
+# Cluster time window: same as 3.74 GeV
+anaTrks.parameters["clusterTimeMin"]   = -40.0
+anaTrks.parameters["clusterTimeMax"]   = 70.0
+anaTrks.parameters["clusterTimeMinMC"] = -40.0
+anaTrks.parameters["clusterTimeMaxMC"] = 70.0
 
 #SmearingClosureTest
 anaTrks.parameters["smearingCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/smearing/tool_smearing.json"
@@ -57,7 +61,7 @@ anaTrks.parameters["scaleCorrVariable"] = ""
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/feeSmearing/"
 anaTrks.parameters["regionDefinitions"] = []
 
-p.sequence = [anaTrks] 
+p.sequence = [anaTrks]
 
 p.input_files = inFilename
 p.output_files = [outFilename]

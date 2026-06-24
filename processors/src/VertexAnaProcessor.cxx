@@ -1223,10 +1223,14 @@ bool VertexAnaProcessor::process(IEvent* ievent) {
             double vtx_proj_x_sig = -999.9;
             double vtx_proj_y_sig = -999.9;
             double vtx_proj_sig = -999.9;
-            if(!v0ProjectionFitsCfg_.empty())
-                vtx_proj_sig = utils::v0_projection_to_target_significance(v0proj_fits_, evth_->getRunNumber(), 
-                        vtx_proj_x, vtx_proj_y, vtx_proj_x_sig, vtx_proj_y_sig, vtx->getX(), vtx->getY(),
+            if(!v0ProjectionFitsCfg_.empty()) {
+                double vtx_proj_x_centered_dummy, vtx_proj_y_centered_dummy;
+                vtx_proj_sig = utils::v0_projection_to_target_significance(v0proj_fits_, evth_->getRunNumber(),
+                        vtx_proj_x, vtx_proj_y, vtx_proj_x_sig, vtx_proj_y_sig,
+                        vtx_proj_x_centered_dummy, vtx_proj_y_centered_dummy,
+                        vtx->getX(), vtx->getY(),
                         reconz, vtx->getP().X(), vtx->getP().Y(), vtx->getP().Z());
+            }
 
             _reg_vtx_histos[region]->Fill2DHisto("unc_vtx_x_v_unc_vtx_y_hh", vtx->getX(), vtx->getY());
             _reg_vtx_histos[region]->Fill2DHisto("unc_vtx_proj_x_v_unc_vtx_proj_y_hh", vtx_proj_x, vtx_proj_y);

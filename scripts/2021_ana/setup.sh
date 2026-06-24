@@ -17,3 +17,4 @@ source /sdf/group/hps/sw2/root/bin/thisroot.sh
 source /sdf/data/hps/users/mgignac/software/dev/hps-mc/install/bin/hps-mc-env.sh
 source /sdf/data/hps/users/mgignac/software/2021-ana/hpstr/install/bin/hpstr-env.sh
 export LD_LIBRARY_PATH=/sdf/home/m/mgignac/.conda/envs/hps-2021/lib:$LD_LIBRARY_PATH
+export HPSMC_DIR=/sdf/data/hps/users/mgignac/software/dev/hps-mc/install

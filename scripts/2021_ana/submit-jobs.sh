@@ -167,7 +167,9 @@ submit_job_definition() {
   echo "hpstr config: ${HPSTR_CONFIG}"
   echo "File lists (${#expanded_lists[@]}): ${expanded_lists[*]}"
   echo "Total files: ${total_files}"
-  echo "Sample type: ${SAMPLE}"
+  if [[ -n "${SAMPLE}" ]]; then
+    echo "Sample type: ${SAMPLE}"
+  fi
   if [[ ${#job_extra_args[@]} -gt 0 ]]; then
     echo "Extra args: ${job_extra_args[*]}"
   fi
@@ -176,6 +178,12 @@ submit_job_definition() {
     echo "DRY RUN - would submit ${total_files} jobs"
     echo "${total_files}"
     return 0
+  fi
+
+  # Build sample args conditionally
+  local sample_args=()
+  if [[ -n "${SAMPLE}" ]]; then
+    sample_args=(--sample "${SAMPLE}")
   fi
 
   # Submit jobs
@@ -192,7 +200,7 @@ submit_job_definition() {
         "${SUBMIT_DIR}/batch-script.sh" \
         "${SUBMIT_DIR}" \
         "${input_file}" \
-        --sample "${SAMPLE}" \
+        "${sample_args[@]+"${sample_args[@]}"}" \
         "${job_extra_args[@]+"${job_extra_args[@]}"}"
 
       ((++job_count))
@@ -289,23 +297,32 @@ elif [[ -n "${sample}" ]]; then
     exit 1
   fi
 
+elif [[ ${#file_lists[@]} -gt 0 ]]; then
+  # File lists provided without --sample or --job - legacy mode without sample
+  if [[ -z "${OUTPUT_DIR:-}" ]]; then
+    echo "ERROR: OUTPUT_DIR not set. Use --job mode or set OUTPUT_DIR in config.sh"
+    exit 1
+  fi
+
 else
-  echo "ERROR: Either --job or --sample is required"
+  echo "ERROR: Either --job, --sample, or file lists are required"
   usage
 fi
 
-# Validate sample is one of the allowed values
-valid=false
-for s in "${VALID_SAMPLES[@]}"; do
-  if [[ "${sample}" == "${s}" ]]; then
-    valid=true
-    break
-  fi
-done
+# Validate sample is one of the allowed values (skip if empty)
+if [[ -n "${sample}" ]]; then
+  valid=false
+  for s in "${VALID_SAMPLES[@]}"; do
+    if [[ "${sample}" == "${s}" ]]; then
+      valid=true
+      break
+    fi
+  done
 
-if [[ "${valid}" == "false" ]]; then
-  echo "ERROR: Invalid sample '${sample}'. Must be one of: ${VALID_SAMPLES[*]}"
-  exit 1
+  if [[ "${valid}" == "false" ]]; then
+    echo "ERROR: Invalid sample '${sample}'. Must be one of: ${VALID_SAMPLES[*]}"
+    exit 1
+  fi
 fi
 
 # Verify all file lists exist before submitting any jobs
@@ -325,7 +342,9 @@ done
 
 echo "File lists (${#file_lists[@]}): ${file_lists[*]}"
 echo "Total files: ${total_files}"
-echo "Sample type: ${sample}"
+if [[ -n "${sample}" ]]; then
+  echo "Sample type: ${sample}"
+fi
 if [[ ${#extra_args[@]} -gt 0 ]]; then
   echo "Extra args: ${extra_args[*]}"
 fi
@@ -338,6 +357,12 @@ fi
 
 # Ensure log directory exists
 mkdir -p "${LOG_DIR}"
+
+# Build sample args conditionally
+sample_args=()
+if [[ -n "${sample}" ]]; then
+  sample_args=(--sample "${sample}")
+fi
 
 # Submit one job per file from each file list
 job_count=0
@@ -357,7 +382,7 @@ for file_list in "${file_lists[@]}"; do
       "${SUBMIT_DIR}/batch-script.sh" \
       "${SUBMIT_DIR}" \
       "${input_file}" \
-      --sample "${sample}" \
+      "${sample_args[@]+"${sample_args[@]}"}" \
       "${extra_args[@]+"${extra_args[@]}"}"
 
     ((++job_count))

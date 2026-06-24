@@ -5,6 +5,7 @@
 
 #include <stdexcept>
 #include <cstdlib>
+#include <iomanip>
 #include <map>
 
 // Helper function to check file extension
@@ -32,10 +33,30 @@ TrackSmearingTool::TrackSmearingTool(const std::string& smearingfile,
     json cfg;
     cfgFile >> cfg;
 
-    pSmearingValueTop_ = cfg["pSmearing"]["top"].get<double>() * smearingFactor_;
-    pSmearingValueBot_ = cfg["pSmearing"]["bot"].get<double>() * smearingFactor_;
-    z0SmearingValueTop_ = cfg["z0Smearing"]["top"].get<double>() * smearingFactor_;
-    z0SmearingValueBot_ = cfg["z0Smearing"]["bot"].get<double>() * smearingFactor_;
+    if (cfg.contains("pSmearing")) {
+      const auto& ps = cfg["pSmearing"];
+      pSmearingValueTop_ = ps["top"].get<double>() * smearingFactor_;
+      pSmearingValueBot_ = ps["bot"].get<double>() * smearingFactor_;
+      if (ps.contains("mu_data") && ps.contains("mu_mc")) {
+        pMeanDataTop_ = ps["mu_data"]["top"].get<double>();
+        pMeanDataBot_ = ps["mu_data"]["bot"].get<double>();
+        pMeanMcTop_   = ps["mu_mc"]["top"].get<double>();
+        pMeanMcBot_   = ps["mu_mc"]["bot"].get<double>();
+        hasMeanCorrP_ = true;
+      }
+    }
+    if (cfg.contains("z0Smearing")) {
+      const auto& zs = cfg["z0Smearing"];
+      z0SmearingValueTop_ = zs["top"].get<double>() * smearingFactor_;
+      z0SmearingValueBot_ = zs["bot"].get<double>() * smearingFactor_;
+      if (zs.contains("mu_data") && zs.contains("mu_mc")) {
+        z0MeanDataTop_ = zs["mu_data"]["top"].get<double>();
+        z0MeanDataBot_ = zs["mu_data"]["bot"].get<double>();
+        z0MeanMcTop_   = zs["mu_mc"]["top"].get<double>();
+        z0MeanMcBot_   = zs["mu_mc"]["bot"].get<double>();
+        hasMeanCorrZ0_ = true;
+      }
+    }
 
     // Support separate relSmearing for p and z0, with backwards compatibility
     // If relSmearingP/relSmearingZ0 are present, use them; otherwise fall back to relSmearing
@@ -57,8 +78,16 @@ TrackSmearingTool::TrackSmearingTool(const std::string& smearingfile,
 
     // Parse omega smearing parameters (optional)
     if (cfg.contains("omegaSmearing")) {
-      omegaSmearingValueTop_ = cfg["omegaSmearing"]["top"].get<double>() * smearingFactor_;
-      omegaSmearingValueBot_ = cfg["omegaSmearing"]["bot"].get<double>() * smearingFactor_;
+      const auto& os = cfg["omegaSmearing"];
+      omegaSmearingValueTop_ = os["top"].get<double>() * smearingFactor_;
+      omegaSmearingValueBot_ = os["bot"].get<double>() * smearingFactor_;
+      if (os.contains("mu_data") && os.contains("mu_mc")) {
+        omegaMeanDataTop_ = os["mu_data"]["top"].get<double>();
+        omegaMeanDataBot_ = os["mu_data"]["bot"].get<double>();
+        omegaMeanMcTop_   = os["mu_mc"]["top"].get<double>();
+        omegaMeanMcBot_   = os["mu_mc"]["bot"].get<double>();
+        hasMeanCorrOmega_ = true;
+      }
     }
 
     // Parse smearOmega flag (optional, default false)
@@ -66,18 +95,49 @@ TrackSmearingTool::TrackSmearingTool(const std::string& smearingfile,
       smearOmega_ = cfg["smearOmega"].get<bool>();
     }
 
+    // Parse all {section}_binned_{varname} entries from hpsplot tool JSON.
+    // Each entry key encodes both the section and the lookup variable name.
+    auto parseBinnedSection = [&](const std::string& prefix,
+                                  std::map<std::string, BinnedParam>& binMap,
+                                  bool applyFactor) {
+      for (auto& [k, v] : cfg.items()) {
+        if (k.rfind(prefix, 0) != 0) continue;
+        std::string var = k.substr(prefix.size());
+        if (var.empty() || !v.contains("top") || !v.contains("bot")) continue;
+        BinnedParam& bp = binMap[var];
+        bp.edgesTop = v["top"]["bin_edges"].get<std::vector<double>>();
+        bp.edgesBot = v["bot"]["bin_edges"].get<std::vector<double>>();
+        if (v["top"].contains("values")) {
+          bp.valTop = v["top"]["values"].get<std::vector<double>>();
+          bp.valBot = v["bot"]["values"].get<std::vector<double>>();
+          if (applyFactor) {
+            for (auto& x : bp.valTop) x *= smearingFactor_;
+            for (auto& x : bp.valBot) x *= smearingFactor_;
+          }
+        }
+        if (v["top"].contains("mu_data") && v["top"].contains("mu_mc")) {
+          bp.muDatTop = v["top"]["mu_data"].get<std::vector<double>>();
+          bp.muMcTop  = v["top"]["mu_mc"].get<std::vector<double>>();
+          bp.muDatBot = v["bot"]["mu_data"].get<std::vector<double>>();
+          bp.muMcBot  = v["bot"]["mu_mc"].get<std::vector<double>>();
+        }
+      }
+    };
+    parseBinnedSection("pSmearing_binned_",     pBinned_,     true);
+    parseBinnedSection("omegaSmearing_binned_", omegaBinned_, true);
+    parseBinnedSection("z0Smearing_binned_",    z0Binned_,    false);
+
+    // Set hasMeanCorr flags if any binned entry (or scalar) has means
+    for (const auto& [v, bp] : pBinned_)
+      if (!bp.muDatTop.empty()) { hasMeanCorrP_ = true; break; }
+    for (const auto& [v, bp] : omegaBinned_)
+      if (!bp.muDatTop.empty()) { hasMeanCorrOmega_ = true; break; }
+    for (const auto& [v, bp] : z0Binned_)
+      if (!bp.muDatTop.empty()) { hasMeanCorrZ0_ = true; break; }
+
     useFixedSmearing_ = true;
     useSeparateTopBot_ = true;
-
-    if (debug_) {
-      std::cout<<"Using JSON smearing config: "<<smearingfile<<std::endl;
-      std::cout<<"  smearingFactor: "<<smearingFactor_<<std::endl;
-      std::cout<<"  pSmearing top: "<<pSmearingValueTop_<<" bot: "<<pSmearingValueBot_<<std::endl;
-      std::cout<<"  z0Smearing top: "<<z0SmearingValueTop_<<" bot: "<<z0SmearingValueBot_<<std::endl;
-      std::cout<<"  omegaSmearing top: "<<omegaSmearingValueTop_<<" bot: "<<omegaSmearingValueBot_<<std::endl;
-      std::cout<<"  relSmearingP: "<<relSmearingP_<<" relSmearingZ0: "<<relSmearingZ0_<<std::endl;
-      std::cout<<"  smearOmega: "<<smearOmega_<<std::endl;
-    }
+    smearingFile_ = smearingfile;
 
   } else {
     // ROOT file with smearing histograms
@@ -137,6 +197,177 @@ TrackSmearingTool::TrackSmearingTool(const double pSmearingValue,
 
 }
 
+double TrackSmearingTool::lookupBinnedValue(const std::vector<double>& edges,
+                                             const std::vector<double>& values,
+                                             double x) const {
+  if (edges.size() < 2 || values.empty()) return 0.;
+  if (x <= edges.front()) return values.front();
+  if (x >= edges.back())  return values.back();
+  auto it = std::upper_bound(edges.begin(), edges.end(), x);
+  int bin = static_cast<int>(std::distance(edges.begin(), it)) - 1;
+  if (bin < 0) bin = 0;
+  if (bin >= static_cast<int>(values.size())) bin = static_cast<int>(values.size()) - 1;
+  return values[bin];
+}
+
+double TrackSmearingTool::getLookupValue(const Track& track) const {
+  if (binnedLookupVariable_ == "phi0" || binnedLookupVariable_ == "phi")
+    return track.getPhi();
+  if (binnedLookupVariable_ == "nHits" || binnedLookupVariable_ == "nhits")
+    return static_cast<double>(track.getTrackerHitCount());
+  return track.getTanLambda();  // default: tanLambda
+}
+
+void TrackSmearingTool::setForcedVariable(const std::string& var) {
+  if (var.empty()) return;  // leave JSON defaults in place
+
+  if (var == "flat") {
+    // Force scalar mode — clear all binned maps so lookups fall back to flat values
+    pBinned_.clear();
+    omegaBinned_.clear();
+    z0Binned_.clear();
+    std::cout << "TrackSmearingTool: forced to flat (scalar) smearing." << std::endl;
+    return;
+  }
+
+  // Validate that at least one section has a binned entry for the requested variable
+  bool found = pBinned_.count(var) || omegaBinned_.count(var) || z0Binned_.count(var);
+  if (!found)
+    throw std::invalid_argument(
+        "TrackSmearingTool: smearingVariable='" + var +
+        "' requested but no binned smearing data was found for this variable in the JSON.");
+
+  binnedLookupVariable_ = var;
+  std::cout << "TrackSmearingTool: using binned smearing, variable='" << var << "'." << std::endl;
+}
+
+void TrackSmearingTool::setScaleCorrVariable(const std::string& var) {
+  if (var.empty()) {
+    scaleCorrVariable_ = "";
+    std::cout << "TrackSmearingTool: scaleCorrVariable cleared — "
+              << "omega data-mode scale correction uses omegaSmearing_binned_"
+              << binnedLookupVariable_ << " means (default)." << std::endl;
+    return;
+  }
+  if (!pBinned_.count(var))
+    throw std::invalid_argument(
+        "TrackSmearingTool: scaleCorrVariable='" + var +
+        "' not found in pSmearing_binned tables. Check JSON contains pSmearing_binned_" + var);
+  scaleCorrVariable_ = var;
+  std::cout << "TrackSmearingTool: *** scale correction override active ***\n"
+            << "  resolution sigma  : omegaSmearing_binned_" << binnedLookupVariable_ << "\n"
+            << "  scale correction  : pSmearing_binned_" << scaleCorrVariable_
+            << " (p-space, mu_mc/mu_data)" << std::endl;
+}
+
+static void printBinTable(const std::string& varName,
+                          const std::vector<double>& edgesT,
+                          const std::vector<double>& sigT,
+                          const std::vector<double>& edgesB,
+                          const std::vector<double>& sigB,
+                          const std::vector<double>& muDatT,
+                          const std::vector<double>& muMcT,
+                          const std::vector<double>& muDatB,
+                          const std::vector<double>& muMcB) {
+  int n = static_cast<int>(edgesT.size()) - 1;
+  bool hasSig  = !sigT.empty();
+  bool hasMean = !muDatT.empty();
+  std::cout << "    binned (" << varName << ", " << n << " bins):\n";
+  std::cout << std::scientific << std::setprecision(3);
+  std::cout << "      bin   lo           hi          ";
+  if (hasSig)  std::cout << " top_sigma    bot_sigma  ";
+  if (hasMean) std::cout << "  top_mu_dat   bot_mu_dat   top_mu_mc    bot_mu_mc";
+  std::cout << "\n";
+  for (int i = 0; i < n; ++i) {
+    std::cout << "      [" << std::setw(2) << i << "] "
+              << std::setw(11) << edgesT[i] << "  "
+              << std::setw(11) << edgesT[i+1];
+    if (hasSig)
+      std::cout << "  " << std::setw(11) << (i < (int)sigT.size() ? sigT[i] : 0.)
+                << "  " << std::setw(11) << (i < (int)sigB.size() ? sigB[i] : 0.);
+    if (hasMean)
+      std::cout << "  " << std::setw(11) << (i < (int)muDatT.size() ? muDatT[i] : 0.)
+                << "  " << std::setw(11) << (i < (int)muDatB.size() ? muDatB[i] : 0.)
+                << "  " << std::setw(11) << (i < (int)muMcT.size()  ? muMcT[i]  : 0.)
+                << "  " << std::setw(11) << (i < (int)muMcB.size()  ? muMcB[i]  : 0.);
+    std::cout << "\n";
+  }
+}
+
+void TrackSmearingTool::printConfig() const {
+  const std::string sep(72, '=');
+  std::cout << "\n" << sep << "\n";
+  std::cout << "  TrackSmearingTool\n" << sep << "\n";
+  std::cout << "  JSON:           " << smearingFile_ << "\n";
+  std::cout << "  Mode:           "
+            << (isData_ ? "Data  (mean correction only, no Gaussian smearing)"
+                        : "MC    (Gaussian smearing applied)") << "\n";
+  std::cout << std::fixed << std::setprecision(4);
+  std::cout << "  smearingFactor: " << smearingFactor_ << "\n";
+  std::cout << "  relSmearingP:   " << (relSmearingP_  ? "relative" : "absolute")
+            << "   relSmearingZ0: "  << (relSmearingZ0_ ? "relative" : "absolute") << "\n";
+  std::cout << "  smearOmega:     " << (smearOmega_ ? "true" : "false") << "\n";
+  std::cout << "  binnedLookupVar:" << binnedLookupVariable_ << "\n";
+  if (!scaleCorrVariable_.empty()) {
+    std::cout << "  *** scaleCorrVariable: pSmearing_binned_" << scaleCorrVariable_
+              << " (p-space means for omega scale correction in data mode) ***\n";
+  } else {
+    std::cout << "  scaleCorrVariable: (none — omega-space means from omegaSmearing_binned_"
+              << binnedLookupVariable_ << ")\n";
+  }
+
+  // p smearing
+  std::cout << "\n  [p smearing]  (" << (relSmearingP_ ? "relative" : "absolute") << ")\n";
+  std::cout << std::scientific << std::setprecision(4);
+  std::cout << "    flat:     top = " << pSmearingValueTop_
+            << "   bot = "            << pSmearingValueBot_ << "\n";
+  if (hasMeanCorrP_ && pBinned_.empty()) {
+    std::cout << "    mu_data:  top = " << pMeanDataTop_ << "   bot = " << pMeanDataBot_ << "\n";
+    std::cout << "    mu_mc:    top = " << pMeanMcTop_   << "   bot = " << pMeanMcBot_   << "\n";
+  }
+  if (!pBinned_.empty()) {
+    for (const auto& [var, bp] : pBinned_)
+      printBinTable(var, bp.edgesTop, bp.valTop, bp.edgesBot, bp.valBot,
+                    bp.muDatTop, bp.muMcTop, bp.muDatBot, bp.muMcBot);
+  } else {
+    std::cout << "    (no binned p smearing loaded)\n";
+  }
+
+  // omega smearing
+  std::cout << "\n  [omega smearing]  (absolute)\n";
+  std::cout << "    flat:     top = " << omegaSmearingValueTop_
+            << "   bot = "            << omegaSmearingValueBot_ << "\n";
+  if (hasMeanCorrOmega_ && omegaBinned_.empty()) {
+    std::cout << "    mu_data:  top = " << omegaMeanDataTop_ << "   bot = " << omegaMeanDataBot_ << "\n";
+    std::cout << "    mu_mc:    top = " << omegaMeanMcTop_   << "   bot = " << omegaMeanMcBot_   << "\n";
+  }
+  if (!omegaBinned_.empty()) {
+    for (const auto& [var, bp] : omegaBinned_)
+      printBinTable(var, bp.edgesTop, bp.valTop, bp.edgesBot, bp.valBot,
+                    bp.muDatTop, bp.muMcTop, bp.muDatBot, bp.muMcBot);
+  } else {
+    std::cout << "    (no binned omega smearing loaded)\n";
+  }
+
+  // z0 smearing
+  std::cout << "\n  [z0 smearing]  (" << (relSmearingZ0_ ? "relative" : "absolute") << ")\n";
+  std::cout << "    flat:     top = " << z0SmearingValueTop_
+            << "   bot = "            << z0SmearingValueBot_ << "\n";
+  if (hasMeanCorrZ0_ && z0Binned_.empty()) {
+    std::cout << "    mu_data:  top = " << z0MeanDataTop_ << "   bot = " << z0MeanDataBot_ << "\n";
+    std::cout << "    mu_mc:    top = " << z0MeanMcTop_   << "   bot = " << z0MeanMcBot_   << "\n";
+  }
+  if (!z0Binned_.empty()) {
+    for (const auto& [var, bp] : z0Binned_)
+      printBinTable(var, bp.edgesTop, bp.valTop, bp.edgesBot, bp.valBot,
+                    bp.muDatTop, bp.muMcTop, bp.muDatBot, bp.muMcBot);
+  } else {
+    std::cout << "    (no binned z0 smearing loaded)\n";
+  }
+
+  std::cout << sep << "\n\n";
+}
+
 double TrackSmearingTool::smearTrackP(const double p) {
 
   double rel_smear = (*normal_)(*generator_);
@@ -164,20 +395,53 @@ double TrackSmearingTool::smearTrackP(const Track& track) {
   // If using fixed smearing with separate top/bot values
   if (useFixedSmearing_ && useSeparateTopBot_) {
     bool isTop = track.getTanLambda() > 0.;
-    double smearingValue = isTop ? pSmearingValueTop_ : pSmearingValueBot_;
+
+    // --- Data mode: apply mean correction only, no Gaussian smearing ---
+    if (isData_) {
+      if (!applyMeanCorr_) return p;
+      double mu_data = 0., mu_mc = 0.;
+      bool hasMu = false;
+      if (pBinned_.count(binnedLookupVariable_)) {
+        const auto& bp = pBinned_.at(binnedLookupVariable_);
+        if (!bp.muDatTop.empty()) {
+          double lv = getLookupValue(track);
+          mu_data = isTop ? lookupBinnedValue(bp.edgesTop, bp.muDatTop, lv)
+                          : lookupBinnedValue(bp.edgesBot, bp.muDatBot, lv);
+          mu_mc   = isTop ? lookupBinnedValue(bp.edgesTop, bp.muMcTop,  lv)
+                          : lookupBinnedValue(bp.edgesBot, bp.muMcBot,  lv);
+          hasMu = true;
+        }
+      }
+      if (!hasMu) {
+        if (!hasMeanCorrP_) return p;
+        mu_data = isTop ? pMeanDataTop_ : pMeanDataBot_;
+        mu_mc   = isTop ? pMeanMcTop_   : pMeanMcBot_;
+      }
+      double pcorr = relSmearingP_ ? ((mu_data > 0.) ? p * (mu_mc / mu_data) : p)
+                                   : p + (mu_mc - mu_data);
+      if (debug_)
+        std::cout<<"Data p corr: isTop="<<isTop<<" p="<<p<<" mu_data="<<mu_data<<" mu_mc="<<mu_mc<<" p'="<<pcorr<<std::endl;
+      return pcorr;
+    }
+
+    // --- MC mode: Gaussian smearing only ---
+    double smearingValue;
+    if (pBinned_.count(binnedLookupVariable_)) {
+      const auto& bp = pBinned_.at(binnedLookupVariable_);
+      double lv = getLookupValue(track);
+      smearingValue = isTop ? lookupBinnedValue(bp.edgesTop, bp.valTop, lv)
+                            : lookupBinnedValue(bp.edgesBot, bp.valBot, lv);
+    } else {
+      smearingValue = isTop ? pSmearingValueTop_ : pSmearingValueBot_;
+    }
 
     double rel_smear = (*normal_)(*generator_);
     double sp = rel_smear * smearingValue;
 
-    double psmear = 0.;
-    if (relSmearingP_)
-      psmear = p + sp * p;
-    else
-      psmear = p + sp;
+    double psmear = relSmearingP_ ? p + sp * p : p + sp;
 
-    if (debug_) {
+    if (debug_)
       std::cout<<"Track isTop: "<<isTop<<" p: "<<p<<" deltaP="<<sp<<" p'="<<psmear<<std::endl;
-    }
 
     return psmear;
   }
@@ -227,8 +491,8 @@ double TrackSmearingTool::smearTrackP(const Track& track) {
 }
 
 double TrackSmearingTool::updateWithSmearP(Track& trk) {
-  // If truth matching is required and track doesn't have a truth match, skip smearing
-  if (requireTruthMatch_ && !hasTruthMatch(trk)) {
+  // Truth matching only applies to MC — on data there are no MC particles to match against
+  if (!isData_ && requireTruthMatch_ && !hasTruthMatch(trk)) {
     if (debug_) {
       std::cout << "TrackSmearingTool: Skipping momentum smearing - no truth match" << std::endl;
     }
@@ -317,19 +581,63 @@ double TrackSmearingTool::smearTrackZ0(const Track& track) {
   // If using fixed smearing with separate top/bot values
   if (useFixedSmearing_ && useSeparateTopBot_) {
     bool isTop = track.getTanLambda() > 0.;
-    double smearingValue = isTop ? z0SmearingValueTop_ : z0SmearingValueBot_;
+
+    // --- Data mode: apply mean correction only, no Gaussian smearing ---
+    if (isData_) {
+      if (!applyMeanCorr_) return z0;
+      double mu_data = 0., mu_mc = 0.;
+      bool hasMu = false;
+      if (z0Binned_.count(binnedLookupVariable_)) {
+        const auto& bp = z0Binned_.at(binnedLookupVariable_);
+        if (!bp.muDatTop.empty()) {
+          double lv = getLookupValue(track);
+          mu_data = isTop ? lookupBinnedValue(bp.edgesTop, bp.muDatTop, lv)
+                          : lookupBinnedValue(bp.edgesBot, bp.muDatBot, lv);
+          mu_mc   = isTop ? lookupBinnedValue(bp.edgesTop, bp.muMcTop,  lv)
+                          : lookupBinnedValue(bp.edgesBot, bp.muMcBot,  lv);
+          hasMu = true;
+        }
+      }
+      if (!hasMu) {
+        if (!hasMeanCorrZ0_) return z0;
+        mu_data = isTop ? z0MeanDataTop_ : z0MeanDataBot_;
+        mu_mc   = isTop ? z0MeanMcTop_   : z0MeanMcBot_;
+      }
+      double z0corr = z0 + (mu_mc - mu_data);
+      if (debug_) {
+        std::cout << "z0 smear (data): isTop=" << isTop
+                  << "  source=" << (hasMu ? "binned[" + binnedLookupVariable_ + "]" : "flat")
+                  << "  mu_data=" << mu_data << "  mu_mc=" << mu_mc
+                  << "  z0=" << z0 << "  shift=" << (mu_mc - mu_data) << "  z0'=" << z0corr << std::endl;
+      }
+      return z0corr;
+    }
+
+    // --- MC mode: Gaussian smearing only ---
+    double smearingValue;
+    bool usedBinned = false;
+    double lookupVal = 0.;
+    if (z0Binned_.count(binnedLookupVariable_) &&
+        !z0Binned_.at(binnedLookupVariable_).valTop.empty()) {
+      const auto& bp = z0Binned_.at(binnedLookupVariable_);
+      lookupVal = getLookupValue(track);
+      smearingValue = isTop ? lookupBinnedValue(bp.edgesTop, bp.valTop, lookupVal)
+                            : lookupBinnedValue(bp.edgesBot, bp.valBot, lookupVal);
+      usedBinned = true;
+    } else {
+      smearingValue = isTop ? z0SmearingValueTop_ : z0SmearingValueBot_;
+    }
 
     double rel_smear = (*normal_)(*generator_);
     double sz0 = rel_smear * smearingValue;
 
-    double z0smear = 0.;
-    if (relSmearingZ0_)
-      z0smear = z0 + sz0 * z0;
-    else
-      z0smear = z0 + sz0;
+    double z0smear = relSmearingZ0_ ? z0 + sz0 * z0 : z0 + sz0;
 
     if (debug_) {
-      std::cout<<"Track isTop: "<<isTop<<" z0: "<<z0<<" deltaZ0="<<sz0<<" z0'="<<z0smear<<std::endl;
+      std::cout << "z0 smear (MC): isTop=" << isTop
+                << "  source=" << (usedBinned ? "binned[" + binnedLookupVariable_ + "=" + std::to_string(lookupVal) + "]" : "flat")
+                << "  sigma=" << smearingValue
+                << "  z0=" << z0 << "  deltaZ0=" << sz0 << "  z0'=" << z0smear << std::endl;
     }
 
     return z0smear;
@@ -340,8 +648,8 @@ double TrackSmearingTool::smearTrackZ0(const Track& track) {
 }
 
 void TrackSmearingTool::updateWithSmearZ0(Track& trk) {
-  // If truth matching is required and track doesn't have a truth match, skip smearing
-  if (requireTruthMatch_ && !hasTruthMatch(trk)) {
+  // Truth matching only applies to MC — on data there are no MC particles to match against
+  if (!isData_ && requireTruthMatch_ && !hasTruthMatch(trk)) {
     if (debug_) {
       std::cout << "TrackSmearingTool: Skipping z0 smearing - no truth match" << std::endl;
     }
@@ -352,50 +660,137 @@ void TrackSmearingTool::updateWithSmearZ0(Track& trk) {
   trk.setZ0(smeared_z0);
 }
 
-double TrackSmearingTool::updateWithSmearOmega(Track& trk, double bfield) {
-  // If truth matching is required and track doesn't have a truth match, skip smearing
-  if (requireTruthMatch_ && !hasTruthMatch(trk)) {
+double TrackSmearingTool::updateWithSmearOmega(Track& trk, double /*bfield*/) {
+  // Truth matching only applies to MC — on data there are no MC particles to match against
+  if (!isData_ && requireTruthMatch_ && !hasTruthMatch(trk)) {
     if (debug_) {
       std::cout << "TrackSmearingTool: Skipping omega smearing - no truth match" << std::endl;
     }
     return 1.0;  // No smearing applied
   }
 
-  // Store original momentum for scale factor calculation
-  double original_p = trk.getP();
-
   // Get current omega (curvature)
   double omega = trk.getOmega();
 
-  // Determine smearing value based on top/bottom
+  // Determine smearing value based on top/bottom (with optional binned lookup)
   bool isTop = trk.getTanLambda() > 0.;
-  double smearingValue = isTop ? omegaSmearingValueTop_ : omegaSmearingValueBot_;
+  double smearingValue;
+  if (omegaBinned_.count(binnedLookupVariable_)) {
+    const auto& bp = omegaBinned_.at(binnedLookupVariable_);
+    double lv = getLookupValue(trk);
+    smearingValue = isTop ? lookupBinnedValue(bp.edgesTop, bp.valTop, lv)
+                          : lookupBinnedValue(bp.edgesBot, bp.valBot, lv);
+  } else {
+    smearingValue = isTop ? omegaSmearingValueTop_ : omegaSmearingValueBot_;
+  }
 
-  // Generate Gaussian random and apply relative smearing to omega
-  double rel_smear = (*normal_)(*generator_);
-  double omega_smeared = omega * (1 + rel_smear * smearingValue);
+  // --- Data mode: apply mean correction only, no Gaussian smearing ---
+  if (isData_) {
+    double lv = getLookupValue(trk);
 
-  // Recalculate momentum from smeared omega
-  // pt = |1/omega| * B * c, where c = 2.99792458e-04 GeV/(T*mm)
-  double mom_param = 2.99792458e-04;
-  double pt = fabs(1. / omega_smeared) * bfield * mom_param;
+    // --- Path A: p-space scale correction from pSmearing_binned_{scaleCorrVariable_} ---
+    if (!scaleCorrVariable_.empty() && pBinned_.count(scaleCorrVariable_)) {
+      const auto& bp = pBinned_.at(scaleCorrVariable_);
+      if (!bp.muDatTop.empty()) {
+        double mu_data_p = isTop ? lookupBinnedValue(bp.edgesTop, bp.muDatTop, lv)
+                                 : lookupBinnedValue(bp.edgesBot, bp.muDatBot, lv);
+        double mu_mc_p   = isTop ? lookupBinnedValue(bp.edgesTop, bp.muMcTop,  lv)
+                                 : lookupBinnedValue(bp.edgesBot, bp.muMcBot,  lv);
+        if (mu_data_p > 0. && mu_mc_p > 0.) {
+          // p_corr = p * (mu_mc_p / mu_data_p)  [p-space scale]
+          // omega ~ 1/p  =>  omega_corr = omega * (mu_data_p / mu_mc_p)
+          double p_scale = mu_mc_p / mu_data_p;
+          double omega_corr = omega / p_scale;
+          double p_before = trk.getP();
+          std::vector<double> momentum = trk.getMomentum();
+          for (double& coord : momentum) coord *= p_scale;
+          trk.setMomentum(momentum);
+          trk.setOmega(omega_corr);
+          double p_after = trk.getP();
+          if (debug_)
+            std::cout << "[TrackSmearingTool] Data omega scale (PATH A — p-space): "
+                      << "paramVar=pSmearing_binned_" << scaleCorrVariable_
+                      << "  isTop=" << isTop << "  lv(tanL)=" << lv
+                      << "  mu_data_p=" << mu_data_p << "  mu_mc_p=" << mu_mc_p
+                      << "  p_scale=" << p_scale
+                      << "  |p|: " << p_before << " -> " << p_after
+                      << "  omega: " << omega << " -> " << omega_corr << std::endl;
+          return std::fabs(p_scale);
+        }
+        // Bin has zero means — no correction available for this track
+        if (debug_)
+          std::cout << "[TrackSmearingTool] Data omega scale (PATH A): "
+                    << "pSmearing_binned_" << scaleCorrVariable_
+                    << " has zero means at lv=" << lv << " isTop=" << isTop
+                    << " — skipping scale correction for this track." << std::endl;
+        return 1.0;
+      }
+    }
 
-  // Calculate momentum components preserving track direction
-  double px = pt * sin(trk.getPhi());
-  double pz = pt * cos(trk.getPhi());
-  double py = pt * trk.getTanLambda();
+    // --- Path B (default): omega-space mean correction from omegaSmearing_binned_{binnedLookupVariable_} ---
+    if (!applyMeanCorr_) {
+      if (debug_)
+        std::cout << "[TrackSmearingTool] Data omega scale (PATH B — omega-space): "
+                  << "applyMeanCorr=false — no correction applied." << std::endl;
+      return 1.0;
+    }
+    double mu_data = 0., mu_mc = 0.;
+    bool hasMu = false;
+    if (omegaBinned_.count(binnedLookupVariable_)) {
+      const auto& bp = omegaBinned_.at(binnedLookupVariable_);
+      if (!bp.muDatTop.empty()) {
+        mu_data = isTop ? lookupBinnedValue(bp.edgesTop, bp.muDatTop, lv)
+                        : lookupBinnedValue(bp.edgesBot, bp.muDatBot, lv);
+        mu_mc   = isTop ? lookupBinnedValue(bp.edgesTop, bp.muMcTop,  lv)
+                        : lookupBinnedValue(bp.edgesBot, bp.muMcBot,  lv);
+        hasMu = true;
+      }
+    }
+    if (!hasMu) {
+      if (!hasMeanCorrOmega_) return 1.0;
+      mu_data = isTop ? omegaMeanDataTop_ : omegaMeanDataBot_;
+      mu_mc   = isTop ? omegaMeanMcTop_   : omegaMeanMcBot_;
+    }
+    double omega_corr = omega + (mu_mc - mu_data);
+    double scale = (omega_corr != 0.) ? omega / omega_corr : 1.0;
+    std::vector<double> momentum = trk.getMomentum();
+    for (double& coord : momentum) coord *= scale;
+    trk.setMomentum(momentum);
+    trk.setOmega(omega_corr);
+    if (debug_)
+      std::cout << "[TrackSmearingTool] Data omega scale (PATH B — omega-space): "
+                << "paramVar=omegaSmearing_binned_" << binnedLookupVariable_
+                << "  isTop=" << isTop << "  lv=" << lv
+                << "  mu_data=" << mu_data << "  mu_mc=" << mu_mc
+                << "  omega=" << omega << "  omega'=" << omega_corr << std::endl;
+    return std::fabs(scale);
+  }
 
-  // Update track momentum
-  trk.setMomentum(px, py, pz);
+  // --- MC mode: Gaussian smearing only ---
+  // Generate Gaussian random and apply absolute smearing to omega
+  double smear = (*normal_)(*generator_);
+  double omega_smeared = omega + smear * smearingValue;
+
+  // Scale momentum by omega / omega_smeared (since p ~ 1/|omega|).
+  // This avoids reconstructing from helix parameters with a B-field value
+  // that may not match the one used when the track was originally created
+  // (bLocal from LCIO is not persisted into the ROOT ntuples).
+  double scale = omega / omega_smeared;
+  std::vector<double> momentum = trk.getMomentum();
+  for (double& coord : momentum)
+    coord *= scale;
+  trk.setMomentum(momentum);
+  trk.setOmega(omega_smeared);
 
   if (debug_) {
+    double original_p = trk.getP() / fabs(scale);
     std::cout << "TrackSmearingTool::updateWithSmearOmega:" << std::endl;
     std::cout << "  isTop: " << isTop << " smearingValue: " << smearingValue << std::endl;
-    std::cout << "  omega: " << omega << " rel_smear: " << rel_smear << " omega': " << omega_smeared << std::endl;
+    std::cout << "  omega: " << omega << " smear: " << smear << " omega': " << omega_smeared << std::endl;
     std::cout << "  original_p: " << original_p << " smeared_p: " << trk.getP() << std::endl;
   }
 
-  return trk.getP() / original_p;  // Return scale factor
+  return fabs(scale);
 }
 
 void TrackSmearingTool::setMCParticles(const std::vector<MCParticle*>* mc_particles) {

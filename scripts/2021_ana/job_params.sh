@@ -22,15 +22,33 @@ declare -A JOB_EXTRA_ARGS      # Extra arguments to pass to hpstr
 # DATA JOBS
 # ============================================================================
 
-JOB_FILE_LISTS["data"]="${DATA_LISTS_DIR}/subset_files.list"
+JOB_FILE_LISTS["data_small"]="${DATA_LISTS_DIR}/small.txt"
+JOB_SAMPLE["data_small"]="data"
+JOB_OUTPUT_DIR["data_small"]="${BASE_OUTPUT_DIR}//data_1pc_pScaleCorr/"
+JOB_HPSTR_CONFIG["data_small"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["data_small"]=""
+
+JOB_FILE_LISTS["data"]="${DATA_LISTS_DIR}/data_1pc.txt"
 JOB_SAMPLE["data"]="data"
-JOB_OUTPUT_DIR["data"]="${BASE_OUTPUT_DIR}/data"
+JOB_OUTPUT_DIR["data"]="${BASE_OUTPUT_DIR}/data_1pc/"
 JOB_HPSTR_CONFIG["data"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["data"]=""
 
-JOB_FILE_LISTS["data_prompt"]="${DATA_LISTS_DIR}/subset_files.list"
+JOB_FILE_LISTS["data_5pc"]="${DATA_LISTS_DIR}/data_5pc.txt"
+JOB_SAMPLE["data_5pc"]="data"
+JOB_OUTPUT_DIR["data_5pc"]="${BASE_OUTPUT_DIR}/data_5pc"
+JOB_HPSTR_CONFIG["data_5pc"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["data_5pc"]=""
+
+JOB_FILE_LISTS["data_10pc"]="${DATA_LISTS_DIR}/data_10pc.txt"
+JOB_SAMPLE["data_10pc"]="data"
+JOB_OUTPUT_DIR["data_10pc"]="${BASE_OUTPUT_DIR}/data_10pc"
+JOB_HPSTR_CONFIG["data_10pc"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["data_10pc"]=""
+
+JOB_FILE_LISTS["data_prompt"]="${DATA_LISTS_DIR}/data_1pc.txt"
 JOB_SAMPLE["data_prompt"]="data"
-JOB_OUTPUT_DIR["data_prompt"]="${BASE_OUTPUT_DIR}/data_prompt"
+JOB_OUTPUT_DIR["data_prompt"]="${BASE_OUTPUT_DIR}/data_1pc_tc"
 JOB_HPSTR_CONFIG["data_prompt"]="config_prompt_2021.py"
 JOB_EXTRA_ARGS["data_prompt"]=""
 
@@ -41,8 +59,14 @@ JOB_EXTRA_ARGS["data_prompt"]=""
 JOB_FILE_LISTS["wab"]="${MC_LISTS_DIR}/wab.list"
 JOB_SAMPLE["wab"]="sim_bkgd"
 JOB_OUTPUT_DIR["wab"]="${BASE_OUTPUT_DIR}/wab"
-JOB_HPSTR_CONFIG["wab"]="config_displaced_2021.py"
+JOB_HPSTR_CONFIG["wab"]="config_displaced_2021.py" #/sdf/data/hps/users/mgignac/software/2021-ana/hpstr/processors/config/anaTrkEff_2021_cfg.py"
 JOB_EXTRA_ARGS["wab"]=""
+
+JOB_FILE_LISTS["wab_14596"]="${MC_LISTS_DIR}/wab_hit_kill.list"
+JOB_SAMPLE["wab_14596"]="sim_bkgd"
+JOB_OUTPUT_DIR["wab_14596"]="${BASE_OUTPUT_DIR}/wab_smeared_hitkill_14596"
+JOB_HPSTR_CONFIG["wab_14596"]="config_displaced_2021.py" #/sdf/data/hps/users/mgignac/software/2021-ana/hpstr/processors/config/anaTrkEff_2021_cfg.py"
+JOB_EXTRA_ARGS["wab_14596"]="--smearing"
 
 JOB_FILE_LISTS["wab_smeared"]="${MC_LISTS_DIR}/wab.list"
 JOB_SAMPLE["wab_smeared"]="sim_bkgd"
@@ -53,7 +77,7 @@ JOB_EXTRA_ARGS["wab_smeared"]="--smearing"
 JOB_FILE_LISTS["tritrig"]="${MC_LISTS_DIR}/tritrig.list"
 JOB_SAMPLE["tritrig"]="sim_bkgd"
 JOB_OUTPUT_DIR["tritrig"]="${BASE_OUTPUT_DIR}/tritrig"
-JOB_HPSTR_CONFIG["tritrig"]="config_displaced_2021.py"
+JOB_HPSTR_CONFIG["tritrig"]="config_displaced_2021.py" #/sdf/data/hps/users/mgignac/software/2021-ana/hpstr/processors/config/anaTrkEff_2021_cfg.py" 
 JOB_EXTRA_ARGS["tritrig"]=""
 
 JOB_FILE_LISTS["tritrig_smeared"]="${MC_LISTS_DIR}/tritrig.list"
@@ -61,6 +85,18 @@ JOB_SAMPLE["tritrig_smeared"]="sim_bkgd"
 JOB_OUTPUT_DIR["tritrig_smeared"]="${BASE_OUTPUT_DIR}/tritrig_smeared"
 JOB_HPSTR_CONFIG["tritrig_smeared"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["tritrig_smeared"]="--smearing"
+
+JOB_FILE_LISTS["tritrig_14596"]="${MC_LISTS_DIR}/tritrig_hit_kill.list" #tritrig_14596.list"
+JOB_SAMPLE["tritrig_14596"]="sim_bkgd"
+JOB_OUTPUT_DIR["tritrig_14596"]="${BASE_OUTPUT_DIR}/tritrig_smeared_hitkill_14596"
+JOB_HPSTR_CONFIG["tritrig_14596"]="config_displaced_2021.py" 
+JOB_EXTRA_ARGS["tritrig_14596"]="--smearing"
+
+JOB_FILE_LISTS["tritrig_noHit"]="${MC_LISTS_DIR}/tritrig_14272_noHit.list"
+JOB_SAMPLE["tritrig_noHit"]="sim_bkgd"
+JOB_OUTPUT_DIR["tritrig_noHit"]="${BASE_OUTPUT_DIR}/tritrig_noHitKillingSmearing"
+JOB_HPSTR_CONFIG["tritrig_noHit"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["tritrig_noHit"]=""
 
 JOB_FILE_LISTS["rad"]="${MC_LISTS_DIR}/rad.list"
 JOB_SAMPLE["rad"]="sim_bkgd"
@@ -70,13 +106,20 @@ JOB_EXTRA_ARGS["rad"]=""
 
 JOB_FILE_LISTS["rad_smeared"]="${MC_LISTS_DIR}/rad.list"
 JOB_SAMPLE["rad_smeared"]="sim_bkgd"
-JOB_OUTPUT_DIR["rad_smeared"]="${BASE_OUTPUT_DIR}/rad_smeared"
+JOB_OUTPUT_DIR["rad_smeared"]="${BASE_OUTPUT_DIR}/rad_smeared/"
 JOB_HPSTR_CONFIG["rad_smeared"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["rad_smeared"]="--smearing"
 
 # ============================================================================
 # A' SIGNAL MC JOBS
 # ============================================================================
+
+JOB_FILE_LISTS["ap_signal_prompt_smeared"]="${MC_LISTS_DIR}/ap_pulser_prompt_2.list"
+JOB_SAMPLE["ap_signal_prompt_smeared"]="ap_signal"
+JOB_OUTPUT_DIR["ap_signal_prompt_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_prompt_smeared"
+JOB_HPSTR_CONFIG["ap_signal_prompt_smeared"]="config_prompt_2021.py" #config_displaced_2021.py"
+JOB_EXTRA_ARGS["ap_signal_prompt_smeared"]="--smearing"
+
 
 # All A' mass points combined
 JOB_FILE_LISTS["ap_signal"]="${MC_LISTS_DIR}/ap*.list"
@@ -87,9 +130,29 @@ JOB_EXTRA_ARGS["ap_signal"]=""
 
 JOB_FILE_LISTS["ap_signal_smeared"]="${MC_LISTS_DIR}/ap*.list"
 JOB_SAMPLE["ap_signal_smeared"]="ap_signal"
-JOB_OUTPUT_DIR["ap_signal_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_smeared"
+JOB_OUTPUT_DIR["ap_signal_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_smeared_notimecuts"
 JOB_HPSTR_CONFIG["ap_signal_smeared"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["ap_signal_smeared"]="--smearing"
+
+
+JOB_FILE_LISTS["ap_tgt_sys"]="${MC_LISTS_DIR}/sys_ap80MeV_tgt_m0pt1mm.list"
+JOB_SAMPLE["ap_tgt_sys"]="ap_signal"
+JOB_OUTPUT_DIR["ap_tgt_sys"]="${BASE_OUTPUT_DIR}/sys/ap_tgt_m0pt1mm/"
+JOB_HPSTR_CONFIG["ap_tgt_sys"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["ap_tgt_sys"]="--smearing"
+
+# All A' mass points combined
+JOB_FILE_LISTS["ap_signal_tc"]="${MC_LISTS_DIR}/ap*.list"
+JOB_SAMPLE["ap_signal_tc"]="ap_signal"
+JOB_OUTPUT_DIR["ap_signal_tc"]="${BASE_OUTPUT_DIR}/ap_signal_tc"
+JOB_HPSTR_CONFIG["ap_signal_tc"]="config_prompt_2021.py"
+JOB_EXTRA_ARGS["ap_signal_tc"]=""
+
+JOB_FILE_LISTS["ap_signal_tc_smeared"]="${MC_LISTS_DIR}/ap*.list"
+JOB_SAMPLE["ap_signal_tc_smeared"]="ap_signal"
+JOB_OUTPUT_DIR["ap_signal_tc_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_tc_smeared"
+JOB_HPSTR_CONFIG["ap_signal_tc_smeared"]="config_prompt_2021.py"
+JOB_EXTRA_ARGS["ap_signal_tc_smeared"]="--smearing"
 
 # ============================================================================
 # SIMP SIGNAL MC JOBS
@@ -103,9 +166,21 @@ JOB_EXTRA_ARGS["simp_signal"]=""
 
 JOB_FILE_LISTS["simp_signal_smeared"]="${MC_LISTS_DIR}/simp*.list"
 JOB_SAMPLE["simp_signal_smeared"]="simp_signal"
-JOB_OUTPUT_DIR["simp_signal_smeared"]="${BASE_OUTPUT_DIR}/simp_signal_smeared"
+JOB_OUTPUT_DIR["simp_signal_smeared"]="${BASE_OUTPUT_DIR}/simp_signal_smeared/"
 JOB_HPSTR_CONFIG["simp_signal_smeared"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["simp_signal_smeared"]="--smearing"
+
+JOB_FILE_LISTS["simp90_0p18"]="${MC_LISTS_DIR}/sys_simp90_0p18.txt"
+JOB_SAMPLE["simp90_0p18"]="simp_signal"
+JOB_OUTPUT_DIR["simp90_0p18"]="${BASE_OUTPUT_DIR}/sys/simp90_n0p18/"
+JOB_HPSTR_CONFIG["simp90_0p18"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["simp90_0p18"]="--smearing"
+
+JOB_FILE_LISTS["simp90_1p8"]="${MC_LISTS_DIR}/sys_simp90_n1p8.txt"
+JOB_SAMPLE["simp90_1p8"]="simp_signal"
+JOB_OUTPUT_DIR["simp90_1p8"]="${BASE_OUTPUT_DIR}/sys/simp90_n1p8/"
+JOB_HPSTR_CONFIG["simp90_1p8"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["simp90_1p8"]="--smearing"
 
 # ============================================================================
 # HELPER FUNCTIONS
@@ -131,7 +206,7 @@ load_job_params() {
     return 1
   fi
 
-  if [[ -z "${JOB_SAMPLE[$job_name]:-}" ]]; then
+  if [[ -z "${JOB_OUTPUT_DIR[$job_name]:-}" ]]; then
     echo "ERROR: Unknown job '${job_name}'" >&2
     echo "Run with --list to see available jobs" >&2
     return 1
@@ -149,5 +224,5 @@ load_job_params() {
 
 # Validate that a job exists
 job_exists() {
-  [[ -n "${JOB_SAMPLE[${1:-}]:-}" ]]
+  [[ -n "${JOB_OUTPUT_DIR[${1:-}]:-}" ]]
 }

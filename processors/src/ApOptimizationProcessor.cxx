@@ -28,7 +28,7 @@ void ApOptimizationProcessor::configure(const ParameterSet& parameters) {
         // MC Signal
         variableHistCfgFilename_ = parameters.getString("variableHistCfgFilename", variableHistCfgFilename_);
         signalVtxAnaFilename_ = parameters.getString("signalVtxAnaFilename", signalVtxAnaFilename_);
-        signalVtxSubsetAnaFilename_ = parameters.getString("signalVtxSubsetAnaFilename", signalVtxSubsetAnaFilename_);
+        // signalVtxSubsetAnaFilename_ = parameters.getString("signalVtxSubsetAnaFilename", signalVtxSubsetAnaFilename_);
         signalVtxAnaTreename_ = parameters.getString("signalVtxAnaTreename", signalVtxAnaTreename_);
         signalMCAnaFilename_ = parameters.getString("signalMCAnaFilename", signalMCAnaFilename_);
         signalMCAnaTreename_ = parameters.getString("signalMCAnaTreename", signalMCAnaTreename_);
@@ -76,8 +76,8 @@ void ApOptimizationProcessor::initialize(std::string inFilename, std::string out
     signalVtxAnaFile_ = new TFile(signalVtxAnaFilename_.c_str(), "READ");
     signal_tree_ = (TTree*)signalVtxAnaFile_->Get(signalVtxAnaTreename_.c_str());
 
-    TFile* signalVtxSubsetAnaFile = new TFile(signalVtxSubsetAnaFilename_.c_str(), "READ");
-    TTree* signal_subset_tree = (TTree*)signalVtxSubsetAnaFile->Get(signalVtxAnaTreename_.c_str());
+    // TFile* signalVtxSubsetAnaFile = new TFile(signalVtxSubsetAnaFilename_.c_str(), "READ");
+    // TTree* signal_subset_tree = (TTree*)signalVtxSubsetAnaFile->Get(signalVtxAnaTreename_.c_str());
 
     std::cout << "ApOptimizationProcessor::initialize: Reading Signal MC Tuple from file "
               << signalMCAnaFilename_.c_str() << std::endl;
@@ -143,17 +143,24 @@ void ApOptimizationProcessor::initialize(std::string inFilename, std::string out
             std::cout << "ApOptimizationProcessor::initialize: Setting up z0/y0 cut quantiles for cut " << cut_name
                       << std::endl;
 
+            json cut_cfg = signalHistos_->getConfig();
+            double* bins_and_limits_cut_var = getBinsAndLimits(cut_cfg, cut_name);
+            std::string bin_str = "(" + std::to_string((int)zbins_[0]) + "," + std::to_string(zbins_[1]) + "," + 
+                                  std::to_string(zbins_[2]) + "," + std::to_string((int)bins_and_limits_cut_var[0]) + "," + 
+                                  std::to_string(bins_and_limits_cut_var[1]) + "," + std::to_string(bins_and_limits_cut_var[2]) + ")";
             signal_tree_->Draw(
-                (cut_var + ":vertex.getZ() >> h_pdf2d_signal_cut_" + cut_name + "(120, -5, 25, 200, 0, 2)").c_str(),
+                (cut_var + ":vertex.getZ() >> h_pdf2d_signal_cut_" + cut_name + bin_str).c_str(),
                 persistentCutStrings_[cut_name].c_str());
             TH2F* pdf_signal_cut = (TH2F*)gDirectory->Get(("h_pdf2d_signal_cut_" + cut_name).c_str());
 
-            testZoffsetAlpha_[cut_name] = getZoffsetAlpha(pdf_signal_cut, max_iteration_, 10);
+            testZoffsetAlpha_[cut_name] = getZoffsetAlpha(pdf_signal_cut, max_iteration_, n_zbins_bundled_);
 
             testVarQuantiles_[cut_name] = new double[max_iteration_];
             for (int i = 0; i < max_iteration_; i++) {
                 testVarQuantiles_[cut_name][i] = i * step_size_;
             }
+
+            delete[] bins_and_limits_cut_var;
         } else {
             // find initial cut fraction to vary quantile calculation around
             double initial_cut_value;
@@ -177,7 +184,7 @@ void ApOptimizationProcessor::initialize(std::string inFilename, std::string out
     }
 
     // Calculate signal vertex efficiency vs vertex z using subset of signal MC with truth information
-    determineSignalVertexEfficiencyXi(signal_subset_tree);
+    determineSignalVertexEfficiencyXi();
 
     // Save data mass distribution after initial cuts for signal estimation
     std::string mass_bin_str = "(" + std::to_string((int)massbins_[0]) + "," + std::to_string(massbins_[1]) + "," +
@@ -185,6 +192,8 @@ void ApOptimizationProcessor::initialize(std::string inFilename, std::string out
     bkg_tree_->Draw(("vertex.invM_ >> h_data_mass" + mass_bin_str).c_str(), initialCuts_.c_str());
     h_data_mass_rad_ = (TH1D*)gDirectory->Get("h_data_mass");
     h_data_mass_rad_->SetTitle((";m_{inv} [GeV];Events/" + std::to_string(mass_bin_width_) + "GeV").c_str());
+
+    bkgHistos_->addHisto1d(h_data_mass_rad_);
 
     // apply initial cuts to background and keep for record
     bkg_tree_->Draw(("vertex.getZ() >> h_data_vtxz_rad" + zbin_str_).c_str(), initialCuts_.c_str());
@@ -343,7 +352,8 @@ double ApOptimizationProcessor::computeTruthSignalShape(double z, double EAp) {
 }
 
 double ApOptimizationProcessor::computePromptYield() {
-    double Nbin = h_data_mass_rad_->GetBinContent(h_data_mass_rad_->FindBin(signal_mass_));  // content at signal mass
+    // double Nbin = h_data_mass_rad_->GetBinContent(h_data_mass_rad_->FindBin(signal_mass_));  // content at signal mass
+    double Nbin = h_data_mass_rad_->Integral(h_data_mass_rad_->FindBin(lowMass_), h_data_mass_rad_->FindBin(highMass_));  // content in mass window
     double alpha = 1 / 137.0;
     double factors = 3 * TMath::Pi() * pow(eps_, 2) / (2 * alpha);
 
@@ -503,7 +513,7 @@ void ApOptimizationProcessor::initializeGraphs(std::string cut_name) {
     }
 }
 
-void ApOptimizationProcessor::determineSignalVertexEfficiencyXi(TTree* signal_subset_tree) {
+void ApOptimizationProcessor::determineSignalVertexEfficiencyXi() {
     // vertex z distribution from generated A' sample
     signal_pretrig_sim_tree_->Draw(("vtx.z >> h_pretrig_signal_vtxz" + zbin_str_).c_str());
     h_pretrig_signal_vtxz_ = (TH1D*)gDirectory->Get("h_pretrig_signal_vtxz");
@@ -511,32 +521,32 @@ void ApOptimizationProcessor::determineSignalVertexEfficiencyXi(TTree* signal_su
 
     // vertex z distribution from reconstructed A' (corresponding to generated sample)
     // apply psum and mass window cuts == initial cuts
-    signal_subset_tree->Draw(("true_ap.vtx_z_ >> h_signal_vtxz_rad_subset" + zbin_str_).c_str(), initialCuts_.c_str());
-    h_signal_vtxz_rad_subset_ = (TH1D*)gDirectory->Get("h_signal_vtxz_rad_subset");
-    h_signal_vtxz_rad_subset_->SetTitle((";z_{truth} [mm];Events/" + std::to_string(z_bin_width_) + "mm").c_str());
-    h_signal_vtxz_rad_subset_->Sumw2();
+    signal_tree_->Draw(("true_ap.vtx_z_ >> h_signal_vtxz_rad" + zbin_str_).c_str(), initialCuts_.c_str());
+    h_signal_vtxz_rad_ = (TH1D*)gDirectory->Get("h_signal_vtxz_rad");
+    h_signal_vtxz_rad_->SetTitle((";z_{truth} [mm];Events/" + std::to_string(z_bin_width_) + "mm").c_str());
+    h_signal_vtxz_rad_->Sumw2();
 
-    TH1D* h_xi_eff = (TH1D*)h_signal_vtxz_rad_subset_->Clone("h_xi_eff");
+    TH1D* h_xi_eff = (TH1D*)h_signal_vtxz_rad_->Clone("h_xi_eff");
     h_xi_eff->Divide(h_pretrig_signal_vtxz_);
 
-    f_xi_eff_ = new TF1("f_xi_eff_", "exp([0] + [1]*x + [2]*x*x)", 0, 150);
-    h_xi_eff->Fit(f_xi_eff_, "SRQ", "", 0, 150);
+    f_xi_eff_ = new TF1("f_xi_eff_", "exp([0] + [1]*x + [2]*x*x)", -1, 150);
+    h_xi_eff->Fit(f_xi_eff_, "SRQ", "", -1, 150);
 
     double xi_eff_0 = f_xi_eff_->Eval(ztarget_);
     f_xi_eff_->SetParameters(f_xi_eff_->GetParameter(0) - log(xi_eff_0), f_xi_eff_->GetParameter(1),
                              f_xi_eff_->GetParameter(2));
 
     signalHistos_->addHisto1d(h_pretrig_signal_vtxz_);
-    signalHistos_->addHisto1d(h_signal_vtxz_rad_subset_);
+    signalHistos_->addHisto1d(h_signal_vtxz_rad_);
     signalHistos_->addHisto1d(h_xi_eff);
 
-    // determine h_signal_vtxz_rad_ for full signal sample
-    signal_tree_->Draw(("vertex.getZ() >> h_signal_vtxz_rad" + zbin_str_).c_str(), initialCuts_.c_str());
-    h_signal_vtxz_rad_ = (TH1D*)gDirectory->Get("h_signal_vtxz_rad");
-    h_signal_vtxz_rad_->SetTitle((";z_{vtx} [mm];Events/" + std::to_string(z_bin_width_) + "mm").c_str());
-    h_signal_vtxz_rad_->Sumw2();
+    // // determine h_signal_vtxz_rad_ for full signal sample
+    // signal_tree_->Draw(("vertex.getZ() >> h_signal_vtxz_rad" + zbin_str_).c_str(), initialCuts_.c_str());
+    // h_signal_vtxz_rad_ = (TH1D*)gDirectory->Get("h_signal_vtxz_rad");
+    // h_signal_vtxz_rad_->SetTitle((";z_{vtx} [mm];Events/" + std::to_string(z_bin_width_) + "mm").c_str());
+    // h_signal_vtxz_rad_->Sumw2();
 
-    signalHistos_->addHisto1d(h_signal_vtxz_rad_);
+    // signalHistos_->addHisto1d(h_signal_vtxz_rad_);
 }
 
 double* ApOptimizationProcessor::getQuantileArray(std::pair<double, double> range, int n_quantiles,
@@ -593,21 +603,26 @@ std::vector<std::pair<double, double>> ApOptimizationProcessor::getZoffsetAlpha(
         std::cout << "ApOptimizationProcessor::getZoffsetAlpha: Number of z bins = "
                   << int(h_y0_vs_z->GetNbinsX() / nbins) << std::endl;
 
-    for (int i = 1; i <= int(h_y0_vs_z->GetNbinsX() / nbins); i++) {
-        auto h_proj = h_y0_vs_z->ProjectionY(("h_y0_vs_z_py_" + std::to_string(i)).c_str(), nbins * i, nbins * (i + 1));
+    for (int i = 0; i < int(h_y0_vs_z->GetNbinsX() / nbins); i++) {
+        auto h_proj = h_y0_vs_z->ProjectionY(("h_y0_vs_z_py_" + std::to_string(i)).c_str(), nbins * i + 1, nbins * (i + 1));
+        
+        if (h_proj->GetEntries() < 50) {
+            if (debug_) {
+                std::cout << "ApOptimizationProcessor::getZoffsetAlpha: Skipping z slice " << i
+                      << " with entries = " << h_proj->GetEntries() << std::endl;
+            }
+            continue;
+        }
         processorHistos_->addHisto1d(h_proj);
-
-        if (h_proj->GetEntries() < 50) continue;
+        double zval = ((TAxis*)h_y0_vs_z->GetXaxis())->GetBinCenter(nbins * (i + 0.5));
 
         double* quantile_pos = new double[n_quantiles];
         h_proj->GetQuantiles(n_quantiles, quantile_pos, quantiles);
         for (int q = 0; q < n_quantiles; q++) {
-            processorHistos_->getGraph(("g_y0_vs_z_q" + std::to_string(q)).c_str())
-                ->AddPoint((double)((TAxis*)h_y0_vs_z->GetXaxis())->GetBinCenter(int(nbins * (i + 0.5))),
-                           quantile_pos[q]);
-            double error = 0.;
+            processorHistos_->getGraph(("g_y0_vs_z_q" + std::to_string(q)).c_str())->AddPointError(zval, quantile_pos[q], 0.0, 0.0);
+            // double error = 0.;
 
-            processorHistos_->getGraph(("g_y0_vs_z_q" + std::to_string(q)).c_str())->SetPointError(q, 0.0, error);
+            // processorHistos_->getGraph(("g_y0_vs_z_q" + std::to_string(q)).c_str())->SetPointError(i, 0.0, error);
         }
     }
     for (int q = 0; q < n_quantiles; q++) {

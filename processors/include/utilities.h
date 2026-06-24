@@ -196,11 +196,20 @@ namespace utils {
      * \todo extern?
      */
     double v0_projection_to_target_significance(json v0proj_fits, int run, double &vtx_proj_x, double &vtx_proj_y,
-            double &vtx_proj_x_signif, double &vtx_proj_y_signif, double vtx_x, double vtx_y, double vtx_z, 
-            double vtx_px, double vtx_py, double vtx_pz);
+            double &vtx_proj_x_signif, double &vtx_proj_y_signif,
+            double &vtx_proj_x_centered, double &vtx_proj_y_centered,
+            double vtx_x, double vtx_y, double vtx_z,
+            double vtx_px, double vtx_py, double vtx_pz, bool debug = false);
 
     double v0_projection_to_target_significance(json v0proj_fits, int run, double &vtx_proj_x, double &vtx_proj_y,
-            double &vtx_proj_x_signif, double &vtx_proj_y_signif, Vertex* vtx);
+            double &vtx_proj_x_signif, double &vtx_proj_y_signif, Vertex* vtx,
+            double &vtx_proj_x_err, double &vtx_proj_y_err,
+            double &vtx_proj_x_centered, double &vtx_proj_y_centered, bool debug = false);
+
+    // Print a side-by-side comparison of the manually-projected target position
+    // (computed from vtx position + momentum) vs the LCIO-stored values from the
+    // Vertex object (getTgtProjX/Y/SigmaX/SigmaY). Useful for validating consistency.
+    void debug_target_projection(double target_pos, Vertex* vtx);
 }
 
 #endif //UTILITIES
