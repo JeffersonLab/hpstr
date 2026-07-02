@@ -16,5 +16,6 @@ var searchData=
   ['mctrackerhit_13',['MCTrackerHit',['../classMCTrackerHit.html#a059cdc4d4b85307925047c413039dab1',1,'MCTrackerHit']]],
   ['mctrackerhitprocessor_14',['MCTrackerHitProcessor',['../classMCTrackerHitProcessor.html#a61d9214e2eac1223b2094625a3ce174b',1,'MCTrackerHitProcessor']]],
   ['modulemapper_15',['ModuleMapper',['../classModuleMapper.html#ac1b0d3a6771fd8a28bd93a46f0bf7aed',1,'ModuleMapper']]],
-  ['mutablettree_16',['MutableTTree',['../classMutableTTree.html#a6fc48d6b4d74a4fa2dc0e723b32af8c6',1,'MutableTTree']]]
+  ['momentumcovariancefromtrack_16',['momentumcovariancefromtrack',['../namespaceTrackTools.html#a7b07bb1ecba45f9ef7827a0dbe936722',1,'TrackTools::momentumCovarianceFromTrack(double px, double py, double pz, double phi0, double omega, double tanLambda, const TMatrixD &amp;covTrack)'],['../namespaceTrackTools.html#a362e3b82deaaf56da9787584dcded141',1,'TrackTools::momentumCovarianceFromTrack(Track *track)']]],
+  ['mutablettree_17',['MutableTTree',['../classMutableTTree.html#a6fc48d6b4d74a4fa2dc0e723b32af8c6',1,'MutableTTree']]]
 ];

@@ -21,10 +21,11 @@ var searchData=
   ['buildaxes_18',['buildaxes',['../classThreeProngHistos.html#a8b76ba87f6ac7ecb57b1a8ae1d9bc475',1,'ThreeProngHistos::BuildAxes()'],['../classTrackEfficHistos.html#a8b76ba87f6ac7ecb57b1a8ae1d9bc475',1,'TrackEfficHistos::BuildAxes()'],['../classTrackHistos.html#a8b76ba87f6ac7ecb57b1a8ae1d9bc475',1,'TrackHistos::BuildAxes()'],['../classTridentHistos.html#a8b76ba87f6ac7ecb57b1a8ae1d9bc475',1,'TridentHistos::BuildAxes()']]],
   ['buildcalcluster_19',['buildCalCluster',['../namespaceutils.html#a2d01ad798936250108f868400e1e3051',1,'utils']]],
   ['buildchannelsvtidmap_20',['buildChannelSvtIDMap',['../classModuleMapper.html#ac38816992997c272b3ea6fd19915063d',1,'ModuleMapper']]],
-  ['buildparticle_21',['buildParticle',['../namespaceutils.html#a7f0793ae3975d895fb1306504c017110',1,'utils']]],
-  ['buildrawhit_22',['buildRawHit',['../namespaceutils.html#afd800cb48040eb2458c898be282a731c',1,'utils']]],
-  ['buildtrack_23',['buildTrack',['../namespaceutils.html#a331cab836b576d7a988d81e008242528',1,'utils']]],
-  ['buildtrackerhit_24',['buildTrackerHit',['../namespaceutils.html#a6bd5c589b49d0a2b2404965d82f7fe51',1,'utils']]],
-  ['buildvertex_25',['buildVertex',['../namespaceutils.html#a38245351b04f5e711d627819b932fbd4',1,'utils']]],
-  ['bumphunter_26',['BumpHunter',['../classBumpHunter.html#ac69da25e77c53cd89082a3d2c1a9a3ac',1,'BumpHunter']]]
+  ['buildcombinedcovariance_21',['buildCombinedCovariance',['../namespaceTrackTools.html#aa87d385a17a2c7a89f43ce06d0b79031',1,'TrackTools']]],
+  ['buildparticle_22',['buildParticle',['../namespaceutils.html#a7f0793ae3975d895fb1306504c017110',1,'utils']]],
+  ['buildrawhit_23',['buildRawHit',['../namespaceutils.html#afd800cb48040eb2458c898be282a731c',1,'utils']]],
+  ['buildtrack_24',['buildTrack',['../namespaceutils.html#a331cab836b576d7a988d81e008242528',1,'utils']]],
+  ['buildtrackerhit_25',['buildTrackerHit',['../namespaceutils.html#a6bd5c589b49d0a2b2404965d82f7fe51',1,'utils']]],
+  ['buildvertex_26',['buildVertex',['../namespaceutils.html#a38245351b04f5e711d627819b932fbd4',1,'utils']]],
+  ['bumphunter_27',['BumpHunter',['../classBumpHunter.html#ac69da25e77c53cd89082a3d2c1a9a3ac',1,'BumpHunter']]]
 ];
