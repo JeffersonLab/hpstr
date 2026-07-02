@@ -50,6 +50,12 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     scaleCorrVariable_ = parameters.getString("scaleCorrVariable", "");
     applyMeanCorr_     = parameters.getInteger("applyMeanCorr", 0) != 0;
 
+    // Save all tracks in the event
+    saveAllTracks_ = parameters.getInteger("saveAllTracks", 0) != 0;
+    // Calculate variables that depend on multiple tracks
+    calcMultiTrackVars_ = parameters.getInteger("calcMultiTrackVars", 0) != 0;
+
+
     std::string smearingFile = !smearingCfgFile.empty() ? smearingCfgFile : pSmearingFile;
 
     if (not smearingFile.empty()) {
@@ -178,6 +184,240 @@ double PreselectAndCategorize2021::calculate_theta_R(const TVector3& ele_mom, co
     return std::acos(cos_theta) * 1000.0;
 }
 
+Track* PreselectAndCategorize2021::createInferredTrack(Vertex* vtx, Track* ele_track, Track* pos_track) {
+
+    Track* inferredTrack = new Track();
+
+    TVector3 ele_mom(ele_track->getMomentum()[0], ele_track->getMomentum()[1], ele_track->getMomentum()[2]);
+    TVector3 pos_mom(pos_track->getMomentum()[0], pos_track->getMomentum()[1], pos_track->getMomentum()[2]);
+
+    // Beam 4-momentum (assume m_e ~ 0 for the beam)
+    double theta_beam = thetaBeamMrad_ / 1000.0;  // convert to radians
+    double beam_px = beamE_ * std::sin(theta_beam);
+    double beam_py = 0.0;
+    double beam_pz = beamE_ * std::cos(theta_beam);
+
+    // Inferred recoil 3-momentum from momentum conservation
+    double recoil_px =  beam_px - ele_mom.X() - pos_mom.X();
+    double recoil_py = beam_py - ele_mom.Y() - pos_mom.Y();
+    double recoil_pz = beam_pz - ele_mom.Z() - pos_mom.Z();
+
+    float inferredCharge = -1; // Third track is an electron
+    float pT = std::sqrt(ele_mom.X()*ele_mom.X() + ele_mom.Z()*ele_mom.Z());
+    float cB = pT * fabs(ele_track->getOmega());
+
+
+
+    float target_pos = -1.1;
+    // Calculate track parameters
+    std::vector<float> params = TrackTools::calculateTrackParameters(
+        vtx->getX(), vtx->getY(), vtx->getZ(),
+        recoil_px, recoil_py, recoil_pz, inferredCharge, cB, target_pos);
+
+    inferredTrack->setTrackParameters(
+        params[0],  // d0
+        params[1],  // phi0
+        params[2],  // omega
+        params[4],  // tanLambda
+        params[3]   // z0
+    );
+
+    TMatrixD covVertex = TrackTools::getVertexCovariance(vtx);
+
+    TMatrixD eleCovMomentum = TrackTools::momentumCovarianceFromTrack(ele_track);
+    TMatrixD posCovMomentum = TrackTools::momentumCovarianceFromTrack(pos_track);
+
+    TMatrixD covMomentum = eleCovMomentum + posCovMomentum;
+
+    // Calculate track parameter covariance
+    TMatrixD covTrackParams = TrackTools::calculateTrackCovariance(
+        vtx->getX(), vtx->getY(), vtx->getZ(),
+        recoil_px, recoil_py, recoil_pz,
+        covVertex, covMomentum,
+        inferredCharge, cB, target_pos);
+
+
+    // Order: [d0, phi0, omega, z0, tanLambda]
+    std::vector<float> covArray;
+    covArray.reserve(15);
+    
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j <= i; j++) {  
+            covArray.push_back(covTrackParams(j, i));
+        }
+    }
+    
+    inferredTrack->setCov(covArray);
+    
+    // Set momentum
+    inferredTrack->setMomentum(recoil_px, recoil_py, recoil_pz);
+
+    return inferredTrack;
+
+}
+
+
+bool PreselectAndCategorize2021::isQualityTrack(Track* trk, const Particle& pos) const {
+    // chi2/ndf <= 20
+    if (trk->getChi2Ndf() > 20.0) return false;
+    
+    // n_hits
+    int nhits = trk->getTrackerHitCount();
+    if (!trk->isKalmanTrack()) nhits *= 2;
+    if (nhits < minHits_) return false;
+    
+    // p >= 0.4
+    double p = trk->getP();
+    if (p < 0.4) return false;
+    
+    // for electrons (charge = -1), p <= 2.9
+    if (trk->getCharge() < 0 && p > 2.9) return false;
+    
+    // Timing cuts relative to preselection positron
+    double trk_time = trk->getTrackTime();
+    double pos_trk_time = pos.getTrack().getTrackTime();
+    double pos_clu_time = pos.getCluster().getTime();
+    
+    if (!disableTimingCuts_) {
+        if (trk->getCharge() < 0) {       
+            if (std::fabs(trk_time - pos_clu_time) > time_cuts_[0]) return false;
+            if (std::fabs(trk_time - pos_trk_time) > time_cuts_[2]) return false;  
+        } else if (trk->getCharge() > 0) {
+            if (std::fabs(trk_time - pos_clu_time) > time_cuts_[1]) return false;
+            if (std::fabs(trk_time - pos_trk_time) > time_cuts_[2]) return false;
+        }
+    }
+    
+    return true;
+}
+
+void PreselectAndCategorize2021::calculatePairwiseQuantities(
+    const std::vector<Track*>& all_tracks,
+    Particle& ele,
+    Particle& pos)
+{
+    // Select quality tracks with good timing relative to preselection positron
+    std::vector<Track> electrons, positrons;
+    std::vector<Track> all_good_tracks;
+    
+    // include the preselected electron and positron first
+    Track ele_trk = ele.getTrack();
+    Track pos_trk = pos.getTrack();
+    
+    if (ele_trk.getCharge() < 0) {
+        electrons.push_back(ele_trk);
+        if (saveAllTracks_) all_good_tracks.push_back(ele_trk);
+    }
+    
+    if (pos_trk.getCharge() > 0) {
+        positrons.push_back(pos_trk);
+        if (saveAllTracks_) all_good_tracks.push_back(pos_trk);
+    }
+    
+    // Track which tracks from the collection we've already included
+    std::set<int> included_track_ids;
+    if (ele_trk.getID() >= 0) included_track_ids.insert(ele_trk.getID());
+    if (pos_trk.getID() >= 0) included_track_ids.insert(pos_trk.getID());
+    
+    // Then check additional tracks from the collection
+    for (auto* trk : all_tracks) {
+        // Skip if this is the same track as preselected electron or positron
+        if (trk->getID() >= 0 && included_track_ids.count(trk->getID()) > 0) {
+            continue;
+        }
+        
+        if (!isQualityTrack(trk, pos)) continue;
+        
+        // Store a copy of the good track
+        if (saveAllTracks_) {
+            all_good_tracks.push_back(*trk);
+        }
+        
+        if (trk->getCharge() < 0) {
+            electrons.push_back(*trk);
+        } else if (trk->getCharge() > 0) {
+            positrons.push_back(*trk);
+        }
+    }
+    
+    // Save all good tracks if enabled
+    if (saveAllTracks_) {
+        bus_.set("all_preselected_tracks", all_good_tracks);
+    }
+    
+    // Initialize extrema values
+    double min_dTanLambda = 9999.0, max_dTanLambda = -9999.0;
+    double min_opening = 9999.0, max_opening = -9999.0;
+    double min_mass = 9999.0, max_mass = -9999.0;
+    double min_asym = 9999.0, max_asym = -9999.0;
+    double min_dPhi = 9999.0, max_dPhi = -9999.0;
+    
+    const double me = 0.000511; 
+    
+    // Loop over all e+/e- pairs
+    for (auto& ele_track : electrons) {
+        const std::vector<double>& ele_mom = ele_track.getMomentum();
+        TVector3 pe(ele_mom[0], ele_mom[1], ele_mom[2]);
+        double pe_mag = pe.Mag();
+        double ele_tanLambda = ele_track.getTanLambda();
+        double ele_phi0 = ele_track.getPhi();
+        
+        for (auto& pos_track : positrons) {
+            const std::vector<double>& pos_mom = pos_track.getMomentum();
+            TVector3 pp(pos_mom[0], pos_mom[1], pos_mom[2]);
+            double pp_mag = pp.Mag();
+            double pos_tanLambda = pos_track.getTanLambda();
+            double pos_phi0 = pos_track.getPhi();
+            
+            // TanLambda difference
+            double dTanLambda = std::fabs(ele_tanLambda - pos_tanLambda);
+            min_dTanLambda = std::min(min_dTanLambda, dTanLambda);
+            max_dTanLambda = std::max(max_dTanLambda, dTanLambda);
+            
+            // Phi difference
+            double dPhi = std::fabs(ele_phi0 - pos_phi0);
+            min_dPhi = std::min(min_dPhi, dPhi);
+            max_dPhi = std::max(max_dPhi, dPhi);
+            
+            // Opening angle
+            double cos_theta = pe.Dot(pp) / (pe_mag * pp_mag);
+            cos_theta = std::max(-1.0, std::min(1.0, cos_theta));
+            double opening_angle = std::acos(cos_theta);
+            min_opening = std::min(min_opening, opening_angle);
+            max_opening = std::max(max_opening, opening_angle);
+            
+            // Invariant mass
+            double Ee = std::sqrt(pe_mag * pe_mag + me * me);
+            double Ep = std::sqrt(pp_mag * pp_mag + me * me);
+            TVector3 p_tot = pe + pp;
+            double E_tot = Ee + Ep;
+            double m2 = E_tot * E_tot - p_tot.Mag2();
+            double mass = (m2 > 0) ? std::sqrt(m2) : 0.0;
+            min_mass = std::min(min_mass, mass);
+            max_mass = std::max(max_mass, mass);
+            
+            // Asymmetry
+            double asymmetry = std::fabs(pe_mag - pp_mag) / (pe_mag + pp_mag);
+            min_asym = std::min(min_asym, asymmetry);
+            max_asym = std::max(max_asym, asymmetry);
+        }
+    }
+    
+    // Store results (use -9999 if no pairs found)
+    bool has_pairs = (!electrons.empty() && !positrons.empty());
+    
+    bus_.set("min_dTanLambda", has_pairs ? min_dTanLambda : -9999.0);
+    bus_.set("max_dTanLambda", has_pairs ? max_dTanLambda : -9999.0);
+    bus_.set("min_opening", has_pairs ? min_opening : -9999.0);
+    bus_.set("max_opening", has_pairs ? max_opening : -9999.0);
+    bus_.set("min_mass", has_pairs ? min_mass : -9999.0);
+    bus_.set("max_mass", has_pairs ? max_mass : -9999.0);
+    bus_.set("min_asym", has_pairs ? min_asym : -9999.0);
+    bus_.set("max_asym", has_pairs ? max_asym : -9999.0);
+    bus_.set("min_dPhi", has_pairs ? min_dPhi : -9999.0);
+    bus_.set("max_dPhi", has_pairs ? max_dPhi : -9999.0);
+}
+
 void PreselectAndCategorize2021::initialize(TTree* tree) {
     _ah = std::make_shared<AnaHelpers>();
 
@@ -249,6 +489,7 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
     bus_.board_output<Vertex>(output_tree_.get(), "vertex");
     bus_.board_output<Particle>(output_tree_.get(), "ele");
     bus_.board_output<Particle>(output_tree_.get(), "pos");
+    bus_.board_output<Track>(output_tree_.get(), "third_track");
     bus_.board_output<double>(output_tree_.get(), "psum");
     bus_.board_output<double>(output_tree_.get(), "psum_scalar");
     bus_.board_output<double>(output_tree_.get(), "epem_opening_angle");
@@ -315,6 +556,20 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
     // vertical impact parameter
     for (const auto& name : {"min_y0", "max_y0err", "min_y0err", "ele_y0err", "pos_y0err", "min_y0_vtx", "min_y0_vtx_proj", "vtx_y_at_zero", "delta_y0_vtx_proj"}) {
         bus_.board_output<double>(output_tree_.get(), name);
+    }
+
+    if (calcMultiTrackVars_) {
+        for (const auto& extrema : {"min", "max"}) {
+            bus_.board_output<double>(output_tree_.get(), std::string(extrema) + "_dTanLambda");
+            bus_.board_output<double>(output_tree_.get(), std::string(extrema) + "_opening");
+            bus_.board_output<double>(output_tree_.get(), std::string(extrema) + "_mass");
+            bus_.board_output<double>(output_tree_.get(), std::string(extrema) + "_asym");
+            bus_.board_output<double>(output_tree_.get(), std::string(extrema) + "_dPhi");
+        }
+    }
+
+    if (saveAllTracks_) {
+        bus_.board_output<std::vector<Track>>(output_tree_.get(), "all_preselected_tracks");
     }
 
     if (bus_.has(mcColl_)) {
@@ -434,6 +689,7 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         if (not v0proj_fits_.empty()) {
             int run = eh.getRunNumber();
             int closest_run;
+            closest_run = std::stoi((*v0proj_fits_.items().begin()).key());
             for (auto entry : v0proj_fits_.items()) {
                 int check_run = std::stoi(entry.key());
                 if (check_run > run)
@@ -809,6 +1065,8 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     bus_.set("epem_opening_angle", ele_mom.Angle(pos_mom));
     bus_.set("recoil_theta", calculate_theta_R(ele_mom, pos_mom));
 
+    Track thirdTrack = *dynamic_cast<Track*>(createInferredTrack(&vtx, &ele_trk, &pos_trk));
+
     // calculate target projection and its significance
     if (not v0proj_fits_.empty()) {
         double vtx_proj_x{-1.0}, vtx_proj_y{-1.0};
@@ -899,6 +1157,26 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     bus_.set("vertex", vtx);
     bus_.set("ele", ele);
     bus_.set("pos", pos);
+    bus_.set("third_track", thirdTrack);
+
+    //set multi-track quantities
+    if (calcMultiTrackVars_ && bus_.has(trkColl_)) {
+        const auto& all_tracks = bus_.get<std::vector<Track*>>(trkColl_);
+        calculatePairwiseQuantities(all_tracks, ele, pos);
+    } else if (saveAllTracks_ && bus_.has(trkColl_)) {
+        // if we only want to save tracks but not calculate pairwise quantities
+        const auto& all_tracks = bus_.get<std::vector<Track*>>(trkColl_);
+        std::vector<Track> all_good_tracks;
+        
+        for (auto* trk : all_tracks) {
+            if (isQualityTrack(trk, pos)) {
+                all_good_tracks.push_back(*trk);
+            }
+        }
+        
+        bus_.set("all_preselected_tracks", all_good_tracks);
+    }
+    
 
     /**
      * This is where the output TTree is filled,

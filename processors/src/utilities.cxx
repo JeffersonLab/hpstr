@@ -850,6 +850,7 @@ double utils::v0_projection_to_target_significance(json v0proj_fits, int run, do
 
     // Read v0 projection fits from json file
     int closest_run;
+    closest_run = std::stoi((*v0proj_fits.items().begin()).key());
     for (auto entry : v0proj_fits.items()) {
         int check_run = std::stoi(entry.key());
         if (check_run > run)
@@ -934,6 +935,7 @@ double utils::v0_projection_to_target_significance(json v0proj_fits, int run, do
                                                    bool debug) {
     // Read v0 projection fits from json file
     int closest_run;
+    closest_run = std::stoi((*v0proj_fits.items().begin()).key());
     for (auto entry : v0proj_fits.items()) {
         int check_run = std::stoi(entry.key());
         if (check_run > run)
