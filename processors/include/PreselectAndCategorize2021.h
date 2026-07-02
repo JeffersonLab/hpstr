@@ -9,6 +9,8 @@
 
 #include <sstream>
 #include <string>
+#include <set>
+
 
 #include "Math/Vector4D.h"
 #include "PreselectAndCategorize.h"
@@ -17,6 +19,7 @@
 #include "TrackBiasingTool.h"
 #include "TrackSmearingTool.h"
 #include "TruthMatchingUtils.h"
+#include "TrackTools.h"
 
 class PreselectAndCategorize2021 : public PreselectAndCategorize {
   public:
@@ -58,6 +61,14 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
     //   p_recoil = p_beam - p_ele - p_pos
     // and theta_R is the angle between p_recoil and the beam direction.
     double calculate_theta_R(const TVector3& ele_mom, const TVector3& pos_mom) const;
+
+    bool saveAllTracks_{false}; // if true, save all tracks in the event
+    bool calcMultiTrackVars_{false}; // if true, calculate event-level variables (min_dTanlambda, etc.)
+
+    Track createInferredTrack(Vertex* vtx, Track* ele_track, Track* pos_track);
+
+    bool isQualityTrack(Track* trk, const Particle& pos) const;
+    void calculatePairwiseQuantities(const std::vector<Track*>& all_tracks,  Particle& ele, Particle& pos);
 };
 
 #endif  //__PRESELECT_AND_CATEGORIZE_2021_H__
