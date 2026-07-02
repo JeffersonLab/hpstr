@@ -65,7 +65,7 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
     bool saveAllTracks_{false}; // if true, save all tracks in the event
     bool calcMultiTrackVars_{false}; // if true, calculate event-level variables (min_dTanlambda, etc.)
 
-    Track* createInferredTrack(Vertex* vtx, Track* ele_track, Track* pos_track);
+    Track createInferredTrack(Vertex* vtx, Track* ele_track, Track* pos_track);
 
     bool isQualityTrack(Track* trk, const Particle& pos) const;
     void calculatePairwiseQuantities(const std::vector<Track*>& all_tracks,  Particle& ele, Particle& pos);

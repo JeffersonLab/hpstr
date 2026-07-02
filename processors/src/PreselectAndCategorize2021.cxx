@@ -184,9 +184,9 @@ double PreselectAndCategorize2021::calculate_theta_R(const TVector3& ele_mom, co
     return std::acos(cos_theta) * 1000.0;
 }
 
-Track* PreselectAndCategorize2021::createInferredTrack(Vertex* vtx, Track* ele_track, Track* pos_track) {
+Track PreselectAndCategorize2021::createInferredTrack(Vertex* vtx, Track* ele_track, Track* pos_track) {
 
-    Track* inferredTrack = new Track();
+    Track inferredTrack;
 
     TVector3 ele_mom(ele_track->getMomentum()[0], ele_track->getMomentum()[1], ele_track->getMomentum()[2]);
     TVector3 pos_mom(pos_track->getMomentum()[0], pos_track->getMomentum()[1], pos_track->getMomentum()[2]);
@@ -214,7 +214,7 @@ Track* PreselectAndCategorize2021::createInferredTrack(Vertex* vtx, Track* ele_t
         vtx->getX(), vtx->getY(), vtx->getZ(),
         recoil_px, recoil_py, recoil_pz, inferredCharge, cB, target_pos);
 
-    inferredTrack->setTrackParameters(
+    inferredTrack.setTrackParameters(
         params[0],  // d0
         params[1],  // phi0
         params[2],  // omega
@@ -247,10 +247,10 @@ Track* PreselectAndCategorize2021::createInferredTrack(Vertex* vtx, Track* ele_t
         }
     }
     
-    inferredTrack->setCov(covArray);
+    inferredTrack.setCov(covArray);
     
     // Set momentum
-    inferredTrack->setMomentum(recoil_px, recoil_py, recoil_pz);
+    inferredTrack.setMomentum(recoil_px, recoil_py, recoil_pz);
 
     return inferredTrack;
 
@@ -1065,7 +1065,7 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     bus_.set("epem_opening_angle", ele_mom.Angle(pos_mom));
     bus_.set("recoil_theta", calculate_theta_R(ele_mom, pos_mom));
 
-    Track thirdTrack = *dynamic_cast<Track*>(createInferredTrack(&vtx, &ele_trk, &pos_trk));
+    Track thirdTrack = createInferredTrack(&vtx, &ele_trk, &pos_trk);
 
     // calculate target projection and its significance
     if (not v0proj_fits_.empty()) {
