@@ -27,9 +27,24 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     // Disable all vertex-level preselection cuts (default: cuts enabled)
     disablePreselection_ = parameters.getInteger("disablePreselection", 0) != 0;
     disableTimingCuts_   = parameters.getInteger("disableTimingCuts", 0) != 0;
+    disableVertexChi2Cut_ = parameters.getInteger("disableVertexChi2Cut", 0) != 0;
 
-    // Minimum number of 2D tracker hits required for each track (default 10)
+    // Momentum source for the e+/e- used in psum and the per-track momentum cuts: vertex-fitted
+    // (default) or standalone track-fit. Defaults to true to preserve prior behavior.
+    useVertexMomentum_ = parameters.getInteger("useVertexMomentum", 1) != 0;
+
+    // Minimum number of 2D tracker hits required per track (default 10). The electron and
+    // positron can be controlled independently via eleMinHits/posMinHits; each defaults to
+    // minHits when not set explicitly.
     minHits_ = parameters.getInteger("minHits", minHits_);
+    eleMinHits_ = parameters.getInteger("eleMinHits", minHits_);
+    posMinHits_ = parameters.getInteger("posMinHits", minHits_);
+
+    // Which trigger to require: "singles2" (default: singles2||singles3) or "pairs"
+    triggerSelection_ = parameters.getString("triggerSelection", triggerSelection_);
+
+    // Optional minimum psum cut; disabled (default) when < 0
+    psumCut_ = parameters.getDouble("psumCut", psumCut_);
 
     // Beam parameters used to infer the recoil-electron direction
     beamE_ = parameters.getDouble("beamE", beamE_);
@@ -147,6 +162,7 @@ std::vector<double> PreselectAndCategorize2021::determine_time_cuts(bool isData,
     } else {
         // Apply MC-specific time cuts
         time_cuts = {6.0, 5.7, 9.2};  // MC with track time smearing
+        //time_cuts = {18.0, 17.1, 27.6};  // MC with track time smearing
         // time_cuts = {3.0, 3.0, 4.2};  // MC without track time smearing
     }
 
@@ -193,18 +209,23 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
     /* pre-selection on vertices */
     // vertex_cf_.add("single_trigger", 2, -0.5, 1.5);
     time_cuts_ = determine_time_cuts(isData_, bus_.get<EventHeader>("EventHeader").getRunNumber());
+    // NOTE: the vertex cutflow's denominator (nocut bin) is now SEEDED: only v0 candidates with a
+    // positron that has BOTH a track and a cluster, and an electron with a track (cluster optional),
+    // enter the cutflow. Cluster-EXISTENCE is folded into the seed; the positron cluster-ENERGY
+    // sanity cut (E_clus > 0.2 GeV) remains as the first cut after the skim.
     vertex_cf_.add("positron_clusterE_above_0pt2GeV", 100, 0, 4.0);
-    vertex_cf_.add("ele_track_cluster", 200, 0.0, 20.0);
-    vertex_cf_.add("pos_track_cluster", 200, 0.0, 20.0);
-    vertex_cf_.add("ele_pos_track", 200, 0.0, 20.0);
+    vertex_cf_.add("electron_above_0pt2GeV", 100, 0.0, 4.0);
+    vertex_cf_.add("electron_below_2pt9GeV", 100, 0.0, 4.0);
     vertex_cf_.add("ele_track_chi2ndf", 100, 0.0, 30.0);
     vertex_cf_.add("pos_track_chi2ndf", 100, 0.0, 30.0);
-    vertex_cf_.add("electron_below_2pt9GeV", 100, 0.0, 4.0);
-    vertex_cf_.add("electron_above_0pt4GeV", 100, 0.0, 4.0);
     vertex_cf_.add("positron_above_0pt4GeV", 100, 0.0, 4.0);
     vertex_cf_.add("ele_min_hits", 14, 0, 14);
     vertex_cf_.add("pos_min_hits", 14, 0, 14);
+    vertex_cf_.add("ele_track_cluster", 200, 0.0, 60.0);
+    vertex_cf_.add("pos_track_cluster", 200, 0.0, 20.0);
+    vertex_cf_.add("ele_pos_track", 200, 0.0, 20.0);
     vertex_cf_.add("vertex_chi2", 100, 0.0, 30.0);
+    if (psumCut_ >= 0.0) vertex_cf_.add("psum_min", 100, 0.0, 4.0);
     vertex_cf_.add("vtx_max_p_4pt0GeV", 100, 0.0, 4.0);
     vertex_cf_.init();
 
@@ -213,15 +234,23 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
     pos_trk_clu_cut << "|t_{trk, e^{+}} - t_{clu, e^{+}}| < " << time_cuts_[1] << " ns";
     ele_pos_trk_cut << "|t_{trk, e^{-}} - t_{trk, e^{+}}| < " << time_cuts_[2] << " ns";
     std::vector<std::string> labels_vertex_cf = {
-        "reconstructed",       "E_{e^{+}} > 0.2 GeV",     ele_trk_clu_cut.str(),        pos_trk_clu_cut.str(),
-        ele_pos_trk_cut.str(), "e^{-} #chi^{2}/ndf < 20", "e^{+} #chi^{2}/ndf < 20",    "p_{e^{-}} < 2.9 GeV",
-        "p_{e^{-}} > 0.4 GeV", "p_{e^{+}} > 0.4 GeV",
-        "N_{2D hits, e^{-}} #geq " + std::to_string(minHits_), "N_{2D hits, e^{+}} #geq " + std::to_string(minHits_),
-        "#chi^{2}_{vtx} < 20", "p_{vtx} < 4.0 GeV"};
+        "e^{+} trk+clu, e^{-} trk", "E_{e^{+}} > 0.2 GeV",
+        "p_{e^{-}} > 0.2 GeV", "p_{e^{-}} < 2.9 GeV",
+        "e^{-} #chi^{2}/ndf < 20", "e^{+} #chi^{2}/ndf < 20", "p_{e^{+}} > 0.4 GeV",
+        "N_{2D hits, e^{-}} #geq " + std::to_string(eleMinHits_), "N_{2D hits, e^{+}} #geq " + std::to_string(posMinHits_),
+        ele_trk_clu_cut.str(), pos_trk_clu_cut.str(), ele_pos_trk_cut.str(),
+        "#chi^{2}_{vtx} < 30"};
+    if (psumCut_ >= 0.0) {
+        std::stringstream psum_cut;
+        psum_cut << "p_{sum} > " << psumCut_ << " GeV";
+        labels_vertex_cf.push_back(psum_cut.str());
+    }
+    labels_vertex_cf.push_back("p_{vtx} < 4.0 GeV");
     vertex_cf_.set_label_names(labels_vertex_cf);
 
     /* event selection after vertex selection */
     event_cf_.add("single_trigger", 2, -0.5, 1.5);
+    event_cf_.add("at_least_one_v0", 10, 0.0, 10.0);
     event_cf_.add("at_least_one_vertex", 10, 0.0, 10.0);
     event_cf_.add("no_extra_vertices", 10, 0.0, 10.0);
     if (isSimpSignal_) {
@@ -233,7 +262,8 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
         event_cf_.add("no_extra_true_ap", 3, 0.0, 2.0);
     }
     event_cf_.init();
-    std::vector<std::string> labels_event_cf = {"readout", "single2 or 3 trigger", "N_{vtx} >= 1", "N_{vtx} < 2"};
+    std::string trig_label = (triggerSelection_ == "pairs") ? "pairs trigger" : "single2 or 3 trigger";
+    std::vector<std::string> labels_event_cf = {"readout", trig_label, "N_{v0}^{raw} >= 1", "N_{vtx}^{presel} >= 1", "N_{vtx}^{presel} < 2"};
     event_cf_.set_label_names(labels_event_cf);
 
     n_vertices_h_ = std::make_unique<TH2F>(
@@ -345,8 +375,13 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     // other triggers within it
     // MC is created with only this trigger AND the event header
     // is not updated so we need to skip this check for MC
-    event_cf_.apply("single_trigger", (tsbank.isSingle3Trigger() || tsbank.isSingle2Trigger()));
-    event_cf_.fill_nm1("single_trigger", (tsbank.isSingle3Trigger() || tsbank.isSingle2Trigger()) ? 1 : 0);
+    // trigger decision selected by configuration: default "singles2" (singles2||singles3),
+    // or "pairs" (OR of all pair triggers). Anything else falls back to the singles logic.
+    bool trigger_decision = (triggerSelection_ == "pairs")
+        ? tsbank.isPairTrigger()
+        : (tsbank.isSingle3Trigger() || tsbank.isSingle2Trigger());
+    event_cf_.apply("single_trigger", trigger_decision);
+    event_cf_.fill_nm1("single_trigger", trigger_decision ? 1 : 0);
     if (not event_cf_.keep()) {
         // we leave BEFORE filling the vertex counting histogram
         // so that the vertex count histogram is relative to this trigger
@@ -357,6 +392,13 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     const auto& allClusters{bus_.get<std::vector<CalCluster*>>("RecoEcalClusters")};
 
     const auto& vtxs{bus_.get<std::vector<Vertex*>>(vtxColl_)};
+
+    // event-level: does the event have at least one raw v0 (before any preselection cuts)?
+    // sits between the trigger and the preselected-vertex requirement so the cutflow shows
+    // trigger -> >=1 v0 -> >=1 good (preselected) v0.
+    event_cf_.apply("at_least_one_v0", vtxs.size() >= 1);
+    event_cf_.fill_nm1("at_least_one_v0", vtxs.size());
+
     /**
      * pre-selection on vertices defining "quality" vertices
      *
@@ -413,10 +455,23 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         TVector3 ele_p_prefit(ele_trk.getMomentum()[0], ele_trk.getMomentum()[1], ele_trk.getMomentum()[2]);
         TVector3 pos_p_prefit(pos_trk.getMomentum()[0], pos_trk.getMomentum()[1], pos_trk.getMomentum()[2]);
 
-        // replace particle track momenta with vertex-fitted momenta
-        bool is_top_ele = ele_trk.getTanLambda() > 0;
-        if (is_top_ele) {
-            if (vtx->getP1Y() > 0) {
+        // Replace particle track momenta with the vertex-fitted momenta (only when enabled). The
+        // vertex stores its two fitted momenta as P1/P2 in a fixed slot order with no particle
+        // label; HPS vertexing only builds top+bottom track pairs, so we identify which slot is the
+        // electron purely by matching the top/bottom side (sign of tanLambda / Py). This covers all
+        // electron-top and electron-bottom cases (the old code only handled electron-on-top). When
+        // useVertexMomentum_ is false, the standalone track-fit momenta are kept as-is.
+        if (useVertexMomentum_) {
+            bool ele_is_top = ele_trk.getTanLambda() > 0;
+            bool pos_is_top = pos_trk.getTanLambda() > 0;
+            bool p1_is_top  = vtx->getP1Y() > 0;
+            if (ele_is_top == pos_is_top) {
+                std::cout << "[PreselectAndCategorize2021] WARNING: same-side vertex (ele_isTop="
+                          << ele_is_top << ", pos_isTop=" << pos_is_top << ", run " << eh.getRunNumber()
+                          << " event " << eh.getEventNumber()
+                          << "): side-based momentum assignment is ambiguous!" << std::endl;
+            }
+            if (ele_is_top == p1_is_top) {
                 ele_trk.setMomentum(vtx->getP1X(), vtx->getP1Y(), vtx->getP1Z());
                 pos_trk.setMomentum(vtx->getP2X(), vtx->getP2Y(), vtx->getP2Z());
             } else {
@@ -548,63 +603,78 @@ bool PreselectAndCategorize2021::process(IEvent*) {
 
         TVector3 psum = ele_mom + pos_mom;
 
-        vertex_cf_.begin_event();
-        {
-            const auto& posCl = pos.getCluster();
-            double posClE = posCl.getEnergy();
-            bool posClCut = posClE >= 0.2;
+        // ----- seed the vertex cutflow -----
+        // Only v0 candidates with a positron that has BOTH a track and a cluster, and an electron
+        // with a track (its cluster is irrelevant here), are counted. These define the cutflow
+        // denominator (nocut bin); the remaining cuts then measure preselection efficiency relative
+        // to this clean candidate, instead of charging cluster-acceptance against the first cut.
+        const auto& posCl = pos.getCluster();
+        double posClE = posCl.getEnergy();
+        bool pos_has_cluster = (posClE > -9000.0);
+        bool pos_has_track   = (pos.getTrack().getTrackerHitCount() > 0);
+        bool ele_has_track   = (ele.getTrack().getTrackerHitCount() > 0);
 
-            double pos_cl_min_dr = -9999.0;
-            double pos_cl_min_dr_t = -9999.0;
-            if (posClE < -9000.0) {
-                auto posAtEcal = pos_trk.getPositionAtEcal();
-                double min_dr = 9999.0;
-                for (const auto* cl : allClusters) {
-                    auto clPos = cl->getPosition();
-                    double dx = clPos[0] - posAtEcal[0];
-                    double dy = clPos[1] - posAtEcal[1];
-                    double dr = std::sqrt(dx*dx + dy*dy);
-                    if (dr < min_dr) {
-                        min_dr = dr;
-                        pos_cl_min_dr_t = cl->getTime() - calTimeOffset_;
-                    }
+        // orphan-cluster diagnostic (only filled when the positron has NO cluster, which the seed
+        // below rejects -> stays at the sentinel for seeded candidates).
+        double pos_cl_min_dr = -9999.0;
+        double pos_cl_min_dr_t = -9999.0;
+        if (not pos_has_cluster) {
+            auto posAtEcal = pos_trk.getPositionAtEcal();
+            double min_dr = 9999.0;
+            for (const auto* cl : allClusters) {
+                auto clPos = cl->getPosition();
+                double dx = clPos[0] - posAtEcal[0];
+                double dy = clPos[1] - posAtEcal[1];
+                double dr = std::sqrt(dx*dx + dy*dy);
+                if (dr < min_dr) {
+                    min_dr = dr;
+                    pos_cl_min_dr_t = cl->getTime() - calTimeOffset_;
                 }
-                pos_cl_min_dr = min_dr;
             }
-            bus_.set("pos_cl_min_dr", pos_cl_min_dr);
-            bus_.set("pos_cl_min_dr_t", pos_cl_min_dr_t);
-
-            vertex_cf_.apply("positron_clusterE_above_0pt2GeV", posClCut);
+            pos_cl_min_dr = min_dr;
         }
+        bus_.set("pos_cl_min_dr", pos_cl_min_dr);
+        bus_.set("pos_cl_min_dr_t", pos_cl_min_dr_t);
+
+        if (not (pos_has_track && pos_has_cluster && ele_has_track)) {
+            ivtx++;
+            continue;  // does not seed the cutflow and cannot be preselected
+        }
+
+        vertex_cf_.begin_event();
+        // sanity cut on the (now-guaranteed-present) positron cluster energy
+        vertex_cf_.apply("positron_clusterE_above_0pt2GeV", posClE >= 0.2);
+        vertex_cf_.apply("electron_above_0pt2GeV", ele.getTrack().getP() >= 0.2);
+        vertex_cf_.apply("electron_below_2pt9GeV", ele.getTrack().getP() <= 2.9);
+        vertex_cf_.apply("ele_track_chi2ndf", ele.getTrack().getChi2Ndf() <= 20.0);
+        vertex_cf_.apply("pos_track_chi2ndf", pos.getTrack().getChi2Ndf() <= 20.0);
+        vertex_cf_.apply("positron_above_0pt4GeV", pos.getTrack().getP() >= 0.4);
+        vertex_cf_.apply("ele_min_hits", ele_nhits >= eleMinHits_);
+        vertex_cf_.apply("pos_min_hits", pos_nhits >= posMinHits_);
         vertex_cf_.apply("ele_track_cluster",
                          disableTimingCuts_ || fabs(ele.getTrack().getTrackTime() - pos.getCluster().getTime()) <= time_cuts_[0]);
         vertex_cf_.apply("pos_track_cluster",
                          disableTimingCuts_ || fabs(pos.getTrack().getTrackTime() - pos.getCluster().getTime()) <= time_cuts_[1]);
         vertex_cf_.apply("ele_pos_track",
                          disableTimingCuts_ || fabs(ele.getTrack().getTrackTime() - pos.getTrack().getTrackTime()) <= time_cuts_[2]);
-        vertex_cf_.apply("ele_track_chi2ndf", ele.getTrack().getChi2Ndf() <= 20.0);
-        vertex_cf_.apply("pos_track_chi2ndf", pos.getTrack().getChi2Ndf() <= 20.0);
-        vertex_cf_.apply("electron_below_2pt9GeV", ele.getTrack().getP() <= 2.9);
-        vertex_cf_.apply("electron_above_0pt4GeV", ele.getTrack().getP() >= 0.4);
-        vertex_cf_.apply("positron_above_0pt4GeV", pos.getTrack().getP() >= 0.4);
-        vertex_cf_.apply("ele_min_hits", ele_nhits >= minHits_);
-        vertex_cf_.apply("pos_min_hits", pos_nhits >= minHits_);
-        vertex_cf_.apply("vertex_chi2", vtx->getChi2() <= 20.0);
+        vertex_cf_.apply("vertex_chi2", disableVertexChi2Cut_ || vtx->getChi2() <= 30.0);
+        if (psumCut_ >= 0.0) vertex_cf_.apply("psum_min", psum.Mag() > psumCut_);
         double vtxmaxp = ele_mom.Mag() + pos_mom.Mag();
         vertex_cf_.apply("vtx_max_p_4pt0GeV", psum.Mag() <= 4.0);
 
-        vertex_cf_.fill_nm1("positron_clusterE_above_0pt2GeV", pos.getCluster().getEnergy());
-        vertex_cf_.fill_nm1("ele_track_cluster", fabs(ele.getTrack().getTrackTime() - pos.getCluster().getTime()));
-        vertex_cf_.fill_nm1("pos_track_cluster", fabs(pos.getTrack().getTrackTime() - pos.getCluster().getTime()));
-        vertex_cf_.fill_nm1("ele_pos_track", fabs(ele.getTrack().getTrackTime() - pos.getTrack().getTrackTime()));
+        vertex_cf_.fill_nm1("positron_clusterE_above_0pt2GeV", posClE);
+        vertex_cf_.fill_nm1("electron_above_0pt2GeV", ele.getTrack().getP());
+        vertex_cf_.fill_nm1("electron_below_2pt9GeV", ele.getTrack().getP());
         vertex_cf_.fill_nm1("ele_track_chi2ndf", ele.getTrack().getChi2Ndf());
         vertex_cf_.fill_nm1("pos_track_chi2ndf", pos.getTrack().getChi2Ndf());
-        vertex_cf_.fill_nm1("electron_below_2pt9GeV", ele.getTrack().getP());
-        vertex_cf_.fill_nm1("electron_above_0pt4GeV", ele.getTrack().getP());
         vertex_cf_.fill_nm1("positron_above_0pt4GeV", pos.getTrack().getP());
         vertex_cf_.fill_nm1("ele_min_hits", ele_nhits);
         vertex_cf_.fill_nm1("pos_min_hits", pos_nhits);
+        vertex_cf_.fill_nm1("ele_track_cluster", fabs(ele.getTrack().getTrackTime() - pos.getCluster().getTime()));
+        vertex_cf_.fill_nm1("pos_track_cluster", fabs(pos.getTrack().getTrackTime() - pos.getCluster().getTime()));
+        vertex_cf_.fill_nm1("ele_pos_track", fabs(ele.getTrack().getTrackTime() - pos.getTrack().getTrackTime()));
         vertex_cf_.fill_nm1("vertex_chi2", vtx->getChi2());
+        if (psumCut_ >= 0.0) vertex_cf_.fill_nm1("psum_min", psum.Mag());
         vertex_cf_.fill_nm1("vtx_max_p_4pt0GeV", vtxmaxp);
 
         if (disablePreselection_ || vertex_cf_.keep()) {

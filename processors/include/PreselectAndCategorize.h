@@ -137,7 +137,18 @@ class Cutflow {
                 }
             }
             h_cutflow_->Write();
-            for (const auto& [_name, entry] : cuts_) entry.second->Write();
+            for (const auto& [_name, entry] : cuts_) {
+                TH1F* h = entry.second.get();
+                // Fold the under/overflow into the first/last visible bins so tails beyond the
+                // axis range (e.g. events failing a cut placed at the high edge of the N-1 range)
+                // stay visible instead of disappearing into overflow.
+                int nb = h->GetNbinsX();
+                h->SetBinContent(1, h->GetBinContent(0) + h->GetBinContent(1));
+                h->SetBinContent(0, 0.);
+                h->SetBinContent(nb, h->GetBinContent(nb) + h->GetBinContent(nb + 1));
+                h->SetBinContent(nb + 1, 0.);
+                h->Write();
+            }
         }
 
     private:

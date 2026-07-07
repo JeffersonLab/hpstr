@@ -46,7 +46,16 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
     bool debug_{false};  // debug output for smearing validation
     bool disablePreselection_{false};  // if true, skip all vertex-level cuts
     bool disableTimingCuts_{false};    // if true, skip all track/cluster timing cuts
-    int minHits_{10};  // minimum number of 2D tracker hits required for each track
+    bool disableVertexChi2Cut_{false}; // if true, skip the vertex chi2 cut
+    bool useVertexMomentum_{true};     // if true, replace each particle's track momentum with the
+                                       // vertex-fitted momentum (P1/P2); if false, keep the
+                                       // standalone track-fit momentum
+    int minHits_{10};  // default minimum number of 2D tracker hits; fallback for both tracks
+    int eleMinHits_{10};  // minimum number of 2D tracker hits required for the electron track
+    int posMinHits_{10};  // minimum number of 2D tracker hits required for the positron track
+    std::string triggerSelection_{"singles2"};  // which trigger to require: "singles2" (default,
+                                                // singles2||singles3) or "pairs" (OR of all pair triggers)
+    double psumCut_{-1.0};  // minimum psum (|p_{e-} + p_{e+}|) [GeV]; filtering disabled when < 0
     double beamE_{3.74};          // beam energy [GeV] used for recoil inference
     double thetaBeamMrad_{0.0};   // beam angle [mrad] used for recoil inference
     std::shared_ptr<TrackBiasingTool> biasingTool_{nullptr};
