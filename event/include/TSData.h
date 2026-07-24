@@ -94,7 +94,12 @@ class TSData : public TObject {
         bool const isSingle3Trigger() const {
             return (prescaled.Single_3_Bot == 1 || prescaled.Single_3_Top == 1);
         };
-        
+
+        bool const isPairTrigger() const {
+            return (prescaled.Pair_0 == 1 || prescaled.Pair_1 == 1 || prescaled.Pair_2 == 1 || prescaled.Pair_3 == 1);
+        };
+
+  
         ClassDef(TSData, 1);
 
 };

@@ -5,6 +5,7 @@
  */
 
 #include "TrackerHit.h"
+#include <cmath>
 
 ClassImp(TrackerHit)
 
