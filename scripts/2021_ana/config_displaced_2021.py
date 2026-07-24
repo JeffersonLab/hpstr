@@ -57,7 +57,7 @@ preselect.parameters["pSmearingFile"] = ""
 #preselect.parameters["debug"] = 1
 #preselect.parameters["apPDG"] = 623
 #preselect.parameters["disablePreselection"] = 1
-preselect.parameters["disableTimingCuts"] = 1
+preselect.parameters["disableTimingCuts"] = 0
 preselect.parameters["vtxCollection"] = "UnconstrainedV0Vertices_KF"
 preselect.parameters["v0ProjectionFitsCfg"] = file_in_hpstr(
         'analysis/data/v0_projection_2021_v9_config.json'
@@ -89,11 +89,11 @@ preselect.parameters["scaleCorrVariable"] = ""   # scale corrections disabled
 preselect.parameters["applyMeanCorr"] = 0
 preselect.parameters["doV0ProjZ0"] = 0
 preselect.parameters["smearingCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/smearing/tool_smearing.json"
-preselect.parameters["eleMinHits"] = 8
-preselect.parameters["posMinHits"] = 8
+preselect.parameters["eleMinHits"] = 10 #6
+preselect.parameters["posMinHits"] = 10 #8 
 preselect.parameters["useVertexMomentum"] = 1  # 0 = use standalone track momenta; 1 = vertex-fitted
 preselect.parameters["triggerSelection"] = options.trigger
-preselect.parameters["psumCut"] = 2.8
+preselect.parameters["psumCut"] = 0.0
 preselect.parameters["doSmearing"] = 1 if (options.smearing and not options.noSmearing and options.sample != 'data') else 0
 preselect.parameters["smearingFactor"] = 1.0
 preselect.parameters["smearingSeed"] = options.seed
