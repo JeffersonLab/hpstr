@@ -456,28 +456,15 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         TVector3 pos_p_prefit(pos_trk.getMomentum()[0], pos_trk.getMomentum()[1], pos_trk.getMomentum()[2]);
 
         // Replace particle track momenta with the vertex-fitted momenta (only when enabled). The
-        // vertex stores its two fitted momenta as P1/P2 in a fixed slot order with no particle
-        // label; HPS vertexing only builds top+bottom track pairs, so we identify which slot is the
-        // electron purely by matching the top/bottom side (sign of tanLambda / Py). This covers all
-        // electron-top and electron-bottom cases (the old code only handled electron-on-top). When
-        // useVertexMomentum_ is false, the standalone track-fit momenta are kept as-is.
+        // vertex stores its two fitted momenta in a fixed electron-then-positron slot order
+        // (verified against hps-java: BilliorVertexer.fitVertex preserves the input track order
+        // [electron, positron] from HpsReconParticleDriver.makeV0Candidates, and
+        // BilliorVertex::getParameters writes p1 <- electron, p2 <- positron), independent of
+        // which vertical half (top/bottom) either track curves into. When useVertexMomentum_ is
+        // false, the standalone track-fit momenta are kept as-is.
         if (useVertexMomentum_) {
-            bool ele_is_top = ele_trk.getTanLambda() > 0;
-            bool pos_is_top = pos_trk.getTanLambda() > 0;
-            bool p1_is_top  = vtx->getP1Y() > 0;
-            if (ele_is_top == pos_is_top) {
-                std::cout << "[PreselectAndCategorize2021] WARNING: same-side vertex (ele_isTop="
-                          << ele_is_top << ", pos_isTop=" << pos_is_top << ", run " << eh.getRunNumber()
-                          << " event " << eh.getEventNumber()
-                          << "): side-based momentum assignment is ambiguous!" << std::endl;
-            }
-            if (ele_is_top == p1_is_top) {
-                ele_trk.setMomentum(vtx->getP1X(), vtx->getP1Y(), vtx->getP1Z());
-                pos_trk.setMomentum(vtx->getP2X(), vtx->getP2Y(), vtx->getP2Z());
-            } else {
-                ele_trk.setMomentum(vtx->getP2X(), vtx->getP2Y(), vtx->getP2Z());
-                pos_trk.setMomentum(vtx->getP1X(), vtx->getP1Y(), vtx->getP1Z());
-            }
+            ele_trk.setMomentum(vtx->getP1X(), vtx->getP1Y(), vtx->getP1Z());
+            pos_trk.setMomentum(vtx->getP2X(), vtx->getP2Y(), vtx->getP2Z());
         }
 
         // apply track_z0 and track_time corrections loaded from JSON
@@ -488,15 +475,19 @@ bool PreselectAndCategorize2021::process(IEvent*) {
 
         if (not v0proj_fits_.empty()) {
             int run = eh.getRunNumber();
-            int closest_run;
+            int closest_run = -1;
             for (auto entry : v0proj_fits_.items()) {
                 int check_run = std::stoi(entry.key());
-                if (check_run > run)
+                if (check_run > run) {
+                    // run predates every entry in the JSON; fall back to the earliest one available
+                    if (closest_run < 0) closest_run = check_run;
                     break;
-                else {
+                } else {
                     closest_run = check_run;
                 }
             }
+            if (closest_run < 0)
+                throw std::runtime_error("PreselectAndCategorize2021: no run entries found in v0proj_fits_ JSON");
             double elez0Mean = v0proj_fits_[std::to_string(closest_run)]["elez0_mean"];
             double posz0Mean = v0proj_fits_[std::to_string(closest_run)]["posz0_mean"];
 

@@ -849,15 +849,19 @@ double utils::v0_projection_to_target_significance(json v0proj_fits, int run, do
     // The rotation angle corresponding to the fit is provided in the json file containing the rotated fit values.
 
     // Read v0 projection fits from json file
-    int closest_run;
+    int closest_run = -1;
     for (auto entry : v0proj_fits.items()) {
         int check_run = std::stoi(entry.key());
-        if (check_run > run)
+        if (check_run > run) {
+            // run predates every entry in the JSON; fall back to the earliest one available
+            if (closest_run < 0) closest_run = check_run;
             break;
-        else {
+        } else {
             closest_run = check_run;
         }
     }
+    if (closest_run < 0)
+        throw std::runtime_error("v0_projection_to_target_significance: no run entries found in v0proj_fits JSON");
     double target_pos = v0proj_fits[std::to_string(closest_run)]["target_position"];
     double rot_mean_x = v0proj_fits[std::to_string(closest_run)]["rotated_mean_x"];
     double rot_mean_y = v0proj_fits[std::to_string(closest_run)]["rotated_mean_y"];
@@ -933,15 +937,19 @@ double utils::v0_projection_to_target_significance(json v0proj_fits, int run, do
                                                    double& vtx_proj_x_centered, double& vtx_proj_y_centered,
                                                    bool debug) {
     // Read v0 projection fits from json file
-    int closest_run;
+    int closest_run = -1;
     for (auto entry : v0proj_fits.items()) {
         int check_run = std::stoi(entry.key());
-        if (check_run > run)
+        if (check_run > run) {
+            // run predates every entry in the JSON; fall back to the earliest one available
+            if (closest_run < 0) closest_run = check_run;
             break;
-        else {
+        } else {
             closest_run = check_run;
         }
     }
+    if (closest_run < 0)
+        throw std::runtime_error("v0_projection_to_target_significance: no run entries found in v0proj_fits JSON");
     double target_pos = v0proj_fits[std::to_string(closest_run)]["target_position"];
     double rot_mean_x = v0proj_fits[std::to_string(closest_run)]["rotated_mean_x"];
     double rot_mean_y = v0proj_fits[std::to_string(closest_run)]["rotated_mean_y"];

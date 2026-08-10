@@ -95,11 +95,22 @@ class TSData : public TObject {
             return (prescaled.Single_3_Bot == 1 || prescaled.Single_3_Top == 1);
         };
 
-        bool const isPairTrigger() const {
-            return (prescaled.Pair_0 == 1 || prescaled.Pair_1 == 1 || prescaled.Pair_2 == 1 || prescaled.Pair_3 == 1);
+        bool const isFEETrigger() const {
+            return (prescaled.FEE_Top == 1 || prescaled.FEE_Bot == 1);
         };
 
-  
+        // Pairs trigger (requires a top+bottom cluster coincidence; no top/bot split).
+        // OR of all pair triggers (Pair_0 = A', Pair_1 = Moller, Pair_2 = pi0, Pair_3).
+        bool const isPairTrigger() const {
+            return (prescaled.Pair_0 == 1 || prescaled.Pair_1 == 1 ||
+                    prescaled.Pair_2 == 1 || prescaled.Pair_3 == 1);
+        };
+
+        bool const isPair0Trigger() const { return (prescaled.Pair_0 == 1); };
+        bool const isPair1Trigger() const { return (prescaled.Pair_1 == 1); };
+        bool const isPair2Trigger() const { return (prescaled.Pair_2 == 1); };
+        bool const isPair3Trigger() const { return (prescaled.Pair_3 == 1); };
+
         ClassDef(TSData, 1);
 
 };

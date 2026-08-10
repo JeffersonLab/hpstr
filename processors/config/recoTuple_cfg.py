@@ -7,7 +7,7 @@ from baseConfig import bfield
 base.parser.add_argument("-w", "--tracking", type=str, dest="tracking",
                          help="Which tracking to use to make plots", metavar="tracking", default="KF")
 base.parser.add_argument("-sh", "--truthHits", type=int, dest="truthHits",
-                         help="Get svt truth hits: 1=yes", metavar="truthHits", default=0)
+                         help="Get svt truth hits: 1=yes", metavar="truthHits", default=1)
 base.parser.add_argument("-r", "--rawHits", type=int, dest="rawHits",
                          help="Keep raw svt hits: 1=yes", metavar="rawHits", default=0)
 base.parser.add_argument("-b", "--useBField", type=int, dest="useBField",
@@ -72,8 +72,10 @@ rawsvt.parameters["hitCollRoot"] = 'SVTRawTrackerHits'
 
 # Tracker3DHits
 svthits.parameters["debug"] = 0
-svthits.parameters["hitCollLcio"] = 'RotatedHelicalTrackHits'
+svthits.parameters["hitCollLcio"] = 'StripClusterer_SiTrackerHitStrip1D'
 svthits.parameters["hitCollRoot"] = 'RotatedHelicalTrackHits'
+svthits.parameters["hitFitCollLcio"] = 'SVTFittedRawTrackerHits'
+svthits.parameters["mcPartRelLcio"] = 'SVTTrueHitRelations'
 
 
 # Tracking

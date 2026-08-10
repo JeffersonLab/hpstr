@@ -28,6 +28,18 @@ JOB_OUTPUT_DIR["data_small"]="${BASE_OUTPUT_DIR}//data_1pc_pScaleCorr/"
 JOB_HPSTR_CONFIG["data_small"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["data_small"]=""
 
+JOB_FILE_LISTS["data_14185_nom"]="${DATA_LISTS_DIR}/data_14185_nom.txt"
+JOB_SAMPLE["data_14185_nom"]="data"
+JOB_OUTPUT_DIR["data_14185_nom"]="${BASE_OUTPUT_DIR}/data_14185_nom/"
+JOB_HPSTR_CONFIG["data_14185_nom"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["data_14185_nom"]=""
+
+JOB_FILE_LISTS["data_14185_lowp"]="${DATA_LISTS_DIR}/data_14185_lowp.txt"
+JOB_SAMPLE["data_14185_lowp"]="data"
+JOB_OUTPUT_DIR["data_14185_lowp"]="${BASE_OUTPUT_DIR}/data_14185_lowp/"
+JOB_HPSTR_CONFIG["data_14185_lowp"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["data_14185_lowp"]=""
+
 JOB_FILE_LISTS["data"]="${DATA_LISTS_DIR}/data_1pc.txt"
 JOB_SAMPLE["data"]="data"
 JOB_OUTPUT_DIR["data"]="${BASE_OUTPUT_DIR}/data_1pc/"
@@ -136,9 +148,15 @@ JOB_EXTRA_ARGS["ap_signal"]=""
 
 JOB_FILE_LISTS["ap_signal_smeared"]="${MC_LISTS_DIR}/ap*.list"
 JOB_SAMPLE["ap_signal_smeared"]="ap_signal"
-JOB_OUTPUT_DIR["ap_signal_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_smeared_notimecuts"
+JOB_OUTPUT_DIR["ap_signal_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_smeared"
 JOB_HPSTR_CONFIG["ap_signal_smeared"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["ap_signal_smeared"]="--smearing"
+
+JOB_FILE_LISTS["ap_signal_improved"]="${MC_LISTS_DIR}/improved_180MeV.list"
+JOB_SAMPLE["ap_signal_improved"]="ap_signal"
+JOB_OUTPUT_DIR["ap_signal_improved"]="${BASE_OUTPUT_DIR}/ap_signal_smeared_improvedTrking/ap180MeV/"
+JOB_HPSTR_CONFIG["ap_signal_improved"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["ap_signal_improved"]="--smearing"
 
 
 JOB_FILE_LISTS["ap_tgt_sys"]="${MC_LISTS_DIR}/sys_ap80MeV_tgt_m0pt1mm.list"

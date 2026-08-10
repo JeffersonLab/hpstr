@@ -25,10 +25,14 @@
 #include "Particle.h"
 #include "Event.h"
 #include "CalCluster.h"
+#include "TrackerHit.h"
 #include "EventHeader.h"
+#include "TSData.h"
 #include "TrackHistos.h"
 #include "TrackSmearingTool.h"
 #include "AnaHelpers.h"
+#include "MCParticle.h"
+#include "TruthMatchingUtils.h"
 
 /**
  * @brief Select Full Energy Electron (FEE) events for the momentum-smearing calibration.
@@ -99,6 +103,21 @@ class FeeAnaProcessor : public Processor {
         // Event Header
         EventHeader* evth_{nullptr}; //!
 
+        // 2021 trigger-scaler bank (TSBank), used to require the FEE trigger.
+        TSData* tsdata_{nullptr}; //!
+        TBranch* btsdata_{nullptr}; //!
+
+        // Full event collections, used to veto additional in-time tracks/clusters.
+        std::vector<CalCluster*>* ecalClusters_{nullptr}; //!
+        TBranch* becalClusters_{nullptr}; //!
+        std::vector<Track*>* allTracks_{nullptr}; //!
+        TBranch* ballTracks_{nullptr}; //!
+
+        // MCParticle collection, used for hit-based truth matching (MC only).
+        std::string mcColl_{"MCParticle"}; //!< MCParticle collection name
+        std::vector<MCParticle*>* mcParticles_{nullptr}; //!
+        TBranch* bmcParticles_{nullptr}; //!
+
         std::string trkCollName_; //!< Track Collection name (histo/smearing naming)
         std::string fspCollName_{"FinalStateParticles_KF"}; //!< FinalStateParticle collection name
 
@@ -137,8 +156,18 @@ class FeeAnaProcessor : public Processor {
         double mcTimeOffset_{5.0};         //!< time offset applied to MC tracks
         bool   requireElectron_{true};     //!< require the FSP to be an electron (charge < 0)
         bool   requireCluster_{true};      //!< require an associated FEE cluster passing E/time/(E/p)
+        bool   requireFeeTrigger_{false};  //!< require the FEE trigger (TSBank FEE_Top||FEE_Bot); data only
         double eopMin_{0.0};               //!< minimum cluster-energy / track-momentum (E/p)
         double eopMax_{99.0};              //!< maximum cluster-energy / track-momentum (E/p)
+
+        // In-time isolation veto: a clean FEE has a single track and a single cluster.
+        // When enabled, a candidate is vetoed if any *additional* cluster/track is
+        // in-time with the primary FEE cluster (i.e. >1 in-time object of that type).
+        bool   vetoExtraClusters_{false};      //!< veto if extra clusters are in-time with the FEE cluster
+        bool   vetoExtraTracks_{false};        //!< veto if extra tracks are in-time with the FEE cluster
+        double vetoClusterTimeWindow_{8.0};    //!< |t_clu - t_FEEclu| window for the cluster veto (ns)
+        double vetoTrackTimeWindow_{8.0};      //!< |t_trk - t_FEEclu(corrected)| window for the track veto (ns)
+        double vetoClusterEnergyMin_{0.5};     //!< only clusters above this energy count toward the cluster veto (GeV)
 
         //Momentum smearing closure test
         std::shared_ptr<TrackSmearingTool> smearingTool_;
@@ -152,6 +181,15 @@ class FeeAnaProcessor : public Processor {
         std::string smearingVariable_{""};  //!< "flat", "nHits", "tanLambda", "phi0" — explicit lookup; "" = JSON default
         std::string scaleCorrVariable_{""};  //!< if set, omega data-mode scale uses pBinned_ means
 
+        // Per-hit_pattern momentum scale correction (data momentum -> beam energy).
+        // Loaded from a JSON with a "pattern_to_scale" map (hit_pattern -> scale) plus a
+        // "default_scale" fallback. p_corr = p * scale. Applied on data only by default.
+        std::string hitPatternScaleFile_{""};   //!< JSON of per-hit_pattern scale factors
+        bool   doHitPatternScale_{false};        //!< master switch for the hit-pattern scale correction
+        bool   hitPatternScaleDataOnly_{true};   //!< only apply the scale on data (MC left untouched)
+        std::map<int,double> hitPatternScale_;   //!< hit_pattern -> scale factor
+        double hitPatternDefaultScale_{1.0};     //!< fallback scale for unlisted patterns
+
         // AnaHelpers for decoding per-sensor hit layers
         std::shared_ptr<AnaHelpers> ah_{nullptr};
 
@@ -164,13 +202,45 @@ class FeeAnaProcessor : public Processor {
         double clu_E_out_{-9999.0};      //!< associated cluster energy
         double clu_time_out_{-9999.0};   //!< associated cluster time
         double eop_out_{-1.0};           //!< associated cluster E / track p
-        // per-layer axial/stereo hit flags (L1-L3)
+        // in-time isolation counts (include the primary FEE object; clean FEE => 1)
+        int    n_clusters_intime_out_{0}; //!< clusters in-time with the FEE cluster (>energy threshold)
+        int    n_tracks_intime_out_{0};   //!< tracks in-time with the FEE cluster
+        // per-layer axial/stereo hit flags (L1-L4)
         bool L1_axial_out_{false};
         bool L1_stereo_out_{false};
         bool L2_axial_out_{false};
         bool L2_stereo_out_{false};
         bool L3_axial_out_{false};
         bool L3_stereo_out_{false};
+        bool L4_axial_out_{false};
+        bool L4_stereo_out_{false};
+        // per-layer "both axial+stereo hit" flags (eleLN/posLN analog, top/bottom independent)
+        bool L1_out_{false};
+        bool L2_out_{false};
+        bool L3_out_{false};
+        bool L4_out_{false};
+        // earliest-layer category with outward hit requirement (single-track isL1L1/isL2L2/isL3L3 analog)
+        bool is_L1_out_{false};
+        bool is_L2_out_{false};
+        bool is_L3_out_{false};
+        // full per-sensor hit pattern encoded as a bitmask: bit i (i=0..13) set if sensor
+        // slot i has a hit. Slots follow the GetTrackHitLayers convention (0/1 = L1
+        // axial/stereo, 2/3 = L2, ...). Use this to bin resolution by exact hit pattern.
+        int  hit_pattern_out_{0};
+        int  n_hits_out_{0};   //!< number of tracker hits on the FEE track
+        // per-hit_pattern momentum scale correction (data->beam). track_corr_out_ is the
+        // original track with its momentum scaled by hit_pattern_scale_out_ (omega scaled by
+        // 1/scale to stay consistent). hit_pattern_scale_isdefault_out_ is true when the
+        // track's hit_pattern was not in the JSON map and the default_scale was used.
+        Track  track_corr_out_;                         //!< momentum-scale-corrected track
+        double hit_pattern_scale_out_{1.0};             //!< scale factor applied to this track's momentum
+        bool   hit_pattern_scale_isdefault_out_{false}; //!< true if the default (fallback) scale was used
+        // truth matching (MC only; false on data)
+        // truth_matched_out_ : hit-based majority match to an e^-/e^+ (utils::hasTruthMatch),
+        //                      identical definition to ele/pos_has_truth_link in the 2021 preselection.
+        // has_truth_link_out_: raw Track TRef truth link resolves to an object (no PDG requirement).
+        bool truth_matched_out_{false};
+        bool has_truth_link_out_{false};
         TH1D* psmear_h_;
         TH1D* psmear_top_h_;
         TH1D* psmear_bot_h_;

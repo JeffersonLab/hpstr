@@ -9,6 +9,7 @@
 #include "ClusterEfficiency2021.h"
 
 #include <cmath>
+#include <cstdio>
 
 void ClusterEfficiency2021::configure(const ParameterSet& parameters) {
     isData_ = parameters.getInteger("isData", 0) != 0;
@@ -17,6 +18,8 @@ void ClusterEfficiency2021::configure(const ParameterSet& parameters) {
     apPDG_ = parameters.getInteger("apPDG", apPDG_);
     calTimeOffset_ = parameters.getDouble("calTimeOffset", 0.0);
     clusterEnergyThresh_ = parameters.getDouble("clusterEnergyThresh", 0.0);
+    eventClusterThresh_ = parameters.getDouble("eventClusterThresh", 0.2);
+    drMatch_ = parameters.getDouble("drMatch", 30.0);
     debug_ = parameters.getInteger("debug", 0) != 0;
 
     auto vtxColl = parameters.getString("vtxCollection", "");
@@ -27,7 +30,7 @@ void ClusterEfficiency2021::configure(const ParameterSet& parameters) {
 
     std::cout << "[ClusterEfficiency2021] isData=" << isData_ << " isApSignal=" << isApSignal_
               << " isSimpSignal=" << isSimpSignal_ << " signalMomPDG=" << signalMomPDG_
-              << " vtxColl=" << vtxColl_ << std::endl;
+              << " vtxColl=" << vtxColl_ << " eventClusterThresh=" << eventClusterThresh_ << std::endl;
 }
 
 void ClusterEfficiency2021::initialize(TTree* tree) {
@@ -97,6 +100,20 @@ void ClusterEfficiency2021::setFile(TFile* out_file) {
     for (const auto& name : {"pos_nearest_clu_dr", "pos_nearest_clu_E", "pos_nearest_clu_time"}) {
         bus_.board_output<double>(output_tree_.get(), name);
     }
+
+    // track-level match flags (KalmanFullTracks, no v0 required) + n_v0 multiplicity
+    bus_.board_output<bool>(output_tree_.get(), "trk_pos_matched");
+    bus_.board_output<bool>(output_tree_.get(), "trk_ele_matched");
+    bus_.board_output<int>(output_tree_.get(), "n_v0");
+
+    // tracking/acceptance-loss scenario: energetic cluster(s) present but no positron track on
+    // one of them. "orphan" = energetic cluster with NO reconstructed track (any charge) within
+    // drMatch_ -> the positron's lost cluster; map its x,y to see WHERE acceptance/tracking fails.
+    bus_.board_output<bool>(output_tree_.get(), "pos_acceptance_loss");
+    bus_.board_output<bool>(output_tree_.get(), "has_orphan_cluster");
+    for (const auto& name : {"orphan_clu_x", "orphan_clu_y", "orphan_clu_E"}) {
+        bus_.board_output<double>(output_tree_.get(), name);
+    }
 }
 
 bool ClusterEfficiency2021::process(IEvent*) {
@@ -113,6 +130,34 @@ bool ClusterEfficiency2021::process(IEvent*) {
     event_cf_.apply("single_trigger", single_trigger);
     event_cf_.fill_nm1("single_trigger", single_trigger ? 1 : 0);
     if (not event_cf_.keep()) return true;
+
+    // ===== Q1: after the singles2/3 trigger, is there an energetic cluster ANYWHERE? =====
+    // Loop over ALL RecoEcalClusters, independent of any v0. By definition a singles
+    // trigger requires an energetic cluster, so this should be ~100%.
+    const auto& allClusters{bus_.get<std::vector<CalCluster*>>("RecoEcalClusters")};
+    int n_clusters = static_cast<int>(allClusters.size());
+    double event_max_clu_E = -9999.;
+    for (const auto* cl : allClusters) {
+        if (cl->getEnergy() > event_max_clu_E) event_max_clu_E = cl->getEnergy();
+    }
+    bool event_has_cluster = event_max_clu_E > eventClusterThresh_;
+    n_triggered_++;
+    if (event_has_cluster) n_event_has_cluster_++;
+
+    // nearest ENERGETIC cluster (E > eventClusterThresh_) to a track's ECal projection.
+    // A track is "dr-matched" to a trigger-quality cluster if the nearest such cluster is
+    // within drMatch_. Used to score/pick the best v0 and to fill the per-track dbg below.
+    auto nearest_energetic = [&](const std::vector<double>& ecal,
+                                 double& out_dr, double& out_E, double& out_t) {
+        out_dr = 9999.0; out_E = -9999.0; out_t = -9999.0;
+        for (const auto* cl : allClusters) {
+            if (cl->getEnergy() <= eventClusterThresh_) continue;
+            auto cp = cl->getPosition();
+            double dr = std::sqrt((cp[0] - ecal[0]) * (cp[0] - ecal[0]) +
+                                  (cp[1] - ecal[1]) * (cp[1] - ecal[1]));
+            if (dr < out_dr) { out_dr = dr; out_E = cl->getEnergy(); out_t = cl->getTime() - calTimeOffset_; }
+        }
+    };
 
     // ----- defaults (sentinels) -----
     bus_.set("weight", 1.);
@@ -145,6 +190,14 @@ bool ClusterEfficiency2021::process(IEvent*) {
     bool truth_epem_found = false, has_v0 = false;
     bool ele_fiducial = false, pos_fiducial = false, both_tracks_fiducial = false;
     bool ele_has_cluster = false, pos_has_cluster = false;
+    // Q2: is an energetic cluster matched to the v0 positron track?
+    bool pos_matched_cluster = false;          // associated cluster with E > eventClusterThresh_
+    double pos_clu_E_dbg = -9999.;             // associated-cluster energy (sentinel if none)
+    double pos_nearest_dr_dbg = -9999.;        // dr to nearest standalone cluster at ECal
+    // Q3: dr-based track->cluster match (did the e-/e+ make an energetic trigger cluster?)
+    bool ele_dr_matched = false, pos_dr_matched = false;
+    double ele_nearest_dr_dbg = -9999., ele_dr_E_dbg = -9999.;
+    double pos_dr_E_dbg = -9999.;
 
     // ===================== truth block =====================
     const std::vector<MCParticle*>* mcParticles = nullptr;
@@ -198,11 +251,16 @@ bool ClusterEfficiency2021::process(IEvent*) {
 
     // ===================== reco block =====================
     const auto& vtxs{bus_.get<std::vector<Vertex*>>(vtxColl_)};
-    const auto& allClusters{bus_.get<std::vector<CalCluster*>>("RecoEcalClusters")};
 
-    // pick a v0: prefer one whose electron/positron tracks truth-match e-/e+, else the first one
+    // Evaluate EVERY e-/e+ v0 and choose the BEST one = the v0 whose positron points closest
+    // to an energetic cluster (smallest e+ dr). Also record whether ANY v0 has a matched
+    // e+/e- (best-case efficiency) and what the FIRST v0 alone would have given.
     Vertex* chosen{nullptr};
     int chosen_i_ele{-1}, chosen_i_pos{-1};
+    int n_v0 = 0;
+    double best_pos_dr = 1e9;
+    bool any_pos_matched = false, any_ele_matched = false;
+    bool first_pos_matched = false, first_ele_matched = false, first_v0_seen = false;
     for (Vertex* vtx : vtxs) {
         int i_ele{-1}, i_pos{-1};
         for (int ipart = 0; ipart < vtx->getParticles().GetEntries(); ++ipart) {
@@ -213,25 +271,88 @@ bool ClusterEfficiency2021::process(IEvent*) {
                 i_pos = ipart;
         }
         if (i_ele < 0 || i_pos < 0) continue;
-        if (chosen == nullptr) {
+        n_v0++;
+
+        Particle* e = dynamic_cast<Particle*>(vtx->getParticles().At(i_ele));
+        Particle* p = dynamic_cast<Particle*>(vtx->getParticles().At(i_pos));
+        auto eEcal = e->getTrack().getPositionAtEcal();
+        auto pEcal = p->getTrack().getPositionAtEcal();
+        double pdr, pE, pt, edr, eE, et;
+        nearest_energetic(pEcal, pdr, pE, pt);
+        nearest_energetic(eEcal, edr, eE, et);
+        bool pmatch = (pdr < drMatch_);
+        bool ematch = (edr < drMatch_);
+        any_pos_matched = any_pos_matched || pmatch;
+        any_ele_matched = any_ele_matched || ematch;
+        if (not first_v0_seen) {
+            first_v0_seen = true;
+            first_pos_matched = pmatch;
+            first_ele_matched = ematch;
+        }
+        if (pdr < best_pos_dr) {  // best v0 = positron closest to an energetic cluster
+            best_pos_dr = pdr;
             chosen = vtx;
             chosen_i_ele = i_ele;
             chosen_i_pos = i_pos;
         }
-        if (mcParticles) {
-            Particle* e = dynamic_cast<Particle*>(vtx->getParticles().At(i_ele));
-            Particle* p = dynamic_cast<Particle*>(vtx->getParticles().At(i_pos));
-            Track et = e->getTrack();
-            Track pt = p->getTrack();
-            if (utils::getTruthPDG(et, mcParticles) == 11 && utils::getTruthPDG(pt, mcParticles) == -11) {
-                chosen = vtx;
-                chosen_i_ele = i_ele;
-                chosen_i_pos = i_pos;
-                break;
+    }
+    has_v0 = (chosen != nullptr);
+
+    // ---- track-level cluster match (decouple tracking vs vertexing) ----
+    // Independent of any v0: does a standalone track (KalmanFullTracks) point at an energetic
+    // cluster? If a positron TRACK matches but no v0 positron does, the loss is VERTEXING; if
+    // no track matches either, the loss is TRACKING/acceptance.
+    bool trk_pos_matched = false, trk_ele_matched = false;
+    bool has_orphan_cluster = false;
+    double orphan_clu_x = -9999., orphan_clu_y = -9999., orphan_clu_E = -9999.;
+    if (bus_.has(trkColl_)) {
+        const auto& tracks{bus_.get<std::vector<Track*>>(trkColl_)};
+        for (Track* trk : tracks) {
+            auto tEcal = trk->getPositionAtEcal();
+            if (tEcal.size() < 2) continue;
+            double dr, E, t;
+            nearest_energetic(tEcal, dr, E, t);
+            if (dr < drMatch_) {
+                if (trk->getCharge() > 0) trk_pos_matched = true;
+                else if (trk->getCharge() < 0) trk_ele_matched = true;
+            }
+        }
+
+        // orphan energetic clusters: energetic cluster with NO track (any charge) within
+        // drMatch_. Keep the highest-E orphan -> the lost (positron) cluster for the x,y map.
+        for (const auto* cl : allClusters) {
+            if (cl->getEnergy() <= eventClusterThresh_) continue;
+            auto cp = cl->getPosition();
+            double min_trk_dr = 9999.;
+            for (Track* trk : tracks) {
+                auto tE = trk->getPositionAtEcal();
+                if (tE.size() < 2) continue;
+                double dr = std::sqrt((tE[0] - cp[0]) * (tE[0] - cp[0]) +
+                                      (tE[1] - cp[1]) * (tE[1] - cp[1]));
+                if (dr < min_trk_dr) min_trk_dr = dr;
+            }
+            if (min_trk_dr > drMatch_) {  // no track points at this energetic cluster
+                has_orphan_cluster = true;
+                if (cl->getEnergy() > orphan_clu_E) {
+                    orphan_clu_E = cl->getEnergy();
+                    orphan_clu_x = cp[0];
+                    orphan_clu_y = cp[1];
+                }
             }
         }
     }
-    has_v0 = (chosen != nullptr);
+    // "tracking/acceptance" scenario for the positron: an energetic cluster exists but no
+    // positron track points at any energetic cluster.
+    bool pos_acceptance_loss = event_has_cluster && not trk_pos_matched;
+
+    bus_.set("trk_pos_matched", trk_pos_matched);
+    bus_.set("trk_ele_matched", trk_ele_matched);
+    bus_.set("n_v0", n_v0);
+    bus_.set("pos_acceptance_loss", pos_acceptance_loss);
+    bus_.set("has_orphan_cluster", has_orphan_cluster);
+    bus_.set<double>("orphan_clu_x", orphan_clu_x);
+    bus_.set<double>("orphan_clu_y", orphan_clu_y);
+    bus_.set<double>("orphan_clu_E", orphan_clu_E);
 
     if (has_v0) {
         Particle ele = *dynamic_cast<Particle*>(chosen->getParticles().At(chosen_i_ele));
@@ -269,6 +390,8 @@ bool ClusterEfficiency2021::process(IEvent*) {
         CalCluster pos_clu = pos.getCluster();
         ele_has_cluster = ele_clu.getEnergy() > clusterEnergyThresh_;
         pos_has_cluster = pos_clu.getEnergy() > clusterEnergyThresh_;
+        pos_matched_cluster = pos_clu.getEnergy() > eventClusterThresh_;
+        pos_clu_E_dbg = pos_clu.getEnergy();
         if (ele_has_cluster) {
             bus_.set<double>("ele_clu_E", ele_clu.getEnergy());
             bus_.set<double>("ele_clu_x", ele_clu.getPosition()[0]);
@@ -284,25 +407,20 @@ bool ClusterEfficiency2021::process(IEvent*) {
             bus_.set("pos_clu_nhits", pos_clu.getNHits());
         }
 
-        // standalone-cluster cross-check: nearest RecoEcalCluster to the positron track
-        // projection at ECal. Reveals cases where a cluster exists but was not associated.
-        double min_dr = 9999.0, min_dr_E = -9999.0, min_dr_t = -9999.0;
-        for (const auto* cl : allClusters) {
-            auto clPos = cl->getPosition();
-            double dx = clPos[0] - posEcal[0];
-            double dy = clPos[1] - posEcal[1];
-            double dr = std::sqrt(dx * dx + dy * dy);
-            if (dr < min_dr) {
-                min_dr = dr;
-                min_dr_E = cl->getEnergy();
-                min_dr_t = cl->getTime() - calTimeOffset_;
-            }
-        }
-        if (not allClusters.empty()) {
-            bus_.set<double>("pos_nearest_clu_dr", min_dr);
-            bus_.set<double>("pos_nearest_clu_E", min_dr_E);
-            bus_.set<double>("pos_nearest_clu_time", min_dr_t);
-        }
+        // dr-match of the BEST v0's tracks to the nearest energetic cluster (for dbg/printout)
+        double pos_dr, pos_dr_E, pos_dr_t;
+        double ele_dr, ele_dr_E, ele_dr_t;
+        nearest_energetic(posEcal, pos_dr, pos_dr_E, pos_dr_t);
+        nearest_energetic(eleEcal, ele_dr, ele_dr_E, ele_dr_t);
+        bus_.set<double>("pos_nearest_clu_dr", pos_dr);
+        bus_.set<double>("pos_nearest_clu_E", pos_dr_E);
+        bus_.set<double>("pos_nearest_clu_time", pos_dr_t);
+        pos_dr_matched = (pos_dr < drMatch_);
+        ele_dr_matched = (ele_dr < drMatch_);
+        pos_nearest_dr_dbg = pos_dr;
+        pos_dr_E_dbg = pos_dr_E;
+        ele_nearest_dr_dbg = ele_dr;
+        ele_dr_E_dbg = ele_dr_E;
     }
 
     bus_.set("truth_epem_found", truth_epem_found);
@@ -320,12 +438,68 @@ bool ClusterEfficiency2021::process(IEvent*) {
     event_cf_.apply("pos_has_cluster", pos_has_cluster);
     event_cf_.fill_nm1("pos_has_cluster", pos_has_cluster ? 1 : 0);
 
+    if (has_v0) n_has_v0_++;
+    if (n_v0 > 1) n_multi_v0_++;
+    if (first_pos_matched) n_first_pos_matched_++;
+    if (first_ele_matched) n_first_ele_matched_++;
+    if (any_pos_matched) n_any_pos_matched_++;
+    if (any_ele_matched) n_any_ele_matched_++;
+    if (trk_pos_matched) n_trk_pos_matched_++;
+    if (trk_ele_matched) n_trk_ele_matched_++;
+    if (trk_pos_matched && not any_pos_matched) n_trkpos_no_v0pos_++;
+
+    // per-event terminal dump (first 40 triggered events) so we can inspect by eye.
+    // Compares v0-level vs track-level cluster match to separate tracking from vertexing.
+    if (n_printed_ < 40) {
+        printf("[cluseff] run %d evt %d | nClu=%2d || nV0=%d hasV0=%d "
+               "|| v0: pos=%d ele=%d || trk: pos=%d ele=%d%s\n",
+               eh.getRunNumber(), eh.getEventNumber(), n_clusters,
+               n_v0, has_v0 ? 1 : 0,
+               any_pos_matched ? 1 : 0, any_ele_matched ? 1 : 0,
+               trk_pos_matched ? 1 : 0, trk_ele_matched ? 1 : 0,
+               (trk_pos_matched && not any_pos_matched) ? "  <-- e+ track but no v0!" : "");
+        n_printed_++;
+    }
+
     // one row per triggered signal event (sentinels where reco objects are absent)
     output_tree_->Fill();
     return true;
 }
 
 void ClusterEfficiency2021::finalize() {
+    auto pct = [](long num, long den) { return den > 0 ? 100.0 * num / den : 0.0; };
+    std::cout << "\n================ ClusterEfficiency2021 summary ================\n"
+              << "  energetic-cluster threshold     : " << eventClusterThresh_ << " GeV\n"
+              << "  singles2/3 triggered events     : " << n_triggered_ << "\n"
+              << "  Q1: cluster > thr ANYWHERE      : " << n_event_has_cluster_
+              << "  (" << pct(n_event_has_cluster_, n_triggered_) << "% of triggered)\n"
+              << "      events with >=1 e+e- v0     : " << n_has_v0_
+              << "  (" << pct(n_has_v0_, n_triggered_) << "% of triggered)\n"
+              << "      ... of which have >1 v0     : " << n_multi_v0_
+              << "  (" << pct(n_multi_v0_, n_has_v0_) << "% of v0 events)\n"
+              << "  dr match radius                 : " << drMatch_ << " mm\n"
+              << "  --- FIRST v0 only (old behavior) ---\n"
+              << "  e+ dr-matched cluster > thr     : " << n_first_pos_matched_
+              << "  (" << pct(n_first_pos_matched_, n_has_v0_) << "% of v0)\n"
+              << "  e- dr-matched cluster > thr     : " << n_first_ele_matched_
+              << "  (" << pct(n_first_ele_matched_, n_has_v0_) << "% of v0)\n"
+              << "  --- ANY v0 (best case), as % of TRIGGERED ---\n"
+              << "  e+ dr-matched in some v0        : " << n_any_pos_matched_
+              << "  (" << pct(n_any_pos_matched_, n_triggered_) << "% of triggered, "
+              << pct(n_any_pos_matched_, n_has_v0_) << "% of v0)\n"
+              << "  e- dr-matched in some v0        : " << n_any_ele_matched_
+              << "  (" << pct(n_any_ele_matched_, n_triggered_) << "% of triggered, "
+              << pct(n_any_ele_matched_, n_has_v0_) << "% of v0)\n"
+              << "  --- TRACK level (KalmanFullTracks, NO v0 required), % of TRIGGERED ---\n"
+              << "  e+ track dr-matched cluster     : " << n_trk_pos_matched_
+              << "  (" << pct(n_trk_pos_matched_, n_triggered_) << "% of triggered)\n"
+              << "  e- track dr-matched cluster     : " << n_trk_ele_matched_
+              << "  (" << pct(n_trk_ele_matched_, n_triggered_) << "% of triggered)\n"
+              << "  e+ track matched but NO v0 e+   : " << n_trkpos_no_v0pos_
+              << "  (" << pct(n_trkpos_no_v0pos_, n_triggered_) << "% of triggered)"
+              << "  <- VERTEXING loss\n"
+              << "===============================================================\n" << std::endl;
+
     outF_->cd();
     output_tree_->Write();
     event_cf_.save();

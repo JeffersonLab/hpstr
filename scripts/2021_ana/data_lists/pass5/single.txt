@@ -1,3 +1,1 @@
-/sdf/data/hps/physics2021/data/recon/pass5_v9/merged/merge-batch-1/hps_014282/merged_hps_014282_job60.root
-/sdf/data/hps/physics2021/data/recon/pass5_v9/merged/merge-batch-1/hps_014282/merged_hps_014282_job61.root
-/sdf/data/hps/physics2021/data/recon/pass5_v9/merged/merge-batch-1/hps_014282/merged_hps_014282_job62.root
+/sdf/data/hps/physics2021/data/recon/pass5_v9/merged/merge-batch-1/hps_014433/merged_hps_014433_job217.root
