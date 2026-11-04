@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['reconstruction_0',['Heavy Photon Search Toolkit for Reconstruction',['../index.html',1,'']]]
+  ['installation_0',['Installation',['../index.html#install',1,'']]],
+  ['installation_20steps_1',['Installation Steps',['../index.html#steps',1,'']]]
 ];

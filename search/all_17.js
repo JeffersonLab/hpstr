@@ -1,7 +1,7 @@
 var searchData=
 [
   ['wabcand_0',['WABCand',['../structTridentWABAnaProcessor_1_1WABCand.html',1,'TridentWABAnaProcessor']]],
-  ['win_5ffactor_1',['win_factor',['../namespaceconfig_1_1bhToys__cfg.html#aaeb6d041bee7e7d2ca23ed634cf7318a',1,'config.bhToys_cfg.win_factor'],['../namespaceconfig_1_1bhResSystematics__cfg.html#aaeb6d041bee7e7d2ca23ed634cf7318a',1,'config.bhResSystematics_cfg.win_factor']]],
+  ['win_5ffactor_1',['win_factor',['../namespaceconfig_1_1bhResSystematics__cfg.html#aaeb6d041bee7e7d2ca23ed634cf7318a',1,'config.bhResSystematics_cfg.win_factor'],['../namespaceconfig_1_1bhToys__cfg.html#aaeb6d041bee7e7d2ca23ed634cf7318a',1,'config.bhToys_cfg.win_factor']]],
   ['win_5ffactor_5f_2',['win_factor_',['../classBhMassResSystematicsProcessor.html#a8ec4ca848064f7e15746fb0279527548',1,'BhMassResSystematicsProcessor::win_factor_'],['../classBhToysHistoProcessor.html#a8ec4ca848064f7e15746fb0279527548',1,'BhToysHistoProcessor::win_factor_']]],
   ['window_5fend_5f_3',['window_end_',['../classBumpHunter.html#a3790858d9da7917e1e5690e8e25f7df1',1,'BumpHunter']]],
   ['window_5fsize_4',['window_size',['../classFitFunction.html#a777357cc7c61777485e69a4b4d15efb3',1,'FitFunction']]],

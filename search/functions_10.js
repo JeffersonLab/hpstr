@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['radiativeacceptance_0',['radiativeacceptance',['../namespaceconfig_1_1optimize__cuts__config.html#a8ec8e524d42c972a1e07ba17eed77f8d',1,'config.optimize_cuts_config.radiativeAcceptance()'],['../namespaceconfig_1_1simp__zbi__config.html#a8ec8e524d42c972a1e07ba17eed77f8d',1,'config.simp_zbi_config.radiativeAcceptance()'],['../classSimpEquations.html#a8e5380d236d20d9515538df56f7627e7',1,'SimpEquations::radiativeAcceptance(double m_Ap)']]],
-  ['radiativefraction_1',['radiativefraction',['../classSimpEquations.html#a59da4e81633341bda2b4b4f6e3b1f576',1,'SimpEquations::radiativeFraction()'],['../namespaceconfig_1_1optimize__cuts__config.html#a831af0441316c308c2b1c3d2853eb9a3',1,'config.optimize_cuts_config.radiativeFraction()'],['../namespaceconfig_1_1simp__zbi__config.html#a831af0441316c308c2b1c3d2853eb9a3',1,'config.simp_zbi_config.radiativeFraction()']]],
+  ['radiativeacceptance_0',['radiativeAcceptance',['../classSimpEquations.html#a8e5380d236d20d9515538df56f7627e7',1,'SimpEquations::radiativeAcceptance()'],['../namespaceconfig_1_1optimize__cuts__config.html#a8ec8e524d42c972a1e07ba17eed77f8d',1,'config.optimize_cuts_config.radiativeAcceptance()'],['../namespaceconfig_1_1simp__zbi__config.html#a8ec8e524d42c972a1e07ba17eed77f8d',1,'config.simp_zbi_config.radiativeAcceptance()']]],
+  ['radiativefraction_1',['radiativeFraction',['../classSimpEquations.html#a59da4e81633341bda2b4b4f6e3b1f576',1,'SimpEquations::radiativeFraction()'],['../namespaceconfig_1_1optimize__cuts__config.html#a831af0441316c308c2b1c3d2853eb9a3',1,'config.optimize_cuts_config.radiativeFraction()'],['../namespaceconfig_1_1simp__zbi__config.html#a831af0441316c308c2b1c3d2853eb9a3',1,'config.simp_zbi_config.radiativeFraction()']]],
   ['rate_5f2l_2',['rate_2l',['../classSimpEquations.html#aad21834dcf2e6d5b32d0912053e0c578',1,'SimpEquations']]],
   ['rate_5f2pi_3',['rate_2pi',['../classSimpEquations.html#a8856199212ff905344c19a54e610b263',1,'SimpEquations']]],
   ['rate_5f2v_4',['rate_2V',['../classSimpEquations.html#a338866c6e44bf6c6b02df06bd1fbb3b3',1,'SimpEquations']]],
@@ -18,11 +18,11 @@ var searchData=
   ['requestfinish_15',['requestFinish',['../classProcess.html#abe828ac1e8fadf52b8fa2b81321cef56',1,'Process']]],
   ['resethistograms1d_16',['resetHistograms1d',['../classZBiHistos.html#af08e78bb257f569b40ab2038d82d0127',1,'ZBiHistos']]],
   ['resethistograms2d_17',['resetHistograms2d',['../classZBiHistos.html#add4d5fa0bd076f3a00d11684948db1e2',1,'ZBiHistos']]],
-  ['resetoutputfiledir_18',['resetoutputfiledir',['../classEventFile.html#aca6f7db6c8b01f79dada293a5cb9f18a',1,'EventFile::resetOutputFileDir()'],['../classIEventFile.html#a777b8752c3340dfd0ef4d639463bf0f1',1,'IEventFile::resetOutputFileDir()'],['../classHpsEventFile.html#aca6f7db6c8b01f79dada293a5cb9f18a',1,'HpsEventFile::resetOutputFileDir()']]],
+  ['resetoutputfiledir_18',['resetOutputFileDir',['../classEventFile.html#aca6f7db6c8b01f79dada293a5cb9f18a',1,'EventFile::resetOutputFileDir()'],['../classHpsEventFile.html#aca6f7db6c8b01f79dada293a5cb9f18a',1,'HpsEventFile::resetOutputFileDir()'],['../classIEventFile.html#a777b8752c3340dfd0ef4d639463bf0f1',1,'IEventFile::resetOutputFileDir()']]],
   ['retime_19',['rETime',['../SvtRawDataAnaProcessor_8cxx.html#a7ac2bfa168261f66829ba4c016a755ae',1,'SvtRawDataAnaProcessor.cxx']]],
   ['reverseengineertime_20',['reverseEngineerTime',['../classSvtRawDataAnaProcessor.html#a3602a5db797f93fce158c8863c2227c3',1,'SvtRawDataAnaProcessor']]],
   ['rotatetohpsframe_21',['rotateToHpsFrame',['../classAnaHelpers.html#a3a1f9426bb49c05d119e9359fdc9b9e0',1,'AnaHelpers']]],
-  ['rotatetosvtframe_22',['rotatetosvtframe',['../classAnaHelpers.html#aaa09d9f9e38b8f1fd1499bf6db19e8ff',1,'AnaHelpers::rotateToSvtFrame(TVector3 v)'],['../classAnaHelpers.html#ac4a6f08ad7c50413941125acb1fc955b',1,'AnaHelpers::rotateToSvtFrame(TMatrixDSym cov)']]],
+  ['rotatetosvtframe_22',['rotateToSvtFrame',['../classAnaHelpers.html#aaa09d9f9e38b8f1fd1499bf6db19e8ff',1,'AnaHelpers::rotateToSvtFrame(TVector3 v)'],['../classAnaHelpers.html#ac4a6f08ad7c50413941125acb1fc955b',1,'AnaHelpers::rotateToSvtFrame(TMatrixDSym cov)']]],
   ['rotationtosvtframe_23',['rotationToSvtFrame',['../classAnaHelpers.html#a8b180d5d5c36c12778a7e8fc4c06b561',1,'AnaHelpers']]],
   ['round_24',['round',['../classSimpZBiOptimizationProcessor.html#a56143e92286edc69212b9d152046c69f',1,'SimpZBiOptimizationProcessor']]],
   ['run_25',['run',['../classProcess.html#a13a43e6d814de94978c515cb084873b1',1,'Process']]],

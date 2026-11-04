@@ -6,7 +6,7 @@ var searchData=
   ['update_3',['update',['../classframework_1_1Bus.html#aa8e95bd8dd49d3d63c9687874bfc7d3e',1,'framework::Bus::update()'],['../classframework_1_1Bus_1_1Passenger.html#affb9ff3ab81d47288fd20086970998dd',1,'framework::Bus::Passenger::update()']]],
   ['updatevertexwithbiasp_4',['updateVertexWithBiasP',['../classTrackBiasingTool.html#aa9611194679de352f7eb8b2c61bc55b5',1,'TrackBiasingTool']]],
   ['updatevertexwithsmearp_5',['updateVertexWithSmearP',['../classTrackSmearingTool.html#a455d8df2948a5f25760e2b371ed64935',1,'TrackSmearingTool']]],
-  ['updatewithbiasp_6',['updatewithbiasp',['../classTrackBiasingTool.html#aa4fb28285c5141fb393c06685fe7712d',1,'TrackBiasingTool::updateWithBiasP(Track &amp;trk, double scaleFactor)'],['../classTrackBiasingTool.html#aa305e938f40284b5e0ca391c0cc4ecb7',1,'TrackBiasingTool::updateWithBiasP(Track &amp;trk)']]],
+  ['updatewithbiasp_6',['updateWithBiasP',['../classTrackBiasingTool.html#aa4fb28285c5141fb393c06685fe7712d',1,'TrackBiasingTool::updateWithBiasP(Track &amp;trk, double scaleFactor)'],['../classTrackBiasingTool.html#aa305e938f40284b5e0ca391c0cc4ecb7',1,'TrackBiasingTool::updateWithBiasP(Track &amp;trk)']]],
   ['updatewithcalibratez0_7',['updateWithCalibrateZ0',['../classTrackBiasingTool.html#ab956d74b587f0a9f76d532a1fa90b6df',1,'TrackBiasingTool']]],
   ['updatewithsmearomega_8',['updateWithSmearOmega',['../classTrackSmearingTool.html#ae5c197da8debf7ecfaf48dfe08d81fac',1,'TrackSmearingTool']]],
   ['updatewithsmearp_9',['updateWithSmearP',['../classTrackSmearingTool.html#aeff7696443b866ef0b4729cef7e2780a',1,'TrackSmearingTool']]],

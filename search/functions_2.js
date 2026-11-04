@@ -1,7 +1,7 @@
 var searchData=
 [
   ['backwardsiterchi2fit_0',['backwardsIterChi2Fit',['../classBlFitHistos.html#afec18a88d97381a0744f4777874073f4',1,'BlFitHistos']]],
-  ['baseselector_1',['baseselector',['../classBaseSelector.html#a70faa48b7356d1e839ab14e03f431afe',1,'BaseSelector::BaseSelector()'],['../classBaseSelector.html#ae77a4bb9007edc5e1c19d429a95eb31f',1,'BaseSelector::BaseSelector(const std::string &amp;inputName, const std::string &amp;cfgFile)'],['../classBaseSelector.html#a255c49f3cdee154e0e91e77153e83efd',1,'BaseSelector::BaseSelector(const std::string &amp;inputName)']]],
+  ['baseselector_1',['BaseSelector',['../classBaseSelector.html#a70faa48b7356d1e839ab14e03f431afe',1,'BaseSelector::BaseSelector()'],['../classBaseSelector.html#a255c49f3cdee154e0e91e77153e83efd',1,'BaseSelector::BaseSelector(const std::string &amp;inputName)'],['../classBaseSelector.html#ae77a4bb9007edc5e1c19d429a95eb31f',1,'BaseSelector::BaseSelector(const std::string &amp;inputName, const std::string &amp;cfgFile)']]],
   ['begin_5fevent_2',['begin_event',['../classCutflow.html#ac8c273034596407dbb357402a92e402b',1,'Cutflow']]],
   ['beta_3',['Beta',['../classSimpEquations.html#a6bba5f2d0a5859ca36f6f49f97b34171',1,'SimpEquations']]],
   ['bhmassressystematicsprocessor_4',['BhMassResSystematicsProcessor',['../classBhMassResSystematicsProcessor.html#a633d6c09bf44d5b10d2432ee06688194',1,'BhMassResSystematicsProcessor']]],
@@ -18,7 +18,7 @@ var searchData=
   ['br_5fvphi_5fpi_15',['br_Vphi_pi',['../classSimpEquations.html#a93fdb1bc8489f9a77e6617478e343393',1,'SimpEquations']]],
   ['br_5fvrho_5fpi_16',['br_Vrho_pi',['../classSimpEquations.html#a7acaa086730cb51afd2214919249662f',1,'SimpEquations']]],
   ['buildapvchannelmap_17',['buildApvChannelMap',['../classModuleMapper.html#afda3474d4449108d05d301a5cc0ca08c',1,'ModuleMapper']]],
-  ['buildaxes_18',['buildaxes',['../classThreeProngHistos.html#a8b76ba87f6ac7ecb57b1a8ae1d9bc475',1,'ThreeProngHistos::BuildAxes()'],['../classTrackEfficHistos.html#a8b76ba87f6ac7ecb57b1a8ae1d9bc475',1,'TrackEfficHistos::BuildAxes()'],['../classTrackHistos.html#a8b76ba87f6ac7ecb57b1a8ae1d9bc475',1,'TrackHistos::BuildAxes()'],['../classTridentHistos.html#a8b76ba87f6ac7ecb57b1a8ae1d9bc475',1,'TridentHistos::BuildAxes()']]],
+  ['buildaxes_18',['BuildAxes',['../classThreeProngHistos.html#a8b76ba87f6ac7ecb57b1a8ae1d9bc475',1,'ThreeProngHistos::BuildAxes()'],['../classTrackEfficHistos.html#a8b76ba87f6ac7ecb57b1a8ae1d9bc475',1,'TrackEfficHistos::BuildAxes()'],['../classTrackHistos.html#a8b76ba87f6ac7ecb57b1a8ae1d9bc475',1,'TrackHistos::BuildAxes()'],['../classTridentHistos.html#a8b76ba87f6ac7ecb57b1a8ae1d9bc475',1,'TridentHistos::BuildAxes()']]],
   ['buildcalcluster_19',['buildCalCluster',['../namespaceutils.html#a2d01ad798936250108f868400e1e3051',1,'utils']]],
   ['buildchannelsvtidmap_20',['buildChannelSvtIDMap',['../classModuleMapper.html#ac38816992997c272b3ea6fd19915063d',1,'ModuleMapper']]],
   ['buildcombinedcovariance_21',['buildCombinedCovariance',['../namespaceTrackTools.html#aa87d385a17a2c7a89f43ce06d0b79031',1,'TrackTools']]],
