@@ -1153,7 +1153,7 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     bus_.set("delta_y0_vtx_proj", delta_y0_vtx_proj);
 
     // set vertex object and tracks
-    bus_.set("weight", 1.);
+    bus_.set("weight", eh.getWeight());
     bus_.set("vertex", vtx);
     bus_.set("ele", ele);
     bus_.set("pos", pos);

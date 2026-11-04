@@ -92,9 +92,13 @@ bool EventProcessor::process(IEvent* ievent) {
     
     // Set the run number
     header_->setRunNumber(lc_event->getRunNumber());
-    
-    // Set the trigger timestamp 
-    header_->setEventTime(lc_event->getTimeStamp()); 
+
+    // Set the event weight (1.0 for unweighted data/MC, or a biased-MC
+    // weight such as the one written by SLIC's ForcedPairConversion plugin).
+    header_->setWeight(lc_event->getWeight());
+
+    // Set the trigger timestamp
+    header_->setEventTime(lc_event->getTimeStamp());
     
     // Set the SVT bias state
     header_->setSvtBiasState(lc_event->getParameters().getIntVal("svt_bias_good")); 

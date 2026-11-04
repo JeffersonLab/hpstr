@@ -69,6 +69,17 @@ class EventHeader : public TObject {
         int getRunNumber() const { return run_number_; };
 
         /**
+         * Set the event weight, as read from EVENT::LCEvent::getWeight().
+         * Defaults to 1.0 for unweighted (e.g. data or unbiased MC) events.
+         *
+         * @param weight The event weight.
+         */
+        void setWeight(const double weight) { weight_ = weight; };
+
+        /** @return The event weight. */
+        double getWeight() const { return weight_; };
+
+        /**
          * @param pair0_trigger Set Flag indicating whether this event was due
          *        to a pair0 trigger.
          */
@@ -274,9 +285,12 @@ class EventHeader : public TObject {
         long event_time_{-9999}; 
 
         /** Run number */
-        int run_number_{-9999}; 
+        int run_number_{-9999};
 
-        /** 
+        /** Event weight, e.g. from a biased/forced MC generation step. */
+        double weight_{1.0};
+
+        /**
          * Flag indicating that a pair0 trigger was registered. It's 
          * set to 1 if it was registered or 0 if it wasn't.
          */
@@ -339,7 +353,7 @@ class EventHeader : public TObject {
         /** The RF time */
         double rf_times_[2]; 
 
-        ClassDef(EventHeader, 1);
+        ClassDef(EventHeader, 2);
 
 }; // EventHeader
 
