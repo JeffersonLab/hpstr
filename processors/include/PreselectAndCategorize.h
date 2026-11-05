@@ -39,6 +39,7 @@
 #include "TVector3.h"
 #include "TLorentzVector.h"
 #include "TAxis.h"
+#include <optional>
 
 // C++ 
 #include <memory>

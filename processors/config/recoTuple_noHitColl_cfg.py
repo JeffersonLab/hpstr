@@ -136,6 +136,8 @@ cvtx.parameters["vtxCollRoot"] = 'TargetConstrainedV0Vertices_KF'
 cvtx.parameters["partCollRoot"] = 'ParticlesOnCVertices_KF'
 cvtx.parameters["kinkRelCollLcio"] = ''
 cvtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
+cvtx.parameters["mcPartRelLcio"] = 'SVTTrueHitRelations'
+cvtx.parameters["trackStateLocation"] = 'AtTarget'
 
 
 vtxgbl.parameters["debug"] = 0

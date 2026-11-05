@@ -619,7 +619,11 @@ std::vector<std::pair<double, double>> ApOptimizationProcessor::getZoffsetAlpha(
         double* quantile_pos = new double[n_quantiles];
         h_proj->GetQuantiles(n_quantiles, quantile_pos, quantiles);
         for (int q = 0; q < n_quantiles; q++) {
-            processorHistos_->getGraph(("g_y0_vs_z_q" + std::to_string(q)).c_str())->AddPointError(zval, quantile_pos[q], 0.0, 0.0);
+            //processorHistos_->getGraph(("g_y0_vs_z_q" + std::to_string(q)).c_str())->AddPointError(zval, quantile_pos[q], 0.0, 0.0);
+            TGraphErrors* g = processorHistos_->getGraph(("g_y0_vs_z_q" + std::to_string(q)).c_str());
+            int n = g->GetN();
+            g->SetPoint(n, zval, quantile_pos[q]);
+            g->SetPointError(n, 0.0, 0.0);
             // double error = 0.;
 
             // processorHistos_->getGraph(("g_y0_vs_z_q" + std::to_string(q)).c_str())->SetPointError(i, 0.0, error);
