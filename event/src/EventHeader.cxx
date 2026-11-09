@@ -25,7 +25,8 @@ void EventHeader::Copy(TObject& obj) const {
     EventHeader& header = static_cast<EventHeader&>(obj); 
     header.event_number_ = event_number_; 
     header.event_time_ = event_time_; 
-    header.run_number_ = run_number_; 
+    header.run_number_ = run_number_;
+    header.weight_ = weight_;
     header.pair0_trigger_ = pair0_trigger_;
     header.pair1_trigger_ = pair1_trigger_;
     header.pulser_trigger_ = pulser_trigger_;
@@ -44,7 +45,8 @@ void EventHeader::Print() {
     std::cout << "[ EventHeader ]:\n" 
               << "\tEvent number: " << event_number_ << "\n"
               << "\tRun number: " << run_number_ << "\n"
-              << "\tEvent time: " << event_time_ << "\n" 
+              << "\tEvent time: " << event_time_ << "\n"
+              << "\tWeight: " << weight_ << "\n"
               << "\tRF time: 1) " << rf_times_[0] << " 2) " << rf_times_[1] 
               << std::endl;
 }
