@@ -20,7 +20,8 @@ var searchData=
   ['usefixedsmearing_5f_17',['useFixedSmearing_',['../classTrackSmearingTool.html#a0ba5a39cf160b46842ff7c0fff3d6d02',1,'TrackSmearingTool']]],
   ['useseparatetopbot_5f_18',['useSeparateTopBot_',['../classTrackSmearingTool.html#a0fd8ff7d0e6fe4f041e60bb16476122d',1,'TrackSmearingTool']]],
   ['usetrackerhits_5f_19',['useTrackerHits_',['../classTrackingProcessor.html#a23e49b66f544b820bd55beffa91f5dbb',1,'TrackingProcessor::useTrackerHits_'],['../classVertexProcessor.html#a23e49b66f544b820bd55beffa91f5dbb',1,'VertexProcessor::useTrackerHits_']]],
-  ['utilities_2ecxx_20',['utilities.cxx',['../utilities_8cxx.html',1,'']]],
-  ['utilities_2eh_21',['utilities.h',['../utilities_8h.html',1,'']]],
-  ['utils_22',['utils',['../namespaceutils.html',1,'']]]
+  ['usevertexmomentum_5f_20',['useVertexMomentum_',['../classPreselectAndCategorize2021.html#aba5d579ad98c5ffc431c60cd5c142ea3',1,'PreselectAndCategorize2021']]],
+  ['utilities_2ecxx_21',['utilities.cxx',['../utilities_8cxx.html',1,'']]],
+  ['utilities_2eh_22',['utilities.h',['../utilities_8h.html',1,'']]],
+  ['utils_23',['utils',['../namespaceutils.html',1,'']]]
 ];

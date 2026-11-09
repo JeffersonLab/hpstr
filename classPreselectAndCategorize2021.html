@@ -150,7 +150,13 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:afa3f4fa08a8a3b675e2dab06e29412a1" id="r_afa3f4fa08a8a3b675e2dab06e29412a1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afa3f4fa08a8a3b675e2dab06e29412a1">debug_</a> {false}</td></tr>
 <tr class="memitem:aa0d8bfd16423a985a05e49ff935db60c" id="r_aa0d8bfd16423a985a05e49ff935db60c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa0d8bfd16423a985a05e49ff935db60c">disablePreselection_</a> {false}</td></tr>
 <tr class="memitem:a3c49ebb9f38e2e9241bbfd97b0f41154" id="r_a3c49ebb9f38e2e9241bbfd97b0f41154"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3c49ebb9f38e2e9241bbfd97b0f41154">disableTimingCuts_</a> {false}</td></tr>
+<tr class="memitem:a0b55fb6995bb8c2192c000278d5acce3" id="r_a0b55fb6995bb8c2192c000278d5acce3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0b55fb6995bb8c2192c000278d5acce3">disableVertexChi2Cut_</a> {false}</td></tr>
+<tr class="memitem:aba5d579ad98c5ffc431c60cd5c142ea3" id="r_aba5d579ad98c5ffc431c60cd5c142ea3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aba5d579ad98c5ffc431c60cd5c142ea3">useVertexMomentum_</a> {true}</td></tr>
 <tr class="memitem:ac3170687cf43d031f6372705825ef070" id="r_ac3170687cf43d031f6372705825ef070"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac3170687cf43d031f6372705825ef070">minHits_</a> {10}</td></tr>
+<tr class="memitem:a0b74fdccec7a1d1f91959ad98c2d6fdf" id="r_a0b74fdccec7a1d1f91959ad98c2d6fdf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0b74fdccec7a1d1f91959ad98c2d6fdf">eleMinHits_</a> {10}</td></tr>
+<tr class="memitem:acaddd3a23362fea2f89cfe8b010e77f3" id="r_acaddd3a23362fea2f89cfe8b010e77f3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acaddd3a23362fea2f89cfe8b010e77f3">posMinHits_</a> {10}</td></tr>
+<tr class="memitem:a771f05055145fbb89b6a4d45d61b5948" id="r_a771f05055145fbb89b6a4d45d61b5948"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a771f05055145fbb89b6a4d45d61b5948">triggerSelection_</a> {&quot;singles2&quot;}</td></tr>
+<tr class="memitem:af37b1e96d930e26e5e35b92ac4981c16" id="r_af37b1e96d930e26e5e35b92ac4981c16"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af37b1e96d930e26e5e35b92ac4981c16">psumCut_</a> {-1.0}</td></tr>
 <tr class="memitem:a604867cb1d9addaefe3f40757957b5ef" id="r_a604867cb1d9addaefe3f40757957b5ef"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a604867cb1d9addaefe3f40757957b5ef">beamE_</a> {3.74}</td></tr>
 <tr class="memitem:a07617b9b45fa61bd92b41158c9126a7f" id="r_a07617b9b45fa61bd92b41158c9126a7f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a07617b9b45fa61bd92b41158c9126a7f">thetaBeamMrad_</a> {0.0}</td></tr>
 <tr class="memitem:a6b1e313b4fbf7fb18b86bdc63a01a8f8" id="r_a6b1e313b4fbf7fb18b86bdc63a01a8f8"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classTrackBiasingTool.html">TrackBiasingTool</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b1e313b4fbf7fb18b86bdc63a01a8f8">biasingTool_</a> {nullptr}</td></tr>
@@ -274,7 +280,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8cxx_source.html#l00162">162</a> of file <a class="el" href="PreselectAndCategorize2021_8cxx_source.html">PreselectAndCategorize2021.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8cxx_source.html#l00178">178</a> of file <a class="el" href="PreselectAndCategorize2021_8cxx_source.html">PreselectAndCategorize2021.cxx</a>.</p>
 
 </div>
 </div>
@@ -310,7 +316,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8cxx_source.html#l00294">294</a> of file <a class="el" href="PreselectAndCategorize2021_8cxx_source.html">PreselectAndCategorize2021.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8cxx_source.html#l00310">310</a> of file <a class="el" href="PreselectAndCategorize2021_8cxx_source.html">PreselectAndCategorize2021.cxx</a>.</p>
 
 </div>
 </div>
@@ -383,7 +389,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8cxx_source.html#l00187">187</a> of file <a class="el" href="PreselectAndCategorize2021_8cxx_source.html">PreselectAndCategorize2021.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8cxx_source.html#l00203">203</a> of file <a class="el" href="PreselectAndCategorize2021_8cxx_source.html">PreselectAndCategorize2021.cxx</a>.</p>
 
 </div>
 </div>
@@ -414,7 +420,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8cxx_source.html#l00147">147</a> of file <a class="el" href="PreselectAndCategorize2021_8cxx_source.html">PreselectAndCategorize2021.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8cxx_source.html#l00162">162</a> of file <a class="el" href="PreselectAndCategorize2021_8cxx_source.html">PreselectAndCategorize2021.cxx</a>.</p>
 
 </div>
 </div>
@@ -445,7 +451,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classPreselectAndCategorize.html#a32d626626eee0bc4ade146973f6abb1c">PreselectAndCategorize</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8cxx_source.html#l01328">1328</a> of file <a class="el" href="PreselectAndCategorize2021_8cxx_source.html">PreselectAndCategorize2021.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8cxx_source.html#l01388">1388</a> of file <a class="el" href="PreselectAndCategorize2021_8cxx_source.html">PreselectAndCategorize2021.cxx</a>.</p>
 
 </div>
 </div>
@@ -482,7 +488,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classPreselectAndCategorize.html#a4c88c2e0a2a6510211fbc4155ba12fd4">PreselectAndCategorize</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8cxx_source.html#l00421">421</a> of file <a class="el" href="PreselectAndCategorize2021_8cxx_source.html">PreselectAndCategorize2021.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8cxx_source.html#l00437">437</a> of file <a class="el" href="PreselectAndCategorize2021_8cxx_source.html">PreselectAndCategorize2021.cxx</a>.</p>
 
 </div>
 </div>
@@ -513,7 +519,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8cxx_source.html#l00260">260</a> of file <a class="el" href="PreselectAndCategorize2021_8cxx_source.html">PreselectAndCategorize2021.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8cxx_source.html#l00276">276</a> of file <a class="el" href="PreselectAndCategorize2021_8cxx_source.html">PreselectAndCategorize2021.cxx</a>.</p>
 
 </div>
 </div>
@@ -559,7 +565,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classPreselectAndCategorize.html#a0ce1dcd521fc7f9b80998c309256f888">PreselectAndCategorize</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8cxx_source.html#l00591">591</a> of file <a class="el" href="PreselectAndCategorize2021_8cxx_source.html">PreselectAndCategorize2021.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8cxx_source.html#l00621">621</a> of file <a class="el" href="PreselectAndCategorize2021_8cxx_source.html">PreselectAndCategorize2021.cxx</a>.</p>
 
 </div>
 </div>
@@ -596,7 +602,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classPreselectAndCategorize.html#a95560a93c94a1eed6c95b17d5ccb6ef6">PreselectAndCategorize</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8cxx_source.html#l00483">483</a> of file <a class="el" href="PreselectAndCategorize2021_8cxx_source.html">PreselectAndCategorize2021.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8cxx_source.html#l00513">513</a> of file <a class="el" href="PreselectAndCategorize2021_8cxx_source.html">PreselectAndCategorize2021.cxx</a>.</p>
 
 </div>
 </div>
@@ -669,7 +675,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00053">53</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00062">62</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
 
 </div>
 </div>
@@ -693,7 +699,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00055">55</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00064">64</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
 
 </div>
 </div>
@@ -717,7 +723,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00066">66</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00075">75</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
 
 </div>
 </div>
@@ -793,6 +799,30 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
+<a id="a0b55fb6995bb8c2192c000278d5acce3" name="a0b55fb6995bb8c2192c000278d5acce3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b55fb6995bb8c2192c000278d5acce3">&#9670;&#160;</a></span>disableVertexChi2Cut_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool disableVertexChi2Cut_ {false}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00052">52</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
+
+</div>
+</div>
 <a id="a47734371f11c7b7e3c401b3d50cb0b16" name="a47734371f11c7b7e3c401b3d50cb0b16"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a47734371f11c7b7e3c401b3d50cb0b16">&#9670;&#160;</a></span>doSmearing_</h2>
 
@@ -838,6 +868,30 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00039">39</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
+
+</div>
+</div>
+<a id="a0b74fdccec7a1d1f91959ad98c2d6fdf" name="a0b74fdccec7a1d1f91959ad98c2d6fdf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b74fdccec7a1d1f91959ad98c2d6fdf">&#9670;&#160;</a></span>eleMinHits_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int eleMinHits_ {10}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00057">57</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
 
 </div>
 </div>
@@ -909,7 +963,55 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00052">52</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00056">56</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
+
+</div>
+</div>
+<a id="acaddd3a23362fea2f89cfe8b010e77f3" name="acaddd3a23362fea2f89cfe8b010e77f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acaddd3a23362fea2f89cfe8b010e77f3">&#9670;&#160;</a></span>posMinHits_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int posMinHits_ {10}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00058">58</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
+
+</div>
+</div>
+<a id="af37b1e96d930e26e5e35b92ac4981c16" name="af37b1e96d930e26e5e35b92ac4981c16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af37b1e96d930e26e5e35b92ac4981c16">&#9670;&#160;</a></span>psumCut_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double psumCut_ {-1.0}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00061">61</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
 
 </div>
 </div>
@@ -957,7 +1059,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00065">65</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00074">74</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
 
 </div>
 </div>
@@ -1101,7 +1203,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00054">54</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00063">63</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
 
 </div>
 </div>
@@ -1125,7 +1227,31 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00057">57</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00066">66</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
+
+</div>
+</div>
+<a id="a771f05055145fbb89b6a4d45d61b5948" name="a771f05055145fbb89b6a4d45d61b5948"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a771f05055145fbb89b6a4d45d61b5948">&#9670;&#160;</a></span>triggerSelection_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string triggerSelection_ {&quot;singles2&quot;}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00059">59</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
 
 </div>
 </div>
@@ -1150,6 +1276,30 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00035">35</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
+
+</div>
+</div>
+<a id="aba5d579ad98c5ffc431c60cd5c142ea3" name="aba5d579ad98c5ffc431c60cd5c142ea3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aba5d579ad98c5ffc431c60cd5c142ea3">&#9670;&#160;</a></span>useVertexMomentum_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool useVertexMomentum_ {true}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize2021_8h_source.html#l00053">53</a> of file <a class="el" href="PreselectAndCategorize2021_8h_source.html">PreselectAndCategorize2021.h</a>.</p>
 
 </div>
 </div>

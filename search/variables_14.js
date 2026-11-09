@@ -6,5 +6,6 @@ var searchData=
   ['upper_5flimit_5f_3',['upper_limit_',['../classHpsFitResult.html#a8dde89795870620273808294c26abce8',1,'HpsFitResult']]],
   ['usefixedsmearing_5f_4',['useFixedSmearing_',['../classTrackSmearingTool.html#a0ba5a39cf160b46842ff7c0fff3d6d02',1,'TrackSmearingTool']]],
   ['useseparatetopbot_5f_5',['useSeparateTopBot_',['../classTrackSmearingTool.html#a0fd8ff7d0e6fe4f041e60bb16476122d',1,'TrackSmearingTool']]],
-  ['usetrackerhits_5f_6',['useTrackerHits_',['../classTrackingProcessor.html#a23e49b66f544b820bd55beffa91f5dbb',1,'TrackingProcessor::useTrackerHits_'],['../classVertexProcessor.html#a23e49b66f544b820bd55beffa91f5dbb',1,'VertexProcessor::useTrackerHits_']]]
+  ['usetrackerhits_5f_6',['useTrackerHits_',['../classTrackingProcessor.html#a23e49b66f544b820bd55beffa91f5dbb',1,'TrackingProcessor::useTrackerHits_'],['../classVertexProcessor.html#a23e49b66f544b820bd55beffa91f5dbb',1,'VertexProcessor::useTrackerHits_']]],
+  ['usevertexmomentum_5f_7',['useVertexMomentum_',['../classPreselectAndCategorize2021.html#aba5d579ad98c5ffc431c60cd5c142ea3',1,'PreselectAndCategorize2021']]]
 ];
