@@ -1,5 +1,8 @@
 #include "FeeAnaProcessor.h"
 #include <iomanip>
+#include <cmath>
+#include <algorithm>
+#include <fstream>
 #include "utilities.h"
 
 FeeAnaProcessor::FeeAnaProcessor(const std::string& name, Process& process)
@@ -18,6 +21,7 @@ void FeeAnaProcessor::configure(const ParameterSet& parameters) {
         seed_                 = parameters.getInteger("seed",seed_);
         trkCollName_          = parameters.getString("trkCollName",trkCollName_);
         fspCollName_          = parameters.getString("fspCollName",fspCollName_);
+        mcColl_               = parameters.getString("mcColl",mcColl_);
         histCfgFilename_      = parameters.getString("histCfg",histCfgFilename_);
         doTruth_              = (bool) parameters.getInteger("doTruth",doTruth_);
         truthHistCfgFilename_ = parameters.getString("truthHistCfg",truthHistCfgFilename_);
@@ -46,6 +50,11 @@ void FeeAnaProcessor::configure(const ParameterSet& parameters) {
         smearingVariable_ = parameters.getString("smearingVariable", "");
         scaleCorrVariable_ = parameters.getString("scaleCorrVariable", "");
 
+        // Per-hit_pattern momentum scale correction (data -> beam energy)
+        hitPatternScaleFile_     = parameters.getString("hitPatternScaleFile", hitPatternScaleFile_);
+        doHitPatternScale_       = parameters.getInteger("doHitPatternScale", doHitPatternScale_ ? 1 : 0) != 0;
+        hitPatternScaleDataOnly_ = parameters.getInteger("hitPatternScaleDataOnly", hitPatternScaleDataOnly_ ? 1 : 0) != 0;
+
         // FEE selection
         feeClusterEnergyMin_ = parameters.getDouble("feeClusterEnergyMin", feeClusterEnergyMin_);
         clusterTimeMin_      = parameters.getDouble("clusterTimeMin",      clusterTimeMin_);
@@ -57,8 +66,16 @@ void FeeAnaProcessor::configure(const ParameterSet& parameters) {
         mcTimeOffset_        = parameters.getDouble("mcTimeOffset",        mcTimeOffset_);
         requireElectron_     = parameters.getInteger("requireElectron", requireElectron_ ? 1 : 0) != 0;
         requireCluster_      = parameters.getInteger("requireCluster",  requireCluster_  ? 1 : 0) != 0;
+        requireFeeTrigger_   = parameters.getInteger("requireFeeTrigger", requireFeeTrigger_ ? 1 : 0) != 0;
         eopMin_              = parameters.getDouble("eopMin", eopMin_);
         eopMax_              = parameters.getDouble("eopMax", eopMax_);
+
+        // In-time isolation veto
+        vetoExtraClusters_    = parameters.getInteger("vetoExtraClusters", vetoExtraClusters_ ? 1 : 0) != 0;
+        vetoExtraTracks_      = parameters.getInteger("vetoExtraTracks",   vetoExtraTracks_   ? 1 : 0) != 0;
+        vetoClusterTimeWindow_ = parameters.getDouble("vetoClusterTimeWindow", vetoClusterTimeWindow_);
+        vetoTrackTimeWindow_   = parameters.getDouble("vetoTrackTimeWindow",   vetoTrackTimeWindow_);
+        vetoClusterEnergyMin_  = parameters.getDouble("vetoClusterEnergyMin",  vetoClusterEnergyMin_);
 
     }
     catch (std::runtime_error& error)
@@ -68,6 +85,29 @@ void FeeAnaProcessor::configure(const ParameterSet& parameters) {
 
     if (!isData_)
       time_offset_ = mcTimeOffset_;
+
+    // Load the per-hit_pattern momentum scale corrections (data -> beam energy).
+    if (doHitPatternScale_ && !hitPatternScaleFile_.empty()) {
+      std::ifstream ifs(hitPatternScaleFile_);
+      if (!ifs.good()) {
+        std::cout << "[FeeAnaProcessor] ERROR: cannot open hitPatternScaleFile "
+                  << hitPatternScaleFile_ << " -- hit-pattern scale correction DISABLED" << std::endl;
+        doHitPatternScale_ = false;
+      } else {
+        nlohmann::json j;
+        ifs >> j;
+        hitPatternDefaultScale_ = j.value("default_scale", 1.0);
+        if (j.contains("pattern_to_scale")) {
+          const nlohmann::json& p2s = j["pattern_to_scale"];
+          for (auto it = p2s.begin(); it != p2s.end(); ++it)
+            hitPatternScale_[std::stoi(it.key())] = it.value().get<double>();
+        }
+        std::cout << "[FeeAnaProcessor] Loaded " << hitPatternScale_.size()
+                  << " hit-pattern scale corrections (default_scale=" << hitPatternDefaultScale_
+                  << (hitPatternScaleDataOnly_ ? ", data-only" : ", data+MC")
+                  << ") from " << hitPatternScaleFile_ << std::endl;
+      }
+    }
 }
 
 void FeeAnaProcessor::setFile(TFile* outFile) {
@@ -79,12 +119,30 @@ void FeeAnaProcessor::setFile(TFile* outFile) {
     output_tree_->Branch("clu_E",     &clu_E_out_);
     output_tree_->Branch("clu_time",  &clu_time_out_);
     output_tree_->Branch("eop",       &eop_out_);
+    output_tree_->Branch("n_clusters_intime", &n_clusters_intime_out_);
+    output_tree_->Branch("n_tracks_intime",   &n_tracks_intime_out_);
     output_tree_->Branch("L1_axial",  &L1_axial_out_);
     output_tree_->Branch("L1_stereo", &L1_stereo_out_);
     output_tree_->Branch("L2_axial",  &L2_axial_out_);
     output_tree_->Branch("L2_stereo", &L2_stereo_out_);
     output_tree_->Branch("L3_axial",  &L3_axial_out_);
     output_tree_->Branch("L3_stereo", &L3_stereo_out_);
+    output_tree_->Branch("L4_axial",  &L4_axial_out_);
+    output_tree_->Branch("L4_stereo", &L4_stereo_out_);
+    output_tree_->Branch("L1",    &L1_out_);
+    output_tree_->Branch("L2",    &L2_out_);
+    output_tree_->Branch("L3",    &L3_out_);
+    output_tree_->Branch("L4",    &L4_out_);
+    output_tree_->Branch("is_L1", &is_L1_out_);
+    output_tree_->Branch("is_L2", &is_L2_out_);
+    output_tree_->Branch("is_L3", &is_L3_out_);
+    output_tree_->Branch("hit_pattern", &hit_pattern_out_);
+    output_tree_->Branch("n_hits",      &n_hits_out_);
+    output_tree_->Branch("track_corr.", &track_corr_out_, 100000, 3);
+    output_tree_->Branch("hit_pattern_scale",            &hit_pattern_scale_out_);
+    output_tree_->Branch("hit_pattern_scale_isdefault",  &hit_pattern_scale_isdefault_out_);
+    output_tree_->Branch("truth_matched",  &truth_matched_out_);
+    output_tree_->Branch("has_truth_link", &has_truth_link_out_);
 }
 
 void FeeAnaProcessor::initialize(TTree* tree) {
@@ -138,6 +196,20 @@ void FeeAnaProcessor::initialize(TTree* tree) {
 
     //Get event header information for trigger
     tree->SetBranchAddress("EventHeader", &evth_ , &bevth_);
+
+    // 2021 trigger-scaler bank, needed to require the FEE trigger (data only).
+    if (requireFeeTrigger_)
+        tree->SetBranchAddress("TSBank", &tsdata_, &btsdata_);
+
+    // Full event collections, used to count in-time tracks/clusters (and optionally veto).
+    // These are always branched in so the in-time multiplicity is recorded in the output
+    // tree regardless of whether the veto is applied.
+    tree->SetBranchAddress("RecoEcalClusters", &ecalClusters_, &becalClusters_);
+    tree->SetBranchAddress(trkCollName_.c_str(), &allTracks_, &ballTracks_);
+
+    // MCParticle collection for hit-based truth matching (MC only; absent on data).
+    if (!isData_ && !mcColl_.empty())
+        tree->SetBranchAddress(mcColl_.c_str(), &mcParticles_, &bmcParticles_);
 
     //Momentum smearing closure test
     // Determine which smearing file to use (smearingCfg takes precedence)
@@ -248,6 +320,16 @@ bool FeeAnaProcessor::process(IEvent* ievent) {
                   << "  nFSPs=" << fsps_->size() << std::endl;
     }
 
+    // Require the FEE trigger on data. MC is generated with a single trigger and the
+    // TSBank bits are not filled, so the requirement is applied to data only (mirrors
+    // the trigger handling in PreselectAndCategorize2021).
+    if (requireFeeTrigger_ && isData_) {
+        if (!tsdata_ || !tsdata_->isFEETrigger()) {
+            if (debug_ > 0) std::cout << "[FeeAna]   FAIL FEE trigger" << std::endl;
+            return true;
+        }
+    }
+
     // FEE selection: loop over FinalStateParticles. Each particle carries its track and
     // (if matched at the LCIO stage) its ECal cluster, so no manual track-cluster matching
     // is needed. We require an electron whose associated cluster looks like a full-energy
@@ -309,9 +391,58 @@ bool FeeAnaProcessor::process(IEvent* ievent) {
         trk_mom.SetY(track->getMomentum()[1]);
         trk_mom.SetZ(track->getMomentum()[2]);
 
-        // Decode per-sensor hit layer vector and determine top/bottom
+        // Decode per-sensor hit layer vector and determine top/bottom.
         bool isTop = track->getTanLambda() > 0;
-        auto layers = ah_->GetTrackHitLayers(track);
+        // The FEE track comes from the FinalStateParticle, whose embedded Track does NOT
+        // carry the per-sensor hit-layer vector: FinalStateParticleProcessor fills the hit
+        // count and the SvtHit refs but never calls addHitLayer(), so getHitLayers() is
+        // empty here. The matching KalmanFullTracks entry (same track ID) does carry it, so
+        // match by ID and decode the layers from that. Fall back to the FSP track's own
+        // SvtHits if no match is found, and finally to the (empty) FSP layer vector.
+        Track* layerTrack = track;
+        if (allTracks_) {
+            for (Track* t : *allTracks_) {
+                if (t && t->getID() == track->getID()) { layerTrack = t; break; }
+            }
+        }
+        std::vector<int> layers = ah_->GetTrackHitLayers(layerTrack);
+        if (std::none_of(layers.begin(), layers.end(), [](int v){ return v == 1; })) {
+            // Matched full track had no layer vector; decode from this track's SvtHits.
+            TRefArray hits = track->getSvtHits();
+            for (int ih = 0; ih < hits.GetEntries(); ++ih) {
+                TrackerHit* th = (TrackerHit*) hits.At(ih);
+                if (th && th->getLayer() >= 0 && th->getLayer() < (int) layers.size())
+                    layers.at(th->getLayer()) = 1;
+            }
+        }
+        // Encode the full per-sensor hit pattern as a bitmask (bit i = sensor slot i hit).
+        int hit_pattern = 0;
+        for (int i = 0; i < (int) layers.size(); ++i)
+            if (layers.at(i) == 1) hit_pattern |= (1 << i);
+
+        // Per-hit_pattern momentum scale correction (data momentum -> beam energy).
+        // p_corr = p * scale, keyed by hit_pattern (default_scale for unlisted patterns).
+        double hitPatternScale = 1.0;
+        bool   hitPatternScaleIsDefault = false;
+        if (doHitPatternScale_ && (!hitPatternScaleDataOnly_ || isData_)) {
+            auto it = hitPatternScale_.find(hit_pattern);
+            if (it != hitPatternScale_.end()) {
+                hitPatternScale = it->second;
+            } else {
+                hitPatternScale = hitPatternDefaultScale_;
+                hitPatternScaleIsDefault = true;
+            }
+        }
+        // Corrected track: scale the momentum magnitude by hitPatternScale (omega scales as
+        // 1/scale since p is inversely proportional to |omega|).
+        Track trk_corr = *track;
+        if (hitPatternScale != 1.0) {
+            std::vector<double> mom = trk_corr.getMomentum();
+            for (double& c : mom) c *= hitPatternScale;
+            trk_corr.setMomentum(mom);
+            trk_corr.setOmega(trk_corr.getOmega() / hitPatternScale);
+        }
+
         // Convention from sensor_locations.txt:
         //   Top:    even sensor index = axial,  odd = stereo
         //   Bottom: even sensor index = stereo, odd = axial
@@ -321,6 +452,23 @@ bool FeeAnaProcessor::process(IEvent* ievent) {
         bool L2_stereo = isTop ? (layers.at(3) == 1) : (layers.at(2) == 1);
         bool L3_axial  = isTop ? (layers.at(4) == 1) : (layers.at(5) == 1);
         bool L3_stereo = isTop ? (layers.at(5) == 1) : (layers.at(4) == 1);
+        bool L4_axial  = isTop ? (layers.at(6) == 1) : (layers.at(7) == 1);
+        bool L4_stereo = isTop ? (layers.at(7) == 1) : (layers.at(6) == 1);
+
+        // Per-layer "has both axial+stereo hit" flags (top/bottom independent),
+        // matching the eleLN/posLN definition in PreselectAndCategorize2021.
+        bool L1 = (layers.at(0) == 1 && layers.at(1) == 1);
+        bool L2 = (layers.at(2) == 1 && layers.at(3) == 1);
+        bool L3 = (layers.at(4) == 1 && layers.at(5) == 1);
+        bool L4 = (layers.at(6) == 1 && layers.at(7) == 1);
+
+        // Earliest-layer category with the outward hit requirement, identical logic to the
+        // ele_L1/ele_L2/ele_L3 vertex categories in PreselectAndCategorize2021. For a single
+        // FEE track these are the per-track analog of the isL1L1/isL2L2/isL3L3 vertex flags:
+        //   is_L1 = track starts at L1, is_L2 = starts at L2, is_L3 = starts at L3.
+        bool is_L1 =  L1 && L2 && L3;
+        bool is_L2 = !L1 && L2 && L3;
+        bool is_L3 = !L1 && !L2 && L3;
 
         if (debug_ > 0) {
             std::cout << "[FeeAna]  fsp[" << ipart << "]"
@@ -378,9 +526,52 @@ bool FeeAnaProcessor::process(IEvent* ievent) {
             continue;
         }
 
+        // In-time isolation: a clean FEE event has a single in-time cluster and a single
+        // in-time track. Count objects in-time with the primary FEE cluster (the primary
+        // itself is always counted). The counts are always computed and written to the
+        // output tree; the veto flags below only control whether a candidate is dropped.
+        // Cluster-cluster timing uses raw times (the offset cancels); track timing is
+        // compared to the offset-corrected cluster time, using the same MC track-time
+        // convention (time_offset_) as the track-time selection above.
+        int n_clusters_intime = 0;
+        int n_tracks_intime    = 0;
+
+        if (ecalClusters_) {
+            for (CalCluster* c : *ecalClusters_) {
+                if (!c || c->getEnergy() < vetoClusterEnergyMin_) continue;
+                if (std::fabs(c->getTime() - clu_traw) < vetoClusterTimeWindow_) ++n_clusters_intime;
+            }
+        }
+        if (allTracks_) {
+            for (Track* t : *allTracks_) {
+                if (!t) continue;
+                if (std::fabs((t->getTrackTime() - time_offset_) - clu_t) < vetoTrackTimeWindow_) ++n_tracks_intime;
+            }
+        }
+
+        n_clusters_intime_out_ = n_clusters_intime;
+        n_tracks_intime_out_   = n_tracks_intime;
+
+        if (vetoExtraClusters_ && n_clusters_intime > 1) {
+            if (debug_ > 0) std::cout << "[FeeAna]   FAIL extra in-time clusters: " << n_clusters_intime << std::endl;
+            continue;
+        }
+        if (vetoExtraTracks_ && n_tracks_intime > 1) {
+            if (debug_ > 0) std::cout << "[FeeAna]   FAIL extra in-time tracks: " << n_tracks_intime << std::endl;
+            continue;
+        }
+
         if (debug_ > 0) std::cout << "[FeeAna]   PASS all cuts" << std::endl;
 
         Track* truth_track = nullptr;
+
+        // Truth matching (MC only; always false on data). Computed independently of doTruth_
+        // so the flags are available in the output tree.
+        //  truth_matched : hit-based majority match to an e^-/e^+, using the same
+        //                  utils::hasTruthMatch definition as the 2021 preselection.
+        //  has_truth_link: raw Track TRef truth link resolves to an object (no PDG check).
+        bool truth_matched  = utils::hasTruthMatch(track_obj, mcParticles_, debug_ > 0);
+        bool has_truth_link = (track->getTruthLink().GetObject() != nullptr);
 
         //Get the truth track
         if (doTruth_) {
@@ -540,6 +731,22 @@ bool FeeAnaProcessor::process(IEvent* ievent) {
           L2_stereo_out_     = L2_stereo;
           L3_axial_out_      = L3_axial;
           L3_stereo_out_     = L3_stereo;
+          L4_axial_out_      = L4_axial;
+          L4_stereo_out_     = L4_stereo;
+          L1_out_            = L1;
+          L2_out_            = L2;
+          L3_out_            = L3;
+          L4_out_            = L4;
+          is_L1_out_         = is_L1;
+          is_L2_out_         = is_L2;
+          is_L3_out_         = is_L3;
+          hit_pattern_out_   = hit_pattern;
+          n_hits_out_        = n2dhits_onTrack;
+          track_corr_out_               = trk_corr;
+          hit_pattern_scale_out_        = hitPatternScale;
+          hit_pattern_scale_isdefault_out_ = hitPatternScaleIsDefault;
+          truth_matched_out_  = truth_matched;
+          has_truth_link_out_ = has_truth_link;
           output_tree_->Fill();
         }
 

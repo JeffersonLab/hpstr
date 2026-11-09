@@ -73,8 +73,17 @@ preselect.parameters['calTimeOffset'] = 37.3
 #preselect.parameters['calTimeOffset'] = 37.3 if options.isData else 24.
 
 preselect.parameters["smearingCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/smearing/tool_smearing.json"
+preselect.parameters["doZ0Corrections"] = 0
+preselect.parameters["z0CalibCfg"] = file_in_hpstr('analysis/data/smearing/z0_calib_2021.json')
+preselect.parameters["z0CalibMcCfg"] = file_in_hpstr('analysis/data/smearing/z0_calib_2021_mc.json')
 preselect.parameters["smearOmega"] = 1
 preselect.parameters["smearingVariable"] = "tanLambda"
+preselect.parameters["scaleCorrVariable"] = ""   # scale corrections disabled
+preselect.parameters["applyMeanCorr"] = 0
+preselect.parameters["eleMinHits"] = 8
+preselect.parameters["posMinHits"] = 10
+preselect.parameters["psumCut"] = 2.8
+preselect.parameters["disableVertexChi2Cut"] = 1  # disable the vertex chi2 cut
 preselect.parameters["doV0ProjZ0"] = 0
 preselect.parameters["doSmearing"] = 1 if (options.smearing and not options.noSmearing and options.sample != 'data') else 0
 preselect.parameters["smearingFactor"] = 1.0

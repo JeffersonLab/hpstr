@@ -5,7 +5,7 @@
  */
 
 #include "MCEcalHit.h"
-#include <math.h>
+#include <cmath>
 
 ClassImp(MCEcalHit)
 

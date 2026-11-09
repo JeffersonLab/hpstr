@@ -28,6 +28,18 @@ JOB_OUTPUT_DIR["data_small"]="${BASE_OUTPUT_DIR}//data_1pc_pScaleCorr/"
 JOB_HPSTR_CONFIG["data_small"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["data_small"]=""
 
+JOB_FILE_LISTS["data_14185_nom"]="${DATA_LISTS_DIR}/data_14185_nom.txt"
+JOB_SAMPLE["data_14185_nom"]="data"
+JOB_OUTPUT_DIR["data_14185_nom"]="${BASE_OUTPUT_DIR}/data_14185_nom/"
+JOB_HPSTR_CONFIG["data_14185_nom"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["data_14185_nom"]=""
+
+JOB_FILE_LISTS["data_14185_lowp"]="${DATA_LISTS_DIR}/data_14185_lowp.txt"
+JOB_SAMPLE["data_14185_lowp"]="data"
+JOB_OUTPUT_DIR["data_14185_lowp"]="${BASE_OUTPUT_DIR}/data_14185_lowp/"
+JOB_HPSTR_CONFIG["data_14185_lowp"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["data_14185_lowp"]=""
+
 JOB_FILE_LISTS["data"]="${DATA_LISTS_DIR}/data_1pc.txt"
 JOB_SAMPLE["data"]="data"
 JOB_OUTPUT_DIR["data"]="${BASE_OUTPUT_DIR}/data_1pc/"
@@ -40,9 +52,9 @@ JOB_OUTPUT_DIR["data_5pc"]="${BASE_OUTPUT_DIR}/data_5pc"
 JOB_HPSTR_CONFIG["data_5pc"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["data_5pc"]=""
 
-JOB_FILE_LISTS["data_10pc"]="${DATA_LISTS_DIR}/data_10pc.txt"
+JOB_FILE_LISTS["data_10pc"]="${DATA_LISTS_DIR}/single.txt"
 JOB_SAMPLE["data_10pc"]="data"
-JOB_OUTPUT_DIR["data_10pc"]="${BASE_OUTPUT_DIR}/data_10pc"
+JOB_OUTPUT_DIR["data_10pc"]="${BASE_OUTPUT_DIR}/data_10pc_psum2p8"
 JOB_HPSTR_CONFIG["data_10pc"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["data_10pc"]=""
 
@@ -51,6 +63,12 @@ JOB_SAMPLE["data_prompt"]="data"
 JOB_OUTPUT_DIR["data_prompt"]="${BASE_OUTPUT_DIR}/data_1pc_tc"
 JOB_HPSTR_CONFIG["data_prompt"]="config_prompt_2021.py"
 JOB_EXTRA_ARGS["data_prompt"]=""
+
+JOB_FILE_LISTS["data_10pc_prompt"]="${DATA_LISTS_DIR}/data_10pc.txt"
+JOB_SAMPLE["data_10pc_prompt"]="data"
+JOB_OUTPUT_DIR["data_10pc_prompt"]="${BASE_OUTPUT_DIR}/data_10pc_prompt_TC_psum2p8"
+JOB_HPSTR_CONFIG["data_10pc_prompt"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["data_10pc_prompt"]=""
 
 # ============================================================================
 # BACKGROUND MC JOBS
@@ -114,7 +132,7 @@ JOB_EXTRA_ARGS["rad_smeared"]="--smearing"
 # A' SIGNAL MC JOBS
 # ============================================================================
 
-JOB_FILE_LISTS["ap_signal_prompt_smeared"]="${MC_LISTS_DIR}/ap_pulser_prompt_2.list"
+JOB_FILE_LISTS["ap_signal_prompt_smeared"]="${MC_LISTS_DIR}/ap_prompt.list"
 JOB_SAMPLE["ap_signal_prompt_smeared"]="ap_signal"
 JOB_OUTPUT_DIR["ap_signal_prompt_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_prompt_smeared"
 JOB_HPSTR_CONFIG["ap_signal_prompt_smeared"]="config_prompt_2021.py" #config_displaced_2021.py"
@@ -130,9 +148,15 @@ JOB_EXTRA_ARGS["ap_signal"]=""
 
 JOB_FILE_LISTS["ap_signal_smeared"]="${MC_LISTS_DIR}/ap*.list"
 JOB_SAMPLE["ap_signal_smeared"]="ap_signal"
-JOB_OUTPUT_DIR["ap_signal_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_smeared_notimecuts"
+JOB_OUTPUT_DIR["ap_signal_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_smeared"
 JOB_HPSTR_CONFIG["ap_signal_smeared"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["ap_signal_smeared"]="--smearing"
+
+JOB_FILE_LISTS["ap_signal_improved"]="${MC_LISTS_DIR}/improved_180MeV.list"
+JOB_SAMPLE["ap_signal_improved"]="ap_signal"
+JOB_OUTPUT_DIR["ap_signal_improved"]="${BASE_OUTPUT_DIR}/ap_signal_smeared_improvedTrking/ap180MeV/"
+JOB_HPSTR_CONFIG["ap_signal_improved"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["ap_signal_improved"]="--smearing"
 
 
 JOB_FILE_LISTS["ap_tgt_sys"]="${MC_LISTS_DIR}/sys_ap80MeV_tgt_m0pt1mm.list"
