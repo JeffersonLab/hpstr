@@ -212,12 +212,13 @@ var searchData=
   ['getvinteger_209',['getVInteger',['../classParameterSet.html#a1ab6928438567873ba6edd25297b7b69',1,'ParameterSet::getVInteger(const std::string &amp;name) const'],['../classParameterSet.html#a553b75b9e8a95eaa270df98131713ab7',1,'ParameterSet::getVInteger(const std::string &amp;name, const std::vector&lt; int &gt; &amp;defaultValue) const']]],
   ['getvolume_210',['getVolume',['../classTrackerHit.html#aac9746ddc550ec176b0957affafbdbe7',1,'TrackerHit']]],
   ['getvstring_211',['getVString',['../classParameterSet.html#a4719f1f1769c1f6e75fde7e0dbb6d8ea',1,'ParameterSet::getVString(const std::string &amp;name) const'],['../classParameterSet.html#afb2668e5bb77dbddecf3ee72b315ce29',1,'ParameterSet::getVString(const std::string &amp;name, const std::vector&lt; std::string &gt; &amp;defaultValue) const']]],
-  ['getwindowsize_212',['getWindowSize',['../classHpsFitResult.html#aa722ffbee1668de3c321f58bd1e9b423',1,'HpsFitResult']]],
-  ['getx_213',['getX',['../classVertex.html#a344385751bee0720059403940d57a13e',1,'Vertex']]],
-  ['gety_214',['getY',['../classVertex.html#aafa51c7f8f38a09febbb9ce7853f77b4',1,'Vertex']]],
-  ['getz_215',['getZ',['../classVertex.html#a9503166f674d33c7b74f1ccdaf6d9989',1,'Vertex']]],
-  ['getz0_216',['getZ0',['../classTrack.html#ac657325cfc2596e354e5262a9c264526',1,'Track']]],
-  ['getz0err_217',['getZ0Err',['../classTrack.html#ae684f1ee22854b77308a6768b08a17dc',1,'Track']]],
-  ['getzoffsetalpha_218',['getZoffsetAlpha',['../classApOptimizationProcessor.html#a89f95dc494f4b1409723c9ce055c0158',1,'ApOptimizationProcessor']]],
-  ['getztailfit_219',['getZTailFit',['../classZBiHistos.html#a27262d4ce83e3fa46528225b17621804',1,'ZBiHistos']]]
+  ['getweight_212',['getWeight',['../classEventHeader.html#a021a96f005d2d318d4cdf05f227c8089',1,'EventHeader']]],
+  ['getwindowsize_213',['getWindowSize',['../classHpsFitResult.html#aa722ffbee1668de3c321f58bd1e9b423',1,'HpsFitResult']]],
+  ['getx_214',['getX',['../classVertex.html#a344385751bee0720059403940d57a13e',1,'Vertex']]],
+  ['gety_215',['getY',['../classVertex.html#aafa51c7f8f38a09febbb9ce7853f77b4',1,'Vertex']]],
+  ['getz_216',['getZ',['../classVertex.html#a9503166f674d33c7b74f1ccdaf6d9989',1,'Vertex']]],
+  ['getz0_217',['getZ0',['../classTrack.html#ac657325cfc2596e354e5262a9c264526',1,'Track']]],
+  ['getz0err_218',['getZ0Err',['../classTrack.html#ae684f1ee22854b77308a6768b08a17dc',1,'Track']]],
+  ['getzoffsetalpha_219',['getZoffsetAlpha',['../classApOptimizationProcessor.html#a89f95dc494f4b1409723c9ce055c0158',1,'ApOptimizationProcessor']]],
+  ['getztailfit_220',['getZTailFit',['../classZBiHistos.html#a27262d4ce83e3fa46528225b17621804',1,'ZBiHistos']]]
 ];
