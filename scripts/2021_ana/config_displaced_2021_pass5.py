@@ -80,7 +80,7 @@ preselect.parameters['trackBiasCfg'] = ""
 preselect.parameters['calTimeOffset'] = 37.3
 #preselect.parameters['calTimeOffset'] = 37.3 if options.isData else 24.
 
-preselect.parameters["doZ0Corrections"] = 0
+preselect.parameters["doZ0Corrections"] = 1
 preselect.parameters["z0CalibCfg"] = file_in_hpstr('analysis/data/smearing/z0_calib_2021.json')
 preselect.parameters["z0CalibMcCfg"] = file_in_hpstr('analysis/data/smearing/z0_calib_2021_mc.json')
 preselect.parameters["smearOmega"] = 1
