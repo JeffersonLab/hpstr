@@ -50,6 +50,9 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
     bool disablePreselection_{false};  // if true, skip all vertex-level cuts
     bool disableTimingCuts_{false};    // if true, skip all track/cluster timing cuts
     bool disableVertexChi2Cut_{false}; // if true, skip the vertex chi2 cut
+    bool requireSingleVertex_{true};   // if true (default), veto events with >=2 preselected
+                                       // vertices; if false, keep the event and select the
+                                       // preselected vertex with the lowest vertex chi2 instead
     bool useVertexMomentum_{true};     // if true, replace each particle's track momentum with the
                                        // vertex-fitted momentum (P1/P2); if false, keep the
                                        // standalone track-fit momentum
@@ -64,6 +67,12 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
     std::shared_ptr<TrackBiasingTool> biasingTool_{nullptr};
     std::vector<double> determine_time_cuts(bool isData, int runNumber);
     std::vector<double> time_cuts_{6.9, 5.2, 9.0};
+
+    // Diagnostics for the requireSingleVertex_=false best-chi2 selection: filled whenever an
+    // event has >=2 preselected vertices, regardless of whether requireSingleVertex_ would have
+    // vetoed it, so the effect of relaxing the veto can be studied even with it left enabled.
+    std::unique_ptr<TH1F> multivtx_chosen_chi2_h_;    // chi2 of the vertex that would be chosen
+    std::unique_ptr<TH1F> multivtx_discarded_chi2_h_; // chi2 of every other preselected vertex
 
     // Inferred recoil-electron angle relative to the beam direction, in mrad.
     // The recoil 3-momentum is reconstructed from momentum conservation:

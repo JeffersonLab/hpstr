@@ -29,6 +29,10 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     disableTimingCuts_   = parameters.getInteger("disableTimingCuts", 0) != 0;
     disableVertexChi2Cut_ = parameters.getInteger("disableVertexChi2Cut", 0) != 0;
 
+    // If true (default), veto events with >=2 preselected vertices. If false, keep the event
+    // and select the preselected vertex with the lowest vertex chi2 instead of vetoing.
+    requireSingleVertex_ = parameters.getInteger("requireSingleVertex", 1) != 0;
+
     // Momentum source for the e+/e- used in psum and the per-track momentum cuts: vertex-fitted
     // (default) or standalone track-fit. Defaults to true to preserve prior behavior.
     useVertexMomentum_ = parameters.getInteger("useVertexMomentum", 1) != 0;
@@ -503,11 +507,20 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
     }
     event_cf_.init();
     std::string trig_label = (triggerSelection_ == "pairs") ? "pairs trigger" : "single2 or 3 trigger";
-    std::vector<std::string> labels_event_cf = {"readout", trig_label, "N_{v0}^{raw} >= 1", "N_{vtx}^{presel} >= 1", "N_{vtx}^{presel} < 2"};
+    std::string no_extra_vtx_label = requireSingleVertex_ ? "N_{vtx}^{presel} < 2" : "best #chi^{2} selected";
+    std::vector<std::string> labels_event_cf = {"readout", trig_label, "N_{v0}^{raw} >= 1", "N_{vtx}^{presel} >= 1", no_extra_vtx_label};
     event_cf_.set_label_names(labels_event_cf);
 
     n_vertices_h_ = std::make_unique<TH2F>(
         "n_vertices_h", "N Vertices in Event; N_{vtx}^{readout}; N_{vtx}^{preselected}", 10, -0.5, 9.5, 10, -0.5, 9.5);
+
+    // Best-chi2 multi-vertex diagnostics: filled for every event with >=2 preselected vertices,
+    // independent of requireSingleVertex_, so the effect of relaxing the veto can be checked
+    // against real data/MC before turning it on.
+    multivtx_chosen_chi2_h_ = std::make_unique<TH1F>(
+        "multivtx_chosen_chi2_h", "Chosen vertex #chi^{2} (events with #geq2 preselected vertices);#chi^{2};N", 60, 0.0, 30.0);
+    multivtx_discarded_chi2_h_ = std::make_unique<TH1F>(
+        "multivtx_discarded_chi2_h", "Discarded vertex #chi^{2} (events with #geq2 preselected vertices);#chi^{2};N", 60, 0.0, 30.0);
 }
 
 void PreselectAndCategorize2021::setFile(TFile* out_file) {
@@ -516,6 +529,14 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
     // create output TTree in output file
     output_tree_ = std::make_unique<TTree>("preselection", "Preselected and Categorized Vertices", 99, out_file);
     bus_.board_output<double>(output_tree_.get(), "weight");
+    /**
+     * Event identity. Without these an entry in this tree cannot be traced back to the
+     * LCIO event it came from, which makes it impossible to inspect an interesting
+     * candidate at any earlier stage of the chain (recon, readout, generation) or to
+     * put two processings of the same events side by side.
+     */
+    bus_.board_output<int>(output_tree_.get(), "run_number");
+    bus_.board_output<int>(output_tree_.get(), "event_number");
     bus_.board_output<Vertex>(output_tree_.get(), "vertex");
     bus_.board_output<Particle>(output_tree_.get(), "ele");
     bus_.board_output<Particle>(output_tree_.get(), "pos");
@@ -536,6 +557,16 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
     bus_.board_output<TVector3>(output_tree_.get(), "pos_track_p_prefit");
     bus_.board_output<TVector3>(output_tree_.get(), "ele_truth_p");
     bus_.board_output<TVector3>(output_tree_.get(), "pos_truth_p");
+
+    // Standalone-track vs vertex-fit comparison, independent of useVertexMomentum. Both are
+    // captured before smearing/scale corrections, so the difference is due to the fit alone.
+    for (const auto& name : {"trk_invM",
+            "ele_p_prefit", "ele_px_prefit", "ele_py_prefit", "ele_pz_prefit",
+            "pos_p_prefit", "pos_px_prefit", "pos_py_prefit", "pos_pz_prefit",
+            "ele_p_postfit", "ele_px_postfit", "ele_py_postfit", "ele_pz_postfit",
+            "pos_p_postfit", "pos_px_postfit", "pos_py_postfit", "pos_pz_postfit"}) {
+        bus_.board_output<double>(output_tree_.get(), name);
+    }
 
     /***************************************
      * adding specific cut variables       *
@@ -619,10 +650,21 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
 }
 
 bool PreselectAndCategorize2021::process(IEvent*) {
+    // Reset the output branches so that anything we do not explicitly set this
+    // event is written as its default rather than carrying over the previous
+    // event's value. Matters for the conditionally-filled truth branches
+    // (true_vertex_invM, true_ap, true_decay_len, ...), which are only set when
+    // the truth match succeeds.
+    bus_.clear_outputs();
+
     const auto& tsbank{bus_.get<TSData>("TSBank")};
     const auto& eh{bus_.get<EventHeader>("EventHeader")};
     int run_number = eh.getRunNumber();
     if (biasingTool_) biasingTool_->setRun(run_number);
+    // Set immediately after clear_outputs so the identity is recorded no matter which
+    // of the many early returns below ends up rejecting the event.
+    bus_.set("run_number", run_number);
+    bus_.set("event_number", eh.getEventNumber());
 
     event_cf_.begin_event();
 
@@ -666,9 +708,40 @@ bool PreselectAndCategorize2021::process(IEvent*) {
      * within Vertex are references to the collections. We make a copy here
      * to apply corrections and do not modify the collections referenced
      * elsewhere in memory.
+     *
+     * Per-vertex quantities destined for the output tree are carried along here as
+     * well, rather than published from inside the loop below. The loop runs over
+     * every raw v0 candidate, so a bus_.set() inside it survives only until the next
+     * iteration overwrites it -- what reaches TTree::Fill() is the last raw candidate
+     * iterated, which need not be the selected vertex and need not even have passed
+     * preselection. Stashing them here and publishing after the best-chi2 vertex is
+     * chosen keeps every branch on an entry describing the same vertex.
      */
-    std::vector<std::tuple<Vertex, Particle, Particle, double, double>> preselected_vtx;
+    struct PreselectedVertex {
+        Vertex vtx;
+        Particle ele;
+        Particle pos;
+        double ele_z0_raw;
+        double pos_z0_raw;
+        TVector3 ele_track_p;
+        TVector3 pos_track_p;
+        TVector3 ele_track_p_prefit;
+        TVector3 pos_track_p_prefit;
+        TVector3 ele_p_postfit;
+        TVector3 pos_p_postfit;
+        double ele_p_smear_ratio;
+        double pos_p_smear_ratio;
+    };
+    std::vector<PreselectedVertex> preselected_vtx;
     int ivtx = 0;
+
+    // Orphan-positron-cluster diagnostic, aggregated over the whole event. It only takes a
+    // value for candidates whose positron has NO cluster, and those are rejected below -- so
+    // it can never describe the vertex that gets written out, and is necessarily an
+    // event-level quantity. We keep the closest orphan over all raw candidates; the sentinel
+    // survives when every candidate had a positron cluster.
+    double evt_pos_cl_min_dr = -9999.0;
+    double evt_pos_cl_min_dr_t = -9999.0;
 
     for (Vertex* vtx : vtxs) {
         // access the indiviual Vertex, electron, and positron
@@ -709,6 +782,9 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         // snapshot pre-vertex-fit track momenta before they are overwritten
         TVector3 ele_p_prefit(ele_trk.getMomentum()[0], ele_trk.getMomentum()[1], ele_trk.getMomentum()[2]);
         TVector3 pos_p_prefit(pos_trk.getMomentum()[0], pos_trk.getMomentum()[1], pos_trk.getMomentum()[2]);
+        // snapshot vertex-fitted momenta now: smearing below rescales them in place on vtx
+        TVector3 ele_p_postfit(vtx->getP1X(), vtx->getP1Y(), vtx->getP1Z());
+        TVector3 pos_p_postfit(vtx->getP2X(), vtx->getP2Y(), vtx->getP2Z());
 
         // Replace particle track momenta with the vertex-fitted momenta (only when enabled). The
         // vertex stores its two fitted momenta in a fixed electron-then-positron slot order
@@ -761,15 +837,15 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         // Apply track smearing (z0 and momentum)
         double ele_p_smear_ratio = 1.0;
         double pos_p_smear_ratio = 1.0;
-        bool ele_has_truth_link = false;
-        bool pos_has_truth_link = false;
 
-        // Check for truth links using utility function (independent of smearing)
+        // For the smearing tool's requireTruthMatch option. The ele/pos_has_truth_link
+        // output flags are deliberately NOT computed here: this loop runs over every raw
+        // vertex, so anything published to the bus from inside it describes the last vertex
+        // iterated rather than the one eventually selected. They are set after vertex
+        // selection instead, where ele_trk/pos_trk belong to the selected vertex.
         const std::vector<MCParticle*>* mcParticles = nullptr;
         if (bus_.has(mcColl_)) {
             mcParticles = &bus_.get<std::vector<MCParticle*>>(mcColl_);
-            ele_has_truth_link = utils::hasTruthMatch(ele_trk, mcParticles, debug_);
-            pos_has_truth_link = utils::hasTruthMatch(pos_trk, mcParticles, debug_);
         }
 
         // Apply smearing/corrections if tool is configured.
@@ -814,14 +890,9 @@ bool PreselectAndCategorize2021::process(IEvent*) {
                 }
             }
         }
-        bus_.set("ele_track_p", TVector3(ele_trk.getMomentum()[0], ele_trk.getMomentum()[1], ele_trk.getMomentum()[2]));
-        bus_.set("pos_track_p", TVector3(pos_trk.getMomentum()[0], pos_trk.getMomentum()[1], pos_trk.getMomentum()[2]));
-        bus_.set("ele_track_p_prefit", ele_p_prefit);
-        bus_.set("pos_track_p_prefit", pos_p_prefit);
-        bus_.set("ele_p_smear_ratio", ele_p_smear_ratio);
-        bus_.set("pos_p_smear_ratio", pos_p_smear_ratio);
-        bus_.set("ele_has_truth_link", ele_has_truth_link);
-        bus_.set("pos_has_truth_link", pos_has_truth_link);
+        // Captured, not published -- see the PreselectedVertex comment above.
+        TVector3 ele_track_p(ele_trk.getMomentum()[0], ele_trk.getMomentum()[1], ele_trk.getMomentum()[2]);
+        TVector3 pos_track_p(pos_trk.getMomentum()[0], pos_trk.getMomentum()[1], pos_trk.getMomentum()[2]);
 
         // put tracks back into their particles
         // with their new data
@@ -879,8 +950,11 @@ bool PreselectAndCategorize2021::process(IEvent*) {
             }
             pos_cl_min_dr = min_dr;
         }
-        bus_.set("pos_cl_min_dr", pos_cl_min_dr);
-        bus_.set("pos_cl_min_dr_t", pos_cl_min_dr_t);
+        if (not pos_has_cluster &&
+            (evt_pos_cl_min_dr < 0.0 || pos_cl_min_dr < evt_pos_cl_min_dr)) {
+            evt_pos_cl_min_dr = pos_cl_min_dr;
+            evt_pos_cl_min_dr_t = pos_cl_min_dr_t;
+        }
 
         if (not (pos_has_track && pos_has_cluster && ele_has_track)) {
             ivtx++;
@@ -924,14 +998,40 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         vertex_cf_.fill_nm1("vtx_max_p_4pt0GeV", vtxmaxp);
 
         if (disablePreselection_ || vertex_cf_.keep()) {
-            preselected_vtx.emplace_back(*vtx, ele, pos, ele_z0_raw, pos_z0_raw);
+            preselected_vtx.push_back(PreselectedVertex{*vtx, ele, pos, ele_z0_raw, pos_z0_raw,
+                                                        ele_track_p, pos_track_p,
+                                                        ele_p_prefit, pos_p_prefit,
+                                                        ele_p_postfit, pos_p_postfit,
+                                                        ele_p_smear_ratio, pos_p_smear_ratio});
         }
         ivtx++;
     }
 
     n_vertices_h_->Fill(vtxs.size(), preselected_vtx.size());
+
+    bus_.set("pos_cl_min_dr", evt_pos_cl_min_dr);
+    bus_.set("pos_cl_min_dr_t", evt_pos_cl_min_dr_t);
+
+    // Index of the preselected vertex with the lowest chi2 -- the vertex that will be carried
+    // forward if the event survives. Trivially valid when there are 0 or 1 preselected vertices.
+    std::size_t i_best_vtx = 0;
+    for (std::size_t i = 1; i < preselected_vtx.size(); ++i) {
+        if (preselected_vtx[i].vtx.getChi2() < preselected_vtx[i_best_vtx].vtx.getChi2()) {
+            i_best_vtx = i;
+        }
+    }
+    // Multi-vertex chi2 diagnostics: always filled (independent of requireSingleVertex_) so the
+    // effect of relaxing the veto can be checked against data/MC before turning it on.
+    if (preselected_vtx.size() >= 2) {
+        for (std::size_t i = 0; i < preselected_vtx.size(); ++i) {
+            double chi2 = preselected_vtx[i].vtx.getChi2();
+            (i == i_best_vtx ? multivtx_chosen_chi2_h_ : multivtx_discarded_chi2_h_)->Fill(chi2);
+        }
+    }
+
     event_cf_.apply("at_least_one_vertex", disablePreselection_ || preselected_vtx.size() >= 1);
-    event_cf_.apply("no_extra_vertices", disablePreselection_ || preselected_vtx.size() < 2);
+    event_cf_.apply("no_extra_vertices",
+                     disablePreselection_ || !requireSingleVertex_ || preselected_vtx.size() < 2);
 
     event_cf_.fill_nm1("at_least_one_vertex", preselected_vtx.size());
     event_cf_.fill_nm1("no_extra_vertices", preselected_vtx.size());
@@ -945,11 +1045,47 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     bus_.set("single2", single2);
     bus_.set("single3", single3);
 
-    // correct number of vertices (i.e. only one)
-    // unpack the vector of vertices into the single elements
+    // unpack the selected vertex into its elements. Normally there is exactly one preselected
+    // vertex; if requireSingleVertex_ is false and multiple survived, i_best_vtx (computed above)
+    // picks the one with the lowest vertex chi2.
     // Guard against empty collection (can occur when disablePreselection=true bypasses at_least_one_vertex)
     if (preselected_vtx.empty()) return true;
-    auto [vtx, ele, pos, ele_z0_raw, pos_z0_raw] = preselected_vtx.at(0);
+    auto selected = preselected_vtx.at(i_best_vtx);
+    Vertex& vtx = selected.vtx;
+    Particle& ele = selected.ele;
+    Particle& pos = selected.pos;
+    const double ele_z0_raw = selected.ele_z0_raw;
+    const double pos_z0_raw = selected.pos_z0_raw;
+
+    // Per-vertex quantities stashed during the loop, now published for the selected vertex.
+    bus_.set("ele_track_p", selected.ele_track_p);
+    bus_.set("pos_track_p", selected.pos_track_p);
+    bus_.set("ele_track_p_prefit", selected.ele_track_p_prefit);
+    bus_.set("pos_track_p_prefit", selected.pos_track_p_prefit);
+    for (const auto& [prefix, prefit, postfit] : {
+            std::make_tuple("ele_", selected.ele_track_p_prefit, selected.ele_p_postfit),
+            std::make_tuple("pos_", selected.pos_track_p_prefit, selected.pos_p_postfit)}) {
+        const std::string pre{prefix};
+        bus_.set(pre + "p_prefit", prefit.Mag());
+        bus_.set(pre + "px_prefit", prefit.X());
+        bus_.set(pre + "py_prefit", prefit.Y());
+        bus_.set(pre + "pz_prefit", prefit.Z());
+        bus_.set(pre + "p_postfit", postfit.Mag());
+        bus_.set(pre + "px_postfit", postfit.X());
+        bus_.set(pre + "py_postfit", postfit.Y());
+        bus_.set(pre + "pz_postfit", postfit.Z());
+    }
+    {
+        // e+e- invariant mass from the standalone track momenta (never the vertex-fitted ones)
+        constexpr double electron_mass{0.000510999};  // GeV
+        const TVector3& pe{selected.ele_track_p_prefit};
+        const TVector3& pp{selected.pos_track_p_prefit};
+        ROOT::Math::PxPyPzMVector ele_p4(pe.X(), pe.Y(), pe.Z(), electron_mass);
+        ROOT::Math::PxPyPzMVector pos_p4(pp.X(), pp.Y(), pp.Z(), electron_mass);
+        bus_.set("trk_invM", (ele_p4 + pos_p4).M());
+    }
+    bus_.set("ele_p_smear_ratio", selected.ele_p_smear_ratio);
+    bus_.set("pos_p_smear_ratio", selected.pos_p_smear_ratio);
 
     // earliest layer hit categories
     bool eleL1{false}, eleL2{false}, eleL3{false}, eleL4{false};
@@ -1336,6 +1472,15 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         bus_.set("ele_truth_p", TVector3(trueEleP.Px(), trueEleP.Py(), trueEleP.Pz()));
         bus_.set("pos_truth_p", TVector3(truePosP.Px(), truePosP.Py(), truePosP.Pz()));
 
+        /**
+         * Truth-link flags for the selected vertex. Computed here rather than in
+         * the vertex loop above: that loop runs over every raw vertex, so a
+         * bus_.set() from inside it describes the last candidate iterated rather
+         * than the one eventually selected.
+         */
+        bus_.set("ele_has_truth_link", utils::hasTruthMatch(ele_trk, &mc_ptr, debug_));
+        bus_.set("pos_has_truth_link", utils::hasTruthMatch(pos_trk, &mc_ptr, debug_));
+
         if (isSimpSignal_) {
             event_cf_.apply("at_least_one_true_vd", n_vd > 0);
             event_cf_.apply("no_extra_true_vd", n_vd < 2);
@@ -1389,6 +1534,8 @@ void PreselectAndCategorize2021::finalize() {
     outF_->cd();
     output_tree_->Write();
     n_vertices_h_->Write();
+    multivtx_chosen_chi2_h_->Write();
+    multivtx_discarded_chi2_h_->Write();
     vertex_cf_.save();
     event_cf_.save();
     outF_->Close();
