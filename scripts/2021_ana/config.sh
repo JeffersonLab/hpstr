@@ -39,4 +39,4 @@ DATA_LISTS_DIR="${SCRIPT_DIR}/data_lists/pass5"
 INPUT_DATA_DIR="/sdf/data/hps/physics2021/mc/hpstr/rad_pulser/pass5_v9/HPS_Run2021Pass1_v9_14272_hitSmearKill-reprocessed-merged/"
 
 # Default hpstr config (used by batch-script.sh if not overridden)
-HPSTR_CONFIG="${HPSTR_CONFIG:-config_displaced_2021.py}"
+HPSTR_CONFIG="${HPSTR_CONFIG:-config_displaced_2021_pass5.py}"
