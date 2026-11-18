@@ -27,7 +27,7 @@ set -o nounset
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CFG="${SCRIPT_DIR}/../../../processors/config/truthVertexMatch_cfg.py"
 
-LIST="${SCRIPT_DIR}/../mc_lists/pass6/matt_graham.txt"
+LIST="${SCRIPT_DIR}/../mc_lists/pass6/ap180MeV_v9_hitSmearKill.txt"
 OUTDIR="${SCRIPT_DIR}/v0eff_vs_z"
 SAMPLE="ap_signal"   # ap_signal, simp_signal, rad
 APPDG=622            # 622 = displaced A', 623 = prompt A' (ignored for simp_signal/rad)
