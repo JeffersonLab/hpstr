@@ -67,6 +67,6 @@ scripts/**/plots/
 scripts/2021_ana/env.sh
 scripts/2021_ana/scratch_*/
 scripts/2021_ana/data/run.sh
-scripts/2021_ana/signal/run.sh
+scripts/2021_ana/helper_scripts/run.sh
 __pycache__/
 *.pyc

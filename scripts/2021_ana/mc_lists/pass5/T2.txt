@@ -1,8 +1,0 @@
-/sdf/data/hps/users/mgignac/output/recon/physics/lowp-tracking/signal/CPU/T2/hpstr/ap_pulser/pass5_v9-lowp-addseedstr/ap180MeV/HPS_Run2021Pass1_v9_14272/merged/ap_pulser_merged_batch1.root
-/sdf/data/hps/users/mgignac/output/recon/physics/lowp-tracking/signal/CPU/T2/hpstr/ap_pulser/pass5_v9-lowp-addseedstr/ap180MeV/HPS_Run2021Pass1_v9_14272/merged/ap_pulser_merged_batch2.root
-/sdf/data/hps/users/mgignac/output/recon/physics/lowp-tracking/signal/CPU/T2/hpstr/ap_pulser/pass5_v9-lowp-addseedstr/ap180MeV/HPS_Run2021Pass1_v9_14272/merged/ap_pulser_merged_batch3.root
-/sdf/data/hps/users/mgignac/output/recon/physics/lowp-tracking/signal/CPU/T2/hpstr/ap_pulser/pass5_v9-lowp-addseedstr/ap180MeV/HPS_Run2021Pass1_v9_14272/merged/ap_pulser_merged_batch4.root
-/sdf/data/hps/users/mgignac/output/recon/physics/lowp-tracking/signal/CPU/T2/hpstr/ap_pulser/pass5_v9-lowp-addseedstr/ap180MeV/HPS_Run2021Pass1_v9_14272/merged/ap_pulser_merged_batch5.root
-/sdf/data/hps/users/mgignac/output/recon/physics/lowp-tracking/signal/CPU/T2/hpstr/ap_pulser/pass5_v9-lowp-addseedstr/ap180MeV/HPS_Run2021Pass1_v9_14272/merged/ap_pulser_merged_batch6.root
-/sdf/data/hps/users/mgignac/output/recon/physics/lowp-tracking/signal/CPU/T2/hpstr/ap_pulser/pass5_v9-lowp-addseedstr/ap180MeV/HPS_Run2021Pass1_v9_14272/merged/ap_pulser_merged_batch7.root
-/sdf/data/hps/users/mgignac/output/recon/physics/lowp-tracking/signal/CPU/T2/hpstr/ap_pulser/pass5_v9-lowp-addseedstr/ap180MeV/HPS_Run2021Pass1_v9_14272/merged/ap_pulser_merged_batch8.root
