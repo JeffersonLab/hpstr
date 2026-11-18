@@ -9,6 +9,9 @@
 #ifndef __PRESELECT_AND_CATEGORIZE_H__
 #define __PRESELECT_AND_CATEGORIZE_H__
 
+#include <type_traits>
+#include <vector>
+
 // HPSTR
 #include "HpsEvent.h"
 #include "Collections.h"
@@ -163,10 +166,47 @@ class Cutflow {
 
 class EventBus {
     framework::Bus bus_;
+    /// names of the output passengers that are safe to reset each event
+    std::vector<std::string> clearable_output_names_;
+
+    /**
+     * Whether an output of this type can be safely reset between events.
+     *
+     * Scalars and std::vector reset to a well-defined empty state that owns
+     * nothing. Class types are deliberately excluded: the event classes reset
+     * via their ROOT `Clear()`, and some of those assume they own their
+     * contents -- MCParticle::Clear() calls daughters_->Delete(). Because
+     * bus_.set() stores a shallow copy, that would delete objects still owned
+     * by the input collection and corrupt the event being processed.
+     */
+    template<typename T>
+    struct auto_clearable : std::is_arithmetic<T> {};
+    template<typename U>
+    struct auto_clearable<std::vector<U>> : std::true_type {};
 
     public:
         bool has(const std::string& name) {
             return bus_.isOnBoard(name);
+        }
+
+        /**
+         * Reset the resettable output passengers to their default state.
+         *
+         * Call this at the start of each event. Branches that are only set
+         * under some condition (e.g. the truth branches, which need a truth
+         * match to be computed) would otherwise still be holding the value
+         * from the last event that did set them, and that stale value gets
+         * written into the tree.
+         *
+         * Only outputs are reset -- input passengers are attached to the input
+         * TTree and are refilled by ROOT on each entry, so clearing them here
+         * would throw away the event we are about to process. Class-typed
+         * outputs are also left alone; see auto_clearable above. Consumers of a
+         * conditionally-set class-typed branch should gate on a companion
+         * scalar (which is reset) rather than trusting the object itself.
+         */
+        void clear_outputs() {
+            for (const auto& name : clearable_output_names_) bus_.clear(name);
         }
 
         template<typename BaggageType>
@@ -189,6 +229,9 @@ class EventBus {
             bus_.board<BaggageType>(name);
             if (bus_.attach(tree, name, true /* create if missing */) == 0) {
                 throw std::runtime_error("Unable to create branch " + name + " in output TTree.");
+            }
+            if constexpr (auto_clearable<BaggageType>::value) {
+                clearable_output_names_.push_back(name);
             }
         }
 
