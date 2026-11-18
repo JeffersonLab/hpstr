@@ -81,6 +81,7 @@ track.parameters["trkCollLcio"] = 'KalmanFullTracks'
 track.parameters["trkCollRoot"] = 'KalmanFullTracks'
 track.parameters["kinkRelCollLcio"] = ''
 track.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
+track.parameters["trackStateLocation"] = 'AtTarget'
 track.parameters["trkhitCollRoot"] = 'SiClustersOnTrack'
 track.parameters["hitFitsCollLcio"] = 'SVTFittedRawTrackerHits'
 track.parameters["rawhitCollRoot"] = 'SVTRawHitsOnTrack_KF'
@@ -115,6 +116,7 @@ vtx.parameters["vtxCollRoot"] = 'UnconstrainedV0Vertices_KF'
 vtx.parameters["partCollRoot"] = 'ParticlesOnUVertices_KF'
 vtx.parameters["kinkRelCollLcio"] = ''
 vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
+vtx.parameters["trackStateLocation"] = 'AtTarget'
 
 #cvtx.parameters["debug"] = 0
 #cvtx.parameters["vtxCollLcio"] = 'TargetConstrainedV0Vertices_KF'
@@ -149,6 +151,7 @@ fsp.parameters["fspCollLcio"] = "FinalStateParticles"
 fsp.parameters["fspCollRoot"] = "FinalStateParticles"
 fsp.parameters["kinkRelCollLcio"] = ""
 fsp.parameters["trkRelCollLcio"] = "KFTrackDataRelations"
+fsp.parameters["trackStateLocation"] = "AtTarget"
 
 if(options.rawHits==1):
     fsp.parameters["trkhitCollRoot"] = "fspOnTrackHits"

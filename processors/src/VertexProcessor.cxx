@@ -174,14 +174,23 @@ bool VertexProcessor::process(IEvent* ievent) {
         for (auto lc_part : lc_parts) {
             if (debug_ > 0) std::cout << "VertexProcessor: Build particle" << std::endl;
             Particle* part = utils::buildParticle(lc_part, trackStateLocation_, gbl_kink_data, track_data);
-            if (lc_part->getTracks().size() > 0) {
-                EVENT::Track* lc_track = static_cast<EVENT::Track*>(lc_part->getTracks()[0]);
+            EVENT::Track* lc_track =
+                lc_part->getTracks().empty() ? nullptr : static_cast<EVENT::Track*>(lc_part->getTracks()[0]);
+            Track* track = nullptr;
+            if (lc_track) {
                 if (debug_ > 0)
                     std::cout << "[VertexProcessor] calling buildTrack: vtx=" << ivtx
                               << " trackStateLocation=" << trackStateLocation_
                               << " has_gbl_kink=" << (gbl_kink_data ? "yes" : "no")
                               << " has_track_data=" << (track_data ? "yes" : "no") << std::endl;
-                Track* track = utils::buildTrack(lc_track, trackStateLocation_, gbl_kink_data, track_data);
+                track = utils::buildTrack(lc_track, trackStateLocation_, gbl_kink_data, track_data);
+                // buildTrack returns nullptr when the requested track state is missing
+                if (!track)
+                    std::cout << "[VertexProcessor] WARNING: track " << lc_track->id() << " has no '"
+                              << trackStateLocation_ << "' track state; particle stored without a track"
+                              << std::endl;
+            }
+            if (track) {
                 int nHits = 0;
                 if (bfield_ > 0.0) track->setMomentum(bfield_);
                 if (track->isKalmanTrack()) hitType = 1;  // SiClusters
