@@ -9,7 +9,7 @@
 USER_NAME="${USER:-$(whoami)}"
 
 # SLURM configuration
-SLURM_PARTITION="roma"
+SLURM_PARTITION="milano"
 SLURM_ACCOUNT="hps"
 
 # Year for processing
@@ -22,7 +22,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOG_DIR="${SCRIPT_DIR}/log"
 
 # Base paths for job_params.sh (can be overridden before sourcing job_params.sh)
-BASE_OUTPUT_DIR="/sdf/data/hps/physics2021/preselection/v14/"
+BASE_OUTPUT_DIR="/sdf/data/hps/physics2021/preselection/pass6dev/v1/"
 MC_LISTS_DIR="${SCRIPT_DIR}/mc_lists/pass5"
 DATA_LISTS_DIR="${SCRIPT_DIR}/data_lists/pass5"
 

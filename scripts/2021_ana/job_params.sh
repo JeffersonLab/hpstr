@@ -17,6 +17,7 @@ declare -A JOB_EXTRA_ARGS      # Extra arguments to pass to hpstr
 : "${BASE_OUTPUT_DIR:=/sdf/data/hps/physics2021/preselection}"
 : "${MC_LISTS_DIR:=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/mc_lists/pass5}"
 : "${DATA_LISTS_DIR:=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/data_lists/pass5}"
+: "${PASS6_LISTS_DIR:=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/mc_lists/pass6}"
 
 # ============================================================================
 # DATA JOBS
@@ -36,7 +37,7 @@ JOB_EXTRA_ARGS["data_14185_nom"]=""
 
 JOB_FILE_LISTS["data_14185_lowp"]="${DATA_LISTS_DIR}/data_14185_lowp.txt"
 JOB_SAMPLE["data_14185_lowp"]="data"
-JOB_OUTPUT_DIR["data_14185_lowp"]="${BASE_OUTPUT_DIR}/data_14185_lowp/"
+JOB_OUTPUT_DIR["data_14185_lowp"]="${BASE_OUTPUT_DIR}/data_14185_lowp_noVtxVeto/"
 JOB_HPSTR_CONFIG["data_14185_lowp"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["data_14185_lowp"]=""
 
@@ -67,7 +68,7 @@ JOB_EXTRA_ARGS["data_prompt"]=""
 JOB_FILE_LISTS["data_10pc_prompt"]="${DATA_LISTS_DIR}/data_10pc.txt"
 JOB_SAMPLE["data_10pc_prompt"]="data"
 JOB_OUTPUT_DIR["data_10pc_prompt"]="${BASE_OUTPUT_DIR}/data_10pc_prompt_TC_psum2p8"
-JOB_HPSTR_CONFIG["data_10pc_prompt"]="config_displaced_2021.py"
+JOB_HPSTR_CONFIG["data_10pc_prompt"]="config_prompt_2021.py"
 JOB_EXTRA_ARGS["data_10pc_prompt"]=""
 
 # ============================================================================
@@ -128,16 +129,122 @@ JOB_OUTPUT_DIR["rad_smeared"]="${BASE_OUTPUT_DIR}/rad_smeared/"
 JOB_HPSTR_CONFIG["rad_smeared"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["rad_smeared"]="--smearing"
 
+JOB_FILE_LISTS["rad_fixed_smeared"]="${MC_LISTS_DIR}/rad_recoil_fix.list"
+JOB_SAMPLE["rad_fixed_smeared"]="ap_signal"
+JOB_OUTPUT_DIR["rad_fixed_smeared"]="${BASE_OUTPUT_DIR}/rad_fix_smeared/"
+JOB_HPSTR_CONFIG["rad_fixed_smeared"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["rad_fixed_smeared"]="--smearing"
+
+# ============================================================================
+# PASS6 (v6) JOBS
+# ============================================================================
+
+JOB_FILE_LISTS["data_v6"]="${PASS6_LISTS_DIR}/data.txt"
+JOB_SAMPLE["data_v6"]="data"
+JOB_OUTPUT_DIR["data_v6"]="${BASE_OUTPUT_DIR}/data_v6"
+JOB_HPSTR_CONFIG["data_v6"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["data_v6"]=""
+
+JOB_FILE_LISTS["tritrig_v6"]="${PASS6_LISTS_DIR}/tritrig.txt"
+JOB_SAMPLE["tritrig_v6"]="sim_bkgd"
+JOB_OUTPUT_DIR["tritrig_v6"]="${BASE_OUTPUT_DIR}/tritrig_v6"
+JOB_HPSTR_CONFIG["tritrig_v6"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["tritrig_v6"]=""
+
+JOB_FILE_LISTS["tritrig_v6_smeared"]="${PASS6_LISTS_DIR}/tritrig.txt"
+JOB_SAMPLE["tritrig_v6_smeared"]="sim_bkgd"
+JOB_OUTPUT_DIR["tritrig_v6_smeared"]="${BASE_OUTPUT_DIR}/tritrig_v6_smeared"
+JOB_HPSTR_CONFIG["tritrig_v6_smeared"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["tritrig_v6_smeared"]="--smearing"
+
+JOB_FILE_LISTS["tritrig_v6_unsmeared"]="${PASS6_LISTS_DIR}/tritrig.txt"
+JOB_SAMPLE["tritrig_v6_unsmeared"]="sim_bkgd"
+JOB_OUTPUT_DIR["tritrig_v6_unsmeared"]="${BASE_OUTPUT_DIR}/tritrig_v6_unsmeared"
+JOB_HPSTR_CONFIG["tritrig_v6_unsmeared"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["tritrig_v6_unsmeared"]=""
+
+JOB_FILE_LISTS["tritrig_v6_fixbs_unsmeared"]="${PASS6_LISTS_DIR}/tritrig_fixbs.txt"
+JOB_SAMPLE["tritrig_v6_fixbs_unsmeared"]="sim_bkgd"
+JOB_OUTPUT_DIR["tritrig_v6_fixbs_unsmeared"]="${BASE_OUTPUT_DIR}/tritrig_v6_fixbs_unsmeared"
+JOB_HPSTR_CONFIG["tritrig_v6_fixbs_unsmeared"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["tritrig_v6_fixbs_unsmeared"]=""
+
+JOB_FILE_LISTS["wab_v6_fixbs_unsmeared"]="${PASS6_LISTS_DIR}/wab_fixbs.txt"
+JOB_SAMPLE["wab_v6_fixbs_unsmeared"]="sim_bkgd"
+JOB_OUTPUT_DIR["wab_v6_fixbs_unsmeared"]="${BASE_OUTPUT_DIR}/wab_v6_fixbs_unsmeared"
+JOB_HPSTR_CONFIG["wab_v6_fixbs_unsmeared"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["wab_v6_fixbs_unsmeared"]=""
+
+JOB_FILE_LISTS["tritrig_v6_fixbs_smeared"]="${PASS6_LISTS_DIR}/tritrig_fixbs.txt"
+JOB_SAMPLE["tritrig_v6_fixbs_smeared"]="sim_bkgd"
+JOB_OUTPUT_DIR["tritrig_v6_fixbs_smeared"]="${BASE_OUTPUT_DIR}/tritrig_v6_fixbs_smeared"
+JOB_HPSTR_CONFIG["tritrig_v6_fixbs_smeared"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["tritrig_v6_fixbs_smeared"]="--smearing"
+
+JOB_FILE_LISTS["wab_v6_fixbs_smeared"]="${PASS6_LISTS_DIR}/wab_fixbs.txt"
+JOB_SAMPLE["wab_v6_fixbs_smeared"]="sim_bkgd"
+JOB_OUTPUT_DIR["wab_v6_fixbs_smeared"]="${BASE_OUTPUT_DIR}/wab_v6_fixbs_smeared"
+JOB_HPSTR_CONFIG["wab_v6_fixbs_smeared"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["wab_v6_fixbs_smeared"]="--smearing"
+
+
+JOB_FILE_LISTS["wab_v6_unsmeared"]="${PASS6_LISTS_DIR}/wab.txt"
+JOB_SAMPLE["wab_v6_unsmeared"]="sim_bkgd"
+JOB_OUTPUT_DIR["wab_v6_unsmeared"]="${BASE_OUTPUT_DIR}/wab_v6_unsmeared"
+JOB_HPSTR_CONFIG["wab_v6_unsmeared"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["wab_v6_unsmeared"]=""
+
+JOB_FILE_LISTS["wab_v6_smeared"]="${PASS6_LISTS_DIR}/wab.txt"
+JOB_SAMPLE["wab_v6_smeared"]="sim_bkgd"
+JOB_OUTPUT_DIR["wab_v6_smeared"]="${BASE_OUTPUT_DIR}/wab_v6_smeared"
+JOB_HPSTR_CONFIG["wab_v6_smeared"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["wab_v6_smeared"]="--smearing"
+
+JOB_FILE_LISTS["rad_v6_fixbs_unsmeared"]="${PASS6_LISTS_DIR}/rad_fixbs.txt"
+JOB_SAMPLE["rad_v6_fixbs_unsmeared"]="sim_bkgd"
+JOB_OUTPUT_DIR["rad_v6_fixbs_unsmeared"]="${BASE_OUTPUT_DIR}/rad_v6_fixbs_unsmeared"
+JOB_HPSTR_CONFIG["rad_v6_fixbs_unsmeared"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["rad_v6_fixbs_unsmeared"]=""
+
+JOB_FILE_LISTS["rad_v6_fixbs_smeared"]="${PASS6_LISTS_DIR}/rad_fixbs.txt"
+JOB_SAMPLE["rad_v6_fixbs_smeared"]="sim_bkgd"
+JOB_OUTPUT_DIR["rad_v6_fixbs_smeared"]="${BASE_OUTPUT_DIR}/rad_v6_fixbs_smeared"
+JOB_HPSTR_CONFIG["rad_v6_fixbs_smeared"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["rad_v6_fixbs_smeared"]="--smearing"
+
+JOB_FILE_LISTS["ap_v6_smeared"]="${PASS6_LISTS_DIR}/ap.txt"
+JOB_SAMPLE["ap_v6_smeared"]="ap_signal"
+JOB_OUTPUT_DIR["ap_v6_smeared"]="${BASE_OUTPUT_DIR}/ap_displaced_v6_smeared"
+JOB_HPSTR_CONFIG["ap_v6_smeared"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["ap_v6_smeared"]="--smearing"
+
+JOB_FILE_LISTS["ap_v6_fixbs_smeared"]="${PASS6_LISTS_DIR}/ap_180.txt"
+JOB_SAMPLE["ap_v6_fixbs_smeared"]="ap_signal"
+JOB_OUTPUT_DIR["ap_v6_fixbs_smeared"]="${BASE_OUTPUT_DIR}/ap_v6_fixbs_smeared"
+JOB_HPSTR_CONFIG["ap_v6_fixbs_smeared"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["ap_v6_fixbs_smeared"]="--smearing"
+
+JOB_FILE_LISTS["ap_v5_old_smeared"]="${MC_LISTS_DIR}/ap180MeV.list"
+JOB_SAMPLE["ap_v5_old_smeared"]="ap_signal"
+JOB_OUTPUT_DIR["ap_v5_old_smeared"]="${BASE_OUTPUT_DIR}/ap_v5_old_smeared"
+JOB_HPSTR_CONFIG["ap_v5_old_smeared"]="config_displaced_2021.py"
+JOB_EXTRA_ARGS["ap_v5_old_smeared"]="--smearing"
+
 # ============================================================================
 # A' SIGNAL MC JOBS
 # ============================================================================
 
-JOB_FILE_LISTS["ap_signal_prompt_smeared"]="${MC_LISTS_DIR}/ap_prompt.list"
-JOB_SAMPLE["ap_signal_prompt_smeared"]="ap_signal"
-JOB_OUTPUT_DIR["ap_signal_prompt_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_prompt_smeared"
-JOB_HPSTR_CONFIG["ap_signal_prompt_smeared"]="config_prompt_2021.py" #config_displaced_2021.py"
-JOB_EXTRA_ARGS["ap_signal_prompt_smeared"]="--smearing"
+JOB_FILE_LISTS["ap_prompt_old_smeared"]="${MC_LISTS_DIR}/prompt_ap.list" 
+JOB_SAMPLE["ap_prompt_old_smeared"]="ap_signal"
+JOB_OUTPUT_DIR["ap_prompt_old_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_prompt_old_smeared"
+JOB_HPSTR_CONFIG["ap_prompt_old_smeared"]="config_prompt_2021.py" #config_displaced_2021.py"
+JOB_EXTRA_ARGS["ap_prompt_old_smeared"]="--smearing --smear-without-truth-match"
 
+JOB_FILE_LISTS["ap_prompt_new_smeared"]="${MC_LISTS_DIR}/prompt_ap_fix.list" 
+JOB_SAMPLE["ap_prompt_new_smeared"]="ap_signal"
+JOB_OUTPUT_DIR["ap_prompt_new_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_prompt_truthMatchFix_smeared"
+JOB_HPSTR_CONFIG["ap_prompt_new_smeared"]="config_prompt_2021.py"
+JOB_EXTRA_ARGS["ap_prompt_new_smeared"]="--smearing" #--smear-without-truth-match"
 
 # All A' mass points combined
 JOB_FILE_LISTS["ap_signal"]="${MC_LISTS_DIR}/ap*.list"
@@ -148,13 +255,13 @@ JOB_EXTRA_ARGS["ap_signal"]=""
 
 JOB_FILE_LISTS["ap_signal_smeared"]="${MC_LISTS_DIR}/ap*.list"
 JOB_SAMPLE["ap_signal_smeared"]="ap_signal"
-JOB_OUTPUT_DIR["ap_signal_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_smeared"
+JOB_OUTPUT_DIR["ap_signal_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_displaced_smeared"
 JOB_HPSTR_CONFIG["ap_signal_smeared"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["ap_signal_smeared"]="--smearing"
 
-JOB_FILE_LISTS["ap_signal_improved"]="${MC_LISTS_DIR}/improved_180MeV.list"
+JOB_FILE_LISTS["ap_signal_improved"]="${MC_LISTS_DIR}/pure_ap_improvetrk_100MeV.list" #improved_180MeV.list"
 JOB_SAMPLE["ap_signal_improved"]="ap_signal"
-JOB_OUTPUT_DIR["ap_signal_improved"]="${BASE_OUTPUT_DIR}/ap_signal_smeared_improvedTrking/ap180MeV/"
+JOB_OUTPUT_DIR["ap_signal_improved"]="${BASE_OUTPUT_DIR}/ap_signal_smeared_improvedTrking_saveVtx/ap100MeV-pure/"
 JOB_HPSTR_CONFIG["ap_signal_improved"]="config_displaced_2021.py"
 JOB_EXTRA_ARGS["ap_signal_improved"]="--smearing"
 

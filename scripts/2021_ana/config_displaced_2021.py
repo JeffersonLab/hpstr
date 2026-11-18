@@ -89,9 +89,10 @@ preselect.parameters["scaleCorrVariable"] = ""   # scale corrections disabled
 preselect.parameters["applyMeanCorr"] = 0
 preselect.parameters["doV0ProjZ0"] = 0
 preselect.parameters["smearingCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/smearing/tool_smearing.json"
-preselect.parameters["eleMinHits"] = 10 #6
-preselect.parameters["posMinHits"] = 10 #8 
+preselect.parameters["eleMinHits"] = 6
+preselect.parameters["posMinHits"] = 8 
 preselect.parameters["useVertexMomentum"] = 1  # 0 = use standalone track momenta; 1 = vertex-fitted
+preselect.parameters["requireSingleVertex"] = 0  # 0 = keep events w/ >=2 preselected vertices, select best chi2; 1 = veto them
 preselect.parameters["triggerSelection"] = options.trigger
 preselect.parameters["psumCut"] = 0.0
 preselect.parameters["doSmearing"] = 1 if (options.smearing and not options.noSmearing and options.sample != 'data') else 0

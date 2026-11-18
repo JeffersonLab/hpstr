@@ -1,0 +1,17 @@
+/sdf/data/hps/physics2021/mc_v5.3.1-lowp-bugfix/hpstr/ap_pulser/pass5_v9/ap180MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill/ap_pulser_101.root
+/sdf/data/hps/physics2021/mc_v5.3.1-lowp-bugfix/hpstr/ap_pulser/pass5_v9/ap180MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill/ap_pulser_104.root
+/sdf/data/hps/physics2021/mc_v5.3.1-lowp-bugfix/hpstr/ap_pulser/pass5_v9/ap180MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill/ap_pulser_106.root
+/sdf/data/hps/physics2021/mc_v5.3.1-lowp-bugfix/hpstr/ap_pulser/pass5_v9/ap180MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill/ap_pulser_108.root
+/sdf/data/hps/physics2021/mc_v5.3.1-lowp-bugfix/hpstr/ap_pulser/pass5_v9/ap180MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill/ap_pulser_10.root
+/sdf/data/hps/physics2021/mc_v5.3.1-lowp-bugfix/hpstr/ap_pulser/pass5_v9/ap180MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill/ap_pulser_112.root
+/sdf/data/hps/physics2021/mc_v5.3.1-lowp-bugfix/hpstr/ap_pulser/pass5_v9/ap180MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill/ap_pulser_114.root
+/sdf/data/hps/physics2021/mc_v5.3.1-lowp-bugfix/hpstr/ap_pulser/pass5_v9/ap180MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill/ap_pulser_118.root
+/sdf/data/hps/physics2021/mc_v5.3.1-lowp-bugfix/hpstr/ap_pulser/pass5_v9/ap180MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill/ap_pulser_11.root
+/sdf/data/hps/physics2021/mc_v5.3.1-lowp-bugfix/hpstr/ap_pulser/pass5_v9/ap180MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill/ap_pulser_121.root
+/sdf/data/hps/physics2021/mc_v5.3.1-lowp-bugfix/hpstr/ap_pulser/pass5_v9/ap180MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill/ap_pulser_126.root
+/sdf/data/hps/physics2021/mc_v5.3.1-lowp-bugfix/hpstr/ap_pulser/pass5_v9/ap180MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill/ap_pulser_12.root
+/sdf/data/hps/physics2021/mc_v5.3.1-lowp-bugfix/hpstr/ap_pulser/pass5_v9/ap180MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill/ap_pulser_130.root
+/sdf/data/hps/physics2021/mc_v5.3.1-lowp-bugfix/hpstr/ap_pulser/pass5_v9/ap180MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill/ap_pulser_131.root
+/sdf/data/hps/physics2021/mc_v5.3.1-lowp-bugfix/hpstr/ap_pulser/pass5_v9/ap180MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill/ap_pulser_132.root
+/sdf/data/hps/physics2021/mc_v5.3.1-lowp-bugfix/hpstr/ap_pulser/pass5_v9/ap180MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill/ap_pulser_133.root
+/sdf/data/hps/physics2021/mc_v5.3.1-lowp-bugfix/hpstr/ap_pulser/pass5_v9/ap180MeV/HPS_Run2021Pass1_v9_14272_hitSmearKill/ap_pulser_134.root
