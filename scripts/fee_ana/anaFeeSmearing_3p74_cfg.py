@@ -84,6 +84,11 @@ anaTrks.parameters["doHitPatternScale"] = 1
 anaTrks.parameters["hitPatternScaleFile"] = '/sdf/data/hps/users/mgignac/software/2021-ana/plotting/plots/track_smearing_hitpattern_summary/hitpattern_scale_corrections.json'
 anaTrks.parameters["hitPatternScaleDataOnly"] = 1  # apply on data only; MC left untouched
 
+# Run-by-run FEE momentum scale (data only): p -> k*p, omega -> omega/k, with k per run and
+# top/bottom half, applied to the track before any selection or smearing. The k applied is
+# stored in the "run_scale" branch (raw p = p / run_scale). Set to "" to disable.
+anaTrks.parameters["runScaleCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/smearing/fee_scale_smearing_2021_3p74.json"
+
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/feeSmearing/"
 anaTrks.parameters["regionDefinitions"] = []
 

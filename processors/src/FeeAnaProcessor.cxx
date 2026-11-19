@@ -51,6 +51,7 @@ void FeeAnaProcessor::configure(const ParameterSet& parameters) {
         scaleCorrVariable_ = parameters.getString("scaleCorrVariable", "");
 
         // Per-hit_pattern momentum scale correction (data -> beam energy)
+        runScaleCfg_             = parameters.getString("runScaleCfg", runScaleCfg_);
         hitPatternScaleFile_     = parameters.getString("hitPatternScaleFile", hitPatternScaleFile_);
         doHitPatternScale_       = parameters.getInteger("doHitPatternScale", doHitPatternScale_ ? 1 : 0) != 0;
         hitPatternScaleDataOnly_ = parameters.getInteger("hitPatternScaleDataOnly", hitPatternScaleDataOnly_ ? 1 : 0) != 0;
@@ -116,6 +117,7 @@ void FeeAnaProcessor::setFile(TFile* outFile) {
     output_tree_->Branch("track.",         &track_out_,         100000, 3);
     output_tree_->Branch("track_smeared.", &track_smeared_out_, 100000, 3);
     output_tree_->Branch("p_smear_ratio",  &p_smear_ratio_out_);
+    output_tree_->Branch("run_scale",      &run_scale_out_);
     output_tree_->Branch("clu_E",     &clu_E_out_);
     output_tree_->Branch("clu_time",  &clu_time_out_);
     output_tree_->Branch("eop",       &eop_out_);
@@ -210,6 +212,16 @@ void FeeAnaProcessor::initialize(TTree* tree) {
     // MCParticle collection for hit-based truth matching (MC only; absent on data).
     if (!isData_ && !mcColl_.empty())
         tree->SetBranchAddress(mcColl_.c_str(), &mcParticles_, &bmcParticles_);
+
+    // Run-by-run momentum scale correction: data only, ignored for MC.
+    if (!runScaleCfg_.empty()) {
+      if (isData_) {
+        runScaleTool_ = std::make_shared<RunScaleCorrectionTool>(runScaleCfg_);
+        runScaleTool_->printConfig();
+      } else {
+        std::cout << "[FeeAnaProcessor] runScaleCfg is set but this is MC; run scale correction not applied" << std::endl;
+      }
+    }
 
     //Momentum smearing closure test
     // Determine which smearing file to use (smearingCfg takes precedence)
@@ -377,6 +389,11 @@ bool FeeAnaProcessor::process(IEvent* ievent) {
         // Track associated to this particle (returned by value)
         Track  track_obj = part->getTrack();
         Track* track     = &track_obj;
+
+        // Run-by-run momentum scale (data only): applied first, so E/p, the momentum
+        // cuts, the output track and the smearing input all see the corrected momentum.
+        run_scale_out_ = 1.0;
+        if (runScaleTool_) run_scale_out_ = runScaleTool_->apply(track_obj, evth_->getRunNumber());
         int n2dhits_onTrack = !track->isKalmanTrack() ? track->getTrackerHitCount() * 2 : track->getTrackerHitCount();
 
         // E/p of the FEE candidate

@@ -30,6 +30,7 @@
 #include "TSData.h"
 #include "TrackHistos.h"
 #include "TrackSmearingTool.h"
+#include "RunScaleCorrectionTool.h"
 #include "AnaHelpers.h"
 #include "MCParticle.h"
 #include "TruthMatchingUtils.h"
@@ -171,6 +172,12 @@ class FeeAnaProcessor : public Processor {
 
         //Momentum smearing closure test
         std::shared_ptr<TrackSmearingTool> smearingTool_;
+
+        // Run-by-run momentum scale correction (data only), applied to the FEE track
+        // before any selection or smearing. Disabled when runScaleCfg is empty.
+        std::string runScaleCfg_{""};  //!< JSON with a "runScale" block
+        std::shared_ptr<RunScaleCorrectionTool> runScaleTool_;
+        double run_scale_out_{1.0};    //!< k applied to this track (1 if none); raw p = p / k
         std::shared_ptr<TrackSmearingTool> smearingToolRel_;
         std::string pSmearingFile_{""};
         std::string smearingCfgFile_{""};
