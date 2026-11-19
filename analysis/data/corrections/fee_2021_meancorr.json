@@ -1,0 +1,16 @@
+{
+  "_doc": "FeeAnaProcessor with the tool_smearing.json mean correction on data (phi0 bins) and MC omega smearing in phi0 bins with z0 smearing; the 1.92 GeV and processors/config FEE configs.",
+  "momentumScale": {
+    "runScale": "",
+    "meanCorr": "analysis/data/smearing/tool_smearing.json",
+    "meanCorrVariable": "phi0"
+  },
+  "smearing": {
+    "cfg": "analysis/data/smearing/tool_smearing.json",
+    "smearingFactor": 1.0,
+    "smearOmega": true,
+    "variable": "phi0",
+    "requireTruthMatch": false,
+    "smearZ0": true
+  }
+}

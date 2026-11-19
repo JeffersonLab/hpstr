@@ -17,6 +17,7 @@
 #include "TMath.h"
 #include "TSData.h"
 #include "TrackBiasingTool.h"
+#include "TrackCorrector.h"
 #include "TrackSmearingTool.h"
 #include "TruthMatchingUtils.h"
 #include "TrackTools.h"
@@ -34,15 +35,12 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
   private:
     std::string trkColl_{"KalmanFullTracks"};
     // std::string hitColl_{"SiClustersOnTrack"};
+    // Track corrections: one TrackCorrector JSON; the per-job settings below stay parameters.
+    std::string trackCorrectionsCfg_{""};  // TrackCorrector JSON ("" = no track corrections)
+    std::shared_ptr<TrackCorrector> corrector_;
     int smearingSeed_{42};  // configurable seed (default 42 for backward compat)
-    bool doSmearing_{true};      // master switch for track smearing
-    bool doZ0Corrections_{true}; // if false, skip all z0 corrections (v0proj mean shift, z0 smearing)
-    double smearingFactor_{1.0};  // factor to multiply smearing parameters by
-    bool requireTruthMatch_{false};  // require truth match for smearing
-    bool smearOmega_{false};  // use omega (curvature) smearing instead of p smearing
-    std::string smearingVariable_{""};  // "flat", "nHits", "tanLambda", "phi0"; "" = JSON default
-    std::string scaleCorrVariable_{""};  // if set, omega data-mode scale uses pBinned_ means
-    bool applyMeanCorr_{false};          // enable omega-space mean correction (PATH B)
+    bool doSmearing_{true};      // MC smearing on/off for this job
+    int requireTruthMatch_{-1};  // require truth match for smearing; -1 = use the JSON value
     bool isSimpSignal_{false};
     bool isApSignal_{false};
     int apPDG_{622};  // PDG code for A': 622 for displaced, 623 for prompt
@@ -64,7 +62,6 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
     double psumCut_{-1.0};  // minimum psum (|p_{e-} + p_{e+}|) [GeV]; filtering disabled when < 0
     double beamE_{3.74};          // beam energy [GeV] used for recoil inference
     double thetaBeamMrad_{0.0};   // beam angle [mrad] used for recoil inference
-    std::shared_ptr<TrackBiasingTool> biasingTool_{nullptr};
     std::vector<double> determine_time_cuts(bool isData, int runNumber);
     std::vector<double> time_cuts_{6.9, 5.2, 9.0};
 

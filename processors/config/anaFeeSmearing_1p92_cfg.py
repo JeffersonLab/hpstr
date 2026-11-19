@@ -48,21 +48,12 @@ anaTrks.parameters["clusterTimeMinMC"] = -40.0
 anaTrks.parameters["clusterTimeMaxMC"] = 70.0
 
 #SmearingClosureTest
-anaTrks.parameters["smearingCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/smearing/tool_smearing.json"
+# Track corrections (data scale corrections, MC smearing), applied to track_smeared:
+# one TrackCorrector JSON. doSmearing and the seed stay per-job parameters.
+anaTrks.parameters["trackCorrectionsCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/corrections/fee_2021_meancorr.json"
 anaTrks.parameters["doSmearing"] = 1 #0 if options.isData else 1
-anaTrks.parameters["smearingFactor"] = 1.0
-anaTrks.parameters["smearOmega"] = 1
-#anaTrks.parameters["smearingVariable"] = "tanLambda"
-anaTrks.parameters["smearingVariable"] = "phi0"
 
-# Data mean (scale) correction: no longer applied inside the smearing tool, so it is set
-# here explicitly with the same file and phi0 binning as before (identical result on data).
-anaTrks.parameters["runScaleCfg"] = ""
-anaTrks.parameters["meanCorrCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/smearing/tool_smearing.json"
-anaTrks.parameters["meanCorrVariable"] = "phi0"
-#anaTrks.parameters["smearingVariable"] = "flat"
 # Scale correction: "" = use omega-space means (default); "tanLambda" = p-space means
-anaTrks.parameters["scaleCorrVariable"] = ""
 
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/feeSmearing/"
 anaTrks.parameters["regionDefinitions"] = []

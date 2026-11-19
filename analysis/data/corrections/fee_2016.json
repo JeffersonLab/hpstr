@@ -1,0 +1,11 @@
+{
+  "_doc": "FeeAnaProcessor, 2016 (processors/config/anaFeeSmearing_cfg.py): ROOT-file momentum smearing, MC only when doSmearing is set.",
+  "smearing": {
+    "cfg": "utils/data/smearingFile_2016_all_12112023.root",
+    "smearingFactor": 1.0,
+    "smearOmega": false,
+    "variable": "",
+    "requireTruthMatch": false,
+    "smearZ0": true
+  }
+}

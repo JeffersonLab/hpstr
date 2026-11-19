@@ -29,31 +29,18 @@ void FeeAnaProcessor::configure(const ParameterSet& parameters) {
         isData_               = parameters.getInteger("isData",isData_);
         regionSelections_     = parameters.getVString("regionDefinitions",regionSelections_);
 
-        //Momentum smearing closure test
-        pSmearingFile_            = parameters.getString("pSmearingFile",pSmearingFile_);
-        smearingCfgFile_          = parameters.getString("smearingCfg",smearingCfgFile_);
+        // Track corrections (scale corrections, smearing): one JSON for TrackCorrector.
+        // The per-job settings stay processor parameters.
+        trackCorrectionsCfg_ = parameters.getString("trackCorrectionsCfg", trackCorrectionsCfg_);
+        doSmearing_          = parameters.getInteger("doSmearing", 0) != 0;
+        requireTruthMatch_   = parameters.getInteger("requireTruthMatch", -1);  // -1: use the JSON value
+        // These settings moved into the trackCorrectionsCfg JSON; refuse them rather than ignore them.
+        for (const char* moved : {"smearingCfg", "pSmearingFile", "runScaleCfg", "meanCorrCfg"}) {
+            if (!parameters.getString(moved, "").empty())
+                throw std::runtime_error(std::string("[FeeAnaProcessor] parameter '") + moved +
+                                         "' moved to the trackCorrectionsCfg JSON");
+        }
 
-        // Master switch for smearing (default false for backward compatibility)
-        doSmearing_ = parameters.getInteger("doSmearing", 0) != 0;
-
-        // Factor to multiply smearing parameters by (default 1.0)
-        smearingFactor_ = parameters.getDouble("smearingFactor", 1.0);
-
-        // Require truth match for smearing (default false)
-        requireTruthMatch_ = parameters.getInteger("requireTruthMatch", 0) != 0;
-
-        // Use omega (curvature) smearing instead of p smearing (default false)
-        smearOmega_ = parameters.getInteger("smearOmega", 0) != 0;
-
-        // Explicit smearing lookup variable: "flat", "nHits", "tanLambda", "phi0"
-        // Empty string (default) accepts whatever the JSON specifies
-        smearingVariable_ = parameters.getString("smearingVariable", "");
-        scaleCorrVariable_ = parameters.getString("scaleCorrVariable", "");
-
-        // Per-hit_pattern momentum scale correction (data -> beam energy)
-        runScaleCfg_             = parameters.getString("runScaleCfg", runScaleCfg_);
-        meanCorrCfg_             = parameters.getString("meanCorrCfg", meanCorrCfg_);
-        meanCorrVariable_        = parameters.getString("meanCorrVariable", meanCorrVariable_);
         hitPatternScaleFile_     = parameters.getString("hitPatternScaleFile", hitPatternScaleFile_);
         doHitPatternScale_       = parameters.getInteger("doHitPatternScale", doHitPatternScale_ ? 1 : 0) != 0;
         hitPatternScaleDataOnly_ = parameters.getInteger("hitPatternScaleDataOnly", hitPatternScaleDataOnly_ ? 1 : 0) != 0;
@@ -215,39 +202,18 @@ void FeeAnaProcessor::initialize(TTree* tree) {
     if (!isData_ && !mcColl_.empty())
         tree->SetBranchAddress(mcColl_.c_str(), &mcParticles_, &bmcParticles_);
 
-    // Data momentum scale corrections (run-by-run scale and/or mean correction): data only.
-    if (!runScaleCfg_.empty() || !meanCorrCfg_.empty()) {
-      if (isData_) {
-        runScaleTool_ = std::make_shared<RunScaleCorrectionTool>(runScaleCfg_, meanCorrCfg_, meanCorrVariable_);
-        runScaleTool_->printConfig();
-      } else {
-        std::cout << "[FeeAnaProcessor] runScaleCfg/meanCorrCfg set but this is MC; scale corrections not applied" << std::endl;
-      }
+    if (!trackCorrectionsCfg_.empty()) {
+      TrackCorrector::Options opts;
+      opts.isData = isData_;
+      opts.seed = seed_;
+      opts.doSmearing = doSmearing_;
+      opts.requireTruthMatch = requireTruthMatch_;
+      opts.debug = debug_ > 0;
+      corrector_ = std::make_shared<TrackCorrector>(trackCorrectionsCfg_, opts);
+      corrector_->printConfig();
     }
 
-    //Momentum smearing closure test
-    // Determine which smearing file to use (smearingCfg takes precedence)
-    std::string smearingFile = !smearingCfgFile_.empty() ? smearingCfgFile_ : pSmearingFile_;
-
-    if (!smearingFile.empty()) {
-      std::cout<<"Loading smearing config from "<<smearingFile<<std::endl;
-      std::cout<<"Smearing Tool Seed "<<seed_<<std::endl;
-      std::cout<<"Using smearing factor: "<<smearingFactor_<<std::endl;
-      std::cout<<"doSmearing: "<<(doSmearing_ ? "true" : "false")<<std::endl;
-      std::cout<<"smearOmega: "<<(smearOmega_ ? "true" : "false")<<std::endl;
-      // Match PreselectAndCategorize2021: relSmearingP=true (relative), relSmearingZ0=false (absolute)
-      // JSON files will override with their own relSmearingP/relSmearingZ0 values
-      smearingTool_ = std::make_shared<TrackSmearingTool>(smearingFile, true, false, seed_, trkCollName_, smearingFactor_);
-      smearingTool_->setIsData(isData_);
-      // Data scale corrections come only from runScaleTool_ (runScaleCfg / meanCorrCfg), so
-      // the smearing tool's own data-mode mean correction is never applied here.
-      smearingTool_->setApplyMeanCorr(false);
-      smearingTool_->setDebug(debug_ > 0);
-      smearingTool_->setForcedVariable(smearingVariable_);
-      if (!scaleCorrVariable_.empty())
-        smearingTool_->setScaleCorrVariable(scaleCorrVariable_);
-      smearingTool_->setRequireTruthMatch(requireTruthMatch_);
-      smearingTool_->printConfig();
+    if (corrector_ && corrector_->hasSmearing()) {
 
       psmear_h_     =   new TH1D("psmear_h",
                                  "psmear_h",200,2,6);
@@ -324,6 +290,8 @@ bool FeeAnaProcessor::process(IEvent* ievent) {
 
     double weight = 1.;
     int n_sel_tracks = 0;
+
+    if (corrector_) corrector_->beginEvent(evth_->getRunNumber(), mcParticles_);
 
     double minTime   = isData_ ? clusterTimeMin_  : clusterTimeMinMC_;
     double maxTime   = isData_ ? clusterTimeMax_  : clusterTimeMaxMC_;
@@ -649,29 +617,24 @@ bool FeeAnaProcessor::process(IEvent* ievent) {
         // trk_smeared starts as a copy of the original; update* methods modify it in-place.
         Track  trk_smeared     = *track;
 
-        // Data scale corrections go into the same collection as the MC smearing, so
-        // track_smeared is the calibrated track for both data and MC while track stays raw.
-        run_scale_out_ = 1.0;
-        if (runScaleTool_) run_scale_out_ = runScaleTool_->apply(trk_smeared, evth_->getRunNumber());
+        // All track corrections (data scale corrections, MC smearing) go into this one
+        // collection, so track_smeared is the calibrated track for data and MC while track
+        // stays raw.
         double omega_unsmeared = track->getOmega();
         double omega_smeared   = omega_unsmeared;
         double p_smear_ratio   = 1.0;
+        run_scale_out_ = 1.0;
+        if (corrector_) {
+          TrackCorrector::Result corr = corrector_->correct({&trk_smeared}).front();
+          run_scale_out_ = corr.pScale;
+          p_smear_ratio  = corr.pSmear;
+          // pSmear = |omega/omega_smeared| = |p_smeared/p_original|
+          if (corrector_->smearsOmega()) omega_smeared = omega_unsmeared / corr.pSmear;
+        }
 
-        if (smearingTool_) {
+        if (corrector_ && corrector_->hasSmearing()) {
 
           double nhits = track->getTrackerHitCount();
-
-          if (doSmearing_) {
-            if (smearOmega_) {
-              double scale  = smearingTool_->updateWithSmearOmega(trk_smeared);
-              // scale = |omega/omega_smeared| = |p_smeared/p_original|
-              omega_smeared = omega_unsmeared / scale;
-              p_smear_ratio = scale;
-            } else {
-              p_smear_ratio = smearingTool_->updateWithSmearP(trk_smeared);
-            }
-            smearingTool_->updateWithSmearZ0(trk_smeared);
-          }
 
           double pval  = trk_smeared.getP();
           double z0val = trk_smeared.getZ0();
@@ -804,7 +767,7 @@ void FeeAnaProcessor::finalize() {
       reg_selectors_[it->first]->getCutFlowHisto()->Write();
     }
 
-    if (smearingTool_) {
+    if (corrector_ && corrector_->hasSmearing()) {
       outF_->cd(trkCollName_.c_str());
       psmear_h_->Write();
       psmear_top_h_->Write();

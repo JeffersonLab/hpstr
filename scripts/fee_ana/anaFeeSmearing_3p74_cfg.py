@@ -67,15 +67,11 @@ anaTrks.parameters["clusterTimeMaxMC"] =  6.0
 #anaTrks.parameters["vetoClusterEnergyMin"]  = 0.5     # only clusters above 0.5 GeV count
 
 #SmearingClosureTest
-anaTrks.parameters["smearingCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/smearing/tool_smearing.json"
+# Track corrections (data scale corrections, MC smearing), applied to track_smeared:
+# one TrackCorrector JSON. doSmearing and the seed stay per-job parameters.
+anaTrks.parameters["trackCorrectionsCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/corrections/fee_2021_3p74.json"
 anaTrks.parameters["doSmearing"] = 1 #0 if options.isData else 1
-anaTrks.parameters["smearingFactor"] = 1.0
-anaTrks.parameters["smearOmega"] = 1
-#anaTrks.parameters["smearingVariable"] = "tanLambda"
-anaTrks.parameters["smearingVariable"] = "phi0"
-#anaTrks.parameters["smearingVariable"] = "flat"
 # Scale correction: "" = use omega-space means (default); "tanLambda" = p-space means
-anaTrks.parameters["scaleCorrVariable"] = ""
 
 # Per-hit_pattern momentum scale correction (data momentum -> beam energy).
 # p_corr = p * scale, keyed by hit_pattern; default_scale for unlisted patterns.
@@ -84,16 +80,6 @@ anaTrks.parameters["doHitPatternScale"] = 1
 anaTrks.parameters["hitPatternScaleFile"] = '/sdf/data/hps/users/mgignac/software/2021-ana/plotting/plots/track_smearing_hitpattern_summary/hitpattern_scale_corrections.json'
 anaTrks.parameters["hitPatternScaleDataOnly"] = 1  # apply on data only; MC left untouched
 
-# Data momentum scale corrections, applied to track_smeared (the same collection the MC
-# smearing goes into); track stays raw. The total scale applied is stored in "run_scale".
-#  runScaleCfg: run-by-run FEE scale, p -> k*p and omega -> omega/k per run and top/bottom half
-#  meanCorrCfg: optional mean correction from a TrackSmearingTool-style JSON (omegaSmearing
-#               mu_data/mu_mc, binned in meanCorrVariable if set); not wanted here since the
-#               run-by-run scale replaces it
-# Set either to "" to disable it.
-anaTrks.parameters["runScaleCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/smearing/fee_scale_smearing_2021_3p74.json"
-anaTrks.parameters["meanCorrCfg"] = ""
-anaTrks.parameters["meanCorrVariable"] = ""
 
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/feeSmearing/"
 anaTrks.parameters["regionDefinitions"] = []

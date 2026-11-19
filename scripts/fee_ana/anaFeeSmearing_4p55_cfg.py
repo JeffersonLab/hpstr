@@ -74,7 +74,6 @@ anaTrks.parameters["vetoClusterEnergyMin"]  = 0.5     # only clusters above 0.5 
 # Momentum smearing disabled: there is no 2019 (4.55 GeV) smearing tool. This config is
 # for looking at the raw FEE tracks. track_smeared branches mirror the unsmeared track.
 anaTrks.parameters["doSmearing"] = 0
-#anaTrks.parameters["smearingCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/smearing/tool_smearing.json"
 
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/feeSmearing/"
 anaTrks.parameters["regionDefinitions"] = []

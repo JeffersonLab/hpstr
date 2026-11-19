@@ -29,8 +29,7 @@
 #include "EventHeader.h"
 #include "TSData.h"
 #include "TrackHistos.h"
-#include "TrackSmearingTool.h"
-#include "RunScaleCorrectionTool.h"
+#include "TrackCorrector.h"
 #include "AnaHelpers.h"
 #include "MCParticle.h"
 #include "TruthMatchingUtils.h"
@@ -170,26 +169,13 @@ class FeeAnaProcessor : public Processor {
         double vetoTrackTimeWindow_{8.0};      //!< |t_trk - t_FEEclu(corrected)| window for the track veto (ns)
         double vetoClusterEnergyMin_{0.5};     //!< only clusters above this energy count toward the cluster veto (GeV)
 
-        //Momentum smearing closure test
-        std::shared_ptr<TrackSmearingTool> smearingTool_;
-
-        // Data momentum scale corrections, applied to track_smeared -- the same collection
-        // the MC smearing goes into -- so track stays raw. The smearing tool's own data-mode
-        // mean correction is not used; set meanCorrCfg to apply one through this tool instead.
-        std::string runScaleCfg_{""};  //!< JSON with a "runScale" block ("" = no run-by-run scale)
-        std::string meanCorrCfg_{""};  //!< JSON with omegaSmearing mu_data/mu_mc ("" = no mean correction)
-        std::string meanCorrVariable_{""};  //!< "" = unbinned means, or phi0 / tanLambda / nHits binned means
-        std::shared_ptr<RunScaleCorrectionTool> runScaleTool_;
-        double run_scale_out_{1.0};    //!< total momentum scale applied to this track (1 if none); raw p = p / scale
-        std::shared_ptr<TrackSmearingTool> smearingToolRel_;
-        std::string pSmearingFile_{""};
-        std::string smearingCfgFile_{""};
-        bool doSmearing_{false};  //!< Master switch for smearing
-        double smearingFactor_{1.0};  //!< Factor to multiply smearing parameters by
-        bool requireTruthMatch_{false};  //!< Require truth match for smearing
-        bool smearOmega_{false};  //!< Use omega (curvature) smearing instead of p smearing
-        std::string smearingVariable_{""};  //!< "flat", "nHits", "tanLambda", "phi0" — explicit lookup; "" = JSON default
-        std::string scaleCorrVariable_{""};  //!< if set, omega data-mode scale uses pBinned_ means
+        // Track corrections: data scale corrections and MC smearing, configured by one JSON
+        // and applied to track_smeared, so track stays raw.
+        std::string trackCorrectionsCfg_{""};     //!< TrackCorrector JSON ("" = no corrections)
+        std::shared_ptr<TrackCorrector> corrector_;
+        bool doSmearing_{false};                  //!< MC smearing on/off for this job
+        int requireTruthMatch_{-1};               //!< -1: use the JSON value; 0/1: override it
+        double run_scale_out_{1.0};    //!< data momentum scale applied to this track (1 if none); raw p = p / scale
 
         // Per-hit_pattern momentum scale correction (data momentum -> beam energy).
         // Loaded from a JSON with a "pattern_to_scale" map (hit_pattern -> scale) plus a

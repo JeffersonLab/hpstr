@@ -7,19 +7,17 @@
 #include "PreselectAndCategorize2021.h"
 
 void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
-    // Support both parameter names (smearingCfg takes precedence)
-    auto pSmearingFile = parameters.getString("pSmearingFile");
-    auto smearingCfgFile = parameters.getString("smearingCfg", "");
-
-    // Configurable seed
+    // Track corrections (z0 offsets / calibration, data scale corrections, MC smearing) are
+    // configured by one JSON for TrackCorrector; the per-job settings stay parameters here.
+    trackCorrectionsCfg_ = parameters.getString("trackCorrectionsCfg", "");
     smearingSeed_ = parameters.getInteger("smearingSeed", smearingSeed_);
-
-    // Master switch for smearing (default true for backward compatibility)
     doSmearing_ = parameters.getInteger("doSmearing", 0) != 0;
-    doZ0Corrections_ = parameters.getInteger("doZ0Corrections", 1) != 0;
-
-    // Factor to multiply smearing parameters by (default 1.0)
-    smearingFactor_ = parameters.getDouble("smearingFactor", 1.0);
+    // These settings moved into the trackCorrectionsCfg JSON; refuse them rather than ignore them.
+    for (const char* moved : {"smearingCfg", "pSmearingFile", "trackBiasCfg", "z0CalibCfg", "z0CalibMcCfg"}) {
+        if (!parameters.getString(moved, "").empty())
+            throw std::runtime_error(std::string("PreselectAndCategorize2021: parameter '") + moved +
+                                     "' moved to the trackCorrectionsCfg JSON");
+    }
 
     // Debug output flag
     debug_ = parameters.getInteger("debug", 0) != 0;
@@ -54,20 +52,8 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     beamE_ = parameters.getDouble("beamE", beamE_);
     thetaBeamMrad_ = parameters.getDouble("thetaBeamMrad", thetaBeamMrad_);
 
-    // Require truth match for smearing (default false)
-    requireTruthMatch_ = parameters.getInteger("requireTruthMatch", 0) != 0;
-
-    // Use omega (curvature) smearing instead of p smearing (default false)
-    smearOmega_ = parameters.getInteger("smearOmega", 0) != 0;
-
-    // Explicit smearing lookup variable: "flat", "nHits", "tanLambda", "phi0"
-    // Empty string (default) accepts whatever the JSON specifies
-    smearingVariable_ = parameters.getString("smearingVariable", "");
-
-    // If set, omega data-mode scale correction uses pSmearing_binned_{scaleCorrVariable_} means
-    // rather than omegaSmearing_binned_{smearingVariable_} means
-    scaleCorrVariable_ = parameters.getString("scaleCorrVariable", "");
-    applyMeanCorr_     = parameters.getInteger("applyMeanCorr", 0) != 0;
+    // Require truth match for smearing: -1 (default) uses the trackCorrectionsCfg value
+    requireTruthMatch_ = parameters.getInteger("requireTruthMatch", -1);
 
     // Save all tracks in the event
     saveAllTracks_ = parameters.getInteger("saveAllTracks", 0) != 0;
@@ -75,28 +61,6 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     calcMultiTrackVars_ = parameters.getInteger("calcMultiTrackVars", 0) != 0;
 
 
-    std::string smearingFile = !smearingCfgFile.empty() ? smearingCfgFile : pSmearingFile;
-
-    if (not smearingFile.empty()) {
-        std::cout << "Loading smearing config from " << smearingFile << std::endl;
-        std::cout << "Using smearing seed: " << smearingSeed_ << std::endl;
-        std::cout << "Using smearing factor: " << smearingFactor_ << std::endl;
-        std::cout << "Require truth match for smearing: " << (requireTruthMatch_ ? "true" : "false") << std::endl;
-        std::cout << "Using omega smearing: " << (smearOmega_ ? "true" : "false") << std::endl;
-        std::cout << "Using smearing variable: " << (smearingVariable_.empty() ? "(JSON default)" : smearingVariable_) << std::endl;
-        // relSmearingP=true (relative), relSmearingZ0=false (absolute) - these are defaults for ROOT files;
-        // JSON files will override with their own relSmearingP/relSmearingZ0 values
-        smearingTool_ = std::make_shared<TrackSmearingTool>(smearingFile, true, false, smearingSeed_,
-                                                            "KalmanFullTracks", smearingFactor_);
-        smearingTool_->setForcedVariable(smearingVariable_);
-        smearingTool_->setRequireTruthMatch(requireTruthMatch_);
-        smearingTool_->setDebug(debug_);
-        smearingTool_->printConfig();
-    }
-    if (not doSmearing_) {
-        std::cout << "Gaussian track smearing disabled via doSmearing=0 "
-                  << "(data-mode scale corrections still apply if smearingCfg is set)" << std::endl;
-    }
 
     auto beamPosCfg = parameters.getString("beamPosCfg");
     if (not beamPosCfg.empty()) {
@@ -113,24 +77,6 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
         v0proj_fits_ = preselect_json_load(v0ProjectionFitsCfg);
     }
 
-    auto trackBiasCfg = parameters.getString("trackBiasCfg");
-    if (not trackBiasCfg.empty()) {
-        std::cout << "Loading track corrections from " << trackBiasCfg << std::endl;
-        auto track_corr = preselect_json_load(trackBiasCfg);
-        std::cout << track_corr << std::endl;
-
-        for (const auto& [name, corr] : track_corr.items()) {
-            // validate names of corrections, Track::applyCorrection silently ignores
-            // names that don't exactly match the names within it, so we check for
-            // misspellings once here
-            if (name != "track_z0" and name != "track_time") {
-                std::cerr << "WARNING: Unrecognized track correction " << name << " : " << corr << " will be skipped."
-                          << std::endl;
-                continue;
-            }
-            track_corrections_[name] = corr;
-        }
-    }
 
     auto vtxColl = parameters.getString("vtxCollection");
     if (not vtxColl.empty()) {
@@ -140,26 +86,20 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
 
     calTimeOffset_ = parameters.getDouble("calTimeOffset");
     isData_ = parameters.getInteger("isData") != 0;
-    if (smearingTool_) {
-        smearingTool_->setIsData(isData_);
-        smearingTool_->setApplyMeanCorr(applyMeanCorr_);
-        if (!scaleCorrVariable_.empty())
-            smearingTool_->setScaleCorrVariable(scaleCorrVariable_);
-    }
     isSimpSignal_ = parameters.getInteger("isSimpSignal") != 0;
     isApSignal_ = parameters.getInteger("isApSignal") != 0;
     if (isSimpSignal_ || isApSignal_) isSignal_ = true;
     apPDG_ = parameters.getInteger("apPDG", 622);
 
-    // Load z0 calibration: use data or MC JSON depending on isData_
-    auto z0CalibFile = isData_
-        ? parameters.getString("z0CalibCfg", "")
-        : parameters.getString("z0CalibMcCfg", "");
-    if (not z0CalibFile.empty()) {
-        if (not biasingTool_)
-            biasingTool_ = std::make_shared<TrackBiasingTool>("", "KalmanFullTracks");
-        biasingTool_->loadZ0Calibration(z0CalibFile);
-        biasingTool_->setDebug(debug_);
+    if (not trackCorrectionsCfg_.empty()) {
+        TrackCorrector::Options opts;
+        opts.isData = isData_;
+        opts.seed = smearingSeed_;
+        opts.doSmearing = doSmearing_;
+        opts.requireTruthMatch = requireTruthMatch_;
+        opts.debug = debug_;
+        corrector_ = std::make_shared<TrackCorrector>(trackCorrectionsCfg_, opts);
+        corrector_->printConfig();
     }
 }
 
@@ -660,7 +600,11 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     const auto& tsbank{bus_.get<TSData>("TSBank")};
     const auto& eh{bus_.get<EventHeader>("EventHeader")};
     int run_number = eh.getRunNumber();
-    if (biasingTool_) biasingTool_->setRun(run_number);
+    if (corrector_) {
+        const std::vector<MCParticle*>* mcParticles =
+            bus_.has(mcColl_) ? &bus_.get<std::vector<MCParticle*>>(mcColl_) : nullptr;
+        corrector_->beginEvent(run_number, mcParticles);
+    }
     // Set immediately after clear_outputs so the identity is recorded no matter which
     // of the many early returns below ends up rejecting the event.
     bus_.set("run_number", run_number);
@@ -798,97 +742,18 @@ bool PreselectAndCategorize2021::process(IEvent*) {
             pos_trk.setMomentum(vtx->getP2X(), vtx->getP2Y(), vtx->getP2Z());
         }
 
-        // apply track_z0 and track_time corrections loaded from JSON
-        for (const auto& [name, corr] : track_corrections_) {
-            ele_trk.applyCorrection(name, corr);
-            pos_trk.applyCorrection(name, corr);
-        }
-
-        if (not v0proj_fits_.empty()) {
-            int run = eh.getRunNumber();
-            int closest_run = -1;
-            for (auto entry : v0proj_fits_.items()) {
-                int check_run = std::stoi(entry.key());
-                if (check_run > run) {
-                    // run predates every entry in the JSON; fall back to the earliest one available
-                    if (closest_run < 0) closest_run = check_run;
-                    break;
-                } else {
-                    closest_run = check_run;
-                }
-            }
-            if (closest_run < 0)
-                throw std::runtime_error("PreselectAndCategorize2021: no run entries found in v0proj_fits_ JSON");
-            double elez0Mean = v0proj_fits_[std::to_string(closest_run)]["elez0_mean"];
-            double posz0Mean = v0proj_fits_[std::to_string(closest_run)]["posz0_mean"];
-
-            if (doZ0Corrections_) {
-                ele_trk.applyCorrection("z0", elez0Mean);
-                pos_trk.applyCorrection("z0", posz0Mean);
-            }
-        }
-
-        // Apply linear z0 calibration: z0 -= slope*tanL + intercept
-        if (biasingTool_) {
-            biasingTool_->updateWithCalibrateZ0(ele_trk);
-            biasingTool_->updateWithCalibrateZ0(pos_trk);
-        }
-
-        // Apply track smearing (z0 and momentum)
+        // Track corrections, in TrackCorrector's fixed order: offsets and z0 calibration, data
+        // scale corrections, MC smearing. The vertex-fitted momenta follow the track momenta.
         double ele_p_smear_ratio = 1.0;
         double pos_p_smear_ratio = 1.0;
-
-        // For the smearing tool's requireTruthMatch option. The ele/pos_has_truth_link
-        // output flags are deliberately NOT computed here: this loop runs over every raw
-        // vertex, so anything published to the bus from inside it describes the last vertex
-        // iterated rather than the one eventually selected. They are set after vertex
-        // selection instead, where ele_trk/pos_trk belong to the selected vertex.
-        const std::vector<MCParticle*>* mcParticles = nullptr;
-        if (bus_.has(mcColl_)) {
-            mcParticles = &bus_.get<std::vector<MCParticle*>>(mcColl_);
-        }
-
-        // Apply smearing/corrections if tool is configured.
-        // doSmearing_ gates Gaussian smearing (MC only). On data, scale corrections
-        // always apply when the tool is loaded — the tool never adds Gaussian noise in data mode.
-        if (smearingTool_) {
-            // Set MC particles for smearing tool (needed for requireTruthMatch option)
-            if (mcParticles) {
-                smearingTool_->setMCParticles(mcParticles);
-            }
-            if (doSmearing_ || isData_) {
-                double ele_p_before = ele_trk.getP();
-                double pos_p_before = pos_trk.getP();
-                double psum_before  = ele_p_before + pos_p_before;
-
-                // Apply z0 smearing first (if z0 corrections are enabled)
-                if (doZ0Corrections_) {
-                    smearingTool_->updateWithSmearZ0(ele_trk);
-                    smearingTool_->updateWithSmearZ0(pos_trk);
-                }
-
-                // Apply momentum smearing (omega or p)
-                if (smearOmega_) {
-                    ele_p_smear_ratio = smearingTool_->updateWithSmearOmega(ele_trk);
-                    pos_p_smear_ratio = smearingTool_->updateWithSmearOmega(pos_trk);
-                } else {
-                    ele_p_smear_ratio = smearingTool_->updateWithSmearP(ele_trk);
-                    pos_p_smear_ratio = smearingTool_->updateWithSmearP(pos_trk);
-                }
-                smearingTool_->updateVertexWithSmearP(vtx, ele_p_smear_ratio, pos_p_smear_ratio);
-
-                if (debug_) {
-                    double ele_p_after = ele_trk.getP();
-                    double pos_p_after = pos_trk.getP();
-                    double psum_after  = ele_p_after + pos_p_after;
-                    std::cout << "[ScaleCorr] ele |p|: " << ele_p_before << " -> " << ele_p_after
-                              << "  ratio=" << ele_p_smear_ratio << std::endl;
-                    std::cout << "[ScaleCorr] pos |p|: " << pos_p_before << " -> " << pos_p_after
-                              << "  ratio=" << pos_p_smear_ratio << std::endl;
-                    std::cout << "[ScaleCorr] psum:    " << psum_before << " -> " << psum_after
-                              << "  delta=" << (psum_after - psum_before) << std::endl;
-                }
-            }
+        if (corrector_) {
+            auto corr = corrector_->correct({&ele_trk, &pos_trk}, {-1, +1});
+            ele_p_smear_ratio = corr[0].pRatio();
+            pos_p_smear_ratio = corr[1].pRatio();
+            if (corrector_->updatesVertex()) TrackCorrector::correctVertex(vtx, ele_p_smear_ratio, pos_p_smear_ratio);
+            if (debug_)
+                std::cout << "[TrackCorrector] ele ratio " << ele_p_smear_ratio << "  pos ratio " << pos_p_smear_ratio
+                          << "  ele |p| " << ele_trk.getP() << "  pos |p| " << pos_trk.getP() << std::endl;
         }
         // Captured, not published -- see the PreselectedVertex comment above.
         TVector3 ele_track_p(ele_trk.getMomentum()[0], ele_trk.getMomentum()[1], ele_trk.getMomentum()[2]);
