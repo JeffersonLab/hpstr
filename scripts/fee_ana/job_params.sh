@@ -48,6 +48,14 @@ JOB_OUTPUT_DIR["data_3p74_pass6"]="${BASE_OUTPUT_DIR}/3p74/data_pass6_v9"
 JOB_HPSTR_CONFIG["data_3p74_pass6"]="anaFeeSmearing_3p74_cfg.py"
 JOB_EXTRA_ARGS["data_3p74_pass6"]=""
 
+# Same inputs, analysed with the run-by-run momentum scale in track_smeared (closure test).
+# The ntuples from data_3p74_pass6 are reused.
+JOB_FILE_LISTS["data_3p74_pass6_runscale"]="${LISTS_3P74_DIR}/feeskims_pass6_v9.list"
+JOB_SAMPLE["data_3p74_pass6_runscale"]="data"
+JOB_OUTPUT_DIR["data_3p74_pass6_runscale"]="${BASE_OUTPUT_DIR}/3p74/data_pass6_v9_runscale"
+JOB_HPSTR_CONFIG["data_3p74_pass6_runscale"]="anaFeeSmearing_3p74_cfg.py"
+JOB_EXTRA_ARGS["data_3p74_pass6_runscale"]=""
+
 # Single run (14185) of the above, for testing
 JOB_FILE_LISTS["data_3p74_pass6_14185"]="${LISTS_3P74_DIR}/feeskims_pass6_v9_14185.list"
 JOB_SAMPLE["data_3p74_pass6_14185"]="data"
