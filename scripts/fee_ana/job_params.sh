@@ -38,6 +38,23 @@ JOB_HPSTR_CONFIG["data_3p74"]="anaFeeSmearing_3p74_cfg.py"
 JOB_EXTRA_ARGS["data_3p74"]=""
 
 # 1.92 GeV data
+# pass6_v9 FEE skims (3.74 GeV). Inputs are .slcio: batch-script.sh converts each
+# with recoTuple_noHitColl_cfg.py, keeps the ntuple next to the .slcio, then runs the FEE
+# analysis on it. Use --files-per-job to group files, e.g.
+#   ./submit-jobs.sh --job data_3p74_pass6 --files-per-job 20
+JOB_FILE_LISTS["data_3p74_pass6"]="${LISTS_3P74_DIR}/feeskims_pass6_v9.list"
+JOB_SAMPLE["data_3p74_pass6"]="data"
+JOB_OUTPUT_DIR["data_3p74_pass6"]="${BASE_OUTPUT_DIR}/3p74/data_pass6_v9"
+JOB_HPSTR_CONFIG["data_3p74_pass6"]="anaFeeSmearing_3p74_cfg.py"
+JOB_EXTRA_ARGS["data_3p74_pass6"]=""
+
+# Single run (14185) of the above, for testing
+JOB_FILE_LISTS["data_3p74_pass6_14185"]="${LISTS_3P74_DIR}/feeskims_pass6_v9_14185.list"
+JOB_SAMPLE["data_3p74_pass6_14185"]="data"
+JOB_OUTPUT_DIR["data_3p74_pass6_14185"]="${BASE_OUTPUT_DIR}/3p74/data_pass6_v9_14185"
+JOB_HPSTR_CONFIG["data_3p74_pass6_14185"]="anaFeeSmearing_3p74_cfg.py"
+JOB_EXTRA_ARGS["data_3p74_pass6_14185"]=""
+
 JOB_FILE_LISTS["data_1p92"]="${LISTS_1P92_DIR}/data.list"
 JOB_SAMPLE["data_1p92"]="data"
 JOB_OUTPUT_DIR["data_1p92"]="${BASE_OUTPUT_DIR}/1p92/data"

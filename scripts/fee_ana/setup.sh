@@ -18,3 +18,6 @@ source /sdf/data/hps/users/mgignac/software/dev/hps-mc/install/bin/hps-mc-env.sh
 source /sdf/data/hps/users/mgignac/software/2021-ana/hpstr/install/bin/hpstr-env.sh
 export LD_LIBRARY_PATH=/sdf/home/m/mgignac/.conda/envs/hps-2021/lib:$LD_LIBRARY_PATH
 export HPSMC_DIR=/sdf/data/hps/users/mgignac/software/dev/hps-mc/install
+# el8 libraries missing on RHEL 9 nodes (e.g. milano) that the el8 ROOT/hpstr build needs:
+# OpenSSL 1.1 (libssl, libcrypto) and libGLU / libOpenGL / libGLdispatch
+export LD_LIBRARY_PATH=/sdf/data/hps/users/mgignac/software/2021-ana/compat-el8/lib:$LD_LIBRARY_PATH

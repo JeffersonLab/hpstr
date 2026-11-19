@@ -12,6 +12,9 @@
 #   --all            - Submit all predefined jobs
 #   --list           - List all available job definitions
 #   --dry-run        - Show what would be submitted without actually submitting
+#   --files-per-job N - Process N input files per sbatch job (default 1). Inputs
+#                      may be ROOT ntuples or .slcio (converted with recoTuple
+#                      first; see batch-script.sh)
 #
 # Legacy interface (still supported):
 #   --sample <type>  - Sample type: data, sim_bkgd
@@ -50,6 +53,7 @@ usage() {
   echo "  --all             Submit all predefined jobs"
   echo "  --list            List all available job definitions"
   echo "  --dry-run         Show what would be submitted without actually submitting"
+  echo "  --files-per-job N Process N input files per sbatch job (default 1)"
   echo "  --sample <type>   Legacy: one of: ${VALID_SAMPLES[*]}"
   echo "  file.list         Legacy: path(s) to file list(s)"
   echo "  -- extra_args     Additional arguments to pass to hpstr"
@@ -69,6 +73,7 @@ job_name=""
 dry_run=false
 list_mode=false
 all_mode=false
+files_per_job=1
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -100,6 +105,14 @@ while [[ $# -gt 0 ]]; do
       dry_run=true
       shift
       ;;
+    --files-per-job)
+      if [[ $# -lt 2 || ! "$2" =~ ^[1-9][0-9]*$ ]]; then
+        echo "ERROR: --files-per-job requires a positive integer"
+        usage
+      fi
+      files_per_job="$2"
+      shift 2
+      ;;
     --)
       shift
       extra_args=("$@")
@@ -121,6 +134,45 @@ if [[ "${list_mode}" == "true" ]]; then
   list_jobs
   exit 0
 fi
+
+# Submit the files listed in the given file lists, files_per_job inputs per sbatch
+# job (passed to batch-script.sh comma-separated). Uses OUTPUT_DIR, HPSTR_CONFIG,
+# NTUPLE_DIR and the sample_args / pass_args arrays from the caller.
+# Echoes the number of sbatch jobs submitted as its last line.
+submit_files() {
+  local n_submitted=0
+  local batch=()
+  flush_batch() {
+    [[ ${#batch[@]} -eq 0 ]] && return 0
+    local joined
+    joined="$(IFS=','; echo "${batch[*]}")"
+    sbatch \
+      --partition="${SLURM_PARTITION}" \
+      --account="${SLURM_ACCOUNT}" \
+      --output="${LOG_DIR}/job_%j.log" \
+      --error="${LOG_DIR}/job_%j.log" \
+      --export="OUTPUT_DIR=${OUTPUT_DIR},HPSTR_CONFIG=${HPSTR_CONFIG},NTUPLE_DIR=${NTUPLE_DIR:-}" \
+      "${SUBMIT_DIR}/batch-script.sh" \
+      "${SUBMIT_DIR}" \
+      "${joined}" \
+      "${sample_args[@]+"${sample_args[@]}"}" \
+      "${pass_args[@]+"${pass_args[@]}"}" >&2
+    ((++n_submitted))
+    batch=()
+  }
+  local file_list input_file
+  for file_list in "$@"; do
+    while IFS= read -r input_file; do
+      [[ -z "${input_file}" ]] && continue
+      batch+=("${input_file}")
+      if [[ ${#batch[@]} -ge ${files_per_job} ]]; then
+        flush_batch
+      fi
+    done < "${file_list}"
+  done
+  flush_batch
+  echo "${n_submitted}"
+}
 
 # Function to submit jobs for a single job definition
 # Returns the number of jobs submitted
@@ -176,9 +228,10 @@ submit_job_definition() {
     echo "Extra args: ${job_extra_args[*]}"
   fi
 
+  local n_jobs=$(( (total_files + files_per_job - 1) / files_per_job ))
   if [[ "${is_dry_run}" == "true" ]]; then
-    echo "DRY RUN - would submit ${total_files} jobs"
-    echo "${total_files}"
+    echo "DRY RUN - would submit ${n_jobs} jobs (${files_per_job} file(s) per job)"
+    echo "${n_jobs}"
     return 0
   fi
 
@@ -187,27 +240,10 @@ submit_job_definition() {
   if [[ -n "${SAMPLE}" ]]; then
     sample_args=(--sample "${SAMPLE}")
   fi
+  local pass_args=("${job_extra_args[@]+"${job_extra_args[@]}"}")
 
   # Submit jobs
-  for file_list in "${expanded_lists[@]}"; do
-    while IFS= read -r input_file; do
-      [[ -z "${input_file}" ]] && continue
-
-      sbatch \
-        --partition="${SLURM_PARTITION}" \
-        --account="${SLURM_ACCOUNT}" \
-        --output="${LOG_DIR}/job_%j.log" \
-        --error="${LOG_DIR}/job_%j.log" \
-        --export="OUTPUT_DIR=${OUTPUT_DIR},HPSTR_CONFIG=${HPSTR_CONFIG}" \
-        "${SUBMIT_DIR}/batch-script.sh" \
-        "${SUBMIT_DIR}" \
-        "${input_file}" \
-        "${sample_args[@]+"${sample_args[@]}"}" \
-        "${job_extra_args[@]+"${job_extra_args[@]}"}"
-
-      ((++job_count))
-    done < "${file_list}"
-  done
+  job_count=$(submit_files "${expanded_lists[@]}" | tail -1)
 
   echo "Submitted ${job_count} jobs for ${job}"
   echo "${job_count}"
@@ -351,9 +387,10 @@ if [[ ${#extra_args[@]} -gt 0 ]]; then
   echo "Extra args: ${extra_args[*]}"
 fi
 
+n_jobs=$(( (total_files + files_per_job - 1) / files_per_job ))
 if [[ "${dry_run}" == "true" ]]; then
   echo ""
-  echo "DRY RUN - would submit ${total_files} jobs"
+  echo "DRY RUN - would submit ${n_jobs} jobs (${files_per_job} file(s) per job)"
   exit 0
 fi
 
@@ -366,30 +403,9 @@ if [[ -n "${sample}" ]]; then
   sample_args=(--sample "${sample}")
 fi
 
-# Submit one job per file from each file list
-job_count=0
-for file_list in "${file_lists[@]}"; do
-  echo "Processing: ${file_list}"
-  while IFS= read -r input_file; do
-    # Skip empty lines
-    [[ -z "${input_file}" ]] && continue
-
-    # Submit individual job, passing OUTPUT_DIR and HPSTR_CONFIG
-    sbatch \
-      --partition="${SLURM_PARTITION}" \
-      --account="${SLURM_ACCOUNT}" \
-      --output="${LOG_DIR}/job_%j.log" \
-      --error="${LOG_DIR}/job_%j.log" \
-      --export="OUTPUT_DIR=${OUTPUT_DIR},HPSTR_CONFIG=${HPSTR_CONFIG}" \
-      "${SUBMIT_DIR}/batch-script.sh" \
-      "${SUBMIT_DIR}" \
-      "${input_file}" \
-      "${sample_args[@]+"${sample_args[@]}"}" \
-      "${extra_args[@]+"${extra_args[@]}"}"
-
-    ((++job_count))
-  done < "${file_list}"
-done
+# Submit files_per_job files per sbatch job from each file list
+pass_args=("${extra_args[@]+"${extra_args[@]}"}")
+job_count=$(submit_files "${file_lists[@]}" | tail -1)
 
 echo "Submitted ${job_count} jobs"
 
