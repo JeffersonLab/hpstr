@@ -50,13 +50,13 @@ JOB_EXTRA_ARGS["data_10pc"]=""
 JOB_FILE_LISTS["data_prompt"]="${DATA_LISTS_DIR}/data_1pc.txt"
 JOB_SAMPLE["data_prompt"]="data"
 JOB_OUTPUT_DIR["data_prompt"]="${BASE_OUTPUT_DIR}/data_1pc_tc"
-JOB_HPSTR_CONFIG["data_prompt"]="config_prompt_2021.py"
+JOB_HPSTR_CONFIG["data_prompt"]="config_prompt_2021_pass5.py"
 JOB_EXTRA_ARGS["data_prompt"]=""
 
 JOB_FILE_LISTS["data_10pc_prompt"]="${DATA_LISTS_DIR}/data_10pc.txt"
 JOB_SAMPLE["data_10pc_prompt"]="data"
 JOB_OUTPUT_DIR["data_10pc_prompt"]="${BASE_OUTPUT_DIR}/data_10pc_prompt_TC_psum2p8"
-JOB_HPSTR_CONFIG["data_10pc_prompt"]="config_prompt_2021.py"
+JOB_HPSTR_CONFIG["data_10pc_prompt"]="config_prompt_2021_pass5.py"
 JOB_EXTRA_ARGS["data_10pc_prompt"]=""
 
 # ============================================================================
@@ -225,13 +225,13 @@ JOB_EXTRA_ARGS["ap_v5_old_smeared"]="--smearing"
 JOB_FILE_LISTS["ap_prompt_old_smeared"]="${MC_LISTS_DIR}/prompt_ap.list" 
 JOB_SAMPLE["ap_prompt_old_smeared"]="ap_signal"
 JOB_OUTPUT_DIR["ap_prompt_old_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_prompt_old_smeared"
-JOB_HPSTR_CONFIG["ap_prompt_old_smeared"]="config_prompt_2021.py" #config_displaced_2021.py"
+JOB_HPSTR_CONFIG["ap_prompt_old_smeared"]="config_prompt_2021_pass5.py" #config_displaced_2021.py"
 JOB_EXTRA_ARGS["ap_prompt_old_smeared"]="--smearing --smear-without-truth-match"
 
 JOB_FILE_LISTS["ap_prompt_new_smeared"]="${MC_LISTS_DIR}/prompt_ap_fix.list" 
 JOB_SAMPLE["ap_prompt_new_smeared"]="ap_signal"
 JOB_OUTPUT_DIR["ap_prompt_new_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_prompt_truthMatchFix_smeared"
-JOB_HPSTR_CONFIG["ap_prompt_new_smeared"]="config_prompt_2021.py"
+JOB_HPSTR_CONFIG["ap_prompt_new_smeared"]="config_prompt_2021_pass5.py"
 JOB_EXTRA_ARGS["ap_prompt_new_smeared"]="--smearing" #--smear-without-truth-match"
 
 # All A' mass points combined
@@ -258,13 +258,13 @@ JOB_EXTRA_ARGS["ap_tgt_sys"]="--smearing"
 JOB_FILE_LISTS["ap_signal_tc"]="${MC_LISTS_DIR}/ap*.list"
 JOB_SAMPLE["ap_signal_tc"]="ap_signal"
 JOB_OUTPUT_DIR["ap_signal_tc"]="${BASE_OUTPUT_DIR}/ap_signal_tc"
-JOB_HPSTR_CONFIG["ap_signal_tc"]="config_prompt_2021.py"
+JOB_HPSTR_CONFIG["ap_signal_tc"]="config_prompt_2021_pass5.py"
 JOB_EXTRA_ARGS["ap_signal_tc"]=""
 
 JOB_FILE_LISTS["ap_signal_tc_smeared"]="${MC_LISTS_DIR}/ap*.list"
 JOB_SAMPLE["ap_signal_tc_smeared"]="ap_signal"
 JOB_OUTPUT_DIR["ap_signal_tc_smeared"]="${BASE_OUTPUT_DIR}/ap_signal_tc_smeared"
-JOB_HPSTR_CONFIG["ap_signal_tc_smeared"]="config_prompt_2021.py"
+JOB_HPSTR_CONFIG["ap_signal_tc_smeared"]="config_prompt_2021_pass5.py"
 JOB_EXTRA_ARGS["ap_signal_tc_smeared"]="--smearing"
 
 # ============================================================================

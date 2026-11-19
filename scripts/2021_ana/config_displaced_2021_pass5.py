@@ -19,6 +19,11 @@ base.parser.add_argument(
         '--trigger', dest='trigger', choices=['singles2', 'pairs'], default='singles2',
         help='Which trigger to require in preselection (default: singles2)'
 )
+base.parser.add_argument(
+        '--smear-without-truth-match', dest='smearNoTruthMatch', action='store_true',
+        help='Smear all tracks, not only truth-matched ones (requireTruthMatch = 0); '
+             'needed for samples whose tracks carry no truth link, e.g. v16 prompt'
+)
 
 options = base.parser.parse_args()
 
@@ -87,7 +92,7 @@ preselect.parameters["triggerSelection"] = options.trigger
 preselect.parameters["psumCut"] = 0.0
 preselect.parameters["doSmearing"] = 1 if (options.smearing and not options.noSmearing and options.sample != 'data') else 0
 preselect.parameters["smearingSeed"] = options.seed
-preselect.parameters["requireTruthMatch"] = 1
+preselect.parameters["requireTruthMatch"] = 0 if options.smearNoTruthMatch else 1
 
 p.sequence = [preselect]
 
