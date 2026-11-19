@@ -50,6 +50,12 @@ anaTrks.parameters["smearingFactor"] = 1.0
 anaTrks.parameters["smearOmega"] = 1
 #anaTrks.parameters["smearingVariable"] = "tanLambda"
 anaTrks.parameters["smearingVariable"] = "phi0"
+
+# Data mean (scale) correction: no longer applied inside the smearing tool, so it is set
+# here explicitly with the same file and phi0 binning as before (identical result on data).
+anaTrks.parameters["runScaleCfg"] = ""
+anaTrks.parameters["meanCorrCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/smearing/tool_smearing.json"
+anaTrks.parameters["meanCorrVariable"] = "phi0"
 #anaTrks.parameters["smearingVariable"] = "flat"
 # Scale correction: "" = use omega-space means (default); "tanLambda" = p-space means
 anaTrks.parameters["scaleCorrVariable"] = ""

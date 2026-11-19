@@ -173,11 +173,14 @@ class FeeAnaProcessor : public Processor {
         //Momentum smearing closure test
         std::shared_ptr<TrackSmearingTool> smearingTool_;
 
-        // Run-by-run momentum scale correction (data only), applied to the FEE track
-        // before any selection or smearing. Disabled when runScaleCfg is empty.
-        std::string runScaleCfg_{""};  //!< JSON with a "runScale" block
+        // Data momentum scale corrections, applied to track_smeared -- the same collection
+        // the MC smearing goes into -- so track stays raw. The smearing tool's own data-mode
+        // mean correction is not used; set meanCorrCfg to apply one through this tool instead.
+        std::string runScaleCfg_{""};  //!< JSON with a "runScale" block ("" = no run-by-run scale)
+        std::string meanCorrCfg_{""};  //!< JSON with omegaSmearing mu_data/mu_mc ("" = no mean correction)
+        std::string meanCorrVariable_{""};  //!< "" = unbinned means, or phi0 / tanLambda / nHits binned means
         std::shared_ptr<RunScaleCorrectionTool> runScaleTool_;
-        double run_scale_out_{1.0};    //!< k applied to this track (1 if none); raw p = p / k
+        double run_scale_out_{1.0};    //!< total momentum scale applied to this track (1 if none); raw p = p / scale
         std::shared_ptr<TrackSmearingTool> smearingToolRel_;
         std::string pSmearingFile_{""};
         std::string smearingCfgFile_{""};

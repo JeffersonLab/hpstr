@@ -88,6 +88,12 @@ anaFee.parameters["smearingFactor"] = 1.0
 anaFee.parameters["smearOmega"]     = 1
 # Smearing lookup variable: "flat", "nHits", "tanLambda", "phi0" ("" = JSON default)
 anaFee.parameters["smearingVariable"] = "phi0"
+
+# Data mean (scale) correction: no longer applied inside the smearing tool, so it is set
+# here explicitly with the same file and phi0 binning as before (identical result on data).
+anaFee.parameters["runScaleCfg"] = ""
+anaFee.parameters["meanCorrCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/smearing/tool_smearing.json"
+anaFee.parameters["meanCorrVariable"] = "phi0"
 # Scale correction: "" = use omega-space means (default); "tanLambda" = p-space means
 anaFee.parameters["scaleCorrVariable"] = ""
 

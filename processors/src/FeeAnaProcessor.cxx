@@ -52,6 +52,8 @@ void FeeAnaProcessor::configure(const ParameterSet& parameters) {
 
         // Per-hit_pattern momentum scale correction (data -> beam energy)
         runScaleCfg_             = parameters.getString("runScaleCfg", runScaleCfg_);
+        meanCorrCfg_             = parameters.getString("meanCorrCfg", meanCorrCfg_);
+        meanCorrVariable_        = parameters.getString("meanCorrVariable", meanCorrVariable_);
         hitPatternScaleFile_     = parameters.getString("hitPatternScaleFile", hitPatternScaleFile_);
         doHitPatternScale_       = parameters.getInteger("doHitPatternScale", doHitPatternScale_ ? 1 : 0) != 0;
         hitPatternScaleDataOnly_ = parameters.getInteger("hitPatternScaleDataOnly", hitPatternScaleDataOnly_ ? 1 : 0) != 0;
@@ -213,13 +215,13 @@ void FeeAnaProcessor::initialize(TTree* tree) {
     if (!isData_ && !mcColl_.empty())
         tree->SetBranchAddress(mcColl_.c_str(), &mcParticles_, &bmcParticles_);
 
-    // Run-by-run momentum scale correction: data only, ignored for MC.
-    if (!runScaleCfg_.empty()) {
+    // Data momentum scale corrections (run-by-run scale and/or mean correction): data only.
+    if (!runScaleCfg_.empty() || !meanCorrCfg_.empty()) {
       if (isData_) {
-        runScaleTool_ = std::make_shared<RunScaleCorrectionTool>(runScaleCfg_);
+        runScaleTool_ = std::make_shared<RunScaleCorrectionTool>(runScaleCfg_, meanCorrCfg_, meanCorrVariable_);
         runScaleTool_->printConfig();
       } else {
-        std::cout << "[FeeAnaProcessor] runScaleCfg is set but this is MC; run scale correction not applied" << std::endl;
+        std::cout << "[FeeAnaProcessor] runScaleCfg/meanCorrCfg set but this is MC; scale corrections not applied" << std::endl;
       }
     }
 
@@ -237,7 +239,9 @@ void FeeAnaProcessor::initialize(TTree* tree) {
       // JSON files will override with their own relSmearingP/relSmearingZ0 values
       smearingTool_ = std::make_shared<TrackSmearingTool>(smearingFile, true, false, seed_, trkCollName_, smearingFactor_);
       smearingTool_->setIsData(isData_);
-      smearingTool_->setApplyMeanCorr(isData_);
+      // Data scale corrections come only from runScaleTool_ (runScaleCfg / meanCorrCfg), so
+      // the smearing tool's own data-mode mean correction is never applied here.
+      smearingTool_->setApplyMeanCorr(false);
       smearingTool_->setDebug(debug_ > 0);
       smearingTool_->setForcedVariable(smearingVariable_);
       if (!scaleCorrVariable_.empty())
@@ -389,11 +393,6 @@ bool FeeAnaProcessor::process(IEvent* ievent) {
         // Track associated to this particle (returned by value)
         Track  track_obj = part->getTrack();
         Track* track     = &track_obj;
-
-        // Run-by-run momentum scale (data only): applied first, so E/p, the momentum
-        // cuts, the output track and the smearing input all see the corrected momentum.
-        run_scale_out_ = 1.0;
-        if (runScaleTool_) run_scale_out_ = runScaleTool_->apply(track_obj, evth_->getRunNumber());
         int n2dhits_onTrack = !track->isKalmanTrack() ? track->getTrackerHitCount() * 2 : track->getTrackerHitCount();
 
         // E/p of the FEE candidate
@@ -649,6 +648,11 @@ bool FeeAnaProcessor::process(IEvent* ievent) {
         // Track-level quantities for output tree and smearing histograms.
         // trk_smeared starts as a copy of the original; update* methods modify it in-place.
         Track  trk_smeared     = *track;
+
+        // Data scale corrections go into the same collection as the MC smearing, so
+        // track_smeared is the calibrated track for both data and MC while track stays raw.
+        run_scale_out_ = 1.0;
+        if (runScaleTool_) run_scale_out_ = runScaleTool_->apply(trk_smeared, evth_->getRunNumber());
         double omega_unsmeared = track->getOmega();
         double omega_smeared   = omega_unsmeared;
         double p_smear_ratio   = 1.0;
