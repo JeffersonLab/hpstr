@@ -59,6 +59,8 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     saveAllTracks_ = parameters.getInteger("saveAllTracks", 0) != 0;
     // Calculate variables that depend on multiple tracks
     calcMultiTrackVars_ = parameters.getInteger("calcMultiTrackVars", 0) != 0;
+    // Hit requirement for the extra tracks; < 0 = eleMinHits/posMinHits
+    extraTrackMinHits_ = parameters.getInteger("extraTrackMinHits", extraTrackMinHits_);
 
 
 
@@ -221,10 +223,13 @@ bool PreselectAndCategorize2021::isQualityTrack(Track* trk, const Particle& pos)
     // chi2/ndf <= 20
     if (trk->getChi2Ndf() > 20.0) return false;
     
-    // n_hits
+    // n_hits: the per-charge preselection cuts by default, or an explicit override
+    int required = (extraTrackMinHits_ >= 0)
+        ? extraTrackMinHits_
+        : (trk->getCharge() < 0 ? eleMinHits_ : posMinHits_);
     int nhits = trk->getTrackerHitCount();
     if (!trk->isKalmanTrack()) nhits *= 2;
-    if (nhits < minHits_) return false;
+    if (nhits < required) return false;
     
     // p >= 0.4
     double p = trk->getP();
@@ -477,6 +482,12 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
      */
     bus_.board_output<int>(output_tree_.get(), "run_number");
     bus_.board_output<int>(output_tree_.get(), "event_number");
+    // Position of the event in the input tuple: unique where MC event numbers are not.
+    bus_.board_output<int>(output_tree_.get(), "input_entry");
+    // Per raw v0 candidate (from vertex collection): the signed track-momentum scale the
+    // corrections applied, omega_before / omega_after
+    bus_.board_output<std::vector<double>>(output_tree_.get(), "vtx_ele_smear_scale");
+    bus_.board_output<std::vector<double>>(output_tree_.get(), "vtx_pos_smear_scale");
     bus_.board_output<Vertex>(output_tree_.get(), "vertex");
     bus_.board_output<Particle>(output_tree_.get(), "ele");
     bus_.board_output<Particle>(output_tree_.get(), "pos");
@@ -609,6 +620,7 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     // of the many early returns below ends up rejecting the event.
     bus_.set("run_number", run_number);
     bus_.set("event_number", eh.getEventNumber());
+    bus_.set("input_entry", ++input_entry_);
 
     event_cf_.begin_event();
 
@@ -677,6 +689,7 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         double pos_p_smear_ratio;
     };
     std::vector<PreselectedVertex> preselected_vtx;
+    std::vector<double> vtx_ele_smear_scale, vtx_pos_smear_scale;  // one entry per raw v0
     int ivtx = 0;
 
     // Orphan-positron-cluster diagnostic, aggregated over the whole event. It only takes a
@@ -746,6 +759,8 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         // scale corrections, MC smearing. The vertex-fitted momenta follow the track momenta.
         double ele_p_smear_ratio = 1.0;
         double pos_p_smear_ratio = 1.0;
+        const double ele_omega_before = ele_trk.getOmega();
+        const double pos_omega_before = pos_trk.getOmega();
         if (corrector_) {
             auto corr = corrector_->correct({&ele_trk, &pos_trk}, {-1, +1});
             ele_p_smear_ratio = corr[0].pRatio();
@@ -755,6 +770,9 @@ bool PreselectAndCategorize2021::process(IEvent*) {
                 std::cout << "[TrackCorrector] ele ratio " << ele_p_smear_ratio << "  pos ratio " << pos_p_smear_ratio
                           << "  ele |p| " << ele_trk.getP() << "  pos |p| " << pos_trk.getP() << std::endl;
         }
+        // Recorded for every raw candidate, before the seeding requirement below can skip it.
+        vtx_ele_smear_scale.push_back(ele_trk.getOmega() != 0. ? ele_omega_before / ele_trk.getOmega() : 1.);
+        vtx_pos_smear_scale.push_back(pos_trk.getOmega() != 0. ? pos_omega_before / pos_trk.getOmega() : 1.);
         // Captured, not published -- see the PreselectedVertex comment above.
         TVector3 ele_track_p(ele_trk.getMomentum()[0], ele_trk.getMomentum()[1], ele_trk.getMomentum()[2]);
         TVector3 pos_track_p(pos_trk.getMomentum()[0], pos_trk.getMomentum()[1], pos_trk.getMomentum()[2]);
@@ -874,6 +892,8 @@ bool PreselectAndCategorize2021::process(IEvent*) {
 
     n_vertices_h_->Fill(vtxs.size(), preselected_vtx.size());
 
+    bus_.set("vtx_ele_smear_scale", vtx_ele_smear_scale);
+    bus_.set("vtx_pos_smear_scale", vtx_pos_smear_scale);
     bus_.set("pos_cl_min_dr", evt_pos_cl_min_dr);
     bus_.set("pos_cl_min_dr_t", evt_pos_cl_min_dr_t);
 

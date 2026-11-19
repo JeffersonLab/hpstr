@@ -61,7 +61,7 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
                                                 // singles2||singles3) or "pairs" (OR of all pair triggers)
     double psumCut_{-1.0};  // minimum psum (|p_{e-} + p_{e+}|) [GeV]; filtering disabled when < 0
     double beamE_{3.74};          // beam energy [GeV] used for recoil inference
-    double thetaBeamMrad_{0.0};   // beam angle [mrad] used for recoil inference
+    double thetaBeamMrad_{30.5};  // beam angle [mrad] used for recoil inference
     std::vector<double> determine_time_cuts(bool isData, int runNumber);
     std::vector<double> time_cuts_{6.9, 5.2, 9.0};
 
@@ -79,6 +79,12 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
 
     bool saveAllTracks_{false}; // if true, save all tracks in the event
     bool calcMultiTrackVars_{false}; // if true, calculate event-level variables (min_dTanlambda, etc.)
+
+    // Minimum 2D tracker hits for all_preselected_tracks. 
+    // Negative (default) means follow the preselection
+    int extraTrackMinHits_{-1};
+
+    int input_entry_{-1};
 
     Track createInferredTrack(Vertex* vtx, Track* ele_track, Track* pos_track);
 
