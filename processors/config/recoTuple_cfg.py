@@ -13,6 +13,10 @@ base.parser.add_argument("-r", "--rawHits", type=int, dest="rawHits",
 base.parser.add_argument("-b", "--useBField", type=int, dest="useBField",
                          help='Use the bField at center of SVT for momentum calculation? 1=yes',
                          metavar="useBField", default=0)
+base.parser.add_argument("--truthClosure", type=int, dest="truthClosure",
+                         help='Audit the truth-link chain (relations -> Track::getMcpHits -> MCParticle'
+                              ' lookup) and print a summary at end of job: 1=yes',
+                         metavar="truthClosure", default=0)
 
 
 options = base.parser.parse_args()
@@ -130,6 +134,11 @@ vtx.parameters["kinkRelCollLcio"] = ''
 vtx.parameters["trkRelCollLcio"] = 'KFTrackDataRelations'
 vtx.parameters["mcPartRelLcio"] = 'SVTTrueHitRelations'
 vtx.parameters["trackStateLocation"] = 'AtTarget'
+# Closure test of the truth-link chain. mcPartCollLcio must name the same collection
+# MCParticleProcessor reads, since that is what fixes which ids are resolvable later.
+vtx.parameters["truthClosure"] = options.truthClosure
+vtx.parameters["mcPartCollLcio"] = 'MCParticle'
+vtx.parameters["rawHitCollLcio"] = 'SVTRawTrackerHits'
 
 cvtx.parameters["debug"] = 0
 cvtx.parameters["useTrackerHits"] = 1
@@ -169,6 +178,7 @@ fsp.parameters["fspCollLcio"] = "FinalStateParticles_KF"
 fsp.parameters["fspCollRoot"] = "FinalStateParticles_KF"
 fsp.parameters["kinkRelCollLcio"] = ""
 fsp.parameters["trkRelCollLcio"] = "KFTrackDataRelations"
+fsp.parameters["trackStateLocation"] = "AtTarget"
 
 if(options.rawHits==1):
     fsp.parameters["trkhitCollRoot"] = "fspOnTrackHits"

@@ -128,6 +128,24 @@ class Bus {
   }
 
   /**
+   * Reset the object carried by a single passenger
+   *
+   * Useful when only a subset of the bus should be reset -- for example
+   * resetting the output passengers at the start of an event while leaving
+   * the input passengers alone, since those are refilled from the input
+   * TTree rather than by the processor.
+   *
+   * Passengers that are not on the bus are silently ignored.
+   *
+   * @see Passenger::clear for how we clear the individual passengers
+   * @param[in] name name of passenger to clear
+   */
+  void clear(const std::string& name) {
+    auto it = passengers_.find(name);
+    if (it != passengers_.end()) it->second->clear();
+  }
+
+  /**
    * Kicks all of the passengers off the bus
    * and therefore destroys any objects they
    * are carrying.

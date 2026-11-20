@@ -7,19 +7,17 @@
 #include "PreselectAndCategorize2021.h"
 
 void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
-    // Support both parameter names (smearingCfg takes precedence)
-    auto pSmearingFile = parameters.getString("pSmearingFile");
-    auto smearingCfgFile = parameters.getString("smearingCfg", "");
-
-    // Configurable seed
+    // Track corrections (z0 offsets / calibration, data scale corrections, MC smearing) are
+    // configured by one JSON for TrackCorrector; the per-job settings stay parameters here.
+    trackCorrectionsCfg_ = parameters.getString("trackCorrectionsCfg", "");
     smearingSeed_ = parameters.getInteger("smearingSeed", smearingSeed_);
-
-    // Master switch for smearing (default true for backward compatibility)
     doSmearing_ = parameters.getInteger("doSmearing", 0) != 0;
-    doZ0Corrections_ = parameters.getInteger("doZ0Corrections", 1) != 0;
-
-    // Factor to multiply smearing parameters by (default 1.0)
-    smearingFactor_ = parameters.getDouble("smearingFactor", 1.0);
+    // These settings moved into the trackCorrectionsCfg JSON; refuse them rather than ignore them.
+    for (const char* moved : {"smearingCfg", "pSmearingFile", "trackBiasCfg", "z0CalibCfg", "z0CalibMcCfg"}) {
+        if (!parameters.getString(moved, "").empty())
+            throw std::runtime_error(std::string("PreselectAndCategorize2021: parameter '") + moved +
+                                     "' moved to the trackCorrectionsCfg JSON");
+    }
 
     // Debug output flag
     debug_ = parameters.getInteger("debug", 0) != 0;
@@ -28,6 +26,10 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     disablePreselection_ = parameters.getInteger("disablePreselection", 0) != 0;
     disableTimingCuts_   = parameters.getInteger("disableTimingCuts", 0) != 0;
     disableVertexChi2Cut_ = parameters.getInteger("disableVertexChi2Cut", 0) != 0;
+
+    // If true (default), veto events with >=2 preselected vertices. If false, keep the event
+    // and select the preselected vertex with the lowest vertex chi2 instead of vetoing.
+    requireSingleVertex_ = parameters.getInteger("requireSingleVertex", 1) != 0;
 
     // Momentum source for the e+/e- used in psum and the per-track momentum cuts: vertex-fitted
     // (default) or standalone track-fit. Defaults to true to preserve prior behavior.
@@ -50,49 +52,17 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
     beamE_ = parameters.getDouble("beamE", beamE_);
     thetaBeamMrad_ = parameters.getDouble("thetaBeamMrad", thetaBeamMrad_);
 
-    // Require truth match for smearing (default false)
-    requireTruthMatch_ = parameters.getInteger("requireTruthMatch", 0) != 0;
-
-    // Use omega (curvature) smearing instead of p smearing (default false)
-    smearOmega_ = parameters.getInteger("smearOmega", 0) != 0;
-
-    // Explicit smearing lookup variable: "flat", "nHits", "tanLambda", "phi0"
-    // Empty string (default) accepts whatever the JSON specifies
-    smearingVariable_ = parameters.getString("smearingVariable", "");
-
-    // If set, omega data-mode scale correction uses pSmearing_binned_{scaleCorrVariable_} means
-    // rather than omegaSmearing_binned_{smearingVariable_} means
-    scaleCorrVariable_ = parameters.getString("scaleCorrVariable", "");
-    applyMeanCorr_     = parameters.getInteger("applyMeanCorr", 0) != 0;
+    // Require truth match for smearing: -1 (default) uses the trackCorrectionsCfg value
+    requireTruthMatch_ = parameters.getInteger("requireTruthMatch", -1);
 
     // Save all tracks in the event
     saveAllTracks_ = parameters.getInteger("saveAllTracks", 0) != 0;
     // Calculate variables that depend on multiple tracks
     calcMultiTrackVars_ = parameters.getInteger("calcMultiTrackVars", 0) != 0;
+    // Hit requirement for the extra tracks; < 0 = eleMinHits/posMinHits
+    extraTrackMinHits_ = parameters.getInteger("extraTrackMinHits", extraTrackMinHits_);
 
 
-    std::string smearingFile = !smearingCfgFile.empty() ? smearingCfgFile : pSmearingFile;
-
-    if (not smearingFile.empty()) {
-        std::cout << "Loading smearing config from " << smearingFile << std::endl;
-        std::cout << "Using smearing seed: " << smearingSeed_ << std::endl;
-        std::cout << "Using smearing factor: " << smearingFactor_ << std::endl;
-        std::cout << "Require truth match for smearing: " << (requireTruthMatch_ ? "true" : "false") << std::endl;
-        std::cout << "Using omega smearing: " << (smearOmega_ ? "true" : "false") << std::endl;
-        std::cout << "Using smearing variable: " << (smearingVariable_.empty() ? "(JSON default)" : smearingVariable_) << std::endl;
-        // relSmearingP=true (relative), relSmearingZ0=false (absolute) - these are defaults for ROOT files;
-        // JSON files will override with their own relSmearingP/relSmearingZ0 values
-        smearingTool_ = std::make_shared<TrackSmearingTool>(smearingFile, true, false, smearingSeed_,
-                                                            "KalmanFullTracks", smearingFactor_);
-        smearingTool_->setForcedVariable(smearingVariable_);
-        smearingTool_->setRequireTruthMatch(requireTruthMatch_);
-        smearingTool_->setDebug(debug_);
-        smearingTool_->printConfig();
-    }
-    if (not doSmearing_) {
-        std::cout << "Gaussian track smearing disabled via doSmearing=0 "
-                  << "(data-mode scale corrections still apply if smearingCfg is set)" << std::endl;
-    }
 
     auto beamPosCfg = parameters.getString("beamPosCfg");
     if (not beamPosCfg.empty()) {
@@ -109,24 +79,6 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
         v0proj_fits_ = preselect_json_load(v0ProjectionFitsCfg);
     }
 
-    auto trackBiasCfg = parameters.getString("trackBiasCfg");
-    if (not trackBiasCfg.empty()) {
-        std::cout << "Loading track corrections from " << trackBiasCfg << std::endl;
-        auto track_corr = preselect_json_load(trackBiasCfg);
-        std::cout << track_corr << std::endl;
-
-        for (const auto& [name, corr] : track_corr.items()) {
-            // validate names of corrections, Track::applyCorrection silently ignores
-            // names that don't exactly match the names within it, so we check for
-            // misspellings once here
-            if (name != "track_z0" and name != "track_time") {
-                std::cerr << "WARNING: Unrecognized track correction " << name << " : " << corr << " will be skipped."
-                          << std::endl;
-                continue;
-            }
-            track_corrections_[name] = corr;
-        }
-    }
 
     auto vtxColl = parameters.getString("vtxCollection");
     if (not vtxColl.empty()) {
@@ -136,26 +88,20 @@ void PreselectAndCategorize2021::configure(const ParameterSet& parameters) {
 
     calTimeOffset_ = parameters.getDouble("calTimeOffset");
     isData_ = parameters.getInteger("isData") != 0;
-    if (smearingTool_) {
-        smearingTool_->setIsData(isData_);
-        smearingTool_->setApplyMeanCorr(applyMeanCorr_);
-        if (!scaleCorrVariable_.empty())
-            smearingTool_->setScaleCorrVariable(scaleCorrVariable_);
-    }
     isSimpSignal_ = parameters.getInteger("isSimpSignal") != 0;
     isApSignal_ = parameters.getInteger("isApSignal") != 0;
     if (isSimpSignal_ || isApSignal_) isSignal_ = true;
     apPDG_ = parameters.getInteger("apPDG", 622);
 
-    // Load z0 calibration: use data or MC JSON depending on isData_
-    auto z0CalibFile = isData_
-        ? parameters.getString("z0CalibCfg", "")
-        : parameters.getString("z0CalibMcCfg", "");
-    if (not z0CalibFile.empty()) {
-        if (not biasingTool_)
-            biasingTool_ = std::make_shared<TrackBiasingTool>("", "KalmanFullTracks");
-        biasingTool_->loadZ0Calibration(z0CalibFile);
-        biasingTool_->setDebug(debug_);
+    if (not trackCorrectionsCfg_.empty()) {
+        TrackCorrector::Options opts;
+        opts.isData = isData_;
+        opts.seed = smearingSeed_;
+        opts.doSmearing = doSmearing_;
+        opts.requireTruthMatch = requireTruthMatch_;
+        opts.debug = debug_;
+        corrector_ = std::make_shared<TrackCorrector>(trackCorrectionsCfg_, opts);
+        corrector_->printConfig();
     }
 }
 
@@ -277,10 +223,13 @@ bool PreselectAndCategorize2021::isQualityTrack(Track* trk, const Particle& pos)
     // chi2/ndf <= 20
     if (trk->getChi2Ndf() > 20.0) return false;
     
-    // n_hits
+    // n_hits: the per-charge preselection cuts by default, or an explicit override
+    int required = (extraTrackMinHits_ >= 0)
+        ? extraTrackMinHits_
+        : (trk->getCharge() < 0 ? eleMinHits_ : posMinHits_);
     int nhits = trk->getTrackerHitCount();
     if (!trk->isKalmanTrack()) nhits *= 2;
-    if (nhits < minHits_) return false;
+    if (nhits < required) return false;
     
     // p >= 0.4
     double p = trk->getP();
@@ -503,11 +452,20 @@ void PreselectAndCategorize2021::initialize(TTree* tree) {
     }
     event_cf_.init();
     std::string trig_label = (triggerSelection_ == "pairs") ? "pairs trigger" : "single2 or 3 trigger";
-    std::vector<std::string> labels_event_cf = {"readout", trig_label, "N_{v0}^{raw} >= 1", "N_{vtx}^{presel} >= 1", "N_{vtx}^{presel} < 2"};
+    std::string no_extra_vtx_label = requireSingleVertex_ ? "N_{vtx}^{presel} < 2" : "best #chi^{2} selected";
+    std::vector<std::string> labels_event_cf = {"readout", trig_label, "N_{v0}^{raw} >= 1", "N_{vtx}^{presel} >= 1", no_extra_vtx_label};
     event_cf_.set_label_names(labels_event_cf);
 
     n_vertices_h_ = std::make_unique<TH2F>(
         "n_vertices_h", "N Vertices in Event; N_{vtx}^{readout}; N_{vtx}^{preselected}", 10, -0.5, 9.5, 10, -0.5, 9.5);
+
+    // Best-chi2 multi-vertex diagnostics: filled for every event with >=2 preselected vertices,
+    // independent of requireSingleVertex_, so the effect of relaxing the veto can be checked
+    // against real data/MC before turning it on.
+    multivtx_chosen_chi2_h_ = std::make_unique<TH1F>(
+        "multivtx_chosen_chi2_h", "Chosen vertex #chi^{2} (events with #geq2 preselected vertices);#chi^{2};N", 60, 0.0, 30.0);
+    multivtx_discarded_chi2_h_ = std::make_unique<TH1F>(
+        "multivtx_discarded_chi2_h", "Discarded vertex #chi^{2} (events with #geq2 preselected vertices);#chi^{2};N", 60, 0.0, 30.0);
 }
 
 void PreselectAndCategorize2021::setFile(TFile* out_file) {
@@ -516,6 +474,20 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
     // create output TTree in output file
     output_tree_ = std::make_unique<TTree>("preselection", "Preselected and Categorized Vertices", 99, out_file);
     bus_.board_output<double>(output_tree_.get(), "weight");
+    /**
+     * Event identity. Without these an entry in this tree cannot be traced back to the
+     * LCIO event it came from, which makes it impossible to inspect an interesting
+     * candidate at any earlier stage of the chain (recon, readout, generation) or to
+     * put two processings of the same events side by side.
+     */
+    bus_.board_output<int>(output_tree_.get(), "run_number");
+    bus_.board_output<int>(output_tree_.get(), "event_number");
+    // Position of the event in the input tuple: unique where MC event numbers are not.
+    bus_.board_output<int>(output_tree_.get(), "input_entry");
+    // Per raw v0 candidate (from vertex collection): the signed track-momentum scale the
+    // corrections applied, omega_before / omega_after
+    bus_.board_output<std::vector<double>>(output_tree_.get(), "vtx_ele_smear_scale");
+    bus_.board_output<std::vector<double>>(output_tree_.get(), "vtx_pos_smear_scale");
     bus_.board_output<Vertex>(output_tree_.get(), "vertex");
     bus_.board_output<Particle>(output_tree_.get(), "ele");
     bus_.board_output<Particle>(output_tree_.get(), "pos");
@@ -536,6 +508,16 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
     bus_.board_output<TVector3>(output_tree_.get(), "pos_track_p_prefit");
     bus_.board_output<TVector3>(output_tree_.get(), "ele_truth_p");
     bus_.board_output<TVector3>(output_tree_.get(), "pos_truth_p");
+
+    // Standalone-track vs vertex-fit comparison, independent of useVertexMomentum. Both are
+    // captured before smearing/scale corrections, so the difference is due to the fit alone.
+    for (const auto& name : {"trk_invM",
+            "ele_p_prefit", "ele_px_prefit", "ele_py_prefit", "ele_pz_prefit",
+            "pos_p_prefit", "pos_px_prefit", "pos_py_prefit", "pos_pz_prefit",
+            "ele_p_postfit", "ele_px_postfit", "ele_py_postfit", "ele_pz_postfit",
+            "pos_p_postfit", "pos_px_postfit", "pos_py_postfit", "pos_pz_postfit"}) {
+        bus_.board_output<double>(output_tree_.get(), name);
+    }
 
     /***************************************
      * adding specific cut variables       *
@@ -619,10 +601,26 @@ void PreselectAndCategorize2021::setFile(TFile* out_file) {
 }
 
 bool PreselectAndCategorize2021::process(IEvent*) {
+    // Reset the output branches so that anything we do not explicitly set this
+    // event is written as its default rather than carrying over the previous
+    // event's value. Matters for the conditionally-filled truth branches
+    // (true_vertex_invM, true_ap, true_decay_len, ...), which are only set when
+    // the truth match succeeds.
+    bus_.clear_outputs();
+
     const auto& tsbank{bus_.get<TSData>("TSBank")};
     const auto& eh{bus_.get<EventHeader>("EventHeader")};
     int run_number = eh.getRunNumber();
-    if (biasingTool_) biasingTool_->setRun(run_number);
+    if (corrector_) {
+        const std::vector<MCParticle*>* mcParticles =
+            bus_.has(mcColl_) ? &bus_.get<std::vector<MCParticle*>>(mcColl_) : nullptr;
+        corrector_->beginEvent(run_number, mcParticles);
+    }
+    // Set immediately after clear_outputs so the identity is recorded no matter which
+    // of the many early returns below ends up rejecting the event.
+    bus_.set("run_number", run_number);
+    bus_.set("event_number", eh.getEventNumber());
+    bus_.set("input_entry", ++input_entry_);
 
     event_cf_.begin_event();
 
@@ -666,9 +664,41 @@ bool PreselectAndCategorize2021::process(IEvent*) {
      * within Vertex are references to the collections. We make a copy here
      * to apply corrections and do not modify the collections referenced
      * elsewhere in memory.
+     *
+     * Per-vertex quantities destined for the output tree are carried along here as
+     * well, rather than published from inside the loop below. The loop runs over
+     * every raw v0 candidate, so a bus_.set() inside it survives only until the next
+     * iteration overwrites it -- what reaches TTree::Fill() is the last raw candidate
+     * iterated, which need not be the selected vertex and need not even have passed
+     * preselection. Stashing them here and publishing after the best-chi2 vertex is
+     * chosen keeps every branch on an entry describing the same vertex.
      */
-    std::vector<std::tuple<Vertex, Particle, Particle, double, double>> preselected_vtx;
+    struct PreselectedVertex {
+        Vertex vtx;
+        Particle ele;
+        Particle pos;
+        double ele_z0_raw;
+        double pos_z0_raw;
+        TVector3 ele_track_p;
+        TVector3 pos_track_p;
+        TVector3 ele_track_p_prefit;
+        TVector3 pos_track_p_prefit;
+        TVector3 ele_p_postfit;
+        TVector3 pos_p_postfit;
+        double ele_p_smear_ratio;
+        double pos_p_smear_ratio;
+    };
+    std::vector<PreselectedVertex> preselected_vtx;
+    std::vector<double> vtx_ele_smear_scale, vtx_pos_smear_scale;  // one entry per raw v0
     int ivtx = 0;
+
+    // Orphan-positron-cluster diagnostic, aggregated over the whole event. It only takes a
+    // value for candidates whose positron has NO cluster, and those are rejected below -- so
+    // it can never describe the vertex that gets written out, and is necessarily an
+    // event-level quantity. We keep the closest orphan over all raw candidates; the sentinel
+    // survives when every candidate had a positron cluster.
+    double evt_pos_cl_min_dr = -9999.0;
+    double evt_pos_cl_min_dr_t = -9999.0;
 
     for (Vertex* vtx : vtxs) {
         // access the indiviual Vertex, electron, and positron
@@ -709,6 +739,9 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         // snapshot pre-vertex-fit track momenta before they are overwritten
         TVector3 ele_p_prefit(ele_trk.getMomentum()[0], ele_trk.getMomentum()[1], ele_trk.getMomentum()[2]);
         TVector3 pos_p_prefit(pos_trk.getMomentum()[0], pos_trk.getMomentum()[1], pos_trk.getMomentum()[2]);
+        // snapshot vertex-fitted momenta now: smearing below rescales them in place on vtx
+        TVector3 ele_p_postfit(vtx->getP1X(), vtx->getP1Y(), vtx->getP1Z());
+        TVector3 pos_p_postfit(vtx->getP2X(), vtx->getP2Y(), vtx->getP2Z());
 
         // Replace particle track momenta with the vertex-fitted momenta (only when enabled). The
         // vertex stores its two fitted momenta in a fixed electron-then-positron slot order
@@ -722,106 +755,27 @@ bool PreselectAndCategorize2021::process(IEvent*) {
             pos_trk.setMomentum(vtx->getP2X(), vtx->getP2Y(), vtx->getP2Z());
         }
 
-        // apply track_z0 and track_time corrections loaded from JSON
-        for (const auto& [name, corr] : track_corrections_) {
-            ele_trk.applyCorrection(name, corr);
-            pos_trk.applyCorrection(name, corr);
-        }
-
-        if (not v0proj_fits_.empty()) {
-            int run = eh.getRunNumber();
-            int closest_run = -1;
-            for (auto entry : v0proj_fits_.items()) {
-                int check_run = std::stoi(entry.key());
-                if (check_run > run) {
-                    // run predates every entry in the JSON; fall back to the earliest one available
-                    if (closest_run < 0) closest_run = check_run;
-                    break;
-                } else {
-                    closest_run = check_run;
-                }
-            }
-            if (closest_run < 0)
-                throw std::runtime_error("PreselectAndCategorize2021: no run entries found in v0proj_fits_ JSON");
-            double elez0Mean = v0proj_fits_[std::to_string(closest_run)]["elez0_mean"];
-            double posz0Mean = v0proj_fits_[std::to_string(closest_run)]["posz0_mean"];
-
-            if (doZ0Corrections_) {
-                ele_trk.applyCorrection("z0", elez0Mean);
-                pos_trk.applyCorrection("z0", posz0Mean);
-            }
-        }
-
-        // Apply linear z0 calibration: z0 -= slope*tanL + intercept
-        if (biasingTool_) {
-            biasingTool_->updateWithCalibrateZ0(ele_trk);
-            biasingTool_->updateWithCalibrateZ0(pos_trk);
-        }
-
-        // Apply track smearing (z0 and momentum)
+        // Track corrections, in TrackCorrector's fixed order: offsets and z0 calibration, data
+        // scale corrections, MC smearing. The vertex-fitted momenta follow the track momenta.
         double ele_p_smear_ratio = 1.0;
         double pos_p_smear_ratio = 1.0;
-        bool ele_has_truth_link = false;
-        bool pos_has_truth_link = false;
-
-        // Check for truth links using utility function (independent of smearing)
-        const std::vector<MCParticle*>* mcParticles = nullptr;
-        if (bus_.has(mcColl_)) {
-            mcParticles = &bus_.get<std::vector<MCParticle*>>(mcColl_);
-            ele_has_truth_link = utils::hasTruthMatch(ele_trk, mcParticles, debug_);
-            pos_has_truth_link = utils::hasTruthMatch(pos_trk, mcParticles, debug_);
+        const double ele_omega_before = ele_trk.getOmega();
+        const double pos_omega_before = pos_trk.getOmega();
+        if (corrector_) {
+            auto corr = corrector_->correct({&ele_trk, &pos_trk}, {-1, +1});
+            ele_p_smear_ratio = corr[0].pRatio();
+            pos_p_smear_ratio = corr[1].pRatio();
+            if (corrector_->updatesVertex()) TrackCorrector::correctVertex(vtx, ele_p_smear_ratio, pos_p_smear_ratio);
+            if (debug_)
+                std::cout << "[TrackCorrector] ele ratio " << ele_p_smear_ratio << "  pos ratio " << pos_p_smear_ratio
+                          << "  ele |p| " << ele_trk.getP() << "  pos |p| " << pos_trk.getP() << std::endl;
         }
-
-        // Apply smearing/corrections if tool is configured.
-        // doSmearing_ gates Gaussian smearing (MC only). On data, scale corrections
-        // always apply when the tool is loaded — the tool never adds Gaussian noise in data mode.
-        if (smearingTool_) {
-            // Set MC particles for smearing tool (needed for requireTruthMatch option)
-            if (mcParticles) {
-                smearingTool_->setMCParticles(mcParticles);
-            }
-            if (doSmearing_ || isData_) {
-                double ele_p_before = ele_trk.getP();
-                double pos_p_before = pos_trk.getP();
-                double psum_before  = ele_p_before + pos_p_before;
-
-                // Apply z0 smearing first (if z0 corrections are enabled)
-                if (doZ0Corrections_) {
-                    smearingTool_->updateWithSmearZ0(ele_trk);
-                    smearingTool_->updateWithSmearZ0(pos_trk);
-                }
-
-                // Apply momentum smearing (omega or p)
-                if (smearOmega_) {
-                    ele_p_smear_ratio = smearingTool_->updateWithSmearOmega(ele_trk);
-                    pos_p_smear_ratio = smearingTool_->updateWithSmearOmega(pos_trk);
-                } else {
-                    ele_p_smear_ratio = smearingTool_->updateWithSmearP(ele_trk);
-                    pos_p_smear_ratio = smearingTool_->updateWithSmearP(pos_trk);
-                }
-                smearingTool_->updateVertexWithSmearP(vtx, ele_p_smear_ratio, pos_p_smear_ratio);
-
-                if (debug_) {
-                    double ele_p_after = ele_trk.getP();
-                    double pos_p_after = pos_trk.getP();
-                    double psum_after  = ele_p_after + pos_p_after;
-                    std::cout << "[ScaleCorr] ele |p|: " << ele_p_before << " -> " << ele_p_after
-                              << "  ratio=" << ele_p_smear_ratio << std::endl;
-                    std::cout << "[ScaleCorr] pos |p|: " << pos_p_before << " -> " << pos_p_after
-                              << "  ratio=" << pos_p_smear_ratio << std::endl;
-                    std::cout << "[ScaleCorr] psum:    " << psum_before << " -> " << psum_after
-                              << "  delta=" << (psum_after - psum_before) << std::endl;
-                }
-            }
-        }
-        bus_.set("ele_track_p", TVector3(ele_trk.getMomentum()[0], ele_trk.getMomentum()[1], ele_trk.getMomentum()[2]));
-        bus_.set("pos_track_p", TVector3(pos_trk.getMomentum()[0], pos_trk.getMomentum()[1], pos_trk.getMomentum()[2]));
-        bus_.set("ele_track_p_prefit", ele_p_prefit);
-        bus_.set("pos_track_p_prefit", pos_p_prefit);
-        bus_.set("ele_p_smear_ratio", ele_p_smear_ratio);
-        bus_.set("pos_p_smear_ratio", pos_p_smear_ratio);
-        bus_.set("ele_has_truth_link", ele_has_truth_link);
-        bus_.set("pos_has_truth_link", pos_has_truth_link);
+        // Recorded for every raw candidate, before the seeding requirement below can skip it.
+        vtx_ele_smear_scale.push_back(ele_trk.getOmega() != 0. ? ele_omega_before / ele_trk.getOmega() : 1.);
+        vtx_pos_smear_scale.push_back(pos_trk.getOmega() != 0. ? pos_omega_before / pos_trk.getOmega() : 1.);
+        // Captured, not published -- see the PreselectedVertex comment above.
+        TVector3 ele_track_p(ele_trk.getMomentum()[0], ele_trk.getMomentum()[1], ele_trk.getMomentum()[2]);
+        TVector3 pos_track_p(pos_trk.getMomentum()[0], pos_trk.getMomentum()[1], pos_trk.getMomentum()[2]);
 
         // put tracks back into their particles
         // with their new data
@@ -879,8 +833,11 @@ bool PreselectAndCategorize2021::process(IEvent*) {
             }
             pos_cl_min_dr = min_dr;
         }
-        bus_.set("pos_cl_min_dr", pos_cl_min_dr);
-        bus_.set("pos_cl_min_dr_t", pos_cl_min_dr_t);
+        if (not pos_has_cluster &&
+            (evt_pos_cl_min_dr < 0.0 || pos_cl_min_dr < evt_pos_cl_min_dr)) {
+            evt_pos_cl_min_dr = pos_cl_min_dr;
+            evt_pos_cl_min_dr_t = pos_cl_min_dr_t;
+        }
 
         if (not (pos_has_track && pos_has_cluster && ele_has_track)) {
             ivtx++;
@@ -924,14 +881,42 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         vertex_cf_.fill_nm1("vtx_max_p_4pt0GeV", vtxmaxp);
 
         if (disablePreselection_ || vertex_cf_.keep()) {
-            preselected_vtx.emplace_back(*vtx, ele, pos, ele_z0_raw, pos_z0_raw);
+            preselected_vtx.push_back(PreselectedVertex{*vtx, ele, pos, ele_z0_raw, pos_z0_raw,
+                                                        ele_track_p, pos_track_p,
+                                                        ele_p_prefit, pos_p_prefit,
+                                                        ele_p_postfit, pos_p_postfit,
+                                                        ele_p_smear_ratio, pos_p_smear_ratio});
         }
         ivtx++;
     }
 
     n_vertices_h_->Fill(vtxs.size(), preselected_vtx.size());
+
+    bus_.set("vtx_ele_smear_scale", vtx_ele_smear_scale);
+    bus_.set("vtx_pos_smear_scale", vtx_pos_smear_scale);
+    bus_.set("pos_cl_min_dr", evt_pos_cl_min_dr);
+    bus_.set("pos_cl_min_dr_t", evt_pos_cl_min_dr_t);
+
+    // Index of the preselected vertex with the lowest chi2 -- the vertex that will be carried
+    // forward if the event survives. Trivially valid when there are 0 or 1 preselected vertices.
+    std::size_t i_best_vtx = 0;
+    for (std::size_t i = 1; i < preselected_vtx.size(); ++i) {
+        if (preselected_vtx[i].vtx.getChi2() < preselected_vtx[i_best_vtx].vtx.getChi2()) {
+            i_best_vtx = i;
+        }
+    }
+    // Multi-vertex chi2 diagnostics: always filled (independent of requireSingleVertex_) so the
+    // effect of relaxing the veto can be checked against data/MC before turning it on.
+    if (preselected_vtx.size() >= 2) {
+        for (std::size_t i = 0; i < preselected_vtx.size(); ++i) {
+            double chi2 = preselected_vtx[i].vtx.getChi2();
+            (i == i_best_vtx ? multivtx_chosen_chi2_h_ : multivtx_discarded_chi2_h_)->Fill(chi2);
+        }
+    }
+
     event_cf_.apply("at_least_one_vertex", disablePreselection_ || preselected_vtx.size() >= 1);
-    event_cf_.apply("no_extra_vertices", disablePreselection_ || preselected_vtx.size() < 2);
+    event_cf_.apply("no_extra_vertices",
+                     disablePreselection_ || !requireSingleVertex_ || preselected_vtx.size() < 2);
 
     event_cf_.fill_nm1("at_least_one_vertex", preselected_vtx.size());
     event_cf_.fill_nm1("no_extra_vertices", preselected_vtx.size());
@@ -945,11 +930,47 @@ bool PreselectAndCategorize2021::process(IEvent*) {
     bus_.set("single2", single2);
     bus_.set("single3", single3);
 
-    // correct number of vertices (i.e. only one)
-    // unpack the vector of vertices into the single elements
+    // unpack the selected vertex into its elements. Normally there is exactly one preselected
+    // vertex; if requireSingleVertex_ is false and multiple survived, i_best_vtx (computed above)
+    // picks the one with the lowest vertex chi2.
     // Guard against empty collection (can occur when disablePreselection=true bypasses at_least_one_vertex)
     if (preselected_vtx.empty()) return true;
-    auto [vtx, ele, pos, ele_z0_raw, pos_z0_raw] = preselected_vtx.at(0);
+    auto selected = preselected_vtx.at(i_best_vtx);
+    Vertex& vtx = selected.vtx;
+    Particle& ele = selected.ele;
+    Particle& pos = selected.pos;
+    const double ele_z0_raw = selected.ele_z0_raw;
+    const double pos_z0_raw = selected.pos_z0_raw;
+
+    // Per-vertex quantities stashed during the loop, now published for the selected vertex.
+    bus_.set("ele_track_p", selected.ele_track_p);
+    bus_.set("pos_track_p", selected.pos_track_p);
+    bus_.set("ele_track_p_prefit", selected.ele_track_p_prefit);
+    bus_.set("pos_track_p_prefit", selected.pos_track_p_prefit);
+    for (const auto& [prefix, prefit, postfit] : {
+            std::make_tuple("ele_", selected.ele_track_p_prefit, selected.ele_p_postfit),
+            std::make_tuple("pos_", selected.pos_track_p_prefit, selected.pos_p_postfit)}) {
+        const std::string pre{prefix};
+        bus_.set(pre + "p_prefit", prefit.Mag());
+        bus_.set(pre + "px_prefit", prefit.X());
+        bus_.set(pre + "py_prefit", prefit.Y());
+        bus_.set(pre + "pz_prefit", prefit.Z());
+        bus_.set(pre + "p_postfit", postfit.Mag());
+        bus_.set(pre + "px_postfit", postfit.X());
+        bus_.set(pre + "py_postfit", postfit.Y());
+        bus_.set(pre + "pz_postfit", postfit.Z());
+    }
+    {
+        // e+e- invariant mass from the standalone track momenta (never the vertex-fitted ones)
+        constexpr double electron_mass{0.000510999};  // GeV
+        const TVector3& pe{selected.ele_track_p_prefit};
+        const TVector3& pp{selected.pos_track_p_prefit};
+        ROOT::Math::PxPyPzMVector ele_p4(pe.X(), pe.Y(), pe.Z(), electron_mass);
+        ROOT::Math::PxPyPzMVector pos_p4(pp.X(), pp.Y(), pp.Z(), electron_mass);
+        bus_.set("trk_invM", (ele_p4 + pos_p4).M());
+    }
+    bus_.set("ele_p_smear_ratio", selected.ele_p_smear_ratio);
+    bus_.set("pos_p_smear_ratio", selected.pos_p_smear_ratio);
 
     // earliest layer hit categories
     bool eleL1{false}, eleL2{false}, eleL3{false}, eleL4{false};
@@ -1336,6 +1357,15 @@ bool PreselectAndCategorize2021::process(IEvent*) {
         bus_.set("ele_truth_p", TVector3(trueEleP.Px(), trueEleP.Py(), trueEleP.Pz()));
         bus_.set("pos_truth_p", TVector3(truePosP.Px(), truePosP.Py(), truePosP.Pz()));
 
+        /**
+         * Truth-link flags for the selected vertex. Computed here rather than in
+         * the vertex loop above: that loop runs over every raw vertex, so a
+         * bus_.set() from inside it describes the last candidate iterated rather
+         * than the one eventually selected.
+         */
+        bus_.set("ele_has_truth_link", utils::hasTruthMatch(ele_trk, &mc_ptr, debug_));
+        bus_.set("pos_has_truth_link", utils::hasTruthMatch(pos_trk, &mc_ptr, debug_));
+
         if (isSimpSignal_) {
             event_cf_.apply("at_least_one_true_vd", n_vd > 0);
             event_cf_.apply("no_extra_true_vd", n_vd < 2);
@@ -1389,6 +1419,8 @@ void PreselectAndCategorize2021::finalize() {
     outF_->cd();
     output_tree_->Write();
     n_vertices_h_->Write();
+    multivtx_chosen_chi2_h_->Write();
+    multivtx_discarded_chi2_h_->Write();
     vertex_cf_.save();
     event_cf_.save();
     outF_->Close();

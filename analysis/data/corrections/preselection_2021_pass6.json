@@ -1,0 +1,15 @@
+{
+  "_doc": "PreselectAndCategorize2021, pass6 displaced (config_displaced_2021_pass6.py): z0 calibration, MC omega (curvature) smearing in tanLambda bins; no run-by-run momentum scale, z0 offset or z0 smearing.",
+  "z0Calib": {
+    "data": "analysis/data/smearing/z0_calib_2021.json",
+    "mc": "analysis/data/smearing/z0_calib_2021_mc.json"
+  },
+  "smearing": {
+    "cfg": "analysis/data/smearing/tool_smearing.json",
+    "smearingFactor": 1.0,
+    "smearOmega": true,
+    "variable": "tanLambda",
+    "requireTruthMatch": true,
+    "smearZ0": false
+  }
+}

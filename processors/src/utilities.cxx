@@ -75,8 +75,11 @@ Particle* utils::buildParticle(EVENT::ReconstructedParticle* lc_particle, std::s
     // Set the Track for the HpsParticle
     if (lc_particle->getTracks().size() > 0) {
         Track* trkPtr = utils::buildTrack(lc_particle->getTracks()[0], trackstate_location, gbl_kink_data, track_data);
-        part->setTrack(trkPtr);
-        delete trkPtr;
+        // buildTrack returns nullptr when the requested track state is missing
+        if (trkPtr) {
+            part->setTrack(trkPtr);
+            delete trkPtr;
+        }
     }
 
     // Set the Track for the HpsParticle

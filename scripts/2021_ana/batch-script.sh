@@ -12,7 +12,7 @@
 #
 #  ENVIRONMENT VARIABLES (passed via sbatch --export):
 #   OUTPUT_DIR   - Base output directory for this job
-#   HPSTR_CONFIG - Python config file to use (e.g., config_displaced_2021.py)
+#   HPSTR_CONFIG - Python config file to use (e.g., config_displaced_2021_pass5.py)
 #   PRESELECT_SUBDIR - Optional subdirectory for systematics studies
 #
 #  USAGE
@@ -60,7 +60,7 @@ echo ""
 # 2. config.sh defaults - fallback for legacy usage
 # The :- syntax means "use env var if set, otherwise use config.sh value"
 OUTPUT_DIR="${OUTPUT_DIR:-}"
-HPSTR_CONFIG="${HPSTR_CONFIG:-config_displaced_2021.py}"
+HPSTR_CONFIG="${HPSTR_CONFIG:-config_displaced_2021_pass5.py}"
 
 if [[ -z "${OUTPUT_DIR}" ]]; then
   echo "ERROR: OUTPUT_DIR not set. Pass via sbatch --export or set in config.sh"

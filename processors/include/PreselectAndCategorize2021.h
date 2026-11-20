@@ -17,6 +17,7 @@
 #include "TMath.h"
 #include "TSData.h"
 #include "TrackBiasingTool.h"
+#include "TrackCorrector.h"
 #include "TrackSmearingTool.h"
 #include "TruthMatchingUtils.h"
 #include "TrackTools.h"
@@ -34,15 +35,12 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
   private:
     std::string trkColl_{"KalmanFullTracks"};
     // std::string hitColl_{"SiClustersOnTrack"};
+    // Track corrections: one TrackCorrector JSON; the per-job settings below stay parameters.
+    std::string trackCorrectionsCfg_{""};  // TrackCorrector JSON ("" = no track corrections)
+    std::shared_ptr<TrackCorrector> corrector_;
     int smearingSeed_{42};  // configurable seed (default 42 for backward compat)
-    bool doSmearing_{true};      // master switch for track smearing
-    bool doZ0Corrections_{true}; // if false, skip all z0 corrections (v0proj mean shift, z0 smearing)
-    double smearingFactor_{1.0};  // factor to multiply smearing parameters by
-    bool requireTruthMatch_{false};  // require truth match for smearing
-    bool smearOmega_{false};  // use omega (curvature) smearing instead of p smearing
-    std::string smearingVariable_{""};  // "flat", "nHits", "tanLambda", "phi0"; "" = JSON default
-    std::string scaleCorrVariable_{""};  // if set, omega data-mode scale uses pBinned_ means
-    bool applyMeanCorr_{false};          // enable omega-space mean correction (PATH B)
+    bool doSmearing_{true};      // MC smearing on/off for this job
+    int requireTruthMatch_{-1};  // require truth match for smearing; -1 = use the JSON value
     bool isSimpSignal_{false};
     bool isApSignal_{false};
     int apPDG_{622};  // PDG code for A': 622 for displaced, 623 for prompt
@@ -50,6 +48,9 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
     bool disablePreselection_{false};  // if true, skip all vertex-level cuts
     bool disableTimingCuts_{false};    // if true, skip all track/cluster timing cuts
     bool disableVertexChi2Cut_{false}; // if true, skip the vertex chi2 cut
+    bool requireSingleVertex_{true};   // if true (default), veto events with >=2 preselected
+                                       // vertices; if false, keep the event and select the
+                                       // preselected vertex with the lowest vertex chi2 instead
     bool useVertexMomentum_{true};     // if true, replace each particle's track momentum with the
                                        // vertex-fitted momentum (P1/P2); if false, keep the
                                        // standalone track-fit momentum
@@ -60,10 +61,15 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
                                                 // singles2||singles3) or "pairs" (OR of all pair triggers)
     double psumCut_{-1.0};  // minimum psum (|p_{e-} + p_{e+}|) [GeV]; filtering disabled when < 0
     double beamE_{3.74};          // beam energy [GeV] used for recoil inference
-    double thetaBeamMrad_{0.0};   // beam angle [mrad] used for recoil inference
-    std::shared_ptr<TrackBiasingTool> biasingTool_{nullptr};
+    double thetaBeamMrad_{30.5};  // beam angle [mrad] used for recoil inference
     std::vector<double> determine_time_cuts(bool isData, int runNumber);
     std::vector<double> time_cuts_{6.9, 5.2, 9.0};
+
+    // Diagnostics for the requireSingleVertex_=false best-chi2 selection: filled whenever an
+    // event has >=2 preselected vertices, regardless of whether requireSingleVertex_ would have
+    // vetoed it, so the effect of relaxing the veto can be studied even with it left enabled.
+    std::unique_ptr<TH1F> multivtx_chosen_chi2_h_;    // chi2 of the vertex that would be chosen
+    std::unique_ptr<TH1F> multivtx_discarded_chi2_h_; // chi2 of every other preselected vertex
 
     // Inferred recoil-electron angle relative to the beam direction, in mrad.
     // The recoil 3-momentum is reconstructed from momentum conservation:
@@ -73,6 +79,12 @@ class PreselectAndCategorize2021 : public PreselectAndCategorize {
 
     bool saveAllTracks_{false}; // if true, save all tracks in the event
     bool calcMultiTrackVars_{false}; // if true, calculate event-level variables (min_dTanlambda, etc.)
+
+    // Minimum 2D tracker hits for all_preselected_tracks. 
+    // Negative (default) means follow the preselection
+    int extraTrackMinHits_{-1};
+
+    int input_entry_{-1};
 
     Track createInferredTrack(Vertex* vtx, Track* ele_track, Track* pos_track);
 

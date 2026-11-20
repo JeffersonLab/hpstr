@@ -19,6 +19,11 @@
 #include <UTIL/LCRelationNavigator.h>
 #include <IMPL/MCParticleImpl.h>
 #include <IMPL/SimTrackerHitImpl.h>
+#include <EVENT/MCParticle.h>
+#include <EVENT/SimTrackerHit.h>
+
+#include <map>
+#include <set>
 
 //-----------//
 //   hpstr   //
@@ -80,7 +85,63 @@ class VertexProcessor : public Processor {
          */
         virtual void finalize();
 
-    private: 
+    private:
+
+        /**
+         * @brief Closure test of the truth-link chain, off by default.
+         *
+         * The chain that feeds PreselectAndCategorize2021's truth_ele_id is
+         *
+         *   tracker hit -> getRawHits() -> mcPartRelLcio_ -> SimTrackerHit
+         *               -> getMCParticle()->id() -> Track::addMcpHit()
+         *               -> plurality -> lookup in the hpstr MCParticle collection
+         *
+         * and every stage can drop the link while looking identical downstream:
+         * hasTruthMatch() returns false whether the relation was missing, the
+         * MCParticle pointer was null, the id resolves to nothing in the stored
+         * MCParticle collection, or the plurality lands on a non-e+-.  These
+         * counters separate those cases and check that what LCIO offered is
+         * exactly what ended up on the hpstr Track.
+         */
+        struct TruthLinkClosure {
+            long n_events{0};              //!< events seen
+            long n_events_with_rel{0};     //!< events where mcPartRelLcio_ was present
+            long n_events_with_mcp{0};     //!< events where mcPartCollLcio_ was present
+
+            long n_raw_event{0};           //!< raw hits in rawHitCollLcio_, whole event
+            long n_raw_event_with_rel{0};  //!< ... having >=1 relation
+
+            long n_tracks{0};              //!< tracks converted
+            long n_trackerhits{0};         //!< tracker (cluster/3D) hits on those tracks
+            long n_raw{0};                 //!< raw hits reached through those tracker hits
+            long n_raw_with_rel{0};        //!< ... having >=1 relation
+            long n_simhits{0};             //!< SimTrackerHits reached
+            long n_simhits_null_mcp{0};    //!< ... whose getMCParticle() was null
+            long n_simhits_dangling{0};    //!< ... whose MCParticle id is absent from mcPartCollLcio_
+
+            long n_expected_entries{0};    //!< addMcpHit() calls the LCIO walk should produce
+            long n_stored_entries{0};      //!< entries actually on Track::getMcpHits()
+
+            long n_trk_no_entry{0};        //!< tracks with an empty mcp-hit list
+            long n_trk_dangling{0};        //!< tracks whose plurality id is not in the MCParticle coll
+            long n_trk_not_electron{0};    //!< tracks whose plurality id resolves to |PDG| != 11
+            long n_trk_electron{0};        //!< tracks that resolve to an e+-
+            long n_trk_plurality_differs{0};  //!< strip-level and layer-unique plurality disagree
+        };
+
+        /**
+         * @brief Tally the closure counters for one converted track.
+         *
+         * @param track       the hpstr Track that addMcpHit() was just called on
+         * @param mcp_pdg     id -> PDG for every particle in mcPartCollLcio_
+         * @param have_mcp    whether mcPartCollLcio_ was present this event
+         */
+        void closeTruthLink(Track* track, const std::map<int, int>& mcp_pdg, bool have_mcp);
+
+        /** @brief Print the closure summary. Called from finalize(). */
+        void reportTruthLinkClosure() const;
+
+        TruthLinkClosure closure_{};
 
         /** Containers to hold all TrackerHit objects. */
         std::vector<TrackerHit*> hits_{};
@@ -96,7 +157,11 @@ class VertexProcessor : public Processor {
         std::string trkRelCollLcio_{"TrackDataRelations"}; //!< description
         std::string hitFitsCollLcio_{"SVTFittedRawTrackerHits"};
         std::string mcPartRelLcio_{"RotatedHelicalTrackMCRelations"};
+        std::string mcPartCollLcio_{"MCParticle"}; //!< collection the stored MCParticle ids come from
+        std::string rawHitCollLcio_{"SVTRawTrackerHits"}; //!< event-level raw hits, for the closure control
         std::string trackStateLocation_{""}; //!< select track state for tracks DEFAULT AtIP
+
+        int truthClosure_{0}; //!< Run the truth-link closure test and print a summary in finalize()
 
         double bfield_{-1.}; //!< magnetic field
 

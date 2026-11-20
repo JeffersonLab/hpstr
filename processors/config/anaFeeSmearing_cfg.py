@@ -34,7 +34,9 @@ anaTrks.parameters["selectionjson"] = os.environ['HPSTR_BASE']+'/analysis/select
 anaTrks.parameters["isData"] = options.isData
 
 #SmearingClosureTest
-anaTrks.parameters["pSmearingFile"] =  os.environ['HPSTR_BASE']+"/utils/data/smearingFile_2016_all_12112023.root"
+# Track corrections (data scale corrections, MC smearing), applied to track_smeared:
+# one TrackCorrector JSON. doSmearing and the seed stay per-job parameters.
+anaTrks.parameters["trackCorrectionsCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/corrections/fee_2016.json"
 
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/feeSmearing/"
 anaTrks.parameters["regionDefinitions"] = []

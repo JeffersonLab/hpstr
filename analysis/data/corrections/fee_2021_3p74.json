@@ -1,0 +1,16 @@
+{
+  "_doc": "FeeAnaProcessor, 3.74 GeV (scripts/fee_ana/anaFeeSmearing_3p74_cfg.py): run-by-run FEE momentum scale on data, MC omega smearing in phi0 bins with z0 smearing.",
+  "momentumScale": {
+    "runScale": "analysis/data/smearing/fee_scale_smearing_2021_3p74.json",
+    "meanCorr": "",
+    "meanCorrVariable": ""
+  },
+  "smearing": {
+    "cfg": "analysis/data/smearing/tool_smearing.json",
+    "smearingFactor": 1.0,
+    "smearOmega": true,
+    "variable": "phi0",
+    "requireTruthMatch": false,
+    "smearZ0": true
+  }
+}

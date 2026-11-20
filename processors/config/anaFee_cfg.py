@@ -82,14 +82,12 @@ anaFee.parameters["eopMax"] = 99.0
 ###############################
 #   Momentum smearing        #
 ###############################
-anaFee.parameters["smearingCfg"]    = os.environ['HPSTR_BASE']+"/analysis/data/smearing/tool_smearing.json"
+# Track corrections (data scale corrections, MC smearing), applied to track_smeared:
+# one TrackCorrector JSON. doSmearing and the seed stay per-job parameters.
+anaFee.parameters["trackCorrectionsCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/corrections/fee_2021_meancorr.json"
 anaFee.parameters["doSmearing"]     = 1
-anaFee.parameters["smearingFactor"] = 1.0
-anaFee.parameters["smearOmega"]     = 1
-# Smearing lookup variable: "flat", "nHits", "tanLambda", "phi0" ("" = JSON default)
-anaFee.parameters["smearingVariable"] = "phi0"
+
 # Scale correction: "" = use omega-space means (default); "tanLambda" = p-space means
-anaFee.parameters["scaleCorrVariable"] = ""
 
 # Optional per-region selections (empty = none)
 anaFee.parameters["regionDefinitions"] = []

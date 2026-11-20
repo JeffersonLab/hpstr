@@ -53,23 +53,21 @@ preselect.parameters["isSignal"] = 1 if ('signal' in options.sample) else 0
 preselect.parameters["isSimpSignal"] = 1 if ('simp' in options.sample) else 0
 preselect.parameters["isApSignal"] = 1 if ('ap' in options.sample) else 0
 preselect.parameters["beamPosCfg"] = "" # has already been done for these samples
-preselect.parameters["pSmearingFile"] = ""
+# Track corrections (z0 offsets / calibration, data scale corrections, MC smearing):
+# one TrackCorrector JSON. doSmearing, the seed and requireTruthMatch stay per-job parameters.
+preselect.parameters["trackCorrectionsCfg"] = file_in_hpstr('analysis/data/corrections/preselection_2021_pass6.json')
 #preselect.parameters["debug"] = 1
 #preselect.parameters["apPDG"] = 623
 #preselect.parameters["disablePreselection"] = 1
 preselect.parameters["disableTimingCuts"] = 0
 preselect.parameters["vtxCollection"] = "UnconstrainedV0Vertices_KF"
+# V0 projection fits for the vertex-projection significance only; the z0 offset taken from
+# them (when wanted) is set in the trackCorrectionsCfg JSON.
 preselect.parameters["v0ProjectionFitsCfg"] = file_in_hpstr(
         'analysis/data/v0_projection_2021_v9_config.json'
         if options.isData else
         'analysis/data/v0_projection_2021_v9_mc_14272_config.json'
 )
-preselect.parameters['trackBiasCfg'] = ""
-#preselect.parameters['trackBiasCfg'] = file_in_hpstr(
-#        'analysis/data/track_bias_corrections_data_2021.json'
-#        if options.isData else
-#        'analysis/data/track_bias_corrections_tritrig_2021.json'
-#)
 
 #preselect.parameters["beamPosCfg"] = file_in_hpstr(
 #        'analysis/data/beam_pos_2021_config.json'
@@ -80,22 +78,14 @@ preselect.parameters['trackBiasCfg'] = ""
 preselect.parameters['calTimeOffset'] = 37.3
 #preselect.parameters['calTimeOffset'] = 37.3 if options.isData else 24.
 
-preselect.parameters["doZ0Corrections"] = 0
-preselect.parameters["z0CalibCfg"] = file_in_hpstr('analysis/data/smearing/z0_calib_2021.json')
-preselect.parameters["z0CalibMcCfg"] = file_in_hpstr('analysis/data/smearing/z0_calib_2021_mc.json')
-preselect.parameters["smearOmega"] = 1
-preselect.parameters["smearingVariable"] = "tanLambda"
-preselect.parameters["scaleCorrVariable"] = ""   # scale corrections disabled
-preselect.parameters["applyMeanCorr"] = 0
 preselect.parameters["doV0ProjZ0"] = 0
-preselect.parameters["smearingCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/smearing/tool_smearing.json"
-preselect.parameters["eleMinHits"] = 10 #6
-preselect.parameters["posMinHits"] = 10 #8 
+preselect.parameters["eleMinHits"] = 6
+preselect.parameters["posMinHits"] = 6
 preselect.parameters["useVertexMomentum"] = 1  # 0 = use standalone track momenta; 1 = vertex-fitted
+preselect.parameters["requireSingleVertex"] = 0  # 0 = keep events w/ >=2 preselected vertices, select best chi2; 1 = veto them
 preselect.parameters["triggerSelection"] = options.trigger
 preselect.parameters["psumCut"] = 0.0
 preselect.parameters["doSmearing"] = 1 if (options.smearing and not options.noSmearing and options.sample != 'data') else 0
-preselect.parameters["smearingFactor"] = 1.0
 preselect.parameters["smearingSeed"] = options.seed
 preselect.parameters["requireTruthMatch"] = 1
 

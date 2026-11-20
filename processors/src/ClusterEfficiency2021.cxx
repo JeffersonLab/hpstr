@@ -117,6 +117,10 @@ void ClusterEfficiency2021::setFile(TFile* out_file) {
 }
 
 bool ClusterEfficiency2021::process(IEvent*) {
+    // Reset output branches so conditionally-filled ones do not carry over the
+    // previous event's value into this event's entry.
+    bus_.clear_outputs();
+
     const auto& tsbank{bus_.get<TSData>("TSBank")};
     const auto& eh{bus_.get<EventHeader>("EventHeader")};
 

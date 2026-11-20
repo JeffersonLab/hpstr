@@ -167,6 +167,7 @@ fsp.parameters["fspCollLcio"] = "FinalStateParticles_KF"
 fsp.parameters["fspCollRoot"] = "FinalStateParticles_KF"
 fsp.parameters["kinkRelCollLcio"] = ""
 fsp.parameters["trkRelCollLcio"] = "KFTrackDataRelations"
+fsp.parameters["trackStateLocation"] = "AtTarget"
 
 if(options.rawHits==1):
     fsp.parameters["trkhitCollRoot"] = "fspOnTrackHits"

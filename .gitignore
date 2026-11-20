@@ -57,3 +57,16 @@ install/
 .vscode/
 .DS_Store
 build*/
+
+# Analysis-script outputs (job logs, ntuples, plots, local test commands)
+scripts/**/log/
+scripts/**/*.root
+scripts/**/*.png
+scripts/**/*.pdf
+scripts/**/plots/
+scripts/2021_ana/env.sh
+scripts/2021_ana/scratch_*/
+scripts/2021_ana/data/run.sh
+scripts/2021_ana/helper_scripts/run.sh
+__pycache__/
+*.pyc

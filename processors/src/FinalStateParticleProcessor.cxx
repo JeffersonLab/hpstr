@@ -27,6 +27,7 @@ void FinalStateParticleProcessor::configure(const ParameterSet& parameters) {
         trkhitCollRoot_    = parameters.getString("trkhitCollRoot",trkhitCollRoot_);
         rawhitCollRoot_    = parameters.getString("rawhitCollRoot",rawhitCollRoot_);
         bfield_            = parameters.getDouble("bfield",bfield_);  //this will overwrite the momentum; only use for pre-v3 slcio
+        trackStateLocation_ = parameters.getString("trackStateLocation", trackStateLocation_);
     }
     catch (std::runtime_error& error)
     {
@@ -126,10 +127,14 @@ bool FinalStateParticleProcessor::process(IEvent* ievent) {
         lc_fsp = static_cast<EVENT::ReconstructedParticle*>(lc_fsps->getElementAt(ifsp));
         if (debug_ > 0) std::cout << "FinalStateParticleProcessor: Build Particle" << std::endl;
         
-        Particle * fsp = utils::buildParticle(lc_fsp,"", gbl_kink_data, track_data);
-        if (lc_fsp->getTracks().size()>0){
-            EVENT::Track* lc_track = static_cast<EVENT::Track*>(lc_fsp->getTracks()[0]);
-            Track* track = utils::buildTrack(lc_track,"",gbl_kink_data,track_data);
+        Particle * fsp = utils::buildParticle(lc_fsp, trackStateLocation_, gbl_kink_data, track_data);
+        EVENT::Track* lc_track = lc_fsp->getTracks().empty() ? nullptr : static_cast<EVENT::Track*>(lc_fsp->getTracks()[0]);
+        Track* track = lc_track ? utils::buildTrack(lc_track, trackStateLocation_, gbl_kink_data, track_data) : nullptr;
+        // buildTrack returns nullptr when the requested track state is missing
+        if (lc_track && !track)
+            std::cout << "[FinalStateParticleProcessor] WARNING: track " << lc_track->id() << " has no '"
+                      << trackStateLocation_ << "' track state; particle stored without a track" << std::endl;
+        if (track){
 	    if (bfield_ > 0.0) track->setMomentum(bfield_);  //this will overwrite the momentum; only use for pre-v3 slcio
             if (track->isKalmanTrack()) hitType = 1; //SiClusters
             EVENT::TrackerHitVec lc_tracker_hits = lc_track->getTrackerHits(); 

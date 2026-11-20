@@ -1,0 +1,44 @@
+\begin{table}[htbp]
+  \centering
+  \caption{Full-energy-electron (FEE) selection applied by the \texttt{FeeAnaProcessor}
+           for the 2021 runs, for the two beam-energy configurations. Cuts are applied
+           per final-state particle (electron candidate) built from the
+           \texttt{FinalStateParticles\_KF} collection.}
+  \label{tab:fee_selection}
+  \begin{tabular}{lcc}
+    \toprule
+    Selection & 3.74\,GeV config & 1.92\,GeV config \\
+    \midrule
+    \multicolumn{3}{l}{\textit{Event / trigger}} \\
+    FEE trigger (TSBank FEE\_Top $\lor$ FEE\_Bot)\textsuperscript{a} & required & required \\
+    \midrule
+    \multicolumn{3}{l}{\textit{Particle / cluster}} \\
+    Charge (electron)                       & $< 0$            & $< 0$ \\
+    Associated ECal cluster                 & required         & required \\
+    Cluster energy $E_{\mathrm{clu}}$       & $> 3.0$\,GeV      & $> 1.54$\,GeV \\
+    Corrected cluster time\textsuperscript{b} & $[-6,\,6]$\,ns & $[-6,\,6]$\,ns \\
+    $E/p$                                   & $[0,\,99]$ (open) & $[0,\,99]$ (open) \\
+    \midrule
+    \multicolumn{3}{l}{\textit{Track quality}} \\
+    Hits on track $N_{\mathrm{hits}}$       & $\geq 10$        & $\geq 10$ \\
+    $\chi^2/\mathrm{ndf}$                    & $< 10$           & $< 10$ \\
+    Momentum $p$                            & $(2,\,6)$\,GeV    & $(1,\,3)$\,GeV \\
+    \midrule
+    \multicolumn{3}{l}{\textit{In-time isolation veto}\textsuperscript{c}} \\
+    Veto extra in-time clusters             & off              & on \\
+    Veto extra in-time tracks               & off              & on \\
+    Cluster/track time window               & --               & $8$\,ns \\
+    Min.\ cluster energy counted            & --               & $0.5$\,GeV \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{2pt}
+  \begin{flushleft}\footnotesize
+  \textsuperscript{a} Applied to data only; the TSBank FEE bits are not filled in MC.\\
+  \textsuperscript{b} Cluster time after subtracting \texttt{CalTimeOffset}$=37.3$\,ns
+      (same for data and MC), centering the prompt peak near zero.\\
+  \textsuperscript{c} A candidate is vetoed if more than one cluster (or track) lies
+      within the time window of the primary FEE cluster. The in-time multiplicities
+      are always written to the output tree regardless of whether the veto is applied.
+  \end{flushleft}
+\end{table}

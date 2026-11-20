@@ -100,6 +100,7 @@ class FinalStateParticleProcessor : public Processor {
         std::string kinkRelCollLcio_{"GBLKinkDataRelations"}; //!< description
         std::string trkRelCollLcio_{"TrackDataRelations"}; //!< description
         std::string hitFitsCollLcio_{"SVTFittedRawTrackerHits"};
+        std::string trackStateLocation_{""}; //!< track state used to build tracks; "" = AtPerigee
 
         double bfield_{-1.}; //!< magnetic field
         

@@ -1,0 +1,24 @@
+{
+  "_doc": "PreselectAndCategorize2021, pass5 displaced and prompt (config_displaced_2021_pass5.py, config_prompt_2021_pass5.py): per-run v0-projection z0 offset, z0 calibration, run-by-run momentum scale on data, MC omega smearing in tanLambda bins with z0 smearing.",
+  "z0Offset": {
+    "data": "analysis/data/v0_projection_2021_v9_config.json",
+    "mc": "analysis/data/v0_projection_2021_v9_mc_14272_config.json"
+  },
+  "z0Calib": {
+    "data": "analysis/data/smearing/z0_calib_2021.json",
+    "mc": "analysis/data/smearing/z0_calib_2021_mc.json"
+  },
+  "momentumScale": {
+    "runScale": "analysis/data/smearing/fee_scale_smearing_2021_3p74.json",
+    "meanCorr": "",
+    "meanCorrVariable": ""
+  },
+  "smearing": {
+    "cfg": "analysis/data/smearing/tool_smearing.json",
+    "smearingFactor": 1.0,
+    "smearOmega": true,
+    "variable": "tanLambda",
+    "requireTruthMatch": true,
+    "smearZ0": true
+  }
+}

@@ -44,15 +44,12 @@ anaTrks.parameters["eopMin"] = 0.0
 anaTrks.parameters["eopMax"] = 99.0
 
 #SmearingClosureTest
-anaTrks.parameters["smearingCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/smearing/tool_smearing.json"
+# Track corrections (data scale corrections, MC smearing), applied to track_smeared:
+# one TrackCorrector JSON. doSmearing and the seed stay per-job parameters.
+anaTrks.parameters["trackCorrectionsCfg"] = os.environ['HPSTR_BASE']+"/analysis/data/corrections/fee_2021_meancorr.json"
 anaTrks.parameters["doSmearing"] = 1 #0 if options.isData else 1
-anaTrks.parameters["smearingFactor"] = 1.0
-anaTrks.parameters["smearOmega"] = 1
-#anaTrks.parameters["smearingVariable"] = "tanLambda"
-anaTrks.parameters["smearingVariable"] = "phi0"
-#anaTrks.parameters["smearingVariable"] = "flat"
+
 # Scale correction: "" = use omega-space means (default); "tanLambda" = p-space means
-anaTrks.parameters["scaleCorrVariable"] = ""
 
 RegionPath = os.environ['HPSTR_BASE']+"/analysis/selections/feeSmearing/"
 anaTrks.parameters["regionDefinitions"] = []
