@@ -2,10 +2,11 @@ var searchData=
 [
   ['uc_5fv0candidates_0',['UC_V0CANDIDATES',['../namespaceCollections.html#a2beb95bd7784a211d3d9ebaf7f894a1f',1,'Collections']]],
   ['uc_5fv0vertices_1',['UC_V0VERTICES',['../namespaceCollections.html#a6f34f4fdcac7049c52193ceb79629d7b',1,'Collections']]],
-  ['upper_5fbound_5f_2',['upper_bound_',['../classBumpHunter.html#ad238d7648d7f332843b306a23231c5f0',1,'BumpHunter']]],
-  ['upper_5flimit_5f_3',['upper_limit_',['../classHpsFitResult.html#a8dde89795870620273808294c26abce8',1,'HpsFitResult']]],
-  ['usefixedsmearing_5f_4',['useFixedSmearing_',['../classTrackSmearingTool.html#a0ba5a39cf160b46842ff7c0fff3d6d02',1,'TrackSmearingTool']]],
-  ['useseparatetopbot_5f_5',['useSeparateTopBot_',['../classTrackSmearingTool.html#a0fd8ff7d0e6fe4f041e60bb16476122d',1,'TrackSmearingTool']]],
-  ['usetrackerhits_5f_6',['useTrackerHits_',['../classTrackingProcessor.html#a23e49b66f544b820bd55beffa91f5dbb',1,'TrackingProcessor::useTrackerHits_'],['../classVertexProcessor.html#a23e49b66f544b820bd55beffa91f5dbb',1,'VertexProcessor::useTrackerHits_']]],
-  ['usevertexmomentum_5f_7',['useVertexMomentum_',['../classPreselectAndCategorize2021.html#aba5d579ad98c5ffc431c60cd5c142ea3',1,'PreselectAndCategorize2021']]]
+  ['updatesvertex_5f_2',['updatesVertex_',['../classTrackCorrector.html#ace7e2e1e0ff85415a7dfbd07f9e6e561',1,'TrackCorrector']]],
+  ['upper_5fbound_5f_3',['upper_bound_',['../classBumpHunter.html#ad238d7648d7f332843b306a23231c5f0',1,'BumpHunter']]],
+  ['upper_5flimit_5f_4',['upper_limit_',['../classHpsFitResult.html#a8dde89795870620273808294c26abce8',1,'HpsFitResult']]],
+  ['usefixedsmearing_5f_5',['useFixedSmearing_',['../classTrackSmearingTool.html#a0ba5a39cf160b46842ff7c0fff3d6d02',1,'TrackSmearingTool']]],
+  ['useseparatetopbot_5f_6',['useSeparateTopBot_',['../classTrackSmearingTool.html#a0fd8ff7d0e6fe4f041e60bb16476122d',1,'TrackSmearingTool']]],
+  ['usetrackerhits_5f_7',['useTrackerHits_',['../classTrackingProcessor.html#a23e49b66f544b820bd55beffa91f5dbb',1,'TrackingProcessor::useTrackerHits_'],['../classVertexProcessor.html#a23e49b66f544b820bd55beffa91f5dbb',1,'VertexProcessor::useTrackerHits_']]],
+  ['usevertexmomentum_5f_8',['useVertexMomentum_',['../classPreselectAndCategorize2021.html#aba5d579ad98c5ffc431c60cd5c142ea3',1,'PreselectAndCategorize2021']]]
 ];

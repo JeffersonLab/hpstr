@@ -73,6 +73,7 @@ $(function() {
 <div id="doc-content">
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classEventBus-members.html">List of all members</a>  </div>
@@ -82,9 +83,15 @@ $(function() {
 
 <p><code>#include &lt;<a class="el" href="PreselectAndCategorize_8h_source.html">PreselectAndCategorize.h</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:auto_5Fclearable" id="r_auto_5Fclearable"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEventBus_1_1auto__clearable.html">auto_clearable</a></td></tr>
+<tr class="memitem:auto_5Fclearable_3C_20std_3A_3Avector_3C_20U_20_3E_20_3E" id="r_auto_5Fclearable_3C_20std_3A_3Avector_3C_20U_20_3E_20_3E"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEventBus_1_1auto__clearable_3_01std_1_1vector_3_01U_01_4_01_4.html">auto_clearable&lt; std::vector&lt; U &gt; &gt;</a></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:afb5a6fd0ce1e8c495fe3c96505444b5e" id="r_afb5a6fd0ce1e8c495fe3c96505444b5e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afb5a6fd0ce1e8c495fe3c96505444b5e">has</a> (const std::string &amp;name)</td></tr>
+<tr class="memitem:a0f3ca3216b02555ce1783216163b43dd" id="r_a0f3ca3216b02555ce1783216163b43dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0f3ca3216b02555ce1783216163b43dd">clear_outputs</a> ()</td></tr>
 <tr class="memitem:ae750aa719b649e249441dea923896d41" id="r_ae750aa719b649e249441dea923896d41"><td class="memTemplParams" colspan="2">template&lt;typename BaggageType&gt; </td></tr>
 <tr class="memitem:ae750aa719b649e249441dea923896d41 template"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae750aa719b649e249441dea923896d41">board_input</a> (TTree *tree, const std::string &amp;name)</td></tr>
 <tr class="memitem:a182abe81d936562f70043cadb6111101" id="r_a182abe81d936562f70043cadb6111101"><td class="memTemplParams" colspan="2">template&lt;typename BaggageType&gt; </td></tr>
@@ -97,10 +104,12 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-pri-attribs" class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:aae59df9358017322ff255007d47332e9" id="r_aae59df9358017322ff255007d47332e9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classframework_1_1Bus.html">framework::Bus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae59df9358017322ff255007d47332e9">bus_</a></td></tr>
+<tr class="memitem:aa7beb6d487fe4e8310e5ad67b2c99817" id="r_aa7beb6d487fe4e8310e5ad67b2c99817"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa7beb6d487fe4e8310e5ad67b2c99817">clearable_output_names_</a></td></tr>
+<tr class="memdesc:aa7beb6d487fe4e8310e5ad67b2c99817"><td class="mdescLeft">&#160;</td><td class="mdescRight">names of the output passengers that are safe to reset each event  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize_8h_source.html#l00164">164</a> of file <a class="el" href="PreselectAndCategorize_8h_source.html">PreselectAndCategorize.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize_8h_source.html#l00167">167</a> of file <a class="el" href="PreselectAndCategorize_8h_source.html">PreselectAndCategorize.h</a>.</p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="ae750aa719b649e249441dea923896d41" name="ae750aa719b649e249441dea923896d41"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae750aa719b649e249441dea923896d41">&#9670;&#160;</a></span>board_input()</h2>
@@ -131,7 +140,7 @@ template&lt;typename BaggageType&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize_8h_source.html#l00173">173</a> of file <a class="el" href="PreselectAndCategorize_8h_source.html">PreselectAndCategorize.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize_8h_source.html#l00213">213</a> of file <a class="el" href="PreselectAndCategorize_8h_source.html">PreselectAndCategorize.h</a>.</p>
 
 </div>
 </div>
@@ -164,7 +173,37 @@ template&lt;typename BaggageType&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize_8h_source.html#l00185">185</a> of file <a class="el" href="PreselectAndCategorize_8h_source.html">PreselectAndCategorize.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize_8h_source.html#l00225">225</a> of file <a class="el" href="PreselectAndCategorize_8h_source.html">PreselectAndCategorize.h</a>.</p>
+
+</div>
+</div>
+<a id="a0f3ca3216b02555ce1783216163b43dd" name="a0f3ca3216b02555ce1783216163b43dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f3ca3216b02555ce1783216163b43dd">&#9670;&#160;</a></span>clear_outputs()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void clear_outputs </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Reset the resettable output passengers to their default state.</p>
+<p>Call this at the start of each event. Branches that are only set under some condition (e.g. the truth branches, which need a truth match to be computed) would otherwise still be holding the value from the last event that did set them, and that stale value gets written into the tree.</p>
+<p>Only outputs are reset &ndash; input passengers are attached to the input TTree and are refilled by ROOT on each entry, so clearing them here would throw away the event we are about to process. Class-typed outputs are also left alone; see <a class="el" href="structEventBus_1_1auto__clearable.html">auto_clearable</a> above. Consumers of a conditionally-set class-typed branch should gate on a companion scalar (which is reset) rather than trusting the object itself. </p>
+
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize_8h_source.html#l00208">208</a> of file <a class="el" href="PreselectAndCategorize_8h_source.html">PreselectAndCategorize.h</a>.</p>
 
 </div>
 </div>
@@ -193,7 +232,7 @@ template&lt;typename BaggageType&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize_8h_source.html#l00196">196</a> of file <a class="el" href="PreselectAndCategorize_8h_source.html">PreselectAndCategorize.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize_8h_source.html#l00239">239</a> of file <a class="el" href="PreselectAndCategorize_8h_source.html">PreselectAndCategorize.h</a>.</p>
 
 </div>
 </div>
@@ -220,7 +259,7 @@ template&lt;typename BaggageType&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize_8h_source.html#l00168">168</a> of file <a class="el" href="PreselectAndCategorize_8h_source.html">PreselectAndCategorize.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize_8h_source.html#l00188">188</a> of file <a class="el" href="PreselectAndCategorize_8h_source.html">PreselectAndCategorize.h</a>.</p>
 
 </div>
 </div>
@@ -253,7 +292,7 @@ template&lt;typename BaggageType&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize_8h_source.html#l00201">201</a> of file <a class="el" href="PreselectAndCategorize_8h_source.html">PreselectAndCategorize.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize_8h_source.html#l00244">244</a> of file <a class="el" href="PreselectAndCategorize_8h_source.html">PreselectAndCategorize.h</a>.</p>
 
 </div>
 </div>
@@ -278,7 +317,33 @@ template&lt;typename BaggageType&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize_8h_source.html#l00165">165</a> of file <a class="el" href="PreselectAndCategorize_8h_source.html">PreselectAndCategorize.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize_8h_source.html#l00168">168</a> of file <a class="el" href="PreselectAndCategorize_8h_source.html">PreselectAndCategorize.h</a>.</p>
+
+</div>
+</div>
+<a id="aa7beb6d487fe4e8310e5ad67b2c99817" name="aa7beb6d487fe4e8310e5ad67b2c99817"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa7beb6d487fe4e8310e5ad67b2c99817">&#9670;&#160;</a></span>clearable_output_names_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::string&gt; clearable_output_names_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>names of the output passengers that are safe to reset each event </p>
+
+<p class="definition">Definition at line <a class="el" href="PreselectAndCategorize_8h_source.html#l00170">170</a> of file <a class="el" href="PreselectAndCategorize_8h_source.html">PreselectAndCategorize.h</a>.</p>
 
 </div>
 </div>

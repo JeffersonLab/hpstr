@@ -207,22 +207,15 @@ Private Attributes</h2></td></tr>
 <tr class="memdesc:a7e2a1ef365eb451f359edbf4cbdd5f49"><td class="mdescLeft">&#160;</td><td class="mdescRight">|t_trk - t_FEEclu(corrected)| window for the track veto (ns)  <br /></td></tr>
 <tr class="memitem:a56aba2858940e48b881336fdd6556cfe" id="r_a56aba2858940e48b881336fdd6556cfe"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a56aba2858940e48b881336fdd6556cfe">vetoClusterEnergyMin_</a> {0.5}</td></tr>
 <tr class="memdesc:a56aba2858940e48b881336fdd6556cfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">only clusters above this energy count toward the cluster veto (GeV)  <br /></td></tr>
-<tr class="memitem:a041ddb16f98b1021f8c73fea4f919ad0" id="r_a041ddb16f98b1021f8c73fea4f919ad0"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classTrackSmearingTool.html">TrackSmearingTool</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a041ddb16f98b1021f8c73fea4f919ad0">smearingTool_</a></td></tr>
-<tr class="memitem:a252f3f5ecc597c840eaea12531ee1868" id="r_a252f3f5ecc597c840eaea12531ee1868"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classTrackSmearingTool.html">TrackSmearingTool</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a252f3f5ecc597c840eaea12531ee1868">smearingToolRel_</a></td></tr>
-<tr class="memitem:a8aeefe0088288135e948375fa5becec5" id="r_a8aeefe0088288135e948375fa5becec5"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8aeefe0088288135e948375fa5becec5">pSmearingFile_</a> {&quot;&quot;}</td></tr>
-<tr class="memitem:a13da931eaea5abdbad264c9ebd177e1e" id="r_a13da931eaea5abdbad264c9ebd177e1e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a13da931eaea5abdbad264c9ebd177e1e">smearingCfgFile_</a> {&quot;&quot;}</td></tr>
+<tr class="memitem:af28c995cb382707871e8d032792a7847" id="r_af28c995cb382707871e8d032792a7847"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af28c995cb382707871e8d032792a7847">trackCorrectionsCfg_</a> {&quot;&quot;}</td></tr>
+<tr class="memdesc:af28c995cb382707871e8d032792a7847"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classTrackCorrector.html">TrackCorrector</a> JSON ("" = no corrections).  <br /></td></tr>
+<tr class="memitem:a87ab92404c6eb9d7167d6544da59b682" id="r_a87ab92404c6eb9d7167d6544da59b682"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classTrackCorrector.html">TrackCorrector</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87ab92404c6eb9d7167d6544da59b682">corrector_</a></td></tr>
 <tr class="memitem:a47734371f11c7b7e3c401b3d50cb0b16" id="r_a47734371f11c7b7e3c401b3d50cb0b16"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a47734371f11c7b7e3c401b3d50cb0b16">doSmearing_</a> {false}</td></tr>
-<tr class="memdesc:a47734371f11c7b7e3c401b3d50cb0b16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Master switch for smearing.  <br /></td></tr>
-<tr class="memitem:a451818003568f7cea73b9e35b5a54e9b" id="r_a451818003568f7cea73b9e35b5a54e9b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a451818003568f7cea73b9e35b5a54e9b">smearingFactor_</a> {1.0}</td></tr>
-<tr class="memdesc:a451818003568f7cea73b9e35b5a54e9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factor to multiply smearing parameters by.  <br /></td></tr>
-<tr class="memitem:a2c3a60f5f376b38488dbb03eac5266de" id="r_a2c3a60f5f376b38488dbb03eac5266de"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2c3a60f5f376b38488dbb03eac5266de">requireTruthMatch_</a> {false}</td></tr>
-<tr class="memdesc:a2c3a60f5f376b38488dbb03eac5266de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Require truth match for smearing.  <br /></td></tr>
-<tr class="memitem:a02d0496205ad98daeb28f03ce85888bb" id="r_a02d0496205ad98daeb28f03ce85888bb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a02d0496205ad98daeb28f03ce85888bb">smearOmega_</a> {false}</td></tr>
-<tr class="memdesc:a02d0496205ad98daeb28f03ce85888bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use omega (curvature) smearing instead of p smearing.  <br /></td></tr>
-<tr class="memitem:a78b4be7b11e3579563f115345fea311b" id="r_a78b4be7b11e3579563f115345fea311b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a78b4be7b11e3579563f115345fea311b">smearingVariable_</a> {&quot;&quot;}</td></tr>
-<tr class="memdesc:a78b4be7b11e3579563f115345fea311b"><td class="mdescLeft">&#160;</td><td class="mdescRight">"flat", "nHits", "tanLambda", "phi0" — explicit lookup; "" = JSON default  <br /></td></tr>
-<tr class="memitem:a4658c5f38cf10029d00564bd83f65445" id="r_a4658c5f38cf10029d00564bd83f65445"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4658c5f38cf10029d00564bd83f65445">scaleCorrVariable_</a> {&quot;&quot;}</td></tr>
-<tr class="memdesc:a4658c5f38cf10029d00564bd83f65445"><td class="mdescLeft">&#160;</td><td class="mdescRight">if set, omega data-mode scale uses pBinned_ means  <br /></td></tr>
+<tr class="memdesc:a47734371f11c7b7e3c401b3d50cb0b16"><td class="mdescLeft">&#160;</td><td class="mdescRight">MC smearing on/off for this job.  <br /></td></tr>
+<tr class="memitem:adfcd4c8bfe7a1303318e4cfeb33e6a90" id="r_adfcd4c8bfe7a1303318e4cfeb33e6a90"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adfcd4c8bfe7a1303318e4cfeb33e6a90">requireTruthMatch_</a> {-1}</td></tr>
+<tr class="memdesc:adfcd4c8bfe7a1303318e4cfeb33e6a90"><td class="mdescLeft">&#160;</td><td class="mdescRight">-1: use the JSON value; 0/1: override it  <br /></td></tr>
+<tr class="memitem:a07417caad939cf5d6e64096e8be7b122" id="r_a07417caad939cf5d6e64096e8be7b122"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a07417caad939cf5d6e64096e8be7b122">run_scale_out_</a> {1.0}</td></tr>
+<tr class="memdesc:a07417caad939cf5d6e64096e8be7b122"><td class="mdescLeft">&#160;</td><td class="mdescRight">data momentum scale applied to this track (1 if none); raw p = p / scale  <br /></td></tr>
 <tr class="memitem:a64ce60149c395f6ba61142866675d488" id="r_a64ce60149c395f6ba61142866675d488"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a64ce60149c395f6ba61142866675d488">hitPatternScaleFile_</a> {&quot;&quot;}</td></tr>
 <tr class="memdesc:a64ce60149c395f6ba61142866675d488"><td class="mdescLeft">&#160;</td><td class="mdescRight">JSON of per-hit_pattern scale factors.  <br /></td></tr>
 <tr class="memitem:a73c2e67322671093abde28fb7acf7ba9" id="r_a73c2e67322671093abde28fb7acf7ba9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a73c2e67322671093abde28fb7acf7ba9">doHitPatternScale_</a> {false}</td></tr>
@@ -470,7 +463,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classProcessor.html#a5882b5eaf11f8b1561d5bb4ecdc217c3">Processor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8cxx_source.html#l00760">760</a> of file <a class="el" href="FeeAnaProcessor_8cxx_source.html">FeeAnaProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8cxx_source.html#l00744">744</a> of file <a class="el" href="FeeAnaProcessor_8cxx_source.html">FeeAnaProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -507,7 +500,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classProcessor.html#ac35b4d4ae3c704c4f9764e8cbbb3a790">Processor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8cxx_source.html#l00148">148</a> of file <a class="el" href="FeeAnaProcessor_8cxx_source.html">FeeAnaProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8cxx_source.html#l00139">139</a> of file <a class="el" href="FeeAnaProcessor_8cxx_source.html">FeeAnaProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -544,7 +537,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classProcessor.html#a1ed21b6d43e34aa191677e80ecf2fd78">Processor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8cxx_source.html#l00307">307</a> of file <a class="el" href="FeeAnaProcessor_8cxx_source.html">FeeAnaProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8cxx_source.html#l00289">289</a> of file <a class="el" href="FeeAnaProcessor_8cxx_source.html">FeeAnaProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -575,7 +568,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classProcessor.html#afc1d6045849356ad995040859cf9e427">Processor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8cxx_source.html#l00113">113</a> of file <a class="el" href="FeeAnaProcessor_8cxx_source.html">FeeAnaProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8cxx_source.html#l00103">103</a> of file <a class="el" href="FeeAnaProcessor_8cxx_source.html">FeeAnaProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -600,7 +593,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00194">194</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00190">190</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -849,7 +842,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>associated cluster energy </p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00202">202</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00198">198</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -875,7 +868,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>associated cluster time </p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00203">203</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00199">199</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -983,6 +976,30 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
+<a id="a87ab92404c6eb9d7167d6544da59b682" name="a87ab92404c6eb9d7167d6544da59b682"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87ab92404c6eb9d7167d6544da59b682">&#9670;&#160;</a></span>corrector_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classTrackCorrector.html">TrackCorrector</a>&gt; corrector_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00175">175</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+
+</div>
+</div>
 <a id="a174d7e034f9a94c6d3d7300d72ba4d1d" name="a174d7e034f9a94c6d3d7300d72ba4d1d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a174d7e034f9a94c6d3d7300d72ba4d1d">&#9670;&#160;</a></span>debug_</h2>
 
@@ -1032,7 +1049,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>master switch for the hit-pattern scale correction </p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00188">188</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00184">184</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1056,9 +1073,9 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Master switch for smearing. </p>
+<p>MC smearing on/off for this job. </p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00177">177</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00176">176</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1134,7 +1151,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>associated cluster E / track p </p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00204">204</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00200">200</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1312,7 +1329,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00243">243</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00239">239</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1362,7 +1379,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00229">229</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00225">225</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1388,7 +1405,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>true if the default (fallback) scale was used </p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00237">237</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00233">233</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1414,7 +1431,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>scale factor applied to this track's momentum </p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00236">236</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00232">232</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1440,7 +1457,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>fallback scale for unlisted patterns </p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00191">191</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00187">187</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1466,7 +1483,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>hit_pattern -&gt; scale factor </p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00190">190</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00186">186</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1492,7 +1509,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>only apply the scale on data (MC left untouched) </p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00189">189</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00185">185</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1518,7 +1535,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>JSON of per-hit_pattern scale factors. </p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00187">187</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00183">183</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1542,7 +1559,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00223">223</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00219">219</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1566,7 +1583,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00224">224</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00220">220</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1590,7 +1607,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00225">225</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00221">221</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1638,7 +1655,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00209">209</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00205">205</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1662,7 +1679,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00218">218</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00214">214</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1686,7 +1703,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00210">210</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00206">206</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1710,7 +1727,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00211">211</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00207">207</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1734,7 +1751,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00219">219</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00215">215</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1758,7 +1775,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00212">212</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00208">208</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1782,7 +1799,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00213">213</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00209">209</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1806,7 +1823,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00220">220</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00216">216</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1830,7 +1847,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00214">214</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00210">210</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1854,7 +1871,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00215">215</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00211">211</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1878,7 +1895,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00221">221</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00217">217</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -1902,7 +1919,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00216">216</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00212">212</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2004,7 +2021,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>clusters in-time with the FEE cluster (&gt;energy threshold) </p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00206">206</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00202">202</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2030,7 +2047,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>number of tracker hits on the FEE track </p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00230">230</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00226">226</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2056,7 +2073,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>tracks in-time with the FEE cluster </p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00207">207</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00203">203</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2080,7 +2097,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00264">264</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00260">260</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2104,7 +2121,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00262">262</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00258">258</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2128,7 +2145,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00263">263</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00259">259</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2152,7 +2169,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00268">268</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00264">264</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2176,7 +2193,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00280">280</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00276">276</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2200,7 +2217,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00278">278</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00274">274</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2224,7 +2241,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00279">279</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00275">275</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2248,7 +2265,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00273">273</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00269">269</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2272,7 +2289,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00271">271</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00267">267</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2296,7 +2313,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00272">272</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00268">268</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2320,7 +2337,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00267">267</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00263">263</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2344,7 +2361,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00265">265</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00261">261</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2368,7 +2385,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00266">266</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00262">262</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2392,7 +2409,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00283">283</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00279">279</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2416,7 +2433,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00281">281</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00277">277</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2440,7 +2457,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00282">282</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00278">278</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2464,7 +2481,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00276">276</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00272">272</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2488,7 +2505,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00274">274</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00270">270</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2512,7 +2529,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00275">275</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00271">271</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2536,7 +2553,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00197">197</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00193">193</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2562,7 +2579,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>smeared_p / original_p (1 if no smearing) </p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00200">200</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00196">196</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2586,7 +2603,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00246">246</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00242">242</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2610,7 +2627,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00244">244</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00240">240</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2634,7 +2651,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00251">251</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00247">247</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2658,7 +2675,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00245">245</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00241">241</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2682,7 +2699,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00249">249</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00245">245</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2706,7 +2723,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00254">254</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00250">250</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2730,7 +2747,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00247">247</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00243">243</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2754,7 +2771,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00252">252</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00248">248</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2778,7 +2795,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00248">248</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00244">244</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -2802,31 +2819,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00253">253</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="a8aeefe0088288135e948375fa5becec5" name="a8aeefe0088288135e948375fa5becec5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8aeefe0088288135e948375fa5becec5">&#9670;&#160;</a></span>pSmearingFile_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string pSmearingFile_ {&quot;&quot;}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00175">175</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00249">249</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -3010,8 +3003,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a2c3a60f5f376b38488dbb03eac5266de" name="a2c3a60f5f376b38488dbb03eac5266de"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c3a60f5f376b38488dbb03eac5266de">&#9670;&#160;</a></span>requireTruthMatch_</h2>
+<a id="adfcd4c8bfe7a1303318e4cfeb33e6a90" name="adfcd4c8bfe7a1303318e4cfeb33e6a90"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adfcd4c8bfe7a1303318e4cfeb33e6a90">&#9670;&#160;</a></span>requireTruthMatch_</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3020,7 +3013,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool requireTruthMatch_ {false}</td>
+          <td class="memname">int requireTruthMatch_ {-1}</td>
         </tr>
       </table>
   </td>
@@ -3030,14 +3023,14 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Require truth match for smearing. </p>
+<p>-1: use the JSON value; 0/1: override it </p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00179">179</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00177">177</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
-<a id="a4658c5f38cf10029d00564bd83f65445" name="a4658c5f38cf10029d00564bd83f65445"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4658c5f38cf10029d00564bd83f65445">&#9670;&#160;</a></span>scaleCorrVariable_</h2>
+<a id="a07417caad939cf5d6e64096e8be7b122" name="a07417caad939cf5d6e64096e8be7b122"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07417caad939cf5d6e64096e8be7b122">&#9670;&#160;</a></span>run_scale_out_</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3046,7 +3039,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::string scaleCorrVariable_ {&quot;&quot;}</td>
+          <td class="memname">double run_scale_out_ {1.0}</td>
         </tr>
       </table>
   </td>
@@ -3056,9 +3049,9 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>if set, omega data-mode scale uses pBinned_ means </p>
+<p>data momentum scale applied to this track (1 if none); raw p = p / scale </p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00182">182</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00178">178</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -3112,156 +3105,6 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a13da931eaea5abdbad264c9ebd177e1e" name="a13da931eaea5abdbad264c9ebd177e1e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a13da931eaea5abdbad264c9ebd177e1e">&#9670;&#160;</a></span>smearingCfgFile_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string smearingCfgFile_ {&quot;&quot;}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00176">176</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="a451818003568f7cea73b9e35b5a54e9b" name="a451818003568f7cea73b9e35b5a54e9b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a451818003568f7cea73b9e35b5a54e9b">&#9670;&#160;</a></span>smearingFactor_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double smearingFactor_ {1.0}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Factor to multiply smearing parameters by. </p>
-
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00178">178</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="a041ddb16f98b1021f8c73fea4f919ad0" name="a041ddb16f98b1021f8c73fea4f919ad0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a041ddb16f98b1021f8c73fea4f919ad0">&#9670;&#160;</a></span>smearingTool_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classTrackSmearingTool.html">TrackSmearingTool</a>&gt; smearingTool_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00173">173</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="a252f3f5ecc597c840eaea12531ee1868" name="a252f3f5ecc597c840eaea12531ee1868"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a252f3f5ecc597c840eaea12531ee1868">&#9670;&#160;</a></span>smearingToolRel_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classTrackSmearingTool.html">TrackSmearingTool</a>&gt; smearingToolRel_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00174">174</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="a78b4be7b11e3579563f115345fea311b" name="a78b4be7b11e3579563f115345fea311b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a78b4be7b11e3579563f115345fea311b">&#9670;&#160;</a></span>smearingVariable_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string smearingVariable_ {&quot;&quot;}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>"flat", "nHits", "tanLambda", "phi0" — explicit lookup; "" = JSON default </p>
-
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00181">181</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
-
-</div>
-</div>
-<a id="a02d0496205ad98daeb28f03ce85888bb" name="a02d0496205ad98daeb28f03ce85888bb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a02d0496205ad98daeb28f03ce85888bb">&#9670;&#160;</a></span>smearOmega_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool smearOmega_ {false}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Use omega (curvature) smearing instead of p smearing. </p>
-
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00180">180</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
-
-</div>
-</div>
 <a id="a06e128443e6fbce857573584ef064d62" name="a06e128443e6fbce857573584ef064d62"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a06e128443e6fbce857573584ef064d62">&#9670;&#160;</a></span>time_offset_</h2>
 
@@ -3308,7 +3151,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>momentum-scale-corrected track </p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00235">235</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00231">231</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -3334,7 +3177,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>original (unsmeared) track </p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00198">198</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00194">194</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -3360,7 +3203,33 @@ Additional Inherited Members</h2></td></tr>
 
 <p>smeared track (identical to track_out_ if no smearing) </p>
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00199">199</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00195">195</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+
+</div>
+</div>
+<a id="af28c995cb382707871e8d032792a7847" name="af28c995cb382707871e8d032792a7847"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af28c995cb382707871e8d032792a7847">&#9670;&#160;</a></span>trackCorrectionsCfg_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string trackCorrectionsCfg_ {&quot;&quot;}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classTrackCorrector.html">TrackCorrector</a> JSON ("" = no corrections). </p>
+
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00174">174</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -3462,7 +3331,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00242">242</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00238">238</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -3692,7 +3561,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00259">259</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00255">255</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -3716,7 +3585,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00257">257</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00253">253</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -3740,7 +3609,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00258">258</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="FeeAnaProcessor_8h_source.html#l00254">254</a> of file <a class="el" href="FeeAnaProcessor_8h_source.html">FeeAnaProcessor.h</a>.</p>
 
 </div>
 </div>

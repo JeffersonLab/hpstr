@@ -73,7 +73,9 @@ $(function() {
 <div id="doc-content">
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classVertexProcessor-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">VertexProcessor Class Reference</div></div>
@@ -94,6 +96,11 @@ Inheritance diagram for VertexProcessor:</div>
   </map>
 </div></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:TruthLinkClosure" id="r_TruthLinkClosure"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structVertexProcessor_1_1TruthLinkClosure.html">TruthLinkClosure</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Closure test of the truth-link chain, off by default.  <a href="structVertexProcessor_1_1TruthLinkClosure.html#details">More...</a><br /></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:af9b2eb31ef1deaf820ace54bfc0203b4" id="r_af9b2eb31ef1deaf820ace54bfc0203b4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af9b2eb31ef1deaf820ace54bfc0203b4">VertexProcessor</a> (const std::string &amp;name, <a class="el" href="classProcess.html">Process</a> &amp;<a class="el" href="#a0ce1dcd521fc7f9b80998c309256f888">process</a>)</td></tr>
@@ -118,8 +125,16 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a7017ddc30577ae1cdf3941090fe9f4b4 inherit pub_methods_classProcessor" id="r_a7017ddc30577ae1cdf3941090fe9f4b4"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classProcessor.html#a7017ddc30577ae1cdf3941090fe9f4b4">process</a> ()</td></tr>
 <tr class="memdesc:a7017ddc30577ae1cdf3941090fe9f4b4 inherit pub_methods_classProcessor"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classProcess.html">Process</a> the histograms and generate analysis output.  <br /></td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pri-methods" class="groupheader"><a id="pri-methods" name="pri-methods"></a>
+Private Member Functions</h2></td></tr>
+<tr class="memitem:a06f4ced51558e03a4b7b9d23e8b1830f" id="r_a06f4ced51558e03a4b7b9d23e8b1830f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a06f4ced51558e03a4b7b9d23e8b1830f">closeTruthLink</a> (<a class="el" href="classTrack.html">Track</a> *track, const std::map&lt; int, int &gt; &amp;mcp_pdg, bool have_mcp)</td></tr>
+<tr class="memdesc:a06f4ced51558e03a4b7b9d23e8b1830f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tally the closure counters for one converted track.  <br /></td></tr>
+<tr class="memitem:ab2aff4c611a1e5194e39a72921c79932" id="r_ab2aff4c611a1e5194e39a72921c79932"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab2aff4c611a1e5194e39a72921c79932">reportTruthLinkClosure</a> () const</td></tr>
+<tr class="memdesc:ab2aff4c611a1e5194e39a72921c79932"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print the closure summary. Called from <a class="el" href="#a32d626626eee0bc4ade146973f6abb1c" title="Callback for the Processor to take any necessary action when the processing of events finishes.">finalize()</a>.  <br /></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pri-attribs" class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
+<tr class="memitem:ad8d65cdc4e147b14738e07fcf4977e92" id="r_ad8d65cdc4e147b14738e07fcf4977e92"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structVertexProcessor_1_1TruthLinkClosure.html">TruthLinkClosure</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad8d65cdc4e147b14738e07fcf4977e92">closure_</a> {}</td></tr>
 <tr class="memitem:a85a0416b17d2d9a674b52dd52ac27949" id="r_a85a0416b17d2d9a674b52dd52ac27949"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classTrackerHit.html">TrackerHit</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85a0416b17d2d9a674b52dd52ac27949">hits_</a> {}</td></tr>
 <tr class="memitem:a1934ef73cd3d1134f35489f9131c6deb" id="r_a1934ef73cd3d1134f35489f9131c6deb"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1934ef73cd3d1134f35489f9131c6deb">trkhitCollRoot_</a> {&quot;fspOnTrackHits&quot;}</td></tr>
 <tr class="memitem:a6fccd8c73f342ab88b9fdd47892b08a0" id="r_a6fccd8c73f342ab88b9fdd47892b08a0"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classRawSvtHit.html">RawSvtHit</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6fccd8c73f342ab88b9fdd47892b08a0">rawhits_</a> {}</td></tr>
@@ -140,8 +155,14 @@ Private Attributes</h2></td></tr>
 <tr class="memdesc:a0fb49bb9938aa822ece804ac031128b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">description  <br /></td></tr>
 <tr class="memitem:a5216eefd347c2cdbb66b31f640c7efb3" id="r_a5216eefd347c2cdbb66b31f640c7efb3"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5216eefd347c2cdbb66b31f640c7efb3">hitFitsCollLcio_</a> {&quot;SVTFittedRawTrackerHits&quot;}</td></tr>
 <tr class="memitem:a09349a0c864ba910fd918c418830c883" id="r_a09349a0c864ba910fd918c418830c883"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a09349a0c864ba910fd918c418830c883">mcPartRelLcio_</a> {&quot;RotatedHelicalTrackMCRelations&quot;}</td></tr>
+<tr class="memitem:a874bb50c59820e4a871a5abad8a9148b" id="r_a874bb50c59820e4a871a5abad8a9148b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a874bb50c59820e4a871a5abad8a9148b">mcPartCollLcio_</a> {&quot;MCParticle&quot;}</td></tr>
+<tr class="memdesc:a874bb50c59820e4a871a5abad8a9148b"><td class="mdescLeft">&#160;</td><td class="mdescRight">collection the stored <a class="el" href="classMCParticle.html">MCParticle</a> ids come from  <br /></td></tr>
+<tr class="memitem:a0ed5e51f1acef8ad445da8df6afd6156" id="r_a0ed5e51f1acef8ad445da8df6afd6156"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ed5e51f1acef8ad445da8df6afd6156">rawHitCollLcio_</a> {&quot;SVTRawTrackerHits&quot;}</td></tr>
+<tr class="memdesc:a0ed5e51f1acef8ad445da8df6afd6156"><td class="mdescLeft">&#160;</td><td class="mdescRight">event-level raw hits, for the closure control  <br /></td></tr>
 <tr class="memitem:a137254086083432875feef6b753eed01" id="r_a137254086083432875feef6b753eed01"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a137254086083432875feef6b753eed01">trackStateLocation_</a> {&quot;&quot;}</td></tr>
 <tr class="memdesc:a137254086083432875feef6b753eed01"><td class="mdescLeft">&#160;</td><td class="mdescRight">select track state for tracks DEFAULT AtIP  <br /></td></tr>
+<tr class="memitem:aa4b89d94a51efab46ea8f99648c5d7cf" id="r_aa4b89d94a51efab46ea8f99648c5d7cf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa4b89d94a51efab46ea8f99648c5d7cf">truthClosure_</a> {0}</td></tr>
+<tr class="memdesc:aa4b89d94a51efab46ea8f99648c5d7cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run the truth-link closure test and print a summary in <a class="el" href="#a32d626626eee0bc4ade146973f6abb1c" title="Callback for the Processor to take any necessary action when the processing of events finishes.">finalize()</a>.  <br /></td></tr>
 <tr class="memitem:a21dfd06817cc880a2dd026644152c09b" id="r_a21dfd06817cc880a2dd026644152c09b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a21dfd06817cc880a2dd026644152c09b">bfield_</a> {-1.}</td></tr>
 <tr class="memdesc:a21dfd06817cc880a2dd026644152c09b"><td class="mdescLeft">&#160;</td><td class="mdescRight">magnetic field  <br /></td></tr>
 <tr class="memitem:a23e49b66f544b820bd55beffa91f5dbb" id="r_a23e49b66f544b820bd55beffa91f5dbb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a23e49b66f544b820bd55beffa91f5dbb">useTrackerHits_</a> {1}</td></tr>
@@ -162,7 +183,7 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Insert description here. more details. </p>
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00040">40</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00045">45</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af9b2eb31ef1deaf820ace54bfc0203b4" name="af9b2eb31ef1deaf820ace54bfc0203b4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af9b2eb31ef1deaf820ace54bfc0203b4">&#9670;&#160;</a></span>VertexProcessor()</h2>
@@ -192,7 +213,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8cxx_source.html#l00010">10</a> of file <a class="el" href="VertexProcessor_8cxx_source.html">VertexProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8cxx_source.html#l00014">14</a> of file <a class="el" href="VertexProcessor_8cxx_source.html">VertexProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -212,11 +233,60 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 <p>Destructor </p>
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8cxx_source.html#l00012">12</a> of file <a class="el" href="VertexProcessor_8cxx_source.html">VertexProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8cxx_source.html#l00016">16</a> of file <a class="el" href="VertexProcessor_8cxx_source.html">VertexProcessor.cxx</a>.</p>
 
 </div>
 </div>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<a id="a06f4ced51558e03a4b7b9d23e8b1830f" name="a06f4ced51558e03a4b7b9d23e8b1830f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a06f4ced51558e03a4b7b9d23e8b1830f">&#9670;&#160;</a></span>closeTruthLink()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void closeTruthLink </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classTrack.html">Track</a> *</td>          <td class="paramname"><span class="paramname"><em>track</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::map&lt; int, int &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>mcp_pdg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>have_mcp</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Tally the closure counters for one converted track. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">track</td><td>the hpstr <a class="el" href="classTrack.html">Track</a> that addMcpHit() was just called on </td></tr>
+    <tr><td class="paramname">mcp_pdg</td><td>id -&gt; PDG for every particle in mcPartCollLcio_ </td></tr>
+    <tr><td class="paramname">have_mcp</td><td>whether mcPartCollLcio_ was present this event </td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Reproduce the plurality exactly as <a class="el" href="PreselectAndCategorize2021_8cxx.html">PreselectAndCategorize2021.cxx</a>:1104-1117 does &ndash; over entries, so a wide cluster contributes once per strip and the layer half of the pair is ignored. Recompute it a second time over unique (layer, id) pairs to measure how often that weighting changes the answer.</p>
+<p>The classification the downstream code cannot make for itself: <a class="el" href="namespaceutils.html#adc59f2c9266725bcf0bf8461f641176d" title="Get the PDG code of the truth particle best matching this track.">utils::getTruthPDG</a> returns 0 both when the id resolves to nothing and when it resolves to a non-e+-, and hasTruthMatch collapses both into "no truth
+link" &ndash; the same value a track with no relations at all gets.</p>
+
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8cxx_source.html#l00315">315</a> of file <a class="el" href="VertexProcessor_8cxx_source.html">VertexProcessor.cxx</a>.</p>
+
+</div>
+</div>
 <a id="a28936b5e7dad5cac4572c2e47464519e" name="a28936b5e7dad5cac4572c2e47464519e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a28936b5e7dad5cac4572c2e47464519e">&#9670;&#160;</a></span>configure()</h2>
 
@@ -250,7 +320,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classProcessor.html#a5aababad5df4ebb1cee987b8b93d6481">Processor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8cxx_source.html#l00014">14</a> of file <a class="el" href="VertexProcessor_8cxx_source.html">VertexProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8cxx_source.html#l00018">18</a> of file <a class="el" href="VertexProcessor_8cxx_source.html">VertexProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -281,7 +351,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classProcessor.html#a5882b5eaf11f8b1561d5bb4ecdc217c3">Processor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8cxx_source.html#l00229">229</a> of file <a class="el" href="VertexProcessor_8cxx_source.html">VertexProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8cxx_source.html#l00431">431</a> of file <a class="el" href="VertexProcessor_8cxx_source.html">VertexProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -318,7 +388,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classProcessor.html#ac35b4d4ae3c704c4f9764e8cbbb3a790">Processor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8cxx_source.html#l00035">35</a> of file <a class="el" href="VertexProcessor_8cxx_source.html">VertexProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8cxx_source.html#l00042">42</a> of file <a class="el" href="VertexProcessor_8cxx_source.html">VertexProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -352,10 +422,44 @@ Additional Inherited Members</h2></td></tr>
   </table>
   </dd>
 </dl>
+<p>Closure test bookkeeping. The map is the ground truth for "does this id
+mean anything downstream": <a class="el" href="classMCParticleProcessor.html" title="Processor used to translate LCIO MCParticles to DST MCParticle objects. more details.">MCParticleProcessor</a> stores exactly these ids (<a class="el" href="MCParticleProcessor_8cxx.html" title="Processor used to translate LCIO ReconstructedParticles to DST MCParticle objects.">MCParticleProcessor.cxx</a>:99 also uses lc_particle-&gt;id()), so an id that is absent here is one <a class="el" href="classPreselectAndCategorize2021.html">PreselectAndCategorize2021</a> can never resolve.</p>
+<p>Event-level control: what fraction of ALL raw hits carry a relation. Without it the on-track number has nothing to be compared against &ndash; under pulser overlay most raw hits are data and are expected to have no relation at all.</p>
+<p>A null <a class="el" href="classMCParticle.html">MCParticle</a> used to be printed and then dereferenced on the next line. Skip it instead, and count it &ndash; a SimTrackerHit whose particle did not survive into the output is one of the ways the truth link goes missing.</p>
+<p>Close on the copy that is actually written out, not on the local <a class="el" href="classTrack.html">Track</a>: <a class="el" href="classParticle.html#aa2dd28c594c2b4ff2fc590c053067a47">Particle::setTrack</a> assigns by value, so this is the object <a class="el" href="classPreselectAndCategorize2021.html">PreselectAndCategorize2021</a> will read back from the tuple.</p>
 
 <p>Implements <a class="el" href="classProcessor.html#a1ed21b6d43e34aa191677e80ecf2fd78">Processor</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8cxx_source.html#l00044">44</a> of file <a class="el" href="VertexProcessor_8cxx_source.html">VertexProcessor.cxx</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8cxx_source.html#l00051">51</a> of file <a class="el" href="VertexProcessor_8cxx_source.html">VertexProcessor.cxx</a>.</p>
+
+</div>
+</div>
+<a id="ab2aff4c611a1e5194e39a72921c79932" name="ab2aff4c611a1e5194e39a72921c79932"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab2aff4c611a1e5194e39a72921c79932">&#9670;&#160;</a></span>reportTruthLinkClosure()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void reportTruthLinkClosure </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Print the closure summary. Called from <a class="el" href="#a32d626626eee0bc4ade146973f6abb1c" title="Callback for the Processor to take any necessary action when the processing of events finishes.">finalize()</a>. </p>
+
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8cxx_source.html#l00372">372</a> of file <a class="el" href="VertexProcessor_8cxx_source.html">VertexProcessor.cxx</a>.</p>
 
 </div>
 </div>
@@ -382,7 +486,31 @@ Additional Inherited Members</h2></td></tr>
 
 <p>magnetic field </p>
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00101">101</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00166">166</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+
+</div>
+</div>
+<a id="ad8d65cdc4e147b14738e07fcf4977e92" name="ad8d65cdc4e147b14738e07fcf4977e92"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8d65cdc4e147b14738e07fcf4977e92">&#9670;&#160;</a></span>closure_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structVertexProcessor_1_1TruthLinkClosure.html">TruthLinkClosure</a> closure_ {}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00144">144</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -408,7 +536,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Debug Level. </p>
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00105">105</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00170">170</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -432,7 +560,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00097">97</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00158">158</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -457,7 +585,7 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 <p>Containers to hold all <a class="el" href="classTrackerHit.html">TrackerHit</a> objects. </p>
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00086">86</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00147">147</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -483,7 +611,33 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00095">95</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00156">156</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+
+</div>
+</div>
+<a id="a874bb50c59820e4a871a5abad8a9148b" name="a874bb50c59820e4a871a5abad8a9148b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a874bb50c59820e4a871a5abad8a9148b">&#9670;&#160;</a></span>mcPartCollLcio_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string mcPartCollLcio_ {&quot;MCParticle&quot;}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>collection the stored <a class="el" href="classMCParticle.html">MCParticle</a> ids come from </p>
+
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00160">160</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -507,7 +661,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00098">98</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00159">159</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -533,7 +687,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00094">94</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00155">155</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -559,7 +713,33 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00091">91</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00152">152</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+
+</div>
+</div>
+<a id="a0ed5e51f1acef8ad445da8df6afd6156" name="a0ed5e51f1acef8ad445da8df6afd6156"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ed5e51f1acef8ad445da8df6afd6156">&#9670;&#160;</a></span>rawHitCollLcio_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string rawHitCollLcio_ {&quot;SVTRawTrackerHits&quot;}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>event-level raw hits, for the closure control </p>
+
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00161">161</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -583,7 +763,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00089">89</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00150">150</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -607,7 +787,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00088">88</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00149">149</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -633,7 +813,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>select track state for tracks DEFAULT AtIP </p>
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00099">99</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00162">162</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -657,7 +837,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00087">87</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00148">148</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -683,7 +863,33 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00096">96</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00157">157</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+
+</div>
+</div>
+<a id="aa4b89d94a51efab46ea8f99648c5d7cf" name="aa4b89d94a51efab46ea8f99648c5d7cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4b89d94a51efab46ea8f99648c5d7cf">&#9670;&#160;</a></span>truthClosure_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int truthClosure_ {0}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Run the truth-link closure test and print a summary in <a class="el" href="#a32d626626eee0bc4ade146973f6abb1c" title="Callback for the Processor to take any necessary action when the processing of events finishes.">finalize()</a>. </p>
+
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00164">164</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -709,7 +915,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Load hit collections, otherwise get from getSubdetectorHitNumbers. </p>
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00103">103</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00168">168</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -735,7 +941,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00092">92</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00153">153</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -761,7 +967,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00093">93</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00154">154</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>
@@ -787,7 +993,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>description </p>
 
-<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00090">90</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="VertexProcessor_8h_source.html#l00151">151</a> of file <a class="el" href="VertexProcessor_8h_source.html">VertexProcessor.h</a>.</p>
 
 </div>
 </div>

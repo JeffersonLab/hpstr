@@ -157,24 +157,20 @@ $(function() {
 <div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>anaFee.parameters[<span class="stringliteral">&quot;eopMax&quot;</span>] = 99.0</div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
 <div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span></div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>anaFee.parameters[<span class="stringliteral">&quot;smearingCfg&quot;</span>]    = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&quot;/analysis/data/smearing/tool_smearing.json&quot;</span></div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>anaFee.parameters[<span class="stringliteral">&quot;doSmearing&quot;</span>]     = 1</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>anaFee.parameters[<span class="stringliteral">&quot;smearingFactor&quot;</span>] = 1.0</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>anaFee.parameters[<span class="stringliteral">&quot;smearOmega&quot;</span>]     = 1</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span><span class="comment"># Smearing lookup variable: &quot;flat&quot;, &quot;nHits&quot;, &quot;tanLambda&quot;, &quot;phi0&quot; (&quot;&quot; = JSON default)</span></div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>anaFee.parameters[<span class="stringliteral">&quot;smearingVariable&quot;</span>] = <span class="stringliteral">&quot;phi0&quot;</span></div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span><span class="comment"># Scale correction: &quot;&quot; = use omega-space means (default); &quot;tanLambda&quot; = p-space means</span></div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>anaFee.parameters[<span class="stringliteral">&quot;scaleCorrVariable&quot;</span>] = <span class="stringliteral">&quot;&quot;</span></div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span><span class="comment"># Optional per-region selections (empty = none)</span></div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>anaFee.parameters[<span class="stringliteral">&quot;regionDefinitions&quot;</span>] = []</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>anaFee.parameters[<span class="stringliteral">&quot;trackCorrectionsCfg&quot;</span>] = os.environ[<span class="stringliteral">&#39;HPSTR_BASE&#39;</span>]+<span class="stringliteral">&quot;/analysis/data/corrections/fee_2021_meancorr.json&quot;</span></div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>anaFee.parameters[<span class="stringliteral">&quot;doSmearing&quot;</span>]     = 1</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="comment"># Scale correction: &quot;&quot; = use omega-space means (default); &quot;tanLambda&quot; = p-space means</span></div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span><span class="comment"># Optional per-region selections (empty = none)</span></div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>anaFee.parameters[<span class="stringliteral">&quot;regionDefinitions&quot;</span>] = []</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaFee__cfg.html#a3f9c3bf7e2cafc2c46df6d132ea658cc">   95</a></span>p.sequence = [anaFee]</div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span> </div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaFee__cfg.html#a3f9c3bf7e2cafc2c46df6d132ea658cc">   97</a></span>p.sequence = [anaFee]</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaFee__cfg.html#a27256609f574b662639e0a8cd48b8d3a">   99</a></span>p.input_files  = inFilename</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaFee__cfg.html#a7882aa8b39a47102a13c2630137590d8">  100</a></span>p.output_files = [outFilename]</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span> </div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>p.printProcess()</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaFee__cfg.html#a27256609f574b662639e0a8cd48b8d3a">   97</a></span>p.input_files  = inFilename</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno"><a class="line" href="namespaceconfig_1_1anaFee__cfg.html#a7882aa8b39a47102a13c2630137590d8">   98</a></span>p.output_files = [outFilename]</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span> </div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>p.printProcess()</div>
 <div class="ttc" id="aclassHpstrConf_1_1Process_html"><div class="ttname"><a href="classHpstrConf_1_1Process.html">HpstrConf.Process</a></div><div class="ttdoc">Process python class.</div><div class="ttdef"><b>Definition</b> <a href="HpstrConf_8py_source.html#l00020">HpstrConf.py:20</a></div></div>
 <div class="ttc" id="aclassHpstrConf_1_1Processor_html"><div class="ttname"><a href="classHpstrConf_1_1Processor.html">HpstrConf.Processor</a></div><div class="ttdoc">Processor python class.</div><div class="ttdef"><b>Definition</b> <a href="HpstrConf_8py_source.html#l00004">HpstrConf.py:4</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

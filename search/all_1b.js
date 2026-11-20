@@ -74,11 +74,12 @@ var searchData=
   ['_7etreecutselector_71',['~TreeCutSelector',['../classTreeCutSelector.html#a9e48b464acf85344e539b10b0a44b5f2',1,'TreeCutSelector']]],
   ['_7etridentanaprocessor_72',['~TridentAnaProcessor',['../classTridentAnaProcessor.html#a3f2e5991caa6ea963b139f5a8e1cdcfe',1,'TridentAnaProcessor']]],
   ['_7etridentwabanaprocessor_73',['~TridentWABAnaProcessor',['../classTridentWABAnaProcessor.html#a10d04e8d52c9a7c3a51a70f7cbeaf632',1,'TridentWABAnaProcessor']]],
-  ['_7etsdata_74',['~TSData',['../classTSData.html#a8a8323b2b9f0b6a29b8f4b8db6984ed8',1,'TSData']]],
-  ['_7evertex_75',['~Vertex',['../classVertex.html#aecaad09aa3b66b2a436c6afeabdc49e7',1,'Vertex']]],
-  ['_7evertexanaprocessor_76',['~VertexAnaProcessor',['../classVertexAnaProcessor.html#aeef1725f2603581320e56ff6d07a8d16',1,'VertexAnaProcessor']]],
-  ['_7evertexprocessor_77',['~VertexProcessor',['../classVertexProcessor.html#ac136882651bfbf8e748194b97fc48aab',1,'VertexProcessor']]],
-  ['_7evtpdata_78',['~VTPData',['../classVTPData.html#a0027cf56a8de652a2bb02e0d07554581',1,'VTPData']]],
-  ['_7evtxhistoprocessor_79',['~VtxHistoProcessor',['../classVtxHistoProcessor.html#ad7d262574e7400932d1167d5ebf58581',1,'VtxHistoProcessor']]],
-  ['_7ezbihistos_80',['~ZBiHistos',['../classZBiHistos.html#a443a9004d2ff66888d9a5038d5450fbf',1,'ZBiHistos']]]
+  ['_7etruthvertexmatch2021_74',['~TruthVertexMatch2021',['../classTruthVertexMatch2021.html#a0913facda8d727ac89e6883dc7458e43',1,'TruthVertexMatch2021']]],
+  ['_7etsdata_75',['~TSData',['../classTSData.html#a8a8323b2b9f0b6a29b8f4b8db6984ed8',1,'TSData']]],
+  ['_7evertex_76',['~Vertex',['../classVertex.html#aecaad09aa3b66b2a436c6afeabdc49e7',1,'Vertex']]],
+  ['_7evertexanaprocessor_77',['~VertexAnaProcessor',['../classVertexAnaProcessor.html#aeef1725f2603581320e56ff6d07a8d16',1,'VertexAnaProcessor']]],
+  ['_7evertexprocessor_78',['~VertexProcessor',['../classVertexProcessor.html#ac136882651bfbf8e748194b97fc48aab',1,'VertexProcessor']]],
+  ['_7evtpdata_79',['~VTPData',['../classVTPData.html#a0027cf56a8de652a2bb02e0d07554581',1,'VTPData']]],
+  ['_7evtxhistoprocessor_80',['~VtxHistoProcessor',['../classVtxHistoProcessor.html#ad7d262574e7400932d1167d5ebf58581',1,'VtxHistoProcessor']]],
+  ['_7ezbihistos_81',['~ZBiHistos',['../classZBiHistos.html#a443a9004d2ff66888d9a5038d5450fbf',1,'ZBiHistos']]]
 ];

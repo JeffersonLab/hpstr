@@ -57,5 +57,6 @@ var searchData=
   ['config_3a_3asimparttuple_5fcfg_54',['simPartTuple_cfg',['../namespaceconfig_1_1simPartTuple__cfg.html',1,'config']]],
   ['config_3a_3asimptuple_5f2016_5fcfg_55',['simpTuple_2016_cfg',['../namespaceconfig_1_1simpTuple__2016__cfg.html',1,'config']]],
   ['config_3a_3atrkntuple_5fcfg_56',['trkNtuple_cfg',['../namespaceconfig_1_1trkNtuple__cfg.html',1,'config']]],
-  ['config_3a_3avtxhprocess_57',['vtxhProcess',['../namespaceconfig_1_1vtxhProcess.html',1,'config']]]
+  ['config_3a_3atruthvertexmatch_5fcfg_57',['truthVertexMatch_cfg',['../namespaceconfig_1_1truthVertexMatch__cfg.html',1,'config']]],
+  ['config_3a_3avtxhprocess_58',['vtxhProcess',['../namespaceconfig_1_1vtxhProcess.html',1,'config']]]
 ];

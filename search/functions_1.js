@@ -45,7 +45,7 @@ var searchData=
   ['addvector_42',['addVector',['../classFlatTupleMaker.html#a32c0bc3072362d4fb4c15e5432e47dd4',1,'FlatTupleMaker']]],
   ['anahelpers_43',['AnaHelpers',['../classAnaHelpers.html#a36472fb9fabb806ac0d2d7cbff1c5eee',1,'AnaHelpers']]],
   ['apoptimizationprocessor_44',['ApOptimizationProcessor',['../classApOptimizationProcessor.html#a9ca437a1141d2470098b27950d7368f6',1,'ApOptimizationProcessor']]],
-  ['apply_45',['apply',['../classCutflow.html#a0dac11bd221c5b4928882b3b923d7280',1,'Cutflow']]],
+  ['apply_45',['apply',['../classCutflow.html#a0dac11bd221c5b4928882b3b923d7280',1,'Cutflow::apply()'],['../classRunScaleCorrectionTool.html#a3722e581a934b88f9671ff463244189d',1,'RunScaleCorrectionTool::apply()']]],
   ['applycorrection_46',['applyCorrection',['../classTrack.html#af280c8b9c4b898587bd23877390c49e0',1,'Track']]],
   ['apv25roxtalkanaprocessor_47',['Apv25RoXtalkAnaProcessor',['../classApv25RoXtalkAnaProcessor.html#ae07def2db88fcfa7956a1432c2368538',1,'Apv25RoXtalkAnaProcessor']]],
   ['assignlayercode_48',['AssignLayerCode',['../classTridentHistos.html#adb9d4e24bc7ef8bb53cc2afaeefd1b6f',1,'TridentHistos']]],
